@@ -176,8 +176,8 @@ equilateral triangle whose vertex coordinates involve `\sqrt{3}`. An
 exact way to work with roots in Sage is the
 :mod:`Algebraic Real Field <sage.rings.qqbar>` ::
 
-    sage: triangle = Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)], base_ring=AA) # optional - sage.rings.number_field  # optional - sage.symbolic
-    sage: triangle.Hrepresentation()                                            # optional - sage.rings.number_field  # optional - sage.symbolic
+    sage: triangle = Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)], base_ring=AA)         # optional - sage.rings.number_field sage.symbolic
+    sage: triangle.Hrepresentation()                                                    # optional - sage.rings.number_field sage.symbolic
     (An inequality (-1, -0.5773502691896258?) x + 1 >= 0,
      An inequality (1, -0.5773502691896258?) x + 0 >= 0,
      An inequality (0, 1.154700538379252?) x + 0 >= 0)
@@ -186,12 +186,12 @@ Without specifying the ``base_ring``, the ``sqrt(3)`` would be a
 symbolic ring element and, therefore, the polyhedron defined over the
 symbolic ring. This is currently not supported as SR is not exact::
 
-    sage: Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)])                          # optional - sage.symbolic
+    sage: Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)])                                  # optional - sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: no default backend for computations with Symbolic Ring
 
-    sage: SR.is_exact()                                                         # optional - sage.symbolic
+    sage: SR.is_exact()                                                                 # optional - sage.symbolic
     False
 
 Even faster than all algebraic real numbers (the field ``AA``) is
@@ -220,7 +220,7 @@ triangle, that would be::
         A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
         sage: Polyhedron(vertices = [[1.12345678901234, 2.123456789012345]])
         A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
-        sage: Polyhedron(vertices = [[1.123456789012345, 2.123456789012345]])       # optional - sage.rings.real_mpfr
+        sage: Polyhedron(vertices = [[1.123456789012345, 2.123456789012345]])           # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: the only allowed inexact ring is 'RDF' with backend 'cdd'
@@ -452,15 +452,15 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     by the cyclic shifts of `(0, \pm 1, \pm (1+\sqrt(5))/2)`, cf.
     :wikipedia:`Regular_icosahedron`. It needs a number field::
 
-        sage: R0.<r0> = QQ[]                                                    # optional - sage.rings.number_field
-        sage: R1.<r1> = NumberField(r0^2-5, embedding=AA(5)**(1/2))             # optional - sage.rings.number_field
-        sage: gold = (1+r1)/2                                                   # optional - sage.rings.number_field
-        sage: v = [[0, 1, gold], [0, 1, -gold], [0, -1, gold], [0, -1, -gold]]  # optional - sage.rings.number_field
-        sage: pp = Permutation((1, 2, 3))          # optional - sage.combinat   # optional - sage.rings.number_field
-        sage: icosah = Polyhedron(                 # optional - sage.combinat   # optional - sage.rings.number_field
+        sage: R0.<r0> = QQ[]                                                            # optional - sage.rings.number_field
+        sage: R1.<r1> = NumberField(r0^2-5, embedding=AA(5)**(1/2))                     # optional - sage.rings.number_field
+        sage: gold = (1+r1)/2                                                           # optional - sage.rings.number_field
+        sage: v = [[0, 1, gold], [0, 1, -gold], [0, -1, gold], [0, -1, -gold]]          # optional - sage.rings.number_field
+        sage: pp = Permutation((1, 2, 3))                                               # optional - sage.combinat sage.rings.number_field
+        sage: icosah = Polyhedron(                                                      # optional - sage.combinat sage.rings.number_field
         ....:    [(pp^2).action(w) for w in v] + [pp.action(w) for w in v] + v,
         ....:    base_ring=R1)
-        sage: len(icosah.faces(2))                 # optional - sage.combinat   # optional - sage.rings.number_field
+        sage: len(icosah.faces(2))                                                      # optional - sage.combinat sage.rings.number_field
         20
 
     When the input contains elements of a Number Field, they require an
@@ -508,12 +508,12 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: Polyhedron(o, base_ring=QQ)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
 
-        sage: H.<x,y> = HyperplaneArrangements(QQ)                                              # optional - sage.combinat
-        sage: h = x + y - 1; h                                                                  # optional - sage.combinat
+        sage: H.<x,y> = HyperplaneArrangements(QQ)                                      # optional - sage.combinat
+        sage: h = x + y - 1; h                                                          # optional - sage.combinat
         Hyperplane x + y - 1
-        sage: Polyhedron(h, base_ring=ZZ)                                                       # optional - sage.combinat
+        sage: Polyhedron(h, base_ring=ZZ)                                               # optional - sage.combinat
         A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 1 line
-        sage: Polyhedron(h)                                                                     # optional - sage.combinat
+        sage: Polyhedron(h)                                                             # optional - sage.combinat
         A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
 
     .. NOTE::
@@ -567,7 +567,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     Check that input with too many bits of precision returns an error (see
     :trac:`22552`)::
 
-        sage: Polyhedron(vertices=[(8.3319544851638732, 7.0567045956967727),                        # optional - sage.rings.real_mpfr
+        sage: Polyhedron(vertices=[(8.3319544851638732, 7.0567045956967727),            # optional - sage.rings.real_mpfr
         ....:                      (6.4876921900819049, 4.8435898415984129)])
         Traceback (most recent call last):
         ...
@@ -575,11 +575,11 @@ def Polyhedron(vertices=None, rays=None, lines=None,
 
     Check that setting ``base_ring`` to a ``RealField`` returns an error (see :trac:`22552`)::
 
-        sage: Polyhedron(vertices=[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(40))                # optional - sage.rings.real_mpfr
+        sage: Polyhedron(vertices=[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(40))    # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: no default backend for computations with Real Field with 40 bits of precision
-        sage: Polyhedron(vertices=[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(53))                # optional - sage.rings.real_mpfr
+        sage: Polyhedron(vertices=[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(53))    # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: no default backend for computations with Real Field with 53 bits of precision
@@ -726,7 +726,8 @@ def Polyhedron(vertices=None, rays=None, lines=None,
 
         if base_ring not in Fields():
             got_compact_Vrep = got_Vrep and not rays and not lines
-            got_cone_Vrep = got_Vrep and all(all(x == 0 for x in v) for v in vertices)
+            got_cone_Vrep = got_Vrep and all(x == 0
+                                             for v in vertices for x in v)
             if not got_compact_Vrep and not got_cone_Vrep:
                 base_ring = base_ring.fraction_field()
                 convert = True
@@ -747,7 +748,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
                 raise ValueError("the only allowed inexact ring is 'RDF' with backend 'cdd'")
 
     # Add the origin if necessary
-    if got_Vrep and len(vertices) == 0 and len(rays + lines) > 0:
+    if got_Vrep and len(vertices) == 0 and bool(rays + lines):
         vertices = [[0] * ambient_dim]
 
     # Specific backends can override the base_ring

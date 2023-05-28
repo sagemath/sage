@@ -165,13 +165,13 @@ cdef class Ring(ParentWithGens):
 
         sage: QQ.is_finite()
         False
-        sage: GF(2^10,'a').is_finite()
+        sage: GF(2^10, 'a').is_finite()                                                 # optional - sage.rings.finite_rings
         True
-        sage: R.<x> = GF(7)[]
-        sage: R.is_finite()
+        sage: R.<x> = GF(7)[]                                                           # optional - sage.rings.finite_rings
+        sage: R.is_finite()                                                             # optional - sage.rings.finite_rings
         False
-        sage: S.<y> = R.quo(x^2+1)
-        sage: S.is_finite()
+        sage: S.<y> = R.quo(x^2 + 1)                                                    # optional - sage.rings.finite_rings
+        sage: S.is_finite()                                                             # optional - sage.rings.finite_rings
         True
 
         sage: Integers(7).cardinality()
@@ -255,11 +255,11 @@ cdef class Ring(ParentWithGens):
         """
         EXAMPLES::
 
-            sage: QQ.base_extend(GF(7))
+            sage: QQ.base_extend(GF(7))                                                 # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no base extension defined
-            sage: ZZ.base_extend(GF(7))
+            sage: ZZ.base_extend(GF(7))                                                 # optional - sage.rings.finite_rings
             Finite Field of size 7
         """
         if R.has_coerce_map_from(self):
@@ -280,7 +280,7 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: FreeAlgebra(QQ, 3, 'x').category() # todo: use a ring which is not an algebra!
+            sage: FreeAlgebra(QQ, 3, 'x').category() # todo: use a ring which is not an algebra!    # optional - sage.combinat sage.modules
             Category of algebras with basis over Rational Field
 
         Since a quotient of the integers is its own base ring, and during
@@ -310,16 +310,19 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
-            sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
-            sage: Q = F.quotient(I)
-            sage: Q.ideal_monoid()
-            Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z) over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
-            sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
-            sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
-            sage: Q = F.quo(I)
-            sage: Q.ideal_monoid()
-            Monoid of ideals of Quotient of Free Associative Unital Algebra on 3 generators (x, y, z) over Integer Ring by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
+            sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)                                        # optional - sage.combinat sage.modules
+            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                        # optional - sage.combinat sage.modules
+            sage: Q = F.quotient(I)                                                     # optional - sage.combinat sage.modules
+            sage: Q.ideal_monoid()                                                      # optional - sage.combinat sage.modules
+            Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
+             over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
+            sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')             # optional - sage.combinat sage.modules
+            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                        # optional - sage.combinat sage.modules
+            sage: Q = F.quo(I)                                                          # optional - sage.combinat sage.modules
+            sage: Q.ideal_monoid()                                                      # optional - sage.combinat sage.modules
+            Monoid of ideals of Quotient of Free Associative Unital Algebra
+             on 3 generators (x, y, z) over Integer Ring
+             by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
 
         """
         if self.__ideal_monoid is not None:
@@ -363,10 +366,10 @@ cdef class Ring(ParentWithGens):
 
         Here is an example over a non-commutative ring::
 
-            sage: A = SteenrodAlgebra(2)
-            sage: A.ideal(A.1,A.2^2)
+            sage: A = SteenrodAlgebra(2)                                                # optional - sage.combinat sage.modules
+            sage: A.ideal(A.1, A.2^2)                                                   # optional - sage.combinat sage.modules
             Twosided Ideal (Sq(2), Sq(2,2)) of mod 2 Steenrod algebra, milnor basis
-            sage: A.ideal(A.1,A.2^2,side='left')
+            sage: A.ideal(A.1, A.2^2, side='left')                                      # optional - sage.combinat sage.modules
             Left Ideal (Sq(2), Sq(2,2)) of mod 2 Steenrod algebra, milnor basis
 
         TESTS:
@@ -445,20 +448,22 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = GF(7)[]
-            sage: (x+y)*R
-            Ideal (x + y) of Multivariate Polynomial Ring in x, y, z over Finite Field of size 7
-            sage: (x+y,z+y^3)*R
-            Ideal (x + y, y^3 + z) of Multivariate Polynomial Ring in x, y, z over Finite Field of size 7
+            sage: R.<x,y,z> = GF(7)[]                                                   # optional - sage.rings.finite_rings
+            sage: (x + y) * R                                                           # optional - sage.rings.finite_rings
+            Ideal (x + y) of Multivariate Polynomial Ring in x, y, z
+             over Finite Field of size 7
+            sage: (x + y, z + y^3) * R                                                  # optional - sage.rings.finite_rings
+            Ideal (x + y, y^3 + z) of Multivariate Polynomial Ring in x, y, z
+             over Finite Field of size 7
 
         The following was implemented in :trac:`7797`::
 
-            sage: A = SteenrodAlgebra(2)
-            sage: A*[A.1+A.2,A.1^2]
+            sage: A = SteenrodAlgebra(2)                                                # optional - sage.combinat sage.modules
+            sage: A * [A.1 + A.2, A.1^2]                                                # optional - sage.combinat sage.modules
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
-            sage: [A.1+A.2,A.1^2]*A
+            sage: [A.1 + A.2, A.1^2] * A                                                # optional - sage.combinat sage.modules
             Right Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
-            sage: A*[A.1+A.2,A.1^2]*A
+            sage: A * [A.1 + A.2, A.1^2] * A                                            # optional - sage.combinat sage.modules
             Twosided Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
 
         """
@@ -516,18 +521,18 @@ cdef class Ring(ParentWithGens):
             <class 'sage.rings.ideal.Ideal_pid'>
             sage: RR._ideal_class_()
             <class 'sage.rings.ideal.Ideal_pid'>
-            sage: R.<x,y> = GF(5)[]
-            sage: R._ideal_class_(1)
+            sage: R.<x,y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: R._ideal_class_(1)                                                    # optional - sage.rings.finite_rings
             <class 'sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal'>
-            sage: S = R.quo(x^3-y^2)
-            sage: S._ideal_class_(1)
+            sage: S = R.quo(x^3 - y^2)                                                  # optional - sage.rings.finite_rings
+            sage: S._ideal_class_(1)                                                    # optional - sage.rings.finite_rings
             <class 'sage.rings.quotient_ring.QuotientRingIdeal_principal'>
-            sage: S._ideal_class_(2)
+            sage: S._ideal_class_(2)                                                    # optional - sage.rings.finite_rings
             <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
-            sage: T.<z> = S[]
-            sage: T._ideal_class_(5)
+            sage: T.<z> = S[]                                                           # optional - sage.rings.finite_rings
+            sage: T._ideal_class_(5)                                                    # optional - sage.rings.finite_rings
             <class 'sage.rings.ideal.Ideal_generic'>
-            sage: T._ideal_class_(1)
+            sage: T._ideal_class_(1)                                                    # optional - sage.rings.finite_rings
             <class 'sage.rings.ideal.Ideal_principal'>
 
         Since :trac:`7797`, non-commutative rings have ideals as well::
@@ -571,7 +576,7 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: Zp(7).unit_ideal()
+            sage: Zp(7).unit_ideal()                                                    # optional - sage.rings.padics
             Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
         """
         if self._unit_ideal is None:
@@ -602,10 +607,10 @@ cdef class Ring(ParentWithGens):
 
         Make sure that :trac:`13644` is fixed::
 
-            sage: K = Qp(3)
-            sage: R.<a> = K[]
-            sage: L.<a> = K.extension(a^2-3)
-            sage: L.ideal(a)
+            sage: K = Qp(3)                                                             # optional - sage.rings.padics
+            sage: R.<a> = K[]                                                           # optional - sage.rings.padics
+            sage: L.<a> = K.extension(a^2-3)                                            # optional - sage.rings.padics
+            sage: L.ideal(a)                                                            # optional - sage.rings.padics
             Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
 
         """
@@ -673,8 +678,8 @@ cdef class Ring(ParentWithGens):
             True
             sage: QQ['x,y,z'].is_commutative()
             True
-            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
-            sage: Q.is_commutative()
+            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                             # optional - sage.combinat sage.modules
+            sage: Q.is_commutative()                                                    # optional - sage.combinat sage.modules
             False
         """
         if self.is_zero():
@@ -701,7 +706,7 @@ cdef class Ring(ParentWithGens):
 
             sage: QQ.is_field()
             True
-            sage: GF(9,'a').is_field()
+            sage: GF(9, 'a').is_field()                                                 # optional - sage.rings.finite_rings
             True
             sage: ZZ.is_field()
             False
@@ -713,12 +718,12 @@ cdef class Ring(ParentWithGens):
         This illustrates the use of the ``proof`` parameter::
 
             sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))
-            sage: S.is_field(proof = True)
+            sage: S.<x,y> = R.quo((b^3))                                                # optional - sage.libs.singular
+            sage: S.is_field(proof=True)                                                # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: S.is_field(proof = False)
+            sage: S.is_field(proof=False)                                               # optional - sage.libs.singular
             False
         """
         if self.is_zero():
@@ -745,9 +750,9 @@ cdef class Ring(ParentWithGens):
             True
             sage: ZZ.is_exact()
             True
-            sage: Qp(7).is_exact()
+            sage: Qp(7).is_exact()                                                      # optional - sage.rings.padics
             False
-            sage: Zp(7, type='capped-abs').is_exact()
+            sage: Zp(7, type='capped-abs').is_exact()                                   # optional - sage.rings.padics
             False
         """
         return True
@@ -763,23 +768,23 @@ cdef class Ring(ParentWithGens):
 
             sage: ZZ.is_subring(QQ)
             True
-            sage: ZZ.is_subring(GF(19))
+            sage: ZZ.is_subring(GF(19))                                                 # optional - sage.rings.finite_rings
             False
 
         TESTS::
 
             sage: QQ.is_subring(QQ['x'])
             True
-            sage: QQ.is_subring(GF(7))
+            sage: QQ.is_subring(GF(7))                                                  # optional - sage.rings.finite_rings
             False
-            sage: QQ.is_subring(CyclotomicField(7))
+            sage: QQ.is_subring(CyclotomicField(7))                                     # optional - sage.rings.number_field
             True
             sage: QQ.is_subring(ZZ)
             False
 
         Every ring is a subring of itself, :trac:`17287`::
 
-            sage: QQbar.is_subring(QQbar)
+            sage: QQbar.is_subring(QQbar)                                               # optional - sage.rings.number_field
             True
             sage: RR.is_subring(RR)
             True
@@ -809,15 +814,15 @@ cdef class Ring(ParentWithGens):
 
             sage: QQ.is_prime_field()
             True
-            sage: GF(3).is_prime_field()
+            sage: GF(3).is_prime_field()                                                # optional - sage.rings.finite_rings
             True
-            sage: GF(9,'a').is_prime_field()
+            sage: GF(9, 'a').is_prime_field()                                           # optional - sage.rings.finite_rings
             False
             sage: ZZ.is_prime_field()
             False
             sage: QQ['x'].is_prime_field()
             False
-            sage: Qp(19).is_prime_field()
+            sage: Qp(19).is_prime_field()                                               # optional - sage.rings.padics
             False
         """
         return False
@@ -848,24 +853,24 @@ cdef class Ring(ParentWithGens):
             True
             sage: Integers(8).is_integral_domain()
             False
-            sage: Zp(7).is_integral_domain()
+            sage: Zp(7).is_integral_domain()                                            # optional - sage.rings.padics
             True
-            sage: Qp(7).is_integral_domain()
+            sage: Qp(7).is_integral_domain()                                            # optional - sage.rings.padics
             True
             sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))
-            sage: S.is_integral_domain()
+            sage: S.<x,y> = R.quo((b^3))                                                # optional - sage.libs.singular
+            sage: S.is_integral_domain()                                                # optional - sage.libs.singular
             False
 
         This illustrates the use of the ``proof`` parameter::
 
             sage: R.<a,b> = ZZ[]
-            sage: S.<x,y> = R.quo((b^3))
-            sage: S.is_integral_domain(proof = True)
+            sage: S.<x,y> = R.quo((b^3))                                                # optional - sage.libs.singular
+            sage: S.is_integral_domain(proof=True)                                      # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: S.is_integral_domain(proof = False)
+            sage: S.is_integral_domain(proof=False)                                     # optional - sage.libs.singular
             False
 
         TESTS:
@@ -883,11 +888,11 @@ cdef class Ring(ParentWithGens):
 
         Forward the proof flag to ``is_field``, see :trac:`22910`::
 
-            sage: R1.<x> = GF(5)[]
-            sage: F1 = R1.quotient_ring(x^2+x+1)
-            sage: R2.<x> = F1[]
-            sage: F2 = R2.quotient_ring(x^2+x+1)
-            sage: F2.is_integral_domain(False)
+            sage: R1.<x> = GF(5)[]                                                      # optional - sage.rings.finite_rings
+            sage: F1 = R1.quotient_ring(x^2 + x + 1)                                    # optional - sage.rings.finite_rings
+            sage: R2.<x> = F1[]                                                         # optional - sage.rings.finite_rings
+            sage: F2 = R2.quotient_ring(x^2 + x + 1)                                    # optional - sage.rings.finite_rings
+            sage: F2.is_integral_domain(False)                                          # optional - sage.rings.finite_rings
             False
         """
         if self.is_field(proof):
@@ -920,7 +925,7 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: GF(19).order()
+            sage: GF(19).order()                                                        # optional - sage.rings.finite_rings
             19
             sage: QQ.order()
             +Infinity
@@ -952,29 +957,29 @@ cdef class Ring(ParentWithGens):
             -1
             sage: QQ.zeta(1)
             1
-            sage: CyclotomicField(6).zeta(6)
+            sage: CyclotomicField(6).zeta(6)                                            # optional - sage.rings.number_field
             zeta6
-            sage: CyclotomicField(3).zeta(3)
+            sage: CyclotomicField(3).zeta(3)                                            # optional - sage.rings.number_field
             zeta3
-            sage: CyclotomicField(3).zeta(3).multiplicative_order()
+            sage: CyclotomicField(3).zeta(3).multiplicative_order()                     # optional - sage.rings.number_field
             3
-            sage: a = GF(7).zeta(); a
+            sage: a = GF(7).zeta(); a                                                   # optional - sage.rings.finite_rings
             3
-            sage: a.multiplicative_order()
+            sage: a.multiplicative_order()                                              # optional - sage.rings.finite_rings
             6
-            sage: a = GF(49,'z').zeta(); a
+            sage: a = GF(49,'z').zeta(); a                                              # optional - sage.rings.finite_rings
             z
-            sage: a.multiplicative_order()
+            sage: a.multiplicative_order()                                              # optional - sage.rings.finite_rings
             48
-            sage: a = GF(49,'z').zeta(2); a
+            sage: a = GF(49,'z').zeta(2); a                                             # optional - sage.rings.finite_rings
             6
-            sage: a.multiplicative_order()
+            sage: a.multiplicative_order()                                              # optional - sage.rings.finite_rings
             2
             sage: QQ.zeta(3)
             Traceback (most recent call last):
             ...
             ValueError: no n-th root of unity in rational field
-            sage: Zp(7, prec=8).zeta()
+            sage: Zp(7, prec=8).zeta()                                                  # optional - sage.rings.padics
             3 + 4*7 + 6*7^2 + 3*7^3 + 2*7^5 + 6*7^6 + 2*7^7 + O(7^8)
 
         TESTS::
@@ -984,7 +989,7 @@ cdef class Ring(ParentWithGens):
             1
             sage: Ring.zeta(QQ, 2)
             -1
-            sage: Ring.zeta(QQ, 3)
+            sage: Ring.zeta(QQ, 3)                                                      # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: no 3rd root of unity in Rational Field
@@ -1021,13 +1026,13 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: CyclotomicField(19).zeta_order()
+            sage: CyclotomicField(19).zeta_order()                                      # optional - sage.rings.number_field
             38
-            sage: GF(19).zeta_order()
+            sage: GF(19).zeta_order()                                                   # optional - sage.rings.finite_rings
             18
-            sage: GF(5^3,'a').zeta_order()
+            sage: GF(5^3,'a').zeta_order()                                              # optional - sage.rings.finite_rings
             124
-            sage: Zp(7, prec=8).zeta_order()
+            sage: Zp(7, prec=8).zeta_order()                                            # optional - sage.rings.padics
             6
         """
         return self.zeta().multiplicative_order()
@@ -1137,7 +1142,7 @@ cdef class Ring(ParentWithGens):
 
         For the symbolic ring, there is no reasonable answer::
 
-            sage: SR.epsilon()
+            sage: SR.epsilon()                                                          # optional - sage.symbolics
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -1195,10 +1200,11 @@ cdef class CommutativeRing(Ring):
 
         EXAMPLES::
 
-            sage: R.<x, y> = GF(3)[]
-            sage: R.localization((x*y, x**2+y**2))
-            Multivariate Polynomial Ring in x, y over Finite Field of size 3 localized at (y, x, x^2 + y^2)
-            sage: ~y in _
+            sage: R.<x, y> = GF(3)[]                                                    # optional - sage.rings.finite_rings
+            sage: R.localization((x*y, x**2 + y**2))                                    # optional - sage.rings.finite_rings
+            Multivariate Polynomial Ring in x, y over Finite Field of size 3
+             localized at (y, x, x^2 + y^2)
+            sage: ~y in _                                                               # optional - sage.rings.finite_rings
             True
         """
         if not self.is_integral_domain():
@@ -1272,11 +1278,11 @@ cdef class CommutativeRing(Ring):
 
             sage: QQ.is_commutative()
             True
-            sage: ZpCA(7).is_commutative()
+            sage: ZpCA(7).is_commutative()                                              # optional - sage.rings.padics
             True
-            sage: A = QuaternionAlgebra(QQ, -1, -3, names=('i','j','k')); A
+            sage: A = QuaternionAlgebra(QQ, -1, -3, names=('i','j','k')); A             # optional - sage.combinat sage.modules
             Quaternion Algebra (-1, -3) with base ring Rational Field
-            sage: A.is_commutative()
+            sage: A.is_commutative()                                                    # optional - sage.combinat sage.modules
             False
         """
         return True
@@ -1312,16 +1318,18 @@ cdef class CommutativeRing(Ring):
         All orders in number fields have Krull dimension 1, including
         non-maximal orders::
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: R = K.maximal_order(); R
-            Gaussian Integers in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
-            sage: R.krull_dimension()
+            sage: K.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
+            sage: R = K.maximal_order(); R                                              # optional - sage.rings.number_field
+            Gaussian Integers in Number Field in i
+             with defining polynomial x^2 + 1 with i = 1*I
+            sage: R.krull_dimension()                                                   # optional - sage.rings.number_field
             1
-            sage: R = K.order(2*i); R
-            Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
-            sage: R.is_maximal()
+            sage: R = K.order(2*i); R                                                   # optional - sage.rings.number_field
+            Order in Number Field in i
+             with defining polynomial x^2 + 1 with i = 1*I
+            sage: R.is_maximal()                                                        # optional - sage.rings.number_field
             False
-            sage: R.krull_dimension()
+            sage: R.krull_dimension()                                                   # optional - sage.rings.number_field
             1
         """
         raise NotImplementedError
@@ -1366,16 +1374,18 @@ cdef class CommutativeRing(Ring):
 
             sage: R = QQ['x']
             sage: y = polygen(R)
-            sage: R.extension(y^2 - 5, 'a')
-            Univariate Quotient Polynomial Ring in a over Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
+            sage: R.extension(y^2 - 5, 'a')                                             # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in a over
+             Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
 
         ::
 
-            sage: P.<x> = PolynomialRing(GF(5))
-            sage: F.<a> = GF(5).extension(x^2 - 2)
-            sage: P.<t> = F[]
-            sage: R.<b> = F.extension(t^2 - a); R
-            Univariate Quotient Polynomial Ring in b over Finite Field in a of size 5^2 with modulus b^2 + 4*a
+            sage: P.<x> = PolynomialRing(GF(5))                                         # optional - sage.rings.finite_rings
+            sage: F.<a> = GF(5).extension(x^2 - 2)                                      # optional - sage.rings.finite_rings
+            sage: P.<t> = F[]                                                           # optional - sage.rings.finite_rings
+            sage: R.<b> = F.extension(t^2 - a); R                                       # optional - sage.rings.finite_rings
+            Univariate Quotient Polynomial Ring in b over
+             Finite Field in a of size 5^2 with modulus b^2 + 4*a
         """
         from sage.rings.polynomial.polynomial_element import Polynomial
         if not isinstance(poly, Polynomial):
@@ -1411,17 +1421,19 @@ cdef class CommutativeRing(Ring):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism(); Frob
-            Frobenius endomorphism x |--> x^5 of Power Series Ring in u over Finite Field of size 5
-            sage: Frob(u)
+            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
+            sage: Frob = K.frobenius_endomorphism(); Frob                               # optional - sage.rings.finite_rings
+            Frobenius endomorphism x |--> x^5 of Power Series Ring in u
+             over Finite Field of size 5
+            sage: Frob(u)                                                               # optional - sage.rings.finite_rings
             u^5
 
         We can specify a power::
 
-            sage: f = K.frobenius_endomorphism(2); f
-            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u over Finite Field of size 5
-            sage: f(1+u)
+            sage: f = K.frobenius_endomorphism(2); f                                    # optional - sage.rings.finite_rings
+            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
+             over Finite Field of size 5
+            sage: f(1+u)                                                                # optional - sage.rings.finite_rings
             1 + u^25
         """
         from .morphism import FrobeniusEndomorphism_generic
@@ -1456,18 +1468,21 @@ cdef class CommutativeRing(Ring):
         EXAMPLES::
 
             sage: R.<x,y,z> = QQ[]
-            sage: M = R.derivation_module(); M
-            Module of derivations over Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: M.gens()
+            sage: M = R.derivation_module(); M                                          # optional - sage.modules
+            Module of derivations over
+             Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.gens()                                                              # optional - sage.modules
             (d/dx, d/dy, d/dz)
 
         We can specify a different codomain::
 
             sage: K = R.fraction_field()
-            sage: M = R.derivation_module(K); M
-            Module of derivations from Multivariate Polynomial Ring in x, y, z over
-             Rational Field to Fraction Field of Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: M.gen() / x
+            sage: M = R.derivation_module(K); M                                         # optional - sage.modules
+            Module of derivations
+             from Multivariate Polynomial Ring in x, y, z over Rational Field
+               to Fraction Field of
+                  Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.gen() / x                                                           # optional - sage.modules
             1/x*d/dx
 
         Here is an example with a non-canonical defining morphism::
@@ -1480,30 +1495,32 @@ cdef class CommutativeRing(Ring):
               Defn: x |--> 0
                     y |--> 1
                     z |--> 2
-            sage: M = R.derivation_module(ev)
-            sage: M
-            Module of derivations from Multivariate Polynomial Ring in x, y, z over Rational Field to Rational Field
+            sage: M = R.derivation_module(ev)                                           # optional - sage.modules
+            sage: M                                                                     # optional - sage.modules
+            Module of derivations
+             from Multivariate Polynomial Ring in x, y, z over Rational Field
+               to Rational Field
 
         Elements in `M` acts as derivations at `(0,1,2)`::
 
-            sage: Dx = M.gen(0); Dx
+            sage: Dx = M.gen(0); Dx                                                     # optional - sage.modules
             d/dx
-            sage: Dy = M.gen(1); Dy
+            sage: Dy = M.gen(1); Dy                                                     # optional - sage.modules
             d/dy
-            sage: Dz = M.gen(2); Dz
+            sage: Dz = M.gen(2); Dz                                                     # optional - sage.modules
             d/dz
             sage: f = x^2 + y^2 + z^2
-            sage: Dx(f)  # = 2*x evaluated at (0,1,2)
+            sage: Dx(f)  # = 2*x evaluated at (0,1,2)                                   # optional - sage.modules
             0
-            sage: Dy(f)  # = 2*y evaluated at (0,1,2)
+            sage: Dy(f)  # = 2*y evaluated at (0,1,2)                                   # optional - sage.modules
             2
-            sage: Dz(f)  # = 2*z evaluated at (0,1,2)
+            sage: Dz(f)  # = 2*z evaluated at (0,1,2)                                   # optional - sage.modules
             4
 
         An example with a twisting homomorphism::
 
             sage: theta = R.hom([x^2, y^2, z^2])
-            sage: M = R.derivation_module(twist=theta); M
+            sage: M = R.derivation_module(twist=theta); M                               # optional - sage.modules
             Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
              over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
 
@@ -1542,23 +1559,23 @@ cdef class CommutativeRing(Ring):
         EXAMPLES::
 
             sage: R.<x,y,z> = QQ[]
-            sage: R.derivation()
+            sage: R.derivation()                                                        # optional - sage.modules
             d/dx
 
         In that case, ``arg`` could be a generator::
 
-            sage: R.derivation(y)
+            sage: R.derivation(y)                                                       # optional - sage.modules
             d/dy
 
         or a list of coefficients::
 
-            sage: R.derivation([1,2,3])
+            sage: R.derivation([1,2,3])                                                 # optional - sage.modules
             d/dx + 2*d/dy + 3*d/dz
 
         It is not possible to define derivations with respect to a
         polynomial which is not a variable::
 
-            sage: R.derivation(x^2)
+            sage: R.derivation(x^2)                                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: unable to create the derivation
@@ -1567,18 +1584,18 @@ cdef class CommutativeRing(Ring):
 
             sage: R.<x,y,z> = QQ[]
             sage: theta = R.hom([x^2, y^2, z^2])
-            sage: f = R.derivation(twist=theta); f
+            sage: f = R.derivation(twist=theta); f                                      # optional - sage.modules
             0
-            sage: f.parent()
+            sage: f.parent()                                                            # optional - sage.modules
             Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
              over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
 
         Specifying a scalar, the returned twisted derivation is the
         corresponding multiple of `\theta - id`::
 
-            sage: R.derivation(1, twist=theta)
+            sage: R.derivation(1, twist=theta)                                          # optional - sage.modules
             [x |--> x^2, y |--> y^2, z |--> z^2] - id
-            sage: R.derivation(x, twist=theta)
+            sage: R.derivation(x, twist=theta)                                          # optional - sage.modules
             x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
 
         """
@@ -1696,9 +1713,9 @@ cdef class IntegralDomain(CommutativeRing):
             True
             sage: QQ.is_integrally_closed()
             True
-            sage: QQbar.is_integrally_closed()
+            sage: QQbar.is_integrally_closed()                                          # optional - sage.rings.number_field
             True
-            sage: GF(5).is_integrally_closed()
+            sage: GF(5).is_integrally_closed()                                          # optional - sage.rings.finite_rings
             True
             sage: Z5 = Integers(5); Z5
             Ring of integers modulo 5
@@ -1715,7 +1732,7 @@ cdef class IntegralDomain(CommutativeRing):
 
         EXAMPLES::
 
-            sage: GF(7).is_field()
+            sage: GF(7).is_field()                                                      # optional - sage.rings.finite_rings
             True
 
         The following examples have their own ``is_field`` implementations::
@@ -1805,12 +1822,13 @@ cdef class DedekindDomain(IntegralDomain):
             sage: U.krull_dimension()
             4
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: R = K.order(2*i); R
-            Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
-            sage: R.is_maximal()
+            sage: K.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
+            sage: R = K.order(2*i); R                                                   # optional - sage.rings.number_field
+            Order in Number Field in i
+             with defining polynomial x^2 + 1 with i = 1*I
+            sage: R.is_maximal()                                                        # optional - sage.rings.number_field
             False
-            sage: R.krull_dimension()
+            sage: R.krull_dimension()                                                   # optional - sage.rings.number_field
             1
         """
         return 1
@@ -1839,9 +1857,9 @@ cdef class DedekindDomain(IntegralDomain):
 
             sage: QQ.is_integrally_closed()
             True
-            sage: S = ZZ[sqrt(5)]; S.is_integrally_closed()
+            sage: S = ZZ[sqrt(5)]; S.is_integrally_closed()                             # optional - sage.rings.number_field sage.symbolic
             False
-            sage: T.<x,y> = PolynomialRing(QQ,2); T
+            sage: T.<x,y> = PolynomialRing(QQ, 2); T
             Multivariate Polynomial Ring in x, y over Rational Field
             sage: T.is_integral_domain()
             True
@@ -1906,7 +1924,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
         EXAMPLES::
 
-            sage: Zp(5).is_noetherian()
+            sage: Zp(5).is_noetherian()                                                 # optional - sage.rings.padics
             True
         """
         return True
@@ -1917,7 +1935,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
         EXAMPLES::
 
-            sage: QQ.class_group()
+            sage: QQ.class_group()                                                      # optional - sage.groups
             Trivial Abelian group
         """
         from sage.groups.abelian_gps.abelian_group import AbelianGroup
@@ -1963,22 +1981,22 @@ cdef class PrincipalIdealDomain(IntegralDomain):
         coercible::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = NumberField(x^2 - 2, 'a')
-            sage: f = (x - a)*(x + a); g = (x - a)*(x^2 - 2)
-            sage: print(f); print(g)
+            sage: S.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
+            sage: f = (x - a)*(x + a); g = (x - a)*(x^2 - 2)                            # optional - sage.rings.number_field
+            sage: print(f); print(g)                                                    # optional - sage.rings.number_field
             x^2 - 2
             x^3 - a*x^2 - 2*x + 2*a
-            sage: f in R
+            sage: f in R                                                                # optional - sage.rings.number_field
             True
-            sage: g in R
+            sage: g in R                                                                # optional - sage.rings.number_field
             False
-            sage: R.gcd(f,g)
+            sage: R.gcd(f, g)                                                           # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: Unable to coerce 2*a to a rational
-            sage: R.base_extend(S).gcd(f,g)
+            sage: R.base_extend(S).gcd(f,g)                                             # optional - sage.rings.number_field
             x^2 - 2
-            sage: R.base_extend(S).gcd(f, (x - a)*(x^2 - 3))
+            sage: R.base_extend(S).gcd(f, (x - a)*(x^2 - 3))                            # optional - sage.rings.number_field
             x - a
         """
         if coerce:
@@ -2071,7 +2089,7 @@ cpdef bint _is_Field(x) except -2:
         True
         sage: _is_Field(ZZ)
         False
-        sage: _is_Field(pAdicField(2))
+        sage: _is_Field(pAdicField(2))                                                  # optional - sage.rings.padics
         True
         sage: _is_Field(5)
         False
@@ -2133,10 +2151,10 @@ cdef class Field(PrincipalIdealDomain):
 
             sage: QQ._pseudo_fraction_field()
             Rational Field
-            sage: K = GF(5)
-            sage: K._pseudo_fraction_field()
+            sage: K = GF(5)                                                             # optional - sage.rings.finite_rings
+            sage: K._pseudo_fraction_field()                                            # optional - sage.rings.finite_rings
             Finite Field of size 5
-            sage: K._pseudo_fraction_field() is K
+            sage: K._pseudo_fraction_field() is K                                       # optional - sage.rings.finite_rings
             True
         """
         return self
@@ -2248,8 +2266,8 @@ cdef class Field(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: k = GF(9, 'a')
-            sage: k.prime_subfield()
+            sage: k = GF(9, 'a')                                                        # optional - sage.rings.finite_rings
+            sage: k.prime_subfield()                                                    # optional - sage.rings.finite_rings
             Finite Field of size 3
         """
         if self.characteristic() == 0:
@@ -2289,7 +2307,7 @@ cdef class Algebra(Ring):
 
         EXAMPLES::
 
-            sage: A = Algebra(ZZ); A
+            sage: A = Algebra(ZZ); A                                                    # optional - sage.modules
             <sage.rings.ring.Algebra object at ...>
         """
         # This is a low-level class. For performance, we trust that the category
@@ -2309,12 +2327,12 @@ cdef class Algebra(Ring):
 
         EXAMPLES::
 
-            sage: A = Algebra(ZZ); A
+            sage: A = Algebra(ZZ); A                                                    # optional - sage.modules
             <sage.rings.ring.Algebra object at ...>
-            sage: A.characteristic()
+            sage: A.characteristic()                                                    # optional - sage.modules
             0
-            sage: A = Algebra(GF(7^3, 'a'))
-            sage: A.characteristic()
+            sage: A = Algebra(GF(7^3, 'a'))                                             # optional - sage.rings.finite_rings sage.modules
+            sage: A.characteristic()                                                    # optional - sage.rings.finite_rings sage.modules
             7
         """
         return self.base_ring().characteristic()
@@ -2329,16 +2347,16 @@ cdef class Algebra(Ring):
 
         EXAMPLES::
 
-            sage: B = QuaternionAlgebra(2)
-            sage: B.has_standard_involution()
+            sage: B = QuaternionAlgebra(2)                                              # optional - sage.combinat sage.modules
+            sage: B.has_standard_involution()                                           # optional - sage.combinat sage.modules
             True
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<u> = NumberField(x**2 - 2)
-            sage: A = QuaternionAlgebra(K,-2,5)
-            sage: A.has_standard_involution()
+            sage: K.<u> = NumberField(x**2 - 2)                                         # optional - sage.rings.number_field
+            sage: A = QuaternionAlgebra(K, -2, 5)                                       # optional - sage.rings.number_field sage.combinat sage.modules
+            sage: A.has_standard_involution()                                           # optional - sage.rings.number_field sage.combinat sage.modules
             True
-            sage: L.<a,b> = FreeAlgebra(QQ,2)
-            sage: L.has_standard_involution()
+            sage: L.<a,b> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat sage.modules
+            sage: L.has_standard_involution()                                           # optional - sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: has_standard_involution is not implemented for this algebra
@@ -2392,7 +2410,7 @@ cdef class CommutativeAlgebra(CommutativeRing):
             sage: sage.rings.ring.CommutativeAlgebra(QQ)
             <sage.rings.ring.CommutativeAlgebra object at ...>
 
-            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ,-1,-1))
+            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ, -1, -1))     # optional - sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             TypeError: base ring must be a commutative ring
@@ -2439,8 +2457,8 @@ def is_Ring(x):
         sage: from sage.rings.ring import is_Ring
         sage: is_Ring(ZZ)
         True
-        sage: MS = MatrixSpace(QQ,2)
-        sage: is_Ring(MS)
+        sage: MS = MatrixSpace(QQ, 2)                                                   # optional - sage.modules
+        sage: is_Ring(MS)                                                               # optional - sage.modules
         True
     """
     return x in _Rings

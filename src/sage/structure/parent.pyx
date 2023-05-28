@@ -126,7 +126,7 @@ from .coerce cimport parent_is_integers
 from .coerce_exceptions import CoercionException
 from .coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
-from .element cimport parent, Element
+from .element cimport parent
 
 
 cdef _record_exception():

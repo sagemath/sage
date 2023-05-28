@@ -1,5 +1,5 @@
 r"""
-Univariate polynomials over number fields.
+Univariate polynomials over number fields
 
 AUTHOR:
 
@@ -15,7 +15,7 @@ operations with them::
     sage: K.<x> = N[]
     sage: f = x - a
     sage: g = x^3 - 2*a + 1
-    sage: f*(x + a)
+    sage: f * (x + a)
     x^2 - 2
     sage: f + g
     x^3 + x - 3*a + 1
@@ -43,21 +43,21 @@ Polynomials are aware of embeddings of the underlying field::
 
 We can also construct polynomials over relative number fields::
 
-    sage: N.<i, s2> = QQ[I, sqrt(2)]
-    sage: K.<x> = N[]
-    sage: f = x - s2
-    sage: g = x^3 - 2*i*x^2 + s2*x
-    sage: f*(x + s2)
+    sage: N.<i, s2> = QQ[I, sqrt(2)]                                                    # optional - sage.symbolic
+    sage: K.<x> = N[]                                                                   # optional - sage.symbolic
+    sage: f = x - s2                                                                    # optional - sage.symbolic
+    sage: g = x^3 - 2*i*x^2 + s2*x                                                      # optional - sage.symbolic
+    sage: f * (x + s2)                                                                  # optional - sage.symbolic
     x^2 - 2
-    sage: f + g
+    sage: f + g                                                                         # optional - sage.symbolic
     x^3 - 2*I*x^2 + (sqrt2 + 1)*x - sqrt2
-    sage: g // f
+    sage: g // f                                                                        # optional - sage.symbolic
     x^2 + (-2*I + sqrt2)*x - 2*sqrt2*I + sqrt2 + 2
-    sage: g % f
+    sage: g % f                                                                         # optional - sage.symbolic
     -4*I + 2*sqrt2 + 2
-    sage: factor(i*x^4 - 2*i*x^2 + 9*i)
+    sage: factor(i*x^4 - 2*i*x^2 + 9*i)                                                 # optional - sage.symbolic
     (I) * (x - I + sqrt2) * (x + I - sqrt2) * (x - I - sqrt2) * (x + I + sqrt2)
-    sage: gcd(f, x-i)
+    sage: gcd(f, x - i)                                                                 # optional - sage.symbolic
     1
 """
 
@@ -123,9 +123,7 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
 
         - ``other`` -- a polynomial with the same parent as ``self``.
 
-        OUTPUT:
-
-        - The monic gcd of ``self`` and ``other``.
+        OUTPUT: The monic gcd of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -140,8 +138,8 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
             sage: f = R.random_element(2)
             sage: g = f + 1
             sage: h = R.random_element(2).monic()
-            sage: f *=h
-            sage: g *=h
+            sage: f *= h
+            sage: g *= h
             sage: gcd(f, g) - h
             0
             sage: f.gcd(g) - h
@@ -182,8 +180,9 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
             sage: h = f.gcd(g); h
             1
             sage: h.parent()
-            Univariate Polynomial Ring in r over Number Field in r with defining polynomial r^2 - 2
-            sage: gcd([a*r+2, r^2-2])
+            Univariate Polynomial Ring in r over
+             Number Field in r with defining polynomial r^2 - 2
+            sage: gcd([a*r + 2, r^2 - 2])
             r + r
         """
         if self.is_zero():
@@ -284,7 +283,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
             sage: R = NumberField([x^2 - 2, x^2 - 3], 'a')['x']
             sage: f = R._random_nonzero_element()
             sage: g1 = R.random_element()
-            sage: g2 = R.random_element()*g1+1
+            sage: g2 = R.random_element()*g1 + 1
             sage: g1 *= f
             sage: g2 *= f
             sage: f.monic() - g1.gcd(g2)
@@ -292,10 +291,10 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         Test for degree one extensions::
 
-            sage: R = NumberField([x-2,x+1,x-3],'a')['x']
+            sage: R = NumberField([x - 2, x + 1, x - 3], 'a')['x']
             sage: f = R.random_element(2)
             sage: g1 = R.random_element(2)
-            sage: g2 = R.random_element(2)*g1+1
+            sage: g2 = R.random_element(2)*g1 + 1
             sage: g1 *= f
             sage: g2 *= f
             sage: d = gcd(g1, g2)
