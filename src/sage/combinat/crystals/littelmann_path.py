@@ -1330,7 +1330,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 return ret
             WLR = self.parent().weight_lattice_realization()
             value = list(ret.value)
-            endpoint = sum(p for p in value)
+            endpoint = sum(value)
             rho = WLR.rho()
             h = WLR.simple_coroots()
 
@@ -1385,7 +1385,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             ret = dual_path.dualize()
             WLR = self.parent().weight_lattice_realization()
             value = list(ret.value)
-            endpoint = sum(p for p in value)
+            endpoint = sum(value)
             rho = WLR.rho()
             h = WLR.simple_coroots()
 

@@ -221,9 +221,14 @@ cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_
         return 0,[]
 
     cdef ModField *F = new ModField(<long>modulus)
-    cdef DenseMatrix *A = new DenseMatrix(F[0], <ModField.Element*>entries,<Py_ssize_t>nrows, <Py_ssize_t>ncols)
-    cdef Py_ssize_t r = reducedRowEchelonize(A[0])
+    cdef DenseMatrix *A = new DenseMatrix(F[0], nrows, ncols)
+
     cdef Py_ssize_t i,j
+    for i in range(nrows):
+        for j in range(ncols):
+            A.setEntry(i, j, entries[i*ncols+j])
+
+    cdef Py_ssize_t r = reducedRowEchelonize(A[0])
     for i in range(nrows):
         for j in range(ncols):
             entries[i*ncols+j] = <celement>A.getEntry(i,j)
