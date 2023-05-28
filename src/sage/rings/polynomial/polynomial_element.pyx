@@ -60,7 +60,7 @@ cdef is_FractionField
 cdef ZZ, QQ, RR, CC, RDF, CDF
 
 cimport cython
-from cpython.number cimport PyNumber_TrueDivide, PyNumber_Check
+from cpython.number cimport PyNumber_Check
 
 import operator
 import copy
@@ -70,14 +70,11 @@ from io import StringIO
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 import sage.rings.rational
 import sage.rings.integer
-from . import polynomial_ring
 import sage.rings.integer_ring
 import sage.rings.rational_field
 import sage.rings.finite_rings.integer_mod_ring
 import sage.rings.fraction_field_element
 import sage.rings.infinity as infinity
-from sage.misc.sage_eval import sage_eval
-from sage.misc.abstract_method import abstract_method
 from sage.misc.latex import latex
 from sage.arith.power cimport generic_power
 from sage.arith.misc import crt
@@ -355,7 +352,7 @@ cdef class Polynomial(CommutativePolynomial):
             Graphics object consisting of 1 graphics primitive
         """
         R = self.base_ring()
-        from sage.plot.all import plot, point, line
+        from sage.plot.all import plot, point
         if R.characteristic() == 0:
             if xmin is None and xmax is None:
                 (xmin, xmax) = (-1,1)

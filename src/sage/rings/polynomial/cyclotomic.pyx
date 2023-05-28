@@ -36,8 +36,6 @@ from sage.arith.misc import factor
 from sage.rings.integer_ring import ZZ
 from sage.misc.misc_c import prod
 from sage.combinat.subset import subsets
-from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari
 
 
