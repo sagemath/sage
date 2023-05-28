@@ -79,7 +79,6 @@ AUTHOR:
 
 - Jonathan Kliem (2019-04)
 """
-
 # ****************************************************************************
 #       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
@@ -90,13 +89,13 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import is_Matrix
 from sage.matrix.matrix_dense  cimport Matrix_dense
 
 from .face_list_data_structure cimport *
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
+
 
 cdef class ListOfFaces:
     r"""

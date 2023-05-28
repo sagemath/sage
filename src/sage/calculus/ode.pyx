@@ -401,9 +401,8 @@ class ode_solver():
             G.save(filename=filename)
 
     def ode_solve(self,t_span=False,y_0=False,num_points=False,params=[]):
-        import inspect
         cdef double h # step size
-        h=self.h
+        h = self.h
         cdef int i
         cdef int j
         cdef int type

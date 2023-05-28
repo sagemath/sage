@@ -86,7 +86,6 @@ import numbers
 from memory_allocator cimport MemoryAllocator
 from cysignals.memory cimport check_calloc, sig_free
 
-from sage.rings.integer             import Integer
 from sage.geometry.polyhedron.base  import Polyhedron_base
 from sage.geometry.lattice_polytope import LatticePolytopeClass
 from sage.geometry.cone             import ConvexRationalPolyhedralCone
