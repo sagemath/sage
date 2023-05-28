@@ -86,7 +86,6 @@ from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 
-from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 from .args cimport SparseEntry, MatrixArgs_init
 
 #########################################################
@@ -114,7 +113,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import is_Vector
-from sage.structure.sequence import Sequence
 
 from .matrix_modn_dense_float cimport Matrix_modn_dense_template
 from .matrix_modn_dense_float cimport Matrix_modn_dense_float
