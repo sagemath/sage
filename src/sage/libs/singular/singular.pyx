@@ -526,6 +526,7 @@ cdef object si2sa_NF(number *n, ring *_ring, object base):
 
     TESTS::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 2)
         sage: P.<x,y,z> = K[]
         sage: f = a^21*x^2 + 1 # indirect doctest
@@ -1393,7 +1394,8 @@ cdef number *sa2si_NF(object elem, ring *_ring):
 
     TESTS::
 
-        sage: F = NumberField(x^3+x+1, 'a')
+        sage: x = polygen(ZZ, 'x')
+        sage: F = NumberField(x^3 + x + 1, 'a')
         sage: type(F)
         <class 'sage.rings.number_field.number_field.NumberField_absolute_with_category'>
         sage: R.<x,y,z> = F[]

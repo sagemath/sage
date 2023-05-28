@@ -1031,8 +1031,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(19).discriminant()
             19
 
-            sage: F.<a> = NumberField(x^2-x-1)
-            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a,F(-1))
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<a> = NumberField(x^2 - x - 1)
+            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a, F(-1))
             sage: B.discriminant()
             Fractional ideal (2)
 

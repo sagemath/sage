@@ -168,6 +168,7 @@ explicit calls to Maxima or other systems.
 ::
 
     sage: # (YES) Factorize  x^4-3*x^2+1 in the field of rational numbers extended by roots of  x^2-x-1.
+    sage: x = polygen(ZZ, 'x')
     sage: k.< a> = NumberField(x^2 - x -1)
     sage: R.< y> = k[]
     sage: f = y^4 - 3*y^2 + 1

@@ -113,6 +113,7 @@ def is_NumberFieldElement(x):
         use isinstance(..., sage.structure.element.NumberFieldElement) instead
         See https://github.com/sagemath/sage/issues/34931 for details.
         False
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^7 + 17*x + 1)
         sage: is_NumberFieldElement(a+1)
         True
@@ -130,6 +131,7 @@ def __create__NumberFieldElement_version0(parent, poly):
 
     TESTS::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^3 - 2)
         sage: R.<z> = QQ[]
         sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version0(k, z^2 + z + 1)
@@ -148,6 +150,7 @@ def __create__NumberFieldElement_version1(parent, cls, poly):
 
     TESTS::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^3 - 2)
         sage: R.<z> = QQ[]
         sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version1(k, type(a), z^2 + z + 1)
@@ -170,6 +173,7 @@ def _inverse_mod_generic(elt, I):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: OE.<w> = EquationOrder(x^3 - x + 2)
         sage: from sage.rings.number_field.number_field_element import _inverse_mod_generic
         sage: _inverse_mod_generic(w, 13*OE)
@@ -203,6 +207,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^3 + x + 1)
         sage: a^3
         -a - 1
@@ -225,6 +230,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Return the number field of self. Only accessible from Cython.
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 3)
             sage: a._number_field() # indirect doctest
             Number Field in a with defining polynomial x^3 + 3
@@ -235,6 +241,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 3)
             sage: a._number_field()
             Number Field in a with defining polynomial x^3 + 3
@@ -431,6 +438,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^3 - 17*x^2 + 1)
             sage: t = a.__reduce__(); t
             (<class 'sage.rings.number_field.number_field_element.NumberFieldElement_absolute'>,
@@ -461,6 +469,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 2)
             sage: b = (2/3)*a + 3/5
             sage: b._repr_()
@@ -476,6 +485,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 - 2)
             sage: m.<b> = NumberField(x^4 - 2)
             sage: phi = k.hom([b^2])
@@ -518,6 +528,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: (a**2 - a + 1)._gap_init_()
             '\\$sage4^2 - \\$sage4 + 1'
@@ -611,6 +622,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.zero()._pari_polynomial('x')                                        # optional - sage.libs.pari
             0
@@ -641,6 +653,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K(1).__pari__()                                                       # optional - sage.libs.pari
             Mod(1, y^3 + 2)
@@ -738,6 +751,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^5 - x - 1)
             sage: ((1 + 1/3*a)^4)._pari_init_()                                         # optional - sage.libs.pari
             'Mod(1/81*y^4 + 4/27*y^3 + 2/3*y^2 + 4/3*y + 1, y^5 - y - 1)'
@@ -774,6 +788,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: m.<b> = NumberField(x^4 - 1789)
             sage: c = (2/3-4/5*b)^3; c
             -64/125*b^3 + 32/25*b^2 - 16/15*b + 8/27
@@ -813,6 +828,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 3*x + 8)
             sage: a  + 1 > a # indirect doctest
             True
@@ -915,7 +931,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: a._random_element().parent() is K
             True
             sage: K.<a> = NumberField(x^2-5)
@@ -1012,6 +1029,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^3 - 2)
             sage: abs(a)
             1.25992104989487
@@ -1044,7 +1062,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))
             sage: K.zero().sign()
             0
@@ -1333,6 +1351,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             1.00000000000000
             sage: abs(z^2 + 17*z - 3)
             16.0604426799931
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 17)
             sage: abs(a)
             2.57128159065824
@@ -1420,6 +1439,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 5)
             sage: [1/K(2).abs_non_arch(P) for P in K.primes_above(2)]
             [2.00000000000000]
@@ -1482,6 +1502,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^6 - 5)
             sage: alpha = a^3
             sage: c = alpha.coordinates_in_terms_of_powers()
@@ -1518,6 +1539,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^3 - 2)
             sage: a.complex_embeddings()
             [-0.629960524947437 - 1.09112363597172*I,
@@ -1540,6 +1562,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^3 - 2)
             sage: a.complex_embedding()
             -0.629960524947437 - 1.09112363597172*I
@@ -1560,6 +1583,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - x - 1)
             sage: OK = K.ring_of_integers()
             sage: OK(a).is_unit()
@@ -1613,6 +1637,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<beta> = NumberField(x^3 + 5)
             sage: Q.<X> = K[]
             sage: L = K.extension(X^2 + X + beta, 'gamma')
@@ -1755,6 +1780,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x^2 - 2*x - 1, 'a')
             sage: P.<X> = K[]
             sage: L = NumberField(X^2 + a^2 + 2*a + 1, 'b')
@@ -1833,6 +1859,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: RR(a^2)
             -1.00000000000000
@@ -1870,6 +1897,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         EXAMPLES::
 
             sage: Pol.<x> = QQ[]
+            sage: x = polygen(ZZ, 'x')
             sage: NF.<a> = NumberField(x^7 + 2, embedding=CC(0.99, 0.47))
             sage: CBF(a)
             [0.9947502791976272 +/- 1.09e-17] + [0.4790464865132800 +/- 1.46e-17]*I
@@ -1911,6 +1939,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: float(a^2)
             -1.0
@@ -1938,6 +1967,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: abs(CDF(a))
             1.0
@@ -1948,6 +1978,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: complex(a)
             1j
@@ -1972,6 +2003,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: (6*i + 6).factor()
             (-i) * (i + 1)^3 * 3
@@ -2027,6 +2059,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: (1 + i).is_prime()
             True
@@ -2079,6 +2112,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         The following field has class number 3, but if the ideal
         ``(self, other)`` happens to be principal, this still works::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)
             sage: K.class_number()
             3
@@ -2124,6 +2158,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: F.<b> = NumberField(x^3 - 3*x - 1)
             sage: b.is_totally_positive()
             False
@@ -2174,6 +2209,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: m.<b> = NumberField(x^4 - 1789)
             sage: b.is_square()
             False
@@ -2225,6 +2261,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 2)
             sage: p = K.primes_above(2)[0]
             sage: K(5).is_padic_square(p)
@@ -2247,6 +2284,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 3)
             sage: K(3).sqrt()
             a
@@ -2324,7 +2362,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^4-7)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^4 - 7)
             sage: K(7).nth_root(2)
             a^2
             sage: K((a-3)^5).nth_root(5)
@@ -2350,6 +2389,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 - 7)
             sage: K(7).is_nth_power(2)
             True
@@ -2403,6 +2443,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: K.<sqrt2> = QuadraticField(2)
             sage: 2^sqrt2                                                               # optional - sage.symbolic
             2^sqrt(2)
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2+1)
             sage: 2^a                                                                   # optional - sage.symbolic
             Traceback (most recent call last):
@@ -2485,6 +2526,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: (a/2) - (a + 3) # indirect doctest
             -1/2*a - 3
@@ -2515,6 +2557,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: C.<zeta12>=CyclotomicField(12)
             sage: zeta12*zeta12^11
             1
+            sage: x = polygen(ZZ, 'x')
             sage: G.<a> = NumberField(x^3 + 2/3*x + 1)
             sage: a^3 # indirect doctest
             -2/3*a - 1
@@ -2569,6 +2612,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: G.<a> = NumberField(x^3 + 2/3*x + 1)
             sage: a/a # indirect doctest
             1
@@ -2667,6 +2711,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: -a # indirect doctest
             -a
@@ -2683,6 +2728,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: L.<b> = K.change_names()
             sage: La = a._copy_for_parent(L)
@@ -2702,6 +2748,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: b = copy(a)
             sage: b is a
@@ -2714,6 +2761,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: b = deepcopy(a)
             sage: b is a
@@ -2739,6 +2787,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^10 - x - 1)
             sage: int(a)
             Traceback (most recent call last):
@@ -2843,6 +2892,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: NF.<alpha> = NumberField(x^5 + 7*x + 3, embedding=CC(0,1))
             sage: QQbar(alpha)
             -1.032202770009288? + 1.168103873894207?*I
@@ -2900,6 +2950,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: K.<a> = QuadraticField(2, embedding=-1.4)
             sage: SR(a) # indirect doctest                                              # optional - sage.symbolic
             -sqrt(2)
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 2)
             sage: SR(a) # indirect doctest                                              # optional - sage.symbolic
             Traceback (most recent call last):
@@ -3027,6 +3078,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         In the first example the conjugates are obvious::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 2)
             sage: a.galois_conjugates(K)
             [a, -a]
@@ -3094,6 +3146,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: F.<b> = NumberField(x^2 - 2)
             sage: K.<j> = F.extension(x^2 + 1)
             sage: j.conjugate()
@@ -3142,6 +3195,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^5 - x - 1)
             sage: f = (-2/3 + 1/3*a)^4; f
             1/81*a^4 - 8/81*a^3 + 8/27*a^2 - 32/81*a + 16/81
@@ -3186,6 +3240,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^3 - 2)
             sage: hash(b^2 + 1)   # random
             175247765440
@@ -3243,6 +3298,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^3 - 2)
             sage: (b^2 + 1)._coefficients()
             [1, 0, 1]
@@ -3305,6 +3361,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 1)
             sage: a._set_multiplicative_order(3)
             sage: a.multiplicative_order()
@@ -3389,6 +3446,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<u> = NumberField(x^4 - 3*x^2 + 3)
             sage: u.additive_order()
             +Infinity
@@ -3406,6 +3464,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 3)
             sage: K(1).is_one()
             True
@@ -3432,6 +3491,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<cbrt3> = NumberField(x^3 - 3)
             sage: cbrt3.is_rational()
             False
@@ -3457,6 +3517,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<cbrt3> = NumberField(x^3 - 3)
             sage: cbrt3.is_integer()
             False
@@ -3482,6 +3543,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 132/7*x^2 + x + 1); K
             Number Field in a with defining polynomial x^3 - 132/7*x^2 + x + 1
             sage: a.trace()
@@ -3517,6 +3579,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x^2 + x - 132/7); K
             Number Field in a with defining polynomial x^3 + x^2 + x - 132/7
             sage: a.norm()
@@ -3590,6 +3653,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         EXAMPLES::
 
             sage: K1.<a1> = CyclotomicField(11)
+            sage: x = polygen(ZZ, 'x')
             sage: K2.<a2> = K1.extension(x^2 - 3)
             sage: K3.<a3> = K2.extension(x^2 + 1)
             sage: (a1 + a2 + a3).absolute_norm()
@@ -3608,6 +3672,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         EXAMPLES::
 
             sage: K1.<a1> = CyclotomicField(11)
+            sage: x = polygen(ZZ, 'x')
             sage: K2.<a2> = K1.extension(x^2 - 3)
             sage: (a1 + a2).relative_norm()
             a1^2 - 3
@@ -3627,6 +3692,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)
             sage: (2/3*a - 5/6).vector()
             (-5/6, 2/3)
@@ -3652,6 +3718,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 7)
             sage: a.charpoly()
             x^3 + 7
@@ -3666,6 +3733,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 3)
             sage: a.minpoly('x')
             x^2 + 3
@@ -3687,6 +3755,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
             sage: a.is_integral()
             True
@@ -3778,6 +3847,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         An example where we explicitly give the subfield or the embedding::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 + 1); L.<a2> = NumberField(x^2 + 1)
             sage: a.matrix(L)
             [ 0  1]
@@ -4180,6 +4250,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 5)
             sage: b = (1+a)/2
             sage: b.norm()
@@ -4211,6 +4282,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 5)
             sage: b = (1+a)/2
             sage: b.norm()
@@ -4344,6 +4416,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - x + 2); ((a + 1)/(a + 2)).list()
             [1/4, 1/2, -1/4]
             sage: K.<a, b> = NumberField([x^3 - x + 2, x^2 + 23]); ((a + b)/(a + 2)).list()
@@ -4368,6 +4441,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3)
             sage: d = 3*a + 1
@@ -4428,6 +4502,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         Quadratic Residue (11 is not a square modulo 17)::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x - 1)
             sage: K(11).residue_symbol(K.ideal(17),2)
             -1
@@ -4565,6 +4640,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: a.different()
             3*a^2
@@ -4615,6 +4691,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
             sage: a.absolute_different()
             0
@@ -4643,6 +4720,7 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2) # optional - magma
             sage: a._magma_init_(magma)            # optional - magma
             '(_sage_[...]![0, 1, 0])'
@@ -4913,6 +4991,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 1, x^2 + 2])
             sage: type(a) # indirect doctest
             <class 'sage.rings.number_field.number_field_element.NumberFieldElement_relative'>
@@ -4929,6 +5008,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^3 - 5, x^2 + 3])
             sage: c = (a + b)^3; c
             3*b*a^2 - 9*a - 3*b + 5
@@ -4961,6 +5041,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
         """
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^3 - 5, x^2 + 3])
             sage: a._magma_init_(magma)
             Traceback (most recent call last):
@@ -4976,7 +5057,8 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
 
         EXAMPLES::
 
-            sage: K.<a,b> = NumberField([x^3+2, x^2+1])
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a,b> = NumberField([x^3 + 2, x^2 + 1])
             sage: a.list()
             [0, 1, 0]
             sage: v = (K.base_field().0 + a)^2 ; v
@@ -5010,6 +5092,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^3 - x + 1, x^2 + 23])
             sage: repr(a^4*b) # indirect doctest
             'b*a^2 - b*a'
@@ -5142,6 +5225,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 2, x^2 + 1000*x + 1])
             sage: y = K['y'].0
             sage: L.<c> = K.extension(y^2 + a*y + b)
@@ -5171,6 +5255,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b, c> = NumberField([x^2 - 2, x^2 - 3, x^2 - 5])
             sage: P = K.prime_factors(5)[1]
             sage: (2*a + b - c).valuation(P)
@@ -5188,6 +5273,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 1)
         sage: O2 = K.order(2*a)
         sage: w = O2.1; w
@@ -5208,6 +5294,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: O2 = K.order(2*a)
             sage: type(O2.1) # indirect doctest
@@ -5227,6 +5314,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
         This is called implicitly in multiplication::
 
+            sage: x = polygen(ZZ, 'x')
             sage: O = EquationOrder(x^3 + 18, 'a')
             sage: O.1 * O.1 * O.1
             -18
@@ -5245,6 +5333,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 - 17, 'a')
             sage: OK = K.ring_of_integers()
             sage: a = OK(K.gen())
@@ -5266,6 +5355,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: OE.<w> = EquationOrder(x^3 - x + 2)
             sage: w.inverse_mod(13*OE)
             6*w^2 - 6
@@ -5290,6 +5380,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 - x + 2, 'a')
             sage: OK = K.ring_of_integers()
             sage: a = OK(K.gen())
@@ -5309,7 +5400,8 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
     EXAMPLES::
 
-        sage: O = EquationOrder([x^2 + x + 1, x^3 - 2],'a,b')
+        sage: x = polygen(ZZ, 'x')
+        sage: O = EquationOrder([x^2 + x + 1, x^3 - 2], 'a,b')
         sage: c = O.1; c
         (-2*b^2 - 2)*a - 2*b^2 - b
         sage: type(c)
@@ -5319,8 +5411,9 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         r"""
         EXAMPLES::
 
-            sage: O = EquationOrder([x^2 + x + 1, x^3 - 2],'a,b')
-            sage: type(O.1) # indirect doctest
+            sage: x = polygen(ZZ, 'x')
+            sage: O = EquationOrder([x^2 + x + 1, x^3 - 2], 'a,b')
+            sage: type(O.1)  # indirect doctest
             <class 'sage.rings.number_field.number_field_element.OrderElement_relative'>
         """
         K = order.number_field()
@@ -5340,6 +5433,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
         This is called implicitly in multiplication::
 
+            sage: x = polygen(ZZ, 'x')
             sage: O = EquationOrder([x^2 + 18, x^3 + 2], 'a,b')
             sage: c = O.1 * O.2; c
             (-23321*b^2 - 9504*b + 10830)*a + 10152*b^2 - 104562*b - 110158
@@ -5362,6 +5456,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K1.<a> = NumberField(x^3 - 17)
             sage: R.<y> = K1[]
             sage: K2 = K1.extension(y^2 - a, 'b')
@@ -5394,6 +5489,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: E.<a,b> = NumberField([x^2 - x + 2, x^2 + 1])
             sage: OE = E.ring_of_integers()
             sage: t = OE(b - a).inverse_mod(17*b)
@@ -5521,6 +5617,7 @@ class CoordinateFunction():
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + x + 3)
         sage: f = (a + 1).coordinates_in_terms_of_powers(); f
         Coordinate function that writes elements in terms of the powers of a + 1
@@ -5535,6 +5632,7 @@ class CoordinateFunction():
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 3)
             sage: f = (a + 1).coordinates_in_terms_of_powers(); f # indirect doctest
             Coordinate function that writes elements in terms of the powers of a + 1
@@ -5548,6 +5646,7 @@ class CoordinateFunction():
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 3)
             sage: f = (a + 1).coordinates_in_terms_of_powers(); repr(f) # indirect doctest
             'Coordinate function that writes elements in terms of the powers of a + 1'
@@ -5558,6 +5657,7 @@ class CoordinateFunction():
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: (a + 2).coordinates_in_terms_of_powers().alpha()
             a + 2
@@ -5568,6 +5668,7 @@ class CoordinateFunction():
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: f = (a + 2).coordinates_in_terms_of_powers()
             sage: f(1/a)
@@ -5595,6 +5696,7 @@ class CoordinateFunction():
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: c = (a + 2).coordinates_in_terms_of_powers()
             sage: c == (a - 3).coordinates_in_terms_of_powers()
@@ -5620,6 +5722,7 @@ class CoordinateFunction():
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: c = (a + 2).coordinates_in_terms_of_powers()
             sage: c != (a - 3).coordinates_in_terms_of_powers()

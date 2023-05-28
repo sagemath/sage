@@ -86,7 +86,8 @@ def c4c6_nonsingular(c4, c6):
 
     Over number fields::
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4c6_nonsingular(-217728*a - 679104, 141460992*a + 409826304)
         True
         sage: K.<a> = NumberField(x^3-10)
@@ -120,7 +121,8 @@ def c4c6_model(c4, c6, assume_nonsingular=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import c4c6_model
-        sage: K.<a> = NumberField(x^3-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^3 - 10)
         sage: c4c6_model(-217728*a - 679104, 141460992*a + 409826304)
         Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336) over Number Field in a with defining polynomial x^3 - 10
 
@@ -164,7 +166,8 @@ def make_integral(a, P, e):
 
         sage: from sage.schemes.elliptic_curves.kraus import make_integral
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: P = K.primes_above(2)[0]
         sage: e = P.ramification_index(); e
         2
@@ -204,7 +207,8 @@ def sqrt_mod_4(x, P):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import sqrt_mod_4
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: P = K.primes_above(2)[0]
         sage: sqrt_mod_4(1+2*a,P)
         (False, 0)
@@ -245,7 +249,8 @@ def test_b2_local(c4, c6, P, b2, debug=False):
 
     EXAMPLES::
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: P3a, P3b = K.primes_above(3)
@@ -307,7 +312,8 @@ def test_b2_global(c4, c6, b2, debug=False):
 
     EXAMPLES::
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: b2 = a+1
@@ -356,7 +362,8 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_local_3
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: P3a, P3b = K.primes_above(3)
@@ -424,7 +431,8 @@ def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import test_a1a3_local
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: P = K.primes_above(2)[0]
@@ -465,7 +473,8 @@ def test_a1a3_global(c4, c6, a1, a3, debug=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import test_a1a3_global
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: test_a1a3_global(c4,c6,a,a,debug=False)
@@ -505,6 +514,7 @@ def test_rst_global(c4, c6, r, s, t, debug=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import test_rst_global
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2-10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
@@ -570,8 +580,9 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_local_2
-        sage: K.<a> = NumberField(x^2-10)
-        sage: c4 = -60544*a + 385796 #  EllipticCurve([a,a,0,1263*a-8032,62956*a-305877])
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
+        sage: c4 = -60544*a + 385796  # EllipticCurve([a,a,0,1263*a-8032,62956*a-305877])
         sage: c6 = -55799680*a + 262126328
         sage: P = K.primes_above(2)[0]
         sage: check_Kraus_local_2(c4,c6,P)
@@ -656,7 +667,8 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_local
-        sage: K.<a> = NumberField(x^2-15)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 15)
         sage: P2 = K.primes_above(2)[0]
         sage: P3 = K.primes_above(3)[0]
         sage: P5 = K.primes_above(5)[0]
@@ -724,7 +736,8 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_global
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: E = EllipticCurve([a,a,0,1263*a-8032,62956*a-305877])
         sage: c4, c6 = E.c_invariants()
         sage: check_Kraus_global(c4,c6,debug=True)
@@ -900,7 +913,8 @@ def semi_global_minimal_model(E, debug=False):
 
     EXAMPLES::
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: K.class_number()
         2
         sage: E = EllipticCurve([0,0,0,-186408*a - 589491, 78055704*a + 246833838])

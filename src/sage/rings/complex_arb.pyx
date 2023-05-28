@@ -549,6 +549,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: CBF.convert_map_from(QuadraticField(-2))
             Conversion via _acb_ method map:
             ...
+            sage: x = polygen(ZZ, 'x')
             sage: CBF.coerce_map_from(NumberField(x^7 + 2, 'a',
             ....:                                 embedding=QQbar(-2)^(1/7)))
             Conversion via _acb_ method map:

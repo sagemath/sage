@@ -509,6 +509,7 @@ class Ideal_generic(MonoidElement):
 
         TESTS::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: A = K.ideal(a)
             sage: taus = K.embeddings(K)
@@ -1705,6 +1706,7 @@ class Ideal_fractional(Ideal_generic):
         EXAMPLES::
 
             sage: from sage.rings.ideal import Ideal_fractional
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: Ideal_fractional(K, [a]) # indirect doctest                           # optional - sage.rings.number_field
             Fractional ideal (a) of Number Field in a with defining polynomial x^2 + 1

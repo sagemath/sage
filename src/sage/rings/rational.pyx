@@ -1424,6 +1424,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - 2, 'beta')                                      # optional - sage.rings.number_field
             sage: (1/7).is_norm(K)                                                      # optional - sage.rings.number_field
             True
@@ -1545,6 +1546,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: QQ(2)._bnfisnorm(QuadraticField(-1, 'i'))                             # optional - sage.rings.number_field
             (i + 1, 1)
+            sage: x = polygen(QQ, 'x')
             sage: 7._bnfisnorm(NumberField(x^3 - 2, 'b'))                               # optional - sage.rings.number_field
             (1, 7)
 

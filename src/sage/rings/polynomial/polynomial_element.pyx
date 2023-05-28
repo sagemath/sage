@@ -2813,7 +2813,7 @@ cdef class Polynomial(CommutativePolynomial):
             R1.<x> = ZZ[]
             R2.<y> = R1[]
             y^2 + (2*x + 2)*y + (x^2 + 2*x + 1)
-            sage: sage_input(RR(pi) * polygen(RR), verify=True)
+            sage: sage_input(RR(pi) * polygen(RR), verify=True)                         # optional - sage.symbolic
             # Verified
             R.<x> = RR[]
             3.1415926535897931*x
@@ -4390,7 +4390,7 @@ cdef class Polynomial(CommutativePolynomial):
         A test where nffactor used to fail without a nf structure::
 
             sage: x = polygen(QQ)
-            sage: K = NumberField([x^2-1099511627777, x^3-3], 'a')                      # optional - sage.rings.number_field
+            sage: K = NumberField([x^2 - 1099511627777, x^3 - 3], 'a')                  # optional - sage.rings.number_field
             sage: x = polygen(K)                                                        # optional - sage.rings.number_field
             sage: f = x^3 - 3                                                           # optional - sage.rings.number_field
             sage: factor(f)                                                             # optional - sage.rings.number_field

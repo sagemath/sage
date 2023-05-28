@@ -1862,8 +1862,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: K.<a>=NumberField(x^3+x^2+1,embedding=1)
-            sage: K.coerce_embedding()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=1)                       # optional - sage.rings.number_field
+            sage: K.coerce_embedding()                                                  # optional - sage.rings.number_field
             Generic morphism:
               From: Number Field in a with defining polynomial x^3 + x^2 + 1 with a = -1.465571231876768?
               To:   Real Lazy Field
@@ -2285,14 +2286,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Another test::
 
-            sage: K = NumberField([x^2-2, x^2-3], 'a,b')
-            sage: M = K.absolute_field('c')
-            sage: M_to_K, K_to_M = M.structure()
-            sage: M.register_coercion(K_to_M)
-            sage: K.register_coercion(M_to_K)
-            sage: phi = M.coerce_map_from(QQ)
-            sage: p = QQ.random_element()
-            sage: c = phi(p) - p; c
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField([x^2 - 2, x^2 - 3], 'a,b')                            # optional - sage.rings.number_field
+            sage: M = K.absolute_field('c')                                             # optional - sage.rings.number_field
+            sage: M_to_K, K_to_M = M.structure()                                        # optional - sage.rings.number_field
+            sage: M.register_coercion(K_to_M)                                           # optional - sage.rings.number_field
+            sage: K.register_coercion(M_to_K)                                           # optional - sage.rings.number_field
+            sage: phi = M.coerce_map_from(QQ)                                           # optional - sage.rings.number_field
+            sage: p = QQ.random_element()                                               # optional - sage.rings.number_field
+            sage: c = phi(p) - p; c                                                     # optional - sage.rings.number_field
             0
             sage: c.parent() is M
             True

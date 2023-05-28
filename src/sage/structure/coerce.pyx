@@ -549,8 +549,9 @@ cdef class CoercionModel:
 
             sage: from sage.structure.coerce import CoercionModel
             sage: cm = CoercionModel()
-            sage: K = NumberField(x^2-2, 'a')
-            sage: A = cm.get_action(ZZ, K, operator.mul)
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^2 - 2, 'a')                                         # optional - sage.rings.number_field
+            sage: A = cm.get_action(ZZ, K, operator.mul)                                # optional - sage.rings.number_field
             sage: f, g = cm.coercion_maps(QQ, int)
             sage: f, g = cm.coercion_maps(ZZ, int)
         """

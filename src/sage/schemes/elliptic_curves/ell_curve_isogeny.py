@@ -769,6 +769,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         sage: E = EllipticCurve('11a1')
         sage: P_list = E.torsion_points()
+        sage: x = polygen(ZZ, 'x')
         sage: K.<alpha> = NumberField(x^3 - 2* x^2 - 40*x - 158)                        # optional - sage.rings.number_field
         sage: EK = E.change_ring(K)                                                     # optional - sage.rings.number_field
         sage: P_list = [EK(P) for P in P_list]                                          # optional - sage.rings.number_field
@@ -1201,6 +1202,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         Tests for :trac:`10888`::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<th> = NumberField(x^2 + 3)                                         # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [7,0])                                           # optional - sage.rings.number_field
             sage: phi = E.isogeny(E(0,0))                                               # optional - sage.rings.number_field
