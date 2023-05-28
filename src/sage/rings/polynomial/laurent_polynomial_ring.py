@@ -51,7 +51,7 @@ from sage.structure.element import parent
 
 def is_LaurentPolynomialRing(R):
     """
-    Returns True if and only if R is a Laurent polynomial ring.
+    Return ``True`` if and only if R is a Laurent polynomial ring.
 
     EXAMPLES::
 
@@ -89,7 +89,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     3. ``LaurentPolynomialRing(base_ring, name, n, order='degrevlex')``
     4. ``LaurentPolynomialRing(base_ring, n, name, order='degrevlex')``
 
-    The optional arguments sparse and order *must* be explicitly
+    The optional arguments ``sparse`` and ``order`` *must* be explicitly
     named, and the other arguments must be given positionally.
 
     INPUT:
@@ -102,10 +102,10 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     - ``order`` -- string or
       :class:`~sage.rings.polynomial.term_order.TermOrder`, e.g.,
 
-        - ``'degrevlex'`` (default) -- degree reverse lexicographic
-        - ``'lex'`` -- lexicographic
-        - ``'deglex'`` -- degree lexicographic
-        - ``TermOrder('deglex',3) + TermOrder('deglex',3)`` -- block ordering
+      - ``'degrevlex'`` (default) -- degree reverse lexicographic
+      - ``'lex'`` -- lexicographic
+      - ``'deglex'`` -- degree lexicographic
+      - ``TermOrder('deglex',3) + TermOrder('deglex',3)`` -- block ordering
 
     OUTPUT:
 
@@ -163,8 +163,9 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
            sage: R.<abc> = LaurentPolynomialRing(QQ, sparse=True); R
            Univariate Laurent Polynomial Ring in abc over Rational Field
 
-           sage: R.<w> = LaurentPolynomialRing(PolynomialRing(GF(7),'k')); R
-           Univariate Laurent Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
+           sage: R.<w> = LaurentPolynomialRing(PolynomialRing(GF(7),'k')); R            # optional - sage.rings.finite_rings
+           Univariate Laurent Polynomial Ring in w over
+            Univariate Polynomial Ring in k over Finite Field of size 7
 
        Rings with different variables are different::
 

@@ -1082,7 +1082,7 @@ class LazyModuleElement(Element):
             if any(cache[a] for a in cache):
                 return True
         else:
-            if any(a for a in self._coeff_stream._cache):
+            if any(self._coeff_stream._cache):
                 return True
 
         v = self._coeff_stream._approximate_order
@@ -1190,7 +1190,7 @@ class LazyModuleElement(Element):
             sage: F.define(1 + g*F)
             sage: F[:16]
             [1, 1, 1, 2, 1, 3, 1, 4, 2, 3, 1, 8, 1, 3, 3]
-            sage: oeis(_)                                                       # optional, internet
+            sage: oeis(_)                                                       # optional - internet
             0: A002033: Number of perfect partitions of n.
             1: A074206: Kalmár's [Kalmar's] problem: number of ordered factorizations of n.
             ...
@@ -1279,7 +1279,7 @@ class LazyModuleElement(Element):
             sage: f                                                                     # optional - sage.symbolic
             1 + 1/(2^s) - 1/(4^s) + O(1/(8^s))
 
-            sage: oeis(f[:30])                                                  # optional, internet
+            sage: oeis(f[:30])                                                  # optional - internet
             0: A122698: a(1)=a(2)=1 then a(n) = Sum_{d|n, 1<d<n} a(d)*a(n/d).
 
         Note that we cannot use division in the examples above.
@@ -1311,7 +1311,7 @@ class LazyModuleElement(Element):
             sage: f.define(1+(t*~f).revert())
             sage: f
             1 + t + t^2 + 2*t^3 + 6*t^4 + 23*t^5 + 104*t^6 + O(t^7)
-            sage: oeis(f[1:20])                                                 # optional, internet
+            sage: oeis(f[1:20])                                                 # optional - internet
             0: A030266: Shifts left under COMPOSE transform with itself.
             1: A110447: Permutations containing 3241 patterns only as part of 35241 patterns.
 
