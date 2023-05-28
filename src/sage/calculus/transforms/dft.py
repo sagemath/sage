@@ -73,7 +73,6 @@ AUTHORS:
 ##########################################################################
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.plot.all", ["polygon", "line", "text"])
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.groups.perm_gps.permgroup_element import is_PermutationGroupElement
 from sage.rings.integer_ring import ZZ
@@ -83,9 +82,9 @@ from sage.rings.real_mpfr import RR
 from sage.functions.all import sin, cos
 from sage.calculus.transforms.fft import FastFourierTransform
 from sage.calculus.transforms.dwt import WaveletTransform
-
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
+lazy_import("sage.plot.all", ["polygon", "line", "text"])
 
 
 class IndexedSequence(SageObject):

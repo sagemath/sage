@@ -2,16 +2,16 @@ from .all__sagemath_standard_no_symbolics import *
 
 from .calculus import maxima as maxima_calculus
 from .calculus import (laplace, inverse_laplace,
-                      limit, lim)
+                       limit, lim)
 
 from .desolvers import (desolve, desolve_laplace, desolve_system,
                         eulers_method, eulers_method_2x2,
                         eulers_method_2x2_plot, desolve_rk4, desolve_system_rk4,
                         desolve_odeint, desolve_mintides, desolve_tides_mpfr)
 
-from .transforms.all import *
-
 from .var import (var, function, clear_vars)
+
+from .transforms.all import *
 
 
 from sage.modules.free_module_element import vector
@@ -61,21 +61,21 @@ def symbolic_expression(x):
 
     If ``x`` is a list or tuple, create a vector of symbolic expressions::
 
-        sage: v=symbolic_expression([x,1]); v
+        sage: v = symbolic_expression([x,1]); v
         (x, 1)
         sage: v.base_ring()
         Symbolic Ring
-        sage: v=symbolic_expression((x,1)); v
+        sage: v = symbolic_expression((x,1)); v
         (x, 1)
         sage: v.base_ring()
         Symbolic Ring
-        sage: v=symbolic_expression((3,1)); v
+        sage: v = symbolic_expression((3,1)); v
         (3, 1)
         sage: v.base_ring()
         Symbolic Ring
         sage: E = EllipticCurve('15a'); E
         Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10 over Rational Field
-        sage: v=symbolic_expression([E,E]); v
+        sage: v = symbolic_expression([E,E]); v
         (x*y + y^2 + y == x^3 + x^2 - 10*x - 10, x*y + y^2 + y == x^3 + x^2 - 10*x - 10)
         sage: v.base_ring()
         Symbolic Ring
@@ -212,5 +212,6 @@ def symbolic_expression(x):
                 else:
                     return SR(result).function(*vars)
     return SR(x)
+
 
 from . import desolvers

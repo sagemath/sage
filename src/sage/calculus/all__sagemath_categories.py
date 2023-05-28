@@ -1,3 +1,1 @@
-from .functional import diff, derivative, taylor
-
-from .functional import expand, simplify
+from .functional import diff, derivative, expand, simplify, taylor

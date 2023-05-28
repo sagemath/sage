@@ -228,16 +228,16 @@ explicit calls to Maxima or other systems.
     sage: # Maxima doesn't solve inequalities
     sage: # (but some Maxima packages do):
     sage: eqn = abs(x-1) > 2
-    sage: eqn
-                                    abs(x - 1) > 2
+    sage: eqn.solve(x)
+    [[x < -1], [3 < x]]
 
 ::
 
     sage: # (NO) Solve the inequality (x-1)*...*(x-5)<0.
     sage: eqn = prod(x-i for i in range(1,5 +1)) < 0
     sage: # but don't know how to solve
-    sage: eqn
-    (x - 1)*(x - 2)*(x - 3)*(x - 4)*(x - 5) < 0
+    sage: eqn.solve(x)
+    [[x < 1], [x > 2, x < 3], [x > 4, x < 5]]
 
 ::
 
