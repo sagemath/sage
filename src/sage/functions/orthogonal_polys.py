@@ -554,7 +554,7 @@ class ChebyshevFunction(OrthogonalFunction):
             sage: K.<a> = NumberField(x^3 - x - 1)                                      # optional - sage.rings.number_field
             sage: chebyshev_T(5, a)                                                     # optional - sage.rings.number_field
             16*a^2 + a - 4
-            sage: chebyshev_T(5, MatrixSpace(ZZ, 2)([1, 2, -4, 7]))
+            sage: chebyshev_T(5, MatrixSpace(ZZ, 2)([1, 2, -4, 7]))                     # optional - sage.modules
             [-40799  44162]
             [-88324  91687]
             sage: R.<x> = QQ[]

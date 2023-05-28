@@ -560,7 +560,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.union(4,1)
             sage: e = d.element_to_root_dict(); e
             {0: 0, 1: 4, 2: 2, 3: 2, 4: 4}
-            sage: WordMorphism(e)
+            sage: WordMorphism(e)                                                       # optional - sage.combinat
             WordMorphism: 0->0, 1->4, 2->2, 3->2, 4->4
         """
         d = {}
@@ -851,7 +851,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: e = d.element_to_root_dict()
             sage: sorted(e.items())
             [(0, 0), (1, 4), (2, 2), (3, 2), (4, 4)]
-            sage: WordMorphism(e)
+            sage: WordMorphism(e)                                                       # optional - sage.combinat
             WordMorphism: 0->0, 1->4, 2->2, 3->2, 4->4
         """
         d = {}

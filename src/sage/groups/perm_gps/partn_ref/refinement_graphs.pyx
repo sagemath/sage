@@ -901,12 +901,12 @@ def orbit_partition(gamma, list_perm=False):
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_graphs import orbit_partition
         sage: G = graphs.PetersenGraph()
-        sage: S = SymmetricGroup(10)
-        sage: gamma = S('(10,1,2,3,4)(5,6,7)(8,9)')
-        sage: orbit_partition(gamma)
+        sage: S = SymmetricGroup(10)                                                    # optional - sage.groups
+        sage: gamma = S('(10,1,2,3,4)(5,6,7)(8,9)')                                     # optional - sage.groups
+        sage: orbit_partition(gamma)                                                    # optional - sage.groups
         [[1, 2, 3, 4, 0], [5, 6, 7], [8, 9]]
-        sage: gamma = S('(10,5)(1,6)(2,7)(3,8)(4,9)')
-        sage: orbit_partition(gamma)
+        sage: gamma = S('(10,5)(1,6)(2,7)(3,8)(4,9)')                                   # optional - sage.groups
+        sage: orbit_partition(gamma)                                                    # optional - sage.groups
         [[1, 6], [2, 7], [3, 8], [4, 9], [5, 0]]
     """
     if list_perm:
