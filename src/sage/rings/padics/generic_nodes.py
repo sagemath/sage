@@ -21,6 +21,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.categories.euclidean_domains import EuclideanDomains
 from sage.rings.padics.local_generic import LocalGeneric
 from sage.rings.padics.padic_generic import pAdicGeneric
 import sage.rings.abc
@@ -1201,6 +1202,9 @@ def is_pAdicRing(R):
 
 
 class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
+
+    _default_category = EuclideanDomains()
+
     def is_field(self, proof = True):
         """
         Return whether this ring is actually a field, ie ``False``.

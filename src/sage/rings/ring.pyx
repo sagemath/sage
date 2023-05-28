@@ -20,31 +20,19 @@ The class inheritance hierarchy is:
   - :class:`Algebra`
   - :class:`CommutativeRing`
 
-    - :class:`NoetherianRing`
     - :class:`CommutativeAlgebra`
     - :class:`IntegralDomain`
 
-      - :class:`DedekindDomain`
-      - :class:`PrincipalIdealDomain`
+      - :class:`Field`
 
-Subclasses of :class:`PrincipalIdealDomain` are
-
-- :class:`EuclideanDomain`
-- :class:`Field`
-
-  - :class:`~sage.rings.finite_rings.finite_field_base.FiniteField`
+        - :class:`~sage.rings.finite_rings.finite_field_base.FiniteField`
 
 Some aspects of this structure may seem strange, but this is an unfortunate
 consequence of the fact that Cython classes do not support multiple
-inheritance. Hence, for instance, :class:`Field` cannot be a subclass of both
-:class:`NoetherianRing` and :class:`PrincipalIdealDomain`, although all fields
-are Noetherian PIDs.
+inheritance.
 
 (A distinct but equally awkward issue is that sometimes we may not know *in
-advance* whether or not a ring belongs in one of these classes; e.g. some
-orders in number fields are Dedekind domains, but others are not, and we still
-want to offer a unified interface, so orders are never instances of the
-:class:`DedekindDomain` class.)
+advance* whether or not a ring belongs in one of these classes.)
 
 AUTHORS:
 
@@ -77,7 +65,6 @@ from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.categories.euclidean_domains import EuclideanDomains
 
 _Rings = Rings()
 _CommutativeRings = CommutativeRings()
@@ -420,7 +407,8 @@ cdef class Ring(ParentWithGens):
 
         if coerce:
             gens = [self(g) for g in gens]
-        if isinstance(self, PrincipalIdealDomain):
+
+        if self in PrincipalIdealDomains():
             # Use GCD algorithm to obtain a principal ideal
             g = gens[0]
             if len(gens) == 1:
@@ -432,6 +420,7 @@ cdef class Ring(ParentWithGens):
                 for h in gens[1:]:
                     g = g.gcd(h)
             gens = [g]
+
         if 'ideal_class' in kwds:
             C = kwds['ideal_class']
             del kwds['ideal_class']
@@ -503,57 +492,6 @@ cdef class Ring(ParentWithGens):
                 return x.ideal(self,side='twosided')
             else:
                 raise TypeError("Don't know how to transform %s into an ideal of %s" % (self, x))
-
-    def _ideal_class_(self, n=0):
-        r"""
-        Return a callable object that can be used to create ideals in this
-        ring. For generic rings, this returns the factory function
-        :func:`sage.rings.ideal.Ideal`, which does its best to be clever about
-        what is required.
-
-        This class can depend on `n`, the number of generators of the ideal.
-        The default input of `n=0` indicates an unspecified number of generators,
-        in which case a class that works for any number of generators is returned.
-
-        EXAMPLES::
-
-            sage: ZZ._ideal_class_()
-            <class 'sage.rings.ideal.Ideal_pid'>
-            sage: RR._ideal_class_()
-            <class 'sage.rings.ideal.Ideal_pid'>
-            sage: R.<x,y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
-            sage: R._ideal_class_(1)                                                    # optional - sage.rings.finite_rings
-            <class 'sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal'>
-            sage: S = R.quo(x^3 - y^2)                                                  # optional - sage.rings.finite_rings
-            sage: S._ideal_class_(1)                                                    # optional - sage.rings.finite_rings
-            <class 'sage.rings.quotient_ring.QuotientRingIdeal_principal'>
-            sage: S._ideal_class_(2)                                                    # optional - sage.rings.finite_rings
-            <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
-            sage: T.<z> = S[]                                                           # optional - sage.rings.finite_rings
-            sage: T._ideal_class_(5)                                                    # optional - sage.rings.finite_rings
-            <class 'sage.rings.ideal.Ideal_generic'>
-            sage: T._ideal_class_(1)                                                    # optional - sage.rings.finite_rings
-            <class 'sage.rings.ideal.Ideal_principal'>
-
-        Since :trac:`7797`, non-commutative rings have ideals as well::
-
-            sage: A = SteenrodAlgebra(2)
-            sage: A._ideal_class_()
-            <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-
-        """
-        # One might need more than just n, but I can't think of an example.
-        from sage.rings.noncommutative_ideals import Ideal_nc
-        try:
-            if not self.is_commutative():
-                return Ideal_nc
-        except (NotImplementedError, AttributeError):
-            return Ideal_nc
-        from sage.rings.ideal import Ideal_generic, Ideal_principal
-        if n == 1:
-            return Ideal_principal
-        else:
-            return Ideal_generic
 
     def principal_ideal(self, gen, coerce=True):
         """
@@ -904,19 +842,6 @@ cdef class Ring(ParentWithGens):
             raise NotImplementedError
         else:
             return False
-
-    def is_noetherian(self):
-        """
-        Return ``True`` if this ring is Noetherian.
-
-        EXAMPLES::
-
-            sage: QQ.is_noetherian()
-            True
-            sage: ZZ.is_noetherian()
-            True
-        """
-        raise NotImplementedError
 
     def order(self):
         """
@@ -1624,11 +1549,9 @@ cdef class IntegralDomain(CommutativeRing):
          - ``category`` (default: ``None``) -- a category, or ``None``
 
         This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like :class:`NoetherianRing`,
-        :class:`PrincipalIdealDomain`, :class:`DedekindDomain`,
-        :class:`EuclideanDomain`, :class:`Field`, ... in order to
+        :class:`IntegralDomain`, :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
-        PrincipalIdealDomain.__init__ -> IntegralDomain.__init__ ->
+        -> IntegralDomain.__init__ ->
         ...
 
         EXAMPLES::
@@ -1637,34 +1560,15 @@ cdef class IntegralDomain(CommutativeRing):
             sage: F.category()
             Category of integral domains
 
-            sage: F = PrincipalIdealDomain(QQ)
-            sage: F.category()
-            Category of principal ideal domains
-
-            sage: F = EuclideanDomain(QQ)
-            sage: F.category()
-            Category of euclidean domains
-
             sage: F = Field(QQ)
             sage: F.category()
             Category of fields
-
-        If a category is specified, then the category is set to the
-        join of that category with the default category::
-
-            sage: F = PrincipalIdealDomain(QQ, category=EnumeratedSets())
 
         The default value for the category is specified by the class
         attribute ``default_category``::
 
             sage: IntegralDomain._default_category
             Category of integral domains
-
-            sage: PrincipalIdealDomain._default_category
-            Category of principal ideal domains
-
-            sage: EuclideanDomain._default_category
-            Category of euclidean domains
 
             sage: Field._default_category
             Category of fields
@@ -1749,6 +1653,8 @@ cdef class IntegralDomain(CommutativeRing):
         else:
             return False
 
+<<<<<<< HEAD
+=======
 cdef class NoetherianRing(CommutativeRing):
     """
     Generic Noetherian ring class.
@@ -2072,6 +1978,7 @@ cdef class EuclideanDomain(PrincipalIdealDomain):
             x
        """
         raise NotImplementedError
+>>>>>>> upstream/develop
 
 cpdef bint _is_Field(x) except -2:
     """
@@ -2109,7 +2016,7 @@ from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-cdef class Field(PrincipalIdealDomain):
+cdef class Field(IntegralDomain):
     """
     Generic field
     """

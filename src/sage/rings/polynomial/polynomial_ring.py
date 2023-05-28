@@ -146,6 +146,7 @@ from sage.structure.element import Element
 
 import sage.categories as categories
 from sage.categories.morphism import IdentityMorphism
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 
 import sage.rings.ring as ring
 from sage.structure.element import is_RingElement
@@ -2025,8 +2026,11 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.is_sparse(),
                                                     implementation=implementation), self.base_ring()
 
-class PolynomialRing_field(PolynomialRing_integral_domain,
-                           ring.PrincipalIdealDomain):
+
+class PolynomialRing_field(PolynomialRing_integral_domain):
+
+    _default_category = PrincipalIdealDomains()
+
     def __init__(self, base_ring, name="x", sparse=False, implementation=None,
                  element_class=None, category=None):
         """
@@ -2101,6 +2105,19 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         """
         from sage.rings.polynomial.ideal import Ideal_1poly_field
         return Ideal_1poly_field
+
+    def is_noetherian(self):
+        """
+        Every principal ideal domain is noetherian, so we return ``True``.
+
+        EXAMPLES::
+
+            sage: ZZ.is_noetherian()
+            True
+        """
+        # This duplicates PrincipalIdealDomains.ParentMethods.is_noetherian;
+        # but we have to override the method PolynomialRing_general.is_noetherian.
+        return True
 
     def divided_difference(self, points, full_table=False):
         r"""

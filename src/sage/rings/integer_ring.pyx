@@ -108,7 +108,8 @@ def is_IntegerRing(x):
     """
     return isinstance(x, IntegerRing_class)
 
-cdef class IntegerRing_class(PrincipalIdealDomain):
+
+cdef class IntegerRing_class(IntegralDomain):
     r"""
     The ring of integers.
 
@@ -418,7 +419,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             K, from_K = parent(x).subfield(x)
             return K.order(K.gen())
 
-        return PrincipalIdealDomain.__getitem__(self, x)
+        return IntegralDomain.__getitem__(self, x)
 
     def range(self, start, end=None, step=None):
         """
