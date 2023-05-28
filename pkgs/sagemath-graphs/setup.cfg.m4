@@ -41,3 +41,19 @@ test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
 bliss = esyscmd(`sage-get-system-packages install-requires sagemath_bliss')
 mcqd = esyscmd(`sage-get-system-packages install-requires sagemath_mcqd')
 tdlib = esyscmd(`sage-get-system-packages install-requires sagemath_tdlib')
+igraph = esyscmd(`sage-get-system-packages install-requires python_igraph')
+
+networkx = esyscmd(`sage-get-system-packages install-requires networkx')
+gap = esyscmd(`sage-get-system-packages install-requires sagemath_gap')
+
+combinat =
+databases =
+editor = esyscmd(`sage-get-system-packages install-requires phitigra')
+mip =
+plot =
+polyhedra = esyscmd(`sage-get-system-packages install-requires sagemath_polyhedra')
+repl = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+sat =
+
+standard =
+    sagemath-graphs[combinat,databases,mip,plot,polyhedra,repl]
