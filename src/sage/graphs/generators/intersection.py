@@ -417,31 +417,31 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     EXAMPLES::
 
-        sage: G = graphs.OrthogonalArrayBlockGraph(5,5); G
+        sage: G = graphs.OrthogonalArrayBlockGraph(5,5); G                              # optional - sage.modules
         OA(5,5): Graph on 25 vertices
-        sage: G.is_strongly_regular(parameters=True)
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.modules
         (25, 20, 15, 20)
-        sage: G = graphs.OrthogonalArrayBlockGraph(4,10); G
+        sage: G = graphs.OrthogonalArrayBlockGraph(4,10); G                             # optional - sage.modules
         OA(4,10): Graph on 100 vertices
-        sage: G.is_strongly_regular(parameters=True)
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.modules
         (100, 36, 14, 12)
 
     Two graphs built from different orthogonal arrays are also different::
 
-        sage: k=4;n=10
+        sage: k = 4; n = 10
         sage: OAa = designs.orthogonal_arrays.build(k,n)
         sage: OAb = [[(x+1)%n for x in R] for R in OAa]
         sage: set(map(tuple,OAa)) == set(map(tuple,OAb))
         False
-        sage: Ga = graphs.OrthogonalArrayBlockGraph(k,n,OAa)
-        sage: Gb = graphs.OrthogonalArrayBlockGraph(k,n,OAb)
-        sage: Ga == Gb
+        sage: Ga = graphs.OrthogonalArrayBlockGraph(k, n, OAa)                          # optional - sage.modules
+        sage: Gb = graphs.OrthogonalArrayBlockGraph(k, n, OAb)                          # optional - sage.modules
+        sage: Ga == Gb                                                                  # optional - sage.modules
         False
 
     As ``OAb`` was obtained from ``OAa`` by a relabelling the two graphs are
     isomorphic::
 
-        sage: Ga.is_isomorphic(Gb)
+        sage: Ga.is_isomorphic(Gb)                                                      # optional - sage.modules
         True
 
     But there are examples of `OA(k,n)` for which the resulting graphs are not
@@ -455,31 +455,31 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
         ....:        [1, 0, 3], [1, 1, 2], [1, 2, 0], [1, 3, 1],
         ....:        [2, 0, 0], [2, 1, 1], [2, 2, 2], [2, 3, 3],
         ....:        [3, 0, 2], [3, 1, 3], [3, 2, 1], [3, 3, 0]]
-        sage: g0 = graphs.OrthogonalArrayBlockGraph(3,4,oa0)
-        sage: g1 = graphs.OrthogonalArrayBlockGraph(3,4,oa1)
-        sage: g0.is_isomorphic(g1)
+        sage: g0 = graphs.OrthogonalArrayBlockGraph(3, 4, oa0)                          # optional - sage.modules
+        sage: g1 = graphs.OrthogonalArrayBlockGraph(3, 4, oa1)                          # optional - sage.modules
+        sage: g0.is_isomorphic(g1)                                                      # optional - sage.modules
         False
 
     But nevertheless isospectral::
 
-        sage: g0.spectrum()
+        sage: g0.spectrum()                                                             # optional - sage.modules
         [9, 1, 1, 1, 1, 1, 1, 1, 1, 1, -3, -3, -3, -3, -3, -3]
-        sage: g1.spectrum()
+        sage: g1.spectrum()                                                             # optional - sage.modules
         [9, 1, 1, 1, 1, 1, 1, 1, 1, 1, -3, -3, -3, -3, -3, -3]
 
     Note that the graph ``g0`` is actually isomorphic to the affine polar graph
     `VO^+(4,2)`::
 
-        sage: graphs.AffineOrthogonalPolarGraph(4,2,'+').is_isomorphic(g0)
+        sage: graphs.AffineOrthogonalPolarGraph(4,2,'+').is_isomorphic(g0)              # optional - sage.modules
         True
 
     TESTS::
 
-        sage: G = graphs.OrthogonalArrayBlockGraph(4,6)
+        sage: G = graphs.OrthogonalArrayBlockGraph(4,6)                                 # optional - sage.modules
         Traceback (most recent call last):
         ...
         NotImplementedError: I don't know how to build an OA(4,6)!
-        sage: G = graphs.OrthogonalArrayBlockGraph(8,2)
+        sage: G = graphs.OrthogonalArrayBlockGraph(8,2)                                 # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: There is no OA(8,2). Beware, Brouwer's website uses OA(n,k) instead of OA(k,n) !

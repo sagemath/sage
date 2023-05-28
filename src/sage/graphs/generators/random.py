@@ -512,7 +512,7 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
         sage: m, k = 6, 4
         sage: IS = graphs.RandomBlockGraph(m, k, incidence_structure=True)
         sage: from sage.combinat.designs.incidence_structures import IncidenceStructure
-        sage: IncidenceStructure(IS)
+        sage: IncidenceStructure(IS)                                                    # optional - sage.modules
         Incidence structure with 19 points and 6 blocks
         sage: m*(k-1)+1
         19

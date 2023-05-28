@@ -702,7 +702,7 @@ def HallJankoGraph(from_string=True):
         2
         sage: g.girth()
         3
-        sage: factor(g.characteristic_polynomial())
+        sage: factor(g.characteristic_polynomial())                                     # optional - sage.modules
         (x - 36) * (x - 6)^36 * (x + 4)^63
 
     TESTS::
@@ -903,10 +903,10 @@ def Balaban11Cage(embedding=1):
     Our many embeddings::
 
         sage: g1 = graphs.Balaban11Cage(embedding=1)
-        sage: g2 = graphs.Balaban11Cage(embedding=2)
+        sage: g2 = graphs.Balaban11Cage(embedding=2)                                    # optional - networkx
         sage: g3 = graphs.Balaban11Cage(embedding=3)
         sage: g1.show(figsize=[10,10])   # long time                                    # optional - sage.plot
-        sage: g2.show(figsize=[10,10])   # long time                                    # optional - sage.plot
+        sage: g2.show(figsize=[10,10])   # long time                                    # optional - networkx sage.plot
         sage: g3.show(figsize=[10,10])   # long time                                    # optional - sage.plot
 
     Proof that the embeddings are the same graph::
@@ -4695,7 +4695,7 @@ def _EllipticLinesProjectivePlaneScheme(k):
     TESTS::
 
         sage: from sage.graphs.generators.smallgraphs import _EllipticLinesProjectivePlaneScheme
-        sage: _EllipticLinesProjectivePlaneScheme(2)
+        sage: _EllipticLinesProjectivePlaneScheme(2)                                    # optional - sage.libs.gap
         [
         [1 0 0 0 0 0]  [0 1 1 1 1 0]  [0 0 0 0 0 1]
         [0 1 0 0 0 0]  [1 0 1 1 0 1]  [0 0 0 0 1 0]
@@ -5009,12 +5009,12 @@ def IoninKharaghani765Graph():
 
     EXAMPLES::
 
-        sage: g = graphs.IoninKharaghani765Graph(); g
+        sage: g = graphs.IoninKharaghani765Graph(); g                                   # optional - sage.modules sage.rings.finite_rings
         Ionin-Kharaghani: Graph on 765 vertices
 
     TESTS::
 
-        sage: graphs.strongly_regular_graph(765, 192, 48, 48)
+        sage: graphs.strongly_regular_graph(765, 192, 48, 48)                           # optional - sage.modules sage.rings.finite_rings
         Ionin-Kharaghani: Graph on 765 vertices
 
     .. TODO::

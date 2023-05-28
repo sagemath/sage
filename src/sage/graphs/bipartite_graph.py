@@ -2106,7 +2106,7 @@ class BipartiteGraph(Graph):
         Eppstein::
 
             sage: G = BipartiteGraph(graphs.CompleteBipartiteGraph(4,5))
-            sage: G.matching(algorithm="Eppstein", value_only=True)
+            sage: G.matching(algorithm="Eppstein", value_only=True)                     # optional - networkx
             4
 
         TESTS:
@@ -2293,10 +2293,10 @@ class BipartiteGraph(Graph):
 
         The two algorithms should return the same result::
 
-           sage: g = BipartiteGraph(graphs.RandomBipartite(10, 10, .5))
-           sage: vc1 = g.vertex_cover(algorithm="Konig")
-           sage: vc2 = g.vertex_cover(algorithm="Cliquer")
-           sage: len(vc1) == len(vc2)
+           sage: g = BipartiteGraph(graphs.RandomBipartite(10, 10, .5))                             # optional - numpy
+           sage: vc1 = g.vertex_cover(algorithm="Konig")                                            # optional - numpy
+           sage: vc2 = g.vertex_cover(algorithm="Cliquer")                                          # optional - numpy
+           sage: len(vc1) == len(vc2)                                                               # optional - numpy
            True
 
         TESTS:

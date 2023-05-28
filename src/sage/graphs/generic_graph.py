@@ -4949,15 +4949,15 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
-            sage: G.spanning_trees_count()
+            sage: G.spanning_trees_count()                                              # optional - sage.modules
             2000
 
         ::
 
             sage: n = 11
             sage: G = graphs.CompleteGraph(n)
-            sage: ST = G.spanning_trees_count()
-            sage: ST == n ^ (n - 2)
+            sage: ST = G.spanning_trees_count()                                         # optional - sage.modules
+            sage: ST == n ^ (n - 2)                                                     # optional - sage.modules
             True
 
         ::
@@ -10506,7 +10506,7 @@ class GenericGraph(GenericGraph_pyx):
              4: 0.23749999999999993,
              5: 0.17775603392041744,
              6: 0.10054631441617742}
-            sage: G.pagerank()                                      # abs tol 1e-9
+            sage: G.pagerank()                                      # abs tol 1e-9      # optional - networkx
             {1: 0.16112205885619563,
              2: 0.1619531043247219,
              3: 0.16112205885619563,
@@ -11372,11 +11372,11 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: t = polygen(QQ, 't')
             sage: K = Graph({5*t: [t^2], t^2: [t^2+2], t^2+2: [4*t^2-6], 4*t^2-6: [5*t]})
-            sage: dsc = sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint.discriminant
-            sage: verts = K.vertices(sort=True, key=dsc)
-            sage: verts
+            sage: from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint     # optional - sage.libs.flint
+            sage: dsc = Polynomial_rational_flint.discriminant                          # optional - sage.libs.flint
+            sage: verts = K.vertices(sort=True, key=dsc); verts                         # optional - sage.libs.flint
             [t^2 + 2, t^2, 5*t, 4*t^2 - 6]
-            sage: [x.discriminant() for x in verts]
+            sage: [x.discriminant() for x in verts]                                     # optional - sage.libs.flint
             [-8, 0, 1, 96]
 
         TESTS:
@@ -15172,7 +15172,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: d1 = G.cluster_triangles(implementation="networkx")                   # optional - networkx
             sage: d2 = G.cluster_triangles(implementation="dense_copy")
             sage: d3 = G.cluster_triangles(implementation="sparse_copy")
-            sage: d1 == d2 and d1 == d3
+            sage: d1 == d2 and d1 == d3                                                 # optional - networkx
             True
 
         TESTS::
@@ -15251,12 +15251,11 @@ class GenericGraph(GenericGraph_pyx):
 
         The result is the same with all implementations::
 
-            sage: G = graphs.RandomGNM(10,20)
-            sage: impls = ['boost','sparse_copy','dense_copy']
-            sage: impls += ['networkx']                                                 # optional - networkx
-            sage: coeffs = [G.clustering_average(implementation=impl)
+            sage: G = graphs.RandomGNM(10,20)                                           # optional - networkx
+            sage: impls = ['boost','sparse_copy','dense_copy','networkx']               # optional - networkx
+            sage: coeffs = [G.clustering_average(implementation=impl)                   # optional - networkx
             ....:           for impl in impls]
-            sage: max(coeffs) - min(coeffs)  # tol abs 1e-12
+            sage: max(coeffs) - min(coeffs)  # tol abs 1e-12                            # optional - networkx
             0
 
         """
@@ -15331,7 +15330,7 @@ class GenericGraph(GenericGraph_pyx):
             {0: 1/3, 1: 1/3, 2: 0, 3: 1/3, 4: 1/3, 5: 1/3,
              6: 1/3, 7: 1/3, 8: 0, 9: 1/3, 10: 1/3, 11: 0}
 
-            sage: (graphs.FruchtGraph()).clustering_coeff(weight=True)
+            sage: (graphs.FruchtGraph()).clustering_coeff(weight=True)                  # optional - networkx
             {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0,
              3: 0.3333333333333333, 4: 0.3333333333333333,
              5: 0.3333333333333333, 6: 0.3333333333333333,
@@ -15366,11 +15365,11 @@ class GenericGraph(GenericGraph_pyx):
 
         Check that the result is the same with all implementations::
 
-            sage: G = graphs.RandomGNM(10, 20)
-            sage: G.relabel(list("abcdefghik"))
-            sage: coeffs = [G.clustering_coeff(implementation=impl)
+            sage: G = graphs.RandomGNM(10, 20)                                          # optional - networkx
+            sage: G.relabel(list("abcdefghik"))                                         # optional - networkx
+            sage: coeffs = [G.clustering_coeff(implementation=impl)                     # optional - networkx
             ....:           for impl in ['boost', 'sparse_copy', 'dense_copy', 'networkx']]
-            sage: for v in G:
+            sage: for v in G:                                                           # optional - networkx
             ....:     coeffs_v = [c[v] for c in coeffs]
             ....:     if max(coeffs_v) - min(coeffs_v) > 1E-12:
             ....:         raise ValueError("error for v={}, min={}, max={}".format(v, min(coeffs_v), max(coeffs_v)))
@@ -15751,7 +15750,7 @@ class GenericGraph(GenericGraph_pyx):
         infinite odd girth::
 
             sage: G = graphs.RandomBipartite(6, 6, .5)
-            sage: G.odd_girth()
+            sage: G.odd_girth()                                                         # optional - numpy
             +Infinity
             sage: G = graphs.Grid2dGraph(3, 4)
             sage: G.odd_girth()
@@ -18975,10 +18974,10 @@ class GenericGraph(GenericGraph_pyx):
 
         The tensor product of two DeBruijn digraphs of same diameter is a DeBruijn digraph::
 
-            sage: B1 = digraphs.DeBruijn(2, 3)
-            sage: B2 = digraphs.DeBruijn(3, 3)
-            sage: T = B1.tensor_product(B2)
-            sage: T.is_isomorphic(digraphs.DeBruijn(2 * 3, 3))
+            sage: B1 = digraphs.DeBruijn(2, 3)                                          # optional - sage.combinat
+            sage: B2 = digraphs.DeBruijn(3, 3)                                          # optional - sage.combinat
+            sage: T = B1.tensor_product(B2)                                             # optional - sage.combinat
+            sage: T.is_isomorphic(digraphs.DeBruijn(2 * 3, 3))                          # optional - sage.combinat
             True
         """
         self._scream_if_not_simple(allow_loops=True)
@@ -20247,13 +20246,13 @@ class GenericGraph(GenericGraph_pyx):
 
         Make sure that :trac:`12364` is fixed::
 
-            sage: m = WordMorphism('a->abb,b->ba')
-            sage: w = m.fixed_point('a')
-            sage: prefix = Word(list(w[:100]))
-            sage: pals = prefix.palindromes()
-            sage: poset = Poset((pals, lambda x,y: x.is_factor(y)))
-            sage: H = poset.hasse_diagram()
-            sage: d = H.layout_graphviz()     # optional - dot2tex graphviz
+            sage: m = WordMorphism('a->abb,b->ba')                                      # optional - sage.combinat
+            sage: w = m.fixed_point('a')                                                # optional - sage.combinat
+            sage: prefix = Word(list(w[:100]))                                          # optional - sage.combinat
+            sage: pals = prefix.palindromes()                                           # optional - sage.combinat
+            sage: poset = Poset((pals, lambda x,y: x.is_factor(y)))                     # optional - sage.combinat
+            sage: H = poset.hasse_diagram()                                             # optional - sage.combinat
+            sage: d = H.layout_graphviz()     # optional - dot2tex graphviz             # optional - sage.combinat
         """
         assert_have_dot2tex()
         assert dim == 2, "3D graphviz layout not implemented"
@@ -23870,7 +23869,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: algos = ['sage']
             sage: algos.append('bliss')     # optional - bliss
             sage: S = Set([0,1,2])
-            sage: for (algo, edges) in product(algos, edges_list):
+            sage: for (algo, edges) in product(algos, edges_list):                      # optional - sage.combinat
             ....:     L = cartesian_product([S] * len(edges))
             ....:     O = OrderedSetPartitions([0,1,2,3])
             ....:     P = Permutations([0,1,2,3])
@@ -24646,7 +24645,7 @@ class GenericGraph(GenericGraph_pyx):
             ....:             break
             ....:     else:
             ....:         polys.append(P)
-            sage: len(polys)
+            sage: len(polys)                                                            # optional - sage.geometry.polyhedron
             25
 
         A non-trivial example of two graphs with isomorphic SEPs::

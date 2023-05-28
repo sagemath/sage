@@ -550,7 +550,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         sage: G = graphs.RandomGNP(10,0.6)
         sage: while not G.is_connected():
         ....:     G = graphs.RandomGNP(10,0.6)
-        sage: G.tutte_polynomial()(1,1) == G.spanning_trees_count()
+        sage: G.tutte_polynomial()(1,1) == G.spanning_trees_count()                     # optional - sage.modules
         True
 
     Given that `T(x,y)` is the Tutte polynomial of a graph `G` with

@@ -226,38 +226,39 @@ class DiGraphGenerators():
 
             sage: digraphs.ButterflyGraph(2).edges(sort=True, labels=False)
             [(('00', 0), ('00', 1)),
-            (('00', 0), ('10', 1)),
-            (('00', 1), ('00', 2)),
-            (('00', 1), ('01', 2)),
-            (('01', 0), ('01', 1)),
-            (('01', 0), ('11', 1)),
-            (('01', 1), ('00', 2)),
-            (('01', 1), ('01', 2)),
-            (('10', 0), ('00', 1)),
-            (('10', 0), ('10', 1)),
-            (('10', 1), ('10', 2)),
-            (('10', 1), ('11', 2)),
-            (('11', 0), ('01', 1)),
-            (('11', 0), ('11', 1)),
-            (('11', 1), ('10', 2)),
-            (('11', 1), ('11', 2))]
-            sage: digraphs.ButterflyGraph(2,vertices='vectors').edges(sort=True, labels=False)
+             (('00', 0), ('10', 1)),
+             (('00', 1), ('00', 2)),
+             (('00', 1), ('01', 2)),
+             (('01', 0), ('01', 1)),
+             (('01', 0), ('11', 1)),
+             (('01', 1), ('00', 2)),
+             (('01', 1), ('01', 2)),
+             (('10', 0), ('00', 1)),
+             (('10', 0), ('10', 1)),
+             (('10', 1), ('10', 2)),
+             (('10', 1), ('11', 2)),
+             (('11', 0), ('01', 1)),
+             (('11', 0), ('11', 1)),
+             (('11', 1), ('10', 2)),
+             (('11', 1), ('11', 2))]
+            sage: digraphs.ButterflyGraph(2, vertices='vectors').edges(sort=True,       # optional - sage.modules sage.rings.finite_rings
+            ....:                                                      labels=False)
             [(((0, 0), 0), ((0, 0), 1)),
-            (((0, 0), 0), ((1, 0), 1)),
-            (((0, 0), 1), ((0, 0), 2)),
-            (((0, 0), 1), ((0, 1), 2)),
-            (((0, 1), 0), ((0, 1), 1)),
-            (((0, 1), 0), ((1, 1), 1)),
-            (((0, 1), 1), ((0, 0), 2)),
-            (((0, 1), 1), ((0, 1), 2)),
-            (((1, 0), 0), ((0, 0), 1)),
-            (((1, 0), 0), ((1, 0), 1)),
-            (((1, 0), 1), ((1, 0), 2)),
-            (((1, 0), 1), ((1, 1), 2)),
-            (((1, 1), 0), ((0, 1), 1)),
-            (((1, 1), 0), ((1, 1), 1)),
-            (((1, 1), 1), ((1, 0), 2)),
-            (((1, 1), 1), ((1, 1), 2))]
+             (((0, 0), 0), ((1, 0), 1)),
+             (((0, 0), 1), ((0, 0), 2)),
+             (((0, 0), 1), ((0, 1), 2)),
+             (((0, 1), 0), ((0, 1), 1)),
+             (((0, 1), 0), ((1, 1), 1)),
+             (((0, 1), 1), ((0, 0), 2)),
+             (((0, 1), 1), ((0, 1), 2)),
+             (((1, 0), 0), ((0, 0), 1)),
+             (((1, 0), 0), ((1, 0), 1)),
+             (((1, 0), 1), ((1, 0), 2)),
+             (((1, 0), 1), ((1, 1), 2)),
+             (((1, 1), 0), ((0, 1), 1)),
+             (((1, 1), 0), ((1, 1), 1)),
+             (((1, 1), 1), ((1, 0), 2)),
+             (((1, 1), 1), ((1, 1), 2))]
             sage: pos = digraphs.ButterflyGraph(2).get_pos()
             sage: pos['11', 0]
             (0, 0)
@@ -338,7 +339,7 @@ class DiGraphGenerators():
             [0, 1, 2, 3, 4]
             sage: g.size()
             4
-            sage: g.automorphism_group().cardinality()
+            sage: g.automorphism_group().cardinality()                                  # optional - sage.groups
             1
         """
         g = DiGraph(n, name="Path")
@@ -470,7 +471,7 @@ class DiGraphGenerators():
             [0, 1, 2, 3, 4]
             sage: g.size()
             10
-            sage: g.automorphism_group().cardinality()
+            sage: g.automorphism_group().cardinality()                                  # optional - sage.groups
             1
 
         .. SEEALSO::
@@ -890,44 +891,44 @@ class DiGraphGenerators():
 
         de Bruijn digraph of degree 2 and diameter 2::
 
-            sage: db = digraphs.DeBruijn(2, 2); db
+            sage: db = digraphs.DeBruijn(2, 2); db                                      # optional - sage.combinat
             De Bruijn digraph (k=2, n=2): Looped digraph on 4 vertices
-            sage: db.order(), db.size()
+            sage: db.order(), db.size()                                                 # optional - sage.combinat
             (4, 8)
-            sage: db.diameter()
+            sage: db.diameter()                                                         # optional - sage.combinat
             2
 
         Building a de Bruijn digraph on a different alphabet::
 
-            sage: g = digraphs.DeBruijn(['a', 'b'], 2)
-            sage: g.vertices(sort=True)
+            sage: g = digraphs.DeBruijn(['a', 'b'], 2)                                  # optional - sage.combinat
+            sage: g.vertices(sort=True)                                                 # optional - sage.combinat
             ['aa', 'ab', 'ba', 'bb']
-            sage: g.is_isomorphic(db)
+            sage: g.is_isomorphic(db)                                                   # optional - sage.combinat
             True
-            sage: g = digraphs.DeBruijn(['AA', 'BB'], 2)
-            sage: g.vertices(sort=True)
+            sage: g = digraphs.DeBruijn(['AA', 'BB'], 2)                                # optional - sage.combinat
+            sage: g.vertices(sort=True)                                                 # optional - sage.combinat
             ['AA,AA', 'AA,BB', 'BB,AA', 'BB,BB']
-            sage: g.is_isomorphic(db)
+            sage: g.is_isomorphic(db)                                                   # optional - sage.combinat
             True
 
         TESTS:
 
         Alphabet of null size or words of length zero::
 
-            sage: digraphs.DeBruijn(5, 0)
+            sage: digraphs.DeBruijn(5, 0)                                               # optional - sage.combinat
             De Bruijn digraph (k=5, n=0): Looped multi-digraph on 1 vertex
-            sage: digraphs.DeBruijn(0, 0)
+            sage: digraphs.DeBruijn(0, 0)                                               # optional - sage.combinat
             De Bruijn digraph (k=0, n=0): Looped multi-digraph on 0 vertices
 
         :trac:`22355`::
 
-            sage: db = digraphs.DeBruijn(2, 2, vertices='strings')
-            sage: db.vertices(sort=True)
+            sage: db = digraphs.DeBruijn(2, 2, vertices='strings')                      # optional - sage.combinat
+            sage: db.vertices(sort=True)                                                # optional - sage.combinat
             ['00', '01', '10', '11']
             sage: h = digraphs.DeBruijn(2, 2, vertices='integers')
             sage: h.vertices(sort=True)
             [0, 1, 2, 3]
-            sage: db.is_isomorphic(h)
+            sage: db.is_isomorphic(h)                                                   # optional - sage.combinat
             True
             sage: digraphs.DeBruijn(0, 0, vertices='integers')
             De Bruijn digraph (k=0, n=0): Looped multi-digraph on 0 vertices
@@ -936,10 +937,11 @@ class DiGraphGenerators():
             ...
             ValueError: unknown type for vertices
         """
-        from sage.combinat.words.words import Words
         from sage.rings.integer import Integer
 
         if vertices == 'strings':
+            from sage.combinat.words.words import Words
+
             W = Words(list(range(k)) if isinstance(k, Integer) else k, n)
             A = Words(list(range(k)) if isinstance(k, Integer) else k, 1)
             g = DiGraph(loops=True)
@@ -998,8 +1000,9 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: GB = digraphs.GeneralizedDeBruijn(8, 2)
-            sage: GB.is_isomorphic(digraphs.DeBruijn(2, 3), certificate = True)
-            (True, {0: '000', 1: '001', 2: '010', 3: '011', 4: '100', 5: '101', 6: '110', 7: '111'})
+            sage: GB.is_isomorphic(digraphs.DeBruijn(2, 3), certificate=True)
+            (True, {0: '000', 1: '001', 2: '010', 3: '011',
+                    4: '100', 5: '101', 6: '110', 7: '111'})
 
         TESTS:
 
@@ -1054,8 +1057,9 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: II = digraphs.ImaseItoh(8, 2)
-            sage: II.is_isomorphic(digraphs.DeBruijn(2, 3), certificate = True)
-            (True, {0: '010', 1: '011', 2: '000', 3: '001', 4: '110', 5: '111', 6: '100', 7: '101'})
+            sage: II.is_isomorphic(digraphs.DeBruijn(2, 3), certificate=True)           # optional - sage.combinat
+            (True, {0: '010', 1: '011', 2: '000', 3: '001',
+                    4: '110', 5: '111', 6: '100', 7: '101'})
 
             sage: II = digraphs.ImaseItoh(12, 2)
             sage: b,D = II.is_isomorphic(digraphs.Kautz(2, 3), certificate=True)
@@ -1132,23 +1136,23 @@ class DiGraphGenerators():
 
         EXAMPLES::
 
-            sage: K = digraphs.Kautz(2, 3)
-            sage: b,D = K.is_isomorphic(digraphs.ImaseItoh(12, 2), certificate=True)
-            sage: b
+            sage: K = digraphs.Kautz(2, 3)                                              # optional - sage.combinat
+            sage: b, D = K.is_isomorphic(digraphs.ImaseItoh(12, 2), certificate=True)   # optional - sage.combinat
+            sage: b                                                                     # optional - sage.combinat
             True
-            sage: D  # random isomorphism
+            sage: D  # random isomorphism                                               # optional - sage.combinat
             {'010': 8, '012': 9, '020': 11, '021': 10, '101': 7,  '102': 6,
              '120': 5, '121': 4, '201': 1, '202': 0, '210': 2, '212': 3}
 
-            sage: K = digraphs.Kautz([1,'a','B'], 2)
-            sage: K.edges(sort=True)
+            sage: K = digraphs.Kautz([1,'a','B'], 2)                                    # optional - sage.combinat
+            sage: K.edges(sort=True)                                                    # optional - sage.combinat
             [('1B', 'B1', '1'), ('1B', 'Ba', 'a'), ('1a', 'a1', '1'),
              ('1a', 'aB', 'B'), ('B1', '1B', 'B'), ('B1', '1a', 'a'),
              ('Ba', 'a1', '1'), ('Ba', 'aB', 'B'), ('a1', '1B', 'B'),
              ('a1', '1a', 'a'), ('aB', 'B1', '1'), ('aB', 'Ba', 'a')]
 
-            sage: K = digraphs.Kautz([1,'aA','BB'], 2)
-            sage: K.edges(sort=True)
+            sage: K = digraphs.Kautz([1,'aA','BB'], 2)                                  # optional - sage.combinat
+            sage: K.edges(sort=True)                                                    # optional - sage.combinat
             [('1,BB', 'BB,1', '1'), ('1,BB', 'BB,aA', 'aA'),
              ('1,aA', 'aA,1', '1'), ('1,aA', 'aA,BB', 'BB'),
              ('BB,1', '1,BB', 'BB'), ('BB,1', '1,aA', 'aA'),
@@ -1160,12 +1164,12 @@ class DiGraphGenerators():
 
         An exception is raised when the degree is less than one::
 
-            sage: G = digraphs.Kautz(0, 2)
+            sage: G = digraphs.Kautz(0, 2)                                              # optional - sage.combinat
             Traceback (most recent call last):
             ...
             ValueError: degree must be greater than or equal to one
 
-            sage: G = digraphs.Kautz(['a'], 2)
+            sage: G = digraphs.Kautz(['a'], 2)                                          # optional - sage.combinat
             Traceback (most recent call last):
             ...
             ValueError: degree must be greater than or equal to one
@@ -1173,23 +1177,23 @@ class DiGraphGenerators():
         An exception is raised when the diameter of the graph is less than
         one::
 
-            sage: G = digraphs.Kautz(2, 0)
+            sage: G = digraphs.Kautz(2, 0)                                              # optional - sage.combinat
             Traceback (most recent call last):
             ...
             ValueError: diameter must be greater than or equal to one
 
         :trac:`22355`::
 
-            sage: K = digraphs.Kautz(2, 2, vertices='strings')
-            sage: K.vertices(sort=True)
+            sage: K = digraphs.Kautz(2, 2, vertices='strings')                          # optional - sage.combinat
+            sage: K.vertices(sort=True)                                                 # optional - sage.combinat
             ['01', '02', '10', '12', '20', '21']
             sage: h = digraphs.Kautz(2, 2, vertices='integers')
             sage: h.vertices(sort=True)
             [0, 1, 2, 3, 4, 5]
-            sage: h.is_isomorphic(K)
+            sage: h.is_isomorphic(K)                                                    # optional - sage.combinat
             True
             sage: h = digraphs.Kautz([1,'aA','BB'], 2, vertices='integers')
-            sage: h.is_isomorphic(K)
+            sage: h.is_isomorphic(K)                                                    # optional - sage.combinat
             True
             sage: h.vertices(sort=True)
             [0, 1, 2, 3, 4, 5]
@@ -1201,10 +1205,10 @@ class DiGraphGenerators():
         if D < 1:
             raise ValueError("diameter must be greater than or equal to one")
 
-        from sage.combinat.words.words import Words
         from sage.rings.integer import Integer
 
         if vertices == 'strings':
+            from sage.combinat.words.words import Words
 
             my_alphabet = Words([str(i) for i in range(k + 1)] if isinstance(k,
                                 Integer) else k, 1)
@@ -1346,16 +1350,16 @@ class DiGraphGenerators():
 
         EXAMPLES::
 
-            sage: D = digraphs.RandomDirectedGN(25)
-            sage: D.num_verts()
+            sage: D = digraphs.RandomDirectedGN(25)                                     # optional - networkx
+            sage: D.num_verts()                                                         # optional - networkx
             25
-            sage: D.num_edges()
+            sage: D.num_edges()                                                         # optional - networkx
             24
-            sage: D.is_connected()
+            sage: D.is_connected()                                                      # optional - networkx
             True
-            sage: D.parent() is DiGraph
+            sage: D.parent() is DiGraph                                                 # optional - networkx
             True
-            sage: D.show()  # long time
+            sage: D.show()  # long time                                                 # optional - networkx
         """
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -1382,12 +1386,12 @@ class DiGraphGenerators():
 
         EXAMPLES::
 
-            sage: D = digraphs.RandomDirectedGNC(25)
-            sage: D.is_directed_acyclic()
+            sage: D = digraphs.RandomDirectedGNC(25)                                    # optional - networkx
+            sage: D.is_directed_acyclic()                                               # optional - networkx
             True
-            sage: D.topological_sort()
+            sage: D.topological_sort()                                                  # optional - networkx
             [24, 23, ..., 1, 0]
-            sage: D.show()  # long time
+            sage: D.show()  # long time                                                 # optional - networkx
         """
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)

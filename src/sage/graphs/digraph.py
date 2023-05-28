@@ -3232,7 +3232,7 @@ class DiGraph(GenericGraph):
 
         ::
 
-            sage: for sort in D.topological_sort_generator():
+            sage: for sort in D.topological_sort_generator():                           # optional - sage.modules sage.rings.finite_rings
             ....:     for u, v in D.edge_iterator(labels=False):
             ....:         if sort.index(u) > sort.index(v):
             ....:             print("this should never happen")
