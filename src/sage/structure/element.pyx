@@ -290,15 +290,11 @@ continue down the MRO and find the ``_add_`` method in the category.
 
 cimport cython
 from cpython cimport *
-from cpython.ref cimport PyObject
 
 from sage.ext.stdsage cimport *
 
-import types
 cdef add, sub, mul, truediv, floordiv, mod, matmul, pow
-cdef iadd, isub, imul, itruediv, ifloordiv, imod, ipow
-from operator import (add, sub, mul, truediv, floordiv, mod, matmul, pow,
-                      iadd, isub, imul, itruediv, ifloordiv, imod, imatmul, ipow)
+from operator import (add, sub, mul, truediv, floordiv, mod, matmul, pow)
 
 cdef dict _coerce_op_symbols = dict(
         add='+', sub='-', mul='*', truediv='/', floordiv='//', mod='%', matmul='@', pow='^',
@@ -310,8 +306,6 @@ from sage.structure.parent cimport Parent
 from sage.cpython.type cimport can_assign_class
 from sage.cpython.getattr cimport getattr_from_other_class
 from sage.misc.lazy_format import LazyFormat
-from sage.misc import sageinspect
-from sage.misc.classcall_metaclass cimport ClasscallMetaclass
 from sage.arith.long cimport integer_check_long_py
 from sage.arith.power cimport generic_power as arith_generic_power
 from sage.arith.numerical_approx cimport digits_to_bits
@@ -711,7 +705,6 @@ cdef class Element(SageObject):
             ...
             AssertionError: self.an_element() is not in self
         """
-        from sage.categories.objects    import Objects
         tester = self._tester(**options)
         SageObject._test_category(self, tester = tester)
         category = self.category()
