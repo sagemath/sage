@@ -180,6 +180,11 @@ include sage/combinat/subset.p*
 include sage/combinat/tools.p*
 # leave out partition - has complicated deps
 # leave out integer_vector_weighted - needs combinat.words.word
+include sage/combinat/subsets_hereditary.p*
+include sage/combinat/dlx.p*
+include sage/combinat/matrices/dancing_links.p*
+include sage/combinat/matrices/dancing_links_c.h
+include sage/combinat/matrices/dlxcpp.p*
 
 # see src/sage/schemes/generic/notes/imports.txt
 include sage/schemes/generic/point.py

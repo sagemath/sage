@@ -73,9 +73,6 @@ from .rigged_configurations.all import *
 
 from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
 
-# block designs, etc
-from sage.combinat.designs.all import *
-
 # Free modules and friends
 from .debruijn_sequence import DeBruijnSequences
 

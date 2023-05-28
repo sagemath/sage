@@ -23,6 +23,8 @@ include sage/combinat/interval_posets.p*                # check if 'element in D
 include sage/combinat/yang_baxter_graph.p*
 include sage/combinat/cluster_algebra_quiver/mutation_class.p*  # more from there?
 
+graft sage/combinat/designs
+
 #include sage/combinat/root_system/dynkin_diagram.p*     # want?
 #include sage/combinat/root_system/cartan_type.p*        # dep of dynkin_diagram
 
@@ -34,7 +36,13 @@ graft sage/graphs
 exclude sage/graphs/chrompoly.p*                        # needs flint
 exclude sage/graphs/matchpoly.p*                        # needs flint
 exclude sage/graphs/convexity_properties.p*             # cimports sage.numerical.backends.generic
+
 include sage/groups/perm_gps/partn_ref/refinement_graphs.p*
+
+# quivers use bounded_integer_sequences, which depends on flint (for a bad reason)
+#include sage/quivers/paths.p*
+#include sage/quivers/path_semigroup.p*                  # but not their representations, algebras
+
 # simplicial complexes
 graft sage/topology            # depends on sage.combinat.subset (now in sagemath-categories)
 

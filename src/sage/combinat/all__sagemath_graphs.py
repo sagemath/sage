@@ -17,3 +17,6 @@ lazy_import('sage.combinat.interval_posets', ['TamariIntervalPoset', 'TamariInte
 from .graph_path import GraphPaths
 
 from .yang_baxter_graph import YangBaxterGraph
+
+# block designs, etc
+from sage.combinat.designs.all import *
