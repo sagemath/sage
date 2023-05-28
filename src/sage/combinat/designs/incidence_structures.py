@@ -433,20 +433,21 @@ class IncidenceStructure():
 
         TESTS::
 
-            sage: IS  = IncidenceStructure([["A",5,pi],["A",5,"Wouhou"],["A","Wouhou",(9,9)],[pi,12]])
-            sage: IS2 = IS.copy()
-            sage: IS2.relabel(IS2.canonical_label())
-            sage: IS.is_isomorphic(IS2)
+            sage: IS  = IncidenceStructure([["A",5,pi],["A",5,"Wouhou"],                # optional - sage.symbolic
+            ....:                           ["A","Wouhou",(9,9)],[pi,12]])
+            sage: IS2 = IS.copy()                                                       # optional - sage.symbolic
+            sage: IS2.relabel(IS2.canonical_label())                                    # optional - sage.symbolic
+            sage: IS.is_isomorphic(IS2)                                                 # optional - sage.symbolic
             True
-            sage: canon = IS.is_isomorphic(IS2,certificate=True)
-            sage: IS.relabel(canon)
-            sage: IS==IS2
+            sage: canon = IS.is_isomorphic(IS2, certificate=True)                       # optional - sage.symbolic
+            sage: IS.relabel(canon)                                                     # optional - sage.symbolic
+            sage: IS==IS2                                                               # optional - sage.symbolic
             True
 
             sage: IS2 = IncidenceStructure([[1,2]])
-            sage: IS2.is_isomorphic(IS)
+            sage: IS2.is_isomorphic(IS)                                                 # optional - sage.symbolic
             False
-            sage: IS2.is_isomorphic(IS,certificate=True)
+            sage: IS2.is_isomorphic(IS, certificate=True)                               # optional - sage.symbolic
             {}
 
         Checking whether two :class:`IncidenceStructure` are isomorphic
@@ -454,7 +455,7 @@ class IncidenceStructure():
         subsequent calls to :meth:`is_isomorphic` will be faster::
 
             sage: IS1 = designs.projective_plane(3)
-            sage: IS2 = IS1.relabel(Permutations(IS1.ground_set()).random_element(),inplace=False)
+            sage: IS2 = IS1.relabel(Permutations(IS1.ground_set()).random_element(), inplace=False)
             sage: IS2 = IncidenceStructure(IS2.blocks())
             sage: IS1._canonical_label is None and IS2._canonical_label is None
             True
@@ -2148,8 +2149,8 @@ class IncidenceStructure():
 
             sage: H = Hypergraph([{1,2,3},{2,3,4},{3,4,5},{4,5,6}]); H
             Incidence structure with 6 points and 4 blocks
-            sage: L = H._spring_layout()
-            sage: L # random
+            sage: L = H._spring_layout()                                                # optional - sage.plot
+            sage: L  # random                                                           # optional - sage.plot
             {1: (0.238, -0.926),
              2: (0.672, -0.518),
              3: (0.449, -0.225),
@@ -2160,9 +2161,9 @@ class IncidenceStructure():
              {2, 3, 4}: (0.727, -0.173),
              {4, 5, 6}: (0.838, 0.617),
              {1, 2, 3}: (0.393, -0.617)}
-            sage: all(v in L for v in H.ground_set())
+            sage: all(v in L for v in H.ground_set())                                   # optional - sage.plot
             True
-            sage: all(v in L for v in map(Set,H.blocks()))
+            sage: all(v in L for v in map(Set, H.blocks()))                             # optional - sage.plot
             True
         """
         from sage.graphs.graph import Graph

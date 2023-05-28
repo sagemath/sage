@@ -540,9 +540,9 @@ class WordGenerator():
 
         ::
 
-            sage: words.FibonacciWord([0,1], 'function')
+            sage: words.FibonacciWord([0,1], 'function')                                # optional - sage.symbolic
             word: 0100101001001010010100100101001001010010...
-            sage: words.FibonacciWord('ab', 'function')
+            sage: words.FibonacciWord('ab', 'function')                                 # optional - sage.symbolic
             word: abaababaabaababaababaabaababaabaababaaba...
 
         TESTS::
@@ -555,7 +555,7 @@ class WordGenerator():
             word: 0100101001001010010100100101001001010010...
             sage: f[:10000] == w[:10000]
             True
-            sage: f[:10000] == u[:10000] #long time
+            sage: f[:10000] == u[:10000]  #long time
             True
             sage: words.FibonacciWord("abc")
             Traceback (most recent call last):
@@ -745,17 +745,17 @@ class WordGenerator():
 
         INPUT:
 
-        -  ``slope`` - the slope of the word. It can be one of the following:
+        -  ``slope`` -- the slope of the word. It can be one of the following:
 
            -  real number in `]0, 1[`
 
            -  iterable over the continued fraction expansion of a real
               number in `]0, 1[`
 
-        -  ``alphabet`` - any container of length two that is suitable to
+        -  ``alphabet`` -- any container of length two that is suitable to
            build an instance of OrderedAlphabet (list, tuple, str, ...)
 
-        -  ``bits`` - integer (optional and considered only if ``slope`` is
+        -  ``bits`` -- integer (optional and considered only if ``slope`` is
            a real number) the number of bits to consider when computing the
            continued fraction.
 
@@ -774,13 +774,13 @@ class WordGenerator():
 
         From real slope::
 
-            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)
+            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)                    # optional - sage.symbolic
             word: 0100101001001010010100100101001001010010...
             sage: words.CharacteristicSturmianWord(4/5)
             word: 11110
             sage: words.CharacteristicSturmianWord(5/14)
             word: 01001001001001
-            sage: words.CharacteristicSturmianWord(pi-3)
+            sage: words.CharacteristicSturmianWord(pi - 3)                              # optional - sage.symbolic
             word: 0000001000000100000010000001000000100000...
 
         From an iterator of the continued fraction expansion of a real::
@@ -803,7 +803,7 @@ class WordGenerator():
 
         The characteristic sturmian word of slope `(\sqrt{3}-1)/2`::
 
-            sage: words.CharacteristicSturmianWord((sqrt(3)-1)/2)
+            sage: words.CharacteristicSturmianWord((sqrt(3)-1)/2)                       # optional - sage.symbolic
             word: 0100100101001001001010010010010100100101...
 
         The same word defined from the continued fraction expansion of
@@ -846,17 +846,17 @@ class WordGenerator():
 
         ::
 
-            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)
+            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)                    # optional - sage.symbolic
             word: 0100101001001010010100100101001001010010...
-            sage: _.length()
+            sage: _.length()                                                            # optional - sage.symbolic
             +Infinity
 
         ::
 
-            sage: a = words.LowerMechanicalWord(1/pi)[1:]
-            sage: b = words.UpperMechanicalWord(1/pi)[1:]
-            sage: c = words.CharacteristicSturmianWord(1/pi)
-            sage: n = 500; a[:n] == b[:n] == c[:n]
+            sage: a = words.LowerMechanicalWord(1/pi)[1:]                               # optional - sage.symbolic
+            sage: b = words.UpperMechanicalWord(1/pi)[1:]                               # optional - sage.symbolic
+            sage: c = words.CharacteristicSturmianWord(1/pi)                            # optional - sage.symbolic
+            sage: n = 500; a[:n] == b[:n] == c[:n]                                      # optional - sage.symbolic
             True
 
         ::
@@ -927,19 +927,19 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: continued_fraction(1/golden_ratio^2)[:8]
+            sage: continued_fraction(1/golden_ratio^2)[:8]                              # optional - sage.symbolic
             [0; 2, 1, 1, 1, 1, 2]
-            sage: cf = iter(_)
-            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))
+            sage: cf = iter(_)                                                          # optional - sage.symbolic
+            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))            # optional - sage.symbolic
             word: 0100101001001010010100100101001010
 
         ::
 
-            sage: alpha = (sqrt(3)-1)/2
-            sage: continued_fraction(alpha)[:10]
+            sage: alpha = (sqrt(3)-1)/2                                                 # optional - sage.symbolic
+            sage: continued_fraction(alpha)[:10]                                        # optional - sage.symbolic
             [0; 2, 1, 2, 1, 2, 1, 2, 1, 2]
-            sage: cf = iter(_)
-            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))
+            sage: cf = iter(_)                                                          # optional - sage.symbolic
+            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))            # optional - sage.symbolic
             word: 0100100101001001001010010010010100100101...
         """
         try:
@@ -1133,23 +1133,23 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: words.LowerMechanicalWord(1/golden_ratio^2)
+            sage: words.LowerMechanicalWord(1/golden_ratio^2)                           # optional - sage.symbolic
             word: 0010010100100101001010010010100100101001...
-            sage: words.LowerMechanicalWord(1/5)
+            sage: words.LowerMechanicalWord(1/5)                                        # optional - sage.symbolic
             word: 0000100001000010000100001000010000100001...
-            sage: words.LowerMechanicalWord(1/pi)
+            sage: words.LowerMechanicalWord(1/pi)                                       # optional - sage.symbolic
             word: 0001001001001001001001000100100100100100...
 
         TESTS::
 
-            sage: m = words.LowerMechanicalWord(1/golden_ratio^2)[1:]
-            sage: s = words.CharacteristicSturmianWord(1/golden_ratio^2)
-            sage: m[:500] == s[:500]
+            sage: m = words.LowerMechanicalWord(1/golden_ratio^2)[1:]                   # optional - sage.symbolic
+            sage: s = words.CharacteristicSturmianWord(1/golden_ratio^2)                # optional - sage.symbolic
+            sage: m[:500] == s[:500]                                                    # optional - sage.symbolic
             True
 
         Check that this returns a word in an alphabet (:trac:`10054`)::
 
-            sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()
+            sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()                  # optional - sage.symbolic
             Infinite words over {0, 1}
         """
         if not 0 <= alpha <= 1:
@@ -1193,23 +1193,23 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: words.UpperMechanicalWord(1/golden_ratio^2)
+            sage: words.UpperMechanicalWord(1/golden_ratio^2)                           # optional - sage.symbolic
             word: 1010010100100101001010010010100100101001...
-            sage: words.UpperMechanicalWord(1/5)
+            sage: words.UpperMechanicalWord(1/5)                                        # optional - sage.symbolic
             word: 1000010000100001000010000100001000010000...
-            sage: words.UpperMechanicalWord(1/pi)
+            sage: words.UpperMechanicalWord(1/pi)                                       # optional - sage.symbolic
             word: 1001001001001001001001000100100100100100...
 
         TESTS::
 
-            sage: m = words.UpperMechanicalWord(1/golden_ratio^2)[1:]
-            sage: s = words.CharacteristicSturmianWord(1/golden_ratio^2)
-            sage: m[:500] == s[:500]
+            sage: m = words.UpperMechanicalWord(1/golden_ratio^2)[1:]                   # optional - sage.symbolic
+            sage: s = words.CharacteristicSturmianWord(1/golden_ratio^2)                # optional - sage.symbolic
+            sage: m[:500] == s[:500]                                                    # optional - sage.symbolic
             True
 
         Check that this returns a word in an alphabet (:trac:`10054`)::
 
-            sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()
+            sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()                  # optional - sage.symbolic
             Infinite words over {0, 1}
         """
         if not 0 <= alpha <= 1:

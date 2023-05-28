@@ -2094,8 +2094,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             EXAMPLES::
 
                 sage: L = RootSystem(["A",2,1]).ambient_space()
-                sage: options = L.plot_parse_options()
-                sage: options
+                sage: options = L.plot_parse_options(); options                         # optional - sage.symbolic
                 <sage.combinat.root_system.plot.PlotOptions object at ...>
 
             .. SEEALSO::
@@ -2120,7 +2119,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L = RootSystem(["B",3]).root_lattice()
                 sage: l = L.an_element(); l
                 2*alpha[1] + 2*alpha[2] + 3*alpha[3]
-                sage: L._plot_projection(l)
+                sage: L._plot_projection(l)                                             # optional - sage.symbolic
                 2*alpha[1] + 2*alpha[2] + 3*alpha[3]
 
             In the ambient space of type `A_2`, this is the
@@ -2154,22 +2153,22 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["A",0]).ambient_space()._plot_projection_barycentric_matrix()
+                sage: RootSystem(["A",0]).ambient_space()._plot_projection_barycentric_matrix()         # optional - sage.symbolic
                 []
-                sage: m = RootSystem(["A",1]).ambient_space()._plot_projection_barycentric_matrix(); m
+                sage: m = RootSystem(["A",1]).ambient_space()._plot_projection_barycentric_matrix(); m  # optional - sage.symbolic
                 [ 1 -1]
-                sage: sum(m.columns())
+                sage: sum(m.columns())                                                                  # optional - sage.symbolic
                 (0)
-                sage: m = RootSystem(["A",2]).ambient_space()._plot_projection_barycentric_matrix(); m
+                sage: m = RootSystem(["A",2]).ambient_space()._plot_projection_barycentric_matrix(); m  # optional - sage.symbolic
                 [      1/2        -1       1/2]
                 [ 989/1142         0 -989/1142]
-                sage: sum(m.columns())
+                sage: sum(m.columns())                                                                  # optional - sage.symbolic
                 (0, 0)
-                sage: m = RootSystem(["A",3]).ambient_space()._plot_projection_barycentric_matrix(); m
+                sage: m = RootSystem(["A",3]).ambient_space()._plot_projection_barycentric_matrix(); m  # optional - sage.symbolic
                 [      1277/1564      -1277/1564               0               0]
                 [1009460/2141389        849/1801      -1121/1189               0]
                 [            1/3             1/3             1/3              -1]
-                sage: sum(m.columns())
+                sage: sum(m.columns())                                                                  # optional - sage.symbolic
                 (0, 0, 0)
 
             """
@@ -2197,11 +2196,11 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(["A",2]).ambient_space()
                 sage: e = L.basis()
-                sage: L._plot_projection_barycentric(e[0])
+                sage: L._plot_projection_barycentric(e[0])                              # optional - sage.symbolic
                 (1/2, 989/1142)
-                sage: L._plot_projection_barycentric(e[1])
+                sage: L._plot_projection_barycentric(e[1])                              # optional - sage.symbolic
                 (-1, 0)
-                sage: L._plot_projection_barycentric(e[2])
+                sage: L._plot_projection_barycentric(e[2])                              # optional - sage.symbolic
                 (1/2, -989/1142)
 
             .. SEEALSO::
@@ -2235,36 +2234,36 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["B",3]).ambient_space().plot_roots()
+                sage: RootSystem(["B",3]).ambient_space().plot_roots()                  # optional - sage.plot
                 Graphics3d Object
-                sage: RootSystem(["B",3]).ambient_space().plot_roots("all")
+                sage: RootSystem(["B",3]).ambient_space().plot_roots("all")             # optional - sage.plot
                 Graphics3d Object
 
             TESTS::
 
-                sage: list(RootSystem(["A",2]).root_lattice().plot_roots())
+                sage: list(RootSystem(["A",2]).root_lattice().plot_roots())             # optional - sage.plot sage.symbolic
                 [Arrow from (0.0,0.0) to (1.0,0.0),
                  Text '$\alpha_{1}$' at the point (1.05,0.0),
                  Arrow from (0.0,0.0) to (0.0,1.0),
                  Text '$\alpha_{2}$' at the point (0.0,1.05)]
 
-                sage: list(RootSystem(["A",2]).weight_lattice().plot_roots(labels=False))
+                sage: list(RootSystem(["A",2]).weight_lattice().plot_roots(labels=False))   # optional - sage.plot sage.symbolic
                 [Arrow from (0.0,0.0) to (2.0,-1.0),
                  Arrow from (0.0,0.0) to (-1.0,2.0)]
 
-                 sage: list(RootSystem(["A",2]).ambient_lattice().plot_roots())
+                 sage: list(RootSystem(["A",2]).ambient_lattice().plot_roots())         # optional - sage.plot sage.symbolic
                  [Arrow from (0.0,0.0) to (1.5,0.86...),
                   Text '$\alpha_{1}$' at the point (1.575...,0.90...),
                   Arrow from (0.0,0.0) to (-1.5,0.86...),
                   Text '$\alpha_{2}$' at the point (-1.575...,0.90...)]
 
-                 sage: list(RootSystem(["B",2]).ambient_space().plot_roots())
+                 sage: list(RootSystem(["B",2]).ambient_space().plot_roots())           # optional - sage.plot sage.symbolic
                  [Arrow from (0.0,0.0) to (1.0,-1.0),
                   Text '$\alpha_{1}$' at the point (1.05,-1.05),
                   Arrow from (0.0,0.0) to (0.0,1.0),
                   Text '$\alpha_{2}$' at the point (0.0,1.05)]
 
-                sage: list(RootSystem(["A",2]).root_lattice().plot_roots("all"))
+                sage: list(RootSystem(["A",2]).root_lattice().plot_roots("all"))        # optional - sage.plot sage.symbolic
                 [Arrow from (0.0,0.0) to (1.0,0.0),
                  Text '$\alpha_{1}$' at the point (1.05,0.0),
                  Arrow from (0.0,0.0) to (0.0,1.0),
@@ -2320,12 +2319,12 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["B",3]).ambient_space().plot_coroots()
+                sage: RootSystem(["B",3]).ambient_space().plot_coroots()                # optional - sage.plot sage.symbolic
                 Graphics3d Object
 
             TESTS::
 
-                 sage: list(RootSystem(["B",2]).ambient_space().plot_coroots())
+                 sage: list(RootSystem(["B",2]).ambient_space().plot_coroots())         # optional - sage.plot sage.symbolic
                  [Arrow from (0.0,0.0) to (1.0,-1.0),
                   Text '$\alpha^\vee_{1}$' at the point (1.05,-1.05),
                   Arrow from (0.0,0.0) to (0.0,2.0),
@@ -2370,18 +2369,18 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["B",3]).ambient_space().plot_fundamental_weights()
+                sage: RootSystem(["B",3]).ambient_space().plot_fundamental_weights()    # optional - sage.plot
                 Graphics3d Object
 
             TESTS::
 
-                sage: sorted(RootSystem(["A",2]).weight_lattice().plot_fundamental_weights(), key=str)
+                sage: sorted(RootSystem(["A",2]).weight_lattice().plot_fundamental_weights(), key=str)      # optional - sage.plot sage.symbolic
                 [Arrow from (0.0,0.0) to (0.0,1.0),
                  Arrow from (0.0,0.0) to (1.0,0.0),
                  Text '$\Lambda_{1}$' at the point (1.05,0.0),
                  Text '$\Lambda_{2}$' at the point (0.0,1.05)]
 
-                 sage: sorted(RootSystem(["A",2]).ambient_lattice().plot_fundamental_weights(), key=str)
+                 sage: sorted(RootSystem(["A",2]).ambient_lattice().plot_fundamental_weights(), key=str)    # optional - sage.plot sage.symbolic
                  [Arrow from (0.0,0.0) to (-0.5,0.86602451838...),
                   Arrow from (0.0,0.0) to (0.5,0.86602451838...),
                   Text '$\Lambda_{1}$' at the point (0.525,0.909325744308...),
@@ -2423,33 +2422,33 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["A",2,1]).ambient_space().plot_reflection_hyperplanes()
+                sage: RootSystem(["A",2,1]).ambient_space().plot_reflection_hyperplanes()           # optional - sage.plot sage.symbolic
                 Graphics object consisting of 6 graphics primitives
-                sage: RootSystem(["G",2,1]).ambient_space().plot_reflection_hyperplanes()
+                sage: RootSystem(["G",2,1]).ambient_space().plot_reflection_hyperplanes()           # optional - sage.plot sage.symbolic
                 Graphics object consisting of 6 graphics primitives
-                sage: RootSystem(["A",3]).weight_space().plot_reflection_hyperplanes()
+                sage: RootSystem(["A",3]).weight_space().plot_reflection_hyperplanes()              # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["B",3]).ambient_space().plot_reflection_hyperplanes()
+                sage: RootSystem(["B",3]).ambient_space().plot_reflection_hyperplanes()             # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["A",3,1]).weight_space().plot_reflection_hyperplanes()
+                sage: RootSystem(["A",3,1]).weight_space().plot_reflection_hyperplanes()            # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["B",3,1]).ambient_space().plot_reflection_hyperplanes()
+                sage: RootSystem(["B",3,1]).ambient_space().plot_reflection_hyperplanes()           # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["A",2,1]).weight_space().plot_reflection_hyperplanes(affine=False, level=1)
+                sage: RootSystem(["A",2,1]).weight_space().plot_reflection_hyperplanes(affine=False, level=1)   # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["A",2]).root_lattice().plot_reflection_hyperplanes()
+                sage: RootSystem(["A",2]).root_lattice().plot_reflection_hyperplanes()              # optional - sage.plot sage.symbolic
                 Graphics object consisting of 4 graphics primitives
 
             TESTS::
 
                 sage: L = RootSystem(["A",2]).ambient_space()
-                sage: print(L.plot_reflection_hyperplanes().description())
+                sage: print(L.plot_reflection_hyperplanes().description())                          # optional - sage.plot sage.symbolic
                 Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
                 Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
                 Line defined by 2 points: [(-1.73..., 3.0), (1.73..., -3.0)]
                 Line defined by 2 points: [(1.73..., 3.0), (-1.73..., -3.0)]
 
-                sage: print(L.plot_reflection_hyperplanes("all").description())
+                sage: print(L.plot_reflection_hyperplanes("all").description())                     # optional - sage.plot sage.symbolic
                 Text '$H_{\alpha^\vee_{1} + \alpha^\vee_{2}}$' at the point (3.15...,0.0)
                 Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
                 Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
@@ -2458,7 +2457,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 Line defined by 2 points: [(3.0, 0.0), (-3.0, 0.0)]
 
                 sage: L = RootSystem(["A",2,1]).ambient_space()
-                sage: print(L.plot_reflection_hyperplanes().description())
+                sage: print(L.plot_reflection_hyperplanes().description())                          # optional - sage.plot sage.symbolic
                 Text '$H_{\alpha^\vee_{0}}$' at the point (3.15...,0.90...)
                 Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
                 Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
@@ -2507,27 +2506,27 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["A",2]).ambient_space().plot_hedron()
+                sage: RootSystem(["A",2]).ambient_space().plot_hedron()                 # optional - sage.plot sage.symbolic
                 Graphics object consisting of 8 graphics primitives
-                sage: RootSystem(["A",3]).ambient_space().plot_hedron()
+                sage: RootSystem(["A",3]).ambient_space().plot_hedron()                 # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["B",3]).ambient_space().plot_hedron()
+                sage: RootSystem(["B",3]).ambient_space().plot_hedron()                 # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["C",3]).ambient_space().plot_hedron()
+                sage: RootSystem(["C",3]).ambient_space().plot_hedron()                 # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["D",3]).ambient_space().plot_hedron()
+                sage: RootSystem(["D",3]).ambient_space().plot_hedron()                 # optional - sage.plot sage.symbolic
                 Graphics3d Object
 
             Surprise: polyhedra of large dimension know how to
             project themselves nicely::
 
-                sage: RootSystem(["F",4]).ambient_space().plot_hedron() # long time
+                sage: RootSystem(["F",4]).ambient_space().plot_hedron()  # long time    # optional - sage.plot sage.symbolic
                 Graphics3d Object
 
             TESTS::
 
                 sage: L = RootSystem(["B",2]).ambient_space()
-                sage: print(L.plot_hedron().description())
+                sage: print(L.plot_hedron().description())                              # optional - sage.plot sage.symbolic
                 Polygon defined by 8 points: [(1.5, 0.5), (0.5, 1.5), (-0.5, 1.5), (-1.5, 0.5), (-1.5, -0.5), (-0.5, -1.5), (0.5, -1.5), (1.5, -0.5)]
                 Line defined by 2 points: [(-0.5, -1.5), (0.5, -1.5)]
                 Line defined by 2 points: [(-0.5, 1.5), (0.5, 1.5)]
@@ -2567,18 +2566,18 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             2D plots::
 
-                sage: RootSystem(["B",2]).ambient_space().plot_fundamental_chamber()
+                sage: RootSystem(["B",2]).ambient_space().plot_fundamental_chamber()    # optional - sage.plot
                 Graphics object consisting of 1 graphics primitive
-                sage: RootSystem(["B",2,1]).ambient_space().plot_fundamental_chamber()
+                sage: RootSystem(["B",2,1]).ambient_space().plot_fundamental_chamber()  # optional - sage.plot
                 Graphics object consisting of 1 graphics primitive
-                sage: RootSystem(["B",2,1]).ambient_space().plot_fundamental_chamber("classical")
+                sage: RootSystem(["B",2,1]).ambient_space().plot_fundamental_chamber("classical")   # optional - sage.plot
                 Graphics object consisting of 1 graphics primitive
 
             3D plots::
 
-                sage: RootSystem(["A",3,1]).weight_space() .plot_fundamental_chamber()
+                sage: RootSystem(["A",3,1]).weight_space() .plot_fundamental_chamber()  # optional - sage.plot
                 Graphics3d Object
-                sage: RootSystem(["B",3,1]).ambient_space().plot_fundamental_chamber()
+                sage: RootSystem(["B",3,1]).ambient_space().plot_fundamental_chamber()  # optional - sage.plot
                 Graphics3d Object
 
             This feature is currently not available in the root lattice/space::
@@ -2591,10 +2590,10 @@ class RootLatticeRealizations(Category_over_base_ring):
             TESTS::
 
                 sage: L = RootSystem(["B",2,1]).ambient_space()
-                sage: print(L.plot_fundamental_chamber().description())
+                sage: print(L.plot_fundamental_chamber().description())                             # optional - sage.plot
                 Polygon defined by 3 points:     [(0.5, 0.5), (1.0, 0.0), (0.0, 0.0)]
 
-                sage: print(L.plot_fundamental_chamber(style="classical").description())
+                sage: print(L.plot_fundamental_chamber(style="classical").description())            # optional - sage.plot
                 Polygon defined by 3 points:     [(0.0, 0.0), (3.0, 3.0), (3.0, 0.0)]
             """
             plot_options = self.plot_parse_options(**options)
@@ -2639,28 +2638,28 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             2D plots::
 
-                sage: RootSystem(["B",2,1]).ambient_space().plot_alcoves()                      # long time (3s)
+                sage: RootSystem(["B",2,1]).ambient_space().plot_alcoves()                      # long time (3s)    # optional - sage.plot sage.symbolic
                 Graphics object consisting of 228 graphics primitives
 
             3D plots::
 
-                sage: RootSystem(["A",2,1]).weight_space() .plot_alcoves(affine=False)          # long time (3s)
+                sage: RootSystem(["A",2,1]).weight_space() .plot_alcoves(affine=False)          # long time (3s)    # optional - sage.plot sage.symbolic
                 Graphics3d Object
-                sage: RootSystem(["G",2,1]).ambient_space().plot_alcoves(affine=False, level=1) # long time (3s)
+                sage: RootSystem(["G",2,1]).ambient_space().plot_alcoves(affine=False, level=1) # long time (3s)    # optional - sage.plot sage.symbolic
                 Graphics3d Object
 
             Here we plot a single alcove::
 
                 sage: L = RootSystem(["A",3,1]).ambient_space()
                 sage: W = L.weyl_group()
-                sage: L.plot(alcoves=[W.one()], reflection_hyperplanes=False, bounding_box=2)
+                sage: L.plot(alcoves=[W.one()], reflection_hyperplanes=False, bounding_box=2)                       # optional - sage.plot sage.symbolic
                 Graphics3d Object
 
             TESTS::
 
                 sage: L = RootSystem(["A",2,1]).weight_space()
-                sage: p = L.plot_alcoves(alcoves=[[0,0]])
-                sage: print(p.description())
+                sage: p = L.plot_alcoves(alcoves=[[0,0]])                                                           # optional - sage.plot sage.symbolic
+                sage: print(p.description())                                                                        # optional - sage.plot sage.symbolic
                 Line defined by 2 points: [(-1.0, 0.0), (0.0, -1.0)]
                 Line defined by 2 points: [(-1.0, 1.0), (-1.0, 0.0)]
                 Line defined by 2 points: [(-1.0, 1.0), (0.0, 0.0)]
@@ -2673,7 +2672,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 Line defined by 2 points: [(1.0, -1.0), (0.0, -1.0)]
                 Line defined by 2 points: [(1.0, 0.0), (0.0, 0.0)]
                 Line defined by 2 points: [(1.0, 0.0), (1.0, -1.0)]
-                sage: sorted((line.options()['rgbcolor'], line.options()['thickness']) for line in p)
+                sage: sorted((line.options()['rgbcolor'], line.options()['thickness']) for line in p)               # optional - sage.plot sage.symbolic
                 [('black', 2), ('black', 2), ('black', 2),
                  ('black', 2), ('black', 2), ('black', 2),
                  ('blue', 1), ('blue', 1), ('blue', 1),
@@ -2833,12 +2832,12 @@ class RootLatticeRealizations(Category_over_base_ring):
             EXAMPLES::
 
                 sage: L = RootSystem(["A",2,1]).ambient_space()
-                sage: L.plot_bounding_box()
+                sage: L.plot_bounding_box()                                             # optional - sage.plot sage.symbolic
                 Graphics object consisting of 1 graphics primitive
 
             TESTS::
 
-                sage: list(L.plot_bounding_box())
+                sage: list(L.plot_bounding_box())                                       # optional - sage.plot sage.symbolic
                 [Polygon defined by 4 points]
             """
             plot_options = self.plot_parse_options(**options)
@@ -2867,32 +2866,34 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(["A",2,1]).ambient_space()
                 sage: w1 = [0,2,1,2,0,2,1,0,2,1,2,1,2,0,2,0,1,2,0]
-                sage: p = L.plot_alcoves(bounding_box=5)           # long time (5s)
-                sage: p += L.plot_alcove_walk(w1)                  # long time
-                sage: p                                            # long time
+                sage: p = L.plot_alcoves(bounding_box=5)           # long time (5s)     # optional - sage.plot sage.symbolic
+                sage: p += L.plot_alcove_walk(w1)                  # long time          # optional - sage.plot sage.symbolic
+                sage: p                                            # long time          # optional - sage.plot sage.symbolic
                 Graphics object consisting of 375 graphics primitives
 
             The same plot with another alcove walk::
 
                 sage: w2 = [2,1,2,0,2,0,2,1,2,0,1,2,1,2,1,0,1,2,0,2,0,1,2,0,2]
-                sage: p += L.plot_alcove_walk(w2, color="orange")  # long time
+                sage: p += L.plot_alcove_walk(w2, color="orange")  # long time          # optional - sage.plot sage.symbolic
 
             And another with some foldings::
 
-                sage: pic = L.plot_alcoves(bounding_box=3)   # long time
-                sage: pic += L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],    # long time (3s)
-                ....:                      foldings = [False, False, True, False, False, False, True, False, True, False],
+                sage: pic = L.plot_alcoves(bounding_box=3)              # long time     # optional - sage.plot sage.symbolic
+                sage: pic += L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],  # long time (3s), optional - sage.plot sage.symbolic
+                ....:                      foldings=[False, False, True, False, False,
+                ....:                                False, True, False, True, False],
                 ....:                      color="green"); pic
                 Graphics object consisting of 155 graphics primitives
 
             TESTS::
 
                 sage: L = RootSystem(["A",2,1]).weight_space()
-                sage: p = L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],
-                ....:                        foldings = [False, False, True, False, False, False, True, False, True, False],
+                sage: p = L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],                     # optional - sage.plot sage.symbolic
+                ....:                        foldings=[False, False, True, False, False,
+                ....:                                  False, True, False, True, False],
                 ....:                        color="green",
                 ....:                        start=L.rho())
-                sage: print(p.description())
+                sage: print(p.description())                                            # optional - sage.plot sage.symbolic
                 Line defined by 2 points: [(-1.0, 8.0), (-1.5, 9.0)]
                 Line defined by 2 points: [(1.0, 4.0), (1.5, 4.5)]
                 Line defined by 2 points: [(1.0, 7.0), (1.5, 6.0)]
@@ -2982,14 +2983,14 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: B = crystals.LSPaths(['A',2], [1,1])
                 sage: L = RootSystem(['A',2]).ambient_space()
-                sage: L.plot_fundamental_weights() + L.plot_ls_paths(B)
+                sage: L.plot_fundamental_weights() + L.plot_ls_paths(B)                 # optional - sage.plot sage.symbolic
                 Graphics object consisting of 14 graphics primitives
 
             This also works in 3 dimensions::
 
                 sage: B = crystals.LSPaths(['B',3], [2,0,0])
                 sage: L = RootSystem(['B',3]).ambient_space()
-                sage: L.plot_ls_paths(B)
+                sage: L.plot_ls_paths(B)                                                # optional - sage.plot sage.symbolic
                 Graphics3d Object
             """
             if not isinstance(paths, (list, tuple, set)):
@@ -3050,7 +3051,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: B = crystals.infinity.MVPolytopes(['C',2])
                 sage: L = RootSystem(['C',2]).ambient_space()
                 sage: p = B.highest_weight_vector().f_string([1,2,1,2])
-                sage: L.plot_fundamental_weights() + L.plot_mv_polytope(p)
+                sage: L.plot_fundamental_weights() + L.plot_mv_polytope(p)              # optional - sage.geometry.polyhedron sage.plot sage.symbolic
                 Graphics object consisting of 14 graphics primitives
 
             This also works in 3 dimensions::
@@ -3058,7 +3059,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: B = crystals.infinity.MVPolytopes(['A',3])
                 sage: L = RootSystem(['A',3]).ambient_space()
                 sage: p = B.highest_weight_vector().f_string([2,1,3,2])
-                sage: L.plot_mv_polytope(p)
+                sage: L.plot_mv_polytope(p)                                             # optional - sage.geometry.polyhedron sage.plot sage.symbolic
                 Graphics3d Object
             """
             from sage.geometry.polyhedron.all import Polyhedron
@@ -3128,17 +3129,18 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(['A',2]).ambient_space()
                 sage: C = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: L.plot_crystal(C, plot_labels='multiplicities')
+                sage: L.plot_crystal(C, plot_labels='multiplicities')                   # optional - sage.plot sage.symbolic
                 Graphics object consisting of 15 graphics primitives
                 sage: C = crystals.Tableaux(['A',2], shape=[8,4])
-                sage: p = L.plot_crystal(C, plot_labels='circles')
-                sage: p.show(figsize=15)
+                sage: p = L.plot_crystal(C, plot_labels='circles')                      # optional - sage.plot sage.symbolic
+                sage: p.show(figsize=15)                                                # optional - sage.plot sage.symbolic
 
             A 3-dimensional example::
 
                 sage: L = RootSystem(['B',3]).ambient_space()
                 sage: C = crystals.Tableaux(['B',3], shape=[2,1])
-                sage: L.plot_crystal(C, plot_labels='circles', edge_labels=True) # long time
+                sage: L.plot_crystal(C, plot_labels='circles',             # long time  # optional - sage.plot sage.symbolic
+                ....:                edge_labels=True)
                 Graphics3d Object
 
             TESTS:
@@ -3147,7 +3149,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: LS = crystals.LSPaths(['A',2], [1,1])
                 sage: L = RootSystem(['A',2]).ambient_space()
-                sage: L.plot_crystal(LS)
+                sage: L.plot_crystal(LS)                                                # optional - sage.plot sage.symbolic
                 Graphics object consisting of 16 graphics primitives
             """
             from sage.plot.arrow import arrow
@@ -3232,7 +3234,8 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: CartanType(['B',2]).root_system().root_lattice().dual_type_cospace()
                 Coroot lattice of the Root system of type ['C', 2]
                 sage: CartanType(['F',4]).root_system().coweight_lattice().dual_type_cospace()
-                Weight lattice of the Root system of type ['F', 4] relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
+                Weight lattice of the Root system of type ['F', 4]
+                 relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
 
             """
             from .root_space import RootSpace
@@ -3257,18 +3260,19 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: CartanType(['B',2]).root_system().root_lattice().to_ambient_space_morphism()
+                sage: B2rs = CartanType(['B',2]).root_system()
+                sage: B2rs.root_lattice().to_ambient_space_morphism()
                 Generic morphism:
-                From: Root lattice of the Root system of type ['B', 2]
-                To:   Ambient space of the Root system of type ['B', 2]
-                sage: CartanType(['B',2]).root_system().coroot_lattice().to_ambient_space_morphism()
+                  From: Root lattice of the Root system of type ['B', 2]
+                  To:   Ambient space of the Root system of type ['B', 2]
+                sage: B2rs.coroot_lattice().to_ambient_space_morphism()
                 Generic morphism:
-                From: Coroot lattice of the Root system of type ['B', 2]
-                To:   Ambient space of the Root system of type ['B', 2]
-                sage: CartanType(['B',2]).root_system().weight_lattice().to_ambient_space_morphism()
+                  From: Coroot lattice of the Root system of type ['B', 2]
+                  To:   Ambient space of the Root system of type ['B', 2]
+                sage: B2rs.weight_lattice().to_ambient_space_morphism()
                 Generic morphism:
-                From: Weight lattice of the Root system of type ['B', 2]
-                To:   Ambient space of the Root system of type ['B', 2]
+                  From: Weight lattice of the Root system of type ['B', 2]
+                  To:   Ambient space of the Root system of type ['B', 2]
 
             """
 

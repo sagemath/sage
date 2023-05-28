@@ -136,7 +136,7 @@ of them::
     sage: st = w.suffix_tree()
     sage: st
     Implicit Suffix Tree of the word: abaabbba
-    sage: st.show(word_labels=True)
+    sage: st.show(word_labels=True)                                                     # optional - sage.plot
 
 ::
 
@@ -1459,16 +1459,16 @@ class FiniteWord_class(Word_class):
 
             sage: W = Words([0, 1])
             sage: w = W([0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1])
-            sage: t = w.topological_entropy(3); t
+            sage: t = w.topological_entropy(3); t                                       # optional - sage.symbolic
             1/3*log(7)/log(2)
-            sage: n(t)
+            sage: n(t)                                                                  # optional - sage.symbolic
             0.935784974019201
 
         ::
 
             sage: w = words.ThueMorseWord()[:100]
             sage: topo = w.topological_entropy
-            sage: for i in range(0, 41, 5):
+            sage: for i in range(0, 41, 5):                                             # optional - sage.symbolic
             ....:     print("{} {}".format(i, n(topo(i), digits=5)))
             0 1.0000
             5 0.71699
@@ -1492,7 +1492,7 @@ class FiniteWord_class(Word_class):
 
             sage: W = Words(range(20))
             sage: w = W(range(20))
-            sage: w.topological_entropy(3)
+            sage: w.topological_entropy(3)                                              # optional - sage.symbolic
             1/3*log(18)/log(20)
         """
         d = self.parent().alphabet().cardinality()
@@ -6824,18 +6824,18 @@ class FiniteWord_class(Word_class):
 
         EXAMPLES::
 
-            sage: Word(range(20)).colored_vector()
+            sage: Word(range(20)).colored_vector()                                      # optional - sage.plot
             Graphics object consisting of 21 graphics primitives
-            sage: Word(range(100)).colored_vector(0,0,10,1)
+            sage: Word(range(100)).colored_vector(0,0,10,1)                             # optional - sage.plot
             Graphics object consisting of 101 graphics primitives
-            sage: Words(range(100))(range(10)).colored_vector()
+            sage: Words(range(100))(range(10)).colored_vector()                         # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
             sage: w = Word('abbabaab')
-            sage: w.colored_vector()
+            sage: w.colored_vector()                                                    # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
-            sage: w.colored_vector(cmap='autumn')
+            sage: w.colored_vector(cmap='autumn')                                       # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
-            sage: Word(range(20)).colored_vector(label='Rainbow')
+            sage: Word(range(20)).colored_vector(label='Rainbow')                       # optional - sage.plot
             Graphics object consisting of 23 graphics primitives
 
         When two words are defined under the same parent, same letters are
@@ -6844,25 +6844,25 @@ class FiniteWord_class(Word_class):
             sage: W = Words(range(20))
             sage: w = W(range(20))
             sage: y = W(range(10,20))
-            sage: y.colored_vector(y=1, x=10) + w.colored_vector()
+            sage: y.colored_vector(y=1, x=10) + w.colored_vector()                      # optional - sage.plot
             Graphics object consisting of 32 graphics primitives
 
         TESTS:
 
         The empty word::
 
-            sage: Word().colored_vector()
+            sage: Word().colored_vector()                                               # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: Word().colored_vector(label='empty')
+            sage: Word().colored_vector(label='empty')                                  # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
 
         Unknown cmap::
 
-            sage: Word(range(100)).colored_vector(cmap='jolies')
+            sage: Word(range(100)).colored_vector(cmap='jolies')                        # optional - sage.plot
             Traceback (most recent call last):
             ...
             RuntimeError: Color map jolies not known
-            sage: Word(range(100)).colored_vector(cmap='__doc__')
+            sage: Word(range(100)).colored_vector(cmap='__doc__')                       # optional - sage.plot
             Traceback (most recent call last):
             ...
             RuntimeError: Color map __doc__ not known

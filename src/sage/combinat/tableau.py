@@ -100,7 +100,7 @@ from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast
 from sage.combinat.posets.posets import Poset
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.misc.misc_c import prod
 from sage.misc.persist import register_unpickle_override
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -890,15 +890,15 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: t = Tableau([[1,2,4],[3]])
-            sage: t.plot()
+            sage: t.plot()                                                              # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
-            sage: t.plot(descents=True)
+            sage: t.plot(descents=True)                                                 # optional - sage.plot
             Graphics object consisting of 12 graphics primitives
 
             sage: t = Tableau([[2,2,4],[3]])
-            sage: t.plot()
+            sage: t.plot()                                                              # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
-            sage: t.plot(descents=True)
+            sage: t.plot(descents=True)                                                 # optional - sage.plot
             Traceback (most recent call last):
             ...
             ValueError: the tableau must be standard for 'descents=True'

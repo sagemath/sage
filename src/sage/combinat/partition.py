@@ -3279,9 +3279,9 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([3,2,1]).hook_product(x)
+            sage: Partition([3,2,1]).hook_product(x)                                    # optional - sage.symbolic
             (2*x + 3)*(x + 2)^2
-            sage: Partition([2,2]).hook_product(x)
+            sage: Partition([2,2]).hook_product(x)                                      # optional - sage.symbolic
             2*(x + 2)*(x + 1)
         """
 
@@ -3422,7 +3422,7 @@ class Partition(CombinatorialElement):
             3
             sage: p.hook_length(0,0)
             3
-            sage: [ p.upper_hook(i,j,x) for i,j in p.cells() ]
+            sage: [ p.upper_hook(i,j,x) for i,j in p.cells() ]                          # optional - sage.symbolic
             [2*x + 1, x, x]
         """
         p = self
@@ -3444,7 +3444,7 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([3,2,1]).upper_hook_lengths(x)
+            sage: Partition([3,2,1]).upper_hook_lengths(x)                              # optional - sage.symbolic
             [[3*x + 2, 2*x + 1, x], [2*x + 1, x], [x]]
             sage: Partition([3,2,1]).upper_hook_lengths(1)
             [[5, 3, 1], [3, 1], [1]]
@@ -3474,7 +3474,7 @@ class Partition(CombinatorialElement):
             3
             sage: p.hook_length(0,0)
             3
-            sage: [ p.lower_hook(i,j,x) for i,j in p.cells() ]
+            sage: [ p.lower_hook(i,j,x) for i,j in p.cells() ]                          # optional - sage.symbolic
             [x + 2, 1, 1]
         """
         p = self
@@ -3496,7 +3496,7 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([3,2,1]).lower_hook_lengths(x)
+            sage: Partition([3,2,1]).lower_hook_lengths(x)                              # optional - sage.symbolic
             [[2*x + 3, x + 2, 1], [x + 2, 1], [1]]
             sage: Partition([3,2,1]).lower_hook_lengths(1)
             [[5, 3, 1], [3, 1], [1]]
@@ -5310,22 +5310,23 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: [Partition([5,4]).outline()(x=i) for i in range(-10,11)]
+            sage: [Partition([5,4]).outline()(x=i) for i in range(-10,11)]              # optional - sage.symbolic
             [10, 9, 8, 7, 6, 5, 6, 5, 6, 5, 4, 3, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-            sage: Partition([]).outline()
+            sage: Partition([]).outline()                                               # optional - sage.symbolic
             abs(x)
 
-            sage: Partition([1]).outline()
+            sage: Partition([1]).outline()                                              # optional - sage.symbolic
             abs(x + 1) + abs(x - 1) - abs(x)
 
-            sage: y = SR.var("y")
-            sage: Partition([6,5,1]).outline(variable=y)
-            abs(y + 6) - abs(y + 5) + abs(y + 4) - abs(y + 3) + abs(y - 1) - abs(y - 2) + abs(y - 3)
+            sage: y = SR.var("y")                                                       # optional - sage.symbolic
+            sage: Partition([6,5,1]).outline(variable=y)                                # optional - sage.symbolic
+            abs(y + 6) - abs(y + 5) + abs(y + 4) - abs(y + 3)
+             + abs(y - 1) - abs(y - 2) + abs(y - 3)
 
         TESTS::
 
-            sage: integrate(Partition([1]).outline()-abs(x),(x,-10,10))
+            sage: integrate(Partition([1]).outline()-abs(x),(x,-10,10))                 # optional - sage.symbolic
             2
         """
         if variable is None:

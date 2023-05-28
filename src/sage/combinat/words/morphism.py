@@ -2790,113 +2790,127 @@ class WordMorphism(SageObject):
         #. The Rauzy fractal of the Tribonacci substitution::
 
             sage: s = WordMorphism('1->12,2->13,3->1')
-            sage: s.rauzy_fractal_plot()     # long time
+            sage: s.rauzy_fractal_plot()     # long time                                # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
 
         #. The "Hokkaido" fractal. We tweak the plot using the plotting options
            to get a nice reusable picture, in which we mark the origin by a black dot::
 
             sage: s = WordMorphism('a->ab,b->c,c->d,d->e,e->a')
-            sage: G = s.rauzy_fractal_plot(n=100000, point_size=3, plot_origin=(50,"black"))  # not tested
+            sage: G = s.rauzy_fractal_plot(n=100000, point_size=3,          # not tested
+            ....:                          plot_origin=(50,"black"))
             sage: G.show(figsize=10, axes=false) # not tested
 
         #. Another "Hokkaido" fractal and its domain exchange::
 
             sage: s = WordMorphism({1:[2], 2:[4,3], 3:[4], 4:[5,3], 5:[6], 6:[1]})
-            sage: s.rauzy_fractal_plot()                  # not tested takes > 1 second
-            sage: s.rauzy_fractal_plot(exchange=True)     # not tested takes > 1 second
+            sage: s.rauzy_fractal_plot()                                    # not tested (> 1 second)
+            sage: s.rauzy_fractal_plot(exchange=True)                       # not tested (> 1 second)
 
         #. A three-dimensional Rauzy fractal::
 
             sage: s = WordMorphism('1->12,2->13,3->14,4->1')
-            sage: s.rauzy_fractal_plot()     # not tested takes > 1 second
+            sage: s.rauzy_fractal_plot()                                    # not tested (> 1 second)
 
         #. A one-dimensional Rauzy fractal (very scattered)::
 
             sage: s = WordMorphism('1->2122,2->1')
-            sage: s.rauzy_fractal_plot().show(figsize=20)     # not tested takes > 1 second
+            sage: s.rauzy_fractal_plot().show(figsize=20)                   # not tested (> 1 second)
 
         #. A high resolution plot of a complicated fractal::
 
             sage: s = WordMorphism('1->23,2->123,3->1122233')
-            sage: G = s.rauzy_fractal_plot(n=300000)  # not tested takes > 1 second
-            sage: G.show(axes=false, figsize=20)      # not tested takes > 1 second
+            sage: G = s.rauzy_fractal_plot(n=300000)                        # not tested (> 1 second)
+            sage: G.show(axes=false, figsize=20)                            # not tested (> 1 second)
 
         #. A nice colorful animation of a domain exchange::
 
             sage: s = WordMorphism('1->21,2->3,3->4,4->25,5->6,6->7,7->1')
-            sage: L = [s.rauzy_fractal_plot(), s.rauzy_fractal_plot(exchange=True)]     # not tested takes > 1 second
-            sage: animate(L, axes=false).show(delay=100)     # not tested takes > 1 second
+            sage: L = [s.rauzy_fractal_plot(),                              # not tested (> 1 second)
+            ....:      s.rauzy_fractal_plot(exchange=True)]
+            sage: animate(L, axes=false).show(delay=100)                    # not tested (> 1 second)
 
         #. Plotting with only one color::
 
             sage: s = WordMorphism('1->12,2->31,3->1')
-            sage: s.rauzy_fractal_plot(colormap={'1':'black', '2':'black', '3':'black'})     # not tested takes > 1 second
+            sage: cm = {'1':'black', '2':'black', '3':'black'}
+            sage: s.rauzy_fractal_plot(colormap=cm)                         # not tested (> 1 second)
 
         #. Different fractals can be obtained by choosing another (non-Pisot) eigenvalue::
 
             sage: s = WordMorphism('1->12,2->3,3->45,4->5,5->6,6->7,7->8,8->1')
             sage: E = s.incidence_matrix().eigenvalues()
             sage: x = [x for x in E if -0.8 < x < -0.7][0]
-            sage: s.rauzy_fractal_plot()          # not tested takes > 1 second
-            sage: s.rauzy_fractal_plot(eig=x)     # not tested takes > 1 second
+            sage: s.rauzy_fractal_plot()                                    # not tested (> 1 second)
+            sage: s.rauzy_fractal_plot(eig=x)                               # not tested (> 1 second)
 
         #. A Pisot reducible substitution with seemingly overlapping tiles::
 
-            sage: s = WordMorphism({1:[1,2], 2:[2,3], 3:[4], 4:[5], 5:[6], 6:[7], 7:[8], 8:[9], 9:[10], 10:[1]})
-            sage: s.rauzy_fractal_plot()     # not tested takes > 1 second
+            sage: s = WordMorphism({1:[1,2], 2:[2,3], 3:[4], 4:[5], 5:[6],
+            ....:                   6:[7], 7:[8], 8:[9], 9:[10], 10:[1]})
+            sage: s.rauzy_fractal_plot()                                    # not tested (> 1 second)
 
         #. A non-Pisot reducible substitution with a strange Rauzy fractal::
 
             sage: s = WordMorphism({1:[3,2], 2:[3,3], 3:[4], 4:[1]})
-            sage: s.rauzy_fractal_plot()     # not tested takes > 1 second
+            sage: s.rauzy_fractal_plot()                                    # not tested (> 1 second)
 
         #. A substitution with overlapping tiles. We use the options
            ``colormap`` and ``opacity`` to study how the tiles overlap::
 
             sage: s = WordMorphism('1->213,2->4,3->5,4->1,5->21')
-            sage: s.rauzy_fractal_plot()                                   # not tested takes > 1 second
-            sage: s.rauzy_fractal_plot(colormap={'1':'red', '4':'purple'})     # not tested takes > 1 second
-            sage: s.rauzy_fractal_plot(opacity={'1':0.1,'2':1,'3':0.1,'4':0.1,'5':0.1}, n=150000)     # not tested takes > 1 second
+            sage: s.rauzy_fractal_plot()                                    # not tested (> 1 second)
+            sage: s.rauzy_fractal_plot(colormap={'1':'red', '4':'purple'})  # not tested (> 1 second)
+            sage: s.rauzy_fractal_plot(n=150000,                            # not tested (> 1 second)
+            ....:                      opacity={'1':0.1,'2':1,'3':0.1,'4':0.1,'5':0.1})
 
         #. Funny experiments by playing with the precision of the float numbers used to plot the fractal::
 
             sage: s = WordMorphism('1->12,2->13,3->1')
-            sage: s.rauzy_fractal_plot(prec=6)      # not tested
-            sage: s.rauzy_fractal_plot(prec=9)      # not tested
-            sage: s.rauzy_fractal_plot(prec=15)     # not tested
-            sage: s.rauzy_fractal_plot(prec=19)     # not tested
-            sage: s.rauzy_fractal_plot(prec=25)     # not tested
+            sage: s.rauzy_fractal_plot(prec=6)                              # not tested
+            sage: s.rauzy_fractal_plot(prec=9)                              # not tested
+            sage: s.rauzy_fractal_plot(prec=15)                             # not tested
+            sage: s.rauzy_fractal_plot(prec=19)                             # not tested
+            sage: s.rauzy_fractal_plot(prec=25)                             # not tested
 
         #. Using the ``translate`` option to plot periodic tilings::
 
             sage: s = WordMorphism('1->12,2->13,3->1')
-            sage: s.rauzy_fractal_plot(n=10000, translate=[(0,0,0),(-1,0,1),(0,-1,1),(1,-1,0),(1,0,-1),(0,1,-1),(-1,1,0)])     # not tested takes > 1 second
+            sage: s.rauzy_fractal_plot(n=10000,                             # not tested (> 1 second)
+            ....:                      translate=[(0,0,0),(-1,0,1),(0,-1,1),(1,-1,0),
+            ....:                                 (1,0,-1),(0,1,-1),(-1,1,0)])
 
            ::
 
             sage: t = WordMorphism("a->aC,b->d,C->de,d->a,e->ab")   # substitution found by Julien Bernat
             sage: V = [vector((0,0,1,0,-1)), vector((0,0,1,-1,0))]
-            sage: S = set(map(tuple, [i*V[0] + j*V[1] for i in [-1,0,1] for j in [-1,0,1]]))
-            sage: t.rauzy_fractal_plot(n=10000, translate=S, exchange=true)     # not tested takes > 1 second
+            sage: S = set(map(tuple, [i*V[0] + j*V[1]
+            ....:                     for i in [-1,0,1] for j in [-1,0,1]]))
+            sage: t.rauzy_fractal_plot(n=10000,                             # not tested (> 1 second)
+            ....:                      translate=S, exchange=true)
 
         #. Using the ``translate`` option to plot arbitrary tilings with the fractal pieces.
            This can be used for example to plot the self-replicating tiling of the Rauzy fractal::
 
             sage: s = WordMorphism({1:[1,2], 2:[3], 3:[4,3], 4:[5], 5:[6], 6:[1]})
-            sage: s.rauzy_fractal_plot()     # not tested takes > 1 second
-            sage: D = {1:[(0,0,0,0,0,0), (0,1,0,0,0,0)], 3:[(0,0,0,0,0,0), (0,1,0,0,0,0)], 6:[(0,1,0,0,0,0)]}
-            sage: s.rauzy_fractal_plot(n=30000, translate=D)     # not tested takes > 1 second
+            sage: s.rauzy_fractal_plot()                                    # not tested (> 1 second)
+            sage: D = {1: [(0,0,0,0,0,0), (0,1,0,0,0,0)],
+            ....:      3: [(0,0,0,0,0,0), (0,1,0,0,0,0)], 6: [(0,1,0,0,0,0)]}
+            sage: s.rauzy_fractal_plot(n=30000, translate=D)                # not tested (> 1 second)
 
         #. Plot the projection of the canonical basis with the fractal::
 
-            sage: s = WordMorphism({1:[2,1], 2:[3], 3:[6,4], 4:[5,1], 5:[6], 6:[7], 7:[8], 8:[9], 9:[1]})
-            sage: s.rauzy_fractal_plot(plot_basis=True)     # not tested takes > 1 second
+            sage: s = WordMorphism({1:[2,1], 2:[3], 3:[6,4], 4:[5,1],
+            ....:                   5:[6], 6:[7], 7:[8], 8:[9], 9:[1]})
+            sage: s.rauzy_fractal_plot(plot_basis=True)                     # not tested (> 1 second)
 
         TESTS::
 
             sage: s = WordMorphism('a->ab,b->c,c->d,d->e,e->a')
-            sage: s.rauzy_fractal_plot(n=1000, colormap='Set1', opacity={'a':0.5,'b':1,'c':0.7,'d':0,'e':0.2}, plot_origin=(100,"black"), plot_basis=True, point_size=2.5)
+            sage: s.rauzy_fractal_plot(n=1000, colormap='Set1',                         # optional - sage.plot
+            ....:                      opacity={'a':0.5,'b':1,'c':0.7,'d':0,'e':0.2},
+            ....:                      plot_origin=(100,"black"), plot_basis=True,
+            ....:                      point_size=2.5)
             Graphics object consisting of 10 graphics primitives
 
         REFERENCES:

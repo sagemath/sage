@@ -522,10 +522,10 @@ class RootedTrees_all(DisjointUnionEnumeratedSets, RootedTrees):
         """
         TESTS::
 
-            sage: sum(x**len(t) for t in
-            ....:     set(RootedTree(t) for t in OrderedTrees(6)))
+            sage: sum(x**len(t)                                                         # optional - sage.symbolic
+            ....:     for t in set(RootedTree(t) for t in OrderedTrees(6)))
             x^5 + x^4 + 3*x^3 + 6*x^2 + 9*x
-            sage: sum(x**len(t) for t in RootedTrees(6))
+            sage: sum(x**len(t) for t in RootedTrees(6))                                # optional - sage.symbolic
             x^5 + x^4 + 3*x^3 + 6*x^2 + 9*x
 
             sage: TestSuite(RootedTrees()).run() # long time

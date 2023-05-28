@@ -82,8 +82,8 @@ Some challenges
       6
 
       sage: A = random_matrix(ZZ, 6, 3, x=7)                                            # optional - sage.modules
-      sage: L = LatticePolytope(A.rows())                                               # optional - sage.geometry.polyhedron
-      sage: L.npoints()                # oops!   # random                               # optional - sage.geometry.polyhedron
+      sage: L = LatticePolytope(A.rows())                                               # optional - sage.geometry.polyhedron sage.modules
+      sage: L.npoints()                # oops!   # random                               # optional - sage.geometry.polyhedron sage.modules
       37
 
 - How to ensure robustness?
@@ -415,16 +415,16 @@ Applying an operation is generally done by *calling a method*::
     6*(x + 1)^2
 
     sage: R.<x> = PolynomialRing(QQ, sparse=True)
-    sage: pQ = R ( p )
-    sage: type(pQ)
+    sage: pQ = R(p)                                                                     # optional - sage.symbolic
+    sage: type(pQ)                                                                      # optional - sage.symbolic
     <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
-    sage: pQ.factor()
+    sage: pQ.factor()                                                                   # optional - sage.symbolic
     (6) * (x + 1)^2
 
-    sage: pZ = ZZ['x'] ( p )
-    sage: type(pZ)
+    sage: pZ = ZZ['x'](p)                                                               # optional - sage.symbolic
+    sage: type(pZ)                                                                      # optional - sage.symbolic
     <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
-    sage: pZ.factor()
+    sage: pZ.factor()                                                                   # optional - sage.symbolic
     2 * 3 * (x + 1)^2
 
 Factoring integers, expressions, or polynomials are distinct tasks,
@@ -444,9 +444,9 @@ are implemented::
     sage: i._pow_.__module__  # not tested (Issue #24275)
     'sage.categories.semigroups'
 
-    sage: pQ._mul_.__module__
+    sage: pQ._mul_.__module__                                                           # optional - sage.symbolic
     'sage.rings.polynomial.polynomial_element_generic'
-    sage: pQ._pow_.__module__  # not tested (Issue #24275)
+    sage: pQ._pow_.__module__  # not tested (Issue #24275)                              # optional - sage.symbolic
     'sage.categories.semigroups'
 
 We see that integers and polynomials have each their own
