@@ -2,12 +2,12 @@ r"""
 Parents for Polyhedra
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.element import get_coercion_model
@@ -400,7 +400,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         points = []
         R = self.base_ring()
         for i in range(self.ambient_dim() + 5):
-            points.append([R(i * j**2) for j in range(self.ambient_dim())])
+            points.append([R(i * j ^ 2) for j in range(self.ambient_dim())])
         return [
             self.element_class(self, [points[0:self.ambient_dim() + 1], [], []], None),
             self.element_class(self, [points[0:1], points[1:self.ambient_dim() + 1], []], None),
@@ -1212,8 +1212,10 @@ class Polyhedra_ZZ_ppl(Polyhedra_base):
         else:
             return Polyhedra_base._element_constructor_polyhedron(self, polyhedron, **kwds)
 
+
 class Polyhedra_ZZ_normaliz(Polyhedra_base):
     Element = Polyhedron_ZZ_normaliz
+
 
 class Polyhedra_QQ_ppl(Polyhedra_base):
     Element = Polyhedron_QQ_ppl
@@ -1244,26 +1246,34 @@ class Polyhedra_QQ_ppl(Polyhedra_base):
         else:
             return Polyhedra_base._element_constructor_polyhedron(self, polyhedron, **kwds)
 
+
 class Polyhedra_QQ_normaliz(Polyhedra_base):
     Element = Polyhedron_QQ_normaliz
+
 
 class Polyhedra_QQ_cdd(Polyhedra_base):
     Element = Polyhedron_QQ_cdd
 
+
 class Polyhedra_RDF_cdd(Polyhedra_base):
     Element = Polyhedron_RDF_cdd
+
 
 class Polyhedra_normaliz(Polyhedra_base):
     Element = Polyhedron_normaliz
 
+
 class Polyhedra_polymake(Polyhedra_base):
     Element = Polyhedron_polymake
+
 
 class Polyhedra_field(Polyhedra_base):
     Element = Polyhedron_field
 
+
 class Polyhedra_number_field(Polyhedra_base):
     Element = Polyhedron_number_field
+
 
 @cached_function
 def does_backend_handle_base_ring(base_ring, backend):

@@ -412,7 +412,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         sage: T = BruhatTitsTree(4)
         Traceback (most recent call last):
         ...
-        ValueError: Input (4) must be prime
+        ValueError: input (4) must be prime
 
     AUTHORS:
 
