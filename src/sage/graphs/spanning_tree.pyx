@@ -977,7 +977,7 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
         sage: pos = G.get_pos()
         sage: T = G.random_spanning_tree(True)
         sage: T.set_pos(pos)
-        sage: T.show(vertex_labels=False)
+        sage: T.show(vertex_labels=False)                                               # optional - sage.plot
 
     We can also use edge weights to change the probability of returning a
     spanning tree::

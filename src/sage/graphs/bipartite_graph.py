@@ -158,7 +158,7 @@ class BipartiteGraph(Graph):
         sage: B = BipartiteGraph(P, partition, check=False)
         sage: B.left
         {0, 1, 2, 3, 4}
-        sage: B.show()
+        sage: B.show()                                                                  # optional - sage.plot
 
        ::
 
@@ -304,14 +304,14 @@ class BipartiteGraph(Graph):
          sage: B = BipartiteGraph('F?^T_\n', partition=[[0, 1, 2], [3, 4, 5, 6]], check=False)
          sage: B.left
          {0, 1, 2}
-         sage: B.show()
+         sage: B.show()                                                                 # optional - sage.plot
 
     #. From a NetworkX bipartite graph::
 
-        sage: import networkx                                                                       # optional - networkx
-        sage: G = graphs.OctahedralGraph()                                                          # optional - networkx
-        sage: N = networkx.make_clique_bipartite(G.networkx_graph())                                # optional - networkx
-        sage: B = BipartiteGraph(N)                                                                 # optional - networkx
+        sage: import networkx                                                           # optional - networkx
+        sage: G = graphs.OctahedralGraph()                                              # optional - networkx
+        sage: N = networkx.make_clique_bipartite(G.networkx_graph())                    # optional - networkx
+        sage: B = BipartiteGraph(N)                                                     # optional - networkx
 
     TESTS:
 
@@ -1464,7 +1464,7 @@ class BipartiteGraph(Graph):
         EXAMPLES::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(20))
-            sage: B.plot()
+            sage: B.plot()                                                              # optional - sage.plot
             Graphics object consisting of 41 graphics primitives
         """
         if "pos" not in kwds:

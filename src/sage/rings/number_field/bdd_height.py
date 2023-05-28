@@ -280,9 +280,9 @@ def integer_points_in_polytope(matrix, interval_radius):
     Return the set of integer points in the polytope obtained by acting on a
     cube by a linear transformation.
 
-    Given an r-by-r matrix ``matrix`` and a real number ``interval_radius``,
+    Given an `r`-by-`r` matrix ``matrix`` and a real number ``interval_radius``,
     this function finds all integer lattice points in the polytope obtained by
-    transforming the cube [-interval_radius,interval_radius]^r via the linear
+    transforming the cube ``[-interval_radius, interval_radius]^r`` via the linear
     map induced by ``matrix``.
 
     INPUT:
@@ -297,37 +297,38 @@ def integer_points_in_polytope(matrix, interval_radius):
 
     EXAMPLES:
 
-    Stretch the interval [-1,1] by a factor of 2 and find the integers in the
+    Stretch the interval `[-1,1]` by a factor of 2 and find the integers in the
     resulting interval::
 
         sage: from sage.rings.number_field.bdd_height import integer_points_in_polytope
         sage: m = matrix([2])
         sage: r = 1
-        sage: integer_points_in_polytope(m,r)
+        sage: integer_points_in_polytope(m, r)
         [(-2), (-1), (0), (1), (2)]
 
     Integer points inside a parallelogram::
 
         sage: from sage.rings.number_field.bdd_height import integer_points_in_polytope
-        sage: m = matrix([[1, 2],[3, 4]])
+        sage: m = matrix([[1, 2], [3, 4]])
         sage: r = RealField()(1.3)
-        sage: integer_points_in_polytope(m,r)
-        [(-3, -7), (-2, -5), (-2, -4), (-1, -3), (-1, -2), (-1, -1), (0, -1), (0, 0), (0, 1), (1, 1), (1, 2), (1, 3), (2, 4), (2, 5), (3, 7)]
+        sage: integer_points_in_polytope(m, r)
+        [(-3, -7), (-2, -5), (-2, -4), (-1, -3), (-1, -2), (-1, -1), (0, -1),
+         (0, 0), (0, 1), (1, 1), (1, 2), (1, 3), (2, 4), (2, 5), (3, 7)]
 
     Integer points inside a parallelepiped::
 
         sage: from sage.rings.number_field.bdd_height import integer_points_in_polytope
-        sage: m = matrix([[1.2,3.7,0.2],[-5.3,-.43,3],[1.2,4.7,-2.1]])
+        sage: m = matrix([[1.2,3.7,0.2], [-5.3,-.43,3], [1.2,4.7,-2.1]])
         sage: r = 2.2
-        sage: L = integer_points_in_polytope(m,r)
+        sage: L = integer_points_in_polytope(m, r)
         sage: len(L)
         4143
 
     If ``interval_radius`` is 0, the output should include only the zero tuple::
 
         sage: from sage.rings.number_field.bdd_height import integer_points_in_polytope
-        sage: m = matrix([[1,2,3,7],[4,5,6,2],[7,8,9,3],[0,3,4,5]])
-        sage: integer_points_in_polytope(m,0)
+        sage: m = matrix([[1,2,3,7], [4,5,6,2], [7,8,9,3], [0,3,4,5]])
+        sage: integer_points_in_polytope(m, 0)
         [(0, 0, 0, 0)]
     """
     T = matrix
@@ -351,15 +352,15 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     multiplicative height at most ``height_bound``.
 
     The function can only be called for number fields `K` with positive unit
-    rank. An error will occur if `K` is `QQ` or an imaginary quadratic field.
+    rank. An error will occur if `K` is `\QQ` or an imaginary quadratic field.
 
-    This algorithm computes 2 lists: L containing elements x in `K` such that
-    H_k(x) <= B, and a list L' containing elements x in `K` that, due to
+    This algorithm computes 2 lists: `L`, containing elements `x` in `K` such that
+    `H_k(x) \leq B`, and a list `L'` containing elements `x` in `K` that, due to
     floating point issues,
     may be slightly larger then the bound. This can be controlled
     by lowering the tolerance.
 
-    In current implementation both lists (L,L') are merged and returned in
+    In current implementation both lists `(L,L')` are merged and returned in
     form of iterator.
 
     ALGORITHM:
@@ -377,7 +378,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     OUTPUT:
 
-    - an iterator of number field elements
+    an iterator of number field elements
 
     EXAMPLES:
 
@@ -385,35 +386,35 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<g> = NumberField(x^5 - x + 7)
-        sage: list(bdd_height(K,-3))
+        sage: list(bdd_height(K, -3))
         []
 
     The only nonzero elements of height 1 are the roots of unity::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<g> = QuadraticField(3)
-        sage: list(bdd_height(K,1))
+        sage: list(bdd_height(K, 1))
         [0, -1, 1]
 
     ::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<g> = QuadraticField(36865)
-        sage: len(list(bdd_height(K,101))) # long time (4 s)
+        sage: len(list(bdd_height(K, 101))) # long time (4 s)
         131
 
     ::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<g> = NumberField(x^6 + 2)
-        sage: len(list(bdd_height(K,60))) # long time (5 s)
+        sage: len(list(bdd_height(K, 60))) # long time (5 s)
         1899
 
     ::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<g> = NumberField(x^4 - x^3 - 3*x^2 + x + 1)
-        sage: len(list(bdd_height(K,10)))
+        sage: len(list(bdd_height(K, 10)))
         99
 
     TESTS:
@@ -455,14 +456,14 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     def delta_approximation(x, delta):
         r"""
-        Compute a rational number in range `(x-delta, x+delta)`
+        Compute a rational number in range `(x-\delta, x+\delta)`
         """
         return rational_in(x - delta, x + delta)
 
     def vector_delta_approximation(v, delta):
         r"""
         Compute a rational vector `w=(w_1, ..., w_n)`
-        such that `|v_i-w_i|<delta` for all `i` in `[1, n]`
+        such that `|v_i-w_i|<\delta` for all `i` in `[1, n]`
         """
         return [delta_approximation(vi, delta) for vi in v]
 

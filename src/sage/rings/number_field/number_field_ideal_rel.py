@@ -94,7 +94,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def _contains_(self, x):
         """
-        Return True if x is an element of this ideal.
+        Return ``True`` if `x` is an element of this ideal.
 
         This function is called (indirectly) when the ``in`` operator is used.
 
@@ -155,10 +155,10 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             Fractional ideal (13)
 
         Now a non-trivial ideal in `L` that is principal in the
-        subfield `K`.  Since the optional 'names' argument is not
-        passed, the generators of the absolute ideal J are returned
-        in terms of the default field generator 'a'. This does not agree
-        with the generator 'm' of the absolute field F defined above::
+        subfield `K`.  Since the optional ``names`` argument is not
+        passed, the generators of the absolute ideal `J` are returned
+        in terms of the default field generator `a`. This does not agree
+        with the generator `m` of the absolute field `F` defined above::
 
             sage: J = L.ideal(b); J
             Fractional ideal (b)
@@ -171,7 +171,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: J.absolute_ideal().norm()
             4
 
-        Now pass 'm' as the name for the generator of the absolute field::
+        Now pass `m` as the name for the generator of the absolute field::
 
             sage: J.absolute_ideal('m')
             Fractional ideal (m^2)
@@ -203,7 +203,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def _from_absolute_ideal(self, id):
         r"""
-        Convert the absolute ideal id to a relative number field ideal.
+        Convert the absolute ideal ``id`` to a relative number field ideal.
 
         WARNING:  This is an internal helper function.
 
@@ -292,7 +292,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def __invert__(self):
         """
-        Return the multiplicative inverse of self.  Call with ~self.
+        Return the multiplicative inverse of ``self``.  Call with ``~self``.
 
         EXAMPLES::
 
@@ -309,8 +309,8 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def is_principal(self, proof=None):
         """
-        Return True if this ideal is principal.  If so, set
-        self.__reduced_generators, with length one.
+        Return ``True`` if this ideal is principal.  If so, set
+        ``self.__reduced_generators``, with length one.
 
         EXAMPLES::
 
@@ -335,7 +335,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def is_zero(self):
         r"""
-        Return True if this is the zero ideal.
+        Return ``True`` if this is the zero ideal.
 
         EXAMPLES::
 
@@ -372,7 +372,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^2+6)
+            sage: K.<a> = NumberField(x^2 + 6)
             sage: L.<b> = K.extension(K['x'].gen()^4 + a)
             sage: N = L.ideal(b).relative_norm(); N
             Fractional ideal (-a)
@@ -421,7 +421,8 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.ideal(2).norm()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For a fractional ideal in a relative number field you must use relative_norm or absolute_norm as appropriate
+            NotImplementedError: For a fractional ideal in a relative number field
+            you must use relative_norm or absolute_norm as appropriate
         """
         raise NotImplementedError("For a fractional ideal in a relative number field you must use relative_norm or absolute_norm as appropriate")
 
@@ -432,12 +433,12 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^2+6)
+            sage: K.<a> = NumberField(x^2 + 6)
             sage: L.<b> = K.extension(K['x'].gen()^4 + a)
             sage: N = L.ideal(b)
             sage: M = N.ideal_below(); M == K.ideal([-a])
             True
-            sage: Np = L.ideal( [ L(t) for t in M.gens() ])
+            sage: Np = L.ideal([L(t) for t in M.gens()])
             sage: Np.ideal_below() == M
             True
             sage: M.parent()
@@ -497,7 +498,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K0.ideal([-a0 + 1]) == K0.ideal([-a0 + 5])
             False
 
-        It works when the base_field is itself a relative number field::
+        It works when the base field is itself a relative number field::
 
             sage: PQ.<X> = QQ[]
             sage: F.<a, b> = NumberFieldTower([X^2 - 2, X^2 - 3])
@@ -535,9 +536,11 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
             sage: K.<a, b> = QQ.extension([x^2 + 11, x^2 - 5])
             sage: K.factor(5)
-            (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4))^2 * (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 7/4))^2
+            (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4))^2
+             * (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 7/4))^2
             sage: K.ideal(5).factor()
-            (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4))^2 * (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 7/4))^2
+            (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4))^2
+             * (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 7/4))^2
             sage: K.ideal(5).prime_factors()
             [Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4),
              Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 7/4)]
@@ -565,13 +568,13 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def integral_basis(self):
         r"""
-        Return a basis for self as a `\ZZ`-module.
+        Return a basis for ``self`` as a `\ZZ`-module.
 
         EXAMPLES::
 
             sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
             sage: I = K.ideal(17*b - 3*a)
-            sage: x = I.integral_basis(); x # random
+            sage: x = I.integral_basis(); x  # random
             [438, -b*a + 309, 219*a - 219*b, 156*a - 154*b]
 
         The exact results are somewhat unpredictable, hence the ``# random``
@@ -625,7 +628,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def is_integral(self):
         """
-        Return True if this ideal is integral.
+        Return ``True`` if this ideal is integral.
 
         EXAMPLES::
 
@@ -641,15 +644,15 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
     def absolute_ramification_index(self):
         """
         Return the absolute ramification index of this fractional ideal,
-        assuming it is prime.  Otherwise, raise a ValueError.
+        assuming it is prime.  Otherwise, raise a :class:`ValueError`.
 
         The absolute ramification index is the power of this prime
         appearing in the factorization of the rational prime that
         this prime lies over.
 
-        Use relative_ramification_index to obtain the power of this
+        Use :meth:`relative_ramification_index` to obtain the power of this
         prime occurring in the factorization of the prime ideal
-        of the  base field that this prime lies over.
+        of the base field that this prime lies over.
 
         EXAMPLES::
 
@@ -672,13 +675,13 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
     def relative_ramification_index(self):
         """
         Return the relative ramification index of this fractional ideal,
-        assuming it is prime.  Otherwise, raise a ValueError.
+        assuming it is prime.  Otherwise, raise a :class:`ValueError`.
 
         The relative ramification index is the power of this prime
         appearing in the factorization of the prime ideal of the
         base field that this prime lies over.
 
-        Use absolute_ramification_index to obtain the power of this
+        Use :meth:`absolute_ramification_index` to obtain the power of this
         prime occurring in the factorization of the rational prime
         that this prime lies over.
 
@@ -706,7 +709,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def ramification_index(self):
         r"""
-        For ideals in relative number fields, ``ramification_index``
+        For ideals in relative number fields, :meth:`ramification_index`
         is deliberately not implemented in order to avoid ambiguity.
         Either :meth:`~relative_ramification_index` or
         :meth:`~absolute_ramification_index` should be used instead.
@@ -763,7 +766,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def element_1_mod(self, other):
         r"""
-        Returns an element `r` in this ideal such that `1-r` is in other.
+        Returns an element `r` in this ideal such that `1-r` is in ``other``.
 
         An error is raised if either ideal is not integral of if they
         are not coprime.
@@ -775,7 +778,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         OUTPUT:
 
         an element `r` of the ideal self such that `1-r` is in the
-        ideal other.
+        ideal ``other``.
 
         EXAMPLES::
 
@@ -821,7 +824,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def valuation(self, p):
         r"""
-        Return the valuation of this fractional ideal at ``p``.
+        Return the valuation of this fractional ideal at `\mathfrak{p}`.
 
         INPUT:
 
@@ -831,7 +834,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         (integer) The valuation of this fractional ideal at the prime
         `\mathfrak{p}`.  If `\mathfrak{p}` is not prime, raise a
-        ValueError.
+        :class:`ValueError`.
 
 
         EXAMPLES::
@@ -859,7 +862,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
 def is_NumberFieldFractionalIdeal_rel(x):
     """
-    Return True if x is a fractional ideal of a relative number field.
+    Return ``True`` if `x` is a fractional ideal of a relative number field.
 
     EXAMPLES::
 
@@ -875,7 +878,7 @@ def is_NumberFieldFractionalIdeal_rel(x):
         sage: is_NumberFieldFractionalIdeal_rel(I)
         False
         sage: R.<x> = QQ[]
-        sage: K.<a> = NumberField(x^2+6)
+        sage: K.<a> = NumberField(x^2 + 6)
         sage: L.<b> = K.extension(K['x'].gen()^4 + a)
         sage: I = L.ideal(b); I
         Fractional ideal (6, b)

@@ -178,7 +178,7 @@ class NumberFieldHomset(RingHomset_generic):
             sage: End(k).order()
             1
 
-            sage: K.<a> = NumberField( [x^3 + 2, x^2 + x + 1] )
+            sage: K.<a> = NumberField([x^3 + 2, x^2 + x + 1])
             sage: End(K).order()
             6
         """
@@ -189,7 +189,7 @@ class NumberFieldHomset(RingHomset_generic):
     @cached_method
     def list(self):
         """
-        Return a list of all the elements of self.
+        Return a list of all the elements of ``self``.
 
         EXAMPLES::
 
@@ -262,13 +262,14 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         sage: L.<cuberoot2, zeta3> = CyclotomicField(3).extension(x^3 - 2)
         sage: phi = L.hom([cuberoot2 * zeta3]); phi
-        Relative number field endomorphism of Number Field in cuberoot2 with defining polynomial x^3 - 2 over its base field
+        Relative number field endomorphism of
+         Number Field in cuberoot2 with defining polynomial x^3 - 2 over its base field
           Defn: cuberoot2 |--> zeta3*cuberoot2
                 zeta3 |--> zeta3
         sage: phi(cuberoot2 + zeta3)
         zeta3*cuberoot2 + zeta3
 
-    In fact, this phi is a generator for the Kummer Galois group of this
+    In fact, this ``phi`` is a generator for the Kummer Galois group of this
     cyclic extension::
 
         sage: phi(phi(cuberoot2 + zeta3))
@@ -423,7 +424,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
     @cached_method
     def default_base_hom(self):
         r"""
-        Pick an embedding of the base field of self into the codomain of this
+        Pick an embedding of the base field of ``self`` into the codomain of this
         homset. This is done in an essentially arbitrary way.
 
         EXAMPLES::
@@ -469,7 +470,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
     @cached_method
     def list(self):
         """
-        Return a list of all the elements of self (for which the domain
+        Return a list of all the elements of ``self`` (for which the domain
         is a relative number field).
 
         EXAMPLES::
@@ -477,11 +478,13 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
             sage: K.<a, b> = NumberField([x^2 + x + 1, x^3 + 2])
             sage: End(K).list()
             [
-            Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
+            Relative number field endomorphism of
+             Number Field in a with defining polynomial x^2 + x + 1 over its base field
               Defn: a |--> a
                     b |--> b,
             ...
-            Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
+            Relative number field endomorphism of
+             Number Field in a with defining polynomial x^2 + x + 1 over its base field
               Defn: a |--> a
                     b |--> -b*a - b
             ]
@@ -575,7 +578,7 @@ class CyclotomicFieldHomset(NumberFieldHomset):
     @cached_method
     def list(self):
         """
-        Return a list of all the elements of self (for which the domain
+        Return a list of all the elements of ``self`` (for which the domain
         is a cyclotomic field).
 
         EXAMPLES::

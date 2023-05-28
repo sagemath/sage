@@ -87,17 +87,17 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
 
     def preimage(self, y):
         r"""
-        Computes a preimage of `y` in the domain, provided one exists.
-        Raises a ValueError if `y` has no preimage.
+        Compute a preimage of `y` in the domain, provided one exists.
+        Raises a :class:`ValueError` if `y` has no preimage.
 
         INPUT:
 
-        - `y` -- an element of the codomain of self.
+        - ``y`` -- an element of the codomain of ``self``.
 
         OUTPUT:
 
         Returns the preimage of `y` in the domain, if one exists.
-        Raises a ValueError if `y` has no preimage.
+        Raises a :class:`ValueError` if `y` has no preimage.
 
         EXAMPLES::
 
@@ -114,9 +114,9 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
         ::
 
             sage: F.<b> = QuadraticField(23)
-            sage: G.<a> = F.extension(x^3+5)
+            sage: G.<a> = F.extension(x^3 + 5)
             sage: f = F.embeddings(G)[0]
-            sage: f.preimage(a^3+2*b+3)
+            sage: f.preimage(a^3 + 2*b + 3)
             2*b - 2
         """
         # Throughout this method I am using the convention that self is a homomorphism from the number field K to the number field L
@@ -156,7 +156,8 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
             sage: K.<a, b> = NumberField( [x^3 + 2, x^2 + x + 1] )
             sage: f = K.hom(-a*b - a, K); f
-            Relative number field endomorphism of Number Field in a with defining polynomial x^3 + 2 over its base field
+            Relative number field endomorphism of
+             Number Field in a with defining polynomial x^3 + 2 over its base field
               Defn: a |--> (-b - 1)*a
                     b |--> b
             sage: type(f)
@@ -175,10 +176,11 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a, b> = NumberField( [x^3 + 2, x^2 + x + 1] )
+            sage: K.<a, b> = NumberField([x^3 + 2, x^2 + x + 1])
             sage: K.hom(a, K).abs_hom()
             Ring morphism:
-              From: Number Field in a with defining polynomial x^6 - 3*x^5 + 6*x^4 - 3*x^3 - 9*x + 9
+              From: Number Field in a with defining polynomial
+                    x^6 - 3*x^5 + 6*x^4 - 3*x^3 - 9*x + 9
               To:   Number Field in a with defining polynomial x^3 + 2 over its base field
               Defn: a |--> a - b
         """
@@ -203,7 +205,7 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a, b> = NumberField( [x^3 + 2, x^2 + x + 1] )
+            sage: K.<a, b> = NumberField([x^3 + 2, x^2 + x + 1])
             sage: K.hom(a, K).im_gens()
             [a, b]
         """
@@ -230,7 +232,7 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a, b> = NumberField( [x^3 + 2, x^2 + x + 1] )
+            sage: K.<a, b> = NumberField([x^3 + 2, x^2 + x + 1])
             sage: K.hom(a, K)._repr_defn()
             'a |--> a\nb |--> b'
         """
@@ -249,7 +251,7 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<a, b> = NumberField( [x^3 + 2, x^2 + x + 1] )
+            sage: K.<a, b> = NumberField([x^3 + 2, x^2 + x + 1])
             sage: K.hom(a*b, K)(17 + 3*a + 2*b) # indirect doctest
             3*b*a + 2*b + 17
         """

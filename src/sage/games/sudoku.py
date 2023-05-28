@@ -464,7 +464,7 @@ class Sudoku(SageObject):
         nsquare = n*n
         array = []
         array.append('\\begin{array}{|*{%s}{*{%s}{r}|}}\\hline\n' % (n, n))
-        gen = (x for x in self.puzzle)
+        gen = iter(self.puzzle)
         for row in range(nsquare):
             for col in range(nsquare):
                 entry = next(gen)

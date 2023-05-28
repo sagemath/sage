@@ -4,8 +4,7 @@ Enumeration of Totally Real Fields: PHC interface
 
 AUTHORS:
 
-    -- John Voight (2007-10-10):
-        * Zeroth attempt.
+- John Voight (2007-10-10): Zeroth attempt.
 """
 
 # ****************************************************************************
@@ -24,14 +23,14 @@ import sage.misc.misc
 
 def coefficients_to_power_sums(n, m, a):
     r"""
-    Takes the list a, representing a list of initial coefficients of
-    a (monic) polynomial of degree n, and returns the power sums
-    of the roots of f up to (m-1)th powers.
+    Take the list ``a``, representing a list of initial coefficients of
+    a (monic) polynomial of degree `n`, and return the power sums
+    of the roots of `f` up to `(m-1)`-th powers.
 
     INPUT:
 
-    - n -- integer, the degree
-    - a -- list of integers, the coefficients
+    - ``n`` -- integer, the degree
+    - ``a`` -- list of integers, the coefficients
 
     OUTPUT:
 

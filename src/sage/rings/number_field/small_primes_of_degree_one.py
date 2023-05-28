@@ -109,17 +109,17 @@ class Small_primes_of_degree_one_iter():
 
     INPUT:
 
-    - ``field`` -- a ``NumberField``.
+    - ``field`` -- a :class:`NumberField`.
 
-    - ``num_integer_primes`` (default: 10000) -- an integer.  We try to find
+    - ``num_integer_primes`` -- (default: 10000) an integer.  We try to find
       primes of absolute norm no greater than the
       ``num_integer_primes``-th prime number. For example, if
       ``num_integer_primes`` is 2, the largest norm found will be 3, since
       the second prime is 3.
 
-    - ``max_iterations`` (default: 100) -- an integer. We test
+    - ``max_iterations`` -- (default: 100) an integer. We test
       ``max_iterations`` integers to find small primes before raising
-      ``StopIteration``.
+      :class:`StopIteration`.
 
     AUTHOR:
 

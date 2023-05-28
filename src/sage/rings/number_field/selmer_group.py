@@ -354,23 +354,23 @@ def basis_for_p_cokernel(S, C, p):
 
 def pSelmerGroup(K, S, p, proof=None, debug=False):
     r"""
-    Return the ``p``-Selmer group `K(S,p)` of the number field ``K``
-    with respect to the prime ideals in ``S``
+    Return the `p`-Selmer group `K(S,p)` of the number field `K`
+    with respect to the prime ideals in ``S``.
 
     INPUT:
 
-    - ``K`` (number field) -- a number field, or `\QQ`.
+    - ``K`` -- a number field or `\QQ`.
 
-    - ``S`` (list) -- a list of prime ideals in ``K``, or prime
-      numbers when ``K`` is `\QQ`.
+    - ``S`` -- a list of prime ideals in `K`, or prime
+      numbers when `K` is `\QQ`.
 
-    - ``p`` (prime) -- a prime number.
+    - ``p`` -- a prime number.
 
-    - ``proof`` - if True then compute the class group provably
-      correctly. Default is True. Call :meth:`proof.number_field` to
+    - ``proof`` -- if ``True``, compute the class group provably
+      correctly. Default is ``True``. Call :meth:`proof.number_field` to
       change this default globally.
 
-    - ``debug`` (boolean, default ``False``) -- debug flag.
+    - ``debug`` -- (boolean, default ``False``) debug flag.
 
     OUTPUT:
 
