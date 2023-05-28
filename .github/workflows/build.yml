@@ -53,7 +53,7 @@ jobs:
           # But /sage is not a git repository.
           # We make /sage a worktree whose index is at tag "new".
           # We then commit the current sources and set the tag "old". (This keeps all mtimes unchanged.)
-          # Then we update worktree and index with "git reset --hard".
+          # Then we update worktree and index with "git reset --hard new".
           # (This keeps mtimes of unchanged files unchanged and mtimes of changed files newer than unchanged files.)
           # Finally we reset the index to "old". (This keeps all mtimes unchanged.)
           # The changed files now show up as uncommitted changes.
