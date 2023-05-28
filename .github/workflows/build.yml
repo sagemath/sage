@@ -43,13 +43,27 @@ jobs:
           set -ex
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build & Test workflow"
-          # If actions/checkout downloaded using the GitHub REST API:
+          # If actions/checkout downloaded our source tree using the GitHub REST API
+          # instead of with git (because do not have git installed in our image),
+          # we first make the source tree a repo.
           if [ ! -d .git ]; then git config --global --add safe.directory $(pwd) && git init && git add -A && git commit --quiet -m "new"; fi
-          # Make the source tree from the container image a worktree:
-          git worktree add --detach worktree-image && git tag -f new
+          # Tag this state of the source tree "new". This is what we want to build and test.
+          git tag -f new
+          # Our container image contains a source tree in /sage with a full build of Sage.
+          # But /sage is not a git repository.
+          # We make /sage a worktree whose index is at tag "new".
+          # We then commit the current sources and set the tag "old". (This keeps all mtimes unchanged.)
+          # Then we update worktree and index with "git reset --hard".
+          # (This keeps mtimes of unchanged files unchanged and mtimes of changed files newer than unchanged files.)
+          # Finally we reset the index to "old". (This keeps all mtimes unchanged.)
+          # The changed files now show up as uncommitted changes.
+          git worktree add --detach worktree-image
           rm -rf /sage/.git && mv worktree-image/.git /sage/
           rm -rf worktree-image && ln -s /sage worktree-image
-          (cd /sage && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old && ./bootstrap && make build && ./sage -t --new -p2)
+          (cd worktree-image && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
+          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
+          # We run tests with "sage -t --new"; this only tests the uncommitted changes.
+          (cd worktree-image && ./bootstrap && make build && ./sage -t --new -p2)
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
