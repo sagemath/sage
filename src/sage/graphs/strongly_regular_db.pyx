@@ -2575,8 +2575,6 @@ def SRG_176_90_38_54():
         sage: G.is_strongly_regular(parameters=True)
         (176, 90, 38, 54)
     """
-    from sage.graphs.generators.basic import CompleteGraph
-    from sage.misc.flatten import flatten
     g = SRG_175_72_20_36()
     g.relabel(range(175))
     # c=filter(lambda x: len(x)==5, g.cliques_maximal())

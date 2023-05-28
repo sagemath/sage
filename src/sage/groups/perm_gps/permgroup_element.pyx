@@ -109,7 +109,6 @@ Check that :trac:`13569` is fixed::
 # ****************************************************************************
 
 import copy
-import random
 
 from libc.stdlib cimport qsort
 
@@ -136,8 +135,8 @@ from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.gap_includes cimport (UInt, UInt2, UInt4, T_PERM2, T_PERM4,
-        NEW_PERM2, NEW_PERM4, TNUM_OBJ, DEG_PERM2, DEG_PERM4, CONST_ADDR_PERM2,
-        CONST_ADDR_PERM4, ADDR_PERM2, ADDR_PERM4)
+        NEW_PERM2, TNUM_OBJ, DEG_PERM2, DEG_PERM4, CONST_ADDR_PERM2,
+        CONST_ADDR_PERM4, ADDR_PERM2)
 from sage.libs.gap.util cimport initialize
 from sage.libs.gap.element cimport (GapElement, GapElement_List,
         GapElement_String, GapElement_Permutation, make_GapElement_Permutation)

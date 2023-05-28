@@ -42,12 +42,12 @@ from libc.stdint cimport uint32_t
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
-from cysignals.signals cimport sig_on, sig_off, sig_check
+from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
+from sage.graphs.base.static_sparse_graph cimport out_degree
 
 
 def _is_valid_lex_BFS_order(G, L):
