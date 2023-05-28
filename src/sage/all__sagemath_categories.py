@@ -20,3 +20,5 @@ from sage.schemes.all__sagemath_categories import *
 
 from sage.calculus.all__sagemath_categories import *
 from sage.functions.all import *
+
+from sage.parallel.all import *
