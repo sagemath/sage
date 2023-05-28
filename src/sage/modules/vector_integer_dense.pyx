@@ -62,8 +62,6 @@ from sage.rings.integer cimport Integer, _Integer_from_mpz
 
 cimport sage.modules.free_module_element as free_module_element
 
-from .free_module_element import vector
-
 from sage.libs.gmp.mpz cimport *
 
 cdef class Vector_integer_dense(free_module_element.FreeModuleElement):

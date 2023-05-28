@@ -1394,8 +1394,8 @@ class FanMorphism(FreeModuleMorphism):
             return prod(self.factor()[1:]).is_injective()
         # Now we know that underlying lattice morphism is bijective.
         Sigma = self.domain_fan()
-        return all(all(self.image_cone(sigma).dim() == d for sigma in Sigma(d))
-                   for d in range(1, Sigma.dim() + 1))
+        return all(self.image_cone(sigma).dim() == d
+                   for d in range(1, Sigma.dim() + 1) for sigma in Sigma(d))
 
     @cached_method
     def is_surjective(self):

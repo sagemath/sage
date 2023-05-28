@@ -23,14 +23,9 @@ from sage.structure.richcmp cimport richcmp, rich_to_bool
 from cpython.object cimport Py_NE, Py_EQ
 
 from sage.misc.repr import repr_lincomb
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.superseded import deprecation
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
-from sage.categories.category import Category
-from sage.categories.sets_cat import Sets
-from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
 
 

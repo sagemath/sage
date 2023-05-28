@@ -2,7 +2,6 @@ r"""
 Base class for multivariate polynomial rings
 """
 import itertools
-import warnings
 from collections.abc import Iterable
 
 import sage.misc.latex
@@ -23,7 +22,6 @@ from sage.arith.misc import binomial
 
 from sage.rings.integer_ring import ZZ
 
-from .polydict import PolyDict
 from . import polynomial_ring
 from .term_order import TermOrder
 from .polynomial_ring_constructor import (PolynomialRing,

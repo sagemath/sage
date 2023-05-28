@@ -506,7 +506,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
                 x = x.replace('j', 'I')
                 x = x.replace('E', 'e')
                 allowed = '+-.*0123456789Ie'
-                if not all(letter in allowed for letter in x):
+                if len(x) == 0 or not all(letter in allowed for letter in x):
                     raise ValueError(f'given string {x!r} is not a complex number')
                 # This should rather use a proper parser to validate input.
                 # TODO: this is probably not the best and most

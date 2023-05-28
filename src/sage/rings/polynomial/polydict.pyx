@@ -715,7 +715,7 @@ cdef class PolyDict:
             return True
         if len(self.__repn) > 1:
             return False
-        return not any(e for e in self.__repn)
+        return not any(self.__repn)
 
     def homogenize(self, size_t var):
         r"""

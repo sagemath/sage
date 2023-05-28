@@ -2072,7 +2072,7 @@ class IncidenceStructure():
             raise RuntimeError("No coloring can be defined "
                                "when there is a set of size 1")
         elif k == 1:
-            if any(x for x in self._blocks):
+            if any(self._blocks):
                 raise ValueError("This hypergraph contains a set. "
                                  "It is not 1-chromatic")
             return [self.ground_set()]

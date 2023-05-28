@@ -1002,7 +1002,7 @@ class Posets(metaclass=ClasscallMetaclass):
             return all(ix <= iy for x, y in zip(a, b) for ix, iy in zip(x, y))
 
         if f is None:
-            f = sum(i for i in s)
+            f = sum(s)
         E = SemistandardTableaux(s, max_entry=f)
         return LatticePoset((E, tableaux_is_less_than))
 

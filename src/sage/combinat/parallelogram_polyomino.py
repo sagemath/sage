@@ -2653,7 +2653,7 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp.area()
             0
         """
-        return sum(h for h in self.heights())
+        return sum(self.heights())
 
     def _repr_(self) -> str:
         r"""

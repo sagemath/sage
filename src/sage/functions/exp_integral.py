@@ -604,8 +604,8 @@ class Function_log_integral_offset(BuiltinFunction):
         1/log(x)
         sage: f.integrate(x)                                                            # optional - sage.symbolic
         -x*log_integral(2) + x*log_integral(x) - Ei(2*log(x))
-        sage: Li(x).integrate(x, 2.0, 4.5)                                              # optional - sage.symbolic
-        -2.5*log_integral(2) + 5.799321147411334
+        sage: Li(x).integrate(x, 2.0, 4.5).n(digits=10)                                 # optional - sage.symbolic
+        3.186411697
         sage: N(f.integrate(x, 2.0, 3.0))   # abs tol 1e-15                             # optional - sage.symbolic
         0.601621785860587
 

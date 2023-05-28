@@ -1474,7 +1474,7 @@ class PiecewiseFunction(BuiltinFunction):
             args = [(domain._giac_condition_(variable),
                      func._giac_init_())
                     for domain, func in parameters]
-            args = ",".join(a for a in flatten(args))
+            args = ",".join(flatten(args))
             return f"piecewise({args})"
 
 

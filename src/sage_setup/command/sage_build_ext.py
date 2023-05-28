@@ -70,7 +70,6 @@ class sage_build_ext(build_ext):
             print("self.compiler.linker_so (after fixing library dirs):")
             print(self.compiler.linker_so)
 
-
         # First, sanity-check the 'extensions' list
         self.check_extensions_list(self.extensions)
 

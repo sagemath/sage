@@ -183,13 +183,13 @@ from sage.libs.singular.decl cimport (ring, poly, ideal, intvec, number,
 # singular functions
 from sage.libs.singular.decl cimport (
     errorreported,
-    n_IsUnit, n_Invers, n_GetChar,
+    n_Invers, n_GetChar,
     p_ISet, rChangeCurrRing, p_Copy, p_Init, p_SetCoeff, p_Setm, p_SetExp, p_Add_q,
     p_NSet, p_GetCoeff, p_Delete, p_GetExp, pNext, rRingVar, omAlloc0, omStrDup,
     omFree, p_Divide, p_SetCoeff0, n_Init, p_DivisibleBy, pLcm, p_LmDivisibleBy,
     pMDivide, p_MDivide, p_IsConstant, p_ExpVectorEqual, p_String, p_LmInit, n_Copy,
-    p_IsUnit, p_IsOne, p_Series, p_Head, idInit, fast_map_common_subexp, id_Delete,
-    p_IsHomogeneous, p_Homogen, p_Totaldegree,pLDeg1_Totaldegree, singclap_pdivide, singclap_factorize,
+    p_IsUnit, p_IsOne, p_Head, idInit, fast_map_common_subexp, id_Delete,
+    p_IsHomogeneous, p_Homogen, p_Totaldegree, singclap_pdivide, singclap_factorize,
     idLift, IDELEMS, On, Off, SW_USE_CHINREM_GCD, SW_USE_EZGCD,
     p_LmIsConstant, pTakeOutComp, singclap_gcd, pp_Mult_qq, p_GetMaxExp,
     pLength, kNF, p_Neg, p_Minus_mm_Mult_qq, p_Plus_mm_Mult_qq,
@@ -220,13 +220,11 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 
 # base ring imports
 import sage.rings.abc
-from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.rational cimport Rational
 from sage.rings.rational_field import QQ
 import sage.rings.abc
 from sage.rings.integer_ring import is_IntegerRing, ZZ
 from sage.rings.integer cimport Integer
-from sage.rings.integer import GCD_list
 from sage.rings.number_field.number_field_base cimport NumberField
 
 from sage.rings.number_field.order import is_NumberFieldOrder
@@ -238,7 +236,7 @@ from sage.structure.parent cimport Parent
 from sage.structure.category_object cimport CategoryObject
 
 from sage.structure.coerce cimport coercion_model
-from sage.structure.element cimport Element, CommutativeRingElement
+from sage.structure.element cimport Element
 
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.factorization import Factorization
@@ -1378,7 +1376,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         if singular is None:
             from sage.interfaces.singular import singular
 
-        if self.ngens()==1:
+        if self.ngens() == 1:
             _vars = str(self.gen())
             if "*" in _vars: # 1.000...000*x
                 _vars = _vars.split("*")[1]

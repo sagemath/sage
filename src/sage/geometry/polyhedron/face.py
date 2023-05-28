@@ -1074,7 +1074,7 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     elif polyhedron.backend() in ('normaliz', 'cdd', 'field', 'number_field', 'polymake'):
         # Equations after the inequalities in Hrep.
         n_ieqs = polyhedron.n_inequalities()
-        H_indices = tuple(x for x in combinatorial_face.ambient_H_indices(add_equations=False))
+        H_indices = tuple(combinatorial_face.ambient_H_indices(add_equations=False))
         H_indices += tuple(range(n_ieqs, n_ieqs + n_equations))
     else:
         raise NotImplementedError("unknown backend")

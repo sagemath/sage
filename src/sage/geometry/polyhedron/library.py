@@ -458,7 +458,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
             ker = Matrix(base_ring, vectors).left_kernel()
         else:
             ker = Matrix(vectors).left_kernel()
-        solutions = Polyhedron(lines=tuple(y for y in ker.basis_matrix()), base_ring=base_ring, backend=backend)
+        solutions = Polyhedron(lines=tuple(ker.basis_matrix()), base_ring=base_ring, backend=backend)
 
         from sage.matrix.special import identity_matrix
         pos_orthant = Polyhedron(rays=identity_matrix(len(vectors)), base_ring=base_ring, backend=backend)
@@ -2028,7 +2028,7 @@ class Polytopes():
         q12 = QQ((1, 2))
         verts = list(itertools.product([q12, -q12], repeat=4))
         B4 = (ZZ**4).basis()
-        verts.extend(v for v in B4)
+        verts.extend(B4)
         verts.extend(-v for v in B4)
         return Polyhedron(vertices=verts, backend=backend)
 

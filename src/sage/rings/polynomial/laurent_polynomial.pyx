@@ -12,7 +12,7 @@ Elements of Laurent polynomial rings
 
 from sage.rings.integer cimport Integer
 from sage.categories.map cimport Map
-from sage.structure.element import is_Element, coerce_binop, parent
+from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent

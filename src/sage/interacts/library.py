@@ -849,7 +849,7 @@ def special_points(
 @library_interact(
     n=lambda: slider(2, 10000, 100, default=1000, label="Number of Tosses"),
     interval=lambda: range_slider(
-        0, 1, default=(0.45, 0.55), label="Plotting range (y)"
+        0.0, 1.0, default=(0.45, 0.55), label="Plotting range (y)"
     ),
 )
 def coin(n, interval):
@@ -878,7 +878,7 @@ def coin(n, interval):
         sage: interacts.statistics.coin()
         ...Interactive function <function coin at ...> with 2 widgets
           n: IntSlider(value=1000, description='Number of Tosses', max=10000, min=2, step=100)
-          interval: IntRangeSlider(value=(0, 0), description='Plotting range (y)', max=1)
+          interval: FloatRangeSlider(value=(0.45, 0.55), description='Plotting range (y)', max=1.0)
     """
     from random import random
     c = []
