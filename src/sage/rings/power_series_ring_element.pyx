@@ -95,8 +95,6 @@ With power series the behavior is the same.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import operator
-
 from cpython.object cimport Py_EQ, Py_NE
 from .infinity import infinity, is_Infinite
 
@@ -107,11 +105,8 @@ import sage.rings.polynomial.polynomial_element
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
-from . import rational_field
-from . import integer_ring
 from .integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from warnings import warn
 
 from sage.categories.fields import Fields
 _Fields = Fields()
@@ -120,7 +115,7 @@ from sage.misc.derivative import multi_derivative
 
 Polynomial = sage.rings.polynomial.polynomial_element.Polynomial_generic_dense
 
-from sage.structure.element cimport AlgebraElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport AlgebraElement, RingElement
 from sage.structure.richcmp cimport richcmp
 
 

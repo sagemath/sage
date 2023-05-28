@@ -45,7 +45,7 @@ include "sage/libs/ntl/decl.pxi"
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
-from sage.libs.mpfi cimport mpfi_t, mpfi_init, mpfi_set, mpfi_clear, mpfi_div_z, mpfi_init2, mpfi_get_prec, mpfi_set_prec
+from sage.libs.mpfi cimport mpfi_t, mpfi_clear, mpfi_div_z, mpfi_init2, mpfi_get_prec, mpfi_set_prec
 from sage.libs.mpfr cimport mpfr_equal_p, mpfr_less_p, mpfr_greater_p, mpfr_greaterequal_p, mpfr_floor, mpfr_get_z, MPFR_RNDN
 from sage.libs.ntl.error import NTLError
 from sage.libs.ntl.convert cimport mpz_to_ZZ
@@ -67,12 +67,10 @@ from sage.rings.real_mpfi cimport RealIntervalFieldElement
 
 cimport sage.rings.number_field.number_field_base as number_field_base
 
-from sage.rings.integer_ring cimport IntegerRing_class
 from sage.rings.rational cimport Rational
 from sage.rings.infinity import infinity
 from sage.categories.fields import Fields
 from sage.misc.superseded import deprecation
-from sage.modules.free_module_element import vector
 
 from sage.structure.element cimport Element, FieldElement
 from sage.structure.element cimport parent
@@ -2997,7 +2995,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             from sage.functions.log import exp
             from sage.rings.complex_mpfr import ComplexField
             from sage.rings.imaginary_unit import I
-            from sage.rings.real_mpfr import RR
             from sage.symbolic.constants import pi
             CC = ComplexField(53)
             two_pi_i = 2 * pi * I

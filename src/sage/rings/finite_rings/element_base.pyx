@@ -505,7 +505,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         if var is None:
             var = self.parent().variable_name()
-        from sage.libs.pari.all import pari
         ffgen = self._parent.modulus()._pari_with_name(var).ffgen()
         polypari = self.polynomial()._pari_with_name()
         # Add ffgen - ffgen to ensure that we really get an FFELT
