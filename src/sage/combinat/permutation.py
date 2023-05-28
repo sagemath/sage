@@ -4258,27 +4258,27 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: p = Permutation([2, 1, 4, 5, 3]); q = Permutation([2, 5, 4, 1, 3])
-            sage: p.right_permutohedron_interval(q)                                     # optional - sage.graphs
+            sage: p.right_permutohedron_interval(q)                                     # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
 
         TESTS::
 
-            sage: Permutation([]).right_permutohedron_interval(Permutation([]))                             # optional - sage.graphs
+            sage: Permutation([]).right_permutohedron_interval(Permutation([]))                             # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[]]
-            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))               # optional - sage.graphs
+            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))               # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[3, 1, 2]]
-            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))         # optional - sage.graphs
+            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))         # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[3, 1, 4, 2], [3, 4, 1, 2], [3, 4, 2, 1], [1, 3, 4, 2],
              [1, 3, 2, 4], [3, 2, 4, 1], [3, 2, 1, 4], [3, 1, 2, 4]]
-            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))   # optional - sage.graphs
+            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))   # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
-            sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))   # optional - sage.graphs
+            sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))   # optional - sage.graphs sage.modules sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: [2, 5, 4, 1, 3] must be lower or equal than [2, 1, 4, 5, 3] for the right permutohedron order
-            sage: Permutation([2, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))      # optional - sage.graphs
+            sage: Permutation([2, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))      # optional - sage.graphs sage.modules sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: len([2, 4, 1, 3]) and len([2, 1, 4, 5, 3]) must be equal
@@ -5503,7 +5503,7 @@ class Permutations(UniqueRepresentation, Parent):
 
         sage: p = Permutations(descents=([1], 4)); p
         Standard permutations of 4 with descents [1]
-        sage: p.list()                                                                  # optional - sage.graphs
+        sage: p.list()                                                                  # optional - sage.graphs sage.modules sage.rings.finite_rings
         [[2, 4, 1, 3], [3, 4, 1, 2], [1, 4, 2, 3], [1, 3, 2, 4], [2, 3, 1, 4]]
 
     ::

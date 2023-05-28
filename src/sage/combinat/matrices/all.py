@@ -10,10 +10,11 @@ Combinatorics on matrices
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
+from .all__sagemath_categories import *
+
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.combinat.matrices.latin',
             ['LatinSquare', 'LatinSquare_generator'])
-lazy_import('sage.combinat.matrices.dlxcpp', 'DLXCPP')
 lazy_import('sage.combinat.matrices.hadamard_matrix',
             ['hadamard_matrix', 'hadamard_matrix_www'])

@@ -124,7 +124,7 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[]})
-            sage: list(H.linear_extensions())
+            sage: list(H.linear_extensions())                                           # optional - sage.modules
             [[0, 1, 2, 3], [0, 2, 1, 3]]
         """
         from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
@@ -1175,12 +1175,12 @@ class HasseDiagram(DiGraph):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()._hasse_diagram
+            sage: P = posets.PentagonPoset()._hasse_diagram                             # optional - sage.modules
             sage: M = P.coxeter_transformation()                                        # optional - sage.libs.flint sage.modules
             sage: M**8 == 1                                                             # optional - sage.libs.flint sage.modules
             True
             sage: P.__dict__['coxeter_transformation'].clear_cache()                    # optional - sage.libs.flint sage.modules
-            sage: P.coxeter_transformation(algorithm="banana")
+            sage: P.coxeter_transformation(algorithm="banana")                          # optional - sage.libs.flint sage.modules
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm
@@ -2233,21 +2233,21 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,2],1:[4],2:[3],3:[4]})
-            sage: list(H.antichains_iterator())
+            sage: list(H.antichains_iterator())                                         # optional - sage.modules
             [[], [4], [3], [2], [1], [1, 3], [1, 2], [0]]
 
             sage: H = HasseDiagram({0:[],1:[],2:[]})
-            sage: list(H.antichains_iterator())
+            sage: list(H.antichains_iterator())                                         # optional - sage.modules
             [[], [2], [1], [1, 2], [0], [0, 2], [0, 1], [0, 1, 2]]
 
             sage: H = HasseDiagram({0:[1],1:[2],2:[3],3:[4]})
-            sage: list(H.antichains_iterator())
+            sage: list(H.antichains_iterator())                                         # optional - sage.modules
             [[], [4], [3], [2], [1], [0]]
 
         TESTS::
 
             sage: H = Poset()._hasse_diagram
-            sage: list(H.antichains_iterator())
+            sage: list(H.antichains_iterator())                                         # optional - sage.modules
             [[]]
         """
         # NOTE: Ordering of antichains as a prefix tree is crucial for

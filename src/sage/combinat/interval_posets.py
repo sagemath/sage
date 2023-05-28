@@ -613,11 +613,11 @@ class TamariIntervalPoset(Element,
 
         TESTS::
 
-            sage: T = TamariIntervalPosets(20).random_element()
-            sage: facs = factor(T)
-            sage: all(U.is_connected() for U in facs)
+            sage: T = TamariIntervalPosets(20).random_element()                         # optional - sage.combinat
+            sage: facs = factor(T)                                                      # optional - sage.combinat
+            sage: all(U.is_connected() for U in facs)                                   # optional - sage.combinat
             True
-            sage: T == prod(facs)
+            sage: T == prod(facs)                                                       # optional - sage.combinat
             True
         """
         hasse = self.poset().hasse_diagram()
@@ -1032,10 +1032,10 @@ class TamariIntervalPoset(Element,
             sage: ip = TamariIntervalPoset(3,[])
             sage: ip.cubical_coordinates()
             (0, 0)
-            sage: ip = TamariIntervalPosets(10).random_element()
-            sage: len(ip.cubical_coordinates())
+            sage: ip = TamariIntervalPosets(10).random_element()                        # optional - sage.combinat
+            sage: len(ip.cubical_coordinates())                                         # optional - sage.combinat
             9
-            sage: sorted(ip.cubical_coordinates() for ip in TamariIntervalPosets(2))
+            sage: sorted(ip.cubical_coordinates() for ip in TamariIntervalPosets(2))    # optional - sage.combinat
             [(-1,), (0,), (1,)]
 
         REFERENCES:
@@ -2533,7 +2533,7 @@ class TamariIntervalPoset(Element,
 
         TESTS::
 
-            sage: ex = TamariIntervalPosets(4).random_element()
+            sage: ex = TamariIntervalPosets(4).random_element()                         # optional - sage.combinat
             sage: dec = ex.new_decomposition()                                          # optional - sage.combinat
             sage: len(dec) == ex.number_of_new_components()                             # optional - sage.combinat
             True

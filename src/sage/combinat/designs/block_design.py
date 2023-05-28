@@ -54,14 +54,17 @@ Functions and methods
 #*****************************************************************************
 from sage.arith.misc import binomial, integer_floor, is_prime_power
 from sage.categories.sets_cat import EmptySetError
-from sage.modules.free_module import VectorSpace
+from sage.misc.lazy_import import lazy_import
+from sage.misc.unknown import Unknown
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+
 from .incidence_structures import IncidenceStructure
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.misc.unknown import Unknown
-from sage.matrix.matrix_space import MatrixSpace
-from sage.libs.gap.libgap import libgap
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
+lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
+lazy_import('sage.modules.free_module', 'VectorSpace')
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'FiniteField')
 
 
 BlockDesign = IncidenceStructure

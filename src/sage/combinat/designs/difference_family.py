@@ -5,7 +5,7 @@ Difference families
 This module gathers everything related to difference families. One can build a
 difference family (or check that it can be built) with :func:`difference_family`::
 
-    sage: G,F = designs.difference_family(13,4,1)
+    sage: G,F = designs.difference_family(13,4,1)                                       # optional - sage.modules
 
 It defines the following functions:
 
@@ -70,9 +70,9 @@ def group_law(G):
         sage: from sage.combinat.designs.difference_family import group_law
         sage: group_law(Zmod(3))
         (0, <built-in function add>, <built-in function neg>)
-        sage: group_law(SymmetricGroup(5))
+        sage: group_law(SymmetricGroup(5))                                              # optional - sage.groups
         ((), <built-in function mul>, <built-in function inv>)
-        sage: group_law(VectorSpace(QQ,3))
+        sage: group_law(VectorSpace(QQ, 3))                                             # optional - sage.modules
         ((0, 0, 0), <built-in function add>, <built-in function neg>)
     """
     import operator
@@ -176,13 +176,13 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
         sage: is_difference_family(G, D)
         True
 
-        sage: G = AdditiveAbelianGroup([3]*4)
-        sage: a,b,c,d = G.gens()
-        sage: D = [[d, -a+d, -c+d, a-b-d, b+c+d],
+        sage: G = AdditiveAbelianGroup([3]*4)                                           # optional - sage.modules
+        sage: a,b,c,d = G.gens()                                                        # optional - sage.modules
+        sage: D = [[d, -a+d, -c+d, a-b-d, b+c+d],                                       # optional - sage.modules
         ....:      [c, a+b-d, -b+c, a-b+d, a+b+c],
         ....:      [-a-b+c+d, a-b-c-d, -a+c-d, b-c+d, a+b],
         ....:      [-b-d, a+b+d, a-b+c-d, a-b+c, -b+c+d]]
-        sage: is_difference_family(G, D)
+        sage: is_difference_family(G, D)                                                # optional - sage.modules
         True
 
     The following example has a third block with a non-trivial stabilizer::
@@ -195,23 +195,23 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
     The function also supports multiplicative groups (non necessarily Abelian)::
 
-        sage: G = DihedralGroup(8)
-        sage: x,y = G.gens()
-        sage: i = G.one()
-        sage: D1 = [[i,x,x^4], [i,x^2, y*x], [i,x^5,y], [i,x^6,y*x^2], [i,x^7,y*x^5]]
-        sage: is_difference_family(G, D1, 16, 3, 2)
+        sage: G = DihedralGroup(8)                                                      # optional - sage.groups
+        sage: x,y = G.gens()                                                            # optional - sage.groups
+        sage: i = G.one()                                                               # optional - sage.groups
+        sage: D1 = [[i,x,x^4], [i,x^2, y*x], [i,x^5,y], [i,x^6,y*x^2], [i,x^7,y*x^5]]   # optional - sage.groups
+        sage: is_difference_family(G, D1, 16, 3, 2)                                     # optional - sage.groups
         True
         sage: from sage.combinat.designs.bibd import BIBD_from_difference_family
-        sage: bibd = BIBD_from_difference_family(G,D1,lambd=2)
+        sage: bibd = BIBD_from_difference_family(G, D1, lambd=2)                        # optional - sage.groups
 
     TESTS::
 
-        sage: K = GF(3^2,'z')
-        sage: z = K.gen()
-        sage: D = [[1,z+1,2]]
-        sage: _ = is_difference_family(K, D, verbose=True)
+        sage: K = GF(3^2,'z')                                                           # optional - sage.rings.finite_rings
+        sage: z = K.gen()                                                               # optional - sage.rings.finite_rings
+        sage: D = [[1,z+1,2]]                                                           # optional - sage.rings.finite_rings
+        sage: _ = is_difference_family(K, D, verbose=True)                              # optional - sage.rings.finite_rings
         the number of differences (=6) must be a multiple of v-1=8
-        sage: _
+        sage: _                                                                         # optional - sage.rings.finite_rings
         False
     """
     identity, mul, inv = group_law(G)
@@ -353,23 +353,23 @@ def singer_difference_set(q,d):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import singer_difference_set, is_difference_family
-        sage: G,D = singer_difference_set(3,2)
-        sage: is_difference_family(G,D,verbose=True)
+        sage: G,D = singer_difference_set(3,2)                                          # optional - sage.rings.finite_rings
+        sage: is_difference_family(G, D, verbose=True)                                  # optional - sage.rings.finite_rings
         It is a (13,4,1)-difference family
         True
 
-        sage: G,D = singer_difference_set(4,2)
-        sage: is_difference_family(G,D,verbose=True)
+        sage: G,D = singer_difference_set(4,2)                                          # optional - sage.rings.finite_rings
+        sage: is_difference_family(G, D, verbose=True)                                  # optional - sage.rings.finite_rings
         It is a (21,5,1)-difference family
         True
 
-        sage: G,D = singer_difference_set(3,3)
-        sage: is_difference_family(G,D,verbose=True)
+        sage: G,D = singer_difference_set(3,3)                                          # optional - sage.rings.finite_rings
+        sage: is_difference_family(G, D, verbose=True)                                  # optional - sage.rings.finite_rings
         It is a (40,13,4)-difference family
         True
 
-        sage: G,D = singer_difference_set(9,3)
-        sage: is_difference_family(G,D,verbose=True)
+        sage: G,D = singer_difference_set(9,3)                                          # optional - sage.rings.finite_rings
+        sage: is_difference_family(G, D, verbose=True)                                  # optional - sage.rings.finite_rings
         It is a (820,91,10)-difference family
         True
     """
@@ -418,11 +418,12 @@ def df_q_6_1(K, existence=False, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import is_difference_family, df_q_6_1
-        sage: prime_powers = [v for v in range(31,500,30) if is_prime_power(v)]
-        sage: parameters = [v for v in prime_powers if df_q_6_1(GF(v,'a'), existence=True) is True]
-        sage: parameters
+        sage: prime_powers = [v for v in range(31,500,30) if is_prime_power(v)]         # optional - sage.rings.finite_rings
+        sage: parameters = [v for v in prime_powers                                     # optional - sage.rings.finite_rings
+        ....:               if df_q_6_1(GF(v,'a'), existence=True) is True]
+        sage: parameters                                                                # optional - sage.rings.finite_rings
         [31, 151, 181, 211, 241, 271, 331, 361, 421]
-        sage: for v in parameters:
+        sage: for v in parameters:                                                      # optional - sage.rings.finite_rings
         ....:     K = GF(v, 'a')
         ....:     df = df_q_6_1(K, check=True)
         ....:     assert is_difference_family(K, df, v, 6, 1)
@@ -478,13 +479,13 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
 
         sage: from sage.combinat.designs.difference_family import radical_difference_set
 
-        sage: D = radical_difference_set(GF(7), 3, 1); D
+        sage: D = radical_difference_set(GF(7), 3, 1); D                                # optional - sage.rings.finite_rings
         [[1, 2, 4]]
-        sage: sorted(x-y for x in D[0] for y in D[0] if x != y)
+        sage: sorted(x-y for x in D[0] for y in D[0] if x != y)                         # optional - sage.rings.finite_rings
         [1, 2, 3, 4, 5, 6]
 
-        sage: D = radical_difference_set(GF(16,'a'), 6, 2)
-        sage: sorted(x-y for x in D[0] for y in D[0] if x != y)
+        sage: D = radical_difference_set(GF(16,'a'), 6, 2)                              # optional - sage.rings.finite_rings
+        sage: sorted(x-y for x in D[0] for y in D[0] if x != y)                         # optional - sage.rings.finite_rings
         [1,
          1,
          a,
@@ -497,7 +498,7 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
          a^3 + a^2 + a + 1,
          a^3 + a^2 + a + 1]
 
-        sage: for k in range(2,50):
+        sage: for k in range(2,50):                                                     # optional - sage.rings.finite_rings
         ....:     for l in reversed(divisors(k*(k-1))):
         ....:         v = k*(k-1)//l + 1
         ....:         if is_prime_power(v) and radical_difference_set(GF(v,'a'),k,l,existence=True) is True:
@@ -756,12 +757,12 @@ def one_radical_difference_family(K, k):
         ....:    one_radical_difference_family,
         ....:    is_difference_family)
 
-        sage: one_radical_difference_family(GF(13),4)
+        sage: one_radical_difference_family(GF(13),4)                                   # optional - sage.rings.finite_rings
         [[0, 1, 3, 9]]
 
     The parameters that appear in [Bu95]_::
 
-        sage: df = one_radical_difference_family(GF(449), 8); df
+        sage: df = one_radical_difference_family(GF(449), 8); df                        # optional - sage.rings.finite_rings
         [[0, 1, 18, 25, 176, 324, 359, 444],
          [0, 9, 88, 162, 222, 225, 237, 404],
          [0, 11, 140, 198, 275, 357, 394, 421],
@@ -770,7 +771,7 @@ def one_radical_difference_family(K, k):
          [0, 70, 99, 197, 230, 362, 403, 435],
          [0, 121, 141, 193, 293, 331, 335, 382],
          [0, 191, 285, 295, 321, 371, 390, 392]]
-        sage: is_difference_family(GF(449), df, 449, 8, 1)
+        sage: is_difference_family(GF(449), df, 449, 8, 1)                              # optional - sage.rings.finite_rings
         True
     """
     q = K.cardinality()
@@ -842,10 +843,10 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
 
         sage: from sage.combinat.designs.difference_family import radical_difference_family
 
-        sage: radical_difference_family(GF(73),9)
+        sage: radical_difference_family(GF(73), 9)                                      # optional - sage.rings.finite_rings
         [[1, 2, 4, 8, 16, 32, 37, 55, 64]]
 
-        sage: radical_difference_family(GF(281),5)
+        sage: radical_difference_family(GF(281), 5)                                     # optional - sage.rings.finite_rings
         [[1, 86, 90, 153, 232],
          [4, 50, 63, 79, 85],
          [5, 36, 149, 169, 203],
@@ -861,7 +862,7 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
          [111, 123, 155, 181, 273],
          [156, 209, 224, 264, 271]]
 
-        sage: for k in range(5,10):
+        sage: for k in range(5,10):                                                     # optional - sage.rings.finite_rings
         ....:     print("k = {}".format(k))
         ....:     list_q = []
         ....:     for q in range(k*(k-1)+1, 2000, k*(k-1)):
@@ -945,10 +946,10 @@ def twin_prime_powers_difference_set(p, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import twin_prime_powers_difference_set
-        sage: G,D = twin_prime_powers_difference_set(3)
-        sage: G
+        sage: G, D = twin_prime_powers_difference_set(3)                                # optional - sage.rings.finite_rings
+        sage: G                                                                         # optional - sage.rings.finite_rings
         The Cartesian product of (Finite Field of size 3, Finite Field of size 5)
-        sage: D
+        sage: D                                                                         # optional - sage.rings.finite_rings
         [[(1, 1), (1, 4), (2, 2), (2, 3), (0, 0), (1, 0), (2, 0)]]
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1087,11 +1088,11 @@ def mcfarland_1973_construction(q, s):
         sage: from sage.combinat.designs.difference_family import (
         ....:    mcfarland_1973_construction, is_difference_family)
 
-        sage: G,D = mcfarland_1973_construction(3, 1)
-        sage: assert is_difference_family(G, D, 45, 12, 3)
+        sage: G,D = mcfarland_1973_construction(3, 1)                                   # optional - sage.modules sage.rings.finite_rings
+        sage: assert is_difference_family(G, D, 45, 12, 3)                              # optional - sage.modules sage.rings.finite_rings
 
-        sage: G,D = mcfarland_1973_construction(2, 2)
-        sage: assert is_difference_family(G, D, 64, 28, 12)
+        sage: G,D = mcfarland_1973_construction(2, 2)                                   # optional - sage.modules sage.rings.finite_rings
+        sage: assert is_difference_family(G, D, 64, 28, 12)                             # optional - sage.modules sage.rings.finite_rings
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
     from sage.modules.free_module import VectorSpace
@@ -1316,11 +1317,11 @@ def _create_m_sequence(q, n, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import _create_m_sequence
-        sage: _create_m_sequence(3, 2) #random
+        sage: _create_m_sequence(3, 2)  # random                                        # optional - sage.rings.finite_rings
         [1, 0, 1, 2, 2, 0, 2, 1]
-        sage: _create_m_sequence(4, 2, check=False) #random
+        sage: _create_m_sequence(4, 2, check=False)  # random                           # optional - sage.rings.finite_rings
         [1, 0, a, a + 1, a, a, 0, a + 1, 1, a + 1, a + 1, 0, 1, a, 1]
-        sage: _create_m_sequence(6, 2)
+        sage: _create_m_sequence(6, 2)                                                  # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: q must be a prime power
@@ -1371,11 +1372,11 @@ def _get_submodule_of_order(G, order):
     TESTS:
 
         sage: from sage.combinat.designs.difference_family import _get_submodule_of_order
-        sage: G = AdditiveAbelianGroup([48])
-        sage: _get_submodule_of_order(G, 6).order()
+        sage: G = AdditiveAbelianGroup([48])                                            # optional - sage.modules
+        sage: _get_submodule_of_order(G, 6).order()                                     # optional - sage.modules
         6
-        sage: G = AdditiveAbelianGroup([13^2-1])
-        sage: _get_submodule_of_order(G, 12).order()
+        sage: G = AdditiveAbelianGroup([13^2 - 1])                                      # optional - sage.modules
+        sage: _get_submodule_of_order(G, 12).order()                                    # optional - sage.modules
         12
     """
     for el in G:
@@ -1409,10 +1410,11 @@ def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence
-        sage: relative_difference_set_from_m_sequence(2, 4, return_group=True) #random
+        sage: relative_difference_set_from_m_sequence(2, 4,               # random      # optional - sage.modules sage.rings.finite_rings
+        ....:                                         return_group=True)
         (Additive abelian group isomorphic to Z/15,
          [(0), (4), (5), (6), (7), (9), (11), (12)])
-        sage: relative_difference_set_from_m_sequence(8, 2, check=False) #random
+        sage: relative_difference_set_from_m_sequence(8, 2, check=False)  # random      # optional - sage.modules sage.rings.finite_rings
         [(0), (6), (30), (40), (41), (44), (56), (61)]
         sage: relative_difference_set_from_m_sequence(6, 2)
         Traceback (most recent call last):

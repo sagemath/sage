@@ -60,11 +60,13 @@ class LinearExtensionOfPoset(ClonableArray,
 
     EXAMPLES::
 
-        sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension=True, facade=False)
+        sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]),
+        ....:           linear_extension=True, facade=False)
         sage: p = P.linear_extension([1,4,2,3]); p
         [1, 4, 2, 3]
         sage: p.parent()
-        The set of all linear extensions of Finite poset containing 4 elements with distinguished linear extension
+        The set of all linear extensions of
+         Finite poset containing 4 elements with distinguished linear extension
         sage: p[0], p[1], p[2], p[3]
         (1, 4, 2, 3)
 
@@ -276,16 +278,16 @@ class LinearExtensionOfPoset(ClonableArray,
 
             sage: X = [0,1,2,3,4,5,6]
             sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
-            sage: P = Poset((X,Y), cover_relations = True, facade=False)
-            sage: for l in P.linear_extensions():
+            sage: P = Poset((X,Y), cover_relations=True, facade=False)
+            sage: for l in P.linear_extensions():                                       # optional - sage.modules sage.rings.finite_rings
             ....:     if l.is_supergreedy():
             ....:         print(l)
             [1, 4, 3, 0, 5, 6, 2]
             [0, 1, 4, 3, 5, 6, 2]
             [0, 1, 5, 4, 3, 6, 2]
 
-            sage: Q = posets.PentagonPoset()
-            sage: for l in Q.linear_extensions():
+            sage: Q = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: for l in Q.linear_extensions():                                       # optional - sage.modules sage.rings.finite_rings
             ....:     if not l.is_supergreedy():
             ....:         print(l)
             [0, 2, 1, 3, 4]
@@ -334,7 +336,7 @@ class LinearExtensionOfPoset(ClonableArray,
             [1, 2, 3, 4]
             sage: l.tau(1)
             [2, 1, 3, 4]
-            sage: for p in L:
+            sage: for p in L:                                                           # optional - sage.modules sage.rings.finite_rings
             ....:     for i in range(1,4):
             ....:         print("{} {} {}".format(i, p, p.tau(i)))
             1 [1, 2, 3, 4] [2, 1, 3, 4]
@@ -488,10 +490,11 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         sage: rels = [[1,3],[1,4],[2,3]]
         sage: P = Poset((elms, rels), linear_extension=True)
         sage: L = P.linear_extensions(); L
-        The set of all linear extensions of Finite poset containing 4 elements with distinguished linear extension
+        The set of all linear extensions of
+         Finite poset containing 4 elements with distinguished linear extension
         sage: L.cardinality()
         5
-        sage: L.list()
+        sage: L.list()                                                                  # optional - sage.modules sage.rings.finite_rings
         [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         sage: L.an_element()
         [1, 2, 3, 4]
@@ -666,7 +669,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: rels = [[1,3],[1,4],[2,3]]
             sage: P = Poset((elms, rels), linear_extension=True)
             sage: L = P.linear_extensions()
-            sage: list(L)
+            sage: list(L)                                                               # optional - sage.modules sage.rings.finite_rings
             [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         """
         from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
@@ -728,7 +731,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension = True)
+            sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension=True)
             sage: L = P.linear_extensions()
             sage: G = L.markov_chain_digraph(); G
             Looped multi-digraph on 5 vertices
@@ -736,24 +739,24 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
             sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 4), ([1, 2, 3, 4], [1, 2, 4, 3], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3),
-            ([1, 2, 3, 4], [2, 1, 4, 3], 1), ([1, 2, 4, 3], [1, 2, 3, 4], 3), ([1, 2, 4, 3], [1, 2, 4, 3], 4),
-            ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 3, 4], 1), ([1, 4, 2, 3], [1, 2, 3, 4], 1),
-            ([1, 4, 2, 3], [1, 2, 3, 4], 2), ([1, 4, 2, 3], [1, 4, 2, 3], 3), ([1, 4, 2, 3], [1, 4, 2, 3], 4),
-            ([2, 1, 3, 4], [1, 2, 4, 3], 1), ([2, 1, 3, 4], [2, 1, 3, 4], 4), ([2, 1, 3, 4], [2, 1, 4, 3], 2),
-            ([2, 1, 3, 4], [2, 1, 4, 3], 3), ([2, 1, 4, 3], [1, 4, 2, 3], 1), ([2, 1, 4, 3], [2, 1, 3, 4], 2),
-            ([2, 1, 4, 3], [2, 1, 3, 4], 3), ([2, 1, 4, 3], [2, 1, 4, 3], 4)]
+             ([1, 2, 3, 4], [2, 1, 4, 3], 1), ([1, 2, 4, 3], [1, 2, 3, 4], 3), ([1, 2, 4, 3], [1, 2, 4, 3], 4),
+             ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 3, 4], 1), ([1, 4, 2, 3], [1, 2, 3, 4], 1),
+             ([1, 4, 2, 3], [1, 2, 3, 4], 2), ([1, 4, 2, 3], [1, 4, 2, 3], 3), ([1, 4, 2, 3], [1, 4, 2, 3], 4),
+             ([2, 1, 3, 4], [1, 2, 4, 3], 1), ([2, 1, 3, 4], [2, 1, 3, 4], 4), ([2, 1, 3, 4], [2, 1, 4, 3], 2),
+             ([2, 1, 3, 4], [2, 1, 4, 3], 3), ([2, 1, 4, 3], [1, 4, 2, 3], 1), ([2, 1, 4, 3], [2, 1, 3, 4], 2),
+             ([2, 1, 4, 3], [2, 1, 3, 4], 3), ([2, 1, 4, 3], [2, 1, 4, 3], 4)]
 
-            sage: G = L.markov_chain_digraph(labeling = 'source')
+            sage: G = L.markov_chain_digraph(labeling='source')
             sage: G.vertices(sort=True, key=repr)
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
             sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 4), ([1, 2, 3, 4], [1, 2, 4, 3], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3),
-            ([1, 2, 3, 4], [2, 1, 4, 3], 1), ([1, 2, 4, 3], [1, 2, 3, 4], 4), ([1, 2, 4, 3], [1, 2, 4, 3], 3),
-            ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 3, 4], 1), ([1, 4, 2, 3], [1, 2, 3, 4], 1),
-            ([1, 4, 2, 3], [1, 2, 3, 4], 4), ([1, 4, 2, 3], [1, 4, 2, 3], 2), ([1, 4, 2, 3], [1, 4, 2, 3], 3),
-            ([2, 1, 3, 4], [1, 2, 4, 3], 2), ([2, 1, 3, 4], [2, 1, 3, 4], 4), ([2, 1, 3, 4], [2, 1, 4, 3], 1),
-            ([2, 1, 3, 4], [2, 1, 4, 3], 3), ([2, 1, 4, 3], [1, 4, 2, 3], 2), ([2, 1, 4, 3], [2, 1, 3, 4], 1),
-            ([2, 1, 4, 3], [2, 1, 3, 4], 4), ([2, 1, 4, 3], [2, 1, 4, 3], 3)]
+             ([1, 2, 3, 4], [2, 1, 4, 3], 1), ([1, 2, 4, 3], [1, 2, 3, 4], 4), ([1, 2, 4, 3], [1, 2, 4, 3], 3),
+             ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 3, 4], 1), ([1, 4, 2, 3], [1, 2, 3, 4], 1),
+             ([1, 4, 2, 3], [1, 2, 3, 4], 4), ([1, 4, 2, 3], [1, 4, 2, 3], 2), ([1, 4, 2, 3], [1, 4, 2, 3], 3),
+             ([2, 1, 3, 4], [1, 2, 4, 3], 2), ([2, 1, 3, 4], [2, 1, 3, 4], 4), ([2, 1, 3, 4], [2, 1, 4, 3], 1),
+             ([2, 1, 3, 4], [2, 1, 4, 3], 3), ([2, 1, 4, 3], [1, 4, 2, 3], 2), ([2, 1, 4, 3], [2, 1, 3, 4], 1),
+             ([2, 1, 4, 3], [2, 1, 3, 4], 4), ([2, 1, 4, 3], [2, 1, 4, 3], 3)]
 
         The edges of the graph are by default colored using blue for
         edge 1, red for edge 2, green for edge 3, and yellow for edge 4::
@@ -768,19 +771,19 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
             sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3), ([1, 2, 3, 4], [2, 1, 3, 4], 1),
-            ([1, 2, 4, 3], [1, 2, 3, 4], 3), ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 4, 3], 1),
-            ([1, 4, 2, 3], [1, 2, 4, 3], 2), ([1, 4, 2, 3], [1, 4, 2, 3], 1), ([1, 4, 2, 3], [1, 4, 2, 3], 3),
-            ([2, 1, 3, 4], [1, 2, 3, 4], 1), ([2, 1, 3, 4], [2, 1, 3, 4], 2), ([2, 1, 3, 4], [2, 1, 4, 3], 3),
-            ([2, 1, 4, 3], [1, 2, 4, 3], 1), ([2, 1, 4, 3], [2, 1, 3, 4], 3), ([2, 1, 4, 3], [2, 1, 4, 3], 2)]
+             ([1, 2, 4, 3], [1, 2, 3, 4], 3), ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 4, 3], 1),
+             ([1, 4, 2, 3], [1, 2, 4, 3], 2), ([1, 4, 2, 3], [1, 4, 2, 3], 1), ([1, 4, 2, 3], [1, 4, 2, 3], 3),
+             ([2, 1, 3, 4], [1, 2, 3, 4], 1), ([2, 1, 3, 4], [2, 1, 3, 4], 2), ([2, 1, 3, 4], [2, 1, 4, 3], 3),
+             ([2, 1, 4, 3], [1, 2, 4, 3], 1), ([2, 1, 4, 3], [2, 1, 3, 4], 3), ([2, 1, 4, 3], [2, 1, 4, 3], 2)]
             sage: view(G) # optional - dot2tex graphviz, not tested (opens external window)
 
         .. SEEALSO:: :meth:`markov_chain_transition_matrix`, :meth:`promotion`, :meth:`tau`
 
         TESTS::
 
-            sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension = True, facade = True)
+            sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension=True, facade=True)
             sage: L = P.linear_extensions()
-            sage: G = L.markov_chain_digraph(labeling = 'source'); G
+            sage: G = L.markov_chain_digraph(labeling='source'); G
             Looped multi-digraph on 5 vertices
         """
         L = sorted(self)
@@ -983,11 +986,11 @@ class LinearExtensionsOfMobile(LinearExtensionsOfPoset):
             sage: M1.linear_extensions().cardinality()                                  # optional - sage.modules
             61
 
-            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
+            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # optional - sage.combinat
             ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
             ....:                         3: [posets.DoubleTailedDiamond(6)]},
             ....:                        anchor=(4, 2, posets.ChainPoset(6)))
-            sage: P.linear_extensions().cardinality()                                   # optional - sage.modules
+            sage: P.linear_extensions().cardinality()                                   # optional - sage.combinat sage.modules
             361628701868606400
         """
         import sage.combinat.posets.d_complete as dc

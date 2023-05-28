@@ -2805,9 +2805,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             TypeError: [3, 1] and [2, 2] must be integers
-            sage: P.is_incomparable_chain_free([[3, 1], [2, 2]])
+            sage: P.is_incomparable_chain_free([[3, 1], [2, 2]])                        # optional - sage.modules
             True
-            sage: P.is_incomparable_chain_free(([3, 1], [2, 2]))
+            sage: P.is_incomparable_chain_free(([3, 1], [2, 2]))                        # optional - sage.modules
             True
             sage: P.is_incomparable_chain_free([3, 1], 2)
             Traceback (most recent call last):
@@ -3725,18 +3725,18 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: P1 = posets.RandomPoset(20, 0.05)
             sage: P2 = posets.RandomPoset(20, 0.05)
-            sage: m1 = P1.magnitude()
-            sage: m2 = P2.magnitude()
+            sage: m1 = P1.magnitude()                                                   # optional - sage.libs.flint sage.modules
+            sage: m2 = P2.magnitude()                                                   # optional - sage.libs.flint sage.modules
             sage: U = P1.disjoint_union(P2)
             sage: P = P1.product(P2)
-            sage: U.magnitude() == m1 + m2
+            sage: U.magnitude() == m1 + m2                                              # optional - sage.libs.flint sage.modules
             True
-            sage: P.magnitude() == m1*m2
+            sage: P.magnitude() == m1*m2                                                # optional - sage.libs.flint sage.modules
             True
 
-            sage: Poset({}).magnitude()
+            sage: Poset({}).magnitude()                                                 # optional - sage.libs.flint sage.modules
             0
-            sage: Poset({1:[]}).magnitude()
+            sage: Poset({1:[]}).magnitude()                                             # optional - sage.libs.flint sage.modules
             1
         """
         H = self._hasse_diagram
@@ -6106,15 +6106,15 @@ class FinitePoset(UniqueRepresentation, Parent):
         Default behaviour is increasing relabeling::
 
             sage: a2 = posets.ChainPoset(2)
-            sage: P = a2 * a2
-            sage: Q = P.relabel()
-            sage: Q.cover_relations()
+            sage: P = a2 * a2                                                           # optional - sage.modules
+            sage: Q = P.relabel()                                                       # optional - sage.modules
+            sage: Q.cover_relations()                                                   # optional - sage.modules
             [[0, 1], [0, 2], [1, 3], [2, 3]]
 
         Relabeling a (semi)lattice gives a (semi)lattice::
 
-            sage: P = JoinSemilattice({0: [1]})
-            sage: P.relabel(lambda n: n+1)
+            sage: P = JoinSemilattice({0: [1]})                                         # optional - sage.modules
+            sage: P.relabel(lambda n: n+1)                                              # optional - sage.modules
             Finite join-semilattice containing 2 elements
 
         .. NOTE::
@@ -7296,8 +7296,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()
-            sage: P.M_triangle()                                                        # optional - sage.combinat
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: P.M_triangle()                                                        # optional - sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             ValueError: the poset is not graded
@@ -8128,7 +8128,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Poset({1: []}).is_eulerian()                                          # optional - sage.modules
             True
 
-            sage: posets.PentagonPoset().is_eulerian()
+            sage: posets.PentagonPoset().is_eulerian()                                  # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: the poset is not graded
@@ -8596,12 +8596,12 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: Y = Poset({1: [2], 2: [3, 4]})
             sage: trafficsign = LatticePoset({1: [2], 2: [3, 4], 3: [5], 4: [5]})       # optional - sage.modules
-            sage: L = Y.completion_by_cuts()
+            sage: L = Y.completion_by_cuts()                                            # optional - sage.modules
             sage: L.is_isomorphic(trafficsign)                                          # optional - sage.modules
             True
 
             sage: P = posets.SymmetricGroupBruhatOrderPoset(3)
-            sage: Q = P.completion_by_cuts(); Q
+            sage: Q = P.completion_by_cuts(); Q                                         # optional - sage.modules
             Finite lattice containing 7 elements
 
         .. SEEALSO::

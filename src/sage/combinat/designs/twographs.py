@@ -84,8 +84,8 @@ class TwoGraph(IncidenceStructure):
             Traceback (most recent call last):
             ...
             AssertionError: the structure is not a 2-graph!
-            sage: p=graphs.PetersenGraph().twograph()
-            sage: TwoGraph(p, check=True)
+            sage: p = graphs.PetersenGraph().twograph()                                 # optional - sage.modules
+            sage: TwoGraph(p, check=True)                                               # optional - sage.modules
             Incidence structure with 10 points and 60 blocks
         """
         IncidenceStructure.__init__(self, points=points, blocks=blocks,
@@ -108,15 +108,15 @@ class TwoGraph(IncidenceStructure):
 
         EXAMPLES::
 
-            sage: p=graphs.PetersenGraph().twograph()
-            sage: p.is_regular_twograph(alpha=True)
+            sage: p = graphs.PetersenGraph().twograph()                                 # optional - sage.modules
+            sage: p.is_regular_twograph(alpha=True)                                     # optional - sage.modules
             4
-            sage: p.is_regular_twograph()
+            sage: p.is_regular_twograph()                                               # optional - sage.modules
             True
-            sage: p=graphs.PathGraph(5).twograph()
-            sage: p.is_regular_twograph(alpha=True)
+            sage: p = graphs.PathGraph(5).twograph()                                    # optional - sage.modules
+            sage: p.is_regular_twograph(alpha=True)                                     # optional - sage.modules
             False
-            sage: p.is_regular_twograph()
+            sage: p.is_regular_twograph()                                               # optional - sage.modules
             False
         """
         r, (_, _, _, a) = self.is_t_design(t=2, k=3, return_parameters=True)
@@ -139,8 +139,8 @@ class TwoGraph(IncidenceStructure):
 
         EXAMPLES::
 
-            sage: p = graphs.PetersenGraph().twograph().descendant(0)
-            sage: p.is_strongly_regular(parameters=True)
+            sage: p = graphs.PetersenGraph().twograph().descendant(0)                   # optional - sage.modules
+            sage: p.is_strongly_regular(parameters=True)                                # optional - sage.modules
             (9, 4, 1, 2)
         """
         from sage.graphs.graph import Graph
@@ -159,14 +159,14 @@ class TwoGraph(IncidenceStructure):
 
         EXAMPLES::
 
-            sage: p = graphs.CompleteGraph(8).line_graph().twograph()
-            sage: pc = p.complement(); pc
+            sage: p = graphs.CompleteGraph(8).line_graph().twograph()                   # optional - sage.modules
+            sage: pc = p.complement(); pc                                               # optional - sage.modules
             Incidence structure with 28 points and 1260 blocks
 
         TESTS::
 
             sage: from sage.combinat.designs.twographs import is_twograph
-            sage: is_twograph(pc)
+            sage: is_twograph(pc)                                                       # optional - sage.modules
             True
         """
         return super().complement(uniform=True)
@@ -192,7 +192,7 @@ def taylor_twograph(q):
     EXAMPLES::
 
         sage: from sage.combinat.designs.twographs import taylor_twograph
-        sage: T=taylor_twograph(3); T
+        sage: T = taylor_twograph(3); T                                                 # optional - sage.rings.finite_rings
         Incidence structure with 28 points and 1260 blocks
     """
     from sage.graphs.generators.classical_geometries import TaylorTwographSRG
@@ -211,13 +211,13 @@ def is_twograph(T):
     a two-graph from a graph::
 
         sage: from sage.combinat.designs.twographs import (is_twograph, TwoGraph)
-        sage: p=graphs.PetersenGraph().twograph()
-        sage: is_twograph(p)
+        sage: p = graphs.PetersenGraph().twograph()                                     # optional - sage.modules
+        sage: is_twograph(p)                                                            # optional - sage.modules
         True
 
     a non-regular 2-uniform hypergraph which is a two-graph::
 
-        sage: is_twograph(TwoGraph([[1,2,3],[1,2,4]]))
+        sage: is_twograph(TwoGraph([[1,2,3],[1,2,4]]))                                  # optional - sage.modules
         True
 
     TESTS:
@@ -277,22 +277,22 @@ def twograph_descendant(G, v, name=None):
     one of s.r.g.'s from the :mod:`database <sage.graphs.strongly_regular_db>`::
 
         sage: from sage.combinat.designs.twographs import twograph_descendant
-        sage: A=graphs.strongly_regular_graph(280,135,70)                    # optional - gap_packages internet
-        sage: twograph_descendant(A, 0).is_strongly_regular(parameters=True) # optional - gap_packages internet
+        sage: A = graphs.strongly_regular_graph(280,135,70)                   # optional - gap_packages internet
+        sage: twograph_descendant(A, 0).is_strongly_regular(parameters=True)  # optional - gap_packages internet
         (279, 150, 85, 75)
 
     TESTS::
 
         sage: T8 = graphs.CompleteGraph(8).line_graph()
         sage: v = T8.vertices(sort=True)[0]
-        sage: twograph_descendant(T8, v)==T8.twograph().descendant(v)
+        sage: twograph_descendant(T8, v) == T8.twograph().descendant(v)                 # optional - sage.modules
         True
         sage: twograph_descendant(T8, v).is_strongly_regular(parameters=True)
         (27, 16, 10, 8)
         sage: p = graphs.PetersenGraph()
-        sage: twograph_descendant(p,5)
+        sage: twograph_descendant(p, 5)
         Graph on 9 vertices
-        sage: twograph_descendant(p,5,name=True)
+        sage: twograph_descendant(p, 5, name=True)
         descendant of Petersen graph at 5: Graph on 9 vertices
     """
     G = G.seidel_switching(G.neighbors(v),inplace=False)
