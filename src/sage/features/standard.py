@@ -30,6 +30,7 @@ def all_features():
             JoinFeature('pplpy', (PythonModule('ppl'),), spkg='pplpy'),
             PythonModule('primecountpy', spkg='primecountpy'),
             PythonModule('ptyprocess', spkg='ptyprocess'),
+            PythonModule('pyparsing', spkg='pyparsing'),
             PythonModule('requests', spkg='requests'),
             PythonModule('scipy', spkg='scipy'),
             PythonModule('sympy', spkg='sympy')]

@@ -1874,7 +1874,7 @@ class FractionWithFactoredDenominator(RingElement):
             Uderivs = diff_prod(Hderivs, U, Hcheck, X,
                                 range(1, k + 1), end, Uderivs, atP)
             # Check for a nonzero U derivative.
-            if any(u for u in Uderivs.values()):
+            if any(Uderivs.values()):
                 all_zero = False
             if all_zero:
                 # Then, using a proposition at the end of [RW2012], we can
@@ -2265,7 +2265,7 @@ class FractionWithFactoredDenominator(RingElement):
             Uderivs = diff_prod(Hprodderivs, U, Hcheck, X,
                                 range(1, k + 1), end, Uderivs, atP)
             # Check for a nonzero U derivative.
-            if any(u for u in Uderivs.values()):
+            if any(Uderivs.values()):
                 all_zero = False
             if all_zero:
                 # Then all higher derivatives of U are zero.
