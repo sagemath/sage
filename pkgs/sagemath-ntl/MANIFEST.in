@@ -24,6 +24,7 @@ include sage/rings/polynomial/polynomial_zz_pex.p*
 include sage/ext/mod_int.pxd
 include sage/ext/mod_int.h
 include sage/ext/cplusplus.pxd
+include sage/libs/mpfr/*.pxd
 include sage/matrix/*.pxd
 include sage/matrix/*.pxi
 include sage/rings/*.pxd
