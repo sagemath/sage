@@ -3042,7 +3042,13 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         """
         if isinstance(element, TamariIntervalPoset):
             return element.final_forest()
-        if element in DyckWords():
+
+        try:
+            DW = DyckWords()
+        except ImportError:
+            DW = ()
+
+        if element in DW:
             binary_tree = element.to_binary_tree_tamari()
         elif element in BinaryTrees() or element in LabelledBinaryTrees():
             binary_tree = element
@@ -3149,7 +3155,13 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         """
         if isinstance(element, TamariIntervalPoset):
             return element.initial_forest()
-        if element in DyckWords():
+
+        try:
+            DW = DyckWords()
+        except ImportError:
+            DW = ()
+
+        if element in DW:
             binary_tree = element.to_binary_tree_tamari()
         elif element in BinaryTrees() or element in LabelledBinaryTrees():
             binary_tree = element
