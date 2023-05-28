@@ -469,7 +469,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     cpdef _neg_(self):
         r"""
-        Returns negative of self.
+        Returns negative of ``self``.
 
         EXAMPLES::
 
@@ -486,13 +486,13 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     @coerce_binop
     def quo_rem(self, right):
         r"""
-        Attempts to divide self by right, and return a quotient and remainder.
+        Attempt to divide ``self`` by ``right``, and return a quotient and remainder.
 
-        If right is monic, then it returns ``(q, r)`` where `self = q * right + r`
-        and `deg(r) < deg(right)`.
+        If right is monic, then it returns ``(q, r)`` where ``self = q * right + r``
+        and ``deg(r) < deg(right)``.
 
-        If right is not monic, then it returns `(q, 0)` where q = self/right if
-        right exactly divides self, otherwise it raises an exception.
+        If right is not monic, then it returns `(q, 0)` where ``q = self/right`` if
+        ``right`` exactly divides ``self``, otherwise it raises an exception.
 
         EXAMPLES::
 
@@ -574,14 +574,14 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     @coerce_binop
     def gcd(self, right):
         r"""
-        Return the GCD of self and right.  The leading
+        Return the GCD of ``self`` and ``right``.  The leading
         coefficient need not be 1.
 
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
-            sage: f = (6*x + 47)*(7*x^2 - 2*x + 38)
-            sage: g = (6*x + 47)*(3*x^3 + 2*x + 1)
+            sage: f = (6*x + 47) * (7*x^2 - 2*x + 38)
+            sage: g = (6*x + 47) * (3*x^3 + 2*x + 1)
             sage: f.gcd(g)
             6*x + 47
         """
@@ -596,16 +596,16 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     @coerce_binop
     def lcm(self, right):
         """
-        Return the LCM of self and right.
+        Return the LCM of ``self`` and ``right``.
 
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
-            sage: f = (6*x + 47)*(7*x^2 - 2*x + 38)
-            sage: g = (6*x + 47)*(3*x^3 + 2*x + 1)
+            sage: f = (6*x + 47) * (7*x^2 - 2*x + 38)
+            sage: g = (6*x + 47) * (3*x^3 + 2*x + 1)
             sage: h = f.lcm(g); h
             126*x^6 + 951*x^5 + 486*x^4 + 6034*x^3 + 585*x^2 + 3706*x + 1786
-            sage: h == (6*x + 47)*(7*x^2 - 2*x + 38)*(3*x^3 + 2*x + 1)
+            sage: h == (6*x + 47) * (7*x^2 - 2*x + 38) * (3*x^3 + 2*x + 1)
             True
 
         TESTS:
@@ -625,7 +625,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     @coerce_binop
     def xgcd(self, right):
         """
-        This function can't in general return ``(g,s,t)`` as above,
+        This function can't in general return `(g,s,t)` as above,
         since they need not exist.  Instead, over the integers, we
         first multiply `g` by a divisor of the resultant of `a/g` and
         `b/g`, up to sign, and return ``g, u, v`` such that
@@ -634,7 +634,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         If ``self`` and ``right`` are coprime as polynomials over the
         rationals, then ``g`` is guaranteed to be the resultant of
-        self and right, as a constant polynomial.
+        ``self`` and ``right``, as a constant polynomial.
 
         EXAMPLES::
 
@@ -815,7 +815,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     def degree(self, gen=None):
         """
         Return the degree of this polynomial. The zero polynomial has
-        degree -1.
+        degree `-1`.
 
         EXAMPLES::
 
@@ -833,11 +833,11 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def discriminant(self, proof=True):
         r"""
-        Return the discriminant of self, which is by definition
+        Return the discriminant of ``self``, which is by definition
 
         .. MATH::
 
-            (-1)^{m(m-1)/2} {\mbox{\tt resultant}}(a, a')/lc(a),
+            (-1)^{m(m-1)/2} \text{resultant}(a, a')/lc(a),
 
         where `m = deg(a)`, and `lc(a)` is the leading coefficient of a.
         If ``proof`` is False (the default is True), then this function
@@ -863,7 +863,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         """
         EXAMPLES::
 
-            sage: t = PolynomialRing(ZZ,"t",implementation='NTL').gen()
+            sage: t = PolynomialRing(ZZ, "t", implementation='NTL').gen()
             sage: f = t^3 + 3*t - 17
             sage: pari(f)
             t^3 + 3*t - 17
@@ -875,11 +875,11 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def squarefree_decomposition(self):
         """
-        Return the square-free decomposition of self.  This is
-        a partial factorization of self into square-free, relatively
+        Return the square-free decomposition of ``self``.  This is
+        a partial factorization of ``self`` into square-free, relatively
         prime polynomials.
 
-        This is a wrapper for the NTL function SquareFreeDecomp.
+        This is a wrapper for the NTL function ``SquareFreeDecomp``.
 
         EXAMPLES::
 
@@ -893,7 +893,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         Verify that :trac:`13053` has been resolved::
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
-            sage: f=-x^2
+            sage: f = -x^2
             sage: f.squarefree_decomposition()
             (-1) * x^2
 
@@ -977,7 +977,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     def factor(self):
         """
         This function overrides the generic polynomial factorization to
-        make a somewhat intelligent decision to use Pari or NTL based on
+        make a somewhat intelligent decision to use PARI or NTL based on
         some benchmarking.
 
         Note: This function factors the content of the polynomial,
@@ -987,11 +987,11 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x>=ZZ[]
-            sage: f=x^4-1
+            sage: R.<x> = ZZ[]
+            sage: f = x^4 - 1
             sage: f.factor()
             (x - 1) * (x + 1) * (x^2 + 1)
-            sage: f=1-x
+            sage: f = 1 - x
             sage: f.factor()
             (-1) * (x - 1)
             sage: f.factor().unit()
@@ -1011,13 +1011,13 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def factor_mod(self, p):
         """
-        Return the factorization of self modulo the prime p.
+        Return the factorization of ``self`` modulo the prime `p`.
 
         INPUT:
 
         - ``p`` -- prime
 
-        OUTPUT: factorization of self reduced modulo p.
+        OUTPUT: factorization of ``self`` reduced modulo `p`.
 
         EXAMPLES::
 
@@ -1049,7 +1049,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
     def factor_padic(self, p, prec=10):
         """
-        Return `p`-adic factorization of self to given precision.
+        Return `p`-adic factorization of ``self`` to given precision.
 
         INPUT:
 
@@ -1066,13 +1066,15 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
             sage: f = x^2 + 1
             sage: f.factor_padic(5, 4)
-            ((1 + O(5^4))*x + 2 + 5 + 2*5^2 + 5^3 + O(5^4)) * ((1 + O(5^4))*x + 3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4))
+            ((1 + O(5^4))*x + 2 + 5 + 2*5^2 + 5^3 + O(5^4))
+            * ((1 + O(5^4))*x + 3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4))
 
         A more difficult example::
 
             sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
             sage: f.factor_padic(5, 10)
-            (4 + O(5^10)) * (5 + O(5^11))^2 * ((1 + O(5^10))*x + 5 + O(5^10))^2 * ((5 + O(5^10))*x + 1 + O(5^10))^2
+            (4 + O(5^10)) * (5 + O(5^11))^2 * ((1 + O(5^10))*x + 5 + O(5^10))^2
+            * ((5 + O(5^10))*x + 1 + O(5^10))^2
 
         """
         from sage.rings.padics.factory import Zp
@@ -1097,11 +1099,11 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         EXAMPLES::
 
-            sage: x = PolynomialRing(ZZ,'x',implementation='NTL').0
+            sage: x = PolynomialRing(ZZ, 'x', implementation='NTL').0
             sage: f = x^3 + 3*x - 17
             sage: f.list()
             [-17, 3, 0, 1]
-            sage: f = PolynomialRing(ZZ,'x',implementation='NTL')(0)
+            sage: f = PolynomialRing(ZZ, 'x', implementation='NTL')(0)
             sage: f.list()
             []
         """
@@ -1111,23 +1113,21 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     @coerce_binop
     def resultant(self, other, proof=True):
         """
-        Returns the resultant of self and other, which must lie in the same
+        Returns the resultant of ``self`` and ``other``, which must lie in the same
         polynomial ring.
 
-        If proof = False (the default is proof=True), then this function may use a
+        If ``proof=False`` (the default is ``proof=True``), then this function may use a
         randomized strategy that errors with probability no more than `2^{-80}`.
 
         INPUT:
 
-        - other -- a polynomial
+        - ``other`` -- a polynomial
 
-        OUTPUT:
-
-        an element of the base ring of the polynomial ring
+        OUTPUT: an element of the base ring of the polynomial ring
 
         EXAMPLES::
 
-            sage: x = PolynomialRing(ZZ,'x',implementation='NTL').0
+            sage: x = PolynomialRing(ZZ, 'x', implementation='NTL').0
             sage: f = x^3 + x + 1;  g = x^3 - x - 1
             sage: r = f.resultant(g); r
             -8

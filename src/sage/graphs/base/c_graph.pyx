@@ -4548,7 +4548,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         At first, the following graph is acyclic::
 
             sage: D = DiGraph({ 0:[1,2,3], 4:[2,5], 1:[8], 2:[7], 3:[7], 5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
-            sage: D.plot(layout='circular').show()
+            sage: D.plot(layout='circular').show()                                      # optional - sage.plot
             sage: D.is_directed_acyclic()
             True
 

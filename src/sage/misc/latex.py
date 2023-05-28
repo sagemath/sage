@@ -647,6 +647,7 @@ def latex_extra_preamble():
         \newcommand{\RLF}{\Bold{R}}
         \newcommand{\SL}{\mathrm{SL}}
         \newcommand{\PSL}{\mathrm{PSL}}
+        \newcommand{\lcm}{\mathop{\operatorname{lcm}}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
     """

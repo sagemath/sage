@@ -762,7 +762,7 @@ def set_partition_composition(tuple sp1, tuple sp2):
                 diagram.append(tuple(block))
 
     # Everything else should be completely contained in the top block
-    assert all(all(val > 0 for val in top) for top in remaining_top)
+    assert all(val > 0 for top in remaining_top for val in top)
     diagram.extend(remaining_top)
 
     return (tuple(diagram), num_loops)

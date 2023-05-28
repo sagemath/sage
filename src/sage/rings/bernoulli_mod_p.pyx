@@ -53,11 +53,9 @@ def verify_bernoulli_mod_p(data):
 
     INPUT:
 
-        data -- list, same format as output of bernoulli_mod_p function
+    - ``data`` -- list, same format as output of :func:`bernoulli_mod_p` function
 
-    OUTPUT:
-
-        bool -- True if checksum passed
+    OUTPUT: bool -- True if checksum passed
 
     EXAMPLES::
 
@@ -102,7 +100,7 @@ def bernoulli_mod_p(int p):
 
     INPUT:
 
-    p -- integer, a prime
+    - ``p`` -- integer, a prime
 
     OUTPUT:
 
@@ -134,7 +132,7 @@ def bernoulli_mod_p(int p):
 
     AUTHOR:
 
-    -- David Harvey (2006-08-06)
+    - David Harvey (2006-08-06)
 
     """
 
@@ -233,12 +231,12 @@ def bernoulli_mod_p_single(long p, long k):
     r"""
     Return the Bernoulli number `B_k` mod `p`.
 
-    If `B_k` is not `p`-integral, an ArithmeticError is raised.
+    If `B_k` is not `p`-integral, an :class:`ArithmeticError` is raised.
 
     INPUT:
 
-    - p -- integer, a prime
-    - k -- non-negative integer
+    - ``p`` -- integer, a prime
+    - ``k`` -- non-negative integer
 
     OUTPUT:
 
@@ -274,7 +272,7 @@ def bernoulli_mod_p_single(long p, long k):
         ...
         ValueError: k must be non-negative
 
-    Check results against bernoulli_mod_p::
+    Check results against :class:`bernoulli_mod_p`::
 
         sage: bernoulli_mod_p(37)
          [1, 31, 16, 15, 16, 4, 17, 32, 22, 31, 15, 15, 17, 12, 29, 2, 0, 2]
@@ -303,8 +301,8 @@ def bernoulli_mod_p_single(long p, long k):
 
     AUTHOR:
 
-    -- David Harvey (2007-08-31)
-    -- David Harvey (2008-06): rewrote to use bernmm library
+    - David Harvey (2007-08-31)
+    - David Harvey (2008-06): rewrote to use bernmm library
 
     """
     if p <= 2:

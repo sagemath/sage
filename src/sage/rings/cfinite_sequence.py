@@ -1038,7 +1038,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 
     def __contains__(self, x):
         """
-        Return True if x is an element of ``CFiniteSequences`` or
+        Return ``True`` if x is an element of ``CFiniteSequences`` or
         canonically coerces to this ring.
 
         EXAMPLES::

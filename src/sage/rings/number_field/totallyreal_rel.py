@@ -13,7 +13,7 @@ fields of `F = \QQ(\sqrt{2})` of discriminant `\le 2000`.
 ::
 
     sage: ZZx = ZZ['x']
-    sage: F.<t> = NumberField(x^2-2)
+    sage: F.<t> = NumberField(x^2 - 2)
     sage: enumerate_totallyreal_fields_rel(F, 2, 2000)
     [[1600, x^4 - 6*x^2 + 4, xF^2 + xF - 1]]
 
@@ -24,7 +24,7 @@ with root discriminant `\le 10`.
 
 ::
 
-    sage: F.<t> = NumberField(x^2-5)
+    sage: F.<t> = NumberField(x^2 - 5)
     sage: ls = enumerate_totallyreal_fields_rel(F, 2, 10^4)
     sage: ls # random (the second factor is platform-dependent)
     [[725, x^4 - x^3 - 3*x^2 + x + 1, xF^2 + (-1/2*t - 7/2)*xF + 1],
@@ -111,30 +111,32 @@ def integral_elements_in_box(K, C):
     r"""
     Return all integral elements of the totally real field `K` whose
     embeddings lie *numerically* within the bounds specified by the
-    list `C`.  The output is architecture dependent, and one may want
-    to expand the bounds that define C by some epsilon.
+    list ``C``.  The output is architecture dependent, and one may want
+    to expand the bounds that define ``C`` by some epsilon.
 
     INPUT:
 
-    - `K` -- a totally real number field
-    - `C` -- a list [[lower, upper], ...] of lower and upper bounds,
+    - ``K`` -- a totally real number field
+    - ``C`` -- a list ``[[lower, upper], ...]`` of lower and upper bounds,
       for each embedding
 
     EXAMPLES::
 
         sage: x = polygen(QQ)
-        sage: K.<alpha> = NumberField(x^2-2)
+        sage: K.<alpha> = NumberField(x^2 - 2)
         sage: eps = 10e-6
-        sage: C = [[0-eps,5+eps],[0-eps,10+eps]]
+        sage: C = [[0-eps, 5+eps], [0-eps, 10+eps]]
         sage: ls = sage.rings.number_field.totallyreal_rel.integral_elements_in_box(K, C)
-        sage: sorted([ a.trace() for a in ls ])
+        sage: sorted(a.trace() for a in ls)
         [0, 2, 4, 4, 4, 6, 6, 6, 6, 8, 8, 8, 10, 10, 10, 10, 12, 12, 14]
         sage: len(ls)
         19
 
         sage: v = sage.rings.number_field.totallyreal_rel.integral_elements_in_box(K, C)
         sage: sorted(v)
-         [0, -alpha + 2, 1, -alpha + 3, 2, 3, alpha + 2, 4, alpha + 3, 5, alpha + 4, 2*alpha + 3, alpha + 5, 2*alpha + 4, alpha + 6, 2*alpha + 5, 2*alpha + 6, 3*alpha + 5, 2*alpha + 7]
+        [0, -alpha + 2, 1, -alpha + 3, 2, 3, alpha + 2, 4, alpha + 3, 5, alpha + 4,
+         2*alpha + 3, alpha + 5, 2*alpha + 4, alpha + 6, 2*alpha + 5, 2*alpha + 6,
+         3*alpha + 5, 2*alpha + 7]
 
     A cubic field::
 
@@ -148,7 +150,8 @@ def integral_elements_in_box(K, C):
     below, and sometimes it isn't)::
 
         sage: sorted(v)
-        [-1/2*a + 2, 1/4*a^2 + 1/2*a, 0, 1, 2, 3, 4,...-1/4*a^2 - 1/2*a + 5, 1/2*a + 3, -1/4*a^2 + 5]
+        [-1/2*a + 2, 1/4*a^2 + 1/2*a, 0, 1, 2, 3, 4,...-1/4*a^2 - 1/2*a + 5,
+         1/2*a + 3, -1/4*a^2 + 5]
     """
     d = K.degree()
     Foo = K.real_embeddings()
@@ -243,18 +246,18 @@ class tr_data_rel:
         - ``F`` -- number field, the base field
         - ``m`` -- integer, the relative degree
         - ``B`` -- integer, the discriminant bound
-        - ``a`` -- list (default: []), the coefficient list to begin with,
+        - ``a`` -- list (default: ``[]``), the coefficient list to begin with,
           corresponding to ``a[len(a)]*x^n + ... + a[0]x^(n-len(a))``.
 
         OUTPUT:
 
         the data initialized to begin enumeration of totally real fields
-        with base field F, degree n, discriminant bounded by B, and starting
-        with coefficients a.
+        with base field `F`, degree `n`, discriminant bounded by `B`, and starting
+        with coefficients `a`.
 
         EXAMPLES::
 
-            sage: F.<t> = NumberField(x^2-2)
+            sage: F.<t> = NumberField(x^2 - 2)
             sage: T = sage.rings.number_field.totallyreal_rel.tr_data_rel(F, 2, 2000)
         """
         if a is None:  # don't make the stupid noob mistake of putting a=[]
@@ -352,10 +355,10 @@ class tr_data_rel:
 
     def incr(self, f_out, verbose=False, haltk=0):
         r"""
-        This function 'increments' the totally real data to the next
+        'Increment' the totally real data to the next
         value which satisfies the bounds essentially given by Rolle's
-        theorem, and returns the next polynomial in the sequence
-        f_out.
+        theorem, and return the next polynomial in the sequence
+        ``f_out``.
 
         The default or usual case just increments the constant
         coefficient; then inductively, if this is outside of the
@@ -368,7 +371,7 @@ class tr_data_rel:
 
         - ``f_out`` -- an integer sequence, to be written with the
           coefficients of the next polynomial
-        - ``verbose`` -- boolean or nonnegative integer (default: False)
+        - ``verbose`` -- boolean or nonnegative integer (default: ``False``)
           print verbosely computational details. It prints extra
           information if ``verbose`` is set to ``2`` or more
         - ``haltk`` -- integer, the level at which to halt the inductive
@@ -662,26 +665,26 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
     - ``F`` -- number field, the base field
     - ``m`` -- integer, the degree
     - ``B`` -- integer, the discriminant bound
-    - ``a`` -- list (default: []), the coefficient list to begin with
+    - ``a`` -- list (default: ``[]``), the coefficient list to begin with
     - ``verbose`` -- boolean or nonnegative integer or string (default: 0)
       give a verbose description of the computations being performed. If
       ``verbose`` is set to ``2`` or more then it outputs some extra
       information. If ``verbose`` is a string then it outputs to a file
       specified by ``verbose``
-    - ``return_seqs`` -- (boolean, default False) If ``True``, then return
+    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: True) if
+    - ``return_pari_objects`` -- (boolean, default: ``True``) if
       both ``return_seqs`` and ``return_pari_objects`` are ``False`` then
-      it returns the elements as Sage objects; otherwise it returns pari
+      it returns the elements as Sage objects; otherwise it returns PARI
       objects.
 
     OUTPUT:
 
     - the list of fields with entries ``[d,fabs,f]``, where ``d`` is the
       discriminant, ``fabs`` is an absolute defining polynomial, and ``f``
-      is a defining polynomial relative to ``F``, sorted by discriminant.
+      is a defining polynomial relative to `F`, sorted by discriminant.
 
     - if ``return_seqs`` is ``True``, then the first field of the list is
       a list containing the count of four items as explained below
@@ -691,12 +694,12 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
         discriminant having a large enough square divisor
       - the third entry is the number of irreducible polynomials
       - the fourth entry is the number of irreducible polynomials with
-        discriminant at most ``B``
+        discriminant at most `B`
 
     EXAMPLES::
 
         sage: ZZx = ZZ['x']
-        sage: F.<t> = NumberField(x^2-2)
+        sage: F.<t> = NumberField(x^2 - 2)
         sage: enumerate_totallyreal_fields_rel(F, 1, 2000)
         [[1, [-2, 0, 1], xF - 1]]
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000)
@@ -902,7 +905,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
                                      return_pari_objects=True):
     r"""
-    Enumerates *all* totally real fields of degree ``n`` with discriminant
+    Enumerate *all* totally real fields of degree ``n`` with discriminant
     at most ``B``, primitive or otherwise.
 
     INPUT:
@@ -911,16 +914,16 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
     - ``B`` -- integer, the discriminant bound
     - ``verbose`` -- boolean or nonnegative integer or string (default: 0)
       give a verbose description of the computations being performed. If
-      ``verbose`` is set to ``2`` or more then it outputs some extra
-      information. If ``verbose`` is a string then it outputs to a file
+      ``verbose`` is set to ``2`` or more, it outputs some extra
+      information. If ``verbose`` is a string, it outputs to a file
       specified by ``verbose``
-    - ``return_seqs`` -- (boolean, default False) If ``True``, then return
+    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
     - ``return_pari_objects`` -- (boolean, default: True) if both
       ``return_seqs`` and ``return_pari_objects`` are ``False`` then it
-      returns the elements as Sage objects; otherwise it returns pari
+      returns the elements as Sage objects; otherwise it returns PARI
       objects.
 
     EXAMPLES::

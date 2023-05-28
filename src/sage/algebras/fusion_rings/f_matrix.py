@@ -2199,7 +2199,7 @@ class FMatrix(SageObject):
             adding equation... fx18 - 1
             adding equation... fx21 - 1
         """
-        while not all(v for v in self._solved):
+        while not all(self._solved):
             # Get a variable that has not been fixed
             # In ascending index order, for consistent results
             for i, var in enumerate(self._poly_ring.gens()):

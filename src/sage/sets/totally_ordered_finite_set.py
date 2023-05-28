@@ -241,7 +241,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
 
             sage: S1 = TotallyOrderedFiniteSet([1, 2, 3])
             sage: S2 = TotallyOrderedFiniteSet((1, 2, 3))
-            sage: S3 = TotallyOrderedFiniteSet((x for x in range(1,4)))
+            sage: S3 = TotallyOrderedFiniteSet(range(1,4))
             sage: S1 is S2
             True
             sage: S2 is S3

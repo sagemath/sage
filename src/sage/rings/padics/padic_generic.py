@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.padics
 r"""
 `p`-adic Generic
 

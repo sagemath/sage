@@ -209,7 +209,7 @@ def is_HCP(f, check_monic_irreducible=True):
         sage: H = hilbert_class_polynomial(D)
         sage: H.degree()
         100
-        sage: max(c for c in H).ndigits()
+        sage: max(H).ndigits()
         2774
         sage: is_HCP(H)
         -1856563

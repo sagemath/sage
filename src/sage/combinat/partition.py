@@ -7451,6 +7451,22 @@ class Partitions_starting(Partitions):
             sage: Partitions(3, starting=[2,1]).list()
             [[2, 1], [1, 1, 1]]
 
+            sage: Partitions(7, starting=[2,2,1]).list()
+            [[2, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1]]
+
+            sage: Partitions(7, starting=[3,2]).list()
+            [[3, 1, 1, 1, 1],
+             [2, 2, 2, 1],
+             [2, 2, 1, 1, 1],
+             [2, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1]]
+
+            sage: Partitions(4, starting=[3,2]).list()
+            [[3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
+
+            sage: Partitions(3, starting=[1,1]).list()
+            []
+
         TESTS::
 
             sage: p = Partitions(3, starting=[2,1])
@@ -7497,8 +7513,24 @@ class Partitions_starting(Partitions):
 
             sage: Partitions(3, starting=[2,1]).first()
             [2, 1]
+            sage: Partitions(3, starting=[1,1,1]).first()
+            [1, 1, 1]
+            sage: Partitions(3, starting=[1,1]).first()
+            False
+            sage: Partitions(3, starting=[3,1]).first()
+            [3]
+            sage: Partitions(3, starting=[2,2]).first()
+            [2, 1]
         """
-        return self._starting
+        if sum(self._starting) == self.n:
+            return self._starting
+
+        if (k := self._starting.size()) < self.n:
+            mu = list(self._starting) + [1] * (self.n - k)
+            return next(Partition(mu))
+
+        #if self._starting.size() > self.n:
+        return self.element_class(self, Partitions(self.n, outer=self._starting).first())
 
     def next(self, part):
         """
@@ -7545,6 +7577,8 @@ class Partitions_ending(Partitions):
             [[4], [3, 1], [2, 2]]
             sage: Partitions(4, ending=[4]).list()
             [[4]]
+            sage: Partitions(4, ending=[5]).list()
+            []
 
         TESTS::
 
@@ -7554,6 +7588,7 @@ class Partitions_ending(Partitions):
         Partitions.__init__(self)
         self.n = n
         self._ending = ending_partition
+        self._ending_size_is_not_same = (n != sum(self._ending))
 
     def _repr_(self):
         """
@@ -7590,7 +7625,11 @@ class Partitions_ending(Partitions):
 
             sage: Partitions(4, ending=[1,1,1,1]).first()
             [4]
+            sage: Partitions(4, ending=[5]).first() is None
+            True
         """
+        if self._ending and self.n <= self._ending[0] and not (self.n == self._ending[0] and len(self._ending) == 1):
+            return None
         return self.element_class(self, [self.n])
 
     def next(self, part):
@@ -7598,15 +7637,26 @@ class Partitions_ending(Partitions):
         Return the next partition after ``part`` in ``self``.
 
         EXAMPLES::
-
+            sage: Partitions(4, ending=[1,1,1,1,1]).next(Partition([4]))
+            [3, 1]
+            sage: Partitions(4, ending=[3,2]).next(Partition([3,1])) is None
+            True
             sage: Partitions(4, ending=[1,1,1,1]).next(Partition([4]))
             [3, 1]
             sage: Partitions(4, ending=[1,1,1,1]).next(Partition([1,1,1,1])) is None
             True
+            sage: Partitions(4, ending=[3]).next(Partition([3,1])) is None
+            True
         """
+        # if we have passed the last Partition, there is no next partition
         if part == self._ending:
             return None
-        return next(part)
+
+        # if self._ending is a different size, we should make the comparison
+        mu = next(part)
+        if self._ending_size_is_not_same and mu < self._ending:
+            return None
+        return mu
 
 
 class PartitionsInBox(Partitions):

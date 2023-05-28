@@ -216,7 +216,7 @@ def find_isomorphism(fan1, fan2, check=False):
         sage: fan2 = Fan(cones, [vector(r)*m for r in rays])
 
         sage: from sage.geometry.fan_isomorphism import find_isomorphism
-        sage: find_isomorphism(fan1, fan2, check=True)
+        sage: find_isomorphism(fan1, fan2, check=True)                                  # optional - sage.graphs
         Fan morphism defined by the matrix
         [-2  3]
         [ 1 -1]

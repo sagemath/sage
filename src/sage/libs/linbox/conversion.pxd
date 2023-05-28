@@ -177,9 +177,8 @@ cdef inline Vector_integer_dense new_sage_vector_integer_dense(P, DenseVector_in
     - v -- linbox vector
     """
     cdef Vector_integer_dense res = P()
-    cdef cppvector[Integer] * vec = &v.refRep()
     cdef size_t i
     for i in range(<size_t> res._degree):
-        mpz_set(res._entries[i], vec[0][i].get_mpz_const())
+        mpz_set(res._entries[i], v.getEntry(i).get_mpz_const())
 
     return res

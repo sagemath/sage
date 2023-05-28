@@ -408,7 +408,7 @@ class GroupAlgebras(AlgebrasCategory):
 
                 sage: G = PermutationGroup([[(1,2,3),(4,5)], [(3,4)]])                  # optional - sage.groups sage.modules
                 sage: QG = GroupAlgebras(QQ).example(G)                                 # optional - sage.groups sage.modules
-                sage: s = sum(i for i in QG.basis())                                    # optional - sage.groups sage.modules
+                sage: s = sum(QG.basis())                                               # optional - sage.groups sage.modules
                 sage: s.central_form()   # not tested                                   # optional - sage.groups sage.modules
                 B[()] + B[(4,5)] + B[(3,4,5)] + B[(2,3)(4,5)]
                 + B[(2,3,4,5)] + B[(1,2)(3,4,5)] + B[(1,2,3,4,5)]

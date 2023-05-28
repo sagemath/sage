@@ -140,7 +140,7 @@ def two_squares_pyx(uint32_t n):
 
     .. SEEALSO::
 
-        :func:`~sage.arith.all.two_squares` is much more suited for large inputs
+        :func:`~sage.arith.misc.two_squares` is much more suited for large inputs
 
     EXAMPLES::
 
@@ -166,7 +166,7 @@ def two_squares_pyx(uint32_t n):
     TESTS::
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: for ij in Subsets(Subsets(45000,15).random_element(),2):
+        sage: for ij in Subsets(Subsets(45000, 15).random_element(), 2):                # optional - sage.combinat
         ....:     if s(two_squares_pyx(s(ij))) != s(ij):
         ....:         print("hey")
 
@@ -254,7 +254,7 @@ def three_squares_pyx(uint32_t n):
     TESTS::
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: for ijk in Subsets(Subsets(35000,15).random_element(),3):
+        sage: for ijk in Subsets(Subsets(35000,15).random_element(),3):                 # optional - sage.combinat
         ....:     if s(three_squares_pyx(s(ijk))) != s(ijk):
         ....:         print("hey")
     """
@@ -278,7 +278,7 @@ def four_squares_pyx(uint32_t n):
 
     .. SEEALSO::
 
-        :func:`~sage.arith.all.four_squares` is much more suited for large input
+        :func:`~sage.arith.misc.four_squares` is much more suited for large input
 
     EXAMPLES::
 

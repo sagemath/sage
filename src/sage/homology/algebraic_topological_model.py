@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.graphs
 r"""
 Algebraic topological model for a cell complex
 
@@ -100,8 +100,8 @@ def algebraic_topological_model(K, base_ring=None):
 
         sage: from sage.homology.algebraic_topological_model import algebraic_topological_model
         sage: RP2 = simplicial_complexes.RealProjectivePlane()
-        sage: phi, M = algebraic_topological_model(RP2, GF(2))
-        sage: M.homology()
+        sage: phi, M = algebraic_topological_model(RP2, GF(2))                          # optional - sage.rings.finite_rings
+        sage: M.homology()                                                              # optional - sage.rings.finite_rings
         {0: Vector space of dimension 1 over Finite Field of size 2,
          1: Vector space of dimension 1 over Finite Field of size 2,
          2: Vector space of dimension 1 over Finite Field of size 2}
@@ -123,7 +123,8 @@ def algebraic_topological_model(K, base_ring=None):
         1
         sage: phi.dual()
         Chain homotopy between:
-          Chain complex endomorphism of Chain complex with at most 3 nonzero terms over Rational Field
+          Chain complex endomorphism of
+            Chain complex with at most 3 nonzero terms over Rational Field
           and Chain complex morphism:
             From: Chain complex with at most 3 nonzero terms over Rational Field
             To:   Chain complex with at most 3 nonzero terms over Rational Field
@@ -369,8 +370,8 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
 
         sage: from sage.homology.algebraic_topological_model import algebraic_topological_model_delta_complex as AT_model
         sage: RP2 = simplicial_complexes.RealProjectivePlane()
-        sage: phi, M = AT_model(RP2, GF(2))
-        sage: M.homology()
+        sage: phi, M = AT_model(RP2, GF(2))                                             # optional - sage.rings.finite_rings
+        sage: M.homology()                                                              # optional - sage.rings.finite_rings
         {0: Vector space of dimension 1 over Finite Field of size 2,
          1: Vector space of dimension 1 over Finite Field of size 2,
          2: Vector space of dimension 1 over Finite Field of size 2}

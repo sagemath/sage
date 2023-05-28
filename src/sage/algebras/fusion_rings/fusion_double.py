@@ -222,7 +222,7 @@ class FusionDouble(CombinatorialFreeModule):
         TESTS::
 
             sage: D = FusionDouble(SymmetricGroup(4))
-            
+
             sage: all(D._char_cache(b.support_of_term(), b.g()) == b.char()(b.g())
             ....:     for b in D.basis())
             True

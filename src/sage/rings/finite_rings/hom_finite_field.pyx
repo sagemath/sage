@@ -317,7 +317,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
     def is_injective(self):
         """
-        Return True since a embedding between finite fields is
+        Return ``True`` since a embedding between finite fields is
         always injective.
 
         EXAMPLES::
@@ -334,7 +334,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
     def is_surjective(self):
         """
-        Return true if this embedding is surjective (and hence an
+        Return ``True`` if this embedding is surjective (and hence an
         isomorphism.
 
         EXAMPLES::
@@ -773,7 +773,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def is_injective(self):
         """
-        Return true since any power of the Frobenius endomorphism
+        Return ``True`` since any power of the Frobenius endomorphism
         over a finite field is always injective.
 
         EXAMPLES::
@@ -788,7 +788,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def is_surjective(self):
         """
-        Return true since any power of the Frobenius endomorphism
+        Return ``True`` since any power of the Frobenius endomorphism
         over a finite field is always surjective.
 
         EXAMPLES::
@@ -803,7 +803,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def is_identity(self):
         """
-        Return true if this morphism is the identity morphism.
+        Return ``True`` if this morphism is the identity morphism.
 
         EXAMPLES::
 

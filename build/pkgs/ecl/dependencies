@@ -1,4 +1,4 @@
-$(MP_LIBRARY) readline gc libffi
+$(MP_LIBRARY) readline gc libffi info
 
 ----------
 All lines of this file are ignored except the first.

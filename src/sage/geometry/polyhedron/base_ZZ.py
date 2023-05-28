@@ -511,14 +511,14 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         if not self.has_IP_property():
             raise ValueError('The polytope must have the IP property.')
 
-        vertices = tuple( ieq.A()/ieq.b() for
-                          ieq in self.inequality_generator() )
+        vertices = tuple(ieq.A() / ieq.b() for
+                         ieq in self.inequality_generator())
 
         ieqs = ((1,) + tuple(v[:]) for v in self.vertices())
 
         pref_rep = 'Hrep' if self.n_vertices() <= self.n_inequalities() else 'Vrep'
 
-        if all( all(v_i in ZZ for v_i in v) for v in vertices):
+        if all(v_i in ZZ for v in vertices for v_i in v):
             parent = self.parent()
             vertices = (v.change_ring(ZZ) for v in vertices)
         else:

@@ -358,6 +358,31 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             v = self._M(v)
         return self.element_class(self, v)
 
+    def _from_dict(self, d, coerce=False, remove_zeros=False):
+        r"""
+        Construct an element of ``self`` from an ``{index: coefficient}``
+        dictionary.
+
+        INPUT:
+
+        - ``d`` -- a dictionary ``{index: coeff}`` where each ``index`` is the
+          index of a basis element and each ``coeff`` belongs to the
+          coefficient ring ``self.base_ring()``
+        - ``coerce`` -- ignored
+        - ``remove_zeros`` -- ignored
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: L._from_dict({'x': -3, 'z': 2, 'y': 0})
+            -3*x + 2*z
+        """
+        zero = self._M.base_ring().zero()
+        ret = [zero] * self._M.rank()
+        for k, c in d.items():
+            ret[self._index_to_pos[k]] = c
+        return self.element_class(self, self._M(ret))
+
     def some_elements(self):
         """
         Return some elements of ``self``.

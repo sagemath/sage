@@ -3129,7 +3129,7 @@ cdef class ocean:
 
     def all_done(self):
         """
-        Returns true iff all islands are known to contain exactly one root.
+        Return ``True`` iff all islands are known to contain exactly one root.
 
         EXAMPLES::
 

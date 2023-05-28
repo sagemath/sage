@@ -355,7 +355,7 @@ class HypergraphGenerators():
             raise ValueError("edge probability should be in [0,1]")
 
         import numpy.random as nrn
-        from sage.functions.other import binomial
+        from sage.arith.misc import binomial
         m = nrn.binomial(binomial(nverts, uniformity), p)
         return hypergraphs.UniformRandomUniform(n, k, m)
 

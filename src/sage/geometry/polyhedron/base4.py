@@ -1225,7 +1225,7 @@ class Polyhedron_base4(Polyhedron_base3):
             True
             sage: polytopes.cube().is_self_dual()
             False
-            sage: polytopes.hypersimplex(5,2).is_self_dual()
+            sage: polytopes.hypersimplex(5,2).is_self_dual()                            # optional - sage.combinat
             False
             sage: P = Polyhedron(vertices=[[1/2, 1/3]], rays=[[1, 1]]).is_self_dual()
             Traceback (most recent call last):

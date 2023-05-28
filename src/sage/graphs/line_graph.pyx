@@ -191,7 +191,7 @@ def is_line_graph(g, certificate=False):
         sage: is_line, R, isom = g.is_line_graph(certificate=True)
         sage: R.sparse6_string()
         ':DaHI~'
-        sage: R.show()
+        sage: R.show()                                                                  # optional - sage.plot
         sage: isom
         {0: (0, 1), 1: (0, 2), 2: (1, 3), 3: (2, 3), 4: (3, 4)}
 

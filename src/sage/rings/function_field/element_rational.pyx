@@ -106,7 +106,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
     def __bool__(self):
         """
-        Return True if the element is not zero.
+        Return ``True`` if the element is not zero.
 
         EXAMPLES::
 

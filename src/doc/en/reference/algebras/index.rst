@@ -110,6 +110,7 @@ Non-associative algebras
 .. toctree::
    :maxdepth: 1
 
+   sage/algebras/octonion_algebra
    lie_algebras
    lie_conformal_algebras
    sage/algebras/jordan_algebra

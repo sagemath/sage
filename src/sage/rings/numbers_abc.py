@@ -57,10 +57,10 @@ def register_sage_classes():
 
     Because we do this, NumPy's ``isscalar()`` recognizes Sage types::
 
-        sage: from numpy import isscalar
-        sage: isscalar(3.141)
+        sage: from numpy import isscalar                                                # optional - numpy
+        sage: isscalar(3.141)                                                           # optional - numpy
         True
-        sage: isscalar(4/17)
+        sage: isscalar(4/17)                                                            # optional - numpy
         True
     """
     from sage.misc.superseded import deprecation

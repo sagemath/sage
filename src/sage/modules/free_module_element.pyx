@@ -124,7 +124,6 @@ from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.abc import RealDoubleField, ComplexDoubleField
 
-from sage.rings.ring cimport Ring
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.numerical_approx cimport digits_to_bits
 

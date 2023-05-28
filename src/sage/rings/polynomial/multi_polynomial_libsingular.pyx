@@ -370,7 +370,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: polynomials over Ring of integers modulo 1 are not supported in Singular
-            sage: MPolynomialRing_libsingular(SR, 1, ["x"], "lex")
+            sage: MPolynomialRing_libsingular(SR, 1, ["x"], "lex")                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: polynomials over Symbolic Ring are not supported in Singular
@@ -468,7 +468,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
     cpdef _coerce_map_from_(self, other):
         """
-        Return True if and only if there exists a coercion map from
+        Return ``True`` if and only if there exists a coercion map from
         ``other`` to ``self``.
 
         TESTS::

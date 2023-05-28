@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.graphs sage.combinat
 r"""
 Rational polyhedral fans
 
@@ -503,12 +503,12 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: fan = Fan([c1, c2], allow_arrangement=True)
         sage: fan.ngenerating_cones()
         7
-        sage: fan.plot()  # optional - sage.plot
+        sage: fan.plot()                                                                # optional - sage.plot
         Graphics3d Object
 
     Cones of different dimension::
 
-        sage: c1 = Cone([(1,0),(0,1)])
+        sage: c1 = Cone([(1,0), (0,1)])
         sage: c2 = Cone([(2,1)])
         sage: c3 = Cone([(-1,-2)])
         sage: fan = Fan([c1, c2, c3], allow_arrangement=True)
@@ -523,7 +523,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: c3 = Cone([[0, 1, 1], [1, 0, 1], [0, -1, 1], [-1, 0, 1]])
         sage: c1 = Cone([[0, 0, 1]])
         sage: fan1 = Fan([c1, c3], allow_arrangement=True)
-        sage: fan1.plot()  # optional - sage.plot
+        sage: fan1.plot()                                                               # optional - sage.plot
         Graphics3d Object
 
     A 3-d cone and two 2-d cones::
@@ -1617,7 +1617,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             True
             sage: f.support_contains((-1,0))
             False
-            sage: f.support_contains(f.lattice().dual()(1,0)) #random output (warning)
+            sage: f.support_contains(f.lattice().dual()(1,0))  # random output (warning)
             False
             sage: f.support_contains(f.lattice().dual()(1,0))
             False
@@ -1625,9 +1625,9 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             False
             sage: f.support_contains(0)   # 0 converts to the origin in the lattice
             True
-            sage: f.support_contains(1/2, sqrt(3))
+            sage: f.support_contains(1/2, sqrt(3))                                      # optional - sage.symbolic
             True
-            sage: f.support_contains(-1/2, sqrt(3))
+            sage: f.support_contains(-1/2, sqrt(3))                                     # optional - sage.symbolic
             False
         """
         if len(args) == 1:
@@ -1668,10 +1668,10 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         EXAMPLES::
 
             sage: K = ToricLattice(1, 'K')
-            sage: fan1 = Fan([[0],[1]],[(1,),(-1,)], lattice=K)
+            sage: fan1 = Fan([[0],[1]], [(1,),(-1,)], lattice=K)
             sage: L = ToricLattice(2, 'L')
-            sage: fan2 = Fan(rays=[(1,0),(0,1),(-1,-1)],
-            ....:        cones=[[0,1],[1,2],[2,0]], lattice=L)
+            sage: fan2 = Fan(rays=[(1,0), (0,1), (-1,-1)],
+            ....:            cones=[[0,1], [1,2], [2,0]], lattice=L)
             sage: fan1.cartesian_product(fan2)
             Rational polyhedral fan in 3-d lattice K+L
             sage: _.ngenerating_cones()
@@ -1733,14 +1733,14 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         Refining a fan with itself gives itself::
 
-            sage: F0 = Fan2d([(1,0),(0,1),(-1,0),(0,-1)])
+            sage: F0 = Fan2d([(1,0), (0,1), (-1,0), (0,-1)])
             sage: F0.common_refinement(F0) == F0
             True
 
         A more complex example with complete fans::
 
-            sage: F1 = Fan([[0],[1]],[(1,),(-1,)])
-            sage: F2 = Fan2d([(1,0),(1,1),(0,1),(-1,0),(0,-1)])
+            sage: F1 = Fan([[0],[1]], [(1,),(-1,)])
+            sage: F2 = Fan2d([(1,0), (1,1), (0,1), (-1,0), (0,-1)])
             sage: F3 = F2.cartesian_product(F1)
             sage: F4 = F1.cartesian_product(F2)
             sage: FF = F3.common_refinement(F4)
@@ -1753,8 +1753,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         An example with two non-complete fans with the same support::
 
-            sage: F5 = Fan2d([(1,0),(1,2),(0,1)])
-            sage: F6 = Fan2d([(1,0),(2,1),(0,1)])
+            sage: F5 = Fan2d([(1,0), (1,2), (0,1)])
+            sage: F6 = Fan2d([(1,0), (2,1), (0,1)])
             sage: F5.common_refinement(F6).ngenerating_cones()
             3
 
@@ -1997,7 +1997,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         TESTS::
 
             sage: fan = Fan(cones=[(0,1,2,3), (0,1,4)],
-            ....:     rays=[(1,1,1), (1,-1,1), (1,-1,-1), (1,1,-1), (0,0,1)])
+            ....:           rays=[(1,1,1), (1,-1,1), (1,-1,-1), (1,1,-1), (0,0,1)])
             sage: fan.cone_containing(0).rays()
             N(1, 1, 1)
             in 3-d lattice N
@@ -2525,18 +2525,18 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES::
 
-            sage: dP8 = toric_varieties.dP8()                                               # optional - palp sage.graphs
-            sage: g = dP8.fan().vertex_graph(); g                                           # optional - palp sage.graphs
+            sage: dP8 = toric_varieties.dP8()                                   # optional - palp sage.graphs
+            sage: g = dP8.fan().vertex_graph(); g                               # optional - palp sage.graphs
             Graph on 4 vertices
-            sage: set(dP8.fan(1)) == set(g.vertices(sort=False))                            # optional - palp sage.graphs
+            sage: set(dP8.fan(1)) == set(g.vertices(sort=False))                # optional - palp sage.graphs
             True
             sage: g.edge_labels()  # all edge labels the same since every cone is smooth    # optional - palp sage.graphs
             [(1, 0), (1, 0), (1, 0), (1, 0)]
 
-            sage: g = toric_varieties.Cube_deformation(10).fan().vertex_graph()             # optional - sage.graphs
-            sage: g.automorphism_group().order()                                            # optional - sage.graphs sage.groups
+            sage: g = toric_varieties.Cube_deformation(10).fan().vertex_graph()         # optional - sage.graphs
+            sage: g.automorphism_group().order()                                        # optional - sage.graphs sage.groups
             48
-            sage: g.automorphism_group(edge_labels=True).order()                            # optional - sage.graphs sage.groups
+            sage: g.automorphism_group(edge_labels=True).order()                        # optional - sage.graphs sage.groups
             4
         """
         from sage.geometry.cone import classify_cone_2d
@@ -2697,7 +2697,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: rays = ((1, 1), (0, 1), (-1, -1), (1, 0))
             sage: cones = [(0,1), (1,2), (2,3), (3,0)]
             sage: fan1 = Fan(cones, rays)
-            sage: m = matrix([[-2,3],[1,-1]])
+            sage: m = matrix([[-2,3], [1,-1]])
             sage: fan2 = Fan(cones, [vector(r)*m for r in rays])
             sage: fan1.is_isomorphic(fan2)
             True
@@ -2799,7 +2799,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: rays = ((1, 1), (0, 1), (-1, -1), (3, 1))
             sage: cones = [(0,1), (1,2), (2,3), (3,0)]
             sage: fan1 = Fan(cones, rays)
-            sage: m = matrix([[-2,3],[1,-1]])
+            sage: m = matrix([[-2,3], [1,-1]])
             sage: fan2 = Fan(cones, [vector(r)*m for r in rays])
 
             sage: fan1.isomorphism(fan2)
@@ -3190,7 +3190,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES::
 
-            sage: fan = Fan([[0,1,3],[3,4],[2,0],[1,2,4]], [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
+            sage: fan = Fan([[0,1,3], [3,4], [2,0], [1,2,4]],
+            ....:           [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
             sage: fan.primitive_collections()
             [frozenset({0, 4}),
              frozenset({2, 3}),
@@ -3250,9 +3251,11 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES::
 
-            sage: fan = Fan([[0,1,3],[3,4],[2,0],[1,2,4]], [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
-            sage: fan.Stanley_Reisner_ideal( PolynomialRing(QQ,5,'A, B, C, D, E') )
-            Ideal (A*E, C*D, A*B*C, B*D*E) of Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
+            sage: fan = Fan([[0,1,3], [3,4], [2,0], [1,2,4]],
+            ....:           [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
+            sage: fan.Stanley_Reisner_ideal(PolynomialRing(QQ, 5, 'A, B, C, D, E'))
+            Ideal (A*E, C*D, A*B*C, B*D*E) of
+             Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
         """
         generators_indices = self.primitive_collections()
         return ring.ideal([prod([ring.gen(i) for i in sr])
@@ -3274,9 +3277,11 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES::
 
-            sage: fan = Fan([[0,1,3],[3,4],[2,0],[1,2,4]], [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
-            sage: fan.linear_equivalence_ideal( PolynomialRing(QQ,5,'A, B, C, D, E') )
-            Ideal (-3*A + 3*C - D + E, -2*A - 2*C - D - E, A + B + C + D + E) of Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
+            sage: fan = Fan([[0,1,3],[3,4],[2,0],[1,2,4]],
+            ....:           [(-3, -2, 1), (0, 0, 1), (3, -2, 1), (-1, -1, 1), (1, -1, 1)])
+            sage: fan.linear_equivalence_ideal(PolynomialRing(QQ, 5, 'A, B, C, D, E'))
+            Ideal (-3*A + 3*C - D + E, -2*A - 2*C - D - E, A + B + C + D + E) of
+             Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
         """
         gens = []
         for d in range(self.dim()):
@@ -3317,7 +3322,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: fan = toric_varieties.P(3).fan()                              # optional - palp
             sage: cone = fan(2)[0]                                              # optional - palp
             sage: bdry = fan.oriented_boundary(cone);  bdry                     # optional - palp
-            -1-d cone of Rational polyhedral fan in 3-d lattice N + 1-d cone of Rational polyhedral fan in 3-d lattice N
+            -1-d cone of Rational polyhedral fan in 3-d lattice N
+            + 1-d cone of Rational polyhedral fan in 3-d lattice N
             sage: bdry[0]                                                       # optional - palp
             (-1, 1-d cone of Rational polyhedral fan in 3-d lattice N)
             sage: bdry[1]                                                       # optional - palp
@@ -3499,22 +3505,23 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES::
 
-            sage: fan = toric_varieties.P(3).fan()                                      # optional - palp
-            sage: K_normal = fan.complex(); K_normal                                    # optional - palp
+            sage: fan = toric_varieties.P(3).fan()                              # optional - palp
+            sage: K_normal = fan.complex(); K_normal                            # optional - palp
             Chain complex with at most 4 nonzero terms over Integer Ring
-            sage: K_normal.homology()                                                   # optional - palp
+            sage: K_normal.homology()                                           # optional - palp
             {0: Z, 1: 0, 2: 0, 3: 0}
-            sage: K_extended = fan.complex(extended=True); K_extended                   # optional - palp
+            sage: K_extended = fan.complex(extended=True); K_extended           # optional - palp
             Chain complex with at most 5 nonzero terms over Integer Ring
-            sage: K_extended.homology()                                                 # optional - palp
+            sage: K_extended.homology()                                         # optional - palp
             {-1: 0, 0: 0, 1: 0, 2: 0, 3: 0}
 
         Homology computations are much faster over `\QQ` if you do not
         care about the torsion coefficients::
 
-            sage: toric_varieties.P2_123().fan().complex(extended=True, base_ring=QQ)   # optional - palp
+            sage: toric_varieties.P2_123().fan().complex(extended=True,         # optional - palp
+            ....:                                        base_ring=QQ)
             Chain complex with at most 4 nonzero terms over Rational Field
-            sage: _.homology()                                                          # optional - palp
+            sage: _.homology()                                                  # optional - palp
             {-1: Vector space of dimension 0 over Rational Field,
              0: Vector space of dimension 0 over Rational Field,
              1: Vector space of dimension 0 over Rational Field,
@@ -3542,15 +3549,15 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         Things get more complicated for non-complete fans::
 
             sage: fan = Fan([Cone([(1,1,1)]),
-            ....:            Cone([(1,0,0),(0,1,0)]),
-            ....:            Cone([(-1,0,0),(0,-1,0),(0,0,-1)])])
+            ....:            Cone([(1,0,0), (0,1,0)]),
+            ....:            Cone([(-1,0,0), (0,-1,0), (0,0,-1)])])
             sage: fan.complex().homology()
             {0: 0, 1: 0, 2: Z x Z, 3: 0}
-            sage: fan = Fan([Cone([(1,0,0),(0,1,0)]),
-            ....:            Cone([(-1,0,0),(0,-1,0),(0,0,-1)])])
+            sage: fan = Fan([Cone([(1,0,0), (0,1,0)]),
+            ....:            Cone([(-1,0,0), (0,-1,0), (0,0,-1)])])
             sage: fan.complex().homology()
             {0: 0, 1: 0, 2: Z, 3: 0}
-            sage: fan = Fan([Cone([(-1,0,0),(0,-1,0),(0,0,-1)])])
+            sage: fan = Fan([Cone([(-1,0,0), (0,-1,0), (0,0,-1)])])
             sage: fan.complex().homology()
             {0: 0, 1: 0, 2: 0, 3: 0}
         """

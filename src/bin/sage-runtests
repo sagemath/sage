@@ -174,7 +174,8 @@ if __name__ == "__main__":
         filenames = [f for f in args.filenames
                      if f.endswith("_test.py") or not os.path.isfile(f)]
         if filenames or not args.filenames:
-            exit_code_pytest = pytest.main(pytest_options + filenames)
+            print(f"Running pytest on {filenames} with options {pytest_options}")
+            exit_code_pytest = pytest.main(filenames + pytest_options)
             if exit_code_pytest == 5:
                 # Exit code 5 means there were no test files, pass in this case
                 exit_code_pytest = 0

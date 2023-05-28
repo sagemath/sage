@@ -30,7 +30,7 @@ from sage.rings.finite_rings.integer_mod cimport mod_inverse_int
 
 class FpT(FractionField_1poly_field):
     r"""
-    This class represents the fraction field GF(p)(T) for `2 < p < \sqrt{2^31-1}`.
+    This class represents the fraction field `\GF{p}(T)` for `2 < p < \sqrt{2^31-1}`.
 
     EXAMPLES::
 
@@ -93,7 +93,7 @@ class FpT(FractionField_1poly_field):
 
 cdef class FpTElement(FieldElement):
     """
-    An element of an FpT fraction field.
+    An element of an :class:`FpT` fraction field.
 
     TESTS::
 
@@ -563,7 +563,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef FpTElement next(self):
         """
-        This function iterates through all polynomials, returning the "next" polynomial after this one.
+        Iterate through all polynomials, returning the "next" polynomial after this one.
 
         The strategy is as follows:
 
@@ -572,7 +572,7 @@ cdef class FpTElement(FieldElement):
         - We progress through the elements with both numerator and denominator monic, and with the denominator less than the numerator.
           For each such, we output all the scalar multiples of it, then all of the scalar multiples of its inverse.
 
-        - So if the leading coefficient of the numerator is less than p-1, we scale the numerator to increase it by 1.
+        - So if the leading coefficient of the numerator is less than `p-1`, we scale the numerator to increase it by 1.
 
         - Otherwise, we consider the multiple with numerator and denominator monic.
 
@@ -741,7 +741,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef bint is_square(self):
         """
-        Return True if this element is the square of another element of the fraction field.
+        Return ``True`` if this element is the square of another element of the fraction field.
 
         EXAMPLES::
 
@@ -1848,11 +1848,11 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
 
 cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p):
     """
-    Put numer/denom into a normal form: denominator monic and sharing no common factor with the numerator.
+    Put ``numer`` / ``denom`` into a normal form: denominator monic and sharing no common factor with the numerator.
 
     The normalized form of 0 is 0/1.
 
-    Return True if numer and denom were changed.
+    Return ``True`` if ``numer`` and ``denom`` were changed.
     """
     cdef long a
     cdef bint changed
@@ -1923,9 +1923,9 @@ cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
     """
     Compare `a` and `b`, returning 0 if they are equal.
 
-    - If the degree of `a` is less than that of `b`, returns -1.
+    - If the degree of `a` is less than that of `b`, returns `-1`.
 
-    - If the degree of `b` is less than that of `a`, returns 1.
+    - If the degree of `b` is less than that of `a`, returns `1`.
 
     - Otherwise, compares `a` and `b` lexicographically, starting at the leading terms.
     """
@@ -1949,7 +1949,7 @@ cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
 
 cdef bint nmod_poly_sqrt_check(nmod_poly_t poly):
     """
-    Quick check to see if poly could possibly be a square.
+    Quick check to see if ``poly`` could possibly be a square.
     """
     # We could use Sage's jacobi_int which is for 32 bits integers rather
     # than FLINT's n_jacobi which is for longs as the FpT class is crafted
@@ -1977,8 +1977,8 @@ def unpickle_FpT_element(K, numer, denom):
 #  elsewhere at some point.
 cdef int sage_cmp_nmod_poly_t(nmod_poly_t L, nmod_poly_t R):
     """
-    Compare two nmod_poly_t in a Pythonic way, so this returns -1, 0,
-    or 1, and is consistent.
+    Compare two ``nmod_poly_t`` in a Pythonic way, so this returns `-1`, `0`,
+    or `1`, and is consistent.
     """
     cdef int j
     cdef Py_ssize_t i

@@ -110,8 +110,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
 
             sage: S = simplicial_complexes.Sphere(2)
             sage: H = Hom(S,S.product(S, is_mutable=False))
-            sage: d = H.diagonal_morphism()
-            sage: d
+            sage: d = H.diagonal_morphism(); d
             Simplicial complex morphism:
               From: Minimal triangulation of the 2-sphere
               To:   Simplicial complex with 16 vertices and 96 facets
@@ -121,13 +120,13 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
                     3 |--> L3R3
 
             sage: T = SimplicialComplex([[0], [1]], is_mutable=False)
-            sage: U = T.product(T,rename_vertices = False, is_mutable=False)
-            sage: G = Hom(T,U)
-            sage: e = G.diagonal_morphism(rename_vertices = False)
-            sage: e
+            sage: U = T.product(T, rename_vertices=False, is_mutable=False)
+            sage: G = Hom(T, U)
+            sage: e = G.diagonal_morphism(rename_vertices=False); e
             Simplicial complex morphism:
               From: Simplicial complex with vertex set (0, 1) and facets {(0,), (1,)}
-              To:   Simplicial complex with 4 vertices and facets {((0, 0),), ((0, 1),), ((1, 0),), ((1, 1),)}
+              To:   Simplicial complex with 4 vertices and
+                    facets {((0, 0),), ((0, 1),), ((1, 0),), ((1, 1),)}
               Defn: 0 |--> (0, 0)
                     1 |--> (1, 1)
         """
@@ -150,15 +149,16 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         EXAMPLES::
 
             sage: S = simplicial_complexes.Sphere(2)
-            sage: H = Hom(S,S)
+            sage: H = Hom(S, S)
             sage: i = H.identity()
             sage: i.is_identity()
             True
 
             sage: T = SimplicialComplex([[0,1]], is_mutable=False)
-            sage: G = Hom(T,T)
+            sage: G = Hom(T, T)
             sage: G.identity()
-            Simplicial complex endomorphism of Simplicial complex with vertex set (0, 1) and facets {(0, 1)}
+            Simplicial complex endomorphism of
+             Simplicial complex with vertex set (0, 1) and facets {(0, 1)}
               Defn: 0 |--> 0
                     1 |--> 1
         """

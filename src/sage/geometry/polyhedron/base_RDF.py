@@ -1,3 +1,5 @@
+# sage.doctest: optional - sage.rings.real_double
+
 """
 Base class for polyhedra over ``RDF``
 """

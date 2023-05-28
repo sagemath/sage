@@ -78,6 +78,18 @@ class RibbonShapedTableau(SkewTableau):
 
             sage: RibbonShapedTableau([[2,3],[1,4,5]])
             [[None, None, 2, 3], [1, 4, 5]]
+
+        TESTS::
+
+            sage: RibbonShapedTableau([4,5])
+            Traceback (most recent call last):
+            ...
+            TypeError: rows must be lists of positive integers
+
+            sage: RibbonShapedTableau([[2,3],[-4,5]])
+            Traceback (most recent call last):
+            ...
+            TypeError: r must be a list of positive integers
         """
         try:
             r = [tuple(r) for r in rows]
@@ -85,7 +97,8 @@ class RibbonShapedTableau(SkewTableau):
             raise TypeError("rows must be lists of positive integers")
         if not r:
             return StandardRibbonShapedTableaux()(r)
-        if all(all(j is None or (isinstance(j, (int, Integer)) and j>0) for j in i) for i in r):
+        if all(j is None or (isinstance(j, (int, Integer)) and j > 0)
+               for i in r for j in i):
             return StandardRibbonShapedTableaux()(r)
         raise TypeError("r must be a list of positive integers")
 
