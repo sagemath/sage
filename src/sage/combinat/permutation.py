@@ -4231,7 +4231,7 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: p = Permutation([2, 1, 4, 5, 3]); q = Permutation([2, 5, 4, 1, 3])
-            sage: p.right_permutohedron_interval(q)  # indirect doctest                 # optional - sage.graphs
+            sage: p.right_permutohedron_interval(q)  # indirect doctest                 # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
         """
@@ -5346,21 +5346,21 @@ class Permutation(CombinatorialElement):
 
             sage: Permutation([]).shifted_shuffle(Permutation([]))                      # optional - sage.graphs
             [[]]
-            sage: Permutation([1, 2, 3]).shifted_shuffle(Permutation([1]))              # optional - sage.graphs
+            sage: Permutation([1, 2, 3]).shifted_shuffle(Permutation([1]))              # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[4, 1, 2, 3], [1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3]]
-            sage: Permutation([1, 2]).shifted_shuffle(Permutation([2, 1]))              # optional - sage.graphs
+            sage: Permutation([1, 2]).shifted_shuffle(Permutation([2, 1]))              # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[4, 1, 3, 2], [4, 3, 1, 2], [1, 4, 3, 2],
              [1, 4, 2, 3], [1, 2, 4, 3], [4, 1, 2, 3]]
-            sage: Permutation([1]).shifted_shuffle([1])                                 # optional - sage.graphs
+            sage: Permutation([1]).shifted_shuffle([1])                                 # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[2, 1], [1, 2]]
             sage: p = Permutation([3, 1, 5, 4, 2])
-            sage: len(p.shifted_shuffle(Permutation([2, 1, 4, 3])))                     # optional - sage.graphs
+            sage: len(p.shifted_shuffle(Permutation([2, 1, 4, 3])))                     # optional - sage.graphs sage.modules sage.rings.finite_rings
             126
 
         The shifted shuffle product is associative. We can test this on an
         admittedly toy example::
 
-            sage: all( all( all( sorted(flatten([abs.shifted_shuffle(c)                 # optional - sage.graphs
+            sage: all( all( all( sorted(flatten([abs.shifted_shuffle(c)                 # optional - sage.graphs sage.modules sage.rings.finite_rings
             ....:                                for abs in a.shifted_shuffle(b)]))
             ....:                == sorted(flatten([a.shifted_shuffle(bcs)
             ....:                                   for bcs in b.shifted_shuffle(c)]))
@@ -5373,7 +5373,7 @@ class Permutation(CombinatorialElement):
         permutations as the ``shifted_shuffle`` method on words (but is
         faster)::
 
-            sage: all( all( sorted(p1.shifted_shuffle(p2))                              # optional - sage.graphs
+            sage: all( all( sorted(p1.shifted_shuffle(p2))                              # optional - sage.graphs sage.modules sage.rings.finite_rings
             ....:           == sorted([Permutation(p) for p in
             ....:                      Word(p1).shifted_shuffle(Word(p2))])
             ....:           for p2 in Permutations(3) )
@@ -8129,7 +8129,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
 
         EXAMPLES::
 
-            sage: Permutations(descents=([2,0],5)).list()                               # optional - sage.graphs
+            sage: Permutations(descents=([2,0],5)).list()                               # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[5, 2, 4, 1, 3],
              [5, 3, 4, 1, 2],
              [4, 3, 5, 1, 2],
@@ -8158,7 +8158,7 @@ def descents_composition_list(dc):
     EXAMPLES::
 
         sage: import sage.combinat.permutation as permutation
-        sage: permutation.descents_composition_list([1,2,2])                            # optional - sage.graphs
+        sage: permutation.descents_composition_list([1,2,2])                            # optional - sage.graphs sage.modules sage.rings.finite_rings
         [[5, 2, 4, 1, 3],
          [5, 3, 4, 1, 2],
          [4, 3, 5, 1, 2],
@@ -8340,7 +8340,7 @@ class StandardPermutations_recoilsfatter(Permutations):
 
         EXAMPLES::
 
-            sage: Permutations(recoils_fatter=[2,2]).list()                             # optional - sage.graphs
+            sage: Permutations(recoils_fatter=[2,2]).list()                             # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[4, 3, 2, 1],
              [3, 2, 1, 4],
              [3, 2, 4, 1],
