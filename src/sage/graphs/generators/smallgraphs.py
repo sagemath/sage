@@ -904,7 +904,7 @@ def Balaban11Cage(embedding=1):
 
         sage: g1 = graphs.Balaban11Cage(embedding=1)
         sage: g2 = graphs.Balaban11Cage(embedding=2)                                    # optional - networkx
-        sage: g3 = graphs.Balaban11Cage(embedding=3)
+        sage: g3 = graphs.Balaban11Cage(embedding=3)                                    # optional - networkx
         sage: g1.show(figsize=[10,10])   # long time                                    # optional - sage.plot
         sage: g2.show(figsize=[10,10])   # long time                                    # optional - networkx sage.plot
         sage: g3.show(figsize=[10,10])   # long time                                    # optional - sage.plot
@@ -1973,8 +1973,8 @@ def DurerGraph():
 
     Its automorphism group is isomorphic to `D_6`::
 
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(6))
+        sage: ag = G.automorphism_group()                                               # optional - sage.groups
+        sage: ag.is_isomorphic(DihedralGroup(6))                                        # optional - sage.groups
         True
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
@@ -2624,8 +2624,8 @@ def GoldnerHararyGraph():
 
         sage: G.chromatic_number()
         4
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(6))
+        sage: ag = G.automorphism_group()                                               # optional - sage.groups
+        sage: ag.is_isomorphic(DihedralGroup(6))                                        # optional - sage.groups
         True
     """
     edge_dict = {
@@ -2713,21 +2713,21 @@ def GrayGraph(embedding=1):
 
     EXAMPLES::
 
-        sage: g = graphs.GrayGraph()
-        sage: g.order()
+        sage: g = graphs.GrayGraph()                                                    # optional - networkx
+        sage: g.order()                                                                 # optional - networkx
         54
-        sage: g.size()
+        sage: g.size()                                                                  # optional - networkx
         81
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - networkx
         8
-        sage: g.diameter()
+        sage: g.diameter()                                                              # optional - networkx
         6
-        sage: g.show(figsize=[10, 10])   # long time
-        sage: graphs.GrayGraph(embedding=2).show(figsize=[10, 10])  # long time
+        sage: g.show(figsize=[10, 10])   # long time                                    # optional - networkx sage.plot
+        sage: graphs.GrayGraph(embedding=2).show(figsize=[10, 10])  # long time         # optional - networkx sage.plot
 
     TESTS::
 
-        sage: graphs.GrayGraph(embedding=3)
+        sage: graphs.GrayGraph(embedding=3)                                             # optional - networkx
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1, 2, or 3
@@ -4370,11 +4370,11 @@ def TruncatedIcosidodecahedralGraph():
 
     Unfortunately, this graph can not be constructed currently, due to numerical issues::
 
-        sage: g = graphs.TruncatedIcosidodecahedralGraph(); g
+        sage: g = graphs.TruncatedIcosidodecahedralGraph(); g                           # optional - sage.geometry.polyhedron
         Traceback (most recent call last):
         ...
         ValueError: *Error: Numerical inconsistency is found.  Use the GMP exact arithmetic.
-        sage: g.order(), g.size()  # not tested
+        sage: g.order(), g.size()  # not tested                                         # optional - sage.geometry.polyhedron
         (120, 180)
     """
     from sage.geometry.polyhedron.library import polytopes

@@ -3272,9 +3272,9 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
     of `G` are isomorphic to Hanoi Tower graphs::
 
         sage: k = randint(1, 5)
-        sage: S = graphs.GeneralizedSierpinskiGraph(graphs.CompleteGraph(3), k)
+        sage: S = graphs.GeneralizedSierpinskiGraph(graphs.CompleteGraph(3), k)         # optional - sage.modules
         sage: H = graphs.HanoiTowerGraph(3, k)
-        sage: S.is_isomorphic(H)
+        sage: S.is_isomorphic(H)                                                        # optional - sage.modules
         True
 
     The generalized Sierpinski graph of dimension `k` of any graph `G` with `n`

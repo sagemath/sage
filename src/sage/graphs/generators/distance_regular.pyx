@@ -132,8 +132,8 @@ def ConwaySmith_for_3S7():
 
     EXAMPLES::
 
-        sage: G = graphs.ConwaySmith_for_3S7()
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.ConwaySmith_for_3S7()                                          # optional - sage.modules sage.rings.finite_rings sage.rings.number_field
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings sage.rings.number_field
         ([10, 6, 4, 1, None], [None, 1, 2, 6, 10])
 
     REFERENCES:
@@ -243,8 +243,8 @@ def FosterGraph3S6():
 
     EXAMPLES::
 
-        sage: G = graphs.FosterGraph3S6()
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.FosterGraph3S6()                                               # optional - sage.libs.gap
+        sage: G.is_distance_regular(True)                                               # optional - sage.libs.gap
         ([6, 4, 2, 1, None], [None, 1, 1, 4, 6])
 
     REFERENCES:
@@ -597,8 +597,8 @@ def UstimenkoGraph(const int m, const int q):
 
     EXAMPLES::
 
-        sage: G = graphs.UstimenkoGraph(4, 2)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.UstimenkoGraph(4, 2)                                           # optional - sage.libs.gap
+        sage: G.is_distance_regular(True)                                               # optional - sage.libs.gap
         ([70, 32, None], [None, 1, 35])
 
     REFERENCES:
@@ -607,13 +607,13 @@ def UstimenkoGraph(const int m, const int q):
 
     TESTS::
 
-        sage: G = graphs.UstimenkoGraph(5, 2)  # long time
-        sage: G.order()  # long time
+        sage: G = graphs.UstimenkoGraph(5, 2)  # long time                              # optional - sage.libs.gap
+        sage: G.order()  # long time                                                    # optional - sage.libs.gap
         2295
-        sage: G.is_distance_regular(True)  # long time
+        sage: G.is_distance_regular(True)  # long time                                  # optional - sage.libs.gap
         ([310, 224, None], [None, 1, 35])
-        sage: G = graphs.UstimenkoGraph(4,3)  # long time
-        sage: G.is_distance_regular(True)  # long time
+        sage: G = graphs.UstimenkoGraph(4,3)  # long time                               # optional - sage.libs.gap
+        sage: G.is_distance_regular(True)  # long time                                  # optional - sage.libs.gap
         ([390, 243, None], [None, 1, 130])
     """
     from sage.graphs.graph_generators import graphs
@@ -652,14 +652,14 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
     EXAMPLES::
 
-        sage: G = graphs.BilinearFormsGraph(3, 3, 2)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.BilinearFormsGraph(3, 3, 2)                                    # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
         ([49, 36, 16, None], [None, 1, 6, 28])
-        sage: G = graphs.BilinearFormsGraph(3,3,3)  # not tested (20 s)
-        sage: G.order()  # not tested (due to above)
+        sage: G = graphs.BilinearFormsGraph(3,3,3)  # not tested (20 s)                 # optional - sage.modules sage.rings.finite_rings
+        sage: G.order()  # not tested (due to above)                                    # optional - sage.modules sage.rings.finite_rings
         19683
-        sage: G = graphs.BilinearFormsGraph(3, 4, 2)  # long time
-        sage: G.is_distance_regular(True)  # long time
+        sage: G = graphs.BilinearFormsGraph(3, 4, 2)  # long time                       # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)  # long time                                  # optional - sage.modules sage.rings.finite_rings
         ([105, 84, 48, None], [None, 1, 6, 28])
 
     REFERENCES:
@@ -669,15 +669,15 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
     TESTS::
 
-        sage: G = graphs.BilinearFormsGraph(2,3,2)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.BilinearFormsGraph(2,3,2)                                      # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
         ([21, 12, None], [None, 1, 6])
-        sage: H = graphs.BilinearFormsGraph(3,2,2)
-        sage: H.is_isomorphic(G)
+        sage: H = graphs.BilinearFormsGraph(3,2,2)                                      # optional - sage.modules sage.rings.finite_rings
+        sage: H.is_isomorphic(G)                                                        # optional - sage.modules sage.rings.finite_rings
         True
-        sage: G = graphs.BilinearFormsGraph(5, 1, 3)
-        sage: K = graphs.CompleteGraph(G.order())
-        sage: K.is_isomorphic(G)
+        sage: G = graphs.BilinearFormsGraph(5, 1, 3)                                    # optional - sage.modules sage.rings.finite_rings
+        sage: K = graphs.CompleteGraph(G.order())                                       # optional - sage.modules sage.rings.finite_rings
+        sage: K.is_isomorphic(G)                                                        # optional - sage.modules sage.rings.finite_rings
         True
     """
     from itertools import product as cartprod
@@ -754,13 +754,13 @@ def AlternatingFormsGraph(const int n, const int q):
 
     TESTS::
 
-         sage: G = graphs.AlternatingFormsGraph(6,2)  # not tested (2 min)
-         sage: G.order()  # not tested (because of above)
+         sage: G = graphs.AlternatingFormsGraph(6,2)  # not tested (2 min)              # optional - sage.modules sage.rings.finite_rings
+         sage: G.order()  # not tested (because of above)                               # optional - sage.modules sage.rings.finite_rings
          32768
-         sage: G.is_distance_regular(True)  # not tested (33 min)
+         sage: G.is_distance_regular(True)  # not tested (33 min)                       # optional - sage.modules sage.rings.finite_rings
          ([651, 560, 256, None], [None, 1, 20, 336])
-         sage: G = graphs.AlternatingFormsGraph(4, 3)
-         sage: G.is_distance_regular(True)
+         sage: G = graphs.AlternatingFormsGraph(4, 3)                                   # optional - sage.modules sage.rings.finite_rings
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules sage.rings.finite_rings
          ([260, 162, None], [None, 1, 90])
     """
     # n x n zero-diagonal skew-symmetric matrix
@@ -840,11 +840,11 @@ def HermitianFormsGraph(const int n, const int r):
 
     EXAMPLES::
 
-        sage: G = graphs.HermitianFormsGraph(2, 2)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.HermitianFormsGraph(2, 2)                                      # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
         ([5, 4, None], [None, 1, 2])
-        sage: G = graphs.HermitianFormsGraph(3, 3)  # not tested (2 min)
-        sage: G.order()  # not tested (bacuase of the above)
+        sage: G = graphs.HermitianFormsGraph(3, 3)  # not tested (2 min)                # optional - sage.modules sage.rings.finite_rings
+        sage: G.order()  # not tested (bacuase of the above)                            # optional - sage.modules sage.rings.finite_rings
         19683
 
     REFERENCES:
@@ -853,11 +853,11 @@ def HermitianFormsGraph(const int n, const int r):
 
     TESTS::
 
-         sage: G = graphs.HermitianFormsGraph(3, 2)
-         sage: G.is_distance_regular(True)
+         sage: G = graphs.HermitianFormsGraph(3, 2)                                     # optional - sage.modules sage.rings.finite_rings
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules sage.rings.finite_rings
          ([21, 20, 16, None], [None, 1, 2, 12])
-         sage: G = graphs.HermitianFormsGraph(2, 3)
-         sage: G.is_distance_regular(True)
+         sage: G = graphs.HermitianFormsGraph(2, 3)                                     # optional - sage.modules sage.rings.finite_rings
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules sage.rings.finite_rings
          ([20, 18, None], [None, 1, 6])
     """
     q = r * r
@@ -1079,8 +1079,8 @@ def GrassmannGraph(const int q, const int n, const int input_e):
 
     EXAMPLES::
 
-        sage: G = graphs.GrassmannGraph(2, 4, 2)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.GrassmannGraph(2, 4, 2)                                        # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
         ([18, 8, None], [None, 1, 9])
 
     REFERENCES:
@@ -1089,11 +1089,11 @@ def GrassmannGraph(const int q, const int n, const int input_e):
 
     TESTS::
 
-        sage: G = graphs.GrassmannGraph(2, 6, 3)  # long time
-        sage: G.is_distance_regular(True)  # long time
+        sage: G = graphs.GrassmannGraph(2, 6, 3)  # long time                           # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)  # long time                                  # optional - sage.modules sage.rings.finite_rings
         ([98, 72, 32, None], [None, 1, 9, 49])
-        sage: G = graphs.GrassmannGraph(3, 4, 2)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.GrassmannGraph(3, 4, 2)                                        # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
         ([48, 27, None], [None, 1, 16])
     """
     from sage.combinat.designs import design_catalog as designs
@@ -1132,10 +1132,10 @@ def DoubleGrassmannGraph(const int q, const int e):
 
     EXAMPLES::
 
-        sage: G = graphs.DoubleGrassmannGraph(2,1)
-        sage: G.diameter()
+        sage: G = graphs.DoubleGrassmannGraph(2,1)                                      # optional - sage.modules sage.rings.finite_rings
+        sage: G.diameter()                                                              # optional - sage.modules sage.rings.finite_rings
         3
-        sage: G.is_distance_regular(True)
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
         ([3, 2, 2, None], [None, 1, 1, 3])
 
 
@@ -1145,15 +1145,15 @@ def DoubleGrassmannGraph(const int q, const int e):
 
     TESTS::
 
-         sage: G = graphs.DoubleGrassmannGraph(5,1)
-         sage: G.order()
+         sage: G = graphs.DoubleGrassmannGraph(5,1)                                     # optional - sage.modules sage.rings.finite_rings
+         sage: G.order()                                                                # optional - sage.modules sage.rings.finite_rings
          62
-         sage: G.is_distance_regular(True)
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules sage.rings.finite_rings
          ([6, 5, 5, None], [None, 1, 1, 6])
-         sage: G = graphs.DoubleGrassmannGraph(3, 2)  # long time
-         sage: G.order()  # long time
+         sage: G = graphs.DoubleGrassmannGraph(3, 2)  # long time                       # optional - sage.modules sage.rings.finite_rings
+         sage: G.order()  # long time                                                   # optional - sage.modules sage.rings.finite_rings
          2420
-         sage: G.is_distance_regular(True)  # long time
+         sage: G.is_distance_regular(True)  # long time                                 # optional - sage.modules sage.rings.finite_rings
          ([13, 12, 12, 9, 9, None], [None, 1, 1, 4, 4, 13])
     """
     n = 2*e + 1
@@ -1407,14 +1407,14 @@ def GeneralisedOctagonGraph(const int s, const int t):
 
     EXAMPLES::
 
-         sage: G = graphs.GeneralisedOctagonGraph(1, 4)
-         sage: G.is_distance_regular(True)
+         sage: G = graphs.GeneralisedOctagonGraph(1, 4)                                 # optional - sage.libs.gap
+         sage: G.is_distance_regular(True)                                              # optional - sage.libs.gap
          ([5, 4, 4, 4, None], [None, 1, 1, 1, 5])
-         sage: G = graphs.GeneralisedOctagonGraph(2, 4)  # optional - gap_packages internet
-         sage: G.is_distance_regular(True)  # optional - gap_packages internet
+         sage: G = graphs.GeneralisedOctagonGraph(2, 4)     # optional - gap_packages internet
+         sage: G.is_distance_regular(True)                  # optional - gap_packages internet
          ([10, 8, 8, 8, None], [None, 1, 1, 1, 5])
-         sage: G = graphs.GeneralisedOctagonGraph(5, 1)
-         sage: G.is_distance_regular(True)
+         sage: G = graphs.GeneralisedOctagonGraph(5, 1)                                 # optional - sage.libs.gap
+         sage: G.is_distance_regular(True)                                              # optional - sage.libs.gap
          ([10, 5, 5, 5, None], [None, 1, 1, 1, 2])
 
     .. NOTE::
@@ -1430,11 +1430,11 @@ def GeneralisedOctagonGraph(const int s, const int t):
 
     TESTS::
 
-        sage: G = graphs.GeneralisedOctagonGraph(8, 64)
+        sage: G = graphs.GeneralisedOctagonGraph(8, 64)                                 # optional - sage.libs.gap
         Traceback (most recent call last):
         ...
         NotImplementedError: Graph would be too big
-        sage: G = graphs.GeneralisedOctagonGraph(4, 16)
+        sage: G = graphs.GeneralisedOctagonGraph(4, 16)                                 # optional - sage.libs.gap
         Traceback (most recent call last):
         ...
         ValueError: generalised octagons of order (q, q^2) are known only for odd powers q of 2
@@ -1518,12 +1518,12 @@ def GeneralisedHexagonGraph(const int s, const int t):
     EXAMPLES::
 
         sage: G = graphs.GeneralisedHexagonGraph(5, 5)  # optional - gap_packages internet
-        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)               # optional - gap_packages internet
         ([30, 25, 25, None], [None, 1, 1, 6])
-        sage: G = graphs.GeneralisedHexagonGraph(7, 1)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.GeneralisedHexagonGraph(7, 1)                                  # optional - sage.libs.gap
+        sage: G.is_distance_regular(True)                                               # optional - sage.libs.gap
         ([14, 7, 7, None], [None, 1, 1, 2])
-        sage: graphs.GeneralisedHexagonGraph(1, 1)
+        sage: graphs.GeneralisedHexagonGraph(1, 1)                                      # optional - sage.libs.gap
         Cycle graph: Graph on 6 vertices
 
     .. NOTE::
@@ -1540,16 +1540,16 @@ def GeneralisedHexagonGraph(const int s, const int t):
     TESTS::
 
         sage: G = graphs.GeneralisedHexagonGraph(4, 4)  # optional - gap_packages internet
-        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)               # optional - gap_packages internet
         ([20, 16, 16, None], [None, 1, 1, 5])
         sage: G = graphs.GeneralisedHexagonGraph(3, 3)  # optional - gap_packages internet
-        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)               # optional - gap_packages internet
         ([12, 9, 9, None], [None, 1, 1, 4])
         sage: G = graphs.GeneralisedHexagonGraph(2, 2)  # optional - gap_packages internet
-        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)               # optional - gap_packages internet
         ([6, 4, 4, None], [None, 1, 1, 3])
         sage: G = graphs.GeneralisedHexagonGraph(2, 8)  # optional - gap_packages internet
-        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)               # optional - gap_packages internet
         ([18, 16, 16, None], [None, 1, 1, 9])
     """
     from sage.arith.misc import is_prime_power
@@ -1673,16 +1673,16 @@ def _extract_lines(G):
     EXAMPLES::
 
         sage: from sage.graphs.generators.distance_regular import _extract_lines
-        sage: G = graphs.GeneralisedHexagonGraph(1, 8)
-        sage: lines = _extract_lines(G)
-        sage: len(lines)
+        sage: G = graphs.GeneralisedHexagonGraph(1, 8)                                  # optional - sage.libs.gap
+        sage: lines = _extract_lines(G)                                                 # optional - sage.libs.gap
+        sage: len(lines)                                                                # optional - sage.libs.gap
         657
-        sage: type(lines)
+        sage: type(lines)                                                               # optional - sage.libs.gap
         <class 'list'>
-        sage: line = lines[0]
-        sage: type(line)
+        sage: line = lines[0]                                                           # optional - sage.libs.gap
+        sage: type(line)                                                                # optional - sage.libs.gap
         <class 'tuple'>
-        sage: line[0] in G  # the elements in the line are vertices
+        sage: line[0] in G  # the elements in the line are vertices                     # optional - sage.libs.gap
         True
 
     REFERENCES:
@@ -1741,9 +1741,9 @@ def _line_graph_generalised_polygon(H):
 
          sage: from sage.graphs.generators.distance_regular import \
          ....: _line_graph_generalised_polygon
-         sage: G = graphs.GeneralisedHexagonGraph(1, 8)
-         sage: H = _line_graph_generalised_polygon(G)
-         sage: H.is_distance_regular(True)
+         sage: G = graphs.GeneralisedHexagonGraph(1, 8)                                 # optional - sage.libs.gap
+         sage: H = _line_graph_generalised_polygon(G)                                   # optional - sage.libs.gap
+         sage: H.is_distance_regular(True)                                              # optional - sage.libs.gap
          ([16, 8, 8, None], [None, 1, 1, 2])
          sage: G = graphs.GeneralisedHexagonGraph(3, 3) # optional - gap_packages internet
          sage: H = _line_graph_generalised_polygon(G)   # optional - gap_packages internet
@@ -1792,9 +1792,9 @@ def _intersection_array_from_graph(G):
 
         sage: from sage.graphs.generators.distance_regular import \
         ....: _intersection_array_from_graph
-        sage: _intersection_array_from_graph(graphs.FosterGraph())
+        sage: _intersection_array_from_graph(graphs.FosterGraph())                      # optional - networkx
         [3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
-        sage: graphs.FosterGraph().is_distance_regular(True)
+        sage: graphs.FosterGraph().is_distance_regular(True)                            # optional - networkx
         ([3, 2, 2, 2, 2, 1, 1, 1, None], [None, 1, 1, 1, 1, 2, 2, 2, 3])
         sage: graphs.DartGraph().is_distance_regular()
         False
@@ -1877,7 +1877,7 @@ def is_classical_parameters_graph(list array):
         sage: G = graphs.HammingGraph(5, 4)
         sage: G.is_distance_regular(True)
         ([15, 12, 9, 6, 3, None], [None, 1, 2, 3, 4, 5])
-        sage: is_classical_parameters_graph([15, 12, 9, 6, 3, 1, 2, 3, 4, 5])
+        sage: is_classical_parameters_graph([15, 12, 9, 6, 3, 1, 2, 3, 4, 5])           # optional - sage.combinat
         (5, 1, 0, 3, 2)
 
     REFERENCES:
@@ -1890,12 +1890,12 @@ def is_classical_parameters_graph(list array):
 
         sage: from sage.graphs.generators.distance_regular import \
         ....: is_classical_parameters_graph
-        sage: is_classical_parameters_graph([68, 64, 1, 17])  # srg not drg
+        sage: is_classical_parameters_graph([68, 64, 1, 17])  # srg not drg             # optional - sage.combinat
         False
         sage: G = graphs.GossetGraph() # sporadic classical parameters graph
         sage: G.is_distance_regular(True)
         ([27, 10, 1, None], [None, 1, 10, 27])
-        sage: is_classical_parameters_graph([27, 10, 1, 1, 10, 27])
+        sage: is_classical_parameters_graph([27, 10, 1, 1, 10, 27])                     # optional - sage.combinat
         False
     """
     from sage.misc.functional import log
@@ -2101,7 +2101,7 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
         Hamming Graph with parameters 3,4: Graph on 64 vertices
         sage: G = _; G.is_distance_regular(True)
         ([9, 6, 3, None], [None, 1, 2, 3])
-        sage: is_classical_parameters_graph([9, 6, 3, 1, 2, 3])
+        sage: is_classical_parameters_graph([9, 6, 3, 1, 2, 3])                         # optional - sage.combinat
         (3, 1, 0, 3, 2)
 
     Two families of graphs are not implemented yet::
@@ -2389,7 +2389,7 @@ def is_near_polygon(array):
 
         sage: from sage.graphs.generators.distance_regular import (
         ....: is_near_polygon, near_polygon_graph)
-        sage: is_near_polygon([7, 6, 6, 5, 5, 4, 1, 1, 2, 2, 3, 3])
+        sage: is_near_polygon([7, 6, 6, 5, 5, 4, 1, 1, 2, 2, 3, 3])                     # optional - sage.combinat
         (2, 7)
         sage: near_polygon_graph(2, 7)
         Odd Graph with parameter 7: Graph on 1716 vertices
@@ -2405,17 +2405,17 @@ def is_near_polygon(array):
 
         sage: from sage.graphs.generators.distance_regular import (
         ....: is_near_polygon, near_polygon_graph)
-        sage: is_near_polygon([7, 6, 6, 4, 4, 1, 1, 3, 3, 7])
+        sage: is_near_polygon([7, 6, 6, 4, 4, 1, 1, 3, 3, 7])                           # optional - sage.combinat
         (4, (2, 2))
         sage: near_polygon_graph(4, (2, 2))
         Double Grassmann graph (5, 2, 2): Graph on 310 vertices
-        sage: near_polygon_graph(*is_near_polygon([3, 2, 2, 1, 1, 3]))
+        sage: near_polygon_graph(*is_near_polygon([3, 2, 2, 1, 1, 3]))                  # optional - sage.combinat
         Generalised hexagon of order (1, 2): Graph on 14 vertices
-        sage: is_near_polygon([16, 12, 8, 4, 1, 2, 3, 4])
+        sage: is_near_polygon([16, 12, 8, 4, 1, 2, 3, 4])                               # optional - sage.combinat
         (6, (4, 5))
-        sage: is_near_polygon([])
+        sage: is_near_polygon([])                                                       # optional - sage.combinat
         False
-        sage: is_near_polygon([25, 16, 9, 4, 1, 1, 4, 9, 16, 25]) # JohnsonGraph
+        sage: is_near_polygon([25, 16, 9, 4, 1, 1, 4, 9, 16, 25])  # JohnsonGraph       # optional - sage.combinat
         False
     """
     from sage.arith.misc import is_prime_power
@@ -2527,10 +2527,10 @@ def near_polygon_graph(family, params):
 
         sage: from sage.graphs.generators.distance_regular import (
         ....: is_near_polygon, near_polygon_graph)
-        sage: near_polygon_graph(*is_near_polygon([6, 5, 5, 4, 4, 3, 3, 2, 2, \
+        sage: near_polygon_graph(*is_near_polygon([6, 5, 5, 4, 4, 3, 3, 2, 2, \         # optional - sage.combinat
         ....: 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6]))
         Bipartite double of Odd graph on a set of 11 elements: Graph on 924 vertices
-        sage: G=_; G.is_distance_regular(True)
+        sage: G=_; G.is_distance_regular(True)                                          # optional - sage.combinat
         ([6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, None],
          [None, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6])
 
@@ -2541,19 +2541,19 @@ def near_polygon_graph(family, params):
 
     TESTS::
 
-        sage: near_polygon_graph(12, 9)
+        sage: near_polygon_graph(12, 9)                                                 # optional - sage.combinat
         Traceback (most recent call last):
         ...
         ValueError: No known near polygons with the given parameters
-        sage: is_near_polygon([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
+        sage: is_near_polygon([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])                     # optional - sage.combinat
         (0, 12)
-        sage: near_polygon_graph((0, 12))
+        sage: near_polygon_graph((0, 12))                                               # optional - sage.combinat
         Traceback (most recent call last):
         ...
         TypeError: ...near_polygon_graph() takes exactly 2 positional arguments (1 given)
-        sage: near_polygon_graph(0, 12)
+        sage: near_polygon_graph(0, 12)                                                 # optional - sage.combinat
         Cycle graph: Graph on 12 vertices
-        sage: near_polygon_graph(*is_near_polygon([8, 7, 6, 5, 1, 2, 3, 8]))
+        sage: near_polygon_graph(*is_near_polygon([8, 7, 6, 5, 1, 2, 3, 8]))            # optional - sage.combinat
         Folded Cube Graph: Graph on 128 vertices
     """
 
@@ -2610,7 +2610,7 @@ def near_polygon_graph(family, params):
 
 
 # dictionary intersection_array (as tuple)  -> construction
-# of spordaic distance-regular graphs
+# of sporadic distance-regular graphs
 _sporadic_graph_database = {
     (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3): FosterGraph,
     (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7): IvanovIvanovFaradjevGraph,
@@ -2682,11 +2682,11 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
     - ``existence`` -- boolean (optional); instead of building the graph return:
 
-      - ``True`` - if a graph with the given intersection array exists;
+      - ``True`` -- if a graph with the given intersection array exists;
 
-      - ``False`` - if there is no graph with the given intersection array;
+      - ``False`` -- if there is no graph with the given intersection array;
 
-      - ``Unknown`` - if Sage doesn't know if such a graph exists.
+      - ``Unknown`` -- if Sage doesn't know if such a graph exists.
 
     - ``check`` -- boolean (optional); if ``True``, then checks that the result
       of this function has the given intersection array. Default: ``True``

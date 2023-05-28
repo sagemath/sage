@@ -2349,7 +2349,7 @@ class Graph(GenericGraph):
         We can check the certificate returned is indeed a 5-cycle::
 
             sage: cycle = g.is_odd_hole_free(certificate=True)                          # optional - sage.modules
-            sage: cycle.is_isomorphic(graphs.CycleGraph(5))
+            sage: cycle.is_isomorphic(graphs.CycleGraph(5))                             # optional - sage.modules
             True
 
         As any chordal graph is hole-free, no interval graph has an odd hole::
@@ -2609,44 +2609,44 @@ class Graph(GenericGraph):
         A Bipartite Graph is always perfect ::
 
             sage: g = graphs.RandomBipartite(8,4,.5)                                    # optional - numpy
-            sage: g.is_perfect()                                                        # optional - numpy
+            sage: g.is_perfect()                                                        # optional - numpy sage.modules
             True
 
         So is the line graph of a bipartite graph::
 
             sage: g = graphs.RandomBipartite(4,3,0.7)                                   # optional - numpy
-            sage: g.line_graph().is_perfect()  # long time                              # optional - numpy
+            sage: g.line_graph().is_perfect()  # long time                              # optional - numpy sage.modules
             True
 
         As well as the Cartesian product of two complete graphs::
 
             sage: g = graphs.CompleteGraph(3).cartesian_product(graphs.CompleteGraph(3))
-            sage: g.is_perfect()
+            sage: g.is_perfect()                                                        # optional - sage.modules
             True
 
         Interval Graphs, which are chordal graphs, too ::
 
             sage: g =  graphs.RandomIntervalGraph(7)
-            sage: g.is_perfect()
+            sage: g.is_perfect()                                                        # optional - sage.modules
             True
 
         The PetersenGraph, which is triangle-free and has chromatic number 3 is
         obviously not perfect::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.is_perfect()
+            sage: g.is_perfect()                                                        # optional - sage.modules
             False
 
         We can obtain an induced 5-cycle as a certificate::
 
-            sage: g.is_perfect(certificate=True)
+            sage: g.is_perfect(certificate=True)                                        # optional - sage.modules
             Subgraph of (Petersen graph): Graph on 5 vertices
 
         TESTS:
 
         Check that :trac:`13546` has been fixed::
 
-            sage: Graph(':FgGE@I@GxGs', loops=False, multiedges=False).is_perfect()
+            sage: Graph(':FgGE@I@GxGs', loops=False, multiedges=False).is_perfect()     # optional - sage.modules
             False
             sage: g = Graph({0: [2, 3, 4, 5],
             ....:            1: [3, 4, 5, 6],
@@ -2655,12 +2655,12 @@ class Graph(GenericGraph):
             ....:            4: [0, 1, 2, 6],
             ....:            5: [0, 1, 2, 3],
             ....:            6: [1, 2, 3, 4]})
-            sage: g.is_perfect()
+            sage: g.is_perfect()                                                        # optional - sage.modules
             False
 
         TESTS::
 
-            sage: Graph(':Ab').is_perfect()
+            sage: Graph(':Ab').is_perfect()                                             # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: This method is only defined for simple graphs, and yours is not one of them !
@@ -2669,7 +2669,7 @@ class Graph(GenericGraph):
             sage: g.add_edge(0,0)
             sage: g.edges(sort=True)
             [(0, 0, None)]
-            sage: g.is_perfect()
+            sage: g.is_perfect()                                                        # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: This method is only defined for simple graphs, and yours is not one of them !
@@ -2721,8 +2721,8 @@ class Graph(GenericGraph):
             sage: C = graphs.CubeGraph(3)
             sage: C.is_edge_transitive()                                                # optional - sage.libs.gap
             True
-            sage: G = graphs.GrayGraph()
-            sage: G.is_edge_transitive()                                                # optional - sage.libs.gap
+            sage: G = graphs.GrayGraph()                                                # optional - networkx
+            sage: G.is_edge_transitive()                                                # optional - networkx sage.libs.gap
             True
             sage: P = graphs.PathGraph(4)
             sage: P.is_edge_transitive()                                                # optional - sage.libs.gap
@@ -2764,8 +2764,8 @@ class Graph(GenericGraph):
             sage: P = graphs.PetersenGraph()
             sage: P.is_arc_transitive()                                                 # optional - sage.libs.gap
             True
-            sage: G = graphs.GrayGraph()
-            sage: G.is_arc_transitive()                                                 # optional - sage.libs.gap
+            sage: G = graphs.GrayGraph()                                                # optional - networkx
+            sage: G.is_arc_transitive()                                                 # optional - networkx sage.libs.gap
             False
         """
         from sage.libs.gap.libgap import libgap
@@ -2847,8 +2847,8 @@ class Graph(GenericGraph):
 
         Another well known semi-symmetric graph is the Ljubljana graph::
 
-            sage: L = graphs.LjubljanaGraph()
-            sage: L.is_semi_symmetric()                                                 # optional - sage.libs.gap
+            sage: L = graphs.LjubljanaGraph()                                           # optional - networkx
+            sage: L.is_semi_symmetric()                                                 # optional - networkx sage.libs.gap
             True
         """
         # A semi-symmetric graph is always bipartite
@@ -6223,8 +6223,8 @@ class Graph(GenericGraph):
         TESTS::
 
             sage: from sage.combinat.designs.twographs import TwoGraph
-            sage: p=graphs.PetersenGraph().twograph()
-            sage: TwoGraph(p, check=True)
+            sage: p = graphs.PetersenGraph().twograph()                                 # optional - sage.modules
+            sage: TwoGraph(p, check=True)                                               # optional - sage.modules
             Incidence structure with 10 points and 60 blocks
 
         .. SEEALSO::
@@ -6810,16 +6810,16 @@ class Graph(GenericGraph):
             {0: 1, 1: 1, 2: 1, 3: 1, 4: 2}
             sage: E = C.cliques_maximal(); E
             [[0, 4], [1, 2, 3, 4]]
-            sage: C.cliques_number_of(cliques=E)
+            sage: C.cliques_number_of(cliques=E)                                        # optional - networkx
             {0: 1, 1: 1, 2: 1, 3: 1, 4: 2}
             sage: F = graphs.Grid2dGraph(2,3)
-            sage: F.cliques_number_of()
+            sage: F.cliques_number_of()                                                 # optional - networkx
             {(0, 0): 2, (0, 1): 3, (0, 2): 2, (1, 0): 2, (1, 1): 3, (1, 2): 2}
-            sage: F.cliques_number_of(vertices=[(0, 1), (1, 2)])
+            sage: F.cliques_number_of(vertices=[(0, 1), (1, 2)])                        # optional - networkx
             {(0, 1): 3, (1, 2): 2}
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
-            sage: G.cliques_number_of()
+            sage: G.cliques_number_of()                                                 # optional - networkx
             {0: 2, 1: 2, 2: 1, 3: 1}
         """
         import networkx
@@ -7706,9 +7706,9 @@ class Graph(GenericGraph):
 
         Checking the 2-core of a random lobster is indeed the empty set::
 
-            sage: g = graphs.RandomLobster(20, .5, .5)
-            sage: ordering, core = g.cores(2)
-            sage: len(core) == 0
+            sage: g = graphs.RandomLobster(20, .5, .5)                                  # optional - networkx
+            sage: ordering, core = g.cores(2)                                           # optional - networkx
+            sage: len(core) == 0                                                        # optional - networkx
             True
 
         Checking the cores of a bull graph::

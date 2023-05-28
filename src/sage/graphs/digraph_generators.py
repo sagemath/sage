@@ -1000,7 +1000,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: GB = digraphs.GeneralizedDeBruijn(8, 2)
-            sage: GB.is_isomorphic(digraphs.DeBruijn(2, 3), certificate=True)
+            sage: GB.is_isomorphic(digraphs.DeBruijn(2, 3), certificate=True)           # optional - sage.combinat
             (True, {0: '000', 1: '001', 2: '010', 3: '011',
                     4: '100', 5: '101', 6: '110', 7: '111'})
 
@@ -1062,10 +1062,10 @@ class DiGraphGenerators():
                     4: '110', 5: '111', 6: '100', 7: '101'})
 
             sage: II = digraphs.ImaseItoh(12, 2)
-            sage: b,D = II.is_isomorphic(digraphs.Kautz(2, 3), certificate=True)
-            sage: b
+            sage: b,D = II.is_isomorphic(digraphs.Kautz(2, 3), certificate=True)        # optional - sage.combinat
+            sage: b                                                                     # optional - sage.combinat
             True
-            sage: D   # random isomorphism
+            sage: D   # random isomorphism                                              # optional - sage.combinat
             {0: '202', 1: '201', 2: '210', 3: '212', 4: '121',
              5: '120', 6: '102', 7: '101', 8: '010', 9: '012',
              10: '021', 11: '020'}
@@ -1587,12 +1587,12 @@ class DiGraphGenerators():
 
         EXAMPLES::
 
-            sage: D = digraphs.RandomDirectedGNR(25, .2)
-            sage: D.is_directed_acyclic()
+            sage: D = digraphs.RandomDirectedGNR(25, .2)                                # optional - networkx
+            sage: D.is_directed_acyclic()                                               # optional - networkx
             True
-            sage: D.to_undirected().is_tree()
+            sage: D.to_undirected().is_tree()                                           # optional - networkx
             True
-            sage: D.show()  # long time
+            sage: D.show()  # long time                                                 # optional - networkx sage.plot
         """
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)
