@@ -299,7 +299,8 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         """
         n = len(self)
         cd = CylindricalDiagram(self).diagram
-        return all(all(k in ZZ for k in a[i+1:n+i-2]) for i, a in enumerate(cd))
+        return all(k in ZZ for i, a in enumerate(cd)
+                   for k in a[i + 1:n + i - 2])
 
     def triangulation(self):
         r"""
