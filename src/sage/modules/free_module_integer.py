@@ -622,7 +622,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         w = matrix(ZZ, w)
         L = w.stack(self.reduced_basis).LLL()
-        assert(L[0] == 0)
+        assert L[0] == 0
         self._reduced_basis = L.matrix_from_rows(range(1, L.nrows()))
 
     @cached_method

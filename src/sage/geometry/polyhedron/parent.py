@@ -400,10 +400,10 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         points = []
         R = self.base_ring()
         for i in range(self.ambient_dim() + 5):
-            points.append([R(i*j^2) for j in range(self.ambient_dim())])
+            points.append([R(i * j**2) for j in range(self.ambient_dim())])
         return [
-            self.element_class(self, [points[0:self.ambient_dim()+1], [], []], None),
-            self.element_class(self, [points[0:1], points[1:self.ambient_dim()+1], []], None),
+            self.element_class(self, [points[0:self.ambient_dim() + 1], [], []], None),
+            self.element_class(self, [points[0:1], points[1:self.ambient_dim() + 1], []], None),
             self.element_class(self, [points[0:3], points[4:5], []], None),
             self.element_class(self, None, None)]
 
