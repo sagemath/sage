@@ -182,7 +182,8 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: f = function('f', nargs=1, conjugate_func=lambda self, x: 2r*x)  # indirect doctest
+            sage: f = function('f', nargs=1,  # indirect doctest                        # optional - sage.symbolic
+            ....:              conjugate_func=lambda self, x: 2r*x)
             sage: f(2)                                                                  # optional - sage.symbolic
             f(2)
             sage: f(2).conjugate()                                                      # optional - sage.symbolic
@@ -192,7 +193,7 @@ cdef class Function(SageObject):
 
             # eval_func raises exception
             sage: def ef(self, x): raise RuntimeError("foo")
-            sage: bar = function("bar", nargs=1, eval_func=ef)
+            sage: bar = function("bar", nargs=1, eval_func=ef)                          # optional - sage.symbolic
             sage: bar(x)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
@@ -200,7 +201,7 @@ cdef class Function(SageObject):
 
             # eval_func returns non coercible
             sage: def ef(self, x): return ZZ
-            sage: bar = function("bar", nargs=1, eval_func=ef)
+            sage: bar = function("bar", nargs=1, eval_func=ef)                          # optional - sage.symbolic
             sage: bar(x)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
@@ -208,7 +209,7 @@ cdef class Function(SageObject):
             or an element that can be coerced into a symbolic expression
 
             # eval_func is not callable
-            sage: bar = function("bar", nargs=1, eval_func=5)
+            sage: bar = function("bar", nargs=1, eval_func=5)                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: eval_func parameter must be callable
@@ -347,10 +348,10 @@ cdef class Function(SageObject):
         """
         EXAMPLES::
 
-            sage: f = function('f', nargs=1, conjugate_func=lambda self, x: 2r*x)
-            sage: f.__hash__() #random
+            sage: f = function('f', nargs=1, conjugate_func=lambda self, x: 2r*x)       # optional - sage.symbolic
+            sage: f.__hash__() #random                                                  # optional - sage.symbolic
             -2224334885124003860
-            sage: hash(f(2)) #random
+            sage: hash(f(2)) #random                                                    # optional - sage.symbolic
             4168614485
         """
         return hash(self._name)*(self._nargs+1)*self._serial
@@ -359,7 +360,7 @@ cdef class Function(SageObject):
         """
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2); foo
+            sage: foo = function("foo", nargs=2); foo                                   # optional - sage.symbolic
             foo
         """
         return self._name
@@ -388,10 +389,10 @@ cdef class Function(SageObject):
         """
         TESTS::
 
-            sage: foo = function("foo", nargs=2)
-            sage: foo == foo
+            sage: foo = function("foo", nargs=2)                                        # optional - sage.symbolic
+            sage: foo == foo                                                            # optional - sage.symbolic
             True
-            sage: foo == 2
+            sage: foo == 2                                                              # optional - sage.symbolic
             False
             sage: foo(1, 2).operator() == foo                                           # optional - sage.symbolic
             True
@@ -413,7 +414,7 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2)
+            sage: foo = function("foo", nargs=2)                                        # optional - sage.symbolic
             sage: x,y,z = var("x y z")                                                  # optional - sage.symbolic
             sage: foo(x, y)                                                             # optional - sage.symbolic
             foo(x, y)
@@ -423,7 +424,7 @@ cdef class Function(SageObject):
             ...
             TypeError: Symbolic function foo takes exactly 2 arguments (1 given)
 
-            sage: bar = function("bar")
+            sage: bar = function("bar")                                                 # optional - sage.symbolic
             sage: bar(x)                                                                # optional - sage.symbolic
             bar(x)
             sage: bar(x, y)                                                             # optional - sage.symbolic
@@ -556,8 +557,8 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2)
-            sage: foo.name()
+            sage: foo = function("foo", nargs=2)                                        # optional - sage.symbolic
+            sage: foo.name()                                                            # optional - sage.symbolic
             'foo'
         """
         return self._name
@@ -568,13 +569,13 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2)
-            sage: foo.number_of_arguments()
+            sage: foo = function("foo", nargs=2)                                        # optional - sage.symbolic
+            sage: foo.number_of_arguments()                                             # optional - sage.symbolic
             2
             sage: foo(x, x)                                                             # optional - sage.symbolic
             foo(x, x)
 
-            sage: foo(x)
+            sage: foo(x)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: Symbolic function foo takes exactly 2 arguments (1 given)
@@ -1227,13 +1228,13 @@ cdef class SymbolicFunction(Function):
         """
         TESTS::
 
-            sage: foo = function("foo", nargs=2)
-            sage: hash(foo)      # random output
+            sage: foo = function("foo", nargs=2)                                        # optional - sage.symbolic
+            sage: hash(foo)      # random output                                        # optional - sage.symbolic
             -6859868030555295348
 
             sage: def ev(self, x): return 2*x
-            sage: foo = function("foo", nargs=2, eval_func=ev)
-            sage: hash(foo)      # random output
+            sage: foo = function("foo", nargs=2, eval_func=ev)                          # optional - sage.symbolic
+            sage: hash(foo)      # random output                                        # optional - sage.symbolic
             -6859868030555295348
         """
         return self._serial*self._hash_()
@@ -1273,39 +1274,42 @@ cdef class SymbolicFunction(Function):
 
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2)
-            sage: foo.__getstate__()
-            (2, 'foo', 2, None, {}, True, [None, None, None, None, None, None, None, None, None, None, None])
-            sage: t = loads(dumps(foo))
-            sage: t == foo
+            sage: foo = function("foo", nargs=2)                                        # optional - sage.symbolic
+            sage: foo.__getstate__()                                                    # optional - sage.symbolic
+            (2, 'foo', 2, None, {}, True,
+             [None, None, None, None, None, None, None, None, None, None, None])
+            sage: t = loads(dumps(foo))                                                 # optional - sage.symbolic
+            sage: t == foo                                                              # optional - sage.symbolic
             True
             sage: var('x,y')                                                            # optional - sage.symbolic
             (x, y)
             sage: t(x, y)                                                               # optional - sage.symbolic
             foo(x, y)
 
-            sage: def ev(self, x,y): return 2*x
-            sage: foo = function("foo", nargs=2, eval_func = ev)
-            sage: foo.__getstate__()
-            (2, 'foo', 2, None, {}, True, [..., None, None, None, None, None, None, None, None, None, None])
+            sage: def ev(self, x,y): return 2*x                                         # optional - sage.symbolic
+            sage: foo = function("foo", nargs=2, eval_func=ev)                          # optional - sage.symbolic
+            sage: foo.__getstate__()                                                    # optional - sage.symbolic
+            (2, 'foo', 2, None, {}, True,
+             [..., None, None, None, None, None, None, None, None, None, None])
 
-            sage: u = loads(dumps(foo))
-            sage: u == foo
+            sage: u = loads(dumps(foo))                                                 # optional - sage.symbolic
+            sage: u == foo                                                              # optional - sage.symbolic
             True
-            sage: t == u
+            sage: t == u                                                                # optional - sage.symbolic
             False
             sage: u(y, x)                                                               # optional - sage.symbolic
             2*y
 
             sage: def evalf_f(self, x, **kwds): return int(6)
-            sage: foo = function("foo", nargs=1, evalf_func=evalf_f)
-            sage: foo.__getstate__()
-            (2, 'foo', 1, None, {}, True, [None, ..., None, None, None, None, None, None, None, None, None])
+            sage: foo = function("foo", nargs=1, evalf_func=evalf_f)                    # optional - sage.symbolic
+            sage: foo.__getstate__()                                                    # optional - sage.symbolic
+            (2, 'foo', 1, None, {}, True,
+             [None, ..., None, None, None, None, None, None, None, None, None])
 
-            sage: v = loads(dumps(foo))
-            sage: v == foo
+            sage: v = loads(dumps(foo))                                                 # optional - sage.symbolic
+            sage: v == foo                                                              # optional - sage.symbolic
             True
-            sage: v == u
+            sage: v == u                                                                # optional - sage.symbolic
             False
             sage: foo(y).n()                                                            # optional - sage.symbolic
             6
@@ -1337,27 +1341,27 @@ cdef class SymbolicFunction(Function):
 
             sage: var('x,y')                                                            # optional - sage.symbolic
             (x, y)
-            sage: foo = function("foo", nargs=2)
-            sage: bar = function("bar", nargs=1)
-            sage: bar.__setstate__(foo.__getstate__())
+            sage: foo = function("foo", nargs=2)                                        # optional - sage.symbolic
+            sage: bar = function("bar", nargs=1)                                        # optional - sage.symbolic
+            sage: bar.__setstate__(foo.__getstate__())                                  # optional - sage.symbolic
 
         ::
 
-            sage: g = function('g', nargs=1, conjugate_func=lambda y,x: 2*x)
-            sage: st = g.__getstate__()
-            sage: f = function('f')
+            sage: g = function('g', nargs=1, conjugate_func=lambda y, x: 2*x)           # optional - sage.symbolic
+            sage: st = g.__getstate__()                                                 # optional - sage.symbolic
+            sage: f = function('f')                                                     # optional - sage.symbolic
             sage: f(x)                                                                  # optional - sage.symbolic
             f(x)
             sage: f(x).conjugate()      # no special conjugate method                   # optional - sage.symbolic
             conjugate(f(x))
-            sage: f.__setstate__(st)
+            sage: f.__setstate__(st)                                                    # optional - sage.symbolic
             sage: f(x + 1).conjugate()  # now there is a special method                 # optional - sage.symbolic
             2*x + 2
 
         Note that the other direction doesn't work here, since ``foo._hash_()``
         hash already been initialized.::
 
-            sage: bar
+            sage: bar                                                                   # optional - sage.symbolic
             foo
             sage: bar(x, y)                                                             # optional - sage.symbolic
             foo(x, y)
