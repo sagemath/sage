@@ -1577,7 +1577,7 @@ def DoubleStarSnark():
         False
         sage: g.automorphism_group().cardinality()
         80
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
     """
     d = {0: [1, 14, 15],
          1: [0, 2, 11],
@@ -1836,7 +1836,7 @@ def ClebschGraph():
         4
         sage: g.diameter()
         2
-        sage: g.show(figsize=[10, 10]) # long time
+        sage: g.show(figsize=[10, 10])  # long time
     """
     g = Graph(pos={})
     x = 0
@@ -1904,11 +1904,11 @@ def DejterGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.DejterGraph(); g
+        sage: g = graphs.DejterGraph(); g                                               # optional - sage.rings.finite_rings
         Dejter Graph: Graph on 112 vertices
-        sage: g.is_regular(k=6)
+        sage: g.is_regular(k=6)                                                         # optional - sage.rings.finite_rings
         True
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - sage.rings.finite_rings
         4
     """
     from sage.graphs.generators.families import CubeGraph
@@ -2668,11 +2668,12 @@ def GolombGraph():
     and 18 edges. It has chromatic number 4, diameter 3, radius 2 and
     girth 3. It can be drawn in the plane as a unit distance graph::
 
-        sage: G = graphs.GolombGraph(); G
+        sage: G = graphs.GolombGraph(); G                                               # optional - sage.symbolic
         Golomb graph: Graph on 10 vertices
-        sage: pos = G.get_pos()
-        sage: dist2 = lambda u,v:(u[0]-v[0])**2 + (u[1]-v[1])**2
-        sage: all(dist2(pos[u], pos[v]) == 1 for u, v in G.edge_iterator(labels=None))
+        sage: pos = G.get_pos()                                                         # optional - sage.symbolic
+        sage: def dist2(u, v):
+        ....:     return (u[0]-v[0])**2 + (u[1]-v[1])**2
+        sage: all(dist2(pos[u], pos[v]) == 1 for u, v in G.edge_iterator(labels=None))  # optional - sage.symbolic
         True
     """
     edge_dict = {
@@ -3610,8 +3611,8 @@ def McGeeGraph(embedding=2):
         7
         sage: g.diameter()
         4
-        sage: g.show()
-        sage: graphs.McGeeGraph(embedding=1).show()  # long time
+        sage: g.show()                                                                  # optional - sage.plot
+        sage: graphs.McGeeGraph(embedding=1).show()  # long time                        # optional - sage.plot
 
     TESTS::
 
@@ -3725,7 +3726,7 @@ def MoebiusKantorGraph():
         Moebius-Kantor Graph: Graph on 16 vertices
         sage: MK.graph6_string()
         'OhCGKE?O@?ACAC@I?Q_AS'
-        sage: (graphs.MoebiusKantorGraph()).show()  # long time
+        sage: (graphs.MoebiusKantorGraph()).show()  # long time                         # optional - sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     G = GeneralizedPetersenGraph(8, 3)
@@ -3743,38 +3744,38 @@ def MoserSpindle():
 
     The Moser spindle is a planar graph having 7 vertices and 11 edges::
 
-        sage: G = graphs.MoserSpindle(); G
+        sage: G = graphs.MoserSpindle(); G                                              # optional - sage.symbolic
         Moser spindle: Graph on 7 vertices
-        sage: G.is_planar()
+        sage: G.is_planar()                                                             # optional - sage.symbolic
         True
-        sage: G.order()
+        sage: G.order()                                                                 # optional - sage.symbolic
         7
-        sage: G.size()
+        sage: G.size()                                                                  # optional - sage.symbolic
         11
 
     It is a Hamiltonian graph with radius 2, diameter 2, and girth 3::
 
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.symbolic
         True
-        sage: G.radius()
+        sage: G.radius()                                                                # optional - sage.symbolic
         2
-        sage: G.diameter()
+        sage: G.diameter()                                                              # optional - sage.symbolic
         2
-        sage: G.girth()
+        sage: G.girth()                                                                 # optional - sage.symbolic
         3
 
     The Moser spindle can be drawn in the plane as a unit distance graph,
     has chromatic number 4, and its automorphism group is isomorphic to
     the dihedral group `D_4`::
 
-        sage: pos = G.get_pos()
-        sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1
+        sage: pos = G.get_pos()                                                         # optional - sage.symbolic
+        sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1                # optional - sage.symbolic
         ....:         for u, v in G.edge_iterator(labels=None))
         True
-        sage: G.chromatic_number()
+        sage: G.chromatic_number()                                                      # optional - sage.symbolic
         4
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(4))
+        sage: ag = G.automorphism_group()                                               # optional - sage.symbolic
+        sage: ag.is_isomorphic(DihedralGroup(4))                                        # optional - sage.symbolic
         True
     """
     edge_dict = {
@@ -3820,8 +3821,8 @@ def NauruGraph(embedding=2):
         6
         sage: g.diameter()
         4
-        sage: g.show()
-        sage: graphs.NauruGraph(embedding=1).show()  # long time
+        sage: g.show()                                                                  # optional - sage.plot
+        sage: graphs.NauruGraph(embedding=1).show()  # long time                        # optional - sage.plot
 
     TESTS::
 
@@ -3856,9 +3857,9 @@ def PappusGraph():
     EXAMPLES::
 
         sage: G = graphs.PappusGraph()
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - sage.plot
         sage: L = graphs.LCFGraph(18, [5,7,-7,7,-7,-5], 3)
-        sage: L.show()  # long time
+        sage: L.show()  # long time                                                     # optional - sage.plot
         sage: G.is_isomorphic(L)
         True
     """
@@ -3922,9 +3923,9 @@ def PetersenGraph():
         ....:                          3:[2,4,8], 4:[0,3,9], 5:[0,7,8],
         ....:                          6:[1,8,9], 7:[2,5,9], 8:[3,5,6],
         ....:                          9:[4,6,7]})
-        sage: petersen_spring.show()  # long time
+        sage: petersen_spring.show()  # long time                                       # optional - sage.plot
         sage: petersen_database = graphs.PetersenGraph()
-        sage: petersen_database.show()  # long time
+        sage: petersen_database.show()  # long time                                     # optional - sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     P = GeneralizedPetersenGraph(5, 2)
@@ -4017,7 +4018,7 @@ def SchlaefliGraph():
     Checking that the method actually returns the Schläfli graph::
 
         sage: S = graphs.SchlaefliGraph()
-        sage: S.is_strongly_regular(parameters = True)
+        sage: S.is_strongly_regular(parameters=True)
         (27, 16, 10, 8)
 
     The graph is vertex-transitive::
@@ -4315,7 +4316,7 @@ def ThomsenGraph():
         Thomsen graph: Graph on 6 vertices
         sage: T.graph6_string()
         'EFz_'
-        sage: (graphs.ThomsenGraph()).show() # long time
+        sage: (graphs.ThomsenGraph()).show()  # long time                               # optional - sage.plot
     """
     from sage.graphs.generators.basic import CompleteBipartiteGraph
     G = CompleteBipartiteGraph(3, 3)
@@ -4423,7 +4424,7 @@ def Tutte12Cage():
         12
         sage: g.diameter()
         6
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
     """
     L = [17, 27, -13, -59, -35, 35, -11, 13, -53, 53, -27, 21, 57, 11,
          -21, -57, 59, -17]
@@ -4456,7 +4457,7 @@ def TutteCoxeterGraph(embedding=2):
         8
         sage: g.diameter()
         4
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
         sage: graphs.TutteCoxeterGraph(embedding=1).show()  # long time
 
     TESTS::
@@ -4569,7 +4570,7 @@ def WagnerGraph():
         4
         sage: g.diameter()
         2
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
     """
     from sage.graphs.generators.families import LCFGraph
     g = LCFGraph(8, [4], 8)

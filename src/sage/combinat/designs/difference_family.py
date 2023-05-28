@@ -591,8 +591,8 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
         x = K.multiplicative_generator()
         D = K.cyclotomic_cosets(x**((v-1)//k), [K.one()])
         if is_difference_family(K, D, v, k, l):
-            print("**  You found a new example of radical difference set **\n"\
-                  "**  for the parameters (v,k,l)=({},{},{}).            **\n"\
+            print("**  You found a new example of radical difference set **\n"
+                  "**  for the parameters (v,k,l)=({},{},{}).            **\n"
                   "**  Please contact sage-devel@googlegroups.com        **\n".format(v, k, l))
             if existence:
                 return True
@@ -602,8 +602,8 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
             D = K.cyclotomic_cosets(x**((v-1)//(k-1)), [K.one()])
             D[0].insert(0,K.zero())
             if is_difference_family(K, D, v, k, l):
-                print("**  You found a new example of radical difference set **\n"\
-                      "**  for the parameters (v,k,l)=({},{},{}).            **\n"\
+                print("**  You found a new example of radical difference set **\n"
+                      "**  for the parameters (v,k,l)=({},{},{}).            **\n"
                       "**  Please contact sage-devel@googlegroups.com        **\n".format(v, k, l))
                 if existence:
                     return True
@@ -1525,10 +1525,11 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
     if check:
         H = _get_submodule_of_order(G2, (q-1) // d)
         assert is_relative_difference_set(second_diff_set, G2, H, ((q**N-1) // (q-1), (q-1) // d, q**(N-1), q**(N-2) * d))
-    
+
     if return_group:
         return G2, second_diff_set
     return second_diff_set
+
 
 def is_relative_difference_set(R, G, H, params, verbose=False):
     r"""

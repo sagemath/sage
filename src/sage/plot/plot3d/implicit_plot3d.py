@@ -50,8 +50,10 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
 
     A nested set of spheres with a hole cut out::
 
-        sage: implicit_plot3d((x^2 + y^2 + z^2), (x,-2,2), (y,-2,2), (z,-2,2), plot_points=60, contour=[1,3,5],
-        ....:                 region=lambda x,y,z: x<=0.2 or y>=0.2 or z<=0.2, color='aquamarine').show(viewer='tachyon')
+        sage: F = x^2 + y^2 + z^2
+        sage: P = implicit_plot3d(F, (x,-2,2), (y,-2,2), (z,-2,2), plot_points=60, contour=[1,3,5],
+        ....:                     region=lambda x,y,z: x<=0.2 or y>=0.2 or z<=0.2, color='aquamarine')
+        sage: P.show(viewer='tachyon')  # long time
 
     .. PLOT::
 
@@ -85,7 +87,8 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
 
         sage: F = (x^2+9/4*y^2+z^2-1)^3 - x^2*z^3 - 9/(80)*y^2*z^3
         sage: r = 1.5
-        sage: implicit_plot3d(F, (x,-r,r), (y,-r,r), (z,-r,r), plot_points=80, color='red', smooth=False).show(viewer='tachyon')
+        sage: V = implicit_plot3d(F, (x,-r,r), (y,-r,r), (z,-r,r), plot_points=80, color='red', smooth=False)
+        sage: V.show(viewer='tachyon')  # long time
 
     .. PLOT::
 
@@ -154,7 +157,7 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
         sage: cm = colormaps.gist_rainbow
         sage: G = implicit_plot3d(x^2 + y^2 + z^2, (x,-2,2), (y,-2,2), (z,-2, 2),
         ....:                     contour=4, color=(t,cm), plot_points=100)
-        sage: G.show(viewer='tachyon')
+        sage: G.show(viewer='tachyon')  # long time
 
     .. PLOT::
 

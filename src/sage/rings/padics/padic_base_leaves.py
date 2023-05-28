@@ -32,8 +32,8 @@ power of `p` that this element is stored modulo::
     22
 
 The number of times that `p` divides the element is called the
-valuation, and can be accessed with the functions ``valuation()`` and
-``ordp()``:
+valuation, and can be accessed with the methods :meth:`valuation` and
+:meth:`ordp`:
 
     sage: a.valuation()
     2
@@ -111,7 +111,7 @@ track precision of elements.::
     1 + 2*5^2 + 5^3
 
 `p`-adic rings and fields should be created using the creation
-functions ``Zp`` and ``Qp`` as above.  This will ensure that there is
+functions :func:`Zp` and :func:`Qp` as above.  This will ensure that there is
 only one instance of `\ZZ_p` and `\QQ_p` of a given
 type, `p`, print mode and precision.  It also saves typing very long
 class names.::
@@ -347,7 +347,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
 
     def _coerce_map_from_(self, R):
         """
-        Returns ``True`` if there is a coerce map from ``R`` to ``self``.
+        Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
         EXAMPLES::
 
@@ -446,7 +446,7 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
 
     def _coerce_map_from_(self, R):
         """
-        Returns ``True`` if there is a coerce map from ``R`` to ``self``.
+        Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
         EXAMPLES::
 
@@ -478,7 +478,7 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
 
     def _convert_map_from_(self, R):
         """
-        Finds conversion maps from R to this ring.
+        Finds conversion maps from ``R`` to this ring.
 
         EXAMPLES::
 
@@ -548,7 +548,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
 
     def _coerce_map_from_(self, R):
         """
-        Returns ``True`` if there is a coerce map from ``R`` to ``self``.
+        Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
         EXAMPLES::
 
@@ -653,7 +653,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
     def _coerce_map_from_(self, R):
         """
-        Returns ``True`` if there is a coerce map from ``R`` to ``self``.
+        Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
         EXAMPLES::
 
@@ -711,11 +711,11 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
     def random_element(self, algorithm='default'):
         r"""
-        Returns a random element of ``self``, optionally using the ``algorithm``
+        Return a random element of ``self``, optionally using the ``algorithm``
         argument to decide how it generates the element. Algorithms currently
         implemented:
 
-        - default: Choose an integer `k` using the standard
+        - ``'default'``: Choose an integer `k` using the standard
           distribution on the integers.  Then choose an integer `a`
           uniformly in the range `0 \le a < p^N` where `N` is the
           precision cap of ``self``.  Return ``self(p^k * a, absprec =
@@ -778,7 +778,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
     def _coerce_map_from_(self, R):
         """
-        Returns ``True`` if there is a coerce map from ``R`` to ``self``.
+        Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
         EXAMPLES::
 
@@ -858,7 +858,8 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
     EXAMPLES::
 
         sage: R = ZpLC(next_prime(10^60)) # indirect doctest
-        doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+        doctest:...: FutureWarning: This class/method/function is marked as experimental.
+        It, its functionality or its interface might change without a formal deprecation.
         See https://github.com/sagemath/sage/issues/23505 for details.
         sage: type(R)
         <class 'sage.rings.padics.padic_base_leaves.pAdicRingLattice_with_category'>
@@ -937,7 +938,8 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
 
             sage: R = ZpLC(2)
             sage: R.random_element()    # random
-            2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16 + 2^17 + 2^18 + 2^19 + 2^21 + O(2^23)
+            2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16
+             + 2^17 + 2^18 + 2^19 + 2^21 + O(2^23)
 
             sage: R.random_element(prec=10)    # random
             1 + 2^3 + 2^4 + 2^7 + O(2^10)
@@ -987,7 +989,8 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
     EXAMPLES::
 
         sage: R = QpLC(next_prime(10^60)) # indirect doctest
-        doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+        doctest:...: FutureWarning: This class/method/function is marked as experimental.
+        It, its functionality or its interface might change without a formal deprecation.
         See https://github.com/sagemath/sage/issues/23505 for details.
         sage: type(R)
         <class 'sage.rings.padics.padic_base_leaves.pAdicFieldLattice_with_category'>
@@ -1062,7 +1065,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         - ``prec`` -- an integer or ``None`` (the default): the
           absolute precision of the generated random element
 
-        - ``integral`` -- a boolean (default: ``False``); if true
+        - ``integral`` -- a boolean (default: ``False``); if ``True``,
           return an element in the ring of integers
 
         EXAMPLES::
@@ -1071,7 +1074,8 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
             sage: K.random_element()   # not tested, known bug (see :trac:`32126`)
             2^-8 + 2^-7 + 2^-6 + 2^-5 + 2^-3 + 1 + 2^2 + 2^3 + 2^5 + O(2^12)
             sage: K.random_element(integral=True)    # random
-            2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16 + 2^17 + 2^18 + 2^19 + O(2^20)
+            2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16
+             + 2^17 + 2^18 + 2^19 + O(2^20)
 
             sage: K.random_element(prec=10)    # random
             2^(-3) + 1 + 2 + 2^4 + 2^8 + O(2^10)
@@ -1128,6 +1132,8 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
 
             sage: R = ZpER(7)
             sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
+            sage: R = ZpER(7, secure=True)
+            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
         """
         from sage.rings.padics import padic_relaxed_element
         self._default_prec, self._halting_prec, self._secure = prec
@@ -1162,6 +1168,8 @@ class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
         TESTS::
 
             sage: K = QpER(7)
+            sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
+            sage: K = QpER(7, secure=True)
             sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
         """
         from sage.rings.padics import padic_relaxed_element

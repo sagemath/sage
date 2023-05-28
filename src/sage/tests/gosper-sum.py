@@ -118,7 +118,7 @@ doing random summations::
     sage: x = var('x')
     sage: (factorial(n-1)^2 / factorial(n-x) / factorial(n+x)).gosper_sum(n,1,m)
     (m^2*factorial(m - 1)^2*factorial(x + 1)*factorial(-x + 1) + x^2*factorial(m + x)*factorial(m - x) - factorial(m + x)*factorial(m - x))/(x^2*factorial(m + x)*factorial(m - x)*factorial(x + 1)*factorial(-x + 1))
-    sage: ((n*(n+a+b)*a^n*b^n)/factorial(n+a)/factorial(n+b)).gosper_sum(n,1,m).simplify_full()
+    sage: ((n*(n+a+b)*a^n*b^n)/factorial(n+a)/factorial(n+b)).gosper_sum(n,1,m).simplify_full()  # long time
     -(a^(m + 1)*b^(m + 1)*factorial(a - 1)*factorial(b - 1) - factorial(a + m)*factorial(b + m))/(factorial(a + m)*factorial(a - 1)*factorial(b + m)*factorial(b - 1))
 
     sage: check_unsolvable(1/n, n,1,m)
@@ -206,11 +206,11 @@ in the book fails the proof)::
     -1/2*(k - 2*n + 1)*k/((k - n)*(2*n + 1))
     sage: G(n,k) = c*F(n,k)
     sage: t = (F(n+1,k) - F(n,k) - G(n,k+1) + G(n,k))
-    sage: t.simplify_full().is_trivial_zero()
+    sage: t.simplify_full().is_trivial_zero()  # long time
     True
     sage: c = k/2/(-1+k-n)
     sage: GG(n,k) = c*F(n,k)
     sage: t = (F(n+1,k) - F(n,k) - GG(n,k+1) + GG(n,k))
-    sage: t.simplify_full().is_trivial_zero()
+    sage: t.simplify_full().is_trivial_zero()  # long time
     False
 """

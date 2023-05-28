@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Bandwidth of undirected graphs
 
@@ -254,7 +255,7 @@ def bandwidth(G, k=None):
     cdef range_t ** ith_range_array = <range_t **> mem.allocarray(n, sizeof(range_t *))
     cdef range_t * range_array_tmp = <range_t *> mem.allocarray(n, sizeof(range_t))
 
-    cdef int i, j, kk
+    cdef int i, kk
     # compute the distance matrix
     all_pairs_shortest_path_BFS(G, NULL, distances, NULL, vertex_list=int_to_vertex)
 

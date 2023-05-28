@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.padics
 r"""
 `p`-adic Generic
 
@@ -100,7 +101,6 @@ class pAdicGeneric(IntegralDomain, LocalGeneric):
         return L
 
     def _modified_print_mode(self, print_mode):
-
         r"""
         Return a dictionary of print options, starting with ``self``'s
         print options but modified by the options in the dictionary
@@ -488,6 +488,12 @@ class pAdicGeneric(IntegralDomain, LocalGeneric):
             2-adic Ring with lattice-cap precision (label: test)
             sage: R.integer_ring({'mode':'series'}) is R
             True
+
+        The `secure` attribute for relaxed type is preserved::
+
+            sage: K = QpER(5, secure=True)
+            sage: K.integer_ring().is_secure()
+            True
         """
         # Currently does not support fields with non integral defining
         # polynomials.  This should change when the padic_general_extension
@@ -495,7 +501,7 @@ class pAdicGeneric(IntegralDomain, LocalGeneric):
         if not self.is_field() and print_mode is None:
             return self
         if print_mode is None:
-            return self.change(field=False)
+            return self.change(field=False, check=False)
         else:
             from sage.misc.superseded import deprecation
             deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
@@ -972,7 +978,6 @@ class pAdicGeneric(IntegralDomain, LocalGeneric):
                         tester.assertEqual(y.expansion(i), x.expansion(i))
                     xx = y + (x % b)
                     tester.assertTrue(xx.is_equal_to(x,prec))
-
 
     def _test_log(self, **options):
         r"""

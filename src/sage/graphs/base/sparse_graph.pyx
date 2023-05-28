@@ -1009,10 +1009,9 @@ cdef class SparseGraph(CGraph):
 
         - a pointer to the first label or ``NULL`` if there are none
         """
-        cdef int i = (u * self.hash_length) + (v & self.hash_mask), j
-        cdef int compared, num_arcs
+        cdef int i = (u * self.hash_length) + (v & self.hash_mask)
+        cdef int compared
         cdef SparseGraphBTNode *temp = self.vertices[i]
-        cdef SparseGraphLLNode *label
         while temp:
             compared = compare(temp.vertex, v)
             if compared > 0:
