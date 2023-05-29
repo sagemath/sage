@@ -457,7 +457,7 @@ class RecognizableSeries(ModuleElement):
             return m
 
         if isinstance(mu, dict):
-            mu = dict((a, immutable(Matrix(M))) for a, M in mu.items())
+            mu = {a: Matrix(M, immutable=True) for a, M in mu.items()}
         mu = Family(mu)
 
         if not mu.is_finite():
