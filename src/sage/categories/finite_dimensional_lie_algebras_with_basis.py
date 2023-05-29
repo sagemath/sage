@@ -1628,10 +1628,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 f_{aj}^b \kappa^{jc\cdots d} + f_{aj}^c \kappa^{cj\cdots d}
                 \cdots + f_{aj}^d \kappa^{bc \cdots j}
 
-            for the symmetric tensor `\kappa^{i_1 \cdots i_k}`, where `k`
-            is the ``order``. This system comes from `[X_i, C_{(k)}] = 0`
-            with `C_{(k)} = \sum_{i_1, \ldots, i_k\}^n
-            \kappa^{i_1 \cdots i_k} X_{i_1} \cdots X_{i_k}`.
+            for the symmetric tensor `\kappa^{i_1 \cdots i_k}`, where `k` is
+            the ``order``. This system comes from `[X_i, C_{(k)}] = 0` with
+
+            .. MATH::
+
+                C_{(k)} = \sum_{i_1, \ldots, i_k}^n
+                \kappa^{i_1 \cdots i_k} X_{i_1} \cdots X_{i_k}.
 
             EXAMPLES::
 
