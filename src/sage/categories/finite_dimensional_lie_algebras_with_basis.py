@@ -1618,7 +1618,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             ALGORITHM:
 
             For the quadratic order (i.e., ``order=2``), then this uses
-            K^{ij}`, the inverse of the Killing form matrix, to compute
+            `K^{ij}`, the inverse of the Killing form matrix, to compute
             `C_{(2)} = \sum_{i,j} K^{ij} X_i \cdots X_j`, where `\{X_1, \ldots,
             X_n\}` is a basis for `\mathfrak{g}`. Otherwise this solves the
             system of equations
