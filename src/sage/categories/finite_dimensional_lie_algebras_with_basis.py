@@ -1603,7 +1603,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             for the center of `U(\mathfrak{g})` of homogeneous degree `k`
             (that is, it is an element of `U_k \setminus U_{k-1}`, where
             `\{U_i\}_{i=0}^{\infty}` is the natural filtration of
-            `U(\mathfrak{g})`. When `\mathfrak{g}` is a simple Lie algebra,
+            `U(\mathfrak{g})`). When `\mathfrak{g}` is a simple Lie algebra,
             then this spans `Z(U(\mathfrak{g}))_k`.
 
             INPUT:
@@ -1612,12 +1612,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             - ``UEA`` -- (optional) the universal enveloping algebra to
               return the result in
             - ``force_generic`` -- (default: ``False``) if ``True`` for the
-              quadradic order, then this uses the default algorithm; otherwise
+              quadratic order, then this uses the default algorithm; otherwise
               this is ignored
 
             ALGORITHM:
 
-            For the quadradic order (i.e., ``order=2``), then this uses
+            For the quadratic order (i.e., ``order=2``), then this uses
             K^{ij}`, the inverse of the Killing form matrix, to compute
             `C_{(2)} = \sum_{i,j} K^{ij} X_i \cdots X_j`, where `\{X_1, \ldots,
             X_n\}` is a basis for `\mathfrak{g}`. Otherwise this solves the
@@ -1697,7 +1697,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             B = self.basis()
 
             if order == 2 and not force_generic:
-                # Special case for the quadradic using the Killing form
+                # Special case for the quadratic using the Killing form
                 try:
                     K = self.killing_form_matrix().inverse()
                     return UEA.sum(K[i, j] * UEA(x) * UEA(y) for i, x in enumerate(B)
