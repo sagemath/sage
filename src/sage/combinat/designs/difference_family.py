@@ -1416,7 +1416,7 @@ def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False
          [(0), (4), (5), (6), (7), (9), (11), (12)])
         sage: relative_difference_set_from_m_sequence(8, 2, check=False)  # random      # optional - sage.modules sage.rings.finite_rings
         [(0), (6), (30), (40), (41), (44), (56), (61)]
-        sage: relative_difference_set_from_m_sequence(6, 2)
+        sage: relative_difference_set_from_m_sequence(6, 2)                             # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: q must be a prime power
@@ -1425,14 +1425,18 @@ def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False
 
         sage: from sage.combinat.designs.difference_family import is_relative_difference_set, _get_submodule_of_order
         sage: q, N = 5, 3
-        sage: G, D = relative_difference_set_from_m_sequence(q, N, check=False, return_group=True)
-        sage: H = _get_submodule_of_order(G, q-1)
-        sage: is_relative_difference_set(D, G, H, ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2)))
+        sage: G, D = relative_difference_set_from_m_sequence(q, N, check=False,         # optional - sage.modules sage.rings.finite_rings
+        ....:                                                return_group=True)
+        sage: H = _get_submodule_of_order(G, q-1)                                       # optional - sage.modules sage.rings.finite_rings
+        sage: is_relative_difference_set(D, G, H,                                       # optional - sage.modules sage.rings.finite_rings
+        ....:                            ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2)))
         True
         sage: q, N = 13, 2
-        sage: G, D = relative_difference_set_from_m_sequence(q, N, check=False, return_group=True)
-        sage: H = _get_submodule_of_order(G, q-1)
-        sage: is_relative_difference_set(D, G, H, ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2)))
+        sage: G, D = relative_difference_set_from_m_sequence(q, N, check=False,         # optional - sage.modules sage.rings.finite_rings
+        ....:                                                return_group=True)
+        sage: H = _get_submodule_of_order(G, q-1)                                       # optional - sage.modules sage.rings.finite_rings
+        sage: is_relative_difference_set(D, G, H,                                       # optional - sage.modules sage.rings.finite_rings
+        ....:                            ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2)))
         True
     """
     from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
@@ -1481,12 +1485,13 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_homomorphism
-        sage: relative_difference_set_from_homomorphism(7, 2, 3) #random
+        sage: relative_difference_set_from_homomorphism(7, 2, 3)                # random, optional - sage.modules sage.rings.finite_rings
         [(0), (3), (4), (2), (13), (7), (14)]
-        sage: relative_difference_set_from_homomorphism(9, 2, 4, check=False, return_group=True) #random
+        sage: relative_difference_set_from_homomorphism(9, 2, 4, check=False,   # random, optional - sage.modules sage.rings.finite_rings
+        ....:                                           return_group=True)
         (Additive abelian group isomorphic to Z/80,
          [(0), (4), (6), (13), (7), (12), (15), (8), (9)])
-        sage: relative_difference_set_from_homomorphism(9, 2, 5)
+        sage: relative_difference_set_from_homomorphism(9, 2, 5)                        # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: q-1 must be a multiple of d
@@ -1495,14 +1500,18 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
 
         sage: from sage.combinat.designs.difference_family import is_relative_difference_set, _get_submodule_of_order
         sage: q, N, d = 11, 2, 5
-        sage: G, D = relative_difference_set_from_homomorphism(q, N, d, check=False, return_group=True)
-        sage: H = _get_submodule_of_order(G, (q-1)//d)
-        sage: is_relative_difference_set(D, G, H, ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
+        sage: G, D = relative_difference_set_from_homomorphism(q, N, d, check=False,    # optional - sage.modules sage.rings.finite_rings
+        ....:                                                  return_group=True)
+        sage: H = _get_submodule_of_order(G, (q-1)//d)                                  # optional - sage.modules sage.rings.finite_rings
+        sage: is_relative_difference_set(D, G, H,                                       # optional - sage.modules sage.rings.finite_rings
+        ....:                            ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
         True
         sage: q, N, d = 9, 2, 4
-        sage: G, D = relative_difference_set_from_homomorphism(q, N, d, check=False, return_group=True)
-        sage: H = _get_submodule_of_order(G, (q-1)//d)
-        sage: is_relative_difference_set(D, G, H, ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
+        sage: G, D = relative_difference_set_from_homomorphism(q, N, d, check=False,    # optional - sage.modules sage.rings.finite_rings
+        ....:                                                  return_group=True)
+        sage: H = _get_submodule_of_order(G, (q-1)//d)                                  # optional - sage.modules sage.rings.finite_rings
+        sage: is_relative_difference_set(D, G, H,                                       # optional - sage.modules sage.rings.finite_rings
+        ....:                            ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
         True
     """
     from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup

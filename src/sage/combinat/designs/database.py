@@ -676,8 +676,8 @@ def OA_11_80():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_11_80
-        sage: OA = OA_11_80()
-        sage: is_orthogonal_array(OA,11,80,2)
+        sage: OA = OA_11_80()                                                           # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,11,80,2)                                           # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -718,8 +718,8 @@ def OA_15_112():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_15_112
-        sage: OA = OA_15_112()
-        sage: is_orthogonal_array(OA,15,112,2)
+        sage: OA = OA_15_112()                                                          # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,15,112,2)                                          # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -939,8 +939,8 @@ def OA_16_176():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_16_176
-        sage: OA = OA_16_176()
-        sage: is_orthogonal_array(OA,16,176,2)
+        sage: OA = OA_16_176()                                                          # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,16,176,2)                                          # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1138,8 +1138,8 @@ def OA_16_208():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_16_208
-        sage: OA = OA_16_208()                        # not tested -- too long
-        sage: is_orthogonal_array(OA,16,208,2)  # not tested -- too long
+        sage: OA = OA_16_208()                        # not tested -- too long          # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,16,208,2)        # not tested -- too long          # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1197,8 +1197,8 @@ def OA_15_224():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_15_224
-        sage: OA = OA_15_224()                         # not tested -- too long
-        sage: is_orthogonal_array(OA,15,224,2)   # not tested -- too long
+        sage: OA = OA_15_224()                         # not tested -- too long         # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,15,224,2)         # not tested -- too long         # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1283,8 +1283,8 @@ def OA_20_352():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_20_352
-        sage: OA = OA_20_352()                        # not tested (~25s)
-        sage: is_orthogonal_array(OA,20,352,2)  # not tested (~25s)
+        sage: OA = OA_20_352()                        # not tested (~25s)               # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,20,352,2)        # not tested (~25s)               # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1342,8 +1342,8 @@ def OA_20_416():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_20_416
-        sage: OA = OA_20_416()                        # not tested (~35s)
-        sage: is_orthogonal_array(OA,20,416,2)  # not tested
+        sage: OA = OA_20_416()                        # not tested (~35s)               # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,20,416,2)        # not tested                      # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1402,8 +1402,8 @@ def OA_20_544():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_20_544
-        sage: OA = OA_20_544()                        # not tested (too long ~1mn)
-        sage: is_orthogonal_array(OA,20,544,2)  # not tested
+        sage: OA = OA_20_544()                        # not tested (too long ~1mn)      # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,20,544,2)        # not tested                      # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1466,8 +1466,8 @@ def OA_17_560():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_17_560
-        sage: OA = OA_17_560()
-        sage: is_orthogonal_array(OA,17,560,2)
+        sage: OA = OA_17_560()                                                          # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,17,560,2)                                          # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1530,8 +1530,8 @@ def OA_11_640():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_11_640
-        sage: OA = OA_11_640()                        # not tested (too long)
-        sage: is_orthogonal_array(OA,11,640,2)  # not tested (too long)
+        sage: OA = OA_11_640()                        # not tested (too long)           # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,11,640,2)        # not tested (too long)           # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -1857,8 +1857,8 @@ def OA_15_896():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_15_896
-        sage: OA = OA_15_896()                          # not tested -- too long (~2min)
-        sage: is_orthogonal_array(OA,15,896,2)    # not tested -- too long
+        sage: OA = OA_15_896()                          # not tested -- too long (~2min)    # optional - sage.rings.finite_rings
+        sage: is_orthogonal_array(OA,15,896,2)          # not tested -- too long            # optional - sage.rings.finite_rings
         True
 
     The design is available from the general constructor::
@@ -2194,8 +2194,8 @@ def QDM_25_6_1_1_5():
 
         sage: from sage.combinat.designs.database import QDM_25_6_1_1_5
         sage: from sage.combinat.designs.designs_pyx import is_quasi_difference_matrix
-        sage: G,M = QDM_25_6_1_1_5()
-        sage: is_quasi_difference_matrix(M,G,6,1,1,5)
+        sage: G,M = QDM_25_6_1_1_5()                                                    # optional - sage.modules
+        sage: is_quasi_difference_matrix(M,G,6,1,1,5)                                   # optional - sage.modules
         True
     """
     M = [
@@ -3685,8 +3685,8 @@ def DM_52_6_1():
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix
         sage: from sage.combinat.designs.database import DM_52_6_1
-        sage: G,M = DM_52_6_1()
-        sage: is_difference_matrix(M,G,6,1)
+        sage: G,M = DM_52_6_1()                                                         # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(M,G,6,1)                                             # optional - sage.rings.finite_rings
         True
 
     Can be obtained from the constructor::
@@ -3796,8 +3796,8 @@ def DM_56_8_1():
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix
         sage: from sage.combinat.designs.database import DM_56_8_1
-        sage: G,M = DM_56_8_1()
-        sage: is_difference_matrix(M,G,8,1)
+        sage: G,M = DM_56_8_1()                                                         # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(M,G,8,1)                                             # optional - sage.rings.finite_rings
         True
 
     Can be obtained from the constructor::
@@ -3923,8 +3923,8 @@ def DM_75_8_1():
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix
         sage: from sage.combinat.designs.database import DM_75_8_1
-        sage: G,M = DM_75_8_1()
-        sage: is_difference_matrix(M,G,8,1)
+        sage: G,M = DM_75_8_1()                                                         # optional - sage.rings.finite_rings
+        sage: is_difference_matrix(M,G,8,1)                                             # optional - sage.rings.finite_rings
         True
 
     Can be obtained from the constructor::
@@ -4148,15 +4148,15 @@ def BIBD_45_9_8(from_code=False):
 
         sage: from sage.combinat.designs.database import BIBD_45_9_8
         sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
-        sage: B = BalancedIncompleteBlockDesign(45, BIBD_45_9_8(),lambd=8); B
+        sage: B = BalancedIncompleteBlockDesign(45, BIBD_45_9_8(), lambd=8); B          # optional - sage.rings.finite_rings
         (45,9,8)-Balanced Incomplete Block Design
 
     TESTS:
 
     From the definition (takes around 12s)::
 
-        sage: B2 = Hypergraph(BIBD_45_9_8(from_code=True)) # not tested
-        sage: B2.is_isomorphic(B)                          # not tested
+        sage: B2 = Hypergraph(BIBD_45_9_8(from_code=True)) # not tested                 # optional - sage.rings.finite_rings
+        sage: B2.is_isomorphic(B)                          # not tested                 # optional - sage.rings.finite_rings
         True
 
     REFERENCE:
@@ -4580,8 +4580,8 @@ def BIBD_79_13_2():
     EXAMPLES:
 
         sage: from sage.combinat.designs.database import BIBD_79_13_2
-        sage: D = IncidenceStructure(BIBD_79_13_2())
-        sage: D.is_t_design(t=2, v=79, k=13, l=2)
+        sage: D = IncidenceStructure(BIBD_79_13_2())                                    # optional - sage.libs.gap
+        sage: D.is_t_design(t=2, v=79, k=13, l=2)                                       # optional - sage.libs.gap
         True
     """
     from sage.libs.gap.libgap import libgap
@@ -4658,8 +4658,8 @@ def BIBD_56_11_2():
     EXAMPLES:
 
         sage: from sage.combinat.designs.database import BIBD_56_11_2
-        sage: D = IncidenceStructure(BIBD_56_11_2())
-        sage: D.is_t_design(t=2, v=56, k=11, l=2)
+        sage: D = IncidenceStructure(BIBD_56_11_2())                                    # optional - sage.libs.gap
+        sage: D.is_t_design(t=2, v=56, k=11, l=2)                                       # optional - sage.libs.gap
         True
     """
     from sage.libs.gap.libgap import libgap
