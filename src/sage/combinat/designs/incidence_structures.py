@@ -160,15 +160,15 @@ class IncidenceStructure():
         We avoid to convert to integers when the points are not (but compare
         equal to integers because of coercion)::
 
-            sage: V = GF(5)
-            sage: e0,e1,e2,e3,e4 = V
-            sage: [e0,e1,e2,e3,e4] == list(range(5)) # coercion makes them equal
+            sage: V = GF(5)                                                             # optional - sage.rings.finite_rings
+            sage: e0,e1,e2,e3,e4 = V                                                    # optional - sage.rings.finite_rings
+            sage: [e0,e1,e2,e3,e4] == list(range(5))  # coercion makes them equal       # optional - sage.rings.finite_rings
             True
-            sage: blocks = [[e0,e1,e2],[e0,e1],[e2,e4]]
-            sage: I = IncidenceStructure(V, blocks)
-            sage: type(I.ground_set()[0])
+            sage: blocks = [[e0,e1,e2],[e0,e1],[e2,e4]]                                 # optional - sage.rings.finite_rings
+            sage: I = IncidenceStructure(V, blocks)                                     # optional - sage.rings.finite_rings
+            sage: type(I.ground_set()[0])                                               # optional - sage.rings.finite_rings
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
-            sage: type(I.blocks()[0][0])
+            sage: type(I.blocks()[0][0])                                                # optional - sage.rings.finite_rings
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
 
         TESTS::
@@ -282,9 +282,9 @@ class IncidenceStructure():
 
             sage: blocks = [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]]
             sage: BD1 = IncidenceStructure(7, blocks)
-            sage: M = BD1.incidence_matrix()
-            sage: BD2 = IncidenceStructure(incidence_matrix=M)
-            sage: BD1 == BD2
+            sage: M = BD1.incidence_matrix()                                            # optional - sage.modules
+            sage: BD2 = IncidenceStructure(incidence_matrix=M)                          # optional - sage.modules
+            sage: BD1 == BD2                                                            # optional - sage.modules
             True
 
             sage: e1 = frozenset([0,1])
@@ -326,9 +326,9 @@ class IncidenceStructure():
         EXAMPLES::
 
             sage: BD1 = IncidenceStructure(7, [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
-            sage: M = BD1.incidence_matrix()
-            sage: BD2 = IncidenceStructure(incidence_matrix=M)
-            sage: BD1 != BD2
+            sage: M = BD1.incidence_matrix()                                            # optional - sage.modules
+            sage: BD2 = IncidenceStructure(incidence_matrix=M)                          # optional - sage.modules
+            sage: BD1 != BD2                                                            # optional - sage.modules
             False
         """
         return not self == other
@@ -363,10 +363,10 @@ class IncidenceStructure():
             True
             sage: ["Am", "I", "finally", "done ?"] in IS
             False
-            sage: IS = designs.ProjectiveGeometryDesign(3, 1, GF(2), point_coordinates=False)
-            sage: [3,8,7] in IS
+            sage: IS = designs.ProjectiveGeometryDesign(3, 1, GF(2), point_coordinates=False)   # optional - sage.rings.finite_rings
+            sage: [3,8,7] in IS                                                                 # optional - sage.rings.finite_rings
             True
-            sage: [3,8,9] in IS
+            sage: [3,8,9] in IS                                                                 # optional - sage.rings.finite_rings
             False
         """
         try:
@@ -1119,10 +1119,11 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: BD = IncidenceStructure(7, [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
+            sage: BD = IncidenceStructure(7, [[0,1,2],[0,3,4],[0,5,6],[1,3,5],
+            ....:                             [1,4,6],[2,3,6],[2,4,5]])
             sage: BD.block_sizes()
             [3, 3, 3, 3, 3, 3, 3]
-            sage: BD.incidence_matrix()
+            sage: BD.incidence_matrix()                                                 # optional - sage.modules
             [1 1 1 0 0 0 0]
             [1 0 0 1 1 0 0]
             [1 0 0 0 0 1 1]
@@ -1132,7 +1133,7 @@ class IncidenceStructure():
             [0 0 1 0 1 1 0]
 
             sage: I = IncidenceStructure('abc', ('ab','abc','ac','c'))
-            sage: I.incidence_matrix()
+            sage: I.incidence_matrix()                                                  # optional - sage.modules
             [1 1 1 0]
             [1 1 0 0]
             [0 1 1 1]
@@ -1157,26 +1158,28 @@ class IncidenceStructure():
         - ``labels`` (boolean) -- whether to return a graph whose vertices are
           integers, or labelled elements.
 
-            - ``labels is False`` (default) -- in this case the first vertices
-              of the graphs are the elements of :meth:`ground_set`, and appear
-              in the same order. Similarly, the following vertices represent the
-              elements of :meth:`blocks`, and appear in the same order.
+          - ``labels is False`` (default) -- in this case the first vertices
+            of the graphs are the elements of :meth:`ground_set`, and appear
+            in the same order. Similarly, the following vertices represent the
+            elements of :meth:`blocks`, and appear in the same order.
 
-            - ``labels is True``, the points keep their original labels, and the
-              blocks are :func:`Set <Set>` objects.
+          - ``labels is True``, the points keep their original labels, and the
+            blocks are :func:`Set <Set>` objects.
 
-              Note that the labelled incidence graph can be incorrect when
-              blocks are repeated, and on some (rare) occasions when the
-              elements of :meth:`ground_set` mix :func:`Set` and non-:func:`Set
-              <Set>` objects.
+            Note that the labelled incidence graph can be incorrect when
+            blocks are repeated, and on some (rare) occasions when the
+            elements of :meth:`ground_set` mix :func:`Set` and non-:func:`Set
+            <Set>` objects.
 
         EXAMPLES::
 
-            sage: BD = IncidenceStructure(7, [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
+            sage: BD = IncidenceStructure(7, [[0,1,2],[0,3,4],[0,5,6],[1,3,5],
+            ....:                             [1,4,6],[2,3,6],[2,4,5]])
             sage: BD.incidence_graph()
             Bipartite graph on 14 vertices
-            sage: A = BD.incidence_matrix()
-            sage: Graph(block_matrix([[A*0,A],[A.transpose(),A*0]])) == BD.incidence_graph()
+            sage: A = BD.incidence_matrix()                                             # optional - sage.modules
+            sage: Graph(block_matrix([[A*0, A],                                         # optional - sage.modules
+            ....:                     [A.transpose(),A*0]])) == BD.incidence_graph()
             True
 
         TESTS:
@@ -1499,10 +1502,10 @@ class IncidenceStructure():
             sage: BD.is_t_design(0,6,3,7) or BD.is_t_design(0,7,4,7) or BD.is_t_design(0,7,3,8)
             False
 
-            sage: BD = designs.AffineGeometryDesign(3, 1, GF(2))
-            sage: BD.is_t_design(1)
+            sage: BD = designs.AffineGeometryDesign(3, 1, GF(2))                        # optional - sage.rings.finite_rings
+            sage: BD.is_t_design(1)                                                     # optional - sage.rings.finite_rings
             True
-            sage: BD.is_t_design(2)
+            sage: BD.is_t_design(2)                                                     # optional - sage.rings.finite_rings
             True
 
         Steiner triple and quadruple systems are other names for `2-(v,3,1)` and
@@ -1568,11 +1571,11 @@ class IncidenceStructure():
             [(8, 4, 7)]
             sage: [(v,k,l) for v in R for k in R for l in R if S4_8.is_t_design(0,v,k,l)]
             [(8, 4, 14)]
-            sage: A = designs.AffineGeometryDesign(3, 1, GF(2))
-            sage: A.is_t_design(return_parameters=True)
+            sage: A = designs.AffineGeometryDesign(3, 1, GF(2))                         # optional - sage.rings.finite_rings
+            sage: A.is_t_design(return_parameters=True)                                 # optional - sage.rings.finite_rings
             (True, (2, 8, 2, 1))
-            sage: A = designs.AffineGeometryDesign(4, 2, GF(2))
-            sage: A.is_t_design(return_parameters=True)
+            sage: A = designs.AffineGeometryDesign(4, 2, GF(2))                         # optional - sage.rings.finite_rings
+            sage: A.is_t_design(return_parameters=True)                                 # optional - sage.rings.finite_rings
             (True, (3, 16, 4, 1))
             sage: I = IncidenceStructure(2, [])
             sage: I.is_t_design(return_parameters=True)
@@ -1712,9 +1715,10 @@ class IncidenceStructure():
             False
 
             sage: G = graphs.CycleGraph(5)
-            sage: B = list(G.subgraph_search_iterator(graphs.PathGraph(3), return_graphs=False))
-            sage: H = IncidenceStructure(B)
-            sage: H.is_generalized_quadrangle(verbose=True)
+            sage: B = list(G.subgraph_search_iterator(graphs.PathGraph(3),              # optional - sage.modules
+            ....:                                     return_graphs=False))
+            sage: H = IncidenceStructure(B)                                             # optional - sage.modules
+            sage: H.is_generalized_quadrangle(verbose=True)                             # optional - sage.modules
             Two blocks intersect on >1 points.
             False
 
@@ -1770,25 +1774,23 @@ class IncidenceStructure():
         The dual of a projective plane is a projective plane::
 
             sage: PP = designs.DesarguesianProjectivePlaneDesign(4)
-            sage: PP.dual().is_t_design(return_parameters=True)
+            sage: PP.dual().is_t_design(return_parameters=True)                         # optional - sage.modules
             (True, (2, 21, 5, 1))
 
         TESTS::
 
-            sage: D = IncidenceStructure(4, [[0,2],[1,2,3],[2,3]])
-            sage: D
+            sage: D = IncidenceStructure(4, [[0,2],[1,2,3],[2,3]]); D
             Incidence structure with 4 points and 3 blocks
-            sage: D.dual()
+            sage: D.dual()                                                              # optional - sage.modules
             Incidence structure with 3 points and 4 blocks
-            sage: print(D.dual(algorithm="gap"))       # optional - gap_packages
+            sage: print(D.dual(algorithm="gap"))            # optional - gap_packages
             Incidence structure with 3 points and 4 blocks
             sage: blocks = [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]]
-            sage: BD = IncidenceStructure(7, blocks, name="FanoPlane")
-            sage: BD
+            sage: BD = IncidenceStructure(7, blocks, name="FanoPlane"); BD
             Incidence structure with 7 points and 7 blocks
-            sage: print(BD.dual(algorithm="gap"))         # optional - gap_packages
+            sage: print(BD.dual(algorithm="gap"))           # optional - gap_packages
             Incidence structure with 7 points and 7 blocks
-            sage: BD.dual()
+            sage: BD.dual()                                                             # optional - sage.modules
             Incidence structure with 7 points and 7 blocks
 
         REFERENCE:
@@ -1817,28 +1819,28 @@ class IncidenceStructure():
 
             sage: P = designs.DesarguesianProjectivePlaneDesign(2); P
             (7,3,1)-Balanced Incomplete Block Design
-            sage: G = P.automorphism_group()
-            sage: G.is_isomorphic(PGL(3,2))
+            sage: G = P.automorphism_group()                                            # optional - sage.groups
+            sage: G.is_isomorphic(PGL(3,2))                                             # optional - sage.groups
             True
-            sage: G
+            sage: G                                                                     # optional - sage.groups
             Permutation Group with generators [...]
-            sage: G.cardinality()
+            sage: G.cardinality()                                                       # optional - sage.groups
             168
 
         A non self-dual example::
 
             sage: IS = IncidenceStructure(list(range(4)), [[0,1,2,3],[1,2,3]])
-            sage: IS.automorphism_group().cardinality()
+            sage: IS.automorphism_group().cardinality()                                 # optional - sage.groups
             6
-            sage: IS.dual().automorphism_group().cardinality()
+            sage: IS.dual().automorphism_group().cardinality()                          # optional - sage.groups sage.modules
             1
 
         Examples with non-integer points::
 
             sage: I = IncidenceStructure('abc', ('ab','ac','bc'))
-            sage: I.automorphism_group()
+            sage: I.automorphism_group()                                                # optional - sage.groups
             Permutation Group with generators [('b','c'), ('a','b')]
-            sage: IncidenceStructure([[(1,2),(3,4)]]).automorphism_group()
+            sage: IncidenceStructure([[(1,2),(3,4)]]).automorphism_group()              # optional - sage.groups
             Permutation Group with generators [((1,2),(3,4))]
         """
         from sage.graphs.graph import Graph
@@ -1907,20 +1909,20 @@ class IncidenceStructure():
             sage: TD.is_resolvable()
             True
 
-            sage: AG = designs.AffineGeometryDesign(3,1,GF(2))
-            sage: AG.is_resolvable()
+            sage: AG = designs.AffineGeometryDesign(3,1,GF(2))                          # optional - sage.rings.finite_rings
+            sage: AG.is_resolvable()                                                    # optional - sage.rings.finite_rings
             True
 
         Their classes::
 
-            sage: b,cls = TD.is_resolvable(True)
+            sage: b, cls = TD.is_resolvable(True)
             sage: b
             True
             sage: cls # random
             [[[0, 3], [1, 2]], [[1, 3], [0, 2]]]
 
-            sage: b,cls = AG.is_resolvable(True)
-            sage: b
+            sage: b, cls = AG.is_resolvable(True)                                       # optional - sage.rings.finite_rings
+            sage: b                                                                     # optional - sage.rings.finite_rings
             True
             sage: cls # random
             [[[6, 7], [4, 5], [0, 1], [2, 3]],
@@ -1941,9 +1943,9 @@ class IncidenceStructure():
 
         TESTS::
 
-            sage: _,cls1 = AG.is_resolvable(certificate=True)
-            sage: _,cls2 = AG.is_resolvable(certificate=True)
-            sage: cls1 is cls2
+            sage: _, cls1 = AG.is_resolvable(certificate=True)                          # optional - sage.rings.finite_rings
+            sage: _, cls2 = AG.is_resolvable(certificate=True)                          # optional - sage.rings.finite_rings
+            sage: cls1 is cls2                                                          # optional - sage.rings.finite_rings
             False
         """
         if self._classes is None:
@@ -2152,8 +2154,8 @@ class IncidenceStructure():
 
             sage: H = Hypergraph([{1,2,3},{2,3,4},{3,4,5},{4,5,6}]); H
             Incidence structure with 6 points and 4 blocks
-            sage: L = H._spring_layout()
-            sage: L # random
+            sage: L = H._spring_layout()                                                # optional - sage.plot
+            sage: L  # random                                                           # optional - sage.plot
             {1: (0.238, -0.926),
              2: (0.672, -0.518),
              3: (0.449, -0.225),
@@ -2164,9 +2166,9 @@ class IncidenceStructure():
              {2, 3, 4}: (0.727, -0.173),
              {4, 5, 6}: (0.838, 0.617),
              {1, 2, 3}: (0.393, -0.617)}
-            sage: all(v in L for v in H.ground_set())
+            sage: all(v in L for v in H.ground_set())                                   # optional - sage.plot
             True
-            sage: all(v in L for v in map(Set,H.blocks()))
+            sage: all(v in L for v in map(Set, H.blocks()))                             # optional - sage.plot
             True
         """
         from sage.graphs.graph import Graph
@@ -2196,9 +2198,10 @@ class IncidenceStructure():
 
             sage: g = graphs.Grid2dGraph(5,5)
             sage: C4 = graphs.CycleGraph(4)
-            sage: sets = Set(map(Set,list(g.subgraph_search_iterator(C4, return_graphs=False))))
-            sage: H = Hypergraph(sets)
-            sage: view(H) # not tested
+            sage: sets = Set(map(Set, g.subgraph_search_iterator(C4,                    # optional - sage.modules
+            ....:                                                return_graphs=False)))
+            sage: H = Hypergraph(sets)                                                  # optional - sage.modules
+            sage: view(H) # not tested                                                  # optional - sage.modules sage.plot
 
         TESTS::
 
