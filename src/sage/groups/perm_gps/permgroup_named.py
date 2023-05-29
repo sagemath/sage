@@ -920,7 +920,7 @@ class DiCyclicGroup(PermutationGroup_unique):
     TESTS::
 
         sage: groups.permutation.DiCyclic(6)
-        Diyclic group of order 24 as a permutation group
+        DiCyclic group of order 24 as a permutation group
 
     AUTHOR:
 
@@ -976,9 +976,9 @@ class DiCyclicGroup(PermutationGroup_unique):
         EXAMPLES::
 
             sage: DiCyclicGroup(12)
-            Diyclic group of order 48 as a permutation group
+            DiCyclic group of order 48 as a permutation group
         """
-        return "Diyclic group of order %s as a permutation group"%self.order()
+        return "DiCyclic group of order %s as a permutation group"%self.order()
 
     def is_commutative(self):
         r"""
