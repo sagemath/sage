@@ -3057,18 +3057,18 @@ def petersen_family(generate=False):
         [Petersen graph: Graph on 10 vertices,
          Complete graph: Graph on 6 vertices,
          Multipartite Graph with set sizes [3, 3, 1]: Graph on 7 vertices,
-         Graph on 8 vertices,
-         Graph on 9 vertices,
-         Graph on 7 vertices,
-         Graph on 8 vertices]
+                                                      Graph on 8 vertices,
+                                                      Graph on 9 vertices,
+                                                      Graph on 7 vertices,
+                                                      Graph on 8 vertices]
 
     The two different inputs generate the same graphs::
 
         sage: F1 = graphs.petersen_family(generate=False)
-        sage: F2 = graphs.petersen_family(generate=True)
+        sage: F2 = graphs.petersen_family(generate=True)                                # optional - sage.modules
         sage: F1 = [g.canonical_label().graph6_string() for g in F1]
-        sage: F2 = [g.canonical_label().graph6_string() for g in F2]
-        sage: set(F1) == set(F2)
+        sage: F2 = [g.canonical_label().graph6_string() for g in F2]                    # optional - sage.modules
+        sage: set(F1) == set(F2)                                                        # optional - sage.modules
         True
     """
     from sage.graphs.generators.smallgraphs import PetersenGraph
@@ -3183,13 +3183,13 @@ def SierpinskiGasketGraph(n):
 
     EXAMPLES::
 
-        sage: s4 = graphs.SierpinskiGasketGraph(4); s4
+        sage: s4 = graphs.SierpinskiGasketGraph(4); s4                                  # optional - sage.modules
         Graph on 42 vertices
-        sage: s4.size()
+        sage: s4.size()                                                                 # optional - sage.modules
         81
-        sage: s4.degree_histogram()
+        sage: s4.degree_histogram()                                                     # optional - sage.modules
         [0, 0, 3, 0, 39]
-        sage: s4.is_hamiltonian()
+        sage: s4.is_hamiltonian()                                                       # optional - sage.modules
         True
 
     REFERENCES:
@@ -3284,16 +3284,16 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
         sage: k = randint(1, 5)
         sage: G = graphs.RandomGNP(n, .5)
         sage: m = G.size()
-        sage: S = graphs.GeneralizedSierpinskiGraph(G, k)
-        sage: S.order() == n**k
+        sage: S = graphs.GeneralizedSierpinskiGraph(G, k)                               # optional - sage.modules
+        sage: S.order() == n**k                                                         # optional - sage.modules
         True
-        sage: S.size() == m*sum([n**i for i in range(k)])
+        sage: S.size() == m*sum([n**i for i in range(k)])                               # optional - sage.modules
         True
         sage: G = graphs.CompleteGraph(n)
-        sage: S = graphs.GeneralizedSierpinskiGraph(G, k)
-        sage: S.order() == n**k
+        sage: S = graphs.GeneralizedSierpinskiGraph(G, k)                               # optional - sage.modules
+        sage: S.order() == n**k                                                         # optional - sage.modules
         True
-        sage: S.size() == (n*(n - 1)/2)*sum([n**i for i in range(k)])
+        sage: S.size() == (n*(n - 1)/2)*sum([n**i for i in range(k)])                   # optional - sage.modules
         True
 
     The positions of the vertices of the output graph are determined from the
@@ -3318,18 +3318,18 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
 
     TESTS::
 
-        sage: graphs.GeneralizedSierpinskiGraph(Graph(), 3)
+        sage: graphs.GeneralizedSierpinskiGraph(Graph(), 3)                             # optional - sage.modules
         Generalized Sierpinski Graph of Graph on 0 vertices of dimension 3: Graph on 0 vertices
-        sage: graphs.GeneralizedSierpinskiGraph(Graph(1), 3).vertices(sort=False)
+        sage: graphs.GeneralizedSierpinskiGraph(Graph(1), 3).vertices(sort=False)       # optional - sage.modules
         [(0, 0, 0)]
-        sage: G = graphs.GeneralizedSierpinskiGraph(Graph(2), 3)
-        sage: G.order(), G.size()
+        sage: G = graphs.GeneralizedSierpinskiGraph(Graph(2), 3)                        # optional - sage.modules
+        sage: G.order(), G.size()                                                       # optional - sage.modules
         (8, 0)
-        sage: graphs.GeneralizedSierpinskiGraph("foo", 1)
+        sage: graphs.GeneralizedSierpinskiGraph("foo", 1)                               # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: parameter G must be a Graph
-        sage: graphs.GeneralizedSierpinskiGraph(Graph(), 0)
+        sage: graphs.GeneralizedSierpinskiGraph(Graph(), 0)                             # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: parameter k must be >= 1
@@ -3740,9 +3740,9 @@ def RingedTree(k, vertex_labels=True):
 
     EXAMPLES::
 
-        sage: G = graphs.RingedTree(5)
-        sage: P = G.plot(vertex_labels=False, vertex_size=10)                           # optional - sage.plot
-        sage: P.show()  # long time                                                     # optional - sage.plot
+        sage: G = graphs.RingedTree(5)                                                  # optional - networkx
+        sage: P = G.plot(vertex_labels=False, vertex_size=10)                           # optional - networkx sage.plot
+        sage: P.show()  # long time                                                     # optional - networkx sage.plot
         sage: G.vertices(sort=True)
         ['', '0', '00', '000', '0000', '0001', '001', '0010', '0011', '01',
          '010', '0100', '0101', '011', '0110', '0111', '1', '10', '100',
@@ -3755,8 +3755,8 @@ def RingedTree(k, vertex_labels=True):
         Traceback (most recent call last):
         ...
         ValueError: The number of levels must be >= 1.
-        sage: G = graphs.RingedTree(5, vertex_labels = False)
-        sage: G.vertices(sort=True)
+        sage: G = graphs.RingedTree(5, vertex_labels=False)                             # optional - networkx
+        sage: G.vertices(sort=True)                                                     # optional - networkx
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
         18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
     """
@@ -3828,13 +3828,13 @@ def MathonPseudocyclicMergingGraph(M, t):
         sage: G = mer(ES(3), 2)  # long time
         sage: G.is_strongly_regular(parameters=True)    # long time
         (784, 297, 116, 110)
-        sage: G = mer(ES(2), 2)
+        sage: G = mer(ES(2), 2)                                                         # optional - sage.libs.gap
         Traceback (most recent call last):
         ...
         AssertionError...
         sage: M = ES(3)
         sage: M = [M[1],M[0],M[2],M[3]]
-        sage: G = mer(M, 2)
+        sage: G = mer(M, 2)                                                             # optional - sage.libs.gap
         Traceback (most recent call last):
         ...
         AssertionError...
@@ -3889,9 +3889,9 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
     Using default ``G`` and ``L``. ::
 
         sage: from sage.graphs.generators.families import MathonPseudocyclicStronglyRegularGraph
-        sage: G=MathonPseudocyclicStronglyRegularGraph(1); G
+        sage: G = MathonPseudocyclicStronglyRegularGraph(1); G                          # optional - sage.modules sage.rings.finite_rings
         Mathon's PC SRG on 45 vertices: Graph on 45 vertices
-        sage: G.is_strongly_regular(parameters=True)
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.modules sage.rings.finite_rings
         (45, 22, 10, 11)
 
     Supplying ``G`` and ``L`` (constructed from the automorphism group of ``G``). ::

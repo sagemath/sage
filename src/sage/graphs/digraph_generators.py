@@ -371,17 +371,18 @@ class DiGraphGenerators():
         A Strongly Regular digraph satisfies the condition `AJ = JA = kJ` where
         `A` is the adjacency matrix::
 
-            sage: g = digraphs.StronglyRegular(7); g
+            sage: g = digraphs.StronglyRegular(7); g                                    # optional - sage.modules
             Strongly regular digraph: Digraph on 7 vertices
-            sage: A = g.adjacency_matrix()*ones_matrix(7); B = ones_matrix(7)*g.adjacency_matrix()
-            sage: A == B == A[0, 0]*ones_matrix(7)
+            sage: A = g.adjacency_matrix()*ones_matrix(7)                               # optional - sage.modules
+            sage: B = ones_matrix(7)*g.adjacency_matrix()                               # optional - sage.modules
+            sage: A == B == A[0, 0]*ones_matrix(7)                                      # optional - sage.modules
             True
 
         TESTS:
 
         Wrong parameter::
 
-            sage: digraphs.StronglyRegular(73)
+            sage: digraphs.StronglyRegular(73)                                          # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: strongly regular digraph with 73 vertices not yet implemented

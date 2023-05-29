@@ -911,7 +911,7 @@ def Balaban11Cage(embedding=1):
 
     Proof that the embeddings are the same graph::
 
-        sage: g1.is_isomorphic(g2)  # g2 and g3 are obviously isomorphic
+        sage: g1.is_isomorphic(g2)  # g2 and g3 are obviously isomorphic                # optional - networkx
         True
 
     TESTS::

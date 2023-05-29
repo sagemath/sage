@@ -212,19 +212,19 @@ def is_orthogonal_array_block_graph(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_orthogonal_array_block_graph
-        sage: t = is_orthogonal_array_block_graph(64, 35, 18, 20); t
+        sage: t = is_orthogonal_array_block_graph(64, 35, 18, 20); t                    # optional - sage.modules
         (..., 5, 8)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.modules
         OA(5,8): Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.modules
         (64, 35, 18, 20)
-        sage: t=is_orthogonal_array_block_graph(225,98,43,42); t
+        sage: t = is_orthogonal_array_block_graph(225,98,43,42); t
         (..., 4)
         sage: g = t[0](*t[1:]); g
         Pasechnik Graph_4: Graph on 225 vertices
         sage: g.is_strongly_regular(parameters=True)
         (225, 98, 43, 42)
-        sage: t=is_orthogonal_array_block_graph(225,112,55,56); t
+        sage: t = is_orthogonal_array_block_graph(225,112,55,56); t
         (..., 4)
         sage: g = t[0](*t[1:]); g
         skewhad^2_4: Graph on 225 vertices
@@ -1011,9 +1011,9 @@ def is_polhill(int v, int k, int l, int mu):
         sage: from sage.graphs.strongly_regular_db import is_polhill
         sage: t = is_polhill(1024, 231,  38,  56); t
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
-        sage: g = t[0](*t[1:]); g                    # not tested (too long)
+        sage: g = t[0](*t[1:]); g                    # not tested (too long)            # optional - sage.rings.finite_rings
         Graph on 1024 vertices
-        sage: g.is_strongly_regular(parameters=True) # not tested (too long)
+        sage: g.is_strongly_regular(parameters=True) # not tested (too long)            # optional - sage.rings.finite_rings
         (1024, 231, 38, 56)
         sage: t = is_polhill(1024, 264,  56,  72); t
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
@@ -1156,11 +1156,11 @@ def is_RSHCD(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_RSHCD
-        sage: t = is_RSHCD(64,27,10,12); t
+        sage: t = is_RSHCD(64,27,10,12); t                                              # optional - sage.modules
         [<built-in function SRG_from_RSHCD>, 64, 27, 10, 12]
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.modules
         Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.modules
         (64, 27, 10, 12)
     """
     if SRG_from_RSHCD(v, k, l, mu, existence=True) is True:
@@ -1191,26 +1191,26 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     some graphs ::
 
         sage: from sage.graphs.strongly_regular_db import SRG_from_RSHCD
-        sage: SRG_from_RSHCD(784, 0, 14, 38, existence=True)
+        sage: SRG_from_RSHCD(784, 0, 14, 38, existence=True)                            # optional - sage.modules
         False
-        sage: SRG_from_RSHCD(784, 377, 180, 182, existence=True)
+        sage: SRG_from_RSHCD(784, 377, 180, 182, existence=True)                        # optional - sage.modules
         True
-        sage: SRG_from_RSHCD(144, 65, 28, 30)
+        sage: SRG_from_RSHCD(144, 65, 28, 30)                                           # optional - sage.modules
         Graph on 144 vertices
 
     an example with vertex-transitive automorphism group, found during the
     implementation of the case `v=324` ::
 
-        sage: G=SRG_from_RSHCD(324,152,70,72)  # long time
-        sage: a=G.automorphism_group()         # long time
-        sage: a.order()                        # long time
+        sage: G = SRG_from_RSHCD(324,152,70,72)  # long time                            # optional - sage.modules
+        sage: a = G.automorphism_group()         # long time                            # optional - sage.modules
+        sage: a.order()                          # long time                            # optional - sage.modules
         2592
-        sage: len(a.orbits())                  # long time
+        sage: len(a.orbits())                    # long time                            # optional - sage.modules
         1
 
     TESTS::
 
-        sage: SRG_from_RSHCD(784, 0, 14, 38)
+        sage: SRG_from_RSHCD(784, 0, 14, 38)                                            # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: I do not know how to build a (784, 0, 14, 38)-SRG from a RSHCD
@@ -1787,22 +1787,22 @@ def eigenmatrix(int v, int k, int l, int mu):
     Petersen's graph's C-algebra does not have a dual coming from an s.r.g.::
 
         sage: from sage.graphs.strongly_regular_db import eigenmatrix
-        sage: P=eigenmatrix(10,3,0,1); P
+        sage: P = eigenmatrix(10,3,0,1); P                                              # optional - sage.modules
         [ 1  3  6]
         [ 1  1 -2]
         [ 1 -2  1]
-        sage: 10*P^-1
+        sage: 10*P^-1                                                                   # optional - sage.modules
         [   1    5    4]
         [   1  5/3 -8/3]
         [   1 -5/3  2/3]
 
     The line graph of `K_{3,3}` is self-dual::
 
-        sage: P=eigenmatrix(9,4,1,2); P
+        sage: P = eigenmatrix(9,4,1,2); P                                               # optional - sage.modules
         [ 1  4  4]
         [ 1  1 -2]
         [ 1 -2  1]
-        sage: 9*P^-1
+        sage: 9*P^-1                                                                    # optional - sage.modules
         [ 1  4  4]
         [ 1  1 -2]
         [ 1 -2  1]
@@ -1814,15 +1814,15 @@ def eigenmatrix(int v, int k, int l, int mu):
         True
         sage: graphs.strongly_regular_graph(243,110,37,60, existence=True)
         True
-        sage: P=eigenmatrix(243,220,199,200); P
+        sage: P = eigenmatrix(243,220,199,200); P                                       # optional - sage.modules
         [  1 220  22]
         [  1   4  -5]
         [  1  -5   4]
-        sage: 243*P^-1
+        sage: 243*P^-1                                                                  # optional - sage.modules
         [  1 110 132]
         [  1   2  -3]
         [  1 -25  24]
-        sage: 243*P^-1==eigenmatrix(243,110,37,60)
+        sage: 243*P^-1==eigenmatrix(243,110,37,60)                                      # optional - sage.modules
         True
 
     TESTS::
@@ -1955,9 +1955,9 @@ def SRG_105_32_4_12():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_105_32_4_12
-        sage: G = SRG_105_32_4_12(); G
+        sage: G = SRG_105_32_4_12(); G                                                  # optional - sage.rings.finite_rings
         Aut L(3,4) on flags: Graph on 105 vertices
-        sage: G.is_strongly_regular(parameters=True)
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.rings.finite_rings
         (105, 32, 4, 12)
     """
     from sage.combinat.designs.block_design import ProjectiveGeometryDesign
@@ -2009,8 +2009,8 @@ def SRG_144_39_6_12():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_144_39_6_12
-        sage: G = SRG_144_39_6_12()
-        sage: G.is_strongly_regular(parameters=True)
+        sage: G = SRG_144_39_6_12()                                                     # optional - sage.libs.gap
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.libs.gap
         (144, 39, 6, 12)
     """
     from sage.libs.gap.libgap import libgap
@@ -2107,8 +2107,8 @@ def SRG_210_99_48_45():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_210_99_48_45
-        sage: g=SRG_210_99_48_45()
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g = SRG_210_99_48_45()                                                    # optional - sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.gap
         (210, 99, 48, 45)
     """
     from sage.libs.gap.libgap import libgap
@@ -2154,8 +2154,8 @@ def SRG_243_110_37_60():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_243_110_37_60
-        sage: G = SRG_243_110_37_60()
-        sage: G.is_strongly_regular(parameters=True)
+        sage: G = SRG_243_110_37_60()                                                   # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.modules sage.rings.finite_rings
         (243, 110, 37, 60)
     """
     from sage.coding.golay_code import GolayCode
@@ -2236,7 +2236,7 @@ def SRG_220_84_38_28():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_220_84_38_28
-        sage: g=SRG_220_84_38_28()
+        sage: g = SRG_220_84_38_28()
         sage: g.is_strongly_regular(parameters=True)
         (220, 84, 38, 28)
     """
@@ -2365,13 +2365,13 @@ def strongly_regular_from_two_weight_code(L):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import strongly_regular_from_two_weight_code
-        sage: x=("100022021001111",
-        ....:    "010011211122000",
-        ....:    "001021112100011",
-        ....:    "000110120222220")
-        sage: M = Matrix(GF(3),[list(l) for l in x])
-        sage: G = strongly_regular_from_two_weight_code(LinearCode(M))
-        sage: G.is_strongly_regular(parameters=True)
+        sage: x = ("100022021001111",
+        ....:      "010011211122000",
+        ....:      "001021112100011",
+        ....:      "000110120222220")
+        sage: M = Matrix(GF(3),[list(l) for l in x])                                    # optional - sage.modules sage.rings.finite_rings
+        sage: G = strongly_regular_from_two_weight_code(LinearCode(M))                  # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.modules sage.rings.finite_rings
         (81, 50, 31, 30)
     """
     from sage.structure.element import is_Matrix
@@ -2398,8 +2398,8 @@ def SRG_416_100_36_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_416_100_36_20
-        sage: g = SRG_416_100_36_20()                # long time # optional - internet
-        sage: g.is_strongly_regular(parameters=True) # long time # optional - internet
+        sage: g = SRG_416_100_36_20()                # long time # optional - internet, sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True) # long time # optional - internet, sage.libs.gap
         (416, 100, 36, 20)
     """
     from sage.libs.gap.libgap import libgap
@@ -2422,8 +2422,8 @@ def SRG_560_208_72_80():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_560_208_72_80
-        sage: g = SRG_560_208_72_80()                # not tested (~2s)
-        sage: g.is_strongly_regular(parameters=True) # not tested (~2s)
+        sage: g = SRG_560_208_72_80()                # not tested (~2s), sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True) # not tested (~2s), sage.libs.gap
         (560, 208, 72, 80)
     """
     from sage.libs.gap.libgap import libgap
@@ -2472,10 +2472,10 @@ def strongly_regular_from_two_intersection_set(M):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import strongly_regular_from_two_intersection_set
-        sage: S = Matrix([(0,0,1),(0,1,0)] + [(1,x^2,x) for x in GF(4,'b')])
-        sage: g = strongly_regular_from_two_intersection_set(S); g
+        sage: S = Matrix([(0,0,1),(0,1,0)] + [(1,x^2,x) for x in GF(4,'b')])     # optional - sage.modules sage.rings.finite_rings
+        sage: g = strongly_regular_from_two_intersection_set(S); g               # optional - sage.modules sage.rings.finite_rings
         two-intersection set in PG(3,4): Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                             # optional - sage.modules sage.rings.finite_rings
         (64, 18, 2, 6)
     """
     from itertools import product
@@ -2662,8 +2662,8 @@ def SRG_1288_792_476_504():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_1288_792_476_504
-        sage: G = SRG_1288_792_476_504()             # long time
-        sage: G.is_strongly_regular(parameters=True) # long time
+        sage: G = SRG_1288_792_476_504()              # long time                       # optional - sage.rings.finite_rings
+        sage: G.is_strongly_regular(parameters=True)  # long time                       # optional - sage.rings.finite_rings
         (1288, 792, 476, 504)
     """
     from sage.coding.golay_code import GolayCode
@@ -3109,7 +3109,7 @@ def _build_small_srg_database():
 
         sage: graphs.strongly_regular_graph(81, 50, 31, 30)
         complement(two-intersection set in PG(4,3)): Graph on 81 vertices
-        sage: graphs.strongly_regular_graph(243, 220, 199, 200) # long time
+        sage: graphs.strongly_regular_graph(243, 220, 199, 200) # long time             # optional - sage.rings.finite_rings
         two-weight code: [55, 5] linear code over GF(3): Graph on 243 vertices
         sage: graphs.strongly_regular_graph(256, 153, 92, 90)
         complement(two-intersection set in PG(4,4)): Graph on 256 vertices
@@ -3117,11 +3117,11 @@ def _build_small_srg_database():
         complement(two-intersection set in PG(8,2)): Graph on 256 vertices
         sage: graphs.strongly_regular_graph(256, 187, 138, 132)
         complement(two-intersection set in PG(8,2)): Graph on 256 vertices
-        sage: graphs.strongly_regular_graph(512, 73, 12, 10)    # not tested (too long)
+        sage: graphs.strongly_regular_graph(512, 73, 12, 10)    # not tested (too long), optional - sage.rings.finite_rings
         two-weight code: [219, 9] linear code over GF(2): Graph on 512 vertices
         sage: graphs.strongly_regular_graph(512, 219, 106, 84)  # long time
         two-intersection set in PG(9,2): Graph on 512 vertices
-        sage: graphs.strongly_regular_graph(512, 315, 202, 180) # not tested (too long)
+        sage: graphs.strongly_regular_graph(512, 315, 202, 180) # not tested (too long), optional - sage.rings.finite_rings
         two-weight code: [70, 9] linear code over GF(2): Graph on 512 vertices
         sage: graphs.strongly_regular_graph(625, 364, 213, 210) # long time
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices

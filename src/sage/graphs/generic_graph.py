@@ -15340,8 +15340,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: (graphs.FruchtGraph()).clustering_coeff(nodes=[0,1,2])
             {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0.0}
 
-            sage: (graphs.FruchtGraph()).clustering_coeff(nodes=[0,1,2],
-            ....:   weight=True)
+            sage: (graphs.FruchtGraph()).clustering_coeff(nodes=[0,1,2],                # optional - networkx
+            ....:                                         weight=True)
             {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0}
 
             sage: (graphs.GridGraph([5,5])).clustering_coeff(nodes=[(0,0),(0,1),(2,2)])
@@ -15749,7 +15749,7 @@ class GenericGraph(GenericGraph_pyx):
         Bipartite graphs have no odd cycle and consequently have
         infinite odd girth::
 
-            sage: G = graphs.RandomBipartite(6, 6, .5)
+            sage: G = graphs.RandomBipartite(6, 6, .5)                                  # optional - numpy
             sage: G.odd_girth()                                                         # optional - numpy
             +Infinity
             sage: G = graphs.Grid2dGraph(3, 4)
@@ -21782,12 +21782,12 @@ class GenericGraph(GenericGraph_pyx):
         Check that :trac:`25121` is fixed::
 
             sage: G = Graph([(0, 1)])
-            sage: G.graphviz_string(edge_colors={(0.25, 0.5, 1.0): [(0, 1)]})
+            sage: G.graphviz_string(edge_colors={(0.25, 0.5, 1.0): [(0, 1)]})           # optional - sage.plot
             'graph {\n  node_0  [label="0"];\n  node_1  [label="1"];\n\n  node_0 -- node_1 [color = "#4080ff"];\n}'
 
             sage: G = Graph([(0, 1)])
-            sage: G.set_latex_options(edge_colors={(0, 1): (0.25, 0.5, 1.0)})
-            sage: print(G.latex_options().dot2tex_picture()) # optional - dot2tex graphviz
+            sage: G.set_latex_options(edge_colors={(0, 1): (0.25, 0.5, 1.0)})           # optional - sage.plot
+            sage: print(G.latex_options().dot2tex_picture())           # optional - dot2tex graphviz sage.plot
             \begin{tikzpicture}[>=latex,line join=bevel,]
             ...
               \definecolor{strokecolor}{rgb}{0.25,0.5,1.0};
