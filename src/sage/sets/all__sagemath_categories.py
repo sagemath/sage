@@ -12,3 +12,4 @@ from .family import Family
 from .condition_set import ConditionSet
 from .disjoint_set import DisjointSet
 from .finite_set_maps import FiniteSetMaps
+lazy_import('sage.sets.real_set', 'RealSet')

@@ -67,6 +67,7 @@ include sage/misc/parser.p*
 include sage/misc/method_decorator.p*
 include sage/misc/random_testing.p*
 include sage/misc/rest_index_of_methods.p*
+include sage/misc/callable_dict.p*
 
 ## Data structures
 include sage/misc/binary_tree.p*
@@ -102,6 +103,8 @@ include sage/rings/finite_rings/integer_mod_ring.p*
 include sage/rings/number_field/number_field_base.p*
 include sage/rings/number_field/number_field_element_base.p*
 include sage/rings/real_double.p*
+
+include sage/rings/real_lazy.p*
 
 include sage/rings/fraction_field.p*
 include sage/rings/fraction_field_element.p*
@@ -176,6 +179,7 @@ include sage/combinat/combinatorial_map.p*
 include sage/combinat/composition.p*
 include sage/combinat/permutation.p*
 include sage/combinat/permutation_cython.p*
+include sage/combinat/ranker.py                                         # for sage.sets.finite_set_map_cy
 include sage/combinat/subset.p*
 include sage/combinat/tools.p*
 # leave out partition - has complicated deps
@@ -197,21 +201,8 @@ include sage/schemes/generic/spec.py
 include sage/schemes/generic/algebraic_scheme.py
 graft sage/schemes/affine
 
-include sage/sets/cartesian_product.py
-include sage/sets/condition_set.py
-include sage/sets/disjoint_set.p*
-include sage/sets/disjoint_union_enumerated_sets.py
-include sage/sets/family.py
-include sage/sets/finite_enumerated_set.py
-include sage/sets/image_set.py
-include sage/sets/integer_range.py
-include sage/sets/non_negative_integers.py
-include sage/sets/positive_integers.py
-include sage/sets/primes.py
-include sage/sets/recursively_enumerated_set.p*                 # is used in a bunch of category examples
-include sage/sets/set.py
-include sage/sets/set_from_iterator.py
-include sage/sets/totally_ordered_finite_set.py
+graft sage/sets
+exclude sage/sets/pythonclass.*                                 # sagemath-objects
 
 ## These two should probably go to sagemath-combinat instead.
 # include sage/data_structures/stream.p*

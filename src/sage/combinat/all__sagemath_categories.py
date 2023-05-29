@@ -1,4 +1,6 @@
 # Integer lists
+from .matrices.all__sagemath_categories import *
+
 from .integer_lists import IntegerListsLex
 from .integer_vector import IntegerVectors
 
@@ -16,3 +18,5 @@ from .combination import Combinations
 from .composition import Composition, Compositions
 from .permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
 from .subset import Subsets, subsets, powerset, uniq
+
+from .dlx import DLXMatrix, AllExactCovers, OneExactCover

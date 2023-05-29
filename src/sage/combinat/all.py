@@ -71,8 +71,6 @@ from sage.combinat.chas.all import *
 from sage.combinat.crystals.all import *
 from .rigged_configurations.all import *
 
-from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
-
 # Free modules and friends
 from .debruijn_sequence import DeBruijnSequences
 

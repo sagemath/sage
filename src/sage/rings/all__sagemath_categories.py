@@ -78,6 +78,9 @@ from .big_oh import O
 from sage.rings.continued_fraction import (continued_fraction,
                                            continued_fraction_list)
 
+# Lazy reals
+from .real_lazy import RealLazyField, RLF, ComplexLazyField, CLF
+
 # Preliminary version of real numbers for doctesting without sage.rings.real_mpfr.
 # sage.rings.all redefines it.
 RealNumber = RR = RDF             # used by the preparser to wrap real literals

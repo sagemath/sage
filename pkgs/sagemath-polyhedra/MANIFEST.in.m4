@@ -60,10 +60,8 @@ graft sage/groups/additive_abelian
 
 # Need sage.combinat.free_module for polyhedral modules
 include sage/combinat/free_module.py
-include sage/combinat/ranker.py
 include sage/combinat/cartesian_product.py
 include sage/combinat/family.py       # until https://trac.sagemath.org/ticket/32624 is done
-include sage/misc/callable_dict.p*
 
 include sage/algebras/algebra.py
 graft sage/algebras/finite_dimensional_algebras  # for hyperplane arrangements

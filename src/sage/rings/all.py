@@ -59,8 +59,6 @@ from .real_mpfr import (RealField, RR,
                        create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
 Reals = RealField
 
-from .real_lazy import RealLazyField, RLF, ComplexLazyField, CLF
-
 from sage.rings.real_arb import RealBallField, RBF
 
 # Polynomial Rings and Polynomial Quotient Rings
