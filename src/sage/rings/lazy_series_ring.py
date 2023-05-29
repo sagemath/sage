@@ -187,8 +187,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: def g(i):
             ....:     if i < 0:
             ....:         return 1
-            ....:     else:
-            ....:         return 1 + sum(k for k in range(i+1))
+            ....:     return 1 + sum(range(i + 1))
             sage: e = L(g, valuation=-5); e
             z^-5 + z^-4 + z^-3 + z^-2 + z^-1 + 1 + 2*z + O(z^2)
             sage: f = e^-1; f
