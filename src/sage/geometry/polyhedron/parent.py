@@ -193,7 +193,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         return Polyhedra_field(base_ring.fraction_field(), ambient_dim, backend)
     else:
         raise ValueError('No such backend (=' + str(backend) +
-                         ') implemented for given basering (=' + str(base_ring)+').')
+                         ') implemented for given basering (=' + str(base_ring) + ').')
 
 
 class Polyhedra_base(UniqueRepresentation, Parent):
@@ -400,7 +400,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         points = []
         R = self.base_ring()
         for i in range(self.ambient_dim() + 5):
-            points.append([R(i * j ^ 2) for j in range(self.ambient_dim())])
+            points.append([R(i*j ^ 2) for j in range(self.ambient_dim())])
         return [
             self.element_class(self, [points[0:self.ambient_dim() + 1], [], []], None),
             self.element_class(self, [points[0:1], points[1:self.ambient_dim() + 1], []], None),
@@ -421,7 +421,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: p + p == p
             True
         """
-        Vrep = [[[self.base_ring().zero()]*self.ambient_dim()], [], []]
+        Vrep = [[[self.base_ring().zero()] * self.ambient_dim()], [], []]
         return self.element_class(self, Vrep, None)
 
     def empty(self):
@@ -454,7 +454,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             True
         """
         R = self.base_ring()
-        return self(None, [[[R.one()]+[R.zero()]*self.ambient_dim()], []], convert=True)
+        return self(None, [[[R.one()] + [R.zero()] * self.ambient_dim()], []], convert=True)
 
     @cached_method
     def Vrepresentation_space(self):
@@ -502,10 +502,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         """
         if self.base_ring() in Fields():
             from sage.modules.free_module import VectorSpace
-            return VectorSpace(self.base_ring(), self.ambient_dim()+1)
-        else:
-            from sage.modules.free_module import FreeModule
-            return FreeModule(self.base_ring(), self.ambient_dim()+1)
+            return VectorSpace(self.base_ring(), self.ambient_dim() + 1)
+        from sage.modules.free_module import FreeModule
+        return FreeModule(self.base_ring(), self.ambient_dim() + 1)
 
     def _repr_base_ring(self):
         """
@@ -574,7 +573,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: Polyhedra(QQ, 3)._repr_()
             'Polyhedra in QQ^3'
         """
-        return 'Polyhedra in '+self._repr_ambient_module()
+        return 'Polyhedra in ' + self._repr_ambient_module()
 
     def _element_constructor_(self, *args, **kwds):
         """
@@ -675,7 +674,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
                     if m == 0:
                         newlstlst.append(lst)
                     else:
-                        newlstlst.append([q/m for q in lst])
+                        newlstlst.append([q / m for q in lst])
                 else:
                     newlstlst.append(lst)
             return convert_base_ring(newlstlst)
@@ -900,14 +899,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
                         except TypeError:
                             pass
                     if other_ring is None:
-                        raise TypeError('Could not coerce '+str(other)+' into ZZ, QQ, or RDF.')
+                        raise TypeError(f'Could not coerce {other} into ZZ, QQ, or RDF.')
 
         if not other_ring.is_exact():
             other_ring = RDF  # the only supported floating-point numbers for now
 
         cm_map, cm_ring = get_coercion_model().analyse(self.base_ring(), other_ring)
         if cm_ring is None:
-            raise TypeError('Could not coerce type '+str(other)+' into ZZ, QQ, or RDF.')
+            raise TypeError(f'Could not coerce type {other} into ZZ, QQ, or RDF.')
         return cm_ring
 
     def _coerce_map_from_(self, X):
