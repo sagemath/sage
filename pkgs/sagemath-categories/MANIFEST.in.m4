@@ -181,6 +181,7 @@ include sage/combinat/tools.p*
 # leave out partition - has complicated deps
 # leave out integer_vector_weighted - needs combinat.words.word
 include sage/combinat/subsets_hereditary.p*
+include sage/combinat/subsets_pairwise.p*
 include sage/combinat/dlx.p*
 include sage/combinat/matrices/dancing_links.p*
 include sage/combinat/matrices/dancing_links_c.h

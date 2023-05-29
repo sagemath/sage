@@ -37,7 +37,7 @@ exclude sage/misc/sh.p*
 exclude sage/misc/viewer.p*
 # lost and abandoned
 prune sage/misc/notes
-# belongs to sagemath-symbolics
+# belongs to sagemath-categories
 exclude sage/misc/derivative.p*
 # can hopefully be eliminated
 exclude sage/misc/sage_ostools.p*
@@ -63,7 +63,6 @@ include sage/combinat/free_module.py
 include sage/combinat/ranker.py
 include sage/combinat/cartesian_product.py
 include sage/combinat/family.py       # until https://trac.sagemath.org/ticket/32624 is done
-include sage/sets/finite_set_map*.p*
 include sage/misc/callable_dict.p*
 
 include sage/algebras/algebra.py

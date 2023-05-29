@@ -39,6 +39,8 @@ exclude sage/graphs/convexity_properties.p*             # cimports sage.numerica
 
 include sage/groups/perm_gps/partn_ref/refinement_graphs.p*
 
+graft sage/sandpiles
+
 # quivers use bounded_integer_sequences, which depends on flint (for a bad reason)
 #include sage/quivers/paths.p*
 #include sage/quivers/path_semigroup.p*                  # but not their representations, algebras
