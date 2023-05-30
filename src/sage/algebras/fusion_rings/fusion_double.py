@@ -711,7 +711,7 @@ class FusionDouble(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: FusionDouble(DiCyclicGroup(4)).group()
-            Diyclic group of order 16 as a permutation group
+            DiCyclic group of order 16 as a permutation group
         """
         return self._G
 
