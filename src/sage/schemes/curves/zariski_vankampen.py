@@ -977,7 +977,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
         if ECi in Internal:
             EI = [v for v in E if v in Internal.connected_component_containing_vertex(ECi) and v != ECi]
-            if  len(EI) > 0:
+            if len(EI) > 0:
                 q = ECi
                 connecting_path = EC[:i]
                 break
