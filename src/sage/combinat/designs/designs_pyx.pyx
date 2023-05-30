@@ -376,10 +376,10 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
         sage: is_pairwise_balanced_design(TD + groups, 40, [10], 1, verbose=True)       # optional - sage.modules
         a block has size 4 while K=[10]
         False
-        sage: is_pairwise_balanced_design([[2,2]],40,[2],1,verbose=True)
+        sage: is_pairwise_balanced_design([[2,2]], 40, [2], 1, verbose=True)
         The following block has repeated elements: [2, 2]
         False
-        sage: is_pairwise_balanced_design([["e",2]],40,[2],1,verbose=True)
+        sage: is_pairwise_balanced_design([["e",2]], 40, [2], 1, verbose=True)
         e does not belong to [0,...,39]
         False
     """

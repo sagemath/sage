@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Orthogonal arrays (build recursive constructions)
 

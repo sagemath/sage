@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Evenly distributed sets in finite fields
 

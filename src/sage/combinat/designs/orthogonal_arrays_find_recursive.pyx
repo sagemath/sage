@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 # cython: cdivision=True
 r"""
 Orthogonal arrays (find recursive constructions)

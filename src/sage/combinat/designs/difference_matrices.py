@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Difference Matrices
 
@@ -146,12 +147,12 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
 
     - ``existence`` (boolean) -- instead of building the design, return:
 
-        - ``True`` -- meaning that Sage knows how to build the design
+      - ``True`` -- meaning that Sage knows how to build the design
 
-        - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+      - ``Unknown`` -- meaning that Sage does not know how to build the
+        design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+      - ``False`` -- meaning that the design does not exist.
 
       .. NOTE::
 
