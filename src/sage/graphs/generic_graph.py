@@ -1923,7 +1923,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix()
             Traceback (most recent call last):
             ...
-            TypeError: Vertices are not comparable, you must used the ``vertices`` parameter of the ``adjacency_matrix`` method to specify an ordering
+            TypeError: Vertex labels are not comparable. You must specify an ordering using parameter ``vertices``
             sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix(vertices=['John', 42, 0])
             [0 1 0]
             [1 0 0]
@@ -1939,7 +1939,7 @@ class GenericGraph(GenericGraph_pyx):
             try:
                 vertices = self.vertices(sort=True)
             except TypeError:
-                raise TypeError ("Vertices are not comparable, you must used the ``vertices`` parameter of the ``adjacency_matrix`` method to specify an ordering")
+                raise TypeError ("Vertex labels are not comparable. You must specify an ordering using parameter ``vertices``")
         elif (len(vertices) != n or
               set(vertices) != set(self.vertex_iterator())):
             raise ValueError("``vertices`` must be a permutation of the vertices")
