@@ -1939,9 +1939,9 @@ class GenericGraph(GenericGraph_pyx):
             try:
                 vertices = self.vertices(sort=True)
             except TypeError:
-                raise TypeError ("Vertex labels are not comparable. You must "
-                                 "specify an ordering using parameter "
-                                 "``vertices``")
+                raise TypeError("Vertex labels are not comparable. You must "
+                                "specify an ordering using parameter "
+                                "``vertices``")
         elif (len(vertices) != n or
               set(vertices) != set(self.vertex_iterator())):
             raise ValueError("``vertices`` must be a permutation of the vertices")
