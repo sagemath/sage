@@ -977,57 +977,77 @@ def geometric_basis(G, E, EC, p, dual_graph):
     InternalEdges = [_ for _ in G.edges(sort=True) if _ not in E.edges(sort=True)]
     InternalVertices = [v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
-    if not Internal: # Creo que se puede quitar
-        for v in E:
-            if len(E.neighbors(v)) > 2:
-                Internal.add_vertex(v)
+    Internal1 = G.subgraph(vertices=G.vertices(sort=True), edges=InternalEdges)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
         if ECi in Internal:
-            q = ECi
-            connecting_path = EC[:i]
-            break
-        if EC[-i] in Internal: # creo que sobra
-            q = EC[-i]
-            connecting_path = list(reversed(EC[-i:]))
-            break
-    distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in E
-                         if v in Internal.connected_component_containing_vertex(q) and not v == q]
+            EI = [v for v in E if v in Internal.connected_component_containing_vertex(ECi) and v != ECi]
+            if  len(EI) > 0:
+                q = ECi
+                connecting_path = EC[:i]
+                break
+        if EC[-i] in Internal:
+            EI = [v for v in E if v in Internal.connected_component_containing_vertex(EC[-i]) and v != EC[-i]]
+            if len(EI) > 0:
+                q = EC[-i]
+                connecting_path = list(reversed(EC[-i:]))
+                break
+    distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in EI]
     r = max(distancequotients)[1]
     qi = EC.index(q)
     ri = EC.index(r)
     cutpath = Internal.shortest_path(q, r)
-    #Gcut = copy(G)
     Ecut = copy(E)
     Ecut.delete_vertices([q, r])
+    subgraphs = Ecut.connected_components_subgraphs()
+    if len(subgraphs) == 2:
+        E1, E2 = subgraphs
+        if EC[qi + 1] in E2:
+            E1, E2 = E2, E1
+    elif len(subgraphs) == 1:
+        E1 = subgraphs[0]
+        E2 = Graph()
+        E2.add_edge(q, r, None)
+        if r == EC[qi + 1]:
+           E1, E2 = E2, E1
+
+    
     Gd = copy(dual_graph)
     cp1 = [(e, cutpath[i + 1], None) for i, e in enumerate(cutpath[: -1])]
     cp1 += [(cutpath[i + 1], e, None) for i, e in enumerate(cutpath[: -1])]
     borra = [_ for _ in Gd.edges(sort=True) if _[2] in cp1]
     Gd.delete_edges(borra)
     Gd1, Gd2 = Gd.connected_components_subgraphs()
-    GL2 = [v for r in Gd2.vertices(sort=True) for v in r[1]]
-    GL2 += [v for e in Gd2.edges(sort=True) for v in e[2]] + [v for v in cutpath]
-    G2 = G.subgraph(GL2)
-    GL1 = [v for r in Gd1.vertices(sort=True) for v in r[1]]
-    GL1 += [v for e in Gd1.edges(sort=True) for v in e[2]] + [v for v in cutpath]
-    G1 = G.subgraph(GL1)
+    edges_2 = []
+    vertices_2 = []
+    for reg in Gd2.vertices(sort=True):
+        vertices_2 += reg[1]
+        reg_circuit = reg[1] + (reg[1][0],)
+        edges_2 += [(v1, reg_circuit[i + 1]) for i, v1 in enumerate(reg_circuit[:-1])]
+        edges_2 += [(v1, reg_circuit[i - 1]) for i, v1 in enumerate(reg_circuit[1:])]
+    G2 = G.subgraph(vertices=vertices_2, edges=edges_2)
+    edges_1 = []
+    vertices_1 = []
+    for reg in Gd1.vertices(sort=True):
+        vertices_1 += reg[1]
+        reg_circuit = reg[1] + (reg[1][0],)
+        edges_1 += [(v1, reg_circuit[i + 1]) for i, v1 in enumerate(reg_circuit[:-1])]
+        edges_1 += [(v1, reg_circuit[i - 1]) for i, v1 in enumerate(reg_circuit[1:])]
+    G1 = G.subgraph(vertices=vertices_1, edges=edges_1)
     if EC[qi + 1] in G2:
         G1, G2 = G2, G1
         Gd1, Gd2 = Gd2, Gd1
-    E1, E2 = Ecut.connected_components_subgraphs()
-    if EC[qi + 1] in E2:
-        E1, E2 = E2, E1
+
+    for v in [q, r]:
+        for n in E.neighbors(v):
+            if n in E1 and n not in (q, r):
+                E1.add_edge(v, n, None)
+            if n in E2 and n not in (q, r):
+                E2.add_edge(v, n, None)
 
     for i in range(len(cutpath) - 1):
         E1.add_edge(cutpath[i], cutpath[i + 1], None)
         E2.add_edge(cutpath[i], cutpath[i + 1], None)
 
-    for v in [q, r]:
-        for n in E.neighbors(v):
-            if n in E1:
-                E1.add_edge(v, n, None)
-            if n in E2:
-                E2.add_edge(v, n, None)
     if qi < ri:
         EC1 = [EC[j] for j in range(qi, ri)] + [_ for _ in reversed(cutpath)]
         EC2 = cutpath + EC[ri + 1 : -1] + EC[ : qi + 1]
@@ -1052,7 +1072,6 @@ def geometric_basis(G, E, EC, p, dual_graph):
             else:
                 i += 1
     return resul
-
 
 def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     r"""
