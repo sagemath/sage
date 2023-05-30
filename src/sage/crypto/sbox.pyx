@@ -1410,6 +1410,12 @@ cdef class SBox(SageObject):
             sage: S = SBox([12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2])
             sage: S.linear_branch_number()
             2
+
+        TESTS::
+
+            sage: f = SBox([0, 2, 0, 6, 2, 2, 3, 7])
+            sage: f.linear_branch_number()
+            1
         """
         cdef Py_ssize_t m = self.m
         cdef Py_ssize_t n = self.n
@@ -1417,8 +1423,8 @@ cdef class SBox(SageObject):
         cdef Py_ssize_t ret = (1 << m) + (1 << n)
 
         cdef Py_ssize_t a, b, w
-        for a in range(1, 1 << m):
-            for b in range(1 << n):
+        for a in range(1 << m):
+            for b in range(1, 1 << n):
                 if lat.get_unsafe(a, b) != 0:
                     w = hamming_weight(a) + hamming_weight(b)
                     if w < ret:
