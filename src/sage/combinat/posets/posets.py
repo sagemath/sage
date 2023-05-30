@@ -4733,7 +4733,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         To get the antichains as, say, sets, one may use the
         ``element_constructor`` option::
 
-            sage: list(posets.ChainPoset(3).antichains(element_constructor=set))
+            sage: list(posets.ChainPoset(3).antichains(element_constructor=set))        # optional - sage.modules
             [set(), {0}, {1}, {2}]
 
         To get the antichains of a given size one can currently use::
@@ -7403,8 +7403,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = posets.AntichainPoset(3).order_ideals_lattice()
-            sage: P.h_polynomial()
+            sage: P = posets.AntichainPoset(3).order_ideals_lattice()                   # optional - sage.modules
+            sage: P.h_polynomial()                                                      # optional - sage.modules
             q^3 + 4*q^2 + q
             sage: P = posets.DiamondPoset(5)
             sage: P.h_polynomial()
@@ -7704,13 +7704,13 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.AntichainPoset(3)
-            sage: P.order_polynomial()
+            sage: P.order_polynomial()                                                  # optional - sage.modules sage.rings.finite_rings
             q^3
 
             sage: P = posets.ChainPoset(3)
-            sage: f = P.order_polynomial(); f
+            sage: f = P.order_polynomial(); f                                           # optional - sage.modules sage.rings.finite_rings
             1/6*q^3 + 1/2*q^2 + 1/3*q
-            sage: [f(i) for i in range(4)]
+            sage: [f(i) for i in range(4)]                                              # optional - sage.modules sage.rings.finite_rings
             [0, 1, 4, 10]
 
         .. SEEALSO:: :meth:`order_polytope`

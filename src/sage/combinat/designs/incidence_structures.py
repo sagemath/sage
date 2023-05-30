@@ -105,8 +105,8 @@ class IncidenceStructure():
     Or by its adjacency matrix (a `\{0,1\}`-matrix in which rows are indexed by
     points and columns by blocks)::
 
-        sage: m = matrix([[0,1,0],[0,0,1],[1,0,1],[1,1,1]])
-        sage: IncidenceStructure(m)
+        sage: m = matrix([[0,1,0],[0,0,1],[1,0,1],[1,1,1]])                             # optional - sage.modules
+        sage: IncidenceStructure(m)                                                     # optional - sage.modules
         Incidence structure with 4 points and 3 blocks
 
     The points can be any (hashable) object::
@@ -735,7 +735,7 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: designs.DesarguesianProjectivePlaneDesign(2).num_points()
+            sage: designs.DesarguesianProjectivePlaneDesign(2).num_points()             # optional - sage.rings.finite_rings
             7
             sage: B = IncidenceStructure(4, [[0,1],[0,2],[0,3],[1,2], [1,2,3]])
             sage: B.num_points()
@@ -749,7 +749,7 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: designs.DesarguesianProjectivePlaneDesign(2).num_blocks()
+            sage: designs.DesarguesianProjectivePlaneDesign(2).num_blocks()             # optional - sage.rings.finite_rings
             7
             sage: B = IncidenceStructure(4, [[0,1],[0,2],[0,3],[1,2], [1,2,3]])
             sage: B.num_blocks()
@@ -1174,7 +1174,7 @@ class IncidenceStructure():
 
             sage: BD = IncidenceStructure(7, [[0,1,2],[0,3,4],[0,5,6],[1,3,5],
             ....:                             [1,4,6],[2,3,6],[2,4,5]])
-            sage: BD.incidence_graph()
+            sage: BD.incidence_graph()                                                  # optional - sage.modules
             Bipartite graph on 14 vertices
             sage: A = BD.incidence_matrix()                                             # optional - sage.modules
             sage: Graph(block_matrix([[A*0, A],                                         # optional - sage.modules
@@ -1221,14 +1221,14 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: Hypergraph(5, [[1, 2, 3], [2, 3 ,4]]).is_berge_cyclic()
+            sage: Hypergraph(5, [[1, 2, 3], [2, 3, 4]]).is_berge_cyclic()               # optional - sage.modules
             True
-            sage: Hypergraph(6, [[1, 2, 3], [3 ,4, 5]]).is_berge_cyclic()
+            sage: Hypergraph(6, [[1, 2, 3], [3, 4, 5]]).is_berge_cyclic()               # optional - sage.modules
             False
 
         TESTS::
 
-            sage: Hypergraph(5, [[1, 2, 3], [2, 3]]).is_berge_cyclic()
+            sage: Hypergraph(5, [[1, 2, 3], [2, 3]]).is_berge_cyclic()                  # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: Berge cycles are defined for uniform hypergraphs only
@@ -1697,13 +1697,13 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: h = designs.CremonaRichmondConfiguration()
-            sage: h.is_generalized_quadrangle()
+            sage: h = designs.CremonaRichmondConfiguration()                            # optional - networkx
+            sage: h.is_generalized_quadrangle()                                         # optional - networkx
             True
 
         This is actually a *regular* generalized quadrangle::
 
-            sage: h.is_generalized_quadrangle(parameters=True)
+            sage: h.is_generalized_quadrangle(parameters=True)                          # optional - networkx
             (2, 2)
 
         TESTS::
@@ -1772,8 +1772,8 @@ class IncidenceStructure():
 
         The dual of a projective plane is a projective plane::
 
-            sage: PP = designs.DesarguesianProjectivePlaneDesign(4)
-            sage: PP.dual().is_t_design(return_parameters=True)                         # optional - sage.modules
+            sage: PP = designs.DesarguesianProjectivePlaneDesign(4)                     # optional - sage.rings.finite_rings
+            sage: PP.dual().is_t_design(return_parameters=True)                         # optional - sage.rings.finite_rings sage.modules
             (True, (2, 21, 5, 1))
 
         TESTS::
@@ -1816,14 +1816,14 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: P = designs.DesarguesianProjectivePlaneDesign(2); P
+            sage: P = designs.DesarguesianProjectivePlaneDesign(2); P                   # optional - sage.rings.finite_rings
             (7,3,1)-Balanced Incomplete Block Design
-            sage: G = P.automorphism_group()                                            # optional - sage.groups
-            sage: G.is_isomorphic(PGL(3,2))                                             # optional - sage.groups
+            sage: G = P.automorphism_group()                                            # optional - sage.groups sage.rings.finite_rings
+            sage: G.is_isomorphic(PGL(3,2))                                             # optional - sage.groups sage.rings.finite_rings
             True
-            sage: G                                                                     # optional - sage.groups
+            sage: G                                                                     # optional - sage.groups sage.rings.finite_rings
             Permutation Group with generators [...]
-            sage: G.cardinality()                                                       # optional - sage.groups
+            sage: G.cardinality()                                                       # optional - sage.groups sage.rings.finite_rings
             168
 
         A non self-dual example::

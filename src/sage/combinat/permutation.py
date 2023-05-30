@@ -5526,7 +5526,7 @@ class Permutations(UniqueRepresentation, Parent):
 
         sage: p = Permutations(recoils_finer=[2,1]); p
         Standard permutations whose recoils composition is finer than [2, 1]
-        sage: p.list()                                                                  # optional - sage.graphs
+        sage: p.list()                                                                  # optional - sage.graphs sage.modules sage.rings.finite_rings
         [[3, 1, 2], [1, 2, 3], [1, 3, 2]]
 
     ::
@@ -8064,7 +8064,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
 
             sage: def P(D, n):
             ....:     return Permutations(descents=(D, n + 1))
-            sage: all(P(D, n).cardinality() == len(P(D, n).list())                      # optional - sage.graphs
+            sage: all(P(D, n).cardinality() == len(P(D, n).list())                      # optional - sage.graphs sage.modules sage.rings.finite_rings
             ....:     for n in range(5) for D in subsets(range(n)))
             True
 
@@ -8272,7 +8272,7 @@ class StandardPermutations_recoilsfiner(Permutations):
 
         EXAMPLES::
 
-            sage: Permutations(recoils_finer=[2,2]).list()                              # optional - sage.graphs
+            sage: Permutations(recoils_finer=[2,2]).list()                              # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[3, 1, 4, 2],
              [3, 4, 1, 2],
              [1, 3, 4, 2],

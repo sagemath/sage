@@ -75,12 +75,12 @@ def biplane(n, existence=False):
 
      - ``existence`` (boolean) -- instead of building the design, return:
 
-        - ``True`` -- meaning that Sage knows how to build the design
+       - ``True`` -- meaning that Sage knows how to build the design
 
-        - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+       - ``Unknown`` -- meaning that Sage does not know how to build the
+         design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+       - ``False`` -- meaning that the design does not exist.
 
     .. SEEALSO::
 
@@ -88,7 +88,7 @@ def biplane(n, existence=False):
 
     EXAMPLES::
 
-        sage: designs.biplane(4)
+        sage: designs.biplane(4)                                                        # optional - sage.rings.finite_rings
         (16,6,2)-Balanced Incomplete Block Design
         sage: designs.biplane(7, existence=True)
         True

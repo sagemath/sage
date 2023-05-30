@@ -998,19 +998,19 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import are_mcfarland_1973_parameters
-        sage: are_mcfarland_1973_parameters(64, 28, 12)
+        sage: are_mcfarland_1973_parameters(64, 28, 12)                                 # optional - sage.rings.finite_rings
         True
-        sage: are_mcfarland_1973_parameters(64, 28, 12, return_parameters=True)
+        sage: are_mcfarland_1973_parameters(64, 28, 12, return_parameters=True)         # optional - sage.rings.finite_rings
         (True, (2, 2))
-        sage: are_mcfarland_1973_parameters(60, 13, 5)
+        sage: are_mcfarland_1973_parameters(60, 13, 5)                                  # optional - sage.rings.finite_rings
         False
-        sage: are_mcfarland_1973_parameters(98125, 19500, 3875)
+        sage: are_mcfarland_1973_parameters(98125, 19500, 3875)                         # optional - sage.rings.finite_rings
         True
-        sage: are_mcfarland_1973_parameters(98125, 19500, 3875, True)
+        sage: are_mcfarland_1973_parameters(98125, 19500, 3875, True)                   # optional - sage.rings.finite_rings
         (True, (5, 3))
 
         sage: from sage.combinat.designs.difference_family import are_mcfarland_1973_parameters
-        sage: for v in range(1, 100):
+        sage: for v in range(1, 100):                                                   # optional - sage.rings.finite_rings
         ....:     for k in range(1,30):
         ....:         for l in range(1,15):
         ....:             if are_mcfarland_1973_parameters(v,k,l):
@@ -1151,7 +1151,7 @@ def hadamard_difference_set_product_parameters(N):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import hadamard_difference_set_product_parameters
-        sage: hadamard_difference_set_product_parameters(8)
+        sage: hadamard_difference_set_product_parameters(8)                             # optional - sage.rings.finite_rings
         (2, 2)
     """
     if N % 2:
@@ -1191,16 +1191,16 @@ def hadamard_difference_set_product(G1, D1, G2, D2):
         sage: from sage.combinat.designs.difference_family import hadamard_difference_set_product
         sage: from sage.combinat.designs.difference_family import is_difference_family
 
-        sage: G1,D1 = designs.difference_family(16,6,2)
-        sage: G2,D2 = designs.difference_family(36,15,6)
+        sage: G1,D1 = designs.difference_family(16,6,2)                                 # optional - sage.rings.finite_rings
+        sage: G2,D2 = designs.difference_family(36,15,6)                                # optional - sage.rings.finite_rings
 
-        sage: G11,D11 = hadamard_difference_set_product(G1,D1,G1,D1)
-        sage: assert is_difference_family(G11, D11, 256, 120, 56)
-        sage: assert designs.difference_family(256, 120, 56, existence=True) is True
+        sage: G11,D11 = hadamard_difference_set_product(G1,D1,G1,D1)                    # optional - sage.rings.finite_rings
+        sage: assert is_difference_family(G11, D11, 256, 120, 56)                       # optional - sage.rings.finite_rings
+        sage: assert designs.difference_family(256, 120, 56, existence=True) is True    # optional - sage.rings.finite_rings
 
-        sage: G12,D12 = hadamard_difference_set_product(G1,D1,G2,D2)
-        sage: assert is_difference_family(G12, D12, 576, 276, 132)
-        sage: assert designs.difference_family(576, 276, 132, existence=True) is True
+        sage: G12,D12 = hadamard_difference_set_product(G1,D1,G2,D2)                    # optional - sage.rings.finite_rings
+        sage: assert is_difference_family(G12, D12, 576, 276, 132)                      # optional - sage.rings.finite_rings
+        sage: assert designs.difference_family(576, 276, 132, existence=True) is True   # optional - sage.rings.finite_rings
     """
     from sage.categories.cartesian_product import cartesian_product
 
@@ -1565,15 +1565,15 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
         sage: from sage.combinat.designs.difference_family import _get_submodule_of_order, relative_difference_set_from_m_sequence, is_relative_difference_set
         sage: q, N = 5, 2
         sage: params = ((q^N-1) // (q-1), q - 1, q^(N-1), q^(N-2))
-        sage: G, R = relative_difference_set_from_m_sequence(q, N, return_group=True)
-        sage: H = _get_submodule_of_order(G, q - 1)
-        sage: is_relative_difference_set(R, G, H, params)
+        sage: G, R = relative_difference_set_from_m_sequence(q, N, return_group=True)   # optional - sage.modules
+        sage: H = _get_submodule_of_order(G, q - 1)                                     # optional - sage.modules
+        sage: is_relative_difference_set(R, G, H, params)                               # optional - sage.modules
         True
 
     If we pass the ``verbose`` argument, the function will explain why it failed::
 
-        sage: R2 = [G[1], G[2], G[3], G[5], G[6]]
-        sage: is_relative_difference_set(R2, G, H, params, verbose=True)
+        sage: R2 = [G[1], G[2], G[3], G[5], G[6]]                                       # optional - sage.modules
+        sage: is_relative_difference_set(R2, G, H, params, verbose=True)                # optional - sage.modules
         There is a value in the difference set which is not repeated d times
         False
     """
@@ -1643,32 +1643,33 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set, is_supplementary_difference_set
-        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(17)
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16, G=G)
+        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(17)  # optional - sage.modules sage.rings.finite_rings
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16, G=G)          # optional - sage.modules sage.rings.finite_rings
         True
 
     The parameter ``v`` can be given instead of ``G``::
 
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=16, lmbda=16)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=16, lmbda=16)         # optional - sage.modules sage.rings.finite_rings
         True
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=20, lmbda=16)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=20, lmbda=16)         # optional - sage.modules sage.rings.finite_rings
         False
 
     If ``verbose=True``, the function will be verbose::
 
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=14, G=G, verbose=True)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=14, G=G,          # optional - sage.modules sage.rings.finite_rings
+        ....:                                 verbose=True)
         Number of pairs with difference (1) is 16, but lambda is 14
         False
 
     TESTS::
 
-        sage: is_supplementary_difference_set([[1], [1]], lmbda=0, G=Zmod(3))
+        sage: is_supplementary_difference_set([[1], [1]], lmbda=0, G=Zmod(3))           # optional - sage.modules sage.rings.finite_rings
         True
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=17, lmbda=16, G=G)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=17, lmbda=16, G=G)    # optional - sage.modules sage.rings.finite_rings
         False
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], G=G)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], G=G)                    # optional - sage.modules sage.rings.finite_rings
         True
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16)               # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: one of G or v must be specified
