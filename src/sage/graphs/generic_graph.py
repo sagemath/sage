@@ -22928,7 +22928,7 @@ class GenericGraph(GenericGraph_pyx):
 
         Graphs::
 
-            sage: graphs_query = GraphQuery(display_cols=['graph6'],num_vertices=4)
+            sage: graphs_query = GraphQuery(display_cols=['graph6'], num_vertices=4)
             sage: L = graphs_query.get_graphs_list()
             sage: graphs_list.show_graphs(L)                                            # optional - sage.plot
             sage: for g in L:
@@ -24023,11 +24023,11 @@ class GenericGraph(GenericGraph_pyx):
         Graphs with loops and multiedges will have identity and repeated
         elements, respectively, among the generators::
 
-            sage: g = Graph(graphs.PaleyGraph(9), loops=True, multiedges=True)
-            sage: g.add_edges([(u, u) for u in g])
-            sage: g.add_edges([(u, u+1) for u in g])
-            sage: _, S = g.is_cayley(generators=True)
-            sage: S # random
+            sage: g = Graph(graphs.PaleyGraph(9), loops=True, multiedges=True)          # optional - sage.rings.finite_rings
+            sage: g.add_edges([(u, u) for u in g])                                      # optional - sage.rings.finite_rings
+            sage: g.add_edges([(u, u+1) for u in g])                                    # optional - sage.rings.finite_rings
+            sage: _, S = g.is_cayley(generators=True)                                   # optional - sage.rings.finite_rings
+            sage: S  # random                                                           # optional - sage.rings.finite_rings
             [(),
              (0,2,1)(a,a + 2,a + 1)(2*a,2*a + 2,2*a + 1),
              (0,2,1)(a,a + 2,a + 1)(2*a,2*a + 2,2*a + 1),
@@ -24040,19 +24040,21 @@ class GenericGraph(GenericGraph_pyx):
 
         Cayley graphs can be reconstructed from the group and generating set::
 
-            sage: g = graphs.PaleyGraph(9)
-            sage: _, G, S = g.is_cayley(return_group=True, generators=True)
-            sage: Graph(G.cayley_graph(generators=S)).is_isomorphic(g)
+            sage: g = graphs.PaleyGraph(9)                                              # optional - sage.rings.finite_rings
+            sage: _, G, S = g.is_cayley(return_group=True, generators=True)             # optional - sage.rings.finite_rings
+            sage: Graph(G.cayley_graph(generators=S)).is_isomorphic(g)                  # optional - sage.rings.finite_rings
             True
 
         A disconnected graphs may also be a Cayley graph::
 
-            sage: g = graphs.PaleyGraph(9)
-            sage: h = g.disjoint_union(g)
-            sage: h = h.disjoint_union(h)
-            sage: h = h.disjoint_union(g)
-            sage: _, G, d, S = h.is_cayley(return_group=True, mapping=True, generators=True, allow_disconnected=True)
-            sage: all(set(d[u] for u in h.neighbors(v)) == set(d[v]*x for x in S) for v in h)
+            sage: g = graphs.PaleyGraph(9)                                              # optional - sage.rings.finite_rings
+            sage: h = g.disjoint_union(g)                                               # optional - sage.rings.finite_rings
+            sage: h = h.disjoint_union(h)                                               # optional - sage.rings.finite_rings
+            sage: h = h.disjoint_union(g)                                               # optional - sage.rings.finite_rings
+            sage: _, G, d, S = h.is_cayley(return_group=True, mapping=True,             # optional - sage.rings.finite_rings
+            ....:                          generators=True, allow_disconnected=True)
+            sage: all(set(d[u] for u in h.neighbors(v)) == set(d[v]*x for x in S)       # optional - sage.rings.finite_rings
+            ....:     for v in h)
             True
 
         The method also works efficiently with dense simple graphs::

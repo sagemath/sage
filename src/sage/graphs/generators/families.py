@@ -1306,9 +1306,9 @@ def GoethalsSeidelGraph(k, r):
 
     EXAMPLES::
 
-        sage: graphs.GoethalsSeidelGraph(3,3)
+        sage: graphs.GoethalsSeidelGraph(3,3)                                           # optional - sage.modules
         Graph on 28 vertices
-        sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)
+        sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)      # optional - sage.modules
         (28, 15, 6, 10)
     """
     from sage.combinat.designs.bibd import balanced_incomplete_block_design
@@ -1588,15 +1588,15 @@ def FibonacciTree(n):
 
     EXAMPLES::
 
-        sage: g = graphs.FibonacciTree(3)
-        sage: g.is_tree()
+        sage: g = graphs.FibonacciTree(3)                                               # optional - sage.libs.pari
+        sage: g.is_tree()                                                               # optional - sage.libs.pari
         True
 
     ::
 
-        sage: l1 = [ len(graphs.FibonacciTree(_)) + 1 for _ in range(6) ]
-        sage: l2 = list(fibonacci_sequence(2,8))
-        sage: l1 == l2
+        sage: l1 = [ len(graphs.FibonacciTree(_)) + 1 for _ in range(6) ]               # optional - sage.libs.pari
+        sage: l2 = list(fibonacci_sequence(2,8))                                        # optional - sage.libs.pari
+        sage: l1 == l2                                                                  # optional - sage.libs.pari
         True
 
     AUTHORS:
@@ -2538,25 +2538,25 @@ def PaleyGraph(q):
 
     EXAMPLES::
 
-        sage: G = graphs.PaleyGraph(9); G
+        sage: G = graphs.PaleyGraph(9); G                                               # optional - sage.rings.finite_rings
         Paley graph with parameter 9: Graph on 9 vertices
-        sage: G.is_regular()
+        sage: G.is_regular()                                                            # optional - sage.rings.finite_rings
         True
 
     A Paley graph is always self-complementary::
 
-        sage: G.is_self_complementary()
+        sage: G.is_self_complementary()                                                 # optional - sage.rings.finite_rings
         True
 
     TESTS:
 
     Wrong parameter::
 
-        sage: graphs.PaleyGraph(6)
+        sage: graphs.PaleyGraph(6)                                                      # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: parameter q must be a prime power
-        sage: graphs.PaleyGraph(3)
+        sage: graphs.PaleyGraph(3)                                                      # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: parameter q must be congruent to 1 mod 4
@@ -2630,11 +2630,14 @@ def SquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: graphs.SquaredSkewHadamardMatrixGraph(4).is_strongly_regular(parameters=True)
+        sage: G = graphs.SquaredSkewHadamardMatrixGraph(4)                              # optional - sage.modules
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.modules
         (225, 112, 55, 56)
-        sage: graphs.SquaredSkewHadamardMatrixGraph(5).is_strongly_regular(parameters=True)  # long time
+        sage: G = graphs.SquaredSkewHadamardMatrixGraph(5)                              # optional - sage.modules
+        sage: G.is_strongly_regular(parameters=True)  # long time                       # optional - sage.modules
         (361, 180, 89, 90)
-        sage: graphs.SquaredSkewHadamardMatrixGraph(9).is_strongly_regular(parameters=True)  # not tested
+        sage: G = graphs.SquaredSkewHadamardMatrixGraph(9)                              # optional - sage.modules
+        sage: G.is_strongly_regular(parameters=True)  # not tested                      # optional - sage.modules
         (1225, 612, 305, 306)
 
     TESTS::
@@ -2680,13 +2683,14 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: g=graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)                      # optional - sage.modules
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.modules
         (226, 105, 48, 49)
         sage: from sage.combinat.designs.twographs import twograph_descendant
-        sage: twograph_descendant(g,0).is_strongly_regular(parameters=True)
+        sage: twograph_descendant(g, 0).is_strongly_regular(parameters=True)            # optional - sage.modules
         (225, 112, 55, 56)
-        sage: twograph_descendant(g.complement(),0).is_strongly_regular(parameters=True)
+        sage: gc = g.complement()                                                       # optional - sage.modules
+        sage: twograph_descendant(gc, 0).is_strongly_regular(parameters=True)           # optional - sage.modules
         (225, 112, 55, 56)
 
     TESTS::
@@ -3743,7 +3747,7 @@ def RingedTree(k, vertex_labels=True):
         sage: G = graphs.RingedTree(5)                                                  # optional - networkx
         sage: P = G.plot(vertex_labels=False, vertex_size=10)                           # optional - networkx sage.plot
         sage: P.show()  # long time                                                     # optional - networkx sage.plot
-        sage: G.vertices(sort=True)
+        sage: G.vertices(sort=True)                                                     # optional - networkx
         ['', '0', '00', '000', '0000', '0001', '001', '0010', '0011', '01',
          '010', '0100', '0101', '011', '0110', '0111', '1', '10', '100',
          '1000', '1001', '101', '1010', '1011', '11', '110', '1100', '1101',
@@ -3832,8 +3836,8 @@ def MathonPseudocyclicMergingGraph(M, t):
         Traceback (most recent call last):
         ...
         AssertionError...
-        sage: M = ES(3)
-        sage: M = [M[1],M[0],M[2],M[3]]
+        sage: M = ES(3)                                                                 # optional - sage.libs.gap
+        sage: M = [M[1],M[0],M[2],M[3]]                                                 # optional - sage.libs.gap
         sage: G = mer(M, 2)                                                             # optional - sage.libs.gap
         Traceback (most recent call last):
         ...
@@ -3896,15 +3900,15 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
 
     Supplying ``G`` and ``L`` (constructed from the automorphism group of ``G``). ::
 
-        sage: G = graphs.PaleyGraph(9)
-        sage: a = G.automorphism_group(partition=[sorted(G)])
-        sage: it = (x for x in a.normal_subgroups() if x.order() == 9)
-        sage: subg = next(iter(it))
-        sage: r = [matrix(libgap.PermutationMat(libgap(z), 9).sage())
+        sage: G = graphs.PaleyGraph(9)                                                  # optional - sage.rings.finite_rings
+        sage: a = G.automorphism_group(partition=[sorted(G)])                           # optional - sage.groups sage.rings.finite_rings
+        sage: it = (x for x in a.normal_subgroups() if x.order() == 9)                  # optional - sage.groups sage.rings.finite_rings
+        sage: subg = next(iter(it))                                                     # optional - sage.groups sage.rings.finite_rings
+        sage: r = [matrix(libgap.PermutationMat(libgap(z), 9).sage())                   # optional - sage.groups sage.libs.gap sage.rings.finite_rings
         ....:      for z in subg]
-        sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),
+        sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),                                  # optional - sage.groups sage.libs.gap sage.rings.finite_rings
         ....:          Permutation(map(lambda x: 1+r.index(x^-1), r)).cycle_tuples()[1:]))
-        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff)); L
+        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff)); L      # optional - sage.groups sage.libs.gap sage.rings.finite_rings
         [ 0  1 -1 -3 -2 -4  3  4  2]
         [-1  0  1 -4 -3 -2  2  3  4]
         [ 1 -1  0 -2 -4 -3  4  2  3]
@@ -3915,21 +3919,21 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         [-4 -3 -2  2  3  4 -1  0  1]
         [-2 -4 -3  4  2  3  1 -1  0]
 
-        sage: G.relabel(range(9))
-        sage: G3x3=graphs.MathonPseudocyclicStronglyRegularGraph(2,G=G,L=L)
-        sage: G3x3.is_strongly_regular(parameters=True)
+        sage: G.relabel(range(9))                                                       # optional - sage.rings.finite_rings
+        sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)         # optional - sage.modules sage.rings.finite_rings
+        sage: G3x3.is_strongly_regular(parameters=True)                                 # optional - sage.modules sage.rings.finite_rings
         (441, 220, 109, 110)
-        sage: G3x3.automorphism_group(algorithm="bliss").order()                # optional - bliss
+        sage: G3x3.automorphism_group(algorithm="bliss").order()    # optional - bliss  # optional - sage.modules sage.rings.finite_rings
         27
-        sage: G9=graphs.MathonPseudocyclicStronglyRegularGraph(2)
-        sage: G9.is_strongly_regular(parameters=True)
+        sage: G9 = graphs.MathonPseudocyclicStronglyRegularGraph(2)                     # optional - sage.modules sage.rings.finite_rings
+        sage: G9.is_strongly_regular(parameters=True)                                   # optional - sage.modules sage.rings.finite_rings
         (441, 220, 109, 110)
-        sage: G9.automorphism_group(algorithm="bliss").order()                  # optional - bliss
+        sage: G9.automorphism_group(algorithm="bliss").order()      # optional - bliss  # optional - sage.modules sage.rings.finite_rings
         9
 
     TESTS::
 
-        sage: graphs.MathonPseudocyclicStronglyRegularGraph(5)
+        sage: graphs.MathonPseudocyclicStronglyRegularGraph(5)                          # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: 21  must be a sum of two squares!...
@@ -4096,21 +4100,21 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     - ``Phi`` is an optional parameter of the construction; it must be either
 
-        - 'fixed'-- this will generate fixed default `\Phi_i`, for `i \in M`, or
+      - ``'fixed'`` -- this will generate fixed default `\Phi_i`, for `i \in M`, or
 
-        - 'random'-- `\Phi_i` are generated at random, or
+      - ``'random'`` -- `\Phi_i` are generated at random, or
 
-        - A dictionary describing the functions `\Phi_i`; for `i \in M`,
-          Phi[(i, T)] in `M`, for each edge T of `L` on `i`.
-          Also, each `\Phi_i` must be injective.
+      - A dictionary describing the functions `\Phi_i`; for `i \in M`,
+        Phi[(i, T)] in `M`, for each edge T of `L` on `i`.
+        Also, each `\Phi_i` must be injective.
 
     - ``Sigma`` is an optional parameter of the construction; it must be either
 
-        - 'fixed'-- this will generate a fixed default `\Sigma`, or
+      - ``'fixed'`` -- this will generate a fixed default `\Sigma`, or
 
-        - 'random'-- `\Sigma` is generated at random.
+      - ``'random'`` -- `\Sigma` is generated at random.
 
-    - ``verbose`` (Boolean)-- default is False. If True, print progress information
+    - ``verbose`` (Boolean) -- default is False. If ``True``, print progress information
 
     .. SEEALSO::
 
@@ -4123,36 +4127,37 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     EXAMPLES::
 
-        sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)
+        sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)         # optional - sage.modules sage.rings.finite_rings
         (378, 116, 34, 36)
-        sage: phi={(2,(0,2)):0,(1,(1,3)):1,(0,(0,3)):1,(2,(1,2)):1,(1,(1,
-        ....:  2)):0,(0,(0,2)):0,(3,(0,3)):0,(3,(1,3)):1}
-        sage: graphs.MuzychukS6Graph(2,2,Phi=phi).is_strongly_regular(parameters=True)
+        sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,                # optional - sage.modules sage.rings.finite_rings
+        ....:        (1,(1,2)):0, (0,(0,2)):0, (3,(0,3)):0, (3,(1,3)):1}
+        sage: graphs.MuzychukS6Graph(2, 2,                                              # optional - sage.modules sage.rings.finite_rings
+        ....:                        Phi=phi).is_strongly_regular(parameters=True)
         (16, 5, 0, 2)
 
     TESTS::
 
-        sage: graphs.MuzychukS6Graph(2,2,Phi='random',Sigma='random').is_strongly_regular(parameters=True)
+        sage: graphs.MuzychukS6Graph(2,2,Phi='random',Sigma='random').is_strongly_regular(parameters=True)  # optional - sage.modules sage.rings.finite_rings
         (16, 5, 0, 2)
-        sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)
+        sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)  # optional - sage.modules sage.rings.finite_rings
         (378, 116, 34, 36)
-        sage: graphs.MuzychukS6Graph(3,2)
+        sage: graphs.MuzychukS6Graph(3,2)                                               # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         AssertionError: n must be even or d must be odd
-        sage: graphs.MuzychukS6Graph(6,2)
+        sage: graphs.MuzychukS6Graph(6,2)                                               # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         AssertionError: n must be a prime power
-        sage: graphs.MuzychukS6Graph(3,1)
+        sage: graphs.MuzychukS6Graph(3,1)                                               # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         AssertionError: d must be at least 2
-        sage: graphs.MuzychukS6Graph(3,3,Phi=42)
+        sage: graphs.MuzychukS6Graph(3,3,Phi=42)                                        # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         AssertionError: Phi must be a dictionary or 'random' or 'fixed'
-        sage: graphs.MuzychukS6Graph(3,3,Sigma=42)
+        sage: graphs.MuzychukS6Graph(3,3,Sigma=42)                                      # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: Sigma must be 'random' or 'fixed'

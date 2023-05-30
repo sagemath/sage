@@ -68,13 +68,13 @@ def is_paley(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_paley
-        sage: t = is_paley(13,6,2,3); t
+        sage: t = is_paley(13,6,2,3); t                                                 # optional - sage.rings.finite_rings
         (..., 13)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.rings.finite_rings
         Paley graph with parameter 13: Graph on 13 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.rings.finite_rings
         (13, 6, 2, 3)
-        sage: t = is_paley(5,5,5,5); t
+        sage: t = is_paley(5,5,5,5); t                                                  # optional - sage.rings.finite_rings
     """
     if (v % 4 == 1 and is_prime_power(v) and
             k == (v - 1)//2 and
@@ -110,18 +110,18 @@ def is_mathon_PC_srg(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_mathon_PC_srg
-        sage: t = is_mathon_PC_srg(45,22,10,11); t
+        sage: t = is_mathon_PC_srg(45,22,10,11); t                                      # optional - sage.libs.pari
         (..., 1)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         Mathon's PC SRG on 45 vertices: Graph on 45 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (45, 22, 10, 11)
 
     TESTS::
 
-        sage: t = is_mathon_PC_srg(5,5,5,5); t
-        sage: mu = 1895  # t=5 case -- the construction cannot work
-        sage: t = is_mathon_PC_srg(4*mu+1,2*mu,mu-1,mu); t
+        sage: t = is_mathon_PC_srg(5,5,5,5); t                                          # optional - sage.libs.pari
+        sage: mu = 1895  # t=5 case -- the construction cannot work                     # optional - sage.libs.pari
+        sage: t = is_mathon_PC_srg(4*mu+1,2*mu,mu-1,mu); t                              # optional - sage.libs.pari
     """
     cdef int t
     if (v % 4 == 1 and
@@ -218,20 +218,20 @@ def is_orthogonal_array_block_graph(int v, int k, int l, int mu):
         OA(5,8): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.modules
         (64, 35, 18, 20)
-        sage: t = is_orthogonal_array_block_graph(225,98,43,42); t
+        sage: t = is_orthogonal_array_block_graph(225,98,43,42); t                      # optional - sage.combinat sage.modules
         (..., 4)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.combinat sage.modules
         Pasechnik Graph_4: Graph on 225 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.combinat sage.modules
         (225, 98, 43, 42)
-        sage: t = is_orthogonal_array_block_graph(225,112,55,56); t
+        sage: t = is_orthogonal_array_block_graph(225,112,55,56); t                     # optional - sage.combinat sage.modules
         (..., 4)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.combinat sage.modules
         skewhad^2_4: Graph on 225 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.combinat sage.modules
         (225, 112, 55, 56)
 
-        sage: t = is_orthogonal_array_block_graph(5,5,5,5); t
+        sage: t = is_orthogonal_array_block_graph(5,5,5,5); t                           # optional - sage.combinat sage.modules
     """
     # notations from
     # https://www.win.tue.nl/~aeb/graphs/OA.html
@@ -356,14 +356,14 @@ def is_affine_polar(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_affine_polar
-        sage: t = is_affine_polar(81,32,13,12); t
+        sage: t = is_affine_polar(81,32,13,12); t                                       # optional - sage.rings.finite_rings
         (..., 4, 3)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.rings.finite_rings
         Affine Polar Graph VO^+(4,3): Graph on 81 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.rings.finite_rings
         (81, 32, 13, 12)
 
-        sage: t = is_affine_polar(5,5,5,5); t
+        sage: t = is_affine_polar(5,5,5,5); t                                           # optional - sage.rings.finite_rings
     """
     # Using notations from https://www.win.tue.nl/~aeb/graphs/VO.html
     #
@@ -411,24 +411,24 @@ def is_orthogonal_polar(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_orthogonal_polar
-        sage: t = is_orthogonal_polar(85, 20, 3, 5); t
+        sage: t = is_orthogonal_polar(85, 20, 3, 5); t                                  # optional - sage.rings.finite_rings
         (<function OrthogonalPolarGraph at ...>, 5, 4, '')
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.rings.finite_rings
         Orthogonal Polar Graph O(5, 4): Graph on 85 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.rings.finite_rings
         (85, 20, 3, 5)
 
-        sage: t = is_orthogonal_polar(5,5,5,5); t
+        sage: t = is_orthogonal_polar(5,5,5,5); t                                       # optional - sage.rings.finite_rings
 
     TESTS:
 
     All of ``O(2m+1,q)``, ``O^+(2m,q)`` and ``O^-(2m,q)`` appear::
 
-        sage: is_orthogonal_polar(85, 20, 3, 5)
+        sage: is_orthogonal_polar(85, 20, 3, 5)                                         # optional - sage.rings.finite_rings
         (<function OrthogonalPolarGraph at ...>, 5, 4, '')
-        sage: is_orthogonal_polar(119,54,21,27)
+        sage: is_orthogonal_polar(119,54,21,27)                                         # optional - sage.rings.finite_rings
         (<function OrthogonalPolarGraph at ...>, 8, 2, '-')
-        sage: is_orthogonal_polar(130,48,20,16)
+        sage: is_orthogonal_polar(130,48,20,16)                                         # optional - sage.rings.finite_rings
         (<function OrthogonalPolarGraph at ...>, 6, 3, '+')
 
     """
@@ -487,21 +487,21 @@ def is_goethals_seidel(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_goethals_seidel
-        sage: t = is_goethals_seidel(28, 15, 6, 10); t
+        sage: t = is_goethals_seidel(28, 15, 6, 10); t                                  # optional - sage.combinat sage.modules
         [<function GoethalsSeidelGraph at ...>, 3, 3]
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.combinat sage.modules
         Graph on 28 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.combinat sage.modules
         (28, 15, 6, 10)
 
-        sage: t = is_goethals_seidel(256, 135, 70, 72); t
+        sage: t = is_goethals_seidel(256, 135, 70, 72); t                               # optional - sage.combinat sage.modules
         [<function GoethalsSeidelGraph at ...>, 2, 15]
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.combinat sage.modules
         Graph on 256 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.combinat sage.modules
         (256, 135, 70, 72)
 
-        sage: t = is_goethals_seidel(5,5,5,5); t
+        sage: t = is_goethals_seidel(5,5,5,5); t                                        # optional - sage.combinat sage.modules
 
     TESTS::
 

@@ -321,8 +321,8 @@ def LargeWittGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.LargeWittGraph()
-        sage: g.is_distance_regular(True)
+        sage: g = graphs.LargeWittGraph()                                               # optional - sage.modules
+        sage: g.is_distance_regular(True)                                               # optional - sage.modules
         ([30, 28, 24, None], [None, 1, 3, 15])
 
     REFERENCES:
@@ -359,8 +359,8 @@ def TruncatedWittGraph():
 
     EXAMPLES::
 
-         sage: G = graphs.TruncatedWittGraph()  # long time
-         sage: G.is_distance_regular(True)  # long time (due to above)
+         sage: G = graphs.TruncatedWittGraph()  # long time                             # optional - sage.modules
+         sage: G.is_distance_regular(True)      # long time (due to above)              # optional - sage.modules
          ([15, 14, 12, None], [None, 1, 1, 9])
 
     REFERENCES:
@@ -388,8 +388,8 @@ def DoublyTruncatedWittGraph():
 
     EXAMPLES::
 
-         sage: G = graphs.DoublyTruncatedWittGraph()
-         sage: G.is_distance_regular(True)
+         sage: G = graphs.DoublyTruncatedWittGraph()                                    # optional - sage.modules
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules
          ([7, 6, 4, 4, None], [None, 1, 1, 1, 6])
 
     REFERENCES:
@@ -411,8 +411,8 @@ def distance_3_doubly_truncated_Golay_code_graph():
 
     EXAMPLES::
 
-        sage: G = graphs.distance_3_doubly_truncated_Golay_code_graph()  # long time
-        sage: G.is_distance_regular(True)  # long time (due to above)
+        sage: G = graphs.distance_3_doubly_truncated_Golay_code_graph()  # long time    # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)  # long time (due to above)                   # optional - sage.modules sage.rings.finite_rings
         ([9, 8, 6, 3, None], [None, 1, 1, 3, 8])
 
     ALGORITHM:
@@ -446,8 +446,8 @@ def shortened_00_11_binary_Golay_code_graph():
 
     EXAMPLES::
 
-        sage: G = graphs.shortened_00_11_binary_Golay_code_graph() # long time (9 s)
-        sage: G.is_distance_regular(True) # long time
+        sage: G = graphs.shortened_00_11_binary_Golay_code_graph()  # long time (9 s)   # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)                           # long time         # optional - sage.modules sage.rings.finite_rings
         ([21, 20, 16, 6, 2, 1, None], [None, 1, 2, 6, 16, 20, 21])
 
     ALGORITHM:
@@ -485,8 +485,8 @@ def shortened_000_111_extended_binary_Golay_code_graph():
 
     EXAMPLES::
 
-        sage: G = graphs.shortened_000_111_extended_binary_Golay_code_graph() # long time (25 s)
-        sage: G.is_distance_regular(True)  # long time
+        sage: G = graphs.shortened_000_111_extended_binary_Golay_code_graph()  # long time (25 s)   # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)                                      # long time          # optional - sage.modules sage.rings.finite_rings
         ([21, 20, 16, 9, 2, 1, None], [None, 1, 2, 3, 16, 20, 21])
 
     ALGORITHM:
@@ -526,8 +526,8 @@ def vanLintSchrijverGraph():
 
     EXAMPLES::
 
-         sage: G = graphs.vanLintSchrijverGraph()
-         sage: G.is_distance_regular(True)
+         sage: G = graphs.vanLintSchrijverGraph()                                       # optional - sage.modules sage.rings.finite_rings
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules sage.rings.finite_rings
          ([6, 5, 5, 4, None], [None, 1, 1, 2, 6])
 
     REFERENCES:
@@ -557,8 +557,8 @@ def LeonardGraph():
 
     EXAMPLES::
 
-         sage: G = graphs.LeonardGraph()
-         sage: G.is_distance_regular(True)
+         sage: G = graphs.LeonardGraph()                                                # optional - sage.combinat sage.modules
+         sage: G.is_distance_regular(True)                                              # optional - sage.combinat sage.modules
          ([12, 11, 10, 7, None], [None, 1, 2, 5, 12])
 
     REFERENCES:
@@ -2125,7 +2125,7 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
 
         sage: graph_with_classical_parameters(3, 1, 2, 3, 3)
         Half 4 Cube: Graph on 8 vertices
-        sage: graph_with_classical_parameters(3, 2, 0, 2, 9)
+        sage: graph_with_classical_parameters(3, 2, 0, 2, 9)                            # optional - sage.libs.gap
         Symplectic Dual Polar Graph DSp(6, 2): Graph on 135 vertices
         sage: graph_with_classical_parameters(3, 2, 2, 14, 7)  # long time
         Grassmann graph J_2(6, 3): Graph on 1395 vertices
@@ -2407,9 +2407,9 @@ def is_near_polygon(array):
         ....: is_near_polygon, near_polygon_graph)
         sage: is_near_polygon([7, 6, 6, 4, 4, 1, 1, 3, 3, 7])                           # optional - sage.combinat
         (4, (2, 2))
-        sage: near_polygon_graph(4, (2, 2))
+        sage: near_polygon_graph(4, (2, 2))                                             # optional - sage.rings.finite_rings
         Double Grassmann graph (5, 2, 2): Graph on 310 vertices
-        sage: near_polygon_graph(*is_near_polygon([3, 2, 2, 1, 1, 3]))                  # optional - sage.combinat
+        sage: near_polygon_graph(*is_near_polygon([3, 2, 2, 1, 1, 3]))                  # optional - sage.combinat sage.rings.finite_rings
         Generalised hexagon of order (1, 2): Graph on 14 vertices
         sage: is_near_polygon([16, 12, 8, 4, 1, 2, 3, 4])                               # optional - sage.combinat
         (6, (4, 5))
@@ -2695,8 +2695,8 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
         sage: graphs.distance_regular_graph([21,20,16,1,2,12], existence=True)
         True
-        sage: G = graphs.distance_regular_graph([12,11,10,7,1,2,5,12], check=False)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.distance_regular_graph([12,11,10,7,1,2,5,12], check=False)     # optional - sage.combinat sage.modules
+        sage: G.is_distance_regular(True)                                               # optional - sage.combinat sage.modules
         ([12, 11, 10, 7, None], [None, 1, 2, 5, 12])
 
     REFERENCES:
