@@ -162,8 +162,6 @@ def braid_from_piecewise(strands):
     B = BraidGroup(len(L))
     return B(braid)
 
-
-
 def discrim(pols):
     r"""
     Return the points in the discriminant of the product of the polynomials of a list or tuple ``pols``.
@@ -379,8 +377,6 @@ def voronoi_cells(V):
     for e in EdgesDual:
         DG.add_edge(crd[e] + (e,))
     return (G, E, p, EC, DG)
-
-
 
 def followstrand(f, factors, x0, x1, y0a, prec=53):
     r"""
@@ -918,8 +914,8 @@ def geometric_basis(G, E, EC, p, dual_graph):
     - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that
       ``E`` is the boundary of the non-bounded component of the complement.
       The edges are labelled as the dual edges and the vertices are labelled
-      by a tuple whose first element is the ordering and the second one is the
-      list of vertices in the region and ``E``.
+      by a tuple whose first element is the an integer for the position and the second one is the
+      ordered list of vertices in the region.
 
     OUTPUT: A geometric basis. It is formed by a list of sequences of paths.
     Each path is a list of vertices, that form a closed path in ``G``, based at
@@ -1008,9 +1004,8 @@ def geometric_basis(G, E, EC, p, dual_graph):
         E2 = Graph()
         E2.add_edge(q, r, None)
         if r == EC[qi + 1]:
-           E1, E2 = E2, E1
+            E1, E2 = E2, E1
 
-    
     Gd = copy(dual_graph)
     cp1 = [(e, cutpath[i + 1], None) for i, e in enumerate(cutpath[: -1])]
     cp1 += [(cutpath[i + 1], e, None) for i, e in enumerate(cutpath[: -1])]
