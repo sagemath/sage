@@ -42,8 +42,6 @@ EXAMPLES::
 import itertools
 from copy import copy
 from sage.combinat.combination import Combinations
-from sage.sets.set import Set
-
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
 from sage.geometry.voronoi_diagram import VoronoiDiagram
@@ -66,6 +64,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
+from sage.sets.set import Set
 
 roots_interval_cache = {}
 
@@ -193,14 +192,14 @@ def discrim(pols):
     """
     flist = tuple(pols)
     x, y = flist[0].parent().gens()
-    F = flist[0].base_ring()
-    R = PolynomialRing(F,(x,))
+    field = flist[0].base_ring()
+    pol_ring = PolynomialRing(field,(x,))
 
     @parallel
     def discrim_pairs(f, g):
         if f == g:
-            return R(f.discriminant(y))
-        return R(f.resultant(g, y))
+            return pol_ring(f.discriminant(y))
+        return pol_ring(f.resultant(g, y))
 
     pairs = [(f, f) for f in flist] +  [(f, g) for f, g in Combinations(flist, 2)]
     fdiscrim = discrim_pairs(pairs)
@@ -341,10 +340,10 @@ def voronoi_cells(V):
         sage: edg[-1] in Ge
         True
 """
-    V0 = [_ for _ in V.regions().values() if _.is_compact()]
-    Vnc = [_ for _ in V.regions().values() if not _.is_compact()]
-    G = Graph([u.vertices() for v in V0 for u in v.faces(1)], format = 'list_of_edges')
-    E = Graph([u.vertices() for v in Vnc for u in v.faces(1) if u.is_compact()], format = 'list_of_edges')
+    compact_regions = [_ for _ in V.regions().values() if _.is_compact()]
+    non_compact_regions = [_ for _ in V.regions().values() if not _.is_compact()]
+    G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)], format = 'list_of_edges')
+    E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1) if u.is_compact()], format = 'list_of_edges')
     p = next(E.vertex_iterator())
     EC0 = orient_circuit(E.eulerian_circuit())
     EC = [EC0[0][0]] + [e[1] for e in EC0]
@@ -352,12 +351,12 @@ def voronoi_cells(V):
     Edges = []
     crd = {}
     reg_graphs = {}
-    for i, reg in enumerate(V0):
+    for i, reg in enumerate(compact_regions):
         reg_graphs[i] = reg.graph()
         Greg0 = orient_circuit(reg_graphs[i].eulerian_circuit())
         Greg = (Greg0[0][0],) + tuple(e[1] for e in Greg0)
         Vreg1[i] = (i, Greg)
-    for i, reg in enumerate(V0):
+    for i, reg in enumerate(compact_regions):
         for e in reg_graphs[i].edges(sort=True):
             a, b = e[:2]
             e1 = (b, a, None)
@@ -369,7 +368,7 @@ def voronoi_cells(V):
                 crd[e] += (Vreg1[i],)
                 crd[e1] += (Vreg1[i],)
     EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
-    DG = Graph(len(V0))
+    DG = Graph(len(compact_regions))
     DG.relabel(Vreg1)
     for e in EdgesDual:
         DG.add_edge(crd[e] + (e,))
