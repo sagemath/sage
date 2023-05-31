@@ -441,7 +441,6 @@ class GaloisRepresentation(SageObject):
         self.__is_surjective[key] = ans
         return ans
 
-
     def _is_surjective(self, p, A):
         r"""
         helper function for ``is_surjective``
@@ -1084,7 +1083,6 @@ class GaloisRepresentation(SageObject):
         self.__image_type[p] = "The image could not be determined. Sorry."
         return self.__image_type[p]
 
-
     def image_classes(self,p,bound=10000):
         r"""
         This function returns, given the representation `\rho`
@@ -1414,7 +1412,6 @@ class GaloisRepresentation(SageObject):
         if not arith.is_prime(p):
             raise ValueError('p (=%s) must be prime' % p)
         return self._E.j_invariant().valuation(p) >= 0
-
 
     def is_semistable(self,p):
         r"""

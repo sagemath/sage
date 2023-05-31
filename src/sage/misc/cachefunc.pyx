@@ -850,6 +850,7 @@ cdef class CachedFunction():
             sage: I = P*[x,y]
             sage: from sage.misc.sageinspect import sage_getdoc
             sage: print(sage_getdoc(I.groebner_basis)) # indirect doctest
+            WARNING: the enclosing module is marked...
                Return the reduced Groebner basis of this ideal.
             ...
 

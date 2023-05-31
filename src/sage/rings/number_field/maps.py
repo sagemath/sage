@@ -11,12 +11,16 @@ EXAMPLES::
     sage: from_K, to_K = K.structure()
     sage: from_K
     Isomorphism map:
-      From: Number Field in a with defining polynomial x^6 - 3*x^5 + 6*x^4 - 11*x^3 + 12*x^2 + 3*x + 1
-      To:   Number Field in cuberoot2 with defining polynomial x^3 - 2 over its base field
+      From: Number Field in a with defining polynomial
+            x^6 - 3*x^5 + 6*x^4 - 11*x^3 + 12*x^2 + 3*x + 1
+      To:   Number Field in cuberoot2 with defining polynomial
+            x^3 - 2 over its base field
     sage: to_K
     Isomorphism map:
-      From: Number Field in cuberoot2 with defining polynomial x^3 - 2 over its base field
-      To:   Number Field in a with defining polynomial x^6 - 3*x^5 + 6*x^4 - 11*x^3 + 12*x^2 + 3*x + 1
+      From: Number Field in cuberoot2 with defining polynomial
+            x^3 - 2 over its base field
+      To:   Number Field in a with defining polynomial
+            x^6 - 3*x^5 + 6*x^4 - 11*x^3 + 12*x^2 + 3*x + 1
 """
 
 #*****************************************************************************
@@ -118,9 +122,11 @@ class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
         (True, True)
 
         sage: fr.domain(), to.codomain()
-        (Vector space of dimension 4 over Rational Field, Vector space of dimension 4 over Rational Field)
+        (Vector space of dimension 4 over Rational Field,
+         Vector space of dimension 4 over Rational Field)
         sage: to.domain(), fr.codomain()
-        (Number Field in a with defining polynomial x^4 + 3*x + 1, Number Field in a with defining polynomial x^4 + 3*x + 1)
+        (Number Field in a with defining polynomial x^4 + 3*x + 1,
+         Number Field in a with defining polynomial x^4 + 3*x + 1)
         sage: fr * to
         Composite map:
           From: Number Field in a with defining polynomial x^4 + 3*x + 1
@@ -243,8 +249,10 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
         Vector space of dimension 2 over Number Field in b0 with defining polynomial x^2 + 1
         sage: fr
         Isomorphism map:
-          From: Vector space of dimension 2 over Number Field in b0 with defining polynomial x^2 + 1
-          To:   Number Field in a with defining polynomial x^2 - b0*x + 1 over its base field
+          From: Vector space of dimension 2
+                over Number Field in b0 with defining polynomial x^2 + 1
+          To:   Number Field in a
+                with defining polynomial x^2 - b0*x + 1 over its base field
         sage: type(fr)
         <class 'sage.rings.number_field.maps.MapRelativeVectorSpaceToRelativeNumberField'>
 
@@ -380,7 +388,8 @@ class NameChangeMap(NumberFieldIsomorphism):
           From: Number Field in a with defining polynomial x^2 - 3
           To:   Number Field in b with defining polynomial x^2 - 3
         sage: type(from_L), type(to_L)
-        (<class 'sage.rings.number_field.maps.NameChangeMap'>, <class 'sage.rings.number_field.maps.NameChangeMap'>)
+        (<class 'sage.rings.number_field.maps.NameChangeMap'>,
+         <class 'sage.rings.number_field.maps.NameChangeMap'>)
     """
     def __init__(self, K, L):
         r"""
@@ -391,7 +400,8 @@ class NameChangeMap(NumberFieldIsomorphism):
             sage: L.structure()
             (Isomorphism given by variable name change map:
               From: Number Field in c with defining polynomial x^2 - 3 over its base field
-              To:   Number Field in a with defining polynomial x^2 - 3 over its base field, Isomorphism given by variable name change map:
+              To:   Number Field in a with defining polynomial x^2 - 3 over its base field,
+             Isomorphism given by variable name change map:
               From: Number Field in a with defining polynomial x^2 - 3 over its base field
               To:   Number Field in c with defining polynomial x^2 - 3 over its base field)
         """

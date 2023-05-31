@@ -1881,8 +1881,7 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
             from sage.rings.complex_mpfr import ComplexField
             return ComplexField(prec)(x).sqrt(all=all)
     if x == -1:
-        from sage.symbolic.expression import I
-        z = I
+        from sage.symbolic.constants import I as z
     else:
         from sage.symbolic.ring import SR
         z = SR(x).sqrt()
