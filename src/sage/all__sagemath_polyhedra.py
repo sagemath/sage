@@ -16,7 +16,7 @@ from sage.homology.all__sagemath_polyhedra import *
 from sage.topology.all import *
 # commented out in MANIFEST.in.m4
 #from sage.tensor.all import *
-#from sage.matroids.all import *
+from sage.matroids.all import *
 from sage.quadratic_forms.all__sagemath_polyhedra import *
 
 true = True
