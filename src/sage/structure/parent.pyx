@@ -103,7 +103,7 @@ This came up in some subtle bug once::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.object cimport PyObject, Py_NE, Py_EQ, Py_LE, Py_GE
+from cpython.object cimport Py_EQ, Py_LE, Py_GE
 from cpython.bool cimport *
 
 from types import MethodType, BuiltinMethodType
@@ -111,7 +111,6 @@ import operator
 from copy import copy
 
 from sage.cpython.type cimport can_assign_class
-cimport sage.categories.morphism as morphism
 cimport sage.categories.map as map
 from sage.structure.debug_options cimport debug
 from sage.structure.sage_object cimport SageObject
@@ -119,7 +118,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.misc.lazy_string cimport _LazyString
-from sage.sets.pythonclass cimport Set_PythonType_class, Set_PythonType
+from sage.sets.pythonclass cimport Set_PythonType_class
 from .category_object import CategoryObject
 from .coerce cimport coercion_model
 from .coerce cimport parent_is_integers
@@ -2625,7 +2624,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         # If needed, it will be passed to Left/RightModuleAction.
         from sage.categories.action import Action, PrecomposedAction
         from sage.categories.homset import Hom
-        from .coerce_actions import LeftModuleAction, RightModuleAction
         cdef Parent R
 
         for action in self._action_list:

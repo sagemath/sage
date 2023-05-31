@@ -39,7 +39,7 @@ import operator
 # Sage matrix imports see :trac:`34283`
 
 # Sage imports
-import sage.structure.coerce
+import sage.structure.coerce_actions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.integer as integer
@@ -1066,7 +1066,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         return matrix_action.MatrixPolymapAction(self, S)
                     else:
                         # action of base ring
-                        return sage.structure.coerce.RightModuleAction(S, self)
+                        return sage.structure.coerce_actions.RightModuleAction(S, self)
                 else:
                     if is_MatrixSpace(S):
                         # matrix multiplications
@@ -1077,7 +1077,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         return matrix_action.PolymapMatrixAction(self, S)
                     else:
                         # action of base ring
-                        return sage.structure.coerce.LeftModuleAction(S, self)
+                        return sage.structure.coerce_actions.LeftModuleAction(S, self)
         except TypeError:
             return None
 

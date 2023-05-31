@@ -64,36 +64,35 @@ For more information on how to specify coercions, conversions, and actions,
 see the documentation for :class:`Parent`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from cpython.object cimport (PyObject, PyTypeObject,
-        PyObject_CallObject, PyObject_RichCompare, Py_TYPE,
-        Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT, Py_GE)
+from cpython.object cimport (PyTypeObject, PyObject_CallObject,
+                             PyObject_RichCompare, Py_TYPE,
+                             Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT)
 from cpython.weakref cimport PyWeakref_GET_OBJECT, PyWeakref_NewRef
 from libc.string cimport strncmp
 cimport gmpy2
 
-cdef add, mul, truediv
-from operator import add, mul, truediv
+cdef mul, truediv
+from operator import mul, truediv
 
 from .richcmp cimport rich_to_bool, revop
 from .sage_object cimport SageObject
 from .parent cimport Parent_richcmp_element_without_coercion
 from .element cimport bin_op_exception, parent, Element
-from .coerce_actions import LeftModuleAction, RightModuleAction
 from .coerce_exceptions import CoercionException
 from sage.rings.integer_fake cimport is_Integer
 from sage.categories.map cimport Map
 from sage.categories.morphism import IdentityMorphism
-from sage.categories.action cimport Action, InverseAction, PrecomposedAction
+from sage.categories.action cimport Action, PrecomposedAction
 from sage.sets.pythonclass cimport Set_PythonType
 
 import traceback
@@ -1676,7 +1675,6 @@ cdef class CoercionModel:
             sage: print(cm.discover_coercion(QQ, QQ^3))
             None
         """
-        from sage.categories.homset import Hom
         if R is S:
             return None, None
 

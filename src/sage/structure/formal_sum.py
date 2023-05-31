@@ -50,7 +50,7 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -62,8 +62,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.repr import repr_lincomb
 import operator
@@ -74,7 +74,7 @@ from sage.structure.element import ModuleElement
 from sage.structure.richcmp import richcmp
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
-from sage.structure.coerce import LeftModuleAction, RightModuleAction
+from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
 from sage.categories.action import PrecomposedAction
 from sage.structure.unique_representation import UniqueRepresentation
 
