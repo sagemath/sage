@@ -325,29 +325,21 @@ def voronoi_cells(V):
         sage: edg = DG.edges(sort=True)[0]; edg
         ((0,
         (A vertex at (9/2, -9/2),
-        A vertex at (2000001/2000000, -24500001/7000000),
-        A vertex at (2000001/2000000, 500001/1000000),
-        A vertex at (2000001/2000000, -24500001/7000000),
-        A vertex at (11/4, 4),
-        A vertex at (2000001/2000000, 500001/1000000),
         A vertex at (9/2, 9/2),
         A vertex at (11/4, 4),
-        A vertex at (9/2, -9/2),
-        A vertex at (9/2, 9/2))),
+        A vertex at (2000001/2000000, 500001/1000000),
+        A vertex at (2000001/2000000, -24500001/7000000),
+        A vertex at (9/2, -9/2))),
         (1,
-        (A vertex at (11/4, 4),
-        A vertex at (2000001/2000000, 500001/1000000),
+        (A vertex at (-49000001/14000000, 1000001/2000000),
         A vertex at (1000001/2000000, 1000001/2000000),
         A vertex at (2000001/2000000, 500001/1000000),
-        A vertex at (-49000001/14000000, 1000001/2000000),
-        A vertex at (1000001/2000000, 1000001/2000000),
-        A vertex at (-4, 4),
         A vertex at (11/4, 4),
-        A vertex at (-49000001/14000000, 1000001/2000000),
-        A vertex at (-4, 4))),
-        (A vertex at (2000001/2000000, 500001/1000000), A vertex at (11/4, 4), None))
-        sage: list(Ge).index(edg[-1])
-        13
+        A vertex at (-4, 4),
+        A vertex at (-49000001/14000000, 1000001/2000000))),
+        (A vertex at (11/4, 4), A vertex at (2000001/2000000, 500001/1000000), None))
+        sage: edg[-1] in Ge
+        True
 """
     V0 = [_ for _ in V.regions().values() if _.is_compact()]
     Vnc = [_ for _ in V.regions().values() if not _.is_compact()]
@@ -356,14 +348,17 @@ def voronoi_cells(V):
     p = next(E.vertex_iterator())
     EC0 = orient_circuit(E.eulerian_circuit())
     EC = [EC0[0][0]] + [e[1] for e in EC0]
-    Vreg1 = {V0.index(_) : (V0.index(_), tuple(v for e in _.facets() for v in e.vertices())) for _ in V0}
-    DG = Graph(len(V0))
-    DG.relabel(Vreg1)
+    Vreg1 = {}
     Edges = []
     crd = {}
-    for i, v in enumerate(V0):
-        r = [e.vertices() + (None, ) for e in v.facets()]
-        for e in r:
+    reg_graphs = {}
+    for i, reg in enumerate(V0):
+        reg_graphs[i] = reg.graph()
+        Greg0 = orient_circuit(reg_graphs[i].eulerian_circuit())
+        Greg = (Greg0[0][0],) + tuple(e[1] for e in Greg0)
+        Vreg1[i] = (i, Greg)
+    for i, reg in enumerate(V0):
+        for e in reg_graphs[i].edges(sort=True):
             a, b = e[:2]
             e1 = (b, a, None)
             if e not in Edges:
@@ -374,6 +369,8 @@ def voronoi_cells(V):
                 crd[e] += (Vreg1[i],)
                 crd[e1] += (Vreg1[i],)
     EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
+    DG = Graph(len(V0))
+    DG.relabel(Vreg1)
     for e in EdgesDual:
         DG.add_edge(crd[e] + (e,))
     return (G, E, p, EC, DG)
@@ -543,19 +540,18 @@ def fieldI(F0):
     I0 = QQbar.gen()
     if I0 in F0:
         return F0
-    else:
-        F0a = F0[I0]
-        F1a = F0a.absolute_field('b0')
-        b0 = F1a.gen()
-        q = b0.minpoly()
-        qembd = F1a.embeddings(QQbar)
-        for h1 in qembd:
-            b1 = h1(b0)
-            b2 = h1(F1a(F0a.gen(0)))
-            b3 = F0.gen(0)
-            F1 = NumberField(q, 'b', embedding=b1)
-            if b3 in F1 and b2.imag() > 0:
-                return F1
+    F0a = F0[I0]
+    F1a = F0a.absolute_field('b0')
+    b0 = F1a.gen()
+    q = b0.minpoly()
+    qembd = F1a.embeddings(QQbar)
+    for h1 in qembd:
+        b1 = h1(b0)
+        b2 = h1(F1a(F0a.gen(0)))
+        b3 = F0.gen(0)
+        F1 = NumberField(q, 'b', embedding=b1)
+        if b3 in F1 and b2.imag() > 0:
+            return F1
 
 
 @parallel
@@ -915,7 +911,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
       ``E`` is the boundary of the non-bounded component of the complement.
       The edges are labelled as the dual edges and the vertices are labelled
       by a tuple whose first element is the an integer for the position and the second one is the
-      ordered list of vertices in the region.
+      cyclic ordered list of vertices in the region.
 
     OUTPUT: A geometric basis. It is formed by a list of sequences of paths.
     Each path is a list of vertices, that form a closed path in ``G``, based at
@@ -973,7 +969,6 @@ def geometric_basis(G, E, EC, p, dual_graph):
     InternalEdges = [_ for _ in G.edges(sort=True) if _ not in E.edges(sort=True)]
     InternalVertices = [v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
-    Internal1 = G.subgraph(vertices=G.vertices(sort=True), edges=InternalEdges)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
         if ECi in Internal:
             EI = [v for v in E if v in Internal.connected_component_containing_vertex(ECi) and v != ECi]
@@ -989,9 +984,17 @@ def geometric_basis(G, E, EC, p, dual_graph):
                 break
     distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in EI]
     r = max(distancequotients)[1]
+    cutpath = Internal.shortest_path(q, r)
+    cutpath_in_E = False
+    i = 1
+    while not cutpath_in_E and i < len(cutpath) - 1:
+        cutpath_in_E = cutpath[i] in EC
+        if cutpath_in_E:
+            r = cutpath[i]
+            cutpath = cutpath[:i+1]
+        i += i+1
     qi = EC.index(q)
     ri = EC.index(r)
-    cutpath = Internal.shortest_path(q, r)
     Ecut = copy(E)
     Ecut.delete_vertices([q, r])
     subgraphs = Ecut.connected_components_subgraphs()
@@ -1015,8 +1018,8 @@ def geometric_basis(G, E, EC, p, dual_graph):
     edges_2 = []
     vertices_2 = []
     for reg in Gd2.vertices(sort=True):
-        vertices_2 += reg[1]
-        reg_circuit = reg[1] + (reg[1][0],)
+        vertices_2 += reg[1][:-1]
+        reg_circuit = reg[1]
         edges_2 += [(v1, reg_circuit[i + 1]) for i, v1 in enumerate(reg_circuit[:-1])]
         edges_2 += [(v1, reg_circuit[i - 1]) for i, v1 in enumerate(reg_circuit[1:])]
     G2 = G.subgraph(vertices=vertices_2, edges=edges_2)
@@ -1213,11 +1216,11 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     computebm0 = computebm or len(disc) == 0
     if computebm0 and not holdstrand:
         return (result, strands)
-    elif computebm0 and holdstrand:
+    if computebm0 and holdstrand:
         return (result,roots_base)
-    elif not computebm0 and not holdstrand:
+    if not computebm0 and not holdstrand:
         return strands
-    elif not computebm0 and holdstrand:
+    if not computebm0 and holdstrand:
         return roots_base
 
 
