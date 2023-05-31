@@ -21,7 +21,6 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.modules.free_module_element import vector
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 from .affine_morphism import SchemeMorphism_polynomial_affine_subscheme_field
@@ -578,6 +577,8 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
             1
 
         """
+        from sage.modules.free_module_element import vector
+
         A = self.ambient_space()
         R = A.coordinate_ring()
         gens = R.gens()

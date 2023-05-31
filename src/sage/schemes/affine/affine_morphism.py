@@ -859,7 +859,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<z> = AffineSpace(QQ, 1)
             sage: H = End(A)
             sage: f = H([z^2 - 3/4])
-            sage: f.jacobian()
+            sage: f.jacobian()                                                          # optional - sage.modules
             [2*z]
 
         ::
@@ -867,7 +867,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: H = End(A)
             sage: f = H([x^3 - 25*x + 12*y, 5*y^2*x - 53*y + 24])
-            sage: f.jacobian()
+            sage: f.jacobian()                                                          # optional - sage.modules
             [ 3*x^2 - 25          12]
             [      5*y^2 10*x*y - 53]
 
@@ -876,7 +876,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x,y> = AffineSpace(ZZ, 2)
             sage: H = End(A)
             sage: f = H([(x^2 - x*y)/(1+y), (5+y)/(2+x)])
-            sage: f.jacobian()
+            sage: f.jacobian()                                                          # optional - sage.modules
             [         (2*x - y)/(y + 1) (-x^2 - x)/(y^2 + 2*y + 1)]
             [  (-y - 5)/(x^2 + 4*x + 4)                  1/(x + 2)]
         """
@@ -905,7 +905,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x> = AffineSpace(ZZ, 1)
             sage: H = Hom(A, A)
             sage: f = H([x^2 + 1])
-            sage: matrix([[1,2], [0,1]]) * f
+            sage: matrix([[1,2], [0,1]]) * f                                            # optional - sage.modules
             Scheme endomorphism of Affine Space of dimension 1 over Integer Ring
               Defn: Defined on coordinates by sending (x) to
                     (x^2 + 3)
@@ -916,7 +916,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A2 = AffineSpace(ZZ, 2)
             sage: H = Hom(A1, A2)
             sage: f = H([x^2 + 1, x^2 - 1])
-            sage: matrix([[1,2,3], [0,1,2], [0,0,1]]) * f
+            sage: matrix([[1,2,3], [0,1,2], [0,0,1]]) * f                               # optional - sage.modules
             Scheme morphism:
               From: Affine Space of dimension 1 over Integer Ring
               To:   Affine Space of dimension 2 over Integer Ring
@@ -949,7 +949,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x> = AffineSpace(ZZ, 1)
             sage: H = Hom(A, A)
             sage: f = H([x^2 + 1])
-            sage: f * matrix([[1,2], [0,1]])
+            sage: f * matrix([[1,2], [0,1]])                                            # optional - sage.modules
             Scheme endomorphism of Affine Space of dimension 1 over Integer Ring
               Defn: Defined on coordinates by sending (x) to
                     (x^2 + 4*x + 5)
@@ -960,7 +960,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A2 = AffineSpace(ZZ, 2)
             sage: H = Hom(A1, A2)
             sage: f = H([x^2 + 1, x^2 - 1])
-            sage: f * matrix([[1,2], [0,1]])
+            sage: f * matrix([[1,2], [0,1]])                                            # optional - sage.modules
             Scheme morphism:
               From: Affine Space of dimension 1 over Integer Ring
               To:   Affine Space of dimension 2 over Integer Ring
@@ -973,7 +973,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: P2.<u,v,w> = AffineSpace(QQ, 3)
             sage: H = Hom(P2, P)
             sage: f = H([u^2 + v^2, w^2])
-            sage: m = matrix([[1,1,1], [1,0,1], [0,0,1]])
+            sage: m = matrix([[1,1,1], [1,0,1], [0,0,1]])                               # optional - sage.modules
             sage: m*f
             Scheme morphism:
               From: Affine Space of dimension 3 over Rational Field
