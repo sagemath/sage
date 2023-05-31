@@ -20,10 +20,7 @@ on:
 jobs:
   synchronize:
     if: |  # check variables from repository settings to suspend the job
-      vars.SYNC_LABELS_ACTIVE == 'yes' && (
-      vars.SYNC_LABELS_BIDIRECT == 'yes' ||
-        github.event.action != 'labeled' &&
-        github.event.action != 'unlabeled')
+      vars.SYNC_LABELS_ACTIVE == 'yes' && ! contains(vars.SYNC_LABELS_IGNORE_EVENTS, github.event.action)
     runs-on: ubuntu-latest
     steps:
       # Checkout the Python script
