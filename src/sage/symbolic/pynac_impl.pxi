@@ -44,7 +44,6 @@ from sage.libs.gsl.types cimport *
 from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils
-from sage.libs.pari.all import pari
 from sage.misc.persist import loads, dumps
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger
@@ -56,6 +55,11 @@ from sage.rings.cc import CC
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element, parent
 from sage.symbolic.function cimport Function
+
+try:
+    from sage.libs.pari.all import pari
+except ImportError:
+    pass
 
 #################################################################
 # Symbolic function helpers
@@ -2463,8 +2467,12 @@ def init_pynac_I():
         ((3*I + 4)*x - 5)*x
     """
     global pynac_I
-    from sage.rings.number_field.number_field import GaussianField
-    pynac_I = GaussianField().gen()
+    try:
+        from sage.rings.number_field.number_field import GaussianField
+        pynac_I = GaussianField().gen()
+    except ImportError:
+        from sage.rings.cc import CC
+        pynac_I = CC(0, 1)
     ginac_pyinit_I(pynac_I)
     from .ring import SR
     return new_Expression_from_GEx(SR, g_I)
