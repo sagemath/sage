@@ -642,7 +642,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
         sage: p1 = Permutation([nn+1 for nn in perm[0]])
         sage: p2 = Permutation([nn+1 for nn in perm[1]])
         sage: p = p2 * p1.inverse()
-        sage: p.show(representation = "braid")
+        sage: p.show(representation="braid")                                            # optional - sage.plot
 
     TESTS:
 

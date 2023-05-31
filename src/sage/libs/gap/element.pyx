@@ -549,7 +549,7 @@ cdef class GapElement(RingElement):
 
         INPUT:
 
-        - ``mut`` - (boolean) wheter to return an mutable copy
+        - ``mut`` - (boolean) whether to return an mutable copy
 
         EXAMPLES::
 
