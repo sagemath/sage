@@ -951,7 +951,7 @@ class DiGraph(GenericGraph):
         At first, the following graph is acyclic::
 
             sage: D = DiGraph({0:[1, 2, 3], 4:[2, 5], 1:[8], 2:[7], 3:[7], 5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10]})
-            sage: D.plot(layout='circular').show()
+            sage: D.plot(layout='circular').show()                                      # optional - sage.plot
             sage: D.is_directed_acyclic()
             True
 
@@ -3140,7 +3140,7 @@ class DiGraph(GenericGraph):
 
             sage: D = DiGraph({0: [1, 2, 3], 4: [2, 5], 1: [8], 2: [7], 3: [7],
             ....:   5: [6, 7], 7: [8], 6: [9], 8: [10], 9: [10]})
-            sage: D.plot(layout='circular').show()
+            sage: D.plot(layout='circular').show()                                      # optional - sage.plot
             sage: D.topological_sort()
             [4, 5, 6, 9, 0, 1, 2, 3, 7, 8, 10]
 
@@ -3220,7 +3220,7 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: D = DiGraph({0: [1, 2], 1: [3], 2: [3, 4]})
-            sage: D.plot(layout='circular').show()
+            sage: D.plot(layout='circular').show()                                      # optional - sage.plot
             sage: list(D.topological_sort_generator())
             [[0, 1, 2, 3, 4], [0, 2, 1, 3, 4], [0, 2, 1, 4, 3], [0, 2, 4, 1, 3], [0, 1, 2, 4, 3]]
 

@@ -31,7 +31,6 @@ AUTHORS:
 
 import re
 import os
-from pyparsing import OneOrMore, nestedExpr
 
 from sage.env import SAGE_ENV
 from sage.misc.cachefunc import cached_method, cached_function
@@ -108,11 +107,11 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: C3.nerve() == C3.nerve()
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: C3.nerve() == C3.nerve()                                              # optional - sage.groups
             False
-            sage: BC3 = C3.nerve()
-            sage: BC3 == BC3
+            sage: BC3 = C3.nerve()                                                      # optional - sage.groups
+            sage: BC3 == BC3                                                            # optional - sage.groups
             True
         """
         return (isinstance(other, Nerve)
@@ -125,11 +124,11 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: G3 = groups.permutation.Cyclic(3)
-            sage: C3.nerve() != G3.nerve()
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: G3 = groups.permutation.Cyclic(3)                                     # optional - sage.groups
+            sage: C3.nerve() != G3.nerve()                                              # optional - sage.groups
             True
-            sage: C3.nerve() != C3.nerve()
+            sage: C3.nerve() != C3.nerve()                                              # optional - sage.groups
             True
         """
         return not self == other
@@ -141,17 +140,17 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: G3 = groups.permutation.Cyclic(3)
-            sage: hash(G3.nerve()) # random
+            sage: G3 = groups.permutation.Cyclic(3)                                     # optional - sage.groups
+            sage: hash(G3.nerve()) # random                                             # optional - sage.groups
             17
 
         Different instances yield different base points, hence different hashes::
 
-            sage: X = G3.nerve()
-            sage: Y = G3.nerve()
-            sage: X.base_point() != Y.base_point()
+            sage: X = G3.nerve()                                                        # optional - sage.groups
+            sage: Y = G3.nerve()                                                        # optional - sage.groups
+            sage: X.base_point() != Y.base_point()                                      # optional - sage.groups
             True
-            sage: hash(X) != hash(Y)
+            sage: hash(X) != hash(Y)                                                    # optional - sage.groups
             True
         """
         return hash(self._monoid) ^ hash(self.base_point())
@@ -169,13 +168,13 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: K4 = groups.misc.MultiplicativeAbelian([2,2])
-            sage: BK4 = simplicial_sets.ClassifyingSpace(K4)
-            sage: BK4.n_skeleton(3)
+            sage: K4 = groups.misc.MultiplicativeAbelian([2,2])                         # optional - sage.groups
+            sage: BK4 = simplicial_sets.ClassifyingSpace(K4)                            # optional - sage.groups
+            sage: BK4.n_skeleton(3)                                                     # optional - sage.groups
             Simplicial set with 40 non-degenerate simplices
-            sage: BK4.n_cells(1) == BK4.n_skeleton(3).n_cells(1)
+            sage: BK4.n_cells(1) == BK4.n_skeleton(3).n_cells(1)                        # optional - sage.groups
             True
-            sage: BK4.n_cells(3) == BK4.n_skeleton(1).n_cells(3)
+            sage: BK4.n_cells(3) == BK4.n_skeleton(1).n_cells(3)                        # optional - sage.groups
             False
         """
         from .simplicial_set_constructions import SubSimplicialSet
@@ -227,7 +226,7 @@ class Nerve(SimplicialSet_arbitrary):
                     # constructor.
                     x = AbstractSimplex(d,
                                         name=' * '.join(str(_) for _ in chain),
-                                        latex_name = ' * '.join(latex(_) for _ in chain))
+                                        latex_name=' * '.join(latex(_) for _ in chain))
                     new_faces[chain] = x
 
                     # Compute faces of x.
@@ -314,17 +313,16 @@ def ClassifyingSpace(group):
 
     EXAMPLES::
 
-        sage: C2 = groups.misc.MultiplicativeAbelian([2])
-        sage: BC2 = simplicial_sets.ClassifyingSpace(C2)
-        sage: H = BC2.homology(range(9), base_ring=GF(2))
-        sage: [H[i].dimension() for i in range(9)]
+        sage: C2 = groups.misc.MultiplicativeAbelian([2])                               # optional - sage.groups
+        sage: BC2 = simplicial_sets.ClassifyingSpace(C2)                                # optional - sage.groups
+        sage: H = BC2.homology(range(9), base_ring=GF(2))                               # optional - sage.groups sage.modules sage.rings.finite_rings
+        sage: [H[i].dimension() for i in range(9)]                                      # optional - sage.groups sage.modules sage.rings.finite_rings
         [0, 1, 1, 1, 1, 1, 1, 1, 1]
 
-        sage: Klein4 = groups.misc.MultiplicativeAbelian([2, 2])
-        sage: BK = simplicial_sets.ClassifyingSpace(Klein4)
-        sage: BK
+        sage: Klein4 = groups.misc.MultiplicativeAbelian([2, 2])                        # optional - sage.groups
+        sage: BK = simplicial_sets.ClassifyingSpace(Klein4); BK                         # optional - sage.groups
         Classifying space of Multiplicative Abelian group isomorphic to C2 x C2
-        sage: BK.homology(range(5), base_ring=GF(2))  # long time (1 second)
+        sage: BK.homology(range(5), base_ring=GF(2))  # long time (1 second)            # optional - sage.groups sage.modules sage.rings.finite_rings
         {0: Vector space of dimension 0 over Finite Field of size 2,
          1: Vector space of dimension 2 over Finite Field of size 2,
          2: Vector space of dimension 3 over Finite Field of size 2,
@@ -346,18 +344,18 @@ def RealProjectiveSpace(n):
 
     EXAMPLES::
 
-        sage: simplicial_sets.RealProjectiveSpace(7)
+        sage: simplicial_sets.RealProjectiveSpace(7)                                    # optional - sage.groups
         RP^7
-        sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
-        sage: RP5.homology()
+        sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                              # optional - sage.groups
+        sage: RP5.homology()                                                            # optional - sage.groups
         {0: 0, 1: C2, 2: 0, 3: C2, 4: 0, 5: Z}
-        sage: RP5
+        sage: RP5                                                                       # optional - sage.groups
         RP^5
-        sage: latex(RP5)
+        sage: latex(RP5)                                                                # optional - sage.groups
         RP^{5}
 
-        sage: BC2 = simplicial_sets.RealProjectiveSpace(Infinity)
-        sage: latex(BC2)
+        sage: BC2 = simplicial_sets.RealProjectiveSpace(Infinity)                       # optional - sage.groups
+        sage: latex(BC2)                                                                # optional - sage.groups
         RP^{\infty}
     """
     if n == Infinity:
@@ -385,7 +383,7 @@ def KleinBottle():
         sage: K = simplicial_sets.KleinBottle()
         sage: K.f_vector()
         [1, 3, 2]
-        sage: K.homology(reduced=False)
+        sage: K.homology(reduced=False)                                                 # optional - sage.modules
         {0: Z, 1: Z x C2, 2: 0}
         sage: K
         Klein bottle
@@ -410,7 +408,7 @@ def Torus():
         sage: T = simplicial_sets.Torus()
         sage: T.f_vector()
         [1, 3, 2]
-        sage: T.homology(reduced=False)
+        sage: T.homology(reduced=False)                                                 # optional - sage.modules
         {0: Z, 1: Z x Z, 2: Z}
     """
     S1 = Sphere(1)
@@ -536,23 +534,23 @@ def ComplexProjectiveSpace(n):
 
         sage: simplicial_sets.ComplexProjectiveSpace(2).homology(reduced=False)
         {0: Z, 1: 0, 2: Z, 3: 0, 4: Z}
-        sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3)
-        sage: CP3
+        sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3)                           # optional - pyparsing
+        sage: CP3                                                                       # optional - pyparsing
         CP^3
-        sage: latex(CP3)
+        sage: latex(CP3)                                                                # optional - pyparsing
         CP^{3}
-        sage: CP3.f_vector()
+        sage: CP3.f_vector()                                                            # optional - pyparsing
         [1, 0, 3, 10, 25, 30, 15]
 
-        sage: K = CP3.suspension() # long time (1 second)
-        sage: R = K.cohomology_ring(GF(2)) # long time
-        sage: R.gens()        # long time
+        sage: K = CP3.suspension()              # long time (1 second)                  # optional - pyparsing
+        sage: R = K.cohomology_ring(GF(2))      # long time                             # optional - pyparsing
+        sage: R.gens()                          # long time                             # optional - pyparsing
         (h^{0,0}, h^{3,0}, h^{5,0}, h^{7,0})
-        sage: x = R.gens()[1] # long time
-        sage: x.Sq(2)         # long time
+        sage: x = R.gens()[1]                   # long time                             # optional - pyparsing
+        sage: x.Sq(2)                           # long time                             # optional - pyparsing
         h^{5,0}
 
-        sage: simplicial_sets.ComplexProjectiveSpace(4).f_vector()
+        sage: simplicial_sets.ComplexProjectiveSpace(4).f_vector()                      # optional - pyparsing
         [1, 0, 4, 22, 97, 255, 390, 315, 105]
 
         sage: simplicial_sets.ComplexProjectiveSpace(5)
@@ -646,10 +644,12 @@ def simplicial_data_from_kenzo_output(filename):
         sage: from sage.topology.simplicial_set_examples import simplicial_data_from_kenzo_output
         sage: from sage.topology.simplicial_set import SimplicialSet
         sage: sphere = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'S4.txt')
-        sage: S4 = SimplicialSet(simplicial_data_from_kenzo_output(sphere))
-        sage: S4.homology(reduced=False)
+        sage: S4 = SimplicialSet(simplicial_data_from_kenzo_output(sphere))             # optional - pyparsing
+        sage: S4.homology(reduced=False)                                                # optional - pyparsing
         {0: Z, 1: 0, 2: 0, 3: 0, 4: Z}
     """
+    from pyparsing import OneOrMore, nestedExpr
+
     with open(filename, 'r') as f:
         data = f.read()
     dim = 0
@@ -732,14 +732,14 @@ def HopfMap():
 
     Using the Hopf map to attach a cell::
 
-        sage: X = g.mapping_cone()
-        sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)
-        sage: X.homology() == CP2.homology()
+        sage: X = g.mapping_cone()                                                      # optional - sage.graphs
+        sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)                           # optional - sage.graphs
+        sage: X.homology() == CP2.homology()                                            # optional - sage.graphs
         True
 
-        sage: X.f_vector()
+        sage: X.f_vector()                                                              # optional - sage.graphs
         [1, 0, 5, 9, 6]
-        sage: CP2.f_vector()
+        sage: CP2.f_vector()                                                            # optional - sage.graphs
         [1, 0, 2, 3, 3]
     """
     # The 2-sphere and its simplices.
@@ -811,19 +811,17 @@ def PresentationComplex(G):
 
     EXAMPLES::
 
-        sage: G = SymmetricGroup(2).as_finitely_presented_group()
-        sage: G
+        sage: G = SymmetricGroup(2).as_finitely_presented_group(); G                    # optional - sage.groups
         Finitely presented group < a | a^2 >
-        sage: S = simplicial_sets.PresentationComplex(G)
-        sage: S
+        sage: S = simplicial_sets.PresentationComplex(G); S                             # optional - sage.groups
         Simplicial set with 5 non-degenerate simplices
-        sage: S.face_data()
+        sage: S.face_data()                                                             # optional - sage.groups
         {Delta^0: None,
          a: (Delta^0, Delta^0),
          a^-1: (Delta^0, Delta^0),
          Ta: (a, s_0 Delta^0, a^-1),
          a^2: (a, s_0 Delta^0, a)}
-        sage: S.fundamental_group()
+        sage: S.fundamental_group()                                                     # optional - sage.groups
         Finitely presented group < e0 | e0^2 >
     """
     O = AbstractSimplex(0)

@@ -26,7 +26,7 @@ from sage.rings.infinity import infinity
 class EisensteinExtensionGeneric(pAdicExtensionGeneric):
     def __init__(self, poly, prec, print_mode, names, element_class):
         """
-        Initializes self.
+        Initializes ``self``.
 
         EXAMPLES::
 
@@ -74,7 +74,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     def inertia_subring(self):
         """
-        Returns the inertia subring.
+        Return the inertia subring.
 
         Since an Eisenstein extension is totally ramified, this is
         just the ground field.
@@ -83,7 +83,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
             sage: A = Zp(7,10)
             sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
+            sage: B.<t> = A.ext(x^2 + 7)
             sage: B.inertia_subring()
             7-adic Ring with capped relative precision 10
         """
@@ -91,21 +91,21 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     def residue_class_field(self):
         """
-        Returns the residue class field.
+        Return the residue class field.
 
         INPUT:
 
-        - self -- a p-adic ring
+        - ``self`` -- a p-adic ring
 
         OUTPUT:
 
-        - the residue field
+        the residue field
 
         EXAMPLES::
 
             sage: A = Zp(7,10)
             sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
+            sage: B.<t> = A.ext(x^2 + 7)
             sage: B.residue_class_field()
             Finite Field of size 7
         """
@@ -113,7 +113,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     def residue_ring(self, n):
         """
-        Return the quotient of the ring of integers by the nth power of its maximal ideal.
+        Return the quotient of the ring of integers by the `n`-th power of its maximal ideal.
 
         EXAMPLES::
 
@@ -162,13 +162,13 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     def gen(self, n=0):
         """
-        Returns a generator for self as an extension of its ground ring.
+        Return a generator for ``self`` as an extension of its ground ring.
 
         EXAMPLES::
 
             sage: A = Zp(7,10)
             sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
+            sage: B.<t> = A.ext(x^2 + 7)
             sage: B.gen()
             t + O(t^21)
         """
@@ -178,14 +178,14 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     def uniformizer_pow(self, n):
         """
-        Returns the nth power of the uniformizer of self (as an
-        element of self).
+        Return the `n`-th power of the uniformizer of ``self`` (as an
+        element of ``self``).
 
         EXAMPLES::
 
             sage: A = Zp(7,10)
             sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
+            sage: B.<t> = A.ext(x^2 + 7)
             sage: B.uniformizer_pow(5)
             t^5 + O(t^25)
         """
@@ -196,14 +196,14 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     def uniformizer(self):
         """
-        Returns the uniformizer of self, ie a generator for the unique
+        Return the uniformizer of ``self``, i.e., a generator for the unique
         maximal ideal.
 
         EXAMPLES::
 
             sage: A = Zp(7,10)
             sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
+            sage: B.<t> = A.ext(x^2 + 7)
             sage: B.uniformizer()
             t + O(t^21)
         """
@@ -211,7 +211,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     def _uniformizer_print(self):
         """
-        Returns a string representation of how the uniformizer of self
+        Return a string representation of how the uniformizer of self
         prints.  Mainly for internal use.
 
         EXAMPLES::

@@ -94,22 +94,22 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
         raise ValueError("Lifting non-ordinary eigensymbols not implemented (issue #20)")
 
     # Act by Hecke to ensure values are in D and not D^dag after solving difference equation
-    verbose("Applying Hecke", level = 2)
+    verbose("Applying Hecke", level=2)
 
     apinv = ~ap
     Phi = apinv * Phi.hecke(p)
 
     # Killing eisenstein part
-    verbose("Killing eisenstein part with q = %s" % q, level = 2)
+    verbose("Killing eisenstein part with q = %s" % q, level=2)
     k = Phi.parent().weight()
     Phi = ((q ** (k + 1) + 1) * Phi - Phi.hecke(q))
 
     # Iterating U_p
-    verbose("Iterating U_p", level = 2)
+    verbose("Iterating U_p", level=2)
     Psi = apinv * Phi.hecke(p)
 
     for attempts in range(M-1):
-        verbose("%s attempt (val = %s/%s)" % (attempts + 1,(Phi-Psi).valuation(),M), level = 2)
+        verbose("%s attempt (val = %s/%s)" % (attempts + 1,(Phi-Psi).valuation(),M), level=2)
         Phi = Psi
         Psi = apinv * Phi.hecke(p)
         Psi._normalize()
@@ -654,7 +654,7 @@ class PSModularSymbolElement(ModuleElement):
         i = 0
 
         g = gens[i]
-        verbose("Computing eigenvalue", level = 2)
+        verbose("Computing eigenvalue", level=2)
         while self._map[g].moment(0).is_zero():
             if not qhecke._map[g].moment(0).is_zero():
                 raise ValueError("not a scalar multiple")
@@ -665,9 +665,9 @@ class PSModularSymbolElement(ModuleElement):
                 raise ValueError("self is zero")
         aq = self.parent().base_ring()(self._map[g].find_scalar_from_zeroth_moment(qhecke._map[g], p, M, check))
 
-        verbose("Found eigenvalues of %s" % aq, level = 2)
+        verbose("Found eigenvalues of %s" % aq, level=2)
         if check:
-            verbose("Checking that this is actually an eigensymbol", level = 2)
+            verbose("Checking that this is actually an eigensymbol", level=2)
             if p is None or M is None or not ZZ(p).is_prime():
                 for g in gens[1:]:
                     try:
@@ -678,7 +678,7 @@ class PSModularSymbolElement(ModuleElement):
                         if qhecke._map[g] != aq * self._map[g]:
                             raise ValueError("not a scalar multiple")
             else:
-                verbose('p = %s, M = %s' % (p, M), level = 2)
+                verbose('p = %s, M = %s' % (p, M), level=2)
                 if qhecke != aq * self:
                     raise ValueError("not a scalar multiple")
         # if not aq.parent().is_exact() and M is not None:
@@ -921,7 +921,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
         else:
             set_padicbase = False
         try:
-            verbose("finding alpha: rooting %s in %s" % (poly, new_base_ring), level = 2)
+            verbose("finding alpha: rooting %s in %s" % (poly, new_base_ring), level=2)
             poly = poly.change_ring(new_base_ring)
             (v0, e0), (v1, e1) = poly.roots()
         except (TypeError, ValueError):
@@ -1050,7 +1050,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
                     raise ValueError("alpha must be a root of x^2 - a_p*x + p^(k+1)")
                 if self.hecke(p) != ap * self:
                     raise ValueError("alpha must be a root of x^2 - a_p*x + p^(k+1)")
-        verbose("found alpha = %s" % alpha, level = 2)
+        verbose("found alpha = %s" % alpha, level=2)
 
         V = self.parent()._p_stabilize_parent_space(p, new_base_ring)
         return self.__class__(self._map.p_stabilize(p, alpha, V), V, construct=True)
@@ -1119,7 +1119,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             return ans
 
     def lift(self, p=None, M=None, alpha=None, new_base_ring=None,
-             algorithm = None, eigensymbol=False, check=True):
+             algorithm=None, eigensymbol=False, check=True):
         r"""
         Return a (`p`-adic) overconvergent modular symbol with
         `M` moments which lifts self up to an Eisenstein error
@@ -1250,17 +1250,17 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             # We need some extra precision due to the fact that solving
             # the difference equation can give denominators.
             if alpha is None:
-                verbose('Finding alpha with M = %s' % M, level = 2)
+                verbose('Finding alpha with M = %s' % M, level=2)
                 alpha = self.Tq_eigenvalue(p, M=M + 1, check=check)
             newM, eisenloss, q, aq = self._find_extraprec(p, M + 1, alpha, check)
             Phi = self._lift_to_OMS(p, newM, new_base_ring, algorithm)
             Phi = _iterate_Up(Phi, p, newM, alpha, q, aq, check)
             Phi = Phi.reduce_precision(M)
-            return Phi._normalize(include_zeroth_moment = True)
+            return Phi._normalize(include_zeroth_moment=True)
         else:
             return self._lift_to_OMS(p, M, new_base_ring, algorithm)
 
-    def _lift_to_OMS(self, p, M, new_base_ring, algorithm = 'greenberg'):
+    def _lift_to_OMS(self, p, M, new_base_ring, algorithm='greenberg'):
         r"""
         Return a (`p`-adic) overconvergent modular symbol with
         `M` moments which lifts self up to an Eisenstein error
@@ -1508,7 +1508,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
         Phi = self._lift_to_OMS(p, newM, new_base_ring, algorithm)
         Phi = _iterate_Up(Phi, p=p, M=newM, ap=alpha, q=q, aq=aq, check=check)
         Phi = Phi.reduce_precision(M)
-        return Phi._normalize(include_zeroth_moment = True)
+        return Phi._normalize(include_zeroth_moment=True)
 
 
 class PSModularSymbolElement_dist(PSModularSymbolElement):

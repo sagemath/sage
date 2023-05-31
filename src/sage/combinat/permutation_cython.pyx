@@ -22,7 +22,7 @@ speed, we provide a class that wraps our struct.
 
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
 #       Copyright (C) 2017 Travis Scrimshaw <tscrim@ucdavis.edu>
 #       Copyright (C) 2017 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -30,12 +30,10 @@ speed, we provide a class that wraps our struct.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
-
-from cpython.object cimport PyObject
 
 from cysignals.memory cimport check_allocarray, sig_free
 
