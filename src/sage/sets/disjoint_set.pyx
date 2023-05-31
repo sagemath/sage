@@ -582,9 +582,9 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.union(3,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: g = d.to_digraph(); g
+            sage: g = d.to_digraph(); g                                                 # optional - sage.graphs
             Looped digraph on 5 vertices
-            sage: g.edges(sort=True)
+            sage: g.edges(sort=True)                                                    # optional - sage.graphs
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
 
         The result depends on the ordering of the union::
@@ -595,7 +595,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.union(1,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: d.to_digraph().edges(sort=True)
+            sage: d.to_digraph().edges(sort=True)                                       # optional - sage.graphs
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
 
         """
@@ -872,7 +872,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.union(3,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: g = d.to_digraph(); g
+            sage: g = d.to_digraph(); g                                                 # optional - sage.graphs
             Looped digraph on 5 vertices
             sage: g.edges(sort=True)
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
@@ -885,7 +885,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.union(1,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: d.to_digraph().edges(sort=True)
+            sage: d.to_digraph().edges(sort=True)                                       # optional - sage.graphs
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
         """
         d = {}
