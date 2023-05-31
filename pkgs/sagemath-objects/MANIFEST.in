@@ -70,6 +70,7 @@ include sage/misc/prandom.*              # dep of sage/rings/ring
 
 include sage/ext/stdsage.pxd
 include sage/ext/mod_int.*
+include sage/ext/cplusplus.pxd
 include sage/sets/pythonclass.*
 include sage/arith/power.*
 include sage/arith/numerical_approx.*

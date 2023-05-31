@@ -121,7 +121,7 @@ include sage/groups/matrix_gps/unitary.p*
                                 # but also on SymmetricGroup (could be easily fixed)
                                 # and sage.sets.disjoint_set
 
-#graft sage/matroids            # many doctests use graphs, finite fields
+graft sage/matroids            # many doctests use graphs, finite fields
 
 include sage/numerical/mip.p*
 include sage/numerical/interactive_simplex_method.p*

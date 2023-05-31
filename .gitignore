@@ -180,6 +180,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-repl/setup.cfg
 /pkgs/sagemath-polyhedra/setup.cfg
 /pkgs/sagemath-graphs/setup.cfg
+/pkgs/sagemath-symbolics/setup.cfg
 /pkgs/sagemath-standard-no-symbolics/setup.cfg
 
 /pkgs/sagemath-objects/pyproject.toml
@@ -188,6 +189,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-repl/pyproject.toml
 /pkgs/sagemath-polyhedra/pyproject.toml
 /pkgs/sagemath-graphs/pyproject.toml
+/pkgs/sagemath-symbolics/pyproject.toml
 /pkgs/sagemath-standard-no-symbolics/pyproject.toml
 
 /pkgs/sagemath-objects/requirements.txt
@@ -196,11 +198,13 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-repl/requirements.txt
 /pkgs/sagemath-polyhedra/requirements.txt
 /pkgs/sagemath-graphs/requirements.txt
+/pkgs/sagemath-symbolics/requirements.txt
 /pkgs/sagemath-standard-no-symbolics/requirements.txt
 
 /pkgs/sagemath-categories/MANIFEST.in
 /pkgs/sagemath-polyhedra/MANIFEST.in
 /pkgs/sagemath-graphs/MANIFEST.in
+/pkgs/sagemath-symbolics/MANIFEST.in
 /pkgs/sagemath-standard-no-symbolics/MANIFEST.in
 
 # same for old locations - before Issue #31577

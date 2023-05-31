@@ -60,7 +60,7 @@ Available in other distribution packages
   Algebraic combinatorics, combinatorial representation theory
 
 * `sagemath-graphs <https://pypi.org/project/sagemath-graphs>`_:
-  Graphs, posets, designs, abstract complexes, abelian sandpiles
+  Graphs, posets, hypergraphs, designs, abstract complexes, combinatorial polyhedra, abelian sandpiles
 
 * `sagemath-groups <https://pypi.org/project/sagemath-groups>`_:
   Groups, semigroups, invariant theory
@@ -73,7 +73,7 @@ Available in other distribution packages
   Plotting and graphics with Matplotlib, Three.JS, etc.
 
 * `sagemath-polyhedra <https://pypi.org/project/sagemath-polyhedra>`_:
-  Convex polyhedra in arbitrary dimension, triangulations, polyhedral fans, geometric complexes, hyperplane arrangements
+  Convex polyhedra in arbitrary dimension, triangulations, polyhedral fans, lattice points, geometric complexes, hyperplane arrangements
 
 * `sagemath-repl <https://pypi.org/project/sagemath-repl>`_:
   IPython REPL, the interactive language of SageMath (preparser), interacts, development tools

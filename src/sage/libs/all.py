@@ -1,3 +1,4 @@
+from .all__sagemath_symbolics import *
 
 import sage.libs.ntl.all as ntl
 
@@ -15,5 +16,3 @@ lazy_import('sage.libs.eclib.mwrank', 'set_precision', 'mwrank_set_precision')
 lazy_import('sage.libs.eclib.mwrank', 'initprimes', 'mwrank_initprimes')
 
 lazy_import('sage.libs.flint.qsieve', 'qsieve')
-
-lazy_import('sage.libs.giac.giac', 'libgiac')
