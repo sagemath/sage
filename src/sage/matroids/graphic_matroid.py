@@ -1,5 +1,4 @@
 # sage.doctest: optional - sage.graphs
-# sage.doctest: optional - sage.groups (for DisjointSet)
 r"""
 Graphic Matroids
 
