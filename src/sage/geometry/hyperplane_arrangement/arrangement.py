@@ -358,8 +358,6 @@ from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
-
-
 class HyperplaneArrangementElement(Element):
     """
     A hyperplane arrangement.
