@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 """
 Sandpiles
 
@@ -83,17 +84,17 @@ Or just::
 
 A picture of the graph::
 
-    sage: S.show() # long time
+    sage: S.show()  # long time                                                         # optional - sage.plot
 
 The relevant Laplacian matrices::
 
-    sage: S.laplacian()
+    sage: S.laplacian()                                                                 # optional - sage.modules
     [ 0  0  0  0  0]
     [-1  3 -1 -1  0]
     [ 0 -1  3 -1 -1]
     [ 0 -1 -1  3 -1]
     [ 0  0 -1 -1  2]
-    sage: S.reduced_laplacian()
+    sage: S.reduced_laplacian()                                                         # optional - sage.modules
     [ 3 -1 -1  0]
     [-1  3 -1 -1]
     [-1 -1  3 -1]
@@ -206,16 +207,18 @@ The number of superstable configurations of each degree::
 the saturated homogeneous toppling ideal::
 
     sage: S.ideal()
-    Ideal (x1 - x0, x3*x2 - x0^2, x4^2 - x0^2, x2^3 - x4*x3*x0, x4*x2^2 - x3^2*x0, x3^3 - x4*x2*x0, x4*x3^2 - x2^2*x0) of Multivariate Polynomial Ring in x4, x3, x2, x1, x0 over Rational Field
+    Ideal (x1 - x0, x3*x2 - x0^2, x4^2 - x0^2, x2^3 - x4*x3*x0,
+           x4*x2^2 - x3^2*x0, x3^3 - x4*x2*x0, x4*x3^2 - x2^2*x0) of
+     Multivariate Polynomial Ring in x4, x3, x2, x1, x0 over Rational Field
 
 its minimal free resolution::
 
-    sage: S.resolution()
+    sage: S.resolution()                                                                # optional - sage.modules
     'R^1 <-- R^7 <-- R^15 <-- R^13 <-- R^4'
 
 and its Betti numbers::
 
-    sage: S.betti()
+    sage: S.betti()                                                                     # optional - sage.modules
                0     1     2     3     4
     ------------------------------------
         0:     1     1     -     -     -
@@ -226,7 +229,7 @@ and its Betti numbers::
 
 Some various ways of creating Sandpiles::
 
-    sage: S = sandpiles.Complete(4) # for more options enter ``sandpile.TAB``
+    sage: S = sandpiles.Complete(4)  # for more options, enter ``sandpile.TAB``
     sage: S = sandpiles.Wheel(6)
 
 A multidigraph with loops (vertices 0, 1, 2; for example, there is a directed
@@ -325,22 +328,14 @@ from sage.arith.functions import lcm
 from sage.arith.misc import binomial, falling_factorial
 from sage.arith.srange import xsrange
 from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
-from sage.combinat.parking_functions import ParkingFunctions
-from sage.combinat.set_partition import SetPartitions
-from sage.combinat.vector_partition import IntegerVectorsIterator
 from sage.features.four_ti_2 import FourTi2Executable
-from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
-from sage.interfaces.singular import singular
-from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.functional import det, denominator
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import exists
 from sage.misc.misc_c import prod
 from sage.misc.temporary_file import tmp_filename
-from sage.modules.free_module_element import vector
-from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -348,8 +343,16 @@ from sage.rings.rational_field import QQ
 from sage.topology.simplicial_complex import SimplicialComplex
 
 lazy_import("sage.calculus.functional", "derivative")
+lazy_import("sage.combinat.parking_functions", "ParkingFunctions")
+lazy_import("sage.combinat.set_partition", "SetPartitions")
+lazy_import("sage.combinat.vector_partition", "IntegerVectorsIterator")
 lazy_import("sage.functions.log", "exp")
+lazy_import("sage.geometry.polyhedron.constructor", "Polyhedron")
+lazy_import("sage.interfaces.singular", "singular")
+lazy_import("sage.matrix.constructor", ["matrix", "identity_matrix"])
+lazy_import("sage.modules.free_module_element", "vector")
 lazy_import("sage.plot.colors", "rainbow")
+lazy_import("sage.probability.probability_distribution", "GeneralDiscreteDistribution")
 lazy_import("sage.symbolic.constants", ["I", "pi"])
 lazy_import("sage.symbolic.ring", "SR")
 
@@ -546,7 +549,7 @@ class Sandpile(DiGraph):
         become edge weights in the Sandpile. ::
 
             sage: s = Sandpile({0:[1,2,3], 1:[0,1,2,2,2], 2:[1,1,0,2,2,2,2]})
-            sage: s.laplacian()
+            sage: s.laplacian()                                                         # optional - sage.modules
             [ 3 -1 -1 -1]
             [-1  4 -3  0]
             [-1 -2  3  0]
@@ -563,7 +566,7 @@ class Sandpile(DiGraph):
             sage: s.sink()
             0
             sage: s = sandpiles.Cycle(4)
-            sage: s.laplacian()
+            sage: s.laplacian()                                                         # optional - sage.modules
             [ 2 -1  0 -1]
             [-1  2 -1  0]
             [ 0 -1  2 -1]
@@ -5822,11 +5825,11 @@ class SandpileDivisor(dict):
 
             sage: S = sandpiles.House()
             sage: p = SandpileDivisor(S, [1,2,1,0,0]).Dcomplex()
-            sage: p.homology()
+            sage: p.homology()                                                          # optional - sage.modules
             {0: 0, 1: Z x Z, 2: 0}
             sage: p.f_vector()
             [1, 5, 10, 4]
-            sage: p.betti()
+            sage: p.betti()                                                             # optional - sage.modules
             {0: 1, 1: 2, 2: 0}
 
         .. NOTE::
@@ -5848,7 +5851,7 @@ class SandpileDivisor(dict):
 
             sage: S = sandpiles.Cycle(3)
             sage: D = SandpileDivisor(S, [2,0,1])
-            sage: D.betti()
+            sage: D.betti()                                                             # optional - sage.modules
             {0: 1, 1: 1}
 
         .. NOTE::
