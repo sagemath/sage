@@ -86,9 +86,8 @@ import numbers
 from memory_allocator cimport MemoryAllocator
 from cysignals.memory cimport check_calloc, sig_free
 
-from sage.geometry.polyhedron.base  import Polyhedron_base
-from sage.geometry.lattice_polytope import LatticePolytopeClass
-from sage.geometry.cone             import ConvexRationalPolyhedralCone
+import sage.geometry.abc
+
 from sage.structure.element         import Matrix
 from sage.matrix.matrix_dense      cimport Matrix_dense
 from sage.misc.misc                 import is_iterator
@@ -361,13 +360,13 @@ cdef class CombinatorialPolyhedron(SageObject):
         self._equations = ()
         self._far_face_tuple = ()
 
-        if isinstance(data, Polyhedron_base):
+        if isinstance(data, sage.geometry.abc.Polyhedron):
             self._init_from_polyhedron(data)
             return
-        if isinstance(data, LatticePolytopeClass):
+        if isinstance(data, sage.geometry.abc.LatticePolytope):
             self._init_from_lattice_polytope(data)
             return
-        if isinstance(data, ConvexRationalPolyhedralCone):
+        if isinstance(data, sage.geometry.abc.ConvexRationalPolyhedralCone):
             self._init_from_cone(data)
             return
 
@@ -1141,7 +1140,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        cdef Matrix_dense incidence_matrix = matrix(
+        incidence_matrix = matrix(
                 ZZ, self.n_Vrepresentation(), self.n_Hrepresentation(), 0)
 
         if self.dim() < 1:
