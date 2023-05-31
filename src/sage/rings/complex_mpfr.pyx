@@ -63,6 +63,11 @@ from sage.misc.superseded import deprecated_function_alias
 cimport gmpy2
 gmpy2.import_gmpy2()
 
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
+
 # Some objects that are not imported at startup in order to break
 # circular imports
 NumberFieldElement_quadratic = ()
@@ -943,10 +948,9 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         if imag is None:
             if real is None: return
 
-            import sage.libs.pari.all
             if isinstance(real, ComplexNumber):
                 real, imag = (<ComplexNumber>real).real(), (<ComplexNumber>real).imag()
-            elif isinstance(real, sage.libs.pari.all.pari_gen):
+            elif isinstance(real, pari_gen):
                 real, imag = real.real(), real.imag()
             elif isinstance(real, (list, tuple)):
                 re, imag = real

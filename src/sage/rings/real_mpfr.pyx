@@ -142,10 +142,6 @@ import sage.misc.weak_dict
 
 import operator
 
-from cypari2.paridecl cimport *
-from cypari2.gen cimport Gen
-from cypari2.stack cimport new_gen
-
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 
 from .integer cimport Integer
@@ -155,6 +151,7 @@ from sage.categories.map cimport Map
 
 from .real_double cimport RealDoubleElement
 
+import sage.rings.abc
 import sage.rings.rational_field
 
 import sage.rings.infinity
@@ -164,6 +161,11 @@ from sage.arith.numerical_approx cimport digits_to_bits
 from sage.arith.constants cimport M_LN2_LN10
 from sage.arith.long cimport is_small_python_int
 
+try:
+    from cypari2 import Gen
+    from sage.libs.pari.convert_sage_real_mpfr import new_gen_from_real_mpfr_element, set_real_mpfr_element_from_gen
+except ImportError:
+    Gen = ()
 
 cimport gmpy2
 gmpy2.import_gmpy2()
@@ -743,9 +745,8 @@ cdef class RealField_class(sage.rings.abc.RealField):
             return RRtoRR(S, self)
         elif QQ.has_coerce_map_from(S):
             return QQtoRR(QQ, self) * QQ._internal_coerce_map_from(S)
-        from sage.rings.qqbar import AA
         from sage.rings.real_lazy import RLF
-        if S is AA or S is RLF:
+        if isinstance(S, sage.rings.abc.AlgebraicRealField) or S is RLF:
             return self.convert_method_map(S, "_mpfr_")
         return self._coerce_map_via([RLF], S)
 
@@ -1455,7 +1456,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # This should not be called except when the number is being created.
         # Real Numbers are supposed to be immutable.
         cdef RealField_class parent
-        cdef Gen _gen
         parent = self._parent
         if isinstance(x, RealNumber):
             if isinstance(x, RealLiteral):
@@ -1469,9 +1469,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             mpfr_set_z(self.value, (<Integer>x).value, parent.rnd)
         elif isinstance(x, Rational):
             mpfr_set_q(self.value, (<Rational>x).value, parent.rnd)
-        elif isinstance(x, Gen) and typ((<Gen>x).g) == t_REAL:
-            _gen = x
-            self._set_from_GEN_REAL(_gen.g)
+        elif isinstance(x, Gen) and set_real_mpfr_element_from_gen(self, x):
+            pass
         elif isinstance(x, int):
             x = Integer(x)
             mpfr_set_z(self.value, (<Integer>x).value, parent.rnd)
@@ -1502,49 +1501,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
                 mpfr_set_inf(self.value, -1)
             else:
                 raise TypeError("unable to convert {!r} to a real number".format(s))
-
-    cdef _set_from_GEN_REAL(self, GEN g):
-        """
-        EXAMPLES::
-
-            sage: rt2 = sqrt(pari('2.0'))
-            sage: rt2
-            1.41421356237310
-            sage: rt2.sage()
-            1.41421356237309505
-            sage: rt2.sage().prec()
-            64
-            sage: pari(rt2.sage()) == rt2
-            True
-            sage: for i in range(100, 200):
-            ....:     assert(sqrt(pari(i)) == pari(sqrt(pari(i)).sage()))
-            sage: (-3.1415).__pari__().sage()
-            -3.14150000000000000
-        """
-        cdef int sgn
-        sgn = signe(g)
-
-        if sgn == 0:
-            mpfr_set_ui(self.value, 0, MPFR_RNDN)
-            return
-
-        cdef int wordsize = 8 * sizeof(long)
-
-        cdef mpz_t mantissa
-        mpz_init(mantissa)
-        mpz_import(mantissa, lg(g) - 2, 1, wordsize/8, 0, 0, &g[2])
-
-        cdef mp_exp_t exponent = expo(g)
-
-        # Round to nearest for best results when setting a low-precision
-        # MPFR from a high-precision GEN
-        mpfr_set_z(self.value, mantissa, MPFR_RNDN)
-        mpfr_mul_2si(self.value, self.value, exponent - wordsize * (lg(g) - 2) + 1, MPFR_RNDN)
-
-        if sgn < 0:
-            mpfr_neg(self.value, self.value, MPFR_RNDN)
-
-        mpz_clear(mantissa)
 
     def __reduce__(self):
         """
@@ -3354,48 +3310,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(a) << (sys.maxsize-3)/4                                            # optional - sage.libs.pari
             0.500000000000000
         """
-        # This uses interfaces of MPFR and PARI which are documented
-        # (and not marked subject-to-change).  It could be faster
-        # by using internal interfaces of MPFR, which are documented
-        # as subject-to-change.
-
-        if mpfr_nan_p(self.value) or mpfr_inf_p(self.value):
-            raise ValueError('cannot convert NaN or infinity to Pari float')
-
-        # wordsize for PARI
-        cdef unsigned long wordsize = sizeof(long)*8
-
-        cdef mpfr_prec_t prec
-        prec = (<RealField_class>self._parent).__prec
-
-        # We round up the precision to the nearest multiple of wordsize.
-        cdef int rounded_prec
-        rounded_prec = (self.prec() + wordsize - 1) & ~(wordsize - 1)
-
-        # Yes, assigning to self works fine, even in Cython.
-        if rounded_prec > prec:
-            self = RealField(rounded_prec)(self)
-
-        cdef mpz_t mantissa
-        cdef mp_exp_t exponent
-        cdef GEN pari_float
-
-        sig_on()
-        if mpfr_zero_p(self.value):
-            pari_float = real_0_bit(-rounded_prec)
-        else:
-            # Now we can extract the mantissa, and it will be normalized
-            # (the most significant bit of the most significant word will be 1).
-            mpz_init(mantissa)
-            exponent = mpfr_get_z_exp(mantissa, self.value)
-
-            # Create a PARI REAL
-            pari_float = cgetr(2 + rounded_prec / wordsize)
-            pari_float[1] = evalexpo(exponent + rounded_prec - 1) + evalsigne(mpfr_sgn(self.value))
-            mpz_export(&pari_float[2], NULL, 1, wordsize // 8, 0, 0, mantissa)
-            mpz_clear(mantissa)
-
-        return new_gen(pari_float)
+        return new_gen_from_real_mpfr_element(self)
 
     def _mpmath_(self, prec=None, rounding=None):
         """
@@ -3414,7 +3329,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
             return RealField(prec)(self)._mpmath_()
         from sage.libs.mpmath.all import make_mpf
         return make_mpf(mpfr_to_mpfval(self.value))
-
 
     def sign_mantissa_exponent(self):
         r"""

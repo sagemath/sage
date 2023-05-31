@@ -218,9 +218,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
              Multivariate Polynomial Ring in z0, z1, z2 over Integer Ring
 
             sage: P.<x,y,z,w> = PolynomialRing(ZZ)
-            sage: P.completion(prec=oo)
+            sage: P.completion(prec=oo)                                                 # optional - sage.combinat
             Multivariate Lazy Taylor Series Ring in x, y, z, w over Integer Ring
-            sage: P.completion((w,x,y), prec=oo)
+            sage: P.completion((w,x,y), prec=oo)                                        # optional - sage.combinat
             Multivariate Lazy Taylor Series Ring in w, x, y over
              Univariate Polynomial Ring in z over Integer Ring
 
@@ -1174,16 +1174,16 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         Default values apply if no degree and/or number of terms is
         provided::
 
-            sage: M = random_matrix(QQ['x,y,z'], 2, 2)
-            sage: all(a.degree() <= 2 for a in M.list())
+            sage: M = random_matrix(QQ['x,y,z'], 2, 2)                                  # optional - sage.modules
+            sage: all(a.degree() <= 2 for a in M.list())                                # optional - sage.modules
             True
-            sage: all(len(list(a)) <= 5 for a in M.list())
+            sage: all(len(list(a)) <= 5 for a in M.list())                              # optional - sage.modules
             True
 
-            sage: M = random_matrix(QQ['x,y,z'], 2, 2, terms=1, degree=2)
-            sage: all(a.degree() <= 2 for a in M.list())
+            sage: M = random_matrix(QQ['x,y,z'], 2, 2, terms=1, degree=2)               # optional - sage.modules
+            sage: all(a.degree() <= 2 for a in M.list())                                # optional - sage.modules
             True
-            sage: all(len(list(a)) <= 1 for a in M.list())
+            sage: all(len(list(a)) <= 1 for a in M.list())                              # optional - sage.modules
             True
 
             sage: P.random_element(0, 1) in QQ

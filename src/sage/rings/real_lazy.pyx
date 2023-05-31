@@ -14,9 +14,9 @@ TESTS:
 
 Bug :trac:`21991`::
 
-    sage: a = QuadraticField(5).gen()
-    sage: u = -573147844013817084101/2*a + 1281597540372340914251/2
-    sage: RealIntervalField(128)(RLF(u)).is_exact()
+    sage: a = QuadraticField(5).gen()                                                   # optional - sage.rings.number_field
+    sage: u = -573147844013817084101/2*a + 1281597540372340914251/2                     # optional - sage.rings.number_field
+    sage: RealIntervalField(128)(RLF(u)).is_exact()                                     # optional - sage.rings.number_field
     False
 """
 
@@ -48,9 +48,13 @@ from sage.rings.integer import Integer
 
 cdef QQ, RR, CC, RealField, ComplexField
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR, RealField
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.cc import CC
+
+try:
+    from sage.rings.real_mpfr import RR, RealField
+    from sage.rings.complex_mpfr import ComplexField
+    from sage.rings.cc import CC
+except ImportError:
+    pass
 
 cdef _QQx = None
 
@@ -812,7 +816,6 @@ cdef class LazyFieldElement(FieldElement):
         try:
             return self.eval(complex)
         except Exception:
-            from .complex_mpfr import ComplexField
             return complex(self.eval(ComplexField(53)))
 
     cpdef eval(self, R):
