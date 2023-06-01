@@ -347,7 +347,7 @@ class AmbientSpace(CombinatorialFreeModule):
             - :meth:`CartanType.col_annihilator`
             - :meth:`null_root`
         """
-        cartan_type  = self.cartan_type()
+        cartan_type = self.cartan_type()
         special_node = cartan_type.special_node()
         if i == special_node:
             return self(self._classical_alpha_0()) + self.monomial("delta")

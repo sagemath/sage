@@ -672,7 +672,7 @@ if [ "$1" = '-maxima' -o "$1" = '--maxima' ]; then
     shift
     maxima_cmd=$(sage-config MAXIMA 2>/dev/null)
     if [ -z "${maxima_cmd}" ]; then
-        maxima_cmd="maxima -l ecl"
+        maxima_cmd="maxima"
     fi
     exec $maxima_cmd "$@"
 fi

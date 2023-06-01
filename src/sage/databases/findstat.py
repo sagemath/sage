@@ -2919,7 +2919,6 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         webbrowser.open(FINDSTAT_URL_STATISTICS + self.id_str())
 
-
     def info(self):
         """
         Print a detailed description of the compound statistic.
@@ -4188,7 +4187,7 @@ class FindStatCollection(Element,
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatCollections
-            sage: set(c for c in FindStatCollections())                         # optional -- internet
+            sage: set(FindStatCollections())           # optional -- internet
             {Cc0001: Permutations,
              Cc0002: Integer partitions,
              ...

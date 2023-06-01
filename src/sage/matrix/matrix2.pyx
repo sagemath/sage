@@ -79,6 +79,7 @@ AUTHORS:
 from cpython cimport *
 from cysignals.signals cimport sig_check
 
+from sage.misc.lazy_string import lazy_string
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
@@ -89,7 +90,7 @@ from sage.misc.verbose import verbose, get_verbose
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.ring import is_Ring
-from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ, is_RationalField
@@ -4457,7 +4458,7 @@ cdef class Matrix(Matrix1):
             raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
         elif algorithm == 'flint' and not (is_IntegerRing(R) or is_RationalField(R)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'pari' and not (is_IntegerRing(R) or (is_NumberField(R) and not is_RationalField(R))):
+        elif algorithm == 'pari' and not (is_IntegerRing(R) or (isinstance(R, NumberField) and not is_RationalField(R))):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
@@ -4514,7 +4515,7 @@ cdef class Matrix(Matrix1):
             except AttributeError:
                 pass
 
-        if M is None and is_NumberField(R):
+        if M is None and isinstance(R, NumberField):
             format, M = self._right_kernel_matrix_over_number_field()
 
         if M is None and R in _Fields:
@@ -4912,11 +4913,10 @@ cdef class Matrix(Matrix1):
         """
         K = self.fetch('right_kernel')
         if K is not None:
-            verbose("retrieving cached right kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
         R = self.base_ring()
-        tm = verbose("computing a right kernel for %sx%s matrix over %s" % (self.nrows(), self.ncols(), R),level=1)
+        tm = verbose(lazy_string("computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1)
 
         # Sanitize basis format
         #   'computed' is OK in right_kernel_matrix(), but not here
@@ -4938,7 +4938,7 @@ cdef class Matrix(Matrix1):
         else:
             K = ambient.submodule_with_basis(M.rows(), already_echelonized=False, check=False)
 
-        verbose("done computing a right kernel for %sx%s matrix over %s" % (self.nrows(), self.ncols(), R),level=1, t=tm)
+        verbose(lazy_string("done computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1, t=tm)
         self.cache('right_kernel', K)
         return K
 
@@ -5088,7 +5088,6 @@ cdef class Matrix(Matrix1):
         """
         K = self.fetch('left_kernel')
         if K is not None:
-            verbose("retrieving cached left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
         tm = verbose("computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
@@ -7951,11 +7950,11 @@ cdef class Matrix(Matrix1):
             [ 1.00 0.000  10.0]
             [0.000  1.00  1.00]
         """
-        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
         cdef Py_ssize_t start_row, c, r, nr, nc, i, best_r
         if self.fetch('in_echelon_form'):
             return self.fetch('pivots')
 
+        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
         self.check_mutability()
         cdef Matrix A
 
@@ -10366,7 +10365,6 @@ cdef class Matrix(Matrix1):
             [2 3]
             [0 1]
         """
-        from sage.modules.free_module_element import zero_vector
         from sage.matrix.constructor import zero_matrix, matrix
         from sage.misc.functional import sqrt
 
@@ -15427,9 +15425,10 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Check that sparse matrices are handled correctly (:trac:`28935`)::
+        Sparse matrices are handled correctly (:trac:`28935`), but may
+        require a patched version of maxima (:trac:`32898`) for now::
 
-            sage: matrix.diagonal([0], sparse=True).exp()
+            sage: matrix.diagonal([0], sparse=True).exp()  # not tested, requires patched maxima
             [1]
             sage: matrix.zero(CBF, 2, sparse=True).exp()
             [1.000000000000000                 0]
@@ -17062,8 +17061,9 @@ cdef class Matrix(Matrix1):
 
             sage: K1 = random_cone(max_ambient_dim=5)
             sage: K2 = random_cone(max_ambient_dim=5)
-            sage: all(L.change_ring(SR).is_positive_operator_on(K1, K2)
-            ....:     for L in K1.positive_operators_gens(K2))  # long time
+            sage: results = ( L.change_ring(SR).is_positive_operator_on(K1, K2)
+            ....:             for L in K1.positive_operators_gens(K2) )
+            sage: all(results)  # long time
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17210,8 +17210,9 @@ cdef class Matrix(Matrix1):
         ``cross_positive_operators_gens`` method)::
 
             sage: K = random_cone(max_ambient_dim=5)
-            sage: all(L.change_ring(SR).is_cross_positive_on(K)
-            ....:     for L in K.cross_positive_operators_gens())  # long time
+            sage: results = ( L.change_ring(SR).is_cross_positive_on(K)
+            ....:             for L in K.cross_positive_operators_gens() )
+            sage: all(results)  # long time
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17346,8 +17347,8 @@ cdef class Matrix(Matrix1):
         case is tested by the ``Z_operators_gens`` method)::
 
             sage: K = random_cone(max_ambient_dim=5)
-            sage: all(L.change_ring(SR).is_Z_operator_on(K)
-            ....:     for L in K.Z_operators_gens())  # long time
+            sage: all(L.change_ring(SR).is_Z_operator_on(K)  # long time
+            ....:     for L in K.Z_operators_gens())
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17464,8 +17465,8 @@ cdef class Matrix(Matrix1):
         ``lyapunov_like_basis`` method)::
 
             sage: K = random_cone(max_ambient_dim=5)
-            sage: all(L.change_ring(SR).is_lyapunov_like_on(K)
-            ....:     for L in K.lyapunov_like_basis())  # long time
+            sage: all(L.change_ring(SR).is_lyapunov_like_on(K)  # long time
+            ....:     for L in K.lyapunov_like_basis())
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17504,8 +17505,8 @@ cdef class Matrix(Matrix1):
             sage: R = K.lattice().vector_space().base_ring()
             sage: L = random_matrix(R, K.lattice_dim())
             sage: actual = L.is_lyapunov_like_on(K)          # long time
-            sage: expected = (L.is_cross_positive_on(K) and
-            ....:             (-L).is_cross_positive_on(K))  # long time
+            sage: expected = (L.is_cross_positive_on(K) and  # long time
+            ....:             (-L).is_cross_positive_on(K))
             sage: actual == expected                         # long time
             True
         """

@@ -2069,7 +2069,7 @@ class IncidenceStructure():
             raise RuntimeError("No coloring can be defined "
                                "when there is a set of size 1")
         elif k == 1:
-            if any(x for x in self._blocks):
+            if any(self._blocks):
                 raise ValueError("This hypergraph contains a set. "
                                  "It is not 1-chromatic")
             return [self.ground_set()]
@@ -2201,7 +2201,7 @@ class IncidenceStructure():
             # verify that :trac:`30976` is fixed
             sage: IS = IncidenceStructure([1,2,3], [[1,2], [2,3]])
             sage: if latex.has_file("tikz.sty"):          # optional - latex
-            ....:     IS._latex_()                        # optional - latex
+            ....:     IS._latex_()
             ...UserWarning:
             The hypergraph is drawn as a set of closed curves...
             \begin{tikzpicture}...

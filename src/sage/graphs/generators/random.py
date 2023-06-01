@@ -78,13 +78,13 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
         sage: for i in range(9):
         ....:     k = graphs.RandomGNP(i+3,.43)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show() # long time                                                      # optional - sage.plot
         sage: graphs.RandomGNP(4,1)
         Complete graph: Graph on 4 vertices
 
@@ -167,13 +167,13 @@ def RandomBarabasiAlbert(n, m, seed=None):
         sage: for i in range(1,10):
         ....:     k = graphs.RandomBarabasiAlbert(i+3, 3)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     When `m = 1`, the generated graph is a tree::
 
@@ -694,13 +694,13 @@ def RandomGNM(n, m, dense=False, seed=None):
         sage: for i in range(9):
         ....:     k = graphs.RandomGNM(i+3, i^2-i)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -1443,8 +1443,8 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
     ::
 
         sage: G = graphs.RandomTreePowerlaw(15, 2)
-        sage: if G:
-        ....:     G.show()  # random output, long time
+        sage: if G:                                   # random output, long time
+        ....:     G.show()
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -1483,8 +1483,8 @@ def RandomRegular(d, n, seed=None):
     ::
 
         sage: G = graphs.RandomRegular(3, 20)
-        sage: if G:
-        ....:     G.show()  # random output, long time
+        sage: if G:                           # random output, long time
+        ....:     G.show()
 
     REFERENCES:
 
@@ -1889,7 +1889,7 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
         True
         sage: G.girth()
         3
-        sage: G.plot(vertex_size=0, vertex_labels=False)
+        sage: G.plot(vertex_size=0, vertex_labels=False)                                # optional - sage.plot
         Graphics object consisting of 13 graphics primitives
 
         sage: H = graphs.RandomTriangulation(7, k=5)
@@ -2106,9 +2106,9 @@ def RandomBicubicPlanar(n, seed=None):
         True
         sage: G.is_bipartite() and G.is_planar() and G.is_regular(3)
         True
-        sage: dic = {'red':[v for v in G.vertices(sort=False) if v[0] == 'n'],
+        sage: dic = {'red': [v for v in G.vertices(sort=False) if v[0] == 'n'],
         ....:        'blue': [v for v in G.vertices(sort=False) if v[0] != 'n']}
-        sage: G.plot(vertex_labels=False,vertex_size=20,vertex_colors=dic)
+        sage: G.plot(vertex_labels=False, vertex_size=20, vertex_colors=dic)            # optional - sage.plot
         Graphics object consisting of ... graphics primitives
 
     .. PLOT::

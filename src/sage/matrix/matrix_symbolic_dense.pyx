@@ -154,7 +154,7 @@ Check that :trac:`12778` is fixed::
     Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
 """
 
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
@@ -402,7 +402,8 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [1/2*(e^(2*x) + 1)*e^(-x) 1/2*(e^(2*x) - 1)*e^(-x)]
             [1/2*(e^(2*x) - 1)*e^(-x) 1/2*(e^(2*x) + 1)*e^(-x)]
 
-        Exp works on 0x0 and 1x1 matrices::
+        Exponentiation works on 0x0 and 1x1 matrices, but the 1x1 example
+        requires a patched version of maxima (:trac:`32898`) for now::
 
             sage: m = matrix(SR,0,[]); m
             []
@@ -410,7 +411,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             []
             sage: m = matrix(SR,1,[2]); m
             [2]
-            sage: m.exp()
+            sage: m.exp()  # not tested, requires patched maxima
             [e^2]
 
         Commuting matrices `m, n` have the property that
@@ -451,7 +452,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [                       0 1/2*(e^(2*x) + 1)*e^(-x) 1/2*(e^(2*x) - 1)*e^(-x)                        0]
             [                       0 1/2*(e^(2*x) - 1)*e^(-x) 1/2*(e^(2*x) + 1)*e^(-x)                        0]
             [1/2*(e^(2*x) - 1)*e^(-x)                        0                        0 1/2*(e^(2*x) + 1)*e^(-x)]
-
         """
         if not self.is_square():
             raise ValueError("exp only defined on square matrices")

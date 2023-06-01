@@ -256,7 +256,7 @@ block_dp_asc = int(pbblock_dp_asc)
 rings = sage.misc.weak_dict.WeakValueDictionary()
 
 
-cdef class BooleanPolynomialRing(MPolynomialRing_base):
+cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
     """
     Construct a boolean polynomial ring with the following parameters:
 
@@ -409,7 +409,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             pbnames = tuple(names)
             names = [name.replace('(', '').replace(')', '') for name in pbnames]
 
-        MPolynomialRing_base.__init__(self, GF((2,1)), n, names, order)
+        BooleanPolynomialRing_base.__init__(self, GF((2,1)), n, names, order)
 
         counter = 0
         for i in range(len(order.blocks()) - 1):
@@ -2857,11 +2857,14 @@ cdef class BooleanMonomialVariableIterator:
             sage: next(iter(m))
             x
         """
+        cdef int index
         cdef PBVar value
         if self._iter == self._end:
             raise StopIteration
-        value = self._iter.dereference()
+        index = self._iter.dereference()
         self._iter.increment()
+        value = PBBooleVariable(self.pbind[index],
+                                (<BooleanPolynomialRing>self._ring)._pbring)
         return new_BM_from_PBVar(self.parent, self._ring, value)
 
 cdef inline BooleanMonomialVariableIterator new_BMVI_from_BooleanMonomial(
@@ -2875,8 +2878,9 @@ cdef inline BooleanMonomialVariableIterator new_BMVI_from_BooleanMonomial(
     m.parent = monom._parent
     m._ring = monom._ring
     m.obj = monom
-    m._iter = m.obj._pbmonom.variableBegin()
-    m._end = m.obj._pbmonom.variableEnd()
+    m._iter = m.obj._pbmonom.begin()
+    m._end = m.obj._pbmonom.end()
+    m.pbind = (<BooleanPolynomialRing> monom.ring()).pbind
     return m
 
 
@@ -7615,7 +7619,7 @@ cdef BooleanPolynomialRing BooleanPolynomialRing_from_PBRing(PBRing _ring):
 
     self._pbring = _ring
 
-    MPolynomialRing_base.__init__(self, GF(2), n, names, T)
+    BooleanPolynomialRing_base.__init__(self, GF(2), n, names, T)
 
     self._zero_element = new_BP(self)
     (<BooleanPolynomial>self._zero_element)._pbpoly = PBBoolePolynomial(0, self._pbring)

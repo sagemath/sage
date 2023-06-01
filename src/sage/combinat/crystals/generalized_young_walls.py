@@ -452,7 +452,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         """
         signature = self.generate_signature(i)
         raw_signature = signature[0]
-        lastminus  = signature[1].rfind('-')
+        lastminus = signature[1].rfind('-')
         newdata = []
         if lastminus > -1:
             deletionrow = raw_signature[lastminus][1]
@@ -562,8 +562,8 @@ class GeneralizedYoungWall(CombinatorialElement):
             for i in r:
                 W.append(-1*alpha[i])
         if not root_lattice:
-            return E(sum(w for w in W))
-        return L(sum(w for w in W))
+            return E(sum(W))
+        return L(sum(W))
 
     def epsilon(self, i):
         r"""
@@ -725,7 +725,7 @@ class GeneralizedYoungWall(CombinatorialElement):
                 else:
                     p_not_found = True
                     for p in index_set:
-                        if (j+k) % (n+1)  == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
+                        if (j+k) % (n+1) == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
                             p_not_found = False
                             continue
                         else:

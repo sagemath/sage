@@ -59,7 +59,7 @@ Test hashing::
     1997752305           # 32-bit
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004,2005,2006 William Stein <wstein@gmail.com>
 #                     2017 Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -67,8 +67,8 @@ Test hashing::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.string cimport strcpy, strlen
 
@@ -80,7 +80,7 @@ from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
 
-from cysignals.signals cimport sig_on, sig_off, sig_check
+from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
@@ -88,8 +88,12 @@ from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
 from sage.libs.gmp.types cimport mpz_t, mpq_t
 from sage.libs.gmp.mpz cimport mpz_init, mpz_clear, mpz_cmp_si
 from sage.libs.gmp.mpq cimport mpq_init, mpq_clear, mpq_set_si, mpq_mul, mpq_add, mpq_set
-from sage.libs.gmp.randomize cimport (mpq_randomize_entry, mpq_randomize_entry_as_int, mpq_randomize_entry_recip_uniform,
-    mpq_randomize_entry_nonzero, mpq_randomize_entry_as_int_nonzero, mpq_randomize_entry_recip_uniform_nonzero)
+from sage.libs.gmp.randomize cimport (mpq_randomize_entry,
+                                      mpq_randomize_entry_as_int,
+                                      mpq_randomize_entry_recip_uniform,
+                                      mpq_randomize_entry_nonzero,
+                                      mpq_randomize_entry_as_int_nonzero,
+                                      mpq_randomize_entry_recip_uniform_nonzero)
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpq cimport *
@@ -98,28 +102,22 @@ from sage.libs.flint.fmpq_mat cimport *
 
 cimport sage.structure.element
 
-from sage.structure.sequence import Sequence
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.rational cimport Rational
 from .matrix cimport Matrix
 from .args cimport SparseEntry, MatrixArgs_init
 from .matrix_integer_dense cimport Matrix_integer_dense, _lift_crt
-from sage.structure.element cimport ModuleElement, RingElement, Element, Vector
+from sage.structure.element cimport Element, Vector
 from sage.rings.integer cimport Integer
 from sage.rings.ring import is_Ring
 from sage.rings.integer_ring import ZZ, is_IntegerRing
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 import sage.rings.abc
 from sage.rings.rational_field import QQ
-from sage.arith.misc import GCD as gcd
 
 from .matrix2 import decomp_seq
-from .matrix0 import Matrix as Matrix_base
+from sage.misc.verbose import verbose
 
-from sage.misc.misc_c import prod
-from sage.misc.verbose import verbose, get_verbose
-
-#########################################################
+# ########################################################
 # PARI C library
 from cypari2.gen cimport Gen
 from sage.libs.pari.all import PariError
@@ -127,7 +125,7 @@ from sage.libs.pari.convert_gmp cimport INTFRAC_to_mpq
 from sage.libs.pari.convert_flint cimport rational_matrix, _new_GEN_from_fmpq_mat_t
 from cypari2.stack cimport clear_stack
 from cypari2.paridecl cimport *
-#########################################################
+# ########################################################
 
 cdef class Matrix_rational_dense(Matrix_dense):
     def __cinit__(self):
@@ -158,7 +156,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         return Matrix_rational_dense.__new__(Matrix_rational_dense, parent, None, None, None)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         fmpq_mat_clear(self._matrix)
 
     def __init__(self, parent, entries=None, copy=None, bint coerce=True):
@@ -216,7 +214,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [8 7 6 8]
         """
         cdef Matrix_rational_dense A
-        cdef Py_ssize_t ncols, k, r, col
+        cdef Py_ssize_t k, r, col
 
         A = self._new_matrix(self._nrows, len(columns))
         k = 0
@@ -299,7 +297,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         if version == 0:
             self._unpickle_version0(data)
         else:
-            raise RuntimeError("unknown matrix version (=%s)"%version)
+            raise RuntimeError("unknown matrix version (=%s)" % version)
 
     cdef _pickle_version0(self):
         return self._export_as_string(32)
@@ -322,7 +320,6 @@ cdef class Matrix_rational_dense(Matrix_dense):
             '1 2/3 -3/4 1 -2/3 -2d/11'
         """
         cdef Py_ssize_t i, j, len_so_far, m, n
-        cdef char *a
         cdef char *s
         cdef char *t
         cdef char *tmp
@@ -388,7 +385,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
                         raise RuntimeError("invalid pickle data")
                     fmpz_one(fmpq_mat_entry_den(self._matrix, i, j))
 
-    ########################################################################
+    # #######################################################################
     # LEVEL 2 functionality
     # x * cdef _add_
     # x * cdef _mul_
@@ -400,7 +397,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
     # x * _multiply_classical
     #   * _list -- list of underlying elements (need not be a copy)
     #   * _dict -- sparse dictionary of underlying elements (need not be a copy)
-    ########################################################################
+    # #######################################################################
 
     cpdef _lmul_(self, Element right):
         """
@@ -547,7 +544,6 @@ cdef class Matrix_rational_dense(Matrix_dense):
         mpq_clear(z)
         return ans
 
-
     def __neg__(self):
         """
         Negate a matrix over QQ.
@@ -595,7 +591,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         ans._subdivisions = self._subdivisions
         return ans
 
-    ########################################################################
+    # #######################################################################
     # LEVEL 3 functionality (Optional)
     # x * cdef _sub_
     #   * __deepcopy__
@@ -606,7 +602,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
     # x * mpz_denom(self, mpz_t d):
     # x * _clear_denom(self):
     # o * echelon_modular(self, height_guess=None):
-    ########################################################################
+    # #######################################################################
     def __invert__(self):
         """
         EXAMPLES::
@@ -755,7 +751,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             return (denom/d)*B
 
         else:
-            raise ValueError("unknown algorithm '%s'"%algorithm)
+            raise ValueError("unknown algorithm '%s'" % algorithm)
 
     def determinant(self, algorithm=None, proof=None):
         """
@@ -855,7 +851,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         elif algorithm == "generic":
             det = Matrix_dense.determinant(self)
         else:
-            raise ValueError("unknown algorithm '%s'"%algorithm)
+            raise ValueError("unknown algorithm '%s'" % algorithm)
 
         self.cache('det', det)
         return det
@@ -954,7 +950,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         from sage.matrix.matrix_space import MatrixSpace
         MZ = MatrixSpace(ZZ, self._nrows, self._ncols, sparse=False)
-        A =  Matrix_integer_dense.__new__(Matrix_integer_dense, MZ, None, None, None)
+        A = Matrix_integer_dense.__new__(Matrix_integer_dense, MZ, None, None, None)
 
         sig_on()
         for i in range(self._nrows):
@@ -1050,7 +1046,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         elif algorithm == 'generic':
             g = Matrix_dense.charpoly(self, var)
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
         self.cache('charpoly', g)
         return g
@@ -1127,7 +1123,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         elif algorithm == 'generic':
             g = Matrix_dense.minpoly(self, var)
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
         self.cache('minpoly', g)
         return g
@@ -1228,7 +1224,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             AB = A*B
         else:
             sig_off()
-            raise ValueError("unknown algorithm '%s'"%algorithm)
+            raise ValueError("unknown algorithm '%s'" % algorithm)
         D = A_denom * B_denom
         if self._nrows == right._nrows:
             # self acts on the space of right
@@ -1245,7 +1241,6 @@ cdef class Matrix_rational_dense(Matrix_dense):
                 fmpq_canonicalise(fmpq_mat_entry(res._matrix, i, j))
         sig_off()
         return res
-
 
     def height(self):
         """
@@ -1323,7 +1318,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         X, d = self._clear_denom()
         s = X._magma_init_(magma).replace('IntegerRing','RationalField')
         if d != 1:
-            s += '/%s'%d._magma_init_(magma)
+            s += '/%s' % d._magma_init_(magma)
         return s
 
     def prod_of_row_sums(self, cols):
@@ -1420,9 +1415,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         verbose("done computing right kernel matrix over the rationals for %sx%s matrix" % (self.nrows(), self.ncols()),level=1, t=tm)
         return 'computed-iml-rational', K
 
-    ################################################
+    # ###############################################
     # Change ring
-    ################################################
+    # ###############################################
     def change_ring(self, R):
         """
         Create the matrix over R with entries the entries of self coerced
@@ -1494,11 +1489,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         # fallback to the generic version
         return Matrix_dense.change_ring(self, R)
 
-
-
-    ################################################
+    # ###############################################
     # Echelon form
-    ################################################
+    # ###############################################
     def echelonize(self, algorithm=None,
                    height_guess=None, proof=None, **kwds):
         """
@@ -1565,8 +1558,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
             ....:      a.echelonize(algorithm=algo)
             ....:      assert sorted(a._cache.keys()) == ['echelon_form', 'in_echelon_form', 'pivots', 'rank'], (algo, a._cache.keys())
         """
-
-        if self.fetch('in_echelon_form'): return  # already known to be in echelon form
+        if self.fetch('in_echelon_form'):
+            return  # already known to be in echelon form
         self.check_mutability()
 
         if algorithm is None:
@@ -1584,7 +1577,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         elif algorithm == 'padic':
             pivots = self._echelonize_padic()
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
         if type(pivots) is not tuple:
             raise RuntimeError("BUG: pivots must get set as a tuple. Got {} for algo {} with {}x{} matrix.".format(
@@ -1752,7 +1745,6 @@ cdef class Matrix_rational_dense(Matrix_dense):
             # 1 at pivot
             fmpq_one(fmpq_mat_entry(self._matrix, i, pivots[i]))
 
-
             # nonzero part
             for j in range(X.ncols()):
                 entry = fmpq_mat_entry(self._matrix, i, nonpivots[j])
@@ -1817,7 +1809,6 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.clear_cache()
         fmpq_mat_swap(self._matrix, (<Matrix_rational_dense>E)._matrix)
         return pivots
-
 
     cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2):
         """
@@ -1926,13 +1917,14 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         """
         X = self._decomposition_rational(is_diagonalizable=is_diagonalizable,
-                                         echelon_algorithm = algorithm,
-                                         height_guess = height_guess, proof=proof)
-        if dual:
-            Y = self.transpose()._decomposition_rational(is_diagonalizable=is_diagonalizable,
-                   echelon_algorithm = algorithm, height_guess = height_guess, proof=proof)
-            return X, Y
-        return X
+                                         echelon_algorithm=algorithm,
+                                         height_guess=height_guess, proof=proof)
+        if not dual:
+            return X
+
+        Y = self.transpose()._decomposition_rational(is_diagonalizable=is_diagonalizable,
+            echelon_algorithm=algorithm, height_guess=height_guess, proof=proof)
+        return X, Y
 
     def _decomposition_rational(self, is_diagonalizable = False,
                                 echelon_algorithm=None,
@@ -2003,7 +1995,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         v = V.random_element()
         num_iterates = max([0] + [f.degree() - g.degree() for g, _ in F if g.degree() > 1]) + 1
 
-        S = [ ]
+        S = []
 
         F.sort()
         for i in range(len(F)):
@@ -2031,15 +2023,15 @@ cdef class Matrix_rational_dense(Matrix_dense):
                 v = h.list()
 
                 while len(S) < tries:
-                    t = verbose('%s-spinning %s-th random vector'%(num_iterates, len(S)),
+                    t = verbose('%s-spinning %s-th random vector' % (num_iterates, len(S)),
                                 level=2, caller_name='rational decomp')
                     S.append(A.iterates(V.random_element(x=-10,y=10), num_iterates))
                     verbose('done spinning', level=2, t=t, caller_name='rational decomp')
 
                 for j in range(0 if W is None else W.nrows() // g.degree(), len(S)):
                     # Compute one element of the kernel of g(A)**m.
-                    t = verbose('compute element of kernel of g(A), for g of degree %s'%g.degree(),level=2,
-                            caller_name='rational decomp')
+                    t = verbose('compute element of kernel of g(A), for g of degree %s' % g.degree(), level=2,
+                                caller_name='rational decomp')
                     w = S[j].linear_combination_of_rows(h.list())
                     t = verbose('done computing element of kernel of g(A)', t=t,level=2, caller_name='rational decomp')
 
@@ -2059,141 +2051,137 @@ cdef class Matrix_rational_dense(Matrix_dense):
                     verbose('computed row space', level=2,t=t, caller_name='rational decomp')
                     break
                 else:
-                    verbose('we have not yet generated all the kernel (rank so far=%s, target rank=%s)'%(
-                        W.rank(), m*g.degree()), level=2, caller_name='rational decomp')
+                    verbose('we have not yet generated all the kernel (rank so far=%s, target rank=%s)' % (W.rank(), m*g.degree()),
+                            level=2, caller_name='rational decomp')
                     tries += 1
                     if tries > 5*m:
                         raise RuntimeError("likely bug in decomposition")
                 # end if
-            #end while
-        #end for
+            # end while
+        # end for
         return decomp_seq(E)
 
+#      def simple_decomposition(self, echelon_algorithm='default', **kwds):
+#          """
+#          Returns the decomposition of the free module on which this
+#          matrix A acts from the right (i.e., the action is x goes to x
+#          A), as a direct sum of simple modules.
 
-##     def simple_decomposition(self, echelon_algorithm='default', **kwds):
-##         """
-##         Returns the decomposition of the free module on which this
-##         matrix A acts from the right (i.e., the action is x goes to x
-##         A), as a direct sum of simple modules.
+#          NOTE: self *must* be diagonalizable.
 
-##         NOTE: self *must* be diagonalizable.
+#          INPUT:
+#              self -- a square matrix that is assumed to be diagonalizable
+#              echelon_algorithm -- 'default'
+#                                   'multimodular' -- use this if the answers
+#                                   have small height
+#              **kwds -- passed on to echelon function.
 
-##         INPUT:
-##             self -- a square matrix that is assumed to be diagonalizable
-##             echelon_algorithm -- 'default'
-##                                  'multimodular' -- use this if the answers
-##                                  have small height
-##             **kwds -- passed on to echelon function.
+#          IMPORTANT NOTE:
+#          If you expect that the subspaces in the answer are spanned by vectors
+#          with small height coordinates, use algorithm='multimodular' and
+#          height_guess=1; this is potentially much faster than the default.
+#          If you know for a fact the answer will be very small, use
+#             algorithm='multimodular', height_guess=bound on height, proof=False
 
-##         IMPORTANT NOTE:
-##         If you expect that the subspaces in the answer are spanned by vectors
-##         with small height coordinates, use algorithm='multimodular' and
-##         height_guess=1; this is potentially much faster than the default.
-##         If you know for a fact the answer will be very small, use
-##            algorithm='multimodular', height_guess=bound on height, proof=False
+#          OUTPUT:
+#              Sequence -- list of tuples (V,g), where V is a subspace
+#                          and an irreducible polynomial g, which is the
+#                          charpoly (=minpoly) of self acting on V.
+#          """
+#          cdef Py_ssize_t k
 
-##         OUTPUT:
-##             Sequence -- list of tuples (V,g), where V is a subspace
-##                         and an irreducible polynomial g, which is the
-##                         charpoly (=minpoly) of self acting on V.
-##         """
-##         cdef Py_ssize_t k
+#          if not self.is_square():
+#              raise ArithmeticError("self must be a square matrix")
 
-##         if not self.is_square():
-##             raise ArithmeticError("self must be a square matrix")
+#          if self.nrows() == 0:
+#              return decomp_seq([])
 
-##         if self.nrows() == 0:
-##             return decomp_seq([])
+#          A, _ = self._clear_denom()
 
-##         A, _ = self._clear_denom()
+#          f = A.charpoly('x')
+#          E = decomp_seq([])
 
-##         f = A.charpoly('x')
-##         E = decomp_seq([])
+#          t = verbose('factoring the characteristic polynomial', level=2, caller_name='simple decomp')
+#          F = f.factor()
+#          G = [g for g, _ in F]
+#          minpoly = prod(G)
+#          squarefree_degree = sum([g.degree() for g in G])
+#          verbose('done factoring', t=t, level=2, caller_name='simple decomp')
 
-##         t = verbose('factoring the characteristic polynomial', level=2, caller_name='simple decomp')
-##         F = f.factor()
-##         G = [g for g, _ in F]
-##         minpoly = prod(G)
-##         squarefree_degree = sum([g.degree() for g in G])
-##         verbose('done factoring', t=t, level=2, caller_name='simple decomp')
+#          V = ZZ**self.nrows()
+#          v = V.random_element()
+#          num_iterates = max([squarefree_degree - g.degree() for g in G]) + 1
 
-##         V = ZZ**self.nrows()
-##         v = V.random_element()
-##         num_iterates = max([squarefree_degree - g.degree() for g in G]) + 1
+#          S = [ ]
 
-##         S = [ ]
+#          F.sort()
+#          for i in range(len(F)):
+#              g, m = F[i]
 
-##         F.sort()
-##         for i in range(len(F)):
-##             g, m = F[i]
+#              if g.degree() == 1:
+#                  # Just use kernel -- much easier.
+#                  B = A.__copy__()
+#                  for k from 0 <= k < A.nrows():
+#                      B[k,k] += g[0]
+#                  if m > 1 and not is_diagonalizable:
+#                      B = B**m
+#                  W = B.change_ring(QQ).kernel()
+#                  for b in W.basis():
+#                      E.append((W.span(b), g))
+#                  continue
 
-##             if g.degree() == 1:
-##                 # Just use kernel -- much easier.
-##                 B = A.__copy__()
-##                 for k from 0 <= k < A.nrows():
-##                     B[k,k] += g[0]
-##                 if m > 1 and not is_diagonalizable:
-##                     B = B**m
-##                 W = B.change_ring(QQ).kernel()
-##                 for b in W.basis():
-##                     E.append((W.span(b), g))
-##                 continue
+#              # General case, i.e., deg(g) > 1:
+#              W = None
+#              while True:
 
-##             # General case, i.e., deg(g) > 1:
-##             W = None
-##             while True:
+#                  # Compute the complementary factor of the charpoly.
+#                  h = minpoly // g
+#                  v = h.list()
 
-##                 # Compute the complementary factor of the charpoly.
-##                 h = minpoly // g
-##                 v = h.list()
+#                  while len(S) < m:
+#                      t = verbose('%s-spinning %s-th random vector'%(num_iterates, len(S)),
+#                                  level=2, caller_name='simple decomp')
+#                      S.append(A.iterates(V.random_element(x=-10,y=10), num_iterates))
+#                      verbose('done spinning', level=2, t=t, caller_name='simple decomp')
 
-##                 while len(S) < m:
-##                     t = verbose('%s-spinning %s-th random vector'%(num_iterates, len(S)),
-##                                 level=2, caller_name='simple decomp')
-##                     S.append(A.iterates(V.random_element(x=-10,y=10), num_iterates))
-##                     verbose('done spinning', level=2, t=t, caller_name='simple decomp')
+#                  for j in range(len(S)):
+#                      # Compute one element of the kernel of g(A).
+#                      t = verbose('compute element of kernel of g(A), for g of degree %s'%g.degree(),level=2,
+#                              caller_name='simple decomp')
+#                      w = S[j].linear_combination_of_rows(h.list())
+#                      t = verbose('done computing element of kernel of g(A)', t=t,level=2, caller_name='simple decomp')
 
-##                 for j in range(len(S)):
-##                     # Compute one element of the kernel of g(A).
-##                     t = verbose('compute element of kernel of g(A), for g of degree %s'%g.degree(),level=2,
-##                             caller_name='simple decomp')
-##                     w = S[j].linear_combination_of_rows(h.list())
-##                     t = verbose('done computing element of kernel of g(A)', t=t,level=2, caller_name='simple decomp')
+#                      # Get the rest of the kernel.
+#                      t = verbose('fill out rest of kernel',level=2, caller_name='simple decomp')
+#                      if W is None:
+#                          W = A.iterates(w, g.degree())
+#                      else:
+#                          W = W.stack(A.iterates(w, g.degree()))
+#                      t = verbose('finished filling out more of kernel',level=2, t=t, caller_name='simple decomp')
 
-##                     # Get the rest of the kernel.
-##                     t = verbose('fill out rest of kernel',level=2, caller_name='simple decomp')
-##                     if W is None:
-##                         W = A.iterates(w, g.degree())
-##                     else:
-##                         W = W.stack(A.iterates(w, g.degree()))
-##                     t = verbose('finished filling out more of kernel',level=2, t=t, caller_name='simple decomp')
-
-##                 if W.rank() == m * g.degree():
-##                     W = W.change_ring(QQ)
-##                     t = verbose('now computing row space', level=2, caller_name='simple decomp')
-##                     W.echelonize(algorithm = echelon_algorithm, **kwds)
-##                     E.append((W.row_space(), m==1))
-##                     verbose('computed row space', level=2,t=t, caller_name='simple decomp')
-##                     break
-##                 else:
-##                     verbose('we have not yet generated all the kernel (rank so far=%s, target rank=%s)'%(
-##                         W.rank(), m*g.degree()), level=2, caller_name='simple decomp')
-##                     j += 1
-##                     if j > 3*m:
-##                         raise RuntimeError("likely bug in decomposition")
-##                 # end if
-##             #end while
-##         #end for
-##         return E
-
+#                  if W.rank() == m * g.degree():
+#                      W = W.change_ring(QQ)
+#                      t = verbose('now computing row space', level=2, caller_name='simple decomp')
+#                      W.echelonize(algorithm = echelon_algorithm, **kwds)
+#                      E.append((W.row_space(), m==1))
+#                      verbose('computed row space', level=2,t=t, caller_name='simple decomp')
+#                      break
+#                  else:
+#                      verbose('we have not yet generated all the kernel (rank so far=%s, target rank=%s)'%(
+#                          W.rank(), m*g.degree()), level=2, caller_name='simple decomp')
+#                      j += 1
+#                      if j > 3*m:
+#                          raise RuntimeError("likely bug in decomposition")
+#                  # end if
+#              #end while
+#          #end for
+#          return E
 
     def _lift_crt_rr(self, res, mm):
         cdef Integer m
         cdef Matrix_integer_dense ZA
         cdef Matrix_rational_dense QA
         cdef Py_ssize_t i, j
-        cdef mpz_t* Z_row
-        cdef mpq_t* Q_row
         cdef mpz_t tmp
         cdef mpq_t tmp2
         mpz_init(tmp)
@@ -2479,7 +2467,6 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         mpq_clear(tmp)
 
-
     def rank(self, algorithm=None):
         """
         Return the rank of this matrix.
@@ -2627,12 +2614,12 @@ cdef class Matrix_rational_dense(Matrix_dense):
         ans = Matrix_rational_dense.__new__(Matrix_rational_dense, parent, None, None, None)
 
         cdef Py_ssize_t i,j
-        cdef Py_ssize_t ri,rj # reversed i and j
+        cdef Py_ssize_t ri,rj  # reversed i and j
         sig_on()
         ri = self._nrows
         for i in range(self._nrows):
             rj = self._ncols
-            ri =  ri - 1
+            ri = ri - 1
             for j in range(self._ncols):
                 rj = rj - 1
                 fmpq_set(fmpq_mat_entry(ans._matrix, rj, ri),
@@ -2642,7 +2629,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
             ans.subdivide([self._ncols - t for t in reversed(col_divs)],
-                        [self._nrows - t for t in reversed(row_divs)])
+                          [self._nrows - t for t in reversed(row_divs)])
         return ans
 
     def set_row_to_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s):
@@ -2723,9 +2710,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
             fmpq_neg(entry, entry)
             l += 1
 
-
-    def _add_col_j_of_A_to_col_i_of_self(self,
-               Py_ssize_t i, Matrix_rational_dense A, Py_ssize_t j):
+    def _add_col_j_of_A_to_col_i_of_self(self, Py_ssize_t i,
+                                         Matrix_rational_dense A, Py_ssize_t j):
         """
         Unsafe technical function that very quickly adds the j-th column of
         A to the i-th column of self.
@@ -2740,10 +2726,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
                      fmpq_mat_entry(self._matrix, r, i),
                      fmpq_mat_entry(A._matrix, r, j))
 
-
-    #################################################
-    # Methods using PARI library                    #
-    #################################################
+    # ###############################################
+    # Methods using PARI library
+    # ###############################################
 
     def __pari__(self):
         """
@@ -2851,7 +2836,6 @@ cdef class Matrix_rational_dense(Matrix_dense):
         clear_stack()
         return A
 
-
     def row(self, Py_ssize_t i, from_list=False):
         """
         Return the i-th row of this matrix as a dense vector.
@@ -2940,9 +2924,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
             fmpq_get_mpq(v._entries[j], fmpq_mat_entry(self._matrix, j, i))
         return v
 
-    ################################################
+    # ###############################################
     # LLL
-    ################################################
+    # ###############################################
 
     def LLL(self, *args, **kwargs):
         """

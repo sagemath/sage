@@ -1,9 +1,9 @@
 
 .. _chapter-modularization:
 
-============================
- Packaging the Sage Library
-============================
+===========================================
+Packaging the Sage Library for Distribution
+===========================================
 
 
 Modules, packages, distribution packages
@@ -167,7 +167,7 @@ The source directory of a distribution package, such as
   the current development release is ``9.7.beta8``, then such a
   version could be marked ``9.7.beta8.post1``.
 
-  Also sometimes when working on tickets it may be necessary to
+  Also sometimes when working on PRs it may be necessary to
   increment the version because a new feature is needed in another
   distribution package. Such versions should be marked by using the
   version number of the anticipated next development release and
@@ -178,7 +178,7 @@ The source directory of a distribution package, such as
   use ``9.7.beta9.dev1``. If the current development release is
   the stable release ``9.8``, use ``9.9.beta0.dev1``.
 
-  After the ticket is merged in the next development version, it will
+  After the PR is merged in the next development version, it will
   be synchronized again with the other package versions.
 
 - ``setup.py`` -- a `setuptools <https://pypi.org/project/setuptools/>`_-based
@@ -567,6 +567,15 @@ doctests that depend on :class:`sage.symbolic.ring.SymbolicRing` for integration
 testing. Hence, these doctests are marked ``# optional -
 sage.symbolic``.
 
+When defining new features for the purpose of doctest annotations, it may be a good
+idea to hide implementation details from feature names. For example, all doctests that
+use finite fields have to depend on PARI. However, we have defined a feature
+:mod:`sage.rings.finite_rings` (which implies the presence of :mod:`sage.libs.pari`).
+Annotating the doctests ``# optional - sage.rings.finite_rings`` expresses the
+dependency in a clearer way than using ``# optional - sage.libs.pari``, and it
+will be a smaller maintenance burden when implementation details change.
+
+
 Testing the distribution in virtual environments with tox
 ---------------------------------------------------------
 
@@ -582,15 +591,13 @@ distribution to be tested (and its Python dependencies).
 
 Let's try it out first with the entire Sage library, represented by
 the distribution **sagemath-standard**.  Note that after Sage has been
-built normally, a set of wheels for all installed Python packages is
-available in ``SAGE_VENV/var/lib/sage/wheels/``::
+built normally, a set of wheels for most installed Python distribution
+packages is available in ``SAGE_VENV/var/lib/sage/wheels/``::
 
   $ ls venv/var/lib/sage/wheels
   Babel-2.9.1-py2.py3-none-any.whl
   Cython-0.29.24-cp39-cp39-macosx_11_0_x86_64.whl
   Jinja2-2.11.2-py2.py3-none-any.whl
-  ...
-  sage_conf-9.5b6-py3-none-any.whl
   ...
   scipy-1.7.2-cp39-cp39-macosx_11_0_x86_64.whl
   setuptools-58.2.0-py3-none-any.whl
@@ -598,6 +605,22 @@ available in ``SAGE_VENV/var/lib/sage/wheels/``::
   wheel-0.37.0-py2.py3-none-any.whl
   widgetsnbextension-3.5.1-py2.py3-none-any.whl
   zipp-3.5.0-py3-none-any.whl
+
+However, in a build of Sage with the default configuration
+``configure --enable-editable``, there will be no wheels for the
+distributions ``sage_*`` and ``sagemath-*``.
+
+To create these wheels, use the command ``make wheels``::
+
+  $ make wheels
+  ...
+  $ ls venv/var/lib/sage/wheels/sage*
+  ...
+  sage_conf-10.0b2-py3-none-any.whl
+  ...
+
+(You can also use ``./configure --enable-wheels`` to ensure that
+these wheels are always available and up to date.)
 
 Note in particular the wheel for **sage-conf**, which provides
 configuration variable settings and the connection to the non-Python
@@ -639,7 +662,7 @@ without depending on optional packages, but without the packages
 
 Again we can run the test with ``tox`` in a separate virtual environment::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
+  $ ./bootstrap && make wheels && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi-norequirements)'
 
 Some small distributions, for example the ones providing the two
 lowest levels, `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_

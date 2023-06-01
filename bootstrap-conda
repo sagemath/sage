@@ -11,14 +11,13 @@ STRIP_COMMENTS="sed s/#.*//;"
 shopt -s extglob
 
 DEVELOP_SPKG_PATTERN="@(_develop$(for a in $(head -n 1 build/pkgs/_develop/dependencies); do echo -n "|"$a; done))"
-
 BOOTSTRAP_PACKAGES=$(echo $(${STRIP_COMMENTS} build/pkgs/_bootstrap/distros/conda.txt))
 SYSTEM_PACKAGES=
 OPTIONAL_SYSTEM_PACKAGES=
 SAGELIB_SYSTEM_PACKAGES=
 SAGELIB_OPTIONAL_SYSTEM_PACKAGES=
 DEVELOP_SYSTEM_PACKAGES=
-for PKG_BASE in $(sage-package list --has-file distros/conda.txt); do
+for PKG_BASE in $(sage-package list --has-file distros/conda.txt --exclude _sagemath); do
     PKG_SCRIPTS=build/pkgs/$PKG_BASE
     SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/conda.txt
     PKG_TYPE=$(cat $PKG_SCRIPTS/type)
@@ -37,9 +36,12 @@ for PKG_BASE in $(sage-package list --has-file distros/conda.txt); do
                     ;;
             esac
         else
-            case "$PKG_TYPE" in
-                standard)
+            case "$PKG_BASE:$PKG_TYPE" in
+                *:standard)
                     SAGELIB_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                    ;;
+                $DEVELOP_SPKG_PATTERN:*)
+                    DEVELOP_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
                     ;;
                 *)
                     SAGELIB_OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"

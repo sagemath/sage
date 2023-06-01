@@ -112,7 +112,7 @@ from sage.rings.integer_ring cimport IntegerRing_class
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
-from sage.structure.element cimport ModuleElement, RingElement, Element, Vector
+from sage.structure.element cimport Element, Vector
 from sage.structure.element import is_Vector
 from sage.structure.sequence import Sequence
 
@@ -1542,7 +1542,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         cdef Matrix_integer_dense left = <Matrix_integer_dense>self
         cdef mod_int *moduli
         cdef int i, n, k
-        cdef object parent
 
         nr = left._nrows
         nc = right._ncols

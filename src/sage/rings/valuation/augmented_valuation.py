@@ -1109,7 +1109,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         # We only have to do that if psi is non-trivial
         if self.psi().degree() > 1:
             from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
-            from sage.rings.function_field.element import FunctionFieldElement_polymod
+            from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
             from sage.rings.number_field.number_field_element import NumberFieldElement_relative
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             if isinstance(F, PolynomialQuotientRingElement):

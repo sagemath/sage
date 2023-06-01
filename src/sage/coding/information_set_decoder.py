@@ -583,7 +583,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         def compute_estimate(p):
             iters = 1.* binomial(n, k)/ \
                 sum( binomial(n-tau, k-i)*binomial(tau,i) for i in range(p+1) )
-            estimate = iters*(T + \
+            estimate = iters*(T +
                 sum(P[pi] * (q-1)**pi * binomial(k, pi) for pi in range(p+1) ))
             return estimate
 
@@ -846,7 +846,7 @@ class LinearCodeInformationSetDecoder(Decoder):
             self._algorithm = algorithm_names[algorithm](code, number_errors, **kwargs)
         else:
             raise ValueError("Unknown ISD algorithm '{}'."
-                            " The known algorithms are {}."\
+                            " The known algorithms are {}."
                             .format(algorithm, sorted(algorithm_names)))
 
     _known_algorithms = {

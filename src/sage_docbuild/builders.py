@@ -145,7 +145,6 @@ def builder_helper(type):
         else:
             options += ' -D multidoc_first_pass=1'
 
-
         build_command = '-b %s -d %s %s %s %s' % (type, self._doctrees_dir(),
                                                   options, self.dir,
                                                   output_dir)
