@@ -431,7 +431,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S1 = simplicial_sets.Sphere(1)
+                    sage: S1 = simplicial_sets.Sphere(1)                                # optional - sage.graphs
                     sage: W = S1.wedge(S1)                                              # optional - sage.graphs
                     sage: G = CyclicPermutationGroup(3)                                 # optional - sage.groups
                     sage: a, b = W.n_cells(1)                                           # optional - sage.graphs
@@ -518,7 +518,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S1 = simplicial_sets.Sphere(1)
+                    sage: S1 = simplicial_sets.Sphere(1)                                # optional - sage.graphs
                     sage: W = S1.wedge(S1)                                              # optional - sage.graphs
                     sage: G = CyclicPermutationGroup(3)                                 # optional - sage.groups
                     sage: (a, b) = W.n_cells(1)                                         # optional - sage.graphs

@@ -2760,24 +2760,24 @@ class CategoryWithParameters(Category):
         On the other hand, modules over a field have more methods than
         modules over a ring::
 
-            sage: Modules(GF(3)).parent_class is Modules(ZZ).parent_class
+            sage: Modules(GF(3)).parent_class is Modules(ZZ).parent_class               # optional - sage.rings.finite_rings
             False
-            sage: Modules(GF(3)).element_class is Modules(ZZ).element_class
+            sage: Modules(GF(3)).element_class is Modules(ZZ).element_class             # optional - sage.rings.finite_rings
             False
 
         For a more subtle example, one could possibly share the classes for
         ``GF(3)`` and ``GF(2^3, 'x')``, but this is not currently the case::
 
-            sage: Modules(GF(3)).parent_class is Modules(GF(2^3,'x')).parent_class
+            sage: Modules(GF(3)).parent_class is Modules(GF(2^3,'x')).parent_class      # optional - sage.rings.finite_rings
             False
 
         This is because those two fields do not have the exact same category::
 
-            sage: GF(3).category()
+            sage: GF(3).category()                                                      # optional - sage.rings.finite_rings
             Join of Category of finite enumerated fields
              and Category of subquotients of monoids
              and Category of quotients of semigroups
-            sage: GF(2^3,'x').category()
+            sage: GF(2^3,'x').category()                                                # optional - sage.rings.finite_rings
             Category of finite enumerated fields
 
         Similarly for ``QQ`` and ``RR``::
@@ -2793,9 +2793,10 @@ class CategoryWithParameters(Category):
 
         Some other cases where one could potentially share those classes::
 
-            sage: Modules(GF(3),dispatch=False).parent_class  is Modules(ZZ).parent_class
+            sage: MF = Modules(GF(3), dispatch=False)                                   # optional - sage.rings.finite_rings
+            sage: MF.parent_class is Modules(ZZ).parent_class                           # optional - sage.rings.finite_rings
             False
-            sage: Modules(GF(3),dispatch=False).element_class is Modules(ZZ).element_class
+            sage: MF.element_class is Modules(ZZ).element_class                         # optional - sage.rings.finite_rings
             False
 
         TESTS::

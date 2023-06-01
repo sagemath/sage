@@ -452,14 +452,14 @@ class Category_over_base_ring(Category_over_base):
             sage: class Cs(Category_over_base):
             ....:    def super_categories(self):
             ....:        return [D]
-            sage: C = Cs(SymmetricGroup(3))
-            sage: C.is_subcategory(D)
+            sage: C = Cs(SymmetricGroup(3))                                             # optional - sage.groups
+            sage: C.is_subcategory(D)                                                   # optional - sage.groups
             True
-            sage: D._subcategory_hook_(C)
+            sage: D._subcategory_hook_(C)                                               # optional - sage.groups
             Unknown
             sage: import __main__
             sage: __main__.Cs = Cs # Fake Cs being defined in a python module
-            sage: TestSuite(C).run()
+            sage: TestSuite(C).run()                                                    # optional - sage.groups
         """
         if not issubclass(C.parent_class, self.parent_class):
             return False
