@@ -1694,19 +1694,27 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: L = [2*(i, j) + 2* (-i, -j) for i, j in ((1, 2), (2, 3), (3, 1))]
             sage: G=FreeGroup(3) / L
             sage: G.char_var(groebner=True)
-            [[(f1 - 1, f2 - 1, f3 - 1), (f1*f3 + 1, f2 - 1), (f1*f2 + 1, f3 - 1),
-              (f2*f3 + 1, f1 - 1), (f2*f3 + 1, f1 - f2), (f2*f3 + 1, f1 - f3),
-              (f1*f3 + 1, f2 - f3)]]
+            [[(f1 - 1, f2 - 1, f3 - 1),
+             (f1 + 1, f2 - 1, f3 - 1),
+             (f1 - 1, f2 - 1, f3 + 1),
+             (f3^2 + 1, f1 - f3, f2 - f3),
+             (f1 - 1, f2 + 1, f3 - 1)],
+             [(f1 - 1, f2 - 1, f3 - 1),
+             (f1*f3 + 1, f2 - 1),
+             (f1*f2 + 1, f3 - 1),
+             (f2*f3 + 1, f1 - 1),
+             (f2*f3 + 1, f1 - f2),
+             (f2*f3 + 1, f1 - f3),
+             (f1*f3 + 1, f2 - f3)]]
         """
         if matrix_ideal is None:
             A, R, ideal = self.abelian_alexander_matrix(abelianized=abelianized, simplified=True)
         else:
             A, ideal = matrix_ideal
             R = A.base_ring()
-        n = A.change_ring(R.fraction_field()).rank()
         res = []
-        for j in range(1, n):
-            L = [p.polynomial_construction()[0] for p in A.minors(j + 1)]            
+        for j in range(1, A.ncols()):
+            L = [p.polynomial_construction()[0] for p in A.minors(j)]
             J = R.ideal(L + ideal)
             res.append(J)
         if not groebner:
@@ -1719,13 +1727,15 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
                     res1.append([0])
                 else:
                     fct = [_[0] for _ in gcd_L.factor()]
-                    res1.append(fct)
+                    if fct != []:
+                        res1.append(fct)
             return res1
         res1 = []
         for J in res:
             LJ = J.minimal_associated_primes()
             fct = [id.groebner_basis() for id in LJ]
-            res1.append(fct)
+            if fct != [R.ideal(1)]:
+                res1.append(fct)
         return res1
 
     def rewriting_system(self):
