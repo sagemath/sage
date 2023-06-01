@@ -1163,7 +1163,7 @@ def eulers_method_2x2_plot(f, g, t0, x0, y0, h, t1):
 
         sage: from sage.calculus.desolvers import eulers_method_2x2_plot
         sage: f = lambda z : z[2]; g = lambda z : -sin(z[1])
-        sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)
+        sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)                 # optional - sage.plot
     """
     from sage.plot.line import line
 
