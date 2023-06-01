@@ -2952,16 +2952,6 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         from sage.matrix.special import companion_matrix
         return companion_matrix(self.list())
 
-#    def p_characteristic_polynomial(self,p=None,algorithm=None):
-#        if not algorithm:
-#
-#        if algorithm=='Katz':
-#            return self.p_curvature_katz(p).characteristic_polynomial()
-#        if algorithm=='Bostanetal':
-#            if 
-
-
-
 cdef class ConstantOrePolynomialSection(Map):
     r"""
     Representation of the canonical homomorphism from the constants of a Ore
