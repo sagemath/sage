@@ -143,13 +143,6 @@ from sage.rings.rational_field import QQ
 from sage.sets.set import Set
 from sage.structure.unique_representation import UniqueRepresentation
 
-
-
-
-
-
-
-
 class GroupMorphismWithGensImages(SetMorphism):
     r"""
     Class used for morphisms from finitely presented groups to
@@ -1359,7 +1352,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         invariants = self.gap().AbelianInvariants()
         return tuple( i.sage() for i in invariants )
 
-
     def abelianization(self, ring = QQ):
         r"""
         Return the abelianization of ``self`` together with
@@ -1603,7 +1595,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         return matrix(len(rel), len(gen),
                       lambda i,j: rel[i].fox_derivative(gen[j], im_gens))
 
-    def abelian_alexander_matrix(self, ring=QQ, abelianized=None):
+    def abelian_alexander_matrix(self, ring=QQ, abelianized=None, simplified=True):
         """
         Return the Alexander matrix of the group with values in the group
         algebra of the abelianized.
@@ -1615,6 +1607,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         - ``abelianized`` -- optional. The data of the abelianization.
 
+        - ``simplified`` -- boolean (default: ``False``). If set to
+          ``True`` use Gauss elimination and erase rows and columns.
+
         OUTPUT:
 
         A matrix with coefficients in the group algebra of the abelianized.
@@ -1624,45 +1619,114 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
             sage: G.<a,b,c> = FreeGroup()
             sage: H = G.quotient([a*b/a/b, a*c/a/c, c*b/c/b])
-            sage: resul = H.abelian_alexander_matrix(); resul
-            ([    -f2 + 1      f1 - 1           0           0           0]
-             [    -f3 + 1           0      f1 - 1           0           0]
-             [    -f4 + 1           0           0      f1 - 1           0]
-             [          0  -f3*f4 + 1      f2 - 1  f2*f3 - f3           0]
-             [          0     -f4 + 1 -f2*f4 + f2   f2*f3 - 1           0],
-            Multivariate Laurent Polynomial Ring in f1, f2, f3, f4, f5 over Rational Field,
-            [])
+            sage: A, R, ideal = H.abelian_alexander_matrix()
+            sage: A
+            [-f2 + 1  f1 - 1       0]
+            [-f3 + 1       0  f1 - 1]
+            [      0  f3 - 1 -f2 + 1]
+            sage: R
+            Multivariate Laurent Polynomial Ring in f1, f2, f3 over Rational Field
+            sage: ideal
+            []
             sage: abel = H.abelianization()
-            sage: resul == H.abelian_alexander_matrix(abelianized=abel)
+            sage: (A, R, ideal) == H.abelian_alexander_matrix(abelianized=abel)
             True
-
-        If we introduce the images of the generators, we obtain the
-        result in the corresponding algebra.
-
-        ::
-
-            sage: G.<a,b,c,d,e> = FreeGroup()
-            sage: H = G.quotient([a*b/a/b, a*c/a/c, a*d/a/d, b*c*d/(c*d*b), b*c*d/(d*b*c)])
-            sage: H.alexander_matrix()
-            [              1 - a*b*a^-1          a - a*b*a^-1*b^-1                          0                          0                          0]
-            [              1 - a*c*a^-1                          0          a - a*c*a^-1*c^-1                          0                          0]
-            [              1 - a*d*a^-1                          0                          0          a - a*d*a^-1*d^-1                          0]
-            [                         0             1 - b*c*d*b^-1   b - b*c*d*b^-1*d^-1*c^-1      b*c - b*c*d*b^-1*d^-1                          0]
-            [                         0        1 - b*c*d*c^-1*b^-1             b - b*c*d*c^-1 b*c - b*c*d*c^-1*b^-1*d^-1                          0]
-            sage: R.<t1,t2,t3,t4> = LaurentPolynomialRing(ZZ)
-            sage: H.alexander_matrix([t1,t2,t3,t4])
-            [    -t2 + 1      t1 - 1           0           0           0]
-            [    -t3 + 1           0      t1 - 1           0           0]
-            [    -t4 + 1           0           0      t1 - 1           0]
-            [          0  -t3*t4 + 1      t2 - 1  t2*t3 - t3           0]
-            [          0     -t4 + 1 -t2*t4 + t2   t2*t3 - 1           0]
+            sage: G=FreeGroup(3)/[(2,1,1), (1,2,2,3,3)]
+            sage: A, R, ideal = G.abelian_alexander_matrix(simplified=True); A
+            [-f3^2 - f3^4 - f3^6         f3^3 + f3^6]
         """
         if abelianized is None:
             ab, R, ideal, images = self.abelianization(ring=ring)
         else:
             ab, R, ideal, images = abelianized
         A = self.alexander_matrix(im_gens=images)
+        if simplified:
+            n, m = A.dimensions()
+            if 0 in (n, m):
+                return A
+            R = A.base_ring()
+            simpli = True
+            while simpli:
+                i, j = [0, 0]
+                unidad = False
+                while not unidad and i < n and j < m:
+                    p = A[i, j]
+                    unidad = p.is_unit()
+                    if unidad:
+                        A.swap_rows(0, i)
+                        A.swap_columns(0, j)
+                        for k in range(1, n):
+                            A.add_multiple_of_row(k, 0, -A[k, 0] * p ** -1)
+                        A = A.delete_rows([0]).delete_columns([0])
+                        n, m = A.dimensions()
+                    else:
+                        if j < m - 1:
+                            j += 1
+                        else:
+                            i += 1
+                            j = 0
+                simpli = unidad
         return A, R, ideal
+
+
+    def char_var(self, matrix_ideal=None, abelianized=None, groebner=False):
+        """
+        Return the characteristic varieties of the group ``self``.
+
+        INPUT:
+
+        - ``matrix_ideal`` -- optional. An abelian Alexander matrix and an ideal,
+          to avoid recomputations.
+
+        - ``abelianized`` -- optional. The data of the abelianization.
+
+        - ``groebner`` -- boolean (default: ``False``). If set to
+          ``True`` the minimal associated primes of the ideals and their
+          groebner bases are computed-.
+
+        OUTPUT:
+
+        If ``groebner`` is ``False`` a list of ideals defining the characteristic varieties.
+        If it is True, a list of lists for groebner bases for each ideal.
+
+        EXAMPLES::
+
+            sage: L = [2*(i, j) + 2* (-i, -j) for i, j in ((1, 2), (2, 3), (3, 1))]
+            sage: G=FreeGroup(3) / L
+            sage: G.char_var(groebner=True)
+            [[(f1 - 1, f2 - 1, f3 - 1), (f1*f3 + 1, f2 - 1), (f1*f2 + 1, f3 - 1),
+              (f2*f3 + 1, f1 - 1), (f2*f3 + 1, f1 - f2), (f2*f3 + 1, f1 - f3),
+              (f1*f3 + 1, f2 - f3)]]
+        """
+        if matrix_ideal is None:
+            A, R, ideal = self.abelian_alexander_matrix(abelianized=abelianized, simplified=True)
+        else:
+            A, ideal = matrix_ideal
+            R = A.base_ring()
+        n = A.change_ring(R.fraction_field()).rank()
+        res = []
+        for j in range(1, n):
+            L = [p.polynomial_construction()[0] for p in A.minors(j + 1)]            
+            J = R.ideal(L + ideal)
+            res.append(J)
+        if not groebner:
+            return res
+        if R.ngens() == 1:
+            res1 = []
+            for J in res:
+                gcd_L = gcd(J.gens())
+                if gcd_L == 0:
+                    res1.append([0])
+                else:
+                    fct = [_[0] for _ in gcd_L.factor()]
+                    res1.append(fct)
+            return res1
+        res1 = []
+        for J in res:
+            LJ = J.minimal_associated_primes()
+            fct = [id.groebner_basis() for id in LJ]
+            res1.append(fct)
+        return res1
 
     def rewriting_system(self):
         """
