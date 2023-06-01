@@ -437,12 +437,18 @@ cpdef bint is_SymbolicEquation(x):
     """
     Return True if *x* is a symbolic equation.
 
+    This function is deprecated.
+
     EXAMPLES:
 
     The following two examples are symbolic equations::
 
         sage: from sage.symbolic.expression import is_SymbolicEquation
         sage: is_SymbolicEquation(sin(x) == x)
+        doctest:warning...
+        DeprecationWarning: is_SymbolicEquation is deprecated; use
+        'isinstance(x, sage.structure.element.Expression) and x.is_relational()' instead
+        See https://github.com/sagemath/sage/issues/35505 for details.
         True
         sage: is_SymbolicEquation(sin(x) < x)
         True
@@ -462,6 +468,10 @@ cpdef bint is_SymbolicEquation(x):
         True
 
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35505,
+                "is_SymbolicEquation is deprecated; use "
+                "'isinstance(x, sage.structure.element.Expression) and x.is_relational()' instead")
     return isinstance(x, Expression) and is_a_relational((<Expression>x)._gobj)
 
 
@@ -474,8 +484,12 @@ cpdef bint _is_SymbolicVariable(x):
 
         sage: from sage.symbolic.ring import is_SymbolicVariable
         sage: is_SymbolicVariable(x)
+        doctest:warning...
+        DeprecationWarning: is_SymbolicVariable is deprecated; use
+        'isinstance(x, sage.structure.element.Expression) and x.is_symbol()' instead
+        See https://github.com/sagemath/sage/issues/35505 for details.
         True
-        sage: is_SymbolicVariable(x+2)
+        sage: is_SymbolicVariable(x + 2)
         False
 
     TESTS::
@@ -483,6 +497,10 @@ cpdef bint _is_SymbolicVariable(x):
         sage: ZZ['x']
         Univariate Polynomial Ring in x over Integer Ring
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35505,
+                "is_SymbolicVariable is deprecated; use "
+                "'isinstance(x, sage.structure.element.Expression) and x.is_symbol()' instead")
     return isinstance(x, Expression) and is_a_symbol((<Expression>x)._gobj)
 
 
@@ -3004,7 +3022,7 @@ cdef class Expression(Expression_abc):
             sig_off()
 
     cpdef bint is_relational(self):
-        """
+        r"""
         Return ``True`` if ``self`` is a relational expression.
 
         EXAMPLES::
@@ -3019,8 +3037,8 @@ cdef class Expression(Expression_abc):
         return is_a_relational(self._gobj)
 
     def is_exact(self):
-        """
-        Return True if this expression only contains exact numerical coefficients.
+        r"""
+        Return ``True`` if this expression only contains exact numerical coefficients.
 
         EXAMPLES::
 

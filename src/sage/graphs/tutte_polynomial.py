@@ -532,7 +532,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
 
     The Tutte polynomial of any tree of order `n` is `x^{n-1}`::
 
-        sage: all(T.tutte_polynomial() == x**9 for T in graphs.trees(10))
+        sage: all(T.tutte_polynomial() == x**9 for T in graphs.trees(10))               # optional - sage.symbolic
         True
 
     The Tutte polynomial of the Petersen graph is::
@@ -560,7 +560,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         sage: G = graphs.OctahedralGraph()
         sage: T = G.tutte_polynomial()
         sage: R = PolynomialRing(ZZ, 'x')
-        sage: R((-1)^5*x*T(1-x,0)).factor()
+        sage: R((-1)^5*x*T(1-x,0)).factor()                                             # optional - sage.symbolic
         (x - 2) * (x - 1) * x * (x^3 - 9*x^2 + 29*x - 32)
         sage: G.chromatic_polynomial().factor()
         (x - 2) * (x - 1) * x * (x^3 - 9*x^2 + 29*x - 32)

@@ -20,12 +20,12 @@ EXAMPLES::
 First, consider an example from arithmetic geometry::
 
     sage: A.<x,y> = PolynomialRing(ZZ, 2)
-    sage: B.<X,Y> = PolynomialRing(Rationals(),2)
+    sage: B.<X,Y> = PolynomialRing(Rationals(), 2)
     sage: f = -y^2 - y + x^3 + 7*x + 1
     sage: fx = f.derivative(x)
     sage: fy = f.derivative(y)
-    sage: I = B.ideal([B(f),B(fx),B(fy)])
-    sage: I.groebner_basis()
+    sage: I = B.ideal([B(f), B(fx), B(fy)])
+    sage: I.groebner_basis()                                                            # optional - sage.libs.singular
     [1]
 
 Since the output is 1, we know that there are no generic
@@ -34,7 +34,7 @@ singularities.
 To look at the singularities of the arithmetic surface, we need to do
 the corresponding computation over `\ZZ`::
 
-    sage: I = A.ideal([f,fx,fy])
+    sage: I = A.ideal([f, fx, fy])
     sage: gb = d_basis(I); gb
     [x - 2020, y - 11313, 22627]
 
@@ -52,7 +52,7 @@ it is an `I_3` node.
 Another example. This one is from the Magma Handbook::
 
     sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3, order='lex')
-    sage: I = ideal( x^2 - 1, y^2 - 1, 2*x*y - z)
+    sage: I = ideal(x^2 - 1, y^2 - 1, 2*x*y - z)
     sage: I = Ideal(d_basis(I))
     sage: x.reduce(I)
     x
@@ -61,7 +61,7 @@ Another example. This one is from the Magma Handbook::
 
 To compute modulo 4, we can add the generator 4 to our basis.::
 
-    sage: I = ideal( x^2 - 1, y^2 - 1, 2*x*y - z, 4)
+    sage: I = ideal(x^2 - 1, y^2 - 1, 2*x*y - z, 4)
     sage: gb = d_basis(I)
     sage: R = P.change_ring(IntegerModRing(4))
     sage: gb = [R(f) for f in gb if R(f)]; gb
@@ -79,7 +79,7 @@ over `\QQ` or an algebraic closure of it (this is not surprising as
 there are 4 equations in 3 unknowns). ::
 
     sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3, order='degneglex')
-    sage: I = ideal( x^2 - 3*y, y^3 - x*y, z^3 - x, x^4 - y*z + 1 )
+    sage: I = ideal(x^2 - 3*y, y^3 - x*y, z^3 - x, x^4 - y*z + 1)
     sage: I.change_ring(P.change_ring(RationalField())).groebner_basis()
     [1]
 
@@ -96,19 +96,19 @@ of the original system modulo `p`.::
     sage: factor(282687803443)
     101 * 103 * 27173681
 
-    sage: I.change_ring( P.change_ring( GF(101) ) ).groebner_basis()
+    sage: I.change_ring(P.change_ring(GF(101))).groebner_basis()
     [z - 33, y + 48, x + 19]
 
-    sage: I.change_ring( P.change_ring( GF(103) ) ).groebner_basis()
+    sage: I.change_ring(P.change_ring(GF(103))).groebner_basis()
     [z - 18, y + 8, x + 39]
 
-    sage: I.change_ring( P.change_ring( GF(27173681) ) ).groebner_basis()
+    sage: I.change_ring( P.change_ring(GF(27173681))).groebner_basis()
     [z + 10380032, y + 3186055, x - 536027]
 
 Of course, modulo any other prime the Groebner basis is trivial so
 there are no other solutions. For example::
 
-    sage: I.change_ring( P.change_ring( GF(3) ) ).groebner_basis()
+    sage: I.change_ring(P.change_ring(GF(3))).groebner_basis()
     [1]
 
 AUTHOR:
