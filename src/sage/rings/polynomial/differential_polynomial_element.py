@@ -106,6 +106,14 @@ class DifferentialPolynomial_generic_dense(OrePolynomial_generic_dense):
             [                       (4*t^9 + 4*t^6 + 3*t^4 + 3*t^3 + t + 4)/t^4 (t^12 + 3*t^9 + 3*t^7 + 3*t^6 + 2*t^4 + 2*t^3 + t^2 + 3*t + 4)/t^5]
             [                        (t^11 + 3*t^8 + 3*t^6 + 2*t^3 + t + 1)/t^3                 (4*t^14 + t^9 + t^6 + 2*t^4 + 2*t^3 + 4*t + 1)/t^4]
 
+        ::
+
+            sage: S.<x> = K['x', t*K.derivation()]
+            sage: x.p_curvature(algorithm='katz')  # indirect doctest
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computation of the p-curvature is only implemented when d^p = 0
+
         """
         KD = self.parent()
         d = KD.twisting_derivation()
