@@ -89,7 +89,6 @@ from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
 
 
-
 @richcmp_method
 class pAdicLseries(SageObject):
     r"""
