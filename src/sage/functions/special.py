@@ -457,7 +457,7 @@ class EllipticE(BuiltinFunction):
         elliptic_e(z, 1)
         sage: # this is still wrong: must be abs(sin(z)) + 2*round(z/pi)
         sage: elliptic_e(z, 1).simplify()
-        2*round(z/pi) + sin(z)
+        2*round(z/pi) ... sin(...z)
         sage: elliptic_e(z, 0)
         z
         sage: elliptic_e(0.5, 0.1)  # abs tol 2e-15

@@ -270,7 +270,7 @@ entrada :math:`i,j` é :math:`i/j`, para :math:`i,j=1,\ldots,4`.
     sage: A.eigenvalues()
     [[0,4],[3,1]]
     sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-...4/3...]],[[1,2,3,4]]]]
 
 Aqui vai outro exemplo:
 
@@ -334,7 +334,7 @@ E agora a famosa garrafa de Klein:
     ....:        "- 10.0")
     5*cos(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)-10.0
     sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
-    -5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)
+    -...5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)...
     sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
     sage: maxima.plot3d("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]", # not tested

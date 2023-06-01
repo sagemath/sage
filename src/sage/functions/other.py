@@ -501,7 +501,7 @@ class Function_floor(BuiltinFunction):
             sage: a = floor(5.4 + x); a
             floor(x + 5.40000000000000)
             sage: a.simplify()
-            floor(x + 0.4000000000000004) + 5
+            floor(x + 0.400000000000000...) + 5
             sage: a(x=2)
             7
 

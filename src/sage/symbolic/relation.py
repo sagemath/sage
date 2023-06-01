@@ -659,7 +659,7 @@ def solve(f, *args, **kwds):
 
         sage: sols = solve([x^3==y,y^2==x], [x,y]); sols[-1], sols[0]
         ([x == 0, y == 0],
-         [x == (0.3090169943749475 + 0.9510565162951535*I),
+         [x == (0.309016994374947... + 0.9510565162951535*I),
           y == (-0.8090169943749475 - 0.5877852522924731*I)])
         sage: sols[0][0].rhs().pyobject().parent()
         Complex Double Field

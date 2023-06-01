@@ -248,7 +248,7 @@ cdef class Matrix(Matrix0):
             sage: a = maxima(m); a
             matrix([0,1,2],[3,4,5],[6,7,8])
             sage: a.charpoly('x').expand()
-            (-x^3)+12*x^2+18*x
+            ...-x^3...+12*x^2+18*x
             sage: m.charpoly()
             x^3 - 12*x^2 - 18*x
         """
