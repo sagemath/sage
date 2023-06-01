@@ -39,9 +39,9 @@ cdef class PowerSeries_poly(PowerSeries):
         Check that :trac:`22216` is fixed::
 
             sage: R.<T> = PowerSeriesRing(QQ)
-            sage: R(pari('1 + O(T)'))
+            sage: R(pari('1 + O(T)'))                                                   # optional - sage.libs.pari
             1 + O(T)
-            sage: R(pari('1/T + O(T)'))
+            sage: R(pari('1/T + O(T)'))                                                 # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: series has negative valuation

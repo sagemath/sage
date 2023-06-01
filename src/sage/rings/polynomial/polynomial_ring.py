@@ -656,11 +656,11 @@ class PolynomialRing_general(ring.Algebra):
             sage: 1 / g
             1 - x + O(x^20)
 
-            sage: PP = P.completion(x, prec=oo); PP
+            sage: PP = P.completion(x, prec=oo); PP                                     # optional - sage.combinat
             Lazy Taylor Series Ring in x over Rational Field
-            sage: g = 1 / PP(f); g
+            sage: g = 1 / PP(f); g                                                      # optional - sage.combinat
             1 + x + x^2 + O(x^3)
-            sage: 1 / g == f
+            sage: 1 / g == f                                                            # optional - sage.combinat
             True
         """
         if p is None or str(p) == self._names[0]:
