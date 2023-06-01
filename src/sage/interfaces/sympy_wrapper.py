@@ -1,3 +1,4 @@
+# sage.doctest: optional - sympy
 """
 Wrapper Class for Sage Sets as SymPy Sets
 """

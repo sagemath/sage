@@ -349,14 +349,14 @@ class Interface(WithEqualityById, ParentWithBase):
         if isinstance(x, bool):
             return self(self._true_symbol() if x else self._false_symbol())
         elif isinstance(x, int):
-            import sage.rings.all
-            return self(sage.rings.all.Integer(x))
+            from sage.rings.integer import Integer
+            return self(Integer(x))
         elif isinstance(x, float):
-            import sage.rings.all
-            return self(sage.rings.all.RDF(x))
+            from sage.rings.real_double import RDF
+            return self(RDF(x))
         elif isinstance(x, complex):
-            import sage.rings.all
-            return self(sage.rings.all.CDF(x))
+            from sage.rings.complex_double import CDF
+            return self(CDF(x))
         if use_special:
             try:
                 return self._coerce_from_special_method(x)
@@ -1377,8 +1377,8 @@ class InterfaceElement(Element):
             sage: QQ(m)
             1
         """
-        import sage.rings.all
-        return sage.rings.all.Integer(repr(self))
+        from sage.rings.integer import Integer
+        return Integer(repr(self))
 
     def _rational_(self):
         """
@@ -1392,8 +1392,8 @@ class InterfaceElement(Element):
             sage: QQ(m)
             1/2
         """
-        import sage.rings.all
-        return sage.rings.all.Rational(repr(self))
+        from sage.rings.rational import Rational
+        return Rational(repr(self))
 
     def name(self, new_name=None):
         """
