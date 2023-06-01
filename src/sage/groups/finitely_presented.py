@@ -1668,7 +1668,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
                 simpli = unidad
         return A, R, ideal
 
-
     def char_var(self, matrix_ideal=None, abelianized=None, groebner=False):
         """
         Return the characteristic varieties of the group ``self``.
