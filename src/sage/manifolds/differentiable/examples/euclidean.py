@@ -694,7 +694,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                     if names[1] in ['p', 'ph', 'phi']:
                         names[1] = names[1] + ':\\phi'
 
-            symbols = ' '.join(x for x in names)
+            symbols = ' '.join(names)
 
         # Technical bit for UniqueRepresentation
         from sage.misc.prandom import getrandbits

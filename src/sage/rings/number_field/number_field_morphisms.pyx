@@ -150,7 +150,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
     def gen_image(self):
         """
-        Returns the image of the generator under this embedding.
+        Return the image of the generator under this embedding.
 
         EXAMPLES::
 
@@ -177,15 +177,15 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
 
     EXAMPLES::
 
-        sage: K.<i> = NumberField(x^2+1,embedding=QQbar(I))
-        sage: L.<i> = NumberField(x^2+1,embedding=-QQbar(I))
+        sage: K.<i> = NumberField(x^2 + 1, embedding=QQbar(I))
+        sage: L.<i> = NumberField(x^2 + 1, embedding=-QQbar(I))
         sage: from sage.rings.number_field.number_field_morphisms import EmbeddedNumberFieldMorphism
-        sage: EmbeddedNumberFieldMorphism(K,L,CDF)
+        sage: EmbeddedNumberFieldMorphism(K, L, CDF)
         Generic morphism:
           From: Number Field in i with defining polynomial x^2 + 1 with i = I
           To:   Number Field in i with defining polynomial x^2 + 1 with i = -I
           Defn: i -> -i
-        sage: EmbeddedNumberFieldMorphism(K,L,QQbar)
+        sage: EmbeddedNumberFieldMorphism(K, L, QQbar)
         Generic morphism:
           From: Number Field in i with defining polynomial x^2 + 1 with i = I
           To:   Number Field in i with defining polynomial x^2 + 1 with i = -I
@@ -225,7 +225,9 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             sage: F1.gen() + F2.gen()
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Number Field in a with defining polynomial x^3 + 2 with a = -1.259921049894873?' and 'Number Field in a with defining polynomial x^3 + 2 with a = 0.6299605249474365? + 1.091123635971722?*I'
+            TypeError: unsupported operand parent(s) for +:
+            'Number Field in a with defining polynomial x^3 + 2 with a = -1.259921049894873?' and
+            'Number Field in a with defining polynomial x^3 + 2 with a = 0.6299605249474365? + 1.091123635971722?*I'
 
         The following was fixed to raise a ``TypeError`` in :trac:`15331`::
 
@@ -272,13 +274,13 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import EmbeddedNumberFieldMorphism
-            sage: K.<a> = NumberField(x^2-700, embedding=25)
-            sage: L.<b> = NumberField(x^6-700, embedding=3)
+            sage: K.<a> = NumberField(x^2 - 700, embedding=25)
+            sage: L.<b> = NumberField(x^6 - 700, embedding=3)
             sage: f = EmbeddedNumberFieldMorphism(K, L)
-            sage: f(2*a-1)
+            sage: f(2*a - 1)
             2*b^3 - 1
             sage: g = f.section()
-            sage: g(2*b^3-1)
+            sage: g(2*b^3 - 1)
             2*a - 1
         """
         return EmbeddedNumberFieldConversion(self.codomain(), self.domain(), self.ambient_field)
@@ -340,12 +342,12 @@ cdef class EmbeddedNumberFieldConversion(Map):
 
 cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None):
     """
-    Given a polynomial and a target, this function chooses the root that
-    target best approximates as compared in ambient_field.
+    Given a polynomial and a ``target``, choose the root that
+    ``target`` best approximates as compared in ``ambient_field``.
 
-    If the parent of target is exact, the equality is required, otherwise
+    If the parent of ``target`` is exact, the equality is required, otherwise
     find closest root (with respect to the ``abs`` function) in the
-    ambient field to the target, and return the root of poly (if any) that
+    ambient field to the ``target``, and return the root of ``poly`` (if any) that
     approximates it best.
 
     EXAMPLES::
@@ -403,11 +405,11 @@ cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None):
 
 cpdef closest(target, values, margin=1):
     """
-    This is a utility function that returns the item in values closest to
-    target (with respect to the ``abs`` function). If margin is greater
-    than 1, and x and y are the first and second closest elements to target,
-    then only return x if x is margin times closer to target than y, i.e.
-    margin * abs(target-x) < abs(target-y).
+    This is a utility function that returns the item in ``values`` closest to
+    target (with respect to the ``abs`` function). If ``margin`` is greater
+    than 1, and `x` and `y` are the first and second closest elements to ``target``,
+    then only return `x` if `x` is ``margin`` times closer to ``target`` than `y`, i.e.
+    ``margin * abs(target-x) < abs(target-y)``.
 
     TESTS::
 
@@ -560,7 +562,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
     """
     Specialized class for converting cyclotomic field elements into a
     cyclotomic field of higher order. All the real work is done by
-    _lift_cyclotomic_element.
+    :meth:`_lift_cyclotomic_element`.
     """
 
     cdef ratio
