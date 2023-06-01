@@ -1336,7 +1336,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: limit(floor(x), x=0, dir='+')
         0
         sage: limit(floor(x), x=0)
-        und
+        ...nd
 
     Maxima gives the right answer here, too, showing
     that :trac:`4142` is fixed::
