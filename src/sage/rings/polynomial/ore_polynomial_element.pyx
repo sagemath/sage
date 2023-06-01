@@ -3125,5 +3125,3 @@ cdef class OrePolynomialBaseringInjection(Morphism):
             To:   Finite Field in t of size 5^3
         """
         return ConstantOrePolynomialSection(self._codomain, self.domain())
-
-            
