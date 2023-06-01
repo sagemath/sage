@@ -44,6 +44,11 @@ graft sage/interfaces
 # include sage/interfaces/qepcad.p*
 # include sage/interfaces/sympy*.p*
 # include sage/interfaces/tides.p*
+exclude sage/interfaces/four_ti_2.p*
+exclude sage/interfaces/kenzo.py
+exclude sage/interfaces/gap.py
+exclude sage/interfaces/tachyon.py
+exclude sage/interfaces/singular.py
 
 # Temporary:
 graft sage/ext/interpreters
@@ -58,6 +63,12 @@ include sage/rings/complex_double.p*
 include sage/rings/complex_field.p*
 include sage/rings/complex_mpfr.p*
 include sage/rings/complex_conversion.p*
+include sage/rings/polynomial/*_mpfr_*.p*
+
+
+# Including singular is too tricky; singular.pyx pulls in pari, ntl, flint, givaro
+#graft sage/libs/singular
+#include sage/rings/polynomial/*_libsingular.p*
 
 
 global-exclude *.py[co]

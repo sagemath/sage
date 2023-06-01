@@ -35,7 +35,7 @@ install_requires =
         mpmath         \
         numpy          \
         sagemath_categories \
-        sagemath_polyhedra \
+        sage_conf \
         | sed "2,\$s/^/    /;"')dnl
 
 [options.package_data]

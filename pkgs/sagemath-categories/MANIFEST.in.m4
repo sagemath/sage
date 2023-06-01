@@ -69,6 +69,11 @@ include sage/misc/random_testing.p*
 include sage/misc/rest_index_of_methods.p*
 include sage/misc/callable_dict.p*
 
+# For sage.interfaces
+include sage/misc/object_multiplexer.p*
+include sage/misc/multireplace.p*
+include sage/misc/pager.p*                                      # should go to sagemath-repl
+
 ## Data structures
 include sage/misc/binary_tree.p*
 graft sage/data_structures               # bitset needed by sage.graphs and sage.geometry.polyhedron

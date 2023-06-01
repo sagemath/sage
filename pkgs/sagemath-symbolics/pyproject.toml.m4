@@ -8,7 +8,6 @@ requires = [
         pkgconfig      \
         sagemath_environment \
         sagemath_categories \
-        sagemath_polyhedra \
         cython         \
         gmpy2          \
         numpy          \

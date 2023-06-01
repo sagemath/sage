@@ -1,5 +1,7 @@
 from .all__sagemath_standard_no_symbolics import *
 
+from sage.misc.lazy_import import lazy_import
+
 from .calculus import maxima as maxima_calculus
 from .calculus import (laplace, inverse_laplace,
                        limit, lim)
@@ -14,8 +16,8 @@ from .var import (var, function, clear_vars)
 from .transforms.all import *
 
 
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
+lazy_import('sage.modules.free_module_element', ['vector', 'FreeModuleElement'])
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 def symbolic_expression(x):
@@ -172,21 +174,20 @@ def symbolic_expression(x):
         TypeError: unable to convert <function function_with_keyword_only_arg at 0x...>
         to a symbolic expression
     """
+    from sage.structure.element import is_Matrix
     from sage.symbolic.expression import Expression
     from sage.symbolic.ring import SR
-    from sage.modules.free_module_element import is_FreeModuleElement
-    from sage.structure.element import is_Matrix
 
     if isinstance(x, Expression):
         return x
     elif hasattr(x, '_symbolic_'):
         return x._symbolic_(SR)
-    elif isinstance(x, (tuple, list)) or is_FreeModuleElement(x):
+    elif isinstance(x, (tuple, list, FreeModuleElement)):
         expressions = [symbolic_expression(item) for item in x]
         if not expressions:
             # Make sure it is symbolic also when length is 0
             return vector(SR, 0)
-        if is_FreeModuleElement(expressions[0]):
+        if isinstance(expressions[0], FreeModuleElement):
             return matrix(expressions)
         return vector(expressions)
     elif is_Matrix(x):

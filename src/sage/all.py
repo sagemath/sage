@@ -135,9 +135,6 @@ lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
 
 from sage.parallel.all   import *
 
-from sage.ext.fast_callable  import fast_callable
-from sage.ext.fast_eval      import fast_float
-
 from sage.tensor.all     import *
 
 from sage.matroids.all   import *
@@ -162,9 +159,8 @@ from sage.functions.all import *
 try:
     from sage.plot.all       import *
     from sage.plot.plot3d.all     import *
-    from sage.symbolic.all   import *
-    from sage.calculus.all   import *
     from sage.manifolds.all import *
+    from .all__sagemath_symbolics import *
     from sage.lfunctions.all import *
     from sage.geometry.riemannian_manifolds.all   import *
 except ImportError:

@@ -1,7 +1,16 @@
 from .all__sagemath_categories import *
 
+#from sage.dynamics.complex_dynamics import *
+from sage.interfaces.all import *
+from sage.libs.all__sagemath_symbolics import *
+#from sage.manifolds.all import *
+from sage.matrix.all__sagemath_symbolics import *
+from sage.rings.all__sagemath_symbolics import *
 from sage.symbolic.all import *
 from sage.calculus.all import *
-#from sage.manifolds.all import *
+from sage.dynamics.all__sagemath_symbolics import *
 
-#from sage.dynamics.complex_dynamics import *
+from sage.calculus.predefined import x
+
+from sage.ext.fast_callable  import fast_callable
+from sage.ext.fast_eval      import fast_float

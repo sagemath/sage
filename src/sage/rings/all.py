@@ -55,10 +55,6 @@ from .padics.padic_printing import _printer_defaults as padic_printing
 from .valuation.all import *
 
 # Real numbers
-from .real_mpfr import (RealField, RR,
-                       create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
-Reals = RealField
-
 from sage.rings.real_arb import RealBallField, RBF
 
 # Polynomial Rings and Polynomial Quotient Rings
@@ -79,13 +75,8 @@ from .real_mpfi import (RealIntervalField,
                        RealInterval)
 
 # Complex numbers
-from .complex_mpfr import ComplexField
-from .complex_mpfr import create_ComplexNumber as ComplexNumber
-Complexes = ComplexField
 from .complex_interval_field import ComplexIntervalField
 from .complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
-
-from .complex_double import ComplexDoubleField, ComplexDoubleElement, CDF
 
 from .complex_mpc import MPComplexField
 
@@ -110,7 +101,6 @@ from .bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
 
 from .monomials import monomials
 
-from .cc import CC
 from .cif import CIF
 
 # invariant theory
