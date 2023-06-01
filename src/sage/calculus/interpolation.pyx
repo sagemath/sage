@@ -57,7 +57,7 @@ cdef class Spline:
 
         sage: v = [(i + sin(i)/2, i+cos(i^2)) for i in range(10)]                       # optional - sage.symbolic
         sage: s = spline(v)                                                             # optional - sage.symbolic
-        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # optional - sage.symbolic
+        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # optional - sage.plot sage.symbolic
 
     We compute the area underneath the spline::
 

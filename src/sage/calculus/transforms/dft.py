@@ -71,20 +71,21 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##########################################################################
-from sage.rings.number_field.number_field import CyclotomicField
-from sage.misc.lazy_import import lazy_import
-from sage.groups.abelian_gps.abelian_group import AbelianGroup
-from sage.groups.perm_gps.permgroup_element import is_PermutationGroupElement
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR
 from sage.functions.all import sin, cos
-from sage.calculus.transforms.fft import FastFourierTransform
-from sage.calculus.transforms.dwt import WaveletTransform
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
+
+lazy_import("sage.calculus.transforms.dwt", "WaveletTransform")
+lazy_import("sage.calculus.transforms.fft", "FastFourierTransform")
+lazy_import("sage.groups.abelian_gps.abelian_group", "AbelianGroup")
+lazy_import("sage.groups.perm_gps.permgroup_element", "PermutationGroupElement")
 lazy_import("sage.plot.all", ["polygon", "line", "text"])
+lazy_import("sage.rings.number_field.number_field", "CyclotomicField")
+lazy_import("sage.rings.real_mpfr", "RR")
 
 
 class IndexedSequence(SageObject):
@@ -216,10 +217,9 @@ class IndexedSequence(SageObject):
             sage: print(s)
             Indexed sequence: [0, 1, 2]
              indexed by [0, 1, 2]
-            sage: I = GF(3)
-            sage: A = [i^2 for i in I]
-            sage: s = IndexedSequence(A,I)
-            sage: s
+            sage: I = GF(3)                                                             # optional - sage.rings.finite_rings
+            sage: A = [i^2 for i in I]                                                  # optional - sage.rings.finite_rings
+            sage: s = IndexedSequence(A,I); s                                           # optional - sage.rings.finite_rings
             Indexed sequence: [0, 1, 1]
              indexed by Finite Field of size 3
         """
@@ -240,8 +240,8 @@ class IndexedSequence(SageObject):
             sage: J = list(range(3))
             sage: A = [ZZ(i^2)+1 for i in J]
             sage: s = IndexedSequence(A,J)
-            sage: P = s.plot_histogram()
-            sage: show(P) # Not tested
+            sage: P = s.plot_histogram()                                                # optional - sage.plot
+            sage: show(P)  # not tested                                                 # optional - sage.plot
         """
         # elements must be coercible into RR
         I = self.index_object()
@@ -268,8 +268,8 @@ class IndexedSequence(SageObject):
             sage: I = list(range(3))
             sage: A = [ZZ(i^2)+1 for i in I]
             sage: s = IndexedSequence(A,I)
-            sage: P = s.plot()
-            sage: show(P) # Not tested
+            sage: P = s.plot()                                                          # optional - sage.plot
+            sage: show(P)  # not tested                                                 # optional - sage.plot
         """
         # elements must be coercible into RR
         I = self.index_object()
@@ -286,30 +286,40 @@ class IndexedSequence(SageObject):
             sage: J = list(range(6))
             sage: A = [ZZ(1) for i in J]
             sage: s = IndexedSequence(A,J)
-            sage: s.dft(lambda x:x^2)
+            sage: s.dft(lambda x: x^2)
             Indexed sequence: [6, 0, 0, 6, 0, 0]
              indexed by [0, 1, 2, 3, 4, 5]
             sage: s.dft()
             Indexed sequence: [6, 0, 0, 0, 0, 0]
              indexed by [0, 1, 2, 3, 4, 5]
-            sage: G = SymmetricGroup(3)
-            sage: J = G.conjugacy_classes_representatives()
-            sage: s = IndexedSequence([1,2,3],J) # 1,2,3 are the values of a class fcn on G
-            sage: s.dft()   # the "scalar-valued Fourier transform" of this class fcn
+            sage: G = SymmetricGroup(3)                                                                 # optional - sage.groups
+            sage: J = G.conjugacy_classes_representatives()                                             # optional - sage.groups
+            sage: s = IndexedSequence([1,2,3], J)  # 1,2,3 are the values of a class fcn on G           # optional - sage.groups
+            sage: s.dft()   # the "scalar-valued Fourier transform" of this class fcn                   # optional - sage.groups
             Indexed sequence: [8, 2, 2]
              indexed by [(), (1,2), (1,2,3)]
-            sage: J = AbelianGroup(2,[2,3],names='ab')
-            sage: s = IndexedSequence([1,2,3,4,5,6],J)
-            sage: s.dft()   # the precision of output is somewhat random and architecture dependent.
-            Indexed sequence: [21.0000000000000, -2.99999999999997 - 1.73205080756885*I, -2.99999999999999 + 1.73205080756888*I, -9.00000000000000 + 0.0000000000000485744257349999*I, -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I, -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
-                indexed by Multiplicative Abelian group isomorphic to C2 x C3
-            sage: J = CyclicPermutationGroup(6)
-            sage: s = IndexedSequence([1,2,3,4,5,6],J)
-            sage: s.dft()   # the precision of output is somewhat random and architecture dependent.
-            Indexed sequence: [21.0000000000000, -2.99999999999997 - 1.73205080756885*I, -2.99999999999999 + 1.73205080756888*I, -9.00000000000000 + 0.0000000000000485744257349999*I, -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I, -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
-                indexed by Cyclic group of order 6 as a permutation group
+            sage: J = AbelianGroup(2, [2,3], names='ab')                                                # optional - sage.groups
+            sage: s = IndexedSequence([1,2,3,4,5,6], J)                                                 # optional - sage.groups
+            sage: s.dft()   # the precision of output is somewhat random and architecture dependent.    # optional - sage.groups
+            Indexed sequence: [21.0000000000000,
+                               -2.99999999999997 - 1.73205080756885*I,
+                               -2.99999999999999 + 1.73205080756888*I,
+                               -9.00000000000000 + 0.0000000000000485744257349999*I,
+                               -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I,
+                               -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
+             indexed by Multiplicative Abelian group isomorphic to C2 x C3
+            sage: J = CyclicPermutationGroup(6)                                                         # optional - sage.groups
+            sage: s = IndexedSequence([1,2,3,4,5,6], J)                                                 # optional - sage.groups
+            sage: s.dft()   # the precision of output is somewhat random and architecture dependent.    # optional - sage.groups
+            Indexed sequence: [21.0000000000000,
+                               -2.99999999999997 - 1.73205080756885*I,
+                               -2.99999999999999 + 1.73205080756888*I,
+                               -9.00000000000000 + 0.0000000000000485744257349999*I,
+                               -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I,
+                               -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
+             indexed by Cyclic group of order 6 as a permutation group
             sage: p = 7; J = list(range(p)); A = [kronecker_symbol(j,p) for j in J]
-            sage: s = IndexedSequence(A,J)
+            sage: s = IndexedSequence(A, J)
             sage: Fs = s.dft()
             sage: c = Fs.list()[1]; [x/c for x in Fs.list()]; s.list()
             [0, 1, 1, -1, 1, -1, -1]
