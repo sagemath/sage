@@ -13,7 +13,6 @@ from .args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
 
-from sage.structure.element cimport parent as parent_c
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     r"""

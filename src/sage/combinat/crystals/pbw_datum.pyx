@@ -25,7 +25,6 @@ AUTHORS:
 #from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.root_system.root_system import RootSystem
 from sage.combinat.root_system.braid_move_calculator import BraidMoveCalculator
 
@@ -450,7 +449,7 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
     """
     cdef int i, j
     cdef int k, pos, first, last
-    cdef tuple interval_of_change, cartan_sub_matrix
+    cdef tuple cartan_sub_matrix
     cdef list output_list = []
     output_list.append( (None, None) )
     cdef tuple previous_word = <tuple> (braid_move_chain[0])

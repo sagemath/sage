@@ -15425,9 +15425,10 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Check that sparse matrices are handled correctly (:trac:`28935`)::
+        Sparse matrices are handled correctly (:trac:`28935`), but may
+        require a patched version of maxima (:trac:`32898`) for now::
 
-            sage: matrix.diagonal([0], sparse=True).exp()
+            sage: matrix.diagonal([0], sparse=True).exp()  # not tested, requires patched maxima
             [1]
             sage: matrix.zero(CBF, 2, sparse=True).exp()
             [1.000000000000000                 0]

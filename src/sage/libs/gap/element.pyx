@@ -26,7 +26,6 @@ from .util import GAPError
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object cimport SageObject
-from sage.structure.parent import Parent
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
@@ -550,7 +549,7 @@ cdef class GapElement(RingElement):
 
         INPUT:
 
-        - ``mut`` - (boolean) wheter to return an mutable copy
+        - ``mut`` - (boolean) whether to return an mutable copy
 
         EXAMPLES::
 

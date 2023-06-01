@@ -1787,8 +1787,8 @@ def solve_ineq_fourier(ineq, vars=None):
         sage: y = var('y')
         sage: solve_ineq_fourier([x+y<9,x-y>4],[x,y])
         [[y + 4 < x, x < -y + 9, y < (5/2)]]
-        sage: solve_ineq_fourier([x+y<9,x-y>4],[y,x])
-        [[y < min(x - 4, -x + 9)]]
+        sage: solve_ineq_fourier([x+y<9,x-y>4],[y,x])[0][0](x=42)
+        y < -33
 
         sage: solve_ineq_fourier([x^2>=0])
         [[x < +Infinity]]
