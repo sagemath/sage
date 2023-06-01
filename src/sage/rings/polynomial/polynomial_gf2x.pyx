@@ -11,6 +11,7 @@ AUTHOR:
 - Martin Albrecht (2008-10) initial implementation
 """
 
+from sage.misc.randstate import current_randstate
 
 # We need to define this stuff before including the templating stuff
 # to make sure the function get_cparent is found since it is used in
@@ -26,12 +27,13 @@ include "sage/libs/ntl/ntl_GF2X_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
-from sage.libs.pari.all import pari
+from cysignals.memory cimport sig_free
 
+from sage.libs.pari.all import pari
 from sage.libs.m4ri cimport mzd_write_bit, mzd_read_bit
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
-
 from sage.misc.cachefunc import cached_method
+from sage.structure.factorization import Factorization
 
 cdef class Polynomial_GF2X(Polynomial_template):
     r"""
@@ -105,6 +107,100 @@ cdef class Polynomial_GF2X(Polynomial_template):
         if variable is None:
             variable = parent.variable_name()
         return pari(self.list()).Polrev(variable) * pari(1).Mod(2)
+
+    def factor(self, algorithm=None):
+        """
+        INPUT:
+
+        - ``algorithm`` (string or None) -- Either ``"NTL"`` for NTL
+          Cantor-Zassenhaus implementation (default if None is specified),
+          or ``"pari"`` to use PARI (which can be constrained by PARI stack size)
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(GF(2), implementation="GF2X")
+            sage: f = R.random_element(5) * R.random_element(7)
+            sage: factors = f.factor()
+            sage: f == product(factors)
+            True
+            sage: factors == f.factor(algorithm="NTL")
+            True
+            sage: factors == f.factor(algorithm="pari")
+            True
+            sage: f = 5 * R.random_element(13) * R.random_element(17)
+            sage: factors = f.factor()
+            sage: f == product(factors)
+            True
+            sage: factors == f.factor(algorithm="NTL")
+            True
+            sage: factors == f.factor(algorithm="pari")
+            True
+
+        Test that factorization can be interrupted::
+
+            sage: R.<x> = PolynomialRing(GF(2), implementation="NTL")
+            sage: f = R.random_element(49999) * R.random_element(50021)
+            sage: alarm(0.5); f.factor()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+        """
+
+        if algorithm == "pari":
+            return self._factor_pari_helper(self.__pari__().factor())
+
+        if algorithm is None:
+            algorithm = "NTL"
+        if algorithm != "NTL":
+            raise ValueError("invalid algorithm for factor()")
+
+        return self._factor_ntl_helper(squarefree=False)
+
+    def squarefree_decomposition(self):
+        r"""
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(GF(2), implementation='GF2X')
+            sage: f = (x^8 + x^4 + 1)*(x^4 + x + 1)*(x^4 + x^3 + 1)
+            sage: f.squarefree_decomposition()
+            (x^2 + x + 1)^4 * (x^8 + x^7 + x^5 + x^4 + x^3 + x + 1)
+
+        """
+        return self._factor_ntl_helper(squarefree=True)
+
+    def _factor_ntl_helper(self, squarefree=True):
+        r"""
+        Compute factorization or squarefree decomposition and format
+        result as a Sage `Factorization` object.
+        """
+        lc = self.lc()
+        pol = self.monic()
+        current_randstate().set_seed_ntl(False)
+
+        cdef GF2X_c** v
+        cdef long* e
+        cdef long i, n
+        cdef Polynomial_GF2X r
+        sig_on()
+        if squarefree:
+            GF2X_square_free_decomp(&v, &e, &n, (<Polynomial_GF2X>pol).x)
+        else:
+            GF2X_factor_canzass(&v, &e, &n, (<Polynomial_GF2X>pol).x, 0)
+        sig_off()
+        F = []
+        for i from 0 <= i < n:
+            r = Polynomial_GF2X.__new__(Polynomial_GF2X)
+            celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+            r._parent = (<Polynomial_template>self)._parent
+            r._cparent = (<Polynomial_template>self)._cparent
+            r.x = v[i][0]
+            F.append((r, e[i]))
+        for i from 0 <= i < n:
+            del v[i]
+        sig_free(v)
+        sig_free(e)
+
+        return Factorization(F, unit=lc)
 
     def modular_composition(Polynomial_GF2X self, Polynomial_GF2X g, Polynomial_GF2X h, algorithm=None):
         r"""

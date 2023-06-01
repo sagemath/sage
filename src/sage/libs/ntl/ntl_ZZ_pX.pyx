@@ -906,12 +906,25 @@ cdef class ntl_ZZ_pX():
         sig_off()
         return r
 
-    def factor(self, verbose=False):
+    def factor(self, algorithm=None, verbose=False):
         """
         Return the factorization of self. Assumes self is
         monic.
 
         NOTE: The roots are returned in a random order.
+
+        INPUT:
+
+        - ``algorithm`` -- string (optional). Possibles values are:
+
+          - ``"canzass"`` (defaut): Use NTL `CanZass` function implementing the
+            Cantor-Zassenhaus algorithm with improvements from von zur Gathen,
+            Kaltofen and Shoup.
+
+          - ``"berlekamp"``: use implementation of Berlekamp algorithm.
+
+          - ``"squarefree"``: use `SquareFreeDecomp` function returning a partial
+            factorization as a product of squarefree factors.
 
         EXAMPLES:
 
@@ -942,8 +955,17 @@ cdef class ntl_ZZ_pX():
         cdef long i, n
         if not self.is_monic():
             raise ValueError("self must be monic.")
+        if algorithm is None:
+            algorithm = "canzass"
+        if algorithm not in ("berlekamp", "canzass", "squarefree"):
+            raise ValueError("invalid algorithm name")
         sig_on()
-        ZZ_pX_factor(&v, &e, &n, &self.x, verbose)
+        if algorithm == "berlekamp":
+            ZZ_pX_factor_berlekamp(&v, &e, &n, &self.x, verbose)
+        elif algorithm == "canzass":
+            ZZ_pX_factor_canzass(&v, &e, &n, &self.x, verbose)
+        elif algorithm == "squarefree":
+            ZZ_pX_square_free_decomp(&v, &e, &n, &self.x)
         sig_off()
         F = []
         for i from 0 <= i < n:

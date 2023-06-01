@@ -17,6 +17,8 @@ AUTHOR:
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer_ring cimport IntegerRing_class
 
+from sage.structure.factorization import Factorization
+
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX
 from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
@@ -24,6 +26,8 @@ from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.convert cimport ZZ_to_mpz
+
+from sage.misc.randstate import current_randstate
 
 # We need to define this stuff before including the templating stuff
 # to make sure the function get_cparent is found since it is used in
@@ -44,6 +48,8 @@ include "sage/libs/ntl/ntl_ZZ_pEX_linkage.pxi"
 
 # and then the interface
 include "polynomial_template.pxi"
+
+from cysignals.memory cimport sig_free
 
 from sage.libs.pari.all import pari
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
@@ -490,3 +496,104 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             x^4 + x^3 + x
         """
         return self.shift(-n)
+
+    def factor(self, algorithm=None):
+        """
+        INPUT:
+
+        - ``algorithm`` (string or None) -- Either ``"NTL"`` for NTL
+          Cantor-Zassenhaus implementation (default if None is specified),
+          or ``"pari"`` to use PARI (which can be constrained by PARI stack size)
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(GF(37^4), implementation="NTL")
+            sage: f = R.random_element(5) * R.random_element(7)
+            sage: factors = f.factor()
+            sage: f == product(factors)
+            True
+            sage: factors == f.factor(algorithm="NTL")
+            True
+            sage: factors == f.factor(algorithm="pari")
+            True
+            sage: f = 5 * R.random_element(13) * R.random_element(17)
+            sage: factors = f.factor()
+            sage: f == product(factors)
+            True
+            sage: factors == f.factor(algorithm="NTL")
+            True
+            sage: factors == f.factor(algorithm="pari")
+            True
+
+        Test that factorization can be interrupted:
+
+            sage: R.<x> = PolynomialRing(GF(65537^4), implementation="NTL")
+            sage: f = R.random_element(997) * R.random_element(1007)
+            sage: alarm(0.5); f.factor(algorithm="NTL")
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+        """
+        if self.degree() < 0:
+            raise ArithmeticError("factorization of {!r} is not defined".format(self))
+
+        if algorithm is None:
+            algorithm = "pari"
+
+        if algorithm == "pari":
+            return self._factor_pari_helper(self.__pari__().factor())
+        elif algorithm == "NTL":
+            return self._factor_ntl_helper(squarefree=False)
+        else:
+            raise ValueError("invalid algorithm for factor()")
+
+    def squarefree_decomposition(self):
+        r"""
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(GF(37^2), implementation='NTL')
+            sage: f = (x^37 + 1)*(x^4 + 2*x^3 + x + 1)
+            sage: f.squarefree_decomposition()
+            (x + 1)^37 * (x^4 + 2*x^3 + x + 1)
+
+        """
+        if self.degree() < 0:
+            raise ValueError("square-free decomposition not defined for zero polynomial")
+
+        return self._factor_ntl_helper(squarefree=True)
+
+    def _factor_ntl_helper(self, squarefree=True):
+        r"""
+        Compute factorization or squarefree decomposition and format
+        result as a Sage `Factorization` object.
+        """
+        lc = self.lc()
+        pol = self.monic()
+        current_randstate().set_seed_ntl(False)
+
+        self._parent._modulus.restore()
+
+        cdef ZZ_pEX_c** v
+        cdef long* e
+        cdef long i, n
+        cdef Polynomial_ZZ_pEX r
+        sig_on()
+        if squarefree:
+            ZZ_pEX_square_free_decomp(&v, &e, &n, (<Polynomial_ZZ_pEX>pol).x)
+        else:
+            ZZ_pEX_factor_canzass(&v, &e, &n, (<Polynomial_ZZ_pEX>pol).x, 0)
+        sig_off()
+        F = []
+        for i from 0 <= i < n:
+            r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+            celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+            r._parent = (<Polynomial_template>self)._parent
+            r._cparent = (<Polynomial_template>self)._cparent
+            r.x = v[i][0]
+            F.append((r, e[i]))
+        for i from 0 <= i < n:
+            del v[i]
+        sig_free(v)
+        sig_free(e)
+
+        return Factorization(F, unit=lc)

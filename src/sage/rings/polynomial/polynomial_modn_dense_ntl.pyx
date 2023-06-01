@@ -55,6 +55,7 @@ from . import polynomial_singular_interface
 from sage.interfaces.singular import singular as singular_default
 
 from sage.structure.element import coerce_binop
+from sage.structure.factorization import Factorization
 
 from sage.libs.ntl.types cimport NTL_SP_BOUND
 from sage.libs.ntl.ZZ_p cimport *
@@ -1886,3 +1887,70 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             12
         """
         return self.base_ring()(str(self.ntl_ZZ_pX().discriminant()))
+
+    def factor(self, algorithm=None):
+        """
+        INPUT:
+
+        - ``algorithm`` -- string (optional). Be default, the NTL implementation
+          of Cantor-Zassenhaus algorithm is used (``algorithm="ntl_canzass"``).
+          It is also possible to specify ``"ntl_berlekamp"`` for Berlekamp algorithm
+          as implemented by NTL library, or ``"pari"`` for PARI `factormod` function.
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(GF(37), implementation='NTL')
+            sage: f = R.random_element(5) * R.random_element(7)
+            sage: f == product(f.factor(algorithm="pari"))
+            True
+            sage: f == product(f.factor(algorithm="ntl_canzass"))
+            True
+            sage: f == product(f.factor(algorithm="ntl_berlekamp"))
+            True
+            sage: f = 5 * R.random_element(13) * R.random_element(17)
+            sage: f == product(f.factor(algorithm="pari"))
+            True
+            sage: f == product(f.factor(algorithm="ntl_canzass"))
+            True
+            sage: f == product(f.factor(algorithm="ntl_berlekamp"))
+            True
+
+        Test that factorization can be interrupted::
+
+            sage: R.<x> = PolynomialRing(GF(65537), implementation='NTL')
+            sage: f = R.random_element(9973) * R.random_element(10007)
+            sage: alarm(0.5); f.factor()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+        """
+
+        if algorithm == "pari":
+            return self._factor_pari_helper(self.__pari__().factor())
+
+        if algorithm is None or algorithm == "ntl_canzass":
+            ntl_algorithm = "canzass"
+        elif algorithm == "ntl_berlekamp":
+            ntl_algorithm = "berlekamp"
+        else:
+            raise ValueError("invalid choice of algorithm for factor()")
+
+        lc = self.lc()
+        pol = self.monic()
+        return Factorization([(self.parent()(w, construct=True), exp)
+            for w, exp in pol.ntl_ZZ_pX().factor(algorithm=ntl_algorithm)], unit=lc)
+
+    def squarefree_decomposition(self):
+        r"""
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(GF(37), implementation='NTL')
+            sage: f = (x^37 + 1)*(x^4 + 2*x^3 + x + 1)
+            sage: f.squarefree_decomposition()
+            (x + 1)^37 * (x^4 + 2*x^3 + x + 1)
+
+        """
+        lc = self.lc()
+        pol = self.monic()
+        return Factorization([(self.parent()(w, construct=True), exp)
+            for w, exp in pol.ntl_ZZ_pX().factor(algorithm="squarefree")], unit=lc)
