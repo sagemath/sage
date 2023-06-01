@@ -56,7 +56,7 @@ del quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
 
-from .all__sagemath_polyhedra import *
+from .all__sagemath_modules import *
 from .all__sagemath_graphs import *
 
 lazy_import('sage.combinat.combinat',

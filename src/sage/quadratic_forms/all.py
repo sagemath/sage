@@ -1,4 +1,4 @@
-from .all__sagemath_polyhedra import *
+from .all__sagemath_modules import *
 
 from .special_values import (gamma__exact, zeta__exact, QuadraticBernoulliNumber,
                              quadratic_L_function__exact, quadratic_L_function__numerical)

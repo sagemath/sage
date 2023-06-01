@@ -18,7 +18,7 @@ Algebras
 #*****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from .all__sagemath_polyhedra import *
+from .all__sagemath_modules import *
 
 import sage.algebras.catalog as algebras
 

@@ -655,7 +655,7 @@ cdef class Function(SageObject):
         """
         EXAMPLES::
 
-             sage: sin._interface_init_(maxima)
+             sage: sin._interface_init_(maxima)                                         # optional - sage.symbolic
              'sin'
         """
         if I is None:
@@ -1139,7 +1139,7 @@ cdef class BuiltinFunction(Function):
             (<class 'sage.functions.trig.Function_cot'>, ())
 
             sage: f = loads(dumps(cot)) #indirect doctest
-            sage: f(pi/2)
+            sage: f(pi/2)                                                               # optional - sage.symbolic
             0
         """
         return self.__class__, tuple()

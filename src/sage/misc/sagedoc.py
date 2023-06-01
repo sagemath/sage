@@ -728,7 +728,7 @@ def format(s, embedded=False):
         import sage.all as toplevel
     except ImportError:
         try:
-            import sage.all__sagemath_polyhedra as toplevel
+            import sage.all__sagemath_modules as toplevel
         except ImportError:
             try:
                 import sage.all__sagemath_categories as toplevel

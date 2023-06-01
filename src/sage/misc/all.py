@@ -1,6 +1,6 @@
 #from .all__sagemath_objects import *
 from .all__sagemath_environment import *
-from .all__sagemath_polyhedra import *
+from .all__sagemath_modules import *
 from .all__sagemath_repl import *
 
 from .dev_tools import runsnake, import_statements

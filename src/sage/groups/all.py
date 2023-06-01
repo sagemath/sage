@@ -1,4 +1,4 @@
-from .all__sagemath_polyhedra import *
+from .all__sagemath_modules import *
 
 from sage.misc.lazy_import import lazy_import
 

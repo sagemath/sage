@@ -1,8 +1,9 @@
 # -*- conf-unix -*-
 [metadata]
-name = sagemath-polyhedra
+name = sagemath-modules
 version = file: VERSION.txt
-description = Sage: Open Source Mathematics Software: Convex polyhedra in arbitrary dimension
+description = Sage: Open Source Mathematics Software: Vectors, matrices, tensors, vector spaces, affine spaces,
+  modules and algebras, additive groups, quadratic forms, homology, coding theory, matroids
 long_description = file: README.rst
 long_description_content_type = text/x-rst
 license = GNU General Public License (GPL) v2 or later
@@ -31,12 +32,9 @@ install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         gmpy2          \
         cysignals      \
-        pplpy          \
         memory_allocator \
-        sagemath_modules \
+        sagemath_categories \
         | sed "2,\$s/^/    /;"')dnl
 
 [options.extras_require]
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
-normaliz = esyscmd(`sage-get-system-packages install-requires pynormaliz')
-polymake = esyscmd(`sage-get-system-packages install-requires jupymake')
