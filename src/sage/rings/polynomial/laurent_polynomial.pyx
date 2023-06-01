@@ -3467,6 +3467,31 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         return R({m[i]: c for m,c in self.dict().iteritems()})
 
+    def polynomial_construction(self):
+        """
+        Return a polynomial having no monomial as a factor
+        and the shift monomial.
+
+        OUTPUT:
+
+        A tuple ``(p, v)`` where ``p`` is the underlying polynomial and ``v``
+        is a monomial.
+
+        EXAMPLES::
+            sage: R.<x, y> = LaurentPolynomialRing(QQ)
+            sage: f = y / x + x^2 / y + 3 * x^4 * y^-2 
+            sage: f.polynomial_construction()
+            (3*x^5 + x^3*y + y^3, x^-1*y^-2)
+        """
+        R = self.parent()
+        n = R.ngens()
+        S = R.polynomial_ring()
+        if self == 0:
+            return self
+        minimo = tuple(min(a[1].degree(v) for a in self) for v in R.gens())
+        mon = R({minimo:1})
+        return (S(mon ** -1 * self), mon)
+
     def factor(self):
         """
         Return a Laurent monomial (the unit part of the factorization) and a factored multi-polynomial.
