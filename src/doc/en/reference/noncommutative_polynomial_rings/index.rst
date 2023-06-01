@@ -13,6 +13,8 @@ Univariate Ore Polynomials
    sage/rings/polynomial/skew_polynomial_element
    sage/rings/polynomial/skew_polynomial_finite_order
    sage/rings/polynomial/skew_polynomial_finite_field
+   sage/rings/polynomial/differential_polynomial_ring
+   sage/rings/polynomial/differential_polynomial_element
    sage/rings/polynomial/ore_function_field
    sage/rings/polynomial/ore_function_element
 
