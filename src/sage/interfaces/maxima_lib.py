@@ -133,6 +133,7 @@ if MAXIMA_FAS:
     ecl_eval("(require 'maxima \"{}\")".format(MAXIMA_FAS))
 else:
     ecl_eval("(require 'maxima)")
+ecl_eval("(maxima::initialize-runtime-globals)")
 ecl_eval("(in-package :maxima)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defvar *MAXIMA-LANG-SUBDIR* NIL)")
