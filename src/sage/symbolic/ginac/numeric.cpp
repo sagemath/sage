@@ -209,9 +209,9 @@ PyObject* RR_get()
 {
         static PyObject* ptr = nullptr;
         if (ptr == nullptr) {
-                PyObject* m = PyImport_ImportModule("sage.rings.all");
+                PyObject* m = PyImport_ImportModule("sage.rings.real_mpfr");
                 if (m == nullptr)
-                        py_error("Error importing sage.rings.all");
+                        py_error("Error importing sage.rings.real_mpfr");
                 ptr = PyObject_GetAttrString(m, "RR");
                 if (ptr == nullptr)
                         py_error("Error getting RR attribute");
@@ -225,13 +225,10 @@ PyObject* CC_get()
         static PyObject* ptr = nullptr;
         if (ptr)
                 return ptr;
-        PyObject* m = PyImport_ImportModule("sage.rings.all");
+        PyObject* m = PyImport_ImportModule("sage.rings.cc");
         if (m == nullptr)
-                py_error("Error importing sage.rings.all");
-        ptr = PyObject_GetAttrString(m, "ComplexField");
-        if (ptr == nullptr)
-                py_error("Error getting ComplexField attribute");
-        ptr = PyObject_CallObject(ptr, NULL);
+                py_error("Error importing sage.rings.cc");
+        ptr = PyObject_GetAttrString(m, "CC");
         if (ptr == nullptr)
                 py_error("Error getting CC attribute");
         Py_INCREF(ptr);
@@ -310,9 +307,9 @@ int precision(const GiNaC::numeric& num, PyObject*& a_parent) {
 }
 
 PyObject* CBF(int res) {
-        PyObject* m = PyImport_ImportModule("sage.rings.all");
+        PyObject* m = PyImport_ImportModule("sage.rings.complex_arb");
         if (m == nullptr)
-                py_error("Error importing arb");
+                py_error("Error importing sage.rings.complex_arb");
         PyObject* f = PyObject_GetAttrString(m, "ComplexBallField");
         if (f == nullptr)
                 py_error("Error getting ComplexBallField attribute");
@@ -392,9 +389,9 @@ PyObject* CallBallMethod1Arg(PyObject* field, const char* meth, const GiNaC::num
 }
 
 PyObject* CoerceBall(PyObject* ball, int prec) {
-        PyObject* m = PyImport_ImportModule("sage.rings.all");
+        PyObject* m = PyImport_ImportModule("sage.rings.complex_mpfr");
         if (m == nullptr)
-                py_error("Error importing sage.rings.all");
+                py_error("Error importing sage.rings.complex_mpfr");
         PyObject* f = PyObject_GetAttrString(m, "ComplexField");
         if (f == nullptr)
                 py_error("Error getting ComplexField attribute");
