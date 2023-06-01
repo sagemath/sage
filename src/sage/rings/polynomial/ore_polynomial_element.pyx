@@ -2949,43 +2949,8 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         return ans
 
     def companion_matrix(self):
-        K=self.base_ring()
-        d=self.degree()
-        if d==0:
-            raise ValueError("operator must be of degree higher or equal to 1")
-        l=self.leading_coefficient()
-        L=[[K(j==i-1) for j in range(d-1)] for i in range(d)]
-        for i in range(d):
-            L[i].append(-self.list()[i]/l)
-        from sage.matrix.constructor import matrix
-        return(matrix(L))
-
-    def p_curvature_Katz(self,p=None):
-        KD=self.parent()
-        theta=KD.twisting_morphism()
-        d=KD.twisting_derivation()
-        if not theta:
-            theta=Hom(self.base_ring(),self.base_ring()).identity()
-        if not d:
-            d=self.base_ring().derivation_module().zero()
-        if not p:
-            p=self.base_ring().characteristic()
-        if not p.is_prime():
-            raise ValueError("p-curvature can only be computed for prime characteristic")
-        pp=self.base_ring().characteristic()
-        if pp==0:
-            from sage.rings.finite_rings.finite_field_constructor import FiniteField
-            from sage.rings.function_field.constructor import FunctionField
-            FpX=FunctionField(FiniteField(p),self.base_ring().variable_name())
-            FpD=FpX[self.parent().variable_name(),FpX.derivation()]
-            return(FpD(self).p_curvature_Katz(p))
-        if  p!=self.parent().base_ring().characteristic():
-            raise ValueError("p-curvature can only be computed for the characteristic of the base ring")
-        A=self.companion_matrix()
-        B=A
-        for i in range(p-1):
-            B=A*B.apply_morphism(theta)+B.apply_morphism(d)
-        return(B)
+        from sage.matrix.special import companion_matrix
+        return companion_matrix(self.list())
 
 #    def p_characteristic_polynomial(self,p=None,algorithm=None):
 #        if not algorithm:

@@ -351,7 +351,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         if sparse:
             raise NotImplementedError("sparse Ore polynomial rings are not implemented")
 
-        from sage.rings.polynomial import skew_polynomial_ring
+        from sage.rings.polynomial import skew_polynomial_ring, differential_polynomial_ring
         constructors = []
         if derivation is None:
             if base_ring in _Fields:
@@ -365,6 +365,8 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
                 except (AttributeError, NotImplementedError):
                     pass
             constructors.append(skew_polynomial_ring.SkewPolynomialRing)
+        elif morphism is None:
+            constructors.append(differential_polynomial_ring.DifferentialPolynomialRing)
 
         for constructor in constructors:
             try:
