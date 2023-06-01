@@ -874,7 +874,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             {{0}, {1, 2, 3, 4}}
             sage: g = d.to_digraph(); g                                                 # optional - sage.graphs
             Looped digraph on 5 vertices
-            sage: g.edges(sort=True)
+            sage: g.edges(sort=True)                                                    # optional - sage.graphs
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
 
         The result depends on the ordering of the union::
