@@ -175,9 +175,9 @@ components are in the correct ring::
     sage: check(L, lambda n: n, valuation=-5)                                           # optional - sage.rings.finite_rings
     sage: check(L, gen(), valuation=-5)                                                 # optional - sage.rings.finite_rings
 
-    sage: L = LazyDirichletSeriesRing(QQbar, "s")
-    sage: check(L, lambda n: n, valuation=2)
-    sage: check(L, gen(), valuation=2)
+    sage: L = LazyDirichletSeriesRing(QQbar, "s")                                       # optional - sage.rings.number_field
+    sage: check(L, lambda n: n, valuation=2)                                            # optional - sage.rings.number_field
+    sage: check(L, gen(), valuation=2)                                                  # optional - sage.rings.number_field
 
     sage: L.<z> = LazyPowerSeriesRing(GF(2))                                            # optional - sage.rings.finite_rings
     sage: check(L, lambda n: n, valuation=0)                                            # optional - sage.rings.finite_rings
@@ -296,9 +296,9 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(ZZ)
             sage: TestSuite(L.an_element()).run()
 
-            sage: L = LazyDirichletSeriesRing(QQbar, 'z')
-            sage: g = L(constant=1)
-            sage: TestSuite(g).run()
+            sage: L = LazyDirichletSeriesRing(QQbar, 'z')                               # optional - sage.rings.number_field
+            sage: g = L(constant=1)                                                     # optional - sage.rings.number_field
+            sage: TestSuite(g).run()                                                    # optional - sage.rings.number_field
         """
         Element.__init__(self, parent)
         self._coeff_stream = coeff_stream
