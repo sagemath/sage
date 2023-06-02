@@ -1,4 +1,4 @@
-# optional - sage.geometry.polyhedron
+# sage.doctest: optional - sage.geometry.polyhedron
 """
 Diamond cutting implementation
 
