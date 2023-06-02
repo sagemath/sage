@@ -9,7 +9,7 @@
 #                   http://www.gnu.org/licenses/
 ###############################################################################
 
-from libc.stdint cimport uintptr_t, uint8_t, uint16_t, uint32_t, uint64_t
+from libc.stdint cimport intptr_t, uintptr_t, uint8_t, uint16_t, uint32_t, uint64_t
 
 cdef extern from "gap/system.h" nogil:
     ctypedef char Char
