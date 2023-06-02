@@ -205,8 +205,8 @@ equação (usando a notação :math:`x=x_{1}`, :math:`y=x_{2}`):
 ::
 
     sage: de1 = maxima("2*diff(x(t),t, 2) + 6*x(t) - 2*y(t)")
-    sage: lde1 = de1.laplace("t","s"); lde1
-    2*(...-...%at('diff(x(t),t,1),t = 0))+s^2*'laplace(x(t),t,s)-x(0)*s) -2*'laplace(y(t),t,s)+6*'laplace(x(t),t,s)
+    sage: lde1 = de1.laplace("t","s"); lde1.sage()
+    2*s^2*laplace(x(t), t, s) - 2*s*x(0) + 6*laplace(x(t), t, s) - 2*laplace(y(t), t, s) - 2*D[0](x)(0)
 
 O resultado é um pouco difícil de ler, mas diz que
 
@@ -220,8 +220,8 @@ calcule a transformada de Laplace da segunda equação:
 ::
 
     sage: de2 = maxima("diff(y(t),t, 2) + 2*y(t) - 2*x(t)")
-    sage: lde2 = de2.laplace("t","s"); lde2
-    ...-...%at('diff(y(t),t,1),t = 0))+s^2*'laplace(y(t),t,s) +2*'laplace(y(t),t,s)-2*'laplace(x(t),t,s) -y(0)*s
+    sage: lde2 = de2.laplace("t","s"); lde2.sage()
+    s^2*laplace(y(t), t, s) - s*y(0) - 2*laplace(x(t), t, s) + 2*laplace(y(t), t, s) - D[0](y)(0)
 
 O resultado significa que
 
