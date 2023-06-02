@@ -149,6 +149,14 @@ include sage/rings/complex_field.p*
 include sage/rings/complex_mpfr.p*
 include sage/rings/complex_conversion.p*
 
+# More from algebras with compile-time dependencies on sagemath-modules
+include sage/algebras/free_algebra*.p*
+include sage/algebras/clifford_algebra*.p*
+include sage/algebras/exterior_algebra*.p*
+include sage/algebras/octonion_algebra.p*
+include sage/algebras/lie_algebras/lie_algebra_element.p*
+
+
 
 global-exclude *.py[co]
 global-exclude *.so

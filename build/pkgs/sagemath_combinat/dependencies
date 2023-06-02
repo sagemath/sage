@@ -1,0 +1,4 @@
+FORCE $(PYTHON) cysignals gmpy2 sagemath_categories | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig python_build $(and $(filter-out no,$(SAGE_CHECK)), tox sagemath_repl)
+
+# FORCE: Always run the spkg-install script
+# ipython - for the doctester

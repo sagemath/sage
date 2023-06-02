@@ -14,6 +14,11 @@ from .combinat import (CombinatorialClass, CombinatorialObject,
                        polygonal_number, stirling_number1, stirling_number2,
                        tuples, unordered_tuples)
 
+lazy_import('sage.combinat.combinat',
+            ('InfiniteAbstractCombinatorialClass', 'UnionCombinatorialClass',
+             'FilteredCombinatorialClass'),
+            deprecation=(31545, 'this class is deprecated, do not use'))
+
 from .combination import Combinations
 from .composition import Composition, Compositions
 from .permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
