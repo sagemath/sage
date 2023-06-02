@@ -2521,7 +2521,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         TESTS::
 
             sage: A = GF(5).over(ZZ)                                                    # optional - sage.rings.finite_rings
-            sage: A.fraction_field(extend_base=True)
+            sage: A.fraction_field(extend_base=True)                                    # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: the morphism is not injective
@@ -2767,7 +2767,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         TESTS::
 
             sage: A = GF(5).over(ZZ)                                                    # optional - sage.rings.finite_rings
-            sage: A.fraction_field(extend_base=True)
+            sage: A.fraction_field(extend_base=True)                                    # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: the morphism is not injective
