@@ -10,8 +10,7 @@ from sage.matrix.all import *
 from sage.groups.all__sagemath_modules import *
 
 from sage.homology.all__sagemath_modules import *
-# commented out in MANIFEST.in.m4
-#from sage.tensor.all import *
+from sage.tensor.all import *
 from sage.matroids.all import *
 from sage.quadratic_forms.all__sagemath_modules import *
 

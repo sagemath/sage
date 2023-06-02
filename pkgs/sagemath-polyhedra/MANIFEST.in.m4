@@ -13,6 +13,7 @@ include sage/interfaces/latte.p*
 include sage/interfaces/four_ti_2.p*
 
 graft sage/geometry
+exclude sage/geometry/abc.py                            # in sagemath-categories
 exclude sage/geometry/all.py
 prune sage/geometry/hyperbolic_space
 prune sage/geometry/riemannian_manifolds

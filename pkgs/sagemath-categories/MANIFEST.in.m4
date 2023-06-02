@@ -30,6 +30,8 @@ exclude sage/categories/subobjects.*
 exclude sage/categories/subquotients.*
 exclude sage/categories/with_realizations.*
 
+include sage/geometry/abc.p*
+
 include sage/interfaces/abc.p*
 include sage/interfaces/process.p*                      # needed for sage.parallel
 include sage/interfaces/tab_completion.p*

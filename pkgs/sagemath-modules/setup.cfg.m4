@@ -34,6 +34,7 @@ install_requires =
         cysignals      \
         memory_allocator \
         sagemath_categories \
+        mpmath \
         | sed "2,\$s/^/    /;"')dnl
 
 [options.extras_require]

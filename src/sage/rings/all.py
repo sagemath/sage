@@ -37,6 +37,7 @@ Tests for deprecations of imports in global namespace from :trac:`33602`::
 from sage.misc.lazy_import import lazy_import
 
 from .all__sagemath_modules import *
+from .all__sagemath_symbolics import *
 
 # Finite fields
 from .finite_rings.all import *

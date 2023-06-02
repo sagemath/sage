@@ -106,11 +106,11 @@ include sage/groups/matrix_gps/orthogonal.p*
 include sage/groups/matrix_gps/symplectic.p*
 include sage/groups/matrix_gps/unitary.p*
 
-#graft sage/tensor              # depends on permutations (now in sagemath-categories),
-                                # but also on SymmetricGroup (could be easily fixed)
-                                # and sage.sets.disjoint_set
-
+graft sage/tensor
 graft sage/matroids            # though many doctests use graphs, finite fields
+include sage/algebras/orlik_solomon.p*
+include sage/algebras/orlik_terao.p*
+
 
 # just modules
 graft sage/homology
@@ -133,6 +133,21 @@ include sage/rings/function_field/valuation.p*                           # ??
 
 include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimports Matrix
 include sage/rings/valuation.p*
+
+include sage/rings/ring_extension*.p*
+
+# mpfr, mpmath
+graft sage/libs/mpfr
+graft sage/libs/mpmath
+graft sage/libs/gsl
+include sage/rings/real_mpfr.p*
+include sage/rings/real_field.p*
+include sage/rings/polynomial/*_mpfr_*.p*
+include sage/rings/cc.p*
+include sage/rings/complex_double.p*
+include sage/rings/complex_field.p*
+include sage/rings/complex_mpfr.p*
+include sage/rings/complex_conversion.p*
 
 
 global-exclude *.py[co]
