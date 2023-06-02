@@ -856,10 +856,10 @@ class RationalFunctionField_char_zero(RationalFunctionField):
         EXAMPLES::
 
             sage: F.<x> = FunctionField(QQ)
-            sage: d = F.higher_derivation()                                             # optional - sage.modules
-            sage: [d(x^5,i) for i in range(10)]                                         # optional - sage.modules
+            sage: d = F.higher_derivation()                                             # optional - sage.libs.singular sage.modules
+            sage: [d(x^5,i) for i in range(10)]                                         # optional - sage.libs.singular sage.modules
             [x^5, 5*x^4, 10*x^3, 10*x^2, 5*x, 1, 0, 0, 0, 0]
-            sage: [d(x^9,i) for i in range(10)]                                         # optional - sage.modules
+            sage: [d(x^9,i) for i in range(10)]                                         # optional - sage.libs.singular sage.modules
             [x^9, 9*x^8, 36*x^7, 84*x^6, 126*x^5, 126*x^4, 84*x^3, 36*x^2, 9*x, 1]
         """
         from .derivations_polymod import FunctionFieldHigherDerivation_char_zero

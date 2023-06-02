@@ -199,7 +199,7 @@ class PolynomialRing_singular_repr:
         EXAMPLES::
 
             sage: R.<x,y> = PolynomialRing(CC)
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1)
             // number of vars : 2
@@ -208,7 +208,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R.<x,y> = PolynomialRing(RealField(100))
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             // coefficients: Float()
             // number of vars : 2
@@ -218,7 +218,7 @@ class PolynomialRing_singular_repr:
 
             sage: w = polygen(ZZ, 'w')
             sage: R.<x> = PolynomialRing(NumberField(w^2 + 1, 's'))                     # optional - sage.rings.number_field
-            sage: singular(R)                                                           # optional - sage.rings.number_field
+            sage: singular(R)                                                           # optional - sage.libs.singular sage.rings.number_field
             polynomial ring, over a field, global ordering
             //   coefficients: QQ[s]/(s^2+1)
             //   number of vars : 1
@@ -227,7 +227,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = PolynomialRing(GF(127), 'x', implementation="singular")           # optional - sage.rings.finite_rings
-            sage: singular(R)                                                           # optional - sage.rings.finite_rings
+            sage: singular(R)                                                           # optional - sage.libs.singular sage.rings.finite_rings
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 1
@@ -236,7 +236,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = PolynomialRing(QQ, 'x', implementation="singular")
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 1
@@ -245,7 +245,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = PolynomialRing(QQ,'x')
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 1
@@ -254,7 +254,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = PolynomialRing(GF(127), 'x')                                      # optional - sage.rings.finite_rings
-            sage: singular(R)                                                           # optional - sage.rings.finite_rings
+            sage: singular(R)                                                           # optional - sage.libs.singular sage.rings.finite_rings
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 1
@@ -263,7 +263,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = Frac(ZZ['a,b'])['x,y']
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ(a, b)
             //   number of vars : 2
@@ -273,7 +273,7 @@ class PolynomialRing_singular_repr:
 
 
             sage: R = IntegerModRing(1024)['x,y']
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a ring (with zero-divisors), global ordering
             //   coefficients: ZZ/(2^10)
             //   number of vars : 2
@@ -282,7 +282,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = IntegerModRing(15)['x,y']
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a ring (with zero-divisors), global ordering
             //   coefficients: ZZ/...(15)
             //   number of vars : 2
@@ -291,7 +291,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = ZZ['x,y']
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a domain, global ordering
             //   coefficients: ZZ
             //   number of vars : 2
@@ -300,7 +300,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = ZZ['x']
-            sage: singular(R)
+            sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a domain, global ordering
             // coefficients: ZZ
             // number of vars : 1
@@ -312,7 +312,7 @@ class PolynomialRing_singular_repr:
             sage: R = k['x']                                                            # optional - sage.rings.finite_rings
             sage: K = R.fraction_field()                                                # optional - sage.rings.finite_rings
             sage: S = K['y']                                                            # optional - sage.rings.finite_rings
-            sage: singular(S)                                                           # optional - sage.rings.finite_rings
+            sage: singular(S)                                                           # optional - sage.libs.singular sage.rings.finite_rings
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/5(x)
             //   number of vars : 2

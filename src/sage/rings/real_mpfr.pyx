@@ -721,7 +721,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         TESTS::
 
-            sage: 1.0 - ZZ(1) - int(1) - 1 - QQ(1) - RealField(100)(1) - AA(1) - RLF(1)
+            sage: 1.0 - ZZ(1) - int(1) - 1 - QQ(1) - RealField(100)(1) - AA(1) - RLF(1)     # optional - sage.rings.number_field
             -6.00000000000000
             sage: R = RR['x']   # Hold reference to avoid garbage collection, see Issue #24709
             sage: R.get_action(ZZ)
@@ -921,7 +921,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
             False
             sage: RR._is_valid_homomorphism_(CC,[CC(1)])
             True
-            sage: RR._is_valid_homomorphism_(GF(2),GF(2)(1))
+            sage: RR._is_valid_homomorphism_(GF(2),GF(2)(1))                            # optional - sage.rings.finite_rings
             False
         """
 
@@ -2343,7 +2343,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._add_(right)
-        from .real_mpfi import RealIntervalFieldElement
+        try:
+            from .real_mpfi import RealIntervalFieldElement
+        except ImportError:
+            RealIntervalFieldElement = None
         if type(right) is RealIntervalFieldElement:
             return right.__add__(left)
         elif isinstance(left, RealNumber):
@@ -2364,7 +2367,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._sub_(right)
-        from .real_mpfi import RealIntervalFieldElement
+        try:
+            from .real_mpfi import RealIntervalFieldElement
+        except ImportError:
+            RealIntervalFieldElement = None
         if type(right) is RealIntervalFieldElement:
             return (-right).__add__(left)
         elif isinstance(left, RealNumber):
@@ -2385,7 +2391,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._mul_(right)
-        from .real_mpfi import RealIntervalFieldElement
+        try:
+            from .real_mpfi import RealIntervalFieldElement
+        except ImportError:
+            RealIntervalFieldElement = None
         if type(right) is RealIntervalFieldElement:
             return right.__mul__(left)
         elif isinstance(left, RealNumber):
@@ -2406,7 +2415,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._div_(right)
-        from .real_mpfi import RealIntervalFieldElement
+        try:
+            from .real_mpfi import RealIntervalFieldElement
+        except ImportError:
+            RealIntervalFieldElement = None
         if type(right) is RealIntervalFieldElement:
             return right.__rtruediv__(left)
         elif isinstance(left, RealNumber):
@@ -3194,7 +3206,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: RR(pi).__int__()
+            sage: RR(pi).__int__()                                                      # optional - sage.symbolic
             3
             sage: type(RR(pi).__int__())                                                # optional - sage.symbolic
             <... 'int'>
@@ -3212,7 +3224,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: RR(pi).__complex__()
+            sage: RR(pi).__complex__()                                                  # optional - sage.symbolic
             (3.141592653589793+0j)
             sage: type(RR(pi).__complex__())                                            # optional - sage.symbolic
             <... 'complex'>
@@ -3226,7 +3238,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: RR(pi)._complex_number_()
+            sage: RR(pi)._complex_number_()                                             # optional - sage.symbolic
             3.14159265358979
             sage: parent(RR(pi)._complex_number_())                                     # optional - sage.symbolic
             Complex Field with 53 bits of precision
@@ -5258,11 +5270,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Computing zeta using PARI is much more efficient in difficult
         cases. Here's how to compute zeta with at least a given precision::
 
-            sage: z = pari(2).zeta(precision=53); z
+            sage: z = pari(2).zeta(precision=53); z                                     # optional - sage.libs.pari
             1.64493406684823
-            sage: pari(2).zeta(precision=128).sage().prec()
+            sage: pari(2).zeta(precision=128).sage().prec()                             # optional - sage.libs.pari
             128
-            sage: pari(2).zeta(precision=65).sage().prec()
+            sage: pari(2).zeta(precision=65).sage().prec()                              # optional - sage.libs.pari
             128                                                # 64-bit
             96                                                 # 32-bit
 
@@ -5274,9 +5286,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         ::
 
-            sage: type(z)
+            sage: type(z)                                                               # optional - sage.libs.pari
             <class 'cypari2.gen.Gen'>
-            sage: R(z)
+            sage: R(z)                                                                  # optional - sage.libs.pari
             1.64493406684823
         """
         cdef RealNumber x = self._new()

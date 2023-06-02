@@ -488,9 +488,9 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         Check that :trac:`14989` is fixed::
 
             sage: x = polygen(ZZ, 'x')
-            sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))
-            sage: i = QQi.order(QQi.gen()).gen(1)
-            sage: CC(i)
+            sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))                    # optional - sage.rings.number_field
+            sage: i = QQi.order(QQi.gen()).gen(1)                                       # optional - sage.rings.number_field
+            sage: CC(i)                                                                 # optional - sage.rings.number_field
             1.00000000000000*I
 
         TESTS::
