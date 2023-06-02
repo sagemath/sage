@@ -93,7 +93,7 @@ def find_library(name):
     EXAMPLES::
 
         sage: from sage.misc.compat import find_library
-        sage: find_library('giac')
+        sage: find_library('giac')                                                      # optional - sage.libs.giac
         '...giac...'
 
     """
