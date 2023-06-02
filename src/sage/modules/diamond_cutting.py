@@ -1,3 +1,4 @@
+# optional - sage.geometry.polyhedron
 """
 Diamond cutting implementation
 
