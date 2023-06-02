@@ -395,8 +395,8 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: M = matrix(3, [-1, -2, 0, 0, 0, 1, -2, 1, -1])
             sage: v = vector(QQ,(1,2,3))
             sage: f = F(M, v)
-            sage: cube = polytopes.cube()
-            sage: f(cube)
+            sage: cube = polytopes.cube()                                               # optional - sage.geometry.polyhedron
+            sage: f(cube)                                                               # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 8 vertices
 
         """

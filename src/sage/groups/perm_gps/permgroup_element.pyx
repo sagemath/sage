@@ -1431,7 +1431,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     cpdef domain(self):
         """
-        Returns the domain of self.
+        Return the domain of ``self``.
 
         EXAMPLES::
 
