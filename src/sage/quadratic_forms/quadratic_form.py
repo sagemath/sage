@@ -100,25 +100,24 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
     EXAMPLES::
 
         sage: P = [3,5]
-        sage: q = quadratic_form_from_invariants(QQ,2,-15,P,1)
-        sage: q
+        sage: q = quadratic_form_from_invariants(QQ,2,-15,P,1); q                       # optional - sage.rings.padics
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 5 0 ]
         [ * -3 ]
-        sage: all(q.hasse_invariant(p) == -1 for p in P)
+        sage: all(q.hasse_invariant(p) == -1 for p in P)                                # optional - sage.rings.padics
         True
 
     TESTS:
 
     This shows that :trac:`28955` is fixed::
 
-        sage: quadratic_form_from_invariants(QQ,3,2,[2],2)
+        sage: quadratic_form_from_invariants(QQ,3,2,[2],2)                              # optional - sage.rings.padics
         Quadratic form in 3 variables over Rational Field with coefficients:
         [ -1 0 0 ]
         [ * 1 0 ]
         [ * * -2 ]
 
-        sage: quadratic_form_from_invariants(QQ,4,2,[2],4)
+        sage: quadratic_form_from_invariants(QQ,4,2,[2],4)                              # optional - sage.rings.padics
         Traceback (most recent call last):
         ...
         ValueError: invariants do not define a rational quadratic form
