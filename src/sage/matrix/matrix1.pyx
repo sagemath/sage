@@ -83,7 +83,7 @@ cdef class Matrix(Matrix0):
             sage: a = matrix(R, 2, [1, 2, 3, 1]); a
             [1.0 2.0]
             [3.0 1.0]
-            sage: b = pari(a); b
+            sage: b = pari(a); b                                                        # optional - sage.libs.pari
             [1.000000000, 2.000000000; 3.000000000, 1.000000000] # 32-bit
             [1.00000000000000, 2.00000000000000; 3.00000000000000, 1.00000000000000] # 64-bit
         """
@@ -271,7 +271,7 @@ cdef class Matrix(Matrix0):
             sage: A = MatrixSpace(QQ,3)([1,2,3,4/3,5/3,6/4,7,8,9])
             sage: g = mathematica(A); g                  # optional - mathematica
             {{1, 2, 3}, {4/3, 5/3, 3/2}, {7, 8, 9}}
-            sage: A._mathematica_init_()
+            sage: A._mathematica_init_()                                                # optional - sage.symbolic
             '{{1/1, 2/1, 3/1}, {4/3, 5/3, 3/2}, {7/1, 8/1, 9/1}}'
 
         ::
