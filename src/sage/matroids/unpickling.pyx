@@ -670,8 +670,8 @@ def unpickle_graphic_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = Matroid(graphs.DiamondGraph())
-        sage: M == loads(dumps(M))
+        sage: M = Matroid(graphs.DiamondGraph())                                        # optional - sage.graphs
+        sage: M == loads(dumps(M))                                                      # optional - sage.graphs
         True
     """
     if version != 0:

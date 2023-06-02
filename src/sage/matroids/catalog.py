@@ -38,8 +38,6 @@ Functions
 from sage.matrix.constructor import Matrix
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.schemes.projective.projective_space import ProjectiveSpace
 
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -50,6 +48,10 @@ from sage.matroids.linear_matroid import (LinearMatroid, RegularMatroid,
                                           QuaternaryMatroid)
 from sage.matroids.rank_matroid import RankMatroid
 from sage.matroids.constructor import Matroid
+
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
+lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace')
+
 
 # The order is the same as in Oxley.
 
@@ -298,15 +300,15 @@ def AG32prime():
              {'b', 'e', 'g', 'h'}, {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'},
              {'d', 'e', 'f', 'g'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
-        sage: M.contract('c').is_isomorphic(matroids.named_matroids.Fano())
+        sage: M.contract('c').is_isomorphic(matroids.named_matroids.Fano())             # optional - sage.rings.finite_rings
         True
-        sage: setprint(M.noncospanning_cocircuits())
+        sage: setprint(M.noncospanning_cocircuits())                                    # optional - sage.rings.finite_rings
         [{'a', 'b', 'c', 'h'}, {'a', 'b', 'd', 'e'}, {'a', 'b', 'f', 'g'},
          {'a', 'c', 'd', 'f'}, {'a', 'd', 'g', 'h'}, {'a', 'e', 'f', 'h'},
          {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'}, {'b', 'd', 'f', 'h'},
          {'b', 'e', 'g', 'h'}, {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'},
          {'d', 'e', 'f', 'g'}]
-        sage: M.is_valid() # long time
+        sage: M.is_valid() # long time                                                  # optional - sage.rings.finite_rings
         True
     """
     E = 'abcdefgh'
@@ -373,11 +375,11 @@ def F8():
         ....:                                         for i in M.groundset()])
         sage: len(D)
         3
-        sage: [N.is_isomorphic(matroids.named_matroids.Fano()) for N in D]
+        sage: [N.is_isomorphic(matroids.named_matroids.Fano()) for N in D]              # optional - sage.rings.finite_rings
         [...True...]
-        sage: [N.is_isomorphic(matroids.named_matroids.NonFano()) for N in D]
+        sage: [N.is_isomorphic(matroids.named_matroids.NonFano()) for N in D]           # optional - sage.rings.finite_rings
         [...True...]
-        sage: M.is_valid() # long time
+        sage: M.is_valid() # long time                                                  # optional - sage.rings.finite_rings
         True
     """
     E = 'abcdefgh'
@@ -689,12 +691,12 @@ def K33dual():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.K33dual(); M
+        sage: M = matroids.named_matroids.K33dual(); M                                  # optional - sage.graphs
         M*(K3, 3): Regular matroid of rank 4 on 9 elements with 81 bases
-        sage: any(N.is_3connected()
+        sage: any(N.is_3connected()                                                     # optional - sage.graphs
         ....:     for N in M.linear_extensions(simple=True))
         False
-        sage: M.is_valid() # long time
+        sage: M.is_valid()  # long time                                                 # optional - sage.graphs
         True
     """
     from sage.graphs.graph_generators import graphs
@@ -757,16 +759,16 @@ def CompleteGraphic(n):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
-        sage: M = matroids.CompleteGraphic(5); M
+        sage: M = matroids.CompleteGraphic(5); M                                        # optional - sage.graphs
         M(K5): Graphic matroid of rank 4 on 10 elements
-        sage: M.has_minor(matroids.Uniform(2, 4))
+        sage: M.has_minor(matroids.Uniform(2, 4))                                       # optional - sage.graphs
         False
-        sage: simplify(M.contract(randrange(0,
+        sage: simplify(M.contract(randrange(0,                                          # optional - sage.graphs
         ....:                 10))).is_isomorphic(matroids.CompleteGraphic(4))
         True
-        sage: setprint(M.closure([0, 2, 4, 5]))
+        sage: setprint(M.closure([0, 2, 4, 5]))                                         # optional - sage.graphs
         {0, 1, 2, 4, 5, 7}
-        sage: M.is_valid()
+        sage: M.is_valid()                                                              # optional - sage.graphs
         True
     """
     from sage.graphs.graph_generators import graphs
@@ -805,11 +807,11 @@ def Wheel(n, field=None, ring=None):
         sage: M.is_valid()
         True
         sage: M = matroids.Wheel(3)
-        sage: M.is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.is_isomorphic(matroids.CompleteGraphic(4))                              # optional - sage.graphs
         True
-        sage: M.is_isomorphic(matroids.Wheel(3,field=GF(3)))
+        sage: M.is_isomorphic(matroids.Wheel(3, field=GF(3)))                           # optional - sage.rings.finite_rings
         True
-        sage: M = matroids.Wheel(3,field=GF(3)); M
+        sage: M = matroids.Wheel(3, field=GF(3)); M                                     # optional - sage.rings.finite_rings
         Wheel(3): Ternary matroid of rank 3 on 6 elements, type 0+
     """
     base_ring = ZZ
@@ -1048,7 +1050,7 @@ def R10():
         {4, 6}
         sage: M.equals(M.dual())
         False
-        sage: M.is_isomorphic(M.dual())
+        sage: M.is_isomorphic(M.dual())                                                 # optional - sage.graphs
         True
         sage: M.is_valid()
         True
@@ -1086,7 +1088,7 @@ def R12():
         R12: Regular matroid of rank 6 on 12 elements with 441 bases
         sage: M.equals(M.dual())
         False
-        sage: M.is_isomorphic(M.dual())
+        sage: M.is_isomorphic(M.dual())                                                 # optional - sage.graphs
         True
         sage: M.is_valid()
         True

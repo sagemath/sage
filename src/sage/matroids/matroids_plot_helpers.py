@@ -1,3 +1,4 @@
+# sage.doctest: optional - scipy
 r"""
 Helper functions for plotting the geometric representation of matroids
 
@@ -50,13 +51,14 @@ REFERENCES
 EXAMPLES::
 
     sage: from sage.matroids import matroids_plot_helpers
-    sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
-    ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0], [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-    sage: pos_dict= {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
-    ....: 4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.666666666666667),
-    ....: 7: (3,3), 8: (4,0), 9: (-1,1), 10: (-2,-2)}
-    sage: M1._cached_info={'plot_positions': pos_dict, 'plot_lineorders': None}
-    sage: matroids_plot_helpers.geomrep(M1, sp=True)                                    # optional - sage.plot
+    sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],               # optional - sage.rings.finite_rings
+    ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
+    ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
+    sage: pos_dict = {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
+    ....:             4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.666666666666667),
+    ....:             7: (3,3), 8: (4,0), 9: (-1,1), 10: (-2,-2)}
+    sage: M1._cached_info = {'plot_positions': pos_dict, 'plot_lineorders': None}       # optional - sage.rings.finite_rings
+    sage: matroids_plot_helpers.geomrep(M1, sp=True)                                    # optional - sage.plot sage.rings.finite_rings
     Graphics object consisting of 22 graphics primitives
 
 """
@@ -401,21 +403,23 @@ def slp(M1, pos_dict=None, B=None):
 
         sage: from sage.matroids import matroids_plot_helpers
         sage: from sage.matroids.advanced import setprint
-        sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
-        ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0],[0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: [M,L,P]=matroids_plot_helpers.slp(M1)
-        sage: M.is_simple()
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],           # optional - sage.rings.finite_rings
+        ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
+        ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
+        sage: [M,L,P] = matroids_plot_helpers.slp(M1)                                   # optional - sage.rings.finite_rings
+        sage: M.is_simple()                                                             # optional - sage.rings.finite_rings
         True
-        sage: setprint([L,P])
+        sage: setprint([L,P])                                                           # optional - sage.rings.finite_rings
         [{10, 8, 9}, {7}]
-        sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
-        ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0],[0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: posdict= {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
-        ....: 4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: [M,L,P]=matroids_plot_helpers.slp(M1,pos_dict=posdict)
-        sage: M.is_simple()
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],           # optional - sage.rings.finite_rings
+        ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
+        ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
+        sage: posdict = {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),             # optional - sage.rings.finite_rings
+        ....:            4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
+        sage: [M,L,P] = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # optional - sage.rings.finite_rings
+        sage: M.is_simple()                                                             # optional - sage.rings.finite_rings
         True
-        sage: setprint([L,P])
+        sage: setprint([L,P])                                                           # optional - sage.rings.finite_rings
         [{0, 10, 9}, {7}]
 
     .. NOTE::
@@ -483,11 +487,12 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
-        ....: [0, 1, 0, 1, 0, 1, 1,0,0],[0, 0, 1, 1, 1, 0, 1,0,0]])
-        sage: [M1,L,P] = matroids_plot_helpers.slp(M)
-        sage: G, lims = matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})                 # optional - sage.plot
-        sage: G.show(axes=False)                                                        # optional - sage.plot
+        sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],                # optional - sage.rings.finite_rings
+        ....:                                 [0, 1, 0, 1, 0, 1, 1,0,0],
+        ....:                                 [0, 0, 1, 1, 1, 0, 1,0,0]])
+        sage: [M1,L,P] = matroids_plot_helpers.slp(M)                                   # optional - sage.rings.finite_rings
+        sage: G, lims = matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})                 # optional - sage.plot sage.rings.finite_rings
+        sage: G.show(axes=False)                                                        # optional - sage.plot sage.rings.finite_rings
 
     .. NOTE::
 
@@ -664,15 +669,16 @@ def posdict_is_sane(M1, pos_dict):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
-        ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0],[0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: pos_dict= {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],           # optional - sage.rings.finite_rings
+        ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
+        ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
+        sage: pos_dict = {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),            # optional - sage.rings.finite_rings
         ....: 4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)
+        sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)                        # optional - sage.rings.finite_rings
         True
-        sage: pos_dict= {1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
-        ....: 4: (0.5, 1.0), 5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)
+        sage: pos_dict = {1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
+        ....:             4: (0.5, 1.0), 5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
+        sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)                        # optional - sage.rings.finite_rings
         False
 
     .. NOTE::

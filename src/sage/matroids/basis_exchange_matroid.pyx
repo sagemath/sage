@@ -516,10 +516,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
-            sage: len(M)
+            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: len(M)                                                                # optional - sage.rings.finite_rings
             7
-            sage: len(M.groundset())
+            sage: len(M.groundset())                                                    # optional - sage.rings.finite_rings
             7
 
         """
@@ -2146,8 +2146,8 @@ cdef class BasisExchangeMatroid(Matroid):
             ....:     return min(len(X), 2)
             ....:
             sage: M = Matroid(groundset='abcd', rank_function=f)
-            sage: N = Matroid(field=GF(3), reduced_matrix=[[1,1],[1,-1]])
-            sage: N._is_isomorphism(M, {0:'a', 1:'b', 2:'c', 3:'d'})
+            sage: N = Matroid(field=GF(3), reduced_matrix=[[1,1],[1,-1]])               # optional - sage.rings.finite_rings
+            sage: N._is_isomorphism(M, {0:'a', 1:'b', 2:'c', 3:'d'})                    # optional - sage.rings.finite_rings
             True
         """
         if not isinstance(other, BasisExchangeMatroid):
@@ -2195,9 +2195,9 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = matroids.CompleteGraphic(4)
-            sage: morphism = M1._isomorphism(M2)
-            sage: M1._is_isomorphism(M2, morphism)
+            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
+            sage: morphism = M1._isomorphism(M2)                                        # optional - sage.graphs
+            sage: M1._is_isomorphism(M2, morphism)                                      # optional - sage.graphs
             True
             sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
             sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
@@ -2289,10 +2289,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = BasisMatroid(matroids.Wheel(3))
-            sage: M2 = matroids.CompleteGraphic(4)
-            sage: M1._is_isomorphic(M2)
+            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # optional - sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)
+            sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
             sage: M1 = BasisMatroid(matroids.named_matroids.Fano())                     # optional - sage.rings.finite_rings
             sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
