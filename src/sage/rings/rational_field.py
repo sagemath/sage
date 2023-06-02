@@ -326,7 +326,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
             sage: QQ.completion(infinity, 53)
             Real Field with 53 bits of precision
-            sage: QQ.completion(5, 15, {'print_mode': 'bars'})
+            sage: QQ.completion(5, 15, {'print_mode': 'bars'})                          # optional - sage.rings.padics
             5-adic Field with capped relative precision 15
         """
         from sage.rings.infinity import Infinity

@@ -109,16 +109,16 @@ A map from a multivariate polynomial ring to itself::
 An endomorphism of a quotient of a multi-variate polynomial ring::
 
     sage: R.<x,y> = PolynomialRing(QQ)
-    sage: S.<a,b> = quo(R, ideal(1 + y^2))
-    sage: phi = S.hom([a^2, -b])
-    sage: phi
+    sage: S.<a,b> = quo(R, ideal(1 + y^2))                                              # optional - sage.libs.singular
+    sage: phi = S.hom([a^2, -b])                                                        # optional - sage.libs.singular
+    sage: phi                                                                           # optional - sage.libs.singular
     Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y
      over Rational Field by the ideal (y^2 + 1)
       Defn: a |--> a^2
             b |--> -b
-    sage: phi(b)
+    sage: phi(b)                                                                        # optional - sage.libs.singular
     -b
-    sage: phi(a^2 + b^2)
+    sage: phi(a^2 + b^2)                                                                # optional - sage.libs.singular
     a^4 - 1
 
 The reduction map from the integers to the integers modulo 8, viewed as
