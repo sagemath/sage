@@ -37,15 +37,15 @@ class SemisimpleAlgebras(Category_over_base_ring):
 
     Typically, finite group algebras are semisimple::
 
-        sage: DihedralGroup(5).algebra(QQ) in SemisimpleAlgebras
+        sage: DihedralGroup(5).algebra(QQ) in SemisimpleAlgebras                        # optional - sage.groups
         True
 
     Unless the characteristic of the field divides the order of the group::
 
-        sage: DihedralGroup(5).algebra(IntegerModRing(5)) in SemisimpleAlgebras
+        sage: DihedralGroup(5).algebra(IntegerModRing(5)) in SemisimpleAlgebras         # optional - sage.groups
         False
 
-        sage: DihedralGroup(5).algebra(IntegerModRing(7)) in SemisimpleAlgebras
+        sage: DihedralGroup(5).algebra(IntegerModRing(7)) in SemisimpleAlgebras         # optional - sage.groups
         True
 
     .. SEEALSO:: :wikipedia:`Semisimple_algebra`
@@ -96,13 +96,13 @@ class SemisimpleAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = SymmetricGroup(4).algebra(QQ)
-                sage: A.radical_basis()
+                sage: A = SymmetricGroup(4).algebra(QQ)                                 # optional - sage.groups
+                sage: A.radical_basis()                                                 # optional - sage.groups
                 ()
 
             TESTS::
 
-                sage: A.radical_basis.__module__
+                sage: A.radical_basis.__module__                                        # optional - sage.groups
                 'sage.categories.finite_dimensional_semisimple_algebras_with_basis'
             """
             return ()

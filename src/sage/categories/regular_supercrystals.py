@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.graphs
 r"""
 Regular Supercrystals
 """
@@ -107,7 +108,7 @@ class RegularSuperCrystals(Category_singleton):
 
             EXAMPLES::
 
-                sage: C = crystals.Tableaux(['A',[1,2]], shape = [2,1])
+                sage: C = crystals.Tableaux(['A',[1,2]], shape=[2,1])
                 sage: c = C.an_element(); c
                 [[-2, -2], [-1]]
                 sage: c.epsilon(2)
@@ -132,7 +133,7 @@ class RegularSuperCrystals(Category_singleton):
 
             EXAMPLES::
 
-                sage: C = crystals.Tableaux(['A',[1,2]], shape = [2,1])
+                sage: C = crystals.Tableaux(['A',[1,2]], shape=[2,1])
                 sage: c = C.an_element(); c
                 [[-2, -2], [-1]]
                 sage: c.phi(1)

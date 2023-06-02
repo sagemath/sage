@@ -48,6 +48,7 @@ Named associative algebras
    sage/algebras/clifford_algebra
    sage/algebras/cluster_algebra
    sage/combinat/descent_algebra
+   sage/algebras/down_up_algebra
    fusion_rings
    sage/algebras/hall_algebra
    sage/combinat/posets/incidence_algebras
@@ -109,6 +110,7 @@ Non-associative algebras
 .. toctree::
    :maxdepth: 1
 
+   sage/algebras/octonion_algebra
    lie_algebras
    lie_conformal_algebras
    sage/algebras/jordan_algebra

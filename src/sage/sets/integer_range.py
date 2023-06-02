@@ -332,7 +332,7 @@ class IntegerRangeFinite(IntegerRange):
         self._begin = begin
         self._end = end
         self._step = step
-        Parent.__init__(self, facade = IntegerRing(), category = FiniteEnumeratedSets())
+        Parent.__init__(self, facade=IntegerRing(), category=FiniteEnumeratedSets())
 
     def __contains__(self, elt):
         r"""
@@ -542,7 +542,7 @@ class IntegerRangeInfinite(IntegerRange):
             raise TypeError("begin should be Integer, not %r" % type(begin))
         self._begin = begin
         self._step = step
-        Parent.__init__(self, facade = IntegerRing(), category = InfiniteEnumeratedSets())
+        Parent.__init__(self, facade=IntegerRing(), category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         r"""
@@ -701,9 +701,9 @@ class IntegerRangeFromMiddle(IntegerRange):
 
         if (begin != Infinity and begin != -Infinity) and \
              (end != Infinity and end != -Infinity):
-            Parent.__init__(self, facade = IntegerRing(), category = FiniteEnumeratedSets())
+            Parent.__init__(self, facade=IntegerRing(), category=FiniteEnumeratedSets())
         else:
-            Parent.__init__(self, facade = IntegerRing(), category = InfiniteEnumeratedSets())
+            Parent.__init__(self, facade=IntegerRing(), category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         r"""
