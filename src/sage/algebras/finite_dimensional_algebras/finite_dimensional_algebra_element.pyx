@@ -26,7 +26,9 @@ cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A
 
     TESTS::
 
-        sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[1,1,0], [0,1,1], [0,1,1]]), Matrix([[0,0,1], [0,1,0], [1,0,0]])])
+        sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+        ....:                                   Matrix([[1,1,0], [0,1,1], [0,1,1]]),
+        ....:                                   Matrix([[0,0,1], [0,1,0], [1,0,0]])])
         sage: x = B([1,2,3])
         sage: loads(dumps(x)) == x      # indirect doctest
         True
@@ -59,23 +61,26 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
     EXAMPLES::
 
-        sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
-        sage: A(17)
+        sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),              # optional - sage.rings.finite_rings
+        ....:                                      Matrix([[0,1], [0,0]])])
+        sage: A(17)                                                                     # optional - sage.rings.finite_rings
         2*e0
-        sage: A([1,1])
+        sage: A([1,1])                                                                  # optional - sage.rings.finite_rings
         e0 + e1
     """
     def __init__(self, A, elt=None, check=True):
         """
         TESTS::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
-            sage: A(QQ(4))
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: A(QQ(4))                                                              # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: elt should be a vector, a matrix, or an element of the base field
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]), Matrix([[0,1], [-1,0]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+            ....:                                   Matrix([[0,1], [-1,0]])])
             sage: elt = B(Matrix([[1,1], [-1,1]])); elt
             e0 + e1
             sage: TestSuite(elt).run()
@@ -133,7 +138,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         TESTS::
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[1,1,0], [0,1,1], [0,1,1]]), Matrix([[0,0,1], [0,1,0], [1,0,0]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[1,1,0], [0,1,1], [0,1,1]]),
+            ....:                                   Matrix([[0,0,1], [0,1,0], [1,0,0]])])
             sage: x = B([1,2,3])
             sage: loads(dumps(x)) == x      # indirect doctest
             True
@@ -149,7 +156,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         TESTS::
 
-            sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: x = A.element_class.__new__(A.element_class)
             sage: x.__setstate__((A, {'_vector':vector([1,1,1]), '_matrix':matrix(QQ,3,[1,1,0, 0,1,0, 0,0,1])}))
             sage: x
@@ -183,7 +192,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         TESTS::
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[1,1,0], [0,1,1], [0,1,1]]), Matrix([[0,0,1], [0,1,0], [1,0,0]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[1,1,0], [0,1,1], [0,1,1]]),
+            ....:                                   Matrix([[0,0,1], [0,1,0], [1,0,0]])])
             sage: x = B([1,2,3])
             sage: x._matrix
             [3 2 3]
@@ -205,7 +216,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: B(5).vector()
             (5, 0, 5)
         """
@@ -220,7 +233,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: B(5).matrix()
             [5 0 0]
             [0 5 0]
@@ -240,7 +255,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]), Matrix([[0,1], [-1,0]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+            ....:                                   Matrix([[0,1], [-1,0]])])
             sage: elt = B(Matrix([[1,1], [-1,1]]))
             sage: elt.monomial_coefficients()
             {0: 1, 1: 1}
@@ -254,7 +270,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,0,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,1,0], [0,0,1]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,1,0], [0,0,1]])])
             sage: C([1,2,0]).left_matrix()
             [1 0 0]
             [0 1 0]
@@ -272,8 +290,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
-            sage: A(1)
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: A(1)                                                                  # optional - sage.rings.finite_rings
             e0
         """
         s = " "
@@ -308,8 +327,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
-            sage: latex(A(1))  # indirect doctest
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: latex(A(1))  # indirect doctest                                       # optional - sage.rings.finite_rings
             \left(\begin{array}{rr}
             1 & 0 \\
             0 & 1
@@ -324,7 +344,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: A([2,1/4,3])[2]
             3
         """
@@ -334,7 +356,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: len(A([2,1/4,3]))
             3
         """
@@ -345,15 +369,18 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
-            sage: A(2) == 2
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: A(2) == 2                                                             # optional - sage.rings.finite_rings
             True
-            sage: A(2) == 3
+            sage: A(2) == 3                                                             # optional - sage.rings.finite_rings
             False
-            sage: A(2) == GF(5)(2)
+            sage: A(2) == GF(5)(2)                                                      # optional - sage.rings.finite_rings
             False
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: B(1) != 0
             True
 
@@ -362,13 +389,13 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         the algebra corresponds to the standard monomials of the relation ideal, when
         the algebra is considered as a quotient of a path algebra. ::
 
-            sage: A(1) > 0
+            sage: A(1) > 0                                                              # optional - sage.rings.finite_rings
             True
-            sage: A(1) < 0
+            sage: A(1) < 0                                                              # optional - sage.rings.finite_rings
             False
-            sage: A(1) >= 0
+            sage: A(1) >= 0                                                             # optional - sage.rings.finite_rings
             True
-            sage: A(1) <= 0
+            sage: A(1) <= 0                                                             # optional - sage.rings.finite_rings
             False
         """
         return richcmp(self._vector, <FiniteDimensionalAlgebraElement>right._vector, op)
@@ -377,8 +404,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
-            sage: A.basis()[0] + A.basis()[1]
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: A.basis()[0] + A.basis()[1]                                           # optional - sage.rings.finite_rings
             e0 + e1
         """
         return self._parent.element_class(self._parent, self._vector + <FiniteDimensionalAlgebraElement>other._vector)
@@ -387,8 +415,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
-            sage: A.basis()[0] - A.basis()[1]
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: A.basis()[0] - A.basis()[1]                                           # optional - sage.rings.finite_rings
             e0 + 2*e1
         """
         return self._parent.element_class(self._parent, self._vector - <FiniteDimensionalAlgebraElement>other._vector)
@@ -397,7 +426,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,0,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,1,0], [0,0,1]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,1,0], [0,0,1]])])
             sage: C.basis()[1] * C.basis()[2]
             e1
         """
@@ -407,7 +438,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         TESTS::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,0,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,1,0], [0,0,1]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,1,0], [0,0,1]])])
             sage: c = C.random_element()
             sage: c * 2 == c + c
             True
@@ -421,7 +454,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         TESTS::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,0,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,1,0], [0,0,1]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,1,0], [0,0,1]])])
             sage: c = C.random_element()
             sage: 2 * c == c + c
             True
@@ -438,7 +473,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: b = B([2,3,4])
             sage: b^6
             64*e0 + 576*e1 + 4096*e2
@@ -459,7 +496,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         TESTS::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]), Matrix([[0,1], [-1,0]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+            ....:                                   Matrix([[0,1], [-1,0]])])
             sage: x = C([1,2])
             sage: y = ~x; y                 # indirect doctest
             1/5*e0 - 2/5*e1
@@ -486,7 +524,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]), Matrix([[0,1], [-1,0]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+            ....:                                   Matrix([[0,1], [-1,0]])])
             sage: C([1,2]).is_invertible()
             True
             sage: C(0).is_invertible()
@@ -505,7 +544,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]), Matrix([[0,1], [-1,0]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+            ....:                                   Matrix([[0,1], [-1,0]])])
             sage: C([1,2])._inverse
             1/5*e0 - 2/5*e1
             sage: C(0)._inverse is None
@@ -543,7 +583,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]), Matrix([[0,1], [-1,0]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+            ....:                                   Matrix([[0,1], [-1,0]])])
             sage: C([1,2]).inverse()
             1/5*e0 - 2/5*e1
         """
@@ -561,7 +602,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+            ....:                                   Matrix([[0,1], [0,0]])])
             sage: C([1,0]).is_zerodivisor()
             False
             sage: C([0,1]).is_zerodivisor()
@@ -575,7 +617,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]), Matrix([[0,1], [0,0]])])
+            sage: C = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+            ....:                                   Matrix([[0,1], [0,0]])])
             sage: C([1,0]).is_nilpotent()
             False
             sage: C([0,1]).is_nilpotent()
@@ -596,7 +639,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: B(0).minimal_polynomial()
             x
             sage: b = B.random_element()
@@ -625,7 +670,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
+            ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: B(0).characteristic_polynomial()
             x^3
             sage: b = B.random_element()
