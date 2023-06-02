@@ -2636,7 +2636,7 @@ class Components(SageObject):
             True
 
         """
-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.combinat.permutation import Permutations
         if not pos:
             pos = tuple(range(self._nid))
         else:
@@ -2652,17 +2652,17 @@ class Components(SageObject):
         else:
             result = CompWithSym(self._ring, self._frame, self._nid, self._sindex,
                                  self._output_formatter, sym=pos)
-        sym_group = SymmetricGroup(n_sym)
+        sym_group = Permutations(n_sym)
         for ind in result.non_redundant_index_generator():
             sum = 0
             for perm in sym_group.list():
                 # action of the permutation on [0,1,...,n_sym-1]:
-                perm_action = [x - 1 for x in perm.domain()]
+                perm_action = [x - 1 for x in perm]
                 ind_perm = list(ind)
                 for k in range(n_sym):
                     ind_perm[pos[perm_action[k]]] = ind[pos[k]]
                 sum += self[[ind_perm]]
-            result[[ind]] = sum / sym_group.order()
+            result[[ind]] = sum / sym_group.cardinality()
         return result
 
     def antisymmetrize(self, *pos):
@@ -2787,7 +2787,7 @@ class Components(SageObject):
             True
 
         """
-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.combinat.permutation import Permutations
         if not pos:
             pos = tuple(range(self._nid))
         else:
@@ -2803,12 +2803,12 @@ class Components(SageObject):
         else:
             result = CompWithSym(self._ring, self._frame, self._nid, self._sindex,
                                  self._output_formatter, antisym=pos)
-        sym_group = SymmetricGroup(n_sym)
+        sym_group = Permutations(n_sym)
         for ind in result.non_redundant_index_generator():
             sum = 0
             for perm in sym_group.list():
                 # action of the permutation on [0,1,...,n_sym-1]:
-                perm_action = [x - 1 for x in perm.domain()]
+                perm_action = [x - 1 for x in perm]
                 ind_perm = list(ind)
                 for k in range(n_sym):
                     ind_perm[pos[perm_action[k]]] = ind[pos[k]]
@@ -2816,7 +2816,7 @@ class Components(SageObject):
                     sum += self[[ind_perm]]
                 else:
                     sum -= self[[ind_perm]]
-            result[[ind]] = sum / sym_group.order()
+            result[[ind]] = sum / sym_group.cardinality()
         return result
 
     def _matrix_(self):
@@ -4339,7 +4339,7 @@ class CompWithSym(Components):
             True
 
         """
-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.combinat.permutation import Permutations
         if not pos:
             pos = tuple(range(self._nid))
         else:
@@ -4421,17 +4421,17 @@ class CompWithSym(Components):
         # Symmetrization
         #
         n_sym = len(pos) # number of indices involved in the symmetry
-        sym_group = SymmetricGroup(n_sym)
+        sym_group = Permutations(n_sym)
         for ind in result.non_redundant_index_generator():
             sum = 0
-            for perm in sym_group.list():
+            for perm in sym_group:
                 # action of the permutation on [0,1,...,n_sym-1]:
-                perm_action = [x - 1 for x in perm.domain()]
+                perm_action = [x - 1 for x in perm]
                 ind_perm = list(ind)
                 for k in range(n_sym):
                     ind_perm[pos[perm_action[k]]] = ind[pos[k]]
                 sum += self[[ind_perm]]
-            result[[ind]] = sum / sym_group.order()
+            result[[ind]] = sum / sym_group.cardinality()
         return result
 
     def antisymmetrize(self, *pos):
@@ -4600,7 +4600,8 @@ class CompWithSym(Components):
             -27/2
 
         """
-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.combinat.permutation import Permutations
+
         if not pos:
             pos = tuple(range(self._nid))
         else:
@@ -4684,12 +4685,12 @@ class CompWithSym(Components):
         # Antisymmetrization
         #
         n_sym = len(pos) # number of indices involved in the antisymmetry
-        sym_group = SymmetricGroup(n_sym)
+        sym_group = Permutations(n_sym)
         for ind in result.non_redundant_index_generator():
             sum = 0
             for perm in sym_group.list():
                 # action of the permutation on [0,1,...,n_sym-1]:
-                perm_action = [x - 1 for x in perm.domain()]
+                perm_action = [x - 1 for x in perm]
                 ind_perm = list(ind)
                 for k in range(n_sym):
                     ind_perm[pos[perm_action[k]]] = ind[pos[k]]
@@ -4697,7 +4698,7 @@ class CompWithSym(Components):
                     sum += self[[ind_perm]]
                 else:
                     sum -= self[[ind_perm]]
-            result[[ind]] = sum / sym_group.order()
+            result[[ind]] = sum / sym_group.cardinality()
         return result
 
 
