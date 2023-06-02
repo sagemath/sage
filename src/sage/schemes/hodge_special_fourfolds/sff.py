@@ -13,7 +13,7 @@ For more computational details, see the paper at https://www.tandfonline.com/doi
 
 AUTHORS:
 
-- Giovanni Staglianò (2023-05-19): initial version
+- Giovanni Staglianò (2023-06-02): initial version
 
 """
 
@@ -1165,8 +1165,8 @@ def _check_type_embedded_projective_variety(X):
     return Embedded_projective_variety(X)
 
 @cached_function
-def PP(n, KK=GF(33331), var='x'):
-    r"""Projective space of dimension ``n`` over ``KK``
+def PP(n, KK=33331, var='x'):
+    r"""Projective space of dimension ``n`` over ``KK``.
 
     EXAMPLES::
 
@@ -2199,7 +2199,7 @@ def rational_map(*args, **kwargs):
         return rational_map(args[0],args[1],args[2].defining_polynomials())
     raise NotImplementedError
 
-def veronese(n, d, KK=GF(33331), var='x'):
+def veronese(n, d, KK=33331, var='x'):
     r"""Return the Veronese embedding.
 
     OUTPUT:
@@ -2216,10 +2216,10 @@ def veronese(n, d, KK=GF(33331), var='x'):
     """
     if isinstance(KK,(int,Integer)):
         KK = GF(KK) if KK > 0 else QQ
-        return veronese(n, d, KK, var)
-    return Rational_map_between_embedded_projective_varieties(PP(n,KK,var='t'), PP(binomial(n+d,n)-1,KK,var), PP(n,KK,var='t').empty()._homogeneous_component(d))
+        return veronese(n, d, KK=KK, var=var)
+    return Rational_map_between_embedded_projective_varieties(PP(n,KK=KK,var='t'), PP(binomial(n+d,n)-1,KK=KK,var=var), PP(n,KK=KK,var='t').empty()._homogeneous_component(d))
 
-def Veronese(n, d, KK=GF(33331), var='x'):
+def Veronese(n, d, KK=33331, var='x'):
     r"""Return the image of the Veronese embedding.
 
     OUTPUT:
@@ -2275,18 +2275,20 @@ class _Rational_projective_surface(Embedded_projective_variety):
                 s_l = s_l + "\\mbox{ (the image of the plane via the linear system }" + latex(self._linear_system) + "\\mbox{)}"
         return s_l
 
-def surface(*args, KK=GF(33331), ambient=None, nodes=None):
-    r"""Return a rational surface in a projective space of dimension ``ambient`` over the field ``KK``
+def surface(*args, KK=33331, ambient=None, nodes=None):
+    r"""Return a rational surface in a projective space of dimension ``ambient`` over the field ``KK``.
 
     INPUT:
 
     - a tuple (a,i,j,k,...) of integers.
 
+    - a base field ``KK`` or its characteristic.
+
     OUTPUT:
 
-    :class:`Embedded_projective_variety`, the rational surface obtained as the image of the plane
-    via the linear system of curves of degree ``a`` having ``i`` general base points of
-    multiplicity 1, ``j`` general base points of multiplicity 2, ``k`` general base points
+    :class:`Embedded_projective_variety`, the rational surface over ``KK`` obtained as the image
+    of the plane via the linear system of curves of degree ``a`` having ``i`` general base points
+    of multiplicity 1, ``j`` general base points of multiplicity 2, ``k`` general base points
     of multiplicity 3, and so on.
 
     EXAMPLES::
@@ -2299,7 +2301,7 @@ def surface(*args, KK=GF(33331), ambient=None, nodes=None):
     for i in v:
         if not(isinstance(i,(Integer,int))):
             raise TypeError("expected a tuple of integers")
-    R = PP(2,KK,var='t').coordinate_ring()
+    R = PP(2,KK=KK,var='t').coordinate_ring()
     I = ideal(R.one())
     for i in range(1,len(v)):
         for j in range(v[i]):
@@ -2595,7 +2597,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 return self._the_map_from_the_fivefold
             raise ValueError("keyword algorithm must be 'macaulay2' or 'sage'")
 
-    def congruence(self, degree=None, num_checks=1, point=None, verbose=None, algorithm_for_image='sage', algorithm_for_point='sage', macaulay2_detectCongruence = False):
+    def congruence(self, degree=None, num_checks=3, point=None, verbose=None, algorithm_for_image='sage', algorithm_for_point='sage', macaulay2_detectCongruence = False):
         r"""Detect and return a congruence of secant curves for the surface of ``self`` in the ambient fivefold of ``self``.
 
         This function works similar to the ``Macaulay2`` function ``detectCongruence``, documented at
@@ -2607,7 +2609,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
         ``degree`` -- an optional integer, the degree of the curves of the congruence.
 
-        ``num_checks`` -- an optional integer with default value 1, check that the congruence works by testing so many random points on the ambient fivefold.
+        ``num_checks`` -- an optional integer with default value 3, check that the congruence works by testing so many random points on the ambient fivefold.
 
         ``point`` -- optional, a point on the ambient fivefold. This is only useful when you want to perform calculations on infinite fields, where the function :meth:`point` might not work.
 
@@ -2638,7 +2640,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
             sage: X = fourfold("GM 4-fold of discriminant 26('')",GF(65521)); X                                   # optional - macaulay2
             Gushel-Mukai fourfold of discriminant 26('') containing a surface in PP^8 of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2, class of the surface in GG(1,4): (5, 4)
-            sage: f = X.congruence(macaulay2_detectCongruence=True, verbose=True); f                              # optional - macaulay2
+            sage: f = X.congruence(macaulay2_detectCongruence=True, num_checks=1, verbose=True); f                # optional - macaulay2
             -- running Macaulay2 function detectCongruence()... --
             number lines contained in the image of the quadratic map and passing through a general point: 6
             number 1-secant lines = 5
@@ -2715,6 +2717,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 raise Exception("function 'congruence' failed")
                 self._possible_degrees_for_curves_of_congruence = set()
             assert(p.is_subset(W[0]))
+            self._possible_degrees_for_curves_of_congruence = set([w.degree() for w in W])
             return W[0]
 
         p = self.ambient_fivefold().point(verbose=verbose, algorithm=algorithm_for_point) if point is None else point
@@ -3561,7 +3564,7 @@ _set_macaulay2_()
 
 if __name__ == "__main__":
     print("""┌─────────────────────────────────────┐
- sff.py version 1.0, date: 2023-05-19""" +
+ sff.py version 1.0, date: 2023-06-02""" +
 ("\n with SpecialFanoFourfolds.m2 v. " + macaulay2('SpecialFanoFourfolds.Options.Version').sage() if Macaulay2().is_present() else "\n Macaulay2 not present") +
 """
 └─────────────────────────────────────┘""")
