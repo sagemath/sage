@@ -4,7 +4,7 @@
 # Furthermore in the case of the state it checks the labels
 # to coincide with the corresponding review state.
 
-name: Synchronize selection list lables
+name: Synchronize labels
 
 on:
   issues:

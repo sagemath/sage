@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 r"""
-Python script to sync labels that are migrated from Trac selection lists.
+Python script to sync status and priority labels.
 For more information see https://github.com/sagemath/sage/pull/35172
 """
 
