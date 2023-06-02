@@ -55,9 +55,9 @@ AUTHORS:
 
 TESTS::
 
-    sage: F = matroids.named_matroids.Fano()
-    sage: M = Matroid(bases=F.bases())
-    sage: TestSuite(M).run()
+    sage: F = matroids.named_matroids.Fano()                                            # optional - sage.rings.finite_rings
+    sage: M = Matroid(bases=F.bases())                                                  # optional - sage.rings.finite_rings
+    sage: TestSuite(M).run()                                                            # optional - sage.rings.finite_rings
 
 Methods
 =======
@@ -975,9 +975,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
             sage: from sage.matroids.advanced import *
             sage: M = BasisMatroid(matroids.Wheel(3))
-            sage: N = BasisMatroid(matroids.CompleteGraphic(4))
-            sage: morphism = M._isomorphism(N)
-            sage: M._is_isomorphism(N, morphism)
+            sage: N = BasisMatroid(matroids.CompleteGraphic(4))                         # optional - sage.graphs
+            sage: morphism = M._isomorphism(N)                                          # optional - sage.graphs
+            sage: M._is_isomorphism(N, morphism)                                        # optional - sage.graphs
             True
             sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.rings.finite_rings
             sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings

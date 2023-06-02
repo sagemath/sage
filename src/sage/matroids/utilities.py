@@ -83,10 +83,10 @@ def setprint(X):
     An exception was made for subclasses of SageObject::
 
         sage: from sage.matroids.advanced import setprint
-        sage: G = graphs.PetersenGraph()
-        sage: list(G)
+        sage: G = graphs.PetersenGraph()                                                # optional - sage.graphs
+        sage: list(G)                                                                   # optional - sage.graphs
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        sage: setprint(G)
+        sage: setprint(G)                                                               # optional - sage.graphs
         Petersen graph: Graph on 10 vertices
     """
     print(setprint_s(X, toplevel=True))
@@ -270,7 +270,7 @@ def make_regular_matroid_from_matroid(matroid):
     EXAMPLES::
 
         sage: from sage.matroids.utilities import make_regular_matroid_from_matroid
-        sage: make_regular_matroid_from_matroid(
+        sage: make_regular_matroid_from_matroid(                                        # optional - sage.graphs
         ....:               matroids.CompleteGraphic(6)).is_isomorphic(
         ....:                                     matroids.CompleteGraphic(6))
         True
@@ -378,9 +378,10 @@ def spanning_forest(M):
 
     EXAMPLES::
 
-        sage: len(sage.matroids.utilities.spanning_forest(matrix([[1,1,1],[1,1,1],[1,1,1]])))
+        sage: from sage.matroids.utilities import spanning_forest
+        sage: len(spanning_forest(matrix([[1,1,1],[1,1,1],[1,1,1]])))                   # optional - sage.graphs
         5
-        sage: len(sage.matroids.utilities.spanning_forest(matrix([[0,0,1],[0,1,0],[0,1,0]])))
+        sage: len(spanning_forest(matrix([[0,0,1],[0,1,0],[0,1,0]])))                   # optional - sage.graphs
         3
     """
     # Given a matrix, produce a spanning tree
@@ -418,8 +419,9 @@ def spanning_stars(M):
 
     EXAMPLES::
 
-        sage: edges = sage.matroids.utilities.spanning_stars(matrix([[1,1,1],[1,1,1],[1,1,1]]))
-        sage: Graph([(x+3, y) for x,y in edges]).is_connected()
+        sage: from sage.matroids.utilities import spanning_stars
+        sage: edges = spanning_stars(matrix([[1,1,1],[1,1,1],[1,1,1]]))                 # optional - sage.graphs
+        sage: Graph([(x+3, y) for x,y in edges]).is_connected()                         # optional - sage.graphs
         True
     """
 
@@ -532,25 +534,25 @@ def lift_cross_ratios(A, lift_map=None):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import lift_cross_ratios, lift_map, LinearMatroid
-        sage: R = GF(7)                                                                 # optional - sage.rings.finite_rings
-        sage: to_sixth_root_of_unity = lift_map('sru')                                  # optional - sage.rings.number_field
-        sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])          # optional - sage.rings.finite_rings
-        sage: A                                                                         # optional - sage.rings.finite_rings
+        sage: R = GF(7)                                                                 # optional - sage.graphs sage.rings.finite_rings
+        sage: to_sixth_root_of_unity = lift_map('sru')                                  # optional - sage.graphs sage.rings.number_field
+        sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])          # optional - sage.graphs sage.rings.finite_rings
+        sage: A                                                                         # optional - sage.graphs sage.rings.finite_rings
         [1 0 6 1 2]
         [6 1 0 0 1]
         [0 6 3 6 0]
-        sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)                          # optional - sage.rings.finite_rings sage.rings.number_field
-        sage: Z                                                                         # optional - sage.rings.finite_rings sage.rings.number_field
+        sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)                          # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
+        sage: Z                                                                         # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
         [ 1  0  1  1  1]
         [ 1  1  0  0  z]
         [ 0 -1  z  1  0]
-        sage: M = LinearMatroid(reduced_matrix=A)                                       # optional - sage.rings.finite_rings
-        sage: sorted(M.cross_ratios())                                                  # optional - sage.rings.finite_rings
+        sage: M = LinearMatroid(reduced_matrix=A)                                       # optional - sage.graphs sage.rings.finite_rings
+        sage: sorted(M.cross_ratios())                                                  # optional - sage.graphs sage.rings.finite_rings
         [3, 5]
-        sage: N = LinearMatroid(reduced_matrix=Z)                                       # optional - sage.rings.finite_rings sage.rings.number_field
-        sage: sorted(N.cross_ratios())                                                  # optional - sage.rings.finite_rings sage.rings.number_field
+        sage: N = LinearMatroid(reduced_matrix=Z)                                       # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
+        sage: sorted(N.cross_ratios())                                                  # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
         [-z + 1, z]
-        sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # optional - sage.rings.finite_rings sage.rings.number_field
+        sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
         True
 
     """
@@ -740,7 +742,7 @@ def split_vertex(G, u, v=None, edges=None):
 
     INPUT:
 
-    - ``G`` -- A SageMath Graph.
+    - ``G`` -- A SageMath :class:`Graph`.
     - ``u`` -- A vertex in ``G``.
     - ``v`` -- (optional) The name of the new vertex after the splitting. If
       ``v`` is specified and already in the graph, it must be an isolated vertex.
@@ -751,13 +753,13 @@ def split_vertex(G, u, v=None, edges=None):
     EXAMPLES::
 
         sage: from sage.matroids.utilities import split_vertex
-        sage: G = graphs.BullGraph()
-        sage: split_vertex(G, u=1, v=55, edges=[(1, 3)])
+        sage: G = graphs.BullGraph()                                                    # optional - sage.graphs
+        sage: split_vertex(G, u=1, v=55, edges=[(1, 3)])                                # optional - sage.graphs
         Traceback (most recent call last):
         ...
         ValueError: the edges are not all incident with u
-        sage: split_vertex(G, u=1, v=55, edges=[(1, 3, None)])
-        sage: list(G.edges(sort=True))
+        sage: split_vertex(G, u=1, v=55, edges=[(1, 3, None)])                          # optional - sage.graphs
+        sage: list(G.edges(sort=True))                                                  # optional - sage.graphs
         [(0, 1, None), (0, 2, None), (1, 2, None), (2, 4, None), (3, 55, None)]
     """
     if v is None:

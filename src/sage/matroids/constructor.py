@@ -75,8 +75,8 @@ EXAMPLES::
    sage: M.is_isomorphic(matroids.named_matroids.Fano())                                # optional - sage.rings.finite_rings
    True
 
-   sage: M = Matroid(graphs.PetersenGraph())
-   sage: M.rank()
+   sage: M = Matroid(graphs.PetersenGraph())                                            # optional - sage.graphs
+   sage: M.rank()                                                                       # optional - sage.graphs
    9
 
 AUTHORS:
@@ -148,8 +148,8 @@ def Matroid(groundset=None, data=None, **kwds):
     You will see a list of methods which will construct matroids. For
     example::
 
-        sage: F7 = matroids.named_matroids.Fano()
-        sage: len(F7.nonspanning_circuits())
+        sage: F7 = matroids.named_matroids.Fano()                                       # optional - sage.rings.finite_rings
+        sage: len(F7.nonspanning_circuits())                                            # optional - sage.rings.finite_rings
         7
 
     or::
@@ -335,54 +335,54 @@ def Matroid(groundset=None, data=None, **kwds):
 
         ::
 
-            sage: G = graphs.PetersenGraph()
-            sage: Matroid(G)
+            sage: G = graphs.PetersenGraph()                                            # optional - sage.graphs
+            sage: Matroid(G)                                                            # optional - sage.graphs
             Graphic matroid of rank 9 on 15 elements
 
         If each edge has a unique label, then those are used as the ground set
         labels::
 
-            sage: G = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'c')])
-            sage: M = Matroid(G)
-            sage: sorted(M.groundset())
+            sage: G = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'c')])                    # optional - sage.graphs
+            sage: M = Matroid(G)                                                        # optional - sage.graphs
+            sage: sorted(M.groundset())                                                 # optional - sage.graphs
             ['a', 'b', 'c']
 
         If there are parallel edges, then integers are used for the ground set.
         If there are no edges in parallel, and is not a complete list of labels,
         or the labels are not unique, then vertex tuples are used::
 
-            sage: G = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b')])
-            sage: M = Matroid(G)
-            sage: sorted(M.groundset())
+            sage: G = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b')])                    # optional - sage.graphs
+            sage: M = Matroid(G)                                                        # optional - sage.graphs
+            sage: sorted(M.groundset())                                                 # optional - sage.graphs
             [(0, 1), (0, 2), (1, 2)]
-            sage: H = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b'), (1, 2, 'c')], multiedges=True)
-            sage: N = Matroid(H)
-            sage: sorted(N.groundset())
+            sage: H = Graph([(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'b'), (1, 2, 'c')],       # optional - sage.graphs
+            ....:           multiedges=True)
+            sage: N = Matroid(H)                                                        # optional - sage.graphs
+            sage: sorted(N.groundset())                                                 # optional - sage.graphs
             [0, 1, 2, 3]
 
         The GraphicMatroid object forces its graph to be connected. If a
         disconnected graph is used as input, it will connect the components::
 
-            sage: G1 = graphs.CycleGraph(3); G2 = graphs.DiamondGraph()
-            sage: G = G1.disjoint_union(G2)
-            sage: M = Matroid(G)
-            sage: M
+            sage: G1 = graphs.CycleGraph(3); G2 = graphs.DiamondGraph()                 # optional - sage.graphs
+            sage: G = G1.disjoint_union(G2)                                             # optional - sage.graphs
+            sage: M = Matroid(G); M                                                     # optional - sage.graphs
             Graphic matroid of rank 5 on 8 elements
-            sage: M.graph()
+            sage: M.graph()                                                             # optional - sage.graphs
             Looped multi-graph on 6 vertices
-            sage: M.graph().is_connected()
+            sage: M.graph().is_connected()                                              # optional - sage.graphs
             True
-            sage: M.is_connected()
+            sage: M.is_connected()                                                      # optional - sage.graphs
             False
 
 
         If the keyword ``regular`` is set to ``True``, the output will instead
-        be an instance of ``RegularMatroid``.
+        be an instance of :class:`RegularMatroid`.
 
         ::
 
-            sage: G = Graph([(0, 1), (0, 2), (1, 2)])
-            sage: M = Matroid(G, regular=True); M
+            sage: G = Graph([(0, 1), (0, 2), (1, 2)])                                   # optional - sage.graphs
+            sage: M = Matroid(G, regular=True); M                                       # optional - sage.graphs
             Regular matroid of rank 2 on 3 elements with 3 bases
 
         Note: if a groundset is specified, we assume it is in the same order
@@ -390,9 +390,9 @@ def Matroid(groundset=None, data=None, **kwds):
         :meth:`G.edge_iterator() <sage.graphs.generic_graph.GenericGraph.edge_iterator>`
         provides::
 
-            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)], multiedges=True)
-            sage: M = Matroid('abcd', G)
-            sage: M.rank(['b', 'c'])
+            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)], multiedges=True)          # optional - sage.graphs
+            sage: M = Matroid('abcd', G)                                                # optional - sage.graphs
+            sage: M.rank(['b', 'c'])                                                    # optional - sage.graphs
             1
 
         As before,
@@ -400,14 +400,14 @@ def Matroid(groundset=None, data=None, **kwds):
         tuples ``(i, j)`` of endpoints. If that fails, we simply use a list
         ``[0..m-1]`` ::
 
-            sage: G = Graph([(0, 1), (0, 2), (1, 2)])
-            sage: M = Matroid(G, regular=True)
-            sage: sorted(M.groundset())
+            sage: G = Graph([(0, 1), (0, 2), (1, 2)])                                   # optional - sage.graphs
+            sage: M = Matroid(G, regular=True)                                          # optional - sage.graphs
+            sage: sorted(M.groundset())                                                 # optional - sage.graphs
             [(0, 1), (0, 2), (1, 2)]
 
-            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)], multiedges=True)
-            sage: M = Matroid(G, regular=True)
-            sage: sorted(M.groundset())
+            sage: G = Graph([(0, 1), (0, 2), (0, 2), (1, 2)], multiedges=True)          # optional - sage.graphs
+            sage: M = Matroid(G, regular=True)                                          # optional - sage.graphs
+            sage: sorted(M.groundset())                                                 # optional - sage.graphs
             [0, 1, 2, 3]
 
         When the ``graph`` keyword is used, a variety of inputs can be
@@ -415,12 +415,12 @@ def Matroid(groundset=None, data=None, **kwds):
         (see the :class:`Graph <sage.graphs.graph.Graph>` method's
         documentation)::
 
-            sage: Matroid(graph=':I`AKGsaOs`cI]Gb~')
+            sage: Matroid(graph=':I`AKGsaOs`cI]Gb~')                                    # optional - sage.graphs
             Graphic matroid of rank 9 on 17 elements
 
         However, this method is no more clever than ``Graph()``::
 
-            sage: Matroid(graph=41/2)
+            sage: Matroid(graph=41/2)                                                   # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: This input cannot be turned into a graph
@@ -430,31 +430,31 @@ def Matroid(groundset=None, data=None, **kwds):
         The basic input is a
         :mod:`Sage matrix <sage.matrix.constructor>`::
 
-            sage: A = Matrix(GF(2), [[1, 0, 0, 1, 1, 0],
+            sage: A = Matrix(GF(2), [[1, 0, 0, 1, 1, 0],                                # optional - sage.rings.finite_rings
             ....:                    [0, 1, 0, 1, 0, 1],
             ....:                    [0, 0, 1, 0, 1, 1]])
-            sage: M = Matroid(matrix=A)
-            sage: M.is_isomorphic(matroids.CompleteGraphic(4))
+            sage: M = Matroid(matrix=A)                                                 # optional - sage.rings.finite_rings
+            sage: M.is_isomorphic(matroids.CompleteGraphic(4))                          # optional - sage.graphs sage.rings.finite_rings
             True
 
         Various shortcuts are possible::
 
-            sage: M1 = Matroid(matrix=[[1, 0, 0, 1, 1, 0],
+            sage: M1 = Matroid(matrix=[[1, 0, 0, 1, 1, 0],                              # optional - sage.rings.finite_rings
             ....:                      [0, 1, 0, 1, 0, 1],
             ....:                      [0, 0, 1, 0, 1, 1]], ring=GF(2))
-            sage: M2 = Matroid(reduced_matrix=[[1, 1, 0],
+            sage: M2 = Matroid(reduced_matrix=[[1, 1, 0],                               # optional - sage.rings.finite_rings
             ....:                              [1, 0, 1],
             ....:                              [0, 1, 1]], ring=GF(2))
-            sage: M3 = Matroid(groundset=[0, 1, 2, 3, 4, 5],
+            sage: M3 = Matroid(groundset=[0, 1, 2, 3, 4, 5],                            # optional - sage.rings.finite_rings
             ....:              matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:              ring=GF(2))
-            sage: A = Matrix(GF(2), [[1, 1, 0], [1, 0, 1], [0, 1, 1]])
-            sage: M4 = Matroid([0, 1, 2, 3, 4, 5], A)
-            sage: M1 == M2
+            sage: A = Matrix(GF(2), [[1, 1, 0], [1, 0, 1], [0, 1, 1]])                  # optional - sage.rings.finite_rings
+            sage: M4 = Matroid([0, 1, 2, 3, 4, 5], A)                                   # optional - sage.rings.finite_rings
+            sage: M1 == M2                                                              # optional - sage.rings.finite_rings
             True
-            sage: M1 == M3
+            sage: M1 == M3                                                              # optional - sage.rings.finite_rings
             True
-            sage: M1 == M4
+            sage: M1 == M4                                                              # optional - sage.rings.finite_rings
             True
 
         However, with unnamed arguments the input has to be a ``Matrix``
@@ -469,36 +469,36 @@ def Matroid(groundset=None, data=None, **kwds):
         identity matrix is prepended. Otherwise the groundset size must equal
         the number of columns::
 
-            sage: A = Matrix(GF(2), [[1, 1, 0], [1, 0, 1], [0, 1, 1]])
-            sage: M = Matroid([0, 1, 2], A)
-            sage: N = Matroid([0, 1, 2, 3, 4, 5], A)
-            sage: M.rank()
+            sage: A = Matrix(GF(2), [[1, 1, 0], [1, 0, 1], [0, 1, 1]])                  # optional - sage.rings.finite_rings
+            sage: M = Matroid([0, 1, 2], A)                                             # optional - sage.rings.finite_rings
+            sage: N = Matroid([0, 1, 2, 3, 4, 5], A)                                    # optional - sage.rings.finite_rings
+            sage: M.rank()                                                              # optional - sage.rings.finite_rings
             2
-            sage: N.rank()
+            sage: N.rank()                                                              # optional - sage.rings.finite_rings
             3
 
         We automatically create an optimized subclass, if available::
 
-            sage: Matroid([0, 1, 2, 3, 4, 5],
+            sage: Matroid([0, 1, 2, 3, 4, 5],                                           # optional - sage.rings.finite_rings
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(2))
             Binary matroid of rank 3 on 6 elements, type (2, 7)
-            sage: Matroid([0, 1, 2, 3, 4, 5],
+            sage: Matroid([0, 1, 2, 3, 4, 5],                                           # optional - sage.rings.finite_rings
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(3))
             Ternary matroid of rank 3 on 6 elements, type 0-
-            sage: Matroid([0, 1, 2, 3, 4, 5],
+            sage: Matroid([0, 1, 2, 3, 4, 5],                                           # optional - sage.rings.finite_rings
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(4, 'x'))
             Quaternary matroid of rank 3 on 6 elements
-            sage: Matroid([0, 1, 2, 3, 4, 5],
+            sage: Matroid([0, 1, 2, 3, 4, 5],                                           # optional - sage.rings.finite_rings
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(2), regular=True)
             Regular matroid of rank 3 on 6 elements with 16 bases
 
         Otherwise the generic LinearMatroid class is used::
 
-            sage: Matroid([0, 1, 2, 3, 4, 5],
+            sage: Matroid([0, 1, 2, 3, 4, 5],                                           # optional - sage.rings.finite_rings
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(83))
             Linear matroid of rank 3 on 6 elements represented over the Finite
@@ -592,9 +592,9 @@ def Matroid(groundset=None, data=None, **kwds):
 
         Most of the time, the matroid itself is returned::
 
-            sage: M = matroids.named_matroids.Fano()
-            sage: N = Matroid(M)
-            sage: N is M
+            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: N = Matroid(M)                                                        # optional - sage.rings.finite_rings
+            sage: N is M                                                                # optional - sage.rings.finite_rings
             True
 
         But it can be useful with the ``regular`` option::
@@ -627,27 +627,26 @@ def Matroid(groundset=None, data=None, **kwds):
     By default we check if the resulting matroid is actually regular. To
     increase speed, this check can be skipped::
 
-        sage: M = matroids.named_matroids.Fano()
-        sage: N = Matroid(M, regular=True)
+        sage: M = matroids.named_matroids.Fano()                                        # optional - sage.rings.finite_rings
+        sage: N = Matroid(M, regular=True)                                              # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: input is not a valid regular matroid
-        sage: N = Matroid(M, regular=True, check=False)
-        sage: N
+        sage: N = Matroid(M, regular=True, check=False); N                              # optional - sage.rings.finite_rings
         Regular matroid of rank 3 on 7 elements with 32 bases
 
-        sage: N.is_valid()
+        sage: N.is_valid()                                                              # optional - sage.rings.finite_rings
         False
 
     Sometimes the output is regular, but represents a different matroid
     from the one you intended::
 
-        sage: M = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]))
-        sage: N = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]),
+        sage: M = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]))                  # optional - sage.rings.finite_rings
+        sage: N = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]),                  # optional - sage.rings.finite_rings
         ....:             regular=True)
-        sage: N.is_valid()
+        sage: N.is_valid()                                                              # optional - sage.rings.finite_rings
         True
-        sage: N.is_isomorphic(M)
+        sage: N.is_isomorphic(M)                                                        # optional - sage.rings.finite_rings
         False
 
     TESTS::
