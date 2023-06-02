@@ -1731,7 +1731,7 @@ cdef class Matrix(Matrix1):
            sage: A = identity_matrix(21)
            sage: A.rook_vector(complement=True)[-1]
            18795307255050944540
-           sage: Derangements(21).cardinality()
+           sage: Derangements(21).cardinality()                                         # optional - sage.combinat
            18795307255050944540
 
         An other example that we convert into a rook polynomial::
