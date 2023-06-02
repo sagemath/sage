@@ -2027,11 +2027,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         Check that we prohibit too large moduli, :trac:`11829`::
 
-            sage: R.<x,y> = GF(previous_prime(2^31))[]
-            sage: factor(x+y+1)
+            sage: R.<x,y> = GF(previous_prime(2^31))[]                                  # optional - sage.rings.finite_rings
+            sage: factor(x + y + 1)                                                     # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            NotImplementedError: Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+            NotImplementedError: Factorization of multivariate polynomials
+            over prime fields with characteristic > 2^29 is not implemented.
 
         Check that we can factor over the algebraic field (:trac:`25390`)::
 
@@ -2047,7 +2048,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             ....:     f.factor()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Provably correct factorization not implemented. Disable this error by wrapping your code in a `with proof.WithProof('polynomial', False):` block.
+            NotImplementedError: Provably correct factorization not implemented.
+            Disable this error by wrapping your code in a
+            `with proof.WithProof('polynomial', False):` block.
             sage: with proof.WithProof('polynomial', False):
             ....:     f.factor()
             Traceback (most recent call last):
