@@ -739,11 +739,11 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     Format 4: ring, size and list of entries. ::
 
-        sage: A = diagonal_matrix(FiniteField(3), 3, [2, 16]); A
+        sage: A = diagonal_matrix(FiniteField(3), 3, [2, 16]); A                        # optional - sage.rings.finite_rings
         [2 0 0]
         [0 1 0]
         [0 0 0]
-        sage: A.parent()
+        sage: A.parent()                                                                # optional - sage.rings.finite_rings
         Full MatrixSpace of 3 by 3 sparse matrices over Finite Field of size 3
 
     NumPy arrays may be used as input. ::
@@ -1506,24 +1506,24 @@ def circulant(v, sparse=None):
 
     EXAMPLES::
 
-        sage: v=[1,2,3,4,8]
+        sage: v = [1,2,3,4,8]
         sage: matrix.circulant(v)
         [1 2 3 4 8]
         [8 1 2 3 4]
         [4 8 1 2 3]
         [3 4 8 1 2]
         [2 3 4 8 1]
-        sage: m = matrix.circulant(vector(GF(3),[0,1,-1],sparse=True)); m
+        sage: m = matrix.circulant(vector(GF(3),[0,1,-1],sparse=True)); m               # optional - sage.rings.finite_rings
         [0 1 2]
         [2 0 1]
         [1 2 0]
-        sage: m.is_sparse()
+        sage: m.is_sparse()                                                             # optional - sage.rings.finite_rings
         True
 
     TESTS::
 
-        sage: m = matrix.circulant(vector(GF(3),[0,1,-1],sparse=False))
-        sage: m.is_sparse()
+        sage: m = matrix.circulant(vector(GF(3),[0,1,-1],sparse=False))                 # optional - sage.rings.finite_rings
+        sage: m.is_sparse()                                                             # optional - sage.rings.finite_rings
         False
         sage: matrix.circulant([0,1,-1]).is_sparse()
         False
