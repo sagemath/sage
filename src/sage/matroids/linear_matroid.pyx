@@ -826,12 +826,6 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             True
         """
         # TODO: ensure this is safe for noncommutative rings
-        global GF2, GF2_zero, GF2_one, GF2_not_defined
-        if GF2_not_defined:
-            GF2 = GF(2)
-            GF2_zero = GF2(0)
-            GF2_one = GF2(1)
-            GF2_not_defined = False
         B = self.basis()
         N = self.groundset() - B
         Bo = frozenset([morphism[e] for e in B])
@@ -845,8 +839,18 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             if other._cocircuit(No | set([morphism[e]])) != frozenset([morphism[f] for f in C[e]]):
                 return False
 
-        if self.base_ring() == GF2:
-            return True
+        global GF2, GF2_zero, GF2_one, GF2_not_defined
+        try:
+            if GF2_not_defined:
+                GF2 = GF(2)
+                GF2_zero = GF2(0)
+                GF2_one = GF2(1)
+                GF2_not_defined = False
+        except ImportError:
+            pass
+        else:
+            if self.base_ring() == GF2:
+                return True
 
         self._set_current_basis(B)
         other._set_current_basis(Bo)
