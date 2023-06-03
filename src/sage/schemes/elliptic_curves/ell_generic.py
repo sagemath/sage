@@ -278,6 +278,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         Check that :trac:`12524` is solved::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<phi> = NumberField(x^2 - x - 1)                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0, 0, phi, 27*phi - 43, -80*phi + 128])            # optional - sage.rings.number_field
             sage: E._latex_()                                                           # optional - sage.rings.number_field
@@ -2556,6 +2557,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         We can also handle injections to different base rings::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)                                          # optional - sage.rings.number_field
             sage: E.isomorphism_to(E.change_ring(K))                                    # optional - sage.rings.number_field
             Elliptic-curve morphism:
@@ -2598,6 +2600,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         We can also find automorphisms defined over extension fields::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 3)  # adjoin roots of unity                 # optional - sage.rings.number_field
             sage: E.automorphisms(K)                                                    # optional - sage.rings.number_field
             [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3
@@ -3343,6 +3346,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve('11a1')
             sage: E._p_primary_torsion_basis(5)
             [[(5 : -6 : 1), 1]]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<t> = NumberField(x^4 + x^3 + 11*x^2 + 41*x + 101)                  # optional - sage.rings.number_field
             sage: EK = E.base_extend(K)                                                 # optional - sage.rings.number_field
             sage: EK._p_primary_torsion_basis(5)  # long time (2s on sage.math, 2011)   # optional - sage.rings.number_field

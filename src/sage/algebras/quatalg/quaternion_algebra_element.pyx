@@ -515,6 +515,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2-x-1); Q.<i,j,k> = QuaternionAlgebra(K,-1,-1); z=2*i+3*j+4/3*k+5/8
             sage: a*z
             5/8*a + 2*a*i + 3*a*j + 4/3*a*k
@@ -529,6 +530,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2-x-1); Q.<i,j,k> = QuaternionAlgebra(K,-1,-1); z=2*i+3*j+4/3*k+5/8
             sage: z*a
             5/8*a + 2*a*i + 3*a*j + 4/3*a*k
@@ -1806,6 +1808,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         Check that the fix in :trac:`17099` is correct::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x**3 + x - 1, 'a')
             sage: D.<i,j,k> = QuaternionAlgebra(K, -1, -3)
             sage: j/3 + (2*j)/3 == j

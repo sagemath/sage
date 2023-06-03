@@ -313,6 +313,7 @@ class MPowerSeries(PowerSeries):
             sage: g.parent()
             Multivariate Power Series Ring in s, t over Rational Field
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x - 3,'a')                                            # optional - sage.rings.number_field
             sage: g = K.random_element()*f                                              # optional - sage.rings.number_field
             sage: g.parent()                                                            # optional - sage.rings.number_field

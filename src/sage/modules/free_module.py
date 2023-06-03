@@ -3796,6 +3796,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
 
         We intersect two modules over the ring of integers of a number field::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<w> = NumberField(x^2 - x + 2)
             sage: OL = L.ring_of_integers()
             sage: V = L**3

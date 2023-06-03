@@ -295,6 +295,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         The given kernel generators need not be independent::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - x - 5)                                      # optional - sage.rings.number_field
             sage: E = EllipticCurve('210.b6').change_ring(K)                            # optional - sage.rings.number_field
             sage: E.torsion_subgroup()                                                  # optional - sage.rings.number_field
@@ -467,6 +468,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         TESTS::
 
             sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - x - 5)                                                  # optional - sage.rings.number_field
             sage: E = EllipticCurve('210.b6').change_ring(K)                                        # optional - sage.rings.number_field
             sage: psi = EllipticCurveHom_composite(E, E.torsion_points())                           # optional - sage.rings.number_field

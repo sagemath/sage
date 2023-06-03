@@ -4198,8 +4198,9 @@ cdef class FieldElement(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: K.<b> = NumberField(x^4 + x^2 + 2/3)
-            sage: c = (1+b) // (1-b); c
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<b> = NumberField(x^4 + x^2 + 2/3)                                  # optional - sage.rings.number_field
+            sage: c = (1+b) // (1-b); c                                                 # optional - sage.rings.number_field
             3/4*b^3 + 3/4*b^2 + 3/2*b + 1/2
             sage: (1+b) / (1-b) == c
             True

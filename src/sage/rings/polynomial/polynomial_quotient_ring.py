@@ -1557,6 +1557,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: K.class_group()                                                       # optional - sage.rings.number_field
             Class group of order 1 of Number Field in a
              with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)                                     # optional - sage.libs.pari sage.rings.number_field
             sage: K.class_group()                                                       # optional - sage.libs.pari sage.rings.number_field
             []

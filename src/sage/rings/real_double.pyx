@@ -1023,7 +1023,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: sage_input(RDF(-e), verify=True, preparse=False)
             # Verified
             -RDF(2.718281828459045...)
-            sage: sage_input(RDF(pi)*polygen(RDF), verify=True, preparse=None)
+            sage: sage_input(RDF(pi)*polygen(RDF), verify=True, preparse=None)          # optional - sage.symbolic
             # Verified
             R = RDF['x']
             x = R.gen()

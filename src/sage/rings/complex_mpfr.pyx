@@ -464,6 +464,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             1.00000000000000*I
             sage: CC.gen() + QQ[I].gen()
             2.00000000000000*I
+            sage: x = polygen(ZZ, 'x')
             sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()
             Traceback (most recent call last):
             ...
@@ -494,7 +495,8 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
         Check that :trac:`14989` is fixed::
 
-            sage: QQi = NumberField(x^2+1, 'i', embedding=CC(0,1))
+            sage: x = polygen(ZZ, 'x')
+            sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))
             sage: i = QQi.order(QQi.gen()).gen(1)
             sage: CC(i)
             1.00000000000000*I
