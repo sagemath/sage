@@ -111,6 +111,7 @@ class FlatteningMorphism(Morphism):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<v> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: R = K['x','y']['a','b']                                               # optional - sage.rings.number_field
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism

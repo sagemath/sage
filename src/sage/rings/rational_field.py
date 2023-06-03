@@ -1054,6 +1054,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         We make a single absolute extension::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = QQ.extension(x^3 + 5); K                                      # optional - sage.rings.number_field
             Number Field in a with defining polynomial x^3 + 5
 

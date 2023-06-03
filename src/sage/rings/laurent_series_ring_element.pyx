@@ -51,7 +51,7 @@ AUTHORS:
 
 - Robert Bradshaw: Cython version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #                     2017 Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -64,19 +64,16 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .infinity import infinity
 
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-import sage.rings.polynomial.polynomial_element as polynomial
 import sage.misc.latex
-from sage.rings.integer import Integer
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_univariate
 from .power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport Element, ModuleElement, RingElement, AlgebraElement
+from sage.structure.element cimport Element, AlgebraElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.misc.derivative import multi_derivative
 
@@ -1594,8 +1591,8 @@ cdef class LaurentSeries(AlgebraElement):
 
         TESTS::
 
-            sage: y = var('y')
-            sage: f.derivative(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: f.derivative(y)                                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y

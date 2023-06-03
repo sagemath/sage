@@ -1255,7 +1255,7 @@ class Line(PrimitiveObject):
 
         elif corner_cutoff <= -1:
             # no corners
-            if not(max_len is None):
+            if max_len is not None:
                 # forced by the maximal number of consecutive smooth points
                 return self.points[:-1][::max_len - 1]
             else:
