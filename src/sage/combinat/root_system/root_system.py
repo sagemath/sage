@@ -40,8 +40,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     realizations of the root and weight lattices, where all computations
     take place. Let us play first with the root lattice::
 
-        sage: space = R.root_lattice()
-        sage: space
+        sage: space = R.root_lattice(); space
         Root lattice of the Root system of type ['B', 3]
 
     This is the free `\ZZ`-module `\bigoplus_i \ZZ.\alpha_i` spanned
@@ -77,8 +76,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     `\bigoplus_i \ZZ.\Lambda_i`, the weight
     space `\bigoplus_i \QQ.\Lambda_i`. For example::
 
-        sage: space = R.weight_space()
-        sage: space
+        sage: space = R.weight_space(); space
         Weight space over the Rational Field of the Root system of type ['B', 3]
 
     ::
@@ -90,8 +88,8 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: alpha = space.simple_roots()
-        sage: alpha[1] + alpha[2]
+        sage: alpha = space.simple_roots()                                              # optional - sage.graphs
+        sage: alpha[1] + alpha[2]                                                       # optional - sage.graphs
         Lambda[1] + Lambda[2] - 2*Lambda[3]
 
     The fundamental weights are the dual basis of the coroots::
@@ -102,8 +100,8 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: alphacheck = space.simple_coroots()
-        sage: list(alphacheck)
+        sage: alphacheck = space.simple_coroots()                                       # optional - sage.graphs
+        sage: list(alphacheck)                                                          # optional - sage.graphs
         [alphacheck[1], alphacheck[2], alphacheck[3]]
 
     ::
@@ -397,7 +395,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: R = RootSystem(['A',3])
-            sage: R.dynkin_diagram()
+            sage: R.dynkin_diagram()                                                    # optional - sage.graphs
             O---O---O
             1   2   3
             A3
@@ -468,7 +466,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @cached_method
     def root_space(self, base_ring=QQ):
         """
-        Returns the root space associated to self.
+        Return the root space associated to ``self``.
 
         EXAMPLES::
 
@@ -479,7 +477,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def root_poset(self, restricted=False, facade=False):
         r"""
-        Returns the (restricted) root poset associated to ``self``.
+        Return the (restricted) root poset associated to ``self``.
 
         The elements are given by the positive roots (resp. non-simple, positive roots), and
         `\alpha \leq \beta` iff `\beta - \alpha` is a non-negative linear combination of simple roots.
@@ -491,26 +489,28 @@ class RootSystem(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: Phi = RootSystem(['A',2]).root_poset(); Phi
+            sage: Phi = RootSystem(['A',2]).root_poset(); Phi                           # optional - sage.graphs
             Finite poset containing 3 elements
-            sage: sorted(Phi.cover_relations(), key=str)
+            sage: sorted(Phi.cover_relations(), key=str)                                # optional - sage.graphs
             [[alpha[1], alpha[1] + alpha[2]], [alpha[2], alpha[1] + alpha[2]]]
 
-            sage: Phi = RootSystem(['A',3]).root_poset(restricted=True); Phi
+            sage: Phi = RootSystem(['A',3]).root_poset(restricted=True); Phi            # optional - sage.graphs
             Finite poset containing 3 elements
-            sage: sorted(Phi.cover_relations(), key=str)
-            [[alpha[1] + alpha[2], alpha[1] + alpha[2] + alpha[3]], [alpha[2] + alpha[3], alpha[1] + alpha[2] + alpha[3]]]
+            sage: sorted(Phi.cover_relations(), key=str)                                # optional - sage.graphs
+            [[alpha[1] + alpha[2], alpha[1] + alpha[2] + alpha[3]],
+             [alpha[2] + alpha[3], alpha[1] + alpha[2] + alpha[3]]]
 
-            sage: Phi = RootSystem(['B',2]).root_poset(); Phi
+            sage: Phi = RootSystem(['B',2]).root_poset(); Phi                           # optional - sage.graphs
             Finite poset containing 4 elements
-            sage: Phi.cover_relations()
-            [[alpha[2], alpha[1] + alpha[2]], [alpha[1], alpha[1] + alpha[2]], [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
+            sage: Phi.cover_relations()                                                 # optional - sage.graphs
+            [[alpha[2], alpha[1] + alpha[2]], [alpha[1], alpha[1] + alpha[2]],
+             [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
         """
         return self.root_lattice().root_poset(restricted=restricted, facade=facade)
 
     def coroot_lattice(self):
         """
-        Returns the coroot lattice associated to self.
+        Return the coroot lattice associated to ``self``.
 
         EXAMPLES::
 
@@ -521,7 +521,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def coroot_space(self, base_ring=QQ):
         """
-        Returns the coroot space associated to self.
+        Return the coroot space associated to ``self``.
 
         EXAMPLES::
 

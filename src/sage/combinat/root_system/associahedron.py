@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.geometry.polyhedron
 r"""
 Associahedron
 

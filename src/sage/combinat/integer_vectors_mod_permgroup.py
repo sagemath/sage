@@ -1,3 +1,4 @@
+# optional - sage.combinat sage.groups
 r"""
 Integer vectors modulo the action of a permutation group
 """

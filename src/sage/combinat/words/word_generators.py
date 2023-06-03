@@ -59,7 +59,6 @@ from itertools import cycle, count
 from random import randint
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
 from sage.rings.infinity import Infinity
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.word import FiniteWord_list
@@ -68,6 +67,9 @@ from sage.combinat.words.words import FiniteWords, InfiniteWords
 from sage.combinat.words.morphism import WordMorphism
 from sage.arith.misc import gcd
 from sage.misc.decorators import rename_keyword
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def _build_tab(sym, tab, W):
@@ -241,10 +243,10 @@ class LowerChristoffelWord(FiniteWord_list):
 
             sage: w0 = words.LowerChristoffelWord(4,7)
             sage: w1, w2 = w0.standard_factorization()
-            sage: (m0,m1,m2) = (w.markoff_number() for w in (w0,w1,w2))
-            sage: (m0,m1,m2)
+            sage: (m0,m1,m2) = (w.markoff_number() for w in (w0,w1,w2))                 # optional - sage.modules
+            sage: (m0,m1,m2)                                                            # optional - sage.modules
             (294685, 13, 7561)
-            sage: m0**2 + m1**2 + m2**2 == 3*m0*m1*m2
+            sage: m0**2 + m1**2 + m2**2 == 3*m0*m1*m2                                   # optional - sage.modules
             True
         """
         from sage.matrix.constructor import matrix
@@ -640,7 +642,7 @@ class WordGenerator():
             sage: tm = words.FixedPointOfMorphism(mu,0); tm
             word: 0110100110010110100101100110100110010110...
             sage: TM = words.ThueMorseWord()
-            sage: tm[:1000] == TM[:1000]
+            sage: tm[:1000] == TM[:1000]                                                # optional - sage.modules
             True
 
         ::
@@ -650,7 +652,7 @@ class WordGenerator():
             word: 0100101001001010010100100101001001010010...
             sage: F = words.FibonacciWord(); F
             word: 0100101001001010010100100101001001010010...
-            sage: f[:1000] == F[:1000]
+            sage: f[:1000] == F[:1000]                                                  # optional - sage.modules
             True
 
         ::
@@ -1521,7 +1523,7 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: for i in range(3): words.fibonacci_tile(i)
+            sage: for i in range(3): words.fibonacci_tile(i)                            # optional - sage.modules
             Path: 3210
             Path: 323030101212
             Path: 3230301030323212323032321210121232121010...
@@ -1539,7 +1541,7 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: for i in range(4): words.dual_fibonacci_tile(i)
+            sage: for i in range(4): words.dual_fibonacci_tile(i)                       # optional - sage.modules
             Path: 3210
             Path: 32123032301030121012
             Path: 3212303230103230321232101232123032123210...

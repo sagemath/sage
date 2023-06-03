@@ -75,7 +75,7 @@ class CartanType(cartan_type.CartanType_decorator):
         We take the Cartan type `B_4`::
 
             sage: T = CartanType(['B',4])
-            sage: T.dynkin_diagram()
+            sage: T.dynkin_diagram()                                                    # optional - sage.graphs
             O---O---O=>=O
             1   2   3   4
             B4
@@ -85,23 +85,23 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: cycle = {1:2, 2:3, 3:4, 4:1}
 
             sage: T = T.relabel(cycle)
-            sage: T.dynkin_diagram()
+            sage: T.dynkin_diagram()                                                    # optional - sage.graphs
             O---O---O=>=O
             2   3   4   1
             B4 relabelled by {1: 2, 2: 3, 3: 4, 4: 1}
-            sage: T.dynkin_diagram().edges(sort=True)
+            sage: T.dynkin_diagram().edges(sort=True)                                   # optional - sage.graphs
             [(1, 4, 1), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 1, 2), (4, 3, 1)]
 
         Multiple relabelling are recomposed into a single one::
 
             sage: T = T.relabel(cycle)
-            sage: T.dynkin_diagram()
+            sage: T.dynkin_diagram()                                                    # optional - sage.graphs
             O---O---O=>=O
             3   4   1   2
             B4 relabelled by {1: 3, 2: 4, 3: 1, 4: 2}
 
             sage: T = T.relabel(cycle)
-            sage: T.dynkin_diagram()
+            sage: T.dynkin_diagram()                                                    # optional - sage.graphs
             O---O---O=>=O
             4   1   2   3
             B4 relabelled by {1: 4, 2: 1, 3: 2, 4: 3}
@@ -109,7 +109,7 @@ class CartanType(cartan_type.CartanType_decorator):
         And trivial relabelling are honoured nicely::
 
             sage: T = T.relabel(cycle)
-            sage: T.dynkin_diagram()
+            sage: T.dynkin_diagram()                                                    # optional - sage.graphs
             O---O---O=>=O
             1   2   3   4
             B4
@@ -317,7 +317,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
         EXAMPLES::
 
-            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram()
+            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram()              # optional - sage.graphs
               3
             O=<=O
             2   1
@@ -327,11 +327,11 @@ class CartanType(cartan_type.CartanType_decorator):
 
         To be compared with the examples in :meth:`ascii_art`::
 
-            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges(sort=True)
+            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges(sort=True)             # optional - sage.graphs
             [(1, 2, 3), (2, 1, 1)]
-            sage: CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges(sort=True)
+            sage: CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges(sort=True)          # optional - sage.graphs
             [(0, 2, 1), (1, 2, 1), (2, 0, 2), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
-            sage: CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges(sort=True)
+            sage: CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges(sort=True)      # optional - sage.graphs
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 2), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
         """
         # Maybe we want to move this up as a relabel method for Dynkin diagram
@@ -361,11 +361,11 @@ class CartanType(cartan_type.CartanType_decorator):
 
             sage: T = CartanType(["BC",3, 2])
             sage: cycle = {1:2, 2:3, 3:0, 0:1}
-            sage: T.relabel(cycle).dual().dynkin_diagram()
+            sage: T.relabel(cycle).dual().dynkin_diagram()                              # optional - sage.graphs
             O=>=O---O=>=O
             1   2   3   0
             BC3~* relabelled by {0: 1, 1: 2, 2: 3, 3: 0}
-            sage: T.dual().relabel(cycle).dynkin_diagram()
+            sage: T.dual().relabel(cycle).dynkin_diagram()                              # optional - sage.graphs
             O=>=O---O=>=O
             1   2   3   0
             BC3~* relabelled by {0: 1, 1: 2, 2: 3, 3: 0}
@@ -413,9 +413,9 @@ class CartanType(cartan_type.CartanType_decorator):
         EXAMPLES::
 
             sage: ct = CartanType(['H', 3]).relabel({1:3,2:2,3:1})
-            sage: G = ct.coxeter_diagram(); G
+            sage: G = ct.coxeter_diagram(); G                                           # optional - sage.graphs
             Graph on 3 vertices
-            sage: G.edges(sort=True)
+            sage: G.edges(sort=True)                                                    # optional - sage.graphs
             [(1, 2, 5), (2, 3, 3)]
         """
         return self._type.coxeter_diagram().relabel(self._relabelling, inplace=False, immutable=True)
@@ -645,7 +645,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         EXAMPLES::
 
             sage: A41 = CartanType(['A',4,1])
-            sage: A41.dynkin_diagram()
+            sage: A41.dynkin_diagram()                                                  # optional - sage.graphs
             0
             O-----------+
             |           |
@@ -657,7 +657,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
             sage: T = A41.relabel({0:1, 1:2, 2:3, 3:4, 4:0})
             sage: T
             ['A', 4, 1] relabelled by {0: 1, 1: 2, 2: 3, 3: 4, 4: 0}
-            sage: T.dynkin_diagram()
+            sage: T.dynkin_diagram()                                                    # optional - sage.graphs
             1
             O-----------+
             |           |
@@ -669,7 +669,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
             sage: T0 = T.classical()
             sage: T0
             ['A', 4] relabelled by {1: 2, 2: 3, 3: 4, 4: 0}
-            sage: T0.dynkin_diagram()
+            sage: T0.dynkin_diagram()                                                   # optional - sage.graphs
             O---O---O---O
             2   3   4   0
             A4 relabelled by {1: 2, 2: 3, 3: 4, 4: 0}

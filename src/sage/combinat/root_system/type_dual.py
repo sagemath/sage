@@ -338,7 +338,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
         EXAMPLES::
 
             sage: ct = CartanType(['F', 4, 1]).dual()
-            sage: ct.dynkin_diagram()
+            sage: ct.dynkin_diagram()                                                   # optional - sage.graphs
             O---O---O=<=O---O
             0   1   2   3   4
             F4~*

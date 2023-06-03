@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.gap
 r"""
 Extended Affine Weyl Groups
 
@@ -203,23 +204,37 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
         sage: type(E)
         <class 'sage.combinat.root_system.extended_affine_weyl_group.ExtendedAffineWeylGroup_Class_with_category'>
 
-        sage: PW0=E.PW0(); PW0
-        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Multiplicative form of Coweight lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
+        sage: PW0 = E.PW0(); PW0
+        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+         Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
+         acted upon by Weyl Group of type ['A', 2]
+         (as a matrix group acting on the coweight lattice)
 
         sage: W0P = E.W0P(); W0P
-        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice) acting on Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
+        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+         Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
+         acting on Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
 
         sage: PvW0 = E.PvW0(); PvW0
-        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Multiplicative form of Weight lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
+        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+         Multiplicative form of Weight lattice of the Root system of type ['A', 2]
+         acted upon by Weyl Group of type ['A', 2]
+         (as a matrix group acting on the weight lattice)
 
         sage: W0Pv = E.W0Pv(); W0Pv
-        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice) acting on Multiplicative form of Weight lattice of the Root system of type ['A', 2]
+        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+         Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
+         acting on Multiplicative form of Weight lattice of the Root system of type ['A', 2]
 
         sage: WF = E.WF(); WF
-        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice) acted upon by Fundamental group of type ['A', 2, 1]
+        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+         Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
+         acted upon by Fundamental group of type ['A', 2, 1]
 
         sage: FW = E.FW(); FW
-        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Fundamental group of type ['A', 2, 1] acting on Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
+        Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+         Fundamental group of type ['A', 2, 1] acting on Weyl Group of type ['A', 2, 1]
+         (as a matrix group acting on the root lattice)
 
     When the realizations are constructed from each other as above, there are built-in coercions between them. ::
 
@@ -330,10 +345,10 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     Here is a demonstration of the printing options::
 
-        sage: E = ExtendedAffineWeylGroup(["A",2,1], affine="sx", classical="Sx",translation="x",fundamental="pix")
+        sage: E = ExtendedAffineWeylGroup(["A",2,1], affine="sx", classical="Sx",
+        ....:                             translation="x", fundamental="pix")
         sage: PW0 = E.PW0()
-        sage: y = PW0(E.lattice_basis()[1])
-        sage: y
+        sage: y = PW0(E.lattice_basis()[1]); y
         x[Lambdacheck[1]]
         sage: FW = E.FW()
         sage: FW(y)
@@ -376,7 +391,9 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
     of `GL_n`, which is usually identified with the lattice `\ZZ^n` of `n`-tuples of integers::
 
         sage: PW0 = E.PW0(); PW0
-        Extended affine Weyl group of GL(3) realized by Semidirect product of Multiplicative form of Ambient space of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the ambient space)
+        Extended affine Weyl group of GL(3) realized by Semidirect product of
+         Multiplicative form of Ambient space of the Root system of type ['A', 2] acted upon
+          by Weyl Group of type ['A', 2] (as a matrix group acting on the ambient space)
         sage: PW0.an_element()
         t[(2, 2, 3)] * s1*s2
 
@@ -395,7 +412,9 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
     and the indices of the simple reflections are taken modulo `n`::
 
         sage: FW = E.FW(); FW
-        Extended affine Weyl group of GL(3) realized by Semidirect product of Fundamental group of GL(3) acting on Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
+        Extended affine Weyl group of GL(3) realized by
+         Semidirect product of Fundamental group of GL(3) acting on
+          Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
         sage: FW.an_element()
         pi[5] * S0*S1*S2
 
@@ -672,7 +691,10 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).PW0()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Multiplicative form of Coweight lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
+            Extended affine Weyl group of type ['A', 2, 1] realized by
+             Semidirect product of Multiplicative form of
+              Coweight lattice of the Root system of type ['A', 2] acted upon by
+               Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
         """
         return self.ExtendedAffineWeylGroupPW0()
 
@@ -683,7 +705,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).W0P()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice) acting on Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
+             acting on Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
         """
         return self.ExtendedAffineWeylGroupW0P()
 
@@ -694,7 +718,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).WF()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice) acted upon by Fundamental group of type ['A', 2, 1]
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
+             acted upon by Fundamental group of type ['A', 2, 1]
         """
         return self.ExtendedAffineWeylGroupWF()
 
@@ -705,7 +731,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).FW()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Fundamental group of type ['A', 2, 1] acting on Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Fundamental group of type ['A', 2, 1] acting on
+              Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
         """
         return self.ExtendedAffineWeylGroupFW()
 
@@ -716,7 +744,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).PvW0()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Multiplicative form of Weight lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Multiplicative form of Weight lattice of the Root system of type ['A', 2]
+             acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
         """
         return self.ExtendedAffineWeylGroupPvW0()
 
@@ -727,7 +757,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).W0Pv()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice) acting on Multiplicative form of Weight lattice of the Root system of type ['A', 2]
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
+              acting on Multiplicative form of Weight lattice of the Root system of type ['A', 2]
         """
         return self.ExtendedAffineWeylGroupW0Pv()
 
@@ -782,7 +814,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             Weight lattice of the Root system of type ['C', 2]
             sage: ExtendedAffineWeylGroup(CartanType(['A',4,2]).dual()).lattice()
             Coweight lattice of the Root system of type ['B', 2]
-            sage: ExtendedAffineWeylGroup(CartanType(['A',2,1]), general_linear=True).lattice()
+            sage: ExtendedAffineWeylGroup(CartanType(['A',2,1]),
+            ....:                         general_linear=True).lattice()
             Ambient space of the Root system of type ['A', 2]
         """
 
@@ -938,7 +971,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).a_realization()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Multiplicative form of Coweight lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
+             acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
         """
         return self.PW0()
 
@@ -1058,9 +1093,15 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                     sage: F = E.fundamental_group()
                     sage: Is = F.special_nodes()
                     sage: [(i, PW0.from_fundamental(F(i))) for i in Is]
-                    [(0, 1), (1, t[Lambdacheck[1]] * s1*s2*s3), (2, t[Lambdacheck[2]] * s2*s3*s1*s2), (3, t[Lambdacheck[3]] * s3*s2*s1)]
+                    [(0, 1),
+                     (1, t[Lambdacheck[1]] * s1*s2*s3),
+                     (2, t[Lambdacheck[2]] * s2*s3*s1*s2),
+                     (3, t[Lambdacheck[3]] * s3*s2*s1)]
                     sage: [(i, E.W0P().from_fundamental((F(i)))) for i in Is]
-                    [(0, 1), (1, s1*s2*s3 * t[-Lambdacheck[3]]), (2, s2*s3*s1*s2 * t[-Lambdacheck[2]]), (3, s3*s2*s1 * t[-Lambdacheck[1]])]
+                    [(0, 1),
+                     (1, s1*s2*s3 * t[-Lambdacheck[3]]),
+                     (2, s2*s3*s1*s2 * t[-Lambdacheck[2]]),
+                     (3, s3*s2*s1 * t[-Lambdacheck[1]])]
                     sage: [(i, E.WF().from_fundamental(F(i))) for i in Is]
                     [(0, 1), (1, pi[1]), (2, pi[2]), (3, pi[3])]
 
@@ -1137,15 +1178,22 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 EXAMPLES::
 
                     sage: ExtendedAffineWeylGroup(['A',3,1]).W0P().simple_reflections()
-                    Finite family {0: s1*s2*s3*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[3]], 1: s1, 2: s2, 3: s3}
+                    Finite family {0: s1*s2*s3*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[3]],
+                                   1: s1, 2: s2, 3: s3}
                     sage: ExtendedAffineWeylGroup(['A',3,1]).WF().simple_reflections()
                     Finite family {0: S0, 1: S1, 2: S2, 3: S3}
-                    sage: ExtendedAffineWeylGroup(['A',3,1], print_tuple=True).FW().simple_reflections()
-                    Finite family {0: (pi[0], S0), 1: (pi[0], S1), 2: (pi[0], S2), 3: (pi[0], S3)}
-                    sage: ExtendedAffineWeylGroup(['A',3,1],fundamental="f",print_tuple=True).FW().simple_reflections()
-                    Finite family {0: (f[0], S0), 1: (f[0], S1), 2: (f[0], S2), 3: (f[0], S3)}
+                    sage: ExtendedAffineWeylGroup(['A',3,1],
+                    ....:                         print_tuple=True).FW().simple_reflections()
+                    Finite family {0: (pi[0], S0), 1: (pi[0], S1),
+                                   2: (pi[0], S2), 3: (pi[0], S3)}
+                    sage: ExtendedAffineWeylGroup(['A',3,1],
+                    ....:                         fundamental="f",
+                    ....:                         print_tuple=True).FW().simple_reflections()
+                    Finite family {0: (f[0], S0), 1: (f[0], S1),
+                                   2: (f[0], S2), 3: (f[0], S3)}
                     sage: ExtendedAffineWeylGroup(['A',3,1]).PvW0().simple_reflections()
-                    Finite family {0: t[Lambda[1] + Lambda[3]] * s1*s2*s3*s2*s1, 1: s1, 2: s2, 3: s3}
+                    Finite family {0: t[Lambda[1] + Lambda[3]] * s1*s2*s3*s2*s1,
+                                   1: s1, 2: s2, 3: s3}
                 """
 
             def simple_reflection(self, i):
@@ -1370,8 +1418,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 - ``self`` -- an element of the extended affine Weyl group
                 - `i` -- a Dynkin node (index of a simple reflection `s_i`)
-                - ``side`` -- 'right' or 'left' (default: 'right') according to which side of ``self`` the reflection `s_i` should be multiplied
-                - ``length_increasing`` -- True or False (default True). If False do the above with the word "greater" replaced by "less".
+                - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) according to which side of ``self`` the reflection `s_i` should be multiplied
+                - ``length_increasing`` -- ``True`` or ``False`` (default ``True``). If ``False``, do the above with the word "greater" replaced by "less".
 
                 EXAMPLES::
 
@@ -1448,7 +1496,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                     sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0 = E.PW0()
                     sage: b = E.lattice_basis()
                     sage: [(x,PW0.from_translation(x).to_affine_weyl_left()) for x in b]
-                    [(Lambdacheck[1], S0*S3*S2), (Lambdacheck[2], S0*S3*S1*S0), (Lambdacheck[3], S0*S1*S2)]
+                    [(Lambdacheck[1], S0*S3*S2),
+                     (Lambdacheck[2], S0*S3*S1*S0),
+                     (Lambdacheck[3], S0*S1*S2)]
 
                 .. WARNING::
 
@@ -1467,7 +1517,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                     sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0=E.PW0()
                     sage: b = E.lattice_basis()
                     sage: [(x,PW0.from_translation(x).to_affine_weyl_right()) for x in b]
-                    [(Lambdacheck[1], S3*S2*S1), (Lambdacheck[2], S2*S3*S1*S2), (Lambdacheck[3], S1*S2*S3)]
+                    [(Lambdacheck[1], S3*S2*S1),
+                     (Lambdacheck[2], S2*S3*S1*S2),
+                     (Lambdacheck[3], S1*S2*S3)]
 
                 .. WARNING::
 
@@ -1609,7 +1661,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                      sage: elts = ExtendedAffineWeylGroup(['A',2,1]).PW0().some_elements()
                      sage: [(x, x.to_affine_grassmannian()) for x in elts]
-                     [(t[2*Lambdacheck[1] + 2*Lambdacheck[2]] * s1*s2, t[2*Lambdacheck[1] + 2*Lambdacheck[2]] * s1*s2*s1)]
+                     [(t[2*Lambdacheck[1] + 2*Lambdacheck[2]] * s1*s2,
+                       t[2*Lambdacheck[1] + 2*Lambdacheck[2]] * s1*s2*s1)]
                 """
 
                 return self.coset_representative(index_set=self.parent().realization_of().cartan_type().classical().index_set())
@@ -1642,7 +1695,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1],print_tuple=True); WF=E.WF()
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1], print_tuple=True); WF=E.WF()
                     sage: W = E.affine_weyl()
                     sage: v = W.from_reduced_word([2,1,0])
                     sage: w = W.from_reduced_word([2,0,1,0])
@@ -1697,14 +1750,14 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1],affine="s")
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s")
                     sage: x = E.FW().an_element(); x
                     pi[2] * s0*s1*s2
                     sage: la = E.lattice().an_element(); la
                     2*Lambdacheck[1] + 2*Lambdacheck[2]
                     sage: x.action(la)
                     5*Lambdacheck[1] - 3*Lambdacheck[2]
-                    sage: E = ExtendedAffineWeylGroup(['C',2,1],affine="s")
+                    sage: E = ExtendedAffineWeylGroup(['C',2,1], affine="s")
                     sage: x = E.PW0().from_translation(E.lattice_basis()[1])
                     sage: x.action(E.lattice_basis()[2])
                     Lambdacheck[1] + Lambdacheck[2]
@@ -1727,14 +1780,14 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1],affine="s")
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s")
                     sage: x = E.FW().an_element(); x
                     pi[2] * s0*s1*s2
                     sage: la = E.dual_lattice().an_element(); la
                     2*Lambda[1] + 2*Lambda[2]
                     sage: x.dual_action(la)
                     5*Lambda[1] - 3*Lambda[2]
-                    sage: E = ExtendedAffineWeylGroup(['C',2,1],affine="s")
+                    sage: E = ExtendedAffineWeylGroup(['C',2,1], affine="s")
                     sage: x = E.PvW0().from_dual_translation(E.dual_lattice_basis()[1])
                     sage: x.dual_action(E.dual_lattice_basis()[2])
                     Lambda[1] + Lambda[2]
@@ -1867,8 +1920,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             OPTIONAL:
 
-            - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``positive`` -- True or False (default: False)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
+            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
 
             EXAMPLES::
 
@@ -1957,7 +2010,10 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).PW0()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Multiplicative form of Coweight lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
+              acted upon by Weyl Group of type ['A', 2]
+               (as a matrix group acting on the coweight lattice)
         """
 
         def __init__(self, E):
@@ -1994,7 +2050,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau", print_tuple = True)
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau",
+                ....:                             print_tuple=True)
                 sage: la = E.lattice().an_element(); la
                 2*Lambdacheck[1] + 2*Lambdacheck[2]
                 sage: E.PW0().from_translation(la)
@@ -2041,7 +2098,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: ExtendedAffineWeylGroup("A3").PW0().simple_reflections()
-                Finite family {0: t[Lambdacheck[1] + Lambdacheck[3]] * s1*s2*s3*s2*s1, 1: s1, 2: s2, 3: s3}
+                Finite family {0: t[Lambdacheck[1] + Lambdacheck[3]] * s1*s2*s3*s2*s1,
+                               1: s1, 2: s2, 3: s3}
             """
             return Family(self.realization_of().cartan_type().index_set(), self.simple_reflection)
 
@@ -2068,12 +2126,12 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `i` - an index.
+            - `i` -- an index.
 
             OPTIONAL:
 
-            - ``side`` - 'left' or 'right' (default: 'right')
-            - ``positive`` - True or False (default: False)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
+            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
 
             EXAMPLES::
 
@@ -2137,12 +2195,14 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `E` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).W0P()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice) acting on Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Weyl Group of type ['A', 2] (as a matrix group acting on the coweight lattice)
+             acting on Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
         """
 
         def __init__(self, E):
@@ -2189,7 +2249,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 sage: E = ExtendedAffineWeylGroup(['A',3,1]); W0P = E.W0P()
                 sage: [(i, W0P.simple_reflection(i)) for i in E.cartan_type().index_set()]
-                [(0, s1*s2*s3*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[3]]), (1, s1), (2, s2), (3, s3)]
+                [(0, s1*s2*s3*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[3]]),
+                 (1, s1), (2, s2), (3, s3)]
             """
             if i == 0:
                 return self.S0()
@@ -2204,7 +2265,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: ExtendedAffineWeylGroup(["A",3,1]).W0P().simple_reflections()
-                Finite family {0: s1*s2*s3*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[3]], 1: s1, 2: s2, 3: s3}
+                Finite family {0: s1*s2*s3*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[3]],
+                               1: s1, 2: s2, 3: s3}
             """
             return Family(self.realization_of().cartan_type().index_set(), self.simple_reflection)
 
@@ -2247,8 +2309,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             OPTIONAL:
 
-            - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``positive`` -- True or False (default: False)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
+            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
 
             EXAMPLES::
 
@@ -2298,7 +2360,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1],affine="s", print_tuple=True); WF=E.WF()
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s",
+                ....:                             print_tuple=True); WF=E.WF()
                 sage: r = E.affine_weyl().from_reduced_word
                 sage: v = r([1,0])
                 sage: w = r([1,2,0])
@@ -2330,12 +2393,14 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `E` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).WF()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice) acted upon by Fundamental group of type ['A', 2, 1]
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
+              acted upon by Fundamental group of type ['A', 2, 1]
         """
 
         def __init__(self, E):
@@ -2396,8 +2461,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['E',6,1],print_tuple=True); WF = E.WF(); F = E.fundamental_group()
-                sage: [(x,WF.from_fundamental(x)) for x in F]
+                sage: E = ExtendedAffineWeylGroup(['E',6,1], print_tuple=True); WF = E.WF()
+                sage: F = E.fundamental_group()
+                sage: [(x, WF.from_fundamental(x)) for x in F]
                 [(pi[0], (1, pi[0])), (pi[1], (1, pi[1])), (pi[6], (1, pi[6]))]
             """
             return self((self.cartesian_factors()[0].one(),f))
@@ -2417,8 +2483,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             OPTIONAL:
 
-            - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``positive`` -- True or False (default: False)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
+            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
 
             EXAMPLES::
 
@@ -2487,12 +2553,14 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `E` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).FW()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Fundamental group of type ['A', 2, 1] acting on Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root lattice)
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Fundamental group of type ['A', 2, 1] acting on Weyl Group of type ['A', 2, 1]
+             (as a matrix group acting on the root lattice)
         """
 
         def __init__(self, E):
@@ -2657,12 +2725,14 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `E` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).PvW0()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Multiplicative form of Weight lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Multiplicative form of Weight lattice of the Root system of type ['A', 2] acted
+              upon by Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
         """
 
         def __init__(self, E):
@@ -2698,7 +2768,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau", print_tuple = True)
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau",
+                ....:                             print_tuple=True)
                 sage: la = E.dual_lattice().an_element(); la
                 2*Lambda[1] + 2*Lambda[2]
                 sage: E.PvW0().from_dual_translation(la)
@@ -2715,7 +2786,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: ExtendedAffineWeylGroup(['A',3,1]).PvW0().simple_reflections()
-                Finite family {0: t[Lambda[1] + Lambda[3]] * s1*s2*s3*s2*s1, 1: s1, 2: s2, 3: s3}
+                Finite family {0: t[Lambda[1] + Lambda[3]] * s1*s2*s3*s2*s1,
+                               1: s1, 2: s2, 3: s3}
             """
             E = self.realization_of()
             return Family(E.cartan_type().index_set(), lambda i: self(E.PW0().simple_reflection(i)))
@@ -2829,7 +2901,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: ExtendedAffineWeylGroup(['A',2,1]).W0Pv()
-            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice) acting on Multiplicative form of Weight lattice of the Root system of type ['A', 2]
+            Extended affine Weyl group of type ['A', 2, 1] realized by Semidirect product of
+             Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
+             acting on Multiplicative form of Weight lattice of the Root system of type ['A', 2]
         """
 
         def __init__(self, E):
@@ -2864,7 +2938,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau", print_tuple = True)
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau",
+                ....:                             print_tuple=True)
                 sage: la = E.dual_lattice().an_element(); la
                 2*Lambda[1] + 2*Lambda[2]
                 sage: E.W0Pv().from_dual_translation(la)
@@ -2881,7 +2956,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: ExtendedAffineWeylGroup(['A',3,1]).W0Pv().simple_reflections()
-                Finite family {0: s1*s2*s3*s2*s1 * t[-Lambda[1] - Lambda[3]], 1: s1, 2: s2, 3: s3}
+                Finite family {0: s1*s2*s3*s2*s1 * t[-Lambda[1] - Lambda[3]],
+                               1: s1, 2: s2, 3: s3}
             """
             E = self.realization_of()
             return Family(E.cartan_type().index_set(), lambda i: self(E.PW0().simple_reflection(i)))

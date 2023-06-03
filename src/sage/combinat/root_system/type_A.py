@@ -253,22 +253,20 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
 
         EXAMPLES::
 
-            sage: a = CartanType(['A',3]).dynkin_diagram()
-            sage: a
+            sage: a = CartanType(['A',3]).dynkin_diagram(); a                           # optional - sage.graphs
             O---O---O
             1   2   3
             A3
-            sage: a.edges(sort=True)
+            sage: a.edges(sort=True)                                                    # optional - sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
 
         TESTS::
 
-            sage: a = DynkinDiagram(['A',1])
-            sage: a
+            sage: a = DynkinDiagram(['A',1]); a                                         # optional - sage.graphs
             O
             1
             A1
-            sage: a.vertices(sort=False), a.edges(sort=False)
+            sage: a.vertices(sort=False), a.edges(sort=False)                           # optional - sage.graphs
             ([1], [])
         """
         from .dynkin_diagram import DynkinDiagram_class

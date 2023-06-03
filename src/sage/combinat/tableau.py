@@ -86,7 +86,6 @@ For display options, see :meth:`Tableaux.options`.
 # ****************************************************************************
 from itertools import repeat
 
-import sage.libs.symmetrica.all as symmetrica
 import sage.misc.prandom as random
 
 from sage.arith.misc import binomial, factorial, multinomial
@@ -97,9 +96,8 @@ from sage.combinat import permutation
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.combinat.subset import powerset
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.misc_c import prod
 from sage.misc.lazy_import import lazy_import
 from sage.misc.persist import register_unpickle_override
@@ -116,6 +114,8 @@ from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.combinat.posets.posets', 'Poset')
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
+lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
 
 
 @richcmp_method
@@ -1131,19 +1131,19 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: t = SemistandardTableau([[1,1,1,2,4],[3,3,4],[4,5],[6,6]])
-            sage: t.to_sign_matrix(6)
+            sage: t.to_sign_matrix(6)                                                   # optional - sage.modules
             [ 0  0  0  1  0  0]
             [ 0  1  0 -1  0  0]
             [ 1 -1  0  1  0  0]
             [ 0  0  1 -1  1  1]
             [ 0  0  0  1 -1  0]
             sage: t = Tableau([[1,2,4],[3,5]])
-            sage: t.to_sign_matrix(7)
+            sage: t.to_sign_matrix(7)                                                   # optional - sage.modules
             [ 0  0  0  1  0  0  0]
             [ 0  1  0 -1  1  0  0]
             [ 1 -1  1  0 -1  0  0]
             sage: t = Tableau([(4,5,4,3),(2,1,3)])
-            sage: t.to_sign_matrix(5)
+            sage: t.to_sign_matrix(5)                                                   # optional - sage.modules
             [ 0  0  1  0  0]
             [ 0  0  0  1  0]
             [ 1  0 -1 -1  1]
@@ -2797,26 +2797,26 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: rs = Tableau([[1,2,3],[4,5]]).row_stabilizer()
-            sage: rs.order() == factorial(3)*factorial(2)
+            sage: rs = Tableau([[1,2,3],[4,5]]).row_stabilizer()                        # optional - sage.groups
+            sage: rs.order() == factorial(3)*factorial(2)                               # optional - sage.groups
             True
-            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs                        # optional - sage.groups
             True
-            sage: PermutationGroupElement([(1,4)]) in rs
+            sage: PermutationGroupElement([(1,4)]) in rs                                # optional - sage.groups
             False
-            sage: rs = Tableau([[1, 2],[3]]).row_stabilizer()
-            sage: PermutationGroupElement([(1,2),(3,)]) in rs
+            sage: rs = Tableau([[1, 2],[3]]).row_stabilizer()                           # optional - sage.groups
+            sage: PermutationGroupElement([(1,2),(3,)]) in rs                           # optional - sage.groups
             True
-            sage: rs.one().domain()
+            sage: rs.one().domain()                                                     # optional - sage.groups
             [1, 2, 3]
-            sage: rs = Tableau([[1],[2],[3]]).row_stabilizer()
-            sage: rs.order()
+            sage: rs = Tableau([[1],[2],[3]]).row_stabilizer()                          # optional - sage.groups
+            sage: rs.order()                                                            # optional - sage.groups
             1
-            sage: rs = Tableau([[2,4,5],[1,3]]).row_stabilizer()
-            sage: rs.order()
+            sage: rs = Tableau([[2,4,5],[1,3]]).row_stabilizer()                        # optional - sage.groups
+            sage: rs.order()                                                            # optional - sage.groups
             12
-            sage: rs = Tableau([]).row_stabilizer()
-            sage: rs.order()
+            sage: rs = Tableau([]).row_stabilizer()                                     # optional - sage.groups
+            sage: rs.order()                                                            # optional - sage.groups
             1
         """
         # Ensure that the permutations involve all elements of the
@@ -2838,12 +2838,12 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: cs = Tableau([[1,2,3],[4,5]]).column_stabilizer()
-            sage: cs.order() == factorial(2)*factorial(2)
+            sage: cs = Tableau([[1,2,3],[4,5]]).column_stabilizer()                     # optional - sage.groups
+            sage: cs.order() == factorial(2)*factorial(2)                               # optional - sage.groups
             True
-            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs                        # optional - sage.groups
             False
-            sage: PermutationGroupElement([(1,4)]) in cs
+            sage: PermutationGroupElement([(1,4)]) in cs                                # optional - sage.groups
             True
         """
         return self.conjugate().row_stabilizer()
@@ -2900,7 +2900,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: st = StandardTableaux([3,2])
             sage: f = lambda b: 1 if b else 0
-            sage: matrix( [ [ f(t1.last_letter_lequal(t2)) for t2 in st] for t1 in st] )
+            sage: matrix([[f(t1.last_letter_lequal(t2)) for t2 in st] for t1 in st])    # optional - sage.modules
             [1 1 1 1 1]
             [0 1 1 1 1]
             [0 0 1 1 1]
@@ -3661,9 +3661,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: sorted(t._segments().items())
             [((0, 2), 2), ((0, 3), 3), ((0, 5), 4), ((1, 3), 1), ((1, 5), 2), ((2, 4), 1)]
 
-            sage: B = crystals.Tableaux("A4", shape=[4,3,2,1])
-            sage: t = B[31].to_tableau()
-            sage: sorted(t._segments().items())
+            sage: B = crystals.Tableaux("A4", shape=[4,3,2,1])                          # optional - sage.modules
+            sage: t = B[31].to_tableau()                                                # optional - sage.modules
+            sage: sorted(t._segments().items())                                         # optional - sage.modules
             [((0, 5), 3), ((1, 4), 2), ((2, 4), 1)]
         """
         segments = {}
@@ -3693,9 +3693,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: t.seg()
             6
 
-            sage: B = crystals.Tableaux("A4",shape=[4,3,2,1])
-            sage: t = B[31].to_tableau()
-            sage: t.seg()
+            sage: B = crystals.Tableaux("A4", shape=[4,3,2,1])                          # optional - sage.modules
+            sage: t = B[31].to_tableau()                                                # optional - sage.modules
+            sage: t.seg()                                                               # optional - sage.modules
             3
         """
         return len(self._segments())
@@ -3721,9 +3721,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: t.flush()
             3
 
-            sage: B = crystals.Tableaux("A4",shape=[4,3,2,1])
-            sage: t = B[32].to_tableau()
-            sage: t.flush()
+            sage: B = crystals.Tableaux("A4", shape=[4,3,2,1])                          # optional - sage.modules
+            sage: t = B[32].to_tableau()                                                # optional - sage.modules
+            sage: t.flush()                                                             # optional - sage.modules
             4
         """
         for i in range(len(self)-1):
@@ -3846,11 +3846,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: StandardTableauTuple([[1,2],[3,4]]).residue_sequence(2)
+            sage: StandardTableauTuple([[1,2],[3,4]]).residue_sequence(2)               # optional - sage.groups
             2-residue sequence (0,1,1,0) with multicharge (0)
-            sage: StandardTableauTuple([[1,2],[3,4]]).residue_sequence(3)
+            sage: StandardTableauTuple([[1,2],[3,4]]).residue_sequence(3)               # optional - sage.groups
             3-residue sequence (0,1,2,0) with multicharge (0)
-            sage: StandardTableauTuple([[1,2],[3,4]]).residue_sequence(4)
+            sage: StandardTableauTuple([[1,2],[3,4]]).residue_sequence(4)               # optional - sage.groups
             4-residue sequence (0,1,3,0) with multicharge (0)
         """
         res = [0] * self.size()
@@ -3884,9 +3884,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: StandardTableau([[1,2,5],[3,4]]).degree(3)
+            sage: StandardTableau([[1,2,5],[3,4]]).degree(3)                            # optional - sage.groups
             0
-            sage: StandardTableau([[1,2,5],[3,4]]).degree(4)
+            sage: StandardTableau([[1,2,5],[3,4]]).degree(4)                            # optional - sage.groups
             1
         """
         n = self.size()
@@ -3929,11 +3929,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: StandardTableau([[1,3,5],[2,4]]).codegree(3)
+            sage: StandardTableau([[1,3,5],[2,4]]).codegree(3)                          # optional - sage.groups
             0
-            sage: StandardTableau([[1,2,5],[3,4]]).codegree(3)
+            sage: StandardTableau([[1,2,5],[3,4]]).codegree(3)                          # optional - sage.groups
             1
-            sage: StandardTableau([[1,2,5],[3,4]]).codegree(4)
+            sage: StandardTableau([[1,2,5],[3,4]]).codegree(4)                          # optional - sage.groups
             0
         """
         if not self:  # the trivial case
@@ -6466,9 +6466,9 @@ class SemistandardTableaux_size(SemistandardTableaux):
 
         EXAMPLES::
 
-            sage: SemistandardTableaux(6).random_element() # random
+            sage: SemistandardTableaux(6).random_element()  # random                    # optional - sage.modules
             [[1, 1, 2], [3, 5, 5]]
-            sage: SemistandardTableaux(6, max_entry=7).random_element() # random
+            sage: SemistandardTableaux(6, max_entry=7).random_element()  # random       # optional - sage.modules
             [[2, 4, 4, 6, 6, 6]]
         """
         from sage.rings.integer_ring import ZZ
@@ -7017,13 +7017,13 @@ class RowStandardTableaux(Tableaux):
 
         sage: ST = RowStandardTableaux(3); ST
         Row standard tableaux of size 3
-        sage: ST.first()
+        sage: ST.first()                                                                # optional - sage.graphs
         [[1, 2, 3]]
-        sage: ST.last()
+        sage: ST.last()                                                                 # optional - sage.graphs
         [[3], [1], [2]]
-        sage: ST.cardinality()
+        sage: ST.cardinality()                                                          # optional - sage.graphs
         10
-        sage: ST.list()
+        sage: ST.list()                                                                 # optional - sage.graphs
         [[[1, 2, 3]],
          [[2, 3], [1]],
          [[1, 2], [3]],
@@ -7050,13 +7050,13 @@ class RowStandardTableaux(Tableaux):
         []
         sage: ST = RowStandardTableaux([2,2]); ST
         Row standard tableaux of shape [2, 2]
-        sage: ST.first()
+        sage: ST.first()                                                                # optional - sage.graphs
         [[2, 4], [1, 3]]
-        sage: ST.last()
+        sage: ST.last()                                                                 # optional - sage.graphs
         [[2, 3], [1, 4]]
-        sage: ST.cardinality()
+        sage: ST.cardinality()                                                          # optional - sage.graphs
         6
-        sage: ST.list()
+        sage: ST.list()                                                                 # optional - sage.graphs
         [[[2, 4], [1, 3]],
          [[3, 4], [1, 2]],
          [[1, 4], [2, 3]],
@@ -7191,11 +7191,11 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
 
     EXAMPLES::
 
-        sage: [ t for t in RowStandardTableaux(1) ]
+        sage: [t for t in RowStandardTableaux(1)]                                       # optional - sage.graphs
         [[[1]]]
-        sage: [ t for t in RowStandardTableaux(2) ]
+        sage: [t for t in RowStandardTableaux(2)]                                       # optional - sage.graphs
         [[[1, 2]], [[2], [1]], [[1], [2]]]
-        sage: list(RowStandardTableaux(3))
+        sage: list(RowStandardTableaux(3))                                              # optional - sage.graphs
         [[[1, 2, 3]],
          [[2, 3], [1]],
          [[1, 2], [3]],
@@ -7215,7 +7215,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         10
         sage: ns = [1,2,3,4,5,6]
         sage: sts = [RowStandardTableaux(n) for n in ns]
-        sage: all(st.cardinality() == len(st.list()) for st in sts)
+        sage: all(st.cardinality() == len(st.list()) for st in sts)                     # optional - sage.graphs
         True
         sage: RowStandardTableaux(40).cardinality()  # not tested, too long
         2063837185739279909309355007659204891024472174278
@@ -7232,8 +7232,8 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
 
         TESTS::
 
-            sage: TestSuite( RowStandardTableaux(0) ).run()
-            sage: TestSuite( RowStandardTableaux(3) ).run()
+            sage: TestSuite(RowStandardTableaux(0)).run()                               # optional - sage.graphs
+            sage: TestSuite(RowStandardTableaux(3)).run()                               # optional - sage.graphs
         """
         RowStandardTableaux.__init__(self)
         from sage.combinat.partition import Partitions_n
@@ -7256,10 +7256,10 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         TESTS::
 
             sage: ST3 = RowStandardTableaux(3)
-            sage: all(st in ST3 for st in ST3)
+            sage: all(st in ST3 for st in ST3)                                          # optional - sage.graphs
             True
             sage: ST4 = RowStandardTableaux(4)
-            sage: [x for x in ST4 if x in ST3]
+            sage: [x for x in ST4 if x in ST3]                                          # optional - sage.graphs
             []
 
         Check that :trac:`14145` is fixed::
@@ -7302,7 +7302,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
 
         TESTS::
 
-            sage: TestSuite( RowStandardTableaux([2,1,1]) ).run()
+            sage: TestSuite( RowStandardTableaux([2,1,1]) ).run()                       # optional - sage.graphs
         """
         super().__init__(category=FiniteEnumeratedSets())
         self.shape = p
@@ -7312,9 +7312,9 @@ class RowStandardTableaux_shape(RowStandardTableaux):
         EXAMPLES::
 
             sage: ST = RowStandardTableaux([2,1,1])
-            sage: all(st in ST for st in ST)
+            sage: all(st in ST for st in ST)                                            # optional - sage.graphs
             True
-            sage: len([x for x in RowStandardTableaux(4) if x in ST])
+            sage: len([x for x in RowStandardTableaux(4) if x in ST])                   # optional - sage.graphs
             12
             sage: ST.cardinality()
             12
@@ -7337,14 +7337,14 @@ class RowStandardTableaux_shape(RowStandardTableaux):
 
         EXAMPLES::
 
-            sage: [t for t in RowStandardTableaux([2,2])]
+            sage: [t for t in RowStandardTableaux([2,2])]                               # optional - sage.graphs
             [[[2, 4], [1, 3]],
              [[3, 4], [1, 2]],
              [[1, 4], [2, 3]],
              [[1, 3], [2, 4]],
              [[1, 2], [3, 4]],
              [[2, 3], [1, 4]]]
-            sage: [t for t in RowStandardTableaux([3,2])]
+            sage: [t for t in RowStandardTableaux([3,2])]                               # optional - sage.graphs
             [[[2, 4, 5], [1, 3]],
              [[3, 4, 5], [1, 2]],
              [[1, 4, 5], [2, 3]],
@@ -7356,7 +7356,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
              [[2, 3, 4], [1, 5]],
              [[2, 3, 5], [1, 4]]]
             sage: st = RowStandardTableaux([2,1])
-            sage: st[0].parent() is st
+            sage: st[0].parent() is st                                                  # optional - sage.graphs
             True
         """
         partial_sums = [sum(self.shape[:i]) for i in range(len(self.shape)+1)]
@@ -7463,7 +7463,7 @@ class StandardTableaux(SemistandardTableaux):
         2
         sage: ST.list()
         [[[1, 3], [2, 4]], [[1, 2], [3, 4]]]
-        sage: StandardTableau([[1,2,3],[4,5]]).residue_sequence(3).standard_tableaux()
+        sage: StandardTableau([[1,2,3],[4,5]]).residue_sequence(3).standard_tableaux()  # optional - sage.groups
         Standard tableaux with 3-residue sequence (0,1,2,2,0) and multicharge (0)
     """
     @staticmethod

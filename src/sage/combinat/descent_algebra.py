@@ -1,3 +1,4 @@
+# sage.doctest: sage.combinat sage.modules
 """
 Descent Algebras
 

@@ -224,42 +224,43 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
         EXAMPLES::
 
-            sage: d = CartanType(['D',5]).dynkin_diagram(); d
+            sage: d = CartanType(['D',5]).dynkin_diagram(); d                           # optional - sage.graphs
                     O 5
                     |
                     |
             O---O---O---O
             1   2   3   4
             D5
-            sage: d.edges(sort=True)
-            [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1), (3, 4, 1), (3, 5, 1), (4, 3, 1), (5, 3, 1)]
+            sage: d.edges(sort=True)                                                    # optional - sage.graphs
+            [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1),
+             (3, 4, 1), (3, 5, 1), (4, 3, 1), (5, 3, 1)]
 
-            sage: d = CartanType(['D',4]).dynkin_diagram(); d
+            sage: d = CartanType(['D',4]).dynkin_diagram(); d                           # optional - sage.graphs
                 O 4
                 |
                 |
             O---O---O
             1   2   3
             D4
-            sage: d.edges(sort=True)
+            sage: d.edges(sort=True)                                                    # optional - sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (2, 4, 1), (3, 2, 1), (4, 2, 1)]
 
-            sage: d = CartanType(['D',3]).dynkin_diagram(); d
+            sage: d = CartanType(['D',3]).dynkin_diagram(); d                           # optional - sage.graphs
             O 3
             |
             |
             O---O
             1   2
             D3
-            sage: d.edges(sort=True)
+            sage: d.edges(sort=True)                                                    # optional - sage.graphs
             [(1, 2, 1), (1, 3, 1), (2, 1, 1), (3, 1, 1)]
 
 
-            sage: d = CartanType(['D',2]).dynkin_diagram(); d
+            sage: d = CartanType(['D',2]).dynkin_diagram(); d                           # optional - sage.graphs
             O   O
             1   2
             D2
-            sage: d.edges(sort=True)
+            sage: d.edges(sort=True)                                                    # optional - sage.graphs
             []
         """
         from .dynkin_diagram import DynkinDiagram_class

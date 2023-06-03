@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 """
 Generic code for bases
 

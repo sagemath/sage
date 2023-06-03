@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.gap
 """
 Braid Move Calculator
 

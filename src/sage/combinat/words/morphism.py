@@ -66,7 +66,7 @@ Infinite fixed point of morphism::
 
 Incidence matrix::
 
-    sage: matrix(m)
+    sage: matrix(m)                                                                     # optional - sage.modules
     [2 3 1]
     [1 3 0]
     [1 1 1]
@@ -93,16 +93,18 @@ from collections.abc import Iterable
 from sage.misc.callable_dict import CallableDict
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_list import lazy_list
 from sage.sets.set import Set
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import Matrix
 from sage.combinat.words.word import FiniteWord_class
 from sage.combinat.words.words import FiniteWords, FiniteOrInfiniteWords
+
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.matrix.constructor', 'Matrix')
 
 
 def get_cycles(f, domain):
@@ -612,7 +614,7 @@ class WordMorphism(SageObject):
         ::
 
             sage: s = WordMorphism({1:[1,2],2:[1]})
-            sage: s.dual_map()
+            sage: s.dual_map()                                                          # optional - sage.modules
             E_1^*(1->12, 2->1)
 
         TESTS::
@@ -1099,21 +1101,21 @@ class WordMorphism(SageObject):
 
             sage: fibo = WordMorphism('a->ab,b->a')
             sage: tm = WordMorphism('a->ab,b->ba')
-            sage: Mfibo = matrix(fibo); Mfibo     # indirect doctest
+            sage: Mfibo = matrix(fibo); Mfibo     # indirect doctest                    # optional - sage.modules
             [1 1]
             [1 0]
-            sage: Mtm = matrix(tm); Mtm
+            sage: Mtm = matrix(tm); Mtm                                                 # optional - sage.modules
             [1 1]
             [1 1]
-            sage: Mtm * Mfibo == matrix(tm*fibo)   # indirect doctest
+            sage: Mtm * Mfibo == matrix(tm*fibo)   # indirect doctest                   # optional - sage.modules
             True
-            sage: Mfibo * Mtm == matrix(fibo*tm)   # indirect doctest
+            sage: Mfibo * Mtm == matrix(fibo*tm)   # indirect doctest                   # optional - sage.modules
             True
-            sage: Mfibo.parent()
+            sage: Mfibo.parent()                                                        # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-            sage: p = Mfibo.charpoly(); p
+            sage: p = Mfibo.charpoly(); p                                               # optional - sage.modules
             x^2 - x - 1
-            sage: p.roots(ring=RR, multiplicities=False)
+            sage: p.roots(ring=RR, multiplicities=False)                                # optional - sage.modules
             [-0.618033988749895, 1.61803398874989]
         """
         if R is None:
@@ -1134,12 +1136,12 @@ class WordMorphism(SageObject):
         EXAMPLES::
 
             sage: m = WordMorphism('a->abc,b->a,c->c')
-            sage: m.incidence_matrix()
+            sage: m.incidence_matrix()                                                  # optional - sage.modules
             [1 1 0]
             [1 0 0]
             [1 0 1]
             sage: m = WordMorphism('a->abc,b->a,c->c,d->abbccccabca,e->abc')
-            sage: m.incidence_matrix()
+            sage: m.incidence_matrix()                                                  # optional - sage.modules
             [1 1 0 3 1]
             [1 0 0 3 1]
             [1 0 1 5 1]
@@ -1202,9 +1204,10 @@ class WordMorphism(SageObject):
 
         We check that :trac:`8674` is fixed::
 
-            sage: P = WordPaths('abcd')
-            sage: m = WordMorphism('a->adab,b->ab,c->cbcd,d->cd', domain=P, codomain=P)
-            sage: m.is_endomorphism()
+            sage: P = WordPaths('abcd')                                                 # optional - sage.modules
+            sage: m = WordMorphism('a->adab,b->ab,c->cbcd,d->cd',                       # optional - sage.modules
+            ....:                  domain=P, codomain=P)
+            sage: m.is_endomorphism()                                                   # optional - sage.modules
             True
         """
         return self.codomain() == self.domain()
@@ -1493,11 +1496,11 @@ class WordMorphism(SageObject):
         EXAMPLES::
 
             sage: m = WordMorphism('a->aaaabbc,b->aaabbc,c->aabc')
-            sage: matrix(m)
+            sage: matrix(m)                                                             # optional - sage.modules
             [4 3 2]
             [2 2 1]
             [1 1 1]
-            sage: m.pisot_eigenvector_right()
+            sage: m.pisot_eigenvector_right()                                           # optional - sage.modules sage.rings.number_field
             (1, 0.5436890126920763?, 0.2955977425220848?)
         """
         eig = self.incidence_matrix().eigenvectors_right()
@@ -1523,11 +1526,11 @@ class WordMorphism(SageObject):
         EXAMPLES::
 
             sage: m = WordMorphism('a->aaaabbc,b->aaabbc,c->aabc')
-            sage: matrix(m)
+            sage: matrix(m)                                                             # optional - sage.modules
             [4 3 2]
             [2 2 1]
             [1 1 1]
-            sage: m.pisot_eigenvector_left()
+            sage: m.pisot_eigenvector_left()                                            # optional - sage.modules sage.rings.number_field
             (1, 0.8392867552141611?, 0.5436890126920763?)
         """
         eig = self.incidence_matrix().eigenvectors_left()
@@ -2072,29 +2075,29 @@ class WordMorphism(SageObject):
 
         The fibonacci morphism::
 
-            sage: s = WordMorphism({0: [0,1], 1:[0]})
-            sage: sorted(s.language(3))
+            sage: s = WordMorphism({0: [0,1], 1: [0]})
+            sage: sorted(s.language(3))                                                 # optional - sage.modules
             [word: 001, word: 010, word: 100, word: 101]
-            sage: len(s.language(1000))
+            sage: len(s.language(1000))                                                 # optional - sage.modules
             1001
-            sage: all(len(s.language(n)) == n+1 for n in range(100))
+            sage: all(len(s.language(n)) == n+1 for n in range(100))                    # optional - sage.modules
             True
 
         A growing but non-primitive example. The DOL-languages generated
         by 0 and 2 are different::
 
-            sage: s = WordMorphism({0: [0,1], 1:[0], 2:[2,0,2]})
+            sage: s = WordMorphism({0: [0,1], 1: [0], 2: [2,0,2]})
 
             sage: u = s.fixed_point(0)
             sage: A0 = u[:200].factor_set(5)
-            sage: B0 = s.language(5, [0])
-            sage: set(A0) == B0
+            sage: B0 = s.language(5, [0])                                               # optional - sage.modules
+            sage: set(A0) == B0                                                         # optional - sage.modules
             True
 
             sage: v = s.fixed_point(2)
             sage: A2 = v[:200].factor_set(5)
-            sage: B2 = s.language(5, [2])
-            sage: set(A2) == B2
+            sage: B2 = s.language(5, [2])                                               # optional - sage.modules
+            sage: set(A2) == B2                                                         # optional - sage.modules
             True
 
             sage: len(A0), len(A2)
@@ -2103,7 +2106,7 @@ class WordMorphism(SageObject):
         The Chacon transformation (non-primitive)::
 
             sage: s = WordMorphism({0: [0,0,1,0], 1:[1]})
-            sage: sorted(s.language(10))
+            sage: sorted(s.language(10))                                                # optional - sage.modules
             [word: 0001000101,
              word: 0001010010,
              ...
@@ -2457,8 +2460,8 @@ class WordMorphism(SageObject):
 
         EXAMPLES::
 
-            sage: sigma = WordMorphism({1:[2],2:[3],3:[1,2]})
-            sage: sigma.dual_map()
+            sage: sigma = WordMorphism({1: [2], 2: [3], 3: [1,2]})
+            sage: sigma.dual_map()                                                      # optional - sage.modules
             E_1^*(1->2, 2->3, 3->12)
 
         ::
@@ -2512,7 +2515,7 @@ class WordMorphism(SageObject):
         is::
 
             sage: s = WordMorphism('1->12,2->13,3->1')
-            sage: s.rauzy_fractal_projection()
+            sage: s.rauzy_fractal_projection()                                          # optional - sage.modules
             {'1': (1.00000000000000, 0.000000000000000),
              '2': (-1.41964337760708, -0.606290729207199),
              '3': (-0.771844506346038, 1.11514250803994)}
@@ -2520,9 +2523,9 @@ class WordMorphism(SageObject):
         TESTS::
 
             sage: t = WordMorphism('1->12,2->3,3->45,4->5,5->6,6->7,7->8,8->1')
-            sage: E = t.incidence_matrix().eigenvalues()
-            sage: x = [x for x in E if -0.8 < x < -0.7][0]
-            sage: t.rauzy_fractal_projection(prec=10)
+            sage: E = t.incidence_matrix().eigenvalues()                                # optional - sage.modules
+            sage: x = [x for x in E if -0.8 < x < -0.7][0]                              # optional - sage.modules
+            sage: t.rauzy_fractal_projection(prec=10)                                   # optional - sage.modules
             {'1': (1.0, 0.00),
              '2': (-1.7, -0.56),
              '3': (0.79, 1.3),
@@ -2531,7 +2534,7 @@ class WordMorphism(SageObject):
              '6': (0.79, 1.3),
              '7': (0.21, -1.3),
              '8': (-0.88, 0.74)}
-            sage: t.rauzy_fractal_projection(eig=x, prec=10)
+            sage: t.rauzy_fractal_projection(eig=x, prec=10)                            # optional - sage.modules
             {'1': (1.0, 0.00),
              '2': (-0.12, -0.74),
              '3': (-0.66, -0.56),
@@ -2616,19 +2619,20 @@ class WordMorphism(SageObject):
         and ``'3'`` are respectively::
 
             sage: s = WordMorphism('1->12,2->13,3->1')
-            sage: D = s.rauzy_fractal_points(n=100)
-            sage: len(D['1'])
+            sage: D = s.rauzy_fractal_points(n=100)                                     # optional - sage.modules
+            sage: len(D['1'])                                                           # optional - sage.modules
             54
-            sage: len(D['2'])
+            sage: len(D['2'])                                                           # optional - sage.modules
             30
-            sage: len(D['3'])
+            sage: len(D['3'])                                                           # optional - sage.modules
             16
 
         TESTS::
 
             sage: s = WordMorphism('1->12,2->13,3->1')
-            sage: D = s.rauzy_fractal_points(n=100, exchange=True, translate=[(3,1,-2), (5,-33,8)], prec=40)
-            sage: len(D['1'])
+            sage: D = s.rauzy_fractal_points(n=100, exchange=True,                      # optional - sage.modules
+            ....:                            translate=[(3,1,-2), (5,-33,8)], prec=40)
+            sage: len(D['1'])                                                           # optional - sage.modules
             108
 
         AUTHOR:
@@ -2839,8 +2843,8 @@ class WordMorphism(SageObject):
         #. Different fractals can be obtained by choosing another (non-Pisot) eigenvalue::
 
             sage: s = WordMorphism('1->12,2->3,3->45,4->5,5->6,6->7,7->8,8->1')
-            sage: E = s.incidence_matrix().eigenvalues()
-            sage: x = [x for x in E if -0.8 < x < -0.7][0]
+            sage: E = s.incidence_matrix().eigenvalues()                                # optional - sage.modules
+            sage: x = [x for x in E if -0.8 < x < -0.7][0]                              # optional - sage.modules
             sage: s.rauzy_fractal_plot()                                    # not tested (> 1 second)
             sage: s.rauzy_fractal_plot(eig=x)                               # not tested (> 1 second)
 
@@ -2883,7 +2887,7 @@ class WordMorphism(SageObject):
            ::
 
             sage: t = WordMorphism("a->aC,b->d,C->de,d->a,e->ab")   # substitution found by Julien Bernat
-            sage: V = [vector((0,0,1,0,-1)), vector((0,0,1,-1,0))]
+            sage: V = [vector((0,0,1,0,-1)), vector((0,0,1,-1,0))]                      # optional - sage.modules
             sage: S = set(map(tuple, [i*V[0] + j*V[1]
             ....:                     for i in [-1,0,1] for j in [-1,0,1]]))
             sage: t.rauzy_fractal_plot(n=10000,                             # not tested (> 1 second)
@@ -2907,7 +2911,7 @@ class WordMorphism(SageObject):
         TESTS::
 
             sage: s = WordMorphism('a->ab,b->c,c->d,d->e,e->a')
-            sage: s.rauzy_fractal_plot(n=1000, colormap='Set1',                         # optional - sage.plot
+            sage: s.rauzy_fractal_plot(n=1000, colormap='Set1',                         # optional - sage.modules sage.plot
             ....:                      opacity={'a':0.5,'b':1,'c':0.7,'d':0,'e':0.2},
             ....:                      plot_origin=(100,"black"), plot_basis=True,
             ....:                      point_size=2.5)
@@ -3327,24 +3331,24 @@ class WordMorphism(SageObject):
 
         EXAMPLES::
 
-            sage: WordMorphism('0->1,1->0').abelian_rotation_subspace()
+            sage: WordMorphism('0->1,1->0').abelian_rotation_subspace()                 # optional - sage.modules
             Vector space of degree 2 and dimension 2 over Rational Field
             Basis matrix:
             [1 0]
             [0 1]
-            sage: WordMorphism('0->01,1->10').abelian_rotation_subspace()
+            sage: WordMorphism('0->01,1->10').abelian_rotation_subspace()               # optional - sage.modules
             Vector space of degree 2 and dimension 0 over Rational Field
             Basis matrix:
             []
-            sage: WordMorphism('0->01,1->1').abelian_rotation_subspace()
+            sage: WordMorphism('0->01,1->1').abelian_rotation_subspace()                # optional - sage.modules
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
             [0 1]
-            sage: WordMorphism('1->122,2->211').abelian_rotation_subspace()
+            sage: WordMorphism('1->122,2->211').abelian_rotation_subspace()             # optional - sage.modules
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
             [ 1 -1]
-            sage: WordMorphism('0->1,1->102,2->3,3->4,4->2').abelian_rotation_subspace()
+            sage: WordMorphism('0->1,1->102,2->3,3->4,4->2').abelian_rotation_subspace()        # optional - sage.modules
             Vector space of degree 5 and dimension 3 over Rational Field
             Basis matrix:
             [0 0 1 0 0]
@@ -3353,7 +3357,7 @@ class WordMorphism(SageObject):
 
         The domain needs to be equal to the codomain::
 
-            sage: WordMorphism('0->1,1->',codomain=Words('01')).abelian_rotation_subspace()
+            sage: WordMorphism('0->1,1->',codomain=Words('01')).abelian_rotation_subspace()     # optional - sage.modules
             Vector space of degree 2 and dimension 0 over Rational Field
             Basis matrix:
             []

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.graphs sage.modules
 r"""
 Subword complex
 
@@ -10,8 +11,8 @@ expression for `w`.
 A subword complex is a shellable sphere if and only if the Demazure
 product of `Q` equals `w`, otherwise it is a shellable ball.
 
-The code is optimized to be used with ReflectionGroup, it works as well
-with CoxeterGroup, but many methods fail for WeylGroup.
+The code is optimized to be used with :class:`ReflectionGroup`, it works as well
+with :class:`CoxeterGroup`, but many methods fail for :class:`WeylGroup`.
 
 EXAMPLES::
 
@@ -83,13 +84,13 @@ real space::
     sage: W = CoxeterGroup(['A',3]); I = list(W.index_set())
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
-    sage: S.brick_polytope()
+    sage: S.brick_polytope()                                                            # optional - sage.geometry.polyhedron
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 14 vertices
 
     sage: W = CoxeterGroup(['H',3]); I = list(W.index_set())
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
-    sage: S.brick_polytope()
+    sage: S.brick_polytope()                                                            # optional - sage.geometry.polyhedron
     doctest:...: RuntimeWarning: the polytope is built with rational vertices
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
 
@@ -114,13 +115,15 @@ REFERENCES:
 from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 from sage.categories.simplicial_complexes import SimplicialComplexes
-from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.cone import Cone
 from sage.combinat.subword_complex_c import _flip_c, _construct_facets_c
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.geometry.cone', 'Cone')
 
 
 class SubwordComplexFacet(Simplex, Element):

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Strong and weak tableaux
 
@@ -37,7 +38,6 @@ from sage.structure.list_clone import ClonableList
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.combinat.skew_tableau import SkewTableau, SemistandardSkewTableaux
 from sage.combinat.partition import Partition, Partitions
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.core import Core
 from sage.rings.integer_ring import ZZ
 from sage.misc.lazy_import import lazy_import
@@ -47,6 +47,8 @@ from sage.combinat.skew_partition import SkewPartition
 from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Composition
 import copy
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 def WeakTableau(t, k, inner_shape = [], representation = "core"):

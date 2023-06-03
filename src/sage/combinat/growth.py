@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.combinat sage.graphs
 r"""
 Growth diagrams and dual graded graphs
 

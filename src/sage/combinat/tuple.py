@@ -16,11 +16,13 @@ Tuples
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.libs.gap.libgap import libgap
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
 class Tuples(Parent, UniqueRepresentation):
@@ -47,9 +49,9 @@ class Tuples(Parent, UniqueRepresentation):
 
     ::
 
-        sage: K.<a> = GF(4, 'a')
-        sage: mset = [x for x in K if x != 0]
-        sage: Tuples(mset,2).list()
+        sage: K.<a> = GF(4, 'a')                                                        # optional - sage.rings.finite_rings
+        sage: mset = [x for x in K if x != 0]                                           # optional - sage.rings.finite_rings
+        sage: Tuples(mset,2).list()                                                     # optional - sage.rings.finite_rings
         [[a, a], [a + 1, a], [1, a], [a, a + 1], [a + 1, a + 1], [1, a + 1],
          [a, 1], [a + 1, 1], [1, 1]]
     """
@@ -127,10 +129,10 @@ class Tuples(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = [1,2,3,4,5]
-            sage: Tuples(S,2).cardinality()
+            sage: Tuples(S,2).cardinality()                                             # optional - sage.libs.gap
             25
             sage: S = [1,1,2,3,4,5]
-            sage: Tuples(S,2).cardinality()
+            sage: Tuples(S,2).cardinality()                                             # optional - sage.libs.gap
             25
         """
         return ZZ(libgap.NrTuples(self._index_list, ZZ(self.k)))
@@ -210,7 +212,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = [1,2,3,4,5]
-            sage: UnorderedTuples(S,2).cardinality()
+            sage: UnorderedTuples(S,2).cardinality()                                    # optional - sage.libs.gap
             15
         """
         return ZZ(libgap.NrUnorderedTuples(self._index_list, ZZ(self.k)))

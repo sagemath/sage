@@ -4806,17 +4806,17 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).increasing_tree()                              # optional - sage.combinat
+            sage: Permutation([1,4,3,2]).increasing_tree()                              # optional - sage.graphs
             1[., 2[3[4[., .], .], .]]
-            sage: Permutation([4,1,3,2]).increasing_tree()                              # optional - sage.combinat
+            sage: Permutation([4,1,3,2]).increasing_tree()                              # optional - sage.graphs
             1[4[., .], 2[3[., .], .]]
 
         By passing the option ``compare=max`` one can have the decreasing
         tree instead::
 
-            sage: Permutation([2,3,4,1]).increasing_tree(max)                           # optional - sage.combinat
+            sage: Permutation([2,3,4,1]).increasing_tree(max)                           # optional - sage.graphs
             4[3[2[., .], .], 1[., .]]
-            sage: Permutation([2,3,1,4]).increasing_tree(max)                           # optional - sage.combinat
+            sage: Permutation([2,3,1,4]).increasing_tree(max)                           # optional - sage.graphs
             4[3[2[., .], 1[., .]], .]
         """
         from sage.combinat.binary_tree import LabelledBinaryTree as LBT
@@ -4837,17 +4837,17 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).increasing_tree_shape()                        # optional - sage.combinat
+            sage: Permutation([1,4,3,2]).increasing_tree_shape()                        # optional - sage.graphs
             [., [[[., .], .], .]]
-            sage: Permutation([4,1,3,2]).increasing_tree_shape()                        # optional - sage.combinat
+            sage: Permutation([4,1,3,2]).increasing_tree_shape()                        # optional - sage.graphs
             [[., .], [[., .], .]]
 
         By passing the option ``compare=max`` one can have the decreasing
         tree instead::
 
-            sage: Permutation([2,3,4,1]).increasing_tree_shape(max)                     # optional - sage.combinat
+            sage: Permutation([2,3,4,1]).increasing_tree_shape(max)                     # optional - sage.graphs
             [[[., .], .], [., .]]
-            sage: Permutation([2,3,1,4]).increasing_tree_shape(max)                     # optional - sage.combinat
+            sage: Permutation([2,3,1,4]).increasing_tree_shape(max)                     # optional - sage.graphs
             [[[., .], [., .]], .]
         """
         return self.increasing_tree(compare).shape()
@@ -4873,22 +4873,22 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).binary_search_tree()                           # optional - sage.combinat
+            sage: Permutation([1,4,3,2]).binary_search_tree()                           # optional - sage.graphs
             1[., 4[3[2[., .], .], .]]
-            sage: Permutation([4,1,3,2]).binary_search_tree()                           # optional - sage.combinat
+            sage: Permutation([4,1,3,2]).binary_search_tree()                           # optional - sage.graphs
             4[1[., 3[2[., .], .]], .]
 
         By passing the option ``left_to_right=False`` one can have
         the insertion going from right to left::
 
-            sage: Permutation([1,4,3,2]).binary_search_tree(False)                      # optional - sage.combinat
+            sage: Permutation([1,4,3,2]).binary_search_tree(False)                      # optional - sage.graphs
             2[1[., .], 3[., 4[., .]]]
-            sage: Permutation([4,1,3,2]).binary_search_tree(False)                      # optional - sage.combinat
+            sage: Permutation([4,1,3,2]).binary_search_tree(False)                      # optional - sage.graphs
             2[1[., .], 3[., 4[., .]]]
 
         TESTS::
 
-            sage: Permutation([]).binary_search_tree()                                  # optional - sage.combinat
+            sage: Permutation([]).binary_search_tree()                                  # optional - sage.graphs
             .
         """
         from sage.combinat.binary_tree import LabelledBinaryTree as LBT
@@ -4909,17 +4909,17 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).binary_search_tree_shape()                     # optional - sage.combinat
+            sage: Permutation([1,4,3,2]).binary_search_tree_shape()                     # optional - sage.graphs
             [., [[[., .], .], .]]
-            sage: Permutation([4,1,3,2]).binary_search_tree_shape()                     # optional - sage.combinat
+            sage: Permutation([4,1,3,2]).binary_search_tree_shape()                     # optional - sage.graphs
             [[., [[., .], .]], .]
 
         By passing the option ``left_to_right=False`` one can have
         the insertion going from right to left::
 
-            sage: Permutation([1,4,3,2]).binary_search_tree_shape(False)                # optional - sage.combinat
+            sage: Permutation([1,4,3,2]).binary_search_tree_shape(False)                # optional - sage.graphs
             [[., .], [., [., .]]]
-            sage: Permutation([4,1,3,2]).binary_search_tree_shape(False)                # optional - sage.combinat
+            sage: Permutation([4,1,3,2]).binary_search_tree_shape(False)                # optional - sage.graphs
             [[., .], [., [., .]]]
         """
         from sage.combinat.binary_tree import binary_search_tree_shape
@@ -4978,20 +4978,20 @@ class Permutation(CombinatorialElement):
 
         The sylvester class of a permutation `p` contains `p`::
 
-            sage: all(p in p.sylvester_class() for p in Permutations(4))                # optional - sage.combinat
+            sage: all(p in p.sylvester_class() for p in Permutations(4))                # optional - sage.combinat sage.graphs
             True
 
         Small cases::
 
-            sage: list(Permutation([]).sylvester_class())                               # optional - sage.combinat
+            sage: list(Permutation([]).sylvester_class())                               # optional - sage.combinat sage.graphs
             [[]]
 
-            sage: list(Permutation([1]).sylvester_class())                              # optional - sage.combinat
+            sage: list(Permutation([1]).sylvester_class())                              # optional - sage.combinat sage.graphs
             [[1]]
 
         The sylvester classes in `S_3`::
 
-            sage: [sorted(p.sylvester_class()) for p in Permutations(3)]                # optional - sage.combinat
+            sage: [sorted(p.sylvester_class()) for p in Permutations(3)]                # optional - sage.combinat sage.graphs
             [[[1, 2, 3]],
              [[1, 3, 2], [3, 1, 2]],
              [[2, 1, 3]],
@@ -5001,7 +5001,7 @@ class Permutation(CombinatorialElement):
 
         The left sylvester classes in `S_3`::
 
-            sage: [sorted(p.sylvester_class(left_to_right=True))                        # optional - sage.combinat
+            sage: [sorted(p.sylvester_class(left_to_right=True))                        # optional - sage.combinat sage.graphs
             ....:  for p in Permutations(3)]
             [[[1, 2, 3]],
              [[1, 3, 2]],
@@ -5013,7 +5013,7 @@ class Permutation(CombinatorialElement):
         A left sylvester class in `S_5`::
 
             sage: p = Permutation([4, 2, 1, 5, 3])
-            sage: sorted(p.sylvester_class(left_to_right=True))                         # optional - sage.combinat
+            sage: sorted(p.sylvester_class(left_to_right=True))                         # optional - sage.combinat sage.graphs
             [[4, 2, 1, 3, 5],
              [4, 2, 1, 5, 3],
              [4, 2, 3, 1, 5],
@@ -7204,7 +7204,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: G = Permutations(4)
-            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()         # optional - sage.combinat
+            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()         # optional - sage.combinat sage.graphs
             True
         """
         from sage.combinat.partition import Partitions_n
@@ -7219,7 +7219,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: G = Permutations(4)
-            sage: G.conjugacy_classes()                                                 # optional - sage.combinat
+            sage: G.conjugacy_classes()                                                 # optional - sage.combinat sage.graphs
             [Conjugacy class of cycle type [1, 1, 1, 1] in Standard permutations of 4,
              Conjugacy class of cycle type [2, 1, 1] in Standard permutations of 4,
              Conjugacy class of cycle type [2, 2] in Standard permutations of 4,
@@ -7240,9 +7240,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
             sage: G = Permutations(5)
             sage: g = G([2,3,4,1,5])
-            sage: G.conjugacy_class(g)                                                  # optional - sage.combinat
+            sage: G.conjugacy_class(g)                                                  # optional - sage.combinat sage.graphs
             Conjugacy class of cycle type [4, 1] in Standard permutations of 5
-            sage: G.conjugacy_class(Partition([2, 1, 1, 1]))                            # optional - sage.combinat
+            sage: G.conjugacy_class(Partition([2, 1, 1, 1]))                            # optional - sage.combinat sage.graphs
             Conjugacy class of cycle type [2, 1, 1, 1] in Standard permutations of 5
         """
         from sage.groups.perm_gps.symgp_conjugacy_class import PermutationsConjugacyClass

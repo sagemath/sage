@@ -1505,16 +1505,17 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(["B",3])
-            sage: W.element_class._repr_=lambda x: "".join(str(i) for i in x.reduced_word())
+            sage: W = WeylGroup(["B",3])                                                # optional - sage.libs.gap
+            sage: W.element_class._repr_ = lambda x: "".join(str(i)                     # optional - sage.libs.gap
+            ....:                                            for i in x.reduced_word())
             sage: K = QQ['q1,q2']
             sage: q1, q2 = K.gens()
-            sage: KW = W.algebra(K)
-            sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)
-            sage: E = T.Y_eigenvectors()
-            sage: w = W.an_element(); w
+            sage: KW = W.algebra(K)                                                     # optional - sage.libs.gap
+            sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)                # optional - sage.libs.gap
+            sage: E = T.Y_eigenvectors()                                                # optional - sage.libs.gap
+            sage: w = W.an_element(); w                                                 # optional - sage.libs.gap
             123
-            sage: E.twist(w,1)
+            sage: E.twist(w,1)                                                          # optional - sage.libs.gap
             1231
         """
         return mu.simple_reflection(i)

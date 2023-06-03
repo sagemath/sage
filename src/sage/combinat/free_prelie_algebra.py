@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.combinat sage.graphs sage.modules
 r"""
 Free Pre-Lie Algebras
 

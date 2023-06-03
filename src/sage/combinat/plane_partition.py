@@ -31,8 +31,8 @@ from sage.structure.richcmp import richcmp, richcmp_method
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.tableau import Tableau
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
@@ -42,6 +42,8 @@ from sage.arith.misc import Sigma, integer_floor as floor, integer_ceil as ceil,
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+
+lazy_import('sage.modules.free_module_element', 'vector')
 
 
 @richcmp_method

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Poirier-Reutenauer Hopf algebra of standard tableaux
 

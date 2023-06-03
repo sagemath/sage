@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.combinat sage.groups
 r"""
 Constellations
 
@@ -56,7 +56,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import (op_NE, op_EQ, richcmp_not_equal,
                                     rich_to_bool)
 
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.integer import Integer
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
@@ -65,7 +64,7 @@ from sage.categories.groups import Groups
 
 lazy_import('sage.graphs.graph', 'Graph')
 lazy_import('sage.graphs.digraph', 'DiGraph')
-
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 # constructors
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.graphs sage.modules
 r"""
 Finite state machines, automata, transducers
 
