@@ -1400,8 +1400,8 @@ class QuaternionOrder(Parent):
                     raise ValueError("lattice must contain 1")
 
                 # check if multiplicatively closed
-                M1 = basis_for_quaternion_lattice(basis)
-                M2 = basis_for_quaternion_lattice(list(basis) + [x * y for x in basis for y in basis])
+                M1 = basis_for_quaternion_lattice(basis, reverse=False)
+                M2 = basis_for_quaternion_lattice(list(basis) + [x * y for x in basis for y in basis], reverse=False)
                 if M1 != M2:
                     raise ValueError("given lattice must be a ring")
 
@@ -2549,7 +2549,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # if self.__right_order == right.__left_order:
         #     left_order = self.__left_order
         #     right_order = right.__right_order
-        basis = tuple(basis_for_quaternion_lattice(gens))
+        basis = tuple(basis_for_quaternion_lattice(gens, reverse=False))
         A = self.quaternion_algebra()
         return A.ideal(basis, check=False)
 
@@ -2692,7 +2692,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         Jbar = [b.conjugate() for b in J.basis()]
         gens = [a * b for a in self.basis() for b in Jbar]
-        basis = tuple(basis_for_quaternion_lattice(gens))
+        basis = tuple(basis_for_quaternion_lattice(gens, reverse=False))
         R = self.quaternion_algebra()
         return R.ideal(basis, check=False)
 
@@ -2900,7 +2900,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 #######################################################################
 
 
-def basis_for_quaternion_lattice(gens, reverse=False):
+def basis_for_quaternion_lattice(gens, reverse=None):
     r"""
     Return a basis for the `\ZZ`-lattice in a quaternion algebra
     spanned by the given gens.
@@ -2919,12 +2919,18 @@ def basis_for_quaternion_lattice(gens, reverse=False):
         sage: from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice
         sage: A.<i,j,k> = QuaternionAlgebra(-1,-7)
         sage: basis_for_quaternion_lattice([i+j, i-j, 2*k, A(1/3)])
+        doctest:warning ... DeprecationWarning: ...
         [1/3, i + j, 2*j, 2*k]
 
         sage: basis_for_quaternion_lattice([A(1),i,j,k])
         [1, i, j, k]
 
     """
+    if reverse is None:
+        from sage.misc.superseded import deprecation
+        deprecation(34880, 'The default value for the "reverse" argument to basis_for_quaternion_lattice() will'
+                           ' change from False to True. Pass the argument explicitly to silence this warning.')
+        reverse = False
     if not gens:
         return []
     Z, d = quaternion_algebra_cython.integral_matrix_and_denom_from_rational_quaternions(gens, reverse)
