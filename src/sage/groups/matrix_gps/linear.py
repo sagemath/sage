@@ -221,7 +221,7 @@ def SL(n, R, var='a'):
         Special Linear Group of degree 2 over Integer Ring
         sage: G.category()
         Category of infinite groups
-        sage: G.gens()
+        sage: G.gens()                                                                  # optional - sage.libs.gap
         (
         [ 0  1]  [1 1]
         [-1  0], [0 1]
@@ -231,7 +231,7 @@ def SL(n, R, var='a'):
 
         sage: G = SL(3, ZZ); G
         Special Linear Group of degree 3 over Integer Ring
-        sage: G.gens()
+        sage: G.gens()                                                                  # optional - sage.libs.gap
         (
         [0 1 0]  [ 0  1  0]  [1 1 0]
         [0 0 1]  [-1  0  0]  [0 1 0]
