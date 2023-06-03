@@ -427,9 +427,9 @@ class CoxeterGroups(Category_singleton):
 
             We now consider an infinite Coxeter group::
 
-                sage: W = WeylGroup(["A",1,1])
-                sage: I = W.weak_order_ideal(predicate = lambda w: w.length() <= 2)
-                sage: list(iter(I))
+                sage: W = WeylGroup(["A",1,1])                                          # optional - sage.groups
+                sage: I = W.weak_order_ideal(predicate=lambda w: w.length() <= 2)       # optional - sage.groups
+                sage: list(iter(I))                                                     # optional - sage.groups
                 [
                 [1 0]  [-1  2]  [ 1  0]  [ 3 -2]  [-1  2]
                 [0 1], [ 0  1], [ 2 -1], [ 2 -1], [-2  3]
@@ -444,11 +444,11 @@ class CoxeterGroups(Category_singleton):
 
             unless this finiteness is explicitly specified::
 
-                sage: I = W.weak_order_ideal(predicate = lambda w: w.length() <= 2,
-                ....:                        category = FiniteEnumeratedSets())
-                sage: I.cardinality()
+                sage: I = W.weak_order_ideal(predicate=lambda w: w.length() <= 2,       # optional - sage.groups
+                ....:                        category=FiniteEnumeratedSets())
+                sage: I.cardinality()                                                   # optional - sage.groups
                 5
-                sage: list(I)
+                sage: list(I)                                                           # optional - sage.groups
                 [
                 [1 0]  [-1  2]  [ 1  0]  [ 3 -2]  [-1  2]
                 [0 1], [ 0  1], [ 2 -1], [ 2 -1], [-2  3]
@@ -471,7 +471,7 @@ class CoxeterGroups(Category_singleton):
             We iterate over each level (i.e., breadth-first-search in the
             search forest), see :trac:`19926`::
 
-                sage: W = CoxeterGroup(['A',2])
+                sage: W = CoxeterGroup(['A',2])                                         # optional - sage.groups
                 sage: [x.length() for x in W]
                 [0, 1, 1, 2, 2, 3]
             """
@@ -1609,7 +1609,7 @@ class CoxeterGroups(Category_singleton):
                 sage: W = CoxeterGroups().example()
                 sage: s = W.simple_reflections()
                 sage: w = s[0] * s[2]
-                sage: sorted(w.reduced_words())                                         # optional - sage.combinat
+                sage: sorted(w.reduced_words())                                         # optional - sage.combinat sage.modules
                 [[0, 2], [2, 0]]
 
                 sage: W = WeylGroup(['E', 6])                                           # optional - sage.combinat sage.groups

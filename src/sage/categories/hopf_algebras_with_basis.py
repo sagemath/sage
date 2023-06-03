@@ -244,13 +244,13 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: R = NonCommutativeSymmetricFunctions(QQ).ribbon()                 # optional - sage.combinat
-                sage: R._test_antipode()                                                # optional - sage.combinat
+                sage: R = NonCommutativeSymmetricFunctions(QQ).ribbon()                 # optional - sage.combinat sage.modules
+                sage: R._test_antipode()                                                # optional - sage.combinat sage.modules
 
             ::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # optional - sage.combinat
-                sage: s._test_antipode()                                                # optional - sage.combinat
+                sage: s = SymmetricFunctions(QQ).schur()                                # optional - sage.combinat sage.modules
+                sage: s._test_antipode()                                                # optional - sage.combinat sage.modules
 
             """
             tester = self._tester(**options)

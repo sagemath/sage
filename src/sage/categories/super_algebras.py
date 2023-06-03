@@ -88,10 +88,10 @@ class SuperAlgebras(SuperModulesCategory):
             This also works when the other elements do not have
             a signed tensor product (:trac:`31266`)::
 
-                sage: a = SteenrodAlgebra(3).an_element()                               # optional - sage.modules
-                sage: M = CombinatorialFreeModule(GF(3), ['s', 't', 'u'])               # optional - sage.modules sage.rings.finite_rings
-                sage: s = M.basis()['s']                                                # optional - sage.modules sage.rings.finite_rings
-                sage: tensor([a, s])                                                    # optional - sage.modules sage.rings.finite_rings
+                sage: a = SteenrodAlgebra(3).an_element()                               # optional - sage.combinat sage.modules
+                sage: M = CombinatorialFreeModule(GF(3), ['s', 't', 'u'])               # optional - sage.combinat sage.modules sage.rings.finite_rings
+                sage: s = M.basis()['s']                                                # optional - sage.combinat sage.modules sage.rings.finite_rings
+                sage: tensor([a, s])                                                    # optional - sage.combinat sage.modules sage.rings.finite_rings
                 2*Q_1 Q_3 P(2,1) # B['s']
             """
             constructor = kwargs.pop('constructor', tensor_signed)

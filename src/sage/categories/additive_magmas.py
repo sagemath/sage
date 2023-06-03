@@ -1016,17 +1016,17 @@ class AdditiveMagmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: A = Sets().WithRealizations().example(); A                # optional - sage.combinat
+                        sage: A = Sets().WithRealizations().example(); A                # optional - sage.combinat sage.modules
                         The subset algebra of {1, 2, 3} over Rational Field
-                        sage: A.zero.__module__                                         # optional - sage.combinat
+                        sage: A.zero.__module__                                         # optional - sage.combinat sage.modules
                         'sage.categories.additive_magmas'
-                        sage: A.zero()                                                  # optional - sage.combinat
+                        sage: A.zero()                                                  # optional - sage.combinat sage.modules
                         0
 
                     TESTS::
 
-                        sage: A.zero() is A.a_realization().zero()                      # optional - sage.combinat
+                        sage: A.zero() is A.a_realization().zero()                      # optional - sage.combinat sage.modules
                         True
-                        sage: A._test_zero()                                            # optional - sage.combinat
+                        sage: A._test_zero()                                            # optional - sage.combinat sage.modules
                     """
                     return self.a_realization().zero()

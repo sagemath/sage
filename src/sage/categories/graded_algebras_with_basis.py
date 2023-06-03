@@ -46,7 +46,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()                                    # optional - sage.combinat
+                sage: m = SymmetricFunctions(QQ).m()                                    # optional - sage.combinat sage.modules
                 sage: m.graded_algebra() is m                                           # optional - sage.combinat sage.modules
                 True
 
@@ -134,10 +134,10 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)                       # optional - sage.combinat
-                sage: S = NCSF.Complete()                                               # optional - sage.combinat
-                sage: L = S.formal_series_ring()                                        # optional - sage.combinat
-                sage: L                                                                 # optional - sage.combinat
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)                       # optional - sage.combinat sage.modules
+                sage: S = NCSF.Complete()                                               # optional - sage.combinat sage.modules
+                sage: L = S.formal_series_ring()                                        # optional - sage.combinat sage.modules
+                sage: L                                                                 # optional - sage.combinat sage.modules
                 Lazy completion of Non-Commutative Symmetric Functions over
                  the Rational Field in the Complete basis
             """
