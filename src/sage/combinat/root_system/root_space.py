@@ -242,15 +242,15 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             sage: L = RootSystem(['B',4]).root_lattice()
             sage: alpha      = L.simple_roots()
             sage: alphacheck = L.simple_coroots()
-            sage: alpha[1].scalar(alphacheck[1])
+            sage: alpha[1].scalar(alphacheck[1])                                        # optional - sage.graphs
             2
-            sage: alpha[1].scalar(alphacheck[2])
+            sage: alpha[1].scalar(alphacheck[2])                                        # optional - sage.graphs
             -1
 
         The scalar products between the roots and coroots are given by
         the Cartan matrix::
 
-            sage: matrix([ [ alpha[i].scalar(alphacheck[j])
+            sage: matrix([ [ alpha[i].scalar(alphacheck[j])                             # optional - sage.graphs
             ....:            for i in L.index_set() ]
             ....:          for j in L.index_set() ])
             [ 2 -1  0  0]
@@ -346,7 +346,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
             sage: Q = RootSystem(['C',2]).root_lattice()
             sage: positive_roots = Q.positive_roots()
-            sage: for x in sorted(positive_roots):
+            sage: for x in sorted(positive_roots):                                      # optional - sage.graphs
             ....:     print("{} {}".format(x, x.quantum_root()))
             alpha[1] True
             alpha[1] + alpha[2] False
@@ -357,7 +357,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
     def max_coroot_le(self):
         r"""
-        Returns the highest positive coroot whose associated root is less than or equal to ``self``.
+        Return the highest positive coroot whose associated root is less than or equal to ``self``.
 
         INPUT:
 
@@ -375,24 +375,24 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
         EXAMPLES::
 
             sage: root_lattice = RootSystem(['C',2]).root_lattice()
-            sage: root_lattice.from_vector(vector([1,1])).max_coroot_le()
+            sage: root_lattice.from_vector(vector([1,1])).max_coroot_le()               # optional - sage.graphs
             alphacheck[1] + 2*alphacheck[2]
-            sage: root_lattice.from_vector(vector([2,1])).max_coroot_le()
+            sage: root_lattice.from_vector(vector([2,1])).max_coroot_le()               # optional - sage.graphs
             alphacheck[1] + 2*alphacheck[2]
             sage: root_lattice = RootSystem(['B',2]).root_lattice()
-            sage: root_lattice.from_vector(vector([1,1])).max_coroot_le()
+            sage: root_lattice.from_vector(vector([1,1])).max_coroot_le()               # optional - sage.graphs
             2*alphacheck[1] + alphacheck[2]
-            sage: root_lattice.from_vector(vector([1,2])).max_coroot_le()
+            sage: root_lattice.from_vector(vector([1,2])).max_coroot_le()               # optional - sage.graphs
             2*alphacheck[1] + alphacheck[2]
 
-            sage: root_lattice.zero().max_coroot_le() is None
+            sage: root_lattice.zero().max_coroot_le() is None                           # optional - sage.graphs
             True
-            sage: root_lattice.from_vector(vector([-1,0])).max_coroot_le()
+            sage: root_lattice.from_vector(vector([-1,0])).max_coroot_le()              # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: -alpha[1] is not in the positive cone of roots
             sage: root_lattice = RootSystem(['A',2,1]).root_lattice()
-            sage: root_lattice.simple_root(1).max_coroot_le()
+            sage: root_lattice.simple_root(1).max_coroot_le()                           # optional - sage.graphs
             Traceback (most recent call last):
             ...
             NotImplementedError: Only implemented for finite Cartan type
@@ -411,7 +411,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
     def max_quantum_element(self):
         r"""
-        Returns a reduced word for the longest element of the Weyl group whose shortest path in the quantum Bruhat graph to the identity, has sum of quantum coroots at most ``self``.
+        Return a reduced word for the longest element of the Weyl group whose shortest path in the quantum Bruhat graph to the identity, has sum of quantum coroots at most ``self``.
 
         INPUT:
 
@@ -426,11 +426,11 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
         EXAMPLES::
 
             sage: Qvee = RootSystem(['C',2]).coroot_lattice()
-            sage: Qvee.from_vector(vector([1,2])).max_quantum_element()
+            sage: Qvee.from_vector(vector([1,2])).max_quantum_element()                 # optional - sage.graphs
             [2, 1, 2, 1]
-            sage: Qvee.from_vector(vector([1,1])).max_quantum_element()
+            sage: Qvee.from_vector(vector([1,1])).max_quantum_element()                 # optional - sage.graphs
             [1, 2, 1]
-            sage: Qvee.from_vector(vector([0,2])).max_quantum_element()
+            sage: Qvee.from_vector(vector([0,2])).max_quantum_element()                 # optional - sage.graphs
             [2]
 
         """

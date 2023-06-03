@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.gap
 """
 Branching Rules
 """
@@ -54,7 +55,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
       * ``"triality"``
       * ``"miscellaneous"``
 
-    The ``BranchingRule`` class is a wrapper for functions
+    The :class:`BranchingRule` class is a wrapper for functions
     from the weight lattice of `G` to the weight lattice of `H`.
     An instance of this class encodes an embedding of `H` into
     `G`. The usual way to specify an embedding is to supply a

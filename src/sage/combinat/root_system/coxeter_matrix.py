@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.graphs
 """
 Coxeter Matrices
 """
@@ -22,14 +23,16 @@ from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
+from sage.misc.lazy_import import lazy_import
 from sage.matrix.matrix_generic_dense import Matrix_generic_dense
-from sage.graphs.graph import Graph
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
 from sage.rings.infinity import infinity
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.coxeter_type import CoxeterType
+
+lazy_import('sage.graphs.graph', 'Graph')
 
 
 class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):

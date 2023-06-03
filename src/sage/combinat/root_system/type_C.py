@@ -216,20 +216,18 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: c = CartanType(['C',3]).dynkin_diagram()
-            sage: c
+            sage: c = CartanType(['C',3]).dynkin_diagram(); c                           # optional - sage.graphs
             O---O=<=O
             1   2   3
             C3
-            sage: c.edges(sort=True)
+            sage: c.edges(sort=True)                                                    # optional - sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-             sage: b = CartanType(['C',1]).dynkin_diagram()
-             sage: b
+             sage: b = CartanType(['C',1]).dynkin_diagram(); b                          # optional - sage.graphs
              O
              1
              C1
-             sage: b.edges(sort=True)
+             sage: b.edges(sort=True)                                                   # optional - sage.graphs
              []
         """
         return self.dual().dynkin_diagram().dual()

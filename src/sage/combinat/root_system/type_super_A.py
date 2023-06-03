@@ -599,37 +599,36 @@ class CartanType(SuperCartanType_standard):
 
         EXAMPLES::
 
-            sage: a = CartanType(['A', [4,2]]).dynkin_diagram()
-            sage: a
+            sage: a = CartanType(['A', [4,2]]).dynkin_diagram(); a                      # optional - sage.graphs
             O---O---O---O---X---O---O
             -4  -3  -2  -1  0   1   2
             A4|2
-            sage: a.edges(sort=True)
+            sage: a.edges(sort=True)                                                    # optional - sage.graphs
             [(-4, -3, 1), (-3, -4, 1), (-3, -2, 1), (-2, -3, 1),
              (-2, -1, 1), (-1, -2, 1), (-1, 0, 1), (0, -1, 1),
              (0, 1, 1), (1, 0, -1), (1, 2, 1), (2, 1, 1)]
 
         TESTS::
 
-            sage: a = DynkinDiagram(['A', [0,0]]); a
+            sage: a = DynkinDiagram(['A', [0,0]]); a                                    # optional - sage.graphs
             X
             0
             A0|0
-            sage: a.vertices(sort=False), a.edges(sort=False)
+            sage: a.vertices(sort=False), a.edges(sort=False)                           # optional - sage.graphs
             ([0], [])
 
-            sage: a = DynkinDiagram(['A', [1,0]]); a
+            sage: a = DynkinDiagram(['A', [1,0]]); a                                    # optional - sage.graphs
             O---X
             -1  0
             A1|0
-            sage: a.vertices(sort=True), a.edges(sort=True)
+            sage: a.vertices(sort=True), a.edges(sort=True)                             # optional - sage.graphs
             ([-1, 0], [(-1, 0, 1), (0, -1, 1)])
 
-            sage: a = DynkinDiagram(['A', [0,1]]); a
+            sage: a = DynkinDiagram(['A', [0,1]]); a                                    # optional - sage.graphs
             X---O
             0   1
             A0|1
-            sage: a.vertices(sort=True), a.edges(sort=True)
+            sage: a.vertices(sort=True), a.edges(sort=True)                             # optional - sage.graphs
             ([0, 1], [(0, 1, 1), (1, 0, -1)])
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -652,7 +651,7 @@ class CartanType(SuperCartanType_standard):
         EXAMPLES::
 
             sage: ct = CartanType(['A', [2,3]])
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # optional - sage.graphs
             [ 2 -1  0  0  0  0]
             [-1  2 -1  0  0  0]
             [ 0 -1  0  1  0  0]
@@ -663,16 +662,16 @@ class CartanType(SuperCartanType_standard):
         TESTS::
 
             sage: ct = CartanType(['A', [0,0]])
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # optional - sage.graphs
             [0]
 
             sage: ct = CartanType(['A', [1,0]])
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # optional - sage.graphs
             [ 2 -1]
             [-1  0]
 
             sage: ct = CartanType(['A', [0,1]])
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # optional - sage.graphs
             [ 0  1]
             [-1  2]
         """
@@ -696,14 +695,14 @@ class CartanType(SuperCartanType_standard):
         EXAMPLES::
 
             sage: ct = CartanType(['A', [1,2]])
-            sage: ct.dynkin_diagram()
+            sage: ct.dynkin_diagram()                                                   # optional - sage.graphs
             O---X---O---O
             -1  0   1   2
             A1|2
-            sage: f={1:2,2:1,0:0,-1:-1}
+            sage: f = {1:2, 2:1, 0:0, -1:-1}
             sage: ct.relabel(f)
             ['A', [1, 2]] relabelled by {-1: -1, 0: 0, 1: 2, 2: 1}
-            sage: ct.relabel(f).dynkin_diagram()
+            sage: ct.relabel(f).dynkin_diagram()                                        # optional - sage.graphs
             O---X---O---O
             -1  0   2   1
             A1|2 relabelled by {-1: -1, 0: 0, 1: 2, 2: 1}

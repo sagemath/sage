@@ -238,27 +238,28 @@ class Algebras(AlgebrasCategory):
 
                 sage: L = RootSystem(["A",2]).ambient_lattice()
                 sage: KL = L.algebra(QQ)
-                sage: w0 = tuple(L.weyl_group().long_element().reduced_word())
+                sage: w0 = tuple(L.weyl_group().long_element().reduced_word())          # optional - sage.libs.gap
                 sage: pi = KL.demazure_operators()
-                sage: pi0 = pi[w0]
-                sage: pi0(KL.monomial(L((2,1))))
-                2*B[(1, 1, 1)] + B[(1, 2, 0)] + B[(1, 0, 2)] + B[(2, 1, 0)] + B[(2, 0, 1)] + B[(0, 1, 2)] + B[(0, 2, 1)]
+                sage: pi0 = pi[w0]                                                      # optional - sage.libs.gap
+                sage: pi0(KL.monomial(L((2,1))))                                        # optional - sage.libs.gap
+                2*B[(1, 1, 1)] + B[(1, 2, 0)] + B[(1, 0, 2)] + B[(2, 1, 0)]
+                 + B[(2, 0, 1)] + B[(0, 1, 2)] + B[(0, 2, 1)]
 
             Let us make the result into an actual polynomial::
 
                 sage: P = QQ['x,y,z']
-                sage: pi0(KL.monomial(L((2,1)))).expand(P.gens())
+                sage: pi0(KL.monomial(L((2,1)))).expand(P.gens())                       # optional - sage.libs.gap
                 x^2*y + x*y^2 + x^2*z + 2*x*y*z + y^2*z + x*z^2 + y*z^2
 
             This is indeed a Schur function::
 
-                sage: s = SymmetricFunctions(QQ).s()
-                sage: s[2,1].expand(3, P.variable_names())
+                sage: s = SymmetricFunctions(QQ).s()                                    # optional - sage.combinat
+                sage: s[2,1].expand(3, P.variable_names())                              # optional - sage.combinat
                 x^2*y + x*y^2 + x^2*z + 2*x*y*z + y^2*z + x*z^2 + y*z^2
 
             Let us check this systematically on Schur functions of degree 6::
 
-                sage: for p in Partitions(6, max_length=3).list():
+                sage: for p in Partitions(6, max_length=3).list():                      # optional - sage.combinat
                 ....:     assert s.monomial(p).expand(3, P.variable_names()) == pi0(KL.monomial(L(tuple(p)))).expand(P.gens())
 
             We check systematically that these operators satisfy the Iwahori-Hecke algebra relations::
@@ -1132,15 +1133,15 @@ class Algebras(AlgebrasCategory):
             EXAMPLES::
 
                 sage: L = RootSystem(["A",3]).ambient_space()
-                sage: W = L.weyl_group()
+                sage: W = L.weyl_group()                                                # optional - sage.libs.gap
                 sage: M = L.algebra(QQ['q','t'])
                 sage: m = M.an_element(); m  # TODO: investigate why we don't get something more interesting
                 B[(2, 2, 3, 0)]
                 sage: m = (m+1)^2; m
                 B[(0, 0, 0, 0)] + 2*B[(2, 2, 3, 0)] + B[(4, 4, 6, 0)]
-                sage: w = W.an_element(); w.reduced_word()
+                sage: w = W.an_element(); w.reduced_word()                              # optional - sage.libs.gap
                 [1, 2, 3]
-                sage: m.acted_upon(w)
+                sage: m.acted_upon(w)                                                   # optional - sage.libs.gap
                 B[(0, 0, 0, 0)] + 2*B[(0, 2, 2, 3)] + B[(0, 4, 4, 6)]
             """
             return self.map_support(w.action)
