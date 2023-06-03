@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 """
 Symmetric functions defined by orthogonality and triangularity
 

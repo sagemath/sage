@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 """
 Classical symmetric functions
 """
@@ -16,10 +17,11 @@ Classical symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from sage.combinat.partition import _Partitions
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.rational_field import RationalField
-from sage.combinat.partition import _Partitions
 
 
 from . import hall_littlewood
