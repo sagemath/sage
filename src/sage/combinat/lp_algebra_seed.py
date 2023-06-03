@@ -1094,7 +1094,7 @@ class LPASeed(SageObject):
             [2, 1, 2, 0, 2]
             [2, 1, 2, 0, 2, 0]
         """
-        return LPASeed._remove_repeat_indices(self._mutation_sequence)
+        return _remove_repeat_indices(self._mutation_sequence)
 
     # equality is currently defined as equivalence (might change later)
 
@@ -1194,38 +1194,34 @@ class LPASeed(SageObject):
 
         return latex(tuple(cvar_poly_pairs))
 
-    # private method to simplify mutation sequence given list L of indices
-    # we essentially apply the involution rule until no consecutive entries
-    # are the same
 
-    @staticmethod
-    def _remove_repeat_indices(L):
-        r"""
-        Remove mutations twice at the same index from the list of indices ``L``.
-        This will result in a list with no consecutive entries equal.
+def _remove_repeat_indices(L):
+    r"""
+    Remove mutations twice at the same index from the list of indices ``L``.
+    This will result in a list with no consecutive entries equal.
 
-        TESTS::
+    TESTS::
 
-            sage: var('x1, x2, x3, x4, x5')
-            (x1, x2, x3, x4, x5)
-            sage: S = LPASeed({x1:x2+x3,x2:x1+x4,x3:x1+x2,x4:x1+x3,x5:x1+x4})
-            sage: S.mutate([0,1,1,3,2,4,4,2,3])
-            A seed with cluster variables [(x2 + x3)/x1, x2, x3, x4, x5] and exchange polynomials [x2 + x3, x1*x4 + x3, x1 + 1, x1*x3 + x2 + x3, x1*x4 + x2 + x3]
-            sage: LPASeed._remove_repeat_indices(S._mutation_sequence)
-            [0]
-        """
-        G = []
-        flag = False  # we raise the flag iff an adjacent duplicate exists
-        index = 0
-        while index < len(L):
-            if index == len(L) - 1 or L[index] != L[index + 1]:
-                G.append(L[index])
-                index += 1
-            else:
-                flag = True
-                index += 2  # skip over next element
-
-        if flag:
-            return LPASeed._remove_repeat_indices(G)
+        sage: var('x1, x2, x3, x4, x5')
+        (x1, x2, x3, x4, x5)
+        sage: S = LPASeed({x1:x2+x3,x2:x1+x4,x3:x1+x2,x4:x1+x3,x5:x1+x4})
+        sage: S.mutate([0,1,1,3,2,4,4,2,3])
+        A seed with cluster variables [(x2 + x3)/x1, x2, x3, x4, x5] and exchange polynomials [x2 + x3, x1*x4 + x3, x1 + 1, x1*x3 + x2 + x3, x1*x4 + x2 + x3]
+        sage: _remove_repeat_indices(S._mutation_sequence)
+        [0]
+    """
+    G = []
+    flag = False  # we raise the flag iff an adjacent duplicate exists
+    index = 0
+    while index < len(L):
+        if index == len(L) - 1 or L[index] != L[index + 1]:
+            G.append(L[index])
+            index += 1
         else:
-            return G
+            flag = True
+            index += 2  # skip over next element
+
+    if flag:
+        return _remove_repeat_indices(G)
+    else:
+        return G
