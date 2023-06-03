@@ -509,7 +509,7 @@ def lll(self):
         sage: Q = QuadraticForm(ZZ, 4, range(1,11))
         sage: Q.is_definite()
         True
-        sage: Q.lll()
+        sage: Q.lll()                                                               # optional - sage.libs.pari
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 1 0 1 0 ]
         [ * 4 3 3 ]
