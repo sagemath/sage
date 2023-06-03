@@ -53,11 +53,12 @@ from sage.rings.lazy_series import LazyPowerSeries, LazySymmetricFunction
 from sage.rings.lazy_series_ring import LazyPowerSeriesRing, LazySymmetricFunctions
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
-from sage.arith.misc import divisors
+from sage.arith.misc import divisors, factorial
 from sage.combinat.partition import Partition, Partitions
-from sage.combinat.sf.sf import SymmetricFunctions
 from sage.misc.cachefunc import cached_function
-from sage.arith.misc import factorial
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.combinat.sf.sf', 'SymmetricFunctions')
 
 
 class OrdinaryGeneratingSeries(LazyPowerSeries):
