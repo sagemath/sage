@@ -2405,14 +2405,14 @@ class FiniteWord_class(Word_class):
         Return ``True`` if ``self`` is a palindrome (or a ``f``-palindrome), and
         ``False`` otherwise.
 
-        Let `f : \Sigma \rightarrow \Sigma` be an involution that extends
+        Let `f : \Sigma \rightarrow \Sigma` be a letter permutation that extends
         to a morphism on `\Sigma^*`. We say that `w\in\Sigma^*` is a
         *`f`-palindrome* if `w=f(\tilde{w})` [Lab2008]_. Also called
         *`f`-pseudo-palindrome* [AZZ2005]_.
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``.
           It must be callable on letters as well as words (e.g.
           :class:`~sage.combinat.words.morphism.WordMorphism`). The
           default value corresponds to usual palindromes, i.e., ``f``
@@ -2457,7 +2457,7 @@ class FiniteWord_class(Word_class):
             sage: w.is_palindrome(f)
             True
 
-        The word must be in the domain of the involution::
+        The word must be in the domain of the morphism::
 
             sage: f = WordMorphism('a->a')
             sage: Word('aababb').is_palindrome(f)
@@ -2467,13 +2467,13 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        If the given involution is not an involution::
+        If the given morphism is not a letter permutation::
 
             sage: f = WordMorphism('a->b,b->b')
             sage: Word('abab').is_palindrome(f)
             Traceback (most recent call last):
             ...
-            TypeError: self (=a->b, b->b) is not an endomorphism
+            ValueError: f must be a letter permutation
 
         ::
 
@@ -2509,11 +2509,11 @@ class FiniteWord_class(Word_class):
             from sage.combinat.words.morphism import WordMorphism
             if not isinstance(f, WordMorphism):
                 f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
             return self[:l//2 + l%2] == f(self[l//2:].reversal())
 
-    def lps(self, f=None, l=None):
+    def lps(self, f=None, l=None): # todo - investigate time and improve if possible
         r"""
         Return the longest palindromic (or ``f``-palindromic) suffix of ``self``.
 
@@ -2617,7 +2617,7 @@ class FiniteWord_class(Word_class):
                 return self[-l-1:].lps(f=f)
 
     @cached_method
-    def palindromic_lacunas_study(self, f=None):
+    def palindromic_lacunas_study(self, f=None): # todo - investigate time and improve if possible
         r"""
         Return interesting statistics about longest (``f``-)palindromic suffixes
         and lacunas of ``self`` (see [BMBL2008]_ and [BMBFLR2008]_).
@@ -2690,7 +2690,7 @@ class FiniteWord_class(Word_class):
 
         return lengths_lps, lacunas, palindromes
 
-    def lacunas(self, f=None):
+    def lacunas(self, f=None): # todo - investigate time and improve if possible
         r"""
         Return the list of all the lacunas of ``self``.
 
@@ -2867,7 +2867,7 @@ class FiniteWord_class(Word_class):
         else:
             return jj - 2*i - 1
 
-    def lengths_maximal_palindromes(self, f=None):
+    def lengths_maximal_palindromes(self, f=None): # todo - improve this as well, this is O(n^2) right now, should use one private method here and in my methods
         r"""
         Return the length of maximal palindromes centered at each position.
 
@@ -2897,6 +2897,9 @@ class FiniteWord_class(Word_class):
             sage: Word('abbabaab').lengths_maximal_palindromes(f)
             [0, 0, 2, 0, 0, 0, 2, 0, 8, 0, 2, 0, 0, 0, 2, 0, 0]
         """
+        # todo - leave link - Glenn Manacher. A new linear-time “on-line” algorithm for finding the smallest initial palindrome of a string. J. ACM, 22(3):346–351, July 1975.
+        # https://dl.acm.org/doi/10.1145/321892.321896
+
         if f is not None:
             from sage.combinat.words.morphism import WordMorphism
             if not isinstance(f, WordMorphism):
@@ -2906,7 +2909,6 @@ class FiniteWord_class(Word_class):
 
         LPC = []  # lengths of the maximal palindromes centered at a position
         LPC.append(0)
-
         k = 0  # index, center of rightmost-ending `f`-palindrome encountered
 
         for j in range(1, 2 * len(self) + 1):
@@ -2931,7 +2933,7 @@ class FiniteWord_class(Word_class):
                     k = j
         return LPC
 
-    def lps_lengths(self, f=None):
+    def lps_lengths(self, f=None): # todo - investigate
         r"""
         Return the length of the longest palindromic suffix of each prefix.
 
@@ -2973,7 +2975,7 @@ class FiniteWord_class(Word_class):
                 Nk = Nj
         return LPS
 
-    def palindromes(self, f=None):
+    def palindromes(self, f=None): # todo - investigate time, f - involution vs f - letter permutation vs f - morphism
         r"""
         Return the set of all palindromic (or ``f``-palindromic) factors of ``self``.
 
@@ -3047,7 +3049,10 @@ class FiniteWord_class(Word_class):
         """
         return list(self.palindrome_prefixes_iterator())
 
-    def defect(self, f=None):
+# todo - add optional parameter - morphismAndAntimorphismGroup=None or another copy of this method
+# todo - use PermutationGroup -> list() method to generate all elements of morphism+anitmorphism group by 
+# adding 2 special characters s1 and s2, for all morphisms s1->s1, s2->s2, for all antimorphisms s1->s2, s2->s1
+    def defect(self, f=None): # todo - improve to linear algorithm of mine, make it work with not only involutions
         r"""
         Return the defect of ``self``.
 
@@ -3231,7 +3236,7 @@ class FiniteWord_class(Word_class):
 
     is_rich = is_full
 
-    def palindromic_closure(self, side='right', f=None):
+    def palindromic_closure(self, side='right', f=None): # todo - investigate
         r"""
         Return the shortest palindrome having ``self`` as a prefix
         (or as a suffix if ``side`` is ``'left'``).
@@ -3289,24 +3294,21 @@ class FiniteWord_class(Word_class):
                 l = self.lps().length()
                 #return self * self[-(l+1)::-1]
                 return self * self[:self.length()-l].reversal()
-            elif side == 'left':
+            if side == 'left':
                 l = self.reversal().lps().length()
                 return self[:l-1:-1] * self
-            else:
-                raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
-            if side == 'right':
-                l = self.lps(f=f).length()
-                return self * f(self[-(l+1)::-1])
-            elif side == 'left':
-                l = self.reversal().lps(f=f).length()
-                return f(self[:l-1:-1]) * self
-            else:
-                raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
+            raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
+        from sage.combinat.words.morphism import WordMorphism
+        f = WordMorphism(f)
+        if not f.is_involution():
+            raise ValueError("f must be an involution")
+        if side == 'right':
+            l = self.lps(f=f).length()
+            return self * f(self[-(l+1)::-1])
+        if side == 'left':
+            l = self.reversal().lps(f=f).length()
+            return f(self[:l-1:-1]) * self
+        raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
 
     def is_symmetric(self, f=None):
         r"""
@@ -3319,7 +3321,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
           be callable on letters as well as words (e.g. ``WordMorphism``).
 
         EXAMPLES::
@@ -3337,7 +3339,7 @@ class FiniteWord_class(Word_class):
             True
         """
         square = self * self
-        return square.lps_lengths(f)[-1] >= self.length()
+        return square.lps(f).length() >= self.length()
 
     def length_border(self):
         r"""
