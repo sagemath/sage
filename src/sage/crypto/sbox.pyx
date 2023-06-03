@@ -15,7 +15,6 @@ from sage.matrix.matrix0 cimport Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import is_even
 from sage.misc.misc_c import prod as mul
-from sage.misc.superseded import deprecated_function_alias
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF

@@ -57,7 +57,7 @@ AUTHOR:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from .conversions \
@@ -66,7 +66,6 @@ from .conversions \
 
 from .conversions cimport bit_rep_to_Vrep_list
 
-from sage.rings.integer        cimport smallInteger
 from .base                     cimport CombinatorialPolyhedron
 from .face_iterator            cimport FaceIterator
 from .face_list_data_structure cimport *
