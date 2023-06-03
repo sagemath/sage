@@ -143,8 +143,7 @@ AUTHORS:
 # creation and deletion are setup by the call to hook_fast_tp_functions
 
 cimport cython
-from libc.math cimport (ldexp, sqrt as sqrt_double, log as log_c,
-        ceil as ceil_c, isnan)
+from libc.math cimport (ldexp, sqrt as sqrt_double, isnan)
 from libc.string cimport memcpy
 from libc.limits cimport LONG_MAX
 
@@ -152,7 +151,6 @@ from cysignals.memory cimport check_allocarray, check_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off, sig_check, sig_occurred
 
 import operator
-import sys
 
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
@@ -160,7 +158,7 @@ from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 from sage.cpython.string cimport char_to_str, str_to_bytes
-from sage.arith.long cimport (pyobject_to_long, integer_check_long,
+from sage.arith.long cimport (integer_check_long,
                               integer_check_long_py, is_small_python_int)
 
 from cpython.list cimport *
@@ -170,13 +168,11 @@ from cpython.object cimport *
 from libc.stdint cimport uint64_t
 cimport sage.structure.element
 from sage.structure.coerce cimport coercion_model
-from sage.structure.element cimport (Element, EuclideanDomainElement,
-        parent)
+from sage.structure.element cimport (Element, parent)
 from sage.structure.parent cimport Parent
 from sage.rings.rational cimport Rational
 from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
 from sage.libs.gmp.pylong cimport *
-from sage.libs.gmp.mpq cimport mpq_neg
 from sage.libs.gmp.binop cimport mpq_add_z, mpq_mul_z, mpq_div_zz
 
 import sage.rings.infinity

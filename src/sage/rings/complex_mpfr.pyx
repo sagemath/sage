@@ -30,15 +30,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import math
-import operator
 import weakref
 
 import sage.misc.misc
 
 from sage.libs.mpfr cimport *
 
-from sage.structure.element cimport FieldElement, RingElement, Element, ModuleElement
+from sage.structure.element cimport RingElement, Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.structure.parent import Parent
@@ -48,7 +46,7 @@ from sage.misc.sage_eval import sage_eval
 
 import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
-from . import ring, infinity
+from . import infinity
 from .integer cimport Integer
 
 from .complex_double cimport ComplexDoubleElement
