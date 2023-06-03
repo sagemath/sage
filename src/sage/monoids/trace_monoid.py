@@ -43,21 +43,22 @@ AUTHORS:
 from collections import OrderedDict
 from itertools import repeat, chain, product
 
+from sage.combinat.words.alphabet import Alphabet
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-
-from sage.graphs.digraph import DiGraph
-from sage.graphs.graph import Graph
 from sage.monoids.free_monoid import FreeMonoid
 from sage.monoids.monoid import Monoid_class
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.infinity import infinity
-from sage.combinat.words.alphabet import Alphabet
 from sage.structure.element import MonoidElement
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.graphs.graph', 'Graph')
 
 
 class TraceMonoidElement(ElementWrapper, MonoidElement):
