@@ -678,17 +678,14 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
         urdl = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT')
         uldr = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT')
         x = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL CROSS')
-        from sage.typeset.unicode_art import unicode_art as art
     else:
         urdl = '/'
         uldr = '\\'
         x = 'X'
-        from sage.typeset.ascii_art import ascii_art as art
 
     if not data:
         # return urdl + uldr + '\n' + uldr + urdl
         return ''
-
 
     if use_unicode:
         # Special handling of overline not adding to printed length
@@ -768,7 +765,11 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
         str_list.pop()
     return "\n".join(str_list)
 
+
 def box_exists(tab, i, j):
+    """
+    For Russian tableaux, it checks if a certain box exists or not.
+    """
     if j < 0 or i < 0:
         return False
     return (len(tab[i:]) > 0 and len(tab[i][j:]) > 0 and tab[i][j] is not None)
