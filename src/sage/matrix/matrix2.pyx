@@ -80,19 +80,18 @@ from cpython cimport *
 from cysignals.signals cimport sig_check
 
 from sage.misc.lazy_string import lazy_string
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element import is_Vector
 from sage.structure.element cimport have_same_parent
-from sage.misc.verbose import verbose, get_verbose
+from sage.misc.verbose import verbose
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
-from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ, is_RationalField
 import sage.rings.abc
 from sage.arith.numerical_approx cimport digits_to_bits
