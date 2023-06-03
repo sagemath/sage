@@ -1973,7 +1973,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             sage: p.length()                                                            # optional - sage.modules
             100
 
-        Creation of a word path from a FiniteWord_callable::
+        Creation of a word path from a :class:`FiniteWord_callable`::
 
             sage: g = Word(lambda n: n%2, length=100)
             sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
@@ -1984,7 +1984,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         Creation of a word from a pickled function::
 
-            sage: f = lambda n : n % 10
+            sage: f = lambda n: n % 10
             sage: from sage.misc.fpickle import pickle_function
             sage: s = pickle_function(f)
             sage: Word(s, datatype='pickled_function')

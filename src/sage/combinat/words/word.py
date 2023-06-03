@@ -23,6 +23,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.words.word_char import WordDatatype_char
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.finite_word import FiniteWord_class
@@ -36,7 +37,8 @@ from .word_infinite_datatypes import (
                             WordDatatype_callable_with_caching,
                             WordDatatype_callable)
 from .morphic import WordDatatype_morphic
-from sage.monoids.free_monoid_element import FreeMonoidElement
+
+lazy_import('sage.monoids.free_monoid_element', 'FreeMonoidElement')
 
 # TODO. Word needs to be replaced by Word. Consider renaming
 # Word_class to Word and imbedding Word as its __call__ method.

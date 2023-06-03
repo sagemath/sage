@@ -221,12 +221,15 @@ from itertools import islice, cycle
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.words import Words
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.words.word_options import word_options
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
+
+lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
 
 
 class FiniteWord_class(Word_class):
@@ -6752,7 +6755,6 @@ class FiniteWord_class(Word_class):
             word: 3421
         """
         from sage.combinat.permutation import Permutation
-        from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
         if not isinstance(permutation, Permutation):
             if isinstance(permutation, PermutationGroupElement):
                 permutation = Permutation(permutation.domain())
@@ -6781,7 +6783,6 @@ class FiniteWord_class(Word_class):
             word: badc
         """
         from sage.combinat.permutation import Permutation
-        from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
         if not isinstance(permutation, Permutation):
             if isinstance(permutation, PermutationGroupElement):
                 permutation = Permutation(permutation.domain())

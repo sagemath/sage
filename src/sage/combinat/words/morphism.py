@@ -93,16 +93,18 @@ from collections.abc import Iterable
 from sage.misc.callable_dict import CallableDict
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_list import lazy_list
 from sage.sets.set import Set
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import Matrix
 from sage.combinat.words.word import FiniteWord_class
 from sage.combinat.words.words import FiniteWords, FiniteOrInfiniteWords
+
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.matrix.constructor', 'Matrix')
 
 
 def get_cycles(f, domain):
@@ -2084,7 +2086,7 @@ class WordMorphism(SageObject):
         A growing but non-primitive example. The DOL-languages generated
         by 0 and 2 are different::
 
-            sage: s = WordMorphism({0: [0,1], 1:[0], 2:[2,0,2]})
+            sage: s = WordMorphism({0: [0,1], 1: [0], 2: [2,0,2]})
 
             sage: u = s.fixed_point(0)
             sage: A0 = u[:200].factor_set(5)

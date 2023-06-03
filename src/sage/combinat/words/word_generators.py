@@ -59,7 +59,6 @@ from itertools import cycle, count
 from random import randint
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
 from sage.rings.infinity import Infinity
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.word import FiniteWord_list
@@ -68,6 +67,9 @@ from sage.combinat.words.words import FiniteWords, InfiniteWords
 from sage.combinat.words.morphism import WordMorphism
 from sage.arith.misc import gcd
 from sage.misc.decorators import rename_keyword
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def _build_tab(sym, tab, W):

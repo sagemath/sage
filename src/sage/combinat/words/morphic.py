@@ -14,8 +14,7 @@ EXAMPLES:
 Creation of the fixed point of a morphism::
 
     sage: m = WordMorphism('a->abc,b->baba,c->ca')
-    sage: w = m.fixed_point('a')
-    sage: w
+    sage: w = m.fixed_point('a'); w
     word: abcbabacababaabcbabaabccaabcbabaabcbabaa...
     sage: w.length()
     +Infinity
@@ -30,8 +29,10 @@ letter, see chapter 3 of the book [BR2010b]_::
 """
 
 from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
-from sage.modules.free_module_element import vector
+
+lazy_import('sage.modules.free_module_element', 'import vector')
 
 
 class WordDatatype_morphic(WordDatatype_callable):
@@ -78,8 +79,7 @@ class WordDatatype_morphic(WordDatatype_callable):
         When the morphic word is finite::
 
             sage: m = WordMorphism("a->ab,b->")
-            sage: w = m.fixed_point("a")
-            sage: w
+            sage: w = m.fixed_point("a"); w
             word: ab
             sage: w[0]                                                                  # optional - sage.modules
             'a'
