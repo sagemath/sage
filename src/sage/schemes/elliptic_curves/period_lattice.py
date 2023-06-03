@@ -1353,12 +1353,12 @@ class PeriodLattice_ell(PeriodLattice):
             sage: P = ER.lift_x(12.34)                                                  # optional - sage.rings.number_field
             sage: xP, yP = P.xy()                                                       # optional - sage.rings.number_field
             sage: xP, yP                                                                # optional - sage.rings.number_field
-            (12.3400000000000, 43.3628968710567)
+            (12.3400000000000, -43.3628968710567)
             sage: L.e_log_RC(xP, yP)                                                    # optional - sage.rings.number_field
-            3.76298229503967
+            0.284656841192041
             sage: xP, yP = ER.lift_x(0).xy()                                            # optional - sage.rings.number_field
             sage: L.e_log_RC(xP, yP)                                                    # optional - sage.rings.number_field
-            2.69842609082114
+            1.34921304541057
 
         Elliptic logs of complex points::
 
@@ -1373,7 +1373,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: EC = EllipticCurve([v(ai) for ai in E.a_invariants()])                # optional - sage.rings.number_field
             sage: xP, yP = EC.lift_x(0).xy()                                            # optional - sage.rings.number_field
             sage: L.e_log_RC(xP, yP)                                                    # optional - sage.rings.number_field
-            1.03355715602040 - 0.867257428417356*I
+            2.06711431204080 - 1.73451485683471*I
         """
         if prec is None:
             prec = RealField().precision()
