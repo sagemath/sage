@@ -511,7 +511,7 @@ def nonneg_region(f):
         ()
     """
     roots = sorted(f.roots())
-    sign_changes = [r for r,e in roots if e%2 == 1]
+    sign_changes = [r for r,e in roots if e % 2 == 1]
     if (f.leading_coefficient() * (-1)**f.degree()) > 0:
         sign_changes = [-infinity] + sign_changes
     if f.leading_coefficient() > 0:
@@ -552,14 +552,15 @@ def inf_max_abs(f, g, D):
         sage: max(abs(f(r0)), abs(g(r0)))
         425.638201706391
     """
-    xs =  f.roots() + f.derivative().roots()
+    xs = f.roots() + f.derivative().roots()
     xs += g.roots() + g.derivative().roots()
-    xs += (f-g).roots() + (f+g).roots()
-    xs = [r for r,e in xs if r in D]  # ignore multiplicities and points outside D
+    xs += (f - g).roots() + (f + g).roots()
+    xs = [r for r, _ in xs if r in D]  # ignore multiplicities and points outside D
     xs += D.finite_endpoints()        # include endpoints of intervals
     if xs:
-        return min([max(abs(f(r)), abs(g(r))) for r in xs])
+        return min(max(abs(f(r)), abs(g(r))) for r in xs)
     return infinity
+
 
 def min_on_disk(f, tol, max_iter=10000):
     r"""

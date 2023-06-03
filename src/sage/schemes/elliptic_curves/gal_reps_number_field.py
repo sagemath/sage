@@ -553,7 +553,7 @@ def Frobenius_filter(E, L, patience=100):
         L.remove(2)
         include_2 = not E.division_polynomial(2).is_irreducible()
 
-    K_is_Q = (K==QQ)
+    K_is_Q = (K == QQ)
     from sage.arith.misc import primes
     from sage.rings.infinity import infinity
 
@@ -568,7 +568,7 @@ def Frobenius_filter(E, L, patience=100):
                         yield P
     numP = 0
     for P in primes_iter():
-        if not L or numP==patience:  # stop if no primes are left, or patience is exhausted
+        if not L or numP == patience:  # stop if no primes are left, or patience is exhausted
             break
 
         numP += 1
@@ -810,7 +810,7 @@ def deg_one_primes_iter(K, principal_only=False):
     # imaginary quadratic fields have no principal primes of norm < disc / 4
     start = K.discriminant().abs() // 4 if principal_only and K.signature() == (0,1) else 2
 
-    K_is_Q = (K==QQ)
+    K_is_Q = (K == QQ)
 
     for p in primes(start=start, stop=Infinity):
         if K_is_Q:
@@ -872,23 +872,23 @@ def _semistable_reducible_primes(E, verbose=False):
     while len(precomp) < 2:
         P = next(deg_one_primes)
         p = P.norm()
-        if p != last_p and (d==1 or P.ramification_index() == 1) and E.has_good_reduction(P):
+        if p != last_p and (d == 1 or P.ramification_index() == 1) and E.has_good_reduction(P):
             precomp.append(P)
             last_p = p
 
     Px, Py = precomp
     x, y = [PP.gens_reduced()[0] for PP in precomp]
-    EmodPx = E.reduction(Px) if d>1 else E.reduction(x)
-    EmodPy = E.reduction(Py) if d>1 else E.reduction(y)
+    EmodPx = E.reduction(Px) if d > 1 else E.reduction(x)
+    EmodPy = E.reduction(Py) if d > 1 else E.reduction(y)
     fxpol = EmodPx.frobenius_polynomial()
     fypol = EmodPy.frobenius_polynomial()
     fx12pol = fxpol.adams_operator(12) # roots are 12th powers of those of fxpol
     fy12pol = fypol.adams_operator(12)
-    px = x.norm() if d>1 else x
-    py = y.norm() if d>1 else x
+    px = x.norm() if d > 1 else x
+    py = y.norm() if d > 1 else x
     Zx = fxpol.parent()
-    xpol = x.charpoly() if d>1 else Zx([-x,1])
-    ypol = y.charpoly() if d>1 else Zx([-y,1])
+    xpol = x.charpoly() if d > 1 else Zx([-x,1])
+    ypol = y.charpoly() if d > 1 else Zx([-y,1])
 
     if verbose:
         print("Finished precomp, x={} (p={}), y={} (p={})".format(x,px,y,py))
@@ -951,7 +951,7 @@ def _semistable_reducible_primes(E, verbose=False):
         # has CM and computing the set of CM j-invariants of K to check.
         # TODO: Is this the best value for this parameter?
 
-        while div==0 and patience>0:
+        while div == 0 and patience > 0:
             P = next(deg_one_primes) # a prime of K not K_rel
             while E.has_bad_reduction(P):
                 P = next(deg_one_primes)
@@ -967,7 +967,7 @@ def _semistable_reducible_primes(E, verbose=False):
             div2 = Integer(xpol.resultant(fpol.adams_operator(12)) // x.norm()**12)
             if div2:
                 div = div2.isqrt()
-                assert div2==div**2
+                assert div2 == div**2
                 if verbose:
                     print("...div = {}".format(div))
             else:
@@ -1341,7 +1341,7 @@ def Billerey_B_bound(E, max_l=200, num_l=8, small_prime_bound=0, debug=False):
             B1 = B1.prime_to_m_part(p)
         return B1
     ll = primes(5,max_l) # iterator
-    while B!=1 and len(ells)<num_l:
+    while B != 1 and len(ells) < num_l:
         try:
             l = next(ll)
             while B0.valuation(l):
