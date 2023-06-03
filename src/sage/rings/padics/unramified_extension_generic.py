@@ -26,21 +26,21 @@ from sage.misc.cachefunc import cached_method
 
 
 class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
-    """
-    An unramified extension of Qp or Zp.
+    r"""
+    An unramified extension of `\QQ_p` or `\ZZ_p`.
     """
     def __init__(self, poly, prec, print_mode, names, element_class):
         """
-        Initializes self
+        Initializes ``self``.
 
         INPUT:
 
-            - poly -- Polynomial defining this extension.
-            - prec -- The precision cap
-            - print_mode -- a dictionary with print options
-            - names -- a 4-tuple, (variable_name, residue_name,
-              unramified_subextension_variable_name, uniformizer_name)
-            - element_class -- the class for elements of this unramified extension.
+        - ``poly`` -- Polynomial defining this extension.
+        - ``prec`` -- The precision cap
+        - ``print_mode`` -- a dictionary with print options
+        - ``names`` -- a 4-tuple, (``variable_name``, ``residue_name``,
+          ``unramified_subextension_variable_name``, ``uniformizer_name``)
+        - ``element_class`` -- the class for elements of this unramified extension.
 
         EXAMPLES::
 
@@ -76,7 +76,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     def absolute_f(self):
         """
         Return the degree of the residue field of this ring/field
-        over its prime subfield
+        over its prime subfield.
 
         EXAMPLES::
 
@@ -113,7 +113,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def residue_ring(self, n):
         """
-        Return the quotient of the ring of integers by the nth power of its maximal ideal.
+        Return the quotient of the ring of integers by the `n`-th power of its maximal ideal.
 
         EXAMPLES::
 
@@ -135,11 +135,11 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def discriminant(self, K=None):
         """
-        Returns the discriminant of self over the subring K.
+        Return the discriminant of ``self`` over the subring `K`.
 
         INPUT:
 
-            - K -- a subring/subfield (defaults to the base ring).
+        - ``K`` -- a subring/subfield (defaults to the base ring).
 
         EXAMPLES::
 
@@ -174,13 +174,13 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def is_galois(self, K=None):
         """
-        Returns True if this extension is Galois.
+        Return ``True`` if this extension is Galois.
 
         Every unramified extension is Galois.
 
         INPUT:
 
-            - K -- a subring/subfield (defaults to the base ring).
+        - ``K`` -- a subring/subfield (defaults to the base ring).
 
         EXAMPLES::
 
@@ -193,7 +193,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def gen(self, n=0):
         """
-        Returns a generator for this unramified extension.
+        Return a generator for this unramified extension.
 
         This is an element that satisfies the polynomial defining this
         extension.  Such an element will reduce to a generator of the
@@ -211,7 +211,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     @cached_method
     def _frob_gen(self, arithmetic = True):
         """
-        Returns frobenius of the generator for this unramified extension
+        Return frobenius of the generator for this unramified extension
 
         EXAMPLES::
 
@@ -233,7 +233,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def uniformizer_pow(self, n):
         """
-        Returns the nth power of the uniformizer of self (as an element of self).
+        Return the `n`-th power of the uniformizer of ``self`` (as an element of ``self``).
 
         EXAMPLES::
 
@@ -244,8 +244,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         return self(self.prime_pow(n))
 
     def uniformizer(self):
-        """
-        Returns a uniformizer for this extension.
+        r"""
+        Return a uniformizer for this extension.
 
         Since this extension is unramified, a uniformizer for the
         ground ring will also be a uniformizer for this extension.
@@ -259,8 +259,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         return self(self.ground_ring().uniformizer())
 
     def _uniformizer_print(self):
-        """
-        Returns how the uniformizer is supposed to print.
+        r"""
+        Return how the uniformizer is supposed to print.
 
         EXAMPLES::
 
@@ -270,8 +270,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         return self.ground_ring()._uniformizer_print()
 
     def _unram_print(self):
-        """
-        Returns how the generator prints.
+        r"""
+        Return how the generator prints.
 
         EXAMPLES::
 
@@ -282,20 +282,19 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def has_pth_root(self):
         r"""
-        Returns whether or not `\ZZ_p` has a primitive `p^{\mbox{th}}` root of unity.
+        Return whether or not `\ZZ_p` has a primitive `p`-th root of unity.
 
-        Since adjoining a `p^{\mbox{th}}` root of unity yields a
-        totally ramified extension, self will contain one if and only
+        Since adjoining a `p`-th root of unity yields a
+        totally ramified extension, ``self`` will contain one if and only
         if the ground ring does.
 
         INPUT:
 
-            - self -- a p-adic ring
+        - ``self`` -- a `p`-adic ring
 
         OUTPUT:
 
-            - boolean -- whether self has primitive `p^{\mbox{th}}`
-              root of unity.
+        boolean -- whether ``self`` has primitive `p`-th root of unity.
 
         EXAMPLES::
 
@@ -308,12 +307,12 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def has_root_of_unity(self, n):
         r"""
-        Return whether or not `\ZZ_p` has a primitive `n^{\mbox{th}}`
+        Return whether or not `\ZZ_p` has a primitive `n`-th
         root of unity.
 
         INPUT:
 
-        - ``self`` -- a p-adic ring
+        - ``self`` -- a `p`-adic ring
         - ``n`` -- an integer
 
         OUTPUT:

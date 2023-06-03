@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
+
 """
 Homology and cohomology with a basis
 
@@ -30,8 +31,13 @@ from sage.categories.algebras import Algebras
 from sage.categories.modules import Modules
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.sets.family import Family
-from sage.topology.simplicial_complex import SimplicialComplex
-from sage.topology.simplicial_set import SimplicialSet_arbitrary
+
+try:
+    from sage.topology.simplicial_complex import SimplicialComplex
+    from sage.topology.simplicial_set import SimplicialSet_arbitrary
+except ImportError:
+    SimplicialComplex = SimplicialSet_arbitrary = ()
+
 
 class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     r"""

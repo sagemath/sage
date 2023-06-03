@@ -4912,7 +4912,7 @@ class StandardTableau(SemistandardTableau):
         """
         descents = []
         # whatpart gives the number for which self is a partition
-        whatpart = sum(i for i in self.shape())
+        whatpart = sum(self.shape())
         # now find the descents
         for i in range(1, whatpart):
             # find out what row i and i+1 are in (we're using the
