@@ -868,7 +868,7 @@ class BinaryQF(SageObject):
                          [ 1 -1]
             x^2 + 2*y^2, [ 0  1]
             )
-            sage: BinaryQF([-225, -743, -743]).reduced_form().is_reduced()
+            sage: BinaryQF([-225, -743, -743]).reduced_form().is_reduced()              # optional - sage.libs.pari
             True
 
         Some randomized testing::
@@ -881,17 +881,17 @@ class BinaryQF(SageObject):
             sage: if f.discriminant() > 0:
             ....:     algos.append('sage')
             sage: a = choice(algos)
-            sage: g = f.reduced_form(algorithm=a)
-            sage: g.is_reduced()
+            sage: g = f.reduced_form(algorithm=a)                                       # optional - sage.libs.pari
+            sage: g.is_reduced()                                                        # optional - sage.libs.pari
             True
-            sage: g.is_equivalent(f)
+            sage: g.is_equivalent(f)                                                    # optional - sage.libs.pari
             True
-            sage: g,M = f.reduced_form(transformation=True, algorithm=a)
-            sage: g.is_reduced()
+            sage: g,M = f.reduced_form(transformation=True, algorithm=a)                # optional - sage.libs.pari
+            sage: g.is_reduced()                                                        # optional - sage.libs.pari
             True
-            sage: g.is_equivalent(f)
+            sage: g.is_equivalent(f)                                                    # optional - sage.libs.pari
             True
-            sage: f * M == g
+            sage: f * M == g                                                            # optional - sage.libs.pari
             True
         """
         if self.is_reduced():
@@ -1578,9 +1578,9 @@ class BinaryQF(SageObject):
 
             sage: Q = BinaryQF([1, 0, 12345])
             sage: n = 2^99 + 5273
-            sage: Q.solve_integer(n)
+            sage: Q.solve_integer(n)                                                    # optional - sage.libs.pari
             (-67446480057659, 7139620553488)
-            sage: Q.solve_integer(n, algorithm='cornacchia')
+            sage: Q.solve_integer(n, algorithm='cornacchia')                            # optional - sage.libs.pari
             (67446480057659, 7139620553488)
             sage: timeit('Q.solve_integer(n)')                          # not tested
             125 loops, best of 3: 3.13 ms per loop
@@ -1616,11 +1616,11 @@ class BinaryQF(SageObject):
             sage: n = random_prime(10^9)
             sage: if randrange(2):
             ....:     n *= 4
-            sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')
-            sage: xy1 is None or Q(*xy1) == n
+            sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')                      # optional - sage.libs.pari
+            sage: xy1 is None or Q(*xy1) == n                                           # optional - sage.libs.pari
             True
-            sage: xy2 = Q.solve_integer(n)
-            sage: (xy1 is None) == (xy2 is None)
+            sage: xy2 = Q.solve_integer(n)                                              # optional - sage.libs.pari
+            sage: (xy1 is None) == (xy2 is None)                                        # optional - sage.libs.pari
             True
 
         Test for square discriminants specifically (:trac:`33026`)::
