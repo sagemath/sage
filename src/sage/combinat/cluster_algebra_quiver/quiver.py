@@ -37,8 +37,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
 from copy import copy
+
+from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.cc import CC
 from sage.rings.infinity import infinity
@@ -46,10 +47,9 @@ from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 from sage.graphs.views import EdgesView
 from sage.arith.misc import gcd
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
 from sage.categories.cartesian_product import cartesian_product
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType, QuiverMutationType_Irreducible, QuiverMutationType_Reducible, _edge_list_to_matrix
@@ -57,6 +57,9 @@ from sage.combinat.cluster_algebra_quiver.mutation_class import _principal_part,
 from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type, _mutation_type_from_data, is_mutation_finite
 
 from sage.combinat.cluster_algebra_quiver.interact import cluster_interact
+
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class ClusterQuiver(SageObject):
