@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Bijection between rigged configurations for `B(\infty)` and marginally large tableaux
 

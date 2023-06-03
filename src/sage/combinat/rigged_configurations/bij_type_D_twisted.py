@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Bijection classes for type `D_{n+1}^{(2)}`
 

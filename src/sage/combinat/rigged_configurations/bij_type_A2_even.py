@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Bijection classes for type `A_{2n}^{(2)}`
 
