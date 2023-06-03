@@ -10,6 +10,11 @@ include requirements.txt
 global-include all__sagemath_combinat.py
 
 graft sage/algebras
+graft sage/combinat
+graft sage/monoids
+
+include sage/data_structures/stream.p*
+include sage/rings/lazy_series*.p*
 
 # included in sagemath-combinat
 prune sage/combinat/integer_lists
@@ -35,6 +40,7 @@ exclude sage/combinat/matrices/dlxcpp.p*
 # included in sagemath-graphs
 prune sage/combinat/designs
 prune sage/combinat/posets
+prune sage/combinat/cluster_algebra_quiver
 exclude sage/combinat/abstract_tree.p*
 exclude sage/combinat/binary_tree.p*
 exclude sage/combinat/ordered_tree.p*
@@ -45,9 +51,10 @@ exclude sage/combinat/tamari_lattices.p*
 exclude sage/combinat/nu_tamari_lattice.p*
 exclude sage/combinat/interval_posets.p*
 exclude sage/combinat/yang_baxter_graph.p*
-exclude sage/combinat/cluster_algebra_quiver/mutation_class.p*
+exclude sage/combinat/finite_state_machine*.p*
 
 # included in sagemath-modules
+prune sage/combinat/root_system
 exclude sage/combinat/free_module.py
 exclude sage/combinat/cartesian_product.py
 exclude sage/combinat/family.py
@@ -60,7 +67,10 @@ exclude sage/algebras/orlik_terao.p*
 exclude sage/algebras/clifford_algebra*.p*
 exclude sage/algebras/exterior_algebra*.p*
 exclude sage/algebras/octonion_algebra.p*
+exclude sage/algebras/weyl_algebra.p*
 
+# included in sagemath-groups
+exclude sage/combinat/enumeration_mod_permgroup.p*
 
 # compile-time library dependencies
 prune sage/algebras/quatalg                                 # flint, singular

@@ -2,7 +2,7 @@
 [metadata]
 name = sagemath-graphs
 version = file: VERSION.txt
-description = Sage: Open Source Mathematics Software: Graphs, posets, complexes
+description = Sage: Open Source Mathematics Software: Graphs, posets, hypergraphs, designs, abstract complexes, combinatorial polyhedra, abelian sandpiles, quivers
 long_description = file: README.rst
 long_description_content_type = text/x-rst
 license = GNU General Public License (GPL) v2 or later

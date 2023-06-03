@@ -43,11 +43,16 @@ See :func:`~sage.combinat.words.word_options.WordOptions`.
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
+from sage.misc.lazy_import import lazy_import
+
 from .alphabet import Alphabet, build_alphabet
 from .morphism import WordMorphism
-from .paths import WordPaths
+lazy_import('sage.combinat.words.paths', 'WordPaths')
 from .word import Word
 from .word_options import WordOptions
 from .word_generators import words
 from .words import Words, FiniteWords, InfiniteWords
 from .lyndon_word import LyndonWord, LyndonWords, StandardBracketedLyndonWords
+
+del install_doc
+del lazy_import

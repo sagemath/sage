@@ -86,7 +86,9 @@ from sage.arith.all      import *
 from sage.matrix.all     import *
 
 from sage.modules.all    import *
-from sage.monoids.all    import *
+
+from sage.all__sagemath_combinat import *
+
 from sage.algebras.all   import *
 from sage.modular.all    import *
 from sage.sat.all        import *

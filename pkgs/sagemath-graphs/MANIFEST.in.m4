@@ -24,11 +24,12 @@ include sage/combinat/yang_baxter_graph.p*
 include sage/combinat/cluster_algebra_quiver/mutation_class.p*  # more from there?
 
 graft sage/combinat/designs
+graft sage/combinat/cluster_algebra_quiver
 
 #include sage/combinat/root_system/dynkin_diagram.p*     # want?
 #include sage/combinat/root_system/cartan_type.p*        # dep of dynkin_diagram
 
-#include sage/combinat/finite_state_machine.p*           # want?
+include sage/combinat/finite_state_machine.p*
 
 #include src/sage/combinat/rigged_configurations/kleber_tree.py # want?
 

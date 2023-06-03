@@ -59,3 +59,9 @@ from sage.misc.lazy_import import lazy_import
 from .all__sagemath_combinat import *
 from .all__sagemath_modules import *
 from .all__sagemath_graphs import *
+
+from .quatalg.all import *
+from .fusion_rings.all import *
+from .lie_algebras.all import *
+from .lie_conformal_algebras.all import *
+from .clifford_algebra import CliffordAlgebra, ExteriorAlgebra

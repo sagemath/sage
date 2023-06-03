@@ -11,13 +11,13 @@ from .rigged_configurations.all import *
 # Free modules and friends
 from .debruijn_sequence import DeBruijnSequences
 
-from .schubert_polynomial import SchubertPolynomialRing
+lazy_import('sage.combinat.schubert_polynomial', 'SchubertPolynomialRing')
 lazy_import('sage.combinat.key_polynomial', 'KeyPolynomialBasis', as_='KeyPolynomials')
-from .symmetric_group_algebra import SymmetricGroupAlgebra, HeckeAlgebraSymmetricGroupT
-from .symmetric_group_representations import SymmetricGroupRepresentation, SymmetricGroupRepresentations
+lazy_import('sage.combinat.symmetric_group_algebra', ['SymmetricGroupAlgebra', 'HeckeAlgebraSymmetricGroupT'])
+lazy_import('sage.combinat.symmetric_group_representations', ['SymmetricGroupRepresentation', 'SymmetricGroupRepresentations'])
 
 # Permutations
-from .affine_permutation import AffinePermutationGroup
+lazy_import('sage.combinat.affine_permutation', 'AffinePermutationGroup')
 lazy_import('sage.combinat.colored_permutations', ['ColoredPermutations',
                                                    'SignedPermutation',
                                                    'SignedPermutations'])
@@ -46,13 +46,16 @@ lazy_import('sage.combinat.partition_kleshchev', ['KleshchevPartitions'])
 lazy_import('sage.combinat.skew_partition', ['SkewPartition', 'SkewPartitions'])
 
 # Partition algebra
-from .partition_algebra import SetPartitionsAk, SetPartitionsPk, SetPartitionsTk, SetPartitionsIk, SetPartitionsBk, SetPartitionsSk, SetPartitionsRk, SetPartitionsPRk
+lazy_import('sage.combinat.partition_algebra', ['SetPartitionsAk', 'SetPartitionsPk', 'SetPartitionsTk'
+                                                'SetPartitionsIk', 'SetPartitionsBk', 'SetPartitionsSk',
+                                                'SetPartitionsRk', 'SetPartitionsPRk'])
 
 # Raising operators
 lazy_import('sage.combinat.partition_shifting_algebras', 'ShiftingOperatorAlgebra')
 
 # Diagram algebra
-from .diagram_algebras import PartitionAlgebra, BrauerAlgebra, TemperleyLiebAlgebra, PlanarAlgebra, PropagatingIdeal
+lazy_import('sage.combinat.diagram_algebras', ['PartitionAlgebra', 'BrauerAlgebra', 'TemperleyLiebAlgebra',
+                                               'PlanarAlgebra', 'PropagatingIdeal'])
 
 # Descent algebra
 lazy_import('sage.combinat.descent_algebra', 'DescentAlgebra')
@@ -62,7 +65,8 @@ lazy_import('sage.combinat.vector_partition',
             ['VectorPartition', 'VectorPartitions'])
 
 # Similarity class types
-from .similarity_class_type import PrimarySimilarityClassType, PrimarySimilarityClassTypes, SimilarityClassType, SimilarityClassTypes
+lazy_import('sage.combinat.similarity_class_type', ['PrimarySimilarityClassType', 'PrimarySimilarityClassTypes',
+                                                    'SimilarityClassType', 'SimilarityClassTypes'])
 
 # Cores
 from .core import Core, Cores
@@ -133,18 +137,14 @@ lazy_import('sage.combinat.superpartition', ('SuperPartition',
 lazy_import('sage.combinat.parallelogram_polyomino',
             ['ParallelogramPolyomino', 'ParallelogramPolyominoes'])
 
-from .root_system.all import *
 from .sf.all import *
 from .ncsf_qsym.all import *
 from .ncsym.all import *
 lazy_import('sage.combinat.fqsym', 'FreeQuasisymmetricFunctions')
 from .matrices.all import *
 
-# Cluster Algebras and Quivers
-from .cluster_algebra_quiver.all import *
-
-from .integer_vector_weighted import WeightedIntegerVectors
-from .integer_vectors_mod_permgroup import IntegerVectorsModPermutationGroup
+lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
+lazy_import('sage.combinat.integer_vectors_mod_permgroup', 'IntegerVectorsModPermutationGroup')
 
 lazy_import('sage.combinat.q_analogues', ['gaussian_binomial', 'q_binomial'])
 

@@ -59,6 +59,11 @@ include sage/combinat/free_module.py
 include sage/combinat/cartesian_product.py
 include sage/combinat/family.py       # until https://trac.sagemath.org/ticket/32624 is done
 
+# root_system; could also instead go to sagemath-polyhedra (which has hyperplane arrangements)
+graft sage/combinat/root_system
+exclude sage/combinat/root_system/reflection_group_c.p*
+exclude sage/combinat/root_system/reflection_group_element.p*
+
 include sage/algebras/algebra.py
 graft sage/algebras/finite_dimensional_algebras  # for hyperplane arrangements
 include sage/algebras/group_algebra.py
@@ -132,7 +137,6 @@ include sage/rings/function_field/hermite_form_polynomial.p*             # cimpo
 include sage/rings/function_field/valuation.p*                           # ??
 
 include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimports Matrix
-include sage/rings/valuation.p*
 
 include sage/rings/ring_extension*.p*
 
@@ -150,12 +154,12 @@ include sage/rings/complex_mpfr.p*
 include sage/rings/complex_conversion.p*
 
 # More from algebras with compile-time dependencies on sagemath-modules
-include sage/algebras/free_algebra*.p*
+#include sage/algebras/free_algebra*.p*
 include sage/algebras/clifford_algebra*.p*
 include sage/algebras/exterior_algebra*.p*
 include sage/algebras/octonion_algebra.p*
+include sage/algebras/weyl_algebra.p*
 include sage/algebras/lie_algebras/lie_algebra_element.p*
-
 
 
 global-exclude *.py[co]

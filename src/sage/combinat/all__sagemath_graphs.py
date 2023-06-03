@@ -20,3 +20,6 @@ from .yang_baxter_graph import YangBaxterGraph
 
 # block designs, etc
 from sage.combinat.designs.all import *
+
+# Cluster Algebras and Quivers
+from .cluster_algebra_quiver.all import *

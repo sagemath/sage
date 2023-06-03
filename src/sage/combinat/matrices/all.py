@@ -18,3 +18,6 @@ lazy_import('sage.combinat.matrices.latin',
             ['LatinSquare', 'LatinSquare_generator'])
 lazy_import('sage.combinat.matrices.hadamard_matrix',
             ['hadamard_matrix', 'hadamard_matrix_www'])
+
+del install_doc
+del lazy_import

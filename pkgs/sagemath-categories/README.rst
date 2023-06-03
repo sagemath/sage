@@ -60,14 +60,14 @@ Available in other distribution packages
   Algebraic combinatorics, combinatorial representation theory
 
 * `sagemath-graphs <https://pypi.org/project/sagemath-graphs>`_:
-  Graphs, posets, hypergraphs, designs, abstract complexes, combinatorial polyhedra, abelian sandpiles
+  Graphs, posets, hypergraphs, designs, abstract complexes, combinatorial polyhedra, abelian sandpiles, quivers
 
 * `sagemath-groups <https://pypi.org/project/sagemath-groups>`_:
   Groups, semigroups, invariant theory
 
 * `sagemath-modules <https://pypi.org/project/sagemath-modules>`_:
   Vectors, matrices, tensors, vector spaces, affine spaces,
-  modules and algebras, additive groups, quadratic forms, homology, coding theory, matroids
+  modules and algebras, additive groups, quadratic forms, root systems, homology, coding theory, matroids
 
 * `sagemath-plot <https://pypi.org/project/sagemath-plot>`_:
   Plotting and graphics with Matplotlib, Three.JS, etc.
