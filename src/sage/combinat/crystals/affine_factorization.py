@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Affine factorization crystal of type `A`
 """
@@ -17,8 +18,9 @@ from sage.categories.crystals import CrystalMorphism
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.homset import Hom
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.rsk import RSK
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 class AffineFactorizationCrystal(UniqueRepresentation, Parent):

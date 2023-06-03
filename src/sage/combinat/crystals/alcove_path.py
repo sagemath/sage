@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Alcove paths
 
@@ -30,9 +31,7 @@ from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.loop_crystals import LoopCrystals
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.modules.free_module_element import free_module_element as vector
 from sage.rings.integer import Integer
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.misc.misc_c import prod
 from sage.categories.sets_cat import Sets
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
@@ -42,6 +41,8 @@ from copy import copy
 from sage.misc.latex import latex
 
 lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
+lazy_import('sage.modules.free_module_element', 'vector')
 
 
 class CrystalOfAlcovePaths(UniqueRepresentation, Parent):

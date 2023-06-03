@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Kyoto Path Model for Affine Highest Weight Crystals
 """

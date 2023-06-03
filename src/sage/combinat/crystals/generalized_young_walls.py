@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Crystals of Generalized Young Walls
 
