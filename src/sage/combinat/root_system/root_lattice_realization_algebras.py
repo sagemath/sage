@@ -577,7 +577,7 @@ class Algebras(AlgebrasCategory):
                 ....:    T._test_relations(elements=elements)
             """
             T_on_basis = functools.partial(self.demazure_lusztig_operator_on_basis,
-                                           q1 = q1, q2 = q2, convention = convention)
+                                           q1=q1, q2=q2, convention=convention)
             return HeckeAlgebraRepresentation(self, T_on_basis, self.cartan_type(), q1, q2, side="left")
 
         def demazure_lusztig_operator_on_classical_on_basis(self, weight, i, q, q1, q2, convention="antidominant"):
@@ -1117,7 +1117,7 @@ class Algebras(AlgebrasCategory):
                                               T_on_basis,
                                               self.cartan_type().classical().dual().affine().dual(),
                                               q1, q2,
-                                              side = "left")
+                                              side="left")
 
     class ElementMethods:
 
