@@ -405,7 +405,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
     try:
         from sage.symbolic.ring import SR
     except ImportError:
-         pass
+        pass
     else:
         if R is SR:
             try:
