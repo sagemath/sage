@@ -1,13 +1,10 @@
 r"""
 Optimized counting of congruence solutions
 """
-
 from sage.arith.misc import is_prime, kronecker as kronecker_symbol, valuation
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.integer_ring import ZZ
-from sage.sets.set import Set
 
 
 def count_modp__by_gauss_sum(n, p, m, Qdet):
