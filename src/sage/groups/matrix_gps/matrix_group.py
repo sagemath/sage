@@ -16,7 +16,7 @@ Loading, saving, ... works::
 
 We test that :trac:`9437` is fixed::
 
-    sage: len(list(SL(2, Zmod(4))))
+    sage: len(list(SL(2, Zmod(4))))                                                     # optional - sage.libs.gap
     48
 
 AUTHORS:

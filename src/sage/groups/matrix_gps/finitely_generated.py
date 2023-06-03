@@ -19,8 +19,8 @@ The finitely generated matrix groups can also be constructed as
 subgroups of matrix groups::
 
     sage: SL2Z = SL(2, ZZ)
-    sage: S, T = SL2Z.gens()
-    sage: SL2Z.subgroup([T^2])
+    sage: S, T = SL2Z.gens()                                                            # optional - sage.libs.gap
+    sage: SL2Z.subgroup([T^2])                                                          # optional - sage.libs.gap
     Subgroup with 1 generators (
     [1 2]
     [0 1]
