@@ -618,61 +618,60 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
     EXAMPLES::
 
         sage: from sage.combinat.output import ascii_art_table_russian
-        sage: data = [[None, None, 1], [2, 2, 2], [3,4], [None, 10], [6]]
+        sage: data = [[None, None, 1], [2, 2], [3,4,5], [None, None, 10], [], [6]]
         sage: print(ascii_art_table_russian(data))
-           / \   / \
-          /   \ /   \
-         \  6  X 10  \
-          \   / \   / \   / \
-           \ /   \ /   \ /   \
-            \     X  4  X  2  \
-             \   / \   / \   / \
-              \ /   \ /   \ /   \
-               \  3  X  2  X  1  /
-                \   / \   / \   /
-                 \ /   \ /   \ /
-                  \  2  X     /
-                   \   / \   /
-                    \ /   \ /
-                     \     /
+           / \         / \
+          /   \       /   \
+         \  6  /     \ 10  \
+          \   /       \   / \
+           \ /         \ /   \
+                        X  5  /
+                       / \   /
+                      /   \ /
+                     /  4  X
+                    / \   / \   / \
+                   /   \ /   \ /   \
+                  \  3  X  2  X  1  /
+                   \   / \   / \   /
+                    \ /   \ /   \ /
+                     \  2  /
                       \   /
                        \ /
-
         sage: print(ascii_art_table_russian(data, use_unicode=True))
-           ╱ ╲   ╱ ╲
-          ╱   ╲ ╱   ╲
-         ╲  6  ╳ 10  ╲
-          ╲   ╱ ╲   ╱ ╲   ╱ ╲
-           ╲ ╱   ╲ ╱   ╲ ╱   ╲
-            ╲     ╳  4  ╳  2  ╲
-             ╲   ╱ ╲   ╱ ╲   ╱ ╲
-              ╲ ╱   ╲ ╱   ╲ ╱   ╲
-               ╲  3  ╳  2  ╳  1  ╱
-                ╲   ╱ ╲   ╱ ╲   ╱
-                 ╲ ╱   ╲ ╱   ╲ ╱
-                  ╲  2  ╳     ╱
-                   ╲   ╱ ╲   ╱
-                    ╲ ╱   ╲ ╱
-                     ╲     ╱
+           ╱ ╲         ╱ ╲
+          ╱   ╲       ╱   ╲
+         ╲  6  ╱     ╲ 10  ╲
+          ╲   ╱       ╲   ╱ ╲
+           ╲ ╱         ╲ ╱   ╲
+                        ╳  5  ╱
+                       ╱ ╲   ╱
+                      ╱   ╲ ╱
+                     ╱  4  ╳
+                    ╱ ╲   ╱ ╲   ╱ ╲
+                   ╱   ╲ ╱   ╲ ╱   ╲
+                  ╲  3  ╳  2  ╳  1  ╱
+                   ╲   ╱ ╲   ╱ ╲   ╱
+                    ╲ ╱   ╲ ╱   ╲ ╱
+                     ╲  2  ╱
                       ╲   ╱
                        ╲ ╱
         sage: data = [[1, None, 2], [None, 2]]
         sage: print(ascii_art_table_russian(data))
-            / \ / \
-           / 2 X 2 /
-          / \ / \ /
-         \   X   /
+          / \ / \
+         \ 2 X 2 /
           \ / \ /
-           \ 1 /
-            \ /
+           X
+          / \
+         \ 1 /
+          \ /
         sage: print(ascii_art_table_russian(data, use_unicode=True))
-            ╱ ╲ ╱ ╲
-           ╱ 2 ╳ 2 ╱
-          ╱ ╲ ╱ ╲ ╱
-         ╲   ╳   ╱
+          ╱ ╲ ╱ ╲
+         ╲ 2 ╳ 2 ╱
           ╲ ╱ ╲ ╱
-           ╲ 1 ╱
-            ╲ ╱
+           ╳
+          ╱ ╲
+         ╲ 1 ╱
+          ╲ ╱
     """
     if use_unicode:
         import unicodedata
@@ -720,46 +719,56 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
         for i in range(row_height):
             if k == max_height and i == 0:
                 continue
-            st = ' ' * ((max_height - k) * (row_height))
+            st = ' ' * ((max_height - k) * row_height)
             for j in range(k + 1):
-                st += ' ' * i
-                if len(str_tab[k-j:]) and (j == 0 or len(str_tab[k-j][j-1:])):
-                    if i == 0:
-                        if j > 0 and len(str_tab[k-j+1:]) and len(str_tab[k-j+1][j-1:]) and len(str_tab[k-j:]) and len(str_tab[k-j][j:]):
-                            st += x
-                        elif len(str_tab[k-j+1:]) and (j == 0 or len(str_tab[k-j+1][j-1:])):
-                            st += uldr
-                        elif len(str_tab[k-j:]) and len(str_tab[k-j][j:]):
-                            if j == 0:
-                                st += uldr
-                            else:
-                                st += urdl
-                        # elif len(str_tab[k-j:]) and j > 0 and len(str_tab[k-j][j-1:]):
-                        #    st += '^'
-                        else:
-                            st += ' '
-                    else:
+                N_box = box_exists(str_tab, k-j+1, j)
+                S_box = box_exists(str_tab, k-j, j-1)
+                SE_box = box_exists(str_tab, k-j-1, j)
+                E_box = box_exists(str_tab, k-j, j)
+                W_box = box_exists(str_tab, k-j+1, j-1)
+                if i == 0:
+                    if (N_box and S_box) or (W_box and E_box):
+                        st += x
+                    elif (E_box and S_box) or (W_box and N_box):
+                        st += urdl
+                    elif (E_box and N_box) or (W_box and S_box):
                         st += uldr
-                else:
-                    st += ' '
-
-                if i == 0 and len(str_tab[k-j:]) and len(str_tab[k-j][j:]) and str_tab[k-j][j] is not None:
-                    st_num = str_tab[k-j][j]
-                    ln_left = int((len(st_num) - (len(st_num) % 2))/2)
-                    st += st_num.rjust(row_height - 1 - ln_left + len(st_num), ' ').ljust(diag_length, ' ')
-                else:
-                    st += ' ' * (diag_length - 2 * i)
-                if i > 0:
-                    if (j == k and k < max_height and len(str_tab[0][j:])) or (len(str_tab[k-j-1:]) and len(str_tab[k-j-1][j:])):
+                    elif E_box:
+                        st += uldr
+                    elif W_box:
                         st += urdl
                     else:
                         st += ' '
+                    if E_box:
+                        st_num = str_tab[k-j][j]
+                        ln_left = int((len(st_num) - (len(st_num) % 2))/2)
+                        st += st_num.rjust(row_height - 1 - ln_left + len(st_num), ' ').ljust(diag_length, ' ')
+                    else:
+                        st += ' ' * diag_length
+                    if j == k and E_box:
+                        st += urdl
+                else:
+                    lstr = ' '
+                    rstr = ' '
+                    if E_box or S_box:
+                        lstr = uldr
+                    if E_box or SE_box:
+                        rstr = urdl
+                    st += ' ' * i
+                    st += lstr
+                    st += ' ' * (2 * (row_height - i) - 1)
+                    st += rstr
                     st += ' ' * (i-1)
-            if i == 0 and j == k and k < max_height and len(str_tab[0][j:]):
-                st += urdl
             str_list.append(st)
 
     import re
     mm = min([len(re.search('^ +', l)[0]) for l in str_list]) - 1
     str_list = [l[mm:].rstrip() for l in str_list]
+    while str_list[-1] == '':
+        str_list.pop()
     return "\n".join(str_list)
+
+def box_exists(tab, i, j):
+    if j < 0 or i < 0:
+        return False
+    return (len(tab[i:]) > 0 and len(tab[i][j:]) > 0 and tab[i][j] is not None)
