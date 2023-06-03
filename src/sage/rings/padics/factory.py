@@ -723,10 +723,10 @@ class Qp_class(UniqueFactory):
         sage: K = Qp(15, check=False); a = K(999); a
         9 + 6*15 + 4*15^2 + O(15^20)
     """
-    def create_key(self, p, prec = None, type = 'capped-rel', print_mode = None,
-                   names = None, ram_name = None, print_pos = None,
-                   print_sep = None, print_alphabet = None, print_max_terms = None, show_prec = None, check = True,
-                   label = None):   # specific to Lattice precision
+    def create_key(self, p, prec=None, type='capped-rel', print_mode=None,
+                   names=None, ram_name=None, print_pos=None,
+                   print_sep=None, print_alphabet=None, print_max_terms=None, show_prec=None, check=True,
+                   label=None):   # specific to Lattice precision
         r"""
         Creates a key from input parameters for ``Qp``.
 
@@ -822,10 +822,10 @@ Qp = Qp_class("Qp")
 # Qq -- unramified extensions
 ######################################################
 
-def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
-          print_mode=None, ram_name = None, res_name = None, print_pos = None,
-       print_sep = None, print_max_ram_terms = None,
-       print_max_unram_terms = None, print_max_terse_terms = None, show_prec=None, check = True, implementation = 'FLINT'):
+def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
+          print_mode=None, ram_name=None, res_name=None, print_pos=None,
+       print_sep=None, print_max_ram_terms=None,
+       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None, check=True, implementation='FLINT'):
     r"""
     Given a prime power `q = p^n`, return the unique unramified
     extension of `\QQ_p` of degree `n`.
@@ -1380,7 +1380,7 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 # Short constructor names for different types
 ######################################################
 
-def QpCR(p, prec = None, *args, **kwds):
+def QpCR(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative `p`-adic fields.
 
@@ -1394,7 +1394,7 @@ def QpCR(p, prec = None, *args, **kwds):
     """
     return Qp(p, prec, 'capped-rel', *args, **kwds)
 
-def QpFP(p, prec = None, *args, **kwds):
+def QpFP(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point `p`-adic fields.
 
@@ -1408,7 +1408,7 @@ def QpFP(p, prec = None, *args, **kwds):
     """
     return Qp(p, prec, 'floating-point', *args, **kwds)
 
-def QqCR(q, prec = None, *args, **kwds):
+def QqCR(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative unramified `p`-adic
     fields.
@@ -1423,7 +1423,7 @@ def QqCR(q, prec = None, *args, **kwds):
     """
     return Qq(q, prec, 'capped-rel', *args, **kwds)
 
-def QqFP(q, prec = None, *args, **kwds):
+def QqFP(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point unramified `p`-adic
     fields.
@@ -1439,7 +1439,7 @@ def QqFP(q, prec = None, *args, **kwds):
     return Qq(q, prec, 'floating-point', *args, **kwds)
 
 @experimental(23505)
-def QpLC(p, prec = None, *args, **kwds):
+def QpLC(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create `p`-adic fields with lattice precision.
 
@@ -1454,7 +1454,7 @@ def QpLC(p, prec = None, *args, **kwds):
     return Qp(p, prec, 'lattice-cap', *args, **kwds)
 
 @experimental(23505)
-def QpLF(p, prec = None, *args, **kwds):
+def QpLF(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create `p`-adic fields with lattice precision.
 
@@ -1930,10 +1930,10 @@ class Zp_class(UniqueFactory):
         sage: a + b
         1 + 5 + O(5^10)
     """
-    def create_key(self, p, prec = None, type = 'capped-rel', print_mode = None,
-                   names = None, ram_name = None, print_pos = None, print_sep = None, print_alphabet = None,
-                   print_max_terms = None, show_prec = None, check = True,
-                   label = None):
+    def create_key(self, p, prec=None, type='capped-rel', print_mode=None,
+                   names=None, ram_name=None, print_pos=None, print_sep=None, print_alphabet=None,
+                   print_max_terms=None, show_prec=None, check=True,
+                   label=None):
         r"""
         Creates a key from input parameters for ``Zp``.
 
@@ -2034,10 +2034,10 @@ Zp = Zp_class("Zp")
 # Zq -- unramified extensions
 ######################################################
 
-def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
-          print_mode=None, ram_name = None, res_name = None, print_pos = None,
-       print_sep = None, print_max_ram_terms = None,
-       print_max_unram_terms = None, print_max_terse_terms = None, show_prec = None, check = True, implementation = 'FLINT'):
+def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
+          print_mode=None, ram_name=None, res_name=None, print_pos=None,
+       print_sep=None, print_max_ram_terms=None,
+       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None, check=True, implementation='FLINT'):
     r"""
     Given a prime power `q = p^n`, return the unique unramified
     extension of `\ZZ_p` of degree `n`.
@@ -2599,7 +2599,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
 # Short constructor names for different types
 ######################################################
 
-def ZpCR(p, prec = None, *args, **kwds):
+def ZpCR(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative `p`-adic rings.
 
@@ -2613,7 +2613,7 @@ def ZpCR(p, prec = None, *args, **kwds):
     """
     return Zp(p, prec, 'capped-rel', *args, **kwds)
 
-def ZpCA(p, prec = None, *args, **kwds):
+def ZpCA(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped absolute `p`-adic rings.
 
@@ -2626,7 +2626,7 @@ def ZpCA(p, prec = None, *args, **kwds):
     """
     return Zp(p, prec, 'capped-abs', *args, **kwds)
 
-def ZpFM(p, prec = None, *args, **kwds):
+def ZpFM(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create fixed modulus `p`-adic rings.
 
@@ -2639,7 +2639,7 @@ def ZpFM(p, prec = None, *args, **kwds):
     """
     return Zp(p, prec, 'fixed-mod', *args, **kwds)
 
-def ZpFP(p, prec = None, *args, **kwds):
+def ZpFP(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point `p`-adic rings.
 
@@ -2653,7 +2653,7 @@ def ZpFP(p, prec = None, *args, **kwds):
     """
     return Zp(p, prec, 'floating-point', *args, **kwds)
 
-def ZqCR(q, prec = None, *args, **kwds):
+def ZqCR(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative unramified `p`-adic rings.
 
@@ -2667,7 +2667,7 @@ def ZqCR(q, prec = None, *args, **kwds):
     """
     return Zq(q, prec, 'capped-rel', *args, **kwds)
 
-def ZqCA(q, prec = None, *args, **kwds):
+def ZqCA(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped absolute unramified `p`-adic rings.
 
@@ -2680,7 +2680,7 @@ def ZqCA(q, prec = None, *args, **kwds):
     """
     return Zq(q, prec, 'capped-abs', *args, **kwds)
 
-def ZqFM(q, prec = None, *args, **kwds):
+def ZqFM(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create fixed modulus unramified `p`-adic rings.
 
@@ -2693,7 +2693,7 @@ def ZqFM(q, prec = None, *args, **kwds):
     """
     return Zq(q, prec, 'fixed-mod', *args, **kwds)
 
-def ZqFP(q, prec = None, *args, **kwds):
+def ZqFP(q, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point unramified `p`-adic rings.
 
@@ -3235,12 +3235,12 @@ class pAdicExtension_class(UniqueFactory):
         sage: W.precision_cap()
         12
     """
-    def create_key_and_extra_args(self, base, modulus, prec = None, print_mode = None,
-                                  names = None, var_name = None, res_name = None,
-                                  unram_name = None, ram_name = None, print_pos = None,
-                                  print_sep = None, print_alphabet = None, print_max_ram_terms = None,
-                                  print_max_unram_terms = None, print_max_terse_terms = None,
-                                  show_prec = None, check = True, unram = False, implementation='FLINT'):
+    def create_key_and_extra_args(self, base, modulus, prec=None, print_mode=None,
+                                  names=None, var_name=None, res_name=None,
+                                  unram_name=None, ram_name=None, print_pos=None,
+                                  print_sep=None, print_alphabet=None, print_max_ram_terms=None,
+                                  print_max_unram_terms=None, print_max_terse_terms=None,
+                                  show_prec=None, check=True, unram=False, implementation='FLINT'):
         r"""
         Creates a key from input parameters for :class:`pAdicExtension`.
 

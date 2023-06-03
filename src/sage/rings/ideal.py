@@ -1689,7 +1689,7 @@ class Ideal_pid(Ideal_principal):
             raise ValueError("The ideal (%s) is not prime"%self)
         from sage.rings.integer_ring import ZZ
         if self.ring() is ZZ:
-            return ZZ.residue_field(self, check = False)
+            return ZZ.residue_field(self, check=False)
         raise NotImplementedError("residue_field() is only implemented for ZZ and rings of integers of number fields.")
 
 class Ideal_fractional(Ideal_generic):
