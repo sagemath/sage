@@ -128,6 +128,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import GCD as gcd
 from sage.categories.morphism import SetMorphism
 from sage.functions.generalized import sign
 from sage.groups.free_group import FreeGroupElement
@@ -1668,11 +1669,14 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
                 simpli = unidad
         return A, R, ideal
 
-    def char_var(self, matrix_ideal=None, abelianized=None, groebner=False):
+    def char_var(self, ring=QQ, matrix_ideal=None, abelianized=None, groebner=False):
         """
         Return the characteristic varieties of the group ``self``.
 
         INPUT:
+
+        - ``ring`` -- base ring (default: ``QQ``). The base ring of the
+          group algebra
 
         - ``matrix_ideal`` -- optional. An abelian Alexander matrix and an ideal,
           to avoid recomputations.
@@ -1681,7 +1685,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         - ``groebner`` -- boolean (default: ``False``). If set to
           ``True`` the minimal associated primes of the ideals and their
-          groebner bases are computed-.
+          groebner bases are computed-. It has no effect if the base ring 
+          is not a field.
 
         OUTPUT:
 
@@ -1707,33 +1712,35 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
              (f1*f3 + 1, f2 - f3)]]
         """
         if matrix_ideal is None:
-            A, R, ideal = self.abelian_alexander_matrix(abelianized=abelianized, simplified=True)
+            A, R, ideal = self.abelian_alexander_matrix(ring=ring, abelianized=abelianized, simplified=True)
         else:
             A, ideal = matrix_ideal
             R = A.base_ring()
         res = []
+        S = R.polynomial_ring()
+        ideal = [S(_) for _ in ideal]
         for j in range(1, A.ncols()):
             L = [p.polynomial_construction()[0] for p in A.minors(j)]
             J = R.ideal(L + ideal)
             res.append(J)
-        if not groebner:
+        if not groebner or not R.base_ring().is_field():
             return res
         if R.ngens() == 1:
+            res0 = [[S(_) for _ in J.gens()] for J in res]
             res1 = []
-            for J in res:
-                gcd_L = gcd(J.gens())
-                if gcd_L == 0:
-                    res1.append([0])
-                else:
-                    fct = [_[0] for _ in gcd_L.factor()]
-                    if fct != []:
-                        res1.append(fct)
+            for JL in res0:
+                J = S.ideal(JL)
+                LJ = J.minimal_associated_primes()
+                fct = [id.groebner_basis() for id in LJ]
+                fct = [a for a in fct if S.gen() not in a] 
+                if fct != [(S.one(),)]:
+                    res1.append(fct)
             return res1
         res1 = []
         for J in res:
             LJ = J.minimal_associated_primes()
             fct = [id.groebner_basis() for id in LJ]
-            if fct != [R.ideal(1)]:
+            if fct != [(S.onel(),)]:
                 res1.append(fct)
         return res1
 
