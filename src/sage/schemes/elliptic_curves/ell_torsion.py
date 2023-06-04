@@ -101,6 +101,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
     Examples over other Number Fields::
 
         sage: E = EllipticCurve('11a1')
+        sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)
         sage: EK = E.change_ring(K)
         sage: from sage.schemes.elliptic_curves.ell_torsion import EllipticCurveTorsionSubgroup
@@ -145,7 +146,8 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
             sage: from sage.schemes.elliptic_curves.ell_torsion import EllipticCurveTorsionSubgroup
             sage: E = EllipticCurve('11a1')
-            sage: K.<i> = NumberField(x^2+1)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<i> = NumberField(x^2 + 1)
             sage: EK = E.change_ring(K)
             sage: EllipticCurveTorsionSubgroup(EK)
             Torsion Subgroup isomorphic to Z/5 associated to the
@@ -216,6 +218,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         EXAMPLES::
 
             sage: E = EllipticCurve('11a1')
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: EK = E.change_ring(K)
             sage: T = EK.torsion_subgroup(); T._repr_()
@@ -245,6 +248,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         EXAMPLES::
 
             sage: E = EllipticCurve('11a1')
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: EK = E.change_ring(K)
             sage: T = EK.torsion_subgroup()
@@ -262,6 +266,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: E = EllipticCurve(K, [0,0,0,1,0])
             sage: tor = E.torsion_subgroup()
