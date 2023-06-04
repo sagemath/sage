@@ -4445,6 +4445,10 @@ REFERENCES:
              Cambridge University Press (1915--1916).
              (Reprinted: Chelsea, New York, 1960).
 
+.. [Man1975] Glenn Manacher. A new linear-time “on-line” algorithm for 
+             finding the smallest initial palindrome of a string. 
+             \J. ACM, 22(3):346–351, July 1975. :doi:`10.1145/321892.321896`
+
 .. [Man2019] V. Manero and M. Marco, *Effective computation of
              degree bounded minimal models of GCDA's*, :arxiv:`1909.07761`
 
