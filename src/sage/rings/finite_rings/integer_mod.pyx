@@ -4099,7 +4099,7 @@ def lucas_q1(mm, IntegerMod_abstract P):
     TESTS::
 
         sage: from sage.rings.finite_rings.integer_mod import lucas_q1
-        sage: all(lucas_q1(k, a) == BinaryRecurrenceSequence(a, -1, 2, a)(k)            # optional - sage.combinat
+        sage: all(lucas_q1(k, a) == BinaryRecurrenceSequence(a, -1, 2, a)(k)            # optional - sage.combinat sage.modules
         ....:     for a in Integers(23)
         ....:     for k in range(13))
         True
@@ -4167,7 +4167,7 @@ def lucas(k, P, Q=1, n=None):
         sage: p = randint(0,100000)
         sage: q = randint(0,100000)
         sage: n = randint(1,100)
-        sage: all(lucas(k, p, q, n)[0] == Mod(lucas_number2(k, p, q), n)                # optional - sage.combinat
+        sage: all(lucas(k, p, q, n)[0] == Mod(lucas_number2(k, p, q), n)                # optional - sage.combinat sage.libs.gap
         ....:     for k in Integers(20))
         True
         sage: from sage.rings.finite_rings.integer_mod import lucas
@@ -4175,7 +4175,8 @@ def lucas(k, P, Q=1, n=None):
         sage: q = randint(0,100000)
         sage: n = randint(1,100)
         sage: k = randint(0,100)
-        sage: lucas(k, p, q, n) == [Mod(lucas_number2(k, p, q), n), Mod(q^(int(k/2)), n)]           # optional - sage.combinat
+        sage: lucas(k, p, q, n) == [Mod(lucas_number2(k, p, q), n),                     # optional - sage.combinat
+        ....:                       Mod(q^(int(k/2)), n)]
         True
 
     EXAMPLES::
