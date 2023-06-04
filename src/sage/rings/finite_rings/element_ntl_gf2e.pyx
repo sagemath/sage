@@ -26,7 +26,7 @@ AUTHORS:
 # ****************************************************************************
 
 from cysignals.memory cimport check_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 include "sage/libs/ntl/decl.pxi"
@@ -372,7 +372,6 @@ cdef class Cache_ntl_gf2e(Cache_base):
         if isinstance(e, Gen):
             sig_on()
             t = (<Gen>e).g
-            sig_off()
             if typ(t) == t_FFELT:
                 t = FF_to_FpXQ(t)
             else:
