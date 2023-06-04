@@ -770,21 +770,21 @@ def basis_from_generators(gens, ords=None):
     EXAMPLES::
 
         sage: from sage.groups.additive_abelian.additive_abelian_wrapper import basis_from_generators
-        sage: E = EllipticCurve(GF(31337^6,'a'), j=37)
-        sage: E.order()
+        sage: E = EllipticCurve(GF(31337^6,'a'), j=37)                                  # optional - sage.groups sage.rings.finite_rings
+        sage: E.order()                                                                 # optional - sage.groups sage.rings.finite_rings
         946988065073788930380545280
-        sage: (R,S), (ordR,ordS) = basis_from_generators(E.gens())
-        sage: ordR, ordS
+        sage: (R,S), (ordR,ordS) = basis_from_generators(E.gens())                      # optional - sage.groups sage.rings.finite_rings
+        sage: ordR, ordS                                                                # optional - sage.groups sage.rings.finite_rings
         (313157428926517503432720, 3024)
-        sage: R.order() == ordR
+        sage: R.order() == ordR                                                         # optional - sage.groups sage.rings.finite_rings
         True
-        sage: S.order() == ordS
+        sage: S.order() == ordS                                                         # optional - sage.groups sage.rings.finite_rings
         True
-        sage: ordR * ordS == E.order()
+        sage: ordR * ordS == E.order()                                                  # optional - sage.groups sage.rings.finite_rings
         True
-        sage: R.weil_pairing(S, ordR).multiplicative_order() == ordS
+        sage: R.weil_pairing(S, ordR).multiplicative_order() == ordS                    # optional - sage.groups sage.rings.finite_rings
         True
-        sage: E.abelian_group().invariants()
+        sage: E.abelian_group().invariants()                                            # optional - sage.groups sage.rings.finite_rings
         (3024, 313157428926517503432720)
     """
     if not gens:
