@@ -172,6 +172,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.real_mpfi', 'RealIntervalFieldElement')
+lazy_import('sage.rings.complex_interval', 'ComplexIntervalFieldElement')
+
 
 def sage_input(x, preparse=True, verify=False, allow_locals=False):
     r"""
@@ -3472,9 +3477,7 @@ def verify_same(a, b):
         assert(a.parent() == b.parent())
     else:
         assert(type(a) is type(b))
-    from sage.rings.real_mpfi import is_RealIntervalFieldElement
-    from sage.rings.complex_interval import is_ComplexIntervalFieldElement
-    if is_RealIntervalFieldElement(a) or is_ComplexIntervalFieldElement(a):
+    if isinstance(a, (RealIntervalFieldElement, ComplexIntervalFieldElement)):
         assert(a.endpoints() == b.endpoints()), "Expected %s == %s" % (a, b)
         return
 
