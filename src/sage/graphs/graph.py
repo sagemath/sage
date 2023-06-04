@@ -891,17 +891,17 @@ class Graph(GenericGraph):
         ValueError: An *undirected* igraph graph was expected.
         To build an directed graph, call the DiGraph constructor.
 
-        sage: m = matrix([[0, -1], [-1, 0]])
-        sage: Graph(m, format="seidel_adjacency_matrix")
+        sage: m = matrix([[0, -1], [-1, 0]])                                            # optional - sage.modules
+        sage: Graph(m, format="seidel_adjacency_matrix")                                # optional - sage.modules
         Graph on 2 vertices
-        sage: m[0,1] = 1
-        sage: Graph(m, format="seidel_adjacency_matrix")
+        sage: m[0,1] = 1                                                                # optional - sage.modules
+        sage: Graph(m, format="seidel_adjacency_matrix")                                # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: the adjacency matrix of a Seidel graph must be symmetric
 
-        sage: m[0,1] = -1; m[1,1] = 1
-        sage: Graph(m, format="seidel_adjacency_matrix")
+        sage: m[0,1] = -1; m[1,1] = 1                                                   # optional - sage.modules
+        sage: Graph(m, format="seidel_adjacency_matrix")                                # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: the adjacency matrix of a Seidel graph must have 0s on the main diagonal
@@ -3927,18 +3927,18 @@ class Graph(GenericGraph):
 
         EXAMPLES::
 
-            sage: s = SymmetricFunctions(ZZ).s()
+            sage: s = SymmetricFunctions(ZZ).s()                                        # optional - sage.combinat sage.modules
             sage: G = graphs.CycleGraph(5)
-            sage: XG = G.chromatic_symmetric_function(); XG
+            sage: XG = G.chromatic_symmetric_function(); XG                             # optional - sage.combinat sage.modules
             p[1, 1, 1, 1, 1] - 5*p[2, 1, 1, 1] + 5*p[2, 2, 1]
              + 5*p[3, 1, 1] - 5*p[3, 2] - 5*p[4, 1] + 4*p[5]
-            sage: s(XG)
+            sage: s(XG)                                                                 # optional - sage.combinat sage.modules
             30*s[1, 1, 1, 1, 1] + 10*s[2, 1, 1, 1] + 10*s[2, 2, 1]
 
         Not all graphs have a positive Schur expansion::
 
             sage: G = graphs.ClawGraph()
-            sage: XG = G.chromatic_symmetric_function(); XG
+            sage: XG = G.chromatic_symmetric_function(); XG                             # optional - sage.combinat sage.modules
             p[1, 1, 1, 1] - 3*p[2, 1, 1] + 3*p[3, 1] - p[4]
             sage: s(XG)
             8*s[1, 1, 1, 1] + 5*s[2, 1, 1] - s[2, 2] + s[3, 1]
@@ -3947,17 +3947,17 @@ class Graph(GenericGraph):
         `X_G = X_{G - e_1} + X_{G - e_2} - X_{G - e_1 - e_2}`::
 
             sage: G = Graph([[1,2],[1,3],[2,3]])
-            sage: XG = G.chromatic_symmetric_function()
+            sage: XG = G.chromatic_symmetric_function()                                 # optional - sage.combinat sage.modules
             sage: G1 = copy(G)
             sage: G1.delete_edge([1,2])
-            sage: XG1 = G1.chromatic_symmetric_function()
+            sage: XG1 = G1.chromatic_symmetric_function()                               # optional - sage.combinat sage.modules
             sage: G2 = copy(G)
             sage: G2.delete_edge([1,3])
-            sage: XG2 = G2.chromatic_symmetric_function()
+            sage: XG2 = G2.chromatic_symmetric_function()                               # optional - sage.combinat sage.modules
             sage: G3 = copy(G1)
             sage: G3.delete_edge([1,3])
-            sage: XG3 = G3.chromatic_symmetric_function()
-            sage: XG == XG1 + XG2 - XG3
+            sage: XG3 = G3.chromatic_symmetric_function()                               # optional - sage.combinat sage.modules
+            sage: XG == XG1 + XG2 - XG3                                                 # optional - sage.combinat sage.modules
             True
         """
         from sage.combinat.sf.sf import SymmetricFunctions
@@ -4004,44 +4004,44 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: G = Graph([[1,2,3], [[1,3], [2,3]]])
-            sage: G.chromatic_quasisymmetric_function()
+            sage: G.chromatic_quasisymmetric_function()                                 # optional - sage.combinat sage.modules
             (2*t^2+2*t+2)*M[1, 1, 1] + M[1, 2] + t^2*M[2, 1]
             sage: G = graphs.PathGraph(4)
-            sage: XG = G.chromatic_quasisymmetric_function(); XG
+            sage: XG = G.chromatic_quasisymmetric_function(); XG                        # optional - sage.combinat sage.modules
             (t^3+11*t^2+11*t+1)*M[1, 1, 1, 1] + (3*t^2+3*t)*M[1, 1, 2]
              + (3*t^2+3*t)*M[1, 2, 1] + (3*t^2+3*t)*M[2, 1, 1]
              + (t^2+t)*M[2, 2]
-            sage: XG.to_symmetric_function()
+            sage: XG.to_symmetric_function()                                            # optional - sage.combinat sage.modules
             (t^3+11*t^2+11*t+1)*m[1, 1, 1, 1] + (3*t^2+3*t)*m[2, 1, 1]
              + (t^2+t)*m[2, 2]
             sage: G = graphs.CompleteGraph(4)
-            sage: G.chromatic_quasisymmetric_function()
+            sage: G.chromatic_quasisymmetric_function()                                 # optional - sage.combinat sage.modules
             (t^6+3*t^5+5*t^4+6*t^3+5*t^2+3*t+1)*M[1, 1, 1, 1]
 
         Not all chromatic quasisymmetric functions are symmetric::
 
             sage: G = Graph([[1,2], [1,5], [3,4], [3,5]])
-            sage: G.chromatic_quasisymmetric_function().is_symmetric()
+            sage: G.chromatic_quasisymmetric_function().is_symmetric()                  # optional - sage.combinat sage.modules
             False
 
         We check that at `t = 1`, we recover the usual chromatic symmetric
         function::
 
-            sage: p = SymmetricFunctions(QQ).p()
+            sage: p = SymmetricFunctions(QQ).p()                                        # optional - sage.combinat sage.modules
             sage: G = graphs.CycleGraph(5)
-            sage: XG = G.chromatic_quasisymmetric_function(t=1); XG
+            sage: XG = G.chromatic_quasisymmetric_function(t=1); XG                     # optional - sage.combinat sage.modules
             120*M[1, 1, 1, 1, 1] + 30*M[1, 1, 1, 2] + 30*M[1, 1, 2, 1]
              + 30*M[1, 2, 1, 1] + 10*M[1, 2, 2] + 30*M[2, 1, 1, 1]
              + 10*M[2, 1, 2] + 10*M[2, 2, 1]
-            sage: p(XG.to_symmetric_function())
+            sage: p(XG.to_symmetric_function())                                         # optional - sage.combinat sage.modules
             p[1, 1, 1, 1, 1] - 5*p[2, 1, 1, 1] + 5*p[2, 2, 1]
              + 5*p[3, 1, 1] - 5*p[3, 2] - 5*p[4, 1] + 4*p[5]
 
             sage: G = graphs.ClawGraph()
-            sage: XG = G.chromatic_quasisymmetric_function(t=1); XG
+            sage: XG = G.chromatic_quasisymmetric_function(t=1); XG                     # optional - sage.combinat sage.modules
             24*M[1, 1, 1, 1] + 6*M[1, 1, 2] + 6*M[1, 2, 1] + M[1, 3]
              + 6*M[2, 1, 1] + M[3, 1]
-            sage: p(XG.to_symmetric_function())
+            sage: p(XG.to_symmetric_function())                                         # optional - sage.combinat sage.modules
             p[1, 1, 1, 1] - 3*p[2, 1, 1] + 3*p[3, 1] - p[4]
         """
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions
@@ -4514,7 +4514,7 @@ class Graph(GenericGraph):
            with this method ::
 
                sage: g = graphs.CycleGraph(10)
-               sage: mapping = g.has_homomorphism_to(g, core = True)
+               sage: mapping = g.has_homomorphism_to(g, core=True)
                sage: print("The size of the core is {}".format(len(set(mapping.values()))))
                The size of the core is 2
 

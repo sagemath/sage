@@ -415,27 +415,27 @@ class DiGraphGenerators():
         A Paley digraph has `n * (n-1) / 2` edges, its underlying graph is a
         clique, and so it is a tournament::
 
-            sage: g = digraphs.Paley(7); g
+            sage: g = digraphs.Paley(7); g                                              # optional - sage.rings.finite_rings
             Paley digraph with parameter 7: Digraph on 7 vertices
-            sage: g.size() == g.order() * (g.order() - 1) / 2
+            sage: g.size() == g.order() * (g.order() - 1) / 2                           # optional - sage.rings.finite_rings
             True
-            sage: g.to_undirected().is_clique()
+            sage: g.to_undirected().is_clique()                                         # optional - sage.rings.finite_rings
             True
 
         A Paley digraph is always self-complementary::
 
-            sage: g.complement().is_isomorphic(g)
+            sage: g.complement().is_isomorphic(g)                                       # optional - sage.rings.finite_rings
             True
 
         TESTS:
 
         Wrong parameter::
 
-            sage: digraphs.Paley(6)
+            sage: digraphs.Paley(6)                                                     # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: parameter q must be a prime power
-            sage: digraphs.Paley(5)
+            sage: digraphs.Paley(5)                                                     # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: parameter q must be congruent to 3 mod 4
