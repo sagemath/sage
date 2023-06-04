@@ -17,11 +17,11 @@ EXAMPLES::
 
 TESTS::
 
-    sage: Pol.<y> = CBF[]
-    sage: Quo.<y> = Pol.quotient(y^3)
-    sage: CBF.zero()*y
+    sage: Pol.<y> = CBF[]                                                               # optional - sage.libs.flint
+    sage: Quo.<y> = Pol.quotient(y^3)                                                   # optional - sage.libs.flint
+    sage: CBF.zero()*y                                                                  # optional - sage.libs.flint
     0
-    sage: ((x - 1)/(x + 1))(1 + y)
+    sage: ((x - 1)/(x + 1))(1 + y)                                                      # optional - sage.libs.flint
     -0.2500000000000000*y^2 + 0.5000000000000000*y
 """
 
