@@ -21,11 +21,14 @@ AUTHORS:
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.ideal import is_Ideal
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
+
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve')
 
 
 def is_Scheme(x):
@@ -331,8 +334,7 @@ class Scheme(Parent):
             (0 : 0 : 1)
         """
         # todo: update elliptic curve stuff to take point_homset as argument
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(self):
+        if isinstance(self, EllipticCurve):
             try:
                 return self._point(self.point_homset(), v, check=check)
             except AttributeError:  # legacy code without point_homset

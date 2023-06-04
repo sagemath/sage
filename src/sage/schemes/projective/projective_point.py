@@ -32,25 +32,32 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from copy import copy
+
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
-_NumberFields = NumberFields()
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.rings.abc import Order
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
-from sage.rings.qqbar import number_field_elements_from_algebraics
+from sage.rings.integer_ring import ZZ
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.arith.misc import GCD as gcd
-from sage.arith.functions import lcm
-from sage.misc.misc_c import prod
-
-from copy import copy
+from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.morphism import (SchemeMorphism,
                                            is_SchemeMorphism,
                                            SchemeMorphism_point)
 from sage.structure.element import AdditiveGroupElement
-from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
+from sage.structure.sequence import Sequence
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
+lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
+
+_NumberFields = NumberFields()
+
 
 #*******************************************************************
 # Projective varieties
@@ -165,8 +172,6 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         """
         SchemeMorphism.__init__(self, X)
         if check:
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-            from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
             if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
                 v = list(v)
@@ -441,8 +446,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: P = ProjectiveSpace(QQ, 1)
             sage: Q = P(1,1)
-            sage: m = matrix(QQ, 2, 2, [1,1, 0,1])
-            sage: m*Q
+            sage: m = matrix(QQ, 2, 2, [1,1, 0,1])                                      # optional - sage.modules
+            sage: m*Q                                                                   # optional - sage.modules
             (2 : 1)
 
         ::
@@ -450,8 +455,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme(x - y)
             sage: Q = X(1,1)
-            sage: m = matrix(CC, 3, 3, [1,CC.0,0, CC.0,1,0, 1,1,1])
-            sage: m*Q
+            sage: m = matrix(CC, 3, 3, [1,CC.0,0, CC.0,1,0, 1,1,1])                     # optional - sage.modules
+            sage: m*Q                                                                   # optional - sage.modules
             (0.333333333333333 + 0.333333333333333*I : 0.333333333333333
             + 0.333333333333333*I : 1.00000000000000)
 
@@ -459,16 +464,16 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: P = ProjectiveSpace(QQbar, 1)                                         # optional - sage.rings.number_field
             sage: Q = P(QQbar(sqrt(2)),1)                                               # optional - sage.rings.number_field sage.symbolic
-            sage: m = matrix(ZZ, 2, 2, [1,-1, 0,1])                                     # optional - sage.rings.number_field sage.symbolic
-            sage: m*Q                                                                   # optional - sage.rings.number_field sage.symbolic
+            sage: m = matrix(ZZ, 2, 2, [1,-1, 0,1])                                     # optional - sage.modules sage.rings.number_field sage.symbolic
+            sage: m*Q                                                                   # optional - sage.modules sage.rings.number_field sage.symbolic
             (0.4142135623730951? : 1)
 
         ::
 
             sage: P = ProjectiveSpace(QQ, 1)
             sage: Q = P(1,1)
-            sage: m = matrix(QQ, 3, 2, [1,1, 0,1, 1,1])
-            sage: m*Q
+            sage: m = matrix(QQ, 3, 2, [1,1, 0,1, 1,1])                                 # optional - sage.modules
+            sage: m*Q                                                                   # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: matrix must be square
@@ -744,7 +749,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         if prec is None:
             prec = 53
         K = self.codomain().base_ring()
-        if K in _NumberFields or is_NumberFieldOrder(K):
+        if K in _NumberFields or K is ZZ or isinstance(K, Order):
             P = self
         else:
             try:
@@ -753,7 +758,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                 raise TypeError("must be defined over an algebraic field")
             else:
                 K = P.codomain().base_ring()
-        if isinstance(K, NumberFieldOrder):
+        if isinstance(K, Order):
             K = K.number_field()
         # first get rid of the denominators
         denom = lcm([xi.denominator() for xi in P])
@@ -1125,8 +1130,6 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         """
         SchemeMorphism.__init__(self, X)
         if check:
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-            from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
             if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
                 v = list(v)

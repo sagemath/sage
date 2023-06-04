@@ -25,16 +25,17 @@ from sage.arith.misc import binomial
 
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
-
-from sage.matrix.constructor import matrix
-
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
-
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_subscheme_field
+
+lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve')
 
 
 class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
@@ -116,8 +117,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                 raise ValueError("%s not well defined in dimension > 1"%v)
             v = [1, 0]
         # todo: update elliptic curve stuff to take point_homset as argument
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(self):
+        if isinstance(self, EllipticCurve):
             try:
                 return self._point(self.point_homset(), v, check=check)
             except AttributeError:  # legacy code without point_homset
@@ -505,7 +505,6 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             ...
             TypeError: orbit bounds must be non-negative
         """
-        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
         if not isinstance(f, DynamicalSystem):
             raise TypeError("map must be a dynamical system for iteration")
         if not isinstance(N,(list,tuple)):

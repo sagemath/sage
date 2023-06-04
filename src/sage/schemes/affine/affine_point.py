@@ -113,16 +113,16 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
             sage: P = AffineSpace(QQ,2)
             sage: Q = P(1,2)
-            sage: m = matrix(ZZ, 3, 3, [0,1,1,0,0,1,1,1,1])
-            sage: m*Q
+            sage: m = matrix(ZZ, 3, 3, [0,1,1,0,0,1,1,1,1])                             # optional - sage.modules
+            sage: m*Q                                                                   # optional - sage.modules
             (3/4, 1/4)
 
         ::
 
             sage: P = AffineSpace(QQ,1)
             sage: Q = P(0)
-            sage: m = matrix(RR, 2, 2, [0,1,1,0])
-            sage: m*Q
+            sage: m = matrix(RR, 2, 2, [0,1,1,0])                                       # optional - sage.modules
+            sage: m*Q                                                                   # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: resulting point not affine
@@ -131,8 +131,8 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
             sage: P = AffineSpace(QQ,2)
             sage: Q = P(1,1)
-            sage: m = matrix(RR, 2, 2, [0,1,1,0])
-            sage: m*Q
+            sage: m = matrix(RR, 2, 2, [0,1,1,0])                                       # optional - sage.modules
+            sage: m*Q                                                                   # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: matrix size is incompatible

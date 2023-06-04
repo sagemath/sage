@@ -55,19 +55,20 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
 from sage.arith.misc import gcd, next_prime, previous_prime, crt
 from sage.arith.srange import srange
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.mrange import cartesian_product_iterator
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
+from sage.misc.mrange import cartesian_product_iterator
 from sage.misc.mrange import xmrange
-from sage.schemes.generic.scheme import is_Scheme
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
-from sage.matrix.constructor import matrix
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
+from sage.schemes.generic.scheme import is_Scheme
+
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def enum_projective_rational_field(X, B):

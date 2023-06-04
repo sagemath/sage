@@ -21,16 +21,18 @@ import itertools
 
 from math import floor
 
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealField
-from sage.rings.number_field.unit_group import UnitGroup
 from sage.arith.misc import GCD as gcd
-from sage.matrix.constructor import matrix, column_matrix
-from sage.libs.pari.all import pari
-from sage.modules.free_module_element import vector
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.rings.rational_field import QQ
+from sage.schemes.projective.projective_space import ProjectiveSpace
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.matrix.constructor', ['matrix', 'column_matrix'])
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.rings.number_field.unit_group', 'UnitGroup')
+lazy_import('sage.rings.real_mpfr', 'RealField')
 
 
 def QQ_points_of_bounded_height(dim, bound):
@@ -184,7 +186,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 7)                                                          # optional - sage.rings.number_field
         sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
-        sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.rings.number_field
+        sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.geometry.polyhedron sage.libs.pari sage.rings.number_field
         13
     """
     if bound < 1:
