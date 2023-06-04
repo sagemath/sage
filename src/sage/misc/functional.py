@@ -874,9 +874,10 @@ def is_integrally_closed(x):
         doctest:...DeprecationWarning: use X.is_integrally_closed()
         See https://github.com/sagemath/sage/issues/32347 for details.
         True
-        sage: K.<a> = NumberField(x^2 + 189*x + 394)
-        sage: R = K.order(2*a)
-        sage: is_integrally_closed(R)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 + 189*x + 394)                                    # optional - sage.rings.number_field
+        sage: R = K.order(2*a)                                                          # optional - sage.rings.number_field
+        sage: is_integrally_closed(R)                                                   # optional - sage.rings.number_field
         False
     """
     deprecation(32347, "use X.is_integrally_closed()")
@@ -1666,7 +1667,8 @@ def regulator(x):
 
     EXAMPLES::
 
-        sage: regulator(NumberField(x^2-2, 'a'))
+        sage: x = polygen(ZZ, 'x')
+        sage: regulator(NumberField(x^2 - 2, 'a'))                                      # optional - sage.rings.number_field
         0.881373587019543
         sage: regulator(EllipticCurve('11a'))
         1.00000000000000

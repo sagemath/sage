@@ -1895,6 +1895,8 @@ class GenericGraph(GenericGraph_pyx):
           the vertices defining how they should appear in the
           matrix. By default, the ordering given by
           :meth:`GenericGraph.vertices` with ``sort=True`` is used.
+          If the vertices are not comparable, the keyword ``vertices`` must be
+          used to specify an ordering, or a TypeError exception will be raised.
 
         - ``base_ring`` -- a ring (default: ``ZZ``); the base ring of the matrix
           space to use.
@@ -2014,6 +2016,14 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: ``vertices`` must be a permutation of the vertices
+            sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix()
+            Traceback (most recent call last):
+            ...
+            TypeError: Vertex labels are not comparable. You must specify an ordering using parameter ``vertices``
+            sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix(vertices=['John', 42, 0])
+            [0 1 0]
+            [1 0 0]
+            [0 0 0]
         """
         n = self.order()
         if sparse is None:
@@ -2022,7 +2032,12 @@ class GenericGraph(GenericGraph_pyx):
                 sparse = False
 
         if vertices is None:
-            vertices = self.vertices(sort=True)
+            try:
+                vertices = self.vertices(sort=True)
+            except TypeError:
+                raise TypeError("Vertex labels are not comparable. You must "
+                                "specify an ordering using parameter "
+                                "``vertices``")
         elif (len(vertices) != n or
               set(vertices) != set(self.vertex_iterator())):
             raise ValueError("``vertices`` must be a permutation of the vertices")

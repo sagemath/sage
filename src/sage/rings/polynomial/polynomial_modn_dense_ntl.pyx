@@ -32,7 +32,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial, _dict_to_list
@@ -41,17 +40,13 @@ from sage.libs.pari.all import pari, pari_gen
 
 from sage.rings.integer cimport smallInteger
 
-from sage.libs.ntl.all import ZZ as ntl_ZZ, ZZX, zero_ZZX, ZZ_p, ZZ_pX
-from sage.rings.rational_field import QQ
+from sage.libs.ntl.all import ZZX, ZZ_pX
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 
 from sage.rings.fraction_field_element import FractionFieldElement
-import sage.rings.polynomial.polynomial_ring
 
 from sage.rings.infinity import infinity
 
-from . import polynomial_singular_interface
 from sage.interfaces.singular import singular as singular_default
 
 from sage.structure.element import coerce_binop
@@ -160,7 +155,6 @@ cdef class Polynomial_dense_mod_n(Polynomial):
             x = [ZZ(R(a)) for a in x]
 
         self.__poly = ZZ_pX(x, parent.modulus())
-
 
     def __reduce__(self):
         return make_element, (self.parent(), (self.list(), False, self.is_gen()))
