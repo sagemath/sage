@@ -346,7 +346,7 @@ class IndexedSequence(SageObject):
             zeta = CyclotomicField(N).gen()
             FT = [sum([S[i] * chi(zeta**(i * j)) for i in J]) for j in J]
         elif (J[0] not in ZZ) and G.is_abelian() and F == ZZ or (F.is_field() and F.base_ring() == QQ):
-            if is_PermutationGroupElement(J[0]):
+            if isinstance(J[0], PermutationGroupElement):
                 # J is a CyclicPermGp
                 n = G.order()
                 a = list(n.factor())
