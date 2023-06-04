@@ -420,7 +420,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         if self.parent().options('convention') == "Russian":
             col_width = max(col_widths) + 1
-            max_height = max([a + len(str_tab[a]) for a in range(len(str_tab))])
+            max_height = max(a + len(val) for a, val in enumerate(str_tab))
             str_list = []
             for i in range(max_height):
                 st = ' ' * ((max_height - i - 1) * col_width)
@@ -432,7 +432,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                         st += ' ' * (col_width * 2 - 1)
                 str_list.append(st)
             import re
-            mm = min([len(re.search('^ +', sline)[0]) for sline in str_list]) - 1
+            mm = min(len(re.search('^ +', sline)[0]) for sline in str_list) - 1
             str_list = [sline[mm:] for sline in str_list]
             str_list.reverse()
             return '\n'.join(str_list)
@@ -987,7 +987,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sphinx_plot(t.plot())
             Tableaux.options.convention="english"
 
-        If Russian notation is set, we tilt the French by 45 degrees:
+        If Russian notation is set, we tilt the French notation by 45 degrees:
 
         .. PLOT::
             :width: 200 px

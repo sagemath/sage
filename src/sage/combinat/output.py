@@ -709,8 +709,8 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
     else:
         diag_length = max_str + 2  # space on both sides
 
-    row_height = int((diag_length + 1)/2)
-    max_height = max([a + len(str_tab[a]) for a in range(len(str_tab))])
+    row_height = int((diag_length + 1) // 2)
+    max_height = max(a + len(val) for a, val in enumerate(str_tab))
     str_list = []
     for k in range(max_height, -1, -1):
         for i in range(row_height):
@@ -759,7 +759,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
             str_list.append(st)
 
     import re
-    mm = min([len(re.search('^ +', l)[0]) for l in str_list]) - 1
+    mm = min(len(re.search('^ +', l)[0]) for l in str_list) - 1
     str_list = [l[mm:].rstrip() for l in str_list]
     while str_list[-1] == '':
         str_list.pop()
@@ -772,4 +772,4 @@ def box_exists(tab, i, j):
     """
     if j < 0 or i < 0:
         return False
-    return (len(tab[i:]) > 0 and len(tab[i][j:]) > 0 and tab[i][j] is not None)
+    return len(tab) >= i and len(tab[i]) >=j and tab[i][j] is not None
