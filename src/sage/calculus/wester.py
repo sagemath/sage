@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.symbolic
 r"""
 Further examples from Wester's paper
 
