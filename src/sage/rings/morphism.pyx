@@ -200,23 +200,24 @@ Inclusion from `\QQ` to the 3-adic field::
 An automorphism of a quotient of a univariate polynomial ring::
 
     sage: R.<x> = PolynomialRing(QQ)
-    sage: S.<sqrt2> = R.quo(x^2 - 2)
-    sage: sqrt2^2
+    sage: S.<sqrt2> = R.quo(x^2 - 2)                                                    # optional - sage.libs.pari
+    sage: sqrt2^2                                                                       # optional - sage.libs.pari
     2
-    sage: (3+sqrt2)^10
+    sage: (3+sqrt2)^10                                                                  # optional - sage.libs.pari
     993054*sqrt2 + 1404491
-    sage: c = S.hom([-sqrt2])
-    sage: c(1+sqrt2)
+    sage: c = S.hom([-sqrt2])                                                           # optional - sage.libs.pari
+    sage: c(1+sqrt2)                                                                    # optional - sage.libs.pari
     -sqrt2 + 1
 
 Note that Sage verifies that the morphism is valid::
 
-    sage: (1 - sqrt2)^2
+    sage: (1 - sqrt2)^2                                                                 # optional - sage.libs.pari
     -2*sqrt2 + 3
-    sage: c = S.hom([1-sqrt2])    # this is not valid
+    sage: c = S.hom([1 - sqrt2])    # this is not valid                                 # optional - sage.libs.pari
     Traceback (most recent call last):
     ...
-    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
+    ValueError: relations do not all (canonically) map to 0
+    under map determined by images of generators
 
 Endomorphism of power series ring::
 
@@ -278,35 +279,35 @@ positive::
 
 Complex conjugation on cyclotomic fields::
 
-    sage: K.<zeta7> = CyclotomicField(7)
-    sage: c = K.hom([1/zeta7]); c
+    sage: K.<zeta7> = CyclotomicField(7)                                                # optional - sage.rings.number_field
+    sage: c = K.hom([1/zeta7]); c                                                       # optional - sage.rings.number_field
     Ring endomorphism of Cyclotomic Field of order 7 and degree 6
       Defn: zeta7 |--> -zeta7^5 - zeta7^4 - zeta7^3 - zeta7^2 - zeta7 - 1
-    sage: a = (1+zeta7)^5; a
+    sage: a = (1+zeta7)^5; a                                                            # optional - sage.rings.number_field
     zeta7^5 + 5*zeta7^4 + 10*zeta7^3 + 10*zeta7^2 + 5*zeta7 + 1
-    sage: c(a)
+    sage: c(a)                                                                          # optional - sage.rings.number_field
     5*zeta7^5 + 5*zeta7^4 - 4*zeta7^2 - 5*zeta7 - 4
-    sage: c(zeta7 + 1/zeta7)       # this element is obviously fixed by inversion
+    sage: c(zeta7 + 1/zeta7)       # this element is obviously fixed by inversion       # optional - sage.rings.number_field
     -zeta7^5 - zeta7^4 - zeta7^3 - zeta7^2 - 1
-    sage: zeta7 + 1/zeta7
+    sage: zeta7 + 1/zeta7                                                               # optional - sage.rings.number_field
     -zeta7^5 - zeta7^4 - zeta7^3 - zeta7^2 - 1
 
 Embedding a number field into the reals::
 
     sage: R.<x> = PolynomialRing(QQ)
-    sage: K.<beta> = NumberField(x^3 - 2)
-    sage: alpha = RR(2)^(1/3); alpha
+    sage: K.<beta> = NumberField(x^3 - 2)                                               # optional - sage.rings.number_field
+    sage: alpha = RR(2)^(1/3); alpha                                                    # optional - sage.rings.number_field
     1.25992104989487
-    sage: i = K.hom([alpha],check=False); i
+    sage: i = K.hom([alpha],check=False); i                                             # optional - sage.rings.number_field
     Ring morphism:
       From: Number Field in beta with defining polynomial x^3 - 2
       To:   Real Field with 53 bits of precision
       Defn: beta |--> 1.25992104989487
-    sage: i(beta)
+    sage: i(beta)                                                                       # optional - sage.rings.number_field
     1.25992104989487
-    sage: i(beta^3)
+    sage: i(beta^3)                                                                     # optional - sage.rings.number_field
     2.00000000000000
-    sage: i(beta^2 + 1)
+    sage: i(beta^2 + 1)                                                                 # optional - sage.rings.number_field
     2.58740105196820
 
 An example from Jim Carlson::

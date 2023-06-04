@@ -308,7 +308,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
         [1 0 0]
         [0 0 3]
 
-        sage: GO(3,3, invariant_form=[[1,0,0], [0,2,0], [0,0,1]])
+        sage: GO(3,3, invariant_form=[[1,0,0], [0,2,0], [0,0,1]])                       # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
@@ -324,7 +324,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
     TESTS::
 
         sage: TestSuite(GO3).run()
-        sage: groups.matrix.GO(2, 3, e=-1)
+        sage: groups.matrix.GO(2, 3, e=-1)                                              # optional - sage.rings.finite_rings
         General Orthogonal Group of degree 2 and form parameter -1 over Finite Field of size 3
     """
     return _OG(n, R, False, e=e, var=var, invariant_form=invariant_form)

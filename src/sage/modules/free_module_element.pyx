@@ -2601,7 +2601,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         Check for :trac:`33814`::
 
-            sage: for R in [ZZ, QQ, RDF, RR, GF(2), GF(3), GF(4), ZZ['x']]:
+            sage: rings = [ZZ, QQ, RDF, ZZ['x']]
+            sage: rings += [RR]                                                         # optional - sage.rings.real_mpfr
+            sage: rings += [GF(2), GF(3), GF(4)]                                        # optional - sage.rings.finite_rings
+            sage: for R in rings:
             ....:     _ = (R**0)().dot_product((R**0)())
         """
         cdef FreeModuleElement r = <FreeModuleElement?>right

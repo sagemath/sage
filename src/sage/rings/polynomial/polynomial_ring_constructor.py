@@ -407,9 +407,9 @@ def PolynomialRing(base_ring, *args, **kwds):
     Check uniqueness if the same implementation is used for different
     values of the ``"implementation"`` keyword::
 
-        sage: R = PolynomialRing(QQbar, 'j', implementation="generic")
-        sage: S = PolynomialRing(QQbar, 'j', implementation=None)
-        sage: R is S
+        sage: R = PolynomialRing(QQbar, 'j', implementation="generic")                  # optional - sage.rings.number_field
+        sage: S = PolynomialRing(QQbar, 'j', implementation=None)                       # optional - sage.rings.number_field
+        sage: R is S                                                                    # optional - sage.rings.number_field
         True
 
         sage: R = PolynomialRing(ZZ['t'], 'j', implementation="generic")
@@ -417,9 +417,9 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R is S
         True
 
-        sage: R = PolynomialRing(QQbar, 'j,k', implementation="generic")
-        sage: S = PolynomialRing(QQbar, 'j,k', implementation=None)
-        sage: R is S
+        sage: R = PolynomialRing(QQbar, 'j,k', implementation="generic")                # optional - sage.rings.number_field
+        sage: S = PolynomialRing(QQbar, 'j,k', implementation=None)                     # optional - sage.rings.number_field
+        sage: R is S                                                                    # optional - sage.rings.number_field
         True
 
         sage: R = PolynomialRing(ZZ, 'j,k', implementation="singular")
@@ -467,7 +467,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: unknown implementation 'FLINT' for multivariate polynomial rings
-        sage: R.<x> = PolynomialRing(QQbar, implementation="whatever")
+        sage: R.<x> = PolynomialRing(QQbar, implementation="whatever")                                                                              # optional - sage.rings.number_field
         Traceback (most recent call last):
         ...
         ValueError: unknown implementation 'whatever' for dense polynomial rings over Algebraic Field

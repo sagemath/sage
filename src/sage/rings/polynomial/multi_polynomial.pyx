@@ -1999,7 +1999,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R = PolynomialRing(QQ, 'a', 5)
             sage: f = R.random_element(terms=20)
             sage: w = random_vector(ZZ,5)                                               # optional - sage.modules
-            sage: d1 = f.weighted_degree(w)
+            sage: d1 = f.weighted_degree(w)                                             # optional - sage.modules
             sage: d2 = (f*1.0).weighted_degree(w)                                       # optional - sage.modules
             sage: d1 == d2                                                              # optional - sage.modules
             True

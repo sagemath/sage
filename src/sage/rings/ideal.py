@@ -510,30 +510,30 @@ class Ideal_generic(MonoidElement):
         TESTS::
 
             sage: x = polygen(ZZ)
-            sage: K.<a> = NumberField(x^2 + 1)
-            sage: A = K.ideal(a)
-            sage: taus = K.embeddings(K)
-            sage: A.apply_morphism(taus[0]) # identity
+            sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_fields
+            sage: A = K.ideal(a)                                                        # optional - sage.rings.number_fields
+            sage: taus = K.embeddings(K)                                                # optional - sage.rings.number_fields
+            sage: A.apply_morphism(taus[0]) # identity                                  # optional - sage.rings.number_fields
             Fractional ideal (a)
-            sage: A.apply_morphism(taus[1]) # complex conjugation
+            sage: A.apply_morphism(taus[1]) # complex conjugation                       # optional - sage.rings.number_fields
             Fractional ideal (-a)
-            sage: A.apply_morphism(taus[0]) == A.apply_morphism(taus[1])
+            sage: A.apply_morphism(taus[0]) == A.apply_morphism(taus[1])                # optional - sage.rings.number_fields
             True
 
         ::
 
-            sage: K.<a> = NumberField(x^2 + 5)
-            sage: B = K.ideal([2, a + 1]); B
+            sage: K.<a> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_fields
+            sage: B = K.ideal([2, a + 1]); B                                            # optional - sage.rings.number_fields
             Fractional ideal (2, a + 1)
-            sage: taus = K.embeddings(K)
-            sage: B.apply_morphism(taus[0]) # identity
+            sage: taus = K.embeddings(K)                                                # optional - sage.rings.number_fields
+            sage: B.apply_morphism(taus[0]) # identity                                  # optional - sage.rings.number_fields
             Fractional ideal (2, a + 1)
 
         Since 2 is totally ramified, complex conjugation fixes it::
 
-            sage: B.apply_morphism(taus[1]) # complex conjugation
+            sage: B.apply_morphism(taus[1]) # complex conjugation                       # optional - sage.rings.number_fields
             Fractional ideal (2, a + 1)
-            sage: taus[1](B)
+            sage: taus[1](B)                                                            # optional - sage.rings.number_fields
             Fractional ideal (2, a + 1)
         """
         from sage.categories.morphism import is_Morphism
