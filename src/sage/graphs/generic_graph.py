@@ -19444,33 +19444,35 @@ class GenericGraph(GenericGraph_pyx):
         We consider the Cayley graph of the symmetric group, whose edges are
         labelled by the numbers 1,2, and 3::
 
-            sage: G = SymmetricGroup(4).cayley_graph()                                          # optional - sage.groups
-            sage: set(G.edge_labels())                                                          # optional - sage.groups
+            sage: G = SymmetricGroup(4).cayley_graph()                                  # optional - sage.groups
+            sage: set(G.edge_labels())                                                  # optional - sage.groups
             {1, 2, 3}
 
         We first request the coloring as a function::
 
-            sage: f = G._color_by_label(as_function=True)                                       # optional - sage.groups
-            sage: [f(1), f(2), f(3)]                                                            # optional - sage.groups
+            sage: f = G._color_by_label(as_function=True)                               # optional - sage.groups
+            sage: [f(1), f(2), f(3)]                                                    # optional - sage.groups
             ['#0000ff', '#ff0000', '#00ff00']
-            sage: f = G._color_by_label({1: "blue", 2: "red", 3: "green"}, as_function=True)    # optional - sage.groups
-            sage: [f(1), f(2), f(3)]                                                            # optional - sage.groups
+            sage: f = G._color_by_label({1: "blue", 2: "red", 3: "green"},              # optional - sage.groups
+            ....:                       as_function=True)
+            sage: [f(1), f(2), f(3)]                                                    # optional - sage.groups
             ['blue', 'red', 'green']
-            sage: f = G._color_by_label({1: "red"}, as_function=True)                           # optional - sage.groups
-            sage: [f(1), f(2), f(3)]                                                            # optional - sage.groups
+            sage: f = G._color_by_label({1: "red"}, as_function=True)                   # optional - sage.groups
+            sage: [f(1), f(2), f(3)]                                                    # optional - sage.groups
             ['red', 'black', 'black']
-            sage: f = G._color_by_label({1: "red"}, as_function=True, default_color='blue')     # optional - sage.groups
-            sage: [f(1), f(2), f(3)]                                                            # optional - sage.groups
+            sage: f = G._color_by_label({1: "red"}, as_function=True,                   # optional - sage.groups
+            ....:                       default_color='blue')
+            sage: [f(1), f(2), f(3)]                                                    # optional - sage.groups
             ['red', 'blue', 'blue']
 
         The default output is a dictionary assigning edges to colors::
 
-            sage: G._color_by_label()                                                           # optional - sage.groups
+            sage: G._color_by_label()                                                   # optional - sage.groups
             {'#0000ff': [((), (1,2), 1), ...],
              '#00ff00': [((), (3,4), 3), ...],
              '#ff0000': [((), (2,3), 2), ...]}
 
-            sage: G._color_by_label({1: "blue", 2: "red", 3: "green"})                          # optional - sage.groups
+            sage: G._color_by_label({1: "blue", 2: "red", 3: "green"})                  # optional - sage.groups
             {'blue': [((), (1,2), 1), ...],
              'green': [((), (3,4), 3), ...],
              'red': [((), (2,3), 2), ...]}
@@ -19479,12 +19481,12 @@ class GenericGraph(GenericGraph_pyx):
 
         We check what happens when several labels have the same color::
 
-            sage: result = G._color_by_label({1: "blue", 2: "blue", 3: "green"})                # optional - sage.groups
-            sage: sorted(result)                                                                # optional - sage.groups
+            sage: result = G._color_by_label({1: "blue", 2: "blue", 3: "green"})        # optional - sage.groups
+            sage: sorted(result)                                                        # optional - sage.groups
             ['blue', 'green']
-            sage: len(result['blue'])                                                           # optional - sage.groups
+            sage: len(result['blue'])                                                   # optional - sage.groups
             48
-            sage: len(result['green'])                                                          # optional - sage.groups
+            sage: len(result['green'])                                                  # optional - sage.groups
             24
         """
         if format is True:
@@ -19538,8 +19540,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: opts = g.latex_options()
             sage: opts
             LaTeX options for Petersen graph: {}
-            sage: opts.set_option('tkz_style', 'Classic')                                       # optional - sage.plot
-            sage: opts                                                                          # optional - sage.plot
+            sage: opts.set_option('tkz_style', 'Classic')                               # optional - sage.plot
+            sage: opts                                                                  # optional - sage.plot
             LaTeX options for Petersen graph: {'tkz_style': 'Classic'}
         """
         if self._latex_opts is None:
@@ -19567,9 +19569,9 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.set_latex_options(tkz_style='Welsh')                                        # optional - sage.plot
-            sage: opts = g.latex_options()                                                      # optional - sage.plot
-            sage: opts.get_option('tkz_style')                                                  # optional - sage.plot
+            sage: g.set_latex_options(tkz_style='Welsh')                                # optional - sage.plot
+            sage: opts = g.latex_options()                                              # optional - sage.plot
+            sage: opts.get_option('tkz_style')                                          # optional - sage.plot
             'Welsh'
         """
         opts = self.latex_options()
@@ -23284,13 +23286,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.is_vertex_transitive()
             False
             sage: P = graphs.PetersenGraph()
-            sage: P.is_vertex_transitive()                                     # optional - sage.groups
+            sage: P.is_vertex_transitive()                                              # optional - sage.groups
             True
             sage: D = graphs.DodecahedralGraph()
-            sage: D.is_vertex_transitive()                                     # optional - sage.groups
+            sage: D.is_vertex_transitive()                                              # optional - sage.groups
             True
-            sage: R = graphs.RandomGNP(2000, .01)                              # optional - networkx
-            sage: R.is_vertex_transitive()                                     # optional - networkx
+            sage: R = graphs.RandomGNP(2000, .01)                                       # optional - networkx
+            sage: R.is_vertex_transitive()                                              # optional - networkx
             False
         """
         if partition is None:
