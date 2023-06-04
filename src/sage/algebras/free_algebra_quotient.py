@@ -21,11 +21,12 @@ TESTS:
     sage: A = FreeAlgebra(QQ,n,'x')
     sage: F = A.monoid()
     sage: i, j = F.gens()
-    sage: mons = [ F(1), i, j, i*j ]
+    sage: mons = [F(1), i, j, i*j]
     sage: r = len(mons)
     sage: M = MatrixSpace(QQ,r)
-    sage: mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]), M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]) ]
-    sage: H2.<i,j> = A.quotient(mons,mats)
+    sage: mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]),
+....:             M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]) ]
+    sage: H2.<i,j> = A.quotient(mons, mats)
     sage: H2 == loads(dumps(H2))
     True
     sage: i == loads(dumps(i))
@@ -106,15 +107,20 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: A = FreeAlgebra(QQ,n,'i')
             sage: F = A.monoid()
             sage: i, j, k = F.gens()
-            sage: mons = [ F(1), i, j, k ]
+            sage: mons = [F(1), i, j, k]
             sage: M = MatrixSpace(QQ,4)
-            sage: mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]),  M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]),  M([0,0,0,1, 0,0,-1,0, 0,1,0,0, -1,0,0,0]) ]
+            sage: mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]),
+            ....:         M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]),
+            ....:         M([0,0,0,1, 0,0,-1,0, 0,1,0,0, -1,0,0,0]) ]
             sage: H3.<i,j,k> = FreeAlgebraQuotient(A,mons,mats)
             sage: x = 1 + i + j + k
             sage: x
             1 + i + j + k
             sage: x**128
-            -170141183460469231731687303715884105728 + 170141183460469231731687303715884105728*i + 170141183460469231731687303715884105728*j + 170141183460469231731687303715884105728*k
+            -170141183460469231731687303715884105728
+             + 170141183460469231731687303715884105728*i
+             + 170141183460469231731687303715884105728*j
+             + 170141183460469231731687303715884105728*k
 
         Same algebra defined in terms of two generators, with some penalty
         on already slow arithmetic.
@@ -128,14 +134,18 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: mons = [ F(1), i, j, i*j ]
             sage: r = len(mons)
             sage: M = MatrixSpace(QQ,r)
-            sage: mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]), M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]) ]
+            sage: mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]),
+            ....:         M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]) ]
             sage: H2.<i,j> = A.quotient(mons,mats)
             sage: k = i*j
             sage: x = 1 + i + j + k
             sage: x
             1 + i + j + i*j
             sage: x**128
-            -170141183460469231731687303715884105728 + 170141183460469231731687303715884105728*i + 170141183460469231731687303715884105728*j + 170141183460469231731687303715884105728*i*j
+            -170141183460469231731687303715884105728
+             + 170141183460469231731687303715884105728*i
+             + 170141183460469231731687303715884105728*j
+             + 170141183460469231731687303715884105728*i*j
 
         TESTS::
 
@@ -180,7 +190,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             True
             sage: H._coerce_map_from_(QQ)
             True
-            sage: H._coerce_map_from_(GF(7))
+            sage: H._coerce_map_from_(GF(7))                                            # optional - sage.rings.finite_rings
             False
         """
         return S == self or self.__free_algebra.has_coerce_map_from(S)
@@ -345,7 +355,8 @@ def hamilton_quatalg(R):
 
         sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(ZZ)
         sage: H
-        Free algebra quotient on 3 generators ('i', 'j', 'k') and dimension 4 over Integer Ring
+        Free algebra quotient on 3 generators ('i', 'j', 'k') and dimension 4
+         over Integer Ring
         sage: i^2
         -1
         sage: i in H

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.groups
+# sage.doctest: optional - sage.groups sage.modules
 r"""
 Group algebras
 

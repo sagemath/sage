@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 r"""
 Down-Up Algebras
 
