@@ -59,7 +59,7 @@ two lines.
     Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
       x + y + z,
       x + y - z
-    sage: V.dimension()
+    sage: V.dimension()                                                                 # optional - sage.libs.singular
     0
 
 AUTHORS:
@@ -964,9 +964,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: I = X.defining_ideal(); I
             Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z
              over Rational Field
-            sage: I.groebner_basis()
+            sage: I.groebner_basis()                                                    # optional - sage.libs.singular
             [x*y^2, y^2*z,  x*z^2]
-            sage: X.dimension()
+            sage: X.dimension()                                                         # optional - sage.libs.singular
             0
             sage: X.base_ring()
             Rational Field

@@ -123,23 +123,23 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         ::
 
             sage: u = QQ['u'].0
-            sage: K.<v> = NumberField(u^2 + 3)                                                      # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                 # optional - sage.rings.number_field
-            sage: len(P(K).points(bound=1.8))                                                       # optional - sage.rings.number_field
+            sage: K.<v> = NumberField(u^2 + 3)                                          # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
+            sage: len(P(K).points(bound=1.8))                                           # optional - sage.rings.number_field
             309
 
         ::
 
-            sage: P1 = ProjectiveSpace(GF(2), 1)                                                    # optional - sage.rings.finite_rings
-            sage: F.<a> = GF(4, 'a')                                                                # optional - sage.rings.finite_rings
-            sage: P1(F).points()                                                                    # optional - sage.rings.finite_rings
+            sage: P1 = ProjectiveSpace(GF(2), 1)                                        # optional - sage.rings.finite_rings
+            sage: F.<a> = GF(4, 'a')                                                    # optional - sage.rings.finite_rings
+            sage: P1(F).points()                                                        # optional - sage.libs.singular sage.rings.finite_rings
             [(0 : 1), (1 : 0), (1 : 1), (a : 1), (a + 1 : 1)]
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([(y^3-y*z^2) - (x^3-x*z^2), (y^3-y*z^2) + (x^3-x*z^2)])
-            sage: E(P.base_ring()).points()
+            sage: E(P.base_ring()).points()                                             # optional - sage.libs.singular
             [(-1 : -1 : 1), (-1 : 0 : 1), (-1 : 1 : 1), (0 : -1 : 1), (0 : 0 : 1),
              (0 : 1 : 1), (1 : -1 : 1), (1 : 0 : 1), (1 : 1 : 1)]
 
@@ -147,7 +147,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: L = E(P.base_ring()).points(); sorted(L, key=str)
+            sage: L = E(P.base_ring()).points(); sorted(L, key=str)                     # optional - sage.libs.singular
             verbose 0 (...: projective_homset.py, points) Warning: computations in
             the numerical fields are inexact;points may be computed partially or incorrectly.
             [(-0.500000000000000 + 0.866025403784439*I : 1.00000000000000 : 0.000000000000000),
@@ -163,7 +163,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(CDF, 2)
             sage: E = P.subscheme([y^2 + x^2 + z^2, x*y*z])
-            sage: len(E(P.base_ring()).points())
+            sage: len(E(P.base_ring()).points())                                        # optional - sage.libs.singular
             verbose 0 (...: projective_homset.py, points) Warning: computations in
             the numerical fields are inexact;points may be computed partially or incorrectly.
             6
@@ -327,7 +327,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: L = E(QQ).numerical_points(F=RR); L
+            sage: L = E(QQ).numerical_points(F=RR); L                                   # optional - sage.libs.singular
             [(0.000000000000000 : 0.000000000000000 : 1.00000000000000),
              (1.00000000000000 : 1.00000000000000 : 0.000000000000000)]
             sage: L[0].codomain()
@@ -339,14 +339,14 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             sage: K.<v> = NumberField(a^5 - 7, embedding=CC(7)**(1/5))                  # optional - sage.rings.number_field
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
             sage: X = P.subscheme([x^2 - v^2*z^2, y - v*z])                             # optional - sage.rings.number_field
-            sage: len(X(K).numerical_points(F=CDF))                                     # optional - sage.rings.number_field
+            sage: len(X(K).numerical_points(F=CDF))                                     # optional - sage.libs.singular sage.rings.number_field
             2
 
         ::
 
             sage: P.<x1, x2, x3> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([3000*x1^50 + 9875643*x2^2*x3^48 + 12334545*x2^50, x1 + x2])
-            sage: len(E(P.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-6))
+            sage: len(E(P.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-6))    # optional - sage.libs.singular
             49
 
         TESTS::

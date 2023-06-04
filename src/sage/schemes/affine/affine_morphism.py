@@ -471,7 +471,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: X = A.subscheme([x - y^2])
             sage: H = Hom(X, X)
             sage: f = H([9*y^2, 3*y])
-            sage: f.homogenize(2)
+            sage: f.homogenize(2)                                                       # optional - sage.libs.singular
             Scheme endomorphism of Closed subscheme of Projective Space
              of dimension 2 over Integer Ring defined by: x1^2 - x0*x2
               Defn: Defined on coordinates by sending (x0 : x1 : x2) to
@@ -483,7 +483,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x,y> = AffineSpace(R, 2)
             sage: H = Hom(A, A)
             sage: f = H([(x^2-2)/y, y^2 - x])
-            sage: f.homogenize((2, 0))
+            sage: f.homogenize((2, 0))                                                  # optional - sage.libs.singular
             Scheme endomorphism of Projective Space of dimension 2
              over Univariate Polynomial Ring in t over Integer Ring
               Defn: Defined on coordinates by sending (x0 : x1 : x2) to
@@ -494,7 +494,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: H = End(A)
             sage: f = H([x^2 - 1])
-            sage: f.homogenize((1, 0))
+            sage: f.homogenize((1, 0))                                                  # optional - sage.libs.singular
             Scheme endomorphism of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x0 : x1) to
                     (x1^2 : x0^2 - x1^2)
@@ -505,7 +505,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x,y> = AffineSpace(R, 2)                                           # optional - sage.rings.number_field
             sage: H = End(A)                                                            # optional - sage.rings.number_field
             sage: f = H([QQbar(sqrt(2))*x*y, a*x^2])                                    # optional - sage.rings.number_field sage.symbolic
-            sage: f.homogenize(2)                                                       # optional - sage.rings.number_field sage.symbolic
+            sage: f.homogenize(2)                                                       # optional - sage.libs.singular sage.rings.number_field sage.symbolic
             Scheme endomorphism of Projective Space of dimension 2
              over Univariate Polynomial Ring in a over Algebraic Field
               Defn: Defined on coordinates by sending (x0 : x1 : x2) to
@@ -974,7 +974,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = Hom(P2, P)
             sage: f = H([u^2 + v^2, w^2])
             sage: m = matrix([[1,1,1], [1,0,1], [0,0,1]])                               # optional - sage.modules
-            sage: m*f
+            sage: m*f                                                                   # optional - sage.modules
             Scheme morphism:
               From: Affine Space of dimension 3 over Rational Field
               To:   Affine Space of dimension 2 over Rational Field
@@ -1527,8 +1527,8 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
             sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
             sage: P1.<a,b> = ProjectiveSpace(QQ,1)
             sage: X = P2.subscheme([x^2 - y^2 - y*z])                                   # optional - sage.libs.singular
-            sage: f = X.hom([x,y], P1)
-            sage: f.is_morphism()
+            sage: f = X.hom([x,y], P1)                                                  # optional - sage.libs.singular
+            sage: f.is_morphism()                                                       # optional - sage.libs.singular
             True
         """
         return self.indeterminacy_locus().dimension() < 0

@@ -215,9 +215,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
             sage: X = P.subscheme([x - y])
-            sage: u,v,w = X.coordinate_ring().gens()
+            sage: u,v,w = X.coordinate_ring().gens()                                    # optional - sage.libs.singular
             sage: H = End(X)
-            sage: H([u^2, v^2, w*u])
+            sage: H([u^2, v^2, w*u])                                                    # optional - sage.libs.singular
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 2
              over Complex Field with 53 bits of precision defined by: x - y
               Defn: Defined on coordinates by sending (x : y : z) to
@@ -887,12 +887,12 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         ::
 
             sage: R.<w> = QQ[]
-            sage: A.<a> = NumberField(w^2 + 1)                                                      # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(A, 2)                                                 # optional - sage.rings.number_field
-            sage: X = P.subscheme(x^2 - y^2)                                                        # optional - sage.rings.number_field
-            sage: H = Hom(X, X)                                                                     # optional - sage.rings.number_field
-            sage: f = H([(a+1)*x^3 + 2*x*y^2, 4*x*y^2, 8*x*z^2])                                    # optional - sage.rings.number_field
-            sage: f.normalize_coordinates(ideal=A.prime_above(2)); f                                # optional - sage.rings.number_field
+            sage: A.<a> = NumberField(w^2 + 1)                                          # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(A, 2)                                     # optional - sage.rings.number_field
+            sage: X = P.subscheme(x^2 - y^2)                                            # optional - sage.rings.number_field
+            sage: H = Hom(X, X)                                                         # optional - sage.rings.number_field
+            sage: f = H([(a+1)*x^3 + 2*x*y^2, 4*x*y^2, 8*x*z^2])                        # optional - sage.rings.number_field
+            sage: f.normalize_coordinates(ideal=A.prime_above(2)); f                    # optional - sage.rings.number_field
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 2 over
              Number Field in a with defining polynomial w^2 + 1 defined by: x^2 - y^2
               Defn: Defined on coordinates by sending (x : y : z) to
@@ -900,16 +900,16 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         We can pass in a valuation to ``valuation``::
 
-            sage: g = H([(a+1)*x^3 + 2*x*y^2, 4*x*y^2, 8*x*z^2])                                    # optional - sage.rings.number_field
-            sage: g.normalize_coordinates(valuation=A.valuation(A.prime_above(2)))                  # optional - sage.rings.number_field
-            sage: g == f                                                                            # optional - sage.rings.number_field
+            sage: g = H([(a+1)*x^3 + 2*x*y^2, 4*x*y^2, 8*x*z^2])                        # optional - sage.rings.number_field
+            sage: g.normalize_coordinates(valuation=A.valuation(A.prime_above(2)))      # optional - sage.rings.number_field
+            sage: g == f                                                                # optional - sage.rings.number_field
             True
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                               # optional - sage.rings.padics
-            sage: f = DynamicalSystem_projective([3*x^2 + 6*y^2, 9*x*y])                            # optional - sage.rings.padics
-            sage: f.normalize_coordinates(); f                                                      # optional - sage.rings.padics
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)                                   # optional - sage.rings.padics
+            sage: f = DynamicalSystem_projective([3*x^2 + 6*y^2, 9*x*y])                # optional - sage.rings.padics
+            sage: f.normalize_coordinates(); f                                          # optional - sage.rings.padics
             Dynamical System of Projective Space of dimension 1 over
              3-adic Field with capped relative precision 20
               Defn: Defined on coordinates by sending (x : y) to
@@ -1122,7 +1122,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: X = P.subscheme(x^2 - y^2)
             sage: H = Hom(X, X)
             sage: f = H([x^2, y^2, x*z])
-            sage: f.dehomogenize(2)
+            sage: f.dehomogenize(2)                                                     # optional - sage.libs.singular
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 2
              over Integer Ring defined by: x^2 - y^2
               Defn: Defined on coordinates by sending (x, y) to (x, y^2/x)
@@ -1402,8 +1402,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([4*x^2 + 3/100*y^2, 8/210*x*y, 1/10000*z^2])
             sage: f.local_height(2)
             2.77258872223978
-            sage: f.normalize_coordinates()
-            sage: f.local_height(2)
+            sage: f.normalize_coordinates()                                             # optional - sage.libs.singular
+            sage: f.local_height(2)                                                     # optional - sage.libs.singular
             0.000000000000000
 
         ::
@@ -1528,9 +1528,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         INPUT:
 
-        - ``Q`` - a rational point or subscheme in the domain of this map.
+        - ``Q`` -- a rational point or subscheme in the domain of this map.
 
-        - ``k`` - positive integer.
+        - ``k`` -- positive integer.
 
         OUTPUT:
 
@@ -1541,7 +1541,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([16*x^2 - 29*y^2, 16*y^2])
-            sage: f.rational_preimages(P(-1, 4))
+            sage: f.rational_preimages(P(-1, 4))                                        # optional - sage.libs.singular
             [(-5/4 : 1), (5/4 : 1)]
 
         ::
@@ -1551,7 +1551,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([76*x^2 - 180*x*y + 45*y^2 + 14*x*z + 45*y*z - 90*z^2,
             ....:        67*x^2 - 180*x*y - 157*x*z + 90*y*z,
             ....:        -90*z^2])
-            sage: f.rational_preimages(P(-9, -4, 1))
+            sage: f.rational_preimages(P(-9, -4, 1))                                    # optional - sage.libs.singular
             [(0 : 4 : 1)]
 
         A non-periodic example ::
@@ -1559,7 +1559,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([x^2 + y^2, 2*x*y])
-            sage: f.rational_preimages(P(17, 15))
+            sage: f.rational_preimages(P(17, 15))                                       # optional - sage.libs.singular
             [(3/5 : 1), (5/3 : 1)]
 
         ::
@@ -1569,7 +1569,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2 - 2*y*w - 3*w^2, -2*x^2 + y^2 - 2*x*z + 4*y*w + 3*w^2,
             ....:        x^2 - y^2 + 2*x*z + z^2 - 2*y*w - w^2,
             ....:        w^2])
-            sage: f.rational_preimages(P(0, -1, 0, 1))
+            sage: f.rational_preimages(P(0, -1, 0, 1))                                  # optional - sage.libs.singular
             []
 
         ::
@@ -1577,7 +1577,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([x^2 + y^2, 2*x*y])
-            sage: f.rational_preimages([CC.0, 1])
+            sage: f.rational_preimages([CC.0, 1])                                       # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: point must be in codomain of self
@@ -1585,22 +1585,22 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         A number field example ::
 
             sage: z = QQ['z'].0
-            sage: K.<a> = NumberField(z^2 - 2)                                                      # optional - sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                                   # optional - sage.rings.number_field
-            sage: H = End(P)                                                                        # optional - sage.rings.number_field
-            sage: f = H([x^2 + y^2, y^2])                                                           # optional - sage.rings.number_field
-            sage: f.rational_preimages(P(3, 1))                                                     # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(z^2 - 2)                                          # optional - sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
+            sage: H = End(P)                                                            # optional - sage.rings.number_field
+            sage: f = H([x^2 + y^2, y^2])                                               # optional - sage.rings.number_field
+            sage: f.rational_preimages(P(3, 1))                                         # optional - sage.libs.singular sage.rings.number_field
             [(-a : 1), (a : 1)]
 
         ::
 
             sage: z = QQ['z'].0
-            sage: K.<a> = NumberField(z^2 - 2)                                                      # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                 # optional - sage.rings.number_field
-            sage: X = P.subscheme([x^2 - z^2])                                                      # optional - sage.rings.number_field
-            sage: H = End(X)                                                                        # optional - sage.rings.number_field
-            sage: f= H([x^2 - z^2, a*y^2, z^2 - x^2])                                               # optional - sage.rings.number_field
-            sage: f.rational_preimages(X([1, 2, -1]))                                               # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(z^2 - 2)                                          # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
+            sage: X = P.subscheme([x^2 - z^2])                                          # optional - sage.rings.number_field
+            sage: H = End(X)                                                            # optional - sage.rings.number_field
+            sage: f= H([x^2 - z^2, a*y^2, z^2 - x^2])                                   # optional - sage.rings.number_field
+            sage: f.rational_preimages(X([1, 2, -1]))                                   # optional - sage.libs.singular sage.rings.number_field
             []
 
         ::
@@ -1609,7 +1609,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: X = P.subscheme([x^2 - z^2])
             sage: H = End(X)
             sage: f = H([x^2-z^2, y^2, z^2-x^2])
-            sage: f.rational_preimages(X([0, 1, 0]))
+            sage: f.rational_preimages(X([0, 1, 0]))                                    # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x^2 - z^2,
               -x^2 + z^2,
@@ -1621,7 +1621,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x, y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([x^2 - y^2, y^2])
-            sage: f.rational_preimages(P.subscheme([x]))
+            sage: f.rational_preimages(P.subscheme([x]))                                # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 1 over Rational Field
              defined by: x^2 - y^2
 
@@ -1630,7 +1630,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([x^2 - 29/16*y^2, y^2])
-            sage: f.rational_preimages(P(5/4, 1), k=4)
+            sage: f.rational_preimages(P(5/4, 1), k=4)                                  # optional - sage.libs.singular
             [(-3/4 : 1), (3/4 : 1), (-7/4 : 1), (7/4 : 1)]
 
         ::
@@ -1639,7 +1639,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P2.<u,v,w> = ProjectiveSpace(QQ, 2)
             sage: H = Hom(P, P2)
             sage: f = H([x^2, y^2, x^2-y^2])
-            sage: f.rational_preimages(P2(1, 1, 0))
+            sage: f.rational_preimages(P2(1, 1, 0))                                     # optional - sage.libs.singular
             [(-1 : 1), (1 : 1)]
         """
         k = ZZ(k)
@@ -1692,10 +1692,10 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # optional - sage.rings.number_field
-            sage: H = End(P)                                                                        # optional - sage.rings.number_field
-            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))*y^2, y^2])                            # optional - sage.rings.number_field sage.symbolic
-            sage: f._number_field_from_algebraics()                                                 # optional - sage.rings.number_field sage.symbolic
+            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                   # optional - sage.rings.number_field
+            sage: H = End(P)                                                            # optional - sage.rings.number_field
+            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))*y^2, y^2])                # optional - sage.rings.number_field sage.symbolic
+            sage: f._number_field_from_algebraics()                                     # optional - sage.rings.number_field sage.symbolic
             Scheme endomorphism of Projective Space of dimension 1 over Number
              Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
              with a = 1.442249570307409? + 1.414213562373095?*I
@@ -1706,11 +1706,11 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # optional - sage.rings.number_field
-            sage: P2.<u,v,w> = ProjectiveSpace(QQbar, 2)                                            # optional - sage.rings.number_field
-            sage: H = Hom(P, P2)                                                                    # optional - sage.rings.number_field
-            sage: f = H([x^2 + QQbar(I)*x*y + 3*y^2, y^2, QQbar(sqrt(5))*x*y])                      # optional - sage.rings.number_field sage.symbolic
-            sage: f._number_field_from_algebraics()                                                 # optional - sage.rings.number_field sage.symbolic
+            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                   # optional - sage.rings.number_field
+            sage: P2.<u,v,w> = ProjectiveSpace(QQbar, 2)                                # optional - sage.rings.number_field
+            sage: H = Hom(P, P2)                                                        # optional - sage.rings.number_field
+            sage: f = H([x^2 + QQbar(I)*x*y + 3*y^2, y^2, QQbar(sqrt(5))*x*y])          # optional - sage.rings.number_field sage.symbolic
+            sage: f._number_field_from_algebraics()                                     # optional - sage.rings.number_field sage.symbolic
             Scheme morphism:
               From: Projective Space of dimension 1 over Number Field in a
                     with defining polynomial y^4 + 3*y^2 + 1
@@ -1724,16 +1724,16 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         The following was fixed in :trac:`23808`::
 
             sage: R.<t> = PolynomialRing(QQ)
-            sage: s = (t^3 + t + 1).roots(QQbar)[0][0]                                              # optional - sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # optional - sage.rings.number_field
-            sage: H = Hom(P, P)                                                                     # optional - sage.rings.number_field
-            sage: f = H([s*x^3 - 13*y^3, y^3 - 15*y^3])                                             # optional - sage.rings.number_field
-            sage: f                                                                                 # optional - sage.rings.number_field
+            sage: s = (t^3 + t + 1).roots(QQbar)[0][0]                                  # optional - sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                   # optional - sage.rings.number_field
+            sage: H = Hom(P, P)                                                         # optional - sage.rings.number_field
+            sage: f = H([s*x^3 - 13*y^3, y^3 - 15*y^3])                                 # optional - sage.rings.number_field
+            sage: f                                                                     # optional - sage.rings.number_field
             Scheme endomorphism of Projective Space of dimension 1 over Algebraic Field
               Defn: Defined on coordinates by sending (x : y) to
                     ((-0.6823278038280193?)*x^3 + (-13)*y^3 : (-14)*y^3)
-            sage: f_alg = f._number_field_from_algebraics()                                         # optional - sage.rings.number_field
-            sage: f_alg.change_ring(QQbar)  # Used to fail                                          # optional - sage.rings.number_field
+            sage: f_alg = f._number_field_from_algebraics()                             # optional - sage.rings.number_field
+            sage: f_alg.change_ring(QQbar)  # Used to fail                              # optional - sage.rings.number_field
             Scheme endomorphism of Projective Space of dimension 1 over Algebraic Field
               Defn: Defined on coordinates by sending (x : y) to
                     ((-0.6823278038280193?)*x^3 + (-13)*y^3 : (-14)*y^3)
@@ -1860,7 +1860,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = End(P)
             sage: f = H([x^2, y^2, z^2])
-            sage: f.indeterminacy_locus()
+            sage: f.indeterminacy_locus()                                               # optional - sage.libs.singular
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed.
             Read the docstring. See https://github.com/sagemath/sage/issues/29145 for details.
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
@@ -1873,7 +1873,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = End(P)
             sage: f = H([x*z - y*z, x^2 - y^2, z^2])
-            sage: f.indeterminacy_locus()
+            sage: f.indeterminacy_locus()                                               # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               x^2 - y^2
@@ -1885,7 +1885,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = End(P)
             sage: f = H([x*z - y*z, x^2 - y^2, z^2])
-            sage: f.base_indeterminacy_locus()
+            sage: f.base_indeterminacy_locus()                                          # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x*z - y*z,
               x^2 - y^2,
@@ -1917,7 +1917,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = End(P)
             sage: f = H([x*z - y*z, x^2 - y^2, z^2])
-            sage: f.indeterminacy_points()
+            sage: f.indeterminacy_points()                                              # optional - sage.libs.singular
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed.
             Read the docstring. See https://github.com/sagemath/sage/issues/29145 for details.
             [(-1 : 1 : 0), (1 : 1 : 0)]
@@ -1929,10 +1929,10 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = Hom(P1, P2)
             sage: h = H([x + y, y, z + y, y])
             sage: set_verbose(None)
-            sage: h.indeterminacy_points(base=True)
+            sage: h.indeterminacy_points(base=True)                                     # optional - sage.libs.singular
             []
             sage: g = H([y^3*z^3, x^3*z^3, y^3*z^3, x^2*y^2*z^2])
-            sage: g.indeterminacy_points(base=True)
+            sage: g.indeterminacy_points(base=True)                                     # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: indeterminacy scheme is not dimension 0
@@ -1942,14 +1942,14 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = End(P)
             sage: f = H([x^2 + y^2, x*z, x^2 + y^2])
-            sage: f.indeterminacy_points()
+            sage: f.indeterminacy_points()                                              # optional - sage.libs.singular
             [(0 : 0 : 1)]
             sage: R.<t> = QQ[]
-            sage: K.<a> = NumberField(t^2 + 1)                                                      # optional - sage.rings.number_field
-            sage: f.indeterminacy_points(F=K)                                                       # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(t^2 + 1)                                          # optional - sage.rings.number_field
+            sage: f.indeterminacy_points(F=K)                                           # optional - sage.libs.singular sage.rings.number_field
             [(-a : 1 : 0), (0 : 0 : 1), (a : 1 : 0)]
             sage: set_verbose(None)
-            sage: f.indeterminacy_points(F=QQbar, base=True)                                        # optional - sage.rings.number_field
+            sage: f.indeterminacy_points(F=QQbar, base=True)                            # optional - sage.libs.singular sage.rings.number_field
             [(-1*I : 1 : 0), (0 : 0 : 1), (1*I : 1 : 0)]
 
         ::
@@ -1965,10 +1965,10 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         ::
 
             sage: set_verbose(None)
-            sage: P.<x,y,z> = ProjectiveSpace(Qp(3), 2)                                             # optional - sage.rings.padics
-            sage: H = End(P)                                                                        # optional - sage.rings.padics
-            sage: f = H([x^2 - 7*y^2, y^2 - z^2, x^2 - 7*z^2])                                      # optional - sage.rings.padics
-            sage: f.indeterminacy_points(base=True)                                                 # optional - sage.rings.padics
+            sage: P.<x,y,z> = ProjectiveSpace(Qp(3), 2)                                 # optional - sage.rings.padics
+            sage: H = End(P)                                                            # optional - sage.rings.padics
+            sage: f = H([x^2 - 7*y^2, y^2 - z^2, x^2 - 7*z^2])                          # optional - sage.rings.padics
+            sage: f.indeterminacy_points(base=True)                                     # optional - sage.libs.singular sage.rings.padics
             [(2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8
                 + 3^9 + 2*3^11 + 3^15 + 2*3^16 + 3^18 + O(3^20) : 1 + O(3^20) : 1 + O(3^20)),
              (2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8 + 3^9 + 2*3^11 + 3^15
@@ -2187,11 +2187,11 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
             sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
             sage: f = P2.hom([x0^3, x0^2*x1, x0*x1^2], P2)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x1^2 - x0*x2
             sage: f = P2.hom([x0 - x1, x0 - x2, x1 - x2], P2)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x0 - x1 + x2
 
@@ -2200,7 +2200,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
             sage: A2.<x,y> = AffineSpace(QQ, 2)
             sage: f = P2.hom([1, x0/x1], A2)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               -x + 1
         """
@@ -2319,7 +2319,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme(0)
             sage: f = X.hom([x^2*y, x^2*z, x*y*z], P2)
-            sage: f.representatives()
+            sage: f.representatives()                                                   # optional - sage.libs.singular
             [Scheme morphism:
                From: Closed subscheme of Projective Space of dimension 2
                      over Rational Field defined by: 0
@@ -2332,7 +2332,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: P1.<a,b> = ProjectiveSpace(QQ, 1)
             sage: X = P2.subscheme([x^2 - y^2 - y*z])
             sage: f = X.hom([x, y], P1)
-            sage: f.representatives()
+            sage: f.representatives()                                                   # optional - sage.libs.singular
             [Scheme morphism:
                From: Closed subscheme of Projective Space of dimension 2
                      over Rational Field defined by: x^2 - y^2 - y*z
@@ -2343,8 +2343,8 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
                      over Rational Field defined by: x^2 - y^2 - y*z
                To:   Projective Space of dimension 1 over Rational Field
                Defn: Defined on coordinates by sending (x : y : z) to (x : y)]
-            sage: g = _[0]
-            sage: g.representatives()
+            sage: g = _[0]                                                              # optional - sage.libs.singular
+            sage: g.representatives()                                                   # optional - sage.libs.singular
             [Scheme morphism:
                From: Closed subscheme of Projective Space of dimension 2
                      over Rational Field defined by: x^2 - y^2 - y*z
@@ -2362,7 +2362,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: X = P2.subscheme([x^2 - y^2 - y*z])
             sage: A1.<a> = AffineSpace(QQ, 1)
             sage: g = X.hom([y/x], A1)
-            sage: g.representatives()
+            sage: g.representatives()                                                   # optional - sage.libs.singular
             [Scheme morphism:
                From: Closed subscheme of Projective Space of dimension 2
                      over Rational Field defined by: x^2 - y^2 - y*z
@@ -2373,15 +2373,15 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
                      over Rational Field defined by: x^2 - y^2 - y*z
                To:   Affine Space of dimension 1 over Rational Field
                Defn: Defined on coordinates by sending (x : y : z) to (y/x)]
-            sage: g0, g1 = _
+            sage: g0, g1 = _                                                            # optional - sage.libs.singular
             sage: emb = A1.projective_embedding(0)
-            sage: emb*g0
+            sage: emb*g0                                                                # optional - sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of Projective Space of dimension 2
                     over Rational Field defined by: x^2 - y^2 - y*z
               To:   Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y : z) to (y + z : x)
-            sage: emb*g1
+            sage: emb*g1                                                                # optional - sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of Projective Space of dimension 2
                     over Rational Field defined by: x^2 - y^2 - y*z
@@ -2468,8 +2468,8 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme(0)
             sage: f = X.hom([x1,x0], P)
-            sage: L = f.indeterminacy_locus()
-            sage: L.rational_points()
+            sage: L = f.indeterminacy_locus()                                           # optional - sage.libs.singular
+            sage: L.rational_points()                                                   # optional - sage.libs.singular
             [(0 : 0 : 1)]
 
         ::
@@ -2478,7 +2478,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: P1.<a,b> = ProjectiveSpace(QQ, 1)
             sage: X = P2.subscheme([x^2 - y^2 - y*z])
             sage: f = X.hom([x,y], P1)
-            sage: f.indeterminacy_locus()
+            sage: f.indeterminacy_locus()                                               # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               y,
@@ -2490,12 +2490,12 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: P2.<a,b,c> = ProjectiveSpace(QQ, 2)
             sage: X = P3.subscheme(x^2 - w*y - x*z)
             sage: f = X.hom([x*y, y*z, z*x], P2)
-            sage: L = f.indeterminacy_locus()
-            sage: L.dimension()
+            sage: L = f.indeterminacy_locus()                                           # optional - sage.libs.singular
+            sage: L.dimension()                                                         # optional - sage.libs.singular
             0
             sage: L.degree()
             2
-            sage: L.rational_points()
+            sage: L.rational_points()                                                   # optional - sage.libs.singular
             [(0 : 0 : 0 : 1), (0 : 1 : 0 : 0)]
 
         ::
@@ -2504,8 +2504,8 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: A2.<a,b> = AffineSpace(QQ, 2)
             sage: X = P3.subscheme(x^2 - w*y - x*z)
             sage: f = X.hom([x/z, y/x], A2)
-            sage: L = f.indeterminacy_locus()
-            sage: L.rational_points()
+            sage: L = f.indeterminacy_locus()                                           # optional - sage.libs.singular
+            sage: L.rational_points()                                                   # optional - sage.libs.singular
             [(0 : 0 : 0 : 1), (0 : 1 : 0 : 0)]
 
         ::
@@ -2514,7 +2514,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: X = P.subscheme(x - y)
             sage: H = End(X)
             sage: f = H([x^2 - 4*y^2, y^2 - z^2, 4*z^2 - x^2])
-            sage: Z = f.indeterminacy_locus(); Z
+            sage: Z = f.indeterminacy_locus(); Z                                        # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               y,
@@ -2575,7 +2575,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme(0)
             sage: f = X.hom([x1,x0], P)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
               (no polynomials)
 
@@ -2584,7 +2584,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
             sage: X = P2.subscheme([z^3 - x*y^2 + y^3])
             sage: f = X.hom([x*z, x*y, x^2 + y*z], P2)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x^6 + 2*x^3*y^3 + x*y^5 + y^6 - x^3*y^2*z - y^5*z
         """
@@ -2636,11 +2636,11 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: A1.<x> = AffineSpace(1, QQ)
             sage: X = A1.subscheme(0)  # affine line
             sage: phi = X.hom([x^2], A1)
-            sage: mor = phi.homogenize(0)
-            sage: G = mor.graph(); G
+            sage: mor = phi.homogenize(0)                                               # optional - sage.libs.singular
+            sage: G = mor.graph(); G                                                    # optional - sage.libs.singular
             Closed subscheme of Product of projective spaces P^1 x P^1
               over Rational Field defined by: x1^2*x2 - x0^2*x3
-            sage: G.affine_patch([0, 0])
+            sage: G.affine_patch([0, 0])                                                # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2
               over Rational Field defined by: x0^2 - x1
         """

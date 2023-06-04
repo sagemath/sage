@@ -146,8 +146,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: R.<t> = PolynomialRing(ZZ)
-            sage: P = ProjectiveSpace(1, R.quo(t^2 + 1))
-            sage: P([2*t, 1])
+            sage: P = ProjectiveSpace(1, R.quo(t^2 + 1))                                # optional - sage.libs.pari
+            sage: P([2*t, 1])                                                           # optional - sage.libs.pari
             (2*tbar : 1)
 
         ::
@@ -510,10 +510,10 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: R.<t> = PolynomialRing(QQ)
-            sage: S = R.quo(R.ideal(t^3))
-            sage: P.<x,y,z> = ProjectiveSpace(S, 2)
-            sage: Q = P(t, 1, 1)
-            sage: Q.scale_by(t);Q
+            sage: S = R.quo(R.ideal(t^3))                                               # optional - sage.libs.pari
+            sage: P.<x,y,z> = ProjectiveSpace(S, 2)                                     # optional - sage.libs.pari
+            sage: Q = P(t, 1, 1)                                                        # optional - sage.libs.pari
+            sage: Q.scale_by(t);Q                                                       # optional - sage.libs.pari
             (tbar^2 : tbar : tbar)
 
         ::
@@ -593,10 +593,10 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: R.<t> = PolynomialRing(QQ, 1)
             sage: S = R.quotient_ring(R.ideal(t^3))
-            sage: P.<x,y> = ProjectiveSpace(S, 1)
-            sage: Q = P(t + 1, t^2 + t)
-            sage: Q.normalize_coordinates()
-            sage: Q
+            sage: P.<x,y> = ProjectiveSpace(S, 1)                                       # optional - sage.libs.singular
+            sage: Q = P(t + 1, t^2 + t)                                                 # optional - sage.libs.singular
+            sage: Q.normalize_coordinates()                                             # optional - sage.libs.singular
+            sage: Q                                                                     # optional - sage.libs.singular
             (1 : tbar)
         """
         R = self.codomain().base_ring()
@@ -631,7 +631,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def dehomogenize(self,n):
         r"""
-        Dehomogenizes at the nth coordinate.
+        Dehomogenizes at the `n`-th coordinate.
 
         INPUT:
 
@@ -646,7 +646,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme(x^2 - y^2)
             sage: Q = X(23, 23, 46)
-            sage: Q.dehomogenize(2)
+            sage: Q.dehomogenize(2)                                                     # optional - sage.libs.singular
             (1/2, 1/2)
 
         ::
@@ -655,21 +655,21 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: S = R.quo(R.ideal(t^3))
             sage: P.<x,y,z> = ProjectiveSpace(S, 2)
             sage: Q = P(t, 1, 1)
-            sage: Q.dehomogenize(1)
+            sage: Q.dehomogenize(1)                                                     # optional - sage.libs.singular
             (tbar, 1)
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
             sage: Q = P(1, 3, 1)                                                        # optional - sage.rings.finite_rings
-            sage: Q.dehomogenize(0)                                                     # optional - sage.rings.finite_rings
+            sage: Q.dehomogenize(0)                                                     # optional - sage.libs.singular sage.rings.finite_rings
             (3, 1)
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
             sage: Q = P(1, 3, 0)                                                        # optional - sage.rings.finite_rings
-            sage: Q.dehomogenize(2)                                                     # optional - sage.rings.finite_rings
+            sage: Q.dehomogenize(2)                                                     # optional - sage.libs.singular sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
@@ -1366,10 +1366,10 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: P.<x,y,z,w,t> = ProjectiveSpace(QQ, 4)
             sage: X = P.subscheme([y^6 - x^3*w^2*t + t^5*w, x^2 - t^2])
             sage: Q1 = X([1,0,2,1,1])
-            sage: Q1.multiplicity()
+            sage: Q1.multiplicity()                                                     # optional - sage.libs.singular
             1
             sage: Q2 = X([0,0,-2,1,0])
-            sage: Q2.multiplicity()
+            sage: Q2.multiplicity()                                                     # optional - sage.libs.singular
             8
         """
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
