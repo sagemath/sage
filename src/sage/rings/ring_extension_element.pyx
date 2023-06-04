@@ -106,12 +106,12 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = QQ.extension(x^2 - 2)
-            sage: K.<a> = A.over()  # over QQ
+            sage: A.<a> = QQ.extension(x^2 - 2)                                         # optional - sage.rings.number_field
+            sage: K.<a> = A.over()  # over QQ                                           # optional - sage.rings.number_field
 
-            sage: hasattr(a, 'continued_fraction')
+            sage: hasattr(a, 'continued_fraction')                                      # optional - sage.rings.number_field
             True
-            sage: a.continued_fraction()
+            sage: a.continued_fraction()                                                # optional - sage.rings.number_field
             [1; (2)*]
         """
         try:
@@ -140,10 +140,10 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = QQ.extension(x^2 - 2)
-            sage: K.<a> = A.over()
+            sage: A.<a> = QQ.extension(x^2 - 2)                                         # optional - sage.rings.number_field
+            sage: K.<a> = A.over()                                                      # optional - sage.rings.number_field
 
-            sage: dir(a)
+            sage: dir(a)                                                                # optional - sage.rings.number_field
             ['__abs__',
              '__add__',
              ...

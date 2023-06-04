@@ -712,9 +712,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.one()
             1
 
-            sage: m = SymmetricFunctions(ZZ).m()
-            sage: L = LazySymmetricFunctions(m)
-            sage: L.one()
+            sage: m = SymmetricFunctions(ZZ).m()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.modules
+            sage: L.one()                                                               # optional - sage.modules
             m[]
 
         """
@@ -733,9 +733,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.zero()
             0
 
-            sage: s = SymmetricFunctions(ZZ).s()
-            sage: L = LazySymmetricFunctions(s)
-            sage: L.zero()
+            sage: s = SymmetricFunctions(ZZ).s()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.modules
+            sage: L.zero()                                                              # optional - sage.modules
             0
 
             sage: L = LazyDirichletSeriesRing(ZZ, 'z')
@@ -807,11 +807,11 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.has_coerce_map_from(GF(2))                                          # optional - sage.rings.finite_rings
             True
 
-            sage: s = SymmetricFunctions(GF(2)).s()                                     # optional - sage.rings.finite_rings
-            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.rings.finite_rings
-            sage: L.has_coerce_map_from(ZZ)                                             # optional - sage.rings.finite_rings
+            sage: s = SymmetricFunctions(GF(2)).s()                                     # optional - sage.modules sage.rings.finite_rings
+            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.modules sage.rings.finite_rings
+            sage: L.has_coerce_map_from(ZZ)                                             # optional - sage.modules sage.rings.finite_rings
             True
-            sage: L.has_coerce_map_from(GF(2))                                          # optional - sage.rings.finite_rings
+            sage: L.has_coerce_map_from(GF(2))                                          # optional - sage.modules sage.rings.finite_rings
             True
         """
         if self.base_ring().has_coerce_map_from(S):
@@ -2237,27 +2237,26 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
     EXAMPLES::
 
-        sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
-        sage: S = NCSF.Complete()
-        sage: L = S.formal_series_ring()
-        sage: L
-        Lazy completion of Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
+        sage: NCSF = NonCommutativeSymmetricFunctions(QQ)                               # optional - sage.modules
+        sage: S = NCSF.Complete()                                                       # optional - sage.modules
+        sage: L = S.formal_series_ring(); L                                             # optional - sage.modules
+        Lazy completion of Non-Commutative Symmetric Functions
+         over the Rational Field in the Complete basis
 
-        sage: f = 1 / (1 - L(S[1]))
-        sage: f
-        S[] + S[1] + (S[1,1]) + (S[1,1,1]) + (S[1,1,1,1]) + (S[1,1,1,1,1]) + (S[1,1,1,1,1,1]) + O^7
-        sage: g = 1 / (1 - L(S[2]))
-        sage: g
+        sage: f = 1 / (1 - L(S[1])); f                                                  # optional - sage.modules
+        S[] + S[1] + (S[1,1]) + (S[1,1,1]) + (S[1,1,1,1]) + (S[1,1,1,1,1])
+         + (S[1,1,1,1,1,1]) + O^7
+        sage: g = 1 / (1 - L(S[2])); g                                                  # optional - sage.modules
         S[] + S[2] + (S[2,2]) + (S[2,2,2]) + O^7
-        sage: f * g
+        sage: f * g                                                                     # optional - sage.modules
         S[] + S[1] + (S[1,1]+S[2]) + (S[1,1,1]+S[1,2])
          + (S[1,1,1,1]+S[1,1,2]+S[2,2]) + (S[1,1,1,1,1]+S[1,1,1,2]+S[1,2,2])
          + (S[1,1,1,1,1,1]+S[1,1,1,1,2]+S[1,1,2,2]+S[2,2,2]) + O^7
-        sage: g * f
+        sage: g * f                                                                     # optional - sage.modules
         S[] + S[1] + (S[1,1]+S[2]) + (S[1,1,1]+S[2,1])
          + (S[1,1,1,1]+S[2,1,1]+S[2,2]) + (S[1,1,1,1,1]+S[2,1,1,1]+S[2,2,1])
          + (S[1,1,1,1,1,1]+S[2,1,1,1,1]+S[2,2,1,1]+S[2,2,2]) + O^7
-        sage: f * g - g * f
+        sage: f * g - g * f                                                             # optional - sage.modules
         (S[1,2]-S[2,1]) + (S[1,1,2]-S[2,1,1])
          + (S[1,1,1,2]+S[1,2,2]-S[2,1,1,1]-S[2,2,1])
          + (S[1,1,1,1,2]+S[1,1,2,2]-S[2,1,1,1,1]-S[2,2,1,1]) + O^7
@@ -2272,23 +2271,23 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
             sage: LazySymmetricFunctions.options.halting_precision(6)
 
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: L = LazySymmetricFunctions(s)
-            sage: TestSuite(L).run()
+            sage: s = SymmetricFunctions(QQ).s()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.modules
+            sage: TestSuite(L).run()                                                    # optional - sage.modules
 
-            sage: p = SymmetricFunctions(GF(5)).p()                                     # optional - sage.rings.finite_rings
-            sage: L = LazySymmetricFunctions(p)                                         # optional - sage.rings.finite_rings
-            sage: TestSuite(L).run()                                                    # optional - sage.rings.finite_rings
+            sage: p = SymmetricFunctions(GF(5)).p()                                     # optional - sage.modules sage.rings.finite_rings
+            sage: L = LazySymmetricFunctions(p)                                         # optional - sage.modules sage.rings.finite_rings
+            sage: TestSuite(L).run()                                                    # optional - sage.modules sage.rings.finite_rings
 
         Reversion will only work when the base ring is a field::
 
-            sage: s = SymmetricFunctions(ZZ).s()
-            sage: L = LazySymmetricFunctions(s)
-            sage: TestSuite(L).run(skip=['_test_revert'])
+            sage: s = SymmetricFunctions(ZZ).s()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.modules
+            sage: TestSuite(L).run(skip=['_test_revert'])                               # optional - sage.modules
 
-            sage: s = SymmetricFunctions(QQ["q"]).s()
-            sage: L = LazySymmetricFunctions(s)
-            sage: TestSuite(L).run(skip=['_test_revert'])
+            sage: s = SymmetricFunctions(QQ["q"]).s()                                   # optional - sage.modules
+            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.modules
+            sage: TestSuite(L).run(skip=['_test_revert'])                               # optional - sage.modules
 
         Options are remembered across doctests::
 
@@ -2297,15 +2296,15 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         Check that :trac:`34470` is fixed.  The ideal generated by
         `p[1]` and `p[2]` is not principal::
 
-            sage: p = SymmetricFunctions(QQ).p()
-            sage: L = LazySymmetricFunctions(s)
-            sage: L in PrincipalIdealDomains
+            sage: p = SymmetricFunctions(QQ).p()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.modules
+            sage: L in PrincipalIdealDomains                                            # optional - sage.modules
             False
 
         Check that a basis which is not graded is not enough::
 
-            sage: ht = SymmetricFunctions(ZZ).ht()
-            sage: L = LazySymmetricFunctions(ht)
+            sage: ht = SymmetricFunctions(ZZ).ht()                                      # optional - sage.modules
+            sage: L = LazySymmetricFunctions(ht)                                        # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: basis should be in GradedAlgebrasWithBasis
@@ -2344,8 +2343,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: s = SymmetricFunctions(GF(2)).s()                                     # optional - sage.rings.finite_rings
-            sage: LazySymmetricFunctions(s)                                             # optional - sage.rings.finite_rings
+            sage: s = SymmetricFunctions(GF(2)).s()                                     # optional - sage.modules sage.rings.finite_rings
+            sage: LazySymmetricFunctions(s)                                             # optional - sage.modules sage.rings.finite_rings
             Lazy completion of Symmetric Functions over Finite Field of size 2 in the Schur basis
         """
         return "Lazy completion of {}".format(self._laurent_poly_ring)
@@ -2356,9 +2355,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: s = SymmetricFunctions(GF(2)).s()                                     # optional - sage.rings.finite_rings
-            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.rings.finite_rings
-            sage: latex(L)                                                              # optional - sage.rings.finite_rings
+            sage: s = SymmetricFunctions(GF(2)).s()                                     # optional - sage.modules sage.rings.finite_rings
+            sage: L = LazySymmetricFunctions(s)                                         # optional - sage.modules sage.rings.finite_rings
+            sage: latex(L)                                                              # optional - sage.modules sage.rings.finite_rings
             \text{\texttt{Symmetric{ }Functions{ }over{ }Finite{ }Field{ }of{ }size{ }2{ }in{ }the{ }Schur{ }basis}}
         """
         from sage.misc.latex import latex
@@ -2370,10 +2369,10 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: m = SymmetricFunctions(ZZ).m()
-            sage: s = SymmetricFunctions(ZZ).s()
-            sage: L = LazySymmetricFunctions(m)
-            sage: L._monomial(s[2,1], 3)
+            sage: m = SymmetricFunctions(ZZ).m()                                        # optional - sage.modules
+            sage: s = SymmetricFunctions(ZZ).s()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.modules
+            sage: L._monomial(s[2,1], 3)                                                # optional - sage.modules
             2*m[1, 1, 1] + m[2, 1]
         """
         L = self._laurent_poly_ring
@@ -2395,63 +2394,66 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: m = SymmetricFunctions(GF(2)).m()                                     # optional - sage.rings.finite_rings
-            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.rings.finite_rings
-            sage: L(2)                                                                  # optional - sage.rings.finite_rings
+            sage: m = SymmetricFunctions(GF(2)).m()                                     # optional - sage.modules sage.rings.finite_rings
+            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.modules sage.rings.finite_rings
+            sage: L(2)                                                                  # optional - sage.modules sage.rings.finite_rings
             0
-            sage: L(3)                                                                  # optional - sage.rings.finite_rings
+            sage: L(3)                                                                  # optional - sage.modules sage.rings.finite_rings
             m[]
 
-            sage: m = SymmetricFunctions(ZZ).m()
-            sage: L = LazySymmetricFunctions(m)
-            sage: f = L(lambda i: m([i]), valuation=5, degree=10); f
+            sage: m = SymmetricFunctions(ZZ).m()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.modules
+            sage: f = L(lambda i: m([i]), valuation=5, degree=10); f                    # optional - sage.modules
             m[5] + m[6] + m[7] + m[8] + m[9]
 
-            sage: f.coefficient(6)
+            sage: f.coefficient(6)                                                      # optional - sage.modules
             m[6]
-            sage: f[20]
+            sage: f[20]                                                                 # optional - sage.modules
             0
 
         Alternatively, ``x`` can be a list of elements of the base ring.
         Then these elements are read as coefficients of the terms of
         degrees starting from the ``valuation``::
 
-            sage: f = L([m[1],m[2],m[3]], valuation=1); f
+            sage: f = L([m[1],m[2],m[3]], valuation=1); f                               # optional - sage.modules
             m[1] + m[2] + m[3]
 
         Finally, ``x`` can be a symmetric function::
 
-            sage: m = SymmetricFunctions(ZZ).m()
-            sage: s = SymmetricFunctions(ZZ).s()
-            sage: L = LazySymmetricFunctions(m)
-            sage: L(s.an_element())
+            sage: m = SymmetricFunctions(ZZ).m()                                        # optional - sage.modules
+            sage: s = SymmetricFunctions(ZZ).s()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.modules
+            sage: L(s.an_element())                                                     # optional - sage.modules
             2*m[] + 2*m[1] + (3*m[1,1]+3*m[2])
 
         TESTS::
 
-            sage: e = SymmetricFunctions(ZZ).e()
-            sage: h = SymmetricFunctions(ZZ).h()
-            sage: L = LazySymmetricFunctions(tensor([h, e]))
-            sage: L(lambda n: 0)
+            sage: e = SymmetricFunctions(ZZ).e()                                        # optional - sage.modules
+            sage: h = SymmetricFunctions(ZZ).h()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(tensor([h, e]))                            # optional - sage.modules
+            sage: L(lambda n: 0)                                                        # optional - sage.modules
             O^7
 
-            sage: L(lambda n: tensor([h[n], e([])]) + tensor([h([]), e[n]]), degree=3)
+            sage: L(lambda n: tensor([h[n], e([])]) + tensor([h([]), e[n]]), degree=3)  # optional - sage.modules
             (2*h[]#e[]) + (h[]#e[1]+h[1]#e[]) + (h[]#e[2]+h[2]#e[])
 
-            sage: L(lambda n: n)[3];
+            sage: L(lambda n: n)[3];                                                    # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: coefficient 3*h[] # e[] should be an element of homogeneous degree 3 but has degree 0
+            ValueError: coefficient 3*h[] # e[] should be an element
+            of homogeneous degree 3 but has degree 0
 
-            sage: L([1, 2, 3]);
+            sage: L([1, 2, 3]);                                                         # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: coefficient 2*h[] # e[] should be an element of homogeneous degree 1 but has degree 0
+            ValueError: coefficient 2*h[] # e[] should be an element
+            of homogeneous degree 1 but has degree 0
 
-            sage: L(lambda n: n, degree=3);
+            sage: L(lambda n: n, degree=3);                                             # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: coefficient h[] # e[] should be an element of homogeneous degree 1 but has degree 0
+            ValueError: coefficient h[] # e[] should be an element
+            of homogeneous degree 1 but has degree 0
         """
         if valuation is None:
             valuation = 0
@@ -2566,9 +2568,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: m = SymmetricFunctions(ZZ).m()
-            sage: L = LazySymmetricFunctions(m)
-            sage: L.an_element()
+            sage: m = SymmetricFunctions(ZZ).m()                                        # optional - sage.modules
+            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.modules
+            sage: L.an_element()                                                        # optional - sage.modules
             2*m[] + 2*m[1] + 3*m[2]
         """
         return self(self._laurent_poly_ring.an_element())
@@ -2579,9 +2581,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: m = SymmetricFunctions(GF(5)).m()                                     # optional - sage.rings.finite_rings
-            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.rings.finite_rings
-            sage: L.some_elements()[:5]                                                 # optional - sage.rings.finite_rings
+            sage: m = SymmetricFunctions(GF(5)).m()                                     # optional - sage.modules sage.rings.finite_rings
+            sage: L = LazySymmetricFunctions(m)                                         # optional - sage.modules sage.rings.finite_rings
+            sage: L.some_elements()[:5]                                                 # optional - sage.modules sage.rings.finite_rings
             [0, m[], 2*m[] + 2*m[1] + 3*m[2], 2*m[1] + 3*m[2],
              3*m[] + 2*m[1] + (m[1,1]+m[2])
                    + (2*m[1,1,1]+m[3])
@@ -2590,10 +2592,10 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                    + (2*m[2,2,1,1]+m[2,2,2]+2*m[3,2,1]+2*m[3,3]+m[4,1,1]+3*m[4,2]+4*m[5,1]+4*m[6])
                    + O^7]
 
-            sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
-            sage: S = NCSF.Complete()
-            sage: L = S.formal_series_ring()
-            sage: L.some_elements()[:4]
+            sage: NCSF = NonCommutativeSymmetricFunctions(QQ)                           # optional - sage.modules
+            sage: S = NCSF.Complete()                                                   # optional - sage.modules
+            sage: L = S.formal_series_ring()                                            # optional - sage.modules
+            sage: L.some_elements()[:4]                                                 # optional - sage.modules
             [0, S[], 2*S[] + 2*S[1] + (3*S[1,1]), 2*S[1] + (3*S[1,1])]
 
         """
@@ -2632,13 +2634,15 @@ class LazySymmetricFunctions(LazyCompletionGradedAlgebra):
 
     EXAMPLES::
 
-        sage: s = SymmetricFunctions(ZZ).s()
-        sage: LazySymmetricFunctions(s)
+        sage: s = SymmetricFunctions(ZZ).s()                                            # optional - sage.modules
+        sage: LazySymmetricFunctions(s)                                                 # optional - sage.modules
         Lazy completion of Symmetric Functions over Integer Ring in the Schur basis
 
-        sage: m = SymmetricFunctions(ZZ).m()
-        sage: LazySymmetricFunctions(tensor([s, m]))
-        Lazy completion of Symmetric Functions over Integer Ring in the Schur basis # Symmetric Functions over Integer Ring in the monomial basis
+        sage: m = SymmetricFunctions(ZZ).m()                                            # optional - sage.modules
+        sage: LazySymmetricFunctions(tensor([s, m]))                                    # optional - sage.modules
+        Lazy completion of
+         Symmetric Functions over Integer Ring in the Schur basis
+          # Symmetric Functions over Integer Ring in the monomial basis
     """
     Element = LazySymmetricFunction
 
