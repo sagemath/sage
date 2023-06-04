@@ -5081,7 +5081,7 @@ cdef class Matroid(SageObject):
             False
             sage: matroids.named_matroids.BetsyRoss().is_kconnected(3)
             True
-            sage: matroids.AG(5,2).is_kconnected(4)
+            sage: matroids.AG(5,2).is_kconnected(4)                                     # optional - sage.rings.finite_rings
             True
             sage: M = matroids.named_matroids.R6()
             sage: M.is_kconnected(3)
@@ -6295,12 +6295,12 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Uniform(2,4)
             sage: [M._is_circuit_chordal(C) for C in M.circuits()]
             [False, False, False, False]
-            sage: M = matroids.named_matroids.Fano()
-            sage: M._is_circuit_chordal(frozenset(['b','c','d']))
+            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M._is_circuit_chordal(frozenset(['b','c','d']))                       # optional - sage.rings.finite_rings
             False
-            sage: M._is_circuit_chordal(frozenset(['b','c','d']), certificate=True)
+            sage: M._is_circuit_chordal(frozenset(['b','c','d']), certificate=True)     # optional - sage.rings.finite_rings
             (False, None)
-            sage: M._is_circuit_chordal(frozenset(['a','b','d','e']))
+            sage: M._is_circuit_chordal(frozenset(['a','b','d','e']))                   # optional - sage.rings.finite_rings
             True
         """
         cdef set X
@@ -7926,11 +7926,11 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: A = M.augmented_bergman_complex(); A                                  # optional - sage.rings.finite_rings
+            sage: A = M.augmented_bergman_complex(); A                                  # optional - sage.graphs sage.rings.finite_rings
             Simplicial complex with 22 vertices and 91 facets
 
             sage: M = matroids.Uniform(2,3)
-            sage: A = M.augmented_bergman_complex(); A
+            sage: A = M.augmented_bergman_complex(); A                                  # optional - sage.graphs
             Simplicial complex with 7 vertices and 9 facets
 
         Both the independent set complex of the matroid and the usual
