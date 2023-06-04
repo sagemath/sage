@@ -90,7 +90,7 @@ exclude sage/groups/perm_gps/partn_ref/refinement_matrices.p*  # needs matrices
 # but sage.functions currently depends on basic rings (QQ etc)
 include sage/arith/*.*
 include sage/calculus/functional.p*
-# include sage/calculus/functions.p*  -- needs matrices
+include sage/calculus/functions.p*
 include sage/misc/derivative.p*
 include sage/misc/functional.p*
 include sage/symbolic/symbols.p*
@@ -189,6 +189,7 @@ include sage/combinat/permutation_cython.p*
 include sage/combinat/ranker.py                                         # for sage.sets.finite_set_map_cy
 include sage/combinat/subset.p*
 include sage/combinat/tools.p*
+include sage/combinat/tuple.p*
 # leave out partition - has complicated deps
 # leave out integer_vector_weighted - needs combinat.words.word
 include sage/combinat/subsets_hereditary.p*

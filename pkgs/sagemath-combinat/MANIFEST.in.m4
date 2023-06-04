@@ -16,7 +16,7 @@ graft sage/monoids
 include sage/data_structures/stream.p*
 include sage/rings/lazy_series*.p*
 
-# included in sagemath-combinat
+# included in sagemath-categories
 prune sage/combinat/integer_lists
 exclude sage/combinat/integer_vector.p*
 exclude sage/combinat/backtrack.p*
@@ -30,6 +30,7 @@ exclude sage/combinat/permutation_cython.p*
 exclude sage/combinat/ranker.py                                         # for sage.sets.finite_set_map_cy
 exclude sage/combinat/subset.p*
 exclude sage/combinat/tools.p*
+exclude sage/combinat/tuple.p*
 exclude sage/combinat/subsets_hereditary.p*
 exclude sage/combinat/subsets_pairwise.p*
 exclude sage/combinat/dlx.p*

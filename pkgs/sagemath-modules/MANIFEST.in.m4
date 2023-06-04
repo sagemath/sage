@@ -51,6 +51,8 @@ exclude sage/modules/vector_mod2*.*     # depends on m4ri
 exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 prune sage/modules/fp_graded
 
+include sage/geometry/toric_lattice*.p*
+
 # Also just modules
 graft sage/groups/additive_abelian
 
@@ -61,10 +63,11 @@ include sage/combinat/family.py       # until https://trac.sagemath.org/ticket/3
 
 # root_system; could also instead go to sagemath-polyhedra (which has hyperplane arrangements)
 graft sage/combinat/root_system
-exclude sage/combinat/root_system/reflection_group_c.p*
+exclude sage/combinat/root_system/reflection_group_c.p*                 # cimports PermutationGroupElement
 exclude sage/combinat/root_system/reflection_group_element.p*
 
 include sage/algebras/algebra.py
+include sage/algebras/catalog.py
 graft sage/algebras/finite_dimensional_algebras  # for hyperplane arrangements
 include sage/algebras/group_algebra.py
 
@@ -134,7 +137,7 @@ include sage/rings/function_field/derivations_rational.p*                # modul
 include sage/rings/function_field/differential.p*                        # module elements
 include sage/rings/function_field/divisor.p*                             # module elements
 include sage/rings/function_field/hermite_form_polynomial.p*             # cimports Matrix
-include sage/rings/function_field/valuation.p*                           # ??
+#include sage/rings/function_field/valuation.p*                           # ??
 
 include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimports Matrix
 
