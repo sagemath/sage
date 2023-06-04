@@ -269,13 +269,13 @@ class Fields(CategoryWithAxiom):
             Check :trac:`23012`::
 
                 sage: R.<x> = QQ[]
-                sage: Q = R.quotient(x^2-1)   # Not a field
-                sage: P.<x> = Q[]
+                sage: Q = R.quotient(x^2 - 1)   # Not a field                           # optional - sage.libs.pari
+                sage: P.<x> = Q[]                                                       # optional - sage.libs.pari
                 sage: def always_True(*args, **kwds): return True
-                sage: Q.is_field = always_True
-                sage: Q in Fields()
+                sage: Q.is_field = always_True                                          # optional - sage.libs.pari
+                sage: Q in Fields()                                                     # optional - sage.libs.pari
                 True
-                sage: Q._gcd_univariate_polynomial(x, x)
+                sage: Q._gcd_univariate_polynomial(x, x)                                # optional - sage.libs.pari
                 x
             """
             while b:
@@ -354,13 +354,13 @@ class Fields(CategoryWithAxiom):
             We check that the behavior of xgcd with zero elements is
             compatible with gcd (:trac:`17671`)::
 
-                sage: R.<x> = QQbar[]
-                sage: zero = R.zero()
-                sage: zero.xgcd(2*x)
+                sage: R.<x> = QQbar[]                                                   # optional - sage.rings.number_field
+                sage: zero = R.zero()                                                   # optional - sage.rings.number_field
+                sage: zero.xgcd(2*x)                                                    # optional - sage.rings.number_field
                 (x, 0, 1/2)
-                sage: (2*x).xgcd(zero)
+                sage: (2*x).xgcd(zero)                                                  # optional - sage.rings.number_field
                 (x, 1/2, 0)
-                sage: zero.xgcd(zero)
+                sage: zero.xgcd(zero)                                                   # optional - sage.rings.number_field
                 (0, 0, 0)
             """
             R = a.parent()

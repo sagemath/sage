@@ -472,7 +472,7 @@ class CoxeterGroups(Category_singleton):
             search forest), see :trac:`19926`::
 
                 sage: W = CoxeterGroup(['A',2])                                         # optional - sage.groups
-                sage: [x.length() for x in W]
+                sage: [x.length() for x in W]                                           # optional - sage.groups
                 [0, 1, 1, 2, 2, 3]
             """
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
