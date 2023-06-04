@@ -47,18 +47,17 @@ This example illustrates generators for a free module over `\ZZ`.
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.cpython.getattr import dir_with_other_class
 from sage.cpython.getattr cimport getattr_from_other_class
 from sage.categories.category import Category
-from sage.structure.debug_options cimport debug
 from sage.misc.cachefunc import cached_method
 from sage.structure.dynamic_class import DynamicMetaclass
 
@@ -668,7 +667,7 @@ cdef class CategoryObject(SageObject):
             sage: print(latex(f))
             5 x_{1}^{10} + x_{0}^{3}
         """
-        from sage.misc.latex import latex, latex_variable_name
+        from sage.misc.latex import latex_variable_name
         try:
             names = self._latex_names
             if names is not None:
@@ -676,7 +675,8 @@ cdef class CategoryObject(SageObject):
         except AttributeError:
             pass
         # Compute the latex versions of the variable names.
-        self._latex_names = [latex_variable_name(x) for x in self.variable_names()]
+        self._latex_names = [latex_variable_name(x)
+                             for x in self.variable_names()]
         return self._latex_names
 
     def latex_name(self):

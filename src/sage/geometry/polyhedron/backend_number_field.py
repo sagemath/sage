@@ -53,7 +53,7 @@ class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
              with sqrt5 = 2.236067977499790?)^3
          defined as the convex hull of 12 vertices
 
-        sage: x = polygen(ZZ); P = Polyhedron(                                     # optional - sage.rings.number_field
+        sage: x = polygen(ZZ); P = Polyhedron(                                          # optional - sage.rings.number_field sage.symbolic
         ....:     vertices=[[sqrt(2)], [AA.polynomial_root(x^3-2, RIF(0,3))]],
         ....:     backend='number_field')
         sage: P                                                                    # optional - sage.rings.number_field
@@ -75,10 +75,11 @@ class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
         sage: p = Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)], backend='number_field')        # optional - sage.rings.number_field
         sage: TestSuite(p).run()                                                            # optional - sage.rings.number_field
 
-        sage: K.<phi> = NumberField(x^2-x-1, embedding=1.618)                               # optional - sage.rings.number_field
-        sage: P1 = Polyhedron([[0,1], [1,1], [1,-phi+1]], backend='number_field')           # optional - sage.rings.number_field
-        sage: P2 = Polyhedron(ieqs=[[-1,-phi,0]], backend='number_field')                   # optional - sage.rings.number_field
-        sage: P1.intersection(P2)                                                           # optional - sage.rings.number_field
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<phi> = NumberField(x^2 - x - 1, embedding=1.618)                       # optional - sage.rings.number_field
+        sage: P1 = Polyhedron([[0,1], [1,1], [1,-phi+1]], backend='number_field')       # optional - sage.rings.number_field
+        sage: P2 = Polyhedron(ieqs=[[-1,-phi,0]], backend='number_field')               # optional - sage.rings.number_field
+        sage: P1.intersection(P2)                                                       # optional - sage.rings.number_field
         The empty polyhedron
          in (Number Field in phi with defining polynomial x^2 - x - 1
              with phi = 1.618033988749895?)^2

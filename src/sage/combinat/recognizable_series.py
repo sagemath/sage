@@ -441,6 +441,7 @@ class RecognizableSeries(ModuleElement):
         super(RecognizableSeries, self).__init__(parent=parent)
 
         from copy import copy
+        from sage.matrix.constructor import Matrix
         from sage.modules.free_module_element import vector
         from sage.sets.family import Family
 
@@ -456,7 +457,7 @@ class RecognizableSeries(ModuleElement):
             return m
 
         if isinstance(mu, dict):
-            mu = dict((a, immutable(M)) for a, M in mu.items())
+            mu = {a: Matrix(M, immutable=True) for a, M in mu.items()}
         mu = Family(mu)
 
         if not mu.is_finite():
