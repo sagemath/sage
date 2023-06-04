@@ -365,8 +365,8 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             [                      1                    -1/2                       0]
             [                   -1/2                       1 1/2*E(5)^2 + 1/2*E(5)^3]
             [                      0 1/2*E(5)^2 + 1/2*E(5)^3                       1]
-            sage: C = CoxeterMatrix([[1,-1,-1],[-1,1,-1],[-1,-1,1]])
-            sage: C.bilinear_form()
+            sage: C = CoxeterMatrix([[1,-1,-1],[-1,1,-1],[-1,-1,1]])                    # optional - sage.graphs
+            sage: C.bilinear_form()                                                     # optional - sage.graphs
             [ 1 -1 -1]
             [-1  1 -1]
             [-1 -1  1]

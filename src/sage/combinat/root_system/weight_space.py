@@ -318,7 +318,7 @@ class WeightSpace(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: L = RootSystem(["C",4]).weight_lattice()
-            sage: L.simple_root(3)
+            sage: L.simple_root(3)                                                      # optional - sage.graphs
             -Lambda[2] + 2*Lambda[3] - Lambda[4]
 
         Its coefficients are given by the corresponding column of the
@@ -332,7 +332,7 @@ class WeightSpace(CombinatorialFreeModule):
 
         Here are all simple roots::
 
-            sage: L.simple_roots()
+            sage: L.simple_roots()                                                      # optional - sage.graphs
             Finite family {1:  2*Lambda[1]   - Lambda[2],
                            2:   -Lambda[1] + 2*Lambda[2]   - Lambda[3],
                            3:   -Lambda[2] + 2*Lambda[3]   - Lambda[4],
@@ -343,7 +343,7 @@ class WeightSpace(CombinatorialFreeModule):
         `\delta`, where `\delta` is the null root::
 
             sage: L = RootSystem(["C",4,1]).weight_lattice(extended=True)
-            sage: L.simple_root(0)
+            sage: L.simple_root(0)                                                      # optional - sage.graphs
             2*Lambda[0] - 2*Lambda[1] + delta
 
         In fact `\delta` is really `1/a_0` times the null root (see
@@ -351,9 +351,9 @@ class WeightSpace(CombinatorialFreeModule):
         but this only makes a difference in type `BC`::
 
             sage: L = RootSystem(CartanType(["BC",4,2])).weight_lattice(extended=True)
-            sage: L.simple_root(0)
+            sage: L.simple_root(0)                                                      # optional - sage.graphs
             2*Lambda[0] - Lambda[1] + delta
-            sage: L.null_root()
+            sage: L.null_root()                                                         # optional - sage.graphs
             2*delta
 
         .. SEEALSO::
@@ -498,7 +498,7 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
 
             sage: R = RootSystem(["A",3])
             sage: alpha = R.weight_space().roots()                                      # optional - sage.graphs
-            sage: alphacheck = R.coweight_space().roots()
+            sage: alphacheck = R.coweight_space().roots()                               # optional - sage.graphs
             sage: alpha[1].scalar(alphacheck[1])                                        # optional - sage.graphs
             Traceback (most recent call last):
             ...

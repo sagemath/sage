@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.gap
 r"""
 Finite complex reflection groups
 ----------------------------------

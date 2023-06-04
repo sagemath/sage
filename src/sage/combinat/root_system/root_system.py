@@ -119,7 +119,6 @@ class RootSystem(UniqueRepresentation, SageObject):
     `\alpha_i`, where `c` is the coefficient of
     `i` in `x`::
 
-        sage: s = space.simple_reflections()
         sage: Lambda[1].simple_reflection(1)
         -Lambda[1] + Lambda[2]
         sage: Lambda[2].simple_reflection(1)
@@ -132,12 +131,12 @@ class RootSystem(UniqueRepresentation, SageObject):
     It can be convenient to manipulate the simple reflections
     themselves::
 
-        sage: s = space.simple_reflections()
-        sage: s[1](Lambda[1])
+        sage: s = space.simple_reflections()                                            # optional - sage.graphs
+        sage: s[1](Lambda[1])                                                           # optional - sage.graphs
         -Lambda[1] + Lambda[2]
-        sage: s[1](Lambda[2])
+        sage: s[1](Lambda[2])                                                           # optional - sage.graphs
         Lambda[2]
-        sage: s[1](Lambda[3])
+        sage: s[1](Lambda[3])                                                           # optional - sage.graphs
         Lambda[3]
 
     .. RUBRIC:: Ambient spaces

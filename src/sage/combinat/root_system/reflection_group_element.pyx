@@ -27,7 +27,6 @@ from sage.misc.misc_c import prod
 from sage.arith.functions import lcm
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.interfaces.gap3 import gap3
 from sage.combinat.root_system.reflection_group_c import reduced_word_c, reduce_in_coset
 from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix
@@ -1169,6 +1168,8 @@ def _gap_factorization(w, gens):
         sage: [_gap_factorization(w,gens) for w in W]                   # optional - gap3
         [[], [1], [0], [0, 1], [1, 0], [0, 1, 0]]
     """
+    from sage.interfaces.gap3 import gap3
+
     gap3.execute('W := GroupWithGenerators(%s)'%str(gens))
     gap3.execute(_gap_factorization_code)
     fac = gap3('MinimalWord(W,%s)'%str(w)).sage()
