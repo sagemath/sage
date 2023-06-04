@@ -945,6 +945,7 @@ def find_post_isomorphism(phi, psi):
 
         sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
         sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+        sage: x = polygen(ZZ, 'x')
         sage: F.<i> = GF(883^2, modulus=x^2+1)
         sage: E = EllipticCurve(F, [1,0])
         sage: P = E.lift_x(117)

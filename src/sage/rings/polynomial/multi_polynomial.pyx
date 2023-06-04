@@ -15,7 +15,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
 from sage.combinat.integer_lists.invlex import IntegerListsLex
-from itertools import chain, islice
+from itertools import chain
 
 from sage.misc.misc_c import prod
 
@@ -30,7 +30,7 @@ from sage.categories.map cimport Map
 from sage.modules.free_module_element import vector
 from sage.rings.rational_field import QQ
 from sage.rings.complex_interval_field import ComplexIntervalField
-from sage.rings.real_mpfr import RealField_class, RealField
+from sage.rings.real_mpfr import RealField
 
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_element cimport Polynomial

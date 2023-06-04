@@ -47,7 +47,7 @@ from sage.libs.gmp.mpz cimport *
 from sage.arith.long cimport pyobject_to_long, is_small_python_int
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
-from sage.structure.element cimport ModuleElement, Element
+from sage.structure.element cimport Element
 from sage.structure.element import coerce_binop
 
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
@@ -70,7 +70,7 @@ from sage.libs.ntl.ZZX cimport *
 from sage.rings.complex_arb cimport ComplexBall
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.real_arb cimport RealBall
-from sage.rings.real_mpfr cimport RealNumber, RealField_class
+from sage.rings.real_mpfr cimport RealNumber
 from sage.rings.real_mpfi cimport RealIntervalFieldElement
 
 from sage.rings.polynomial.evaluation_flint cimport fmpz_poly_evaluation_mpfr, fmpz_poly_evaluation_mpfi

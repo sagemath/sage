@@ -30,15 +30,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import math
-import operator
 import weakref
 
 import sage.misc.misc
 
 from sage.libs.mpfr cimport *
 
-from sage.structure.element cimport FieldElement, RingElement, Element, ModuleElement
+from sage.structure.element cimport RingElement, Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.structure.parent import Parent
@@ -48,7 +46,7 @@ from sage.misc.sage_eval import sage_eval
 
 import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
-from . import ring, infinity
+from . import infinity
 from .integer cimport Integer
 
 from .complex_double cimport ComplexDoubleElement
@@ -464,6 +462,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             1.00000000000000*I
             sage: CC.gen() + QQ[I].gen()
             2.00000000000000*I
+            sage: x = polygen(ZZ, 'x')
             sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()
             Traceback (most recent call last):
             ...
@@ -494,7 +493,8 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
         Check that :trac:`14989` is fixed::
 
-            sage: QQi = NumberField(x^2+1, 'i', embedding=CC(0,1))
+            sage: x = polygen(ZZ, 'x')
+            sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))
             sage: i = QQi.order(QQi.gen()).gen(1)
             sage: CC(i)
             1.00000000000000*I

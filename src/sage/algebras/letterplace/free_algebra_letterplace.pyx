@@ -115,8 +115,6 @@ TESTS::
     algebras with different term orderings, yet.
 
 """
-
-from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.singular.function import lib, singular_function
 from sage.libs.singular.function cimport RingWrap

@@ -25,7 +25,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
@@ -38,7 +38,6 @@ from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 from .quaternion_algebra_element cimport QuaternionAlgebraElement_rational_field
 
 from sage.libs.gmp.mpz cimport mpz_t, mpz_lcm, mpz_init, mpz_set, mpz_clear, mpz_init_set, mpz_mul, mpz_fdiv_q, mpz_cmp_si
-from sage.libs.gmp.mpq cimport mpq_set_num, mpq_set_den, mpq_canonicalize
 
 from sage.libs.flint.fmpz cimport fmpz_set_mpz
 from sage.libs.flint.fmpq cimport fmpq_canonicalise

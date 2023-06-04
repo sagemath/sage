@@ -132,9 +132,9 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.misc.superseded import deprecation_cython as deprecation
 
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.element cimport have_same_parent
-from sage.structure.richcmp cimport rich_to_bool_sgn, rich_to_bool
+from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
 

@@ -24,12 +24,11 @@ from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_one
 from sage.libs.gmp.mpq cimport *
 from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
-from sage.misc.verbose import get_verbose, verbose
+from sage.misc.verbose import verbose
 from sage.modules.vector_integer_sparse cimport *
 from sage.modules.vector_modn_sparse cimport *
 from sage.modules.vector_rational_sparse cimport *
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr cimport RealNumber
 
