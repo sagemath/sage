@@ -20,11 +20,11 @@ alternatively do:
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
+from .all__sagemath_schemes import *
 from .all__sagemath_symbolics import *
 
 from sage.misc.lazy_import import lazy_import
 
-from sage.dynamics.arithmetic_dynamics.all import *
 from sage.dynamics.cellular_automata.all import *
 
 # Discrete dynamical systems

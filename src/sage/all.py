@@ -90,10 +90,9 @@ from sage.modules.all    import *
 from sage.all__sagemath_combinat import *
 
 from sage.algebras.all   import *
-from sage.modular.all    import *
 from sage.sat.all        import *
-from sage.schemes.all    import *
 
+from sage.all__sagemath_schemes import *
 from sage.all__sagemath_graphs import *
 
 from sage.groups.all     import *

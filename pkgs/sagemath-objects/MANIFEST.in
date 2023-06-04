@@ -83,7 +83,7 @@ include sage/groups/old.*
 
 
 graft sage/libs/gmp
-
+include sage/libs/gmpxx.pxd
 
 
 ## What we do not want:
