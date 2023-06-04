@@ -98,7 +98,7 @@ def _iter_vectors(n, lower, upper, step=None):
             raise ValueError("Expected n>0 but got %d <= 0" % n)
         step = n
 
-    assert(step > 0)
+    assert step > 0
     if step == 1:
         for x in range(lower, upper):
             v = vector(ZZ, n)
@@ -473,7 +473,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             b_ = self._G[i]
             c_ = c.dot_product(b_) / b_.dot_product(b_)
             sigma_ = sigma / b_.norm()
-            assert(sigma_ > 0)
+            assert sigma_ > 0
             z = DiscreteGaussianDistributionIntegerSampler(sigma=sigma_, c=c_, algorithm="uniform+online")()
             c = c - z * B[i]
             v = v + z * B[i]

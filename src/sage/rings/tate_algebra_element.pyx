@@ -20,14 +20,13 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool_sgn
 from sage.structure.element import coerce_binop
 
 from sage.structure.element cimport Element
 from sage.structure.element cimport MonoidElement
 from sage.structure.element cimport CommutativeAlgebraElement
-from sage.structure.sequence import Sequence
 
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
@@ -260,9 +259,7 @@ cdef class TateAlgebraTerm(MonoidElement):
             ...00000000010*x*y
             sage: T(2*x*y)._latex_()
             '...00000000010xy'
-
         """
-        from sage.misc.latex import latex
         parent = self._parent
         s = ""
         if self._coeff._is_atomic() or (-self._coeff)._is_atomic():
@@ -1258,9 +1255,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             ...0000000001*x^3 + ...0000000001*x + ...00000000010*x^2
             sage: f._latex_()
             '...0000000001x^{3} + ...0000000001x + ...00000000010x^{2}'
-
         """
-        from sage.misc.latex import latex
         base = self._parent.base_ring()
         nvars = self._parent.ngens()
         vars = self._parent.variable_names()

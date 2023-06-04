@@ -61,13 +61,11 @@ from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.richcmp cimport rich_to_bool
-from sage.structure.sequence import Sequence
 
 from sage.misc.misc_c import prod
 from sage.misc.randstate cimport randstate, current_randstate, SAGE_RAND_MAX
 
 cimport sage.rings.integer as integer
-cimport sage.rings.rational as rational
 
 from . import ring
 

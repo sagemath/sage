@@ -696,14 +696,14 @@ def coefficients_from_j(j, minimal_twist=True):
     if K not in _Fields:
         K = K.fraction_field()
 
-    char=K.characteristic()
-    if char==2:
+    char = K.characteristic()
+    if char == 2:
         if j == 0:
             return Sequence([0, 0, 1, 0, 0], universe=K)
         else:
             return Sequence([1, 0, 0, 0, 1/j], universe=K)
     if char == 3:
-        if j==0:
+        if j == 0:
             return Sequence([0, 0, 0, 1, 0], universe=K)
         else:
             return Sequence([0, j, 0, 0, -j**2], universe=K)
@@ -717,7 +717,7 @@ def coefficients_from_j(j, minimal_twist=True):
             return Sequence([0, 0, 0, -1, 0], universe=K) # 32a2
 
         if not minimal_twist:
-            k=j-1728
+            k = j-1728
             return Sequence([0, 0, 0, -3*j*k, -2*j*k**2], universe=K)
 
         n = j.numerator()
@@ -729,7 +729,7 @@ def coefficients_from_j(j, minimal_twist=True):
         from sage.sets.set import Set
         for p in Set(n.prime_divisors()+m.prime_divisors()):
             e = min(a4.valuation(p)//2,a6.valuation(p)//3)
-            if e>0:
+            if e > 0:
                 p = p**e
                 a4 /= p**2
                 a6 /= p**3
@@ -754,7 +754,7 @@ def coefficients_from_j(j, minimal_twist=True):
         return Sequence([0, 0, 0, 0, 1], universe=K)
     if j == 1728:
         return Sequence([0, 0, 0, 1, 0], universe=K)
-    k=j-1728
+    k = j-1728
     return Sequence([0, 0, 0, -3*j*k, -2*j*k**2], universe=K)
 
 
@@ -1112,7 +1112,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     # Test whether P is a flex; if not test whether there are any rational flexes:
 
     hessian = Matrix([[F.derivative(v1, v2) for v1 in R.gens()] for v2 in R.gens()]).det()
-    if P and hessian(P)==0:
+    if P and hessian(P) == 0:
         flex_point = P
     else:
         flexes = C.intersection(Curve(hessian)).rational_points()
@@ -1174,11 +1174,11 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         if not P:
             raise ValueError('A point must be given when the cubic has no rational flexes')
         L = tangent_at_smooth_point(C,P)
-        Qlist = [Q for Q in C.intersection(Curve(L)).rational_points() if C(Q)!=CP]
+        Qlist = [Q for Q in C.intersection(Curve(L)).rational_points() if C(Q) != CP]
         # assert Qlist
         P2 = C(Qlist[0])
         L2 = tangent_at_smooth_point(C,P2)
-        Qlist = [Q for Q in C.intersection(Curve(L2)).rational_points() if C(Q)!=P2]
+        Qlist = [Q for Q in C.intersection(Curve(L2)).rational_points() if C(Q) != P2]
         # assert Qlist
         P3 = C(Qlist[0])
 
@@ -1345,7 +1345,7 @@ def chord_and_tangent(F, P):
         raise TypeError('{} does not define a point on a projective curve over {} defined by {}'.format(P,K,F))
 
     L = Curve(tangent_at_smooth_point(C,P))
-    Qlist = [Q for Q in C.intersection(L).rational_points() if Q!=P]
+    Qlist = [Q for Q in C.intersection(L).rational_points() if Q != P]
     if Qlist:
         return Qlist[0]
     return P

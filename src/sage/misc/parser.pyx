@@ -20,8 +20,6 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from libc.string cimport strchr
-from cpython.bytes cimport PyBytes_FromStringAndSize
 from cpython.list cimport PyList_Append
 
 import math
@@ -1097,4 +1095,4 @@ cdef class LookupNameMaker:
         except KeyError:
             if self.fallback is not None:
                 return self.fallback(name)
-            raise NameError("Unknown variable: '{}'".format(name))
+            raise NameError(f"Unknown variable: '{name}'")

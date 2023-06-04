@@ -65,11 +65,9 @@ from cysignals.signals cimport sig_on, sig_off
 import operator
 import fractions
 
-from sage.arith.long cimport pyobject_to_long, integer_check_long_py
+from sage.arith.long cimport integer_check_long_py
 from sage.cpython.string cimport char_to_str, str_to_bytes
 
-import sage.misc.misc as misc
-from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport rich_to_bool_sgn
 import sage.rings.rational_field
 
@@ -77,7 +75,6 @@ cimport sage.rings.integer as integer
 from .integer cimport Integer
 
 from .integer_ring import ZZ
-from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
 
 from sage.structure.coerce cimport is_numpy_type
 
@@ -85,7 +82,6 @@ from sage.libs.gmp.pylong cimport mpz_set_pylong
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element
-from sage.structure.element import coerce_binop
 from sage.structure.parent cimport Parent
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map

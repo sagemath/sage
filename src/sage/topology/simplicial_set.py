@@ -1862,7 +1862,7 @@ class SimplicialSet_arbitrary(Parent):
                     keep.update([f.nondegenerate() for f in data[underlying]])
                 else:
                     # x is a vertex
-                    assert(underlying.dimension() == 0)
+                    assert underlying.dimension() == 0
                     vertices.add(underlying)
         missing = set(nondegenerate_simplices).difference(keep)
         for x in missing:
@@ -3323,7 +3323,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         for x in simplices:
             if x not in data:
                 # x had better be a vertex.
-                assert(x.dimension() == 0)
+                assert x.dimension() == 0
                 data[x] = None
 
         # Check the simplicial identity d_i d_j = d_{j-1} d_i.

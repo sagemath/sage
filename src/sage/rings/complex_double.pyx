@@ -68,7 +68,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import operator
 from cpython.object cimport Py_NE
 
 from sage.misc.randstate cimport randstate, current_randstate
@@ -83,7 +82,7 @@ import sage.rings.abc
 cimport sage.rings.ring
 cimport sage.rings.integer
 
-from sage.structure.element cimport RingElement, Element, ModuleElement, FieldElement
+from sage.structure.element cimport Element, FieldElement
 from sage.structure.parent  cimport Parent
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.richcmp cimport rich_to_bool

@@ -153,7 +153,6 @@ import sage.categories.fields
 cimport sage.rings.abc
 cimport sage.rings.rational
 
-from cpython.float cimport PyFloat_AS_DOUBLE
 from cpython.int cimport PyInt_AS_LONG
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from cpython.complex cimport PyComplex_FromDoubles
@@ -169,13 +168,13 @@ from sage.libs.arb.acb_hypgeom cimport *
 from sage.libs.arb.acb_elliptic cimport *
 from sage.libs.arb.acb_modular cimport *
 from sage.libs.arb.acb_poly cimport *
-from sage.libs.arb.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_set_mpfr, arf_clear, arf_set_mag, arf_set, arf_is_nan
-from sage.libs.arb.mag cimport (mag_init, mag_clear, mag_add, mag_set_d,
-        MAG_BITS, mag_is_inf, mag_is_finite, mag_zero, mag_set_ui_2exp_si,
+from sage.libs.arb.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, arf_set, arf_is_nan
+from sage.libs.arb.mag cimport (mag_init, mag_clear, mag_set_d,
+        MAG_BITS, mag_zero, mag_set_ui_2exp_si,
         mag_mul_2exp_si)
-from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_get_mpz, fmpz_set_mpz, fmpz_clear, fmpz_abs
+from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_get_mpz, fmpz_set_mpz, fmpz_clear
 from sage.libs.flint.fmpq cimport fmpq_t, fmpq_init, fmpq_set_mpq, fmpq_clear
-from sage.libs.gmp.mpz cimport mpz_fits_ulong_p, mpz_fits_slong_p, mpz_get_ui, mpz_get_si, mpz_sgn
+from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_get_si
 from sage.libs.gsl.complex cimport gsl_complex_rect
 from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.complex_double cimport ComplexDoubleElement
@@ -189,13 +188,12 @@ from sage.rings.real_mpfi cimport RealIntervalField_class
 from sage.rings.real_mpfr cimport RealField_class, RealField, RealNumber
 from sage.rings.ring import Field
 import sage.rings.abc
-from sage.structure.element cimport Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.arith.long cimport is_small_python_int
 
 from sage.misc.lazy_string import lazy_string
 from sage.misc.superseded import deprecated_function_alias
-from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField, ComplexIntervalField_class
 from sage.rings.integer_ring import ZZ
 

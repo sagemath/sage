@@ -264,7 +264,7 @@ from sage.libs.mpfi cimport *
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 cimport sage.structure.element
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport RingElement, Element
 from sage.structure.element cimport have_same_parent
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
@@ -272,14 +272,10 @@ from sage.structure.richcmp cimport richcmp
 from .convert.mpfi cimport mpfi_set_sage
 from .real_mpfr cimport RealField_class, RealNumber, RealField
 from .integer cimport Integer
-from .real_double cimport RealDoubleElement
-from .real_double import RDF
 from .integer_ring import ZZ
 from .rational_field import QQ
-from sage.categories.morphism cimport Map
 
 cimport sage.rings.abc
-cimport sage.rings.real_mpfr as real_mpfr
 
 import math  # for log
 import sys
@@ -2937,8 +2933,9 @@ cdef class RealIntervalFieldElement(RingElement):
 
     def __rshift__(x, y):
         """
-        Returns `x / 2^y`, for `y` an integer. Much faster
-        than an ordinary division.
+        Return `x / 2^y`, for `y` an integer.
+
+        Much faster than an ordinary division.
 
         EXAMPLES::
 

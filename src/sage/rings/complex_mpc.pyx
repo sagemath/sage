@@ -69,7 +69,7 @@ from sage.libs.mpfr cimport *
 from sage.libs.mpc cimport *
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.libs.pari.all import pari
@@ -2578,5 +2578,5 @@ cdef class CCtoMPC(Map):
 
 
 # Support Python's numbers abstract base class
-import numbers
+# import numbers
 from sage.rings.complex_mpc import MPComplexNumber

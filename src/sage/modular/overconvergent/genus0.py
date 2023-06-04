@@ -972,8 +972,8 @@ class OverconvergentModularFormsSpace(Module):
         g = self._gsr.gen()
         answer = self._gsr(0)
         for i in range(n):
-            assert(x.valuation() >= i)
-            answer += (x[i] / self._basis_cache[i][i])*g**i
+            assert x.valuation() >= i
+            answer += (x[i] / self._basis_cache[i][i]) * g**i
             x = x - self._basis_cache[i] * answer[i]
         return answer + O(g**n)
 

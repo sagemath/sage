@@ -616,9 +616,9 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         cf_index = ZZ.zero()
         one = ZZ.one()
 
-        while(p not in cf_dict):
+        while p not in cf_dict:
             cf_dict[p] = cf_index
-            if (p == infinity):
+            if p == infinity:
                 # TODO: The choice of r doesn't matter?
                 r = ZZ.zero()
             #elif self.is_elliptic():
@@ -820,7 +820,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         number_of_ones.append(ones)
 
         initial_ones = number_of_ones.pop(0)
-        if len(list_larger) == 0:
+        if not list_larger:
             list_v1 = [-ZZ(1)]
             list_vlarger = [ initial_ones + 2 ]
         else:
@@ -836,7 +836,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         L_len = len(L)
         k = 0
-        while(k < L_len - 1):
+        while k < L_len - 1:
             if L[k][0] == L[k+1][0]:
                 k_entry = L.pop(k+1)
                 L[k][1] += k_entry[1]

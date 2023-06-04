@@ -78,13 +78,11 @@ from libc.math cimport log2, ceil
 
 from sage.libs.gmp.all cimport *
 
-import operator
-
 cdef bint use_32bit_type(int_fast64_t modulus):
     return modulus <= INTEGER_MOD_INT32_LIMIT
 
 from sage.arith.long cimport (
-    integer_check_long, integer_check_long_py, is_small_python_int, ERR_OVERFLOW)
+    integer_check_long, integer_check_long_py, is_small_python_int)
 
 import sage.rings.rational as rational
 
@@ -106,7 +104,7 @@ from sage.structure.richcmp cimport rich_to_bool_sgn, rich_to_bool
 import sage.structure.element
 cimport sage.structure.element
 coerce_binop = sage.structure.element.coerce_binop
-from sage.structure.element cimport RingElement, ModuleElement, Element
+from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 

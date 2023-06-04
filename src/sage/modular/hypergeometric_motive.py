@@ -687,11 +687,10 @@ class HypergeometricData():
         alpha = self._alpha
         beta = self._beta
         if flip_beta:
-            return(sum(1 for a in alpha if a <= x) -
-                   sum(1 for b in beta if 1 - b <= x))
-        else:
-            return(sum(1 for a in alpha if a <= x) -
-                   sum(1 for b in beta if b <= x))
+            return (sum(1 for a in alpha if a <= x) -
+                    sum(1 for b in beta if 1 - b <= x))
+        return (sum(1 for a in alpha if a <= x) -
+                sum(1 for b in beta if b <= x))
 
     def weight(self):
         """

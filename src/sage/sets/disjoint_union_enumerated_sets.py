@@ -262,8 +262,8 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         # facade  = options.pop('facade', True);
         # keepkey = options.pop('keepkey', False);
-        assert(isinstance(facade, bool))
-        assert(isinstance(keepkey, bool))
+        assert isinstance(facade, bool)
+        assert isinstance(keepkey, bool)
         return super().__classcall__(
             cls, Family(fam),
             facade=facade, keepkey=keepkey, category=category)

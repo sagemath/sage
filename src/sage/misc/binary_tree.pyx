@@ -63,7 +63,6 @@ cdef object binary_tree_get(binary_tree_node *self, int key):
 
 cdef object binary_tree_delete(binary_tree_node *self, int key):
     cdef object t
-    cdef binary_tree_node *cur
     if self.key > key:
         if self.left == NULL:
             return None

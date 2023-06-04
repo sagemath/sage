@@ -214,7 +214,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
                 # Let us hope that FreeModuleMorphism knows to handle
                 # that case
                 pass
-        if not(self.codomain().base_ring().has_coerce_map_from(self.domain().base_ring())) and not(A.is_zero()):
+        if not self.codomain().base_ring().has_coerce_map_from(self.domain().base_ring()) and not A.is_zero():
             raise TypeError("nontrivial morphisms require a coercion map from the base ring of the domain to the base ring of the codomain")
         return free_module_morphism.FreeModuleMorphism(self, A, side)
 

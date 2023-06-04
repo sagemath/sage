@@ -106,15 +106,11 @@ REFERENCES:
 
 from sage.arith.functions import lcm
 from sage.arith.misc import gcd
-from sage.rings.big_oh import O
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
 from sage.rings.laurent_series_ring_element cimport LaurentSeries
-from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport (Element, ModuleElement,
-                                     RingElement, AlgebraElement)
+from sage.structure.element cimport (Element, AlgebraElement)
 from sage.structure.richcmp cimport richcmp
 
 

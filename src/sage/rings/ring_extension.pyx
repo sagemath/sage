@@ -98,15 +98,15 @@ AUTHOR:
 - Xavier Caruso (2019)
 """
 
-#############################################################################
+# ###########################################################################
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #    This program is free softwGare: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.misc.fast_methods cimport hash_by_id
@@ -120,7 +120,6 @@ from sage.structure.element cimport Element
 from sage.structure.category_object import normalize_names
 from sage.categories.map cimport Map
 from sage.categories.commutative_rings import CommutativeRings
-from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.fields import Fields
 from sage.rings.ring cimport CommutativeRing, CommutativeAlgebra
 from sage.rings.integer_ring import ZZ

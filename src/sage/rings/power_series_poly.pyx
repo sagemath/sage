@@ -5,8 +5,8 @@ Power Series Methods
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
 from .power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport Element, ModuleElement, RingElement
-from .infinity import infinity, is_Infinite
+from sage.structure.element cimport Element
+from .infinity import infinity
 
 try:
     from sage.libs.pari.all import pari_gen, PariError
@@ -1226,9 +1226,7 @@ cdef class PowerSeries_poly(PowerSeries):
             Order(x^20)
         """
         from sage.symbolic.ring import SR
-        from sage.rings.infinity import PlusInfinity
-        poly = self.polynomial()
-        pex = SR(poly)
+        pex = SR(self.polynomial())
         var = SR.var(self.variable())
         return pex.series(var, self.prec())
 

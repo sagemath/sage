@@ -5422,7 +5422,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         We pick a point on ``E``::
 
             sage: p = E.lift_x(1); p                                                    # optional - sage.rings.number_field
-            (1 : 2 : 1)
+            (1 : -6 : 1)
 
             sage: I = E.defining_ideal(); I                                             # optional - sage.rings.number_field
             Ideal (-x^3 - 2*x^2*z + x*y*z + y^2*z - 4*x*z^2 + 3*y*z^2 - 5*z^3)
