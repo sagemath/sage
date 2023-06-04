@@ -85,7 +85,6 @@ lazy_import("sage.groups.abelian_gps.abelian_group", "AbelianGroup")
 lazy_import("sage.groups.perm_gps.permgroup_element", "PermutationGroupElement")
 lazy_import("sage.plot.all", ["polygon", "line", "text"])
 lazy_import("sage.rings.number_field.number_field", "CyclotomicField")
-lazy_import("sage.rings.real_mpfr", "RR")
 
 
 class IndexedSequence(SageObject):
@@ -243,6 +242,7 @@ class IndexedSequence(SageObject):
             sage: P = s.plot_histogram()                                                # optional - sage.plot
             sage: show(P)  # not tested                                                 # optional - sage.plot
         """
+        from sage.rings.real_mpfr import RR
         # elements must be coercible into RR
         I = self.index_object()
         N = len(I)
@@ -271,6 +271,7 @@ class IndexedSequence(SageObject):
             sage: P = s.plot()                                                          # optional - sage.plot
             sage: show(P)  # not tested                                                 # optional - sage.plot
         """
+        from sage.rings.real_mpfr import RR
         # elements must be coercible into RR
         I = self.index_object()
         S = self.list()
@@ -721,6 +722,7 @@ class IndexedSequence(SageObject):
             Indexed sequence: [2.82842712474999, 0.000000000000000, 0.000000000000000, 0.000000000000000, 0.000000000000000, 0.000000000000000, 0.000000000000000, 0.000000000000000]
                 indexed by [0, 1, 2, 3, 4, 5, 6, 7]
         """
+        from sage.rings.real_mpfr import RR
         # elements must be coercible into RR
         J = self.index_object()   # must be = range(N)
         N = len(J)             # must be 1 minus a power of 2
