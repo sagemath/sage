@@ -1898,19 +1898,19 @@ class Stream_plethysm(Stream_binary):
     EXAMPLES::
 
         sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
-        sage: s = SymmetricFunctions(QQ).s()
-        sage: p = SymmetricFunctions(QQ).p()
-        sage: f = Stream_function(lambda n: s[n], True, 1)
-        sage: g = Stream_function(lambda n: s[[1]*n], True, 1)
-        sage: h = Stream_plethysm(f, g, True, p, s)
-        sage: [h[i] for i in range(5)]
+        sage: s = SymmetricFunctions(QQ).s()                                            # optional - sage.modules
+        sage: p = SymmetricFunctions(QQ).p()                                            # optional - sage.modules
+        sage: f = Stream_function(lambda n: s[n], True, 1)                              # optional - sage.modules
+        sage: g = Stream_function(lambda n: s[[1]*n], True, 1)                          # optional - sage.modules
+        sage: h = Stream_plethysm(f, g, True, p, s)                                     # optional - sage.modules
+        sage: [h[i] for i in range(5)]                                                  # optional - sage.modules
         [0,
          s[1],
          s[1, 1] + s[2],
          2*s[1, 1, 1] + s[2, 1] + s[3],
          3*s[1, 1, 1, 1] + 2*s[2, 1, 1] + s[2, 2] + s[3, 1] + s[4]]
-        sage: u = Stream_plethysm(g, f, True, p, s)
-        sage: [u[i] for i in range(5)]
+        sage: u = Stream_plethysm(g, f, True, p, s)                                     # optional - sage.modules
+        sage: [u[i] for i in range(5)]                                                  # optional - sage.modules
         [0,
          s[1],
          s[1, 1] + s[2],
@@ -1944,20 +1944,22 @@ class Stream_plethysm(Stream_binary):
 
     Check that degree one elements are treated in the correct way::
 
-        sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]; p = SymmetricFunctions(R).p()
-        sage: f_s = a1*p[1] + a2*p[2] + a11*p[1,1]
-        sage: g_s = b1*p[1] + b21*p[2,1] + b111*p[1,1,1]
-        sage: r_s = f_s(g_s)
-        sage: f = Stream_exact([f_s.restrict_degree(k) for k in range(f_s.degree()+1)])
-        sage: g = Stream_exact([g_s.restrict_degree(k) for k in range(g_s.degree()+1)])
-        sage: r = Stream_plethysm(f, g, True, p)
-        sage: r_s == sum(r[n] for n in range(2*(r_s.degree()+1)))
+        sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]; p = SymmetricFunctions(R).p()           # optional - sage.modules
+        sage: f_s = a1*p[1] + a2*p[2] + a11*p[1,1]                                      # optional - sage.modules
+        sage: g_s = b1*p[1] + b21*p[2,1] + b111*p[1,1,1]                                # optional - sage.modules
+        sage: r_s = f_s(g_s)                                                            # optional - sage.modules
+        sage: f = Stream_exact([f_s.restrict_degree(k)                                  # optional - sage.modules
+        ....:                   for k in range(f_s.degree()+1)])
+        sage: g = Stream_exact([g_s.restrict_degree(k)                                  # optional - sage.modules
+        ....:                   for k in range(g_s.degree()+1)])
+        sage: r = Stream_plethysm(f, g, True, p)                                        # optional - sage.modules
+        sage: r_s == sum(r[n] for n in range(2*(r_s.degree()+1)))                       # optional - sage.modules
         True
 
-        sage: r_s - f_s(g_s, include=[])
+        sage: r_s - f_s(g_s, include=[])                                                # optional - sage.modules
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
 
-        sage: r2 = Stream_plethysm(f, g, True, p, include=[])
+        sage: r2 = Stream_plethysm(f, g, True, p, include=[])                           # optional - sage.modules
         sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
 
@@ -1969,11 +1971,11 @@ class Stream_plethysm(Stream_binary):
         TESTS::
 
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: p = SymmetricFunctions(QQ).p()
-            sage: f = Stream_function(lambda n: s[n], True, 1)
-            sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
-            sage: h = Stream_plethysm(f, g, True, p)
+            sage: s = SymmetricFunctions(QQ).s()                                        # optional - sage.modules
+            sage: p = SymmetricFunctions(QQ).p()                                        # optional - sage.modules
+            sage: f = Stream_function(lambda n: s[n], True, 1)                          # optional - sage.modules
+            sage: g = Stream_function(lambda n: s[n-1,1], True, 2)                      # optional - sage.modules
+            sage: h = Stream_plethysm(f, g, True, p)                                    # optional - sage.modules
         """
         from sage.combinat.sf.sfa import _variables_recursive
 
@@ -2012,12 +2014,12 @@ class Stream_plethysm(Stream_binary):
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
-            sage: p = SymmetricFunctions(QQ).p()
-            sage: f = Stream_function(lambda n: p[n], True, 1)
-            sage: h = Stream_plethysm(f, f, True, p)
-            sage: h._approximate_order
+            sage: p = SymmetricFunctions(QQ).p()                                        # optional - sage.modules
+            sage: f = Stream_function(lambda n: p[n], True, 1)                          # optional - sage.modules
+            sage: h = Stream_plethysm(f, f, True, p)                                    # optional - sage.modules
+            sage: h._approximate_order                                                  # optional - sage.modules
             1
-            sage: [h[i] for i in range(5)]
+            sage: [h[i] for i in range(5)]                                              # optional - sage.modules
             [0, p[1], 2*p[2], 2*p[3], 3*p[4]]
         """
         # this is very likely not the true order
@@ -2038,14 +2040,14 @@ class Stream_plethysm(Stream_binary):
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: p = SymmetricFunctions(QQ).p()
-            sage: f = Stream_function(lambda n: s[n], True, 1)
-            sage: g = Stream_function(lambda n: s[[1]*n], True, 1)
-            sage: h = Stream_plethysm(f, g, True, p)
-            sage: s(h.get_coefficient(5))
+            sage: s = SymmetricFunctions(QQ).s()                                        # optional - sage.modules
+            sage: p = SymmetricFunctions(QQ).p()                                        # optional - sage.modules
+            sage: f = Stream_function(lambda n: s[n], True, 1)                          # optional - sage.modules
+            sage: g = Stream_function(lambda n: s[[1]*n], True, 1)                      # optional - sage.modules
+            sage: h = Stream_plethysm(f, g, True, p)                                    # optional - sage.modules
+            sage: s(h.get_coefficient(5))                                               # optional - sage.modules
             4*s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 2*s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[4, 1] + s[5]
-            sage: [s(h.get_coefficient(i)) for i in range(6)]
+            sage: [s(h.get_coefficient(i)) for i in range(6)]                           # optional - sage.modules
             [0,
              s[1],
              s[1, 1] + s[2],
@@ -2077,32 +2079,35 @@ class Stream_plethysm(Stream_binary):
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_plethysm, Stream_exact, Stream_function, Stream_zero
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: p = SymmetricFunctions(QQ).p()
-            sage: f = Stream_exact([1]) # irrelevant for this test
-            sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)
-            sage: h = Stream_plethysm(f, g, True, p)
-            sage: A = h.compute_product(7, Partition([2, 1])); A
+            sage: s = SymmetricFunctions(QQ).s()                                        # optional - sage.modules
+            sage: p = SymmetricFunctions(QQ).p()                                        # optional - sage.modules
+            sage: f = Stream_exact([1]) # irrelevant for this test                      # optional - sage.modules
+            sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)                               # optional - sage.modules
+            sage: h = Stream_plethysm(f, g, True, p)                                    # optional - sage.modules
+            sage: A = h.compute_product(7, Partition([2, 1])); A                        # optional - sage.modules
             1/12*p[2, 2, 1, 1, 1] + 1/4*p[2, 2, 2, 1] + 1/6*p[3, 2, 2]
              + 1/12*p[4, 1, 1, 1] + 1/4*p[4, 2, 1] + 1/6*p[4, 3]
-            sage: A == p[2, 1](s[2] + s[3]).homogeneous_component(7)
+            sage: A == p[2, 1](s[2] + s[3]).homogeneous_component(7)                    # optional - sage.modules
             True
 
-            sage: p2 = tensor([p, p])
-            sage: f = Stream_exact([1]) # irrelevant for this test
-            sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]]) for k in range(n+1)), True, 1)
-            sage: h = Stream_plethysm(f, g, True, p2)
-            sage: A = h.compute_product(7, Partition([2, 1]))
-            sage: B = p[2, 1](sum(g[n] for n in range(7)))
-            sage: B = p2.element_class(p2, {m: c for m, c in B if sum(mu.size() for mu in m) == 7})
-            sage: A == B
+            sage: p2 = tensor([p, p])                                                   # optional - sage.modules
+            sage: f = Stream_exact([1]) # irrelevant for this test                      # optional - sage.modules
+            sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])              # optional - sage.modules
+            ....:                                   for k in range(n+1)), True, 1)
+            sage: h = Stream_plethysm(f, g, True, p2)                                   # optional - sage.modules
+            sage: A = h.compute_product(7, Partition([2, 1]))                           # optional - sage.modules
+            sage: B = p[2, 1](sum(g[n] for n in range(7)))                              # optional - sage.modules
+            sage: B = p2.element_class(p2, {m: c for m, c in B                          # optional - sage.modules
+            ....:                           if sum(mu.size() for mu in m) == 7})
+            sage: A == B                                                                # optional - sage.modules
             True
 
-            sage: f = Stream_exact([1]) # irrelevant for this test
-            sage: g = Stream_function(lambda n: s[n], True, 0)
-            sage: h = Stream_plethysm(f, g, True, p)
-            sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))
-            sage: all(h.compute_product(k, Partition([2, 2, 1])) == B.restrict_degree(k) for k in range(7))
+            sage: f = Stream_exact([1]) # irrelevant for this test                      # optional - sage.modules
+            sage: g = Stream_function(lambda n: s[n], True, 0)                          # optional - sage.modules
+            sage: h = Stream_plethysm(f, g, True, p)                                    # optional - sage.modules
+            sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))                        # optional - sage.modules
+            sage: all(h.compute_product(k, Partition([2, 2, 1]))                        # optional - sage.modules
+            ....:      == B.restrict_degree(k) for k in range(7))
             True
         """
         # This is the approximate order of the result
@@ -2139,23 +2144,25 @@ class Stream_plethysm(Stream_binary):
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_plethysm, Stream_exact, Stream_function, Stream_zero
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: p = SymmetricFunctions(QQ).p()
-            sage: f = Stream_exact([1]) # irrelevant for this test
-            sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)
-            sage: h = Stream_plethysm(f, g, True, p)
-            sage: A = h.stretched_power_restrict_degree(2, 3, 6)
-            sage: A == p[2,2,2](s[2] + s[3]).homogeneous_component(12)
+            sage: s = SymmetricFunctions(QQ).s()                                        # optional - sage.modules
+            sage: p = SymmetricFunctions(QQ).p()                                        # optional - sage.modules
+            sage: f = Stream_exact([1]) # irrelevant for this test                      # optional - sage.modules
+            sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)                               # optional - sage.modules
+            sage: h = Stream_plethysm(f, g, True, p)                                    # optional - sage.modules
+            sage: A = h.stretched_power_restrict_degree(2, 3, 6)                        # optional - sage.modules
+            sage: A == p[2,2,2](s[2] + s[3]).homogeneous_component(12)                  # optional - sage.modules
             True
 
-            sage: p2 = tensor([p, p])
-            sage: f = Stream_exact([1]) # irrelevant for this test
-            sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]]) for k in range(n+1)), True, 1)
-            sage: h = Stream_plethysm(f, g, True, p2)
-            sage: A = h.stretched_power_restrict_degree(2, 3, 6)
-            sage: B = p[2,2,2](sum(g[n] for n in range(7)))  # long time
-            sage: B = p2.element_class(p2, {m: c for m, c in B if sum(mu.size() for mu in m) == 12})  # long time
-            sage: A == B  # long time
+            sage: p2 = tensor([p, p])                                                   # optional - sage.modules
+            sage: f = Stream_exact([1]) # irrelevant for this test                      # optional - sage.modules
+            sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])              # optional - sage.modules
+            ....:                                   for k in range(n+1)), True, 1)
+            sage: h = Stream_plethysm(f, g, True, p2)                                   # optional - sage.modules
+            sage: A = h.stretched_power_restrict_degree(2, 3, 6)                        # optional - sage.modules
+            sage: B = p[2,2,2](sum(g[n] for n in range(7)))                # long time  # optional - sage.modules
+            sage: B = p2.element_class(p2, {m: c for m, c in B             # long time  # optional - sage.modules
+            ....:                           if sum(mu.size() for mu in m) == 12})
+            sage: A == B  # long time                                                   # optional - sage.modules
             True
         """
         from sage.combinat.sf.sfa import _raise_variables
@@ -2305,11 +2312,11 @@ class Stream_rmul(Stream_scalar):
     EXAMPLES::
 
         sage: from sage.data_structures.stream import (Stream_rmul, Stream_function)
-        sage: W = algebras.DifferentialWeyl(QQ, names=('x',))
-        sage: x, dx = W.gens()
-        sage: f = Stream_function(lambda n: x^n, True, 1)
-        sage: g = Stream_rmul(f, dx, True)
-        sage: [g[i] for i in range(5)]
+        sage: W = algebras.DifferentialWeyl(QQ, names=('x',))                           # optional - sage.modules
+        sage: x, dx = W.gens()                                                          # optional - sage.modules
+        sage: f = Stream_function(lambda n: x^n, True, 1)                               # optional - sage.modules
+        sage: g = Stream_rmul(f, dx, True)                                              # optional - sage.modules
+        sage: [g[i] for i in range(5)]                                                  # optional - sage.modules
         [0, x*dx + 1, x^2*dx + 2*x, x^3*dx + 3*x^2, x^4*dx + 4*x^3]
     """
     def get_coefficient(self, n):
@@ -2346,11 +2353,11 @@ class Stream_lmul(Stream_scalar):
     EXAMPLES::
 
         sage: from sage.data_structures.stream import (Stream_lmul, Stream_function)
-        sage: W = algebras.DifferentialWeyl(QQ, names=('x',))
-        sage: x, dx = W.gens()
-        sage: f = Stream_function(lambda n: x^n, True, 1)
-        sage: g = Stream_lmul(f, dx, True)
-        sage: [g[i] for i in range(5)]
+        sage: W = algebras.DifferentialWeyl(QQ, names=('x',))                           # optional - sage.modules
+        sage: x, dx = W.gens()                                                          # optional - sage.modules
+        sage: f = Stream_function(lambda n: x^n, True, 1)                               # optional - sage.modules
+        sage: g = Stream_lmul(f, dx, True)                                              # optional - sage.modules
+        sage: [g[i] for i in range(5)]                                                  # optional - sage.modules
         [0, x*dx, x^2*dx, x^3*dx, x^4*dx]
     """
     def get_coefficient(self, n):
@@ -2511,12 +2518,12 @@ class Stream_cauchy_invert(Stream_unary):
 
             sage: from sage.data_structures.stream import Stream_function, Stream_cauchy_invert
             sage: f = Stream_function(lambda n: GF(7)(n), True, 0)
-            sage: [f[i] for i in range(5)]
+            sage: [f[i] for i in range(5)]                                              # optional - sage.rings.finite_rings
             [0, 1, 2, 3, 4]
-            sage: h = Stream_cauchy_invert(f)
-            sage: h._approximate_order
+            sage: h = Stream_cauchy_invert(f)                                           # optional - sage.rings.finite_rings
+            sage: h._approximate_order                                                  # optional - sage.rings.finite_rings
             -1
-            sage: [h[i] for i in range(-2, 5)]
+            sage: [h[i] for i in range(-2, 5)]                                          # optional - sage.rings.finite_rings
             [0, 1, 5, 1, 0, 0, 0]
         """
         try:
