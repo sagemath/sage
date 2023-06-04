@@ -769,7 +769,37 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
 def box_exists(tab, i, j):
     """
     For Russian tableaux, it checks if a certain box exists or not.
+
+    Returns `True` if `tab[i][j]` exists and is not `None`. In particular this
+    allows for `tab[i][j]` to be `''` or `0`.
+
+    INPUT:
+
+        - ``tab`` -- An `array` of `array`s.
+        - ``i`` -- First coordinate
+        - ``j`` -- Second coordinate
+
+    TESTS::
+
+        sage: from sage.combinat.output import box_exists
+        sage: tab = [[1,None,'', 0],[None]]
+        sage: box_exists(tab, 0, 0)
+        True
+        sage: box_exists(tab, 0, 1)
+        False
+        sage: box_exists(tab, 0, 2)
+        True
+        sage: box_exists(tab, 0, 3)
+        True
+        sage: box_exists(tab, 0, 4)
+        False
+        sage: box_exists(tab, 1, 0)
+        False
+        sage: box_exists(tab, 1, 1)
+        False
+        sage: box_exists(tab, 0, -1)
+        False
     """
     if j < 0 or i < 0:
         return False
-    return len(tab) >= i and len(tab[i]) >=j and tab[i][j] is not None
+    return len(tab) > i and len(tab[i]) > j and tab[i][j] is not None
