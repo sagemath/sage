@@ -63,13 +63,11 @@ from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.richcmp cimport rich_to_bool
-from sage.structure.sequence import Sequence
 
 from sage.misc.misc_c import prod
 from sage.misc.randstate cimport randstate, current_randstate, SAGE_RAND_MAX
 
 cimport sage.rings.integer as integer
-cimport sage.rings.rational as rational
 
 from . import ring
 
@@ -924,6 +922,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: ZZ.extension(x^2 - 5, 'a')                                            # optional - sage.rings.number_field
             Order in Number Field in a with defining polynomial x^2 - 5
             sage: ZZ.extension([x^2 + 1, x^2 + 2], 'a,b')                               # optional - sage.rings.number_field

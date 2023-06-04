@@ -1,13 +1,11 @@
 # NOT ready to be used -- possibly should be deleted.
 
 from .power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport Element, ModuleElement, RingElement
-from .infinity import infinity, is_Infinite
-from sage.libs.pari.all import PariError
-from .power_series_ring_element import is_PowerSeries
-from . import rational_field
+from sage.structure.element cimport Element
+from .infinity import infinity
 from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from . import power_series_poly
+
 
 cdef class PowerSeries_mpoly(PowerSeries):
 

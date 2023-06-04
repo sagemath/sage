@@ -1320,6 +1320,7 @@ class QuadraticForm(SageObject):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: F.<a> = NumberField(x^2 - 5)                                          # optional - sage.rings.number_field
             sage: Z = F.ring_of_integers()                                              # optional - sage.rings.number_field
             sage: Q = QuadraticForm(Z, 3, [2*a, 3*a, 0, 1 - a, 0, 2*a + 4])             # optional - sage.rings.number_field

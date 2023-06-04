@@ -542,8 +542,9 @@ def is_prime(n):
     However, number fields redefine ``.is_prime()`` in an incompatible fashion
     (cf. :trac:`32340`) and we should not warn::
 
-        sage: K.<i> = NumberField(x^2+1)
-        sage: is_prime(1+i)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<i> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
+        sage: is_prime(1 + i)                                                           # optional - sage.rings.number_field
         True
     """
     try:
@@ -3345,11 +3346,12 @@ def crt(a, b, m=None, n=None):
 
     Note that this also works for polynomial rings::
 
-        sage: K.<a> = NumberField(x^3 - 7)
-        sage: R.<y> = K[]
-        sage: f = y^2 + 3
-        sage: g = y^3 - 5
-        sage: CRT(1,3,f,g)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
+        sage: R.<y> = K[]                                                               # optional - sage.rings.number_field
+        sage: f = y^2 + 3                                                               # optional - sage.rings.number_field
+        sage: g = y^3 - 5                                                               # optional - sage.rings.number_field
+        sage: CRT(1, 3, f, g)                                                           # optional - sage.rings.number_field
         -3/26*y^4 + 5/26*y^3 + 15/26*y + 53/26
         sage: CRT(1,a,f,g)
         (-3/52*a + 3/52)*y^4 + (5/52*a - 5/52)*y^3 + (15/52*a - 15/52)*y + 27/52*a + 25/52

@@ -41,7 +41,6 @@ from sage.numerical.backends.generic_backend cimport GenericBackend
 from sage.numerical.backends.generic_backend import get_solver
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from cysignals.memory cimport sig_free
-from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 from libc.stdint cimport uint32_t
 from sage.graphs.base.static_sparse_graph cimport (short_digraph,

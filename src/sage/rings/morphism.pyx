@@ -397,8 +397,6 @@ compare equal::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.object cimport Py_EQ, Py_NE
-
 from . import ideal
 import sage.structure.all
 from sage.structure.richcmp cimport (richcmp, rich_to_bool)

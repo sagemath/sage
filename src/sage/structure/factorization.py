@@ -673,8 +673,8 @@ class Factorization(SageObject):
 
         We create a factored polynomial::
 
-            sage: x = polygen(QQ,'x')
-            sage: F = factor(x^3 + 1); F
+            sage: x = polygen(QQ, 'x')
+            sage: F = factor(x^3 + 1); F                                                # optional - sage.libs.pari
             (x + 1) * (x^2 - x + 1)
 
         We sort it by decreasing degree::
@@ -1097,8 +1097,9 @@ class Factorization(SageObject):
             sage: f^4
             2^8 * 5^8
 
-            sage: K.<a> = NumberField(x^3 - 39*x - 91)
-            sage: F = K.factor(7); F
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 39*x - 91)                                                          # optional - sage.rings.number_field
+            sage: F = K.factor(7); F                                                                            # optional - sage.rings.number_field
             (Fractional ideal (7, a)) * (Fractional ideal (7, a + 2)) * (Fractional ideal (7, a - 2))
             sage: F^9
             (Fractional ideal (7, a))^9 * (Fractional ideal (7, a + 2))^9 * (Fractional ideal (7, a - 2))^9

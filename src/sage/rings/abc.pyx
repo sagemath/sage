@@ -402,6 +402,7 @@ class Order:
     EXAMPLES::
 
         sage: import sage.rings.abc
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 1); O = K.order(2*a)                            # optional - sage.rings.number_field
         sage: isinstance(O, sage.rings.abc.Order)                                       # optional - sage.rings.number_field
         True
