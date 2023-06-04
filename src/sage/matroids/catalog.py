@@ -49,6 +49,7 @@ from sage.matroids.linear_matroid import (LinearMatroid, RegularMatroid,
                                           QuaternaryMatroid)
 from sage.matroids.rank_matroid import RankMatroid
 from sage.matroids.constructor import Matroid
+from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
 lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace')
