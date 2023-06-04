@@ -30,9 +30,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from sage.arith.misc import binomial
 from sage.arith.misc import GCD as gcd
 from sage.libs.gmp.mpz cimport *
-from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.real_mpfi import RealIntervalField
 from sage.rings.real_mpfr import RealField
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer

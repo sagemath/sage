@@ -217,12 +217,11 @@ from sage.libs.mpfi cimport *
 from sage.libs.mpfr cimport *
 from sage.libs.mpfr cimport MPFR_RNDN, MPFR_RNDU, MPFR_RNDD, MPFR_RNDZ
 
-from sage.structure.element cimport Element, ModuleElement, RingElement
+from sage.structure.element cimport Element, RingElement
 from sage.rings.ring cimport Field
 import sage.rings.abc
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.real_mpfr cimport RealField_class, RealField, RealNumber
 from sage.arith.long cimport is_small_python_int
 
@@ -339,7 +338,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
     ::
 
-        sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, 'x')
+        sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, 'x')                         # optional - sage.symbolic
         x + [0.914213562373095 +/- ...e-16]
 
     TESTS::

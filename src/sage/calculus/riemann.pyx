@@ -46,15 +46,12 @@ cimport numpy as np
 from math import pi
 from math import sin
 from math import cos
-from math import sqrt
 
 from math import log # used for complex plot lightness
 from math import atan
 
 from cmath import exp
 from cmath import phase
-
-from random import uniform # used for accuracy tests
 
 FLOAT = np.float64
 ctypedef np.float64_t FLOAT_T

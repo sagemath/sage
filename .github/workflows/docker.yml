@@ -23,6 +23,7 @@ on:
            "ubuntu-jammy",
            "ubuntu-kinetic",
            "ubuntu-lunar",
+           "ubuntu-mantic",
            "debian-buster",
            "debian-bullseye",
            "debian-bookworm",
@@ -34,6 +35,7 @@ on:
            "linuxmint-20.3",
            "linuxmint-21",
            "linuxmint-21.1",
+           "linuxmint-21.2",
            "fedora-29-python3.8",
            "fedora-30-python3.8",
            "fedora-31",
@@ -44,19 +46,21 @@ on:
            "fedora-36",
            "fedora-37",
            "fedora-38",
+           "fedora-39",
            "centos-7-devtoolset-gcc_11",
            "centos-stream-8-python3.9",
            "centos-stream-9-python3.9",
-           "gentoo-python3.9",
            "gentoo-python3.10",
            "gentoo-python3.11",
            "archlinux-latest",
            "opensuse-15.3-gcc_11-python3.9",
            "opensuse-15.4-gcc_11-python3.10",
+           "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "conda-forge",
            "ubuntu-bionic-gcc_8-i386",
            "debian-buster-i386",
+           "debian-bullseye-i386",
            ]
       tox_packages_factors:
         description: 'Stringified JSON object listing tox packages factors'
@@ -71,7 +75,7 @@ on:
         default: ""
       max_parallel:
         type: number
-        default: 24
+        default: 30
       free_disk_space:
         default: false
         type: boolean
