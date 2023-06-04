@@ -592,13 +592,13 @@ def PBD_4_7(v,check=True, existence=False):
         parall = []
         plus_one = None
         for S in AF:
-            if all(all(x not in SS for x in S) for SS in parall):
+            if all(x not in SS for SS in parall for x in S):
                 parall.append(S)
             elif plus_one is None:
                 plus_one = S
             if len(parall) == 4 and plus_one is not None:
                 break
-        X = set(sum(parall,plus_one))
+        X = set(sum(parall, plus_one))
 
         S_4_5_7 = [X.intersection(S) for S in AF]
         S_4_5_7 = [S for S in S_4_5_7 if len(S)>1]

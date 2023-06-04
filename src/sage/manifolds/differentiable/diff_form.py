@@ -782,7 +782,7 @@ class DiffForm(TensorField):
 
         p = self.tensor_type()[1]
         # For performance reasons, we raise the indicies of the volume form
-        # and not of the differential form; in the symplectic case this is wrong by 
+        # and not of the differential form; in the symplectic case this is wrong by
         # a factor of (-1)^p, which will be corrected below
         eps = nondegenerate_tensor.volume_form(p)
         if p == 0:

@@ -30,9 +30,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from sage.arith.misc import binomial
 from sage.arith.misc import GCD as gcd
 from sage.libs.gmp.mpz cimport *
-from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.real_mpfi import RealIntervalField
 from sage.rings.real_mpfr import RealField
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
@@ -51,9 +49,9 @@ from libc.math cimport lrint, floor, ceil, fabs, round
 
 def hermite_constant(n):
     r"""
-    This function returns the nth Hermite constant
+    Return the `n`-th Hermite constant.
 
-    The nth Hermite constant (typically denoted `\gamma_n`), is defined
+    The `n`-th Hermite constant (typically denoted `\gamma_n`), is defined
     to be
 
     .. MATH::
@@ -67,11 +65,11 @@ def hermite_constant(n):
 
     INPUT:
 
-    - n -- integer
+    - ``n`` -- integer
 
     OUTPUT:
 
-    - (an upper bound for) the Hermite constant gamma_n
+    (an upper bound for) the Hermite constant `\gamma_n`
 
     EXAMPLES::
 
@@ -197,12 +195,14 @@ cdef void newton_in_intervals(int *f, int *df, int n, double *beta,
 cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
     r"""
     Private function.  Solves the equations which arise in the Lagrange multiplier
-    for degree 3: for each 1 <= r <= n-2, we solve
+    for degree 3: for each `1 \leq r \leq n-2`, we solve
 
-        r*x^i + (n-1-r)*y^i + z^i = s_i (i = 1,2,3)
+    .. MATH::
 
-    where the s_i are the power sums determined by the coefficients a.
-    We output the largest value of z which occurs.
+        r*x^i + (n-1-r)\cdot y^i + z^i = s_i \quad (i = 1,2,3)
+
+    where the `s_i` are the power sums determined by the coefficients `a`.
+    We output the largest value of `z` which occurs.
     We use a precomputed elimination ideal.
 
     EXAMPLES::
@@ -323,7 +323,7 @@ for i from 0 <= i < 46:
 
 def int_has_small_square_divisor(sage.rings.integer.Integer d):
     r"""
-    Returns the largest a such that a^2 divides d and a has prime divisors < 200.
+    Return the largest `a` such that `a^2` divides `d` and `a` has prime divisors `< 200`.
 
     EXAMPLES::
 
@@ -452,7 +452,7 @@ cdef class tr_data:
 
     We do not give a complete description here.  For more information,
     see the attached functions; all of these are used internally by the
-    functions in totallyreal.py, so see that file for examples and
+    functions in :mod:`.totallyreal`, so see that file for examples and
     further documentation.
     """
 
@@ -584,9 +584,9 @@ cdef class tr_data:
 
     def increment(self, verbose=False, haltk=0, phc=False):
         r"""
-        This function 'increments' the totally real data to the next
+        'Increment' the totally real data to the next
         value which satisfies the bounds essentially given by Rolle's
-        theorem, and returns the next polynomial as a sequence of
+        theorem, and return the next polynomial as a sequence of
         integers.
 
         The default or usual case just increments the constant
@@ -598,10 +598,10 @@ cdef class tr_data:
 
         INPUT:
 
-        - verbose -- boolean to print verbosely computational details
-        - haltk -- integer, the level at which to halt the inductive
+        - ``verbose`` -- boolean to print verbosely computational details
+        - ``haltk`` -- integer, the level at which to halt the inductive
           coefficient bounds
-        - phc -- boolean, if PHCPACK is available, use it when k == n-5 to
+        - ``phc`` -- boolean, if PHCPACK is available, use it when `k = n-5` to
           compute an improved Lagrange multiplier bound
 
         OUTPUT:
@@ -912,7 +912,7 @@ cdef class tr_data:
 
     def printa(self):
         """
-        Print relevant data for self.
+        Print relevant data for ``self``.
 
         EXAMPLES::
 

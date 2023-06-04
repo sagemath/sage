@@ -45,7 +45,8 @@ fields of discriminant `\le 50`.
      [40, x^2 - 10],
      [41, x^2 - x - 10],
      [44, x^2 - 11]]
-    sage: [ d for d in range(5,50) if (is_squarefree(d) and d%4 == 1) or (d%4 == 0 and is_squarefree(d/4)) ]
+    sage: [d for d in range(5,50)
+    ....:    if (is_squarefree(d) and d%4 == 1) or (d%4 == 0 and is_squarefree(d/4))]
     [5, 8, 12, 13, 17, 20, 21, 24, 28, 29, 33, 37, 40, 41, 44]
 
 Next, we compute all totally real quintic fields of discriminant `\le 10^5`::
@@ -81,15 +82,15 @@ Authors
 ------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein and John Voight
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_calloc, sig_free
 
@@ -104,10 +105,8 @@ from sage.libs.pari.misc cimport new_t_POL_from_int_star
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.misc.misc import cputime
 
 from sage.rings.number_field.totallyreal_data import tr_data, int_has_small_square_divisor
 from sage.rings.number_field.totallyreal_data cimport tr_data
@@ -116,15 +115,15 @@ from sage.rings.number_field.totallyreal_data cimport tr_data
 cpdef double odlyzko_bound_totallyreal(int n):
     r"""
     This function returns the unconditional Odlyzko bound for the root
-    discriminant of a totally real number field of degree n.
+    discriminant of a totally real number field of degree `n`.
 
     .. NOTE::
 
-        The bounds for n > 50 are not necessarily optimal.
+        The bounds for `n > 50` are not necessarily optimal.
 
     INPUT:
 
-    - n (integer) the degree
+    - ``n`` -- (integer) the degree
 
     OUTPUT:
 
@@ -132,7 +131,8 @@ cpdef double odlyzko_bound_totallyreal(int n):
 
     EXAMPLES::
 
-        sage: [sage.rings.number_field.totallyreal.odlyzko_bound_totallyreal(n) for n in range(1,5)]
+        sage: from sage.rings.number_field.totallyreal import odlyzko_bound_totallyreal
+        sage: [odlyzko_bound_totallyreal(n) for n in range(1, 5)]
         [1.0, 2.223, 3.61, 5.067]
 
     AUTHORS:
@@ -164,7 +164,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
                                       just_print=False,
                                       return_pari_objects=True):
     r"""
-    This function enumerates primitive totally real fields of degree
+    Enumerate primitive totally real fields of degree
     `n>1` with discriminant `d \leq B`; optionally one can specify the
     first few coefficients, where the sequence `a` corresponds to
 
@@ -183,26 +183,26 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
 
     - ``n`` -- (integer) the degree
     - ``B`` -- (integer) the discriminant bound
-    - ``a`` -- (list, default: []) the coefficient list to begin with
+    - ``a`` -- (list, default: ``[]``) the coefficient list to begin with
     - ``verbose`` -- (integer or string, default: 0) if ``verbose == 1``
       (or ``2``), then print to the screen (really) verbosely; if verbose is
       a string, then print verbosely to the file specified by verbose.
-    - ``return_seqs`` -- (boolean, default False) If ``True``, then return
+    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
       the polynomials as sequences (for easier exporting to a file).
-    - ``phc`` -- boolean or integer (default: False)
-    - ``keep_fields`` -- (boolean or integer, default: False) If
-      ``keep_fields`` is True, then keep fields up to ``B*log(B)``; if
+    - ``phc`` -- boolean or integer (default: ``False``)
+    - ``keep_fields`` -- (boolean or integer, default: ``False``) If
+      ``keep_fields`` is ``True``, then keep fields up to ``B*log(B)``; if
       ``keep_fields`` is an integer, then keep fields up to that integer.
     - ``t_2`` -- (boolean or integer, default: False) If ``t_2 = T``, then
       keep only polynomials with t_2 norm >= T.
-    - ``just_print`` -- (boolean, default: False): if ``just_print`` is not
-      False, instead of creating a sorted list of totally real number
+    - ``just_print`` -- (boolean, default: ``False``): if ``just_print`` is not
+      ``False``, instead of creating a sorted list of totally real number
       fields, we simply write each totally real field we find to the file
       whose filename is given by ``just_print``. In this case, we don't
       return anything.
-    - ``return_pari_objects`` -- (boolean, default: True) if
+    - ``return_pari_objects`` -- (boolean, default: ``True``) if
       both ``return_seqs`` and ``return_pari_objects`` are ``False`` then
-      it returns the elements as Sage objects; otherwise it returns pari
+      it returns the elements as Sage objects; otherwise it returns PARI
       objects.
 
     OUTPUT:
@@ -479,7 +479,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
 def weed_fields(S, Py_ssize_t lenS=0):
     r"""
     Function used internally by the :func:`~enumerate_totallyreal_fields_prim`
-    routine. (Weeds the fields listed by [discriminant, polynomial]
+    routine. (Weeds the fields listed by ``[discriminant, polynomial]``
     for isomorphism classes.) Returns the size of the resulting list.
 
     EXAMPLES::

@@ -14,6 +14,7 @@ We define a P1NFList:
 
 ::
 
+    sage: x = polygen(QQ, 'x')
     sage: k.<a> = NumberField(x^3 + 11)
     sage: N = k.ideal(5, a^2 - a + 1)
     sage: P = P1NFList(N); P
@@ -95,6 +96,7 @@ def P1NFList_clear_level_cache():
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^3 + 11)
         sage: N = k.ideal(a+1)
         sage: alpha = MSymbol(N, 2*a^2, 5)
@@ -136,6 +138,7 @@ class MSymbol(SageObject):
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^3 + 11)
         sage: N = k.ideal(a + 1, 2)
         sage: MSymbol(N, 3, a^2 + 1)
@@ -175,6 +178,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^4 + 13*x - 7)
             sage: N = k.ideal(5)
             sage: MSymbol(N, 0, 6*a)
@@ -215,6 +219,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: MSymbol(N, 3, a)
@@ -228,6 +233,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^4 + 13*x - 7)
             sage: N = k.ideal(a^3 - 1)
             sage: alpha = MSymbol(N, 3, 5*a^2 - 1)
@@ -244,6 +250,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3, a)
@@ -265,6 +272,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3, a)
@@ -279,6 +287,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3, a); alpha
@@ -299,6 +308,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3, a); alpha
@@ -316,6 +326,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(a + 1, 2)
             sage: alpha = MSymbol(N, 3, a^2 + 1)
@@ -331,6 +342,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(a + 1, 2)
             sage: alpha = MSymbol(N, 3, a^2 + 1)
@@ -353,6 +365,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3*a + 1, a)
@@ -380,6 +393,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha1 = MSymbol(N, 3, a); alpha1
@@ -475,6 +489,7 @@ class P1NFList(SageObject):
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^3 + 11)
         sage: N = k.ideal(5, a + 1)
         sage: P = P1NFList(N); P
@@ -494,6 +509,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 5)
             sage: N = k.ideal(3, a - 1)
             sage: P = P1NFList(N); P
@@ -511,6 +527,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N1 = k.ideal(3, a + 1)
             sage: P1 = P1NFList(N1)
@@ -533,6 +550,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(a)
             sage: P = P1NFList(N)
@@ -550,6 +568,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a^2 - a + 1)
             sage: P = P1NFList(N)
@@ -564,6 +583,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a+1)
             sage: P = P1NFList(N); P
@@ -578,6 +598,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a+1)
             sage: P = P1NFList(N)
@@ -611,6 +632,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 31)
             sage: N = k.ideal(5, a + 3)
             sage: P = P1NFList(N)
@@ -649,6 +671,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 31)
             sage: N = k.ideal(5, a + 3)
             sage: P = P1NFList(N)
@@ -680,6 +703,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 31)
             sage: N = k.ideal(5, a + 3)
             sage: P = P1NFList(N)
@@ -760,6 +784,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 31)
             sage: N = k.ideal(5, a + 3)
             sage: P = P1NFList(N)
@@ -798,6 +823,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3)
             sage: P = P1NFList(N)
@@ -832,6 +858,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
@@ -866,6 +893,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
@@ -902,6 +930,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
@@ -941,6 +970,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
@@ -985,6 +1015,7 @@ def p1NFlist(N):
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^2 + 23)
         sage: N = k.ideal(3)
         sage: from sage.modular.modsym.p1list_nf import p1NFlist, psi
@@ -1043,6 +1074,7 @@ def lift_to_sl2_Ok(N, c, d):
     EXAMPLES::
 
         sage: from sage.modular.modsym.p1list_nf import lift_to_sl2_Ok
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^2 + 23)
         sage: Ok = k.ring_of_integers()
         sage: N = k.ideal(3)
@@ -1148,6 +1180,7 @@ def make_coprime(N, c, d):
     EXAMPLES::
 
         sage: from sage.modular.modsym.p1list_nf import make_coprime
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^2 + 23)
         sage: N = k.ideal(3, a - 1)
         sage: c = 2*a; d = a + 1
@@ -1183,6 +1216,7 @@ def psi(N):
     EXAMPLES::
 
         sage: from sage.modular.modsym.p1list_nf import psi
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^2 + 23)
         sage: N = k.ideal(3, a - 1)
         sage: psi(N)
