@@ -7823,15 +7823,15 @@ cdef class Matroid(SageObject):
             sage: t="fghij"
             sage: x=1.61
             sage: y=1/1.61
-            sage: for i in range(5):
+            sage: for i in range(5):                                                    # optional - sage.symbolic
             ....:         pos[s[i]]=(RR(x*sin(2*pi*i/5)), RR(x*cos(2*pi*i/5)))
             ....:         pos[t[i]]=(RR(y*sin(2*pi*(i+1/2)/5)), RR(y*cos(2*pi*(i+1/2)/5)))
             ....:
             sage: pos['k']=(0,0)
-            sage: M._fix_positions(pos_dict=pos)
-            sage: M._cached_info['lineorders'] is None
+            sage: M._fix_positions(pos_dict=pos)                                        # optional - sage.symbolic
+            sage: M._cached_info['lineorders'] is None                                  # optional - sage.symbolic
             True
-            sage: M._cached_info['plot_positions']['k']
+            sage: M._cached_info['plot_positions']['k']                                 # optional - sage.symbolic
             (0, 0)
         """
         if self.rank() > 3:
