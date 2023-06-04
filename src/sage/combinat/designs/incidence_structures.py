@@ -1709,7 +1709,7 @@ class IncidenceStructure():
         TESTS::
 
             sage: H = IncidenceStructure((2*graphs.CompleteGraph(3)).edges(sort=True, labels=False))
-            sage: H.is_generalized_quadrangle(verbose=True)
+            sage: H.is_generalized_quadrangle(verbose=True)                             # optional - sage.modules
             Some point is at distance >3 from some block.
             False
 
@@ -1721,7 +1721,7 @@ class IncidenceStructure():
             Two blocks intersect on >1 points.
             False
 
-            sage: hypergraphs.CompleteUniform(4,2).is_generalized_quadrangle(verbose=1)
+            sage: hypergraphs.CompleteUniform(4,2).is_generalized_quadrangle(verbose=1) # optional - sage.modules
             Some point has two projections on some line.
             False
         """

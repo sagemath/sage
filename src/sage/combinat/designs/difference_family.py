@@ -1924,30 +1924,30 @@ def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set
-        sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)
-        sage: get_fixed_relative_difference_set(G, s1) #random
+        sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)  # optional - sage.modules
+        sage: get_fixed_relative_difference_set(G, s1)  # random                        # optional - sage.modules
         [2, 10, 19, 23, 0]
 
     If ``as_elements=True``, the result will contain elements of the group::
 
-        sage: get_fixed_relative_difference_set(G, s1, as_elements=True) #random
+        sage: get_fixed_relative_difference_set(G, s1, as_elements=True)  # random      # optional - sage.modules
         [(2), (10), (19), (23), (0)]
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import is_fixed_relative_difference_set
-        sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)
-        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)  # optional - sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)           # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # optional - sage.modules
         True
-        sage: G, s1 = relative_difference_set_from_m_sequence(9, 2, return_group=True)
-        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: G, s1 = relative_difference_set_from_m_sequence(9, 2, return_group=True)  # optional - sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)           # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # optional - sage.modules
         True
-        sage: type(s2[0])
+        sage: type(s2[0])                                                               # optional - sage.modules
         <class 'sage.groups.additive_abelian.additive_abelian_group.AdditiveAbelianGroup_fixed_gens_with_category.element_class'>
-        sage: s2 = get_fixed_relative_difference_set(G, s1)
-        sage: type(s2[0])
+        sage: s2 = get_fixed_relative_difference_set(G, s1)                             # optional - sage.modules
+        sage: type(s2[0])                                                               # optional - sage.modules
         <class 'sage.rings.integer.Integer'>
     """
     q = len(rel_diff_set)
@@ -1988,20 +1988,20 @@ def is_fixed_relative_difference_set(R, q):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set, is_fixed_relative_difference_set
-        sage: G, s1 = relative_difference_set_from_m_sequence(7, 2, return_group=True)
-        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: G, s1 = relative_difference_set_from_m_sequence(7, 2, return_group=True)  # optional - sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)           # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # optional - sage.modules
         True
-        sage: G = AdditiveAbelianGroup([15])
-        sage: s3 = [G[1], G[2], G[3], G[4]]
-        sage: is_fixed_relative_difference_set(s3, len(s3))
+        sage: G = AdditiveAbelianGroup([15])                                            # optional - sage.modules
+        sage: s3 = [G[1], G[2], G[3], G[4]]                                             # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s3, len(s3))                             # optional - sage.modules
         False
 
     If the relative difference set does not contain elements of the group, the method returns false::
 
-        sage: G, s1 = relative_difference_set_from_m_sequence(7, 2, return_group=True)
-        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=False)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: G, s1 = relative_difference_set_from_m_sequence(7, 2, return_group=True)  # optional - sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=False)          # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # optional - sage.modules
         False
     """
     for el in R:
