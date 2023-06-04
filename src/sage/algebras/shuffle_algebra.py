@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# optional - sage.combinat sage.modules
 r"""
 Shuffle algebras
 

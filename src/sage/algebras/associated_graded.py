@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 r"""
 Associated Graded Algebras To Filtered Algebras
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# optional - sage.modules
 r"""
 Splitting Algebras
 

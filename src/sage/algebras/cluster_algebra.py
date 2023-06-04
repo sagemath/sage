@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.graphs sage.modules
 r"""
 Cluster algebras
 
@@ -360,12 +361,11 @@ from sage.categories.morphism import SetMorphism
 from sage.categories.rings import Rings
 from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
 from sage.combinat.permutation import Permutation
-from sage.geometry.cone import Cone
-from sage.geometry.fan import Fan
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.matrix.special import block_matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
@@ -380,6 +380,8 @@ from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 
+lazy_import('sage.geometry.cone', 'Cone')
+lazy_import('sage.geometry.fan', 'Fan')
 
 ##############################################################################
 # Elements of a cluster algebra
@@ -2371,7 +2373,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: A = ClusterAlgebra(['A', 2])
-            sage: A.cluster_fan()
+            sage: A.cluster_fan()                                                       # optional - sage.geometry.polyhedron
             Rational polyhedral fan in 2-d lattice N
         """
         seeds = self.seeds(depth=depth, mutating_F=False)

@@ -132,12 +132,12 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_bases import convert_to_milnor_matrix
-        sage: convert_to_milnor_matrix(5, 'adem') # indirect doctest
+        sage: convert_to_milnor_matrix(5, 'adem') # indirect doctest                    # optional - sage.modules sage.rings.finite_rings
         [0 1]
         [1 1]
-        sage: convert_to_milnor_matrix(45, 'milnor')
+        sage: convert_to_milnor_matrix(45, 'milnor')                                    # optional - sage.modules sage.rings.finite_rings
         111 x 111 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
-        sage: convert_to_milnor_matrix(12,'wall')
+        sage: convert_to_milnor_matrix(12,'wall')                                       # optional - sage.modules sage.rings.finite_rings
         [1 0 0 1 0 0 0]
         [1 1 0 0 0 1 0]
         [0 1 0 1 0 0 0]
@@ -149,15 +149,15 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
     The function takes an optional argument, the prime `p` over
     which to work::
 
-        sage: convert_to_milnor_matrix(17,'adem',3)
+        sage: convert_to_milnor_matrix(17,'adem',3)                                     # optional - sage.modules sage.rings.finite_rings
         [0 0 1 1]
         [0 0 0 1]
         [1 1 1 1]
         [0 1 0 1]
-        sage: convert_to_milnor_matrix(48,'adem',5)
+        sage: convert_to_milnor_matrix(48,'adem',5)                                     # optional - sage.modules sage.rings.finite_rings
         [0 1]
         [1 1]
-        sage: convert_to_milnor_matrix(36,'adem',3)
+        sage: convert_to_milnor_matrix(36,'adem',3)                                     # optional - sage.modules sage.rings.finite_rings
         [0 0 1]
         [0 1 0]
         [1 2 0]
@@ -206,7 +206,7 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_bases import convert_from_milnor_matrix, convert_to_milnor_matrix
-        sage: convert_from_milnor_matrix(12,'wall')
+        sage: convert_from_milnor_matrix(12,'wall')                                     # optional - sage.modules sage.rings.finite_rings
         [1 0 0 1 0 0 0]
         [0 0 1 1 0 0 0]
         [0 0 0 1 0 1 1]
@@ -214,10 +214,10 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
         [1 0 1 0 1 0 0]
         [1 1 1 0 0 0 0]
         [1 0 1 0 1 0 1]
-        sage: convert_from_milnor_matrix(38,'serre_cartan')
+        sage: convert_from_milnor_matrix(38,'serre_cartan')                             # optional - sage.modules sage.rings.finite_rings
         72 x 72 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
-        sage: x = convert_to_milnor_matrix(20,'wood_y')
-        sage: y = convert_from_milnor_matrix(20,'wood_y')
+        sage: x = convert_to_milnor_matrix(20,'wood_y')                                 # optional - sage.modules sage.rings.finite_rings
+        sage: y = convert_from_milnor_matrix(20,'wood_y')                               # optional - sage.modules sage.rings.finite_rings
         sage: x*y
         [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
         [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -240,7 +240,7 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
     The function takes an optional argument, the prime `p` over
     which to work::
 
-        sage: convert_from_milnor_matrix(17,'adem',3)
+        sage: convert_from_milnor_matrix(17,'adem',3)                                   # optional - sage.modules sage.rings.finite_rings
         [2 1 1 2]
         [0 2 0 1]
         [1 2 0 0]

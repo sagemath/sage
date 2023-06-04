@@ -84,17 +84,18 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
   <sage.algebras.yokonuma_hecke_algebra.YokonumaHeckeAlgebra>`
 """
 
-from sage.algebras.free_algebra import FreeAlgebra as Free
-from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra as Quaternion
-from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra as Steenrod
-from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra as FiniteDimensional
-from sage.algebras.group_algebra import GroupAlgebra as Group
-from sage.algebras.clifford_algebra import CliffordAlgebra as Clifford
-from sage.algebras.clifford_algebra import ExteriorAlgebra as Exterior
-from sage.algebras.weyl_algebra import DifferentialWeylAlgebra as DifferentialWeyl
-from sage.algebras.lie_algebras.lie_algebra import LieAlgebra as Lie
-
 from sage.misc.lazy_import import lazy_import
+lazy_import('sage.algebras.free_algebra', 'FreeAlgebra', as_='Free')
+lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra', as_='Quaternion')
+lazy_import('sage.algebras.steenrod.steenrod_algebra', 'SteenrodAlgebra', as_='Steenrod')
+lazy_import('sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra',
+            'FiniteDimensionalAlgebra', as_='FiniteDimensional')
+lazy_import('sage.algebras.group_algebra', 'GroupAlgebra', as_='Group')
+lazy_import('sage.algebras.clifford_algebra', 'CliffordAlgebra', as_='Clifford')
+lazy_import('sage.algebras.clifford_algebra', 'ExteriorAlgebra', as_='Exterior')
+lazy_import('sage.algebras.weyl_algebra', 'DifferentialWeylAlgebra', as_='DifferentialWeyl')
+lazy_import('sage.algebras.lie_algebras.lie_algebra', 'LieAlgebra', as_='Lie')
+
 lazy_import('sage.algebras.iwahori_hecke_algebra', 'IwahoriHeckeAlgebra', 'IwahoriHecke')
 lazy_import('sage.algebras.nil_coxeter_algebra', 'NilCoxeterAlgebra', 'NilCoxeter')
 lazy_import('sage.algebras.free_zinbiel_algebra', 'FreeZinbielAlgebra', 'FreeZinbiel')

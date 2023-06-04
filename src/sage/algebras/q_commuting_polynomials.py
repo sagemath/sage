@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 r"""
 `q`-Commuting Polynomials
 
