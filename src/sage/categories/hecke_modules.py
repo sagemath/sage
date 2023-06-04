@@ -103,7 +103,7 @@ class HeckeModules(Category_module):
 
         def _Hom_(self, Y, category):
             r"""
-            Returns the homset from ``self`` to ``Y`` in the category ``category``
+            Return the homset from ``self`` to ``Y`` in the category ``category``
 
             INPUT:
 
@@ -121,13 +121,13 @@ class HeckeModules(Category_module):
 
             EXAMPLES::
 
-                sage: M = ModularForms(Gamma0(7), 4)
-                sage: H = M._Hom_(M, category = HeckeModules(QQ)); H
+                sage: M = ModularForms(Gamma0(7), 4)                                    # optional - sage.modular
+                sage: H = M._Hom_(M, category=HeckeModules(QQ)); H                      # optional - sage.modular
                 Set of Morphisms
                  from Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
                    to Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
                    in Category of Hecke modules over Rational Field
-                sage: H.__class__
+                sage: H.__class__                                                       # optional - sage.modular
                 <class 'sage.modular.hecke.homspace.HeckeModuleHomspace_with_category'>
                 sage: TestSuite(H).run(skip=["_test_elements", "_test_an_element", "_test_elements_eq",
                 ....:                        "_test_elements_eq_reflexive", "_test_elements_eq_transitive",
@@ -142,7 +142,7 @@ class HeckeModules(Category_module):
 
             TESTS::
 
-                sage: H = M._Hom_(M, category = HeckeModules(GF(5))); H
+                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # optional - sage.modular sage.rings.finite_rings
                 Traceback (most recent call last):
                 ...
                 TypeError: Category of Hecke modules over Finite Field of size 5
