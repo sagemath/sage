@@ -353,24 +353,24 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
 
         # Diagonalize the 2x2 block
         else:
-            B = self[ind, ind+1]
-            if (B % 2 != 0):
+            B = self[ind, ind + 1]
+            if B % 2:
                 raise RuntimeError("we expected the mixed term to be even")
 
             a = self[ind, ind]
-            b = ZZ(B / ZZ(2))
-            c = self[ind+1, ind+1]
+            b = B // ZZ(2)
+            c = self[ind + 1, ind + 1]
             tmp_disc = b * b - a * c
 
             # Perform the diagonalization
-            if (tmp_disc % 8 == 1):                # 2xy
+            if tmp_disc % 8 == 1:                # 2xy
                 tmp_diag_vec[ind] = 1
-                tmp_diag_vec[ind+1] = -1
+                tmp_diag_vec[ind + 1] = -1
                 ind += 2
-            elif(tmp_disc % 8 == 5):               # 2x^2 + 2xy + 2y^2
-                tmp_diag_vec[0] = 3*u
+            elif tmp_disc % 8 == 5:               # 2x^2 + 2xy + 2y^2
+                tmp_diag_vec[0] = 3 * u
                 tmp_diag_vec[ind] = -u
-                tmp_diag_vec[ind+1] = -u
+                tmp_diag_vec[ind + 1] = -u
                 ind += 2
                 u = tmp_diag_vec[0]
             else:

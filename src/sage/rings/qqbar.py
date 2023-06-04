@@ -1180,6 +1180,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             sage: AA.has_coerce_map_from(SR)                                            # optional - sage.symbolic
             False
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 - 2, 'a', embedding=2.**(1/3))
             sage: AA.has_coerce_map_from(K)
             True
@@ -4701,12 +4702,13 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sqrt(sqrt(5) + 5)
             sage: QQbar.zeta(5).radical_expression()                                    # optional - sage.symbolic
             1/4*sqrt(5) + 1/2*sqrt(-1/2*sqrt(5) - 5/2) - 1/4
-            sage: a = QQ[x](x^7 - x - 1).roots(AA, False)[0]
+            sage: x = polygen(QQ, 'x')
+            sage: a = (x^7 - x - 1).roots(AA, False)[0]
             sage: a.radical_expression()                                                # optional - sage.symbolic
             1.112775684278706?
             sage: a.radical_expression().parent() == SR                                 # optional - sage.symbolic
             False
-            sage: a = sorted(QQ[x](x^7-x-1).roots(QQbar, False), key=imag)[0]
+            sage: a = sorted((x^7-x-1).roots(QQbar, False), key=imag)[0]
             sage: a.radical_expression()                                                # optional - sage.symbolic
             -0.3636235193291805? - 0.9525611952610331?*I
             sage: QQbar.zeta(5).imag().radical_expression()                             # optional - sage.symbolic
@@ -4726,11 +4728,13 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         ::
 
-            sage: a = AA(sqrt(2) + 10^25)
-            sage: p = a.minpoly()
-            sage: v = a._value
-            sage: f = ComplexIntervalField(v.prec())
-            sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]
+            sage: a = AA(sqrt(2) + 10^25)                                               # optional - sage.symbolic
+            sage: p = a.minpoly()                                                       # optional - sage.symbolic
+            sage: v = a._value                                                          # optional - sage.symbolic
+            sage: f = ComplexIntervalField(v.prec())                                    # optional - sage.symbolic
+            sage: var('x')                                                              # optional - sage.symbolic
+            x
+            sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]                   # optional - sage.symbolic
             [True, True]
             sage: a.radical_expression()                                                # optional - sage.symbolic
             sqrt(2) + 10000000000000000000000000
@@ -5410,7 +5414,8 @@ class AlgebraicReal(AlgebraicNumber_base):
         real which is not the case without calling _ensure_real (see
         :trac:`11728`)::
 
-            sage: P = AA['x'](1+x^4); a1,a2 = P.factor()[0][0],P.factor()[1][0]; a1*a2
+            sage: x = polygen(ZZ, 'x')
+            sage: P = AA['x'](1 + x^4); a1,a2 = P.factor()[0][0], P.factor()[1][0]; a1*a2
             x^4 + 1.000000000000000?
             sage: a1,a2
             (x^2 - 1.414213562373095?*x + 1, x^2 + 1.414213562373095?*x + 1)
@@ -7079,13 +7084,13 @@ class ANRoot(ANDescr):
 
         EXAMPLES::
 
-            sage: a = (x^2 + 23).roots(ring=QQbar, multiplicities=False)[0]
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = (x^2 + 23).roots(ring=QQbar, multiplicities=False)[0]             # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANRoot'>
-            sage: c = b.conjugate(a); c
+            sage: c = b.conjugate(a); c                                                 # optional - sage.symbolic
             <sage.rings.qqbar.ANUnaryExpr object at ...>
-            sage: c.exactify()
+            sage: c.exactify()                                                          # optional - sage.symbolic
             -2*a + 1 where a^2 - a + 6 = 0 and a in 0.50000000000000000? - 2.397915761656360?*I
         """
         if not self._complex:
@@ -7797,6 +7802,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: v.generator()
             Number Field in a with defining polynomial y^2 - y - 1 with a in 1.618033988749895?
@@ -7811,6 +7817,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: type(v)
             <class 'sage.rings.qqbar.ANExtensionElement'>
@@ -7825,6 +7832,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: v.field_element_value()
             a
@@ -7837,6 +7845,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: type(v)
             <class 'sage.rings.qqbar.ANExtensionElement'>

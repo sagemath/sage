@@ -103,7 +103,7 @@ This came up in some subtle bug once::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.object cimport PyObject, Py_NE, Py_EQ, Py_LE, Py_GE
+from cpython.object cimport Py_EQ, Py_LE, Py_GE
 from cpython.bool cimport *
 
 from types import MethodType, BuiltinMethodType
@@ -111,7 +111,6 @@ import operator
 from copy import copy
 
 from sage.cpython.type cimport can_assign_class
-cimport sage.categories.morphism as morphism
 cimport sage.categories.map as map
 from sage.structure.debug_options cimport debug
 from sage.structure.sage_object cimport SageObject
@@ -119,7 +118,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.misc.lazy_string cimport _LazyString
-from sage.sets.pythonclass cimport Set_PythonType_class, Set_PythonType
+from sage.sets.pythonclass cimport Set_PythonType_class
 from .category_object import CategoryObject
 from .coerce cimport coercion_model
 from .coerce cimport parent_is_integers
@@ -1862,8 +1861,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: K.<a>=NumberField(x^3+x^2+1,embedding=1)
-            sage: K.coerce_embedding()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=1)                       # optional - sage.rings.number_field
+            sage: K.coerce_embedding()                                                  # optional - sage.rings.number_field
             Generic morphism:
               From: Number Field in a with defining polynomial x^3 + x^2 + 1 with a = -1.465571231876768?
               To:   Real Lazy Field
@@ -2285,14 +2285,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Another test::
 
-            sage: K = NumberField([x^2-2, x^2-3], 'a,b')
-            sage: M = K.absolute_field('c')
-            sage: M_to_K, K_to_M = M.structure()
-            sage: M.register_coercion(K_to_M)
-            sage: K.register_coercion(M_to_K)
-            sage: phi = M.coerce_map_from(QQ)
-            sage: p = QQ.random_element()
-            sage: c = phi(p) - p; c
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField([x^2 - 2, x^2 - 3], 'a,b')                            # optional - sage.rings.number_field
+            sage: M = K.absolute_field('c')                                             # optional - sage.rings.number_field
+            sage: M_to_K, K_to_M = M.structure()                                        # optional - sage.rings.number_field
+            sage: M.register_coercion(K_to_M)                                           # optional - sage.rings.number_field
+            sage: K.register_coercion(M_to_K)                                           # optional - sage.rings.number_field
+            sage: phi = M.coerce_map_from(QQ)                                           # optional - sage.rings.number_field
+            sage: p = QQ.random_element()                                               # optional - sage.rings.number_field
+            sage: c = phi(p) - p; c                                                     # optional - sage.rings.number_field
             0
             sage: c.parent() is M
             True
@@ -2597,7 +2598,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         # If needed, it will be passed to Left/RightModuleAction.
         from sage.categories.action import Action, PrecomposedAction
         from sage.categories.homset import Hom
-        from .coerce_actions import LeftModuleAction, RightModuleAction
         cdef Parent R
 
         for action in self._action_list:
