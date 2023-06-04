@@ -359,7 +359,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
 
                 sage: k = bell_number(30, 'mpmath', prec=15); k                         # optional - mpmath
                 846749014511809388871680
-                sage: k == bell_number(30)                                              # optional - mpmath
+                sage: k == bell_number(30)                                              # optional - mpmath sage.libs.flint
                 False
 
     TESTS::

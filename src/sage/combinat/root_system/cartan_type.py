@@ -65,14 +65,14 @@ while the Lie algebra is `sl_{n+1}`, and the Lie group `SL_{n+1}`
 One may also construct crystals associated to various Dynkin diagrams.
 For example::
 
-    sage: C = crystals.Letters(T); C
+    sage: C = crystals.Letters(T); C                                                    # optional - sage.combinat
     The crystal of letters for type ['A', 4]
-    sage: C.list()
+    sage: C.list()                                                                      # optional - sage.combinat
     [1, 2, 3, 4, 5]
 
-    sage: C = crystals.Tableaux(T, shape=[2]); C
+    sage: C = crystals.Tableaux(T, shape=[2]); C                                        # optional - sage.combinat
     The crystal of tableaux of type ['A', 4] and shape(s) [[2]]
-    sage: C.cardinality()
+    sage: C.cardinality()                                                               # optional - sage.combinat
     15
 
 Here is a sample of all the finite irreducible crystallographic Cartan
@@ -88,10 +88,12 @@ types and their corresponding Dynkin diagrams::
     sage: [latex(ct) for ct in CartanType.samples(crystallographic=True)]
     [A_{1}, A_{5}, B_{1}, B_{5}, C_{1}, C_{5}, D_{2}, D_{3}, D_{5},
      E_6, E_7, E_8, F_4, G_2,
-     A_{1}^{(1)}, A_{5}^{(1)}, B_{1}^{(1)}, B_{5}^{(1)}, C_{1}^{(1)}, C_{5}^{(1)}, D_{3}^{(1)}, D_{5}^{(1)},
+     A_{1}^{(1)}, A_{5}^{(1)}, B_{1}^{(1)}, B_{5}^{(1)},
+     C_{1}^{(1)}, C_{5}^{(1)}, D_{3}^{(1)}, D_{5}^{(1)},
      E_6^{(1)}, E_7^{(1)}, E_8^{(1)}, F_4^{(1)}, G_2^{(1)},
      BC_{1}^{(2)}, BC_{5}^{(2)},
-     B_{5}^{(1)\vee}, C_{4}^{(1)\vee}, F_4^{(1)\vee}, G_2^{(1)\vee}, BC_{1}^{(2)\vee}, BC_{5}^{(2)\vee}]
+     B_{5}^{(1)\vee}, C_{4}^{(1)\vee}, F_4^{(1)\vee},
+     G_2^{(1)\vee}, BC_{1}^{(2)\vee}, BC_{5}^{(2)\vee}]
     sage: view([DynkinDiagram(ct) for ct in CartanType.samples(crystallographic=True)]) # not tested
 
 Non-crystallographic Cartan types are also partially supported::

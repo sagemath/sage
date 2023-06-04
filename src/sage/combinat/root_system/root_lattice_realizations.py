@@ -289,9 +289,15 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L.some_elements()
                 [2*alpha[1] + 2*alpha[2], alpha[1], alpha[2]]
             """
-            result = [self.an_element()]+list(self.simple_roots())
-            if hasattr(self, "fundamental_weights"):
-                result += list(self.fundamental_weights())
+            result = [self.an_element()]
+            try:
+                result.extend(self.simple_roots())
+            except ImportError:
+                pass
+            try:
+                result.extend(self.fundamental_weights())
+            except (AttributeError, ImportError):
+                pass
             return result
 
         ##########################################################################

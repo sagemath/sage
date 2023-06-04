@@ -548,9 +548,9 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: omega1 = Lambda[1] - Lambda[0]
                 sage: omega2 = Lambda[2] - Lambda[0]
 
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)      # optional - sage.graphs
                 {0: 1, 1: 2, 2: 0}
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)      # optional - sage.graphs
                 {0: 2, 1: 0, 2: 1}
 
                 sage: R = RootSystem(['C',2,1]).weight_lattice()
@@ -562,9 +562,9 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: Lambda = R.fundamental_weights()
                 sage: omega1 = Lambda[1] - Lambda[0]
                 sage: omega2 = Lambda[2] - 2*Lambda[0]
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)      # optional - sage.graphs
                 {0: 1, 1: 0, 2: 2, 3: 3, 4: 5, 5: 4}
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)      # optional - sage.graphs
                 {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
 
             Algorithm: computes `w` of the decomposition, and see how
