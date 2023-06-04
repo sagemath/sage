@@ -1765,8 +1765,8 @@ def quotient(x, y, *args, **kwds):
         0.833333333333333
         sage: R.<x> = ZZ[]; R
         Univariate Polynomial Ring in x over Integer Ring
-        sage: I = Ideal(R, x^2+1)
-        sage: quotient(R, I)
+        sage: I = Ideal(R, x^2 + 1)
+        sage: quotient(R, I)                                                            # optional - sage.libs.pari
         Univariate Quotient Polynomial Ring in xbar over Integer Ring with modulus x^2 + 1
     """
     try:
