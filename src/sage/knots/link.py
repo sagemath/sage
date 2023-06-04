@@ -55,22 +55,25 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.matrix.constructor import matrix
+from copy import deepcopy, copy
+from itertools import combinations
+
 from sage.rings.integer_ring import ZZ
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.ring", "SR")
 from sage.rings.integer import Integer
-from sage.numerical.mip import MixedIntegerLinearProgram
-lazy_import("sage.functions.generalized", "sign")
-from sage.homology.chain_complex import ChainComplex
 from sage.misc.flatten import flatten
 from sage.misc.cachefunc import cached_method
-from copy import deepcopy, copy
-from itertools import combinations
 from sage.structure.sage_object import SageObject
+
+lazy_import("sage.functions.generalized", "sign")
+lazy_import('sage.groups.braid', ['Braid', 'BraidGroup'])
+lazy_import('sage.homology.chain_complex', 'ChainComplex')
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.numerical.mip', 'MixedIntegerLinearProgram')
+lazy_import("sage.symbolic.ring", "SR")
 
 
 class Link(SageObject):
@@ -368,7 +371,6 @@ class Link(SageObject):
                 self._braid = None
 
         else:
-            from sage.groups.braid import Braid, BraidGroup
             if isinstance(data, Braid):
                 # Remove all unused strands
                 support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
@@ -501,13 +503,16 @@ class Link(SageObject):
              x1*x3^-1*x2^-1*x3, x3*x1^-1*x0^-1*x1 >
             sage: GB = K8.fundamental_group(presentation='braid')
             sage: GB
-            Finitely presented group < x0, x1, x2 | x1*x2^-1*x1^-1*x0*x1*x2*x1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0^-1, x1*x2^-1*x1^-1*x0*x1*x2*x1^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2*x1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-2, x1*x2^-1*x1^-1*x0*x1*x2*x1^-1*x2^-1 >
+            Finitely presented group
+             < x0, x1, x2 | x1*x2^-1*x1^-1*x0*x1*x2*x1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0^-1,
+                            x1*x2^-1*x1^-1*x0*x1*x2*x1^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2*x1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-2,
+                            x1*x2^-1*x1^-1*x0*x1*x2*x1^-1*x2^-1 >
             sage: GA.simplified()
-            Finitely presented group < x0, x1 |
-             x1^-1*x0*x1*x0^-1*x1*x0*x1^-1*x0^-1*x1*x0^-1 >
+            Finitely presented group
+             < x0, x1 | x1^-1*x0*x1*x0^-1*x1*x0*x1^-1*x0^-1*x1*x0^-1 >
             sage: GB.simplified()
-            Finitely presented group < x0, x2 |
-             x2^-1*x0*x2^-1*x0^-1*x2*x0*x2^-1*x0*x2*x0^-1 >
+            Finitely presented group
+             < x0, x2 | x2^-1*x0*x2^-1*x0^-1*x2*x0*x2^-1*x0*x2*x0^-1 >
         """
         from sage.groups.free_group import FreeGroup
         if presentation == 'braid':
@@ -3057,12 +3062,12 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
-            sage: K._coloring_matrix(3)
+            sage: K._coloring_matrix(3)                                                 # optional - sage.rings.finite_rings
             [2 2 2]
             [2 2 2]
             [2 2 2]
             sage: K8 = Knot([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
-            sage: K8._coloring_matrix(4)
+            sage: K8._coloring_matrix(4)                                                # optional - sage.rings.finite_rings
             [2 0 4 4]
             [4 4 2 0]
             [0 4 4 2]
@@ -3152,7 +3157,7 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
-            sage: K.colorings(3)
+            sage: K.colorings(3)                                                        # optional - sage.rings.finite_rings
             [{(1, 2): 0, (3, 4): 1, (5, 6): 2},
              {(1, 2): 0, (3, 4): 2, (5, 6): 1},
              {(1, 2): 1, (3, 4): 0, (5, 6): 2},
