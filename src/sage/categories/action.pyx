@@ -432,16 +432,16 @@ cdef class PrecomposedAction(Action):
     We demonstrate that an example discussed on :trac:`14711` did not become a
     problem::
 
-        sage: E = ModularSymbols(11).2
-        sage: s = E.modular_symbol_rep()
-        sage: del E,s
-        sage: import gc
-        sage: _ = gc.collect()
-        sage: E = ModularSymbols(11).2
-        sage: v = E.manin_symbol_rep()
-        sage: c,x = v[0]
-        sage: y = x.modular_symbol_rep()
-        sage: coercion_model.get_action(QQ, parent(y), op=operator.mul)
+        sage: E = ModularSymbols(11).2                                                  # optional - sage.modular
+        sage: s = E.modular_symbol_rep()                                                # optional - sage.modular
+        sage: del E,s                                                                   # optional - sage.modular
+        sage: import gc                                                                 # optional - sage.modular
+        sage: _ = gc.collect()                                                          # optional - sage.modular
+        sage: E = ModularSymbols(11).2                                                  # optional - sage.modular
+        sage: v = E.manin_symbol_rep()                                                  # optional - sage.modular
+        sage: c,x = v[0]                                                                # optional - sage.modular
+        sage: y = x.modular_symbol_rep()                                                # optional - sage.modular
+        sage: coercion_model.get_action(QQ, parent(y), op=operator.mul)                 # optional - sage.modular
         Left scalar multiplication by Rational Field
          on Abelian Group of all Formal Finite Sums over Rational Field
          with precomposition on right by Coercion map:
@@ -483,12 +483,12 @@ cdef class PrecomposedAction(Action):
 
         Check that this action can be pickled (:trac:`29031`)::
 
-            sage: E = ModularSymbols(11).2
-            sage: v = E.manin_symbol_rep()
-            sage: c,x = v[0]
-            sage: y = x.modular_symbol_rep()
-            sage: act = coercion_model.get_action(QQ, parent(y), op=operator.mul)
-            sage: loads(dumps(act)) is not None
+            sage: E = ModularSymbols(11).2                                              # optional - sage.modular
+            sage: v = E.manin_symbol_rep()                                              # optional - sage.modular
+            sage: c,x = v[0]                                                            # optional - sage.modular
+            sage: y = x.modular_symbol_rep()                                            # optional - sage.modular
+            sage: act = coercion_model.get_action(QQ, parent(y), op=operator.mul)       # optional - sage.modular
+            sage: loads(dumps(act)) is not None                                         # optional - sage.modular
             True
         """
         return (type(self), (self._action, self.G_precomposition, self.S_precomposition))
