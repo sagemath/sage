@@ -1,7 +1,7 @@
 """
-Dense vectors over the symbolic ring
+Sparse vectors over the symbolic ring
 
-Implements dense vectors over the symbolic ring.
+Implements vectors over the symbolic ring.
 
 AUTHORS:
 
@@ -9,10 +9,12 @@ AUTHORS:
 
 - Joris Vankerschaver (2011-05-15): Initial version
 
+- Dima Pasechnik (2023-06-04): cloning from the dense case
+
 EXAMPLES::
 
     sage: x, y = var('x, y')
-    sage: u = vector([sin(x)^2 + cos(x)^2, log(2*y) + log(3*y)]); u
+    sage: u = vector([sin(x)^2 + cos(x)^2, log(2*y) + log(3*y)], sparse=True); u
     (cos(x)^2 + sin(x)^2, log(3*y) + log(2*y))
     sage: type(u)
     <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
@@ -24,8 +26,8 @@ TESTS:
 Check that the outcome of arithmetic with symbolic vectors is again
 a symbolic vector (:trac:`11549`)::
 
-    sage: v = vector(SR, [1, 2])
-    sage: w = vector(SR, [sin(x), 0])
+    sage: v = vector(SR, [1, 2], sparse=True)
+    sage: w = vector(SR, [sin(x), 0], sparse=True)
     sage: type(v)
     <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(w)
@@ -39,7 +41,7 @@ a symbolic vector (:trac:`11549`)::
 
 Test pickling/unpickling::
 
-    sage: u = vector(SR, [sin(x^2)])
+    sage: u = vector(SR, [sin(x^2)], sparse=True)
     sage: loads(dumps(u)) == u
     True
 
@@ -64,8 +66,8 @@ def apply_map(phi):
 
     EXAMPLES::
 
-        sage: from sage.modules.vector_symbolic_dense import apply_map
-        sage: v = vector([1,2,3])
+        sage: from sage.modules.vector_symbolic_sparse import apply_map
+        sage: v = vector([1,2,3], sparse=True)
         sage: f = apply_map(lambda x: x+1)
         sage: f(v)
         (2, 3, 4)
@@ -80,7 +82,7 @@ def apply_map(phi):
 
             sage: var('x,y')
             (x, y)
-            sage: v = vector([sin(x)^2 + cos(x)^2, log(x*y), sin(x/(x^2 + x)), factorial(x+1)/factorial(x)])
+            sage: v = vector([sin(x)^2 + cos(x)^2, log(x*y), sin(x/(x^2 + x)), factorial(x+1)/factorial(x)], sparse=True)
             sage: v.simplify_trig()
             (1, log(x*y), sin(1/(x + 1)), factorial(x + 1)/factorial(x))
             sage: v.canonicalize_radical()
@@ -92,7 +94,7 @@ def apply_map(phi):
             sage: v.simplify_full()
             (1, log(x*y), sin(1/(x + 1)), x + 1)
 
-            sage: v = vector([sin(2*x), sin(3*x)])
+            sage: v = vector([sin(2*x), sin(3*x)], sparse=True)
             sage: v.simplify_trig()
             (2*cos(x)*sin(x), (4*cos(x)^2 - 1)*sin(x))
             sage: v.simplify_trig(False)
@@ -105,7 +107,7 @@ def apply_map(phi):
     return apply
 
 
-class Vector_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):
+class Vector_symbolic_sparse(free_module_element.FreeModuleElement_generic_sparse):
     pass
 
 # Add elementwise methods.
@@ -113,4 +115,4 @@ for method in ['simplify', 'simplify_factorial',
                'simplify_log', 'simplify_rational',
                'simplify_trig', 'simplify_full', 'trig_expand',
                'canonicalize_radical', 'trig_reduce']:
-    setattr(Vector_symbolic_dense, method, apply_map(getattr(Expression, method)))
+    setattr(Vector_symbolic_sparse, method, apply_map(getattr(Expression, method)))
