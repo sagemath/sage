@@ -665,7 +665,7 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr1 != sr2
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def sub_bytes(self, d):
         r"""

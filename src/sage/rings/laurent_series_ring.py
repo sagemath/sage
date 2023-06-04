@@ -47,6 +47,11 @@ from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer_ring import ZZ
 
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
+
 
 def is_LaurentSeriesRing(x):
     """
@@ -483,7 +488,6 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.structure.element import parent
-        from sage.libs.pari.all import pari_gen
 
         P = parent(x)
         if isinstance(x, self.element_class) and n == 0 and P is self:

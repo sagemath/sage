@@ -455,7 +455,7 @@ class FastEllipticPolynomial:
         if rems is None:
             rems = self.hItree.remainders(poly)
         r = prod(rems)
-        s = -1 if len(self.hItree)%2 == 1 == poly.degree() else 1
+        s = -1 if len(self.hItree) % 2 == 1 == poly.degree() else 1
         assert r.is_constant()
         return s * r[0]
 

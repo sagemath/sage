@@ -16,7 +16,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
@@ -34,7 +33,6 @@ from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial
 from sage.rings.rational import Rational
-from sage.structure.element cimport Element, ModuleElement, RingElement
 from sage.structure.richcmp cimport rich_to_bool
 
 

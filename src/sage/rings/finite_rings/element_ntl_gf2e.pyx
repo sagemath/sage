@@ -34,11 +34,8 @@ from cypari2.paridecl cimport *
 
 from sage.structure.richcmp cimport (richcmp,
                                      richcmp_not_equal, rich_to_bool)
-from sage.structure.element cimport Element, ModuleElement, RingElement
 
 from sage.structure.parent cimport Parent
-
-from sage.rings.ring cimport Ring
 
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 
@@ -46,13 +43,8 @@ from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
-from sage.misc.randstate import current_randstate
-from sage.arith.long cimport pyobject_to_long
-
 from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
 from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.interfaces.abc import GapElement
 
