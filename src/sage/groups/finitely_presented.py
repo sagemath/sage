@@ -1685,7 +1685,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         - ``groebner`` -- boolean (default: ``False``). If set to
           ``True`` the minimal associated primes of the ideals and their
-          groebner bases are computed-. It has no effect if the base ring 
+          groebner bases are computed-. It has no effect if the base ring
           is not a field.
 
         OUTPUT:
@@ -1732,7 +1732,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
                 J = S.ideal(JL)
                 LJ = J.minimal_associated_primes()
                 fct = [id.groebner_basis() for id in LJ]
-                fct = [a for a in fct if S.gen() not in a] 
+                fct = [a for a in fct if S.gen() not in a]
                 if fct != [(S.one(),)]:
                     res1.append(fct)
             return res1
