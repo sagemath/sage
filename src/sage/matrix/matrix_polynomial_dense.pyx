@@ -39,7 +39,6 @@ AUTHORS:
 
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
 

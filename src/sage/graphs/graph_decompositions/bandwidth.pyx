@@ -109,7 +109,7 @@ Functions
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from libc.stdint cimport uint16_t
@@ -117,7 +117,6 @@ from cysignals.signals cimport sig_check
 from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.distances_all_pairs cimport all_pairs_shortest_path_BFS
-from sage.graphs.base.boost_graph import bandwidth_heuristics
 
 ctypedef uint16_t index_t
 

@@ -47,6 +47,7 @@ AUTHORS:
 
 This example follows one in the Magma reference manual::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<y> = NumberField(x^4 - 420*x^2 + 40000)
     sage: z = y^5/11; z
     420/11*y^3 - 40000/11*y
@@ -181,6 +182,7 @@ def is_NumberFieldHomsetCodomain(codomain):
         sage: from sage.rings.number_field.number_field import is_NumberFieldHomsetCodomain
         sage: is_NumberFieldHomsetCodomain(QQ)
         True
+        sage: x = polygen(ZZ, 'x')
         sage: is_NumberFieldHomsetCodomain(NumberField(x^2 + 1, 'x'))
         True
         sage: is_NumberFieldHomsetCodomain(ZZ)
@@ -305,6 +307,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
     Constructing a relative number field::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 2)
         sage: R.<t> = K[]
         sage: L.<b> = K.extension(t^3 + t + a); L
@@ -760,7 +763,8 @@ def NumberFieldTower(polynomials, names, check=True, embeddings=None, latex_name
 
     EXAMPLES::
 
-        sage: k.<a,b,c> = NumberField([x^2 + 1, x^2 + 3, x^2 + 5]); k # indirect doctest
+        sage: x = polygen(ZZ, 'x')
+        sage: k.<a,b,c> = NumberField([x^2 + 1, x^2 + 3, x^2 + 5]); k  # indirect doctest
         Number Field in a with defining polynomial x^2 + 1 over its base field
         sage: a^2
         -1
@@ -1033,7 +1037,8 @@ def is_AbsoluteNumberField(x):
     EXAMPLES::
 
         sage: from sage.rings.number_field.number_field import is_AbsoluteNumberField
-        sage: is_AbsoluteNumberField(NumberField(x^2+1,'a'))
+        sage: x = polygen(ZZ, 'x')
+        sage: is_AbsoluteNumberField(NumberField(x^2 + 1, 'a'))
         True
         sage: is_AbsoluteNumberField(NumberField([x^3 + 17, x^2+1],'a'))
         False
@@ -1065,6 +1070,7 @@ def is_QuadraticField(x) -> bool:
         use isinstance(..., sage.rings.abc.NumberField_quadratic instead
         See https://github.com/sagemath/sage/issues/32660 for details.
         True
+        sage: x = polygen(ZZ, 'x')
         sage: is_QuadraticField(NumberField(x^2 - 5, 'b'))
         True
         sage: is_QuadraticField(NumberField(x^3 - 5, 'b'))
@@ -1256,6 +1262,7 @@ def is_CyclotomicField(x) -> bool:
     EXAMPLES::
 
         sage: from sage.rings.number_field.number_field import is_CyclotomicField
+        sage: x = polygen(ZZ, 'x')
         sage: is_CyclotomicField(NumberField(x^2 + 1,'zeta4'))
         doctest:warning...
         DeprecationWarning: is_CyclotomicField is deprecated;
@@ -1289,6 +1296,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 2); K
         Number Field in a with defining polynomial x^3 - 2
         sage: TestSuite(K).run()
@@ -1402,6 +1410,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: NumberField(x^97 - 19, 'a')
             Number Field in a with defining polynomial x^97 - 19
 
@@ -1508,6 +1517,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         This also works for relative number fields and their absolute fields::
 
             sage: K.<a> = QuadraticField(2)
+            sage: x = polygen(ZZ, 'x')
             sage: L.<i> = K.extension(x^2 + 1)
             sage: M.<b> = L.absolute_field()
             sage: M(i)
@@ -1600,7 +1610,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^3 + x^2 + 1,embedding=CC.gen())
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=CC.gen())
             sage: F, R = K.construction()
             sage: F
             AlgebraicExtensionFunctor
@@ -1678,6 +1689,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 17)
             sage: K(a) is a # indirect doctest
             True
@@ -1996,7 +2008,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: k.<theta25> = NumberField(x^3+(2/3)*x+1)
+            sage: x = polygen(ZZ, 'x')
+            sage: k.<theta25> = NumberField(x^3 + (2/3)*x + 1)
             sage: k._convert_from_str('theta25^3 + (1/3)*theta25')
             -1/3*theta25 - 1
 
@@ -2021,6 +2034,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         This method is implicitly called by :meth:`Hom` and
         :meth:`sage.categories.homset.Hom`::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1); K
             Number Field in i with defining polynomial x^2 + 1
             sage: K.Hom(K) # indirect doctest
@@ -2072,6 +2086,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<z> = NumberField(x^2 + 3)
             sage: L.<a> = K.absolute_field(); L
             Number Field in a with defining polynomial x^2 + 3
@@ -2132,6 +2147,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.primitive_element()
             a
@@ -2179,6 +2195,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<j> = NumberField(x^8 + 1)
             sage: K.random_element().parent() is K
             True
@@ -2251,6 +2268,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 - 3); K
             Number Field in a with defining polynomial x^4 - 3
             sage: H.<b>, from_H = K.subfield(a^2)
@@ -2338,6 +2356,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<i> = NumberField(x^2 + 1); L
             Number Field in i with defining polynomial x^2 + 1
             sage: K, from_K, to_K = L.change_generator(i/2 + 3)
@@ -2585,6 +2604,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^10 - 2)
             sage: K.is_absolute()
             True
@@ -2611,6 +2631,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 2)
             sage: p = K.primes_above(2)[0]
             sage: K.quadratic_defect(5, p)
@@ -2698,6 +2719,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: m.<b> = NumberField(x^2 + 4)
             sage: k.is_isomorphic(m)
@@ -2761,6 +2783,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 2, 'alpha').is_totally_real()
             False
             sage: NumberField(x^2 - 2, 'alpha').is_totally_real()
@@ -2779,6 +2802,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 2, 'alpha').is_totally_imaginary()
             True
             sage: NumberField(x^2 - 2, 'alpha').is_totally_imaginary()
@@ -2795,6 +2819,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: Q.<a> = NumberField(x - 1)
             sage: Q.is_CM()
             False
@@ -2929,7 +2954,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             Ring endomorphism of Cyclotomic Field of order 8 and degree 4
               Defn: zeta8 |--> -zeta8^3
             sage: QuadraticField(5, 'a').complex_conjugation()
-            Identity endomorphism of Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
+            Identity endomorphism of Number Field in a with defining
+             polynomial x^2 - 5 with a = 2.236067977499790?
+            sage: x = polygen(QQ, 'x')
             sage: F = NumberField(x^4 + x^3 - 3*x^2 - x + 1, 'a')
             sage: F.is_totally_real()
             True
@@ -3033,6 +3060,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                Defn: a0 |--> -a^27 - a^26 - a^25 - a^24 - a^23 - a^22 - a^21 - a^20 - a^19
                              - a^18 - a^17 - a^16 - a^15 - a^14 - a^13 - a^12 - a^11 - a^10
                              - a^9 - a^8 - a^7 - a^6 - a^5 - a^4 - a^3 - a^2 - 1)
+            sage: x = polygen(QQ, 'x')
             sage: F.<a> = NumberField(x^3 - 2)
             sage: F.maximal_totally_real_subfield()
             [Rational Field,
@@ -3138,6 +3166,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^5 + x + 17)
             sage: v = k.complex_embeddings()
             sage: ls = [phi(k.0^2) for phi in v] ; ls # random order
@@ -3184,6 +3213,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.real_embeddings()
             [
@@ -3262,6 +3292,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Most fields don't implicitly have embeddings unless explicitly
         specified::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 - 2, 'a').specified_complex_embedding() is None
             True
             sage: NumberField(x^3 - x + 5, 'a').specified_complex_embedding() is None
@@ -3312,6 +3343,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: QuadraticField(-7, 'a').gen_embedding()
             2.645751311064591?*I
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 7, 'a').gen_embedding()  # None
         """
         embedding = self.coerce_embedding()
@@ -3329,6 +3361,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<i> = QuadraticField(-1)
             sage: K.algebraic_closure()
             Algebraic Field
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: K.algebraic_closure()
             Algebraic Field
@@ -3361,7 +3394,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: k = K.subfields(9)[0][0]
             sage: k.conductor()
             27
-            sage: K.<t> = NumberField(x^3+x^2-2*x-1)
+            sage: x = polygen(QQ, 'x')
+            sage: K.<t> = NumberField(x^3 + x^2 - 2*x - 1)
             sage: K.conductor()
             7
             sage: K.<t> = NumberField(x^3+x^2-36*x-4)
@@ -3426,6 +3460,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<t> = NumberField(x^3 + x^2 - 36*x - 4)
             sage: K.conductor()
             109
@@ -3473,6 +3508,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 3, 'a').latex_variable_name()
             doctest:...: DeprecationWarning: This method is replaced by ...
             See https://github.com/sagemath/sage/issues/30372 for details.
@@ -3494,6 +3530,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^13 - (2/3)*x + 3)
             sage: k._repr_()
             'Number Field in a with defining polynomial x^13 - 2/3*x + 3'
@@ -3515,6 +3552,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^13 - (2/3)*x + 3)
             sage: k._latex_()
             '\\Bold{Q}[a]/(a^{13} - \\frac{2}{3} a + 3)'
@@ -3541,6 +3579,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 2, 'c')._ideal_class_()
             <class 'sage.rings.number_field.number_field_ideal.NumberFieldIdeal'>
         """
@@ -3558,6 +3597,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 2, 'c')._fractional_ideal_class_()
             <class 'sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal'>
         """
@@ -3570,6 +3610,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.ideal(2)
             Fractional ideal (2)
@@ -3668,6 +3709,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: K.fractional_ideal([1/a])
             Fractional ideal (1/2*a^2)
@@ -3719,6 +3761,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
             sage: d = K.ideals_of_bdd_norm(10)
             sage: for n in d:
@@ -3986,6 +4029,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              Fractional ideal (2*i + 1), Fractional ideal (3)]
             sage: K.primes_of_bounded_norm(1)
             []
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P = K.primes_of_bounded_norm(30)
             sage: P
@@ -4175,6 +4219,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
        EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<xi> = NumberField(x^3 - 3*x + 1)
             sage: K.completely_split_primes(100)
             [17, 19, 37, 53, 71, 73, 89]
@@ -4203,6 +4248,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 - 3)
             sage: k._is_valid_homomorphism_(QQ, [0])
             False
@@ -4257,6 +4303,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         If `f` is monic and integral, the result satisfies ``g = f``
         and ``alpha = beta = x``::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 - 2)
             sage: K._pari_absolute_structure()
             (y^2 - 2, Mod(y, y^2 - 2), Mod(y, y^2 - 2))
@@ -4308,6 +4355,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Some examples with relative number fields::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a, c> = NumberField([x^2 + 3, x^2 + 1])
             sage: k.pari_polynomial()
             x^4 + 8*x^2 + 4
@@ -4363,6 +4411,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^4 - 3*x + 7); k
             Number Field in a with defining polynomial x^4 - 3*x + 7
             sage: k.pari_nf()[:4]
@@ -4422,6 +4471,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 - 17)
             sage: k.pari_zk()
             [1, 1/3*y^2 - 1/3*y + 1/3, y]
@@ -4436,6 +4486,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k = NumberField(x^2 + x + 1, 'a')
             sage: k.__pari__()
             [y^2 + y + 1, [0, 1], -3, 1, ... [1, y], [1, 0; 0, 1], [1, 0, 0, -1; 0, 1, 1, -1]]
@@ -4450,6 +4501,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k = NumberField(x^2 + x + 1, 'a')
             sage: k._pari_init_()
             '[y^2 + y + 1, [0, 1], -3, 1, ... [1, y], [1, 0; 0, 1], [1, 0, 0, -1; 0, 1, 1, -1]]'
@@ -4483,6 +4535,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 1); k
             Number Field in a with defining polynomial x^2 + 1
             sage: len(k.pari_bnf())
@@ -4583,6 +4636,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^99 + 2); k
             Number Field in a with defining polynomial x^99 + 2
             sage: k.characteristic()
@@ -4608,6 +4662,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
             sage: G = K.class_group(); G
             Class group of order 3 with structure C3 of
@@ -4679,6 +4734,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 23, 'a').class_number()
             3
             sage: NumberField(x^2 + 163, 'a').class_number()
@@ -4774,6 +4830,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         An example in a relative extension (see :trac:`8722`)::
 
+            sage: x = polygen(QQ, 'x')
             sage: L.<a,b> = NumberField([x^2 + 1, x^2 - 5])
             sage: p = L.ideal((-1/2*b - 1/2)*a + 1/2*b - 1/2)
             sage: W = L.S_units([p]); [x.norm() for x in W]
@@ -4825,7 +4882,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+5)
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField(x^2 + 5)
             sage: K._S_class_group_and_units(())
             ([-1], [(Fractional ideal (2, a + 1), 2)])
 
@@ -5026,6 +5084,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Verify that :trac:`14489` is fixed;
         the representation depends on the PARI version::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 381 * x + 127)
             sage: gens = K.selmer_generators(K.primes_above(13), 2)
             sage: len(gens) == 8
@@ -5233,6 +5292,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             Vector space of dimension 2 over Finite Field of size 2
             sage: gens
             [2, -1]
+            sage: x = polygen(ZZ, 'x')
             sage: for v in KS2:
             ....:     if not v:
             ....:         continue
@@ -5296,6 +5356,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^4 - 2)
             sage: K.composite_fields(K)
             [Number Field in a with defining polynomial x^4 - 2,
@@ -5632,6 +5693,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^3 + x^2 + 997*x + 1, 'a').absolute_degree()
             3
             sage: NumberField(x + 1, 'a').absolute_degree()
@@ -5647,6 +5709,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^3 + x^2 + 997*x + 1, 'a').degree()
             3
             sage: NumberField(x + 1, 'a').degree()
@@ -5671,6 +5734,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: d = k.different()
             sage: d
@@ -5717,6 +5781,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<t> = NumberField(x^3 + x^2 - 2*x + 8)
             sage: K.disc()
             -503
@@ -5744,6 +5809,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<b> = NumberField(x^2 - 123)
             sage: k.disc()
             492
@@ -5756,6 +5822,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 + x + 1)
             sage: b = [1, 2*a, 3*a^2]
             sage: T = K.trace_dual_basis(b); T
@@ -5788,6 +5855,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)
             sage: K.elements_of_norm(3)
             []
@@ -5816,6 +5884,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: R.<t> = K[]
             sage: L.<b> = K.extension(t^2 + a); L
@@ -5876,6 +5945,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Here we show how to factor Gaussian integers (up to units).
         First we form a number field defined by `x^2 + 1`::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<I> = NumberField(x^2 + 1); K
             Number Field in I with defining polynomial x^2 + 1
 
@@ -5955,6 +6025,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<w> = NumberField(x^2 + 23)
             sage: K.prime_factors(w + 1)
             [Fractional ideal (2, 1/2*w - 1/2),
@@ -6079,6 +6150,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<theta> = NumberField(x^14 + 2); k
             Number Field in theta with defining polynomial x^14 + 2
             sage: k.gen()
@@ -6138,6 +6210,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^5 + x + 3, 'c').is_field()
             True
         """
@@ -6151,6 +6224,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 1, 'i').is_galois()
             True
             sage: NumberField(x^3 + 2, 'a').is_galois()
@@ -6176,6 +6250,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 1, 'i').is_abelian()
             True
             sage: NumberField(x^3 + 2, 'a').is_abelian()
@@ -6235,6 +6310,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<b> = NumberField(x^2 - 14)  # a Galois extension
             sage: G = k.galois_group(); G
             Galois group 2T1 (S2) with order 2 of x^2 - 14
@@ -6320,6 +6396,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K._normalize_prime_list(None)
             ()
@@ -6354,6 +6431,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^5 + 10*x + 1)
             sage: K.power_basis()
             [1, a, a^2, a^3, a^4]
@@ -6387,6 +6465,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^5 + 10*x + 1)
             sage: K.integral_basis()
             [1, a, a^2, a^3, a^4]
@@ -6422,6 +6501,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^5 + 10*x + 1)
             sage: K._pari_integral_basis()
             [1, y, y^2, y^3, y^4]
@@ -6504,6 +6584,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: F.<t> = NumberField(x^6 - 7*x^4 - x^3 + 11*x^2 + x - 1)
             sage: F.maximal_order().basis()
             [1/2*t^5 + 1/2*t^4 + 1/2*t^2 + 1/2, t, t^2, t^3, t^4, t^5]
@@ -6583,6 +6664,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: F.<t> = NumberField(x^6 - 7*x^4 - x^3 + 11*x^2 + x - 1)
             sage: F.reduced_gram_matrix()
             [ 6  3  0  2  0  1]
@@ -6707,6 +6789,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^3 + x + 9, 'a').narrow_class_group()
             Multiplicative Abelian group isomorphic to C2
 
@@ -6728,6 +6811,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 17,'a').ngens()
             1
             sage: NumberField(x + 3,'a').ngens()
@@ -6748,6 +6832,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 19,'a').order()
             +Infinity
         """
@@ -6759,6 +6844,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + (2/3)*x - 9/17,'a').absolute_polynomial_ntl()
             ([-27 34 51], 51)
         """
@@ -6773,6 +6859,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + (2/3)*x - 9/17,'a').polynomial_ntl()
             ([-27 34 51], 51)
         """
@@ -6793,6 +6880,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + (2/3)*x - 9/17,'a').polynomial()
             x^2 + 2/3*x - 9/17
         """
@@ -6809,7 +6897,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: k5.<z> = CyclotomicField(5)
             sage: k5.defining_polynomial()
             x^4 + x^3 + x^2 + x + 1
-            sage: y = polygen(QQ,'y')
+            sage: y = polygen(QQ, 'y')
             sage: k.<a> = NumberField(y^9 - 3*y + 5); k
             Number Field in a with defining polynomial y^9 - 3*y + 5
             sage: k.defining_polynomial()
@@ -6824,6 +6912,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES: An example with an absolute field::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 3)
             sage: y = polygen(QQ, 'y')
             sage: k.<a> = NumberField(y^2 + 3)
@@ -6848,6 +6937,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^3 + 2*x - 5, 'alpha')
             sage: K.polynomial_quotient_ring()
             Univariate Quotient Polynomial Ring in alpha over Rational Field
@@ -6868,6 +6958,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 - 2, 'a').regulator()
             0.881373587019543
             sage: NumberField(x^4 + x^3 + x^2 + x + 1, 'a').regulator()
@@ -6956,7 +7047,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: NumberField(x^2+1, 'a').signature()
+            sage: x = polygen(QQ, 'x')
+            sage: NumberField(x^2 + 1, 'a').signature()
             (0, 1)
             sage: NumberField(x^3-2, 'a').signature()
             (1, 1)
@@ -6971,6 +7063,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<zeta3> = NumberField(x^2 + 3)
             sage: K.trace_pairing([1, zeta3])
             [ 2  0]
@@ -7009,6 +7102,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 5); K
             Number Field in a with defining polynomial x^2 + 5
             sage: P, Q = K.ideal(3).prime_factors()
@@ -7401,6 +7495,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<xi> = NumberField(x^2 + x + 1)
             sage: S = K.primes_above(3)
             sage: K.S_unit_solutions(S)  # random, due to ordering
@@ -7449,6 +7544,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<z> = NumberField(x^2 + 3)
             sage: K.zeta(1)
             1
@@ -7541,6 +7637,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: F.<alpha> = NumberField(x^22 + 3)
             sage: F.zeta_order()
             6
@@ -7586,6 +7683,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: z = K.primitive_root_of_unity(); z
             i
@@ -7657,6 +7755,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<b> = NumberField(x^2 + 1)
             sage: zs = K.roots_of_unity(); zs
             [b, -1, -b, 1]
@@ -7703,6 +7802,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 - 10)
             sage: Ilist = [K.primes_above(p)[0] for p in prime_range(10)]
             sage: b = K.solve_CRT([1,2,3,4], Ilist, True)
@@ -7752,6 +7852,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         The valuation can be specified with an integer ``prime`` that is
         completely ramified in ``R``::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)
             sage: K.valuation(2)
             2-adic valuation
@@ -7932,6 +8033,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         In this example, the maximal order cannot be generated by a single
         element::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + x^2 - 2*x+8)
             sage: o = k.maximal_order()
             sage: o
@@ -8048,6 +8150,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^17 + 3, 'a'); K
             Number Field in a with defining polynomial x^17 + 3
             sage: type(K)
@@ -8090,6 +8193,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: L.<b> = NumberField(x^2 + 1)
             sage: K._coerce_from_other_number_field(L(2/3))
@@ -8315,6 +8419,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: S.<y> = NumberField(x^3 + x + 1)
             sage: S.coerce(int(4)) # indirect doctest
             4
@@ -8376,13 +8481,13 @@ class NumberField_absolute(NumberField_generic):
 
         TESTS::
 
-            sage: K.<a> = NumberField(polygen(QQ)^3-2)
+            sage: K.<a> = NumberField(polygen(QQ)^3 - 2)
             sage: type(K.coerce_map_from(QQ))
             <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
 
         Make sure we still get our optimized morphisms for special fields::
 
-            sage: K.<a> = NumberField(polygen(QQ)^2-2)
+            sage: K.<a> = NumberField(polygen(QQ)^2 - 2)
             sage: type(K.coerce_map_from(QQ))
             <class 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
 
@@ -8438,6 +8543,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)
             sage: K.absolute_polynomial ()
             x^2 + 1
@@ -8456,6 +8562,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 - 17)
             sage: K.absolute_generator()
             a
@@ -8474,6 +8581,7 @@ class NumberField_absolute(NumberField_generic):
 
         ::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField([x^2 + p for p in [5, 3, 2]],'a').absolute_field('b'); K
             Number Field in b with defining polynomial x^8 + 40*x^6 + 352*x^4 + 960*x^2 + 576
             sage: L, from_L, to_L = K.optimized_representation()
@@ -8569,6 +8677,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField([x^2 + p for p in [5, 3, 2]],'a').absolute_field('b'); K
             Number Field in b with defining polynomial x^8 + 40*x^6 + 352*x^4 + 960*x^2 + 576
             sage: L = K.optimized_subfields(name='b')
@@ -8671,6 +8780,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<z> = NumberField(x^2 + 3); K
             Number Field in z with defining polynomial x^2 + 3
             sage: L.<ww> = K.change_names()
@@ -8694,7 +8804,8 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField( [x^3 - 2, x^2 + x + 1] )
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField([x^3 - 2, x^2 + x + 1])
             sage: K = K.absolute_field('b')
             sage: S = K.subfields()
             sage: len(S)
@@ -8766,6 +8877,7 @@ class NumberField_absolute(NumberField_generic):
 
         Let's make sure embeddings are being respected::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^4 - 23, embedding=50)
             sage: K, CDF(a)
             (Number Field in a with defining polynomial x^4 - 23 with a = 2.189938703094843?,
@@ -8856,6 +8968,7 @@ class NumberField_absolute(NumberField_generic):
 
         TESTS::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + x^2 - 2*x+8)
             sage: k.maximal_order() is k.maximal_order()  # indirect doctest
             True
@@ -8892,6 +9005,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<i> = NumberField(x^2 + 1)
             sage: k.order(2*i)
             Order in Number Field in i with defining polynomial x^2 + 1
@@ -8946,6 +9060,7 @@ class NumberField_absolute(NumberField_generic):
 
         Test that caching works::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: K.order(a) is K.order(a)      # indirect doctest
             True
@@ -8998,6 +9113,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 2)
             sage: V, from_V, to_V  = k.free_module()
             sage: from_V(V([1,2,3]))
@@ -9039,6 +9155,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 5)
             sage: K.absolute_vector_space()
             (Vector space of dimension 3 over Rational Field,
@@ -9069,6 +9186,7 @@ class NumberField_absolute(NumberField_generic):
         For medium-sized Galois groups of fields with small discriminants,
         this computation is feasible::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^6 + 4*x^2 + 2)
             sage: K.galois_group().order()
             48
@@ -9115,6 +9233,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^4 - 2)
             sage: M = K.galois_closure('b'); M
             Number Field in b with defining polynomial x^8 + 28*x^4 + 2500
@@ -9175,6 +9294,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 10000)
             sage: K.automorphisms()
             [
@@ -9236,6 +9356,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: L.<a1> = K.galois_closure(); L
             Number Field in a1 with defining polynomial x^6 + 108
@@ -9353,6 +9474,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: F.<alpha> = NumberField(x^3 + 2)
             sage: F.minkowski_embedding()
             [ 1.00000000000000 -1.25992104989487  1.58740105196820]
@@ -9424,6 +9546,7 @@ class NumberField_absolute(NumberField_generic):
 
         ::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 + 5)
             sage: f = K.logarithmic_embedding()
             sage: f(0)
@@ -9489,6 +9612,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: F.<alpha> = NumberField(x^3 - 100*x + 1); F.places()
             [Ring morphism:
                From: Number Field in alpha with defining polynomial x^3 - 100*x + 1
@@ -9584,7 +9708,8 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
-            sage: F.<alpha> = NumberField(x^4-7) ; F.real_places()
+            sage: x = polygen(QQ, 'x')
+            sage: F.<alpha> = NumberField(x^4 - 7) ; F.real_places()
             [Ring morphism:
             From: Number Field in alpha with defining polynomial x^4 - 7
             To:   Real Field with 106 bits of precision
@@ -9612,6 +9737,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<xi> = NumberField(x^3 - 3)
             sage: phi_real = K.places()[0]
             sage: phi_complex = K.places()[1]
@@ -9676,6 +9802,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^10 - 2)
             sage: L.<c,d> = K.relativize(a^4 + a^2 + 2); L
             Number Field in c with defining polynomial
@@ -9916,6 +10043,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.absolute_degree()
             2
@@ -9928,6 +10056,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.relative_degree()
             2
@@ -9940,6 +10069,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.relative_polynomial()
             x^2 + 1
@@ -9952,6 +10082,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.relative_vector_space()
             (Vector space of dimension 2 over Rational Field,
@@ -9970,6 +10101,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.absolute_discriminant()
             -4
@@ -9982,6 +10114,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.relative_discriminant()
             -4
@@ -9994,6 +10127,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.absolute_different()
             Fractional ideal (2)
@@ -10006,6 +10140,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.relative_different()
             Fractional ideal (2)
@@ -10044,6 +10179,7 @@ class NumberField_absolute(NumberField_generic):
 
         Some global examples::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 - 23)
             sage: K.hilbert_symbol(0, a + 5)
             0
@@ -10269,6 +10405,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 20072)
             sage: S = [K.primes_above(3)[0], K.primes_above(23)[0]]
             sage: b = K.hilbert_symbol_negative_at_S(S, a + 1)
@@ -10434,6 +10571,7 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: F.<a> = NumberField(x^2 - x - 1)
             sage: F.hilbert_conductor(2*a, F(-1))
             Fractional ideal (2)
@@ -10492,6 +10630,7 @@ class NumberField_absolute(NumberField_generic):
         There are no elements in a number field with multiplicative height less
         than 1::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<g> = NumberField(x^5 - x + 19)
             sage: list(K.elements_of_bounded_height(bound=0.9))
             []
@@ -10597,9 +10736,10 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
-            sage: K.<i> = NumberField(x**2+1)
-            sage: x = polygen(K,'x')
-            sage: factor(x*x+4)  # indirect doctest
+            sage: x = polygen(QQ, 'x')
+            sage: K.<i> = NumberField(x**2 + 1)
+            sage: x = polygen(K, 'x')
+            sage: factor(x*x + 4)  # indirect doctest
             (x - 2*i) * (x + 2*i)
 
         TESTS::
@@ -11392,6 +11532,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 3); K
             Number Field in a with defining polynomial x^2 + 3
             sage: CyclotomicField(3).Hom(K) # indirect doctest
@@ -11440,6 +11581,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             True
             sage: CyclotomicField(11).is_isomorphic(CyclotomicField(23))
             False
+            sage: x = polygen(QQ, 'x')
             sage: CyclotomicField(3).is_isomorphic(NumberField(x^2 + x + 1, 'a'))
             True
             sage: CyclotomicField(18).is_isomorphic(CyclotomicField(9))
@@ -12082,6 +12224,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: K.discriminant()
             -4
@@ -12160,6 +12303,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
 
             sage: type(QuadraticField(-23,'a').class_number())
             <class 'sage.rings.integer.Integer'>
+            sage: x = polygen(QQ, 'x')
             sage: type(NumberField(x^3 + 23, 'a').class_number())
             <class 'sage.rings.integer.Integer'>
             sage: type(NumberField(x^3 + 23, 'a').extension(x^2 + 5, 'b').class_number())
@@ -12225,6 +12369,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
             sage: L = K.hilbert_class_field('b'); L
             Number Field in b with defining polynomial x^3 - x^2 + 1 over its base field
@@ -12453,6 +12598,7 @@ def refine_embedding(e, prec=None):
 
     An example where we extend a real embedding into ``AA``::
 
+        sage: x = polygen(QQ, 'x')
         sage: K.<a> = NumberField(x^3 - 2)
         sage: K.signature()
         (1, 1)
@@ -12581,6 +12727,7 @@ def is_real_place(v):
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: K.<xi> = NumberField(x^3 - 3)
         sage: phi_real = K.places()[0]
         sage: phi_complex = K.places()[1]
