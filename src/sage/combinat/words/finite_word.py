@@ -2850,7 +2850,7 @@ class FiniteWord_class(Word_class):
             sage: Word('dedadbc').lengths_maximal_palindromes(f)
             [1, 0, 3, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]
         """
-        wordWithSpecialLetter, updatedMorphism = self._insert_not_used_letter_between_consecutive_letters(f=f)
+        wordWithSpecialLetter, updatedMorphism, _ = self._insert_not_used_letter_between_consecutive_letters(f=f)
         resultLengths = [0] * wordWithSpecialLetter.length()
         center, right = 0, 0
         for i in range(wordWithSpecialLetter.length()):
@@ -2938,13 +2938,16 @@ class FiniteWord_class(Word_class):
         _, palindromesTree = self._get_palindromic_factors_data(f=f)
         return self._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree)
 
-    def palindromic_complexity(self, n):
+    def palindromic_complexity(self, n, f=None):
         r"""
         Return the number of distinct palindromic factors of length ``n`` of ``self``.
 
         INPUT:
 
         - ``n`` -- the length of the factors.
+
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
+          be callable on letters as well as words (e.g. ``WordMorphism``).
 
         EXAMPLES::
 
@@ -2958,7 +2961,14 @@ class FiniteWord_class(Word_class):
             sage: [w.palindromic_complexity(i) for i in range(20)]
             [1, 2, 2, 2, 2, 0, 4, 0, 4, 0, 4, 0, 4, 0, 2, 0, 2, 0, 4, 0]
         """
-        return len([x for x in self.palindromes() if len(x)==n])
+        _, palindromesTree = self._get_palindromic_factors_data(f=f)
+        result = 0
+        for palindromeNode in palindromesTree:
+            endsWithSpecialLetter = palindromeNode[3]
+            palindromeLength = palindromeNode[2]
+            if (not endsWithSpecialLetter) and (palindromeLength == n):
+                result += 1
+        return result
 
     def palindrome_prefixes(self):
         r"""
@@ -2982,7 +2992,7 @@ class FiniteWord_class(Word_class):
 # todo - add optional parameter - morphismAndAntimorphismGroup=None or another copy of this method
 # todo - use PermutationGroup -> list() method to generate all elements of morphism+anitmorphism group by 
 # adding 2 special characters s1 and s2, for all morphisms s1->s1, s2->s2, for all antimorphisms s1->s2, s2->s1
-    def defect(self, f=None): # todo - improve to linear algorithm of mine, make it work with not only involutions
+    def defect(self, f=None):
         r"""
         Return the defect of ``self``.
 
@@ -2992,7 +3002,7 @@ class FiniteWord_class(Word_class):
         It is well known that the maximum number of palindromic factors in `w`
         is `|w|+1` (see [DJP2001]_).
 
-        An optional involution on letters ``f`` can be given. In that case, the
+        An optional letter permutation on letters ``f`` can be given. In that case, the
         *f-palindromic defect* (or *pseudopalindromic defect*, or
         *theta-palindromic defect*) of `w` is returned. It is a
         generalization of defect to f-palindromes. More precisely, the defect is
@@ -3006,7 +3016,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
           be callable on letters as well as words (e.g. ``WordMorphism``). The
           default value corresponds to usual palindromes, i.e., ``f`` equal to
           the identity.
@@ -3048,7 +3058,7 @@ class FiniteWord_class(Word_class):
             sage: w[:300].defect()
             52
 
-        For generalized defect with an involution different from the identity,
+        For generalized defect with a letter permutation different from the identity,
         there is always a letter which is not a palindrome! This is the reason
         for the modification of the definition::
 
@@ -3088,8 +3098,8 @@ class FiniteWord_class(Word_class):
             from sage.combinat.words.morphism import WordMorphism
             if not isinstance(f, WordMorphism):
                 f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
             D = f.domain()
             A = set(map(D, self.letters()))
             while A:
@@ -3097,9 +3107,14 @@ class FiniteWord_class(Word_class):
                 if f(x) != x: # count only non f-palindromic letters
                     if f(x) in A:
                         A.remove(f(x))
-                    g_w +=1
-
-        return self.length()+1-g_w-len(self.palindromes(f=f))
+                    g_w += 1
+        _, palindromesTree = self._get_palindromic_factors_data(f=f)
+        distinctPalindromesCount = 0
+        for palindromeNode in palindromesTree:
+            endsWithSpecialLetter = palindromeNode[3]
+            if not endsWithSpecialLetter:
+                distinctPalindromesCount += 1
+        return self.length() + 1 - g_w - distinctPalindromesCount
 
     def is_full(self, f=None):
         r"""
@@ -3111,7 +3126,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
           be callable on letters as well as words (e.g. ``WordMorphism``).
 
         OUTPUT:
@@ -3288,6 +3303,7 @@ class FiniteWord_class(Word_class):
         between each pair of consecutive letters.
         - a morphism -- copy of ``f`` which returns the letter which was inserted
         into ``self``, when applied on the same letter.
+        - a letter -- not used letter which was inserted into ``self``.
 
         EXAMPLES::
 
@@ -3315,7 +3331,7 @@ class FiniteWord_class(Word_class):
             if not f.is_letter_permutation():
                 raise ValueError("f must be a letter permutation")
             updatedMorphism = specialLetterMorphism.extend_by(f)
-        return wordWithSpecialLetter, updatedMorphism
+        return wordWithSpecialLetter, updatedMorphism, specialLetter
 
     def _find_lps_for_all_prefixes_from_maximal_palindrome_lengths(self, maximalPalindromeLengths):
         r"""
@@ -3368,10 +3384,10 @@ class FiniteWord_class(Word_class):
         return result
 
     def _find_set_of_all_palindromic_factors_from_palindromes_tree(self, palindromesTree, f=None):
-        pass
+        pass # TODO
 
     def _find_lacunas_from_palindromes_tree(self, palindromesTree):
-        pass
+        pass # TODO
 
     def _get_palindromic_factors_data(self, f=None):
         r"""
@@ -3400,15 +3416,20 @@ class FiniteWord_class(Word_class):
 
         TODO
         """
-        wordWithSpecialLetter, updatedMorphism = self._insert_not_used_letter_between_consecutive_letters(f=f)
+        wordWithSpecialLetter, updatedMorphism, specialLetter = self._insert_not_used_letter_between_consecutive_letters(f=f)
+        # Manacher's algorithm part
         maximalPalindromeRadiuses = [0] * wordWithSpecialLetter.length()
         maximalPalindromeLengths = [0] * wordWithSpecialLetter.length()
-        initialLengths = [] # TODO
-        previousPositions = [] # TODO
+        initialPalindromeRadiuses = [0] * wordWithSpecialLetter.length()
+        previousPositions = [None] * wordWithSpecialLetter.length()
         center, right = 0, 0
         for i in range(wordWithSpecialLetter.length()):
             if i < right:
                 maximalPalindromeRadiuses[i] = min(right - i, maximalPalindromeRadiuses[2 * center - i])
+                initialPalindromeRadiuses[i] = maximalPalindromeRadiuses[i]
+                previousPositions[i] = 2 * center - i
+                if initialPalindromeRadiuses[2 * center - i] == maximalPalindromeRadiuses[2 * center - i]:
+                    previousPositions[i] = previousPositions[2 * center - i]
             l, r = i - maximalPalindromeRadiuses[i], i + maximalPalindromeRadiuses[i]
             while (l >= 0 and r < wordWithSpecialLetter.length() 
                    and updatedMorphism(wordWithSpecialLetter[l])[0] == wordWithSpecialLetter[r] 
@@ -3423,16 +3444,69 @@ class FiniteWord_class(Word_class):
         oddPosResults = [x - x % 2 for x in maximalPalindromeRadiuses[1::2]]
         maximalPalindromeLengths[::2] = evenPosResults
         maximalPalindromeLengths[1::2] = oddPosResults
-        # TODO - build initial lengths list as well, and previous positions list (which were copied) 
+        # Building forest used later to build palindromes tree
+        diffForest = []
+        treeAndNodeIndexes = [None] * len(previousPositions)
         i = 0 
         while i < len(previousPositions):
-            if previousPositions[i] == None:
-                # TODO
-                pass
+            if initialPalindromeRadiuses[i] != maximalPalindromeRadiuses[i]:
+                if previousPositions[i] == None:
+                    treeIndex, nodeIndex = len(diffForest), 0
+                    diffForest.append([[i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []]])
+                    treeAndNodeIndexes[i] = (treeIndex, nodeIndex)
+                else:
+                    previousPositionIndex = previousPositions[i]
+                    treeIndex, nodeIndex = treeAndNodeIndexes[previousPositionIndex]
+                    tree = diffForest[treeIndex]
+                    newNodeIndex = len(tree)
+                    tree[nodeIndex][3].append(newNodeIndex)
+                    tree.append([i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []])
+                    treeAndNodeIndexes[i] = (treeIndex, newNodeIndex)
             i += 1
-        # TODO
-        palindromesTree = []
-        # TODO
+        # Building palindromes tree
+        palindromesTree = [[dict(), None, 0, False]]
+        for tree in diffForest:
+            nodeIndexesToTraverse = [[0]]
+            palindromeIndexes = [0]
+            while nodeIndexesToTraverse:
+                if nodeIndexesToTraverse[-1]:
+                    currentNodeIndex = nodeIndexesToTraverse[-1].pop()
+                    currentNode = tree[currentNodeIndex]
+                    currentPalindromeIndex = palindromeIndexes[-1]
+                    currentPalindrome = palindromesTree[currentPalindromeIndex]
+                    centerIndex, initialRadius, maxRadius, neighbourIndexes = (
+                        currentNode[0], currentNode[1], currentNode[2], currentNode[3])
+                    i = initialRadius
+                    while i < maxRadius:
+                        nodeIndexesToTraverse.append([])
+                        leftLetter = wordWithSpecialLetter[centerIndex - i]
+                        if leftLetter in currentPalindrome[0].keys():
+                            nextPalindromeIndex = currentPalindrome[0][leftLetter]
+                            currentPalindrome = palindromesTree[nextPalindromeIndex]
+                            palindromeIndexes.append(nextPalindromeIndex)
+                            if centerIndex < currentPalindrome[1]:
+                                currentPalindrome[1] = centerIndex
+                        else:
+                            nextPalindromeIndex = len(palindromesTree)
+                            currentPalindrome[0][leftLetter] = nextPalindromeIndex
+                            currentActualLength = currentPalindrome[2]
+                            nextActualLength = currentActualLength
+                            endsWithSpecialLetter = (True if leftLetter == specialLetter else False)
+                            if not endsWithSpecialLetter:
+                                if currentActualLength == 0:
+                                    nextActualLength = 2 if currentPalindrome[3] else 1
+                                else:
+                                    nextActualLength += 2
+                            palindromesTree.append([dict(), centerIndex, nextActualLength, endsWithSpecialLetter])
+                            currentPalindrome = palindromesTree[nextPalindromeIndex]
+                            palindromeIndexes.append(nextPalindromeIndex)
+                        i += 1
+                    for neighbourIndex in neighbourIndexes:
+                        neighbourInitialRadius = tree[neighbourIndex][1]
+                        nodeIndexesToTraverse[neighbourInitialRadius].append(neighbourIndex)
+                else:
+                    nodeIndexesToTraverse.pop()
+                    palindromeIndexes.pop()
         return maximalPalindromeLengths, palindromesTree
 
     def length_border(self):
