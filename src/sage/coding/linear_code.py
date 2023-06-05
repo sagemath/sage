@@ -298,9 +298,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
     To implement a linear code, you need to:
 
-    - inherit from AbstractLinearCode
+    - inherit from :class:`AbstractLinearCode`
 
-    - call AbstractLinearCode ``__init__`` method in the subclass constructor. Example:
+    - call :class:`AbstractLinearCode` ``__init__`` method in the subclass constructor. Example:
       ``super().__init__(base_field, length, "EncoderName", "DecoderName")``.
       By doing that, your subclass will have its ``length`` parameter
       initialized and will be properly set as a member of the category framework.
@@ -328,7 +328,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
       ``MyNewCodeClass`` will be able to use instances of ``MyDecoderClass``.
 
 
-    As AbstractLinearCode is not designed to be implemented, it does not have any representation
+    As the class :class:`AbstractLinearCode` is not designed to be instantiated, it does not have any representation
     methods. You should implement ``_repr_`` and ``_latex_`` methods in the subclass.
 
     .. NOTE::
@@ -578,7 +578,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         `C=C^*` in this case, so this info is extraneous). The test fails to
         produce 6-designs (ie, the hypotheses of the theorem fail to hold,
         not that the 6-designs definitely don't exist). The command
-        assmus_mattson_designs(C,5,mode="verbose") returns the same value
+        ``assmus_mattson_designs(C,5,mode="verbose")`` returns the same value
         but prints out more detailed information.
 
         The second example below illustrates the blocks of the 5-(24, 8, 1)
@@ -588,17 +588,14 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
             sage: C = codes.GolayCode(GF(2))             #  example 1
             sage: C.assmus_mattson_designs(5)
-            ['weights from C: ',
-            [8, 12, 16, 24],
-            'designs from C: ',
-            [[5, (24, 8, 1)], [5, (24, 12, 48)], [5, (24, 16, 78)], [5, (24, 24, 1)]],
-            'weights from C*: ',
-            [8, 12, 16],
-            'designs from C*: ',
-            [[5, (24, 8, 1)], [5, (24, 12, 48)], [5, (24, 16, 78)]]]
+            ['weights from C: ', [8, 12, 16, 24],
+            'designs from C: ',  [[5, (24, 8, 1)], [5, (24, 12, 48)], [5, (24, 16, 78)],
+                                  [5, (24, 24, 1)]],
+            'weights from C*: ', [8, 12, 16],
+            'designs from C*: ', [[5, (24, 8, 1)], [5, (24, 12, 48)], [5, (24, 16, 78)]]]
             sage: C.assmus_mattson_designs(6)
             0
-            sage: X = range(24)                           #  example 2
+            sage: X = range(24)                          #  example 2
             sage: blocks = [c.support() for c in C if c.hamming_weight()==8]; len(blocks)  # long time computation
             759
         """
@@ -648,7 +645,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         where `k_S` is the dimension of the shortened code `C_{J-S}`,
         `J=[1,2,...,n]`. (The normalized binomial moment is
-        `b_i(C) = \binom(n,d+i)^{-1}B_{d+i}(C)`.) In other words, `C_{J-S}`
+        `b_i(C) = \binom{n}{d+i})^{-1}B_{d+i}(C)`.) In other words, `C_{J-S}`
         is isomorphic to the subcode of C of codewords supported on S.
 
         EXAMPLES::
@@ -746,11 +743,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         - ``equivalence`` (optional) -- which defines the acting group, either
 
-            * ``"permutational"``
+          * ``"permutational"``
 
-            * ``"linear"``
+          * ``"linear"``
 
-            * ``"semilinear"``
+          * ``"semilinear"``
 
         OUTPUT:
 
@@ -1353,9 +1350,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         INPUT:
 
         -  ``algorithm`` -- (default: ``None``) the name of the algorithm to use
-           to perform minimum distance computation. If set to ``None``,
-           GAP methods will be used. ``algorithm`` can be:
-           - ``"Guava"``, which will use optional GAP package Guava
+           to perform minimum distance computation. ``algorithm`` can be:
+
+           - ``None``, to use GAP methods (but not Guava)
+
+           - ``"Guava"``, to use the optional GAP package Guava
 
         OUTPUT:
 
@@ -1782,7 +1781,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``L`` - Subset of `\{1,...,n\}`, where `n` is the length of this code
+        - ``L`` -- Subset of `\{1,...,n\}`, where `n` is the length of this code
 
         OUTPUT:
 
@@ -1808,8 +1807,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``algorithm`` - (optional, default: ``None``) If set to ``"gap"``,
-          call GAP. If set to `"leon"`, call the option GAP package GUAVA and
+        - ``algorithm`` -- (optional, default: ``None``) If set to ``"gap"``,
+          call GAP. If set to ``"leon"``, call the option GAP package GUAVA and
           call a function therein by Jeffrey Leon (see warning below). If set to
           ``"binary"``, use an algorithm optimized for binary codes. The default
           is to use ``"binary"`` for binary codes and ``"gap"`` otherwise.
@@ -1820,7 +1819,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         .. WARNING::
 
-            Specifying ``algorithm = "leon"`` sometimes prints a traceback
+            Specifying ``algorithm="leon"`` sometimes prints a traceback
             related to a stack smashing error in the C library. The result
             appears to be computed correctly, however. It appears to run much
             faster than the GAP algorithm in small examples and much slower than
@@ -1848,11 +1847,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [1, 0, 0, 7, 7, 0, 0, 1]
             sage: C = codes.HammingCode(GF(3), 3); C
             [13, 10] Hamming Code over GF(3)
-            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")   # optional - gap_packages (Guava package)
+            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")  # optional - gap_packages (Guava package)
             True
             sage: C = codes.HammingCode(GF(5), 2); C
             [6, 4] Hamming Code over GF(5)
-            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")   # optional - gap_packages (Guava package)
+            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")  # optional - gap_packages (Guava package)
             True
             sage: C = codes.HammingCode(GF(7), 2); C
             [8, 6] Hamming Code over GF(7)
@@ -1904,7 +1903,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
     def support(self):
         r"""
         Return the set of indices `j` where `A_j` is nonzero, where
-        `A_j` is the number of codewords in `self` of Hamming weight `j`.
+        `A_j` is the number of codewords in ``self`` of Hamming weight `j`.
 
         OUTPUT:
 
@@ -1928,7 +1927,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         Return the weight enumerator polynomial of ``self``.
 
         This is the bivariate, homogeneous polynomial in `x` and `y` whose
-        coefficient to `x^i y^{n-i}` is the number of codewords of `self` of
+        coefficient to `x^i y^{n-i}` is the number of codewords of ``self`` of
         Hamming weight `i`. Here, `n` is the length of ``self``.
 
         INPUT:
@@ -1937,7 +1936,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           homogeneous polynomial. Can be given as a single string of length 2,
           or a single string with a comma, or as a tuple or list of two strings.
 
-        - ``bivariate`` -- (default: `True`) Whether to return a bivariate,
+        - ``bivariate`` -- (default: ``True``) Whether to return a bivariate,
           homogeneous polynomial or just a univariate polynomial. If set to
           ``False``, then ``names`` will be interpreted as a single variable
           name and default to ``"x"``.
@@ -2003,9 +2002,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C.zeta_polynomial()
             2/5*T^2 + 2/5*T + 1/5
             sage: C = codes.databases.best_linear_code_in_guava(6,3,GF(2))  # optional - gap_packages (Guava package)
-            sage: C.minimum_distance()                   # optional - gap_packages (Guava package)
+            sage: C.minimum_distance()              # optional - gap_packages (Guava package)
             3
-            sage: C.zeta_polynomial()                    # optional - gap_packages (Guava package)
+            sage: C.zeta_polynomial()               # optional - gap_packages (Guava package)
             2/5*T^2 + 2/5*T + 1/5
             sage: C = codes.HammingCode(GF(2), 4)
             sage: C.zeta_polynomial()
@@ -2198,7 +2197,7 @@ class LinearCode(AbstractLinearCode):
     minimum distance, will use generic, slow algorithms.
 
     If you are looking for constructing a code from a more specific family, see
-    if the family has been implemented by investigating `codes.<tab>`. These
+    if the family has been implemented by investigating ``codes.<tab>``. These
     more specific classes use properties particular to that family to allow
     faster algorithms, and could also have family-specific methods.
 
