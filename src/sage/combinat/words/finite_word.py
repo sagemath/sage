@@ -2850,24 +2850,7 @@ class FiniteWord_class(Word_class):
             sage: Word('dedadbc').lengths_maximal_palindromes(f)
             [1, 0, 3, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]
         """
-        specialLetter = self.not_used_letter()
-        updatedLetterList = []
-        for letter in self:
-            updatedLetterList.append(letter)
-            updatedLetterList.append(specialLetter)
-        if updatedLetterList:
-            updatedLetterList.pop()
-        from sage.combinat.words.word import Word
-        wordWithSpecialLetter = Word(updatedLetterList)
-        from sage.combinat.words.morphism import WordMorphism
-        specialLetterMorphism = WordMorphism({specialLetter: specialLetter})
-        updatedMorphism = specialLetterMorphism.extend_by(WordMorphism({x: x for x in self.letters()}))
-        if f is not None:
-            if not isinstance(f, WordMorphism):
-                f = WordMorphism(f)
-            if not f.is_letter_permutation():
-                raise ValueError("f must be a letter permutation")
-            updatedMorphism = specialLetterMorphism.extend_by(f)
+        wordWithSpecialLetter, updatedMorphism = self._insert_not_used_letter_between_consecutive_letters(f=f)
         resultLengths = [0] * wordWithSpecialLetter.length()
         center, right = 0, 0
         for i in range(wordWithSpecialLetter.length()):
@@ -2883,6 +2866,10 @@ class FiniteWord_class(Word_class):
             if i + resultLengths[i] > right:
                 center = i
                 right = i + resultLengths[i]
+        evenPosResults = [max(x + x % 2 - 1, 0) for x in resultLengths[::2]]
+        oddPosResults = [x - x % 2 for x in resultLengths[1::2]]
+        resultLengths[::2] = evenPosResults
+        resultLengths[1::2] = oddPosResults
         return resultLengths
 
     def lps_lengths(self, f=None):
@@ -3283,9 +3270,56 @@ class FiniteWord_class(Word_class):
         square = self * self
         return square.lps(f=f).length() >= self.length()
 
+    def _insert_not_used_letter_between_consecutive_letters(self, f=None):
+        r"""
+        This is private method. It returns copy of ``self`` with not used letter inserted 
+        between each pair of consecutive letters of ``self`` and updated morphism.
+
+        INPUT:
+
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
+          be callable on letters as well as words (e.g. ``WordMorphism``). The
+          default value corresponds to usual palindromes, i.e., ``f`` equal to
+          the identity.
+
+        OUTPUT:
+
+        - a word -- copy of ``self`` with not used letter inserted 
+        between each pair of consecutive letters.
+        - a morphism -- copy of ``f`` which returns the letter which was inserted
+        into ``self``, when applied on the same letter.
+
+        EXAMPLES::
+
+            sage: word, morphism = Word('aba')._insert_not_used_letter_between_consecutive_letters()
+            sage: word
+            ['a', 0, 'b', 0, 'a']
+            sage: morphism
+            WordMorphism: 0->0, a->a, b->b
+        """
+        specialLetter = self.not_used_letter()
+        updatedLetterList = []
+        for letter in self:
+            updatedLetterList.append(letter)
+            updatedLetterList.append(specialLetter)
+        if updatedLetterList:
+            updatedLetterList.pop()
+        from sage.combinat.words.word import Word
+        wordWithSpecialLetter = Word(updatedLetterList)
+        from sage.combinat.words.morphism import WordMorphism
+        specialLetterMorphism = WordMorphism({specialLetter: specialLetter})
+        updatedMorphism = specialLetterMorphism.extend_by(WordMorphism({x: x for x in self.letters()}))
+        if f is not None:
+            if not isinstance(f, WordMorphism):
+                f = WordMorphism(f)
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
+            updatedMorphism = specialLetterMorphism.extend_by(f)
+        return wordWithSpecialLetter, updatedMorphism
+
     def _find_lps_for_all_prefixes_from_maximal_palindrome_lengths(self, maximalPalindromeLengths):
         r"""
-        This is private method. It returns lps for all prefixes of ``self``.
+        This is private method. It returns lengths of lps for all prefixes of ``self``.
 
         INPUT:
 
@@ -3316,7 +3350,7 @@ class FiniteWord_class(Word_class):
         while i + 1 < len(maximalPalindromeLengths):
             if len(currentIndexesWithRemoveIndexes) > 0:
                 resIndex = currentIndexesWithRemoveIndexes[0][0]
-                result.append(2 * currentPos + 1 - resIndex)
+                result.append(i - resIndex)
             else:
                 result.append(0)
             currentIndexesWithRemoveIndexes.append([i, currentPos + 1 + (maximalPalindromeLengths[i] // 2)])
@@ -3328,7 +3362,7 @@ class FiniteWord_class(Word_class):
                 currentIndexesWithRemoveIndexes.popleft()
         if len(currentIndexesWithRemoveIndexes) > 0:
             resIndex = currentIndexesWithRemoveIndexes[0][0]
-            result.append(2 * currentPos + 1 - resIndex)
+            result.append(i - resIndex)
         else:
             result.append(0)
         return result
@@ -3366,7 +3400,40 @@ class FiniteWord_class(Word_class):
 
         TODO
         """
-        pass
+        wordWithSpecialLetter, updatedMorphism = self._insert_not_used_letter_between_consecutive_letters(f=f)
+        maximalPalindromeRadiuses = [0] * wordWithSpecialLetter.length()
+        maximalPalindromeLengths = [0] * wordWithSpecialLetter.length()
+        initialLengths = [] # TODO
+        previousPositions = [] # TODO
+        center, right = 0, 0
+        for i in range(wordWithSpecialLetter.length()):
+            if i < right:
+                maximalPalindromeRadiuses[i] = min(right - i, maximalPalindromeRadiuses[2 * center - i])
+            l, r = i - maximalPalindromeRadiuses[i], i + maximalPalindromeRadiuses[i]
+            while (l >= 0 and r < wordWithSpecialLetter.length() 
+                   and updatedMorphism(wordWithSpecialLetter[l])[0] == wordWithSpecialLetter[r] 
+                   and wordWithSpecialLetter[l] == updatedMorphism(wordWithSpecialLetter[r])[0]):
+                maximalPalindromeRadiuses[i] += 1
+                l -= 1
+                r += 1
+            if i + maximalPalindromeRadiuses[i] > right:
+                center = i
+                right = i + maximalPalindromeRadiuses[i]
+        evenPosResults = [max(x + x % 2 - 1, 0) for x in maximalPalindromeRadiuses[::2]]
+        oddPosResults = [x - x % 2 for x in maximalPalindromeRadiuses[1::2]]
+        maximalPalindromeLengths[::2] = evenPosResults
+        maximalPalindromeLengths[1::2] = oddPosResults
+        # TODO - build initial lengths list as well, and previous positions list (which were copied) 
+        i = 0 
+        while i < len(previousPositions):
+            if previousPositions[i] == None:
+                # TODO
+                pass
+            i += 1
+        # TODO
+        palindromesTree = []
+        # TODO
+        return maximalPalindromeLengths, palindromesTree
 
     def length_border(self):
         r"""
