@@ -185,7 +185,6 @@ from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
 
 lazy_import('sage.libs.gap.libgap', 'libgap')
-lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def _check_n_q_d(n, q, d, field_based=True):
@@ -397,6 +396,7 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
             return int(d/( d - t*n))
         elif d < t*n + 1:
             fact = (d-1) / t
+            from sage.rings.real_mpfr import RR
             if RR(fact)==RR(int(fact)):
                 fact = int(fact) + 1
             return int(d/( d - t * fact)) * q**(n - fact)
