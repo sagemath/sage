@@ -1098,7 +1098,7 @@ class LinearCodeSystematicEncoder(Encoder):
 
         sage: class DualRepetitionCode(sage.coding.linear_code.AbstractLinearCode):
         ....:   def __init__(self, field, length):
-        ....:       super().__init__(self,f ield, length, "Systematic", "Syndrome")
+        ....:       super().__init__(field, length, "Systematic", "Syndrome")
         ....:
         ....:   def parity_check_matrix(self):
         ....:       return Matrix(self.base_field(), [1]*self.length())
@@ -1118,7 +1118,7 @@ class LinearCodeSystematicEncoder(Encoder):
 
         sage: class BadCodeFamily(sage.coding.linear_code.AbstractLinearCode):
         ....:   def __init__(self, field, length):
-        ....:       super().__init__(self, field, length, "Systematic", "Syndrome")
+        ....:       super().__init__(field, length, "Systematic", "Syndrome")
         ....:
         ....:   def _repr_(self):
         ....:       return "I am a badly defined code"
