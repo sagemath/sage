@@ -46,7 +46,8 @@ jobs:
           git worktree add --detach worktree-image
           rm -rf /sage/.git && mv worktree-image/.git /sage/
           rm -rf worktree-image && ln -s /sage worktree-image
-          (cd worktree-image && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
+          if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
+          (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
           # Keep track of changes to built HTML
           (cd /sage/local/share/doc/sage/html && git init && git add -A && git commit -m "old")
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.

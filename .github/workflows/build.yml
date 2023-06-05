@@ -64,7 +64,8 @@ jobs:
           git worktree add --detach worktree-image
           rm -rf /sage/.git && mv worktree-image/.git /sage/
           rm -rf worktree-image && ln -s /sage worktree-image
-          (cd worktree-image && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
+          if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
+          (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
           (cd worktree-image && ./bootstrap && make build && ./sage -t --new -p2)
