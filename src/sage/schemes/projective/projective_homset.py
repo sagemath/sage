@@ -156,7 +156,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
              (0.000000000000000 : 0.000000000000000 : 1.00000000000000),
              (1.00000000000000 : 1.00000000000000 : 0.000000000000000),
              (1.00000000000000*I : 0.000000000000000 : 1.00000000000000)]
-            sage: L[0].codomain()
+            sage: L[0].codomain()                                                       # optional - sage.libs.singular
             Projective Space of dimension 2 over Complex Field with 53 bits of precision
 
         ::
@@ -604,10 +604,10 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
         sage: d = 7
-        sage: C = Curve(x^3 + y^3 - d*z^3)
-        sage: E = EllipticCurve([0,-432*d^2])
-        sage: transformation = [(36*d*z-y)/(72*d),(36*d*z+y)/(72*d),x/(12*d)]
-        sage: phi = E.hom(transformation, C); phi
+        sage: C = Curve(x^3 + y^3 - d*z^3)                                              # optional - sage.schemes
+        sage: E = EllipticCurve([0,-432*d^2])                                           # optional - sage.schemes
+        sage: transformation = [(36*d*z-y)/(72*d), (36*d*z+y)/(72*d), x/(12*d)]
+        sage: phi = E.hom(transformation, C); phi                                       # optional - sage.schemes
         Scheme morphism:
           From: Elliptic Curve defined by y^2 = x^3 - 21168 over Rational Field
           To:   Projective Plane Curve over Rational Field defined by x^3 + y^3 - 7*z^3
@@ -630,16 +630,16 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a')
-            sage: X = E(QQ)
-            sage: P = X([0,1,0]);  P
+            sage: E = EllipticCurve('37a')                                              # optional - sage.schemes
+            sage: X = E(QQ)                                                             # optional - sage.schemes
+            sage: P = X([0,1,0]);  P                                                    # optional - sage.schemes
             (0 : 1 : 0)
-            sage: type(P)
+            sage: type(P)                                                               # optional - sage.schemes
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_number_field'>
 
         TESTS::
 
-            sage: X._element_constructor_([0,1,0])
+            sage: X._element_constructor_([0,1,0])                                      # optional - sage.schemes
             (0 : 1 : 0)
         """
         if len(v) == 1:
@@ -656,9 +656,9 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a')
-            sage: X = E(QQ)
-            sage: X._repr_()
+            sage: E = EllipticCurve('37a')                                              # optional - sage.schemes
+            sage: X = E(QQ)                                                             # optional - sage.schemes
+            sage: X._repr_()                                                            # optional - sage.schemes
             'Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field'
         """
         s = 'Abelian group of points on ' + str(self.extended_codomain())
@@ -677,13 +677,13 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a')
-            sage: Hom = E.point_homset();  Hom
+            sage: E = EllipticCurve('37a')                                              # optional - sage.schemes
+            sage: Hom = E.point_homset();  Hom                                          # optional - sage.schemes
             Abelian group of points on Elliptic Curve defined
              by y^2 + y = x^3 - x over Rational Field
-            sage: Hom.base_ring()
+            sage: Hom.base_ring()                                                       # optional - sage.schemes
             Rational Field
-            sage: Hom.base_extend(QQ)
+            sage: Hom.base_extend(QQ)                                                   # optional - sage.schemes
             Traceback (most recent call last):
             ...
             NotImplementedError: Abelian variety point sets are not

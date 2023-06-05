@@ -329,7 +329,7 @@ class Scheme(Parent):
             (4, 5)
 
             sage: R.<t> = PolynomialRing(QQ)
-            sage: E = EllipticCurve([t + 1, t, t, 0, 0])
+            sage: E = EllipticCurve([t + 1, t, t, 0, 0])                                # optional - sage.schemes
             sage: E.point([0, 0])
             (0 : 0 : 1)
         """
@@ -647,8 +647,8 @@ class Scheme(Parent):
             sage: S._Hom_(P).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category'>
 
-            sage: E = EllipticCurve('37a1')
-            sage: Hom(E, E).__class__
+            sage: E = EllipticCurve('37a1')                                             # optional - sage.schemes
+            sage: Hom(E, E).__class__                                                   # optional - sage.schemes
             <class 'sage.schemes.projective.projective_homset.SchemeHomset_polynomial_projective_space_with_category'>
 
             sage: Hom(Spec(ZZ), Spec(ZZ)).__class__
@@ -737,11 +737,11 @@ class Scheme(Parent):
         EXAMPLES::
 
             sage: P.<x> = PolynomialRing(GF(3))                                         # optional - sage.rings.finite_rings
-            sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # optional - sage.rings.finite_rings
+            sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # optional - sage.rings.finite_rings sage.schemes
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: C.zeta_series(4, t)                                                   # optional - sage.rings.finite_rings
+            sage: C.zeta_series(4, t)                                                   # optional - sage.rings.finite_rings sage.schemes
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
-            sage: (1+2*t+3*t^2)/(1-t)/(1-3*t) + O(t^5)                                  # optional - sage.rings.finite_rings
+            sage: (1+2*t+3*t^2)/(1-t)/(1-3*t) + O(t^5)
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
 
         If the scheme has a method ``zeta_function``, this is used to
@@ -751,7 +751,7 @@ class Scheme(Parent):
         Nonetheless, since :trac:`15108` and :trac:`15148`, it supports
         hyperelliptic curves over non-prime fields::
 
-            sage: C.base_extend(GF(9, 'a')).zeta_series(4, t)                           # optional - sage.rings.finite_rings
+            sage: C.base_extend(GF(9, 'a')).zeta_series(4, t)                           # optional - sage.rings.finite_rings sage.schemes
             1 + 12*t + 120*t^2 + 1092*t^3 + 9840*t^4 + O(t^5)
 
         ::
@@ -765,9 +765,9 @@ class Scheme(Parent):
         TESTS::
 
             sage: P.<x> = PolynomialRing(ZZ)
-            sage: C = HyperellipticCurve(x^3 + x + 1)
+            sage: C = HyperellipticCurve(x^3 + x + 1)                                   # optional - sage.schemes
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: C.zeta_series(4, t)
+            sage: C.zeta_series(4, t)                                                   # optional - sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: zeta functions only defined for schemes
@@ -1206,8 +1206,8 @@ class AffineScheme(UniqueRepresentation, Scheme):
 
             sage: S.<p,q> = QQ[]
             sage: A1.<r> = AffineSpace(QQ, 1)
-            sage: A1_emb = Curve(p - 2)
-            sage: A1.hom([2, r], A1_emb)
+            sage: A1_emb = Curve(p - 2)                                                 # optional - sage.schemes
+            sage: A1.hom([2, r], A1_emb)                                                # optional - sage.schemes
             Scheme morphism:
               From: Affine Space of dimension 1 over Rational Field
               To:   Affine Plane Curve over Rational Field defined by p - 2

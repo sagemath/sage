@@ -21,11 +21,12 @@ We construct products projective spaces of various dimensions over the same ring
 # https://www.gnu.org/licenses/
 # ****************************************************************************
 from copy import copy
+
+import sage.rings.abc
+
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import is_NumberFieldOrder
-from sage.rings.qqbar import QQbar
 from sage.schemes.generic.morphism import SchemeMorphism
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.structure.sequence import Sequence
@@ -464,7 +465,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             0.536479304144700
         """
         K = self.codomain().base_ring()
-        if K not in NumberFields() and not is_NumberFieldOrder(K) and K != QQbar:
+        if K not in NumberFields() and K != ZZ and not isinstance(K, (sage.rings.abc.Order, sage.rings.abc.AlgebraicField)):
             raise TypeError("must be over a number field or a number field order or QQbar")
 
         n = self.codomain().ambient_space().num_components()

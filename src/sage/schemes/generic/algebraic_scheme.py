@@ -1771,8 +1771,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         One can enumerate points up to a given bound on a projective scheme
         over the rationals::
 
-            sage: E = EllipticCurve('37a')
-            sage: E.rational_points(bound=8)
+            sage: E = EllipticCurve('37a')                                              # optional - sage.schemes
+            sage: E.rational_points(bound=8)                                            # optional - sage.schemes
             [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 0),
              (1/4 : -5/8 : 1), (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
              (2 : -3 : 1), (2 : 2 : 1)]
@@ -1780,8 +1780,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         For a small finite field, the complete set of points can be
         enumerated. ::
 
-            sage: Etilde = E.base_extend(GF(3))                                         # optional - sage.rings.finite_rings
-            sage: Etilde.rational_points()                                              # optional - sage.rings.finite_rings
+            sage: Etilde = E.base_extend(GF(3))                                         # optional - sage.rings.finite_rings sage.schemes
+            sage: Etilde.rational_points()                                              # optional - sage.rings.finite_rings sage.schemes
             [(0 : 0 : 1), (0 : 1 : 0), (0 : 2 : 1), (1 : 0 : 1),
              (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
 
@@ -1790,8 +1790,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
             sage: FF = FiniteField(7)                                                   # optional - sage.rings.finite_rings
             sage: P.<x> = PolynomialRing(FiniteField(7))                                # optional - sage.rings.finite_rings
-            sage: C = HyperellipticCurve(x^8 + x + 1)                                   # optional - sage.rings.finite_rings
-            sage: C.rational_points()                                                   # optional - sage.rings.finite_rings
+            sage: C = HyperellipticCurve(x^8 + x + 1)                                   # optional - sage.rings.finite_rings sage.schemes
+            sage: C.rational_points()                                                   # optional - sage.rings.finite_rings sage.schemes
             [(0 : 1 : 0), (0 : 1 : 1), (0 : 6 : 1), (2 : 0 : 1),
              (4 : 0 : 1), (6 : 1 : 1), (6 : 6 : 1)]
 
