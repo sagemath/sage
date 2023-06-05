@@ -152,9 +152,9 @@ class AbstractCode(Parent):
 
     To implement a code, you need to:
 
-    - inherit from AbstractCode
+    - inherit from :class:`AbstractCode`
 
-    - call AbstractCode ``__init__`` method in the subclass constructor.
+    - call :class:`AbstractCode` ``__init__`` method in the subclass constructor.
       Example: ``super().__init__(length, "EncoderName",
       "DecoderName", "metric")``. "EncoderName" and "DecoderName" are set to
       ``None`` by default, a generic code class such as AbstractCode does
@@ -197,7 +197,7 @@ class AbstractCode(Parent):
       ``MyDecoderClass``.
 
 
-    As AbstractCode is not designed to be implemented, it does not have any
+    As the class :class:`AbstractCode` is not designed to be instantiated, it does not have any
     representation methods. You should implement ``_repr_`` and ``_latex_``
     methods in the subclass.
     """
@@ -227,7 +227,7 @@ class AbstractCode(Parent):
 
         EXAMPLES:
 
-        The following example demonstrates how to use subclass `AbstractCode`
+        The following example demonstrates how to use a subclass of ``AbstractCode``
         for representing a new family of codes::
 
             sage: from sage.coding.abstract_code import AbstractCode
@@ -666,7 +666,7 @@ class AbstractCode(Parent):
 
     def decode_to_code(self, word, decoder_name=None, *args, **kwargs):
         r"""
-        Corrects the errors in ``word`` and returns a codeword.
+        Correct the errors in ``word`` and returns a codeword.
 
         INPUT:
 
@@ -837,10 +837,10 @@ class AbstractCode(Parent):
         INPUT:
 
         - ``classes`` -- (default: ``False``) if ``classes`` is set to ``True``,
-          return instead a ``dict`` mapping available decoder name to the
+          return instead a :class:`dict` mapping available decoder name to the
           associated decoder class.
 
-        OUTPUT: a list of strings, or a `dict` mapping strings to classes.
+        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
 
         EXAMPLES::
 
@@ -1016,10 +1016,10 @@ class AbstractCode(Parent):
         INPUT:
 
         - ``classes`` -- (default: ``False``) if ``classes`` is set to ``True``,
-          return instead a ``dict`` mapping available encoder name to the
+          return instead a :class:`dict` mapping available encoder name to the
           associated encoder class.
 
-        OUTPUT: a list of strings, or a `dict` mapping strings to classes.
+        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
 
         EXAMPLES::
 
