@@ -174,16 +174,18 @@ on k, given n, d, q, (b) seek bounds on R, delta, q (assuming n is
 # ****************************************************************************
 
 from sage.arith.misc import binomial, is_prime_power
-from sage.libs.gap.libgap import libgap
+from sage.features.gap import GapPackage
 from sage.misc.functional import sqrt, log
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import RR
 
 from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
-from sage.features.gap import GapPackage
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def _check_n_q_d(n, q, d, field_based=True):

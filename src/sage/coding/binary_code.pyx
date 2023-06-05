@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Optimized low-level binary code representation
 
@@ -92,7 +93,7 @@ def weight_dist(M):
     EXAMPLES::
 
         sage: from sage.coding.binary_code import weight_dist
-        sage: M = Matrix(GF(2),[
+        sage: M = Matrix(GF(2), [
         ....:  [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
         ....:  [0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0],
         ....:  [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1],
@@ -100,14 +101,14 @@ def weight_dist(M):
         ....:  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]])
         sage: weight_dist(M)
         [1, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 1]
-        sage: M = Matrix(GF(2),[
+        sage: M = Matrix(GF(2), [
         ....:  [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
         ....:  [0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0],
         ....:  [0,0,0,0,0,1,0,1,0,0,0,1,1,1,1,1,1],
         ....:  [0,0,0,1,1,0,0,0,0,1,1,0,1,1,0,1,1]])
         sage: weight_dist(M)
         [1, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 4, 0, 0, 0, 0, 0]
-        sage: M=Matrix(GF(2),[
+        sage: M = Matrix(GF(2), [
         ....:  [1,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0,0],
         ....:  [0,1,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0],
         ....:  [0,0,1,0,0,1,1,1,1,0,0,1,0,0,0,0,0],
@@ -536,7 +537,7 @@ def test_expand_to_ortho_basis(B=None):
     TESTS::
 
         sage: from sage.coding.binary_code import test_expand_to_ortho_basis, BinaryCode
-        sage: M = Matrix(GF(2), [[1,1,1,1,1,1,0,0,0,0],[0,0,1,1,1,1,1,1,1,1]])
+        sage: M = Matrix(GF(2), [[1,1,1,1,1,1,0,0,0,0], [0,0,1,1,1,1,1,1,1,1]])
         sage: B = BinaryCode(M)
         sage: B.put_in_std_form()
         0
@@ -870,7 +871,7 @@ cdef class BinaryCode:
 
         EXAMPLES::
 
-            sage: M = Matrix(GF(2), [[1,1,1,1,0,0],[0,0,1,1,1,1]])
+            sage: M = Matrix(GF(2), [[1,1,1,1,0,0], [0,0,1,1,1,1]])
             sage: from sage.coding.binary_code import *
             sage: B = BinaryCode(M)
             sage: B.matrix()
@@ -1212,7 +1213,7 @@ cdef class BinaryCode:
         EXAMPLES::
 
             sage: from sage.coding.binary_code import *
-            sage: M = Matrix(GF(2), [[1,1,1,1,0,0],[0,0,1,1,1,1]])
+            sage: M = Matrix(GF(2), [[1,1,1,1,0,0], [0,0,1,1,1,1]])
             sage: B = BinaryCode(M); B
             Binary [6,2] linear code, generator matrix
             [111100]
@@ -2930,7 +2931,11 @@ cdef class PartitionStack:
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: P = PartitionStack(4, 8)
-            sage: P._dangerous_dont_use_set_ents_lvls(list(range(8)), list(range(7))+[-1], [4,7,12,11,1,9,3,0,2,5,6,8,10,13,14,15], [0]*16)
+            sage: P._dangerous_dont_use_set_ents_lvls(
+            ....:     list(range(8)),
+            ....:     list(range(7)) + [-1],
+            ....:     [4,7,12,11,1,9,3,0,2,5,6,8,10,13,14,15],
+            ....:     [0]*16)
             sage: P
             ({4},{7},{12},{11},{1},{9},{3},{0},{2},{5},{6},{8},{10},{13},{14},{15})  ({0},{1,2,3,4,5,6,7})
             ({4},{7},{12},{11},{1},{9},{3},{0},{2},{5},{6},{8},{10},{13},{14},{15})  ({0},{1},{2,3,4,5,6,7})
@@ -3931,7 +3936,8 @@ cdef class BinaryCodeClassifier:
             sage: for n in range(13):
             ....:   s = 'n=%2d : '%n
             ....:   for k in range(1,7):
-            ....:       s += '%3d '%len([C for C in L if C.length() == n and C.dimension() == k])
+            ....:       s += '%3d '%len([C for C in L
+            ....:                        if C.length() == n and C.dimension() == k])
             ....:   print(s)
             n= 0 :   0   0   0   0   0   0
             n= 1 :   0   0   0   0   0   0

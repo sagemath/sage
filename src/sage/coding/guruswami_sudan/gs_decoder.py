@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes
 
@@ -38,7 +39,7 @@ from sage.misc.functional import sqrt
 
 def n_k_params(C, n_k):
     r"""
-    Internal helper function for the GRSGuruswamiSudanDecoder class for allowing to
+    Internal helper function for the :class:`GRSGuruswamiSudanDecoder` class for allowing to
     specify either a GRS code `C` or the length and dimensions `n, k` directly,
     in all the static functions.
 
@@ -62,13 +63,13 @@ def n_k_params(C, n_k):
         sage: n_k_params(None, (10, 5))
         (10, 5)
         sage: C = codes.GeneralizedReedSolomonCode(GF(11).list()[:10], 5)
-        sage: n_k_params(C,None)
+        sage: n_k_params(C, None)
         (10, 5)
         sage: n_k_params(None,None)
         Traceback (most recent call last):
         ...
         ValueError: Please provide either the code or its length and dimension
-        sage: n_k_params(C,(12, 2))
+        sage: n_k_params(C, (12, 2))
         Traceback (most recent call last):
         ...
         ValueError: Please provide only the code or its length and dimension
@@ -157,16 +158,16 @@ class GRSGuruswamiSudanDecoder(Decoder):
       Guruswami-Sudan algorithm to correct.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
-        - the first integer is the multiplicity parameter, and
-        - the second integer is the list size parameter.
+      - the first integer is the multiplicity parameter, and
+      - the second integer is the list size parameter.
 
     - ``interpolation_alg`` -- (default: ``None``) the interpolation algorithm
       that will be used. The following possibilities are currently available:
 
-        * ``"LinearAlgebra"`` -- uses a linear system solver.
-        * ``"LeeOSullivan"`` -- uses Lee O'Sullivan method based on row reduction of a matrix
-        * ``None`` -- one of the above will be chosen based on the size of the
-          code and the parameters.
+      * ``"LinearAlgebra"`` -- uses a linear system solver.
+      * ``"LeeOSullivan"`` -- uses Lee O'Sullivan method based on row reduction of a matrix
+      * ``None`` -- one of the above will be chosen based on the size of the
+        code and the parameters.
 
       You can also supply your own function to perform the interpolation. See
       NOTE section for details on the signature of this function.
@@ -174,12 +175,12 @@ class GRSGuruswamiSudanDecoder(Decoder):
     - ``root_finder`` -- (default: ``None``) the rootfinding algorithm that will
       be used. The following possibilities are currently available:
 
-        * ``"Alekhnovich"`` -- uses Alekhnovich's algorithm.
+      * ``"Alekhnovich"`` -- uses Alekhnovich's algorithm.
 
-        * ``"RothRuckenstein"`` -- uses Roth-Ruckenstein algorithm.
+      * ``"RothRuckenstein"`` -- uses Roth-Ruckenstein algorithm.
 
-        * ``None`` -- one of the above will be chosen based on the size of the
-          code and the parameters.
+      * ``None`` -- one of the above will be chosen based on the size of the
+        code and the parameters.
 
       You can also supply your own function to perform the interpolation. See
       NOTE section for details on the signature of this function.
@@ -203,38 +204,40 @@ class GRSGuruswamiSudanDecoder(Decoder):
     EXAMPLES::
 
         sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-        sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 97)
-        sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
+        sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau=97); D
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251)
+         decoding 97 errors with parameters (1, 2)
 
     One can specify multiplicity and list size instead of ``tau``::
 
-        sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2))
-        sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
+        sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters=(1,2)); D
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251)
+         decoding 97 errors with parameters (1, 2)
 
     One can pass a method as ``root_finder`` (works also for ``interpolation_alg``)::
 
         sage: from sage.coding.guruswami_sudan.gs_decoder import roth_ruckenstein_root_finder
         sage: rf = roth_ruckenstein_root_finder
-        sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2), root_finder = rf)
-        sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
+        sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters=(1,2),
+        ....:                                             root_finder=rf);  D
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251)
+         decoding 97 errors with parameters (1, 2)
 
     If one wants to use the native Sage algorithms for the root finding step,
     one can directly pass the string given in the ``Input`` block of this class.
     This works for ``interpolation_alg`` as well::
 
 
-        sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters = (1,2), root_finder="RothRuckenstein")
-        sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
+        sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, parameters=(1,2),
+        ....:                                             root_finder="RothRuckenstein"); D
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251)
+         decoding 97 errors with parameters (1, 2)
 
     Actually, we can construct the decoder from ``C`` directly::
 
-        sage: D = C.decoder("GuruswamiSudan", tau = 97)
-        sage: D
-        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
+        sage: D = C.decoder("GuruswamiSudan", tau=97); D
+        Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251)
+         decoding 97 errors with parameters (1, 2)
     """
 
     ####################### static methods ###############################
@@ -256,8 +259,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
         OUTPUT:
 
         - ``(s, l)`` -- a pair of integers, where:
-            - ``s`` is the multiplicity parameter, and
-            - ``l`` is the list size parameter.
+          - ``s`` is the multiplicity parameter, and
+          - ``l`` is the list size parameter.
 
         .. NOTE::
 
@@ -266,23 +269,25 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         EXAMPLES::
 
+            sage: GSD = codes.decoders.GRSGuruswamiSudanDecoder
             sage: tau, n, k = 97, 250, 70
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k = (n, k))
+            sage: GSD.parameters_given_tau(tau, n_k=(n, k))
             (1, 2)
 
         Another example with a bigger decoding radius::
 
             sage: tau, n, k = 118, 250, 70
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k = (n, k))
+            sage: GSD.parameters_given_tau(tau, n_k=(n, k))
             (47, 89)
 
         Choosing a decoding radius which is too large results in an errors::
 
             sage: tau = 200
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k = (n, k))
+            sage: GSD.parameters_given_tau(tau, n_k=(n, k))
             Traceback (most recent call last):
             ...
-            ValueError: The decoding radius must be less than the Johnson radius (which is 118.66)
+            ValueError: The decoding radius must be less than
+            the Johnson radius (which is 118.66)
         """
         n,k = n_k_params(C, n_k)
 
@@ -334,27 +339,28 @@ class GRSGuruswamiSudanDecoder(Decoder):
         OUTPUT:
 
         - ``(tau, (s, l))`` -- where
-            - ``tau`` is the obtained decoding radius, and
-            - ``s, ell`` are the multiplicity parameter, respectively list size
-              parameter giving this radius.
+          - ``tau`` is the obtained decoding radius, and
+          - ``s, ell`` are the multiplicity parameter, respectively list size
+            parameter giving this radius.
 
         EXAMPLES::
 
+            sage: GSD = codes.decoders.GRSGuruswamiSudanDecoder
             sage: n, k = 250, 70
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.guruswami_sudan_decoding_radius(n_k = (n, k))
+            sage: GSD.guruswami_sudan_decoding_radius(n_k=(n, k))
             (118, (47, 89))
 
         One parameter can be restricted at a time::
 
             sage: n, k = 250, 70
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.guruswami_sudan_decoding_radius(n_k = (n, k), s=3)
+            sage: GSD.guruswami_sudan_decoding_radius(n_k=(n, k), s=3)
             (109, (3, 5))
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.guruswami_sudan_decoding_radius(n_k = (n, k), l=7)
+            sage: GSD.guruswami_sudan_decoding_radius(n_k=(n, k), l=7)
             (111, (4, 7))
 
         The function can also just compute the decoding radius given the parameters::
 
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.guruswami_sudan_decoding_radius(n_k = (n, k), s=2, l=6)
+            sage: GSD.guruswami_sudan_decoding_radius(n_k=(n, k), s=2, l=6)
             (92, (2, 6))
         """
         n,k = n_k_params(C, n_k)
@@ -366,7 +372,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             return gilt(n - n/2*(s+1)/(l+1) - (k-1)/2*l/s)
         if l is None and s is None:
             tau = gilt(johnson_radius(n, n - k + 1))
-            return (tau, GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k = (n, k)))
+            return (tau, GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k=(n, k)))
         if l is not None and s is not None:
             return (get_tau(s,l), (s,l))
 
@@ -425,8 +431,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
         OUTPUT:
 
         - ``(s, l)`` -- a pair of integers, where:
-            - ``s`` is the multiplicity parameter, and
-            - ``l`` is the list size parameter.
+          - ``s`` is the multiplicity parameter, and
+          - ``l`` is the list size parameter.
 
         .. NOTE::
 
@@ -438,31 +444,32 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         The following is an example where the parameters are optimal::
 
+            sage: GSD = codes.decoders.GRSGuruswamiSudanDecoder
             sage: tau = 98
             sage: n, k = 250, 70
-            sage: codes.decoders.GRSGuruswamiSudanDecoder._suitable_parameters_given_tau(tau, n_k = (n, k))
+            sage: GSD._suitable_parameters_given_tau(tau, n_k=(n, k))
             (2, 3)
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k = (n, k))
+            sage: GSD.parameters_given_tau(tau, n_k=(n, k))
             (2, 3)
 
         This is an example where they are not::
 
             sage: tau = 97
             sage: n, k = 250, 70
-            sage: codes.decoders.GRSGuruswamiSudanDecoder._suitable_parameters_given_tau(tau, n_k = (n, k))
+            sage: GSD._suitable_parameters_given_tau(tau, n_k=(n, k))
             (2, 3)
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k = (n, k))
+            sage: GSD.parameters_given_tau(tau, n_k=(n, k))
             (1, 2)
 
         We can provide a GRS code instead of `n` and `k` directly::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: codes.decoders.GRSGuruswamiSudanDecoder._suitable_parameters_given_tau(tau, C = C)
+            sage: GSD._suitable_parameters_given_tau(tau, C=C)
             (2, 3)
 
         Another one with a bigger ``tau``::
 
-            sage: codes.decoders.GRSGuruswamiSudanDecoder._suitable_parameters_given_tau(118, C = C)
+            sage: GSD._suitable_parameters_given_tau(118, C=C)
             (47, 89)
         """
         n,k = n_k_params(C, n_k)
@@ -499,21 +506,22 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         EXAMPLES::
 
+            sage: GSD = codes.decoders.GRSGuruswamiSudanDecoder
             sage: tau, s, l = 97, 1, 2
             sage: n, k = 250, 70
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.gs_satisfactory(tau, s, l, n_k = (n, k))
+            sage: GSD.gs_satisfactory(tau, s, l, n_k=(n, k))
             True
 
         One can also pass a GRS code::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.gs_satisfactory(tau, s, l, C = C)
+            sage: GSD.gs_satisfactory(tau, s, l, C=C)
             True
 
         Another example where ``s`` and ``l`` does not satisfy the equation::
 
             sage: tau, s, l = 118, 47, 80
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.gs_satisfactory(tau, s, l, n_k = (n, k))
+            sage: GSD.gs_satisfactory(tau, s, l, n_k=(n, k))
             False
 
         If one provides both ``C`` and ``n_k`` an exception is returned::
@@ -521,14 +529,14 @@ class GRSGuruswamiSudanDecoder(Decoder):
             sage: tau, s, l = 97, 1, 2
             sage: n, k = 250, 70
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.gs_satisfactory(tau, s, l, C = C, n_k = (n, k))
+            sage: GSD.gs_satisfactory(tau, s, l, C=C, n_k=(n, k))
             Traceback (most recent call last):
             ...
             ValueError: Please provide only the code or its length and dimension
 
         Same if one provides none of these::
 
-            sage: codes.decoders.GRSGuruswamiSudanDecoder.gs_satisfactory(tau, s, l)
+            sage: GSD.gs_satisfactory(tau, s, l)
             Traceback (most recent call last):
             ...
             ValueError: Please provide either the code or its length and dimension
@@ -543,8 +551,9 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         If neither ``tau`` nor ``parameters`` is given, an exception is returned::
 
+            sage: GSD = codes.decoders.GRSGuruswamiSudanDecoder
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C)
+            sage: D = GSD(C)
             Traceback (most recent call last):
             ...
             ValueError: Specify either tau or parameters
@@ -553,7 +562,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         an exception is returned::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 97, interpolation_alg = 42)
+            sage: D = GSD(C, tau=97, interpolation_alg=42)
             Traceback (most recent call last):
             ...
             ValueError: Please provide a method or one of the allowed strings for interpolation_alg
@@ -561,7 +570,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         Same thing for ``root_finder``::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 97, root_finder = "FortyTwo")
+            sage: D = GSD(C, tau=97, root_finder="FortyTwo")
             Traceback (most recent call last):
             ...
             ValueError: Please provide a method or one of the allowed strings for root_finder
@@ -570,7 +579,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         error message is returned::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 142, parameters=(1, 2))
+            sage: D = GSD(C, tau=142, parameters=(1, 2))
             Traceback (most recent call last):
             ...
             ValueError: Impossible parameters for the Guruswami-Sudan algorithm
@@ -578,7 +587,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         If ``code`` is not a GRS code, an error is raised::
 
             sage: C  = codes.random_linear_code(GF(11), 10, 4)
-            sage: codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 2)
+            sage: GSD(C, tau=2)
             Traceback (most recent call last):
             ...
             ValueError: code has to be a generalized Reed-Solomon code
@@ -624,7 +633,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D = C.decoder("GuruswamiSudan", tau=97)
             sage: D
             Guruswami-Sudan decoder for [250, 70, 181] Reed-Solomon Code over GF(251) decoding 97 errors with parameters (1, 2)
         """
@@ -637,7 +646,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D = C.decoder("GuruswamiSudan", tau=97)
             sage: latex(D)
             \textnormal{Guruswami-Sudan decoder for } [250, 70, 181] \textnormal{ Reed-Solomon Code over } \Bold{F}_{251}\textnormal{ decoding }97\textnormal{ errors with parameters }(1, 2)
         """
@@ -650,8 +659,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D1 = C.decoder("GuruswamiSudan", tau = 97)
-            sage: D2 = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D1 = C.decoder("GuruswamiSudan", tau=97)
+            sage: D2 = C.decoder("GuruswamiSudan", tau=97)
             sage: D1.__eq__(D2)
             True
         """
@@ -675,7 +684,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D = C.decoder("GuruswamiSudan", tau=97)
             sage: D.interpolation_algorithm()
             <function gs_interpolation_lee_osullivan at 0x...>
         """
@@ -693,7 +702,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D = C.decoder("GuruswamiSudan", tau=97)
             sage: D.rootfinding_algorithm()
             <function alekhnovich_root_finder at 0x...>
         """
@@ -706,7 +715,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D = C.decoder("GuruswamiSudan", tau=97)
             sage: D.parameters()
             (1, 2)
         """
@@ -719,7 +728,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D = C.decoder("GuruswamiSudan", tau=97)
             sage: D.multiplicity()
             1
         """
@@ -732,7 +741,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D = C.decoder("GuruswamiSudan", tau=97)
             sage: D.list_size()
             2
         """
@@ -751,8 +760,9 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         EXAMPLES::
 
+            sage: GSD = codes.decoders.GRSGuruswamiSudanDecoder
             sage: C = codes.GeneralizedReedSolomonCode(GF(17).list()[:15], 6)
-            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau=5)
+            sage: D = GSD(C, tau=5)
             sage: F.<x> = GF(17)[]
             sage: m = 13*x^4 + 7*x^3 + 10*x^2 + 14*x + 3
             sage: c = D.connected_encoder().encode(m)
@@ -771,7 +781,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         does not fit the allowed signature, an exception will be raised::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(17).list()[:15], 6)
-            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau=5, root_finder=next_prime)
+            sage: D = GSD(C, tau=5, root_finder=next_prime)
             sage: F.<x> = GF(17)[]
             sage: m = 9*x^5 + 10*x^4 + 9*x^3 + 7*x^2 + 15*x + 2
             sage: c = D.connected_encoder().encode(m)
@@ -779,7 +789,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
             sage: m in D.decode_to_message(r)
             Traceback (most recent call last):
             ...
-            ValueError: The provided root-finding algorithm has a wrong signature. See the documentation of `codes.decoders.GRSGuruswamiSudanDecoder.rootfinding_algorithm()` for details
+            ValueError: The provided root-finding algorithm has a wrong signature.
+            See the documentation of `GSD.rootfinding_algorithm()` for details
         """
         return [self.connected_encoder().unencode(c) for c in self.decode_to_code(r)]
 
@@ -794,8 +805,9 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         EXAMPLES::
 
+            sage: GSD = codes.decoders.GRSGuruswamiSudanDecoder
             sage: C = codes.GeneralizedReedSolomonCode(GF(17).list()[:15], 6)
-            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau=5)
+            sage: D = GSD(C, tau=5)
             sage: c = vector(GF(17), [3,13,12,0,0,7,5,1,8,11,1,9,4,12,14])
             sage: c in C
             True
@@ -813,7 +825,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         Check that :trac:`21347` is fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(13).list()[:10], 3)
-            sage: D = codes.decoders.GRSGuruswamiSudanDecoder(C, tau = 4)
+            sage: D = GSD(C, tau=4)
             sage: c = vector(GF(13), [6, 8, 2, 1, 5, 1, 2, 8, 6, 9])
             sage: e = vector(GF(13), [1, 0, 0, 1, 1, 0, 0, 1, 0, 1])
             sage: D.decode_to_code(c+e)
@@ -854,14 +866,14 @@ class GRSGuruswamiSudanDecoder(Decoder):
         EXAMPLES::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", tau = 97)
+            sage: D = C.decoder("GuruswamiSudan", tau=97)
             sage: D.decoding_radius()
             97
 
         An example where tau is not one of the inputs to the constructor::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(251).list()[:250], 70)
-            sage: D = C.decoder("GuruswamiSudan", parameters = (2,4))
+            sage: D = C.decoder("GuruswamiSudan", parameters=(2,4))
             sage: D.decoding_radius()
             105
         """

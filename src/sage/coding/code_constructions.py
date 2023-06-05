@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Linear code constructors that do not preserve the structural information
 
@@ -226,28 +227,28 @@ def permutation_action(g, v):
 
         sage: V = VectorSpace(GF(3),5)
         sage: v = V([0,1,2,0,1])
-        sage: G = SymmetricGroup(5)
-        sage: g = G([(1,2,3)])
-        sage: permutation_action(g,v)
+        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
+        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
+        sage: permutation_action(g,v)                                                   # optional - sage.groups
         (1, 2, 0, 0, 1)
-        sage: g = G([()])
-        sage: permutation_action(g,v)
+        sage: g = G([()])                                                               # optional - sage.groups
+        sage: permutation_action(g,v)                                                   # optional - sage.groups
         (0, 1, 2, 0, 1)
-        sage: g = G([(1,2,3,4,5)])
-        sage: permutation_action(g,v)
+        sage: g = G([(1,2,3,4,5)])                                                      # optional - sage.groups
+        sage: permutation_action(g,v)                                                   # optional - sage.groups
         (1, 2, 0, 1, 0)
         sage: L = Sequence([1,2,3,4,5])
-        sage: permutation_action(g,L)
+        sage: permutation_action(g,L)                                                   # optional - sage.groups
         [2, 3, 4, 5, 1]
         sage: MS = MatrixSpace(GF(3),3,7)
         sage: A = MS([[1,0,0,0,1,1,0],[0,1,0,1,0,1,0],[0,0,0,0,0,0,1]])
-        sage: S5 = SymmetricGroup(5)
-        sage: g = S5([(1,2,3)])
+        sage: S5 = SymmetricGroup(5)                                                    # optional - sage.groups
+        sage: g = S5([(1,2,3)])                                                         # optional - sage.groups
         sage: A
         [1 0 0 0 1 1 0]
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
-        sage: permutation_action(g,A)
+        sage: permutation_action(g,A)                                                   # optional - sage.groups
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
         [1 0 0 0 1 1 0]
@@ -255,16 +256,16 @@ def permutation_action(g, v):
     It also works on lists and is a "left action"::
 
         sage: v = [0,1,2,0,1]
-        sage: G = SymmetricGroup(5)
-        sage: g = G([(1,2,3)])
-        sage: gv = permutation_action(g,v); gv
+        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
+        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
+        sage: gv = permutation_action(g,v); gv                                          # optional - sage.groups
         [1, 2, 0, 0, 1]
-        sage: permutation_action(g,v) == g(v)
+        sage: permutation_action(g,v) == g(v)                                           # optional - sage.groups
         True
-        sage: h = G([(3,4)])
-        sage: gv = permutation_action(g,v)
-        sage: hgv = permutation_action(h,gv)
-        sage: hgv == permutation_action(h*g,v)
+        sage: h = G([(3,4)])                                                            # optional - sage.groups
+        sage: gv = permutation_action(g,v)                                              # optional - sage.groups
+        sage: hgv = permutation_action(h,gv)                                            # optional - sage.groups
+        sage: hgv == permutation_action(h*g,v)                                          # optional - sage.groups
         True
 
     AUTHORS:
@@ -436,28 +437,28 @@ def ExtendedQuadraticResidueCode(n,F):
     INPUT:
 
 
-    -  ``n`` - an odd prime
+    -  ``n`` -- an odd prime
 
-    -  ``F`` - a finite prime field F whose order must be a
-       quadratic residue modulo n.
+    -  ``F`` -- a finite prime field whose order must be a
+       quadratic residue modulo `n`.
 
 
     OUTPUT: Returns an extended quadratic residue code.
 
     EXAMPLES::
 
-        sage: C1 = codes.QuadraticResidueCode(7,GF(2))
+        sage: C1 = codes.QuadraticResidueCode(7, GF(2))
         sage: C2 = C1.extended_code()
-        sage: C3 = codes.ExtendedQuadraticResidueCode(7,GF(2)); C3
+        sage: C3 = codes.ExtendedQuadraticResidueCode(7, GF(2)); C3
         Extension of [7, 4] Cyclic Code over GF(2)
         sage: C2 == C3
         True
-        sage: C = codes.ExtendedQuadraticResidueCode(17,GF(2))
+        sage: C = codes.ExtendedQuadraticResidueCode(17, GF(2))
         sage: C
         Extension of [17, 9] Cyclic Code over GF(2)
-        sage: C3 = codes.QuadraticResidueCodeOddPair(7,GF(2))[0]
+        sage: C3 = codes.QuadraticResidueCodeOddPair(7, GF(2))[0]
         sage: C3x = C3.extended_code()
-        sage: C4 = codes.ExtendedQuadraticResidueCode(7,GF(2))
+        sage: C4 = codes.ExtendedQuadraticResidueCode(7, GF(2))
         sage: C3x == C4
         True
 
@@ -505,28 +506,28 @@ def QuadraticResidueCode(n,F):
     INPUT:
 
 
-    -  ``n`` - an odd prime
+    -  ``n`` -- an odd prime
 
-    -  ``F`` - a finite prime field F whose order must be a
-       quadratic residue modulo n.
+    -  ``F`` -- a finite prime field whose order must be a
+       quadratic residue modulo `n`.
 
 
     OUTPUT: Returns a quadratic residue code.
 
     EXAMPLES::
 
-        sage: C = codes.QuadraticResidueCode(7,GF(2))
+        sage: C = codes.QuadraticResidueCode(7, GF(2))
         sage: C
         [7, 4] Cyclic Code over GF(2)
-        sage: C = codes.QuadraticResidueCode(17,GF(2))
+        sage: C = codes.QuadraticResidueCode(17, GF(2))
         sage: C
         [17, 9] Cyclic Code over GF(2)
-        sage: C1 = codes.QuadraticResidueCodeOddPair(7,GF(2))[0]
-        sage: C2 = codes.QuadraticResidueCode(7,GF(2))
+        sage: C1 = codes.QuadraticResidueCodeOddPair(7, GF(2))[0]
+        sage: C2 = codes.QuadraticResidueCode(7, GF(2))
         sage: C1 == C2
         True
-        sage: C1 = codes.QuadraticResidueCodeOddPair(17,GF(2))[0]
-        sage: C2 = codes.QuadraticResidueCode(17,GF(2))
+        sage: C1 = codes.QuadraticResidueCodeOddPair(17, GF(2))[0]
+        sage: C2 = codes.QuadraticResidueCode(17, GF(2))
         sage: C1 == C2
         True
 
@@ -556,16 +557,16 @@ def QuadraticResidueCodeEvenPair(n,F):
         sage: codes.QuadraticResidueCodeEvenPair(17, GF(2))
         ([17, 8] Cyclic Code over GF(2),
          [17, 8] Cyclic Code over GF(2))
-        sage: codes.QuadraticResidueCodeEvenPair(13,GF(9,"z"))  # known bug (#25896)
+        sage: codes.QuadraticResidueCodeEvenPair(13, GF(9,"z"))  # known bug (#25896)
         ([13, 6] Cyclic Code over GF(9),
          [13, 6] Cyclic Code over GF(9))
-        sage: C1,C2 = codes.QuadraticResidueCodeEvenPair(7,GF(2))
+        sage: C1,C2 = codes.QuadraticResidueCodeEvenPair(7, GF(2))
         sage: C1.is_self_orthogonal()
         True
         sage: C2.is_self_orthogonal()
         True
-        sage: C3 = codes.QuadraticResidueCodeOddPair(17,GF(2))[0]
-        sage: C4 = codes.QuadraticResidueCodeEvenPair(17,GF(2))[1]
+        sage: C3 = codes.QuadraticResidueCodeOddPair(17, GF(2))[0]
+        sage: C4 = codes.QuadraticResidueCodeEvenPair(17, GF(2))[1]
         sage: C3.systematic_generator_matrix() == C4.dual_code().systematic_generator_matrix()
         True
 
@@ -577,11 +578,11 @@ def QuadraticResidueCodeEvenPair(n,F):
         Traceback (most recent call last):
         ...
         ValueError: the argument F must be a finite field
-        sage: codes.QuadraticResidueCodeEvenPair(14,GF(2))
+        sage: codes.QuadraticResidueCodeEvenPair(14, GF(2))
         Traceback (most recent call last):
         ...
         ValueError: the argument n must be an odd prime
-        sage: codes.QuadraticResidueCodeEvenPair(5,GF(2))
+        sage: codes.QuadraticResidueCodeEvenPair(5, GF(2))
         Traceback (most recent call last):
         ...
         ValueError: the order of the finite field must be a quadratic residue modulo n
@@ -641,7 +642,7 @@ def QuadraticResidueCodeOddPair(n,F):
 
     TESTS::
 
-        sage: codes.QuadraticResidueCodeOddPair(9,GF(2))
+        sage: codes.QuadraticResidueCodeOddPair(9, GF(2))
         Traceback (most recent call last):
         ...
         ValueError: the argument n must be an odd prime
@@ -712,10 +713,10 @@ def ToricCode(P,F):
     INPUT:
 
 
-    -  ``P`` - all the integer lattice points in a polytope
+    -  ``P`` -- all the integer lattice points in a polytope
        defining the toric variety.
 
-    -  ``F`` - a finite field.
+    -  ``F`` -- a finite field.
 
 
     OUTPUT: Returns toric code with length n = , dimension k over field
@@ -723,7 +724,7 @@ def ToricCode(P,F):
 
     EXAMPLES::
 
-         sage: C = codes.ToricCode([[0,0],[1,0],[2,0],[0,1],[1,1]],GF(7))
+         sage: C = codes.ToricCode([[0,0],[1,0],[2,0],[0,1],[1,1]], GF(7))
          sage: C
          [36, 5] linear code over GF(7)
          sage: C.minimum_distance()
@@ -731,14 +732,16 @@ def ToricCode(P,F):
          sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
          ...
          24
-         sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],[0,-1],[0,0],[0,1],[1,-1],[1,0]],GF(5))
+         sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],
+         ....:                      [0,-1],[0,0],[0,1],[1,-1],[1,0]], GF(5))
          sage: C
          [16, 9] linear code over GF(5)
          sage: C.minimum_distance()
          6
          sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
          6
-         sage: C = codes.ToricCode([ [0,0],[1,1],[1,2],[1,3],[1,4],[2,1],[2,2],[2,3],[3,1],[3,2],[4,1]],GF(8,"a"))
+         sage: C = codes.ToricCode([[0,0],[1,1],[1,2],[1,3],[1,4],[2,1],
+         ....:                      [2,2],[2,3],[3,1],[3,2],[4,1]], GF(8,"a"))
          sage: C
          [49, 11] linear code over GF(8)
 
@@ -784,7 +787,7 @@ def WalshCode(m):
         [1, 0, 0, 0, 7, 0, 0, 0, 0]
         sage: C.minimum_distance()
         4
-        sage: C.minimum_distance(algorithm='gap') # check d=2^(m-1)
+        sage: C.minimum_distance(algorithm='gap')  # check d=2^(m-1)
         4
 
     REFERENCES:

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 BCH code
 
@@ -406,7 +407,8 @@ class BCHUnderlyingGRSDecoder(Decoder):
             sage: Cgrs = D.grs_code()
             sage: Fgrs = Cgrs.base_field()
             sage: b = Fgrs.gen()
-            sage: c = vector(Fgrs, [0, b^2 + b, 1, b^2 + b, 0, 1, 1, 1, b^2 + b, 0, 0, b^2 + b + 1, b^2 + b, 0, 1])
+            sage: c = vector(Fgrs, [0, b^2 + b, 1, b^2 + b, 0, 1, 1, 1,
+            ....:                   b^2 + b, 0, 0, b^2 + b + 1, b^2 + b, 0, 1])
             sage: D.grs_word_to_bch(c)
             (0, a, 1, a, 0, 1, 1, 1, a, 0, 0, a + 1, a, 0, 1)
         """
@@ -424,7 +426,8 @@ class BCHUnderlyingGRSDecoder(Decoder):
             sage: a = F.gen()
             sage: C = codes.BCHCode(F, 15, 3, jump_size=2)
             sage: D = codes.decoders.BCHUnderlyingGRSDecoder(C)
-            sage: y = vector(F, [a, a + 1, 1, a + 1, 1, a, a + 1, a + 1, 0, 1, a + 1, 1, 1, 1, a])
+            sage: y = vector(F, [a, a + 1, 1, a + 1, 1, a, a + 1,
+            ....:                a + 1, 0, 1, a + 1, 1, 1, 1, a])
             sage: D.decode_to_code(y)
             (a, a + 1, 1, a + 1, 1, a, a + 1, a + 1, 0, 1, a + 1, 1, 1, 1, a)
             sage: D.decode_to_code(y) in C
@@ -438,12 +441,18 @@ class BCHUnderlyingGRSDecoder(Decoder):
             [31, 6] BCH Code over GF(2) with designed distance 15
             sage: D = codes.decoders.BCHUnderlyingGRSDecoder(C, "GuruswamiSudan", tau=8)
             sage: Dgrs = D.grs_decoder()
-            sage: c = vector(GF(2), [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0])
-            sage: y = vector(GF(2), [1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0])
+            sage: c = vector(GF(2), [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0,
+            ....:                    1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0])
+            sage: y = vector(GF(2), [1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1,
+            ....:                    1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0])
             sage: print (c in C and (c-y).hamming_weight() == 8)
             True
             sage: Dgrs.decode_to_code(y)
-            [(1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0), (1, z5^3 + z5^2 + z5 + 1, z5^4 + z5^2 + z5, z5^4 + z5^3 + z5^2 + 1, 0, 0, z5^4 + z5 + 1, 1, z5^4 + z5^2 + z5, 0, 1, z5^4 + z5, 1, 0, 1, 1, 1, 0, 0, z5^4 + z5^3 + 1, 1, 0, 1, 1, 1, 1, z5^4 + z5^3 + z5 + 1, 1, 1, 0, 0)]
+            [(1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1,
+                 0, 1, 1, 0, 1, 0, 0),
+             (1, z5^3 + z5^2 + z5 + 1, z5^4 + z5^2 + z5, z5^4 + z5^3 + z5^2 + 1, 0, 0,
+                 z5^4 + z5 + 1, 1, z5^4 + z5^2 + z5, 0, 1, z5^4 + z5, 1, 0, 1, 1, 1, 0,
+                 0, z5^4 + z5^3 + 1, 1, 0, 1, 1, 1, 1, z5^4 + z5^3 + z5 + 1, 1, 1, 0, 0)]
             sage: D.decode_to_code(y) == [c]
             True
         """
