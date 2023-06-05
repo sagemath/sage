@@ -77,7 +77,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     :class:`sage.coding.linear_code.LinearCode`.
 
 
-    As AbstractLinearCodeNoMetric is not designed to be implemented, it does not
+    As the class :class:`AbstractLinearCodeNoMetric` is not designed to be instantiated, it does not
     have any representation methods. You should implement ``_repr_`` and ``_latex_``
     methods in the subclass.
 
@@ -662,8 +662,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         EXAMPLES::
 
-            sage: G = matrix(GF(3),2,[1,2,0,\
-                                      2,1,1])
+            sage: G = matrix(GF(3),2,[1,2,0,
+            ....:                     2,1,1])
             sage: code = LinearCode(G)
             sage: code.systematic_generator_matrix()
             [1 2 0]
@@ -680,7 +680,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         INPUT:
 
         - A list of positions, i.e. integers in the range 0 to `n-1` where `n`
-          is the length of `self`.
+          is the length of ``self``.
 
         OUTPUT:
 
@@ -689,8 +689,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         EXAMPLES::
 
-            sage: G = matrix(GF(3),2,[1,2,0,\
-                                      2,1,1])
+            sage: G = matrix(GF(3),2,[1,2,0,
+            ....:                     2,1,1])
             sage: code = LinearCode(G)
             sage: code.is_information_set([0,1])
             False
@@ -898,8 +898,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def is_permutation_automorphism(self,g):
         r"""
-        Return `1` if `g` is an element of `S_n` (`n` = length of self) and
-        if `g` is an automorphism of self.
+        Return `1` if `g` is an element of `S_n` (`n` = length of ``self``) and
+        if `g` is an automorphism of ``self``.
 
         EXAMPLES::
 
@@ -1058,7 +1058,7 @@ class LinearCodeSystematicEncoder(Encoder):
       the range 0 to `n-1` where `n` is the length of the code and `k` its
       dimension. The 0th symbol of a message will then be at position
       ``systematic_positions[0]``, the 1st index at position
-      ``systematic_positions[1]``, etc. A ``ValueError`` is raised at
+      ``systematic_positions[1]``, etc. A :class:`ValueError` is raised at
       construction time if the supplied indices do not form an information set.
 
     EXAMPLES:
