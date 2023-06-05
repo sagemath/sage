@@ -107,7 +107,7 @@ class Decoder(SageObject):
             sage: codes.decoders.LinearCodeSyndromeDecoder.decoder_type()
             {'dynamic', 'hard-decision'}
 
-        We can also call it on a instance of a Decoder class::
+        We can also call it on a instance of a :class:`Decoder` class::
 
             sage: G = Matrix(GF(2), [[1, 0, 0, 1], [0, 1, 1, 1]])
             sage: C = LinearCode(G)
@@ -223,7 +223,7 @@ class Decoder(SageObject):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         This is a default implementation which assumes that the method
         :meth:`decode_to_message` has been implemented, else it returns an exception.

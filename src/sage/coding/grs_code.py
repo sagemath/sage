@@ -8,9 +8,9 @@ finite field `F`, the corresponding Reed-Solomon code (RS code) of dimension
 
 .. MATH::
 
-    \{ f(\alpha_1), \ldots, f(\alpha_n)  \mid  f \in F[x], \deg f < k \}
+    \{ (f(\alpha_1), \ldots, f(\alpha_n))  \mid  f \in F[x], \deg f < k \}
 
-An RS code is often called "classical" if `alpha_i = \alpha^{i-1}` and `\alpha`
+An RS code is often called "classical" if `\alpha_i = \alpha^{i-1}` and `\alpha`
 is a primitive `n`'th root of unity.
 
 More generally, given also `n` "column multipliers" `\beta_1, \dots, \beta_n`,
@@ -19,7 +19,7 @@ the set:
 
 .. MATH::
 
-    \{ (\beta_1 f(\alpha_1), \ldots, \beta_n f(\alpha_n)
+    \{ (\beta_1 f(\alpha_1), \ldots, \beta_n f(\alpha_n))
     \mid f \in F[x], \deg f < k \}
 
 Here is a list of all content related to GRS codes:
@@ -665,13 +665,13 @@ class GRSEvaluationVectorEncoder(Encoder):
 
     .. MATH::
 
-        p = \Sigma_{i=1}^{m} m_i \times x^i.
+        p = \Sigma_{i=1}^{m} m_i  x^i.
 
     The encoding of `m` will be the following codeword:
 
     .. MATH::
 
-        (\beta_1 \times p(\alpha_1), \dots, \beta_n \times p(\alpha_n)).
+        (\beta_1  p(\alpha_1), \dots, \beta_n  p(\alpha_n)).
 
     INPUT:
 
@@ -768,7 +768,7 @@ class GRSEvaluationVectorEncoder(Encoder):
 
         .. MATH::
 
-            G = [g_{i,j}], g_{i,j} = \beta_j \times \alpha_{j}^{i}.
+            G = [g_{i,j}], g_{i,j} = \beta_j \alpha_{j}^{i}.
 
         This matrix is a Vandermonde matrix.
 
@@ -807,7 +807,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
     .. MATH::
 
-        (\beta_1 \times p(\alpha_1), \dots, \beta_n \times p(\alpha_n)).
+        (\beta_1 p(\alpha_1), \dots, \beta_n p(\alpha_n)).
 
     INPUT:
 
@@ -1543,7 +1543,7 @@ class GRSGaoDecoder(Decoder):
         Performs an Euclidean algorithm on ``a`` and ``b`` until a remainder
         has degree less than `\frac{n+k}{2}`, `n` being the dimension of the
         code, `k` its dimension, and returns `(r, s)` such that in the step
-        just before termination, `r = a\times s + b\times t`.
+        just before termination, `r = a s + b t`.
 
         INPUT:
 
@@ -1899,11 +1899,11 @@ class GRSErrorErasureDecoder(Decoder):
 
         INPUT:
 
-        - word_and_erasure_vector -- a tuple whose:
+        - ``word_and_erasure_vector`` -- a tuple whose:
 
           * first element is an element of the ambient space of the code
           * second element is a vector over `\GF{2}` whose length is the
-            same as the code's
+            same as the code's, containing erasure positions
 
         .. NOTE::
 
@@ -1914,12 +1914,6 @@ class GRSErrorErasureDecoder(Decoder):
             ``r`` will be returned as is.
             In either case, if ``r`` is not a codeword,
             the output is unspecified.
-
-        INPUT:
-
-        - ``word_and_erasure_vector`` -- a pair of vectors, where
-          first element is a codeword of ``self`` and second element
-          is a vector of GF(2) containing erasure positions
 
         OUTPUT:
 
@@ -2140,7 +2134,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         Performs an Euclidean algorithm on ``a`` and ``b`` until a remainder
         has degree less than `\frac{n+k}{2}`, `n` being the dimension of the
         code, `k` its dimension, and returns `(r, t)` such that in the step
-        just before termination, `r = a\times s + b\times t`.
+        just before termination, `r = a s + b t`.
 
         INPUT:
 

@@ -2,7 +2,7 @@
 r"""
 Hamming codes
 
-Given an integer `r` and a field `F`, such that `F=GF(q)`, the `[n, k, d]` code
+Given an integer `r` and a field `F`, such that `F=\GF{q}`, the `[n, k, d]` code
 with length `n=\frac{q^{r}-1}{q-1}`, dimension `k=\frac{q^{r}-1}{q-1} - r` and
 minimum distance `d=3` is called the Hamming Code of order `r`.
 

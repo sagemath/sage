@@ -257,7 +257,7 @@ class CyclicCode(AbstractLinearCode):
 
     EXAMPLES:
 
-    We can construct a CyclicCode object using three different methods.
+    We can construct a :class:`CyclicCode` object using three different methods.
     First (1), we provide a generator polynomial and a code length::
 
         sage: F.<x> = GF(2)[]
