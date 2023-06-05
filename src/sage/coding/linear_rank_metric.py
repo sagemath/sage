@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Generic structures for linear codes over the rank metric
 
@@ -391,9 +391,11 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
              sage: from sage.coding.linear_rank_metric import AbstractLinearRankMetricCode
              sage: class RankRepetitionCode(AbstractLinearRankMetricCode):
              ....:   def __init__(self, base_field, sub_field, length):
-             ....:       sage.coding.linear_rank_metric.AbstractLinearRankMetricCode.__init__(self, base_field, sub_field, length, "GeneratorMatrix", "NearestNeighbor")
+             ....:       super().__init__(self, base_field, sub_field, length,
+             ....:                        "GeneratorMatrix", "NearestNeighbor")
              ....:       beta = base_field.gen()
-             ....:       self._generator_matrix = matrix(base_field, [[ beta^i for i in range(length) ]])
+             ....:       self._generator_matrix = matrix(base_field,
+             ....:                                       [[beta^i for i in range(length)]])
              ....:   def generator_matrix(self):
              ....:       return self._generator_matrix
              ....:   def _repr_(self):
@@ -436,7 +438,8 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
             sage: C.parent()
             <class '__main__.RankRepetitionCode_with_category'>
             sage: C.category()
-            Category of facade finite dimensional vector spaces with basis over Finite Field in z3 of size 2^3
+            Category of facade finite dimensional vector spaces with basis
+             over Finite Field in z3 of size 2^3
 
         And any method that works on rank metric linear codes works for our new dummy code::
 

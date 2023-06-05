@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Subfield subcode
 
@@ -282,7 +283,8 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'aa').list()[:13], 5)
         sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
         sage: codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs)
-        Decoder of Subfield subcode of [13, 5, 9] Reed-Solomon Code over GF(16) down to GF(4) through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
+        Decoder of Subfield subcode of [13, 5, 9] Reed-Solomon Code over GF(16) down to GF(4)
+         through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
     """
 
     def __init__(self, code, original_decoder = None, **kwargs):
@@ -296,7 +298,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cbis = codes.GeneralizedReedSolomonCode(GF(16, 'aa').list()[:9], 5)
             sage: D = Cbis.decoder()
-            sage: codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs, original_decoder = D)
+            sage: codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs, original_decoder=D)
             Traceback (most recent call last):
             ...
             ValueError: original_decoder must have the original code as associated code
@@ -368,7 +370,8 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'aa').list()[:13], 5)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: D = codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs)
-            sage: Chan = channels.StaticErrorRateChannel(Cs.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(Cs.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: c = Cs.random_element()
             sage: y = Chan(c)
             sage: c == D.decode_to_code(y)

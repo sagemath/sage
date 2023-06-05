@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Channels
 
@@ -582,9 +583,9 @@ class ErrorErasureChannel(Channel):
 
         - a couple of vectors, namely:
 
-            - the transmitted message, which is ``message`` with erroneous and erased positions
-            - the erasure vector, which contains ``1`` at the erased positions of the transmitted message
-              , 0 elsewhere.
+          - the transmitted message, which is ``message`` with erroneous and erased positions
+          - the erasure vector, which contains ``1`` at the erased positions of the transmitted message
+            and ``0`` elsewhere.
 
         EXAMPLES::
 

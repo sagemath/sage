@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Extended code
 
@@ -298,7 +299,8 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
         sage: Ce = codes.ExtendedCode(C)
         sage: D = codes.decoders.ExtendedCodeOriginalCodeDecoder(Ce)
         sage: D
-        Decoder of Extension of [15, 7, 9] Reed-Solomon Code over GF(16) through Gao decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
+        Decoder of Extension of [15, 7, 9] Reed-Solomon Code over GF(16)
+         through Gao decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
     """
 
     def __init__(self, code, original_decoder = None, **kwargs):
@@ -385,7 +387,8 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
             sage: Ce = codes.ExtendedCode(C)
             sage: D = codes.decoders.ExtendedCodeOriginalCodeDecoder(Ce)
             sage: c = Ce.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(Ce.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(Ce.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: y in Ce
             False
@@ -396,10 +399,12 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
             sage: Ce = codes.ExtendedCode(C)
-            sage: Dgrs = C.decoder('GuruswamiSudan', tau = 4)
-            sage: D = codes.decoders.ExtendedCodeOriginalCodeDecoder(Ce, original_decoder = Dgrs)
+            sage: Dgrs = C.decoder('GuruswamiSudan', tau=4)
+            sage: D = codes.decoders.ExtendedCodeOriginalCodeDecoder(Ce,
+            ....:                                                    original_decoder=Dgrs)
             sage: c = Ce.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(Ce.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(Ce.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: y in Ce
             False

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Information-set decoding for linear codes
 
@@ -96,7 +96,8 @@ class InformationSetAlgorithm(SageObject):
 
         sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
         sage: LeeBrickellISDAlgorithm(codes.GolayCode(GF(2)), (0,4))
-        ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2) decoding up to 4 errors
+        ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2)
+         decoding up to 4 errors
 
     A minimal working example of how to sub-class::
 
@@ -112,7 +113,8 @@ class InformationSetAlgorithm(SageObject):
         ....:         # decoding algorithm here
         ....:         raise DecodingError("I failed")
         sage: MinimalISD(codes.GolayCode(GF(2)), (0,4))
-        ISD Algorithm (MinimalISD) for [24, 12, 8] Extended Golay code over GF(2) decoding up to 4 errors
+        ISD Algorithm (MinimalISD) for [24, 12, 8] Extended Golay code over GF(2)
+         decoding up to 4 errors
     """
 
     def __init__(self, code, decoding_interval, algorithm_name, parameters = None):
@@ -388,11 +390,13 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         sage: C = codes.GolayCode(GF(2))
         sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
         sage: A = LeeBrickellISDAlgorithm(C, (0,4)); A
-        ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2) decoding up to 4 errors
+        ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2)
+         decoding up to 4 errors
 
         sage: C = codes.GolayCode(GF(2))
         sage: A = LeeBrickellISDAlgorithm(C, (2,3)); A
-        ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2) decoding between 2 and 3 errors
+        ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2)
+         decoding between 2 and 3 errors
     """
     def __init__(self, code, decoding_interval, search_size = None):
         r"""
@@ -525,7 +529,8 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
             sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
             sage: C = codes.GolayCode(GF(2))
             sage: A = LeeBrickellISDAlgorithm(C, (0,3)); A
-            ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2) decoding up to 3 errors
+            ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2)
+             decoding up to 3 errors
             sage: A.calibrate()
             sage: A.parameters() #random
             {'search_size': 1}
@@ -535,7 +540,8 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         If we specify the parameter at construction time, calibrate does not override this choice::
 
             sage: A = LeeBrickellISDAlgorithm(C, (0,3), search_size=2); A
-            ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2) decoding up to 3 errors
+            ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2)
+             decoding up to 3 errors
             sage: A.parameters()
             {'search_size': 2}
             sage: A.calibrate()
@@ -693,16 +699,19 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         sage: C = codes.GolayCode(GF(3))
         sage: D = C.decoder("InformationSet", 2); D
-        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3) decoding up to 2 errors
+        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
+         decoding up to 2 errors
 
     You can specify which algorithm you wish to use, and you should do so in
     order to pass special parameters to it::
 
         sage: C = codes.GolayCode(GF(3))
         sage: D2 = C.decoder("InformationSet", 2, algorithm="Lee-Brickell", search_size=2); D2
-        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3) decoding up to 2 errors
+        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
+         decoding up to 2 errors
         sage: D2.algorithm()
-        ISD Algorithm (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3) decoding up to 2 errors
+        ISD Algorithm (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
+         decoding up to 2 errors
         sage: D2.algorithm().parameters()
         {'search_size': 2}
 
@@ -711,7 +720,8 @@ class LinearCodeInformationSetDecoder(Decoder):
         sage: C.decoder("InformationSet", 2, algorithm="NoSuchThing")
         Traceback (most recent call last):
         ...
-        ValueError: Unknown ISD algorithm 'NoSuchThing'. The known algorithms are ['Lee-Brickell'].
+        ValueError: Unknown ISD algorithm 'NoSuchThing'.
+        The known algorithms are ['Lee-Brickell'].
 
     You can also construct an ISD algorithm separately and pass that. This is
     mostly useful if you write your own ISD algorithms::
@@ -719,7 +729,8 @@ class LinearCodeInformationSetDecoder(Decoder):
         sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
         sage: A = LeeBrickellISDAlgorithm(C, (0, 2))
         sage: D = C.decoder("InformationSet", 2, algorithm=A); D
-        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3) decoding up to 2 errors
+        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
+         decoding up to 2 errors
 
     When passing an already constructed ISD algorithm, you can't also pass
     parameters to the ISD algorithm when constructing the decoder::
@@ -727,22 +738,26 @@ class LinearCodeInformationSetDecoder(Decoder):
         sage: C.decoder("InformationSet", 2, algorithm=A, search_size=2)
         Traceback (most recent call last):
         ...
-        ValueError: ISD algorithm arguments are not allowed when supplying a constructed ISD algorithm
+        ValueError: ISD algorithm arguments are not allowed
+        when supplying a constructed ISD algorithm
 
     We can also information-set decode non-binary codes::
 
         sage: C = codes.GolayCode(GF(3))
         sage: D = C.decoder("InformationSet", 2); D
-        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3) decoding up to 2 errors
+        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
+         decoding up to 2 errors
 
     There are two other ways to access this class::
 
         sage: D = codes.decoders.LinearCodeInformationSetDecoder(C, 2); D
-        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3) decoding up to 2 errors
+        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
+         decoding up to 2 errors
 
         sage: from sage.coding.information_set_decoder import LinearCodeInformationSetDecoder
         sage: D = LinearCodeInformationSetDecoder(C, 2); D
-        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3) decoding up to 2 errors
+        Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
+         decoding up to 2 errors
     """
     def __init__(self, code, number_errors, algorithm=None, **kwargs):
         r"""
@@ -889,7 +904,8 @@ class LinearCodeInformationSetDecoder(Decoder):
             sage: C = codes.GolayCode(GF(2))
             sage: D = C.decoder("InformationSet", (2,4), "Lee-Brickell")
             sage: D.algorithm()
-            ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2) decoding between 2 and 4 errors
+            ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2)
+             decoding between 2 and 4 errors
         """
         return self._algorithm
 

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.groups sage.modules
 r"""
 Enumerating binary self-dual codes
 
