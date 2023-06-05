@@ -46,10 +46,11 @@ jobs:
           set -ex
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build & Test workflow"
+          git config --global --add safe.directory $(pwd)
           # If actions/checkout downloaded our source tree using the GitHub REST API
           # instead of with git (because do not have git installed in our image),
           # we first make the source tree a repo.
-          if [ ! -d .git ]; then git config --global --add safe.directory $(pwd) && git init && git add -A && git commit --quiet -m "new"; fi
+          if [ ! -d .git ]; then git init && git add -A && git commit --quiet -m "new"; fi
           # Tag this state of the source tree "new". This is what we want to build and test.
           git tag -f new
           # Our container image contains a source tree in /sage with a full build of Sage.
