@@ -1444,7 +1444,7 @@ class PolynomialRing_general(ring.Algebra):
 
         return p
 
-    def _monics_degree( self, of_degree ):
+    def _monics_degree(self, of_degree):
         """
         Refer to monics() for full documentation.
         """
@@ -1455,15 +1455,14 @@ class PolynomialRing_general(ring.Algebra):
             coeffs.reverse()
             yield self(coeffs)
 
-    def _monics_max( self, max_degree ):
+    def _monics_max(self, max_degree):
         """
         Refer to monics() for full documentation.
         """
         for degree in range(max_degree + 1):
-            for m in self._monics_degree( degree ):
-                yield m
+            yield from self._monics_degree(degree)
 
-    def _polys_degree( self, of_degree ):
+    def _polys_degree(self, of_degree):
         """
         Refer to polynomials() for full documentation.
         """
