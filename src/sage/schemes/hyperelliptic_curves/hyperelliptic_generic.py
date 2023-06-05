@@ -349,7 +349,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             raise ValueError("No odd degree model exists over field of definition")
         rt = rts[0]
         x = f.parent().gen()
-        fnew =  f((x*rt + 1)/x).numerator() # move rt to "infinity"
+        fnew = f((x * rt + 1) / x).numerator()  # move rt to "infinity"
 
         from .constructor import HyperellipticCurve
         return HyperellipticCurve(fnew, 0, names=self._names, PP=self._PP)
@@ -619,8 +619,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             return self.local_coordinates_at_infinity(prec, name)
         else:
             return self.local_coordinates_at_nonweierstrass(P, prec, name)
-
-
 
     def rational_points(self, **kwds):
         r"""

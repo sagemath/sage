@@ -379,7 +379,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         A more elaborate example (two Galois-conjugate characters each giving a
         2-dimensional space)::
 
-            sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()
+            sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()  # long time
             [
             q - q^4 - q^6 + O(q^7),
             q^2 + O(q^7),

@@ -114,7 +114,7 @@ cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
 
 from sage.structure.sequence import Sequence
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, RingElement, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
@@ -124,7 +124,6 @@ from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.abc import RealDoubleField, ComplexDoubleField
 
-from sage.rings.ring cimport Ring
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.numerical_approx cimport digits_to_bits
 

@@ -258,7 +258,7 @@ testing <../developer/portability_testing.html>`_ in the Developer's
 Guide for details.
 
 
-With so many bugs in Sage and hundreds of open tickets, why don't you produce a stabilization release?
+With so many bugs in Sage and hundreds of open issues, why don't you produce a stabilization release?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Any software package contains bug. With something as complex as Sage, neither
@@ -269,7 +269,7 @@ A Sage release cycle lasts for a few months, with several betas appearing at
 1-2 week intervals, followed by several release candidates (as of 2022). Under
 this schedule and with the limited capacity of the Sage developer community,
 the project cannot make stabilization releases. However, important
-bug fix tickets are merged with high priority and will be available in the
+bug fix PRs are merged with high priority and will be available in the
 development release. Thanks to rigorous integration testing by our dedicated
 Release Manager, development releases (betas and release candidates) are
 generally safe and reliable to use.

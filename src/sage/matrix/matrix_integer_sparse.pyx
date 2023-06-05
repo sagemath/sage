@@ -62,7 +62,7 @@ from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, fmpz_poly_set_coeff
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
 from .matrix_modn_sparse cimport Matrix_modn_sparse
-from sage.structure.element cimport ModuleElement, RingElement, Element, Vector
+from sage.structure.element cimport Element
 
 import sage.matrix.matrix_space as matrix_space
 

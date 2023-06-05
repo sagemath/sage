@@ -26,7 +26,6 @@ from .util import GAPError
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object cimport SageObject
-from sage.structure.parent import Parent
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
@@ -34,29 +33,6 @@ from sage.rings.real_double import RDF
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.combinat.permutation import Permutation
 from sage.structure.coerce cimport coercion_model as cm
-
-decode_type_number = {
-    0: 'T_INT (integer)',
-    T_INTPOS: 'T_INTPOS (positive integer)',
-    T_INTNEG: 'T_INTNEG (negative integer)',
-    T_RAT: 'T_RAT (rational number)',
-    T_CYC: 'T_CYC (universal cyclotomic)',
-    T_FFE: 'T_FFE (finite field element)',
-    T_PERM2: 'T_PERM2',
-    T_PERM4: 'T_PERM4',
-    T_BOOL: 'T_BOOL',
-    T_CHAR: 'T_CHAR',
-    T_FUNCTION: 'T_FUNCTION',
-    T_PLIST: 'T_PLIST',
-    T_PLIST_CYC: 'T_PLIST_CYC',
-    T_BLIST: 'T_BLIST',
-    T_STRING: 'T_STRING',
-    T_MACFLOAT: 'T_MACFLOAT (hardware floating point number)',
-    T_COMOBJ: 'T_COMOBJ (component object)',
-    T_POSOBJ: 'T_POSOBJ (positional object)',
-    T_DATOBJ: 'T_DATOBJ (data object)',
-    T_WPOBJ:  'T_WPOBJ (weak pointer object)',
-    }
 
 ############################################################################
 ### helper functions to construct lists and records ########################
@@ -573,7 +549,7 @@ cdef class GapElement(RingElement):
 
         INPUT:
 
-        - ``mut`` - (boolean) wheter to return an mutable copy
+        - ``mut`` - (boolean) whether to return an mutable copy
 
         EXAMPLES::
 
@@ -681,11 +657,10 @@ cdef class GapElement(RingElement):
 
             sage: x = libgap(1)
             sage: x._type_number()
-            (0, 'T_INT (integer)')
+            (0, b'integer')
         """
         n = TNUM_OBJ(self.value)
-        global decode_type_number
-        name = decode_type_number.get(n, 'unknown')
+        name = TNAM_OBJ(self.value)
         return (n, name)
 
     def __dir__(self):

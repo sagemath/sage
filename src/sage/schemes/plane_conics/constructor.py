@@ -26,7 +26,6 @@ AUTHORS:
 
 from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
-from sage.quadratic_forms.quadratic_form import is_QuadraticForm
 from sage.rings.ring import IntegralDomain
 from sage.rings.rational_field import is_RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
@@ -198,7 +197,10 @@ def Conic(base_field, F=None, names=None, unique=True):
                          F[3] * y**2 + F[4] * y * z + F[5] * z**2)
         raise TypeError("F (=%s) must be a sequence of 3 or 6"
                         "coefficients" % F)
-    if is_QuadraticForm(F):
+
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
+
+    if isinstance(F, QuadraticForm):
         F = F.matrix()
     if is_Matrix(F) and F.is_square() and F.ncols() == 3:
         if names is None:

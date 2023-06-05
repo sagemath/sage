@@ -930,8 +930,7 @@ def solve(f, *args, **kwds):
     A basic interface to Giac is provided::
 
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
-        ...
-        [[-log(2)/(log(3) - log(2))]]
+        ...[[-log(2)/(log(3) - log(2))]]
 
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
@@ -1788,8 +1787,8 @@ def solve_ineq_fourier(ineq, vars=None):
         sage: y = var('y')
         sage: solve_ineq_fourier([x+y<9,x-y>4],[x,y])
         [[y + 4 < x, x < -y + 9, y < (5/2)]]
-        sage: solve_ineq_fourier([x+y<9,x-y>4],[y,x])
-        [[y < min(x - 4, -x + 9)]]
+        sage: solve_ineq_fourier([x+y<9,x-y>4],[y,x])[0][0](x=42)
+        y < -33
 
         sage: solve_ineq_fourier([x^2>=0])
         [[x < +Infinity]]

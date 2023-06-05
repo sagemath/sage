@@ -1166,13 +1166,13 @@ class Algebras(AlgebrasCategory):
             TESTS::
 
                 sage: type(p.expand(F.gens()))
-                <class 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <class 'sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair'>
 
                 sage: p = KL.zero()
                 sage: p.expand(F.gens())
                 0
                 sage: type(p.expand(F.gens()))
-                <class 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <class 'sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair'>
             """
             codomain = alphabet[0].parent()
             return codomain.sum(c * prod(X**int(n)

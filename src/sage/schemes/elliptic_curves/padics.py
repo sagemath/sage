@@ -317,7 +317,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
     p = Integer(p)  # this is assumed in code below
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError("p = (%s) must be prime"%p)
+            raise ValueError("p = (%s) must be prime" % p)
         if p == 2:
             raise ValueError("p must be odd")   # todo
         if self.conductor() % (p**2) == 0:
@@ -715,7 +715,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     """
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError("p = (%s) must be prime"%p)
+            raise ValueError("p = (%s) must be prime" % p)
         if p == 2:
             raise ValueError("p must be odd")   # todo
         if self.conductor() % (p**2) == 0:
@@ -786,10 +786,8 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
                    "answer with precision at least prec, but we didn't."
         return K(answer)
 
-
     # (man... I love python's local function definitions...)
     return height
-
 
 
 def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
@@ -869,7 +867,7 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
     """
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError("p = (%s) must be prime"%p)
+            raise ValueError("p = (%s) must be prime" % p)
         if p == 2:
             raise ValueError("p must be odd")   # todo
         if self.conductor() % p == 0:
@@ -933,7 +931,6 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
             assert answer.precision_absolute() >= prec, "we should have got an " \
                    "answer with precision at least prec, but we didn't."
         return K(answer)
-
 
     # (man... I love python's local function definitions...)
     return height
@@ -1125,7 +1122,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     sigma = sigma.padded_list(N+1)
 
-    sigma[0] = K(0, N +1)
+    sigma[0] = K(0, N + 1)
     sigma[1] = K(1, N)
     for n in range(2, N+1):
         sigma[n] = K(sigma[n].lift(), N - n + 1)
