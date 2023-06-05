@@ -2847,8 +2847,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: M = matroids.Wheel(3)
-            sage: OS = M.orlik_terao_algebra()
-            sage: OS
+            sage: OS = M.orlik_terao_algebra(); OS
             Orlik-Terao algebra of Wheel(3):
              Regular matroid of rank 3 on 6 elements with 16 bases
              over Integer Ring
@@ -2857,14 +2856,14 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: M.orlik_terao_algebra(QQ).base_ring()
             Rational Field
 
-            sage: G = SymmetricGroup(3);
-            sage: OTG = M.orlik_terao_algebra(QQ, invariant=G)
+            sage: G = SymmetricGroup(3);                                                # optional - sage.groups
+            sage: OTG = M.orlik_terao_algebra(QQ, invariant=G)                          # optional - sage.groups
 
-            sage: G = SymmetricGroup(4)
-            sage: action = lambda g,x: g(x+1)-1
-            sage: OTG1 = M.orlik_terao_algebra(QQ, invariant=(G,action))
-            sage: OTG2 = M.orlik_terao_algebra(QQ, invariant=(action,G))
-            sage: OTG1 is OTG2
+            sage: G = SymmetricGroup(4)                                                 # optional - sage.groups
+            sage: action = lambda g, x: g(x + 1) - 1                                    # optional - sage.groups
+            sage: OTG1 = M.orlik_terao_algebra(QQ, invariant=(G,action))                # optional - sage.groups
+            sage: OTG2 = M.orlik_terao_algebra(QQ, invariant=(action,G))                # optional - sage.groups
+            sage: OTG1 is OTG2                                                          # optional - sage.groups
             True
 
          """

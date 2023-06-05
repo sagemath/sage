@@ -7942,9 +7942,9 @@ cdef class Matroid(SageObject):
         to the independent set complex and ``R`` when they belong to the
         (cone of) the Bergman complex. The cone point is ``'R[]'``::
 
-            sage: sorted(A.faces()[0])
+            sage: sorted(A.faces()[0])                                                  # optional - sage.graphs
             [('L0',), ('L1',), ('L2',), ('R[0]',), ('R[1]',), ('R[2]',), ('R[]',)]
-            sage: sorted(map(sorted, A.faces()[1]))
+            sage: sorted(map(sorted, A.faces()[1]))                                     # optional - sage.graphs
             [['L0', 'L1'],
              ['L0', 'L2'],
              ['L0', 'R[0]'],

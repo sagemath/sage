@@ -1371,8 +1371,8 @@ def Block_9_4():
         sage: M = matroids.named_matroids.Block_9_4()
         sage: M.is_valid() # long time
         True
-        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())
-        sage: BD.is_t_design(return_parameters=True)
+        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())                 # optional - sage.graphs
+        sage: BD.is_t_design(return_parameters=True)                                    # optional - sage.graphs
         (True, (2, 9, 4, 3))
     """
     E = 'abcdefghi'
@@ -1397,8 +1397,8 @@ def Block_10_5():
         sage: M = matroids.named_matroids.Block_10_5()
         sage: M.is_valid() # long time
         True
-        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())
-        sage: BD.is_t_design(return_parameters=True)
+        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())                 # optional - sage.graphs
+        sage: BD.is_t_design(return_parameters=True)                                    # optional - sage.graphs
         (True, (3, 10, 5, 3))
     """
 

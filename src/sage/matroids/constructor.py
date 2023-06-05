@@ -536,7 +536,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M = Matroid(circuit_closures={3: ['edfg', 'acdg', 'bcfg',
             ....:     'cefh', 'afgh', 'abce', 'abdf', 'begh', 'bcdh', 'adeh'],
             ....:     4: ['abcdefgh']})
-            sage: M.equals(matroids.named_matroids.P8())
+            sage: M.equals(matroids.named_matroids.P8())                                # optional - sage.rings.finite_rings
             True
 
         You can also input tuples `(k, X)` where `X` is the closure of a
@@ -544,7 +544,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
             sage: M = Matroid(circuit_closures=[(2, 'abd'), (3, 'abcdef'),
             ....:                               (2, 'bce')])
-            sage: M.equals(matroids.named_matroids.Q6())
+            sage: M.equals(matroids.named_matroids.Q6())                                # optional - sage.rings.finite_rings
             True
 
     #.  RevLex-Index:
@@ -600,14 +600,13 @@ def Matroid(groundset=None, data=None, **kwds):
 
             sage: M = Matroid(circuit_closures={2:['adb', 'bec', 'cfa',
             ....:                                  'def'], 3:['abcdef']})
-            sage: N = Matroid(M, regular=True)
-            sage: N
+            sage: N = Matroid(M, regular=True); N                                       # optional - sage.graphs
             Regular matroid of rank 3 on 6 elements with 16 bases
-            sage: M == N
+            sage: M == N                                                                # optional - sage.graphs
             False
-            sage: M.is_isomorphic(N)
+            sage: M.is_isomorphic(N)                                                    # optional - sage.graphs
             True
-            sage: Matrix(N) # random
+            sage: Matrix(N)  # random                                                   # optional - sage.graphs
             [1 0 0 1 1 0]
             [0 1 0 1 1 1]
             [0 0 1 0 1 1]
@@ -620,7 +619,7 @@ def Matroid(groundset=None, data=None, **kwds):
         sage: M
         Regular matroid of rank 3 on 6 elements with 16 bases
 
-        sage: M.is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.is_isomorphic(matroids.CompleteGraphic(4))                              # optional - sage.graphs
         True
 
     By default we check if the resulting matroid is actually regular. To
