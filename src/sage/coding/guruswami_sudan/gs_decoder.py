@@ -339,7 +339,9 @@ class GRSGuruswamiSudanDecoder(Decoder):
         OUTPUT:
 
         - ``(tau, (s, l))`` -- where
+
           - ``tau`` is the obtained decoding radius, and
+
           - ``s, ell`` are the multiplicity parameter, respectively list size
             parameter giving this radius.
 

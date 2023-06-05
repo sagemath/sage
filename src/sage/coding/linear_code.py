@@ -377,7 +377,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
             sage: class MyCodeFamily(sage.coding.linear_code.AbstractLinearCode):
             ....:   def __init__(self, field, length, dimension, generator_matrix):
-            ....:       super().__init__(self, field, length,
+            ....:       super().__init__(field, length,
             ....:                        "GeneratorMatrix", "Syndrome")
             ....:       self._dimension = dimension
             ....:       self._generator_matrix = generator_matrix
