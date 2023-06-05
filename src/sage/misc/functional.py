@@ -389,9 +389,10 @@ def hecke_operator(x, n):
 
     EXAMPLES::
 
-        sage: M = ModularSymbols(1,12)
-        sage: hecke_operator(M,5)
-        Hecke operator T_5 on Modular Symbols space of dimension 3 for Gamma_0(1) of weight 12 with sign 0 over Rational Field
+        sage: M = ModularSymbols(1,12)                                                  # optional - sage.modular
+        sage: hecke_operator(M,5)                                                       # optional - sage.modular
+        Hecke operator T_5 on Modular Symbols space of dimension 3 for Gamma_0(1)
+         of weight 12 with sign 0 over Rational Field
     """
     return x.hecke_operator(n)
 
@@ -1665,8 +1666,8 @@ def rank(x):
 
     We compute the rank of an elliptic curve::
 
-        sage: E = EllipticCurve([0,0,1,-1,0])
-        sage: rank(E)
+        sage: E = EllipticCurve([0,0,1,-1,0])                                           # optional - sage.schemes
+        sage: rank(E)                                                                   # optional - sage.schemes
         1
     """
     return x.rank()
@@ -1681,7 +1682,7 @@ def regulator(x):
         sage: x = polygen(ZZ, 'x')
         sage: regulator(NumberField(x^2 - 2, 'a'))                                      # optional - sage.rings.number_field
         0.881373587019543
-        sage: regulator(EllipticCurve('11a'))
+        sage: regulator(EllipticCurve('11a'))                                           # optional - sage.schemes
         1.00000000000000
     """
     return x.regulator()
