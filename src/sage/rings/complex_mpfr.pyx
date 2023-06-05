@@ -2365,38 +2365,35 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         First we compute `\eta(1+i)`::
 
             sage: i = CC.0
-            sage: z = 1+i; z.eta()
+            sage: z = 1 + i; z.eta()                                                    # optional - sage.libs.pari
             0.742048775836565 + 0.198831370229911*I
 
         We compute eta to low precision directly from the definition::
 
-            sage: z = 1 + i; z.eta()
-            0.742048775836565 + 0.198831370229911*I
             sage: pi = CC(pi)        # otherwise we will get a symbolic result.         # optional - sage.symbolic
-            sage: exp(pi * i * z / 12) * prod([1 - exp(2*pi*i*n*z)                      # optional - sage.symbolic
-            ....:                              for n in range(1,10)])
+            sage: exp(pi * i * z / 12) * prod(1 - exp(2*pi*i*n*z)                       # optional - sage.symbolic
+            ....:                             for n in range(1,10))
             0.742048775836565 + 0.198831370229911*I
 
         The optional argument allows us to omit the fractional part::
 
-            sage: z = 1 + i
-            sage: z.eta(omit_frac=True)
+            sage: z.eta(omit_frac=True)                                                 # optional - sage.libs.pari
             0.998129069925959
-            sage: prod([1 - exp(2*pi*i*n*z) for n in range(1,10)])                        # optional - sage.symbolic
+            sage: prod(1 - exp(2*pi*i*n*z) for n in range(1,10))                        # optional - sage.symbolic
             0.998129069925958 + 4.59099857829247e-19*I
 
         We illustrate what happens when `z` is not in the upper
         half plane::
 
             sage: z = CC(1)
-            sage: z.eta()
+            sage: z.eta()                                                               # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: value must be in the upper half plane
 
         You can also use functional notation::
 
-            sage: eta(1+CC(I))
+            sage: eta(1 + CC(I))                                                        # optional - sage.libs.pari
             0.742048775836565 + 0.198831370229911*I
         """
         try:
@@ -2581,7 +2578,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             1.62780548487271 + 0.136827548397369*I
             sage: a.agm(b, algorithm="principal")
             1.62780548487271 + 0.136827548397369*I
-            sage: a.agm(b, algorithm="pari")
+            sage: a.agm(b, algorithm="pari")                                            # optional - sage.libs.pari
             1.62780548487271 + 0.136827548397369*I
 
         An example to show that the returned value depends on the algorithm
@@ -2599,7 +2596,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             0.490319232466314
             sage: a.agm(b, algorithm="principal").abs()
             0.338446122230459
-            sage: a.agm(b, algorithm="pari").abs()
+            sage: a.agm(b, algorithm="pari").abs()                                      # optional - sage.libs.pari
             0.490319232466314
 
         TESTS:
@@ -2866,17 +2863,17 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: i = ComplexField(30).0
-            sage: (1+i).gamma()
+            sage: (1 + i).gamma()                                                       # optional - sage.libs.pari
             0.49801567 - 0.15494983*I
 
         TESTS::
 
-            sage: CC(0).gamma()
+            sage: CC(0).gamma()                                                         # optional - sage.libs.pari
             Infinity
 
         ::
 
-            sage: CC(-1).gamma()
+            sage: CC(-1).gamma()                                                        # optional - sage.libs.pari
             Infinity
         """
         try:
@@ -2893,13 +2890,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: C, i = ComplexField(30).objgen()
-            sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10
+            sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10                             # optional - sage.libs.pari
             0.0020969149 - 0.059981914*I
-            sage: (1+i).gamma_inc(5)
+            sage: (1+i).gamma_inc(5)                                                    # optional - sage.libs.pari
             -0.0013781309 + 0.0065198200*I
-            sage: C(2).gamma_inc(1 + i)
+            sage: C(2).gamma_inc(1 + i)                                                 # optional - sage.libs.pari
             0.70709210 - 0.42035364*I
-            sage: CC(2).gamma_inc(5)
+            sage: CC(2).gamma_inc(5)                                                    # optional - sage.libs.pari
             0.0404276819945128
 
         TESTS:
@@ -2907,7 +2904,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         Check that :trac:`7099` is fixed::
 
             sage: C = ComplexField(400)
-            sage: C(2 + I).gamma_inc(C(3 + I))  # abs tol 1e-120
+            sage: C(2 + I).gamma_inc(C(3 + I))  # abs tol 1e-120                        # optional - sage.libs.pari
             0.121515644664508695525971545977439666159749344176962379708992904126499444842886620664991650378432544392118359044438541515 + 0.101533909079826033296475736021224621546966200987295663190553587086145836461236284668967411665020429964946098113930918850*I
 
         """
@@ -3241,9 +3238,9 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             sage: i = ComplexField(30).gen()
             sage: z = 1 + i
-            sage: z.zeta()
+            sage: z.zeta()                                                              # optional - sage.libs.pari
             0.58215806 - 0.92684856*I
-            sage: zeta(z)
+            sage: zeta(z)                                                               # optional - sage.libs.pari
             0.58215806 - 0.92684856*I
 
             sage: CC(1).zeta()
