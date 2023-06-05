@@ -650,10 +650,10 @@ class ClassicalWeylSubgroup(WeylGroup_gens):
             sage: RootSystem(['C',4,1]).coweight_lattice().weyl_group().classical()
             Parabolic Subgroup of the Weyl Group of type ['C', 4, 1]^* (as a matrix group acting on the coweight lattice)
         """
-        return "Parabolic Subgroup of the Weyl Group of type %s (as a matrix group acting on the %s)" % (self.domain().cartan_type(),
-                                                                                                         self._domain._name_string(capitalize=False,
-                                                                                                                                   base_ring=False,
-                                                                                                                                   type=False))
+        domain = self._domain._name_string(capitalize=False,
+                                           base_ring=False,
+                                           type=False)
+        return "Parabolic Subgroup of the Weyl Group of type %s (as a matrix group acting on the %s)" % (self.domain().cartan_type(), domain)
 
     def weyl_group(self, prefix="hereditary"):
         """
