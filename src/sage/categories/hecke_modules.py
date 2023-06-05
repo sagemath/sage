@@ -129,7 +129,7 @@ class HeckeModules(Category_module):
                    in Category of Hecke modules over Rational Field
                 sage: H.__class__                                                       # optional - sage.modular
                 <class 'sage.modular.hecke.homspace.HeckeModuleHomspace_with_category'>
-                sage: TestSuite(H).run(skip=["_test_elements", "_test_an_element", "_test_elements_eq",
+                sage: TestSuite(H).run(skip=["_test_elements", "_test_an_element", "_test_elements_eq",     # optional - sage.modular
                 ....:                        "_test_elements_eq_reflexive", "_test_elements_eq_transitive",
                 ....:                        "_test_elements_eq_symmetric", "_test_elements_neq", "_test_some_elements",
                 ....:                        "_test_zero", "_test_additive_associativity",
