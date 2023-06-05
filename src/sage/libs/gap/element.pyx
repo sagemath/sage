@@ -169,7 +169,7 @@ cdef char *gap_element_str(Obj obj):
 
 cdef Obj make_gap_record(sage_dict) except NULL:
     """
-    Convert Sage lists into Gap lists
+    Convert Sage dictionary into Gap record
 
     INPUT:
 
