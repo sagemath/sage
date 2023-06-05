@@ -3307,11 +3307,13 @@ class FiniteWord_class(Word_class):
 
         EXAMPLES::
 
-            sage: word, morphism = Word('aba')._insert_not_used_letter_between_consecutive_letters()
+            sage: word, morphism, letter = Word('aba')._insert_not_used_letter_between_consecutive_letters()
             sage: word
             ['a', 0, 'b', 0, 'a']
             sage: morphism
             WordMorphism: 0->0, a->a, b->b
+            sage: letter
+            0
         """
         specialLetter = self.not_used_letter()
         updatedLetterList = []
