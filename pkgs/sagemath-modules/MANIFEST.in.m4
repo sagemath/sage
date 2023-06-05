@@ -165,6 +165,9 @@ include sage/algebras/weyl_algebra.p*
 include sage/algebras/lie_algebras/lie_algebra_element.p*
 
 
+graft sage/coding
+prune sage/coding/codecan               # needs sage.groups
+
 global-exclude *.py[co]
 global-exclude *.so
 global-exclude *.bak

@@ -38,8 +38,6 @@ from .generic.all import *
 
 from .toric.all import *
 
-from .product_projective.all import *
-
 from .cyclic_covers.all import *
 
 from .berkovich.all import *

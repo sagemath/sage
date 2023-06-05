@@ -209,6 +209,7 @@ include sage/schemes/generic/spec.py
 include sage/schemes/generic/algebraic_scheme.py
 graft sage/schemes/affine
 graft sage/schemes/projective
+graft sage/schemes/product_projective
 
 graft sage/sets
 exclude sage/sets/pythonclass.*                                 # sagemath-objects

@@ -13,6 +13,8 @@ from sage.homology.all__sagemath_modules import *
 from sage.tensor.all import *
 from sage.matroids.all import *
 from sage.quadratic_forms.all__sagemath_modules import *
+from sage.coding.all import *
+
 
 true = True
 false = False

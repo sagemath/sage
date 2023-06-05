@@ -73,43 +73,34 @@ from functools import reduce  # in order to keep reduce in python3
 import sage.misc.lazy_import
 
 from sage.misc.all       import *         # takes a while
-from sage.typeset.all    import *
 
 from sage.misc.sh import sh
 
 from sage.libs.all       import *
 from sage.data_structures.all import *
 
-from sage.structure.all  import *
 from sage.rings.all      import *
-from sage.arith.all      import *
-from sage.matrix.all     import *
-
-from sage.modules.all    import *
 
 from sage.all__sagemath_combinat import *
 
 from sage.algebras.all   import *
 from sage.sat.all        import *
 
+from sage.all__sagemath_modules import *
 from sage.all__sagemath_schemes import *
 from sage.all__sagemath_graphs import *
 
 from sage.groups.all     import *
-from sage.arith.power    import generic_power as power
 from sage.databases.all  import *
-from sage.categories.all import *
 from sage.sets.all       import *
 from sage.probability.all import *
 from sage.interfaces.all import *
 
 lazy_import('sage.tests', 'all', as_='tests', deprecation=27337)
-from sage.cpython.all    import *
 
 from sage.crypto.all     import *
 import sage.crypto.mq as mq
 
-from sage.coding.all     import *
 from sage.combinat.all   import *
 
 from sage.geometry.all   import *
@@ -134,12 +125,6 @@ import sage.stats.all as stats
 
 lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
 
-from sage.parallel.all   import *
-
-from sage.tensor.all     import *
-
-from sage.matroids.all   import *
-
 from sage.game_theory.all import *
 
 from sage.knots.all import *
@@ -154,8 +139,6 @@ from copy import copy, deepcopy
 # The code executed here uses a large amount of Sage components
 from sage.rings.qqbar import _init_qqbar
 _init_qqbar()
-
-from sage.functions.all import *
 
 try:
     from sage.plot.all       import *
