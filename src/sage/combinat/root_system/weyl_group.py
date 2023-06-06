@@ -252,7 +252,7 @@ class WeylGroup_gens(UniqueRepresentation,
                        for i in self.index_set()]
         from sage.libs.gap.libgap import libgap
         if not gens_matrix:
-            libgap_group = libgap.Group([], 1)
+            libgap_group = libgap.Group([], matrix(ZZ, 1, 1, [1]))
         else:
             libgap_group = libgap.Group(gens_matrix)
         degree = ZZ(self.domain().dimension())
