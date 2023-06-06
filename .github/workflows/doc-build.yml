@@ -49,7 +49,7 @@ jobs:
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
           # Keep track of changes to built HTML
-          (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git init && git add -A && git commit -m "old")
+          (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git init && (echo ".buildinfo"; echo ".inv") > .gitignore; git add -A && git commit -m "old")
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
           (cd worktree-image && ./bootstrap && make doc-html)
         env:
@@ -58,9 +58,11 @@ jobs:
 
       - name: Copy docs
         run: |
+          set -ex
           mkdir -p ./docs
           # Create changelog
-          (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git diff --name-only && rm -rf .git) | tee  ./docs/CHANGES.txt
+          (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git diff --name-only) | tee ./docs/CHANGES.txt
+          (cd /sage/local/share/doc/sage/html/en && git diff; rm -rf .git) | head -n400
           sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt > ./docs/CHANGES.html
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
