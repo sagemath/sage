@@ -540,7 +540,7 @@ def QuadraticResidueCode(n,F):
     return QuadraticResidueCodeOddPair(n,F)[0]
 
 def QuadraticResidueCodeEvenPair(n,F):
-    """
+    r"""
     Quadratic residue codes of a given odd prime length and base ring
     either don't exist at all or occur as 4-tuples - a pair of
     "odd-like" codes and a pair of "even-like" codes. If `n > 2` is prime
@@ -606,7 +606,7 @@ def QuadraticResidueCodeEvenPair(n,F):
 
 
 def QuadraticResidueCodeOddPair(n,F):
-    """
+    r"""
     Quadratic residue codes of a given odd prime length and base ring
     either don't exist at all or occur as 4-tuples - a pair of
     "odd-like" codes and a pair of "even-like" codes. If n 2 is prime
