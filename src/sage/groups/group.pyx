@@ -216,7 +216,7 @@ cdef class Group(Parent):
             f0*f1*f2*f3
         """
         from sage.misc.misc_c import prod
-        return prod(self.gens())
+        return self.prod(self.gens())
 
     def quotient(self, H, **kwds):
         """
