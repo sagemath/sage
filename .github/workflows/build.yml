@@ -66,49 +66,55 @@ jobs:
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
 
-      - name: Incremental build and test
+      - name: Incremental build and test --new
         id: incremental
         run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          (cd worktree-image && ./bootstrap && make build && ./sage -t --new -p2)
+          ./bootstrap && make build && ./sage -t --new -p2
+        working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
       - name: Configure new tree
-        if: always() && steps.prepare.outcome == 'success'
+        if: always() && steps.worktree.outcome == 'success'
         run: |
           # Reuse built SAGE_LOCAL contained in the Docker image 
           ./bootstrap
           ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
 
       - name: Build and test modularized distributions
-        if: always() && steps.prepare.outcome == 'success'
+        if: always() && steps.worktree.outcome == 'success'
         run: make V=0 tox && make pypi-wheels
+        working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
       - name: Set up node to install pyright
-        if: always() && steps.prepare.outcome == 'success'
+        if: always() && steps.worktree.outcome == 'success'
         uses: actions/setup-node@v3
         with:
           node-version: '12'
 
       - name: Install pyright
-        if: always() && steps.prepare.outcome == 'success'
+        if: always() && steps.worktree.outcome == 'success'
         # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
         run: npm install -g pyright@1.1.232
 
       - name: Static code check with pyright
-        if: always() && steps.prepare.outcome == 'success'
-        run: pyright    
-      
-      - name: Build
+        if: always() && steps.worktree.outcome == 'success'
+        run: pyright
+        working-directory: ./worktree-image
+
+      - name: Build (fallback to non-incremental)
         id: build
-        if: always() && steps.prepare.outcome == 'success'
-        run: make build
+        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+        run: |
+          set -ex
+          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
+        working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
@@ -118,27 +124,28 @@ jobs:
         run: |
           ../sage -python -m pip install coverage pytest-xdist
           ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
-        working-directory: ./src
+        working-directory: ./worktree-image/src
         env:
           # Increase the length of the lines in the "short summary"
           COLUMNS: 120
 
-      - name: Test
-        if: always() && steps.build.outcome == 'success'
+      - name: Test --all --long
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
           ../sage -python -m pip install coverage
           ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
-        working-directory: ./src
+        working-directory: ./worktree-image/src
 
       - name: Prepare coverage results
-        if: always() && steps.build.outcome == 'success'
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
           ./venv/bin/python3 -m coverage combine src/.coverage/
           ./venv/bin/python3 -m coverage xml
           find . -name *coverage*
-      
+        working-directory: ./worktree-image
+
       - name: Upload coverage to codecov
-        if: always() && steps.build.outcome == 'success'
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage.xml
+          files: ./worktree-image/coverage.xml

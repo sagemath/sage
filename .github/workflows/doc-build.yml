@@ -52,21 +52,23 @@ jobs:
           # Keep track of changes to built HTML
           (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git init && (echo ".buildinfo"; echo ".inv") > .gitignore; git add -A && git commit -m "old")
 
-      - name: Incremental build
+      - name: Incremental build and docbuild
         id: incremental
         run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          (cd worktree-image && ./bootstrap && make doc-html)
+          ./bootstrap && make doc-html
+        working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
-      - name: Build (fallback to non-incremental)
+      - name: Build and docbuild (fallback to non-incremental)
         id: build
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          (cd worktree-image && ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make doc-html)
+          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make doc-html
+        working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
