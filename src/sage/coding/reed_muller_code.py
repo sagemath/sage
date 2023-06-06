@@ -537,7 +537,7 @@ class ReedMullerVectorEncoder(Encoder):
     `(f(\alpha_{11},\alpha_{12},\ldots,\alpha_{1m}),f(\alpha_{21},\alpha_{22},\ldots,
     \alpha_{2m}),\ldots,f(\alpha_{q^m1},\alpha_{q^m2},\ldots,\alpha_{q^mm}))`
 
-    with `\alpha_{ij}=\beta_{i \bmod{q^j}} \forall (i,j)`
+    with `\alpha_{ij}=\beta_{i \bmod{q^j}}` for all `i`, `j)`.
 
     INPUT:
 
@@ -705,7 +705,7 @@ class ReedMullerPolynomialEncoder(Encoder):
     `(f(\alpha_{11},\alpha_{12},\ldots,\alpha_{1m}),f(\alpha_{21},\alpha_{22},\ldots,
     \alpha_{2m}),\ldots,f(\alpha_{q^m1},\alpha_{q^m2},\ldots,\alpha_{q^mm}))`
 
-    with `\alpha_{ij}=\beta_{i \bmod{q^j}} \forall (i,j)`
+    with `\alpha_{ij}=\beta_{i \bmod{q^j}}` for all `i`, `j`.
 
     INPUT:
 

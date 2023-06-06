@@ -51,7 +51,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Zmod
 
 def find_generator_polynomial(code, check=True):
     r"""
-    Returns a possible generator polynomial for ``code``.
+    Return a possible generator polynomial for ``code``.
 
     If the code is cyclic, the generator polynomial is the gcd of all the
     polynomial forms of the codewords. Conversely, if this gcd exactly
@@ -96,7 +96,7 @@ def find_generator_polynomial(code, check=True):
 
 def _to_complete_list(poly, length):
     r"""
-    Returns the vector of length exactly ``length`` corresponding to the
+    Return the vector of length exactly ``length`` corresponding to the
     coefficients of the provided polynomial. If needed, zeros are added.
 
     INPUT:
@@ -123,7 +123,7 @@ def _to_complete_list(poly, length):
 
 def bch_bound(n, D, arithmetic=False):
     r"""
-    Returns the BCH bound obtained for a cyclic code of length ``n`` and
+    Return the BCH bound obtained for a cyclic code of length ``n`` and
     defining set ``D``.
 
     Consider a cyclic code `C`, with defining set `D`, length `n`, and minimum
@@ -213,7 +213,7 @@ class CyclicCode(AbstractLinearCode):
     r"""
     Representation of a cyclic code.
 
-    We propose three different ways to create a new CyclicCode, either by
+    We propose three different ways to create a new :class:`CyclicCode`, either by
     providing:
 
     - the generator polynomial and the length (1)
@@ -225,7 +225,7 @@ class CyclicCode(AbstractLinearCode):
     cyclic codes such that its length `n` and field order `q` are coprimes.
 
     Depending on which behaviour you want, you need to specify the names of the
-    arguments to CyclicCode. See EXAMPLES section below for details.
+    arguments to :class:`CyclicCode`. See EXAMPLES section below for details.
 
     INPUT:
 
@@ -466,7 +466,7 @@ class CyclicCode(AbstractLinearCode):
 
     def __contains__(self, word):
         r"""
-        Returns ``True`` if ``word`` belongs to ``self``, ``False`` otherwise.
+        Return ``True`` if ``word`` belongs to ``self``, ``False`` otherwise.
 
         INPUT:
 
@@ -514,7 +514,7 @@ class CyclicCode(AbstractLinearCode):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -531,7 +531,7 @@ class CyclicCode(AbstractLinearCode):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -707,7 +707,7 @@ class CyclicCode(AbstractLinearCode):
     @cached_method
     def check_polynomial(self):
         r"""
-        Returns the check polynomial of ``self``.
+        Return the check polynomial of ``self``.
 
         Let `C` be a cyclic code of length `n` and `g` its generator
         polynomial. The following: `h = \frac{x^n - 1}{g(x)}` is called `C`'s
@@ -731,7 +731,7 @@ class CyclicCode(AbstractLinearCode):
     @cached_method
     def parity_check_matrix(self):
         r"""
-        Returns the parity check matrix of ``self``.
+        Return the parity check matrix of ``self``.
 
         The parity check matrix of a linear code `C` corresponds to the
         generator matrix of the dual code of `C`.
@@ -757,7 +757,7 @@ class CyclicCode(AbstractLinearCode):
 
     def bch_bound(self, arithmetic=False):
         r"""
-        Returns the BCH bound of ``self`` which is a bound on ``self``
+        Return the BCH bound of ``self`` which is a bound on ``self``
         minimum distance.
 
         See :meth:`sage.coding.cyclic_code.bch_bound` for details.
@@ -793,7 +793,7 @@ class CyclicCode(AbstractLinearCode):
 
     def surrounding_bch_code(self):
         r"""
-        Returns the surrounding BCH code of ``self``.
+        Return the surrounding BCH code of ``self``.
 
         EXAMPLES::
 
@@ -820,7 +820,7 @@ class CyclicCodePolynomialEncoder(Encoder):
     and let `g` be its generator polynomial.
 
     This encoder encodes any polynomial `p \in F[x]_{<k}` by computing
-    `c = p \times g` and returning the vector of its coefficients.
+    `c = p g` and returning the vector of its coefficients.
 
     INPUT:
 
@@ -874,7 +874,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -890,7 +890,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -938,7 +938,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def unencode_nocheck(self, c):
         r"""
-        Returns the message corresponding to ``c``.
+        Return the message corresponding to ``c``.
         Does not check if ``c`` belongs to the code.
 
         INPUT:
@@ -967,7 +967,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Returns the message space of ``self``
+        Return the message space of ``self``
 
         EXAMPLES::
 
@@ -993,8 +993,7 @@ class CyclicCodeVectorEncoder(Encoder):
     This codeword can be seen as a polynomial over `F[x]`, as follows:
     `P_m = \Sigma_{i=0}^{k-1} m_i \times x^i`.
 
-    To encode `m`, this encoder does the following multiplication:
-    `P_m \times g`.
+    To encode `m`, this encoder does the multiplication `P_m  g`.
 
     INPUT:
 
@@ -1049,7 +1048,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -1065,7 +1064,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -1118,7 +1117,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def unencode_nocheck(self, c):
         r"""
-        Returns the message corresponding to ``c``.
+        Return the message corresponding to ``c``.
         Does not check if ``c`` belongs to the code.
 
         INPUT:
@@ -1150,7 +1149,7 @@ class CyclicCodeVectorEncoder(Encoder):
     @cached_method
     def generator_matrix(self):
         r"""
-        Returns a generator matrix of ``self``
+        Return a generator matrix of ``self``
 
         EXAMPLES::
 
@@ -1175,7 +1174,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Returns the message space of ``self``
+        Return the message space of ``self``
 
         EXAMPLES::
 
@@ -1241,7 +1240,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -1255,7 +1254,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -1269,7 +1268,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def bch_code(self):
         r"""
-        Returns the surrounding BCH code of
+        Return the surrounding BCH code of
         :meth:`sage.coding.encoder.Encoder.code`.
 
         EXAMPLES::
@@ -1283,7 +1282,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def bch_decoder(self):
         r"""
-        Returns the decoder that will be used over the surrounding BCH code.
+        Return the decoder that will be used over the surrounding BCH code.
 
         EXAMPLES::
 
@@ -1315,7 +1314,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def decoding_radius(self):
         r"""
-        Returns maximal number of errors that ``self`` can decode.
+        Return maximal number of errors that ``self`` can decode.
 
         EXAMPLES::
 

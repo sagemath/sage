@@ -223,10 +223,10 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
 
 def gs_interpolation_linalg(points, tau, parameters, wy):
     r"""
-    Compute an interpolation polynomial Q(x,y) for the Guruswami-Sudan algorithm
+    Compute an interpolation polynomial `Q(x,y)` for the Guruswami-Sudan algorithm
     by solving a linear system of equations.
 
-    ``Q`` is a bivariate polynomial over the field of the points, such that the
+    `Q` is a bivariate polynomial over the field of the points, such that the
     polynomial has a zero of multiplicity at least `s` at each of the points,
     where `s` is the multiplicity parameter. Furthermore, its ``(1,
     wy)``-weighted degree should be less than
@@ -241,11 +241,12 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
     - ``tau`` -- an integer, the number of errors one wants to decode.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
+
       - the first integer is the multiplicity parameter of Guruswami-Sudan algorithm and
       - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek ``Q`` of low
-      ``(1,wy)`` weighted degree.
+    - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
+      ``(1, wy)``-weighted degree.
 
     EXAMPLES:
 
@@ -289,7 +290,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
 
 def lee_osullivan_module(points, parameters, wy):
     r"""
-    Return the analytically straight-forward basis for the `\GF q[x]` module
+    Return the analytically straight-forward basis for the `\GF{q}[x]` module
     containing all interpolation polynomials, as according to Lee and
     O'Sullivan.
 
@@ -297,7 +298,7 @@ def lee_osullivan_module(points, parameters, wy):
     interpolation polynomial through the sought interpolation points `(x_i,
     y_i)`, i.e. `R(x_i) = y_i`. Let `G(x) = \prod_{i=1}^n (x-x_i)`. Then the
     `i`'th row of the basis matrix of the module is the coefficient-vector of
-    the following polynomial in `\GF q[x][y]`:
+    the following polynomial in `\GF{q}[x][y]`:
 
         `P_i(x,y) = G(x)^{[i-s]} (y - R(x))^{i - [i-s]} y^{[i-s]}` ,
 
@@ -308,14 +309,15 @@ def lee_osullivan_module(points, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek ``Q`` with
-      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``.
+    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek `Q` with
+      ``(xi,yi)`` being a root of `Q` with multiplicity `s`.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
+
       - the first integer is the multiplicity parameter `s` of Guruswami-Sudan algorithm and
       - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek ``Q`` of low
+    - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
       ``(1,wy)`` weighted degree.
 
     EXAMPLES::

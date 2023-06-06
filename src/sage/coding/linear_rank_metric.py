@@ -197,7 +197,7 @@ def from_matrix_representation(w, base_field=None, basis=None):
       ``w``.
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
-      ``\GF{q}``. If not specified, given that `q = p^s`, let
+      `\GF{q}`. If not specified, given that `q = p^s`, let
       `1,\beta,\ldots,\beta^{sm}` be the power basis that SageMath uses to
       represent `\GF{q^m}`. The default basis is then `1,\beta,\ldots,\beta^{m-1}`.
 
@@ -331,8 +331,8 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
     This class is intended for codes which are linear over the ``base_field``.
 
     Codewords of rank metric codes have two representations. They can either be
-    written as a vector of length `n` over `GF(q^m)`, or an `m \times n` matrix
-    over `GF(q)`. This implementation principally uses the vector representation.
+    written as a vector of length `n` over `\GF{q^m}`, or an `m \times n` matrix
+    over `\GF{q}`. This implementation principally uses the vector representation.
     However, one can always get the matrix representation using the
     :meth:`sage.coding.linear_rank_metric.AbstractLinearRankMetricCode.to_matrix`
     method. To go back to a vector, use the
@@ -495,7 +495,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
         r"""
         Return `m`, the degree of the field extension of ``self``.
 
-        Let ``base_field`` be `GF(q^m)` and ``sub_field`` be `GF(q)`. Then this
+        Let ``base_field`` be `\GF{q^m}` and ``sub_field`` be `\GF{q}`. Then this
         function returns `m`.
 
         EXAMPLES::

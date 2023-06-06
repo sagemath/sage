@@ -46,7 +46,7 @@ def QuasiQuadraticResidueCode(p):
     Follows the definition of Proposition 2.2 in [BM2003]_. The code has a generator
     matrix in the block form `G=(Q,N)`. Here `Q` is a `p \times p` circulant
     matrix whose top row is `(0,x_1,...,x_{p-1})`, where `x_i=1` if and only if
-    `i` is a quadratic residue `\mod p`, and `N` is a `p \times p` circulant
+    `i` is a quadratic residue mod `p`, and `N` is a `p \times p` circulant
     matrix whose top row is `(0,y_1,...,y_{p-1})`, where `x_i+y_i=1` for all
     `i`.
 
@@ -95,7 +95,7 @@ def RandomLinearCodeGuava(n, k, F):
 
         sage: C = codes.RandomLinearCodeGuava(30,15,GF(2)); C      # optional - gap_packages (Guava package)
         [30, 15] linear code over GF(2)
-        sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C      # optional - gap_packages (Guava package)
+        sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C   # optional - gap_packages (Guava package)
         [10, 5] linear code over GF(4)
 
     AUTHOR: David Joyner (11-2005)

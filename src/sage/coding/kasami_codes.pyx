@@ -81,8 +81,8 @@ class KasamiCode(AbstractLinearCode):
     The only valid parameters `s,t` are given by the below,
     where `q` is a power of 2:
 
-        * `s = q^{2j+1}`, `t = q^m` with `m \leq j` and `\gcd(m,2j+1) = 1`
-        * `s = q^2`, `t=q`
+    * `s = q^{2j+1}`, `t = q^m` with `m \leq j` and `\gcd(m,2j+1) = 1`
+    * `s = q^2`, `t=q`
 
     The Kasami code `(s,t)` is obtained from the extended
     Kasami code `(s,t)`, via truncation of all words.

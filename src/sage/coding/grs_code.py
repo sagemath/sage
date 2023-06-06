@@ -577,7 +577,7 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
     r"""
     Construct a classical Reed-Solomon code.
 
-    A classical `[n,k]` Reed-Solomon code over `GF(q)` with `1 \le k \le n` and
+    A classical `[n,k]` Reed-Solomon code over `\GF{q}` with `1 \le k \le n` and
     `n | (q-1)` is a Reed-Solomon code whose evaluation points are the
     consecutive powers of a primitive `n`'th root of unity `\alpha`, i.e.
     `\alpha_i = \alpha^{i-1}`, where `\alpha_1, \ldots, \alpha_n` are the

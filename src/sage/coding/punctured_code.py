@@ -29,7 +29,7 @@ from copy import copy
 
 def _puncture(v, points):
     r"""
-    Returns v punctured as the positions listed in ``points``.
+    Return v punctured as the positions listed in ``points``.
 
     INPUT:
 
@@ -60,7 +60,7 @@ def _puncture(v, points):
 
 def _insert_punctured_positions(l, punctured_points, value = None):
     r"""
-    Returns ``l`` with ``value`` inserted in the corresponding
+    Return ``l`` with ``value`` inserted in the corresponding
     position from ``punctured_points``.
 
     INPUT:
@@ -164,7 +164,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -178,7 +178,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -192,7 +192,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def punctured_positions(self):
         r"""
-        Returns the list of positions which were punctured on the original code.
+        Return the list of positions which were punctured on the original code.
 
         EXAMPLES::
 
@@ -205,7 +205,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def original_code(self):
         r"""
-        Returns the linear code which was punctured to get ``self``.
+        Return the linear code which was punctured to get ``self``.
 
         EXAMPLES::
 
@@ -218,7 +218,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def dimension(self):
         r"""
-        Returns the dimension of ``self``.
+        Return the dimension of ``self``.
 
         EXAMPLES::
 
@@ -235,7 +235,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def random_element(self, *args, **kwds):
         r"""
-        Returns a random codeword of ``self``.
+        Return a random codeword of ``self``.
 
         This method does not trigger the computation of
         ``self``'s :meth:`sage.coding.linear_code_no_metric.generator_matrix`.
@@ -296,7 +296,7 @@ class PuncturedCode(AbstractLinearCode):
     @cached_method
     def structured_representation(self):
         r"""
-        Returns ``self`` as a structured code object.
+        Return ``self`` as a structured code object.
 
         If ``self`` has a specific structured representation (e.g. a punctured GRS code is
         a GRS code too), it will return this representation, else it returns a
@@ -373,7 +373,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -387,7 +387,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -402,7 +402,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
     @cached_method
     def generator_matrix(self):
         r"""
-        Returns a generator matrix of the associated code of ``self``.
+        Return a generator matrix of the associated code of ``self``.
 
         EXAMPLES::
 
@@ -470,7 +470,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
     As seen above, if all optional are left blank, and if an error-erasure decoder is
     available, it will be chosen as the original decoder.
-    Now, if one forces ``strategy `` to ``'try-all'`` or ``'random-values'``, the
+    Now, if one forces ``strategy`` to ``'try-all'`` or ``'random-values'``, the
     default decoder of the original code will be chosen, even if an error-erasure is available::
 
         sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
@@ -565,7 +565,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -580,7 +580,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -594,7 +594,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
     def original_decoder(self):
         r"""
-        Returns the decoder over the original code that will be used to decode words of
+        Return the decoder over the original code that will be used to decode words of
         :meth:`sage.coding.decoder.Decoder.code`.
 
         EXAMPLES::
@@ -609,7 +609,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
     def decode_to_code(self, y):
         r"""
-        Decodes ``y`` to an element in :meth:`sage.coding.decoder.Decoder.code`.
+        Decode ``y`` to an element in :meth:`sage.coding.decoder.Decoder.code`.
 
         EXAMPLES::
 
@@ -679,7 +679,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
     def decoding_radius(self, number_erasures = None):
         r"""
-        Returns maximal number of errors that ``self`` can decode.
+        Return the maximal number of errors that ``self`` can decode.
 
         EXAMPLES::
 

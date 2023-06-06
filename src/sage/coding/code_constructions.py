@@ -217,11 +217,13 @@ def _lift2smallest_field(a):
 
 def permutation_action(g, v):
     r"""
-    Returns permutation of rows g\*v. Works on lists, matrices,
+    Returns permutation of rows `g * v`.
+
+    Works on lists, matrices,
     sequences and vectors (by permuting coordinates). The code requires
-    switching from i to i+1 (and back again) since the SymmetricGroup
-    is, by convention, the symmetric group on the "letters" 1, 2, ...,
-    n (not 0, 1, ..., n-1).
+    switching from `i` to `i+1` (and back again) since the :class:`SymmetricGroup`
+    is, by convention, the symmetric group on the "letters" `1`, `2`, ...,
+    `n` (not `0`, `1`, ..., `n-1`).
 
     EXAMPLES::
 
@@ -497,10 +499,10 @@ def QuadraticResidueCode(n,F):
     A quadratic residue code (or QR code) is a cyclic code whose
     generator polynomial is the product of the polynomials
     `x-\alpha^i` (`\alpha` is a primitive
-    `n^{th}` root of unity; `i` ranges over the set of
+    `n`'th root of unity; `i` ranges over the set of
     quadratic residues modulo `n`).
 
-    See QuadraticResidueCodeEvenPair and QuadraticResidueCodeOddPair
+    See :class:`QuadraticResidueCodeEvenPair` and :class:`QuadraticResidueCodeOddPair`
     for a more general construction.
 
     INPUT:
@@ -542,12 +544,12 @@ def QuadraticResidueCodeEvenPair(n,F):
     Quadratic residue codes of a given odd prime length and base ring
     either don't exist at all or occur as 4-tuples - a pair of
     "odd-like" codes and a pair of "even-like" codes. If `n > 2` is prime
-    then (Theorem 6.6.2 in [HP2003]_) a QR code exists over `GF(q)` iff q is a
+    then (Theorem 6.6.2 in [HP2003]_) a QR code exists over `\GF{q}` iff q is a
     quadratic residue mod `n`.
 
     They are constructed as "even-like" duadic codes associated the
-    splitting (Q,N) mod n, where Q is the set of non-zero quadratic
-    residues and N is the non-residues.
+    splitting `(Q,N)` mod `n`, where `Q` is the set of non-zero quadratic
+    residues and `N` is the non-residues.
 
     EXAMPLES::
 
@@ -608,12 +610,12 @@ def QuadraticResidueCodeOddPair(n,F):
     Quadratic residue codes of a given odd prime length and base ring
     either don't exist at all or occur as 4-tuples - a pair of
     "odd-like" codes and a pair of "even-like" codes. If n 2 is prime
-    then (Theorem 6.6.2 in [HP2003]_) a QR code exists over GF(q) iff q is a
-    quadratic residue mod n.
+    then (Theorem 6.6.2 in [HP2003]_) a QR code exists over `\GF{q} iff `q` is a
+    quadratic residue mod `n`.
 
     They are constructed as "odd-like" duadic codes associated the
-    splitting (Q,N) mod n, where Q is the set of non-zero quadratic
-    residues and N is the non-residues.
+    splitting `(Q,N)` mod `n`, where `Q` is the set of non-zero quadratic
+    residues and `N` is the non-residues.
 
     EXAMPLES::
 
@@ -700,13 +702,13 @@ def ToricCode(P,F):
 
     .. MATH::
 
-        \mathrm{eval_T} : V \rightarrow F^n,
+        \operatorname{eval}_T : V \rightarrow F^n,
 
 
     where `x^e` is the multi-index notation
     (`x=(x_1,...,x_d)`, `e=(e_1,...,e_d)`, and
     `x^e = x_1^{e_1}...x_d^{e_d}`), where
-    `eval_T (f(x)) = (f(t_1),...,f(t_n))`, and where
+    `\operatorname{eval}_T (f(x)) = (f(t_1),...,f(t_n))`, and where
     `T=\{t_1,...,t_n\}`. This function returns the toric
     codes discussed in [Joy2004]_.
 
@@ -745,7 +747,7 @@ def ToricCode(P,F):
          sage: C
          [49, 11] linear code over GF(8)
 
-    This is in fact a [49,11,28] code over GF(8). If you type next
+    This is in fact a [49,11,28] code over `\GF{8}`. If you type next
     ``C.minimum_distance()`` and wait overnight (!), you
     should get 28.
 

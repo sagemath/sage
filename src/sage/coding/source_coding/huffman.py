@@ -102,15 +102,15 @@ class Huffman(SageObject):
 
     - ``source`` -- can be either
 
-        - A string from which the Huffman encoding should be created.
+      - A string from which the Huffman encoding should be created.
 
-        - A dictionary that associates to each symbol of an alphabet a numeric
-          value. If we consider the frequency of each alphabetic symbol, then
-          ``source`` is considered as the frequency table of the alphabet with
-          each numeric (non-negative integer) value being the number of
-          occurrences of a symbol. The numeric values can also represent weights
-          of the symbols. In that case, the numeric values are not necessarily
-          integers, but can be real numbers.
+      - A dictionary that associates to each symbol of an alphabet a numeric
+        value. If we consider the frequency of each alphabetic symbol, then
+        ``source`` is considered as the frequency table of the alphabet with
+        each numeric (non-negative integer) value being the number of
+        occurrences of a symbol. The numeric values can also represent weights
+        of the symbols. In that case, the numeric values are not necessarily
+        integers, but can be real numbers.
 
     In order to construct a Huffman code for an alphabet, we use exactly one of
     the following methods:
