@@ -39,9 +39,8 @@ jobs:
           eval $(sage-print-system-package-command auto update)
           eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
 
-      - name: Incremental build and test
-        if: always() && steps.prepare.outcome == 'success'
-        id: incremental
+      - name: Add prebuilt tree as a worktree
+        id: worktree
         run: |
           set -ex
           git config --global user.email "ci-sage@example.com"
@@ -66,6 +65,10 @@ jobs:
           rm -rf worktree-image && ln -s /sage worktree-image
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
+
+      - name: Incremental build and test
+        id: incremental
+        run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
           (cd worktree-image && ./bootstrap && make build && ./sage -t --new -p2)

@@ -23,7 +23,8 @@ jobs:
         run: |
           apt-get update && apt-get install -y git zip
 
-      - name: Build
+      - name: Add prebuilt tree as a worktree
+        id: worktree
         run: |
           set -ex
           git config --global user.email "ci-sage@example.com"
@@ -50,13 +51,29 @@ jobs:
           (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
           # Keep track of changes to built HTML
           (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git init && (echo ".buildinfo"; echo ".inv") > .gitignore; git add -A && git commit -m "old")
+
+      - name: Incremental build
+        id: incremental
+        run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
           (cd worktree-image && ./bootstrap && make doc-html)
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
+      - name: Build (fallback to non-incremental)
+        id: build
+        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+        run: |
+          set -ex
+          (cd worktree-image && ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make doc-html)
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
       - name: Copy docs
+        id: copy
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
           set -ex
           mkdir -p ./docs
@@ -72,6 +89,7 @@ jobs:
           zip -r docs.zip docs
 
       - name: Upload docs
+        if: always() && steps.copy.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: docs
