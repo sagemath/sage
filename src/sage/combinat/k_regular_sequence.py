@@ -125,6 +125,9 @@ def pad_right(T, length, zero=0):
         (1, 2, 3, 0, 0, 0, 0, 0, 0, 0)
         sage: pad_right((1, 2, 3), 2)
         (1, 2, 3)
+        sage: from sage.combinat.k_regular_sequence import pad_right
+        sage: pad_right([(1, 2), (3, 4)], 4, (0, 0))
+        [(1, 2), (3, 4), (0, 0), (0, 0)]
 
     TESTS::
 
@@ -993,7 +996,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
           terms
 
         - ``max_exponent`` -- (default: ``10``) a positive integer specifying
-          the maximum exponent of `k` which is tried when guessing the sequence
+          the maximum exponent of `k` which is tried when guessing the sequence,
+          i.e., relations between `f(k^t n+r)` are used for `0\le t\le \operatorname{max_exponent}` and `0\le r < k^j`
 
         - ``sequence`` -- (default: ``None``) a `k`-regular sequence used
           for bootstrapping the guessing by adding information of the
@@ -1006,20 +1010,20 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         ALGORITHM:
 
         For the purposes of this description, the left vector valued sequence
-        associated with a regular sequence is consists of the left vector
+        associated with a regular sequence consists of the left vector
         multiplied by the corresponding matrix product, but without the right
         vector of the regular sequence.
 
         The algorithm maintains a left vector valued sequence consisting
         of the left vector valued sequence of the argument ``sequence``
-        (replaced by an empty tuple if ``sequence`` is `None`) plus several
+        (replaced by an empty tuple if ``sequence`` is ``None``) plus several
         components of the shape `m \mapsto f(k^t\cdot m +r)` for suitable
         ``t`` and ``r``.
 
-        Implicitly, the algorithm also maintains a `d \times n_max` matrix ``A``
+        Implicitly, the algorithm also maintains a `d \times n_\max` matrix ``A``
         (where ``d`` is the dimension of the left vector valued sequence)
         whose columns are the current left vector valued sequence evaluated at
-        the non-negative integers less than `n_max` and ensures that this
+        the non-negative integers less than `n_\max` and ensures that this
         matrix has full row rank.
 
         EXAMPLES:
@@ -1052,6 +1056,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                             1: [ 0  1]
                                [-1  2]},
              (0, 1))
+             
+         The ``INFO`` messages mean that the right vector valued sequence is the sequence `(s(n), s(2n+1))^\top`.
 
         We guess again, but this time, we use a constant sequence
         for bootstrapping the guessing process::
@@ -1219,11 +1225,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         zero = domain(0)
         one = domain(1)
 
-        # A `line` will be a triple `(t, r, s)` corresponding to an entry
-        # `k**t * m + r` belonging to `M_s`
-        # TODO: what is `M_s`?
+        # A `line` will be a pair `(t, r)` corresponding to an entry
+        # `k**t * m + r`
 
-        # The elements of `lines` will be correspond to the current components
+        # The elements of `lines` will correspond to the current components
         # of the left vector valued sequence described in the algorithm section
         # of the docstring.
 
@@ -1234,10 +1239,12 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             """
             return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R in lines)
 
-        @cached_function(key=lambda lines: len(lines))  # we assume that existing lines are not changed (we allow appending of new lines)
+        @cached_function(key=lambda lines: len(lines))  
+        # we assume that existing lines are not changed 
+        # (we allow appending of new lines)
         def some_inverse_U_matrix(lines):
             r"""
-                Find an invertible `d \times d` times submatrix of the matrix
+                Find an invertible `d \times d` submatrix of the matrix
                 ``A`` described in the algorithm section of the docstring.
 
                 The output is the inverse of the invertible submatrix and
@@ -1256,7 +1263,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 except ZeroDivisionError:
                     pass
             else:
-                raise RuntimeError('no inverse submatrix found')
+                raise RuntimeError('no invertible submatrix found')
 
         def linear_combination_candidate(t_L, r_L, lines):
             r"""
@@ -1310,7 +1317,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         if left is None:
             line_L = (0, 0)  # entries (t, r) --> k**t * m + r
             include(line_L)
-            left = vector((len(seq(0)) + len(lines)-1)*(zero,) + (one,))
+            assert len(lines) == 1
+            left = vector(len(seq(0))*(zero,) + (one,))
 
         while to_branch:
             line_R = to_branch.pop(0)
