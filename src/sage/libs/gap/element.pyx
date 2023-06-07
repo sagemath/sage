@@ -5,7 +5,6 @@ This document describes the individual wrappers for various GAP
 elements. For general information about GAP, you should read the
 :mod:`~sage.libs.gap.libgap` module documentation.
 """
-
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
@@ -24,8 +23,6 @@ from .libgap import libgap
 from .util cimport *
 from .util import GAPError
 from sage.cpython.string cimport str_to_bytes, char_to_str
-from sage.misc.cachefunc import cached_method
-from sage.structure.sage_object cimport SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
