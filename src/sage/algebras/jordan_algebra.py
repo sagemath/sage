@@ -213,6 +213,29 @@ class JordanAlgebra(UniqueRepresentation, Parent):
         return JordanAlgebraSymmetricBilinear(arg0, arg1, names=names)
 
 
+    def _test_jordan_relations(self, **options):
+        r"""
+        Test the Jordan algebra relations.
+
+        The Jordan algebra relations are
+
+        - `xy = yx`, and
+        - `(xy)(xx) = x(y(xx))` (the Jordan identity).
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(GF(7), 1, 3, 4)
+            sage: J = JordanAlgebra(O)
+            sage: J._test_jordan_relations()
+        """
+        tester = self._tester(**options)
+        S = tester.some_elements()
+        from sage.misc.misc import some_tuples
+        for x, y in some_tuples(S, 2, tester._max_runs):
+            tester.assertEqual(x * y, y * x)
+            tester.assertEqual((x * y) * (x * x), x * (y * (x * x)))
+
+
 class SpecialJordanAlgebra(JordanAlgebra):
     r"""
     A (special) Jordan algebra `A^+` from an associative algebra `A`.
@@ -1068,7 +1091,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
 class ExceptionalJordanAlgebra(JordanAlgebra):
     r"""
     The exceptional `27` dimensional Jordan algebra as self-adjoint
-    `3 \times 3` over an octonion algebra.
+    `3 \times 3` matrix over an octonion algebra.
 
     Let `\mathbf{O}` be the :class:`OctonionAlgebra` over a commutative
     ring `R` of characteristic not equal to `2`. The *exceptional Jordan
