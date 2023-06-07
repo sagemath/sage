@@ -1,31 +1,31 @@
 """
-Symbolic dense matrices
+Symbolic sparse matrices
 
 EXAMPLES::
 
-    sage: matrix(SR, 2, 2, range(4))
+    sage: matrix(SR, 2, 2, range(4), sparse=True)
     [0 1]
     [2 3]
-    sage: matrix(SR, 2, 2, var('t'))
+    sage: matrix(SR, 2, 2, var('t'), sparse=True)
     [t 0]
     [0 t]
 
 Arithmetic::
 
-    sage: -matrix(SR, 2, range(4))
+    sage: -matrix(SR, 2, range(4), sparse=True)
     [ 0 -1]
     [-2 -3]
-    sage: m = matrix(SR, 2, [1..4]); sqrt(2)*m
+    sage: m = matrix(SR, 2, [1..4], sparse=True); sqrt(2)*m
     [  sqrt(2) 2*sqrt(2)]
     [3*sqrt(2) 4*sqrt(2)]
-    sage: m = matrix(SR, 4, [1..4^2])
+    sage: m = matrix(SR, 4, [1..4^2], sparse=True)
     sage: m * m
     [ 90 100 110 120]
     [202 228 254 280]
     [314 356 398 440]
     [426 484 542 600]
 
-    sage: m = matrix(SR, 3, [1, 2, 3]); m
+    sage: m = matrix(SR, 3, [1, 2, 3], sparse=True); m
     [1]
     [2]
     [3]
@@ -34,31 +34,31 @@ Arithmetic::
 
 Computing inverses::
 
-    sage: M = matrix(SR, 2, var('a,b,c,d'))
+    sage: M = matrix(SR, 2, var('a,b,c,d'), sparse=True)
     sage: ~M
     [1/a - b*c/(a^2*(b*c/a - d))           b/(a*(b*c/a - d))]
     [          c/(a*(b*c/a - d))              -1/(b*c/a - d)]
     sage: (~M*M).simplify_rational()
     [1 0]
     [0 1]
-    sage: M = matrix(SR, 3, 3, range(9)) - var('t')
+    sage: M = matrix(SR, 3, 3, range(9), sparse=True) - var('t')
     sage: (~M * M).simplify_rational()
     [1 0 0]
     [0 1 0]
     [0 0 1]
 
-    sage: matrix(SR, 1, 1, 1).inverse()
+    sage: matrix(SR, 1, 1, 1, sparse=True).inverse()
     [1]
-    sage: matrix(SR, 0, 0).inverse()
+    sage: matrix(SR, 0, 0, sparse=True).inverse()
     []
-    sage: matrix(SR, 3, 0).inverse()
+    sage: matrix(SR, 3, 0, sparse=True).inverse()
     Traceback (most recent call last):
     ...
     ArithmeticError: self must be a square matrix
 
 Transposition::
 
-    sage: m = matrix(SR, 2, [sqrt(2), -1, pi, e^2])
+    sage: m = matrix(SR, 2, [sqrt(2), -1, pi, e^2], sparse=True)
     sage: m.transpose()
     [sqrt(2)      pi]
     [     -1     e^2]
@@ -71,51 +71,51 @@ Transposition::
 
 Test pickling::
 
-    sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e]); m
+    sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e], sparse=True); m
     [sqrt(2)       3]
     [     pi       e]
     sage: TestSuite(m).run()
 
 Comparison::
 
-    sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e])
+    sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e], sparse=True)
     sage: m == m
     True
     sage: m != 3
     True
-    sage: m = matrix(SR,2,[1..4]); n = m^2
+    sage: m = matrix(SR,2,[1..4], sparse=True); n = m^2
     sage: (exp(m+n) - exp(m)*exp(n)).simplify_rational() == 0       # indirect test
     True
 
 
 Determinant::
 
-    sage: M = matrix(SR, 2, 2, [x,2,3,4])
+    sage: M = matrix(SR, 2, 2, [x,2,3,4], sparse=True)
     sage: M.determinant()
     4*x - 6
-    sage: M = matrix(SR, 3,3,range(9))
+    sage: M = matrix(SR, 3,3,range(9), sparse=True)
     sage: M.det()
     0
     sage: t = var('t')
-    sage: M = matrix(SR, 2, 2, [cos(t), sin(t), -sin(t), cos(t)])
+    sage: M = matrix(SR, 2, 2, [cos(t), sin(t), -sin(t), cos(t)], sparse=True)
     sage: M.det()
     cos(t)^2 + sin(t)^2
-    sage: M = matrix([[sqrt(x),0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]])
+    sage: M = matrix([[sqrt(x),0,0,0], [0,1,0,0], [0,0,1,0], [0,0,0,1]], sparse=True)
     sage: det(M)
     sqrt(x)
 
 Permanents::
 
-    sage: M = matrix(SR, 2, 2, [x,2,3,4])
+    sage: M = matrix(SR, 2, 2, [x,2,3,4], sparse=True)
     sage: M.permanent()
     4*x + 6
 
 Rank::
 
-    sage: M = matrix(SR, 5, 5, range(25))
+    sage: M = matrix(SR, 5, 5, range(25), sparse=True)
     sage: M.rank()
     2
-    sage: M = matrix(SR, 5, 5, range(25)) - var('t')
+    sage: M = matrix(SR, 5, 5, range(25), sparse=True) - var('t')
     sage: M.rank()
     5
 
@@ -126,7 +126,7 @@ Rank::
 
 Copying symbolic matrices::
 
-    sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e])
+    sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e], sparse=True)
     sage: n = copy(m)
     sage: n[0,0] = sin(1)
     sage: m
@@ -138,7 +138,7 @@ Copying symbolic matrices::
 
 Conversion to Maxima::
 
-    sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e])
+    sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e], sparse=True)
     sage: m._maxima_()
     matrix([sqrt(2),3],[%pi,%e])
 
@@ -146,26 +146,34 @@ TESTS:
 
 Check that :trac:`12778` is fixed::
 
-    sage: M = Matrix([[1, 0.9, 1/5, x^2], [2, 1.9, 2/5, x^3], [3, 2.9, 3/5, x^4]]); M
+    sage: M = Matrix([[1, 0.9, 1/5, x^2], [2, 1.9, 2/5, x^3], [3, 2.9, 3/5, x^4]], sparse=True); M
     [                1 0.900000000000000               1/5               x^2]
     [                2  1.90000000000000               2/5               x^3]
     [                3  2.90000000000000               3/5               x^4]
     sage: parent(M)
-    Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
-"""
+    Full MatrixSpace of 3 by 4 sparse matrices over Symbolic Ring
 
+Check that :issue:`35653` is fixed::
+
+    sage: diagonal_matrix([x]).inverse()
+    [1/x]
+    sage: M = MatrixSpace(SR,2,2,sparse=True)
+    sage: M([[x,0],[0,x]]).inverse()
+    [1/x   0]
+    [  0 1/x]
+"""
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
-from .matrix_generic_dense cimport Matrix_generic_dense
+from .matrix_generic_sparse cimport Matrix_generic_sparse
 from .constructor import matrix
 
 cdef maxima
 
-from sage.calculus.calculus import maxima
+from sage.calculus.calculus import symbolic_expression_from_maxima_string, maxima
 
-
-cdef class Matrix_symbolic_dense(Matrix_generic_dense):
+cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
     def echelonize(self, **kwds):
         """
         Echelonize using the classical algorithm.
@@ -173,12 +181,11 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         TESTS::
 
-            sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]])
+            sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]], sparse=True)
             sage: m.echelonize(); m
             [1 0]
             [0 1]
         """
-
         return super().echelonize(algorithm="classical", **kwds)
 
     def eigenvalues(self, extend=True):
@@ -191,7 +198,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: a=matrix(SR,[[1,2],[3,4]])
+            sage: a=matrix(SR,[[1,2],[3,4]], sparse=True)
             sage: a.eigenvalues()
             [-1/2*sqrt(33) + 5/2, 1/2*sqrt(33) + 5/2]
 
@@ -199,7 +206,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         Check for :trac:`31700`::
 
-            sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]])
+            sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]], sparse=True)
             sage: t = linear_transformation(m)
             sage: t.eigenvalues()
             [1/4*sqrt(5) - 1/4*sqrt(2*sqrt(5) - 10) + 1/4,
@@ -230,7 +237,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: A = matrix(SR,3,3,range(9)); A
+            sage: A = matrix(SR,3,3,range(9), sparse=True); A
             [0 1 2]
             [3 4 5]
             [6 7 8]
@@ -247,7 +254,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         ::
 
-            sage: A = matrix(SR, 2, 2, var('a,b,c,d'))
+            sage: A = matrix(SR, 2, 2, var('a,b,c,d'), sparse=True)
             sage: A.eigenvectors_left()
             [(1/2*a + 1/2*d - 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2), [(1, -1/2*(a - d + sqrt(a^2 + 4*b*c - 2*a*d + d^2))/c)], 1), (1/2*a + 1/2*d + 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2), [(1, -1/2*(a - d - sqrt(a^2 + 4*b*c - 2*a*d + d^2))/c)], 1)]
             sage: es = A.eigenvectors_left(); es
@@ -267,7 +274,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         matrix. ::
 
             sage: G=graphs.CycleGraph(5)
-            sage: am = G.adjacency_matrix()
+            sage: am = G.adjacency_matrix(sparse=True)
             sage: spectrum = am.eigenvectors_left()
             sage: qqbar_evalue = spectrum[2][0]
             sage: type(qqbar_evalue)
@@ -275,7 +282,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: qqbar_evalue
             0.618033988749895?
 
-            sage: am = G.adjacency_matrix().change_ring(SR)
+            sage: am = G.adjacency_matrix(sparse=True).change_ring(SR)
             sage: spectrum = am.eigenvectors_left()
             sage: symbolic_evalue = spectrum[2][0]
             sage: type(symbolic_evalue)
@@ -289,14 +296,14 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         A slightly larger matrix with a "nice" spectrum. ::
 
             sage: G = graphs.CycleGraph(6)
-            sage: am = G.adjacency_matrix().change_ring(SR)
+            sage: am = G.adjacency_matrix(sparse=True).change_ring(SR)
             sage: am.eigenvectors_left()
             [(-1, [(1, 0, -1, 1, 0, -1), (0, 1, -1, 0, 1, -1)], 2), (1, [(1, 0, -1, -1, 0, 1), (0, 1, 1, 0, -1, -1)], 2), (-2, [(1, -1, 1, -1, 1, -1)], 1), (2, [(1, 1, 1, 1, 1, 1)], 1)]
 
         TESTS::
 
-            sage: A = matrix(SR, [[1, 2], [3, 4]])
-            sage: B = matrix(SR, [[1, 1], [0, 1]])
+            sage: A = matrix(SR, [[1, 2], [3, 4]], sparse=True)
+            sage: B = matrix(SR, [[1, 1], [0, 1]], sparse=True)
             sage: A.eigenvectors_left(B)
             Traceback (most recent call last):
             ...
@@ -305,7 +312,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         Check that :trac:`23332` is fixed::
 
-            sage: matrix([[x, x^2], [1, 0]]).eigenvectors_left()
+            sage: matrix([[x, x^2], [1, 0]], sparse=True).eigenvectors_left()
             [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*x*(sqrt(5) + 1))], 1),
              (1/2*x*(sqrt(5) + 1), [(1, 1/2*x*(sqrt(5) - 1))], 1)]
         """
@@ -344,7 +351,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: A = matrix(SR,2,2,range(4)); A
+            sage: A = matrix(SR,2,2,range(4), sparse=True); A
             [0 1]
             [2 3]
             sage: right = A.eigenvectors_right(); right
@@ -360,8 +367,8 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         TESTS::
 
-            sage: A = matrix(SR, [[1, 2], [3, 4]])
-            sage: B = matrix(SR, [[1, 1], [0, 1]])
+            sage: A = matrix(SR, [[1, 2], [3, 4]], sparse=True)
+            sage: B = matrix(SR, [[1, 1], [0, 1]], sparse=True)
             sage: A.eigenvectors_right(B)
             Traceback (most recent call last):
             ...
@@ -370,7 +377,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         Check that :trac:`23332` is fixed::
 
-            sage: matrix([[x, x^2], [1, 0]]).eigenvectors_right()
+            sage: matrix([[x, x^2], [1, 0]], sparse=True).eigenvectors_right()
             [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*(sqrt(5) + 1)/x)], 1),
              (1/2*x*(sqrt(5) + 1), [(1, 1/2*(sqrt(5) - 1)/x)], 1)]
         """
@@ -392,7 +399,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: m = matrix(SR,2, [0,x,x,0]); m
+            sage: m = matrix(SR,2, [0,x,x,0], sparse=True); m
             [0 x]
             [x 0]
             sage: m.exp()
@@ -405,11 +412,11 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         Exponentiation works on 0x0 and 1x1 matrices, but the 1x1 example
         requires a patched version of maxima (:trac:`32898`) for now::
 
-            sage: m = matrix(SR,0,[]); m
+            sage: m = matrix(SR,0,[], sparse=True); m
             []
             sage: m.exp()
             []
-            sage: m = matrix(SR,1,[2]); m
+            sage: m = matrix(SR,1,[2], sparse=True); m
             [2]
             sage: m.exp()  # not tested, requires patched maxima
             [e^2]
@@ -417,7 +424,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         Commuting matrices `m, n` have the property that
         `e^{m+n} = e^m e^n` (but non-commuting matrices need not)::
 
-            sage: m = matrix(SR,2,[1..4]); n = m^2
+            sage: m = matrix(SR,2,[1..4], sparse=True); n = m^2
             sage: m*n
             [ 37  54]
             [ 81 118]
@@ -431,7 +438,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         The input matrix must be square::
 
-            sage: m = matrix(SR,2,3,[1..6]); exp(m)
+            sage: m = matrix(SR,2,3,[1..6], sparse=True); exp(m)
             Traceback (most recent call last):
             ...
             ValueError: exp only defined on square matrices
@@ -439,14 +446,15 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         In this example we take the symbolic answer and make it
         numerical at the end::
 
-            sage: exp(matrix(SR, [[1.2, 5.6], [3,4]])).change_ring(RDF)  # rel tol 1e-15
+            sage: exp(matrix(SR, [[1.2, 5.6], [3,4]], sparse=True)).change_ring(RDF)  # rel tol 1e-15
             [ 346.5574872980695  661.7345909344504]
             [354.50067371488416  677.4247827652946]
 
         Another example involving the reversed identity matrix, which
         we clumsily create::
 
-            sage: m = identity_matrix(SR,4); m = matrix(list(reversed(m.rows()))) * x
+            sage: m = identity_matrix(SR,4, sparse=True)
+            sage: m = matrix(list(reversed(m.rows())), sparse=True) * x
             sage: exp(m)
             [1/2*(e^(2*x) + 1)*e^(-x)                        0                        0 1/2*(e^(2*x) - 1)*e^(-x)]
             [                       0 1/2*(e^(2*x) + 1)*e^(-x) 1/2*(e^(2*x) - 1)*e^(-x)                        0]
@@ -483,10 +491,10 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: M = matrix(SR, 2, 2, var('a,b,c,d'))
+            sage: M = matrix(SR, 2, 2, var('a,b,c,d'), sparse=True)
             sage: M.charpoly('t')
             t^2 + (-a - d)*t - b*c + a*d
-            sage: matrix(SR, 5, [1..5^2]).charpoly()
+            sage: matrix(SR, 5, [1..5^2], sparse=True).charpoly()
             x^5 - 65*x^4 - 250*x^3
 
         TESTS:
@@ -496,10 +504,10 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         second call uses the cached value by noting that its result is
         not cached::
 
-            sage: M = MatrixSpace(SR, 2)
+            sage: M = MatrixSpace(SR, 2, sparse=True)
             sage: A = M(range(0, 2^2))
             sage: type(A)
-            <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+            <class 'sage.matrix.matrix_symbolic_sparse.Matrix_symbolic_sparse'>
             sage: A.charpoly('x')
             x^2 - 3*x - 2
             sage: A.charpoly('y')
@@ -510,17 +518,17 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         Ensure the variable name of the polynomial does not conflict
         with variables used within the matrix (:trac:`14403`)::
 
-            sage: Matrix(SR, [[sqrt(x), x],[1,x]]).charpoly().list()
+            sage: Matrix(SR, [[sqrt(x), x],[1,x]], sparse=True).charpoly().list()
             [x^(3/2) - x, -x - sqrt(x), 1]
 
         Test that :trac:`13711` is fixed::
 
-            sage: matrix([[sqrt(2), -1], [pi, e^2]]).charpoly()
+            sage: matrix([[sqrt(2), -1], [pi, e^2]], sparse=True).charpoly()
             x^2 + (-sqrt(2) - e^2)*x + pi + sqrt(2)*e^2
 
         Test that :trac:`26427` is fixed::
 
-            sage: M = matrix(SR, 7, 7, SR.var('a', 49))
+            sage: M = matrix(SR, 7, 7, SR.var('a', 49), sparse=True)
             sage: M.charpoly().degree() # long time
             7
         """
@@ -553,12 +561,12 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: M = Matrix.identity(SR, 2)
+            sage: M = Matrix.identity(SR, 2, sparse=True)
             sage: M.minpoly()
             x - 1
 
             sage: t = var('t')
-            sage: m = matrix(2, [1, 2, 4, t])
+            sage: m = matrix(2, [1, 2, 4, t], sparse=True)
             sage: m.minimal_polynomial()
             x^2 + (-t - 1)*x + t - 8
 
@@ -566,7 +574,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         Check that the variable `x` can occur in the matrix::
 
-            sage: m = matrix([[x]])
+            sage: m = matrix([[x]], sparse=True)
             sage: m.minimal_polynomial('y')
             y - x
 
@@ -590,17 +598,17 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: a = matrix(SR,[[1,2],[3,4]])
+            sage: a = matrix(SR,[[1,2],[3,4]], sparse=True)
             sage: a.fcp()
             x^2 - 5*x - 2
             sage: [i for i in a.fcp()]
             [(x^2 - 5*x - 2, 1)]
-            sage: a = matrix(SR,[[1,0],[0,2]])
+            sage: a = matrix(SR,[[1,0],[0,2]], sparse=True)
             sage: a.fcp()
             (x - 2) * (x - 1)
             sage: [i for i in a.fcp()]
             [(x - 2, 1), (x - 1, 1)]
-            sage: a = matrix(SR, 5, [1..5^2])
+            sage: a = matrix(SR, 5, [1..5^2], sparse=True)
             sage: a.fcp()
             (x^2 - 65*x - 250) * x^3
             sage: list(a.fcp())
@@ -640,16 +648,16 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         We start with some examples of diagonalisable matrices::
 
             sage: a,b,c,d = var('a,b,c,d')
-            sage: matrix([a]).jordan_form()
+            sage: matrix([a], sparse=True).jordan_form()
             [a]
-            sage: matrix([[a, 0], [1, d]]).jordan_form(subdivide=True)
+            sage: matrix([[a, 0], [1, d]], sparse=True).jordan_form(subdivide=True)
             [d|0]
             [-+-]
             [0|a]
-            sage: matrix([[a, 0], [1, d]]).jordan_form(subdivide=False)
+            sage: matrix([[a, 0], [1, d]], sparse=True).jordan_form(subdivide=False)
             [d 0]
             [0 a]
-            sage: matrix([[a, x, x], [0, b, x], [0, 0, c]]).jordan_form()
+            sage: matrix([[a, x, x], [0, b, x], [0, 0, c]], sparse=True).jordan_form()
             [c|0|0]
             [-+-+-]
             [0|b|0]
@@ -659,10 +667,10 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         In the following examples, we compute Jordan forms of some
         non-diagonalisable matrices::
 
-            sage: matrix([[a, a], [0, a]]).jordan_form()
+            sage: matrix([[a, a], [0, a]], sparse=True).jordan_form()
             [a 1]
             [0 a]
-            sage: matrix([[a, 0, b], [0, c, 0], [0, 0, a]]).jordan_form()
+            sage: matrix([[a, 0, b], [0, c, 0], [0, 0, a]], sparse=True).jordan_form()
             [c|0 0]
             [-+---]
             [0|a 1]
@@ -672,7 +680,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         Note that symbolic expressions may need to be simplified to
         make consistency checks succeed::
 
-            sage: A = matrix([[x - a*c, a^2], [-c^2, x + a*c]])
+            sage: A = matrix([[x - a*c, a^2], [-c^2, x + a*c]], sparse=True)
             sage: J, P = A.jordan_form(transformation=True)
             sage: J, P
             (
@@ -685,7 +693,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: A1.simplify_rational() == A
             True
 
-            sage: B = matrix([[a, b, c], [0, a, d], [0, 0, a]])
+            sage: B = matrix([[a, b, c], [0, a, d], [0, 0, a]], sparse=True)
             sage: J, T = B.jordan_form(transformation=True)
             sage: J, T
             (
@@ -698,24 +706,24 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         Finally, some examples involving square roots::
 
-            sage: matrix([[a, -b], [b, a]]).jordan_form()
+            sage: matrix([[a, -b], [b, a]], sparse=True).jordan_form()
             [a - I*b|      0]
             [-------+-------]
             [      0|a + I*b]
-            sage: matrix([[a, b], [c, d]]).jordan_form(subdivide=False)
+            sage: matrix([[a, b], [c, d]], sparse=True).jordan_form(subdivide=False)
             [1/2*a + 1/2*d - 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)                                                   0]
             [                                                  0 1/2*a + 1/2*d + 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)]
         """
         A = self._maxima_lib_()
         jordan_info = A.jordan()
-        J = jordan_info.dispJordan()._sage_()
+        J = matrix(jordan_info.dispJordan()._sage_(), sparse=True)
         if subdivide:
             v = [x[1] for x in jordan_info]
             w = [sum(v[0:i]) for i in xrange(1, len(v))]
             J.subdivide(w, w)
         if transformation:
             P = A.diag_mode_matrix(jordan_info)._sage_()
-            return J, P
+            return J, matrix(P, sparse=True)
         else:
             return J
 
@@ -727,7 +735,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
             sage: var('x,y,z')
             (x, y, z)
-            sage: m = matrix([[z, (x+y)/(x+y)], [x^2, y^2+2]]); m
+            sage: m = matrix([[z, (x+y)/(x+y)], [x^2, y^2+2]], sparse=True); m
             [      z       1]
             [    x^2 y^2 + 2]
             sage: m.simplify()
@@ -741,7 +749,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: theta = var('theta')
-            sage: M = matrix(SR, 2, 2, [cos(theta), sin(theta), -sin(theta), cos(theta)])
+            sage: M = matrix(SR, 2, 2, [cos(theta), sin(theta), -sin(theta), cos(theta)], sparse=True)
             sage: ~M
             [1/cos(theta) - sin(theta)^2/((sin(theta)^2/cos(theta) + cos(theta))*cos(theta)^2)                   -sin(theta)/((sin(theta)^2/cos(theta) + cos(theta))*cos(theta))]
             [                   sin(theta)/((sin(theta)^2/cos(theta) + cos(theta))*cos(theta))                                          1/(sin(theta)^2/cos(theta) + cos(theta))]
@@ -755,7 +763,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         """
         EXAMPLES::
 
-            sage: M = matrix(SR, 3, 3, range(9)) - var('t')
+            sage: M = matrix(SR, 3, 3, range(9), sparse=True) - var('t')
             sage: (~M*M)[0,0]
             t*(3*(2/t + (6/t + 7)/((t - 3/t - 4)*t))*(2/t + (6/t + 5)/((t - 3/t
             - 4)*t))/(t - (6/t + 7)*(6/t + 5)/(t - 3/t - 4) - 12/t - 8) + 1/t +
@@ -794,7 +802,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: f2 = sin(x/(x^2 + x))
             sage: f3 = binomial(n,k)*factorial(k)*factorial(n-k)
             sage: f4 = x*sin(2)/(x^a)
-            sage: A = matrix(SR, [[f1,f2],[f3,f4]])
+            sage: A = matrix(SR, [[f1,f2],[f3,f4]], sparse=True)
             sage: A.simplify_full()
             [                1    sin(1/(x + 1))]
             [     factorial(n) x^(-a + 1)*sin(2)]
@@ -814,7 +822,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             (x, y)
             sage: l1 = [sqrt(2)*sqrt(3)*sqrt(6) , log(x*y)]
             sage: l2 = [sin(x/(x^2 + x)) , 1]
-            sage: m = matrix([l1, l2])
+            sage: m = matrix([l1, l2], sparse=True)
             sage: m
             [sqrt(6)*sqrt(3)*sqrt(2)                log(x*y)]
             [       sin(x/(x^2 + x))                       1]
@@ -831,14 +839,14 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: M = matrix(SR, 2, 2, x^2 - 2*x + 1); M
+            sage: M = matrix(SR, 2, 2, x^2 - 2*x + 1, sparse=True); M
             [x^2 - 2*x + 1             0]
             [            0 x^2 - 2*x + 1]
             sage: M.factor()
             [(x - 1)^2         0]
             [        0 (x - 1)^2]
         """
-        return self._maxima_(maxima).factor()._sage_()
+        return matrix(self._maxima_(maxima).factor()._sage_(), sparse=True)
 
     def expand(self):
         """
@@ -865,12 +873,12 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
             sage: var('a,b,c,x,y')
             (a, b, c, x, y)
-            sage: m = matrix([[x, x+2], [x^2, x^2+2]]); m
+            sage: m = matrix([[x, x+2], [x^2, x^2+2]], sparse=True); m
             [      x   x + 2]
             [    x^2 x^2 + 2]
             sage: m.variables()
             (x,)
-            sage: m = matrix([[a, b+c], [x^2, y^2+2]]); m
+            sage: m = matrix([[a, b+c], [x^2, y^2+2]], sparse=True); m
             [      a   b + c]
             [    x^2 y^2 + 2]
             sage: m.variables()
@@ -887,7 +895,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
             sage: var('x,y,z')
             (x, y, z)
-            sage: M = MatrixSpace(SR,2,2)
+            sage: M = MatrixSpace(SR,2,2, sparse=True)
             sage: M(x).arguments()
             (x,)
             sage: M(x+sin(x)).arguments()
@@ -903,7 +911,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
             sage: var('a,b,c,x,y')
             (a, b, c, x, y)
-            sage: m = matrix([[a, (x+y)/(x+y)], [x^2, y^2+2]]); m
+            sage: m = matrix([[a, (x+y)/(x+y)], [x^2, y^2+2]], sparse=True); m
             [      a       1]
             [    x^2 y^2 + 2]
             sage: m.number_of_arguments()
@@ -917,7 +925,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
             sage: var('x,y,z')
             (x, y, z)
-            sage: M = MatrixSpace(SR,2,2)
+            sage: M = MatrixSpace(SR,2,2, sparse=True)
             sage: h = M(sin(x)+cos(x))
             sage: h
             [cos(x) + sin(x)               0]
@@ -994,7 +1002,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: M = matrix(SR, [[0,1,0],[0,0,0]])
+            sage: M = matrix(SR, [[0,1,0],[0,0,0]], sparse=True)
             sage: M.zero_pattern_matrix()  # indirect doctest
             [1 0 1]
             [1 1 1]
@@ -1015,13 +1023,13 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: x, y = var('x,y')
-            sage: v = matrix([[x,y],[x*sin(y), 0]])
+            sage: v = matrix([[x,y],[x*sin(y), 0]], sparse=True)
             sage: w = v.function([x,y]); w
             [       (x, y) |--> x        (x, y) |--> y]
             [(x, y) |--> x*sin(y)        (x, y) |--> 0]
             sage: w.parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Callable function ring with arguments (x, y)
+            Full MatrixSpace of 2 by 2 sparse matrices over Callable function ring with arguments (x, y)
         """
         from sage.symbolic.callable import CallableSymbolicExpressionRing
         return matrix(CallableSymbolicExpressionRing(args),
-                      self.nrows(), self.ncols(), self.list())
+                      self.nrows(), self.ncols(), self.list(), sparse=True)
