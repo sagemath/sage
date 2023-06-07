@@ -17,15 +17,18 @@ Coxeter Types
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
+
+from sage.combinat.root_system.cartan_type import CartanType
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
-from sage.combinat.root_system.cartan_type import CartanType
-import sage.rings.abc
 from sage.matrix.args import SparseEntry
 from sage.matrix.constructor import Matrix
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicField')
 
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
@@ -371,19 +374,12 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         n = self.rank()
         mat = self.coxeter_matrix()._matrix
 
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-        UCF = UniversalCyclotomicField()
-
         if R is None:
-            R = UCF
-        # if UCF.has_coerce_map_from(base_ring):
-        #     R = UCF
-        # else:
-        #     R = base_ring
+            R = UniversalCyclotomicField()
 
         # Compute the matrix with entries `- \cos( \pi / m_{ij} )`.
-        E = UCF.gen
-        if R is UCF:
+        if isinstance(R, sage.rings.abc.UniversalCyclotomicField):
+            E = R.gen
 
             def val(x):
                 if x > -1:
@@ -391,6 +387,8 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
                 else:
                     return R(x)
         elif isinstance(R, sage.rings.abc.NumberField_quadratic):
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+            E = UniversalCyclotomicField().gen
 
             def val(x):
                 if x > -1:
