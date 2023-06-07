@@ -3386,10 +3386,111 @@ class FiniteWord_class(Word_class):
         return result
 
     def _find_set_of_all_palindromic_factors_from_palindromes_tree(self, palindromesTree, f=None):
-        pass # TODO
+        r"""
+        This is private method. Returns all palindromic factors or ``f``-palindromic factors
+        of ``self`` using palindromes tree from _get_palindromic_factors_data method.
+
+        INPUT:
+
+        - palindromes tree -- data structure returned by _get_palindromic_factors_data method.
+
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
+          be callable on letters as well as words (e.g. ``WordMorphism``).
+
+        OUTPUT:
+
+        a set -- set of all palindromic or ``f``-palindromic factors of ``self``.
+
+        EXAMPLES:
+
+        sage: word = Word('aabab')
+        sage: palindromesTree = [[{'a': 1, 0: 4, 'b': 6}, None, 0, False],
+        ....: [{0: 2}, 0, 1, False], [{'b': 3}, 2, 1, True], [{}, 6, 3, False],
+        ....: [{'a': 5}, 1, 0, True], [{}, 1, 2, False], [{0: 7}, 4, 1, False],
+        ....: [{'a': 8}, 4, 1, True], [{0: 9}, 4, 3, False], [{}, 4, 3, True]]
+        sage: factors = word._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree)
+        sage: sorted(factors)
+        [word: a, word: aa, word: aba, word: b, word: bab]
+        sage: f = WordMorphism('a->b,b->a')
+        sage: palindromesTree = [[{'s': 1}, None, 0, False],
+        ....: [{'b': 2, 'a': 5}, 1, 0, True], [{'s': 3}, 5, 2, False],
+        ....: [{'a': 4}, 5, 2, True], [{}, 5, 4, False],
+        ....: [{'s': 6}, 3, 2, False], [{}, 3, 2, True]]
+        sage: factors = word._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree, f=f)
+        sage: sorted(factors)
+        [word: ab, word: abab, word: ba]
+        """
+        from sage.combinat.words.word import Word
+        from collections import deque
+        result = set()
+        currentWordLetters = deque()
+        currentPalindromes = [palindrome for palindrome in palindromesTree[0][0].items()]
+        while currentPalindromes:
+            if currentPalindromes[-1] == None:
+                currentPalindromes.pop()
+                if len(currentWordLetters) == 1:
+                    currentWordLetters.pop()
+                else:
+                    currentWordLetters.pop()
+                    currentWordLetters.popleft()
+            else:
+                leftLetter, palindromeIndex = currentPalindromes.pop()
+                palindrome = palindromesTree[palindromeIndex]
+                actualPalindromeLength, endsWithSpecialLetter = palindrome[2], palindrome[3]
+                if not endsWithSpecialLetter:
+                    currentPalindromes.append(None)
+                    if actualPalindromeLength == 1:
+                        currentWordLetters.append(leftLetter)
+                    else:
+                        currentWordLetters.appendleft(leftLetter)
+                        currentWordLetters.append(f(leftLetter)[0])
+                    result.add(Word(currentWordLetters))
+                for neighbour in palindrome[0].items():
+                    currentPalindromes.append(neighbour)
+        return result
 
     def _find_lacunas_from_palindromes_tree(self, palindromesTree):
-        pass # TODO
+        r"""
+        This is private method. Returns all lacunas of ``self``using 
+        palindromes tree from _get_palindromic_factors_data method.
+
+        INPUT:
+
+        - palindromes tree -- data structure returned by _get_palindromic_factors_data method.
+
+        OUTPUT:
+
+        a list -- list of all the lacunas of ``self`` in ascending order.
+
+        EXAMPLES:
+
+        sage: word = Word('aabab')
+        sage: palindromesTree = [[{'a': 1, 0: 4, 'b': 6}, None, 0, False],
+        ....: [{0: 2}, 0, 1, False], [{'b': 3}, 2, 1, True], [{}, 6, 3, False],
+        ....: [{'a': 5}, 1, 0, True], [{}, 1, 2, False], [{0: 7}, 4, 1, False],
+        ....: [{'a': 8}, 4, 1, True], [{0: 9}, 4, 3, False], [{}, 4, 3, True]]
+        sage: word._find_lacunas_from_palindromes_tree(palindromesTree)
+        []
+        sage: palindromesTree = [[{'s': 1}, None, 0, False],
+        ....: [{'b': 2, 'a': 5}, 1, 0, True], [{'s': 3}, 5, 2, False],
+        ....: [{'a': 4}, 5, 2, True], [{}, 5, 4, False],
+        ....: [{'s': 6}, 3, 2, False], [{}, 3, 2, True]]
+        sage: word._find_lacunas_from_palindromes_tree(palindromesTree)
+        [0, 1]
+        """
+        lacunas = [True] * self.length()
+        for palindrome in palindromesTree:
+            minimalCenterIndex, actualPalindromeLength, endsWithSpecialLetter = palindrome[1], palindrome[2], palindrome[3]
+            if minimalCenterIndex is not None and not endsWithSpecialLetter:
+                rightLetterIndex = (minimalCenterIndex + actualPalindromeLength - 1) // 2
+                lacunas[rightLetterIndex] = False
+        result = []
+        i = 0
+        while i < len(lacunas):
+            if lacunas[i]:
+                result.append(i)
+            i += 1
+        return result
 
     def _get_palindromic_factors_data(self, f=None):
         r"""
