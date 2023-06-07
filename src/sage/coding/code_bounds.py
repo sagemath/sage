@@ -137,7 +137,7 @@ This module implements:
 
 -  ``elias_bound_asymp(delta,q)``, asymptotic analog of Elias bound.
 
--  ``hamming_upper_bound(n,q,d)`
+-  ``hamming_upper_bound(n,q,d)``
 
 -  ``hamming_bound_asymp(delta,q)``, asymptotic analog of Hamming
    bound.
