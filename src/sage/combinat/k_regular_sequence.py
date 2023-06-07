@@ -1327,13 +1327,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             for s_L in srange(k):
                 r_L = k**t_R * s_L + r_R
                 try:
-                    solution = find_linear_combination(t_L, r_L, lines)
+                    linear_combination = find_linear_combination(t_L, r_L, lines)
                 except NoLinearCombination:
                     include(t_L, r_L)  # entries (t, r) --> k**t * m + r
-                    solution = (len(lines)-1)*(zero,) + (one,)
+                    linear_combination = (len(lines)-1)*(zero,) + (one,)
                 logger.debug('M_%s: f_{%s*m+%s} = %s * X_m',
-                             s_L, k**t_L, r_L, solution)
-                mu[s_L].append(solution)
+                             s_L, k**t_L, r_L, linear_combination)
+                mu[s_L].append(linear_combination)
 
         d = len(seq(0)) + len(lines)
         mu = tuple(Matrix(domain, [pad_right(tuple(row), d, zero=zero) for row in M])
