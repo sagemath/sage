@@ -1307,21 +1307,18 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         to_branch = []
         lines = []
 
-        def include(line):
-            to_branch.append(line)
-            lines.append(line)
-            t, r = line
+        def include(t, r):
+            to_branch.append((t, r))
+            lines.append((t, r))
             logger.info('including f_{%s*m+%s}', k**t, r)
 
         if left is None:
-            line_L = (0, 0)  # entries (t, r) --> k**t * m + r
-            include(line_L)
+            include(0, 0)  # entries (t, r) --> k**t * m + r
             assert len(lines) == 1
             left = vector(len(seq(0))*(zero,) + (one,))
 
         while to_branch:
-            line_R = to_branch.pop(0)
-            t_R, r_R = line_R
+            t_R, r_R = to_branch.pop(0)
             if t_R >= max_exponent:
                 raise RuntimeError(f'aborting as exponents would be larger '
                                    f'than max_exponent={max_exponent}')
@@ -1329,12 +1326,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             t_L = t_R + 1
             for s_L in srange(k):
                 r_L = k**t_R * s_L + r_R
-                line_L = t_L, r_L
-
                 try:
                     solution = find_linear_combination(t_L, r_L, lines)
                 except NoLinearCombination:
-                    include(line_L)
+                    include(t_L, r_L)  # entries (t, r) --> k**t * m + r
                     solution = (len(lines)-1)*(zero,) + (one,)
                 logger.debug('M_%s: f_{%s*m+%s} = %s * X_m',
                              s_L, k**t_L, r_L, solution)
