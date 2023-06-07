@@ -815,7 +815,7 @@ class YoungRepresentations_Orthogonal(SymmetricGroupRepresentations_class):
         EXAMPLES::
 
             sage: from sage.combinat.symmetric_group_representations import YoungRepresentations_Orthogonal
-            sage: YoungRepresentations_Orthogonal(3)
+            sage: YoungRepresentations_Orthogonal(3)                                    # optional - sage.symbolic
             Orthogonal representations of the symmetric group of order 3! over Symbolic Ring
         """
         return "Orthogonal representations of the symmetric group of order %s! over %s" % (self._n, self._ring)

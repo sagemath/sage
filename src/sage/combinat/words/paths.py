@@ -104,14 +104,14 @@ Some built-in combinatorial classes of paths::
     Finite Dyck paths
     sage: d = D('()()()(())'); d
     Path: ()()()(())
-    sage: d.plot()
+    sage: d.plot()                                                                      # optional - sage.plot
     Graphics object consisting of 3 graphics primitives
 
 ::
 
     sage: P = WordPaths('abcdef', steps='triangle_grid')
     sage: p = P('babaddefadabcadefaadfafabacdefa')
-    sage: p.plot()
+    sage: p.plot()                                                                      # optional - sage.plot
     Graphics object consisting of 3 graphics primitives
 
 Vector steps may be in more than 2 dimensions::
@@ -120,7 +120,7 @@ Vector steps may be in more than 2 dimensions::
     sage: P = WordPaths(alphabet='abc', steps=d); P
     Word Paths over 3 steps
     sage: p = P('abcabcabcabcaabacabcababcacbabacacabcaccbcac')
-    sage: p.plot()
+    sage: p.plot()                                                                      # optional - sage.plot
     Graphics3d Object
 
 ::
@@ -137,7 +137,7 @@ Vector steps may be in more than 2 dimensions::
 
     sage: CubePaths = WordPaths('abcABC', steps='cube_grid'); CubePaths
     Word Paths on the cube grid
-    sage: CubePaths('abcabaabcabAAAAA').plot()
+    sage: CubePaths('abcabaabcabAAAAA').plot()                                          # optional - sage.plot
     Graphics3d Object
 
 The input data may be a str, a list, a tuple,

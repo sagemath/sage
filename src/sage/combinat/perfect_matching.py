@@ -224,7 +224,7 @@ class PerfectMatching(SetPartition):
         EXAMPLES::
 
             sage: P = PerfectMatching([(1,3),(2,5),(4,6)])
-            sage: latex(P)  # random
+            sage: latex(P)  # random                                                    # optional - sage.graphs
             \begin{tikzpicture}
             ...
             \end{tikzpicture}
@@ -234,7 +234,7 @@ class PerfectMatching(SetPartition):
         Above we added ``random`` since warnings might be displayed
         once. The second time, there should be no warnings::
 
-            sage: print(P._latex_())
+            sage: print(P._latex_())                                                    # optional - sage.graphs
             \begin{tikzpicture}
             ...
             \end{tikzpicture}
@@ -377,10 +377,12 @@ class PerfectMatching(SetPartition):
             sage: loops = sorted(loops, key=len)
             sage: sorted(loops[0])
             ['d', 'f']
-            sage: G = SymmetricGroup(4)
-            sage: g = G([(1,2,3,4)])
-            sage: ((loops[1] in [permutation_action(g**i, ['a', 'e', 'c', 'b']) for i in range(4)])
-            ....:      or (loops[1] in [permutation_action(g**i, ['a', 'b', 'c', 'e']) for i in range(4)]))
+            sage: G = SymmetricGroup(4)                                                 # optional - sage.groups
+            sage: g = G([(1,2,3,4)])                                                    # optional - sage.groups
+            sage: ((loops[1] in [permutation_action(g**i, ['a', 'e', 'c', 'b'])         # optional - sage.groups
+            ....:                for i in range(4)])
+            ....:      or (loops[1] in [permutation_action(g**i, ['a', 'b', 'c', 'e'])
+            ....:                       for i in range(4)]))
             True
         """
         return list(self.loops_iterator(other))
@@ -475,11 +477,13 @@ class PerfectMatching(SetPartition):
 
         EXAMPLES::
 
-            sage: PerfectMatching([[1,3], [4,2]]).to_graph().edges(sort=True, labels=False)
+            sage: PerfectMatching([[1,3], [4,2]]).to_graph().edges(sort=True,           # optional - sage.graphs
+            ....:                                                  labels=False)
             [(1, 3), (2, 4)]
-            sage: PerfectMatching([[1,4], [3,2]]).to_graph().edges(sort=True, labels=False)
+            sage: PerfectMatching([[1,4], [3,2]]).to_graph().edges(sort=True,           # optional - sage.graphs
+            ....:                                                  labels=False)
             [(1, 4), (2, 3)]
-            sage: PerfectMatching([]).to_graph().edges(sort=True, labels=False)
+            sage: PerfectMatching([]).to_graph().edges(sort=True, labels=False)         # optional - sage.graphs
             []
         """
         from sage.graphs.graph import Graph

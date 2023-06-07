@@ -447,7 +447,7 @@ ring `R= \QQ(x)[y]/ (P)`::
 
     sage: Qx = QQ['x'].fraction_field()
     sage: Qxy = Qx['y']
-    sage: R = Qxy.quo(P); R
+    sage: R = Qxy.quo(P); R                                                             # optional - sage.symbolic
     Univariate Quotient Polynomial Ring in ybar
     over Fraction Field of Univariate Polynomial Ring in x
     over Rational Field with modulus y^2 - y + x
@@ -458,7 +458,7 @@ Note: ``ybar`` is the name of the variable `y` in the quotient ring.
 
 We continue the calculation of this fraction in `R`::
 
-    sage: fraction = - R(Px) / R(Py); fraction
+    sage: fraction = - R(Px) / R(Py); fraction                                          # optional - sage.symbolic
     (1/2/(x - 1/4))*ybar - 1/4/(x - 1/4)
 
 .. note::

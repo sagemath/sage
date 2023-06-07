@@ -73,22 +73,22 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
     number of calls to `f` from 91 to 56::
 
         sage: num_calls = 0
-        sage: g = graphs.PetersenGraph()
+        sage: g = graphs.PetersenGraph()                                                # optional - sage.graphs
         sage: def is_independent_set(S):
         ....:     global num_calls
         ....:     num_calls += 1
         ....:     return g.subgraph(S).size() == 0
-        sage: l1 = list(subsets_with_hereditary_property(is_independent_set,
+        sage: l1 = list(subsets_with_hereditary_property(is_independent_set,            # optional - sage.graphs
         ....:                                            g.vertices(sort=False)))
-        sage: num_calls
+        sage: num_calls                                                                 # optional - sage.graphs
         91
         sage: num_calls = 0
-        sage: l2 = list(subsets_with_hereditary_property(is_independent_set,
+        sage: l2 = list(subsets_with_hereditary_property(is_independent_set,            # optional - sage.graphs
         ....:                                            g.vertices(sort=False),
         ....:                                            max_obstruction_size=2))
-        sage: num_calls
+        sage: num_calls                                                                 # optional - sage.graphs
         56
-        sage: l1 == l2
+        sage: l1 == l2                                                                  # optional - sage.graphs
         True
 
     TESTS::
