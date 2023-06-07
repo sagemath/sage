@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 Elliptic curves over the rational numbers
 
 AUTHORS:
@@ -200,7 +200,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self._set_torsion_order(kwds['torsion_order'])
 
     def _set_rank(self, r):
-        """
+        r"""
         Internal function to set the cached rank of this elliptic curve to
         ``r``.
 
@@ -221,7 +221,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         self.__rank = (Integer(r), True)
 
     def _set_torsion_order(self, t):
-        """
+        r"""
         Internal function to set the cached torsion order of this elliptic
         curve to ``t``.
 
@@ -242,7 +242,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         self.__torsion_order = Integer(t)
 
     def _set_cremona_label(self, L):
-        """
+        r"""
         Internal function to set the cached label of this elliptic curve to
         ``L``.
 
@@ -267,7 +267,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         self.__cremona_label = L
 
     def _set_conductor(self, N):
-        """
+        r"""
         Internal function to set the cached conductor of this elliptic
         curve to ``N.``
 
@@ -288,7 +288,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         self.__conductor_pari = Integer(N)
 
     def _set_modular_degree(self, deg):
-        """
+        r"""
         Internal function to set the cached modular degree of this elliptic
         curve to ``deg``.
 
@@ -309,7 +309,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         self.__modular_degree = Integer(deg)
 
     def _set_gens(self, gens):
-        """
+        r"""
         Internal function to set the cached generators of this elliptic
         curve to ``gens``.
 
@@ -382,7 +382,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return bool(misc.mul([x.valuation(p) >= 0 for x in self.ainvs()]))
 
     def is_integral(self):
-        """
+        r"""
         Return ``True`` if this elliptic curve has integral coefficients (in
         Z).
 
@@ -476,7 +476,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return mwrank(list(self.a_invariants()))
 
     def conductor(self, algorithm="pari"):
-        """
+        r"""
         Return the conductor of the elliptic curve.
 
         INPUT:
@@ -576,7 +576,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     ####################################################################
 
     def pari_curve(self):
-        """
+        r"""
         Return the PARI curve corresponding to this elliptic curve.
 
         EXAMPLES::
@@ -629,7 +629,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return self._pari_curve
 
     def pari_mincurve(self):
-        """
+        r"""
         Return the PARI curve corresponding to a minimal model for this
         elliptic curve.
 
@@ -653,7 +653,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
     @cached_method
     def database_attributes(self):
-        """
+        r"""
         Return a dictionary containing information about ``self`` in
         the elliptic curve database.
 
@@ -688,7 +688,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             raise LookupError("Cremona database does not contain entry for " + repr(self))
 
     def database_curve(self):
-        """
+        r"""
         Return the curve in the elliptic curve database isomorphic to this
         curve, if possible. Otherwise raise a ``LookupError`` exception.
 
@@ -760,7 +760,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     #  Access to mwrank
     ####################################################################
     def mwrank_curve(self, verbose=False):
-        """
+        r"""
         Construct an mwrank_EllipticCurve from this elliptic curve
 
         The resulting mwrank_EllipticCurve has available methods from John
@@ -792,7 +792,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                     second_limit=8,
                     n_aux=-1,
                     second_descent=1):
-        """
+        r"""
         Compute 2-descent data for this curve.
 
         INPUT:
@@ -1362,7 +1362,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return f
 
     def pollack_stevens_modular_symbol(self, sign=0, implementation='eclib'):
-        """
+        r"""
         Create the modular symbol attached to the elliptic curve,
         suitable for overconvergent calculations.
 
@@ -1979,7 +1979,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              only_use_mwrank=True,
              algorithm='mwrank_lib',
              proof=None):
-        """
+        r"""
         Return the rank of this elliptic curve, assuming no conjectures.
 
         If we fail to provably compute the rank, raises a RuntimeError
@@ -2398,7 +2398,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return G, proved
 
     def gens_certain(self):
-        """
+        r"""
         Return ``True`` if the generators have been proven correct.
 
         EXAMPLES::
@@ -2948,7 +2948,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return Integer(self.pari_mincurve().ellak(n))
 
     def ap(self, p):
-        """
+        r"""
         The ``p``-th Fourier coefficient of the modular form corresponding to
         this elliptic curve, where ``p`` is prime.
 
@@ -3009,7 +3009,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return self.ainvs() == self.minimal_model().ainvs()
 
     def is_p_minimal(self, p):
-        """
+        r"""
         Tests if curve is ``p``-minimal at a given prime ``p``.
 
         INPUT:
@@ -3188,7 +3188,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return 4
 
     def tamagawa_product(self):
-        """
+        r"""
         Return the product of the Tamagawa numbers.
 
         EXAMPLES::
@@ -3204,7 +3204,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return self.__tamagawa_product
 
     def real_components(self):
-        """
+        r"""
         Return the number of real components.
 
         EXAMPLES::
@@ -3361,7 +3361,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return self.period_lattice().elliptic_exponential(z)
 
     def lseries(self):
-        """
+        r"""
         Return the L-series of this elliptic curve.
 
         Further documentation is available for the functions which apply to
@@ -3911,7 +3911,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 return self._generalized_congmod_numbers(M)["congnum"]
 
     def cremona_label(self, space=False):
-        """
+        r"""
         Return the Cremona label associated to (the minimal model) of this
         curve, if it is known. If not, raise a ``LookupError`` exception.
 
@@ -4003,7 +4003,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return self.change_ring(rings.GF(p))
 
     def torsion_order(self):
-        """
+        r"""
         Return the order of the torsion subgroup.
 
         EXAMPLES::
@@ -4107,7 +4107,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return self.__torsion_subgroup
 
     def torsion_points(self):
-        """
+        r"""
         Return the torsion points of this elliptic curve as a sorted
         list.
 
@@ -4375,7 +4375,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             raise ValueError("Error in has_rational_cm: %s is not an extension field of QQ" % field)
 
     def quadratic_twist(self, D):
-        """
+        r"""
         Return the global minimal model of the quadratic twist of this
         curve by ``D``.
 
@@ -4746,7 +4746,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return isogs
 
     def is_isogenous(self, other, proof=True, maxp=200):
-        """
+        r"""
         Return whether or not self is isogenous to other.
 
         INPUT:
@@ -4824,7 +4824,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return E2 in E1.isogeny_class().curves
 
     def isogeny_degree(self, other):
-        """
+        r"""
         Return the minimal degree of an isogeny between ``self`` and
         ``other``.
 
@@ -4949,7 +4949,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 #         """
 
     def optimal_curve(self):
-        """
+        r"""
         Given an elliptic curve that is in the installed Cremona
         database, return the optimal curve isogenous to it.
 
@@ -5289,7 +5289,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return self.ap(ell) % p != 0
 
     def is_good(self, p, check=True):
-        """
+        r"""
         Return ``True`` if ``p`` is a prime of good reduction for `E`.
 
         INPUT:
@@ -5314,7 +5314,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return self.conductor() % p != 0
 
     def is_supersingular(self, p, ell=None):
-        """
+        r"""
         Return ``True`` precisely when p is a prime of good reduction and the
         mod-``p`` representation attached to this elliptic curve is
         supersingular at ell.
@@ -5344,7 +5344,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return self.is_good(p) and not self.is_ordinary(p, ell)
 
     def supersingular_primes(self, B):
-        """
+        r"""
         Return a list of all supersingular primes for this elliptic curve
         up to and possibly including B.
 
@@ -5379,7 +5379,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                       [P[i] for i in range(2,len(v)) if v[i] == 0 and N % P[i] != 0]
 
     def ordinary_primes(self, B):
-        """
+        r"""
         Return a list of all ordinary primes for this elliptic curve up to
         and possibly including B.
 
@@ -5463,7 +5463,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     ########################################################################
 
     def sha(self):
-        """
+        r"""
         Return an object of class
         'sage.schemes.elliptic_curves.sha_tate.Sha' attached to this
         elliptic curve.
@@ -5528,7 +5528,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     matrix_of_frobenius = padics.matrix_of_frobenius
 
     def mod5family(self):
-        """
+        r"""
         Return the family of all elliptic curves with the same mod-5
         representation as ``self``.
 
@@ -5836,7 +5836,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     prove_BSD = BSD.prove_BSD
 
     def integral_points(self, mw_base='auto', both_signs=False, verbose=False):
-        """
+        r"""
         Compute all integral points (up to sign) on this elliptic curve.
 
         INPUT:
@@ -6233,7 +6233,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         return int_points
 
     def S_integral_points(self, S, mw_base='auto', both_signs=False, verbose=False, proof=None):
-        """
+        r"""
         Compute all S-integral points (up to sign) on this elliptic curve.
 
         INPUT:
@@ -6910,7 +6910,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
 
 def cremona_curves(conductors):
-    """
+    r"""
     Return iterator over all known curves (in database) with conductor
     in the list of conductors.
 
@@ -6943,7 +6943,7 @@ def cremona_curves(conductors):
     return sage.databases.cremona.CremonaDatabase().iter(conductors)
 
 def cremona_optimal_curves(conductors):
-    """
+    r"""
     Return iterator over all known optimal curves (in database) with
     conductor in the list of conductors.
 
