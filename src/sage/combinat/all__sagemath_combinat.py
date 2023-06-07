@@ -98,9 +98,6 @@ from .words.all import *
 
 lazy_import('sage.combinat.subword', 'Subwords')
 
-# Tuples
-from .tuple import Tuples, UnorderedTuples
-
 # Alternating sign matrices
 lazy_import('sage.combinat.alternating_sign_matrix', ('AlternatingSignMatrix',
                                                       'AlternatingSignMatrices',

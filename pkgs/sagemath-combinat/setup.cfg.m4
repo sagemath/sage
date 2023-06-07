@@ -42,5 +42,6 @@ lrcalc =
 symmetrica =
 
 graphs = esyscmd(`sage-get-system-packages install-requires sagemath_graphs')
+modules = esyscmd(`sage-get-system-packages install-requires sagemath_modules')
 
-standard = sagemath-combinat[lrcalc,symmetrica]
+standard = sagemath-combinat[lrcalc,symmetrica,graphs,modules]

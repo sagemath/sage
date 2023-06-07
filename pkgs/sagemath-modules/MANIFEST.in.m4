@@ -168,6 +168,20 @@ include sage/algebras/lie_algebras/lie_algebra_element.p*
 graft sage/coding
 prune sage/coding/codecan               # needs sage.groups
 
+graft sage/crypto
+## # parts of sage.crypto using linear algebra
+## include sage/crypto/lattice.p*
+## include sage/crypto/sbox*.p*            # cimports Matrix
+## include sage/crypto/boolean_function.p* # dep of sbox
+## graft sage/crypto/mq
+## # parts of sage.crypto using StringMonoid
+## # they could as well go to sagemath-combinat, but sage.crypto.__init__ is nonempty
+## include sage/crypto/block_cipher/sdes.p*
+## include sage/crypto/stream*.p*
+## include sage/crypto/util*.p*
+## graft sage/crypto/public_key
+
+
 global-exclude *.py[co]
 global-exclude *.so
 global-exclude *.bak

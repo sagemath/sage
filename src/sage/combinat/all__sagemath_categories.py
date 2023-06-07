@@ -23,5 +23,7 @@ from .combination import Combinations
 from .composition import Composition, Compositions
 from .permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
 from .subset import Subsets, subsets, powerset, uniq
+from .tuple import Tuples, UnorderedTuples
+
 
 from .dlx import DLXMatrix, AllExactCovers, OneExactCover
