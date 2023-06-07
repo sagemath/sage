@@ -77,13 +77,6 @@ jobs:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
-      - name: Configure new tree
-        if: always() && steps.worktree.outcome == 'success'
-        run: |
-          # Reuse built SAGE_LOCAL contained in the Docker image 
-          ./bootstrap
-          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
-
       - name: Build and test modularized distributions
         if: always() && steps.worktree.outcome == 'success'
         run: make V=0 tox && make pypi-wheels
