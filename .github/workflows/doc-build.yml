@@ -67,7 +67,7 @@ jobs:
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make doc-html
+          make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make doc-html
         working-directory: ./worktree-image
         env:
           MAKE: make -j2
