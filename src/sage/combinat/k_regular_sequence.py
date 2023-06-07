@@ -1287,7 +1287,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                        linear_combination * vector(values(m, lines))
                        for m in xsrange(0, (n_max - r_L) // k**t_L + 1))
 
-        class NoLinearCombination(ValueError):
+        class NoLinearCombination(RuntimeError):
             pass
 
         def find_linear_combination(t_L, r_L, lines):
