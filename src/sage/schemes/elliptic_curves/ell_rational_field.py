@@ -1777,6 +1777,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         Return lower and upper bounds on the rank of the Mordell-Weil
         group `E(\QQ)` and a list of points of infinite order.
 
+        .. WARNING::
+
+            This function is deprecated as the functionality of
+            Simon's script for elliptic curves over the rationals
+            has been ported over to pari.
+            Use :meth:`.rank` with the keyword ``algorithm='pari'`` instead.
+
         INPUT:
 
         - ``verbose`` -- 0, 1, 2, or 3 (default: 0), the verbosity level
@@ -1829,6 +1836,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve('11a1')
             sage: E.simon_two_descent()
+            doctest:warning
+            ...
+            DeprecationWarning: Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.
+            See https://github.com/sagemath/sage/issues/35621 for details.
             (0, 0, [])
             sage: E = EllipticCurve('37a1')
             sage: E.simon_two_descent()
@@ -1909,6 +1920,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.selmer_rank()  # uses mwrank
             1
         """
+        from sage.misc.superseded import deprecation
+        deprecation(35621, 'Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.')
+
         t = EllipticCurve_number_field.simon_two_descent(self, verbose=verbose,
                                                          lim1=lim1, lim3=lim3, limtriv=limtriv,
                                                          maxprob=maxprob, limbigprime=limbigprime,
@@ -1978,7 +1992,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     def rank(self, use_database=True, verbose=False,
              only_use_mwrank=True,
              algorithm='mwrank_lib',
-             proof=None):
+             proof=None,
+             pari_effort=0):
         r"""
         Return the rank of this elliptic curve, assuming no conjectures.
 
@@ -1999,6 +2014,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'mwrank_lib'`` -- call mwrank c library
 
+          - ``'pari'`` -- call ellrank in pari
+
         - ``only_use_mwrank`` -- (default: ``True``) if ``False`` try
           using analytic rank methods first
 
@@ -2006,9 +2023,15 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           ``proof.elliptic_curve`` or ``sage.structure.proof``); note that
           results obtained from databases are considered ``proof=True``
 
+        - ``pari_effort`` -- (default: 0) parameter used in when
+          the algorithm ``pari`` is chosen. It measure of the effort
+          done to find rational points. Values up to 10 can be chosen;
+          the running times increase roughly like the cube of the
+          effort value.
+
         OUTPUT: the rank of the elliptic curve as :class:`Integer`
 
-        IMPLEMENTATION: Uses L-functions, mwrank, and databases.
+        IMPLEMENTATION: Uses L-functions, mwrank, pari, and databases.
 
         EXAMPLES::
 
@@ -2024,7 +2047,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             4
             sage: EllipticCurve([0, 0, 1, -79, 342]).rank(proof=False)
             5
-            sage: EllipticCurve([0, 0, 1, -79, 342]).simon_two_descent()[0]  # long time (7s on sage.math, 2012)
+            sage: EllipticCurve([0, 0, 1, -79, 342]).rank(algorithm="pari")
             5
 
         Examples with denominators in defining equations::
@@ -2038,7 +2061,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.minimal_model().rank()
             1
 
-        A large example where mwrank doesn't determine the result with certainty::
+        A large example where mwrank doesn't determine the result with certainty, but pari does::
 
             sage: EllipticCurve([1,0,0,0,37455]).rank(proof=False)
             0
@@ -2046,6 +2069,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Traceback (most recent call last):
             ...
             RuntimeError: rank not provably correct (lower bound: 0)
+            sage: EllipticCurve([1,0,0,0,37455]).rank(algorithm="pari")
+            0
 
         TESTS::
 
@@ -2053,6 +2078,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'garbage'
+
+        An example to check if the points are saturated::
+
+            sage: E = EllipticCurve([0,0, 1, -7, 6])
+            sage: E.gens(use_database=False, algorithm="pari") # random
+            [(2 : 0 : 1), (-1 : 3 : 1), (11 : 35 : 1)]
+            sage: E.saturation(_)[1]
+            1
 
         Since :trac:`23962`, the default is to use the Cremona
         database. We also check that the result is cached correctly::
@@ -2068,6 +2101,15 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             0
             sage: E._EllipticCurve_rational_field__rank
             (0, True)
+
+        This example has Sha = Z/4 x Z/4 and the rank cannot be
+        determined using pari only::
+
+            sage: E =EllipticCurve([-113^2,0])
+            sage: E.rank(use_database=False, verbose=False, algorithm="pari")
+            Traceback (most recent call last):
+            ...
+            RuntimeError: rank not provably correct (lower bound: 0, upper bound:2). Hint: increase pari_effort.
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
@@ -2168,6 +2210,27 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__rank = (rank, proof)
             return rank
 
+        if algorithm == 'pari':
+            ep = self.pari_curve()
+            # if we know already some points in _known_points
+            # we can give them to pari to speed it up
+            kpts = [ [x[0],x[1]] for x in self._known_points ]
+            lower, upper, s, pts = ep.ellrank(pari_effort, kpts)
+            ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+            ge = self.saturation(ge)[0]
+            self._known_points = ge
+            # note that lower is only a conjectural
+            # lower bound for the rank, the only
+            # proven lower bound is #ge.
+            if len(ge) == upper:
+                verbose_verbose(f"rank {upper} unconditionally determined by pari")
+                rank = Integer(upper)
+                self.__rank = (rank, True)
+                self.__gens = (ge, True)
+                return rank
+            else:
+                verbose_verbose(f"Warning -- rank could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
+                raise RuntimeError(f"rank not provably correct (lower bound: {len(ge)}, upper bound:{upper}). Hint: increase pari_effort.")
         raise ValueError("unknown algorithm {!r}".format(algorithm))
 
     def gens(self, proof=None, **kwds):
@@ -2194,6 +2257,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'mwrank_lib'`` -- call mwrank C library
 
+          - ``'pari'`` -- use ellrank in pari
+
         - ``only_use_mwrank`` -- bool (default True) if False, first
           attempts to use more naive, natively implemented methods
 
@@ -2207,6 +2272,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           points found by two-descent in the Mordell-Weil group is
           greater than this, a warning message will be displayed.
 
+        - ``pari_effort`` -- (default: 0) parameter used in when
+          the algorithm ``pari`` is chosen. It measure of the effort
+          done to find rational points. Values up to 10 can be chosen,
+          the running times increase roughly like the cube of the
+          effort value.
+
         OUTPUT:
 
         - ``generators`` -- list of generators for the Mordell-Weil
@@ -2218,13 +2289,18 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             :meth:`~gens_certain` method to find out afterwards
             whether the generators were proved.
 
-        IMPLEMENTATION: Uses Cremona's mwrank C library.
+        IMPLEMENTATION: Uses Cremona's mwrank C++ library or ellrank in pari.
 
         EXAMPLES::
 
             sage: E = EllipticCurve('389a')
             sage: E.gens()                 # random output
             [(-1 : 1 : 1), (0 : 0 : 1)]
+            sage: E.gens(algorithm="pari")    # random output
+            [(5/4 : 5/8 : 1), (0 : 0 : 1)]
+            sage: E = EllipticCurve([0,2429469980725060,0,275130703388172136833647756388,0])
+            sage: len(E.gens(algorithm="pari"))
+            14
 
         A non-integral example::
 
@@ -2240,6 +2316,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              over Rational Field
             sage: E1.gens() # random (if database not used)
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
+            sage: E1.gens(algorithm="pari")   #random
+            [(-400 : 8000 : 1), (0 : -8000 : 1)]
+
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
@@ -2266,7 +2345,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                       only_use_mwrank=True,
                       use_database=True,
                       descent_second_limit=12,
-                      sat_bound=1000):
+                      sat_bound=1000,
+                      pari_effort=0):
         r"""
         Return generators for the Mordell-Weil group `E(Q)` *modulo*
         torsion.
@@ -2289,6 +2369,25 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: gens, proved = E._compute_gens(proof=False)
             sage: proved
             True
+
+        TESTS::
+
+            sage: E = EllipticCurve([-127^2,0])
+            sage: E.gens(use_database=False, algorithm="pari")
+            Traceback (most recent call last):
+            ...
+            RuntimeError: generators could not be determined. So far we found []. Hint: increase pari_effort.
+            sage: E.gens(use_database=False, algorithm="pari",pari_effort=4)
+            [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
+
+            sage: E = EllipticCurve([-157^2,0])
+            sage: E.gens(use_database=False, algorithm="pari")
+            Traceback (most recent call last):
+            ...
+            RuntimeError: generators could not be determined. So far we found []. Hint: increase pari_effort.
+            sage: E.gens(use_database=False, algorithm="pari",pari_effort=10) # long time
+            [(-166136231668185267540804/2825630694251145858025 : 167661624456834335404812111469782006/150201095200135518108761470235125 : 1)]
+
         """
         # If the optional extended database is installed and an
         # isomorphic curve is in the database then its gens will be
@@ -2333,7 +2432,29 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             except RuntimeError:
                 pass
         # end if (not_use_mwrank)
-        if algorithm == "mwrank_lib":
+        if algorithm == "pari":
+            ep = self.pari_curve()
+            # if we know already some points in _known_points
+            # we can give them to pari to speed it up
+            kpts = [ [x[0],x[1]] for x in self._known_points ]
+            lower, upper, s, pts = ep.ellrank(pari_effort, kpts)
+            ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+            ge = self.saturation(ge)[0]
+            self._known_points = ge
+            # note that lower is only a conjectural
+            # lower bound for the rank, the only
+            # proven lower bound is #ge.
+            if len(ge) == upper:
+                verbose_verbose(f"rank {upper} unconditionally determined by pari")
+                rank = Integer(upper)
+                self.__rank = (rank, True)
+                if len(ge) == rank:
+                    self.__gens = (ge, True)
+                    return ge, True
+            # cases when we did not find all points
+            verbose_verbose(f"Warning -- generators could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
+            raise RuntimeError(f"generators could not be determined. So far we found {ge}. Hint: increase pari_effort.")
+        elif algorithm == "mwrank_lib":
             verbose_verbose("Calling mwrank C++ library.")
             if not self.is_integral():
                 xterm = 1
@@ -2853,86 +2974,118 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             points = self.saturation(points, verbose=verbose)[0]
         return points
 
-    def selmer_rank(self):
+    def selmer_rank(self, algorithm="pari"):
         r"""
-        The rank of the 2-Selmer group of the curve.
+        Return the rank of the 2-Selmer group of the curve.
 
-        EXAMPLES: The following is the curve 960D1, which has rank 0, but
-        Sha of order 4.
+        INPUT:
 
-        ::
+        - ``algorithm`` -- (default:``'pari'``)
+          either ``'pari'`` or ``'mwrank'``
+
+        EXAMPLES:
+        This example has rank 1, Sha[2] of order 4 and
+        a single rational 2-torsion point::
+
+            sage: E = EllipticCurve([1, 1, 1, 508, -2551])
+            sage: E.selmer_rank()
+            4
+            sage: E.selmer_rank(algorithm="mwrank")
+            4
+
+        The following is the curve 960d1, which has rank 0, but
+        Sha of order 4::
 
             sage: E = EllipticCurve([0, -1, 0, -900, -10098])
             sage: E.selmer_rank()
             3
+            sage: E.selmer_rank(algorithm="mwrank")
+            3
 
-        Here the Selmer rank is equal to the 2-torsion rank (=1) plus
-        the 2-rank of Sha (=2), and the rank itself is zero::
+        This curve has rank 1, and 4 elements in Sha[2].
+        Yet the order of Sha is 16, so that group is the product
+        of two cyclic groups of order 4::
 
+            sage: E = EllipticCurve([1, 0, 0, -150752, -22541610])
+            sage: E.selmer_rank()
+            4
+
+        Instead in this last example of rank 0, Sha is a product of four cyclic groups of order 2::
+
+            sage: E = EllipticCurve([1, 0, 0, -49280, -4214808])
+            sage: E.selmer_rank()
+            5
             sage: E.rank()
             0
-
-        In contrast, for the curve 571A, also with rank 0 and Sha of
-        order 4, we get a worse bound::
-
-            sage: E = EllipticCurve([0, -1, 1, -929, -10595])
-            sage: E.selmer_rank()
-            2
-            sage: E.rank_bound()
-            2
-
-        To establish that the rank is in fact 0 in this case, we would
-        need to carry out a higher descent::
-
-            sage: E.three_selmer_rank() # optional - magma
-            0
-
-        Or use the L-function to compute the analytic rank::
-
-            sage: E.rank(only_use_mwrank=False)
-            0
         """
         try:
             return self.__selmer_rank
         except AttributeError:
-            C = self.mwrank_curve()
-            self.__selmer_rank = C.selmer_rank()
-            return self.__selmer_rank
+            if algorithm=="pari":
+                ep = self.pari_curve()
+                lower, upper, s, pts = ep.ellrank()
+                tor = self.two_torsion_rank()
+                return upper + tor + s
+            elif algorithm=="mwrank":
+                C = self.mwrank_curve()
+                self.__selmer_rank = C.selmer_rank()
+                return self.__selmer_rank
+            else:
+                raise ValueError(f"unknown {algorithm=}")
 
-    def rank_bound(self):
+    def rank_bound(self, algorithm="pari"):
         r"""
-        Upper bound on the rank of the curve, computed using
-        2-descent.
+        Return the upper bound on the rank of the curve,
+        computed using a 2-descent.
+
+        INPUT:
+
+        - ``algorithm`` -- (default:``'pari'``)
+          either ``'pari'`` or ``'mwrank'``
 
         In many cases, this is the actual rank of the
-        curve.  If the curve has no 2-torsion it is the same as the
-        2-selmer rank.
+        curve.
 
-        EXAMPLES: The following is the curve 960D1, which has rank 0, but
-        Sha of order 4.
+        EXAMPLES::
 
-        ::
-
-            sage: E = EllipticCurve([0, -1, 0, -900, -10098])
+            sage: E = EllipticCurve("389a1")
             sage: E.rank_bound()
-            0
+            2
 
-        It gives 0 instead of 2, because it knows Sha is nontrivial. In
-        contrast, for the curve 571A, also with rank 0 and Sha of order 4,
-        we get a worse bound::
+        The following is the curve 571a1, which has
+        rank 0, but Sha of order 4, yet pari, using the Cassels
+        pairing is able to show that the rank is 0.
+        The 2-descent in mwrank only determines a weaker upper bound::
 
             sage: E = EllipticCurve([0, -1, 1, -929, -10595])
             sage: E.rank_bound()
+            0
+            sage: E.rank_bound(algorithm="mwrank")
             2
-            sage: E.rank(only_use_mwrank=False)   # uses L-function
+
+        In the following last example, both algorithm only determine a rank bound larger than the actual rank::
+
+            sage: E = EllipticCurve([1, 1, 1, -896670, -327184905])
+            sage: E.rank_bound()
+            2
+            sage: E.rank_bound(algorithm="mwrank")
+            2
+            sage: E.rank(only_use_mwrank=False) # uses L-function
             0
         """
         try:
             return self.__rank_bound
         except AttributeError:
-            C = self.mwrank_curve()
-            self.__rank_bound = C.rank_bound()
-            return self.__rank_bound
+            if algorithm=="pari":
+                ep = self.pari_curve()
+                lower, upper, s, pts = ep.ellrank()
+                return upper
+            elif algorithm=="mwrank":
+                C = self.mwrank_curve()
+                self.__rank_bound = C.rank_bound()
+                return self.__rank_bound
+            else:
+                raise ValueError(f"unknown {algorithm=}")
 
     def an(self, n):
         r"""
