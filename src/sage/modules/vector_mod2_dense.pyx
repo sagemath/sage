@@ -46,7 +46,6 @@ from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
-from .free_module_element import vector
 
 from sage.libs.m4ri cimport *
 

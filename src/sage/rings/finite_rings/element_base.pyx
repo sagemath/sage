@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 """
 Base class for finite field elements
 
@@ -25,7 +26,7 @@ from sage.misc.superseded import deprecated_function_alias
 
 def is_FiniteFieldElement(x):
     """
-    Return True if ``x`` is a finite field element.
+    Return ``True`` if ``x`` is a finite field element.
 
     This function is deprecated.
 
@@ -504,7 +505,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         if var is None:
             var = self.parent().variable_name()
-        from sage.libs.pari.all import pari
         ffgen = self._parent.modulus()._pari_with_name(var).ffgen()
         polypari = self.polynomial()._pari_with_name()
         # Add ffgen - ffgen to ensure that we really get an FFELT
@@ -1006,7 +1006,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: G32(m1) == g1
             True
         """
-        [(p, k2)] = list(self.parent().cardinality().factor())
+        k2 = self.parent().degree()
         if k2 % 2:
             raise TypeError("cardinality of the field must be a square number")
         k = k2 / 2
