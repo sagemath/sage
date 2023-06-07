@@ -540,8 +540,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             return
 
         from sage.arith.misc import primes
-        for p in primes(B+1):
-            yield p
+        yield from primes(B + 1)
 
     def discriminant(self):
         """
