@@ -2718,11 +2718,11 @@ class RecurrenceParser():
 
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: var('n')                                                                  # optional - sage.symbolic
+            sage: var('n')                                                              # optional - sage.symbolic
             n
-            sage: function('f')                                                             # optional - sage.symbolic
+            sage: function('f')                                                         # optional - sage.symbolic
             f
-            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                      # optional - sage.symbolic
+            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                  # optional - sage.symbolic
             ....:     f(8*n) == -1*f(2*n - 1) + 1*f(2*n + 1),
             ....:     f(8*n + 1) == -11*f(2*n - 1) + 10*f(2*n) + 11*f(2*n + 1),
             ....:     f(8*n + 2) == -21*f(2*n - 1) + 20*f(2*n) + 21*f(2*n + 1),
@@ -2733,9 +2733,9 @@ class RecurrenceParser():
             ....:     f(8*n + 7) == -71*f(2*n - 1) + 70*f(2*n) + 71*f(2*n + 1),
             ....:     f(0) == 0, f(1) == 1, f(2) == 2, f(3) == 3, f(4) == 4,
             ....:     f(5) == 5, f(6) == 6, f(7) == 7], f, n)
-            sage: rules = RP.parameters(                                                    # optional - sage.symbolic
+            sage: rules = RP.parameters(                                                # optional - sage.symbolic
             ....:     M, m, coeffs, initial_values, 0)
-            sage: RP.matrix(rules, 0, False)                                                # optional - sage.symbolic
+            sage: RP.matrix(rules, 0, False)                                            # optional - sage.symbolic
             [  0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0]
             [  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0]
             [  0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0]
@@ -2753,7 +2753,7 @@ class RecurrenceParser():
             [  0   0   0 -31  30  31   0   0   0   0   0   0   0   0   0   0   0]
             [  0   0   0 -41  40  41   0   0   0   0   0   0   0   0   0   0   0]
             [  0   0   0 -51  50  51   0   0   0   0   0   0   0   0   0   0   0]
-            sage: RP.matrix(rules, 1, False)                                                # optional - sage.symbolic
+            sage: RP.matrix(rules, 1, False)                                            # optional - sage.symbolic
             [  0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0]
             [  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0]
             [  0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0]
@@ -2788,7 +2788,7 @@ class RecurrenceParser():
 
         Number of Unbordered Factors in the Thue--Morse Sequence::
 
-            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                      # optional - sage.symbolic
+            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                  # optional - sage.symbolic
             ....:     f(8*n) == 2*f(4*n),
             ....:     f(8*n + 1) == f(4*n + 1),
             ....:     f(8*n + 2) == f(4*n + 1) + f(4*n + 3),
@@ -2802,9 +2802,9 @@ class RecurrenceParser():
             ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
             ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
             ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n)
-            sage: UB_rules = RP.parameters(                                                 # optional - sage.symbolic
+            sage: UB_rules = RP.parameters(                                             # optional - sage.symbolic
             ....:     M, m, coeffs, initial_values, 3)
-            sage: RP.matrix(UB_rules, 0)                                                    # optional - sage.symbolic
+            sage: RP.matrix(UB_rules, 0)                                                # optional - sage.symbolic
             [ 0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0]
@@ -2821,7 +2821,7 @@ class RecurrenceParser():
             [ 0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0]
             [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0]
-            sage: RP.matrix(UB_rules, 1)                                                    # optional - sage.symbolic
+            sage: RP.matrix(UB_rules, 1)                                                # optional - sage.symbolic
             [ 0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0]
@@ -3015,9 +3015,9 @@ class RecurrenceParser():
 
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: var('n')                                                                  # optional - sage.symbolic
+            sage: var('n')                                                              # optional - sage.symbolic
             n
-            sage: function('f')                                                             # optional - sage.symbolic
+            sage: function('f')                                                         # optional - sage.symbolic
             f
             sage: SB_rules = RP.parameters(
             ....:     1, 0, {(0, 0): 1, (1, 0): 1, (1, 1): 1},
@@ -3027,7 +3027,7 @@ class RecurrenceParser():
 
         Number of Unbordered Factors in the Thue--Morse Sequence::
 
-            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                      # optional - sage.symbolic
+            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                  # optional - sage.symbolic
             ....:     f(8*n) == 2*f(4*n),
             ....:     f(8*n + 1) == f(4*n + 1),
             ....:     f(8*n + 2) == f(4*n + 1) + f(4*n + 3),
@@ -3041,9 +3041,9 @@ class RecurrenceParser():
             ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
             ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
             ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n)
-            sage: UB_rules = RP.parameters(                                                 # optional - sage.symbolic
+            sage: UB_rules = RP.parameters(                                             # optional - sage.symbolic
             ....:     M, m, coeffs, initial_values, 3)
-            sage: RP.right(UB_rules)                                                        # optional - sage.symbolic
+            sage: RP.right(UB_rules)                                                    # optional - sage.symbolic
             (1, 1, 2, 1, 2, 2, 4, 2, 4, 6, 0, 4, 4, 1, 0, 0)
         """
         from sage.modules.free_module_element import vector
@@ -3079,12 +3079,12 @@ class RecurrenceParser():
 
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: var('n')                                                                  # optional - sage.symbolic
+            sage: var('n')                                                              # optional - sage.symbolic
             n
-            sage: function('f')                                                             # optional - sage.symbolic
+            sage: function('f')                                                         # optional - sage.symbolic
             f
 
-            sage: RP([f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),                        # optional - sage.symbolic
+            sage: RP([f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),                    # optional - sage.symbolic
             ....:     f(0) == 0, f(1) == 1], f, n)
             ([
               [1 0 0]  [1 1 0]
@@ -3094,7 +3094,7 @@ class RecurrenceParser():
              (1, 0, 0),
              (0, 1, 1))
 
-            sage: RP(equations=[f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),              # optional - sage.symbolic
+            sage: RP(equations=[f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),          # optional - sage.symbolic
             ....:     f(0) == 0, f(1) == 1], function=f, var=n)
             ([
               [1 0 0]  [1 1 0]
