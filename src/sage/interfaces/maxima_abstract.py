@@ -1572,8 +1572,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         ::
 
-            sage: f = maxima('exp(x^2)').integral('x',0,1); f
-            -...(sqrt(%pi)*%i*erf(%i))/2...
+            sage: f = maxima('exp(x^2)').integral('x',0,1)
+            sage: f.sage()
+            -1/2*I*sqrt(pi)*erf(I)
             sage: f.numer()
             1.46265174590718...
         """

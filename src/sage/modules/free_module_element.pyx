@@ -4053,8 +4053,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: t=var('t')
             sage: r=vector([t,t^2,sin(t)])
             sage: vec,answers=r.nintegral(t,0,1)
-            sage: vec
-            (0.5, 0.333333333333333..., 0.4596976941318602...)
+            sage: vec # abs tol 1e-15
+            (0.5, 0.3333333333333334, 0.4596976941318602)
             sage: type(vec)
             <class 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
             sage: answers

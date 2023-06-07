@@ -49,9 +49,14 @@ The first way yields a Maxima object.
 
 ::
 
+    sage: x,y = SR.var('x,y')
     sage: F = maxima.factor('x^5 - y^5')
-    sage: F
-    -...(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)...
+    sage: F # not tested - depends on maxima version
+    -((y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4))
+    sage: actual = F.sage()
+    sage: expected = -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    sage: bool(actual == expected)
+    True
     sage: type(F)
     <class 'sage.interfaces.maxima.MaximaElement'>
 
@@ -71,18 +76,19 @@ data to other systems.
 
 ::
 
+    sage: F = maxima('x * y')
     sage: repr(F)
-    '-...(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)...'
+    'x*y'
     sage: F.str()
-    '-...(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)...'
+    'x*y'
 
 The ``maxima.eval`` command evaluates an expression in
 maxima and returns the result as a *string* not a maxima object.
 
 ::
 
-    sage: print(maxima.eval('factor(x^5 - y^5)'))
-    -...(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)...
+    sage: print(maxima.eval('factor(x^5 - 1)'))
+    (x-1)*(x^4+x^3+x^2+x+1)
 
 We can create the polynomial `f` as a Maxima polynomial,
 then call the factor method on it. Notice that the notation
@@ -91,11 +97,11 @@ works.
 
 ::
 
-    sage: f = maxima('x^5 - y^5')
+    sage: f = maxima('x^5 + y^5')
     sage: f^2
-    (x^5-y^5)^2
+    (y^5+x^5)^2
     sage: f.factor()
-    -...(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)...
+    (y+x)*(y^4-x*y^3+x^2*y^2-x^3*y+x^4)
 
 Control-C interruption works well with the maxima interface,
 because of the excellent implementation of maxima. For example, try
