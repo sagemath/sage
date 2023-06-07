@@ -80,9 +80,11 @@ jobs:
           set -ex
           mkdir -p ./docs
           # Create changelog
+          echo '## Preview of CHANGES.html'
           (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git diff --name-only) | tee ./docs/CHANGES.txt
-          (cd /sage/local/share/doc/sage/html/en && git diff; rm -rf .git) | head -n400
-          sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt > ./docs/CHANGES.html
+          (cd /sage/local/share/doc/sage/html/en && git diff; rm -rf .git) > ./docs/html.diff
+          echo '## Preview of html.diff'; head -n 400 ./docs/html.diff
+          (echo '<p><a href="html.diff">HTML diff</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them
