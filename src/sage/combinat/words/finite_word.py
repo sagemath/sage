@@ -568,6 +568,44 @@ class FiniteWord_class(Word_class):
             res += 1
         return res
 
+    def not_used_letters(self, n):
+        r"""
+        Return ``n`` letters not contained in ``self``.
+
+        INPUT:
+
+        - ``n`` -- non-negative integer, amount of letters
+        which will be returned
+
+        OUTPUT:
+
+        a list -- list of lowest non-negative integers 
+        which are not contained in ``self`` as letters
+
+        EXAMPLES::
+
+            sage: w = Word('abcd')
+            sage: w.not_used_letters(2)
+            [0, 1]
+            sage: w = Word([1, 2, 3])
+            sage: w.not_used_letter(3)
+            [0, 4, 5]
+            sage: w = Word([3, 1, 'ab', 0, 'c', 2, 4])
+            sage: w.not_used_letter(2)
+            []
+        """
+        if n < 0:
+            raise ValueError("Parameter `n` must be a non-negative integer")
+        lettersSet = set(self.letters())
+        res = []
+        num = 0
+        while len(res) < n:
+            while num in lettersSet:
+                num += 1
+            res.append(num)
+            num += 1
+        return res
+
     def content(self, n=None):
         r"""
         Return content of ``self``.
@@ -2989,9 +3027,6 @@ class FiniteWord_class(Word_class):
         """
         return list(self.palindrome_prefixes_iterator())
 
-# todo - add optional parameter - morphismAndAntimorphismGroup=None or another copy of this method
-# todo - use PermutationGroup -> list() method to generate all elements of morphism+anitmorphism group by 
-# adding 2 special characters s1 and s2, for all morphisms s1->s1, s2->s2, for all antimorphisms s1->s2, s2->s1
     def defect(self, f=None):
         r"""
         Return the defect of ``self``.
@@ -3115,6 +3150,154 @@ class FiniteWord_class(Word_class):
             if not endsWithSpecialLetter:
                 distinctPalindromesCount += 1
         return self.length() + 1 - g_w - distinctPalindromesCount
+
+    def g_defect(self, morphisms=[], antimorphisms=[]):
+        r"""
+        Return the `G`-defect of ``self``.
+
+        The *G-defect* of a finite word `w` is defined in [PS2014]_ as
+        generalization of defect of `w`. More precisely, for the finite group `G`
+        generated from `morphisms` and `antimorphisms`, the `G`-defect is
+        `D_G(w)=|w|+1-g_G(w)-|PAL_G(w)|`, where `PAL_G(w)` denotes the set of
+        `G`-palindromic classes of equivalence of factors of `w` (including 
+        the empty word) and `g_G(w)` is the number of classes of equivalence
+        `\[a\]` such that `a` is a letter, `a` is not equal to `f(a)` for 
+        every antimorphism `f \in G`, and `a` occurs in `w`.
+
+        INPUT:
+
+        - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
+        on the alphabet of ``self``. Letter permutations must be callable on
+        letters as well as words (e.g. ``WordMorphism``). If the identity
+        morphisms is not in `morphisms`, then it is added automatically.
+
+        - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
+        on the alphabet of ``self``. Letter permutations must be callable on
+        letters as well as words (e.g. ``WordMorphism``).
+
+        OUTPUT:
+
+        an integer -- the `G`-defect of ``self``, where `G` is a finite group
+        of morphisms and antimorphisms, which is generated from 
+        `morphisms` and `antimorphisms`.
+
+        ALGORITHM:
+
+        Algorithm is described in TODO TODO TODO.
+
+        Time complexity of this algorithm is `O(|G| \cdot self.length())`
+        plus time to generate `G` from `morphisms` and `antimorphisms`.
+
+        EXAMPLES::
+
+        TODO
+        """
+        from sage.combinat.words.morphism import WordMorphism
+        # Generate G
+        specialLetters = self.not_used_letters(2)
+        specialLetterOne, specialLetterTwo = specialLetters[0], specialLetters[1]
+        specialMorphism = WordMorphism({specialLetterOne: specialLetterOne, specialLetterTwo: specialLetterTwo})
+        specialAntimorphism = WordMorphism({specialLetterOne: specialLetterTwo, specialLetterTwo: specialLetterOne})
+        domains = set()
+        properMorphisms = []
+        for morphism in morphisms:
+            if not isinstance(morphism, WordMorphism):
+                morphism = WordMorphism(morphism)
+            if not morphism.is_letter_permutation():
+                raise ValueError("All morphisms must be letter permutations")
+            domains.add(morphism.domain())
+            properMorphisms.append(specialMorphism.extend_by(morphism))
+        properAntimorphisms = []
+        for antimorphism in antimorphisms:
+            if not isinstance(antimorphism, WordMorphism):
+                antimorphism = WordMorphism(antimorphism)
+            if not antimorphism.is_letter_permutation():
+                raise ValueError("All antimorphisms must be letter permutations")
+            domains.add(antimorphism.domain())
+            properAntimorphisms.append(specialAntimorphism.extend_by(antimorphism))
+        if len(domains) >= 2:
+            raise ValueError("All morphisms and antimorphisms must have the same domain")
+        domain = set(self.letters())
+        if len(domains) == 1:
+            domain = set(domains.pop().alphabet())
+        if specialLetterOne in domain or specialLetterTwo in domain:
+            raise ValueError("Collision between domain of (anti)morphisms and generated letters `%s` and `%s`", 
+                             specialLetterOne, specialLetterTwo)
+        properMorphisms.append(specialMorphism.extend_by(WordMorphism({x: x for x in domain})))
+        domain = list(domain)
+        domain.append(specialLetterOne)
+        domain.append(specialLetterTwo)
+        permutationGroupGens = []
+        for morphism in properMorphisms:
+            currentGen = []
+            for letter in domain:
+                currentGen.append(morphism(letter)[0])
+            permutationGroupGens.append(currentGen)
+        for antimorphism in properAntimorphisms:
+            currentGen = []
+            for letter in domain:
+                currentGen.append(antimorphism(letter)[0])
+            permutationGroupGens.append(currentGen)
+        from sage.groups.perm_gps.permgroup import PermutationGroup
+        permutationGroupForG = PermutationGroup(permutationGroupGens, domain=domain)
+        morphismsG = []
+        antimorphismsG = []
+        for permutation in permutationGroupForG.list():
+            permutationDict = permutation.dict()
+            if permutationDict[specialLetterOne] == specialLetterOne:
+                del permutationDict[specialLetterOne]
+                del permutationDict[specialLetterTwo]
+                morphismsG.append(WordMorphism(permutationDict))
+            else:
+                del permutationDict[specialLetterOne]
+                del permutationDict[specialLetterTwo]
+                antimorphismsG.append(WordMorphism(permutationDict))
+        inverseMorphismsG = []
+        for morphism in morphismsG:
+            inverseMorphismDict = dict()
+            for letter in morphism.domain().alphabet():
+                inverseMorphismDict[morphism(letter)[0]] = letter
+            inverseMorphismsG.append(WordMorphism(inverseMorphismDict))
+        # Compute g_G TODO
+        g_G = 0
+
+        # Compute amount of distinct palindromic classes of equivalency
+        palindromesTrees = []
+        for antimorphism in antimorphismsG:
+            _, palindromesTree = self._get_palindromic_factors_data(f=antimorphism)
+            palindromesTrees.append(palindromesTree)
+        for palindromeTree in palindromesTrees:
+            pass
+
+        from sage.combinat.words.word import Word
+        from collections import deque
+        result = set()
+        currentWordLetters = deque()
+        currentPalindromes = [palindrome for palindrome in palindromesTree[0][0].items()]
+        while currentPalindromes:
+            if currentPalindromes[-1] == None:
+                currentPalindromes.pop()
+                if len(currentWordLetters) == 1:
+                    currentWordLetters.pop()
+                else:
+                    currentWordLetters.pop()
+                    currentWordLetters.popleft()
+            else:
+                leftLetter, palindromeIndex = currentPalindromes.pop()
+                palindrome = palindromesTree[palindromeIndex]
+                actualPalindromeLength, endsWithSpecialLetter = palindrome[2], palindrome[3]
+                if not endsWithSpecialLetter:
+                    currentPalindromes.append(None)
+                    if actualPalindromeLength == 1:
+                        currentWordLetters.append(leftLetter)
+                    else:
+                        currentWordLetters.appendleft(leftLetter)
+                        currentWordLetters.append(f(leftLetter)[0])
+                    result.add(Word(currentWordLetters))
+                for neighbour in palindrome[0].items():
+                    currentPalindromes.append(neighbour)
+
+        return self.length() + 1 - g_G - distinctPalindromesCount
 
     def is_full(self, f=None):
         r"""

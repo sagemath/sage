@@ -5102,6 +5102,11 @@ REFERENCES:
             l'École normale supérieure.
             Vol. 44. No. 1. Elsevier, 2011.
 
+.. [PS2014] Edita Pelantová, Štěpán Starosta. Palindromic richness 
+            for languages invariant under more symmetries,
+            Theoretical Computer Science, Volume 518, 2014, 
+            Pages 42-63, ISSN 0304-3975, :doi:`10.1016/j.tcs.2013.07.021`
+
 .. [PSW1996] Boris Pittel, Joel Spencer and Nicholas Wormald. *Sudden
              Emergence of a Giant k-Core in a Random
              Graph*. (1996). J. Combinatorial Theory. Ser B 67. pages
