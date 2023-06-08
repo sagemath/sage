@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Linear feedback shift register (LFSR) sequence commands
 

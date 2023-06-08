@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat
 r"""
 Blum-Goldwasser Probabilistic Encryption
 

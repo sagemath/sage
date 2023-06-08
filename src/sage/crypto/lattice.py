@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 """
 Hard Lattice Generator
 
@@ -35,22 +36,22 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     INPUT:
 
     - ``type`` -- one of the following strings
-        - ``'modular'`` (default) -- A class of lattices for which
-          asymptotic worst-case to average-case connections hold. For
-          more refer to [Aj1996]_.
-        - ``'random'`` -- Special case of modular (n=1). A dense class
-          of lattice used for testing basis reduction algorithms
-          proposed by Goldstein and Mayer [GM2002]_.
-        - ``'ideal'`` -- Special case of modular. Allows for a more
-          compact representation proposed by [LM2006]_.
-        - ``'cyclotomic'`` -- Special case of ideal. Allows for
-          efficient processing proposed by [LM2006]_.
-    - ``n`` -- Determinant size, primal:`det(L) = q^n`, dual:`det(L) = q^{m-n}`.
+      - ``'modular'`` (default) -- A class of lattices for which
+        asymptotic worst-case to average-case connections hold. For
+        more refer to [Aj1996]_.
+      - ``'random'`` -- Special case of modular (n=1). A dense class
+        of lattice used for testing basis reduction algorithms
+        proposed by Goldstein and Mayer [GM2002]_.
+      - ``'ideal'`` -- Special case of modular. Allows for a more
+        compact representation proposed by [LM2006]_.
+      - ``'cyclotomic'`` -- Special case of ideal. Allows for
+        efficient processing proposed by [LM2006]_.
+    - ``n`` -- Determinant size, primal: `det(L) = q^n`, dual: `det(L) = q^{m-n}`.
       For ideal lattices this is also the degree of the quotient polynomial.
     - ``m`` -- Lattice dimension, `L \subseteq Z^m`.
     - ``q`` -- Coefficient size, `q-Z^m \subseteq L`.
     - ``seed`` -- Randomness seed.
-    - ``quotient`` -- For the type ideal, this determines the quotient
+    - ``quotient`` -- For the type ``'ideal'``, this determines the quotient
       polynomial. Ignored for all other types.
     - ``dual`` -- Set this flag if you want a basis for `q-dual(L)`, for example
       for Regev's LWE bases [Reg2005]_.
@@ -149,9 +150,9 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     Relation of primal and dual bases::
 
-        sage: B_primal=sage.crypto.gen_lattice(m=10, q=11, seed=42)
-        sage: B_dual=sage.crypto.gen_lattice(m=10, q=11, seed=42, dual=True)
-        sage: B_dual_alt=transpose(11*B_primal.inverse()).change_ring(ZZ)
+        sage: B_primal = sage.crypto.gen_lattice(m=10, q=11, seed=42)
+        sage: B_dual = sage.crypto.gen_lattice(m=10, q=11, seed=42, dual=True)
+        sage: B_dual_alt = transpose(11*B_primal.inverse()).change_ring(ZZ)
         sage: B_dual_alt.hermite_form() == B_dual.hermite_form()
         True
 
