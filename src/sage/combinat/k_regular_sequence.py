@@ -1056,7 +1056,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                                [-1  2]},
              (0, 1))
              
-         The ``INFO`` messages mean that the right vector valued sequence is the sequence `(s(n), s(2n+1))^\top`.
+        The ``INFO`` messages mean that the right vector valued sequence is the sequence `(s(n), s(2n+1))^\top`.
 
         We guess again, but this time, we use a constant sequence
         for bootstrapping the guessing process::
@@ -1275,8 +1275,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             """
             return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R in lines)
 
-        @cached_function(key=lambda lines: len(lines))  
-        # we assume that existing lines are not changed 
+        @cached_function(key=lambda lines: len(lines))
+        # we assume that existing lines are not changed
         # (we allow appending of new lines)
         def some_inverse_U_matrix(lines):
             r"""
