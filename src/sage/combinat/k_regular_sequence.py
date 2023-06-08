@@ -981,7 +981,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         except OverflowError:
             raise ValueError('value {} of index is negative'.format(n)) from None
 
-    def guess(self, f, n_max=100, max_exponent=10, sequence=None):
+    def guess(self, f, n_verify=100, max_exponent=10, sequence=None):
         r"""
         Guess a `k`-regular sequence whose first terms coincide with `(f(n))_{n\geq0}`.
 
@@ -990,9 +990,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         - ``f`` -- a function (callable) which determines the sequence.
           It takes nonnegative integers as an input
 
-        - ``n_max`` -- (default: ``100``) a positive integer. The resulting
-          `k`-regular sequence coincides with `f` on the first ``n_max``
-          terms
+        - ``n_verify`` -- (default: ``100``) a positive integer. The resulting
+          `k`-regular sequence coincides with `f` on the first ``n_verify``
+          terms.
 
         - ``max_exponent`` -- (default: ``10``) a positive integer specifying
           the maximum exponent of `k` which is tried when guessing the sequence,
@@ -1019,10 +1019,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         components of the shape `m \mapsto f(k^t\cdot m +r)` for suitable
         ``t`` and ``r``.
 
-        Implicitly, the algorithm also maintains a `d \times n_\max` matrix ``A``
+        Implicitly, the algorithm also maintains a `d \times n_\mathrm{verify}` matrix ``A``
         (where ``d`` is the dimension of the left vector valued sequence)
         whose columns are the current left vector valued sequence evaluated at
-        the non-negative integers less than `n_\max` and ensures that this
+        the non-negative integers less than `n_\mathrm{verify}` and ensures that this
         matrix has full row rank.
 
         EXAMPLES:
@@ -1207,7 +1207,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: R = kRegularSequenceSpace(2, QQ)
             sage: one = R.one_hadamard()
             sage: S = R.guess(lambda n: sum(n.bits()), sequence=one) + one
-            sage: T = R.guess(lambda n: n*n, sequence=S, n_max=4); T
+            sage: T = R.guess(lambda n: n*n, sequence=S, n_verify=4); T
             2-regular sequence 0, 1, 4, 9, 16, 25, 36, 163/3, 64, 89, ...
             sage: T.linear_representation()
             ((0, 0, 1),
@@ -1289,9 +1289,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             """
             d = len(seq(0)) + len(lines)
 
-            for m_indices in cantor_product(xsrange(n_max+1), repeat=d, min_slope=1):
+            for m_indices in cantor_product(xsrange(n_verify), repeat=d, min_slope=1):
                 # Iterate over all increasing lists of length d consisting
-                # of non-negative integers less than `n_max`.
+                # of non-negative integers less than `n_verify`.
 
                 U = Matrix(domain, d, d, [values(m, lines) for m in m_indices]).transpose()
                 try:
@@ -1319,10 +1319,18 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 ``r_L``, i.e., `m \mapsto f(k**t_L * m + r_L)`, is the linear
                 combination ``linear_combination`` of the current vector valued
                 sequence.
+
+                Note that we only evaluate the subsequence of ``f`` where arguments
+                of ``f`` are at most ``n_verify``. This might lead to detection of
+                linear dependence which would not be true for higher values, but this
+                coincides with the documentation of ``n_verify``.
+                However, this is not a guarantee that the given function will never
+                be evaluated beyond ``n_verify``, determining an invertible submatrix
+                in ``some_inverse_U_matrix`` might require us to do so.
             """
             return all(f(k**t_L * m + r_L) ==
                        linear_combination * vector(values(m, lines))
-                       for m in xsrange(0, (n_max - r_L) // k**t_L + 1))
+                       for m in xsrange(0, (n_verify - r_L) // k**t_L + 1))
 
         class NoLinearCombination(RuntimeError):
             pass
