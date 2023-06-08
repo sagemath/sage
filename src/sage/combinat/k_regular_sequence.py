@@ -1269,7 +1269,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             """
             d = len(seq(0)) + len(lines)
 
-            for m_indices in cantor_product(xsrange(n_max), repeat=d, min_slope=1):
+            for m_indices in cantor_product(xsrange(n_max+1), repeat=d, min_slope=1):
                 # Iterate over all increasing lists of length d consisting
                 # of non-negative integers less than `n_max`.
 
