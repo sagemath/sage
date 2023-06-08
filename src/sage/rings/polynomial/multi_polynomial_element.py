@@ -2163,10 +2163,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: A.<x,y> = PolynomialRing(CC, 2, order='degrevlex')
             sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7])
             sage: f = x*y^13 + y^12
-            sage: M = f.lift(I)
-            sage: M
+            sage: M = f.lift(I); M                                                      # optional - sage.libs.singular
             [y^7, x^7*y^2 + x^8 + x^5*y^3 + x^6*y + x^3*y^4 + x^4*y^2 + x*y^5 + x^2*y^3 + y^4]
-            sage: sum( map( mul , zip( M, I.gens() ) ) ) == f
+            sage: sum(map(mul, zip(M, I.gens()))) == f                                  # optional - sage.libs.singular
             True
 
         TESTS:
@@ -2176,8 +2175,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: A.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
             sage: I = A.ideal([x^2 + y^2 - 1, x^2 - y^2])                               # optional - sage.rings.number_field
             sage: f = 2*x^2 - 1                                                         # optional - sage.rings.number_field
-            sage: M = f.lift(I)                                                         # optional - sage.rings.number_field
-            sage: sum(map(mul, zip(M, I.gens()))) == f                                  # optional - sage.rings.number_field
+            sage: M = f.lift(I)                                                         # optional - sage.libs.singular sage.rings.number_field
+            sage: sum(map(mul, zip(M, I.gens()))) == f                                  # optional - sage.libs.singular sage.rings.number_field
             True
         """
         fs = self._singular_()
@@ -2199,17 +2198,17 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
             sage: R.<x,y> = CC[]
             sage: f = y*x^2 + x + 1
-            sage: f.quo_rem(x)
+            sage: f.quo_rem(x)                                                          # optional - sage.libs.singular
             (x*y + 1.00000000000000, 1.00000000000000)
 
             sage: R = QQ['a','b']['x','y','z']
             sage: p1 = R('a + (1+2*b)*x*y + (3-a^2)*z')
             sage: p2 = R('x-1')
-            sage: p1.quo_rem(p2)
+            sage: p1.quo_rem(p2)                                                        # optional - sage.libs.singular
             ((2*b + 1)*y, (2*b + 1)*y + (-a^2 + 3)*z + a)
 
-            sage: R.<x,y> = Qp(5)[]
-            sage: x.quo_rem(y)
+            sage: R.<x,y> = Qp(5)[]                                                     # optional - sage.rings.padics
+            sage: x.quo_rem(y)                                                          # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: no conversion of this ring to a Singular ring defined

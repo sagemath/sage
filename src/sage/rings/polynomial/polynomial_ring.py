@@ -2933,7 +2933,8 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
             sage: isinstance(S, PolynomialRing_cdvr)
             False
 
-            sage: S.<x> = Zp(5)[]                                                       # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: S.<x> = Zp(5)[]
             sage: isinstance(S, PolynomialRing_cdvr)
             True
         """

@@ -422,8 +422,8 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R is S                                                                    # optional - sage.rings.number_field
         True
 
-        sage: R = PolynomialRing(ZZ, 'j,k', implementation="singular")
-        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)
+        sage: R = PolynomialRing(ZZ, 'j,k', implementation="singular")                  # optional - sage.libs.singular
+        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)                        # optional - sage.libs.singular
         sage: R is S
         True
 
@@ -441,7 +441,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
         sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
-        sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)
+        sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)                                                       # optional - sage.libs.singular
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
 
     Sparse univariate polynomials only support a generic
@@ -479,7 +479,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: unknown implementation 'whatever' for multivariate polynomial rings
-        sage: PolynomialRing(RR, name="x", implementation="singular")
+        sage: PolynomialRing(RR, name="x", implementation="singular")                                                                               # optional - sage.libs.singular
         Traceback (most recent call last):
         ...
         NotImplementedError: polynomials over Real Field with 53 bits of precision are not supported in Singular
@@ -587,7 +587,8 @@ def PolynomialRing(base_ring, *args, **kwds):
         Multivariate Polynomial Ring in x, y, z over Rational Field
         sage: Q0 = PolynomialRing(QQ,[]); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
         Multivariate Polynomial Ring in no variables over Rational Field
-        sage: P.<x> = PolynomialRing(QQ, implementation="singular"); TestSuite(P).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); P
+        sage: P.<x> = PolynomialRing(QQ, implementation="singular"); TestSuite(P).run(skip=['_test_construction', '_test_elements',                 # optional - sage.libs.singular
+        ....:                                                                               '_test_euclidean_degree', '_test_quo_rem']); P
         Multivariate Polynomial Ring in x over Rational Field
         sage: Q1 = PolynomialRing(QQ,"x",1); TestSuite(Q1).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); Q1
         Multivariate Polynomial Ring in x over Rational Field
@@ -599,7 +600,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
         sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
-        sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)
+        sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)                                                       # optional - sage.libs.singular
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
         sage: R = PolynomialRing(ZZ, 'j', sparse=True); TestSuite(R).run(); type(R)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>

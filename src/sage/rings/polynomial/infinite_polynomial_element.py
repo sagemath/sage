@@ -1097,7 +1097,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         reduction. However, reduction by ``y[1]*x[2]^2`` works, since
         one can change variable index 1 into 2 and 2 into 3::
 
-            sage: p.reduce([y[1]*x[2]^2])
+            sage: p.reduce([y[1]*x[2]^2])                                               # optional - sage.libs.singular
             y_3*y_1^2
 
         The next example shows that tail reduction is not done, unless
@@ -1105,15 +1105,15 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         Ideal::
 
             sage: I = (y[3])*X
-            sage: p.reduce(I)
+            sage: p.reduce(I)                                                           # optional - sage.libs.singular
             x_3^3*y_2 + y_3*y_1^2
-            sage: p.reduce(I, tailreduce=True)
+            sage: p.reduce(I, tailreduce=True)                                          # optional - sage.libs.singular
             x_3^3*y_2
 
         Last, we demonstrate the ``report`` option::
 
             sage: p = x[1]^2 + y[2]^2 + x[1]*x[2]*y[3] + x[1]*y[4]
-            sage: p.reduce(I, tailreduce=True, report=True)
+            sage: p.reduce(I, tailreduce=True, report=True)                             # optional - sage.libs.singular
             :T[2]:>
             >
             x_1^2 + y_2^2
