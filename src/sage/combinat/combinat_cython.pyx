@@ -1,3 +1,4 @@
+# cython: binding=True
 """
 Fast computation of combinatorial functions (Cython + mpz)
 
