@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Small Scale Variants of the AES (SR) Polynomial System Generator
 

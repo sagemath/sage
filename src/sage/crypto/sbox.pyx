@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 S-Boxes and Their Algebraic Representations
 """
@@ -58,9 +59,9 @@ cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg):
 cdef class SBox(SageObject):
     r"""
     A substitution box or S-box is one of the basic components of
-    symmetric key cryptography. In general, an S-box takes ``m`` input
-    bits and transforms them into ``n`` output bits. This is called an
-    ``mxn`` S-box and is often implemented as a lookup table. These
+    symmetric key cryptography. In general, an S-box takes `m` input
+    bits and transforms them into `n` output bits. This is called an
+    `m \times n` S-box and is often implemented as a lookup table. These
     S-boxes are carefully chosen to resist linear and differential
     cryptanalysis [He2002]_.
 
@@ -839,7 +840,8 @@ cdef class SBox(SageObject):
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox(7,6,0,4,2,5,1,3)
             sage: S.ring()
-            Multivariate Polynomial Ring in x0, x1, x2, y0, y1, y2 over Finite Field of size 2
+            Multivariate Polynomial Ring in x0, x1, x2, y0, y1, y2 over
+             Finite Field of size 2
         """
         return self._ring
 

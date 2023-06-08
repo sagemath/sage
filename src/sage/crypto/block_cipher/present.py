@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 PRESENT
 
@@ -61,10 +62,12 @@ AUTHORS:
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.crypto.sboxes import PRESENT as PRESENTSBOX
-from sage.modules.vector_mod2_dense import Vector_mod2_dense
+
+lazy_import('sage.modules.vector_mod2_dense', 'Vector_mod2_dense')
 
 
 def _smallscale_present_linearlayer(nsboxes=16):
