@@ -1,4 +1,4 @@
-# sage.doctest: sage.modules sage.rings.finite_rings
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Generic structures for linear codes over the Hamming metric
 
@@ -217,7 +217,6 @@ from sage.coding.linear_code_no_metric import AbstractLinearCodeNoMetric
 from sage.combinat.subset import Subsets
 from sage.cpython.string import bytes_to_str
 from sage.features.gap import GapPackage
-from sage.interfaces.gap import gap
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import is_even
@@ -234,6 +233,7 @@ from sage.rings.rational_field import QQ
 
 lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
+lazy_import('sage.interfaces.gap', 'gap')
 
 
 # *****************************************************************************
@@ -466,7 +466,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         depends on which packages are loaded, so we must re-seed GAP to ensure
         a consistent result for this example::
 
-            sage: libgap.set_seed(0)
+            sage: libgap.set_seed(0)                                                    # optional - sage.libs.gap
             0
             sage: C = codes.HammingCode(GF(4, 'z'), 3)
             sage: C.automorphism_group_gens()
