@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest - sage.graphs sage.modules
 r"""
 ClusterSeed
 

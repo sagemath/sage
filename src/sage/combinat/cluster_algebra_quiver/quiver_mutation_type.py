@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.graphs
 r"""
 Quiver mutation types
 
@@ -326,7 +327,7 @@ by sending `M` to the generalized Cartan matrix `C(M)` obtained by
 replacing all positive entries by their negatives and adding `2`'s on
 the main diagonal.
 
-``QuiverMutationType`` constructs a quiver mutation type object. For
+:class:`QuiverMutationType` constructs a quiver mutation type object. For
 more detail on the possible different types, please see the
 compendium.
 
@@ -708,7 +709,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         TESTS::
 
             sage: QMT = QuiverMutationType(['A',5])
-            sage: QMT.show() # long time
+            sage: QMT.show()  # long time                                               # optional - sage.plot sage.symbolic
         """
         self.plot(circular=circular, directed=directed).show()
 
@@ -787,7 +788,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',5]); mut_type
             ['A', 5]
-            sage: mut_type.b_matrix()
+            sage: mut_type.b_matrix()                                                   # optional - sage.plot sage.symbolic
             [ 0  1  0  0  0]
             [-1  0 -1  0  0]
             [ 0  1  0  1  0]
@@ -796,7 +797,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',3],['B',3]); mut_type
             [ ['A', 3], ['B', 3] ]
-            sage: mut_type.b_matrix()
+            sage: mut_type.b_matrix()                                                   # optional - sage.plot sage.symbolic
             [ 0  1  0  0  0  0]
             [-1  0 -1  0  0  0]
             [ 0  1  0  0  0  0]
@@ -853,7 +854,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',5]); mut_type
             ['A', 5]
-            sage: mut_type.cartan_matrix()
+            sage: mut_type.cartan_matrix()                                              # optional - sage.modules
             [ 2 -1  0  0  0]
             [-1  2 -1  0  0]
             [ 0 -1  2 -1  0]
@@ -862,7 +863,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',3],['B',3]); mut_type
             [ ['A', 3], ['B', 3] ]
-            sage: mut_type.cartan_matrix()
+            sage: mut_type.cartan_matrix()                                              # optional - sage.modules
             [ 2 -1  0  0  0  0]
             [-1  2 -1  0  0  0]
             [ 0 -1  2  0  0  0]
@@ -1105,7 +1106,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
     """
     The mutation type for a cluster algebra or a quiver. Should not be
-    called directly, but through QuiverMutationType.
+    called directly, but through :class:`QuiverMutationType`.
     """
 
     def __init__(self, letter, rank, twist=None):
@@ -1694,7 +1695,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
         which are mutation equivalent to the standard quiver of
         ``self`` (up to isomorphism) is returned.
 
-        Otherwise, ``NotImplemented`` is returned.
+        Otherwise, :obj:`NotImplemented` is returned.
 
         Formula for finite type A is taken from Torkildsen - Counting
         cluster-tilted algebras of type `A_n`.
@@ -1898,7 +1899,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
 
     def dual(self):
         """
-        Return the QuiverMutationType which is dual to ``self``.
+        Return the :class:`QuiverMutationType` which is dual to ``self``.
 
         EXAMPLES::
 
@@ -1962,8 +1963,8 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
 class QuiverMutationType_Reducible(QuiverMutationType_abstract):
     """
     The mutation type for a cluster algebra or a quiver. Should not be
-    called directly, but through QuiverMutationType.  Inherits from
-    QuiverMutationType_abstract.
+    called directly, but through :class:`QuiverMutationType`.  Inherits from
+    :class:`QuiverMutationType_abstract`.
     """
 
     def __init__(self, *args):
@@ -2056,7 +2057,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
         which are mutation equivalent to the standard quiver of
         ``self`` (up to isomorphism) is returned.
 
-        Otherwise, ``NotImplemented`` is returned.
+        Otherwise, :obj:`NotImplemented` is returned.
 
         EXAMPLES::
 
@@ -2095,7 +2096,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
 
     def dual(self):
         """
-        Return the QuiverMutationType which is dual to ``self``.
+        Return the :class:`QuiverMutationType` which is dual to ``self``.
 
         EXAMPLES::
 
@@ -2296,7 +2297,7 @@ def save_quiver_data(n, up_to=True, types='ClassicalExceptional', verbose=True):
 
     INPUT:
 
-    - ``n``: the rank (or the upper limit on the rank) of the mutation
+    - ``n`` -- the rank (or the upper limit on the rank) of the mutation
       classes that are being saved.
 
     - ``up_to`` -- (default:``True``) if ``True``, saves data for
@@ -2437,17 +2438,17 @@ def _edge_list_to_matrix(edges, nlist, mlist) -> matrix:
 
         sage: from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _edge_list_to_matrix
         sage: G = QuiverMutationType(['A', 2])._digraph
-        sage: _edge_list_to_matrix(G.edges(sort=True), [0, 1], [])
+        sage: _edge_list_to_matrix(G.edges(sort=True), [0, 1], [])                      # optional - sage.modules
         [ 0  1]
         [-1  0]
 
         sage: G2 = DiGraph([('a', 'b', 1)])
-        sage: _edge_list_to_matrix(G2.edges(sort=True), ['a', 'b'], [])
+        sage: _edge_list_to_matrix(G2.edges(sort=True), ['a', 'b'], [])                 # optional - sage.modules
         [ 0  1]
         [-1  0]
 
         sage: G3 = DiGraph([('a', 'b', 1), ('b', 'c', 1)])
-        sage: _edge_list_to_matrix(G3.edges(sort=True), ['a', 'b'], ['c'])
+        sage: _edge_list_to_matrix(G3.edges(sort=True), ['a', 'b'], ['c'])              # optional - sage.modules
         [ 0  1]
         [-1  0]
         [ 0 -1]

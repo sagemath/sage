@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.graphs sage.modules
 r"""
 Quiver
 
@@ -40,7 +40,6 @@ AUTHORS:
 from sage.structure.sage_object import SageObject
 from copy import copy
 from sage.rings.integer_ring import ZZ
-from sage.rings.cc import CC
 from sage.rings.infinity import infinity
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
@@ -67,14 +66,14 @@ class ClusterQuiver(SageObject):
 
     - ``data`` -- can be any of the following::
 
-        * QuiverMutationType
-        * str - a string representing a QuiverMutationType or a common quiver type (see Examples)
-        * ClusterQuiver
-        * Matrix - a skew-symmetrizable matrix
-        * DiGraph - must be the input data for a quiver
-        * List of edges - must be the edge list of a digraph for a quiver
+      * :class:`QuiverMutationType`
+      * :class:`str` -- a string representing a :class:`QuiverMutationType` or a common quiver type (see Examples)
+      * :class:`ClusterQuiver`
+      * :class:`Matrix` -- a skew-symmetrizable matrix
+      * :class:`DiGraph` -- must be the input data for a quiver
+      * List of edges -- must be the edge list of a digraph for a quiver
 
-    - ``frozen`` -- (default:``None``) sets the list of frozen variables
+    - ``frozen`` -- (default: ``None``) sets the list of frozen variables
       if the input type is a :class:`DiGraph`, it is ignored otherwise
 
     - ``user_labels`` -- (default:``None``) sets the names of the labels for
@@ -559,6 +558,7 @@ class ClusterQuiver(SageObject):
         from sage.plot.colors import rainbow
         from sage.graphs.graph_generators import GraphGenerators
         from sage.symbolic.constants import e, pi
+        from sage.rings.cc import CC
         from sage.rings.imaginary_unit import I
         graphs = GraphGenerators()
         # returns positions for graph vertices on two concentric cycles with radius 1 and 2
