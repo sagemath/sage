@@ -11,20 +11,19 @@ EXAMPLES:
 
 We create a toy example based on the Mordell-Weil group of an elliptic curve over `\QQ`::
 
-    sage: E = EllipticCurve('30a2')
-    sage: pts = [E(4,-7,1), E(7/4, -11/8, 1), E(3, -2, 1)]
-    sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [3, 2, 2])
-    sage: M
+    sage: E = EllipticCurve('30a2')                                                     # optional - sage.schemes
+    sage: pts = [E(4,-7,1), E(7/4, -11/8, 1), E(3, -2, 1)]                              # optional - sage.schemes
+    sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [3, 2, 2]); M           # optional - sage.schemes
     Additive abelian group isomorphic to Z/3 + Z/2 + Z/2 embedded in Abelian
     group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - 19*x + 26
     over Rational Field
-    sage: M.gens()
+    sage: M.gens()                                                                      # optional - sage.schemes
     ((4 : -7 : 1), (7/4 : -11/8 : 1), (3 : -2 : 1))
-    sage: 3*M.0
+    sage: 3*M.0                                                                         # optional - sage.schemes
     (0 : 1 : 0)
-    sage: 3000000000000001 * M.0
+    sage: 3000000000000001 * M.0                                                        # optional - sage.schemes
     (4 : -7 : 1)
-    sage: M == loads(dumps(M))  # known bug, see https://github.com/sagemath/sage/issues/11599#comment:7
+    sage: M == loads(dumps(M))  # known bug, see https://github.com/sagemath/sage/issues/11599#comment:7    # optional - sage.schemes
     True
 
 TESTS:
@@ -33,7 +32,7 @@ We check that ridiculous operations are being avoided::
 
     sage: from sage.misc.verbose import set_verbose
     sage: set_verbose(2, 'additive_abelian_wrapper.py')
-    sage: 300001 * M.0
+    sage: 300001 * M.0                                                                  # optional - sage.schemes
     verbose 1 (...: additive_abelian_wrapper.py, discrete_exp) Calling discrete exp on (1, 0, 0)
     (4 : -7 : 1)
     sage: set_verbose(0, 'additive_abelian_wrapper.py')
@@ -100,19 +99,19 @@ class UnwrappingMorphism(Morphism):
         r"""
         TESTS::
 
-            sage: E = EllipticCurve("65a1")
-            sage: G = E.torsion_subgroup()
-            sage: isinstance(G, sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper)
+            sage: E = EllipticCurve("65a1")                                             # optional - sage.schemes
+            sage: G = E.torsion_subgroup()                                              # optional - sage.schemes
+            sage: isinstance(G, sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper)  # optional - sage.schemes
             True
-            sage: P1 = E([1,-1,1])
-            sage: P2 = E([0,1,0])
-            sage: P1 in G  # indirect doctest
+            sage: P1 = E([1,-1,1])                                                      # optional - sage.schemes
+            sage: P2 = E([0,1,0])                                                       # optional - sage.schemes
+            sage: P1 in G  # indirect doctest                                           # optional - sage.schemes
             False
-            sage: P2 in G
+            sage: P2 in G                                                               # optional - sage.schemes
             True
-            sage: (G(P2) + P1) in G
+            sage: (G(P2) + P1) in G                                                     # optional - sage.schemes
             False
-            sage: (G(P2) + P1).parent()
+            sage: (G(P2) + P1).parent()                                                 # optional - sage.schemes
             Abelian group of points on Elliptic Curve defined by y^2 + x*y = x^3 - x over Rational Field
         """
         return self.codomain()(x.element())
@@ -144,11 +143,11 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
         EXAMPLES::
 
-            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)
-            sage: T; type(T)
+            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)                    # optional - sage.schemes
+            sage: T; type(T)                                                            # optional - sage.schemes
             (0 : 0 : 1)
             <class 'sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup_with_category.element_class'>
-            sage: T.element(); type(T.element())
+            sage: T.element(); type(T.element())                                        # optional - sage.schemes
             (0 : 0 : 1)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_number_field'>
         """
@@ -162,8 +161,8 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
         EXAMPLES::
 
-            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)
-            sage: repr(T)  # indirect doctest
+            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)                    # optional - sage.schemes
+            sage: repr(T)  # indirect doctest                                           # optional - sage.schemes
             '(0 : 0 : 1)'
         """
         return repr(self.element())
@@ -193,7 +192,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
     ::
 
-        sage: EllipticCurve(GF(419**2), [1,0]).abelian_group()  # indirect doctest      # optional - sage.rings.finite_rings
+        sage: EllipticCurve(GF(419**2), [1,0]).abelian_group()  # indirect doctest      # optional - sage.rings.finite_rings sage.schemes
         Additive abelian group isomorphic to Z/420 + Z/420 embedded in
          Abelian group of points on Elliptic Curve
           defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
@@ -455,22 +454,22 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         ::
 
-            sage: E = EllipticCurve('574i1')
-            sage: pts = [E(103,172), E(61,18)]
-            sage: assert pts[0].order() == 7 and pts[1].order() == infinity
-            sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [7,0]); M
+            sage: E = EllipticCurve('574i1')                                            # optional - sage.schemes
+            sage: pts = [E(103,172), E(61,18)]                                          # optional - sage.schemes
+            sage: assert pts[0].order() == 7 and pts[1].order() == infinity             # optional - sage.schemes
+            sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [7,0]); M       # optional - sage.schemes
             Additive abelian group isomorphic to Z/7 + Z embedded in
              Abelian group of points on Elliptic Curve defined by
               y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
-            sage: M.torsion_subgroup()
+            sage: M.torsion_subgroup()                                                  # optional - sage.schemes
             Additive abelian group isomorphic to Z/7 embedded in
              Abelian group of points on Elliptic Curve defined by
               y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
-            sage: M.torsion_subgroup(7)
+            sage: M.torsion_subgroup(7)                                                 # optional - sage.schemes
             Additive abelian group isomorphic to Z/7 embedded in
              Abelian group of points on Elliptic Curve defined by
               y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
-            sage: M.torsion_subgroup(5)
+            sage: M.torsion_subgroup(5)                                                 # optional - sage.schemes
             Trivial group embedded in Abelian group of points on Elliptic Curve
              defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
 
