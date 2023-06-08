@@ -1218,6 +1218,15 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                                [  -1    2    0]
                                [13/3 -5/3 16/3]},
              (1, 2, 0))
+
+        ::
+
+            sage: two = Seq2.one_hadamard() * 2
+            sage: two.linear_representation()
+            ((1), Finite family {0: [1], 1: [1]}, (2))
+            sage: two_again = Seq2.guess(lambda n: 2, sequence=two)
+            sage: two_again.linear_representation()
+            ((1), Finite family {0: [1], 1: [1]}, (2))
         """
         import logging
         logger = logging.getLogger(__name__)
