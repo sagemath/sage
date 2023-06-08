@@ -914,8 +914,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: Pol.<x> = CBF[]
-            sage: (1 + x + x^2/2 + x^3/6 + x^4/24 + x^5/120).compose_trunc(1 + x, 2)
+            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
+            sage: (1 + x + x^2/2 + x^3/6 + x^4/24 + x^5/120).compose_trunc(1 + x, 2)    # optional - sage.libs.flint
             ([2.708333333333333 +/- ...e-16])*x + [2.71666666666667 +/- ...e-15]
 
             sage: Pol.<x> = QQ['y'][]
@@ -1339,9 +1339,9 @@ cdef class Polynomial(CommutativePolynomial):
             0.200000000000000
             sage: CC(a)
             0.200000000000000
-            sage: RBF(a)
+            sage: RBF(a)                                                                # optional - sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
-            sage: CBF(a)
+            sage: CBF(a)                                                                # optional - sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
             sage: RIF(a)
             0.2000000000000000?
@@ -1357,7 +1357,7 @@ cdef class Polynomial(CommutativePolynomial):
             0.8164965809277260?
             sage: RR(b)                                                                 # optional - sage.rings.number_field
             0.816496580927726
-            sage: RBF(b)                                                                # optional - sage.rings.number_field
+            sage: RBF(b)                                                                # optional - sage.libs.flint sage.rings.number_field
             [0.816496580927726 +/- 2.44e-16]
             sage: RIF(b)                                                                # optional - sage.rings.number_field
             0.8164965809277260?
@@ -1371,7 +1371,7 @@ cdef class Polynomial(CommutativePolynomial):
             0.6324555320336758*I
             sage: CC(c)                                                                 # optional - sage.rings.number_field
             0.632455532033676*I
-            sage: CBF(c) # abs tol 1e-16                                                # optional - sage.rings.number_field
+            sage: CBF(c) # abs tol 1e-16                                                # optional - sage.libs.flint sage.rings.number_field
             [0.6324555320336759 +/- 3.38e-17]*I
             sage: CIF(c)                                                                # optional - sage.rings.number_field
             0.6324555320336758?*I

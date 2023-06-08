@@ -2905,7 +2905,7 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
             False
 
             sage: S.<x> = Zp(5)[]                                                       # optional - sage.rings.padics
-            sage: isinstance(S, PolynomialRing_cdvr)
+            sage: isinstance(S, PolynomialRing_cdvr)                                    # optional - sage.rings.padics
             True
         """
         if element_class is None:

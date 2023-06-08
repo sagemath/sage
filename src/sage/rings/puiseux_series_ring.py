@@ -302,8 +302,8 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: P(z) + y**(1/2)
             3 + y^(1/2) + 2*y + y^2 + 2*y^3 + O(y^5)
 
-            sage: from sage.modular.etaproducts import qexp_eta
-            sage: y^(1/24)*qexp_eta(P, prec=30)
+            sage: from sage.modular.etaproducts import qexp_eta                         # optional - sage.modular
+            sage: y^(1/24)*qexp_eta(P, prec=30)                                         # optional - sage.modular
             y^(1/24) - y^(25/24) - y^(49/24) + y^(121/24) + y^(169/24) - y^(289/24) - y^(361/24) + y^(529/24) + y^(625/24) + O(y^(721/24))
         """
         P = parent(x)

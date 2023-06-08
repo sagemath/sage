@@ -1694,11 +1694,11 @@ cdef class LaurentSeries(AlgebraElement):
             sage: (x^-2 + 1 + x).nth_root(2)**2
             x^-2 + 1 + x + O(x^18)
 
-            sage: j = j_invariant_qexp()
-            sage: q = j.parent().gen()
-            sage: j(q^3).nth_root(3)
+            sage: j = j_invariant_qexp()                                                # optional - sage.modular
+            sage: q = j.parent().gen()                                                  # optional - sage.modular
+            sage: j(q^3).nth_root(3)                                                    # optional - sage.modular
             q^-1 + 248*q^2 + 4124*q^5 + ... + O(q^29)
-            sage: (j(q^2) - 1728).nth_root(2)
+            sage: (j(q^2) - 1728).nth_root(2)                                           # optional - sage.modular
             q^-1 - 492*q - 22590*q^3 - ... + O(q^19)
         """
         if prec is None:

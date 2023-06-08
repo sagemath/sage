@@ -235,7 +235,7 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(QQ, 'x', implementation="singular")
+            sage: R = PolynomialRing(QQ, 'x', implementation="singular")                # optional - sage.libs.singular
             sage: singular(R)                                                           # optional - sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ

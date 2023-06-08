@@ -1746,7 +1746,7 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
 
             sage: quots2 = [((),(1,)), ((), (1,2)), ((0,),(1,)),
             ....:           ((),(2,1)), ((3,),(2,1))]
-            sage: for q in quots2:
+            sage: for q in quots2:                                                      # optional - sage.rings.number_field
             ....:     cf = continued_fraction(q)
             ....:     ncf = -cf
             ....:     nncf = -ncf

@@ -80,24 +80,24 @@ cdef class MPolynomial(CommutativePolynomial):
             TypeError: unable to convert non-constant polynomial x to Complex Double Field
 
             sage: a = RR['x,y'](1)
-            sage: RBF(a)
+            sage: RBF(a)                                                                # optional - sage.libs.flint
             1.000000000000000
             sage: RIF(a)
             1
-            sage: CBF(a)
+            sage: CBF(a)                                                                # optional - sage.libs.flint
             1.000000000000000
             sage: CIF(a)
             1
 
-            sage: CBF(RR['x,y'](1)) # indirect doctest
+            sage: CBF(RR['x,y'](1)) # indirect doctest                                  # optional - sage.libs.flint
             1.000000000000000
-            sage: CBF(ZZ['x,y'].gen(0))
+            sage: CBF(ZZ['x,y'].gen(0))                                                 # optional - sage.libs.flint
             Traceback (most recent call last):
             ...
             TypeError: unable to convert non-constant polynomial x to Complex ball field with 53 bits of precision
 
             sage: x = polygen(QQ)
-            sage: A.<u> = NumberField(x^3 - 2)
+            sage: A.<u> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: A(A['x,y'](u))
             u
         """
@@ -1881,10 +1881,9 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: A.<x,y> = PolynomialRing(CC, 2, order='degrevlex')
             sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7 ])
             sage: f = x*y^13 + y^12
-            sage: M = f.lift(I)
-            sage: M
+            sage: M = f.lift(I); M                                                      # optional - sage.libs.singular
             [y^7, x^7*y^2 + x^8 + x^5*y^3 + x^6*y + x^3*y^4 + x^4*y^2 + x*y^5 + x^2*y^3 + y^4]
-            sage: sum( map( mul , zip( M, I.gens() ) ) ) == f
+            sage: sum(map(mul, zip(M, I.gens()))) == f                                  # optional - sage.libs.singular
             True
         """
         raise NotImplementedError

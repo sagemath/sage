@@ -442,8 +442,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         Check that :trac:`28993` is fixed::
 
-            sage: from sage.modular.etaproducts import qexp_eta
-            sage: qexp_eta(S, prec=30)                                                  # optional - sage.rings.padics
+            sage: from sage.modular.etaproducts import qexp_eta                         # optional - sage.modular
+            sage: qexp_eta(S, prec=30)                                                  # optional - sage.modular
             1 - t - t^2 + t^5 + t^7 - t^12 - t^15 + t^22 + t^26 + O(t^30)
 
         When converting from `R((z))` to `R((z))((w))`, the variable

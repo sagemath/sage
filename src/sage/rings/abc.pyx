@@ -202,12 +202,12 @@ class RealBallField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(RBF, sage.rings.abc.RealBallField)
+        sage: isinstance(RBF, sage.rings.abc.RealBallField)                             # optional - sage.libs.flint
         True
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.RealBallField.__subclasses__()
+        sage: sage.rings.abc.RealBallField.__subclasses__()                             # optional - sage.libs.flint
         [<class 'sage.rings.real_arb.RealBallField'>]
 
         sage: len(sage.rings.abc.RealBallField.__subclasses__()) <= 1
@@ -302,12 +302,12 @@ class ComplexBallField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(CBF, sage.rings.abc.ComplexBallField)
+        sage: isinstance(CBF, sage.rings.abc.ComplexBallField)                          # optional - sage.libs.flint
         True
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.ComplexBallField.__subclasses__()
+        sage: sage.rings.abc.ComplexBallField.__subclasses__()                          # optional - sage.libs.flint
         [<class 'sage.rings.complex_arb.ComplexBallField'>]
 
         sage: len(sage.rings.abc.ComplexBallField.__subclasses__()) <= 1
