@@ -613,10 +613,9 @@ def Matroid(groundset=None, data=None, **kwds):
 
     The ``regular`` option::
 
-        sage: M = Matroid(reduced_matrix=[[1, 1, 0],
+        sage: M = Matroid(reduced_matrix=[[1, 1, 0],                                    # optional - sage.graphs
         ....:                             [1, 0, 1],
-        ....:                             [0, 1, 1]], regular=True)
-        sage: M
+        ....:                             [0, 1, 1]], regular=True); M
         Regular matroid of rank 3 on 6 elements with 16 bases
 
         sage: M.is_isomorphic(matroids.CompleteGraphic(4))                              # optional - sage.graphs
