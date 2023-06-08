@@ -212,7 +212,6 @@ class JordanAlgebra(UniqueRepresentation, Parent):
         arg1.set_immutable()
         return JordanAlgebraSymmetricBilinear(arg0, arg1, names=names)
 
-
     def _test_jordan_relations(self, **options):
         r"""
         Test the Jordan algebra relations.
