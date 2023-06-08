@@ -592,7 +592,7 @@ We conclude with a rank `3 + 1` alcove walk::
     sage: L = RootSystem(["B",3,1]).ambient_space()
     sage: w3 = [0,2,1,3,2,0,2,1,0,2,3,1,2,1,3,2,0,2,0,1,2,0]
     sage: (L.plot_fundamental_weights()                                                 # optional - sage.plot sage.symbolic
-    ....:   + L.plot_reflection_hyperplanes(bounding_box=2) + L.plot_alcove_walk(w3)
+    ....:   + L.plot_reflection_hyperplanes(bounding_box=2) + L.plot_alcove_walk(w3))
     Graphics3d Object
 
 .. PLOT::
