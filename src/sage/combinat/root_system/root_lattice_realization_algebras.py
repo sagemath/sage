@@ -301,21 +301,24 @@ class Algebras(AlgebrasCategory):
                 sage: RootSystem(["A",2]).root_lattice().algebra(QQ)._test_demazure_operators()
             """
             tester = self._tester(**options)
-            pi = self.demazure_operators()
-            L = self.basis().keys()
-            alpha = L.simple_roots()
-            alphacheck = L.simple_coroots()
-            s = L.simple_reflections()
-            for i in self.cartan_type().index_set():
-                emalphai = self.monomial(-alpha[i]) # X^{-\alpha_i}
-                for weight in L.some_elements():
-                    if not weight.scalar(alphacheck[i]) in ZZ:
-                        # Demazure operators are not defined in this case
-                        continue
-                    x = self.monomial(weight)
-                    result = pi[i](x)
-                    tester.assertEqual(result * (self.one()-emalphai),
-                                       x - emalphai * x.map_support(s[i]))
+            try:
+                pi = self.demazure_operators()
+                L = self.basis().keys()
+                alpha = L.simple_roots()
+                alphacheck = L.simple_coroots()
+                s = L.simple_reflections()
+                for i in self.cartan_type().index_set():
+                    emalphai = self.monomial(-alpha[i]) # X^{-\alpha_i}
+                    for weight in L.some_elements():
+                        if not weight.scalar(alphacheck[i]) in ZZ:
+                            # Demazure operators are not defined in this case
+                            continue
+                        x = self.monomial(weight)
+                        result = pi[i](x)
+                        tester.assertEqual(result * (self.one()-emalphai),
+                                           x - emalphai * x.map_support(s[i]))
+            except ImportError:
+                pass
 
         def demazure_lusztig_operator_on_basis(self, weight, i, q1, q2, convention="antidominant"):
             r"""

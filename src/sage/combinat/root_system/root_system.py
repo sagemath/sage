@@ -119,13 +119,13 @@ class RootSystem(UniqueRepresentation, SageObject):
     `\alpha_i`, where `c` is the coefficient of
     `i` in `x`::
 
-        sage: Lambda[1].simple_reflection(1)
+        sage: Lambda[1].simple_reflection(1)                                            # optional - sage.graphs
         -Lambda[1] + Lambda[2]
-        sage: Lambda[2].simple_reflection(1)
+        sage: Lambda[2].simple_reflection(1)                                            # optional - sage.graphs
         Lambda[2]
-        sage: Lambda[3].simple_reflection(1)
+        sage: Lambda[3].simple_reflection(1)                                            # optional - sage.graphs
         Lambda[3]
-        sage: (-2*Lambda[1] + Lambda[2] + Lambda[3]).simple_reflection(1)
+        sage: (-2*Lambda[1] + Lambda[2] + Lambda[3]).simple_reflection(1)               # optional - sage.graphs
         2*Lambda[1] - Lambda[2] + Lambda[3]
 
     It can be convenient to manipulate the simple reflections

@@ -555,11 +555,11 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
         EXAMPLES::
 
             sage: B4 = CartanType(['B',4])
-            sage: B4.dynkin_diagram()
+            sage: B4.dynkin_diagram()                                                   # optional - sage.graphs
             O---O---O=>=O
             1   2   3   4
             B4
-            sage: B4.affine().dynkin_diagram()
+            sage: B4.affine().dynkin_diagram()                                          # optional - sage.graphs
                 O 0
                 |
                 |
@@ -569,11 +569,11 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
 
         If possible, this reuses the original label for the special node::
 
-            sage: T = B4.relabel({1:2, 2:3, 3:4, 4:1}); T.dynkin_diagram()
+            sage: T = B4.relabel({1:2, 2:3, 3:4, 4:1}); T.dynkin_diagram()              # optional - sage.graphs
             O---O---O=>=O
             2   3   4   1
             B4 relabelled by {1: 2, 2: 3, 3: 4, 4: 1}
-            sage: T.affine().dynkin_diagram()
+            sage: T.affine().dynkin_diagram()                                           # optional - sage.graphs
                 O 0
                 |
                 |
@@ -583,11 +583,11 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
 
         Otherwise, it chooses a label for the special_node in `0,1,...`::
 
-            sage: T = B4.relabel({1:0, 2:1, 3:2, 4:3}); T.dynkin_diagram()
+            sage: T = B4.relabel({1:0, 2:1, 3:2, 4:3}); T.dynkin_diagram()              # optional - sage.graphs
             O---O---O=>=O
             0   1   2   3
             B4 relabelled by {1: 0, 2: 1, 3: 2, 4: 3}
-            sage: T.affine().dynkin_diagram()
+            sage: T.affine().dynkin_diagram()                                           # optional - sage.graphs
                 O 4
                 |
                 |
