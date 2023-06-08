@@ -56,7 +56,7 @@ cdef class GenericAction(Action):
         random errors (see :trac:`18157`). ::
 
             sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)         # optional - sage.modules
+            sage: sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)         # optional - sage.modular sage.modules
             Left action
              by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
              on Set P^1(QQ) of all cusps
@@ -95,8 +95,8 @@ cdef class GenericAction(Action):
 
 
             sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modules
-            sage: A.codomain()                                                          # optional - sage.modules
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modular sage.modules
+            sage: A.codomain()                                                          # optional - sage.modular sage.modules
             Set P^1(QQ) of all cusps
 
             sage: S3 = SymmetricGroup(3)                                                # optional - sage.groups
@@ -143,13 +143,13 @@ cdef class ActedUponAction(GenericAction):
         TESTS::
 
             sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modules
-            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                           # optional - sage.modules
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modular sage.modules
+            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                           # optional - sage.modular sage.modules
             Infinity
-            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                               # optional - sage.modules
+            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                               # optional - sage.modular sage.modules
             Infinity
 
-            sage: type(A)                                                               # optional - sage.modules
+            sage: type(A)                                                               # optional - sage.modular sage.modules
             <... 'sage.structure.coerce_actions.ActedUponAction'>
         """
         return (<Element>x)._acted_upon_(g, not self._is_left)
@@ -175,10 +175,10 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
         sage: detect_element_action(ZZx, QQ, True)
         Right scalar multiplication by Rational Field
          on Univariate Polynomial Ring in x over Integer Ring
-        sage: detect_element_action(Cusps, M, False)                                    # optional - sage.modules
+        sage: detect_element_action(Cusps, M, False)                                    # optional - sage.modular sage.modules
         Left action by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
          on Set P^1(QQ) of all cusps
-        sage: detect_element_action(Cusps, M, True),                                    # optional - sage.modules
+        sage: detect_element_action(Cusps, M, True),                                    # optional - sage.modular sage.modules
         (None,)
         sage: detect_element_action(ZZ, QQ, True),
         (None,)

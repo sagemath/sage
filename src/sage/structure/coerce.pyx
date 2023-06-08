@@ -35,9 +35,9 @@ On failure, a TypeError is always raised.
 Some arithmetic operations (such as multiplication) can indicate an action
 rather than arithmetic in a common parent. For example::
 
-    sage: E = EllipticCurve('37a')
-    sage: P = E(0,0)
-    sage: 5*P
+    sage: E = EllipticCurve('37a')                                                      # optional - sage.schemes
+    sage: P = E(0,0)                                                                    # optional - sage.schemes
+    sage: 5*P                                                                           # optional - sage.schemes
     (1/4 : -5/8 : 1)
 
 where there is action of `\ZZ` on the points of `E` given by the additive
@@ -439,7 +439,7 @@ cpdef bint is_numpy_type(t):
         False
         sage: is_numpy_type(Integer)
         False
-        sage: is_numpy_type(Sudoku)
+        sage: is_numpy_type(Sudoku)                                                     # optional - sage.combinat
         False
         sage: is_numpy_type(None)
         False

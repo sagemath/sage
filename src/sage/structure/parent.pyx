@@ -2581,17 +2581,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         TESTS::
 
-            sage: E = EllipticCurve([1,0])
-            sage: coercion_model.get_action(E, ZZ, operator.mul)
+            sage: E = EllipticCurve([1,0])                                              # optional - sage.schemes
+            sage: coercion_model.get_action(E, ZZ, operator.mul)                        # optional - sage.schemes
             Right Integer Multiplication by Integer Ring
              on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
-            sage: coercion_model.get_action(ZZ, E, operator.mul)
+            sage: coercion_model.get_action(ZZ, E, operator.mul)                        # optional - sage.schemes
             Left Integer Multiplication by Integer Ring
              on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
-            sage: coercion_model.get_action(E, int, operator.mul)
+            sage: coercion_model.get_action(E, int, operator.mul)                       # optional - sage.schemes
             Right Integer Multiplication by Set of Python objects of class 'int'
              on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
-            sage: coercion_model.get_action(int, E, operator.mul)
+            sage: coercion_model.get_action(int, E, operator.mul)                       # optional - sage.schemes
             Left Integer Multiplication by Set of Python objects of class 'int'
              on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
 
@@ -2614,7 +2614,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         ::
 
-            sage: print(coercion_model.get_action(E, ZZ, operator.pow))
+            sage: print(coercion_model.get_action(E, ZZ, operator.pow))                 # optional - sage.schemes
             None
         """
         # G acts on S, G -> G', R -> S => G' acts on R (?)
@@ -2840,8 +2840,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             False
             sage: [R._is_numerical() for R in [QQ['x'], QQ[['x']]]]
             [False, False]
-            sage: [R._is_numerical() for R in [RIF, RBF, CIF, CBF]]
-            [False, False, False, False]
+            sage: [R._is_numerical() for R in [RBF, CBF]]                               # optional - sage.libs.flint
+            [False, False]
+            sage: [R._is_numerical() for R in [RIF, CIF]]
+            [False, False]
         """
         try:
             from sage.rings.complex_mpfr import ComplexField
@@ -2874,8 +2876,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             False
             sage: [R._is_real_numerical() for R in [QQ['x'], QQ[['x']]]]
             [False, False]
-            sage: [R._is_real_numerical() for R in [RIF, RBF, CIF, CBF]]
-            [False, False, False, False]
+            sage: [R._is_real_numerical() for R in [RBF, CBF]]                          # optional - sage.libs.flint
+            [False, False]
+            sage: [R._is_real_numerical() for R in [RIF, CIF]]                          # optional - sage.libs.flint
+            [False, False]
         """
         try:
             from sage.rings.real_mpfr import RealField, mpfr_prec_min
