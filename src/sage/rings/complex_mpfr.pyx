@@ -2111,7 +2111,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (1+CC(I)).arccos()
+            sage: (1+CC(I)).arccos()                                                    # optional - sage.libs.pari
             0.904556894302381 - 1.06127506190504*I
         """
         return self._parent(self.__pari__().acos())
@@ -2122,7 +2122,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (1+CC(I)).arccosh()
+            sage: (1+CC(I)).arccosh()                                                   # optional - sage.libs.pari
             1.06127506190504 + 0.904556894302381*I
         """
         return self._parent(self.__pari__().acosh())
@@ -2133,7 +2133,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (1+CC(I)).arcsin()
+            sage: (1+CC(I)).arcsin()                                                    # optional - sage.libs.pari
             0.666239432492515 + 1.06127506190504*I
         """
         return self._parent(self.__pari__().asin())
@@ -2144,7 +2144,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (1+CC(I)).arcsinh()
+            sage: (1+CC(I)).arcsinh()                                                   # optional - sage.libs.pari
             1.06127506190504 + 0.666239432492515*I
         """
         return self._parent(self.__pari__().asinh())
@@ -2155,7 +2155,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (1+CC(I)).arctan()
+            sage: (1+CC(I)).arctan()                                                    # optional - sage.libs.pari
             1.01722196789785 + 0.402359478108525*I
         """
         return self._parent(self.__pari__().atan())
@@ -2166,7 +2166,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (1+CC(I)).arctanh()
+            sage: (1+CC(I)).arctanh()                                                   # optional - sage.libs.pari
             0.402359478108525 + 1.01722196789785*I
         """
         return self._parent(self.__pari__().atanh())
@@ -2177,7 +2177,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: ComplexField(100)(1,1).coth()
+            sage: ComplexField(100)(1,1).coth()                                         # optional - sage.libs.pari
             0.86801414289592494863584920892 - 0.21762156185440268136513424361*I
         """
         return ~(self.tanh())
@@ -2188,7 +2188,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: ComplexField(100)(1,1).arccoth()
+            sage: ComplexField(100)(1,1).arccoth()                                      # optional - sage.libs.pari
             0.40235947810852509365018983331 - 0.55357435889704525150853273009*I
         """
         return (~self).arctanh()
@@ -2199,7 +2199,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: ComplexField(100)(1,1).csc()
+            sage: ComplexField(100)(1,1).csc()                                          # optional - sage.libs.pari
             0.62151801717042842123490780586 - 0.30393100162842645033448560451*I
         """
         return ~(self.sin())
@@ -2210,7 +2210,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: ComplexField(100)(1,1).csch()
+            sage: ComplexField(100)(1,1).csch()                                         # optional - sage.libs.pari
             0.30393100162842645033448560451 - 0.62151801717042842123490780586*I
         """
         return ~(self.sinh())
@@ -2221,7 +2221,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: ComplexField(100)(1,1).arccsch()
+            sage: ComplexField(100)(1,1).arccsch()                                      # optional - sage.libs.pari
             0.53063753095251782601650945811 - 0.45227844715119068206365839783*I
         """
         return (~self).arcsinh()
@@ -2232,7 +2232,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: ComplexField(100)(1,1).sec()
+            sage: ComplexField(100)(1,1).sec()                                          # optional - sage.libs.pari
             0.49833703055518678521380589177 + 0.59108384172104504805039169297*I
         """
         return ~(self.cos())
@@ -2243,7 +2243,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: ComplexField(100)(1,1).sech()
+            sage: ComplexField(100)(1,1).sech()                                         # optional - sage.libs.pari
             0.49833703055518678521380589177 - 0.59108384172104504805039169297*I
         """
         return ~(self.cosh())
@@ -2254,7 +2254,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: ComplexField(100)(1,1).arcsech()
+            sage: ComplexField(100)(1,1).arcsech()                                      # optional - sage.libs.pari
             0.53063753095251782601650945811 - 1.1185178796437059371676632938*I
         """
         return (~self).arccosh()
@@ -2265,13 +2265,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (1+CC(I)).cot()
+            sage: (1+CC(I)).cot()                                                       # optional - sage.libs.pari
             0.217621561854403 - 0.868014142895925*I
-            sage: i = ComplexField(200).0
-            sage: (1+i).cot()
+            sage: i = ComplexField(200).0                                               # optional - sage.libs.pari
+            sage: (1+i).cot()                                                           # optional - sage.libs.pari
             0.21762156185440268136513424360523807352075436916785404091068 - 0.86801414289592494863584920891627388827343874994609327121115*I
-            sage: i = ComplexField(220).0
-            sage: (1+i).cot()
+            sage: i = ComplexField(220).0                                               # optional - sage.libs.pari
+            sage: (1+i).cot()                                                           # optional - sage.libs.pari
             0.21762156185440268136513424360523807352075436916785404091068124239 - 0.86801414289592494863584920891627388827343874994609327121115071646*I
 
         TESTS:
@@ -2596,7 +2596,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             -0.371591652351761 + 0.319894660206830*I
             sage: a.agm(b, algorithm="principal")
             0.338175462986180 - 0.0135326969565405*I
-            sage: a.agm(b, algorithm="pari")
+            sage: a.agm(b, algorithm="pari")                                            # optional - sage.libs.pari
             -0.371591652351761 + 0.319894660206830*I
             sage: a.agm(b, algorithm="optimal").abs()
             0.490319232466314
@@ -2819,7 +2819,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: a = ComplexNumber(1,0)
-            sage: a.dilog()
+            sage: a.dilog()                                                             # optional - sage.libs.pari
             1.64493406684823
             sage: float(pi^2/6)                                                         # optional - sage.symbolic
             1.6449340668482262
@@ -2827,13 +2827,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         ::
 
             sage: b = ComplexNumber(0,1)
-            sage: b.dilog()
+            sage: b.dilog()                                                             # optional - sage.libs.pari
             -0.205616758356028 + 0.915965594177219*I
 
         ::
 
             sage: c = ComplexNumber(0,0)
-            sage: c.dilog()
+            sage: c.dilog()                                                             # optional - sage.libs.pari
             0.000000000000000
         """
         return self._parent(self.__pari__().dilog())
