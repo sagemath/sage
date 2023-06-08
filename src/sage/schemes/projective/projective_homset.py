@@ -330,7 +330,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             sage: L = E(QQ).numerical_points(F=RR); L                                   # optional - sage.libs.singular
             [(0.000000000000000 : 0.000000000000000 : 1.00000000000000),
              (1.00000000000000 : 1.00000000000000 : 0.000000000000000)]
-            sage: L[0].codomain()
+            sage: L[0].codomain()                                                       # optional - sage.libs.singular
             Projective Space of dimension 2 over Real Field with 53 bits of precision
 
         ::
@@ -353,7 +353,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: E(QQ).numerical_points(F=CDF, point_tolerance=-1)
+            sage: E(QQ).numerical_points(F=CDF, point_tolerance=-1)                     # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: tolerance must be positive
@@ -362,7 +362,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: E(QQ).numerical_points(F=CC, zero_tolerance=-1)
+            sage: E(QQ).numerical_points(F=CC, zero_tolerance=-1)                       # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: tolerance must be positive

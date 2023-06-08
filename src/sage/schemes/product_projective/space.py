@@ -977,7 +977,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         EXAMPLES::
 
             sage: X.<y0,y1,y2,y3,y4,y5> = ProductProjectiveSpaces(ZZ, [2, 2])
-            sage: phi = X.segre_embedding(); phi
+            sage: phi = X.segre_embedding(); phi                                        # optional - sage.libs.singular
             Scheme morphism:
               From: Product of projective spaces P^2 x P^2 over Integer Ring
               To:   Closed subscheme of Projective Space of dimension 8 over Integer Ring
@@ -991,7 +991,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             ::
 
             sage: T = ProductProjectiveSpaces([1, 2], CC, 'z')
-            sage: T.segre_embedding()
+            sage: T.segre_embedding()                                                   # optional - sage.libs.singular
             Scheme morphism:
               From: Product of projective spaces P^1 x P^2
                     over Complex Field with 53 bits of precision
@@ -1004,7 +1004,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             ::
 
             sage: T = ProductProjectiveSpaces([1, 2, 1], QQ, 'z')
-            sage: T.segre_embedding()
+            sage: T.segre_embedding()                                                   # optional - sage.libs.singular
             Scheme morphism:
               From: Product of projective spaces P^1 x P^2 x P^1 over Rational Field
               To:   Closed subscheme of Projective Space of dimension 11

@@ -57,6 +57,7 @@ AUTHORS:
 
 from sage.schemes.generic.scheme import is_Scheme
 from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
+from sage.misc.lazy_import import lazy_import
 from sage.misc.mrange import xmrange
 from sage.misc.misc_c import prod
 from sage.arith.misc import next_prime, previous_prime, crt

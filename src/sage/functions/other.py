@@ -1565,7 +1565,7 @@ class Function_binomial(GinacFunction):
             10
             sage: binomial(2, 0)
             1
-            sage: binomial(1/2, 0)
+            sage: binomial(1/2, 0)                                                      # optional - sage.libs.pari
             1
             sage: binomial(3, -1)
             0

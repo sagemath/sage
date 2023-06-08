@@ -22,10 +22,12 @@ EXAMPLES::
 
 import sage.rings.abc
 
-from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.rings.fraction_field import FractionField
+from sage.rings.integer_ring import ZZ
+from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
 _Fields = Fields()
 
 
@@ -412,7 +414,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], ZZ)
             sage: H = End(Z)
             sage: f = H([a^3, b^3, x^2, y^2, z^2])
-            sage: type(f.as_dynamical_system())
+            sage: type(f.as_dynamical_system())                                         # optional - sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective'>
         """
         if not self.is_endomorphism():

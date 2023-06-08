@@ -1102,8 +1102,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: E = EllipticCurve(QQ,[-1, 0])
-            sage: P.Lattes_map(E, 2)
+            sage: E = EllipticCurve(QQ,[-1, 0])                                         # optional - sage.schemes
+            sage: P.Lattes_map(E, 2)                                                    # optional - sage.schemes
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (1/4*x^4 + 1/2*x^2*y^2 + 1/4*y^4 : x^3*y - x*y^3)
@@ -1111,8 +1111,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         TESTS::
 
             sage: P.<x,y> = ProjectiveSpace(GF(37), 1)                                  # optional - sage.rings.finite_rings
-            sage: E = EllipticCurve([1, 1])                                             # optional - sage.rings.finite_rings
-            sage: f = P.Lattes_map(E, 2); f                                             # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve([1, 1])                                             # optional - sage.rings.finite_rings sage.schemes
+            sage: f = P.Lattes_map(E, 2); f                                             # optional - sage.rings.finite_rings sage.schemes
             Dynamical System of Projective Space of dimension 1 over Finite Field of size 37
               Defn: Defined on coordinates by sending (x : y) to
                     (-9*x^4 + 18*x^2*y^2 - 2*x*y^3 - 9*y^4 : x^3*y + x*y^3 + y^4)
@@ -2111,7 +2111,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         EXAMPLES::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: P.curve([y^2 - x*z])
+            sage: P.curve([y^2 - x*z])                                                  # optional - sage.schemes
             Projective Plane Curve over Rational Field defined by y^2 - x*z
         """
         from sage.schemes.curves.constructor import Curve
@@ -2130,7 +2130,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P3.<x0,x1,x2,x3> = ProjectiveSpace(3, QQ)
             sage: p1 = P3(1, 2, 3, 4)
             sage: p2 = P3(4, 3, 2, 1)
-            sage: P3.line_through(p1, p2)
+            sage: P3.line_through(p1, p2)                                               # optional - sage.schemes
             Projective Curve over Rational Field defined by
               -5/4*x0 + 5/2*x1 - 5/4*x2,        -5/2*x0 + 15/4*x1 - 5/4*x3,
               -5/4*x0 + 15/4*x2 - 5/2*x3,       -5/4*x1 + 5/2*x2 - 5/4*x3

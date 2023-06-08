@@ -40,9 +40,9 @@ class Function_gamma(GinacFunction):
         EXAMPLES::
 
             sage: from sage.functions.gamma import gamma1
-            sage: gamma1(CDF(0.5, 14))
+            sage: gamma1(CDF(0.5, 14))                                                  # optional - sage.libs.pari
             -4.0537030780372815e-10 - 5.773299834553605e-10*I
-            sage: gamma1(CDF(I))
+            sage: gamma1(CDF(I))                                                        # optional - sage.libs.pari
             -0.15494982830181067 - 0.49801566811835607*I
 
         Recall that `\Gamma(n)` is `n-1` factorial::
@@ -670,9 +670,9 @@ def gamma(a, *args, **kwds):
 
     ::
 
-        sage: gamma(CDF(I))                                                             # optional - sage.symbolic
+        sage: gamma(CDF(I))                                                             # optional - sage.libs.pari sage.symbolic
         -0.15494982830181067 - 0.49801566811835607*I
-        sage: gamma(CDF(0.5, 14))
+        sage: gamma(CDF(0.5, 14))                                                       # optional - sage.libs.pari
         -4.0537030780372815e-10 - 5.773299834553605e-10*I
 
     Use ``numerical_approx`` to get higher precision from

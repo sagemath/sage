@@ -169,9 +169,9 @@ class Scheme(Parent):
 
             sage: S = Spec(ZZ)
             sage: f = S.identity_morphism()
-            sage: from sage.schemes.generic.glue import GluedScheme
-            sage: T = GluedScheme(f, f)
-            sage: S.hom([1],T)
+            sage: from sage.schemes.generic.glue import GluedScheme                     # optional - sage.schemes
+            sage: T = GluedScheme(f, f)                                                 # optional - sage.schemes
+            sage: S.hom([1],T)                                                          # optional - sage.schemes
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -330,7 +330,7 @@ class Scheme(Parent):
 
             sage: R.<t> = PolynomialRing(QQ)
             sage: E = EllipticCurve([t + 1, t, t, 0, 0])                                # optional - sage.schemes
-            sage: E.point([0, 0])
+            sage: E.point([0, 0])                                                       # optional - sage.schemes
             (0 : 0 : 1)
         """
         # todo: update elliptic curve stuff to take point_homset as argument

@@ -1453,27 +1453,27 @@ def exponential_integral_1(x, n=0):
 
     EXAMPLES::
 
-        sage: exponential_integral_1(2)
+        sage: exponential_integral_1(2)                                                 # optional - sage.libs.pari
         0.0489005107080611
-        sage: exponential_integral_1(2, 4)  # abs tol 1e-18
+        sage: exponential_integral_1(2, 4)  # abs tol 1e-18                             # optional - sage.libs.pari
         [0.0489005107080611, 0.00377935240984891, 0.000360082452162659, 0.0000376656228439245]
-        sage: exponential_integral_1(40, 5)
+        sage: exponential_integral_1(40, 5)                                             # optional - sage.libs.pari
         [0.000000000000000, 2.22854325868847e-37, 6.33732515501151e-55,
          2.02336191509997e-72, 6.88522610630764e-90]
         sage: exponential_integral_1(0)
         +Infinity
-        sage: r = exponential_integral_1(RealField(150)(1)); r
+        sage: r = exponential_integral_1(RealField(150)(1)); r                          # optional - sage.libs.pari
         0.21938393439552027367716377546012164903104729
-        sage: parent(r)
+        sage: parent(r)                                                                 # optional - sage.libs.pari
         Real Field with 150 bits of precision
-        sage: exponential_integral_1(RealField(150)(100))
+        sage: exponential_integral_1(RealField(150)(100))                               # optional - sage.libs.pari
         3.6835977616820321802351926205081189876552201e-46
 
     TESTS:
 
     The relative error for a single value should be less than 1 ulp::
 
-        sage: for prec in [20..1000]:  # long time (22s on sage.math, 2013)
+        sage: for prec in [20..1000]:  # long time (22s on sage.math, 2013)             # optional - sage.libs.pari
         ....:     R = RealField(prec)
         ....:     S = RealField(prec+64)
         ....:     for t in range(8):  # Try 8 values for each precision
@@ -1487,7 +1487,7 @@ def exponential_integral_1(x, n=0):
     The absolute error for a vector should be less than `2^{-p} c`, where
     `p` is the precision in bits of `x` and `c = 2` ``max(1, exponential_integral_1(x))``::
 
-        sage: for prec in [20..128]:  # long time (15s on sage.math, 2013)
+        sage: for prec in [20..128]:  # long time (15s on sage.math, 2013)              # optional - sage.libs.pari
         ....:     R = RealField(prec)
         ....:     S = RealField(prec+64)
         ....:     a = R.random_element(-15,10).exp()
@@ -1500,7 +1500,7 @@ def exponential_integral_1(x, n=0):
         ....:         if e >= c:
         ....:             print("exponential_integral_1(%s, %s)[%s] with precision %s has error of %s >= %s"%(a, n, i, prec, e, c))
 
-    ALGORITHM: use the PARI C-library function ``eint1``.
+    ALGORITHM: use the PARI C-library function :pari:`eint1`.
 
     REFERENCE:
 

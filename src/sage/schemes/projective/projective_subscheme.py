@@ -241,8 +241,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
             sage: X = A.subscheme([x - y*z])
-            sage: Y = X.projective_embedding(1).codomain()
-            sage: Y.affine_patch(1, A).ambient_space() == A
+            sage: Y = X.projective_embedding(1).codomain()                              # optional - sage.libs.singular
+            sage: Y.affine_patch(1, A).ambient_space() == A                             # optional - sage.libs.singular
             True
 
         ::
@@ -467,8 +467,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         EXAMPLES::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2, (x-2*w)^2, x^2])
-            sage: f.orbit(P.subscheme([x]), 5)
+            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2,                 # optional - sage.schemes
+            ....:                                 (x-2*w)^2, x^2])
+            sage: f.orbit(P.subscheme([x]), 5)                                          # optional - sage.schemes
             [Closed subscheme of Projective Space of dimension 3 over Rational Field
               defined by: x,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
@@ -497,9 +498,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         ::
 
             sage: PS.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: f = DynamicalSystem_projective([x^2, y^2, z^2])
+            sage: f = DynamicalSystem_projective([x^2, y^2, z^2])                       # optional - sage.schemes
             sage: X = PS.subscheme([x - y])
-            sage: X.orbit(f, [-1,2])
+            sage: X.orbit(f, [-1,2])                                                    # optional - sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: orbit bounds must be non-negative
@@ -542,8 +543,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         EXAMPLES::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([y^2, z^2, x^2, w^2])
-            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)
+            sage: f = DynamicalSystem_projective([y^2, z^2, x^2, w^2])                  # optional - sage.schemes
+            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)                         # optional - sage.schemes
             Closed subscheme of Projective Space of dimension 3 over Rational Field
              defined by:
               y - z,
@@ -552,9 +553,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         ::
 
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
-            sage: f = DynamicalSystem_projective([x^2, y^2, z^2])
+            sage: f = DynamicalSystem_projective([x^2, y^2, z^2])                       # optional - sage.schemes
             sage: X = PS.subscheme([x - y])
-            sage: X.nth_iterate(f, -2)
+            sage: X.nth_iterate(f, -2)                                                  # optional - sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: must be a forward orbit
@@ -574,9 +575,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         ::
 
             sage: PS.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: f = DynamicalSystem_projective([x^2, y^2, z^2])
+            sage: f = DynamicalSystem_projective([x^2, y^2, z^2])                       # optional - sage.schemes
             sage: X = PS.subscheme([x - y])
-            sage: X.nth_iterate(f, 2.5)
+            sage: X.nth_iterate(f, 2.5)                                                 # optional - sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral RealNumber to Integer
@@ -745,11 +746,12 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             ...
             TypeError: subscheme must be in ambient space of domain of map
         """
-        dom = f.domain()
-        codom = f.codomain()
         if check:
             if not f.is_morphism():
                 raise TypeError("map must be a morphism")
+        dom = f.domain()
+        codom = f.codomain()
+        if check:
             if self.ambient_space() != dom:
                 raise TypeError("subscheme must be in ambient space of domain of map")
         CR_dom = dom.coordinate_ring()
@@ -837,7 +839,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: H = Hom(P3, P1)
             sage: X = P1.subscheme([x - y])
             sage: f = H([u^2, v^2])
-            sage: X.preimage(f)
+            sage: X.preimage(f)                                                         # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: map must be a morphism
@@ -848,7 +850,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: H = End(PS)
             sage: f = H([x^2, x^2, x^2])
             sage: X = PS.subscheme([x - y])
-            sage: X.preimage(f)
+            sage: X.preimage(f)                                                         # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: map must be a morphism
@@ -860,7 +862,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: Y = P1.subscheme([u^2 - v^2])
             sage: H = End(PS)
             sage: f = H([x^2, y^2, z^2])
-            sage: Y.preimage(f)
+            sage: Y.preimage(f)                                                         # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: subscheme must be in ambient space of codomain
@@ -942,7 +944,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         The singular locus of the quartic surface in the last example
         is itself supported on a twisted cubic::
 
-            sage: X.Jacobian().radical()
+            sage: X.Jacobian().radical()                                                # optional - sage.libs.singular
             Ideal (z^2 - 3*y*w, y*z - 9*x*w, y^2 - 3*x*z) of Multivariate
             Polynomial Ring in x, y, z, w over Rational Field
 

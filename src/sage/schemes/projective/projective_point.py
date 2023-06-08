@@ -867,9 +867,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         EXAMPLES::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([x^2, y^2, 4*w^2, 4*z^2], domain=P)
+            sage: f = DynamicalSystem_projective([x^2, y^2, 4*w^2, 4*z^2], domain=P)    # optional - sage.schemes
             sage: Q = P.point([4, 4, 1, 1], False)
-            sage: Q.multiplier(f, 1)
+            sage: Q.multiplier(f, 1)                                                    # optional - sage.schemes
             [ 2  0 -8]
             [ 0  2 -8]
             [ 0  0 -2]
@@ -924,29 +924,29 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem_projective([x^3 - 3*x*y^2, y^3], domain=P)
+            sage: f = DynamicalSystem_projective([x^3 - 3*x*y^2, y^3], domain=P)        # optional - sage.schemes
             sage: Q = P(-1, 1)
-            sage: Q.is_preperiodic(f)
+            sage: Q.is_preperiodic(f)                                                   # optional - sage.schemes
             True
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme(z)
-            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)                  # optional - sage.schemes
             sage: p = X((-1, 1, 0))
-            sage: p.is_preperiodic(f, return_period=True)
+            sage: p.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
             (0, 2)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: f = DynamicalSystem_projective([x^2 - 29/16*y^2, y^2], domain=P)
+            sage: f = DynamicalSystem_projective([x^2 - 29/16*y^2, y^2], domain=P)      # optional - sage.schemes
             sage: Q = P(1, 4)
-            sage: Q.is_preperiodic(f, return_period=True)
+            sage: Q.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
             (1, 3)
             sage: Q = P(1, 1)
-            sage: Q.is_preperiodic(f, return_period=True)
+            sage: Q.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
             (0, 0)
 
         ::
@@ -954,37 +954,37 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: R.<x> = PolynomialRing(QQ)
             sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^5 + 5/4*x*y^4, y^5], domain=P)      # optional - sage.rings.number_field
+            sage: f = DynamicalSystem_projective([x^5 + 5/4*x*y^4, y^5], domain=P)      # optional - sage.rings.number_field sage.schemes
             sage: Q = P([-1/2*a + 1/2, 1])                                              # optional - sage.rings.number_field
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field
+            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.schemes
             True
             sage: Q = P([a, 1])                                                         # optional - sage.rings.number_field
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field
+            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.schemes
             False
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: f = DynamicalSystem_projective([
+            sage: f = DynamicalSystem_projective([                                      # optional - sage.schemes
             ....:         -38/45*x^2 + (2*y - 7/45*z)*x + (-1/2*y^2 - 1/2*y*z + z^2),
             ....:         -67/90*x^2 + (2*y + z*157/90)*x - y*z,
             ....:         z^2
             ....:     ], domain=P)
             sage: Q = P([1, 3, 1])
-            sage: Q.is_preperiodic(f, return_period=True)
+            sage: Q.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
             (0, 9)
 
         ::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([
+            sage: f = DynamicalSystem_projective([                                      # optional - sage.schemes
             ....:         (-y - w)*x + (-13/30*y^2 + 13/30*w*y + w^2),
             ....:         -1/2*x^2 + (-y + 3/2*w)*x + (-1/3*y^2 + 4/3*w*y),
             ....:         -3/2*z^2 + 5/2*z*w + w^2,
             ....:         w^2
             ....:     ], domain=P)
             sage: Q = P([3,0,4/3,1])
-            sage: Q.is_preperiodic(f, return_period=True)
+            sage: Q.is_preperiodic(f, return_period=True)                               # optional - sage.schemes
             (2, 24)
 
         ::
@@ -992,35 +992,35 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(-1)
             sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2, QQbar(sqrt(-1))*y^2, z^2],       # optional - sage.rings.number_field sage.symbolic
+            sage: f = DynamicalSystem_projective([x^2, QQbar(sqrt(-1))*y^2, z^2],       # optional - sage.rings.number_field sage.schemes sage.symbolic
             ....:                                domain=P)
             sage: Q = P([1, 1, 1])                                                      # optional - sage.rings.number_field sage.symbolic
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.symbolic
+            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.schemes sage.symbolic
             True
 
         ::
 
             sage: set_verbose(-1)
             sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # optional - sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2, y^2, z^2], domain=P)             # optional - sage.rings.number_field
+            sage: f = DynamicalSystem_projective([x^2, y^2, z^2], domain=P)             # optional - sage.rings.number_field sage.schemes
             sage: Q = P([QQbar(sqrt(-1)), 1, 1])                                        # optional - sage.rings.number_field sage.symbolic
-            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.symbolic
+            sage: Q.is_preperiodic(f)                                                   # optional - sage.rings.number_field sage.schemes sage.symbolic
             True
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem_projective([16*x^2 - 29*y^2, 16*y^2], domain=P)
+            sage: f = DynamicalSystem_projective([16*x^2 - 29*y^2, 16*y^2], domain=P)   # optional - sage.schemes
             sage: Q = P(-1,4)
-            sage: Q.is_preperiodic(f)
+            sage: Q.is_preperiodic(f)                                                   # optional - sage.schemes
             True
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(3), 2)                                 # optional - sage.rings.finite_rings
-            sage: F = DynamicalSystem([x^2 - 2*y^2, y^2, z^2])                          # optional - sage.rings.finite_rings
+            sage: F = DynamicalSystem([x^2 - 2*y^2, y^2, z^2])                          # optional - sage.rings.finite_rings sage.schemes
             sage: Q = P(1, 1, 1)                                                        # optional - sage.rings.finite_rings
-            sage: Q.is_preperiodic(F, return_period=True)                               # optional - sage.rings.finite_rings
+            sage: Q.is_preperiodic(F, return_period=True)                               # optional - sage.rings.finite_rings sage.schemes
             (1, 1)
 
         TESTS::
@@ -1037,9 +1037,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem_projective([16*x^2 - 29*y^2, 16*y^2])
+            sage: f = DynamicalSystem_projective([16*x^2 - 29*y^2, 16*y^2])             # optional - sage.schemes
             sage: Q = P(11,4)
-            sage: Q.is_preperiodic(f, err=2)
+            sage: Q.is_preperiodic(f, err=2)                                            # optional - sage.schemes
             False
         """
         try:
@@ -1328,13 +1328,13 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: X = P.subscheme([x*z - y^2])
             sage: Y = P.subscheme([x^3 - y*w^2 + z*w^2, x*y - z*w])
             sage: Q1 = X([1/2, 1/4, 1/8, 1])
-            sage: Q1.intersection_multiplicity(Y)
+            sage: Q1.intersection_multiplicity(Y)                                       # optional - sage.libs.singular
             1
             sage: Q2 = X([0,0,0,1])
-            sage: Q2.intersection_multiplicity(Y)
+            sage: Q2.intersection_multiplicity(Y)                                       # optional - sage.libs.singular
             5
             sage: Q3 = X([0,0,1,0])
-            sage: Q3.intersection_multiplicity(Y)
+            sage: Q3.intersection_multiplicity(Y)                                       # optional - sage.libs.singular
             6
 
         ::
@@ -1423,11 +1423,11 @@ class SchemeMorphism_point_abelian_variety_field(AdditiveGroupElement, SchemeMor
 
     EXAMPLES::
 
-        sage: E = EllipticCurve([0,0,1,-1,0])
-        sage: origin = E(0)
-        sage: origin.domain()
+        sage: E = EllipticCurve([0,0,1,-1,0])                                                       # optional - sage.schemes
+        sage: origin = E(0)                                                                         # optional - sage.schemes
+        sage: origin.domain()                                                                       # optional - sage.schemes
         Spectrum of Rational Field
-        sage: origin.codomain()
+        sage: origin.codomain()                                                                     # optional - sage.schemes
         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
     """
     pass

@@ -531,7 +531,7 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
             sage: X = PP.subscheme([y^2*z^3*u - x^5*v])
             sage: Y = PP.subscheme([u^3 - v^3, x - y])
             sage: Q = X([0,0,1,1,1])
-            sage: Q.intersection_multiplicity(Y)
+            sage: Q.intersection_multiplicity(Y)                                        # optional - sage.libs.singular
             2
         """
         from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
@@ -553,13 +553,13 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
             sage: PP.<x,y,z,w,u,v,t> = ProductProjectiveSpaces(QQ, [3, 2])
             sage: X = PP.subscheme([x^8*t - y^8*t + z^5*w^3*v])
             sage: Q1 = X([1,1,0,0,-1,-1,1])
-            sage: Q1.multiplicity()
+            sage: Q1.multiplicity()                                                     # optional - sage.libs.singular
             1
             sage: Q2 = X([0,0,0,1,0,1,1])
-            sage: Q2.multiplicity()
+            sage: Q2.multiplicity()                                                     # optional - sage.libs.singular
             5
             sage: Q3 = X([0,0,0,1,1,0,0])
-            sage: Q3.multiplicity()
+            sage: Q3.multiplicity()                                                     # optional - sage.libs.singular
             6
         """
         from sage.schemes.product_projective.space import is_ProductProjectiveSpaces

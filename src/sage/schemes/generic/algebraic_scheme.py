@@ -1510,8 +1510,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
               -x1*x3 + x0*x4,
               -x7*x9 + x6*x10
 
-            sage: E = EllipticCurve([0,0,0,0,1])
-            sage: E^2
+            sage: E = EllipticCurve([0,0,0,0,1])                                        # optional - sage.schemes
+            sage: E^2                                                                   # optional - sage.schemes
             Closed subscheme of Product of projective spaces P^2 x P^2
              over Rational Field defined by:
               -x0^3 + x1^2*x2 - x2^3,

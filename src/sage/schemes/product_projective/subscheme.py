@@ -84,14 +84,14 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: Q = ((-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x
             ....:      + ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2))
             sage: W = X.subscheme([L,Q])
-            sage: phi = W.segre_embedding(P)
-            sage: phi.codomain().ambient_space() == P
+            sage: phi = W.segre_embedding(P)                                            # optional - sage.libs.singular
+            sage: phi.codomain().ambient_space() == P                                   # optional - sage.libs.singular
             True
 
         ::
 
             sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1, 1, 1], CC)
-            sage: PP.subscheme([]).segre_embedding()
+            sage: PP.subscheme([]).segre_embedding()                                    # optional - sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of Product of projective spaces P^1 x P^1 x P^1
                     over Complex Field with 53 bits of precision defined by:
@@ -107,7 +107,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         ::
 
             sage: PP.<x,y,z,u,v,s,t> = ProductProjectiveSpaces([2, 1, 1], ZZ)
-            sage: PP.subscheme([x^3, u - v, s^2 - t^2]).segre_embedding()
+            sage: PP.subscheme([x^3, u - v, s^2 - t^2]).segre_embedding()               # optional - sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of Product of projective spaces P^2 x P^1 x P^1
                     over Integer Ring defined by:
@@ -424,10 +424,10 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: PP.<x,y,z,w> = ProductProjectiveSpaces(QQ, [1, 1])
             sage: X = PP.subscheme([x^4*z^3 - y^4*w^3])
             sage: Q1 = PP([1,1,1,1])
-            sage: X.multiplicity(Q1)
+            sage: X.multiplicity(Q1)                                                    # optional - sage.libs.singular
             1
             sage: Q2 = PP([0,1,1,0])
-            sage: X.multiplicity(Q2)
+            sage: X.multiplicity(Q2)                                                    # optional - sage.libs.singular
             3
 
         ::
@@ -435,10 +435,10 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: PP.<x,y,z,w,u> = ProductProjectiveSpaces(GF(11), [1,2])               # optional - sage.rings.finite_rings
             sage: X = PP.subscheme([x^7*u - y^7*z, u^6*x^2 - w^3*z^3*x*y - w^6*y^2])    # optional - sage.rings.finite_rings
             sage: Q1 = PP([1,0,10,1,0])                                                 # optional - sage.rings.finite_rings
-            sage: X.multiplicity(Q1)                                                    # optional - sage.rings.finite_rings
+            sage: X.multiplicity(Q1)                                                    # optional - sage.libs.singular sage.rings.finite_rings
             1
             sage: Q2 = PP([1,0,1,0,0])                                                  # optional - sage.rings.finite_rings
-            sage: X.multiplicity(Q2)                                                    # optional - sage.rings.finite_rings
+            sage: X.multiplicity(Q2)                                                    # optional - sage.libs.singular sage.rings.finite_rings
             4
         """
         PP = self.ambient_space()

@@ -287,7 +287,7 @@ def sage_include_directories(use_sources=False):
     Expected output while using Sage::
 
         sage: import sage.env
-        sage: sage.env.sage_include_directories()
+        sage: sage.env.sage_include_directories()                                       # optional - numpy
         ['...',
          '.../numpy/core/include',
          '.../include/python...']

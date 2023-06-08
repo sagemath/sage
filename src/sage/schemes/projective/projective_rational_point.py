@@ -26,8 +26,8 @@ Projective, over `\QQ`::
 Projective over a finite field::
 
     sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-    sage: E = EllipticCurve('72').change_ring(GF(19))                                               # optional - sage.rings.finite_rings
-    sage: enum_projective_finite_field(E)                                                           # optional - sage.rings.finite_rings
+    sage: E = EllipticCurve('72').change_ring(GF(19))                                   # optional - sage.rings.finite_rings sage.schemes
+    sage: enum_projective_finite_field(E)                                               # optional - sage.rings.finite_rings sage.schemes
     [(0 : 1 : 0), (1 : 0 : 1), (3 : 0 : 1), (4 : 9 : 1), (4 : 10 : 1),
      (6 : 6 : 1), (6 : 13 : 1), (7 : 6 : 1), (7 : 13 : 1), (9 : 4 : 1),
      (9 : 15 : 1), (12 : 8 : 1), (12 : 11 : 1), (13 : 8 : 1), (13 : 11 : 1),
@@ -188,20 +188,20 @@ def enum_projective_number_field(X, **kwds):
 
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^3 - 5, 'v')                                                         # optional - sage.rings.number_field
-        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
-        sage: X = P.subscheme([x - y])                                                              # optional - sage.rings.number_field
-        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)                      # optional - sage.rings.number_field
+        sage: K = NumberField(u^3 - 5, 'v')                                             # optional - sage.rings.number_field
+        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                         # optional - sage.rings.number_field
+        sage: X = P.subscheme([x - y])                                                  # optional - sage.rings.number_field
+        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)          # optional - sage.rings.number_field
         [(0 : 0 : 1), (1 : 1 : 0), (-1 : -1 : 1), (1 : 1 : 1)]
 
     ::
 
-        sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 3, 'v')                                                         # optional - sage.rings.number_field
-        sage: A.<x,y> = ProjectiveSpace(K, 1)                                                       # optional - sage.rings.number_field
-        sage: X = A.subscheme(x - y)                                                                # optional - sage.rings.number_field
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_number_field
-        sage: enum_projective_number_field(X, bound=2)                                              # optional - sage.rings.number_field
+        sage: u = QQ['u'].0
+        sage: K = NumberField(u^2 + 3, 'v')                                             # optional - sage.rings.number_field
+        sage: A.<x,y> = ProjectiveSpace(K, 1)                                           # optional - sage.rings.number_field
+        sage: X = A.subscheme(x - y)                                                    # optional - sage.rings.number_field
+        sage: enum_projective_number_field(X, bound=2)                                  # optional - sage.rings.number_field
         [(1 : 1)]
     """
     B = kwds.pop('bound')
@@ -245,29 +245,29 @@ def enum_projective_finite_field(X):
 
     EXAMPLES::
 
-        sage: F = GF(53)                                                                            # optional - sage.rings.finite_rings
-        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)                                                     # optional - sage.rings.finite_rings
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-        sage: len(enum_projective_finite_field(P(F)))                                               # optional - sage.rings.finite_rings
+        sage: F = GF(53)                                                                # optional - sage.rings.finite_rings
+        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)                                         # optional - sage.rings.finite_rings
+        sage: len(enum_projective_finite_field(P(F)))                                   # optional - sage.rings.finite_rings
         2863
         sage: 53^2 + 53 + 1
         2863
 
     ::
 
-        sage: F = GF(9, 'a')                                                                        # optional - sage.rings.finite_rings
-        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)                                                      # optional - sage.rings.finite_rings
-        sage: C = Curve(X^3 - Y^3 + Z^2*Y)                                                          # optional - sage.rings.finite_rings
-        sage: enum_projective_finite_field(C(F))                                                    # optional - sage.rings.finite_rings
+        sage: F = GF(9, 'a')                                                            # optional - sage.rings.finite_rings
+        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)                                          # optional - sage.rings.finite_rings
+        sage: C = Curve(X^3 - Y^3 + Z^2*Y)                                              # optional - sage.rings.finite_rings sage.schemes
+        sage: enum_projective_finite_field(C(F))                                        # optional - sage.rings.finite_rings sage.schemes
         [(0 : 0 : 1), (0 : 1 : 1), (0 : 2 : 1), (1 : 1 : 0), (a + 1 : 2*a : 1),
          (a + 1 : 2*a + 1 : 1), (a + 1 : 2*a + 2 : 1), (2*a + 2 : a : 1),
          (2*a + 2 : a + 1 : 1), (2*a + 2 : a + 2 : 1)]
 
     ::
 
-        sage: F = GF(5)                                                                             # optional - sage.rings.finite_rings
-        sage: P2F.<X,Y,Z> = ProjectiveSpace(2, F)                                                   # optional - sage.rings.finite_rings
-        sage: enum_projective_finite_field(P2F)                                                     # optional - sage.rings.finite_rings
+        sage: F = GF(5)                                                                 # optional - sage.rings.finite_rings
+        sage: P2F.<X,Y,Z> = ProjectiveSpace(2, F)                                       # optional - sage.rings.finite_rings
+        sage: enum_projective_finite_field(P2F)                                         # optional - sage.rings.finite_rings
         [(0 : 0 : 1), (0 : 1 : 0), (0 : 1 : 1), (0 : 2 : 1), (0 : 3 : 1), (0 : 4 : 1),
          (1 : 0 : 0), (1 : 0 : 1), (1 : 1 : 0), (1 : 1 : 1), (1 : 2 : 1), (1 : 3 : 1),
          (1 : 4 : 1), (2 : 0 : 1), (2 : 1 : 0), (2 : 1 : 1), (2 : 2 : 1), (2 : 3 : 1),
@@ -345,15 +345,15 @@ def sieve(X, bound):
         sage: from sage.schemes.projective.projective_rational_point import sieve
         sage: P.<x,y,z,q> = ProjectiveSpace(QQ, 3)
         sage: Y = P.subscheme([x^2 - 3^2*y^2 + z*q, x + z + 4*q])
-        sage: sorted(sieve(Y, 12))  # long time
+        sage: sorted(sieve(Y, 12))  # long time                                         # optional - sage.libs.singular
         [(-4 : -4/3 : 0 : 1), (-4 : 4/3 : 0 : 1),
          (-1 : -1/3 : 1 : 0), (-1 : 1/3 : 1 : 0)]
 
     ::
 
         sage: from sage.schemes.projective.projective_rational_point import sieve
-        sage: E = EllipticCurve('37a')
-        sage: sorted(sieve(E, 14))  # long time
+        sage: E = EllipticCurve('37a')                                                  # optional - sage.schemes
+        sage: sorted(sieve(E, 14))  # long time                                         # optional - sage.libs.singular sage.schemes
         [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1),
          (0 : 0 : 1), (0 : 1 : 0), (1/4 : -5/8 : 1),
          (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
@@ -366,7 +366,7 @@ def sieve(X, bound):
         sage: from sage.schemes.projective.projective_rational_point import sieve
         sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
         sage: X = P.subscheme(3*x - 3/2*y)
-        sage: sieve(X, 3)
+        sage: sieve(X, 3)                                                               # optional - sage.libs.singular
         [(-1 : -2 : 1), (-1/2 : -1 : 1), (-1/3 : -2/3 : 1), (0 : 0 : 1),
          (1/3 : 2/3 : 1), (1/2 : 1 : 0), (1/2 : 1 : 1), (1 : 2 : 1)]
     """

@@ -638,7 +638,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x,y,z> = AffineSpace(ZZ, 3)
             sage: H = End(A)
             sage: f = H([x^2, y^2, z^2])
-            sage: type(f.as_dynamical_system())
+            sage: type(f.as_dynamical_system())                                         # optional - sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine'>
 
         ::
@@ -646,7 +646,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x,y> = AffineSpace(ZZ, 2)
             sage: H = End(A)
             sage: f = H([x^2 - y^2, y^2])
-            sage: type(f.as_dynamical_system())
+            sage: type(f.as_dynamical_system())                                         # optional - sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine'>
 
         ::
@@ -654,15 +654,15 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x> = AffineSpace(GF(5), 1)                                         # optional - sage.rings.finite_rings
             sage: H = End(A)                                                            # optional - sage.rings.finite_rings
             sage: f = H([x^2])                                                          # optional - sage.rings.finite_rings
-            sage: type(f.as_dynamical_system())                                         # optional - sage.rings.finite_rings
+            sage: type(f.as_dynamical_system())                                         # optional - sage.rings.finite_rings sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine_finite_field'>
 
         ::
 
             sage: P.<x,y> = AffineSpace(RR, 2)
             sage: f = DynamicalSystem([x^2 + y^2, y^2], P)
-            sage: g = f.as_dynamical_system()
-            sage: g is f
+            sage: g = f.as_dynamical_system()                                           # optional - sage.schemes
+            sage: g is f                                                                # optional - sage.schemes
             True
         """
         from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem

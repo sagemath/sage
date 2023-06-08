@@ -160,11 +160,11 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         sage: multiple(1,10^1000)
         1
 
-        sage: E = EllipticCurve('389a1')
-        sage: P = E(-1,1)
-        sage: multiple(P, 10, '+')
+        sage: E = EllipticCurve('389a1')                                                # optional - sage.schemes
+        sage: P = E(-1,1)                                                               # optional - sage.schemes
+        sage: multiple(P, 10, '+')                                                      # optional - sage.schemes
         (645656132358737542773209599489/22817025904944891235367494656 : 525532176124281192881231818644174845702936831/3446581505217248068297884384990762467229696 : 1)
-        sage: multiple(P, -10, '+')
+        sage: multiple(P, -10, '+')                                                     # optional - sage.schemes
         (645656132358737542773209599489/22817025904944891235367494656 : -528978757629498440949529703029165608170166527/3446581505217248068297884384990762467229696 : 1)
     """
     from operator import inv, mul, neg, add

@@ -115,11 +115,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
         sage: f = x^3 + y^3 + 60*z^3
         sage: g = y^2*z - (x^3 - 6400*z^3/3)
-        sage: C = Curve(f)
-        sage: E = Curve(g)
-        sage: xbar,ybar,zbar = C.coordinate_ring().gens()
-        sage: H = C.Hom(E)
-        sage: H([zbar, xbar - ybar, -(xbar+ybar)/80])
+        sage: C = Curve(f)                                                              # optional - sage.schemes
+        sage: E = Curve(g)                                                              # optional - sage.schemes
+        sage: xbar,ybar,zbar = C.coordinate_ring().gens()                               # optional - sage.schemes
+        sage: H = C.Hom(E)                                                              # optional - sage.schemes
+        sage: H([zbar, xbar - ybar, -(xbar+ybar)/80])                                   # optional - sage.schemes
         Scheme morphism:
           From: Projective Plane Curve over Rational Field defined by x^3 + y^3 + 60*z^3
           To:   Projective Plane Curve over Rational Field defined by -x^3 + y^2*z + 6400/3*z^3
@@ -691,15 +691,15 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: H = End(P)
             sage: f = H([x^2, y^2, z^2])
-            sage: type(f.as_dynamical_system())
+            sage: type(f.as_dynamical_system())                                         # optional - sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective'>
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
-            sage: f = H([x^2-y^2, y^2])
-            sage: type(f.as_dynamical_system())
+            sage: f = H([x^2 - y^2, y^2])
+            sage: type(f.as_dynamical_system())                                         # optional - sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective_field'>
 
         ::
@@ -707,15 +707,15 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(GF(5), 1)                                   # optional - sage.rings.finite_rings
             sage: H = End(P)                                                            # optional - sage.rings.finite_rings
             sage: f = H([x^2, y^2])                                                     # optional - sage.rings.finite_rings
-            sage: type(f.as_dynamical_system())                                         # optional - sage.rings.finite_rings
+            sage: type(f.as_dynamical_system())                                         # optional - sage.rings.finite_rings sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective_finite_field'>
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(RR, 1)
-            sage: f = DynamicalSystem([x^2 + y^2, y^2], P)
-            sage: g = f.as_dynamical_system()
-            sage: g is f
+            sage: f = DynamicalSystem([x^2 + y^2, y^2], P)                              # optional - sage.schemes
+            sage: g = f.as_dynamical_system()                                           # optional - sage.schemes
+            sage: g is f                                                                # optional - sage.schemes
             True
         """
         if isinstance(self, DynamicalSystem):
@@ -1218,7 +1218,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
             sage: f = H([x^2 + y^2, y^2])
-            sage: f.is_morphism()
+            sage: f.is_morphism()                                                       # optional - sage.libs.singular
             True
 
         ::
@@ -1226,7 +1226,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y,z> = ProjectiveSpace(RR, 2)
             sage: H = Hom(P, P)
             sage: f = H([x*z - y*z, x^2 - y^2, z^2])
-            sage: f.is_morphism()
+            sage: f.is_morphism()                                                       # optional - sage.libs.singular
             False
 
         ::
@@ -1235,7 +1235,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y,z> = ProjectiveSpace(R, 2)                                     # optional - sage.rings.finite_rings
             sage: H = Hom(P, P)                                                         # optional - sage.rings.finite_rings
             sage: f = H([x*z - t*y^2, x^2 - y^2, t*z^2])                                # optional - sage.rings.finite_rings
-            sage: f.is_morphism()                                                       # optional - sage.rings.finite_rings
+            sage: f.is_morphism()                                                       # optional - sage.libs.singular sage.rings.finite_rings
             True
 
         Map that is not morphism on projective space, but is over a subscheme::
@@ -1244,7 +1244,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: X = P.subscheme([x*y + y*z])
             sage: H = Hom(X, X)
             sage: f = H([x*z - y*z, x^2 - y^2, z^2])
-            sage: f.is_morphism()
+            sage: f.is_morphism()                                                       # optional - sage.libs.singular
             True
         """
 
@@ -1959,7 +1959,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: H = End(P)
             sage: f = H([x^2 - t^2*y^2, y^2 - z^2, x^2 - t^2*z^2])
-            sage: f.indeterminacy_points(base=True)
+            sage: f.indeterminacy_points(base=True)                                     # optional - sage.libs.singular
             [(-t : -1 : 1), (-t : 1 : 1), (t : -1 : 1), (t : 1 : 1)]
 
         ::
@@ -2217,10 +2217,10 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)                                             # optional - sage.rings.finite_rings
-            sage: H = Hom(P, P)                                                                     # optional - sage.rings.finite_rings
-            sage: f = H([x^2 + y^2, y^2, z^2 + y*z])                                                # optional - sage.rings.finite_rings
-            sage: f._fast_eval([1,1,1])                                                             # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)                                 # optional - sage.rings.finite_rings
+            sage: H = Hom(P, P)                                                         # optional - sage.rings.finite_rings
+            sage: f = H([x^2 + y^2, y^2, z^2 + y*z])                                    # optional - sage.rings.finite_rings
+            sage: f._fast_eval([1,1,1])                                                 # optional - sage.rings.finite_rings
             [2, 1, 2]
         """
         if self._is_prime_finite_field:
@@ -2248,13 +2248,13 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
         TESTS::
 
             sage: R.<x,y,z> = QQ[]
-            sage: C = Curve(7*x^2 + 2*y*z + z^2)
-            sage: f, g = C.parametrization()
-            sage: g([0, -1, 2])
+            sage: C = Curve(7*x^2 + 2*y*z + z^2)                                        # optional - sage.schemes
+            sage: f, g = C.parametrization()                                            # optional - sage.schemes
+            sage: g([0, -1, 2])                                                         # optional - sage.schemes
             (1 : 0)
-            sage: f([1, 0])
+            sage: f([1, 0])                                                             # optional - sage.schemes
             (0 : -1/2 : 1)
-            sage: _ == C([0, -1, 2])
+            sage: _ == C([0, -1, 2])                                                    # optional - sage.schemes
             True
         """
         try:
@@ -2277,19 +2277,19 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
         EXAMPLES::
 
             sage: R.<x,y,z> = QQ[]
-            sage: C = Curve(7*x^2 + 2*y*z + z^2)  # conic
-            sage: f, g = C.parametrization()
-            sage: f*g == C.identity_morphism()
+            sage: C = Curve(7*x^2 + 2*y*z + z^2)  # conic                               # optional - sage.schemes
+            sage: f, g = C.parametrization()                                            # optional - sage.schemes
+            sage: f*g == C.identity_morphism()                                          # optional - sage.schemes
             True
 
-            sage: C = Curve(x^2 + y^2 - z^2)
-            sage: P.<u, v> = ProjectiveSpace(QQ, 1)
-            sage: f = C.hom([x + z, y], P)
-            sage: g = C.hom([y, z - x], P)
-            sage: f == g
+            sage: C = Curve(x^2 + y^2 - z^2)                                            # optional - sage.schemes
+            sage: P.<u, v> = ProjectiveSpace(QQ, 1)                                     # optional - sage.schemes
+            sage: f = C.hom([x + z, y], P)                                              # optional - sage.schemes
+            sage: g = C.hom([y, z - x], P)                                              # optional - sage.schemes
+            sage: f == g                                                                # optional - sage.schemes
             True
-            sage: h = C.hom([z, x - y], P)
-            sage: f == h
+            sage: h = C.hom([z, x - y], P)                                              # optional - sage.schemes
+            sage: f == h                                                                # optional - sage.schemes
             False
         """
         Y = self.codomain()
@@ -2493,7 +2493,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: L = f.indeterminacy_locus()                                           # optional - sage.libs.singular
             sage: L.dimension()                                                         # optional - sage.libs.singular
             0
-            sage: L.degree()
+            sage: L.degree()                                                            # optional - sage.libs.singular
             2
             sage: L.rational_points()                                                   # optional - sage.libs.singular
             [(0 : 0 : 0 : 1), (0 : 1 : 0 : 0)]
@@ -2560,7 +2560,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: P1.<a,b> = ProjectiveSpace(QQ, 1)
             sage: X = P2.subscheme([x^2 - y^2 - y*z])
             sage: f = X.hom([x,y], P1)
-            sage: f.is_morphism()
+            sage: f.is_morphism()                                                       # optional - sage.libs.singular
             True
         """
         return self.indeterminacy_locus().dimension() < 0
