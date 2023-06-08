@@ -1126,11 +1126,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: logging.basicConfig(level=logging.DEBUG)
             sage: Seq2.guess(s)
             INFO:...:including f_{1*m+0}
-            DEBUG:...:M_0: f_{2*m+0} = (1) * X_m
+            DEBUG:...:M_0: f_{2*m+0} = (1) * F_m
             INFO:...:including f_{2*m+1}
-            DEBUG:...:M_1: f_{2*m+1} = (0, 1) * X_m
-            DEBUG:...:M_0: f_{4*m+1} = (0, 1) * X_m
-            DEBUG:...:M_1: f_{4*m+3} = (-1, 2) * X_m
+            DEBUG:...:M_1: f_{2*m+1} = (0, 1) * F_m
+            DEBUG:...:M_0: f_{4*m+1} = (0, 1) * F_m
+            DEBUG:...:M_1: f_{4*m+3} = (-1, 2) * F_m
             2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
             sage: from importlib import reload
             sage: logging.shutdown(); _ = reload(logging)
@@ -1331,7 +1331,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 except NoLinearCombination:
                     include(t_L, r_L)  # entries (t, r) --> k**t * m + r
                     linear_combination = (len(lines)-1)*(zero,) + (one,)
-                logger.debug('M_%s: f_{%s*m+%s} = %s * X_m',
+                logger.debug('M_%s: f_{%s*m+%s} = %s * F_m',
                              s_L, k**t_L, r_L, linear_combination)
                 mu[s_L].append(linear_combination)
 
