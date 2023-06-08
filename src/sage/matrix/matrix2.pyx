@@ -1744,7 +1744,7 @@ cdef class Matrix(Matrix1):
             [1, 8, 20, 16, 4]
             sage: A.rook_vector(algorithm="Ryser")
             [1, 8, 20, 16, 4]
-            sage: A.rook_vector(algorithm="Godsil")
+            sage: A.rook_vector(algorithm="Godsil")                                     # optional - sage.graphs
             [1, 8, 20, 16, 4]
 
         When the matrix `A` has more ones then zeroes it is usually faster
@@ -1788,11 +1788,13 @@ cdef class Matrix(Matrix1):
             [1, 0, 0]
             sage: matrix.ones(4, 2).rook_vector("Ryser")
             [1, 8, 12]
-            sage: matrix.ones(4, 2).rook_vector("Godsil")
+            sage: matrix.ones(4, 2).rook_vector("Godsil")                               # optional - sage.graphs
             [1, 8, 12]
             sage: m = matrix(ZZ,4,5)
             sage: m[:4,:4] = identity_matrix(4)
-            sage: for algorithm in ("Godsil","Ryser","ButeraPernici"):
+            sage: algos = ["Ryser", "ButeraPernici"]
+            sage: algos += ["Godsil"]                                                   # optional - sage.graphs
+            sage: for algorithm in algos:
             ....:     v = m.rook_vector(complement=True, use_complement=True, algorithm=algorithm)
             ....:     if v != [1, 16, 78, 128, 53]:
             ....:         print("ERROR with algorithm={} use_complement=True".format(algorithm))
@@ -6188,7 +6190,7 @@ cdef class Matrix(Matrix1):
         `T_2` on level 43 modular symbols, both with all eigenvalues (the default)
         and with one subspace per factor. ::
 
-            sage: A = ModularSymbols(43).T(2).matrix(); A
+            sage: A = ModularSymbols(43).T(2).matrix(); A                               # optional - sage.modular
             [ 3  0  0  0  0  0 -1]
             [ 0 -2  1  0  0  0  0]
             [ 0 -1  1  1  0 -1  0]
@@ -6196,59 +6198,70 @@ cdef class Matrix(Matrix1):
             [ 0 -1  0  1  1 -1  1]
             [ 0  0 -2  0  2 -2  1]
             [ 0  0 -1  0  1  0 -1]
-            sage: A.base_ring()
+            sage: A.base_ring()                                                         # optional - sage.modular
             Rational Field
-            sage: f = A.charpoly(); f
+            sage: f = A.charpoly(); f                                                   # optional - sage.modular
             x^7 + x^6 - 12*x^5 - 16*x^4 + 36*x^3 + 52*x^2 - 32*x - 48
-            sage: factor(f)
+            sage: factor(f)                                                             # optional - sage.modular
             (x - 3) * (x + 2)^2 * (x^2 - 2)^2
-            sage: A.eigenspaces_left(algebraic_multiplicity=True)
-            [
-            (3, Vector space of degree 7 and dimension 1 over Rational Field
-            User basis matrix:
-            [   1    0  1/7    0 -1/7    0 -2/7], 1),
-            (-2, Vector space of degree 7 and dimension 2 over Rational Field
-            User basis matrix:
-            [ 0  1  0  1 -1  1 -1]
-            [ 0  0  1  0 -1  2 -1], 2),
-            (-1.414213562373095?, Vector space of degree 7 and dimension 2 over Algebraic Field
-            User basis matrix:
-            [                  0                   1                   0                  -1 0.4142135623730951?                   1                  -1]
-            [                  0                   0                   1                   0                  -1                   0  2.414213562373095?], 2),
-            (1.414213562373095?, Vector space of degree 7 and dimension 2 over Algebraic Field
-            User basis matrix:
-            [                   0                    1                    0                   -1  -2.414213562373095?                    1                   -1]
-            [                   0                    0                    1                    0                   -1                    0 -0.4142135623730951?], 2)
-            ]
-            sage: A.eigenspaces_left(format='galois', algebraic_multiplicity=True)
-            [
-            (3, Vector space of degree 7 and dimension 1 over Rational Field
-            User basis matrix:
-            [   1    0  1/7    0 -1/7    0 -2/7], 1),
-            (-2, Vector space of degree 7 and dimension 2 over Rational Field
-            User basis matrix:
-            [ 0  1  0  1 -1  1 -1]
-            [ 0  0  1  0 -1  2 -1], 2),
-            (a2, Vector space of degree 7 and dimension 2 over Number Field in a2 with defining polynomial x^2 - 2
-            User basis matrix:
-            [      0       1       0      -1 -a2 - 1       1      -1]
-            [      0       0       1       0      -1       0 -a2 + 1], 2)
-            ]
+            sage: A.eigenspaces_left(algebraic_multiplicity=True)                       # optional - sage.modular
+            [ (3,
+               Vector space of degree 7 and dimension 1 over Rational Field
+                 User basis matrix:
+                 [   1    0  1/7    0 -1/7    0 -2/7],
+               1),
+              (-2,
+               Vector space of degree 7 and dimension 2 over Rational Field
+                 User basis matrix:
+                 [ 0  1  0  1 -1  1 -1]
+                 [ 0  0  1  0 -1  2 -1],
+               2),
+              (-1.414213562373095?,
+               Vector space of degree 7 and dimension 2 over Algebraic Field
+                 User basis matrix:
+                 [                  0                   1                   0                  -1 0.4142135623730951?                   1                  -1]
+                 [                  0                   0                   1                   0                  -1                   0  2.414213562373095?],
+               2),
+              (1.414213562373095?,
+               Vector space of degree 7 and dimension 2 over Algebraic Field
+                 User basis matrix:
+                 [                   0                    1                    0                   -1  -2.414213562373095?                    1                   -1]
+                 [                   0                    0                    1                    0                   -1                    0 -0.4142135623730951?],
+               2) ]
+            sage: A.eigenspaces_left(format='galois', algebraic_multiplicity=True)      # optional - sage.modular
+            [ (3,
+               Vector space of degree 7 and dimension 1 over Rational Field
+                 User basis matrix:
+                 [   1    0  1/7    0 -1/7    0 -2/7],
+               1),
+              (-2,
+               Vector space of degree 7 and dimension 2 over Rational Field
+                 User basis matrix:
+                 [ 0  1  0  1 -1  1 -1]
+                 [ 0  0  1  0 -1  2 -1],
+               2),
+              (a2,
+               Vector space of degree 7 and dimension 2
+                over Number Field in a2 with defining polynomial x^2 - 2
+                 User basis matrix:
+                 [      0       1       0      -1 -a2 - 1       1      -1]
+                 [      0       0       1       0      -1       0 -a2 + 1],
+               2) ]
 
         Next we compute the left eigenspaces over the finite field of order 11. ::
 
-            sage: A = ModularSymbols(43, base_ring=GF(11), sign=1).T(2).matrix(); A                 # optional - sage.libs.pari
+            sage: A = ModularSymbols(43, base_ring=GF(11), sign=1).T(2).matrix(); A     # optional - sage.modular sage.rings.finite_rings
             [ 3  0  9  0]
             [ 0  9  0 10]
             [ 0  0 10  1]
             [ 0  0  1  1]
-            sage: A.base_ring()                                                                     # optional - sage.libs.pari
+            sage: A.base_ring()                                                         # optional - sage.modular sage.rings.finite_rings
             Finite Field of size 11
-            sage: A.charpoly()                                                                      # optional - sage.libs.pari
+            sage: A.charpoly()                                                          # optional - sage.modular sage.rings.finite_rings
             x^4 + 10*x^3 + 3*x^2 + 2*x + 1
-            sage: A.eigenspaces_left(format='galois', var='beta')                                   # optional - sage.libs.pari
-            [
-             (9, Vector space of degree 4 and dimension 1 over Finite Field of size 11
+            sage: A.eigenspaces_left(format='galois', var='beta')                       # optional - sage.modular sage.rings.finite_rings
+            [ (9,
+               Vector space of degree 4 and dimension 1 over Finite Field of size 11
                  User basis matrix: [0 1 5 6]),
              (3, Vector space of degree 4 and dimension 1 over Finite Field of size 11
                  User basis matrix: [1 0 1 6]),
@@ -6316,9 +6329,10 @@ cdef class Matrix(Matrix1):
 
         We make sure that :trac:`13308` is fixed. ::
 
-            sage: M = ModularSymbols(Gamma1(23), sign=1)
-            sage: m = M.cuspidal_subspace().hecke_matrix(2)
-            sage: [j*m==i[0]*j for i in m.eigenspaces_left(format='all') for j in i[1].basis()] # long time (4s)
+            sage: M = ModularSymbols(Gamma1(23), sign=1)                                # optional - sage.modular
+            sage: m = M.cuspidal_subspace().hecke_matrix(2)                             # optional - sage.modular
+            sage: [j*m == i[0]*j                                # long time (4s)        # optional - sage.modular
+            ....:  for i in m.eigenspaces_left(format='all') for j in i[1].basis()]
             [True, True, True, True, True, True, True, True, True, True, True, True]
 
             sage: B = matrix(QQ, 2, 3, range(6))
@@ -6849,7 +6863,6 @@ cdef class Matrix(Matrix1):
             warn("Using generic algorithm for an inexact ring, which may result in garbage from numerical precision issues.")
 
         V = []
-        from sage.rings.qqbar import QQbar
         from sage.categories.homset import hom
         eigenspaces = self.eigenspaces_left(format='galois', algebraic_multiplicity=True)
         evec_list=[]
@@ -6865,6 +6878,7 @@ cdef class Matrix(Matrix1):
                     evec_eval_list.append((eigval, eigbasis, eigmult))
                 else:
                     try:
+                        from sage.rings.qqbar import QQbar
                         eigval_conj = eigval.galois_conjugates(QQbar)
                     except AttributeError:
                         raise NotImplementedError("eigenvectors are not implemented for matrices with eigenvalues that are not in the fraction field of the base ring or in QQbar")
