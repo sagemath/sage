@@ -2711,16 +2711,21 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``sequence`` -- an iterable of vertices of self.
+
         - ``show_sequence`` -- (default: ``False``) if ``True``, a png
           containing the associated quivers is shown.
+
         - ``fig_size`` -- (default: 1.2) factor by which the size of
           the plot is multiplied.
-        - ``return_output`` -- (default: 'seed') determines what output
-          is to be returned::
+
+        - ``return_output`` -- (default: ``'seed'``) determines what output
+          is to be returned:
 
           * if ``'seed'``, outputs all the cluster seeds obtained
             by the ``sequence`` of mutations.
+
           * if ``'matrix'``, outputs a list of exchange matrices.
+
           * if ``'var'``, outputs a list of new cluster variables obtained
             at each step.
 
