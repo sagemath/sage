@@ -624,7 +624,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: P = ProjectiveSpace(GF(5), 2, names='x')                              # optional - sage.rings.finite_rings
             sage: pt = P([1, 1, 1])                                                     # optional - sage.rings.finite_rings
-            sage: P._linear_system_as_kernel(0, pt, 3)                                  # optional - sage.rings.finite_rings
+            sage: P._linear_system_as_kernel(0, pt, 3)                                  # optional - sage.modules sage.rings.finite_rings
             [1]
             [0]
             [0]
@@ -637,7 +637,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: P = ProjectiveSpace(GF(5), 2, names='x')                              # optional - sage.rings.finite_rings
             sage: pt = P([1, 1, 1])                                                     # optional - sage.rings.finite_rings
-            sage: M = P._linear_system_as_kernel(2, pt, 0)                              # optional - sage.rings.finite_rings
+            sage: M = P._linear_system_as_kernel(2, pt, 0)                              # optional - sage.modules sage.rings.finite_rings
             sage: [M.nrows(), M.ncols()]                                                # optional - sage.rings.finite_rings
             [0, 6]
 
@@ -647,7 +647,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: R = Zmod(4)
             sage: P = ProjectiveSpace(R, 2, names='x')
             sage: pt = [R(1), R(3), R(0)]
-            sage: P._linear_system_as_kernel(3, pt, 2)
+            sage: P._linear_system_as_kernel(3, pt, 2)                                  # optional - sage.modules
             [1 3 0 1 0 0 3 0 0 0]
             [0 1 0 2 0 0 3 0 0 0]
             [0 0 1 0 3 0 0 1 0 0]
@@ -673,7 +673,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P = ProjectiveSpace(QQ, 3, names='x')
             sage: RPol.<t0,t1,t2,t3> = PolynomialRing(QQ, 4)
             sage: pt = [t0,t1,1,t3]
-            sage: P._linear_system_as_kernel(2, pt, 2)
+            sage: P._linear_system_as_kernel(2, pt, 2)                                  # optional - sage.modules
             [ 2*t0    t1     1    t3     0     0     0     0     0     0]
             [    0    t0     0     0  2*t1     1    t3     0     0     0]
             [ t0^2 t0*t1    t0 t0*t3  t1^2    t1 t1*t3     1    t3  t3^2]
@@ -1318,7 +1318,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def point_transformation_matrix(self, points_source, points_target, normalize=True):
         r"""
-
         Returns a unique element of PGL that transforms one set of points to another.
 
         Given a projective space of dimension n and a set of n+2 source points and a set of n+2 target
@@ -1351,11 +1350,11 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<a,b,c> = ProjectiveSpace(QQ, 2)
             sage: points_source = [P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target = [P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
-            sage: m = P1.point_transformation_matrix(points_source, points_target); m
+            sage: m = P1.point_transformation_matrix(points_source, points_target); m   # optional - sage.modules
             [ -13/59 -128/59  -25/59]
             [538/177    8/59  26/177]
             [ -45/59 -196/59       1]
-            sage: [m*points_source[i] == points_target[i] for i in range(4)]
+            sage: [m*points_source[i] == points_target[i] for i in range(4)]            # optional - sage.modules
             [True, True, True, True]
 
         ::
@@ -1363,7 +1362,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<a,b> = ProjectiveSpace(GF(13),  1)                                 # optional - sage.rings.finite_rings
             sage: points_source = [P([-6, 7]), P([1, 4]), P([3, 2])]                    # optional - sage.rings.finite_rings
             sage: points_target = [P([-1, 2]), P([0, 2]), P([-1, 6])]                   # optional - sage.rings.finite_rings
-            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.rings.finite_rings
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules sage.rings.finite_rings
             [10  4]
             [10  1]
 
@@ -1372,7 +1371,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<a,b> = ProjectiveSpace(QQ, 1)
             sage: points_source = [P([-6, -4]), P([1, 4]), P([3, 2])]
             sage: points_target = [P([-1, 2]), P([0, 2]), P([-7, -3])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: source points not independent
@@ -1383,7 +1382,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<a,b> = ProjectiveSpace(R, 1)
             sage: points_source = [P([-6*t, 7]), P([1, 4]), P([3, 2])]
             sage: points_target = [P([-1, 2*t]), P([0, 2]), P([-1, 6])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules
             [             (1/3*t + 7/12)/(t^2 - 53/24*t)       (-1/12*t - 7/48)/(t^2 - 53/24*t)]
             [(-2/3*t^2 - 7/36*t - 35/12)/(t^2 - 53/24*t)                                      1]
 
@@ -1392,7 +1391,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<a,b,c> = ProjectiveSpace(RR, 2)
             sage: points_source = [P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target = [P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
-            sage: P1.point_transformation_matrix(points_source, points_target) # abs tol 1e-13
+            sage: P1.point_transformation_matrix(points_source,        # abs tol 1e-13  # optional - sage.modules
+            ....:                                points_target)
             [-0.0619047619047597  -0.609523809523810  -0.119047619047621]
             [  0.853968253968253  0.0380952380952380  0.0412698412698421]
             [ -0.214285714285712  -0.933333333333333   0.280952380952379]
@@ -1402,7 +1402,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<a,b,c> = ProjectiveSpace(ZZ, 2)
             sage: points_source = [P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target = [P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
-            sage: P1.point_transformation_matrix(points_source, points_target)
+            sage: P1.point_transformation_matrix(points_source, points_target)          # optional - sage.modules
             [ -39 -384  -75]
             [ 538   24   26]
             [-135 -588  177]
@@ -1412,7 +1412,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<a,b,c> = ProjectiveSpace(ZZ, 2)
             sage: points_source = [P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target = [P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
-            sage: P1.point_transformation_matrix(points_source, points_target, normalize=False)
+            sage: P1.point_transformation_matrix(points_source, points_target,          # optional - sage.modules
+            ....:                                normalize=False)
             [-13/30 -64/15   -5/6]
             [269/45   4/15  13/45]
             [  -3/2 -98/15  59/30]
@@ -1423,7 +1424,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<a,b> = ProjectiveSpace(R, 1)
             sage: points_source = [P([-6*t, 7]), P([1, 4]), P([3, 2])]
             sage: points_target = [P([-1, 2*t]), P([0, 2]), P([-1, 6])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules
             [         -48*t - 84           12*t + 21]
             [96*t^2 + 28*t + 420    -144*t^2 + 318*t]
 
@@ -1432,7 +1433,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<a,b> = ProjectiveSpace(QQ, 1)
             sage: points_source = [P([-6, -1]), P([1, 4]), P([3, 2])]
             sage: points_target = [P([-1, 2]), P([0, 2]), P([-2, 4])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: target points not independent
@@ -1442,7 +1443,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<a,b,c> = ProjectiveSpace(QQ, 2)
             sage: points_source = [P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1])]
             sage: points_target = [P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P([6, -1, 1])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: incorrect number of points in source, need 4 points
@@ -1452,7 +1453,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<a,b,c> = ProjectiveSpace(QQ, 2)
             sage: points_source = [P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P([1, -1, 1])]
             sage: points_target = [P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P([6, -1, 1]), P([7, 8, -9])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: incorrect number of points in target, need 4 points
@@ -1463,7 +1464,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: points_source = [P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target=[P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P([6, -1, 1])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: source points not in self
@@ -1474,7 +1475,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P1.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: points_source = [P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P([1, -1, 1])]
             sage: points_target = [P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P1([6, -1, 1])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: target points not in self
@@ -1484,7 +1485,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: points_source = [P(1, 0, 0), P(0, 1, 0), P(0, 0, 1), P(1, -1, -1)]
             sage: points_target = [P(0, 1, 0), P(-2, 0, 1), P(0, 0, 1), P(1, -1, -1)]
-            sage: P.point_transformation_matrix(points_source, points_target, normalize=True)
+            sage: P.point_transformation_matrix(points_source, points_target,           # optional - sage.modules
+            ....:                               normalize=True)
             [ 0 -2  0]
             [-2  0  0]
             [ 0  1  1]
@@ -1560,10 +1562,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: plane1 = P.subscheme(x)
             sage: plane2 = P.subscheme(y)
-            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m
+            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m             # optional - sage.modules
             [0 1]
             [1 0]
-            sage: plane2(m*P((0,1)))
+            sage: plane2(m*P((0,1)))                                                    # optional - sage.modules
             (1 : 0)
 
         ::
@@ -1571,7 +1573,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: plane1 = P.subscheme(x + 2*y + z)
             sage: plane2 = P.subscheme(2*x + y + z)
-            sage: P.hyperplane_transformation_matrix(plane1, plane2)
+            sage: P.hyperplane_transformation_matrix(plane1, plane2)                    # optional - sage.modules
             [1 0 0 0]
             [0 4 0 0]
             [0 0 2 0]
@@ -1582,7 +1584,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
             sage: plane1 = P.subscheme(x + y)
             sage: plane2 = P.subscheme(y)
-            sage: P.hyperplane_transformation_matrix(plane1, plane2)
+            sage: P.hyperplane_transformation_matrix(plane1, plane2)                    # optional - sage.modules
             [-1  0]
             [ 1  1]
 
@@ -1592,8 +1594,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
             sage: plane1 = P.subscheme(x - 2*v*y + z)                                   # optional - sage.rings.number_field
             sage: plane2 = P.subscheme(x + v*y + v*z)                                   # optional - sage.rings.number_field
-            sage: m = P.hyperplane_transformation_matrix(plane1, plane2)                # optional - sage.rings.number_field
-            sage: m                                                                     # optional - sage.rings.number_field
+            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m             # optional - sage.modules sage.rings.number_field
             [   v    0    0]
             [   0 -2*v    0]
             [   0    0    1]
@@ -1605,7 +1606,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                   # optional - sage.rings.number_field
             sage: plane1 = P.subscheme(k*x + 2*k*y + z)                                 # optional - sage.rings.number_field
             sage: plane2 = P.subscheme(7*k*x + y + 9*z)                                 # optional - sage.rings.number_field
-            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m             # optional - sage.rings.number_field
+            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m             # optional - sage.modules sage.rings.number_field
             [   1    0    0    0]
             [   0 14*k    0    0]
             [   0    0  7/9    0]
@@ -1620,8 +1621,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y,z> = ProjectiveSpace(G, 2)                                     # optional - sage.rings.number_field
             sage: plane1 = P.subscheme(x - 2*u*y + z)                                   # optional - sage.rings.number_field
             sage: plane2 = P.subscheme(x + u*y + z)                                     # optional - sage.rings.number_field
-            sage: m = P.hyperplane_transformation_matrix(plane1, plane2)                # optional - sage.rings.number_field
-            sage: plane2(m*P((2*u, 1, 0)))                                              # optional - sage.rings.number_field
+            sage: m = P.hyperplane_transformation_matrix(plane1, plane2)                # optional - sage.modules sage.rings.number_field
+            sage: plane2(m*P((2*u, 1, 0)))                                              # optional - sage.modules sage.rings.number_field
             (-u : 1 : 0)
 
         ::
@@ -1629,7 +1630,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y,z> = ProjectiveSpace(FiniteField(2), 2)                        # optional - sage.rings.finite_rings
             sage: plane1 = P.subscheme(x + y + z)                                       # optional - sage.rings.finite_rings
             sage: plane2 = P.subscheme(z)                                               # optional - sage.rings.finite_rings
-            sage: P.hyperplane_transformation_matrix(plane1, plane2)                    # optional - sage.rings.finite_rings
+            sage: P.hyperplane_transformation_matrix(plane1, plane2)                    # optional - sage.modules sage.rings.finite_rings
             [1 0 0]
             [1 1 0]
             [1 1 1]
@@ -1640,7 +1641,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y,z> = ProjectiveSpace(R, 2)
             sage: plane1 = P.subscheme(x + 9*t*y + z)
             sage: plane2 = P.subscheme(x + z)
-            sage: P.hyperplane_transformation_matrix(plane1, plane2)
+            sage: P.hyperplane_transformation_matrix(plane1, plane2)                    # optional - sage.modules
             [  1 9*t   0]
             [  1   0   0]
             [  0   0   1]
@@ -1650,7 +1651,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: plane1 = P.subscheme(x^2)
             sage: plane2 = P.subscheme(y)
-            sage: P.hyperplane_transformation_matrix(plane1, plane2)
+            sage: P.hyperplane_transformation_matrix(plane1, plane2)                    # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: plane_1 must be defined by a single degree 1 equation
@@ -1744,14 +1745,14 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: points = [P((1, 0, 1)), P((1, 2, 1)), P((1, 3, 4))]
-            sage: P.is_linearly_independent(points)
+            sage: P.is_linearly_independent(points)                                     # optional - sage.modules
             True
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
             sage: points = [P((1, 0, 1)), P((1, 2, 1)), P((1, 3, 4)), P((0, 0, 1))]     # optional - sage.rings.finite_rings
-            sage: P.is_linearly_independent(points, 2)                                  # optional - sage.rings.finite_rings
+            sage: P.is_linearly_independent(points, 2)                                  # optional - sage.modules sage.rings.finite_rings
             True
 
         ::
@@ -1759,7 +1760,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: R.<c> = QQ[]
             sage: P.<x,y,z> = ProjectiveSpace(R, 2)
             sage: points = [P((c, 0, 1)), P((0, c, 1)), P((1, 0, 4)), P((0, 0, 1))]
-            sage: P.is_linearly_independent(points, 3)
+            sage: P.is_linearly_independent(points, 3)                                  # optional - sage.modules
             False
 
         ::
@@ -1767,7 +1768,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: R.<c> = QQ[]
             sage: P.<x,y,z> = ProjectiveSpace(FractionField(R), 2)
             sage: points = [P((c, 0, 1)), P((0, c, 1)), P((1, 3, 4)), P((0, 0, 1))]
-            sage: P.is_linearly_independent(points, 3)
+            sage: P.is_linearly_independent(points, 3)                                  # optional - sage.modules
             True
 
         ::
@@ -1775,20 +1776,20 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: K.<k> = CyclotomicField(3)                                            # optional - sage.rings.number_field
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
             sage: points = [P((k, k^2, 1)), P((0, k, 1)), P((1, 0, 4)), P((0, 0, 1))]   # optional - sage.rings.number_field
-            sage: P.is_linearly_independent(points, 3)                                  # optional - sage.rings.number_field
+            sage: P.is_linearly_independent(points, 3)                                  # optional - sage.modules sage.rings.number_field
             True
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: points = [P((1, 0)), P((1, 1))]
-            sage: P.is_linearly_independent(points)
+            sage: P.is_linearly_independent(points)                                     # optional - sage.modules
             True
 
         TESTS::
 
             sage: points = [P(1, 0), P(1, 1), P(2, 1)]
-            sage: P.is_linearly_independent(points, 5)
+            sage: P.is_linearly_independent(points, 5)                                  # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: n must be a non negative integer not greater than the length of points

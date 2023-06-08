@@ -660,7 +660,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         ::
 
             sage: P.<x,y> = AffineSpace(RR, 2)
-            sage: f = DynamicalSystem([x^2 + y^2, y^2], P)
+            sage: f = DynamicalSystem([x^2 + y^2, y^2], P)                              # optional - sage.schemes
             sage: g = f.as_dynamical_system()                                           # optional - sage.schemes
             sage: g is f                                                                # optional - sage.schemes
             True

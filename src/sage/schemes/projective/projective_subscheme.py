@@ -250,7 +250,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: P.<u,v,w> = ProjectiveSpace(2, ZZ)
             sage: S = P.subscheme([u^2 - v*w])
             sage: A.<x, y> = AffineSpace(2, ZZ)
-            sage: S.affine_patch(1, A)
+            sage: S.affine_patch(1, A)                                                  # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Integer Ring defined by:
               x^2 - y
         """
@@ -1022,17 +1022,17 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: P.<x,y,z,w,t,u> = ProjectiveSpace(QQ, 5)
             sage: X = P.subscheme([x^7 + x*y*z*t^4 - u^7])
-            sage: X.degree()
+            sage: X.degree()                                                            # optional - sage.libs.singular
             7
 
             sage: P.<x,y,z,w> = ProjectiveSpace(GF(13), 3)                              # optional - sage.rings.finite_rings
             sage: X = P.subscheme([y^3 - w^3, x + 7*z])                                 # optional - sage.rings.finite_rings
-            sage: X.degree()                                                            # optional - sage.rings.finite_rings
+            sage: X.degree()                                                            # optional - sage.libs.singular sage.rings.finite_rings
             3
 
             sage: P.<x,y,z,w,u> = ProjectiveSpace(QQ, 4)
-            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])
-            sage: C.degree()
+            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])            # optional - sage.schemes
+            sage: C.degree()                                                            # optional - sage.libs.singular sage.schemes
             63
         """
         P = self.defining_ideal().hilbert_polynomial()

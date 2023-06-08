@@ -490,7 +490,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: L = A.subscheme([z, y + z])
             sage: A(QQ)._coerce_map_from_(H(QQ))
             True
-            sage: H(QQ)._coerce_map_from_(L(QQ))
+            sage: H(QQ)._coerce_map_from_(L(QQ))                                        # optional - sage.libs.singular
             True
             sage: L(QQ).has_coerce_map_from(H(QQ))
             False

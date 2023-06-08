@@ -371,7 +371,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: E(QQ).numerical_points(F=QQbar)
+            sage: E(QQ).numerical_points(F=QQbar)                                       # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: F must be a numerical field

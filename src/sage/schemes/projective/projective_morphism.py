@@ -169,7 +169,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         sage: H = End(P)
         sage: f = H([(x-2*y)^2, (x-2*z)^2, x^2])
         sage: X = P.subscheme(y-z)
-        sage: f(f(f(X)))
+        sage: f(f(f(X)))                                                                # optional - sage.libs.singular
         Closed subscheme of Projective Space of dimension 2 over Rational Field
          defined by:
           y - z
@@ -179,7 +179,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
         sage: H = End(P)
         sage: f = H([(x-2*y)^2, (x-2*z)^2, (x-2*w)^2, x^2])
-        sage: f(P.subscheme([x,y,z]))
+        sage: f(P.subscheme([x,y,z]))                                                   # optional - sage.libs.singular
         Closed subscheme of Projective Space of dimension 3 over Rational Field
          defined by:
           w,
@@ -604,7 +604,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
             sage: H = Hom(P,P)
             sage: f = H([x^2 + y^2, y^2])
-            sage: matrix([[1,2], [0,1]]) * f
+            sage: matrix([[1,2], [0,1]]) * f                                            # optional - sage.modules
             Scheme endomorphism of Projective Space of dimension 1 over Integer Ring
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + 3*y^2 : y^2)
@@ -612,11 +612,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<i> = NumberField(x^2 + 1)                                                      # optional - sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)                                                  # optional - sage.rings.number_field
-            sage: H = Hom(P, P)                                                                     # optional - sage.rings.number_field
-            sage: f = H([1/3*x^2 + 1/2*y^2, y^2])                                                   # optional - sage.rings.number_field
-            sage: matrix([[i,0], [0,i]]) * f                                                        # optional - sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)                                      # optional - sage.rings.number_field
+            sage: H = Hom(P, P)                                                         # optional - sage.rings.number_field
+            sage: f = H([1/3*x^2 + 1/2*y^2, y^2])                                       # optional - sage.rings.number_field
+            sage: matrix([[i,0], [0,i]]) * f                                            # optional - sage.modules sage.rings.number_field
             Scheme endomorphism of Projective Space of dimension 1 over
              Number Field in i with defining polynomial x^2 + 1
               Defn: Defined on coordinates by sending (x : y) to
@@ -648,7 +648,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
             sage: H = Hom(P, P)
             sage: f = H([x^2 + y^2, y^2])
-            sage: f * matrix([[1,2], [0,1]])
+            sage: f * matrix([[1,2], [0,1]])                                            # optional - sage.modules
             Scheme endomorphism of Projective Space of dimension 1 over Integer Ring
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + 4*x*y + 5*y^2 : y^2)
@@ -656,11 +656,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         ::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<i> = NumberField(x^2 + 1)                                                      # optional - sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)                                                  # optional - sage.rings.number_field
-            sage: H = Hom(P, P)                                                                     # optional - sage.rings.number_field
-            sage: f = H([1/3*x^2 + 1/2*y^2, y^2])                                                   # optional - sage.rings.number_field
-            sage: f * matrix([[i,0], [0,i]])                                                        # optional - sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)                                      # optional - sage.rings.number_field
+            sage: H = Hom(P, P)                                                         # optional - sage.rings.number_field
+            sage: f = H([1/3*x^2 + 1/2*y^2, y^2])                                       # optional - sage.rings.number_field
+            sage: f * matrix([[i,0], [0,i]])                                            # optional - sage.modules sage.rings.number_field
             Scheme endomorphism of Projective Space of dimension 1 over
              Number Field in i with defining polynomial x^2 + 1
               Defn: Defined on coordinates by sending (x : y) to
