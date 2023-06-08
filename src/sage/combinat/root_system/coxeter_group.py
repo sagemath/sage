@@ -91,7 +91,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
         [3 1 5]
         [2 5 1]
 
-        sage: W = CoxeterGroup(["A",4,1], implementation="permutation")
+        sage: W = CoxeterGroup(["A",4,1], implementation="permutation")                 # optional - sage.libs.gap
         Traceback (most recent call last):
         ...
         ValueError: the type must be finite

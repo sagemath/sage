@@ -119,7 +119,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         sage: L = R.weight_space(K2)
 
         sage: alpha = R.root_space(K2).simple_roots()
-        sage: L(alpha[1])
+        sage: L(alpha[1])                                                               # optional - sage.graphs
         2*Lambda[1] - Lambda[2]
 
         sage: alpha = R.root_space(K1).simple_roots()
@@ -1103,14 +1103,14 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RS = R.root_lattice()
                 sage: P = RS.nonnesting_partition_lattice(); P                          # optional - sage.graphs
                 Finite lattice containing 14 elements
-                sage: P.coxeter_transformation()**10 == 1
+                sage: P.coxeter_transformation()**10 == 1                               # optional - sage.graphs
                 True
 
                 sage: R = RootSystem(['B', 3])
                 sage: RS = R.root_lattice()
                 sage: P = RS.nonnesting_partition_lattice(); P                          # optional - sage.graphs
                 Finite lattice containing 20 elements
-                sage: P.coxeter_transformation()**7 == 1
+                sage: P.coxeter_transformation()**7 == 1                                # optional - sage.graphs
                 True
 
             REFERENCES:
@@ -1142,7 +1142,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RS = R.root_lattice()
                 sage: P = RS.generalized_nonnesting_partition_lattice(2); P             # optional - sage.graphs
                 Finite lattice containing 12 elements
-                sage: P.coxeter_transformation()**20 == 1
+                sage: P.coxeter_transformation()**20 == 1                               # optional - sage.graphs
                 True
             """
             Phi_plus = self.positive_roots()

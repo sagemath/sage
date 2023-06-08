@@ -957,16 +957,16 @@ def HadamardDesign(n):
 
     EXAMPLES::
 
-        sage: designs.HadamardDesign(7)
+        sage: designs.HadamardDesign(7)                                                 # optional - sage.modules
         Incidence structure with 7 points and 7 blocks
-        sage: print(designs.HadamardDesign(7))
+        sage: print(designs.HadamardDesign(7))                                          # optional - sage.modules
         Incidence structure with 7 points and 7 blocks
 
     For example, the Hadamard 2-design with `n = 11` is a design whose parameters are 2-(11, 5, 2).
     We verify that `NJ = 5J` for this design. ::
 
-        sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()
-        sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J
+        sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()                  # optional - sage.modules
+        sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J                                    # optional - sage.modules
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
@@ -1010,7 +1010,7 @@ def Hadamard3Design(n):
 
     EXAMPLES::
 
-        sage: designs.Hadamard3Design(12)
+        sage: designs.Hadamard3Design(12)                                               # optional - sage.modules
         Incidence structure with 12 points and 22 blocks
 
     We verify that any two blocks of the Hadamard `3`-design `3-(8, 4, 1)`
@@ -1020,9 +1020,9 @@ def Hadamard3Design(n):
 
     ::
 
-        sage: D = designs.Hadamard3Design(8)
-        sage: N = D.incidence_matrix()
-        sage: N.transpose()*N
+        sage: D = designs.Hadamard3Design(8)                                            # optional - sage.modules
+        sage: N = D.incidence_matrix()                                                  # optional - sage.modules
+        sage: N.transpose()*N                                                           # optional - sage.modules
         [4 2 2 2 2 2 2 2 2 2 2 2 2 0]
         [2 4 2 2 2 2 2 2 2 2 2 2 0 2]
         [2 2 4 2 2 2 2 2 2 2 2 0 2 2]
