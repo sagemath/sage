@@ -1227,6 +1227,17 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: two_again = Seq2.guess(lambda n: 2, sequence=two)
             sage: two_again.linear_representation()
             ((1), Finite family {0: [1], 1: [1]}, (2))
+
+        ::
+
+            sage: def s(k):
+            ....:     return k
+            sage: S1 = Seq2.guess(s)
+            sage: S2 = Seq2.guess(s, sequence=S1)
+            sage: S1
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+            sage: S2
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
         """
         import logging
         logger = logging.getLogger(__name__)
