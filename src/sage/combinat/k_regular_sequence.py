@@ -1201,6 +1201,23 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             Traceback (most recent call last):
             ...
             RuntimeError: aborting as exponents would be larger than max_exponent=1
+
+        ::
+
+            sage: R = kRegularSequenceSpace(2, QQ)
+            sage: one = R.one_hadamard()
+            sage: S = R.guess(lambda n: sum(n.bits()), sequence=one) + one
+            sage: T = R.guess(lambda n: n*n, sequence=S, n_max=4); T
+            2-regular sequence 0, 1, 4, 9, 16, 25, 36, 163/3, 64, 89, ...
+            sage: T.linear_representation()
+            ((0, 0, 1),
+             Finite family {0: [1 0 0]
+                               [0 1 0]
+                               [0 0 4],
+                            1: [   0    1    0]
+                               [  -1    2    0]
+                               [13/3 -5/3 16/3]},
+             (1, 2, 0))
         """
         import logging
         logger = logging.getLogger(__name__)
@@ -1217,8 +1234,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             seq = lambda m: vector([])
         else:
             mu = [M.rows() for M in sequence.mu]
-            seq = lambda m: sequence.left * sequence._mu_of_word_(
-                self._n_to_index_(m))
+            seq = lambda m: (sequence._mu_of_word_(self._n_to_index_(m))
+                             * sequence.right)
             logger.info('including %s', sequence)
 
         zero = domain(0)
