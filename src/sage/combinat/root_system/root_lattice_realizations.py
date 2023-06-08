@@ -119,7 +119,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         sage: L = R.weight_space(K2)
 
         sage: alpha = R.root_space(K2).simple_roots()
-        sage: L(alpha[1])
+        sage: L(alpha[1])                                                               # optional - sage.graphs
         2*Lambda[1] - Lambda[2]
 
         sage: alpha = R.root_space(K1).simple_roots()
