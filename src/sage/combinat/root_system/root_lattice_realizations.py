@@ -94,7 +94,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         sage: x = alpha[2] + 1/2 * alpha[5]
 
         sage: L = R.weight_space()
-        sage: L(x)
+        sage: L(x)                                                                      # optional - sage.graphs
         -Lambda[1] + 2*Lambda[2] - Lambda[3] - 1/2*Lambda[4] + Lambda[5] - 1/2*Lambda[6]
 
         sage: L = R.ambient_space()
@@ -107,7 +107,8 @@ class RootLatticeRealizations(Category_over_base_ring):
         sage: L(x)
         Traceback (most recent call last):
         ...
-        TypeError: do not know how to make x (= alpha[2] + 1/2*alpha[5]) an element of self (=Weight lattice of the Root system of type ['A', 7])
+        TypeError: do not know how to make x (= alpha[2] + 1/2*alpha[5]) an element
+        of self (=Weight lattice of the Root system of type ['A', 7])
 
     If `K_1` is a subring of `K_2`, then one could in theory have
     an embedding from the root space over `K_1` to any root
@@ -125,7 +126,9 @@ class RootLatticeRealizations(Category_over_base_ring):
         sage: L(alpha[1])
         Traceback (most recent call last):
         ...
-        TypeError: do not know how to make x (= alpha[1]) an element of self (=Weight space over the Univariate Polynomial Ring in q over Rational Field of the Root system of type ['A', 7])
+        TypeError: do not know how to make x (= alpha[1]) an element
+        of self (=Weight space over the Univariate Polynomial Ring in q
+        over Rational Field of the Root system of type ['A', 7])
 
     By a slight abuse, the embedding of the root lattice is not actually
     required to be faithful. Typically for an affine root system, the
