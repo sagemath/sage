@@ -4175,7 +4175,7 @@ def lucas(k, P, Q=1, n=None):
         sage: q = randint(0,100000)
         sage: n = randint(1,100)
         sage: k = randint(0,100)
-        sage: lucas(k, p, q, n) == [Mod(lucas_number2(k, p, q), n),                     # optional - sage.combinat
+        sage: lucas(k, p, q, n) == [Mod(lucas_number2(k, p, q), n),                     # optional - sage.combinat sage.libs.gap
         ....:                       Mod(q^(int(k/2)), n)]
         True
 
