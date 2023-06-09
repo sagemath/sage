@@ -17,7 +17,7 @@ TESTS::
 
     sage: from sage.combinat.species.generating_series import CycleIndexSeriesRing
     sage: p = SymmetricFunctions(QQ).power()                                            # optional - sage.modules
-    sage: CIS = CycleIndexSeriesRing(QQ)
+    sage: CIS = CycleIndexSeriesRing(QQ)                                                # optional - sage.modules
     sage: geo1 = CIS(lambda i: p([1])^i)                                                # optional - sage.modules
     sage: geo2 = CIS(lambda i: p([2])^(i // 2) if is_even(i) else 0)                    # optional - sage.modules
     sage: s = geo1 * geo2                                                               # optional - sage.modules
@@ -294,7 +294,7 @@ class CycleIndexSeries(LazySymmetricFunction):
 
             sage: from sage.combinat.species.generating_series import CycleIndexSeriesRing
             sage: p = SymmetricFunctions(QQ).power()                                    # optional - sage.modules
-            sage: CIS = CycleIndexSeriesRing(QQ)
+            sage: CIS = CycleIndexSeriesRing(QQ)                                        # optional - sage.modules
             sage: f = CIS([0, p([1]), 2*p([1,1]), 3*p([2,1])])                          # optional - sage.modules
             sage: f.count([1])                                                          # optional - sage.modules
             1
@@ -314,7 +314,7 @@ class CycleIndexSeries(LazySymmetricFunction):
 
             sage: from sage.combinat.species.generating_series import CycleIndexSeriesRing
             sage: p = SymmetricFunctions(QQ).power()                                    # optional - sage.modules
-            sage: CIS = CycleIndexSeriesRing(QQ)
+            sage: CIS = CycleIndexSeriesRing(QQ)                                        # optional - sage.modules
             sage: f = CIS([0, p([1]), 2*p([1,1]),3*p([2,1])])                           # optional - sage.modules
             sage: f.coefficient_cycle_type([1])                                         # optional - sage.modules
             1
@@ -334,9 +334,9 @@ class CycleIndexSeries(LazySymmetricFunction):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: cis = P.cycle_index_series()
-            sage: f = cis.isotype_generating_series()
-            sage: f[:10]
+            sage: cis = P.cycle_index_series()                                          # optional - sage.modules
+            sage: f = cis.isotype_generating_series()                                   # optional - sage.modules
+            sage: f[:10]                                                                # optional - sage.modules
             [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
         """
         R = self.base_ring()
@@ -352,8 +352,8 @@ class CycleIndexSeries(LazySymmetricFunction):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: cis = P.cycle_index_series()
-            sage: [cis._ogs_gen(i, 0) for i in range(10)]
+            sage: cis = P.cycle_index_series()                                          # optional - sage.modules
+            sage: [cis._ogs_gen(i, 0) for i in range(10)]                               # optional - sage.modules
             [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
         """
         if n < ao:
@@ -367,9 +367,9 @@ class CycleIndexSeries(LazySymmetricFunction):
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
-            sage: cis = P.cycle_index_series()
-            sage: f = cis.generating_series()
-            sage: f[:5]
+            sage: cis = P.cycle_index_series()                                          # optional - sage.modules
+            sage: f = cis.generating_series()                                           # optional - sage.modules
+            sage: f[:5]                                                                 # optional - sage.modules
             [1, 1, 1, 5/6, 5/8]
         """
         R = self.base_ring()
@@ -385,8 +385,8 @@ class CycleIndexSeries(LazySymmetricFunction):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: cis = P.cycle_index_series()
-            sage: [cis._egs_gen(i, 0) for i in range(10)]
+            sage: cis = P.cycle_index_series()                                          # optional - sage.modules
+            sage: [cis._egs_gen(i, 0) for i in range(10)]                               # optional - sage.modules
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
         if n < ao:
@@ -409,16 +409,16 @@ class CycleIndexSeries(LazySymmetricFunction):
 
         The species `E` of sets satisfies the relationship `E' = E`::
 
-            sage: E = species.SetSpecies().cycle_index_series()
-            sage: E[:8] == E.derivative()[:8]
+            sage: E = species.SetSpecies().cycle_index_series()                         # optional - sage.modules
+            sage: E[:8] == E.derivative()[:8]                                           # optional - sage.modules
             True
 
         The species `C` of cyclic orderings and the species `L` of linear
         orderings satisfy the relationship `C' = L`::
 
-            sage: C = species.CycleSpecies().cycle_index_series()
-            sage: L = species.LinearOrderSpecies().cycle_index_series()
-            sage: L[:8] == C.derivative()[:8]
+            sage: C = species.CycleSpecies().cycle_index_series()                       # optional - sage.modules
+            sage: L = species.LinearOrderSpecies().cycle_index_series()                 # optional - sage.modules
+            sage: L[:8] == C.derivative()[:8]                                           # optional - sage.modules
             True
         """
         return self.derivative_with_respect_to_p1(n=n)
@@ -439,9 +439,9 @@ class CycleIndexSeries(LazySymmetricFunction):
         The species `E^{\bullet}` of "pointed sets" satisfies
         `E^{\bullet} = X \cdot E`::
 
-            sage: E = species.SetSpecies().cycle_index_series()
-            sage: X = species.SingletonSpecies().cycle_index_series()
-            sage: E.pointing()[:8] == (X*E)[:8]
+            sage: E = species.SetSpecies().cycle_index_series()                         # optional - sage.modules
+            sage: X = species.SingletonSpecies().cycle_index_series()                   # optional - sage.modules
+            sage: E.pointing()[:8] == (X*E)[:8]                                         # optional - sage.modules
             True
         """
         X = self.parent()([1], valuation=1)
@@ -463,9 +463,9 @@ class CycleIndexSeries(LazySymmetricFunction):
         Let `BT` be the species of binary trees, `BF` the species of binary
         forests, and `E` the species of sets. Then we have `BF = E \circ BT`::
 
-            sage: BT = species.BinaryTreeSpecies().cycle_index_series()
-            sage: BF = species.BinaryForestSpecies().cycle_index_series()
-            sage: BT.exponential().isotype_generating_series()[:8] == BF.isotype_generating_series()[:8]
+            sage: BT = species.BinaryTreeSpecies().cycle_index_series()                 # optional - sage.modules
+            sage: BF = species.BinaryForestSpecies().cycle_index_series()               # optional - sage.modules
+            sage: BT.exponential().isotype_generating_series()[:8] == BF.isotype_generating_series()[:8]    # optional - sage.modules
             True
         """
         base_ring = self.parent().base_ring().base_ring()
@@ -490,10 +490,10 @@ class CycleIndexSeries(LazySymmetricFunction):
         Let `G` be the species of nonempty graphs and  `CG` be the species of nonempty connected
         graphs. Then `G = E^{+} \circ CG`, so `CG = \Omega \circ G`::
 
-            sage: G = species.SimpleGraphSpecies().cycle_index_series() - 1
+            sage: G = species.SimpleGraphSpecies().cycle_index_series() - 1             # optional - sage.modules
             sage: from sage.combinat.species.generating_series import LogarithmCycleIndexSeries
-            sage: CG = LogarithmCycleIndexSeries()(G)
-            sage: CG.isotype_generating_series()[0:8]
+            sage: CG = LogarithmCycleIndexSeries()(G)                                   # optional - sage.modules
+            sage: CG.isotype_generating_series()[0:8]                                   # optional - sage.modules
             [0, 1, 1, 2, 6, 21, 112, 853]
         """
         base_ring = self.parent().base_ring().base_ring()
@@ -546,7 +546,7 @@ class CycleIndexSeriesRing(LazySymmetricFunctions):
 
     We test to make sure that caching works::
 
-        sage: R is CycleIndexSeriesRing(QQ)
+        sage: R is CycleIndexSeriesRing(QQ)                                             # optional - sage.modules
         True
     """
     Element = CycleIndexSeries

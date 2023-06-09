@@ -1074,14 +1074,15 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: rs = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]]).row_stabilizer()
-            sage: rs.order()
+            sage: t = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]])
+            sage: rs = t.row_stabilizer()                                               # optional - sage.groups
+            sage: rs.order()                                                            # optional - sage.groups
             24
-            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs                        # optional - sage.groups
             True
-            sage: PermutationGroupElement([(1,4)]) in rs
+            sage: PermutationGroupElement([(1,4)]) in rs                                # optional - sage.groups
             False
-            sage: rs.one().domain()
+            sage: rs.one().domain()                                                     # optional - sage.groups
             [1, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         # Ensure that the permutations involve all elements of the
@@ -1102,12 +1103,13 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: cs = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]]).column_stabilizer()
-            sage: cs.order()
+            sage: t = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]])
+            sage: cs = t.column_stabilizer()                                            # optional - sage.groups
+            sage: cs.order()                                                            # optional - sage.groups
             8
-            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs                        # optional - sage.groups
             False
-            sage: PermutationGroupElement([(1,4)]) in cs
+            sage: PermutationGroupElement([(1,4)]) in cs                                # optional - sage.groups
             True
         """
 
@@ -2714,7 +2716,7 @@ class RowStandardTableauTuples(TableauTuples):
         Row standard tableau tuples of shape ([2], [1, 1])
         sage: tabs.cardinality()
         12
-        sage: tabs[:]
+        sage: tabs[:]                                                                   # optional - sage.graphs
         [([[3, 4]], [[2], [1]]),
          ([[2, 4]], [[3], [1]]),
          ([[1, 4]], [[3], [2]]),
@@ -3425,14 +3427,14 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples([[1],[1],[1]]).list()
+            sage: RowStandardTableauTuples([[1],[1],[1]]).list()                        # optional - sage.graphs
             [([[3]], [[2]], [[1]]),
              ([[2]], [[3]], [[1]]),
              ([[1]], [[3]], [[2]]),
              ([[1]], [[2]], [[3]]),
              ([[2]], [[1]], [[3]]),
              ([[3]], [[1]], [[2]])]
-            sage: RowStandardTableauTuples([[2,1],[2]]).list()
+            sage: RowStandardTableauTuples([[2,1],[2]]).list()                          # optional - sage.graphs
             [([[4, 5], [2]], [[1, 3]]),
              ([[4, 5], [3]], [[1, 2]]),
              ([[3, 5], [4]], [[1, 2]]),
@@ -3466,10 +3468,10 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
 
         TESTS::
 
-            sage: def check(mu):
+            sage: def check(mu):                                                        # optional - sage.graphs
             ....:     return (RowStandardTableauTuples(mu).cardinality()
             ....:             == len(RowStandardTableauTuples(mu).list()))
-            sage: all(check(mu) for mu in PartitionTuples(4,4))
+            sage: all(check(mu) for mu in PartitionTuples(4,4))                         # optional - sage.graphs
             True
         """
         mu = self.shape()
@@ -3538,9 +3540,9 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples([[2],[2,1]]).an_element()
+            sage: RowStandardTableauTuples([[2],[2,1]]).an_element()                    # optional - sage.graphs
             ([[4, 5]], [[1, 3], [2]])
-            sage: RowStandardTableauTuples([[10],[],[]]).an_element()
+            sage: RowStandardTableauTuples([[10],[],[]]).an_element()                   # optional - sage.graphs
             ([[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]], [], [])
         """
         c = self.cardinality()

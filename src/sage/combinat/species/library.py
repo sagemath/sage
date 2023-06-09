@@ -43,7 +43,7 @@ def SimpleGraphSpecies():
         sage: S = species.SimpleGraphSpecies()
         sage: S.generating_series().counts(10)
         [1, 1, 2, 8, 64, 1024, 32768, 2097152, 268435456, 68719476736]
-        sage: S.cycle_index_series()[:5]
+        sage: S.cycle_index_series()[:5]                                                # optional - sage.modules
         [p[],
          p[1],
          p[1, 1] + p[2],
@@ -94,7 +94,7 @@ def BinaryTreeSpecies():
         sage: B = species.BinaryTreeSpecies()
         sage: a = B.structures([1,2,3,4,5])[187]; a
         2*((5*3)*(4*1))
-        sage: a.automorphism_group()
+        sage: a.automorphism_group()                                                    # optional - sage.groups
         Permutation Group with generators [()]
 
     TESTS::
@@ -121,9 +121,9 @@ def BinaryForestSpecies():
         sage: F = species.BinaryForestSpecies()
         sage: F.generating_series().counts(10)
         [1, 1, 3, 19, 193, 2721, 49171, 1084483, 28245729, 848456353]
-        sage: F.isotype_generating_series().counts(10)
+        sage: F.isotype_generating_series().counts(10)                                  # optional - sage.modules
         [1, 1, 2, 4, 10, 26, 77, 235, 758, 2504]
-        sage: F.cycle_index_series()[:7]
+        sage: F.cycle_index_series()[:7]                                                # optional - sage.modules
         [p[],
          p[1],
          3/2*p[1, 1] + 1/2*p[2],
@@ -134,8 +134,8 @@ def BinaryForestSpecies():
 
     TESTS::
 
-        sage: seq = F.isotype_generating_series().counts(10)[1:]
-        sage: oeis(seq)[0]                              # optional -- internet
+        sage: seq = F.isotype_generating_series().counts(10)[1:]                        # optional - sage.modules
+        sage: oeis(seq)[0]                              # optional -- internet          # optional - sage.modules
         A052854: Number of forests of ordered trees on n total nodes.
     """
     B = BinaryTreeSpecies()

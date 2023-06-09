@@ -255,11 +255,11 @@ class WordDatatype_morphic(WordDatatype_callable):
 
             sage: m = WordMorphism("a->ab,b->a")
             sage: w = m.fixed_point("a")
-            sage: w[0]
+            sage: w[0]                                                                  # optional - sage.modules
             'a'
-            sage: w[5]
+            sage: w[5]                                                                  # optional - sage.modules
             'a'
-            sage: w[10000]
+            sage: w[10000]                                                              # optional - sage.modules
             'a'
 
         TESTS:
@@ -271,7 +271,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: W = m.domain()
             sage: from sage.combinat.words.morphic import WordDatatype_morphic
             sage: w = WordDatatype_morphic(W, m, 'a')
-            sage: w._func(5)
+            sage: w._func(5)                                                            # optional - sage.modules
             'a'
 
         """

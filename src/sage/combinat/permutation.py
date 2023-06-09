@@ -4966,7 +4966,7 @@ class Permutation(CombinatorialElement):
         The sylvester class of a permutation in `S_5`::
 
             sage: p = Permutation([3, 5, 1, 2, 4])
-            sage: sorted(p.sylvester_class())                                           # optional - sage.combinat
+            sage: sorted(p.sylvester_class())                                           # optional - sage.combinat sage.graphs
             [[1, 3, 2, 5, 4],
              [1, 3, 5, 2, 4],
              [1, 5, 3, 2, 4],

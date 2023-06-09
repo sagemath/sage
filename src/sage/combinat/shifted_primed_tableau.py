@@ -28,6 +28,7 @@ from sage.rings.rational_field import QQ
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
@@ -39,8 +40,9 @@ from sage.categories.regular_supercrystals import RegularSuperCrystals
 from sage.categories.sets_cat import Sets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.combination import Combinations
+
+lazy_import('sage.combinat.root_system.cartan_type', 'CartanType')
 
 
 class ShiftedPrimedTableau(ClonableArray,

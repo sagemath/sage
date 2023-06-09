@@ -1676,7 +1676,7 @@ class FiniteWord_class(Word_class):
         For ultimately periodic words::
 
             sage: sigma = WordMorphism('a->abcd,b->cd,c->cd,d->cd')
-            sage: w = sigma.fixed_point('a')[:100]; w
+            sage: w = sigma.fixed_point('a')[:100]; w                                   # optional - sage.modules
             word: abcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd...
             sage: g = w.reduced_rauzy_graph(5)                                          # optional - sage.graphs
             sage: g.vertices(sort=True)                                                 # optional - sage.graphs
@@ -6752,7 +6752,7 @@ class FiniteWord_class(Word_class):
             word: badc
             sage: w.apply_permutation_to_positions(Permutation([2,1,4,3]))
             word: badc
-            sage: w.apply_permutation_to_positions(PermutationGroupElement([2,1,4,3]))
+            sage: w.apply_permutation_to_positions(PermutationGroupElement([2,1,4,3]))  # optional - sage.groups
             word: badc
             sage: Word([1,2,3,4]).apply_permutation_to_positions([3,4,2,1])
             word: 3421
@@ -6782,7 +6782,7 @@ class FiniteWord_class(Word_class):
             word: dcba
             sage: w.apply_permutation_to_letters(Permutation(p))
             word: badc
-            sage: w.apply_permutation_to_letters(PermutationGroupElement(p))
+            sage: w.apply_permutation_to_letters(PermutationGroupElement(p))            # optional - sage.groups
             word: badc
         """
         from sage.combinat.permutation import Permutation

@@ -64,9 +64,9 @@ def LyndonWords(e=None, k=None):
         word: 1112
         sage: LW.last()
         word: 2333
-        sage: LW.random_element() # random
+        sage: LW.random_element()  # random                                             # optional - sage.libs.pari
         word: 1232
-        sage: LW.cardinality()
+        sage: LW.cardinality()                                                          # optional - sage.libs.pari
         18
 
     If e is a (weak) composition, then it returns the class of Lyndon
@@ -277,9 +277,9 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
             sage: LyndonWords([]).cardinality()
             0
-            sage: LyndonWords([2,2]).cardinality()
+            sage: LyndonWords([2,2]).cardinality()                                      # optional - sage.libs.pari
             1
-            sage: LyndonWords([2,3,2]).cardinality()
+            sage: LyndonWords([2,3,2]).cardinality()                                    # optional - sage.libs.pari
             30
 
         Check to make sure that the count matches up with the number of
@@ -287,7 +287,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
             sage: comps = [[],[2,2],[3,2,7],[4,2]] + Compositions(4).list()
             sage: lws = [LyndonWords(comp) for comp in comps]
-            sage: all(lw.cardinality() == len(lw.list()) for lw in lws)
+            sage: all(lw.cardinality() == len(lw.list()) for lw in lws)                 # optional - sage.libs.pari
             True
         """
         evaluation = self._e
@@ -417,7 +417,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
         Make sure that the correct length is checked (:trac:`30186`)::
 
             sage: L = LyndonWords(2, 4)
-            sage: _ = L(L.random_element())
+            sage: _ = L(L.random_element())                                             # optional - sage.libs.pari
         """
         w = self._words(*args, **kwds)
         if kwds.get('check', True) and not w.is_lyndon():
@@ -443,7 +443,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: [ LyndonWords(3,i).cardinality() for i in range(1, 11) ]
+            sage: [ LyndonWords(3,i).cardinality() for i in range(1, 11) ]              # optional - sage.libs.pari
             [3, 3, 8, 18, 48, 116, 312, 810, 2184, 5880]
         """
         if self._k == 0:
@@ -470,7 +470,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             sage: sum(1 for lw in LyndonWords(1, 1000))
             0
 
-            sage: list(LyndonWords(1, 1))
+            sage: list(LyndonWords(1, 1))                                               # optional - sage.libs.pari
             [word: 1]
         """
         W = self._words._element_classes['list']

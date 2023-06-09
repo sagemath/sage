@@ -1590,25 +1590,25 @@ class WordMorphism(SageObject):
         EXAMPLES::
 
             sage: tm = WordMorphism('a->ab,b->ba')
-            sage: tm.is_primitive()
+            sage: tm.is_primitive()                                                     # optional - sage.modules
             True
             sage: fibo = WordMorphism('a->ab,b->a')
-            sage: fibo.is_primitive()
+            sage: fibo.is_primitive()                                                   # optional - sage.modules
             True
             sage: m = WordMorphism('a->bb,b->aa')
-            sage: m.is_primitive()
+            sage: m.is_primitive()                                                      # optional - sage.modules
             False
             sage: f = WordMorphism({0:[1],1:[0]})
-            sage: f.is_primitive()
+            sage: f.is_primitive()                                                      # optional - sage.modules
             False
 
         ::
 
             sage: s = WordMorphism('a->b,b->c,c->ab')
-            sage: s.is_primitive()
+            sage: s.is_primitive()                                                      # optional - sage.modules
             True
             sage: s = WordMorphism('a->b,b->c,c->d,d->e,e->f,f->g,g->h,h->ab')
-            sage: s.is_primitive()
+            sage: s.is_primitive()                                                      # optional - sage.modules
             True
 
         TESTS::
@@ -1618,8 +1618,8 @@ class WordMorphism(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: self (=a->bb, b->aac) is not an endomorphism
-            sage: m = WordMorphism('a->,b->',codomain=Words('ab'))
-            sage: m.is_primitive()
+            sage: m = WordMorphism('a->,b->', codomain=Words('ab'))
+            sage: m.is_primitive()                                                      # optional - sage.modules
             False
             sage: m = WordMorphism('a->,b->')
             sage: m.is_primitive()
@@ -1683,9 +1683,9 @@ class WordMorphism(SageObject):
 
         ::
 
-            sage: n0, n1 = matrix(2,[1,1,1,0]), matrix(2,[2,1,1,0])
-            sage: n = {'a':n0, 'b':n1}
-            sage: WordMorphism(n).is_prolongable(letter='a') #todo: not implemented
+            sage: n0, n1 = matrix(2,[1,1,1,0]), matrix(2,[2,1,1,0])                     # optional - sage.modules
+            sage: n = {'a':n0, 'b':n1}                                                  # optional - sage.modules
+            sage: WordMorphism(n).is_prolongable(letter='a')  # todo: not implemented   # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: codomain of self must be an instance of Words
@@ -2089,7 +2089,7 @@ class WordMorphism(SageObject):
             sage: s = WordMorphism({0: [0,1], 1: [0], 2: [2,0,2]})
 
             sage: u = s.fixed_point(0)
-            sage: A0 = u[:200].factor_set(5)
+            sage: A0 = u[:200].factor_set(5)                                            # optional - sage.modules
             sage: B0 = s.language(5, [0])                                               # optional - sage.modules
             sage: set(A0) == B0                                                         # optional - sage.modules
             True
@@ -2888,7 +2888,7 @@ class WordMorphism(SageObject):
 
             sage: t = WordMorphism("a->aC,b->d,C->de,d->a,e->ab")   # substitution found by Julien Bernat
             sage: V = [vector((0,0,1,0,-1)), vector((0,0,1,-1,0))]                      # optional - sage.modules
-            sage: S = set(map(tuple, [i*V[0] + j*V[1]
+            sage: S = set(map(tuple, [i*V[0] + j*V[1]                                   # optional - sage.modules
             ....:                     for i in [-1,0,1] for j in [-1,0,1]]))
             sage: t.rauzy_fractal_plot(n=10000,                             # not tested (> 1 second)
             ....:                      translate=S, exchange=true)

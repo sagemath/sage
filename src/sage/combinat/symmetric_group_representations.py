@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules sage.groups
 r"""
 Representations of the Symmetric Group
 
@@ -29,13 +30,10 @@ Representations of the Symmetric Group
 # ****************************************************************************
 
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.ring", "SR")
 from sage.misc.functional import sqrt
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.permutation import Permutation, Permutations, from_cycles
 from sage.combinat.tableau import StandardTableaux, Tableau
-from sage.combinat.yang_baxter_graph import YangBaxterGraph_partition
-from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -45,6 +43,11 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSets
+
+lazy_import("sage.combinat.yang_baxter_graph", "YangBaxterGraph_partition")
+lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_="PermutationConstructor")
+lazy_import("sage.symbolic.ring", "SR")
+
 
 # #### Constructor function ################################################
 
