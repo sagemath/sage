@@ -1290,6 +1290,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             """
             d = len(seq(0)) + len(lines)
 
+            # The following search for an inverse works but is inefficient;
+            # see :trac:`35748` for details.
             for m_indices in cantor_product(xsrange(n_verify), repeat=d, min_slope=1):
                 # Iterate over all increasing lists of length d consisting
                 # of non-negative integers less than `n_verify`.
