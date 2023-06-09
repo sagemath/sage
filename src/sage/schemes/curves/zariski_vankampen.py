@@ -991,7 +991,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
         if cutpath_in_E:
             r = cutpath[i]
             cutpath = cutpath[:i+1]
-        i += i+1
+        i = i+1
     qi = EC.index(q)
     ri = EC.index(r)
     Ecut = copy(E)
