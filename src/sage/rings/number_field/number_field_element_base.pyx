@@ -21,6 +21,7 @@ cdef class NumberFieldElement_base(FieldElement):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^3 + x + 1)                                                          # optional - sage.rings.number_field
         sage: isinstance(a, sage.rings.number_field.number_field_element_base.NumberFieldElement_base)  # optional - sage.rings.number_field
         True

@@ -1848,7 +1848,7 @@ def suite1():
 
     Factorial(2*10**6).run(systems=['sage', 'magma'])
     Fibonacci(10**6).run()
-    Fibonacci(2*10^7).run(systems=["sage", "magma", "mathematica"])
+    Fibonacci(2*10**7).run(systems=["sage", "magma", "mathematica"])
 
     MatrixKernel(150,QQ).run()
 
@@ -1861,7 +1861,7 @@ def suite1():
     PolyFactor(700,GF(19))
 
     PolyFactor(500,GF(49,'a'))
-    PolyFactor(100,GF(10007^3,'a'))
+    PolyFactor(100,GF((10007,3),'a'))
 
     CharPolyTp(54,4).run()
     CharPolyTp(389,2).run()

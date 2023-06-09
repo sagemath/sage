@@ -63,6 +63,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             TypeError: n (=a + O(5^20)) is not an integer
 
             sage: K = Qp(5)
+            sage: x = polygen(ZZ, 'x')
             sage: L.<pi> = K.extension(x^2 - 5)
             sage: FrobeniusEndomorphism_padics(L)
             Traceback (most recent call last):

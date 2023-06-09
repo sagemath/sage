@@ -173,6 +173,7 @@ def _coords_in_C_mod_p(I,C,p):
     of which is not cyclic::
 
         sage: from sage.rings.number_field.selmer_group import _coords_in_C_mod_p
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - x + 58)
         sage: C = K.class_group()
         sage: C.gens_orders()
@@ -208,6 +209,7 @@ def _root_ideal(I, C, p):
     EXAMPLES::
 
         sage: from sage.rings.number_field.selmer_group import _root_ideal
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - x + 58)
         sage: C = K.class_group()
         sage: cyclic_gens   = C.gens_ideals()
@@ -265,6 +267,7 @@ def coords_in_U_mod_p(u, U, p):
     EXAMPLES::
 
         sage: from sage.rings.number_field.selmer_group import coords_in_U_mod_p
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^4 - 5*x^2 + 1)
         sage: U = K.unit_group()
         sage: U
@@ -315,6 +318,7 @@ def basis_for_p_cokernel(S, C, p):
     EXAMPLES::
 
         sage: from sage.rings.number_field.selmer_group import basis_for_p_cokernel
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - x + 58)
         sage: S = K.ideal(30).support(); S
         [Fractional ideal (2, a),

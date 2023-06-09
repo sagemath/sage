@@ -571,14 +571,13 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: el.parent() == subspace
             True
         """
-
         if not self.module():
-            raise ValueError("No free module defined for {}".format(self))
+            raise ValueError(f"no free module defined for {self}")
         basis = self.gens()
-        assert(len(basis) == len(vec))
+        assert len(basis) == len(vec)
         # vec = self.module()(self.module().linear_combination_of_basis(vec))
         # this also handles the trivial case (dimension 0)
-        return self(sum([vec[k]*basis[k] for k in range(0, len(vec))]))
+        return self(sum([vec[k] * basis[k] for k in range(len(vec))]))
 
     def element_from_ambient_coordinates(self, vec):
         r"""

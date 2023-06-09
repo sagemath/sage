@@ -70,6 +70,7 @@ def bdd_norm_pr_gens_iq(K, norm_list):
     norm 5, but no principal ideals of norm 7::
 
         sage: from sage.rings.number_field.bdd_height import bdd_norm_pr_gens_iq
+        sage: x = polygen(ZZ, 'x')
         sage: K.<g> = NumberField(x^2 + 1)
         sage: L = range(10)
         sage: bdd_pr_ideals = bdd_norm_pr_gens_iq(K, L)
@@ -130,6 +131,7 @@ def bdd_height_iq(K, height_bound):
     EXAMPLES::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height_iq
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 191)
         sage: for t in bdd_height_iq(K,8):
         ....:     print(exp(2*t.global_height()))
@@ -254,6 +256,7 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
     ::
 
         sage: from sage.rings.number_field.bdd_height import bdd_norm_pr_ideal_gens
+        sage: x = polygen(ZZ, 'x')
         sage: K.<g> = NumberField(x^5 - x + 19)
         sage: b = bdd_norm_pr_ideal_gens(K, range(30))
         sage: key = ZZ(28)
@@ -385,6 +388,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     There are no elements of negative height::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
+        sage: x = polygen(ZZ, 'x')
         sage: K.<g> = NumberField(x^5 - x + 7)
         sage: list(bdd_height(K, -3))
         []

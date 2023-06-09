@@ -260,6 +260,7 @@ class tr_data_rel:
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: F.<t> = NumberField(x^2 - 2)
             sage: T = sage.rings.number_field.totallyreal_rel.tr_data_rel(F, 2, 2000)
         """

@@ -28,7 +28,7 @@ debugger.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
@@ -36,7 +36,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from .data_structures cimport *
 from .automorphism_group_canonical_label cimport (
     get_aut_gp_and_can_lab, aut_gp_and_can_lab,
-    allocate_agcl_output, deallocate_agcl_output)
+    deallocate_agcl_output)
 from .double_coset cimport double_coset
 from sage.rings.integer cimport Integer
 

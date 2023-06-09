@@ -66,7 +66,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object import SageObject
-from sage.structure.element cimport Element
 from sage.structure.richcmp cimport richcmp
 
 

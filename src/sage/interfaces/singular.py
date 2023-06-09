@@ -2405,7 +2405,7 @@ def generate_docstring_dictionary():
                     a, b = m.groups()
                     node_names[a] = b.strip()
 
-            if line == "6 Index\n":
+            if line in ("6 Index\n", "F Index\n"):
                 in_node = False
 
     nodes[curr_node] = "".join(L)  # last node

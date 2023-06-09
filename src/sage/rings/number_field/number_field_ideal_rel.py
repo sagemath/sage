@@ -12,6 +12,7 @@ AUTHORS:
 
 EXAMPLES::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<a,b> = NumberField([x^2 + 1, x^2 + 2])
     sage: A = K.absolute_field('z')
     sage: I = A.factor(7)[0][0]
@@ -50,6 +51,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField([x^2 + 1, x^2 + 2]); K
         Number Field in a0 with defining polynomial x^2 + 1 over its base field
         sage: i = K.ideal(38); i
@@ -82,6 +84,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 23, x^2 - 7])
             sage: I = K.ideal(2, (a + 2*b + 3)/2)
             sage: J = K.ideal(2, a - b)
@@ -100,6 +103,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 23, x^2 - 7])
             sage: I = K.ideal(2, (a + 2*b + 3)/2)
             sage: [z in I for z in [a, b, 2, a + b]] # indirect doctest
@@ -116,6 +120,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 23, x^2 - 7])
             sage: I = K.ideal(2, (a + 2*b + 3)/2)
             sage: I.pari_rhnf()
@@ -209,6 +214,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = QQ.extension([x^2 + 71, x^3 + 2*x + 1])
             sage: (2*a + b).norm()
             22584817
@@ -237,6 +243,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^3 - x + 1, x^2 + 23])
             sage: I = K.ideal(a*b - 1)
             sage: I.free_module()
@@ -257,6 +264,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 2])
             sage: I = K.ideal((a + 1)*b/2 + 1)
             sage: I.gens_reduced()
@@ -296,6 +304,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^2 + 1, x^2 + 2])
             sage: I = K.fractional_ideal(4)
             sage: I^(-1)
@@ -314,6 +323,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 23, x^2 + 1])
             sage: I = K.ideal([7, (-1/2*b - 3/2)*a + 3/2*b + 9/2])
             sage: I.is_principal()
@@ -339,6 +349,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 3, x^3 + 4])
             sage: K.ideal(17).is_zero()
             False
@@ -355,6 +366,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b, c> = QQ.extension([x^2 - 23, x^2 - 5, x^2 - 7])
             sage: I = L.ideal(a + b)
             sage: I.absolute_norm()
@@ -417,6 +429,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 2])
             sage: K.ideal(2).norm()
             Traceback (most recent call last):
@@ -534,6 +547,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = QQ.extension([x^2 + 11, x^2 - 5])
             sage: K.factor(5)
             (Fractional ideal (5, (-1/4*b - 1/4)*a + 1/4*b - 3/4))^2
@@ -572,6 +586,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
             sage: I = K.ideal(17*b - 3*a)
             sage: x = I.integral_basis(); x  # random
@@ -595,6 +610,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberFieldTower([x^2 - 23, x^2 + 1])
             sage: I = K.ideal([a + b/3])
             sage: J, d = I.integral_split()
@@ -612,6 +628,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 17, x^3 - 2])
             sage: K.ideal(a + b).is_prime()
             True
@@ -632,12 +649,13 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
-           sage: K.<a, b> = QQ.extension([x^2 + 11, x^2 - 5])
-           sage: I = K.ideal(7).prime_factors()[0]
-           sage: I.is_integral()
-           True
-           sage: (I/2).is_integral()
-           False
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a, b> = QQ.extension([x^2 + 11, x^2 - 5])
+            sage: I = K.ideal(7).prime_factors()[0]
+            sage: I.is_integral()
+            True
+            sage: (I/2).is_integral()
+            False
         """
         return self.absolute_ideal().is_integral()
 
@@ -716,6 +734,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 2])
             sage: K.ideal(2).ramification_index()
             Traceback (most recent call last):
@@ -749,6 +768,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, w> = NumberFieldTower([x^2 - 3, x^2 + x + 1])
             sage: I = K.ideal(6, -w*a - w + 4)
             sage: list(I.residues())[:5]
@@ -782,6 +802,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberFieldTower([x^2 - 23, x^2 + 1])
             sage: I = Ideal(2, (a - 3*b + 2)/2)
             sage: J = K.ideal(a)
@@ -813,6 +834,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberFieldTower([x^2 - 23, x^2 + 1])
             sage: I = K.ideal([a + b])
             sage: I.smallest_integer()
@@ -839,6 +861,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 17, x^3 - 2])
             sage: A = K.ideal(a + b)
             sage: A.is_prime()
@@ -872,6 +895,7 @@ def is_NumberFieldFractionalIdeal_rel(x):
         False
         sage: is_NumberFieldFractionalIdeal_rel(ideal(5))
         False
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^2 + 2)
         sage: I = k.ideal([a + 1]); I
         Fractional ideal (a + 1)
