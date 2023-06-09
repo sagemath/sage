@@ -49,19 +49,19 @@ def SimpleGraphSpecies():
          p[1, 1] + p[2],
          4/3*p[1, 1, 1] + 2*p[2, 1] + 2/3*p[3],
          8/3*p[1, 1, 1, 1] + 4*p[2, 1, 1] + 2*p[2, 2] + 4/3*p[3, 1] + p[4]]
-        sage: S.isotype_generating_series()[:6]
+        sage: S.isotype_generating_series()[:6]                                         # optional - sage.modules
         [1, 1, 2, 4, 11, 34]
 
     TESTS::
 
-        sage: seq = S.isotype_generating_series().counts(6)[1:]
-        sage: oeis(seq)[0]                              # optional -- internet
+        sage: seq = S.isotype_generating_series().counts(6)[1:]                         # optional - sage.modules
+        sage: oeis(seq)[0]                              # optional -- internet          # optional - sage.modules
         A000088: Number of graphs on n unlabeled nodes.
 
     ::
 
-        sage: seq = S.generating_series().counts(10)[1:]
-        sage: oeis(seq)[0]                              # optional -- internet
+        sage: seq = S.generating_series().counts(10)[1:]                                # optional - sage.modules
+        sage: oeis(seq)[0]                              # optional -- internet          # optional - sage.modules
         A006125: a(n) = 2^(n*(n-1)/2).
     """
     E = SetSpecies()

@@ -24,12 +24,12 @@ leaves and of `q` to internal nodes::
     sage: L = species.LinearOrderSpecies(min=1)
     sage: T = species.CombinatorialSpecies(min=1)
     sage: T.define(leaf + internal_node*L(T))
-    sage: T.isotype_generating_series()[0:6]
+    sage: T.isotype_generating_series()[0:6]                                            # optional - sage.modules
     [0, 1, q, q^2 + q, q^3 + 3*q^2 + q, q^4 + 6*q^3 + 6*q^2 + q]
 
 Consider the following::
 
-    sage: T.isotype_generating_series().coefficient(4)
+    sage: T.isotype_generating_series().coefficient(4)                                  # optional - sage.modules
     q^3 + 3*q^2 + q
 
 This means that, among the trees on `4` nodes, one has a
@@ -335,7 +335,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series()[0:5]
+            sage: G.isotype_generating_series()[0:5]                                    # optional - sage.modules
             [1, 1, 2, 4, 11]
         """
         from .functorial_composition_species import FunctorialCompositionSpecies
@@ -448,7 +448,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: X^1 is X
             True
             sage: A = X^32
-            sage: A.digraph()
+            sage: A.digraph()                                                           # optional - sage.graphs
             Multi-digraph on 6 vertices
 
         TESTS::
@@ -643,8 +643,8 @@ class GenericCombinatorialSpecies(SageObject):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: g = P.cycle_index_series()
-            sage: g[0:4]
+            sage: g = P.cycle_index_series()                                            # optional - sage.modules
+            sage: g[0:4]                                                                # optional - sage.modules
             [p[], p[1], p[1, 1] + p[2], p[1, 1, 1] + p[2, 1] + p[3]]
         """
         return self._get_series(CycleIndexSeriesRing, "cis", base_ring)
@@ -710,19 +710,19 @@ class GenericCombinatorialSpecies(SageObject):
             sage: X = species.SingletonSpecies()
             sage: B = species.CombinatorialSpecies()
             sage: B.define(X+B*B)
-            sage: g = B.digraph(); g
+            sage: g = B.digraph(); g                                                    # optional - sage.graphs
             Multi-digraph on 4 vertices
 
-            sage: sorted(g, key=str)
+            sage: sorted(g, key=str)                                                    # optional - sage.graphs
             [Combinatorial species,
              Product of (Combinatorial species) and (Combinatorial species),
              Singleton species,
              Sum of (Singleton species) and
               (Product of (Combinatorial species) and (Combinatorial species))]
 
-            sage: d = {sp: i for i, sp in enumerate(g)}
-            sage: g.relabel(d)
-            sage: g.canonical_label().edges(sort=True)
+            sage: d = {sp: i for i, sp in enumerate(g)}                                 # optional - sage.graphs
+            sage: g.relabel(d)                                                          # optional - sage.graphs
+            sage: g.canonical_label().edges(sort=True)                                  # optional - sage.graphs
             [(0, 3, None), (2, 0, None), (2, 0, None), (3, 1, None), (3, 2, None)]
         """
         from sage.graphs.digraph import DiGraph
@@ -739,13 +739,13 @@ class GenericCombinatorialSpecies(SageObject):
 
         EXAMPLES::
 
-            sage: d = DiGraph(multiedges=True)
-            sage: X = species.SingletonSpecies()
-            sage: X._add_to_digraph(d); d
+            sage: d = DiGraph(multiedges=True)                                          # optional - sage.graphs
+            sage: X = species.SingletonSpecies()                                        # optional - sage.graphs
+            sage: X._add_to_digraph(d); d                                               # optional - sage.graphs
             Multi-digraph on 1 vertex
-            sage: (X+X)._add_to_digraph(d); d
+            sage: (X+X)._add_to_digraph(d); d                                           # optional - sage.graphs
             Multi-digraph on 2 vertices
-            sage: d.edges(sort=True)
+            sage: d.edges(sort=True)                                                    # optional - sage.graphs
             [(Sum of (Singleton species) and (Singleton species), Singleton species, None),
              (Sum of (Singleton species) and (Singleton species), Singleton species, None)]
         """
@@ -770,21 +770,25 @@ class GenericCombinatorialSpecies(SageObject):
         EXAMPLES::
 
             sage: B = species.BinaryTreeSpecies()
-            sage: B.algebraic_equation_system()
+            sage: B.algebraic_equation_system()                                         # optional - sage.graphs
             [-node3^2 + node1, -node1 + node3 + (-z)]
 
         ::
 
-            sage: sorted(B.digraph().vertex_iterator(), key=str)
+            sage: sorted(B.digraph().vertex_iterator(), key=str)                        # optional - sage.graphs
             [Combinatorial species with min=1,
-             Product of (Combinatorial species with min=1) and (Combinatorial species with min=1),
+             Product of (Combinatorial species with min=1)
+                    and (Combinatorial species with min=1),
              Singleton species,
-             Sum of (Singleton species) and (Product of (Combinatorial species with min=1) and (Combinatorial species with min=1))]
+             Sum of (Singleton species)
+                and (Product of (Combinatorial species with min=1)
+                and (Combinatorial species with min=1))]
 
         ::
 
-            sage: B.algebraic_equation_system()[0].parent()
-            Multivariate Polynomial Ring in node0, node1, node2, node3 over Fraction Field of Univariate Polynomial Ring in z over Rational Field
+            sage: B.algebraic_equation_system()[0].parent()                             # optional - sage.graphs
+            Multivariate Polynomial Ring in node0, node1, node2, node3 over
+             Fraction Field of Univariate Polynomial Ring in z over Rational Field
         """
         d = self.digraph()
 
