@@ -13,6 +13,7 @@ graft sage/algebras
 graft sage/combinat
 graft sage/monoids
 graft sage/games
+graft sage/sat
 
 include sage/data_structures/stream.p*
 include sage/rings/lazy_series*.p*

@@ -34,6 +34,7 @@ include sage/numerical/backends/matrix_*.p*
 include sage/numerical/backends/ppl_*.p*
 include sage/numerical/backends/scip_*.p*
 
+graft sage/game_theory
 
 global-exclude *.py[co]
 global-exclude *.so

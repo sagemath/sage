@@ -16,5 +16,7 @@ from sage.quadratic_forms.all__sagemath_modules import *
 from sage.coding.all import *
 from sage.crypto.all import *
 
+import sage.crypto.mq as mq
+
 true = True
 false = False

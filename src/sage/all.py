@@ -84,7 +84,6 @@ from sage.rings.all      import *
 from sage.all__sagemath_combinat import *
 
 from sage.algebras.all   import *
-from sage.sat.all        import *
 
 from sage.all__sagemath_modules import *
 from sage.all__sagemath_schemes import *
@@ -98,9 +97,6 @@ from sage.interfaces.all import *
 
 lazy_import('sage.tests', 'all', as_='tests', deprecation=27337)
 
-from sage.crypto.all     import *
-import sage.crypto.mq as mq
-
 from sage.combinat.all   import *
 
 from sage.geometry.all   import *
@@ -112,8 +108,6 @@ from sage.homology.all   import *
 
 from sage.quadratic_forms.all import *
 
-from sage.games.all      import *
-
 lazy_import('sage.media.wav', 'Wave', as_='wave', deprecation=12673)
 
 from sage.logic.all      import *
@@ -124,8 +118,6 @@ from sage.stats.all      import *
 import sage.stats.all as stats
 
 lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
-
-from sage.game_theory.all import *
 
 from sage.knots.all import *
 
