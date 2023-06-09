@@ -214,32 +214,30 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
     The set of `d`-dimensional subspaces in a `n`-dimensional projective space
     forms `2`-designs (or balanced incomplete block designs)::
 
-        sage: PG = designs.ProjectiveGeometryDesign(4, 2, GF(2))
-        sage: PG
+        sage: PG = designs.ProjectiveGeometryDesign(4, 2, GF(2)); PG                    # optional - sage.rings.finite_rings
         Incidence structure with 31 points and 155 blocks
-        sage: PG.is_t_design(return_parameters=True)
+        sage: PG.is_t_design(return_parameters=True)                                    # optional - sage.rings.finite_rings
         (True, (2, 31, 7, 7))
 
-        sage: PG = designs.ProjectiveGeometryDesign(3, 1, GF(4))
-        sage: PG.is_t_design(return_parameters=True)
+        sage: PG = designs.ProjectiveGeometryDesign(3, 1, GF(4))                        # optional - sage.rings.finite_rings
+        sage: PG.is_t_design(return_parameters=True)                                    # optional - sage.rings.finite_rings
         (True, (2, 85, 5, 1))
 
     Check with ``F`` being a prime power::
 
-        sage: PG = designs.ProjectiveGeometryDesign(3, 2, 4)
-        sage: PG
+        sage: PG = designs.ProjectiveGeometryDesign(3, 2, 4); PG                        # optional - sage.rings.finite_rings
         Incidence structure with 85 points and 85 blocks
 
     Use coordinates::
 
-        sage: PG = designs.ProjectiveGeometryDesign(2, 1, GF(3))
-        sage: PG.blocks()[0]
+        sage: PG = designs.ProjectiveGeometryDesign(2, 1, GF(3))                        # optional - sage.rings.finite_rings
+        sage: PG.blocks()[0]                                                            # optional - sage.rings.finite_rings
         [(1, 0, 0), (1, 0, 1), (1, 0, 2), (0, 0, 1)]
 
     Use indexing by integers::
 
-        sage: PG = designs.ProjectiveGeometryDesign(2, 1, GF(3), point_coordinates=0)
-        sage: PG.blocks()[0]
+        sage: PG = designs.ProjectiveGeometryDesign(2, 1, GF(3), point_coordinates=0)   # optional - sage.rings.finite_rings
+        sage: PG.blocks()[0]                                                            # optional - sage.rings.finite_rings
         [0, 1, 2, 12]
 
     Check that the constructor using gap also works::
