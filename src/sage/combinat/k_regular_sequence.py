@@ -996,7 +996,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         - ``max_exponent`` -- (default: ``10``) a positive integer specifying
           the maximum exponent of `k` which is tried when guessing the sequence,
-          i.e., relations between `f(k^t n+r)` are used for `0\le t\le \operatorname{max_exponent}` and `0\le r < k^j`
+          i.e., relations between `f(k^t n+r)` are used for
+          `0\le t\le \mathtt{max\_exponent}` and `0\le r < k^j`
 
         - ``sequence`` -- (default: ``None``) a `k`-regular sequence used
           for bootstrapping the guessing by adding information of the
