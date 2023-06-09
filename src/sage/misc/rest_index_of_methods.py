@@ -103,7 +103,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
 
     The inherited methods do not show up::
 
-        sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 75       # optional - sage.combinat
+        sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 75       # optional - sage.graphs
         True
         sage: from sage.graphs.generic_graph import GenericGraph
         sage: A = gen_rest_table_index(Graph).count('\n')
