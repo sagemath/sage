@@ -1056,7 +1056,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                             1: [ 0  1]
                                [-1  2]},
              (0, 1))
-             
+
         The ``INFO`` messages mean that the right vector valued sequence is the sequence `(s(n), s(2n+1))^\top`.
 
         We guess again, but this time, we use a constant sequence
