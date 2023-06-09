@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Bosonic Ghosts Lie Conformal Algebra
 

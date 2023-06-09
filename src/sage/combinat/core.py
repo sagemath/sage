@@ -256,7 +256,7 @@ class Core(CombinatorialElement):
 
             sage: c = Core([4,2],3); c.length()
             4
-            sage: c.to_grassmannian().length()
+            sage: c.to_grassmannian().length()                                          # optional - sage.modules
             4
 
             sage: Core([9,5,3,2,1,1], 5).length()
@@ -275,17 +275,17 @@ class Core(CombinatorialElement):
         EXAMPLES::
 
             sage: c = Core([3,1,1],3)
-            sage: w = c.to_grassmannian(); w
+            sage: w = c.to_grassmannian(); w                                            # optional - sage.modules
             [-1  1  1]
             [-2  2  1]
             [-2  1  2]
             sage: c.parent()
             3-Cores of length 4
-            sage: w.parent()
+            sage: w.parent()                                                            # optional - sage.modules
             Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root space)
 
             sage: c = Core([],3)
-            sage: c.to_grassmannian()
+            sage: c.to_grassmannian()                                                   # optional - sage.modules
             [1 0 0]
             [0 1 0]
             [0 0 1]
@@ -304,23 +304,25 @@ class Core(CombinatorialElement):
         EXAMPLES::
 
             sage: c = Core([4,2],3)
-            sage: c.affine_symmetric_group_simple_action(0)
+            sage: c.affine_symmetric_group_simple_action(0)                             # optional - sage.modules
             [3, 1]
-            sage: c.affine_symmetric_group_simple_action(1)
+            sage: c.affine_symmetric_group_simple_action(1)                             # optional - sage.modules
             [5, 3, 1]
-            sage: c.affine_symmetric_group_simple_action(2)
+            sage: c.affine_symmetric_group_simple_action(2)                             # optional - sage.modules
             [4, 2]
 
         This action corresponds to the left action by the `i`-th simple reflection in the affine
         symmetric group::
 
             sage: c = Core([4,2],3)
-            sage: W = c.to_grassmannian().parent()
+            sage: W = c.to_grassmannian().parent()                                      # optional - sage.modules
             sage: i = 0
-            sage: c.affine_symmetric_group_simple_action(i).to_grassmannian() == W.simple_reflection(i)*c.to_grassmannian()
+            sage: (c.affine_symmetric_group_simple_action(i).to_grassmannian()          # optional - sage.modules
+            ....:     == W.simple_reflection(i)*c.to_grassmannian())
             True
             sage: i = 1
-            sage: c.affine_symmetric_group_simple_action(i).to_grassmannian() == W.simple_reflection(i)*c.to_grassmannian()
+            sage: (c.affine_symmetric_group_simple_action(i).to_grassmannian()          # optional - sage.modules
+            ....:     == W.simple_reflection(i)*c.to_grassmannian())
             True
         """
         mu = self.to_partition()

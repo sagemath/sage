@@ -921,11 +921,11 @@ cdef class dancing_linksWrapper:
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2], [0,2], [1], [3]]
             sage: x = dlx_solver(rows)
-            sage: s = x.to_sat_solver()
+            sage: s = x.to_sat_solver()                                                 # optional - sage.sat
 
         Using some optional SAT solvers::
 
-            sage: x.to_sat_solver('cryptominisat')          # optional - pycryptosat
+            sage: x.to_sat_solver('cryptominisat')                          # optional - pycryptosat sage.sat
             CryptoMiniSat solver: 4 variables, 7 clauses.
 
         """
@@ -980,20 +980,20 @@ cdef class dancing_linksWrapper:
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: d = dlx_solver(rows)
             sage: solutions = [[0,1], [2,3], [4,5]]
-            sage: d.one_solution_using_sat_solver() in solutions
+            sage: d.one_solution_using_sat_solver() in solutions                        # optional - sage.sat
             True
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_sat_solver('glucose') # optional - glucose
-            sage: s in solutions                                 # optional - glucose
+            sage: s = d.one_solution_using_sat_solver('glucose')                # optional - glucose sage.sat
+            sage: s in solutions                                                # optional - glucose sage.sat
             True
 
         When no solution is found::
 
             sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
             sage: d = dlx_solver(rows)
-            sage: d.one_solution_using_sat_solver() is None
+            sage: d.one_solution_using_sat_solver() is None                             # optional - sage.sat
             True
 
         """
@@ -1028,16 +1028,16 @@ cdef class dancing_linksWrapper:
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2], [0,2], [1], [3]]
             sage: d = dlx_solver(rows)
-            sage: p,x = d.to_milp()
-            sage: p
+            sage: p,x = d.to_milp()                                                     # optional - sage.numerical.mip
+            sage: p                                                                     # optional - sage.numerical.mip
             Boolean Program (no objective, 4 variables, ... constraints)
-            sage: x
+            sage: x                                                                     # optional - sage.numerical.mip
             MIPVariable with 4 binary components
 
         In the reduction, the boolean variable x_i is True if and only if
         the i-th row is in the solution::
 
-            sage: p.show()
+            sage: p.show()                                                              # optional - sage.numerical.mip
             Maximization:
             <BLANKLINE>
             <BLANKLINE>
@@ -1054,7 +1054,7 @@ cdef class dancing_linksWrapper:
 
         Using some optional MILP solvers::
 
-            sage: d.to_milp('gurobi')   # optional - gurobi sage_numerical_backends_gurobi
+            sage: d.to_milp('gurobi')             # optional - gurobi sage_numerical_backends_gurobi sage.numerical.mip
             (Boolean Program (no objective, 4 variables, 4 constraints),
              MIPVariable with 4 binary components)
 
@@ -1108,20 +1108,20 @@ cdef class dancing_linksWrapper:
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: d = dlx_solver(rows)
             sage: solutions = [[0,1], [2,3], [4,5]]
-            sage: d.one_solution_using_milp_solver() in solutions
+            sage: d.one_solution_using_milp_solver() in solutions                       # optional - sage.numerical.mip
             True
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_milp_solver('gurobi') # optional - gurobi sage_numerical_backends_gurobi
-            sage: s in solutions                                 # optional - gurobi sage_numerical_backends_gurobi
+            sage: s = d.one_solution_using_milp_solver('gurobi') # optional - gurobi sage_numerical_backends_gurobi sage.numerical.mip
+            sage: s in solutions                                 # optional - gurobi sage_numerical_backends_gurobi sage.numerical.mip
             True
 
         When no solution is found::
 
             sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
             sage: d = dlx_solver(rows)
-            sage: d.one_solution_using_milp_solver() is None
+            sage: d.one_solution_using_milp_solver() is None                            # optional - sage.numerical.mip
             True
 
         """

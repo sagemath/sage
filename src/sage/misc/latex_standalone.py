@@ -215,9 +215,9 @@ Adding a border in the options avoids cropping the vertices of a graph::
 The current latex representation of a transducer is a tikzpicture using
 the tikz library automata. The string can be used as input::
 
-    sage: s = latex(transducers.GrayCode())                # optional - sage.combinat
-    sage: t = TikzPicture(s, usetikzlibrary=['automata'])  # optional - sage.combinat
-    sage: _ = t.pdf(view=False)           # long time (2s) # optional - latex sage.combinat
+    sage: s = latex(transducers.GrayCode())                # optional - sage.graphs
+    sage: t = TikzPicture(s, usetikzlibrary=['automata'])  # optional - sage.graphs
+    sage: _ = t.pdf(view=False)           # long time (2s) # optional - latex sage.graphs
 
 AUTHORS:
 
@@ -1798,8 +1798,8 @@ class TikzPicture(Standalone):
         EXAMPLES::
 
             sage: from sage.misc.latex_standalone import TikzPicture
-            sage: P = posets.PentagonPoset()       # optional sage.combinat
-            sage: tikz = TikzPicture.from_poset(P) # optional sage.combinat dot2tex graphviz
+            sage: P = posets.PentagonPoset()       # optional - sage.graphs
+            sage: tikz = TikzPicture.from_poset(P) # optional - sage.combinat sage.graphs dot2tex graphviz
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/20343 for details.

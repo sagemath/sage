@@ -138,7 +138,7 @@ class Function_gamma(GinacFunction):
             Infinity
             sage: (-1.).gamma()
             NaN
-            sage: CC(-1).gamma()
+            sage: CC(-1).gamma()                                                        # optional - sage.libs.pari
             Infinity
             sage: RDF(-1).gamma()
             NaN

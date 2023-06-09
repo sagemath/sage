@@ -6755,7 +6755,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             8
             sage: SemistandardTableaux([2,2,1]).cardinality()
             75
-            sage: SymmetricFunctions(QQ).schur()([2,2,1]).expand(5)(1,1,1,1,1) # cross check
+            sage: SymmetricFunctions(QQ).schur()([2,2,1]).expand(5)(1,1,1,1,1)  # cross check   # optional - sage.modules
             75
             sage: SemistandardTableaux([5]).cardinality()
             126

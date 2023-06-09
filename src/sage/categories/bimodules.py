@@ -103,7 +103,7 @@ class Bimodules(CategoryWithParameters):
 
         EXAMPLES::
 
-            sage: Bimodules.an_instance()
+            sage: Bimodules.an_instance()                                               # optional - sage.rings.real_mpfr
             Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right
         """
         from sage.rings.rational_field import QQ

@@ -260,14 +260,14 @@ class ColoredPermutation(MultiplicativeGroupElement):
             sage: s1,s2,t = C.gens()
             sage: x = s1*s2*t*s2; x.one_line_form()
             [(1, 2), (0, 1), (0, 3)]
-            sage: M = x.to_matrix(); M
+            sage: M = x.to_matrix(); M                                                  # optional - sage.rings.number_field
             [    0     1     0]
             [zeta4     0     0]
             [    0     0     1]
 
         The matrix multiplication is in the *opposite* order::
 
-            sage: M == s2.to_matrix()*t.to_matrix()*s2.to_matrix()*s1.to_matrix()
+            sage: M == s2.to_matrix()*t.to_matrix()*s2.to_matrix()*s1.to_matrix()       # optional - sage.rings.number_field
             True
         """
         Cp = CyclotomicField(self.parent()._m)
@@ -542,14 +542,14 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: C = ColoredPermutations(3, 4)
-            sage: C.coxeter_matrix()
+            sage: C.coxeter_matrix()                                                    # optional - sage.modules
             [1 3 2 2]
             [3 1 3 2]
             [2 3 1 4]
             [2 2 4 1]
 
             sage: C = ColoredPermutations(1, 4)
-            sage: C.coxeter_matrix()
+            sage: C.coxeter_matrix()                                                    # optional - sage.modules
             [1 3 2]
             [3 1 3]
             [2 3 1]
@@ -557,7 +557,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         TESTS::
 
             sage: S = SignedPermutations(4)
-            sage: S.coxeter_matrix()
+            sage: S.coxeter_matrix()                                                    # optional - sage.modules
             [1 3 2 2]
             [3 1 3 2]
             [2 3 1 4]
@@ -660,7 +660,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: C = ColoredPermutations(4, 3)
-            sage: C.matrix_group()
+            sage: C.matrix_group()                                                      # optional - sage.modules
             Matrix group over Cyclotomic Field of order 4 and degree 2 with 3 generators (
             [0 1 0]  [1 0 0]  [    1     0     0]
             [1 0 0]  [0 0 1]  [    0     1     0]
@@ -677,7 +677,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: C = ColoredPermutations(4, 3)
-            sage: C.as_permutation_group()
+            sage: C.as_permutation_group()                                              # optional - sage.groups
             Complex reflection group G(4, 1, 3) as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import ComplexReflectionGroup
@@ -880,8 +880,8 @@ class ColoredPermutations(Parent, UniqueRepresentation):
             sage: C = ColoredPermutations(3, 2)
             sage: f = prod(q - ds - 1 for ds in C.codegrees())
             sage: d = lambda x: sum(1 for e in x.to_matrix().eigenvalues() if e == 1)
-            sage: g = sum(det(x.to_matrix()) * q**d(x) for x in C)
-            sage: f == g
+            sage: g = sum(det(x.to_matrix()) * q**d(x) for x in C)                      # optional - sage.modules sage.rings.number_field
+            sage: f == g                                                                # optional - sage.modules sage.rings.number_field
             True
         """
         # Special case for the usual symmetric group
@@ -1265,8 +1265,9 @@ class SignedPermutations(ColoredPermutations):
 
     This is a finite Coxeter group of type `B_n`::
 
-        sage: S.canonical_representation()
-        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095? with Coxeter matrix:
+        sage: S.canonical_representation()                                              # optional - sage.modules
+        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2
+         with a = 1.414213562373095? with Coxeter matrix:
         [1 3 2 2]
         [3 1 3 2]
         [2 3 1 4]

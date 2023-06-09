@@ -74,11 +74,11 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.SubsetSpecies()
             sage: a = F.structures(["a", "b", "c"])[5]; a
             {'a', 'c'}
-            sage: p = PermutationGroupElement((1,2))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,2))                                    # optional - sage.groups
+            sage: a.transport(p)                                                        # optional - sage.groups
             {'b', 'c'}
-            sage: p = PermutationGroupElement((1,3))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,3))                                    # optional - sage.groups
+            sage: a.transport(p)                                                        # optional - sage.groups
             {'a', 'c'}
         """
         l = sorted([perm(i) for i in self._list])
@@ -94,12 +94,12 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.SubsetSpecies()
             sage: a = F.structures([1,2,3,4])[6]; a
             {1, 3}
-            sage: a.automorphism_group()
+            sage: a.automorphism_group()                                                # optional - sage.groups
             Permutation Group with generators [(2,4), (1,3)]
 
         ::
 
-            sage: [a.transport(g) for g in a.automorphism_group()]
+            sage: [a.transport(g) for g in a.automorphism_group()]                      # optional - sage.groups
             [{1, 3}, {1, 3}, {1, 3}, {1, 3}]
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -224,7 +224,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.SubsetSpecies()
-            sage: S.cycle_index_series()[0:5]
+            sage: S.cycle_index_series()[0:5]                                           # optional - sage.modules
             [p[],
              2*p[1],
              2*p[1, 1] + p[2],

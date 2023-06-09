@@ -338,7 +338,7 @@ def sieve(X, bound):
         sage: from sage.schemes.product_projective.rational_point import sieve
         sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
         sage: X = PP.subscheme([x^2 + y^2 - x*z, u*u - v*u])
-        sage: sieve(X, 2)
+        sage: sieve(X, 2)                                                               # optional - sage.libs.singular
         [(0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 1), (1/2 : -1/2 : 1 , 0 : 1),
          (1/2 : -1/2 : 1 , 1 : 1), (1/2 : 1/2 : 1 , 0 : 1), (1/2 : 1/2 : 1 , 1 : 1),
          (1 : 0 : 1 , 0 : 1), (1 : 0 : 1 , 1 : 1)]

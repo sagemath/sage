@@ -865,7 +865,7 @@ def q_stirling_number1(n, k, q=None):
         sage: q_stirling_number1(4,2)
         q^3 + 3*q^2 + 4*q + 3
 
-        sage: all(stirling_number1(6,k) == q_stirling_number1(6,k)(1)
+        sage: all(stirling_number1(6,k) == q_stirling_number1(6,k)(1)                   # optional - sage.libs.gap
         ....:     for k in range(1,7))
         True
 

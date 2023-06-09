@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.libs.gap sage.modules
 """
 Quantum Groups Using GAP's QuaGroup Package
 
@@ -20,7 +21,12 @@ https://www.gap-system.org/Packages/quagroup.html.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import re
+
+from copy import copy
+
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -32,7 +38,6 @@ from sage.sets.family import Family
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.libs.gap.libgap import libgap
 from sage.features.gap import GapPackage
-from sage.graphs.digraph import DiGraph
 from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.cartesian_product import cartesian_product
@@ -43,8 +48,7 @@ from sage.categories.modules import Modules
 from sage.categories.morphism import Morphism
 from sage.categories.rings import Rings
 
-from copy import copy
-import re
+lazy_import('sage.graphs.digraph', 'DiGraph')
 
 
 class QuaGroupModuleElement(Element):

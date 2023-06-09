@@ -555,9 +555,9 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: TR = TropicalSemiring(RR)
-            sage: T60 = TropicalSemiring(RealField(60))
-            sage: TR.has_coerce_map_from(T60)
+            sage: TR = TropicalSemiring(RR)                                             # optional - sage.rings.real_mpfr
+            sage: T60 = TropicalSemiring(RealField(60))                                 # optional - sage.rings.real_mpfr
+            sage: TR.has_coerce_map_from(T60)                                           # optional - sage.rings.real_mpfr
             True
             sage: TQ = TropicalSemiring(QQ)
             sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
@@ -570,15 +570,15 @@ class TropicalSemiring(Parent, UniqueRepresentation):
             True
             sage: TR.has_coerce_map_from(float)
             False
-            sage: TR.has_coerce_map_from(RR)
+            sage: TR.has_coerce_map_from(RR)                                            # optional - sage.rings.real_mpfr
             False
             sage: TR.has_coerce_map_from(QQ)
             False
-            sage: TR.coerce_map_from(T60)(T60(2))
+            sage: TR.coerce_map_from(T60)(T60(2))                                       # optional - sage.rings.real_mpfr
             2.00000000000000
-            sage: TR.coerce(T60(3.4))
+            sage: TR.coerce(T60(3.4))                                                   # optional - sage.rings.real_mpfr
             3.40000000000000
-            sage: TR.coerce(T60.infinity())
+            sage: TR.coerce(T60.infinity())                                             # optional - sage.rings.real_mpfr
             +infinity
             sage: TQ.coerce(TR(3.4))
             Traceback (most recent call last):

@@ -2095,7 +2095,7 @@ class WordMorphism(SageObject):
             True
 
             sage: v = s.fixed_point(2)
-            sage: A2 = v[:200].factor_set(5)
+            sage: A2 = v[:200].factor_set(5)                                            # optional - sage.modules
             sage: B2 = s.language(5, [2])                                               # optional - sage.modules
             sage: set(A2) == B2                                                         # optional - sage.modules
             True

@@ -669,8 +669,8 @@ def LogarithmCycleIndexSeries(R=QQ):
     (that is, that composition with `E^{+}` in both directions yields the
     multiplicative identity `X`)::
 
-        sage: Eplus = sage.combinat.species.set_species.SetSpecies(min=1).cycle_index_series()
-        sage: LogarithmCycleIndexSeries()(Eplus)[0:4]                                   # optional - sage.modules
+        sage: Eplus = sage.combinat.species.set_species.SetSpecies(min=1).cycle_index_series()  # optional - sage.modules
+        sage: LogarithmCycleIndexSeries()(Eplus)[0:4]                                           # optional - sage.modules
         [0, p[1], 0, 0]
     """
     CIS = CycleIndexSeriesRing(R)

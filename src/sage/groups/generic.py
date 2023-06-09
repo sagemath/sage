@@ -253,9 +253,9 @@ class multiples:
         sage: list(multiples(1, 10, 100))
         [100, 101, 102, 103, 104, 105, 106, 107, 108, 109]
 
-        sage: E = EllipticCurve('389a1')
-        sage: P = E(-1,1)
-        sage: for Q in multiples(P, 5): print((Q, Q.height()/P.height()))
+        sage: E = EllipticCurve('389a1')                                                # optional - sage.schemes
+        sage: P = E(-1,1)                                                               # optional - sage.schemes
+        sage: for Q in multiples(P, 5): print((Q, Q.height()/P.height()))               # optional - sage.schemes
         ((0 : 1 : 0), 0.000000000000000)
         ((-1 : 1 : 1), 1.00000000000000)
         ((10/9 : -35/27 : 1), 4.00000000000000)
@@ -278,7 +278,8 @@ class multiples:
         3  times x = 3*x
         4  times x = 4*x
 
-        sage: for i,n in multiples(3, 5, indexed=True, operation='*'):  print("3 to the power %s = %s" % (i,n))
+        sage: for i,n in multiples(3, 5, indexed=True, operation='*'):
+        ....:     print("3 to the power %s = %s" % (i,n))
         3 to the power 0 = 1
         3 to the power 1 = 3
         3 to the power 2 = 9

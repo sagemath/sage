@@ -171,7 +171,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: F = P + P
-            sage: F.cycle_index_series()[:5]
+            sage: F.cycle_index_series()[:5]                                            # optional - sage.modules
             [2*p[],
              2*p[1],
              2*p[1, 1] + 2*p[2],
@@ -214,7 +214,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: X = species.SingletonSpecies()
             sage: S = X + X
-            sage: S.algebraic_equation_system()
+            sage: S.algebraic_equation_system()                                         # optional - sage.graphs
             [node1 + (-2*z)]
         """
         return sum(var_mapping[operand] for operand in self._state_info)

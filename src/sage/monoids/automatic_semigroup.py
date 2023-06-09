@@ -285,8 +285,8 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: AutomaticSemigroup((0,), one=0, mul=operator.add).category()
             Join of Category of monoids and Category of subobjects of sets
 
-            sage: S5 = SymmetricGroup(5)
-            sage: AutomaticSemigroup([S5((1,2))]).category()
+            sage: S5 = SymmetricGroup(5)                                                # optional - sage.groups
+            sage: AutomaticSemigroup([S5((1,2))]).category()                            # optional - sage.groups
             Join of Category of finite groups and
             Category of subquotients of monoids and
             Category of finite finitely generated semigroups and
@@ -406,8 +406,9 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: AutomaticSemigroup(Family({1: R(3), 2: R(5)}), mul=operator.add, one=R.zero())
             A semigroup with 2 generators
 
-            sage: S5 = SymmetricGroup(5); S5.rename("S5")
-            sage: AutomaticSemigroup(Family({1: S5((1,2))}), category=Groups().Finite().Subobjects())
+            sage: S5 = SymmetricGroup(5); S5.rename("S5")                               # optional - sage.groups
+            sage: AutomaticSemigroup(Family({1: S5((1,2))}),                            # optional - sage.groups
+            ....:                    category=Groups().Finite().Subobjects())
             A subgroup of (S5) with 1 generators
         """
         categories = [Groups(), Monoids(), Semigroups()]
@@ -511,7 +512,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: len(M._retract.cache.keys())
+            sage: len(M._retract.cache.keys())                                          # optional - sage.groups
             24
         """
         element = self._retract(ambient_element)

@@ -848,7 +848,7 @@ cdef class Element(SageObject):
 
         EXAMPLES::
 
-            sage: (2/3).numerical_approx()
+            sage: (2/3).numerical_approx()                                              # optional - sage.rings.real_mpfr
             0.666666666666667
             sage: pi.n(digits=10)                                                       # optional - sage.symbolic
             3.141592654
@@ -873,7 +873,7 @@ cdef class Element(SageObject):
 
         EXAMPLES::
 
-            sage: (2/3).n()
+            sage: (2/3).n()                                                             # optional - sage.rings.real_mpfr
             0.666666666666667
         """
         return self.numerical_approx(prec, digits, algorithm)

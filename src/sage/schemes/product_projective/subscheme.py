@@ -195,33 +195,33 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: Q = ((-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x
             ....:      + ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2))
             sage: W = X.subscheme([L, Q])
-            sage: W.dimension()
+            sage: W.dimension()                                                         # optional - sage.libs.singular
             2
 
         ::
 
             sage: PP.<x,y,z,u,v,s,t> = ProductProjectiveSpaces([2, 1, 1], QQ)
             sage: X = PP.subscheme([x^3, x^5 + y^5, z^6, x*u - v*y, s^2 - t^2])
-            sage: X.dimension()
+            sage: X.dimension()                                                         # optional - sage.libs.singular
             -1
 
         ::
 
             sage: PP = ProductProjectiveSpaces([2, 1, 3], CC, 't')
-            sage: PP.subscheme([]).dimension()
+            sage: PP.subscheme([]).dimension()                                          # optional - sage.libs.singular
             6
 
         ::
 
             sage: PP = ProductProjectiveSpaces([1, 3, 1], ZZ, 't')
-            sage: PP.subscheme([]).dimension()
+            sage: PP.subscheme([]).dimension()                                          # optional - sage.libs.singular
             5
 
         ::
 
             sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1,1,1], CC)
             sage: X = PP.subscheme([x^2 - y^2, u - v, s^2 - t^2])
-            sage: X.dimension()
+            sage: X.dimension()                                                         # optional - sage.libs.singular
             0
         """
         try:
@@ -356,10 +356,10 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: PP.<x,y,u,v> = ProductProjectiveSpaces(QQ, [1, 1])
             sage: G = PP.subscheme([(x^2 + 1/4*y^2)*v - y^2*u])
             sage: D = PP.subscheme([x*v - y*u])
-            sage: sorted(G.intersection(D).rational_points())
+            sage: sorted(G.intersection(D).rational_points())                           # optional - sage.libs.singular
             [(1/2 : 1 , 1/2 : 1), (1 : 0 , 1 : 0)]
             sage: Q = PP([1/2,1,1/2,1])
-            sage: G.intersection_multiplicity(D, Q)
+            sage: G.intersection_multiplicity(D, Q)                                     # optional - sage.libs.singular
             2
 
         ::
@@ -369,7 +369,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: X = PP.subscheme([z^5 + 3*x*y^4 + 8*y^5, u^2 - v^2])                  # optional - sage.rings.finite_rings
             sage: Y = PP.subscheme([x^6 + z^6, w*z - v*y])                              # optional - sage.rings.finite_rings
             sage: Q = PP([a,a+1,1,a,a,1])                                               # optional - sage.rings.finite_rings
-            sage: X.intersection_multiplicity(Y, Q)                                     # optional - sage.rings.finite_rings
+            sage: X.intersection_multiplicity(Y, Q)                                     # optional - sage.libs.singular sage.rings.finite_rings
             16
 
         ::
@@ -378,7 +378,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: X = PP.subscheme([x^2*u^3 + y*z*u*v^2, x - y])
             sage: Y = PP.subscheme([u^3 - w^3, x*v - y*w, z^3*w^2 - y^3*u*v])
             sage: Q = PP([0,0,1,0,1,0])
-            sage: X.intersection_multiplicity(Y, Q)
+            sage: X.intersection_multiplicity(Y, Q)                                     # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: the intersection of this subscheme and (=Closed subscheme of Affine Space of dimension 4

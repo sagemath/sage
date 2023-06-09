@@ -2109,12 +2109,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: import gc
             sage: _ = gc.collect()
             sage: K = GF(1<<55,'t')                                                     # optional - sage.rings.finite_rings
-            sage: for i in range(50):                                                   # optional - sage.rings.finite_rings
+            sage: for i in range(50):                                                   # optional - sage.rings.finite_rings sage.schemes
             ....:   a = K.random_element()
             ....:   E = EllipticCurve(j=a)
             ....:   b = K.has_coerce_map_from(E)
-            sage: _ = gc.collect()                                                      # optional - sage.rings.finite_rings
-            sage: len([x for x in gc.get_objects() if isinstance(x, type(E))])          # optional - sage.rings.finite_rings
+            sage: _ = gc.collect()
+            sage: len([x for x in gc.get_objects() if isinstance(x, type(E))])          # optional - sage.rings.finite_rings sage.schemes
             1
 
         TESTS:
@@ -2122,12 +2122,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         The following was fixed in :trac:`12969`::
 
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)                       # optional - sage.combinat
-            sage: H = Sym.macdonald().H()                                               # optional - sage.combinat
-            sage: P = Sym.macdonald().P()                                               # optional - sage.combinat
-            sage: m = Sym.monomial()                                                    # optional - sage.combinat
-            sage: Ht = Sym.macdonald().Ht()                                             # optional - sage.combinat
-            sage: phi = m.coerce_map_from(P)                                            # optional - sage.combinat
+            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)                       # optional - sage.combinat sage.modules
+            sage: H = Sym.macdonald().H()                                               # optional - sage.combinat sage.modules
+            sage: P = Sym.macdonald().P()                                               # optional - sage.combinat sage.modules
+            sage: m = Sym.monomial()                                                    # optional - sage.combinat sage.modules
+            sage: Ht = Sym.macdonald().Ht()                                             # optional - sage.combinat sage.modules
+            sage: phi = m.coerce_map_from(P)                                            # optional - sage.combinat sage.modules
         """
         return copy(self._internal_coerce_map_from(S))
 

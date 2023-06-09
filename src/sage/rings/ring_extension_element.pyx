@@ -466,9 +466,9 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
             sage: A.<x> = PolynomialRing(QQ)
             sage: E = A.over(QQ)
-            sage: E(x^2+1).is_prime()
+            sage: E(x^2 + 1).is_prime()                                                 # optional - sage.libs.pari
             True
-            sage: E(x^2-1).is_prime()
+            sage: E(x^2 - 1).is_prime()                                                 # optional - sage.libs.pari
             False
         """
         return self._backend.is_prime()

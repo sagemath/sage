@@ -2827,16 +2827,16 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 it is convenient to define shorthands for the various
                 realizations, but cumbersome to do it by hand::
 
-                    sage: S = SymmetricFunctions(ZZ); S                                 # optional - sage.combinat
+                    sage: S = SymmetricFunctions(ZZ); S                                 # optional - sage.combinat sage.modules
                     Symmetric Functions over Integer Ring
-                    sage: s = S.s(); s                                                  # optional - sage.combinat
+                    sage: s = S.s(); s                                                  # optional - sage.combinat sage.modules
                     Symmetric Functions over Integer Ring in the Schur basis
-                    sage: e = S.e(); e                                                  # optional - sage.combinat
+                    sage: e = S.e(); e                                                  # optional - sage.combinat sage.modules
                     Symmetric Functions over Integer Ring in the elementary basis
 
                 This method automates the process::
 
-                    sage: S.inject_shorthands()                                         # optional - sage.combinat
+                    sage: S.inject_shorthands()                                         # optional - sage.combinat sage.modules
                     Defining e as shorthand for
                      Symmetric Functions over Integer Ring in the elementary basis
                     Defining f as shorthand for
@@ -2849,22 +2849,22 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                      Symmetric Functions over Integer Ring in the powersum basis
                     Defining s as shorthand for
                      Symmetric Functions over Integer Ring in the Schur basis
-                    sage: s[1] + e[2] * p[1,1] + 2*h[3] + m[2,1]                        # optional - sage.combinat
+                    sage: s[1] + e[2] * p[1,1] + 2*h[3] + m[2,1]                        # optional - sage.combinat sage.modules
                     s[1] - 2*s[1, 1, 1] + s[1, 1, 1, 1] + s[2, 1]
                     + 2*s[2, 1, 1] + s[2, 2] + 2*s[3] + s[3, 1]
 
-                    sage: e                                                             # optional - sage.combinat
+                    sage: e                                                             # optional - sage.combinat sage.modules
                     Symmetric Functions over Integer Ring in the elementary basis
-                    sage: p                                                             # optional - sage.combinat
+                    sage: p                                                             # optional - sage.combinat sage.modules
                     Symmetric Functions over Integer Ring in the powersum basis
-                    sage: s                                                             # optional - sage.combinat
+                    sage: s                                                             # optional - sage.combinat sage.modules
                     Symmetric Functions over Integer Ring in the Schur basis
 
                 Sometimes, like for symmetric functions, one can
                 request for all shorthands to be defined, including
                 less common ones::
 
-                    sage: S.inject_shorthands("all")                                    # optional - sage.combinat
+                    sage: S.inject_shorthands("all")                                    # optional - sage.combinat sage.modules
                     Defining e as shorthand for
                      Symmetric Functions over Integer Ring in the elementary basis
                     Defining f as shorthand for
@@ -2892,37 +2892,37 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 The messages can be silenced by setting ``verbose=False``::
 
-                    sage: Q = QuasiSymmetricFunctions(ZZ)                               # optional - sage.combinat
-                    sage: Q.inject_shorthands(verbose=False)                            # optional - sage.combinat
+                    sage: Q = QuasiSymmetricFunctions(ZZ)                               # optional - sage.combinat sage.modules
+                    sage: Q.inject_shorthands(verbose=False)                            # optional - sage.combinat sage.modules
 
-                    sage: F[1,2,1] + 5*M[1,3] + F[2]^2                                  # optional - sage.combinat
+                    sage: F[1,2,1] + 5*M[1,3] + F[2]^2                                  # optional - sage.combinat sage.modules
                     5*F[1, 1, 1, 1] - 5*F[1, 1, 2] - 3*F[1, 2, 1] + 6*F[1, 3] +
                     2*F[2, 2] + F[3, 1] + F[4]
 
-                    sage: F                                                             # optional - sage.combinat
+                    sage: F                                                             # optional - sage.combinat sage.modules
                     Quasisymmetric functions over the Integer Ring in the
                      Fundamental basis
-                    sage: M                                                             # optional - sage.combinat
+                    sage: M                                                             # optional - sage.combinat sage.modules
                     Quasisymmetric functions over the Integer Ring in the
                      Monomial basis
 
                 One can also just import a subset of the shorthands::
 
-                    sage: SQ = SymmetricFunctions(QQ)                                   # optional - sage.combinat
-                    sage: SQ.inject_shorthands(['p', 's'], verbose=False)               # optional - sage.combinat
-                    sage: p                                                             # optional - sage.combinat
+                    sage: SQ = SymmetricFunctions(QQ)                                   # optional - sage.combinat sage.modules
+                    sage: SQ.inject_shorthands(['p', 's'], verbose=False)               # optional - sage.combinat sage.modules
+                    sage: p                                                             # optional - sage.combinat sage.modules
                     Symmetric Functions over Rational Field in the powersum basis
-                    sage: s                                                             # optional - sage.combinat
+                    sage: s                                                             # optional - sage.combinat sage.modules
                     Symmetric Functions over Rational Field in the Schur basis
 
                 Note that ``e`` is left unchanged::
 
-                    sage: e                                                             # optional - sage.combinat
+                    sage: e                                                             # optional - sage.combinat sage.modules
                     Symmetric Functions over Integer Ring in the elementary basis
 
                 TESTS::
 
-                    sage: e == S.e(), h == S.h(), m == S.m(), p == SQ.p(), s == SQ.s()  # optional - sage.combinat
+                    sage: e == S.e(), h == S.h(), m == S.m(), p == SQ.p(), s == SQ.s()  # optional - sage.combinat sage.modules
                     (True, True, True, True, True)
                 """
                 from sage.misc.misc import inject_variable

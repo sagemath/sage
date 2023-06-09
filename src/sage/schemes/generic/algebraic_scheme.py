@@ -55,14 +55,14 @@ Here is a more complicated example in a projective space::
     sage: P3 = ProjectiveSpace(3, QQ, 'x')
     sage: P3.inject_variables()
     Defining x0, x1, x2, x3
-    sage: Q = matrix([[x0, x1, x2], [x1, x2, x3]]).minors(2); Q
+    sage: Q = matrix([[x0, x1, x2], [x1, x2, x3]]).minors(2); Q                         # optional - sage.modules
     [-x1^2 + x0*x2, -x1*x2 + x0*x3, -x2^2 + x1*x3]
-    sage: twisted_cubic = P3.subscheme(Q); twisted_cubic                                # optional - sage.libs.singular
+    sage: twisted_cubic = P3.subscheme(Q); twisted_cubic                                # optional - sage.libs.singular sage.modules
     Closed subscheme of Projective Space of dimension 3 over Rational Field defined by:
       -x1^2 + x0*x2,
       -x1*x2 + x0*x3,
       -x2^2 + x1*x3
-    sage: twisted_cubic.dimension()                                                     # optional - sage.libs.singular
+    sage: twisted_cubic.dimension()                                                     # optional - sage.libs.singular sage.modules
     1
 
 Note that there are 3 equations in the 3-dimensional ambient space,

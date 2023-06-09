@@ -1288,7 +1288,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
               To:   Projective Space of dimension 5 over Rational Field
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^2 : x*y : x*z : y^2 : y*z : z^2)
-            sage: vd(P.subscheme([]))
+            sage: vd(P.subscheme([]))                                                   # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 5 over Rational Field
              defined by:
               -u^2 + t*v,

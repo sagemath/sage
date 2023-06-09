@@ -111,7 +111,7 @@ class SixVertexConfiguration(ClonableArray):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: [x.to_signed_matrix() for x in M]
+            sage: [x.to_signed_matrix() for x in M]                                     # optional - sage.modules
             [
             [1 0 0]  [1 0 0]  [ 0  1  0]  [0 1 0]  [0 1 0]  [0 0 1]  [0 0 1]
             [0 1 0]  [0 0 1]  [ 1 -1  1]  [1 0 0]  [0 0 1]  [1 0 0]  [0 1 0]
@@ -392,7 +392,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         sage: M = SixVertexModel(4, boundary_conditions='ice')
         sage: len(M)
         42
-        sage: all(len(SixVertexModel(n, boundary_conditions='ice'))
+        sage: all(len(SixVertexModel(n, boundary_conditions='ice'))                     # optional - sage.modules
         ....:     == AlternatingSignMatrices(n).cardinality() for n in range(1, 7))
         True
 
@@ -693,8 +693,8 @@ class SquareIceModel(SixVertexModel):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: asm = AlternatingSignMatrix([[0,1,0],[1,-1,1],[0,1,0]])
-            sage: M.from_alternating_sign_matrix(asm)
+            sage: asm = AlternatingSignMatrix([[0,1,0],[1,-1,1],[0,1,0]])               # optional - sage.modules
+            sage: M.from_alternating_sign_matrix(asm)                                   # optional - sage.modules
                 ^    ^    ^
                 |    |    |
             --> # -> # <- # <--
@@ -711,10 +711,10 @@ class SquareIceModel(SixVertexModel):
 
             sage: M = SixVertexModel(5, boundary_conditions='ice')
             sage: ASM = AlternatingSignMatrices(5)
-            sage: all(M.from_alternating_sign_matrix(x.to_alternating_sign_matrix()) == x
+            sage: all(M.from_alternating_sign_matrix(x.to_alternating_sign_matrix()) == x   # optional - sage.modules
             ....:     for x in M)
             True
-            sage: all(M.from_alternating_sign_matrix(x).to_alternating_sign_matrix() == x
+            sage: all(M.from_alternating_sign_matrix(x).to_alternating_sign_matrix() == x   # optional - sage.modules
             ....:     for x in ASM)
             True
         """
@@ -766,12 +766,12 @@ class SquareIceModel(SixVertexModel):
             EXAMPLES::
 
                 sage: M = SixVertexModel(4, boundary_conditions='ice')
-                sage: M[6].to_alternating_sign_matrix()
+                sage: M[6].to_alternating_sign_matrix()                                 # optional - sage.modules
                 [1 0 0 0]
                 [0 0 0 1]
                 [0 0 1 0]
                 [0 1 0 0]
-                sage: M[7].to_alternating_sign_matrix()
+                sage: M[7].to_alternating_sign_matrix()                                 # optional - sage.modules
                 [ 0  1  0  0]
                 [ 1 -1  1  0]
                 [ 0  1 -1  1]

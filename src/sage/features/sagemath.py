@@ -256,6 +256,28 @@ class sage__modules(JoinFeature):
                              spkg='sagemath_modules')
 
 
+class sage__numerical__mip(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.numerical.mip`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__numerical__mip
+        sage: sage__numerical__mip().is_present()                                       # optional - sage.numerical.mip
+        FeatureTestResult('sage.numerical.mip', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__numerical__mip
+            sage: isinstance(sage__numerical__mip(), sage__numerical__mip)
+            True
+        """
+        PythonModule.__init__(self, 'sage.numerical.mip',
+                              spkg='sagemath_polyhedra')
+
+
 class sage__plot(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.plot`.
@@ -435,6 +457,29 @@ class sage__rings__real_mpfr(PythonModule):
                               spkg='sagemath_modules')
 
 
+class sage__sat(JoinFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.sat`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__sat
+        sage: sage__sat().is_present()  # optional - sage.sat
+        FeatureTestResult('sage.sat', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__sat
+            sage: isinstance(sage__sat(), sage__sat)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.sat',
+                             [PythonModule('sage.sat.expression')],
+                             spkg='sagemath_combinat')
+
+
 class sage__schemes(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.schemes`.
@@ -513,6 +558,7 @@ def all_features():
             sage__libs__pari(),
             sage__modular(),
             sage__modules(),
+            sage__numerical__mip(),
             sage__plot(),
             sage__rings__finite_rings(),
             sage__rings__function_field(),
@@ -521,5 +567,6 @@ def all_features():
             sage__rings__polynomial__pbori(),
             sage__rings__real_double(),
             sage__rings__real_mpfr(),
+            sage__sat(),
             sage__schemes(),
             sage__symbolic()]

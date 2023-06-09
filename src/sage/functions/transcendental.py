@@ -428,11 +428,11 @@ def zeta_symmetric(s):
         sage: zeta_symmetric(RR(0.7))
         0.49758041465112690357779107525638385212657443284080589766062
         sage: C.<i> = ComplexField()
-        sage: zeta_symmetric(0.5 + i*14.0)
+        sage: zeta_symmetric(0.5 + i*14.0)                                              # optional - sage.libs.pari
         0.000201294444235258 + 1.49077798716757e-19*I
-        sage: zeta_symmetric(0.5 + i*14.1)
+        sage: zeta_symmetric(0.5 + i*14.1)                                              # optional - sage.libs.pari
         0.0000489893483255687 + 4.40457132572236e-20*I
-        sage: zeta_symmetric(0.5 + i*14.2)
+        sage: zeta_symmetric(0.5 + i*14.2)                                              # optional - sage.libs.pari
         -0.0000868931282620101 + 7.11507675693612e-20*I
 
     REFERENCE:

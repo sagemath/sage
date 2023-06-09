@@ -40,8 +40,8 @@ With the object ``DegreeSequences(n)``, one can:
     For instance::
 
         sage: ds = [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
-        sage: g = graphs.DegreeSequence(ds)
-        sage: g.degree_sequence()
+        sage: g = graphs.DegreeSequence(ds)                                             # optional - networkx sage.graphs
+        sage: g.degree_sequence()                                                       # optional - networkx sage.graphs
         [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
 
 Definitions

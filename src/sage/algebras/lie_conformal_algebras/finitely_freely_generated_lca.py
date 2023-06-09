@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 """
 Finitely and Freely Generated Lie Conformal Algebras.
 
