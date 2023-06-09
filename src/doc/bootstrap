@@ -194,10 +194,10 @@ Details of external packages
 
 Packages are in alphabetical order.
 
+.. default-role:: code
+
 .. toctree::
    :maxdepth: 1
-
-.. default-role:: code
 
 EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst | sort); do
@@ -210,6 +210,7 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst | sort); do
             echo >> "$OUTPUT_INDEX" "   $PKG_BASE"
 done
 cat >> "$OUTPUT_INDEX" <<EOF
+
 .. default-role::
 
 EOF
