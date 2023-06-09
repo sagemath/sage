@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.real_mpfr
 r"""
 Generic numerical approximation function
 """
