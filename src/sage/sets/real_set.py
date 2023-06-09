@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.real_mpfr
 """
 Subsets of the Real Line
 
