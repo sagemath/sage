@@ -788,7 +788,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',5]); mut_type
             ['A', 5]
-            sage: mut_type.b_matrix()                                                   # optional - sage.plot sage.symbolic
+            sage: mut_type.b_matrix()                                                   # optional - sage.modules
             [ 0  1  0  0  0]
             [-1  0 -1  0  0]
             [ 0  1  0  1  0]
@@ -797,7 +797,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
             sage: mut_type = QuiverMutationType(['A',3],['B',3]); mut_type
             [ ['A', 3], ['B', 3] ]
-            sage: mut_type.b_matrix()                                                   # optional - sage.plot sage.symbolic
+            sage: mut_type.b_matrix()                                                   # optional - sage.modules
             [ 0  1  0  0  0  0]
             [-1  0 -1  0  0  0]
             [ 0  1  0  0  0  0]
