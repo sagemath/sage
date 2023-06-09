@@ -324,7 +324,7 @@ def line_graph(g, labels=True):
         sage: h2 = g.line_graph(labels=False)
         sage: h2.vertices(sort=True)
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-        sage: h2.am() == h.am()
+        sage: h2.am() == h.am()                                                         # optional - sage.modules
         True
         sage: g = DiGraph([[1..4], lambda i,j: i < j])
         sage: h = g.line_graph()

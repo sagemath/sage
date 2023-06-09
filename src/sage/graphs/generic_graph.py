@@ -10528,7 +10528,7 @@ class GenericGraph(GenericGraph_pyx):
              4: 0.2374999999999999,
              5: 0.17775588228760858,
              6: 0.100546895675278}
-            sage: G.pagerank(by_weight=True)                        # abs tol 1e-9
+            sage: G.pagerank(by_weight=True)                        # abs tol 1e-9      # optional - networkx
             {1: 0.16459583718588994,
              2: 0.13977928595154515,
              3: 0.16539840184339605,
@@ -20870,10 +20870,10 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: S = SupersingularModule(389)
-            sage: H = S.hecke_matrix(2)
-            sage: D = DiGraph(H, sparse=True)
-            sage: P = D.plot()                                                          # optional - sage.plot
+            sage: S = SupersingularModule(389)                                          # optional - sage.modular
+            sage: H = S.hecke_matrix(2)                                                 # optional - sage.modular
+            sage: D = DiGraph(H, sparse=True)                                           # optional - sage.modular
+            sage: P = D.plot()                                                          # optional - sage.modular sage.plot
 
         ::
 
@@ -24041,8 +24041,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = Graph(graphs.PaleyGraph(9), loops=True, multiedges=True)          # optional - sage.rings.finite_rings
             sage: g.add_edges([(u, u) for u in g])                                      # optional - sage.rings.finite_rings
             sage: g.add_edges([(u, u+1) for u in g])                                    # optional - sage.rings.finite_rings
-            sage: _, S = g.is_cayley(generators=True)                                   # optional - sage.rings.finite_rings
-            sage: S  # random                                                           # optional - sage.rings.finite_rings
+            sage: _, S = g.is_cayley(generators=True)                                   # optional - sage.groups sage.rings.finite_rings
+            sage: S  # random                                                           # optional - sage.groups sage.rings.finite_rings
             [(),
              (0,2,1)(a,a + 2,a + 1)(2*a,2*a + 2,2*a + 1),
              (0,2,1)(a,a + 2,a + 1)(2*a,2*a + 2,2*a + 1),
@@ -24056,8 +24056,8 @@ class GenericGraph(GenericGraph_pyx):
         Cayley graphs can be reconstructed from the group and generating set::
 
             sage: g = graphs.PaleyGraph(9)                                              # optional - sage.rings.finite_rings
-            sage: _, G, S = g.is_cayley(return_group=True, generators=True)             # optional - sage.rings.finite_rings
-            sage: Graph(G.cayley_graph(generators=S)).is_isomorphic(g)                  # optional - sage.rings.finite_rings
+            sage: _, G, S = g.is_cayley(return_group=True, generators=True)             # optional - sage.groups sage.rings.finite_rings
+            sage: Graph(G.cayley_graph(generators=S)).is_isomorphic(g)                  # optional - sage.groups sage.rings.finite_rings
             True
 
         A disconnected graphs may also be a Cayley graph::
@@ -24066,15 +24066,15 @@ class GenericGraph(GenericGraph_pyx):
             sage: h = g.disjoint_union(g)                                               # optional - sage.rings.finite_rings
             sage: h = h.disjoint_union(h)                                               # optional - sage.rings.finite_rings
             sage: h = h.disjoint_union(g)                                               # optional - sage.rings.finite_rings
-            sage: _, G, d, S = h.is_cayley(return_group=True, mapping=True,             # optional - sage.rings.finite_rings
+            sage: _, G, d, S = h.is_cayley(return_group=True, mapping=True,             # optional - sage.groups sage.rings.finite_rings
             ....:                          generators=True, allow_disconnected=True)
-            sage: all(set(d[u] for u in h.neighbors(v)) == set(d[v]*x for x in S)       # optional - sage.rings.finite_rings
+            sage: all(set(d[u] for u in h.neighbors(v)) == set(d[v]*x for x in S)       # optional - sage.groups sage.rings.finite_rings
             ....:     for v in h)
             True
 
         The method also works efficiently with dense simple graphs::
 
-            sage: graphs.CompleteBipartiteGraph(50, 50).is_cayley()
+            sage: graphs.CompleteBipartiteGraph(50, 50).is_cayley()                     # optional - sage.groups
             True
 
         TESTS::

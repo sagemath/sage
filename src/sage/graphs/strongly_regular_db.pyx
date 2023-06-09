@@ -505,7 +505,8 @@ def is_goethals_seidel(int v, int k, int l, int mu):
 
     TESTS::
 
-        sage: for p in [(16, 9, 4, 6), (28, 15, 6, 10), (64, 35, 18, 20), (120, 63, 30, 36),
+        sage: for p in [(16, 9, 4, 6), (28, 15, 6, 10),                                 # optional - sage.combinat sage.modules
+        ....:           (64, 35, 18, 20), (120, 63, 30, 36),
         ....:           (144, 77, 40, 42), (256, 135, 70, 72), (400, 209, 108, 110),
         ....:           (496, 255, 126, 136), (540, 275, 130, 150), (576, 299, 154, 156),
         ....:           (780, 399, 198, 210), (784, 405, 208, 210), (976, 495, 238, 264)]:
@@ -1882,7 +1883,7 @@ def _H_3_cayley_graph(L):
     TESTS::
 
         sage: from sage.graphs.strongly_regular_db import _H_3_cayley_graph
-        sage: _H_3_cayley_graph(["100","110","130","140","200","230","240","300"])
+        sage: _H_3_cayley_graph(["100","110","130","140","200","230","240","300"])      # optional - sage.groups
         Graph on 100 vertices
     """
     from sage.groups.free_group import FreeGroup
@@ -3100,7 +3101,7 @@ def _build_small_srg_database():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import _build_small_srg_database
-        sage: _build_small_srg_database()
+        sage: _build_small_srg_database()                                               # optional - sage.modules
 
     TESTS:
 
