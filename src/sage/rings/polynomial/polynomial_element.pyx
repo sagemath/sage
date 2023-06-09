@@ -1042,9 +1042,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: a != b
             False
 
-            sage: R.<x> = RBF[]
-            sage: pol = RBF(1.0, 0.1)
-            sage: pol == pol
+            sage: R.<x> = RBF[]                                                         # optional - sage.libs.flint
+            sage: pol = RBF(1.0, 0.1)                                                   # optional - sage.libs.flint
+            sage: pol == pol                                                            # optional - sage.libs.flint
             False
         """
         cdef Polynomial pol = <Polynomial?>other
@@ -1739,8 +1739,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: Pol.<x> = QQ[]
             sage: (x + x^3/6 + x^5/120).revert_series(6)
             3/40*x^5 - 1/6*x^3 + x
-            sage: Pol.<x> = CBF[]
-            sage: (x + x^3/6 + x^5/120).revert_series(6)
+            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
+            sage: (x + x^3/6 + x^5/120).revert_series(6)                                # optional - sage.libs.flint
             ([0.075000000000000 +/- ...e-17])*x^5 + ([-0.166666666666667 +/- ...e-16])*x^3 + x
             sage: Pol.<x> = SR[]                                                        # optional - sage.symbolic
             sage: x.revert_series(6)                                                    # optional - sage.symbolic
@@ -4127,12 +4127,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         Arbitrary precision real and complex factorization::
 
-            sage: R.<x> = RealField(100)[]
-            sage: F = factor(x^2 - 3); F
+            sage: R.<x> = RealField(100)[]                                              # optional - sage.rings.real_mpfr
+            sage: F = factor(x^2 - 3); F                                                # optional - sage.rings.real_mpfr
             (x - 1.7320508075688772935274463415) * (x + 1.7320508075688772935274463415)
-            sage: expand(F)                                                             # optional - sage.symbolic
+            sage: expand(F)                                                             # optional - sage.rings.real_mpfr
             x^2 - 3.0000000000000000000000000000
-            sage: factor(x^2 + 1)
+            sage: factor(x^2 + 1)                                                       # optional - sage.rings.real_mpfr
             x^2 + 1.0000000000000000000000000000
 
             sage: R.<x> = ComplexField(100)[]
@@ -6227,9 +6227,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: x = PolynomialRing(RealField(), 'x').gen()
-            sage: f = x^2 - 2
-            sage: f.newton_raphson(4, 1)
+            sage: x = PolynomialRing(RealField(), 'x').gen()                            # optional - sage.rings.real_mpfr
+            sage: f = x^2 - 2                                                           # optional - sage.rings.real_mpfr
+            sage: f.newton_raphson(4, 1)                                                # optional - sage.rings.real_mpfr
             [1.50000000000000, 1.41666666666667, 1.41421568627451, 1.41421356237469]
 
         AUTHORS:
@@ -7138,7 +7138,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f2 = f.compose_power(2); f2
+            sage: f2 = f.compose_power(2); f2                                           # optional - sage.libs.singular sage.modules
             x^4 - 4*x^3 + 8*x^2 - 16*x + 16
             sage: f2 == f.composed_op(f, operator.mul)                                  # optional - sage.libs.singular sage.modules
             True
@@ -7854,13 +7854,13 @@ cdef class Polynomial(CommutativePolynomial):
         In some cases, it is possible to isolate the roots of polynomials over
         complex ball fields::
 
-            sage: Pol.<x> = CBF[]
-            sage: (x^2 + 2).roots(multiplicities=False)
+            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
+            sage: (x^2 + 2).roots(multiplicities=False)                                 # optional - sage.libs.flint
             [[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I]
-            sage: (x^3 - 1/2).roots(RBF, multiplicities=False)
+            sage: (x^3 - 1/2).roots(RBF, multiplicities=False)                          # optional - sage.libs.flint
             [[0.7937005259840997 +/- ...e-17]]
-            sage: ((x - 1)^2).roots(multiplicities=False, proof=False)
+            sage: ((x - 1)^2).roots(multiplicities=False, proof=False)                  # optional - sage.libs.flint
             doctest:...
             UserWarning: roots may have been lost...
             [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
@@ -8198,7 +8198,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that :trac:`31710` is fixed::
 
-            sage: CBF['x'].zero().roots(multiplicities=False)
+            sage: CBF['x'].zero().roots(multiplicities=False)                           # optional - sage.libs.flint
             Traceback (most recent call last):
             ...
             ArithmeticError: taking the roots of the zero polynomial
@@ -8555,20 +8555,20 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: x = polygen(ZZ)
-            sage: (x^2 - x - 1).real_roots()
+            sage: (x^2 - x - 1).real_roots()                                            # optional - sage.rings.real_mpfr
             [-0.618033988749895, 1.61803398874989]
 
         TESTS::
 
-            sage: x = polygen(RealField(100))
-            sage: (x^2 - x - 1).real_roots()[0].parent()
+            sage: x = polygen(RealField(100))                                           # optional - sage.rings.real_mpfr
+            sage: (x^2 - x - 1).real_roots()[0].parent()                                # optional - sage.rings.real_mpfr
                 Real Field with 100 bits of precision
             sage: x = polygen(RDF)
             sage: (x^2 - x - 1).real_roots()[0].parent()
             Real Double Field
 
-            sage: x=polygen(ZZ,'x'); v=(x^2-x-1).real_roots()
-            sage: v[0].parent() is RR
+            sage: x = polygen(ZZ,'x'); v = (x^2 - x - 1).real_roots()                   # optional - sage.rings.real_mpfr
+            sage: v[0].parent() is RR                                                   # optional - sage.rings.real_mpfr
             True
         """
         K = self.base_ring()
@@ -9865,38 +9865,38 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = RR[]
-            sage: f = x^6 + x^2 + -x^4 - 2*x^3
-            sage: f.norm(2)
+            sage: R.<x> = RR[]                                                          # optional - sage.rings.real_mpfr
+            sage: f = x^6 + x^2 + -x^4 - 2*x^3                                          # optional - sage.rings.real_mpfr
+            sage: f.norm(2)                                                             # optional - sage.rings.real_mpfr
             2.64575131106459
             sage: (sqrt(1^2 + 1^2 + (-1)^2 + (-2)^2)).n()                               # optional - sage.symbolic
             2.64575131106459
 
         ::
 
-            sage: f.norm(1)
+            sage: f.norm(1)                                                             # optional - sage.rings.real_mpfr
             5.00000000000000
-            sage: f.norm(infinity)
+            sage: f.norm(infinity)                                                      # optional - sage.rings.real_mpfr
             2.00000000000000
 
         ::
 
-            sage: f.norm(-1)
+            sage: f.norm(-1)                                                            # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             ValueError: The degree of the norm must be positive
 
         TESTS::
 
-            sage: R.<x> = RR[]
-            sage: f = x^6 + x^2 + -x^4 -x^3
-            sage: f.norm(int(2))
+            sage: R.<x> = RR[]                                                          # optional - sage.rings.real_mpfr
+            sage: f = x^6 + x^2 + -x^4 -x^3                                             # optional - sage.rings.real_mpfr
+            sage: f.norm(int(2))                                                        # optional - sage.rings.real_mpfr
             2.00000000000000
 
         Check that :trac:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
-            sage: (x^2^100 + 1).norm(1)
+            sage: (x^2^100 + 1).norm(1)                                                 # optional - sage.rings.real_mpfr
             2.00000000000000
 
         AUTHORS:
@@ -10928,8 +10928,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: Pol.<x> = CBF[]
-            sage: (1 + x)._log_series(3)
+            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
+            sage: (1 + x)._log_series(3)                                                # optional - sage.libs.flint
             -0.5000000000000000*x^2 + x
         """
         raise NotImplementedError
@@ -10941,8 +10941,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: Pol.<x> = CBF[]
-            sage: x._exp_series(3)
+            sage: Pol.<x> = CBF[]                                                       # optional - sage.libs.flint
+            sage: x._exp_series(3)                                                      # optional - sage.libs.flint
             0.5000000000000000*x^2 + x + 1.000000000000000
         """
         raise NotImplementedError
