@@ -117,9 +117,9 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         sage: [ x.lift() for x in M.list() ]
         [1, 3, 5, 9]
 
-        sage: G = M.cayley_graph(side = "twosided"); G
+        sage: G = M.cayley_graph(side="twosided"); G                                    # optional - sage.graphs
         Looped multi-digraph on 4 vertices
-        sage: G.edges(sort=True, key=str)
+        sage: G.edges(sort=True, key=str)                                               # optional - sage.graphs
         [([1, 1], [1, 1], (2, 'left')),
          ([1, 1], [1, 1], (2, 'right')),
          ([1, 1], [1], (1, 'left')),
@@ -136,73 +136,75 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
          ([], [1], (1, 'right')),
          ([], [2], (2, 'left')),
          ([], [2], (2, 'right'))]
-        sage: list(map(sorted, M.j_classes()))
+        sage: list(map(sorted, M.j_classes()))                                          # optional - sage.graphs
         [[[1], [1, 1]], [[], [2]]]
-        sage: M.j_classes_of_idempotents()
+        sage: M.j_classes_of_idempotents()                                              # optional - sage.graphs
         [[[1, 1]], [[]]]
-        sage: M.j_transversal_of_idempotents()
+        sage: M.j_transversal_of_idempotents()                                          # optional - sage.graphs
         [[1, 1], []]
 
-        sage: list(map(attrcall('pseudo_order'), M.list()))
+        sage: list(map(attrcall('pseudo_order'), M.list()))                             # optional - sage.graphs
         [[1, 0], [3, 1], [2, 0], [2, 1]]
 
     We can also use it to get submonoids from groups. We check that in the
     symmetric group, a transposition and a long cycle generate the whole group::
 
-        sage: G5 = SymmetricGroup(5)
-        sage: N = AutomaticSemigroup(Family({1: G5([2,1,3,4,5]), 2: G5([2,3,4,5,1])}), one=G5.one())
-        sage: N.repr_element_method("reduced_word")
-        sage: N.cardinality() == G5.cardinality()
+        sage: G5 = SymmetricGroup(5)                                                    # optional - sage.groups
+        sage: N = AutomaticSemigroup(Family({1: G5([2,1,3,4,5]), 2: G5([2,3,4,5,1])}),  # optional - sage.groups
+        ....:                        one=G5.one())
+        sage: N.repr_element_method("reduced_word")                                     # optional - sage.groups
+        sage: N.cardinality() == G5.cardinality()                                       # optional - sage.groups
         True
-        sage: N.retract(G5((1,4,3,5,2)))
+        sage: N.retract(G5((1,4,3,5,2)))                                                # optional - sage.groups
         [1, 2, 1, 2, 2, 1, 2, 1, 2, 2]
-        sage: N.from_reduced_word([1, 2, 1, 2, 2, 1, 2, 1, 2, 2]).lift()
+        sage: N.from_reduced_word([1, 2, 1, 2, 2, 1, 2, 1, 2, 2]).lift()                # optional - sage.groups
         (1,4,3,5,2)
 
    We can also create a semigroup of matrices, where we define the
    multiplication as matrix multiplication::
 
-        sage: M1=matrix([[0,0,1],[1,0,0],[0,1,0]])
-        sage: M2=matrix([[0,0,0],[1,1,0],[0,0,1]])
-        sage: M1.set_immutable()
-        sage: M2.set_immutable()
-        sage: def prod_m(x,y):
+        sage: M1 = matrix([[0,0,1],[1,0,0],[0,1,0]])                                    # optional - sage.modules
+        sage: M2 = matrix([[0,0,0],[1,1,0],[0,0,1]])                                    # optional - sage.modules
+        sage: M1.set_immutable()                                                        # optional - sage.modules
+        sage: M2.set_immutable()                                                        # optional - sage.modules
+        sage: def prod_m(x,y):                                                          # optional - sage.modules
         ....:     z=x*y
         ....:     z.set_immutable()
         ....:     return z
-        sage: Mon = AutomaticSemigroup([M1,M2], mul=prod_m, category=Monoids().Finite().Subobjects())
-        sage: Mon.cardinality()
+        sage: Mon = AutomaticSemigroup([M1,M2], mul=prod_m,                             # optional - sage.modules
+        ....:                          category=Monoids().Finite().Subobjects())
+        sage: Mon.cardinality()                                                         # optional - sage.modules
         24
-        sage: C = Mon.cayley_graph()
-        sage: C.is_directed_acyclic()
+        sage: C = Mon.cayley_graph()                                                    # optional - sage.graphs sage.modules
+        sage: C.is_directed_acyclic()                                                   # optional - sage.graphs sage.modules
         False
 
     Let us construct and play with the 0-Hecke Monoid::
 
-        sage: W = WeylGroup(['A',4]); W.rename("W")
-        sage: ambient_monoid = FiniteSetMaps(W, action="right")
-        sage: pi = W.simple_projections(length_increasing=True).map(ambient_monoid)
-        sage: M = AutomaticSemigroup(pi, one=ambient_monoid.one()); M
+        sage: W = WeylGroup(['A',4]); W.rename("W")                                     # optional - sage.graphs sage.modules
+        sage: ambient_monoid = FiniteSetMaps(W, action="right")                         # optional - sage.graphs sage.modules
+        sage: pi = W.simple_projections(length_increasing=True).map(ambient_monoid)     # optional - sage.graphs sage.modules
+        sage: M = AutomaticSemigroup(pi, one=ambient_monoid.one()); M                   # optional - sage.graphs sage.modules
         A submonoid of (Maps from W to itself) with 4 generators
-        sage: M.repr_element_method("reduced_word")
-        sage: sorted(M._elements_set, key=str)
+        sage: M.repr_element_method("reduced_word")                                     # optional - sage.graphs sage.modules
+        sage: sorted(M._elements_set, key=str)                                          # optional - sage.graphs sage.modules
         [[1], [2], [3], [4], []]
-        sage: M.construct(n=10)
-        sage: sorted(M._elements_set, key=str)
+        sage: M.construct(n=10)                                                         # optional - sage.graphs sage.modules
+        sage: sorted(M._elements_set, key=str)                                          # optional - sage.graphs sage.modules
         [[1, 2], [1, 3], [1, 4], [1], [2, 1], [2, 3], [2], [3], [4], []]
-        sage: elt = M.from_reduced_word([3,1,2,4,2])
-        sage: M.construct(up_to=elt)
-        sage: len(M._elements_set)
+        sage: elt = M.from_reduced_word([3,1,2,4,2])                                    # optional - sage.graphs sage.modules
+        sage: M.construct(up_to=elt)                                                    # optional - sage.graphs sage.modules
+        sage: len(M._elements_set)                                                      # optional - sage.graphs sage.modules
         36
-        sage: M.cardinality()
+        sage: M.cardinality()                                                           # optional - sage.graphs sage.modules
         120
 
     We check that the 0-Hecke monoid is `J`-trivial and contains `2^4`
     idempotents::
 
-        sage: len(M.idempotents())
+        sage: len(M.idempotents())                                                      # optional - sage.graphs sage.modules
         16
-        sage: all(len(j) == 1 for j in M.j_classes())
+        sage: all(len(j) == 1 for j in M.j_classes())                                   # optional - sage.graphs sage.modules
         True
 
     TESTS::
@@ -211,9 +213,9 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         True
         sage: g[1] == g[1]*g[1]*g[1]
         True
-        sage: M.__class__
+        sage: M.__class__                                                               # optional - sage.graphs sage.modules
         <class 'sage.monoids.automatic_semigroup.AutomaticMonoid_with_category'>
-        sage: TestSuite(M).run()
+        sage: TestSuite(M).run()                                                        # optional - sage.graphs sage.modules
 
         sage: from sage.monoids.automatic_semigroup import AutomaticSemigroup
         sage: R = IntegerModRing(34)
@@ -264,7 +266,10 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: M.ambient() == R
             True
             sage: AutomaticSemigroup((0,)).category()
-            Join of Category of finitely generated semigroups and Category of subquotients of semigroups and Category of commutative magmas and Category of subobjects of sets
+            Join of Category of finitely generated semigroups
+                and Category of subquotients of semigroups
+                and Category of commutative magmas
+                and Category of subobjects of sets
             sage: AutomaticSemigroup((0,), one=1).category()
             Join of Category of subquotients of monoids and
             Category of commutative monoids and
@@ -469,16 +474,16 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: M.ambient()
             Ring of integers modulo 12
 
-            sage: M1=matrix([[0,0,1],[1,0,0],[0,1,0]])
-            sage: M2=matrix([[0,0,0],[1,1,0],[0,0,1]])
-            sage: M1.set_immutable()
-            sage: M2.set_immutable()
-            sage: def prod_m(x,y):
+            sage: M1 = matrix([[0,0,1],[1,0,0],[0,1,0]])                                # optional - sage.modules
+            sage: M2 = matrix([[0,0,0],[1,1,0],[0,0,1]])                                # optional - sage.modules
+            sage: M1.set_immutable()                                                    # optional - sage.modules
+            sage: M2.set_immutable()                                                    # optional - sage.modules
+            sage: def prod_m(x,y):                                                      # optional - sage.modules
             ....:     z=x*y
             ....:     z.set_immutable()
             ....:     return z
-            sage: Mon = AutomaticSemigroup([M1,M2], mul=prod_m)
-            sage: Mon.ambient()
+            sage: Mon = AutomaticSemigroup([M1,M2], mul=prod_m)                         # optional - sage.modules
+            sage: Mon.ambient()                                                         # optional - sage.modules
             Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
         """
         return self._ambient
@@ -490,15 +495,16 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.monoids.automatic_semigroup import AutomaticSemigroup
-            sage: S5 = SymmetricGroup(5); S5.rename("S5")
-            sage: M = AutomaticSemigroup(Family({1:S5((1,2)), 2:S5((1,2,3,4))}), one=S5.one())
-            sage: m = M.retract(S5((3,1))); m
+            sage: S5 = SymmetricGroup(5); S5.rename("S5")                               # optional - sage.groups
+            sage: M = AutomaticSemigroup(Family({1:S5((1,2)), 2:S5((1,2,3,4))}),        # optional - sage.groups
+            ....:                        one=S5.one())
+            sage: m = M.retract(S5((3,1))); m                                           # optional - sage.groups
             (1,3)
-            sage: m.parent() is M
+            sage: m.parent() is M                                                       # optional - sage.groups
             True
-            sage: M.retract(S5((4,5)), check=False)
+            sage: M.retract(S5((4,5)), check=False)                                     # optional - sage.groups
             (4,5)
-            sage: M.retract(S5((4,5)))
+            sage: M.retract(S5((4,5)))                                                  # optional - sage.groups
             Traceback (most recent call last):
             ...
             ValueError: (4,5) not in A subgroup of (S5) with 2 generators
@@ -528,14 +534,15 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.monoids.automatic_semigroup import AutomaticSemigroup
-            sage: S5 = SymmetricGroup(5)
-            sage: S4 = AutomaticSemigroup(Family({1:S5((1,2)), 2:S5((1,2,3,4))}), one=S5.one())
-            sage: S4._retract(S5((3,1)))
+            sage: S5 = SymmetricGroup(5)                                                # optional - sage.groups
+            sage: S4 = AutomaticSemigroup(Family({1:S5((1,2)), 2:S5((1,2,3,4))}),       # optional - sage.groups
+            ....:                         one=S5.one())
+            sage: S4._retract(S5((3,1)))                                                # optional - sage.groups
             (1,3)
 
         No check is done::
 
-            sage: S4._retract(S5((4,5)))
+            sage: S4._retract(S5((4,5)))                                                # optional - sage.groups
             (4,5)
         """
         return self.element_class(self, ambient_element)
@@ -771,11 +778,12 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.monoids.automatic_semigroup import AutomaticSemigroup
-            sage: G4 = SymmetricGroup(4)
-            sage: M = AutomaticSemigroup(Family({1:G4((1,2)), 2:G4((1,2,3,4))}), one=G4.one())
-            sage: M.from_reduced_word([2, 1, 2, 2, 1]).lift()
+            sage: G4 = SymmetricGroup(4)                                                # optional - sage.groups
+            sage: M = AutomaticSemigroup(Family({1:G4((1,2)), 2:G4((1,2,3,4))}),        # optional - sage.groups
+            ....:                        one=G4.one())
+            sage: M.from_reduced_word([2, 1, 2, 2, 1]).lift()                           # optional - sage.groups
             (1,3)
-            sage: M.from_reduced_word([2, 1, 2, 2, 1]) == M.retract(G4((3,1)))
+            sage: M.from_reduced_word([2, 1, 2, 2, 1]) == M.retract(G4((3,1)))          # optional - sage.groups
             True
         """
         result = self.one()
@@ -785,7 +793,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
     def construct(self, up_to=None, n=None):
         """
-        Construct the elements of the ``self``.
+        Construct the elements of ``self``.
 
         INPUT:
 
@@ -802,19 +810,19 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.monoids.automatic_semigroup import AutomaticSemigroup
-            sage: W = WeylGroup(['A',3]); W.rename("W")
-            sage: ambient_monoid = FiniteSetMaps(W, action="right")
-            sage: pi = W.simple_projections(length_increasing=True).map(ambient_monoid)
-            sage: M = AutomaticSemigroup(pi, one=ambient_monoid.one()); M
+            sage: W = WeylGroup(['A',3]); W.rename("W")                                 # optional - sage.groups sage.modules
+            sage: ambient_monoid = FiniteSetMaps(W, action="right")                     # optional - sage.groups sage.modules
+            sage: pi = W.simple_projections(length_increasing=True).map(ambient_monoid) # optional - sage.groups sage.modules
+            sage: M = AutomaticSemigroup(pi, one=ambient_monoid.one()); M               # optional - sage.groups sage.modules
             A submonoid of (Maps from W to itself) with 3 generators
-            sage: M.repr_element_method("reduced_word")
-            sage: sorted(M._elements_set, key=str)
+            sage: M.repr_element_method("reduced_word")                                 # optional - sage.groups sage.modules
+            sage: sorted(M._elements_set, key=str)                                      # optional - sage.groups sage.modules
             [[1], [2], [3], []]
-            sage: elt = M.from_reduced_word([2,3,1,2])
-            sage: M.construct(up_to=elt)
-            sage: len(M._elements_set)
+            sage: elt = M.from_reduced_word([2,3,1,2])                                  # optional - sage.groups sage.modules
+            sage: M.construct(up_to=elt)                                                # optional - sage.groups sage.modules
+            sage: len(M._elements_set)                                                  # optional - sage.groups sage.modules
             19
-            sage: M.cardinality()
+            sage: M.cardinality()                                                       # optional - sage.groups sage.modules
             24
         """
         if self._constructed:
