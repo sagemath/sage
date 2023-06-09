@@ -993,8 +993,8 @@ written.
   - If there is no whitespace in the doctest output where you could wrap the line,
     do not add such whitespace. Just don't wrap the line.
 
-  - Wrap and indent long output to maximize readability in source and in the HTML output.
-    But do not wrap strings::
+  - Wrap and indent long output to maximize readability in the source code
+    and in the HTML output. But do not wrap strings::
 
       sage: from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_quasi
       sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)

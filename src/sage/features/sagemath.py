@@ -127,7 +127,7 @@ class sage__geometry__polyhedron(PythonModule):
     EXAMPLES:
 
     Doctests that use polyhedra, cones, geometric complexes, triangulations, etc. should use
-    the annotations ``# optional - sage.geometry.polyhedron``.
+    the annotations ``# optional - sage.geometry.polyhedron``::
 
         sage: co = polytopes.truncated_tetrahedron()                                    # optional - sage.geometry.polyhedron
         sage: co.volume()                                                               # optional - sage.geometry.polyhedron
@@ -164,20 +164,29 @@ class sage__graphs(JoinFeature):
     EXAMPLES:
 
 
-        Matroids are not implemented as posets in Sage but are instead closely tied to
-        linear algebra over fields; hence use ``# optional - sage.modules``::
+    Matroids are not implemented as posets in Sage but are instead closely tied to
+    linear algebra over fields; hence use ``# optional - sage.modules``::
 
-            sage: M = Matroid(Matrix(QQ, [[1, 0, 0, 0, 1, 1, 1],                        # optional - sage.modules
-            ....:                         [0, 1, 0, 1, 0, 1, 1],
-            ....:                         [0, 0, 1, 1, 1, 0, 1]]))
-            sage: N = M / [2] \ [3, 4]                                                  # optional - sage.modules
-            sage: sorted(N.groundset())                                                 # optional - sage.modules
-            [0, 1, 5, 6]
+        sage: M = Matroid(Matrix(QQ, [[1, 0, 0, 0, 1, 1, 1],                            # optional - sage.modules
+        ....:                         [0, 1, 0, 1, 0, 1, 1],
+        ....:                         [0, 0, 1, 1, 1, 0, 1]]))
+        sage: N = M / [2] \ [3, 4]                                                      # optional - sage.modules
+        sage: sorted(N.groundset())                                                     # optional - sage.modules
+        [0, 1, 5, 6]
+
+    However, many constructions (and some methods) of matroids do involve graphs::
+
+        sage: W = matroids.Wheel(3)     # despite the name, not created via graphs      # optional - sage.modules
+        sage: W.is_isomorphic(N)        # goes through a graph isomorphism test         # optional - sage.graphs sage.modules
+        False
+        sage: K4 = matroids.CompleteGraphic(4)    # this one is created via graphs      # optional - sage.graphs sage.modules
+        sage: K4.is_isomorphic(W)                                                       # optional - sage.graphs sage.modules
+        True
 
     TESTS::
 
         sage: from sage.features.sagemath import sage__graphs
-        sage: sage__graphs().is_present()  # optional - sage.graphs
+        sage: sage__graphs().is_present()                                               # optional - sage.graphs
         FeatureTestResult('sage.graphs', True)
     """
     def __init__(self):
@@ -340,7 +349,7 @@ class sage__rings__function_field(JoinFeature):
         Maximal order of Rational function field in x over Rational Field
 
     Use the annotation ``# optional - sage.rings.function_field`` whenever extensions
-    of function fields (by adjoining a root of a univariate polynomial) come into play.
+    of function fields (by adjoining a root of a univariate polynomial) come into play::
 
         sage: R.<y> = K[]
         sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x)); L                         # optional - sage.rings.function_field
@@ -458,7 +467,7 @@ class sage__rings__real_double(PythonModule):
 
     EXAMPLES:
 
-    The Real Double Field is basically always available, and no ``# optional`` annotation is needed.
+    The Real Double Field is basically always available, and no ``# optional`` annotation is needed::
 
         sage: RDF.characteristic()
         0
@@ -510,12 +519,12 @@ class sage__symbolic(JoinFeature):
 
     EXAMPLES:
 
-    The symbolic subsystem of Sage is provided by the distribution
-    sagemath-symbolics. If it is not installed,
-    Sage is able to provide installation advice::
+    The symbolics subsystem of Sage will be provided by the distribution
+    sagemath-symbolics, in preparation at :issue:`35095`. If it is not installed,
+    Sage will be able to provide installation advice::
 
         sage: from sage.features.sagemath import sage__symbolic
-        sage: print(sage__symbolic().resolution())                                      # optional - sage_spkg
+        sage: print(sage__symbolic().resolution())                                      # optional - sage_spkg, not tested
         ...To install sagemath_symbolics...you can try to run...
         pip install sagemath-symbolics
         ...
@@ -535,8 +544,7 @@ class sage__symbolic(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.symbolic',
-                             [PythonModule('sage.symbolic.expression')],
-                             spkg="sagemath_symbolics")
+                             [PythonModule('sage.symbolic.expression')])
 
 
 def all_features():
