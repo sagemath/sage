@@ -1926,10 +1926,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         Prior to :trac:`11544` this could take a full minute to run (2011). ::
 
             sage: A = matrix(QQ, 4, 4, [1, 2, -2, 2, 1, 0, -1, -1, 0, -1, 1, 1, -1, 2, 1/2, 0])
-            sage: e = A.eigenvalues()[3]
-            sage: K = (A-e).kernel()
-            sage: P = K.basis_matrix()
-            sage: P.str()
+            sage: e = A.eigenvalues()[3]                                                # optional - sage.rings.number_field
+            sage: K = (A - e).kernel()                                                  # optional - sage.rings.number_field
+            sage: P = K.basis_matrix()                                                  # optional - sage.rings.number_field
+            sage: P.str()                                                               # optional - sage.rings.number_field
             '[              1.000000000000000? + 0.?e-17*I  -2.116651487479748? + 0.0255565807096352?*I -0.2585224251020429? + 0.2886023409047535?*I  -0.4847545623533090? - 1.871890760086142?*I]'
 
         Use single-row delimiters where appropriate::
