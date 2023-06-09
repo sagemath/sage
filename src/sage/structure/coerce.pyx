@@ -847,11 +847,11 @@ cdef class CoercionModel:
         Sometimes with non-sage types there is not enough information to deduce
         what will actually happen::
 
-            sage: R100 = RealField(100)
-            sage: cm.explain(R100, float, operator.add)
+            sage: R100 = RealField(100)                                                 # optional - sage.rings.real_mpfr
+            sage: cm.explain(R100, float, operator.add)                                 # optional - sage.rings.real_mpfr
             Right operand is numeric, will attempt coercion in both directions.
             Unknown result parent.
-            sage: parent(R100(1) + float(1))
+            sage: parent(R100(1) + float(1))                                            # optional - sage.rings.real_mpfr
             <class 'float'>
             sage: cm.explain(QQ, float, operator.add)
             Right operand is numeric, will attempt coercion in both directions.
@@ -1036,7 +1036,7 @@ cdef class CoercionModel:
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.common_parent(ZZ, QQ)
             Rational Field
-            sage: cm.common_parent(ZZ, QQ, RR)
+            sage: cm.common_parent(ZZ, QQ, RR)                                          # optional - sage.rings.real_mpfr
             Real Field with 53 bits of precision
             sage: ZZT = ZZ[['T']]
             sage: QQT = QQ['T']
@@ -1649,7 +1649,7 @@ cdef class CoercionModel:
             Natural morphism:
               From: Integer Ring
               To:   Rational Field, None)
-            sage: cm.discover_coercion(RR, QQ)
+            sage: cm.discover_coercion(RR, QQ)                                          # optional - sage.rings.real_mpfr
             (None, (map internal to coercion system -- copy before use)
              Generic map:
               From: Rational Field
