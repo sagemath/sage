@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 """
 Alternating Central Extension Quantum Onsager Algebra
 

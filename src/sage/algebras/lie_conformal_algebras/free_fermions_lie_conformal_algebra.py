@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Free Fermions Super Lie Conformal Algebra.
 

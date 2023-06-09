@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.combinat sage.groups sage.modules
 r"""
 Cubic Hecke Algebras
 
