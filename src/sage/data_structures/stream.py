@@ -1669,7 +1669,7 @@ class Stream_dirichlet_invert(Stream_unary):
         sage: g = Stream_dirichlet_invert(f, True)
         sage: [g[i] for i in range(10)]
         [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
-        sage: [moebius(i) for i in range(10)]
+        sage: [moebius(i) for i in range(10)]                                           # optional - sage.libs.pari
         [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
     """
     def __init__(self, series, is_sparse):
@@ -1921,10 +1921,10 @@ class Stream_plethysm(Stream_binary):
     stream of order `0`::
 
         sage: from sage.data_structures.stream import Stream_exact
-        sage: f = Stream_exact([s[1]], order=1)
-        sage: g = Stream_function(lambda n: s[n], True, 0)
-        sage: r = Stream_plethysm(f, g, True, p, s)
-        sage: [r[n] for n in range(3)]
+        sage: f = Stream_exact([s[1]], order=1)                                         # optional - sage.modules
+        sage: g = Stream_function(lambda n: s[n], True, 0)                              # optional - sage.modules
+        sage: r = Stream_plethysm(f, g, True, p, s)                                     # optional - sage.modules
+        sage: [r[n] for n in range(3)]                                                  # optional - sage.modules
         [s[], s[1], s[2]]
 
     TESTS:

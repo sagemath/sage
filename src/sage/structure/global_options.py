@@ -619,14 +619,14 @@ class Option():
 
         EXAMPLES::
 
-            sage: RiggedConfigurations.options.half_width_boxes_type_B                          # optional - sage.combinat
+            sage: RiggedConfigurations.options.half_width_boxes_type_B                          # optional - sage.combinat sage.modules
             True
-            sage: 'yes' if RiggedConfigurations.options.half_width_boxes_type_B else 'no'       # optional - sage.combinat
+            sage: 'yes' if RiggedConfigurations.options.half_width_boxes_type_B else 'no'       # optional - sage.combinat sage.modules
             'yes'
-            sage: RiggedConfigurations.options.half_width_boxes_type_B = False                  # optional - sage.combinat
-            sage: 'yes' if RiggedConfigurations.options.half_width_boxes_type_B else 'no'       # optional - sage.combinat
+            sage: RiggedConfigurations.options.half_width_boxes_type_B = False                  # optional - sage.combinat sage.modules
+            sage: 'yes' if RiggedConfigurations.options.half_width_boxes_type_B else 'no'       # optional - sage.combinat sage.modules
             'no'
-            sage: RiggedConfigurations.options._reset()                                         # optional - sage.combinat
+            sage: RiggedConfigurations.options._reset()                                         # optional - sage.combinat sage.modules
         """
         return bool(self._options[self._name])
 

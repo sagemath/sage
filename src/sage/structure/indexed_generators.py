@@ -192,8 +192,8 @@ class IndexedGenerators():
 
         ::
 
-            sage: X = SchubertPolynomialRing(QQ)                                        # optional - sage.combinat
-            sage: X.prefix()                                                            # optional - sage.combinat
+            sage: X = SchubertPolynomialRing(QQ)                                        # optional - sage.combinat sage.modules
+            sage: X.prefix()                                                            # optional - sage.combinat sage.modules
             'X'
         """
         return self._print_options['prefix']
@@ -457,15 +457,15 @@ class IndexedGenerators():
 
         TESTS::
 
-            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # optional - sage.combinat
-            sage: ascii_art(R[1,2,2,4])                                                 # optional - sage.combinat
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # optional - sage.combinat sage.modules
+            sage: ascii_art(R[1,2,2,4])                                                 # optional - sage.combinat sage.modules
             R
                ****
               **
              **
              *
             sage: Partitions.options(diagram_str="#", convention="french")              # optional - sage.combinat
-            sage: ascii_art(R[1,2,2,4])                                                 # optional - sage.combinat
+            sage: ascii_art(R[1,2,2,4])                                                 # optional - sage.combinat sage.modules
             R
              #
              ##
@@ -493,8 +493,8 @@ class IndexedGenerators():
 
         TESTS::
 
-            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # optional - sage.combinat
-            sage: unicode_art(R[1,2,2,4])                                               # optional - sage.combinat
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # optional - sage.combinat sage.modules
+            sage: unicode_art(R[1,2,2,4])                                               # optional - sage.combinat sage.modules
             R
                ┌┬┬┬┐
               ┌┼┼┴┴┘
@@ -502,7 +502,7 @@ class IndexedGenerators():
              ├┼┘
              └┘
             sage: Partitions.options.convention="french"                                # optional - sage.combinat
-            sage: unicode_art(R[1,2,2,4])                                               # optional - sage.combinat
+            sage: unicode_art(R[1,2,2,4])                                               # optional - sage.combinat sage.modules
             R
              ┌┐
              ├┼┐
