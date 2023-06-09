@@ -511,7 +511,7 @@ class sage__symbolic(JoinFeature):
     EXAMPLES:
 
     The symbolic subsystem of Sage is provided by the distribution
-    :ref:`sagemath-symbolics <spkg_sagemath_symbolics>`. If it is not installed,
+    sagemath-symbolics. If it is not installed,
     Sage is able to provide installation advice::
 
         sage: from sage.features.sagemath import sage__symbolic

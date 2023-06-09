@@ -958,6 +958,68 @@ written.
       5
       7
 
+- **Wrap long doctest lines:** Note that all doctests in EXAMPLES blocks
+  get formatted as part of our HTML and PDF reference manuals. Our HTML manuals
+  are formatted using the responsive design provided by the
+  :ref:`Furo theme <spkg_furo>`. Even when the browser window is expanded to
+  make use of the full width of a wide desktop screen, the style will not
+  allow code boxes to grow arbitrarily wide.
+
+  It is best to wrap long lines when possible so that readers do not have to
+  scroll horizontally (back and forth) to follow an example.
+
+  - Try to wrap long lines somewhere around columns 80 to 88
+    and try to never exceed column 95 in the source file.
+    (Columns numbers are from the left margin in the source file;
+    these rules work no matter how deep the docstring may be nested
+    because also the formatted output will be nested.)
+
+  - If you have to break an expression at a place that is not already
+    nested in parentheses, wrap it in parentheses::
+
+      sage: (length(list(Permutations(['a', 'b', 'c', 'd', 'e', 'f', 'g'])))
+      ....:    == length(list(Permutations(7))))
+
+  - If the output in your only example is very wide and cannot be reasonably
+    reformatted to fit (for example, large symbolic matrices or numbers with many digits),
+    consider showing a smaller example first.
+
+  - No need to wrap long ``import`` statements. Typically, the ``import`` statements
+    are not the interesting parts of the doctests. Users only need to be able to
+    copy-paste them into a Sage session or source file::
+
+      sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict, MPolynomialRing_polydict_domain  # this is fine
+
+  - If there is no whitespace in the doctest output where you could wrap the line,
+    do not add such whitespace. Just don't wrap the line.
+
+  - Wrap and indent long output to maximize readability in source and in the HTML output.
+    But do not wrap strings::
+
+      sage: from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_quasi
+      sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
+      sage: S = P.subscheme([])
+      sage: T = P.subscheme([x - y])
+      sage: U = AlgebraicScheme_quasi(S, T); U
+      Quasi-projective subscheme X - Y of Projective Space of dimension 2
+       over Integer Ring,
+        where X is defined by: (no polynomials)
+          and Y is defined by: x - y
+      sage: U._repr_()                                                                                                                                                    # this is fine
+      'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
+
+  - Annotations for modularization purposes such as ``# optional - sagemath-combinat sagemath-modules``
+    (see :ref:`section-further_conventions`) should be aligned at column 88.
+    Clean lines from consistent alignment help reduce visual clutter.
+    Moreover, at the maximum window width, only the word fragment ``# option`` will be
+    visible without horizontal scrolling, striking a thoughtfully chosen balance between presenting
+    the information and reducing visual clutter. (How much can be seen may be
+    browser-dependent, of course.) In visually dense doctests, you can try to sculpt out visual space to separate
+    the test commands from the annotation.
+
+  - Annotations for doctests depending on optional packages such as ``# optional - pynormaliz``, on the other hand,
+    should be aligned so that they are visible without having to scroll horizontally.
+
 - **Python3 print:** Python3 syntax for print must be used in Sage
   code and doctests. If you use an old-style print in doctests, it
   will raise a SyntaxError::
