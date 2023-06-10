@@ -193,7 +193,7 @@ class sage__graphs(JoinFeature):
     Doctests that use anything from :mod:`sage.graphs` (:class:`Graph`, :class:`DiGraph`, ...)
     should be marked ``# optional - sage.graphs``. The same applies to any doctest that
     uses a :class:`~sage.combinat.posets.posets.Poset`, cluster algebra quiver, finite
-    state machines, abelian sandpiles, or Dynkin diagrams.
+    state machines, abelian sandpiles, or Dynkin diagrams::
 
         sage: g = graphs.PetersenGraph()                                                # optional - sage.graphs
         sage: r, s = g.is_weakly_chordal(certificate=True); r                           # optional - sage.graphs
@@ -204,7 +204,7 @@ class sage__graphs(JoinFeature):
 
     By way of generalization, any use of :class:`SimplicialComplex` or other abstract complexes from
     :mod:`sage.topology`, hypergraphs, and combinatorial designs, should be marked
-    ``# optional - sage.graphs`` as well.
+    ``# optional - sage.graphs`` as well::
 
         sage: X = SimplicialComplex([[0,1,2], [1,2,3]])                                 # optional - sage.graphs
         sage: X.link(Simplex([0]))                                                      # optional - sage.graphs
