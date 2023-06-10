@@ -190,9 +190,20 @@ class sage__graphs(JoinFeature):
 
     EXAMPLES:
 
+    Doctests that use anything from :mod:`sage.graphs` (:class:`Graph`, :class:`DiGraph`, ...)
+    should be marked ``# optional - sage.graphs``. The same applies to any doctest that
+    uses a :class:`~sage.combinat.posets.posets.Poset`, cluster algebra quiver, finite
+    state machines, abelian sandpiles, or Dynkin diagrams.
 
-    Matroids are not implemented as posets in Sage but are instead closely tied to
-    linear algebra over fields; hence use ``# optional - sage.modules``::
+    Also any use of tree classes defined in :mod:`sage.combinat` (:class:`BinaryTree`,
+    :class:`RootedTree`, ...) in doctests should be marked the same.
+
+    By way of generalization, any use of :class:`SimplicialComplex` or other abstract complexes from
+    :mod:`sage.topology`, hypergraphs, and combinatorial designs, should be marked
+    ``# optional - sage.graphs`` as well.
+
+    On the other hand, matroids are not implemented as posets in Sage but are instead
+    closely tied to linear algebra over fields; hence use ``# optional - sage.modules`` instead::
 
         sage: M = Matroid(Matrix(QQ, [[1, 0, 0, 0, 1, 1, 1],                            # optional - sage.modules
         ....:                         [0, 1, 0, 1, 0, 1, 1],
