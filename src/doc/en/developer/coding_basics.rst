@@ -979,6 +979,7 @@ written.
 
       sage: (length(list(Permutations(['a', 'b', 'c', 'd', 'e', 'f', 'g'])))
       ....:    == length(list(Permutations(7))))
+      True
 
   - If the output in your only example is very wide and cannot be reasonably
     reformatted to fit (for example, large symbolic matrices or numbers with many digits),
