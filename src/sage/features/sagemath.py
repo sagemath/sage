@@ -123,7 +123,7 @@ class sage__modular(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__modular
-        sage: sage__modular().is_present()  # optional - sage.modular
+        sage: sage__modular().is_present()                                              # optional - sage.modular
         FeatureTestResult('sage.modular', True)
     """
     def __init__(self):
@@ -169,7 +169,7 @@ class sage__libs__flint(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__libs__flint
-        sage: sage__libs__flint().is_present()                       # optional - sage.libs.flint
+        sage: sage__libs__flint().is_present()                                          # optional - sage.libs.flint
         FeatureTestResult('sage.libs.flint', True)
     """
     def __init__(self):
@@ -194,7 +194,7 @@ class sage__libs__ntl(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__libs__ntl
-        sage: sage__libs__ntl().is_present()                       # optional - sage.libs.ntl
+        sage: sage__libs__ntl().is_present()                                            # optional - sage.libs.ntl
         FeatureTestResult('sage.libs.ntl', True)
     """
     def __init__(self):
@@ -376,7 +376,7 @@ class sage__rings__polynomial__pbori(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__rings__polynomial__pbori
-        sage: sage__rings__polynomial__pbori().is_present()                       # optional - sage.rings.polynomial.pbori
+        sage: sage__rings__polynomial__pbori().is_present()                             # optional - sage.rings.polynomial.pbori
         FeatureTestResult('sage.rings.polynomial.pbori', True)
     """
     def __init__(self):
@@ -442,7 +442,7 @@ class sage__schemes(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__schemes
-        sage: sage__schemes().is_present()  # optional - sage.schemes
+        sage: sage__schemes().is_present()                                              # optional - sage.schemes
         FeatureTestResult('sage.schemes', True)
     """
     def __init__(self):
