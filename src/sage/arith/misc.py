@@ -1384,53 +1384,53 @@ def random_prime(n, proof=None, lbound=2):
 
     INPUT:
 
-    -  ``n`` - an integer >= 2.
+    -  ``n`` - an integer `\geq 2`.
 
-    -  ``proof`` - bool or None (default: None) If False, the function uses a
+    -  ``proof`` - bool or ``None`` (default: ``None``) If ``False``, the function uses a
        pseudo-primality test, which is much faster for really big numbers but
-       does not provide a proof of primality. If None, uses the global default
+       does not provide a proof of primality. If ``None``, uses the global default
        (see :mod:`sage.structure.proof.proof`)
 
-    - ``lbound`` - an integer >= 2, lower bound for the chosen primes
+    - ``lbound`` - an integer `\geq 2`, lower bound for the chosen primes
 
     EXAMPLES::
 
-        sage: p = random_prime(100000)                                                                                  # optional - sage.libs.pari
-        sage: p.is_prime()                                                                                              # optional - sage.libs.pari
+        sage: p = random_prime(100000)                                                  # optional - sage.libs.pari
+        sage: p.is_prime()                                                              # optional - sage.libs.pari
         True
-        sage: p <= 100000                                                                                               # optional - sage.libs.pari
+        sage: p <= 100000                                                               # optional - sage.libs.pari
         True
-        sage: random_prime(2)                                                                                           # optional - sage.libs.pari
+        sage: random_prime(2)                                                           # optional - sage.libs.pari
         2
 
     Here we generate a random prime between 100 and 200::
 
-        sage: p = random_prime(200, lbound=100)                                                                         # optional - sage.libs.pari
-        sage: p.is_prime()                                                                                              # optional - sage.libs.pari
+        sage: p = random_prime(200, lbound=100)                                         # optional - sage.libs.pari
+        sage: p.is_prime()                                                              # optional - sage.libs.pari
         True
-        sage: 100 <= p <= 200                                                                                           # optional - sage.libs.pari
+        sage: 100 <= p <= 200                                                           # optional - sage.libs.pari
         True
 
     If all we care about is finding a pseudo prime, then we can pass
     in ``proof=False`` ::
 
-        sage: p = random_prime(200, proof=False, lbound=100)                                                            # optional - sage.libs.pari
-        sage: p.is_pseudoprime()                                                                                        # optional - sage.libs.pari
+        sage: p = random_prime(200, proof=False, lbound=100)                            # optional - sage.libs.pari
+        sage: p.is_pseudoprime()                                                        # optional - sage.libs.pari
         True
-        sage: 100 <= p <= 200                                                                                           # optional - sage.libs.pari
+        sage: 100 <= p <= 200                                                           # optional - sage.libs.pari
         True
 
     TESTS::
 
-        sage: type(random_prime(2))                                                                                     # optional - sage.libs.pari
+        sage: type(random_prime(2))                                                     # optional - sage.libs.pari
         <class 'sage.rings.integer.Integer'>
-        sage: type(random_prime(100))                                                                                   # optional - sage.libs.pari
+        sage: type(random_prime(100))                                                   # optional - sage.libs.pari
         <class 'sage.rings.integer.Integer'>
-        sage: random_prime(1, lbound=-2)   #caused Sage hang #10112                                                     # optional - sage.libs.pari
+        sage: random_prime(1, lbound=-2)   #caused Sage hang  #10112                    # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: n must be greater than or equal to 2
-        sage: random_prime(126, lbound=114)                                                                             # optional - sage.libs.pari
+        sage: random_prime(126, lbound=114)                                             # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: there are no primes between 114 and 126 (inclusive)
@@ -2506,14 +2506,14 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
     type of ``n``.
 
     If ``n`` is an integer, returns the factorization as an object
-    of type ``Factorization``.
+    of type :class:`Factorization`.
 
-    If n is not an integer, ``n.factor(proof=proof, **kwds)`` gets called.
+    If ``n`` is not an integer, ``n.factor(proof=proof, **kwds)`` gets called.
     See ``n.factor??`` for more documentation in this case.
 
     .. warning::
 
-       This means that applying ``factor`` to an integer result of
+       This means that applying :func:`factor` to an integer result of
        a symbolic computation will not factor the integer, because it is
        considered as an element of a larger symbolic ring.
 
@@ -2527,46 +2527,46 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     INPUT:
 
-    -  ``n`` - an nonzero integer
+    -  ``n`` -- a nonzero integer
 
-    -  ``proof`` - bool or None (default: None)
+    -  ``proof`` -- bool or ``None`` (default: ``None``)
 
-    -  ``int_`` - bool (default: False) whether to return
+    -  ``int_`` -- bool (default: ``False``) whether to return
        answers as Python ints
 
-    -  ``algorithm`` - string
+    -  ``algorithm`` -- string
 
-       - ``'pari'`` - (default) use the PARI c library
+       - ``'pari'`` -- (default) use the PARI c library
 
-       - ``'kash'`` - use KASH computer algebra system (requires that
+       - ``'kash'`` -- use KASH computer algebra system (requires that
          kash be installed)
 
-       - ``'magma'`` - use Magma (requires magma be installed)
+       - ``'magma'`` -- use Magma (requires magma be installed)
 
-    -  ``verbose`` - integer (default: 0); PARI's debug
+    -  ``verbose`` -- integer (default: 0); PARI's debug
        variable is set to this; e.g., set to 4 or 8 to see lots of output
        during factorization.
 
     OUTPUT:
 
-    -  factorization of n
+    -  factorization of `n`
 
     The qsieve and ecm commands give access to highly optimized
     implementations of algorithms for doing certain integer
     factorization problems. These implementations are not used by the
-    generic factor command, which currently just calls PARI (note that
+    generic :func:`factor` command, which currently just calls PARI (note that
     PARI also implements sieve and ecm algorithms, but they are not as
     optimized). Thus you might consider using them instead for certain
     numbers.
 
     The factorization returned is an element of the class
-    :class:`~sage.structure.factorization.Factorization`; see Factorization??
-    for more details, and examples below for usage. A Factorization contains
-    both the unit factor (+1 or -1) and a sorted list of (prime, exponent)
+    :class:`~sage.structure.factorization.Factorization`; use ``Factorization??``
+    to see more details, and examples below for usage. A :class:`~sage.structure.factorization.Factorization` contains
+    both the unit factor (`+1` or `-1`) and a sorted list of ``(prime, exponent)``
     pairs.
 
     The factorization displays in pretty-print format but it is easy to
-    obtain access to the (prime,exponent) pairs and the unit, to
+    obtain access to the ``(prime, exponent)`` pairs and the unit, to
     recover the number from its factorization, and even to multiply two
     factorizations. See examples below.
 
@@ -2585,6 +2585,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         -20
         sage: factor(-next_prime(10^2) * next_prime(10^7))                              # optional - sage.libs.pari
         -1 * 101 * 10000019
+
+    ::
+
+        sage: factor(293292629867846432923017396246429, algorithm='flint')              # optional - sage.libs.flint
+        3 * 4852301647696687 * 20148007492971089
 
     ::
 
@@ -2609,10 +2614,10 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         sage: factor(2^(2^7) + 1)                                                       # optional - sage.libs.pari
         59649589127497217 * 5704689200685129054721
 
-    Sage calls PARI's factor, which has proof False by default.
-    Sage has a global proof flag, set to True by default (see
-    :mod:`sage.structure.proof.proof`, or proof.[tab]). To override
-    the default, call this function with proof=False.
+    Sage calls PARI's :pari:`factor`, which has ``proof=False`` by default.
+    Sage has a global proof flag, set to ``True`` by default (see
+    :mod:`sage.structure.proof.proof`, or use ``proof.[tab]``). To override
+    the default, call this function with ``proof=False``.
 
     ::
 
