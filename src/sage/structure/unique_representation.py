@@ -424,10 +424,10 @@ Class inheritance
 Using :class:`CachedRepresentation` has the advantage that one has a class and
 creates cached instances of this class by the usual Python syntax::
 
-    sage: G = SymmetricGroup(6)
-    sage: issubclass(SymmetricGroup, sage.structure.unique_representation.CachedRepresentation)
+    sage: G = SymmetricGroup(6)                                                                     # optional - sage.groups
+    sage: issubclass(SymmetricGroup, sage.structure.unique_representation.CachedRepresentation)     # optional - sage.groups
     True
-    sage: isinstance(G, SymmetricGroup)
+    sage: isinstance(G, SymmetricGroup)                                                             # optional - sage.groups
     True
 
 In contrast, a factory is just a callable object that returns something that
@@ -502,9 +502,9 @@ subgroups::
     sage: G3 = G.subgroup([G((1,2,3,4,5,6)), G((1,2))])                                 # optional - sage.groups
     sage: G is G3                                                                       # optional - sage.groups
     False
-    sage: type(G) == type(G3)
+    sage: type(G) == type(G3)                                                           # optional - sage.groups
     False
-    sage: G == G3
+    sage: G == G3                                                                       # optional - sage.groups
     True
 
 The unique representation behaviour can conveniently be implemented with a
@@ -517,9 +517,9 @@ For example, a symmetric function algebra is uniquely determined by the base
 ring. Thus, it is reasonable to use :class:`UniqueRepresentation` in this
 case::
 
-    sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)
+    sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)                        # optional - sage.combinat
     True
-    sage: issubclass(SymmetricFunctions, UniqueRepresentation)
+    sage: issubclass(SymmetricFunctions, UniqueRepresentation)                          # optional - sage.combinat
     True
 
 :class:`UniqueRepresentation` differs from :class:`CachedRepresentation` only
@@ -1188,15 +1188,15 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     the same memory representation), if and only if they were created using
     equal arguments. For example, calling twice::
 
-        sage: f = SymmetricFunctions(QQ)                                                # optional - sage.combinat
-        sage: g = SymmetricFunctions(QQ)                                                # optional - sage.combinat
+        sage: f = SymmetricFunctions(QQ)                                                # optional - sage.combinat sage.modules
+        sage: g = SymmetricFunctions(QQ)                                                # optional - sage.combinat sage.modules
 
     to create the symmetric function algebra over `\QQ` actually gives back the
     same object::
 
-        sage: f == g                                                                    # optional - sage.combinat
+        sage: f == g                                                                    # optional - sage.combinat sage.modules
         True
-        sage: f is g                                                                    # optional - sage.combinat
+        sage: f is g                                                                    # optional - sage.combinat sage.modules
         True
 
     This is a standard design pattern. It allows for sharing cached data (say
@@ -1211,9 +1211,9 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     derive from it, or make sure some of its super classes does. Also, it
     groups together the class and the factory in a single gadget::
 
-        sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)                    # optional - sage.combinat
+        sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)                    # optional - sage.combinat sage.modules
         True
-        sage: issubclass(SymmetricFunctions, UniqueRepresentation)                      # optional - sage.combinat
+        sage: issubclass(SymmetricFunctions, UniqueRepresentation)                      # optional - sage.combinat sage.modules
         True
 
     This nice behaviour is not available when one just uses a factory::
@@ -1223,7 +1223,7 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
         ...
         TypeError: isinstance() arg 2 must be a type...
 
-        sage: isinstance(GF, sage.structure.factory.UniqueFactory)
+        sage: isinstance(GF, sage.structure.factory.UniqueFactory)                      # optional - sage.rings.finite_rings
         True
 
     In addition, :class:`~sage.structure.factory.UniqueFactory` only provides
