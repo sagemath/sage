@@ -21,7 +21,7 @@ doctest::
     sage: g.powers(4)                                                                   # optional - sage.groups
     [(), (1,2,3,4), (1,3)(2,4), (1,4,3,2)]
 
-This test cannot pass when the distribution :ref:`sagemath-objects <sagemath-objects>`
+This test cannot pass when the distribution :ref:`sagemath-objects <spkg_sagemath_objects>`
 is tested separately (in a virtual environment): In this situation,
 :class:`SymmetricGroup` is not defined anywhere (and thus not present
 in the top-level namespace).
