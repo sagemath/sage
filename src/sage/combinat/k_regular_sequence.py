@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.modules
+# sage.doctest: optional - sage.combinat sage.modules sage.symbolic
 r"""
 `k`-regular Sequences
 
@@ -331,17 +331,17 @@ class kRegularSequence(RecognizableSeries):
         We check if the linear representation of the subsequences above
         indeed represent the correct vector valued sequences::
 
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
 
             sage: def v(n):
             ....:     return vector([3*n + 1, 6*n + 1])
-            sage: S31.mu[0] * v(n) == v(2*n)                                            # optional - sage.symbolic
+            sage: S31.mu[0] * v(n) == v(2*n)
             True
-            sage: S31.mu[1] * v(n) == v(2*n + 1)                                        # optional - sage.symbolic
+            sage: S31.mu[1] * v(n) == v(2*n + 1)
             True
 
-            sage: function('delta_0')                                                   # optional - sage.symbolic
+            sage: function('delta_0')
             delta_0
 
             sage: def simplify_delta(expr):
@@ -349,17 +349,17 @@ class kRegularSequence(RecognizableSeries):
 
             sage: def v(n):
             ....:     return vector([n -1 + delta_0(n), 2*n - 1 + delta_0(n), 4*n + 1])
-            sage: simplify_delta(v(2*n) - Srs.mu[0]*v(n)).is_zero()                     # optional - sage.symbolic
+            sage: simplify_delta(v(2*n) - Srs.mu[0]*v(n)).is_zero()
             True
-            sage: simplify_delta(v(2*n + 1) - Srs.mu[1]*v(n)).is_zero()                 # optional - sage.symbolic
+            sage: simplify_delta(v(2*n + 1) - Srs.mu[1]*v(n)).is_zero()
             True
 
             sage: def v(n):
             ....:     return vector([1 - delta_0(n), 1])
 
-            sage: simplify_delta(v(2*n) - Sbd.mu[0]*v(n)).is_zero()                     # optional - sage.symbolic
+            sage: simplify_delta(v(2*n) - Sbd.mu[0]*v(n)).is_zero()
             True
-            sage: simplify_delta(v(2*n + 1) - Sbd.mu[1]*v(n)).is_zero()                 # optional - sage.symbolic
+            sage: simplify_delta(v(2*n + 1) - Sbd.mu[1]*v(n)).is_zero()
             True
 
         We check some corner-cases::
@@ -934,11 +934,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         ::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
-            sage: function('f')                                                         # optional - sage.symbolic
+            sage: function('f')
             f
-            sage: Seq2.from_recurrence([                                                # optional - sage.symbolic
+            sage: Seq2.from_recurrence([
             ....:     f(2*n) == 2*f(n), f(2*n + 1) == 3*f(n) + 4*f(n - 1),
             ....:     f(0) == 0, f(1) == 1], f, n)
             2-regular sequence 0, 0, 0, 1, 2, 3, 4, 10, 6, 17, ...
@@ -1022,26 +1022,26 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         Stern--Brocot Sequence::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
-            sage: function('f')                                                         # optional - sage.symbolic
+            sage: function('f')
             f
-            sage: SB = Seq2.from_recurrence([                                           # optional - sage.symbolic
+            sage: SB = Seq2.from_recurrence([
             ....:     f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),
             ....:     f(0) == 0, f(1) == 1], f, n)
-            sage: SB                                                                    # optional - sage.symbolic
+            sage: SB
             2-regular sequence 0, 1, 1, 2, 1, 3, 2, 3, 1, 4, ...
 
         Number of Odd Entries in Pascal's Triangle::
 
-            sage: Seq2.from_recurrence([                                                # optional - sage.symbolic
+            sage: Seq2.from_recurrence([
             ....:     f(2*n) == 3*f(n), f(2*n + 1) == 2*f(n) + f(n + 1),
             ....:     f(0) == 0, f(1) == 1], f, n)
             2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
 
         Number of Unbordered Factors in the Thue--Morse Sequence::
 
-            sage: UB = Seq2.from_recurrence([                                           # optional - sage.symbolic
+            sage: UB = Seq2.from_recurrence([
             ....:     f(8*n) == 2*f(4*n),
             ....:     f(8*n + 1) == f(4*n + 1),
             ....:     f(8*n + 2) == f(4*n + 1) + f(4*n + 3),
@@ -1055,20 +1055,20 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
             ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
             ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n, offset=3)
-            sage: UB                                                                    # optional - sage.symbolic
+            sage: UB
             2-regular sequence 1, 2, 2, 4, 2, 4, 6, 0, 4, 4, ...
 
         Binary sum of digits `S(n)`, characterized by the recurrence relations
         `S(4n) = S(2n)`, `S(4n + 1) = S(2n + 1)`, `S(4n + 2) = S(2n + 1)` and
         `S(4n + 3) = -S(2n) + 2S(2n + 1)`::
 
-            sage: S = Seq2.from_recurrence([                                            # optional - sage.symbolic
+            sage: S = Seq2.from_recurrence([
             ....:     f(4*n) == f(2*n),
             ....:     f(4*n + 1) == f(2*n + 1),
             ....:     f(4*n + 2) == f(2*n + 1),
             ....:     f(4*n + 3) == -f(2*n) + 2*f(2*n + 1),
             ....:     f(0) == 0, f(1) == 1], f, n)
-            sage: S                                                                     # optional - sage.symbolic
+            sage: S
             2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
 
         In order to check if this sequence is indeed the binary sum of digits,
@@ -1078,7 +1078,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: S2 = Seq2(
             ....:     (Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [1, 1]])),
             ....:     left=vector([0, 1]), right=vector([1, 0]))
-            sage: (S - S2).is_trivial_zero()                                            # optional - sage.symbolic
+            sage: (S - S2).is_trivial_zero()
             True
 
         Alternatively, we can also use the simpler but inhomogeneous recurrence relations
@@ -1096,13 +1096,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         Number of Non-Zero Elements in the Generalized Pascal's Triangle (see [LRS2017]_)::
 
             sage: Seq2 = kRegularSequenceSpace(2, QQ)
-            sage: P = Seq2.from_recurrence([                                            # optional - sage.symbolic
+            sage: P = Seq2.from_recurrence([
             ....:     f(4*n) == 5/3*f(2*n) - 1/3*f(2*n + 1),
             ....:     f(4*n + 1) == 4/3*f(2*n) + 1/3*f(2*n + 1),
             ....:     f(4*n + 2) == 1/3*f(2*n) + 4/3*f(2*n + 1),
             ....:     f(4*n + 3) == -1/3*f(2*n) + 5/3*f(2*n + 1),
             ....:     f(0) == 1, f(1) == 2], f, n)
-            sage: P                                                                     # optional - sage.symbolic
+            sage: P
             2-regular sequence 1, 2, 3, 3, 4, 5, 5, 4, 5, 7, ...
 
         Finally, the same sequence can also be obtained via direct parameters
@@ -1118,7 +1118,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         TESTS::
 
-            sage: Seq2.from_recurrence([  # long time                                   # optional - sage.symbolic
+            sage: Seq2.from_recurrence([  # long time
             ....:     f(4*n) == f(2*n),
             ....:     f(4*n + 1) == f(2*n),
             ....:     f(4*n + 2) == f(2*n),
@@ -1130,7 +1130,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: S = Seq2.from_recurrence([                                            # optional - sage.symbolic
+            sage: S = Seq2.from_recurrence([
             ....:     f(4*n) == f(2*n),
             ....:     f(4*n + 1) == f(2*n),
             ....:     f(4*n + 2) == f(2*n),
@@ -1139,7 +1139,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     f(5) == 5, f(6) == 6, f(7) == 7, f(16) == 4, f(18) == 4,
             ....:     f(20) == 4, f(22) == 4, f(24) == 6, f(26) == 6, f(28) == 6],
             ....:     f, n, offset=2)
-            sage: all([S[4*i] == S[2*i] and                                             # optional - sage.symbolic
+            sage: all([S[4*i] == S[2*i] and
             ....:      S[4*i + 1] == S[2*i] and
             ....:      S[4*i + 2] == S[2*i] and
             ....:      S[4*i + 3] == S[2*i + 16] for i in srange(2, 100)])
@@ -1147,7 +1147,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: S = Seq2.from_recurrence([                                            # optional - sage.symbolic
+            sage: S = Seq2.from_recurrence([
             ....:     f(4*n) == f(2*n),
             ....:     f(4*n + 1) == f(2*n),
             ....:     f(4*n + 2) == f(2*n),
@@ -1160,7 +1160,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     f(22) == 22, f(23) == 23, f(24) == 24, f(25) == 25,
             ....:     f(26) == 26, f(27) == 27, f(28) == 28, f(29) == 29,
             ....:     f(30) == 30, f(31) == 31], f, n, offset=8)
-            sage: all([S[4*i] == S[2*i] and                                             # optional - sage.symbolic
+            sage: all([S[4*i] == S[2*i] and
             ....:      S[4*i + 1] == S[2*i] and
             ....:      S[4*i + 2] == S[2*i] and
             ....:      S[4*i + 3] == S[2*i - 16] for i in srange(8, 100)])
@@ -1168,11 +1168,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         Same test with different variable and function names::
 
-            sage: var('m')                                                              # optional - sage.symbolic
+            sage: var('m')
             m
-            sage: function('g')                                                         # optional - sage.symbolic
+            sage: function('g')
             g
-            sage: T = Seq2.from_recurrence([                                            # optional - sage.symbolic
+            sage: T = Seq2.from_recurrence([
             ....:     g(4*m) == g(2*m),
             ....:     g(4*m + 1) == g(2*m),
             ....:     g(4*m + 2) == g(2*m),
@@ -1185,12 +1185,12 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     g(22) == 22, g(23) == 23, g(24) == 24, g(25) == 25,
             ....:     g(26) == 26, g(27) == 27, g(28) == 28, g(29) == 29,
             ....:     g(30) == 30, g(31) == 31], g, m, offset=8)
-            sage: (S - T).is_trivial_zero()  # long time                                # optional - sage.symbolic
+            sage: (S - T).is_trivial_zero()  # long time
             True
 
         Zero-sequence with non-zero initial values::
 
-            sage: Seq2.from_recurrence([                                                # optional - sage.symbolic
+            sage: Seq2.from_recurrence([
             ....:     f(2*n) == 0, f(2*n + 1) == 0,
             ....:     f(0) == 1, f(1) == 1, f(2) == 2, f(3) == 3], f, n)
             Traceback (most recent call last):
@@ -1199,14 +1199,14 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: Seq2.from_recurrence([                                                # optional - sage.symbolic
+            sage: Seq2.from_recurrence([
             ....:     f(2*n) == 0, f(2*n + 1) == 0,
             ....:     f(0) == 1, f(1) == 1, f(2) == 2, f(3) == 3], f, n, offset=2)
             2-regular sequence 1, 1, 2, 3, 0, 0, 0, 0, 0, 0, ...
 
         Check if inhomogeneities `0` do not change the sequence::
 
-            sage: Seq2.from_recurrence([                                                # optional - sage.symbolic
+            sage: Seq2.from_recurrence([
             ....:     f(2*n) == 0, f(2*n + 1) == 0,
             ....:     f(0) == 1, f(1) == 1, f(2) == 2, f(3) == 3], f, n, offset=2,
             ....:     inhomogeneities={0: 0, 1: Seq2.zero()})
@@ -1229,26 +1229,26 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         of non-zero elements in the generalized Pascal's triangle (see
         [LRS2017]_)::
 
-            sage: U = Seq2.from_recurrence(M=1, m=0,                                    # optional - sage.symbolic
+            sage: U = Seq2.from_recurrence(M=1, m=0,
             ....:     coeffs={(0, 0): 1},
             ....:     initial_values={0: 0, 1: 1},
             ....:     inhomogeneities={1: P})
-            sage: (U - Seq2(SB)).is_trivial_zero()                                      # optional - sage.symbolic
+            sage: (U - Seq2(SB)).is_trivial_zero()
             True
 
         ::
 
-            sage: U = Seq2.from_recurrence(M=1, m=0,                                    # optional - sage.symbolic
+            sage: U = Seq2.from_recurrence(M=1, m=0,
             ....:     coeffs={},
             ....:     initial_values={0: 0, 1: 1},
             ....:     inhomogeneities={0: SB, 1: P})
-            sage: (U - Seq2(SB)).is_trivial_zero()                                      # optional - sage.symbolic
+            sage: (U - Seq2(SB)).is_trivial_zero()
             True
 
         Number of Unbordered Factors in the Thue--Morse Sequence, but partly
         encoded with inhomogeneities::
 
-            sage: UB2 = Seq2.from_recurrence([                                          # optional - sage.symbolic
+            sage: UB2 = Seq2.from_recurrence([
             ....:     f(8*n) == 2*f(4*n),
             ....:     f(8*n + 1) == f(4*n + 1),
             ....:     f(8*n + 2) == f(4*n + 1),
@@ -1264,7 +1264,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n, offset=3,
             ....:     inhomogeneities={2: UB.subsequence(4, 3), 3: -UB.subsequence(4, 1),
             ....:                      6: UB.subsequence(4, 2) + UB.subsequence(4, 3)})
-            sage: (UB2 - Seq2(UB)).is_trivial_zero()                                    # optional - sage.symbolic
+            sage: (UB2 - Seq2(UB)).is_trivial_zero()
             True
         """
         RP = RecurrenceParser(self.k, self.coefficient_ring())
@@ -1325,11 +1325,11 @@ class RecurrenceParser():
 
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
-            sage: function('f')                                                         # optional - sage.symbolic
+            sage: function('f')
             f
-            sage: RP.parse_recurrence([                                                 # optional - sage.symbolic
+            sage: RP.parse_recurrence([
             ....:     f(4*n) == f(2*n) + 2*f(2*n + 1) + 3*f(2*n - 2),
             ....:     f(4*n + 1) == 4*f(2*n) + 5*f(2*n + 1) + 6*f(2*n - 2),
             ....:     f(4*n + 2) == 7*f(2*n) + 8*f(2*n + 1) + 9*f(2*n - 2),
@@ -1341,7 +1341,7 @@ class RecurrenceParser():
 
         Stern--Brocot Sequence::
 
-            sage: RP.parse_recurrence([                                                 # optional - sage.symbolic
+            sage: RP.parse_recurrence([
             ....:    f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),
             ....:    f(0) == 0, f(1) == 1], f, n)
             (1, 0, {(0, 0): 1, (1, 0): 1, (1, 1): 1}, {0: 0, 1: 1})
@@ -1354,28 +1354,28 @@ class RecurrenceParser():
 
         The following tests check that the equations are well-formed::
 
-            sage: RP.parse_recurrence([], f, n)                                         # optional - sage.symbolic
+            sage: RP.parse_recurrence([], f, n)
             Traceback (most recent call last):
             ...
             ValueError: List of recurrence equations is empty.
 
         ::
 
-            sage: RP.parse_recurrence([f(4*n + 1)], f, n)                               # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(4*n + 1)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: f(4*n + 1) is not an equation with ==.
 
         ::
 
-            sage: RP.parse_recurrence([42], f, n)                                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([42], f, n)
             Traceback (most recent call last):
             ...
             ValueError: 42 is not a symbolic expression.
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) + 1 == f(n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) + 1 == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(2*n) + 1 in the equation f(2*n) + 1 == f(n) is
@@ -1383,7 +1383,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n, 5) == 3], f, n)                           # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n, 5) == 3], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(2*n, 5) in the equation f(2*n, 5) == 3 does not
@@ -1391,7 +1391,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f() == 3], f, n)                                 # optional - sage.symbolic
+            sage: RP.parse_recurrence([f() == 3], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f() in the equation f() == 3 does not have one
@@ -1399,7 +1399,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(1/n + 1) == f(n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(1/n + 1) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(1/n + 1) in the equation f(1/n + 1) == f(n):
@@ -1407,7 +1407,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n + 1/2) == f(n)], f, n)                     # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n + 1/2) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(2*n + 1/2) in the equation f(2*n + 1/2) == f(n):
@@ -1415,7 +1415,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(4*n^2) == f(2*n^2)], f, n)                     # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(4*n^2) == f(2*n^2)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(4*n^2) in the equation f(4*n^2) == f(2*n^2):
@@ -1423,7 +1423,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(42) == 1/2], f, n)                             # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(42) == 1/2], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Initial value 1/2 given by the equation f(42) == (1/2)
@@ -1431,14 +1431,14 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(42) == 0, f(42) == 1], f, n)                   # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(42) == 0, f(42) == 1], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Initial value f(42) is given twice.
 
         ::
 
-            sage: RP.parse_recurrence([f(42) == f(n)], f, n)                            # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(42) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Initial value f(n) given by the equation f(42) == f(n)
@@ -1446,7 +1446,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(4*n) == f(n), f(2*n) == f(n)], f, n)           # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(4*n) == f(n), f(2*n) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(2*n) in the equation f(2*n) == f(n): 2 does not
@@ -1455,7 +1455,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(3*n + 1) == f(n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(3*n + 1) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(3*n + 1) in the equation f(3*n + 1) == f(n):
@@ -1463,7 +1463,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(n + 1) == f(n)], f, n)                         # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(n + 1) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(n + 1) in the equation f(n + 1) == f(n):
@@ -1471,14 +1471,14 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == f(n), f(2*n) == 0], f, n)              # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == f(n), f(2*n) == 0], f, n)
             Traceback (most recent call last):
             ...
             ValueError: There are more than one recurrence relation for f(2*n).
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n + 2) == f(n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n + 2) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(2*n + 2) in the equation f(2*n + 2) == f(n):
@@ -1486,7 +1486,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n - 1) == f(n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n - 1) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(2*n - 1) in the equation f(2*n - 1) == f(n):
@@ -1494,7 +1494,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == 2*n], f, n)                            # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 2*n], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term 2*n in the equation f(2*n) == 2*n does not
@@ -1502,7 +1502,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == 1/2*f(n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 1/2*f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term 1/2*f(n) in the equation f(2*n) == 1/2*f(n):
@@ -1510,21 +1510,21 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == 1/f(n)], f, n)                         # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 1/f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: 1/f(n) is not a valid right hand side.
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == 2*n*f(n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 2*n*f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: 2*n*f(n) is not a valid right hand side.
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == 2*f(n, 5)], f, n)                      # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 2*f(n, 5)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(n, 5) in the equation f(2*n) == 2*f(n, 5)
@@ -1532,14 +1532,14 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == 2*f()], f, n)                          # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 2*f()], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f() in the equation f(2*n) == 2*f() has no argument.
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == 1/f(n) + 2*f(n)], f, n)                # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 1/f(n) + 2*f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term 1/f(n) in the equation f(2*n) == 1/f(n) + 2*f(n)
@@ -1547,7 +1547,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == 2*f(1/n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 2*f(1/n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(1/n) in the equation f(2*n) == 2*f(1/n):
@@ -1555,7 +1555,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == f(n + 1/2)], f, n)                     # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == f(n + 1/2)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(n + 1/2) in the equation f(2*n) == f(n + 1/2):
@@ -1563,7 +1563,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == f(1/2*n)], f, n)                       # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == f(1/2*n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(1/2*n) in the equation f(2*n) == f(1/2*n):
@@ -1571,7 +1571,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == f(n^2 + 1)], f, n)                     # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == f(n^2 + 1)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(n^2 + 1) in the equation f(2*n) == f(n^2 + 1):
@@ -1579,7 +1579,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == f(1)], f, n)                           # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == f(1)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(1) in the equation f(2*n) == f(1):
@@ -1587,7 +1587,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(4*n) == f(2*n) + f(n)], f, n)                  # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(4*n) == f(2*n) + f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(n) in the equation f(4*n) == f(2*n) + f(n):
@@ -1596,7 +1596,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(4*n) == f(2*n), f(4*n + 1) == f(n)],           # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(4*n) == f(2*n), f(4*n + 1) == f(n)],
             ....:     f, n)
             Traceback (most recent call last):
             ...
@@ -1606,7 +1606,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(4*n) == f(3*n)], f, n)                         # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(4*n) == f(3*n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(3*n) in the equation f(4*n) == f(3*n): 3 is not
@@ -1614,7 +1614,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == f(4*n)], f, n)                         # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == f(4*n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(4*n) in the equation f(2*n) == f(4*n):
@@ -1622,7 +1622,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == f(2*n)], f, n)                         # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == f(2*n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Term f(2*n) in the equation f(2*n) == f(2*n):
@@ -1630,14 +1630,14 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(2*n) == f(n)], f, n)                           # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == f(n)], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Recurrence relations for [f(2*n + 1)] are missing.
 
         ::
 
-            sage: RP.parse_recurrence([f(4*n) == f(n), f(4*n + 3) == 0], f, n)          # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(4*n) == f(n), f(4*n + 3) == 0], f, n)
             Traceback (most recent call last):
             ...
             ValueError: Recurrence relations for [f(4*n + 1), f(4*n + 2)]
@@ -1645,20 +1645,20 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parse_recurrence([f(42) == 0], f, n)                               # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(42) == 0], f, n)
             Traceback (most recent call last):
             ...
             ValueError: No recurrence relations are given.
 
         ::
 
-            sage: RP.parse_recurrence(                                                  # optional - sage.symbolic
+            sage: RP.parse_recurrence(
             ....:     [f(4*n + r) == f(n) for r in srange(4)], f, n)
             (2, 0, {(0, 0): 1, (1, 0): 1, (2, 0): 1, (3, 0): 1}, {})
 
         ::
 
-            sage: RP.parse_recurrence(                                                  # optional - sage.symbolic
+            sage: RP.parse_recurrence(
             ....:     [f(8*n) == f(n)] +
             ....:     [f(8*n + r) == f(2*n) for r in srange(1,8)], f, n)
             Traceback (most recent call last):
@@ -1669,35 +1669,35 @@ class RecurrenceParser():
 
         Finally, also for the zero-sequence the output is as expected::
 
-            sage: RP.parse_recurrence([f(2*n) == 0, f(2*n + 1) == 0], f, n)             # optional - sage.symbolic
+            sage: RP.parse_recurrence([f(2*n) == 0, f(2*n + 1) == 0], f, n)
             (1, 0, {}, {})
 
         We check that the output is of the correct type (:trac:`33158`)::
 
             sage: RP = RecurrenceParser(2, QQ)
-            sage: equations = [                                                         # optional - sage.symbolic
+            sage: equations = [
             ....:     f(4*n) == 5/3*f(2*n) - 1/3*f(2*n + 1),
             ....:     f(4*n + 1) == 4/3*f(2*n) + 1/3*f(2*n + 1),
             ....:     f(4*n + 2) == 1/3*f(2*n) + 4/3*f(2*n + 1),
             ....:     f(4*n + 3) == -1/3*f(2*n) + 5/3*f(2*n + 1),
             ....:     f(0) == 1, f(1) == 2]
-            sage: M, m, coeffs, initial_values = RP.parse_recurrence(equations, f, n)   # optional - sage.symbolic
-            sage: M.parent()                                                            # optional - sage.symbolic
+            sage: M, m, coeffs, initial_values = RP.parse_recurrence(equations, f, n)
+            sage: M.parent()
             Integer Ring
-            sage: m.parent()                                                            # optional - sage.symbolic
+            sage: m.parent()
             Integer Ring
-            sage: all(v.parent() == QQ for v in coeffs.values())                        # optional - sage.symbolic
+            sage: all(v.parent() == QQ for v in coeffs.values())
             True
-            sage: all(v.parent() == QQ for v in initial_values.values())                # optional - sage.symbolic
+            sage: all(v.parent() == QQ for v in initial_values.values())
             True
 
         This results in giving the correct (see :trac:`33158`) minimization in::
 
             sage: Seq2 = kRegularSequenceSpace(2, QQ)
-            sage: P = Seq2.from_recurrence(equations, f, n)                             # optional - sage.symbolic
-            sage: P                                                                     # optional - sage.symbolic
+            sage: P = Seq2.from_recurrence(equations, f, n)
+            sage: P
             2-regular sequence 1, 2, 3, 3, 4, 5, 5, 4, 5, 7, ...
-            sage: P.minimized()                                                         # optional - sage.symbolic
+            sage: P.minimized()
             2-regular sequence 1, 2, 3, 3, 4, 5, 5, 4, 5, 7, ...
         """
         from sage.arith.srange import srange
@@ -2119,9 +2119,9 @@ class RecurrenceParser():
 
         TESTS::
 
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
-            sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0,                               # optional - sage.symbolic
+            sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0,
             ....:     {-1: 0, 1: 0, 10: 0, I: 0, n: 0})
             Traceback (most recent call last):
             ...
@@ -2130,7 +2130,7 @@ class RecurrenceParser():
 
         ::
 
-            sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0,                               # optional - sage.symbolic
+            sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0,
             ....:     {0: n})
             Traceback (most recent call last):
             ...
@@ -2585,11 +2585,11 @@ class RecurrenceParser():
         TESTS::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
-            sage: function('f')                                                         # optional - sage.symbolic
+            sage: function('f')
             f
-            sage: UB = Seq2.from_recurrence([                                           # optional - sage.symbolic
+            sage: UB = Seq2.from_recurrence([
             ....:     f(8*n) == 2*f(4*n),
             ....:     f(8*n + 1) == f(4*n + 1),
             ....:     f(8*n + 2) == f(4*n + 1) + f(4*n + 3),
@@ -2603,16 +2603,16 @@ class RecurrenceParser():
             ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
             ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
             ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n, offset=3)
-            sage: inhomogeneities={2: UB.subsequence(4, 3), 3: -UB.subsequence(4, 1),   # optional - sage.symbolic
+            sage: inhomogeneities={2: UB.subsequence(4, 3), 3: -UB.subsequence(4, 1),
             ....:                  6: UB.subsequence(4, 2) + UB.subsequence(4, 3)}
-            sage: recurrence_rules_UB = RR(M=3, m=2, ll=0, uu=9,                        # optional - sage.symbolic
+            sage: recurrence_rules_UB = RR(M=3, m=2, ll=0, uu=9,
             ....:                          inhomogeneities=inhomogeneities)
-            sage: shifted_inhomog = RP.shifted_inhomogeneities(recurrence_rules_UB)     # optional - sage.symbolic
-            sage: shifted_inhomog                                                       # optional - sage.symbolic
+            sage: shifted_inhomog = RP.shifted_inhomogeneities(recurrence_rules_UB)
+            sage: shifted_inhomog
             {2: 2-regular sequence 8, 8, 8, 12, 12, 16, 12, 16, 12, 24, ...,
              3: 2-regular sequence -10, -8, -8, -8, -8, -8, -8, -8, -8, -12, ...,
              6: 2-regular sequence 20, 22, 24, 28, 28, 32, 28, 32, 32, 48, ...}
-            sage: shifted_inhomog[2].mu[0].ncols() == 3*inhomogeneities[2].mu[0].ncols()    # optional - sage.symbolic
+            sage: shifted_inhomog[2].mu[0].ncols() == 3*inhomogeneities[2].mu[0].ncols()
             True
 
         .. SEEALSO::
@@ -2719,11 +2719,11 @@ class RecurrenceParser():
 
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
-            sage: function('f')                                                         # optional - sage.symbolic
+            sage: function('f')
             f
-            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                  # optional - sage.symbolic
+            sage: M, m, coeffs, initial_values = RP.parse_recurrence([
             ....:     f(8*n) == -1*f(2*n - 1) + 1*f(2*n + 1),
             ....:     f(8*n + 1) == -11*f(2*n - 1) + 10*f(2*n) + 11*f(2*n + 1),
             ....:     f(8*n + 2) == -21*f(2*n - 1) + 20*f(2*n) + 21*f(2*n + 1),
@@ -2734,9 +2734,9 @@ class RecurrenceParser():
             ....:     f(8*n + 7) == -71*f(2*n - 1) + 70*f(2*n) + 71*f(2*n + 1),
             ....:     f(0) == 0, f(1) == 1, f(2) == 2, f(3) == 3, f(4) == 4,
             ....:     f(5) == 5, f(6) == 6, f(7) == 7], f, n)
-            sage: rules = RP.parameters(                                                # optional - sage.symbolic
+            sage: rules = RP.parameters(
             ....:     M, m, coeffs, initial_values, 0)
-            sage: RP.matrix(rules, 0, False)                                            # optional - sage.symbolic
+            sage: RP.matrix(rules, 0, False)
             [  0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0]
             [  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0]
             [  0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0]
@@ -2754,7 +2754,7 @@ class RecurrenceParser():
             [  0   0   0 -31  30  31   0   0   0   0   0   0   0   0   0   0   0]
             [  0   0   0 -41  40  41   0   0   0   0   0   0   0   0   0   0   0]
             [  0   0   0 -51  50  51   0   0   0   0   0   0   0   0   0   0   0]
-            sage: RP.matrix(rules, 1, False)                                            # optional - sage.symbolic
+            sage: RP.matrix(rules, 1, False)
             [  0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0]
             [  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0]
             [  0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0]
@@ -2789,7 +2789,7 @@ class RecurrenceParser():
 
         Number of Unbordered Factors in the Thue--Morse Sequence::
 
-            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                  # optional - sage.symbolic
+            sage: M, m, coeffs, initial_values = RP.parse_recurrence([
             ....:     f(8*n) == 2*f(4*n),
             ....:     f(8*n + 1) == f(4*n + 1),
             ....:     f(8*n + 2) == f(4*n + 1) + f(4*n + 3),
@@ -2803,9 +2803,9 @@ class RecurrenceParser():
             ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
             ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
             ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n)
-            sage: UB_rules = RP.parameters(                                             # optional - sage.symbolic
+            sage: UB_rules = RP.parameters(
             ....:     M, m, coeffs, initial_values, 3)
-            sage: RP.matrix(UB_rules, 0)                                                # optional - sage.symbolic
+            sage: RP.matrix(UB_rules, 0)
             [ 0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0]
@@ -2822,7 +2822,7 @@ class RecurrenceParser():
             [ 0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0]
             [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0]
-            sage: RP.matrix(UB_rules, 1)                                                # optional - sage.symbolic
+            sage: RP.matrix(UB_rules, 1)
             [ 0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0]
             [ 0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0]
@@ -3016,9 +3016,9 @@ class RecurrenceParser():
 
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
-            sage: function('f')                                                         # optional - sage.symbolic
+            sage: function('f')
             f
             sage: SB_rules = RP.parameters(
             ....:     1, 0, {(0, 0): 1, (1, 0): 1, (1, 1): 1},
@@ -3028,7 +3028,7 @@ class RecurrenceParser():
 
         Number of Unbordered Factors in the Thue--Morse Sequence::
 
-            sage: M, m, coeffs, initial_values = RP.parse_recurrence([                  # optional - sage.symbolic
+            sage: M, m, coeffs, initial_values = RP.parse_recurrence([
             ....:     f(8*n) == 2*f(4*n),
             ....:     f(8*n + 1) == f(4*n + 1),
             ....:     f(8*n + 2) == f(4*n + 1) + f(4*n + 3),
@@ -3042,9 +3042,9 @@ class RecurrenceParser():
             ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
             ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
             ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n)
-            sage: UB_rules = RP.parameters(                                             # optional - sage.symbolic
+            sage: UB_rules = RP.parameters(
             ....:     M, m, coeffs, initial_values, 3)
-            sage: RP.right(UB_rules)                                                    # optional - sage.symbolic
+            sage: RP.right(UB_rules)
             (1, 1, 2, 1, 2, 2, 4, 2, 4, 6, 0, 4, 4, 1, 0, 0)
         """
         from sage.modules.free_module_element import vector
@@ -3080,12 +3080,12 @@ class RecurrenceParser():
 
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: var('n')
             n
-            sage: function('f')                                                         # optional - sage.symbolic
+            sage: function('f')
             f
 
-            sage: RP([f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),                    # optional - sage.symbolic
+            sage: RP([f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),
             ....:     f(0) == 0, f(1) == 1], f, n)
             ([
               [1 0 0]  [1 1 0]
@@ -3095,7 +3095,7 @@ class RecurrenceParser():
              (1, 0, 0),
              (0, 1, 1))
 
-            sage: RP(equations=[f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),          # optional - sage.symbolic
+            sage: RP(equations=[f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),
             ....:     f(0) == 0, f(1) == 1], function=f, var=n)
             ([
               [1 0 0]  [1 1 0]
