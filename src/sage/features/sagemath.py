@@ -46,7 +46,7 @@ from .singular import sage__libs__singular
 
 class sagemath_doc_html(StaticFile):
     r"""
-    A :class:`Feature` which describes the presence of the documentation
+    A :class:`~sage.features.Feature` which describes the presence of the documentation
     of the Sage library in HTML format.
 
     Developers often use ``make build`` instead of ``make`` to avoid the
@@ -195,12 +195,23 @@ class sage__graphs(JoinFeature):
     uses a :class:`~sage.combinat.posets.posets.Poset`, cluster algebra quiver, finite
     state machines, abelian sandpiles, or Dynkin diagrams.
 
+        sage: g = graphs.PetersenGraph()                                                # optional - sage.graphs
+        sage: r, s = g.is_weakly_chordal(certificate=True); r                           # optional - sage.graphs
+        False
+
     Also any use of tree classes defined in :mod:`sage.combinat` (:class:`BinaryTree`,
     :class:`RootedTree`, ...) in doctests should be marked the same.
 
     By way of generalization, any use of :class:`SimplicialComplex` or other abstract complexes from
     :mod:`sage.topology`, hypergraphs, and combinatorial designs, should be marked
     ``# optional - sage.graphs`` as well.
+
+        sage: X = SimplicialComplex([[0,1,2], [1,2,3]])                                 # optional - sage.graphs
+        sage: X.link(Simplex([0]))                                                      # optional - sage.graphs
+        Simplicial complex with vertex set (1, 2) and facets {(1, 2)}
+
+        sage: IncidenceStructure([[1,2,3],[1,4]]).degrees(2)                            # optional - sage.graphs
+        {(1, 2): 1, (1, 3): 1, (1, 4): 1, (2, 3): 1, (2, 4): 0, (3, 4): 0}
 
     On the other hand, matroids are not implemented as posets in Sage but are instead
     closely tied to linear algebra over fields; hence use ``# optional - sage.modules`` instead::
@@ -215,7 +226,7 @@ class sage__graphs(JoinFeature):
     However, many constructions (and some methods) of matroids do involve graphs::
 
         sage: W = matroids.Wheel(3)     # despite the name, not created via graphs      # optional - sage.modules
-        sage: W.is_isomorphic(N)        # goes through a graph isomorphism test         # optional - sage.graphs sage.modules
+        sage: W.is_isomorphic(N)           # goes through a graph isomorphism test      # optional - sage.graphs sage.modules
         False
         sage: K4 = matroids.CompleteGraphic(4)    # this one is created via graphs      # optional - sage.graphs sage.modules
         sage: K4.is_isomorphic(W)                                                       # optional - sage.graphs sage.modules
@@ -241,7 +252,7 @@ class sage__graphs(JoinFeature):
 
 class sage__groups(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.groups``.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.groups``.
 
     EXAMPLES:
 
@@ -273,7 +284,7 @@ class sage__groups(JoinFeature):
 
 class sage__libs__pari(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
 
     SageMath uses the :ref:`PARI <spkg_pari>` library (via :ref:`cypari2 <spkg_cypari>`) for numerous purposes.
     Doctests that involves such features should be marked ``# optional - sage.libs.pari``.
@@ -310,6 +321,21 @@ class sage__libs__pari(JoinFeature):
 class sage__modules(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.modules`.
+
+    EXAMPLES:
+
+    All uses of implementations of vector spaces / free modules in SageMath, whether
+    :class:`sage.modules.free_module.FreeModule`,
+    :class:`sage.combinat.free_module.CombinatorialFreeModule`,
+    :class:`sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`, or
+    additive abelian groups, should be marked ``# optional - sage.modules``.
+
+    The same holds for matrices, tensors, algebras, quadratic forms,
+    point lattices, root systems, matrix/affine/Weyl/Coxeter groups, matroids,
+    and ring derivations.
+
+    Likewise, all uses of :mod:`sage.coding`, :mod:`sage.crypto`, and :mod:`sage.homology`
+    in doctests should be marked ``# optional - sage.modules``.
 
     TESTS::
 
@@ -393,7 +419,7 @@ class sage__rings__function_field(JoinFeature):
         sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x)); L                         # optional - sage.rings.function_field
         Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x
 
-    Such extensions of function fields are implemented using Gr\"obner bases of polynomial rings;
+    Such extensions of function fields are implemented using Gröbner bases of polynomial rings;
     Sage makes essential use of the :ref:`Singular <spkg_singular>` system for this.
     (It is not necessary to use the annotation ``# optional - sage.libs.singular``; it is
     implied by ``# optional - sage.rings.function_field``.)
@@ -479,7 +505,7 @@ class sage__rings__number_field(JoinFeature):
 
 class sage__rings__padics(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.rings.padics``.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.rings.padics``.
 
     TESTS::
 
