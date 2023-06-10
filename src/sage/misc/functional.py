@@ -1915,25 +1915,25 @@ def sqrt(x, *args, **kwds):
 
     EXAMPLES::
 
-        sage: sqrt(-1)
+        sage: sqrt(-1)                                                                  # optional - sage.symbolic
         I
-        sage: sqrt(2)
+        sage: sqrt(2)                                                                   # optional - sage.symbolic
         sqrt(2)
-        sage: sqrt(2)^2
+        sage: sqrt(2)^2                                                                 # optional - sage.symbolic
         2
         sage: sqrt(4)
         2
-        sage: sqrt(4,all=True)
+        sage: sqrt(4, all=True)
         [2, -2]
-        sage: sqrt(x^2)
+        sage: sqrt(x^2)                                                                 # optional - sage.symbolic
         sqrt(x^2)
 
     For a non-symbolic square root, there are a few options.
     The best is to numerically approximate afterward::
 
-        sage: sqrt(2).n()                                                                                               # optional - sage.symbolic
+        sage: sqrt(2).n()                                                               # optional - sage.symbolic
         1.41421356237310
-        sage: sqrt(2).n(prec=100)                                                                                       # optional - sage.symbolic
+        sage: sqrt(2).n(prec=100)                                                       # optional - sage.symbolic
         1.4142135623730950488016887242
 
     Or one can input a numerical type::
@@ -1948,9 +1948,9 @@ def sqrt(x, *args, **kwds):
     To prevent automatic evaluation, one can use the ``hold`` parameter
     after coercing to the symbolic ring::
 
-        sage: sqrt(SR(4),hold=True)
+        sage: sqrt(SR(4), hold=True)                                                    # optional - sage.symbolic
         sqrt(4)
-        sage: sqrt(4,hold=True)
+        sage: sqrt(4, hold=True)
         Traceback (most recent call last):
         ...
         TypeError: ..._do_sqrt() got an unexpected keyword argument 'hold'
