@@ -361,16 +361,22 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         EXAMPLES::
 
             sage: P.<x,y> = QQ[]
-            sage: Q = P.quotient(x^2+2)
+            sage: Q = P.quotient(x^2 + 2)
             sage: Q.category()
-            Join of Category of commutative rings and Category of subquotients of monoids and Category of quotients of semigroups
+            Join of
+             Category of commutative rings and
+             Category of subquotients of monoids and
+             Category of quotients of semigroups
             sage: first_class = Q.__class__
             sage: Q._refine_category_(Fields())
             sage: Q.category()
-            Join of Category of fields and Category of subquotients of monoids and Category of quotients of semigroups
+            Join of
+             Category of fields and
+             Category of subquotients of monoids and
+             Category of quotients of semigroups
             sage: first_class == Q.__class__
             False
-            sage: TestSuite(Q).run()
+            sage: TestSuite(Q).run()                                                    # optional - sage.libs.singular
 
         TESTS:
 
@@ -1077,21 +1083,21 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: I in RR
             False
-            sage: SR(2) in ZZ
+            sage: SR(2) in ZZ                                                           # optional - sage.symbolic
             True
             sage: RIF(1, 2) in RIF
             True
-            sage: pi in RIF # there is no element of RIF equal to pi
+            sage: pi in RIF  # there is no element of RIF equal to pi                   # optional - sage.symbolic
             False
-            sage: sqrt(2) in CC
+            sage: sqrt(2) in CC                                                         # optional - sage.symbolic
             True
-            sage: pi in RR
+            sage: pi in RR                                                              # optional - sage.symbolic
             True
-            sage: pi in CC
+            sage: pi in CC                                                              # optional - sage.symbolic
             True
-            sage: pi in RDF
+            sage: pi in RDF                                                             # optional - sage.symbolic
             True
-            sage: pi in CDF
+            sage: pi in CDF                                                             # optional - sage.symbolic
             True
 
         Note that we have
@@ -1148,9 +1154,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Check that :trac:`24209` is fixed::
 
-            sage: I in QQbar
+            sage: I in QQbar                                                            # optional - sage.rings.number_field
             True
-            sage: sqrt(-1) in QQbar
+            sage: sqrt(-1) in QQbar                                                     # optional - sage.rings.number_field sage.symbolic
             True
         """
         P = parent(x)
@@ -2049,8 +2055,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef bint has_coerce_map_from(self, S) except -2:
         """
-        Return True if there is a natural map from S to self.
-        Otherwise, return False.
+        Return ``True`` if there is a natural map from ``S`` to ``self``.
+        Otherwise, return ``False``.
 
         EXAMPLES::
 
@@ -2103,12 +2109,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: import gc
             sage: _ = gc.collect()
             sage: K = GF(1<<55,'t')                                                     # optional - sage.rings.finite_rings
-            sage: for i in range(50):                                                   # optional - sage.rings.finite_rings
+            sage: for i in range(50):                                                   # optional - sage.rings.finite_rings sage.schemes
             ....:   a = K.random_element()
             ....:   E = EllipticCurve(j=a)
             ....:   b = K.has_coerce_map_from(E)
-            sage: _ = gc.collect()                                                      # optional - sage.rings.finite_rings
-            sage: len([x for x in gc.get_objects() if isinstance(x, type(E))])          # optional - sage.rings.finite_rings
+            sage: _ = gc.collect()
+            sage: len([x for x in gc.get_objects() if isinstance(x, type(E))])          # optional - sage.rings.finite_rings sage.schemes
             1
 
         TESTS:
@@ -2116,12 +2122,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         The following was fixed in :trac:`12969`::
 
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)                       # optional - sage.combinat
-            sage: H = Sym.macdonald().H()                                               # optional - sage.combinat
-            sage: P = Sym.macdonald().P()                                               # optional - sage.combinat
-            sage: m = Sym.monomial()                                                    # optional - sage.combinat
-            sage: Ht = Sym.macdonald().Ht()                                             # optional - sage.combinat
-            sage: phi = m.coerce_map_from(P)                                            # optional - sage.combinat
+            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)                       # optional - sage.combinat sage.modules
+            sage: H = Sym.macdonald().H()                                               # optional - sage.combinat sage.modules
+            sage: P = Sym.macdonald().P()                                               # optional - sage.combinat sage.modules
+            sage: m = Sym.monomial()                                                    # optional - sage.combinat sage.modules
+            sage: Ht = Sym.macdonald().Ht()                                             # optional - sage.combinat sage.modules
+            sage: phi = m.coerce_map_from(P)                                            # optional - sage.combinat sage.modules
         """
         return copy(self._internal_coerce_map_from(S))
 
@@ -2299,9 +2305,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: p = QQ.random_element()                                               # optional - sage.rings.number_field
             sage: c = phi(p) - p; c                                                     # optional - sage.rings.number_field
             0
-            sage: c.parent() is M
+            sage: c.parent() is M                                                       # optional - sage.rings.number_field
             True
-            sage: K.coerce_map_from(QQ)
+            sage: K.coerce_map_from(QQ)                                                 # optional - sage.rings.number_field
             Coercion map:
               From: Rational Field
               To:   Number Field in a with defining polynomial x^2 - 2 over its base field
@@ -2323,16 +2329,18 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         Check that :trac:`14982` is fixed, and more generally that we discover
         sensible coercion paths in the presence of embeddings::
 
-            sage: K.<a> = NumberField(x^2+1/2, embedding=CC(0,1))
-            sage: L = NumberField(x^2+2, 'b', embedding=1/a)
-            sage: PolynomialRing(L, 'x').coerce_map_from(L)
+            sage: K.<a> = NumberField(x^2 + 1/2, embedding=CC(0, 1))                    # optional - sage.rings.number_field
+            sage: L = NumberField(x^2 + 2, 'b', embedding=1/a)                          # optional - sage.rings.number_field
+            sage: PolynomialRing(L, 'x').coerce_map_from(L)                             # optional - sage.rings.number_field
             Polynomial base injection morphism:
               From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-              To:   Univariate Polynomial Ring in x over Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-            sage: PolynomialRing(K, 'x').coerce_map_from(L)
+              To:   Univariate Polynomial Ring in x over Number Field in b
+                    with defining polynomial x^2 + 2 with b = -2*a
+            sage: PolynomialRing(K, 'x').coerce_map_from(L)                             # optional - sage.rings.number_field
             Composite map:
               From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-              To:   Univariate Polynomial Ring in x over Number Field in a with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
+              To:   Univariate Polynomial Ring in x over Number Field in a
+                    with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
               Defn:   Generic morphism:
                       From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
                       To:   Number Field in a with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
@@ -2340,15 +2348,18 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     then
                       Polynomial base injection morphism:
                       From: Number Field in a with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
-                      To:   Univariate Polynomial Ring in x over Number Field in a with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
-            sage: MatrixSpace(L, 2, 2).coerce_map_from(L)
+                      To:   Univariate Polynomial Ring in x over Number Field in a
+                            with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
+            sage: MatrixSpace(L, 2, 2).coerce_map_from(L)                               # optional - sage.rings.number_field
             Coercion map:
               From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-              To:   Full MatrixSpace of 2 by 2 dense matrices over Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-            sage: PowerSeriesRing(L, 'x').coerce_map_from(L)
+              To:   Full MatrixSpace of 2 by 2 dense matrices over Number Field in b
+                    with defining polynomial x^2 + 2 with b = -2*a
+            sage: PowerSeriesRing(L, 'x').coerce_map_from(L)                            # optional - sage.rings.number_field
             Coercion map:
               From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-              To:   Power Series Ring in x over Number Field in b with defining polynomial x^2 + 2 with b = -2*a
+              To:   Power Series Ring in x over Number Field in b
+                    with defining polynomial x^2 + 2 with b = -2*a
         """
         if isinstance(S, Parent) and (<Parent>S)._embedding is not None:
             if (<Parent>S)._embedding.codomain() is self:
