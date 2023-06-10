@@ -353,7 +353,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 
         INPUT:
 
-        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the
+        - ``bijection`` -- (default: ``'Boussicault-Socci'``) is the name of the
           bijection to use. Possible values are ``'Boussicault-Socci'``,
           ``'via dyck and Delest-Viennot'``.
 
