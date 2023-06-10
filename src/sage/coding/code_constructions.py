@@ -502,8 +502,8 @@ def QuadraticResidueCode(n,F):
     `n`'th root of unity; `i` ranges over the set of
     quadratic residues modulo `n`).
 
-    See :class:`QuadraticResidueCodeEvenPair` and :class:`QuadraticResidueCodeOddPair`
-    for a more general construction.
+    See :class:`QuadraticResidueCodeEvenPair` and
+    :class:`QuadraticResidueCodeOddPair` for a more general construction.
 
     INPUT:
 

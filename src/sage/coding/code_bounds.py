@@ -152,8 +152,8 @@ This module implements:
 
 -  Delsarte (a.k.a. Linear Programming (LP)) upper bounds.
 
-PROBLEM: In this module we shall typically either (a) seek bounds
-on `k`, given `n`, `d`, `q`, (b) seek bounds on `R`, `\delta`, `q` (assuming `n` is
+PROBLEM: In this module we shall typically either (a) seek bounds on `k`, given
+`n`, `d`, `q`, (b) seek bounds on `R`, `\delta`, `q` (assuming `n` is
 "infinity").
 
 .. TODO::
@@ -300,10 +300,11 @@ def dimension_upper_bound(n, d, q, algorithm=None):
     Return an upper bound for the dimension of a linear code.
 
     Return an upper bound `B(n,d) = B_q(n,d)` for the
-    dimension of a linear code of length n, minimum distance d over a
-    field of size q.
+    dimension of a linear code of length `n`, minimum distance `d` over a
+    field of size `q`.
 
-    Parameter ``algorithm`` has the same meaning as in :func:`codesize_upper_bound`
+    Parameter ``algorithm`` has the same meaning as in
+    :func:`codesize_upper_bound`
 
     EXAMPLES::
 

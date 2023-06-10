@@ -6,18 +6,18 @@ This module implements functions useful for studying binary self-dual codes.
 The main function is ``self_dual_binary_codes``, which is a case-by-case list
 of entries, each represented by a Python dictionary.
 
-Format of each entry: a Python dictionary with keys "order autgp", "spectrum",
-"code", "Comment", "Type", where
+Format of each entry: a Python dictionary with keys ``"order autgp"``, ``"spectrum"``,
+``"code"``, ``"Comment"``, ``"Type"``, where
 
-- "code" -- a sd code C of length n, dim n/2, over GF(2)
+- ``"code"`` -- a sd code `C` of length `n`, dim `n/2`, over `\GF{2}`
 
-- "order autgp" -- order of the permutation automorphism group of C
+- ``"order autgp"`` -- order of the permutation automorphism group of `C`
 
-- "Type" -- the type of C (which can be "I" or "II", in the binary case)
+- ``"Type"`` -- the type of `C` (which can be ``"I"`` or ``"II"``, in the binary case)
 
-- "spectrum" -- the spectrum [A0,A1,...,An]
+- ``"spectrum"`` -- the spectrum `[A_0,A_1,...,A_n]`
 
-- "Comment" -- possibly an empty string.
+- ``"Comment"`` -- possibly an empty string.
 
 Python dictionaries were used since they seemed to be both
 human-readable and allow others to update the database easiest.
@@ -53,8 +53,8 @@ You should get lists of numbers equal to 0.707106781186548.
 Here's a rather naive construction of self-dual codes in the binary
 case:
 
-For even `m`, let `A_m` denote the `m\times m` matrix over `\GF{2}` given by adding
-the all 1's matrix to the identity matrix (in
+For even `m`, let `A_m` denote the `m\times m` matrix over `\GF{2}`
+given by adding the all 1's matrix to the identity matrix (in
 ``MatrixSpace(GF(2),m,m)`` of course). If `M_1, ..., M_r` are square
 matrices, let `diag(M_1,M_2,...,M_r)` denote the "block diagonal"
 matrix with the matrices `M_i` on the diagonal and 0's elsewhere. Let
@@ -66,7 +66,7 @@ having block form `G = (I, A)`, where
 `C(m_1,...,m_r,s)` are SD.
 
 SD codes not of this form will be called (for the purpose of
-documenting the code below) "exceptional". Except when n is
+documenting the code below) "exceptional". Except when `n` is
 "small", most sd codes are exceptional (based on a counting
 argument and table 9.1 in the Huffman+Pless [HP2003]_, page 347).
 

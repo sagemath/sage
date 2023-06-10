@@ -162,29 +162,31 @@ def test_word_perms(t_limit=5.0):
     These are structures written in pure C for speed, and are tested from this
     function, which performs the following tests:
 
-    1.  Tests :func:`create_word_perm`, which creates a :class:`WordPermutation` from a Python
-        list `L` representing a permutation `i \mapsto L[i]`. Takes a random word and
-        permutes it by a random list permutation, and tests that the result
-        agrees with doing it the slow way.
+    1.  Tests :func:`create_word_perm`, which creates a :class:`WordPermutation`
+        from a Python list `L` representing a permutation `i \mapsto
+        L[i]`. Takes a random word and permutes it by a random list permutation,
+        and tests that the result agrees with doing it the slow way.
 
-    1b. Tests :func:`create_array_word_perm`, which creates a :class:`WordPermutation` from a
-        C array. Does the same as above.
+    1b. Tests :func:`create_array_word_perm`, which creates a
+        :class:`WordPermutation` from a C array. Does the same as above.
 
-    2.  Tests :func:`create_comp_word_perm`, which creates a :class:`WordPermutation` as a
-        composition of two :class:`WordPermutation` objects. Takes a random word and
-        two random permutations, and tests that the result of permuting by the
-        composition is correct.
+    2.  Tests :func:`create_comp_word_perm`, which creates a
+        :class:`WordPermutation` as a composition of two
+        :class:`WordPermutation` objects. Takes a random word and two random
+        permutations, and tests that the result of permuting by the composition
+        is correct.
 
-    3.  Tests :func:`create_inv_word_perm` and :func:`create_id_word_perm`, which create a
-        :class:`WordPermutation` as the inverse and identity permutations, resp.
-        Takes a random word and a random permutation, and tests that the result
-        permuting by the permutation and its inverse in either order, and
-        permuting by the identity both return the original word.
+    3.  Tests :func:`create_inv_word_perm` and :func:`create_id_word_perm`,
+        which create a :class:`WordPermutation` as the inverse and identity
+        permutations, resp.  Takes a random word and a random permutation, and
+        tests that the result permuting by the permutation and its inverse in
+        either order, and permuting by the identity both return the original
+        word.
 
     .. NOTE::
 
-        The functions :func:`permute_word_by_wp` and :func:`dealloc_word_perm` are implicitly
-        involved in each of the above tests.
+        The functions :func:`permute_word_by_wp` and :func:`dealloc_word_perm`
+        are implicitly involved in each of the above tests.
 
     TESTS::
 
@@ -866,8 +868,8 @@ cdef class BinaryCode:
 
     def matrix(self):
         """
-        Returns the generator matrix of the :class:`BinaryCode`, i.e. the code is the
-        rowspace of ``B.matrix()``.
+        Return the generator matrix of the :class:`BinaryCode`, i.e. the code is
+        the rowspace of ``B.matrix()``.
 
         EXAMPLES::
 
@@ -3910,9 +3912,9 @@ cdef class BinaryCodeClassifier:
 
         - ``n`` -- limit on the degree of the code
 
-        - ``d`` -- test whether new vector has weight divisible by `d`. If `d=4`, this
-          ensures that all doubly-even canonically augmented children are
-          generated.
+        - ``d`` -- test whether new vector has weight divisible by `d`. If
+          `d=4`, this ensures that all doubly-even canonically augmented
+          children are generated.
 
         EXAMPLES::
 

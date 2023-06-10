@@ -197,9 +197,9 @@ class AbstractCode(Parent):
       ``MyDecoderClass``.
 
 
-    As the class :class:`AbstractCode` is not designed to be instantiated, it does not have any
-    representation methods. You should implement ``_repr_`` and ``_latex_``
-    methods in the subclass.
+    As the class :class:`AbstractCode` is not designed to be instantiated, it
+    does not have any representation methods. You should implement ``_repr_``
+    and ``_latex_`` methods in the subclass.
     """
 
     def __init__(self, length, default_encoder_name=None,

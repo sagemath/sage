@@ -242,7 +242,8 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
-      - the first integer is the multiplicity parameter of Guruswami-Sudan algorithm and
+      - the first integer is the multiplicity parameter of Guruswami-Sudan
+        algorithm and
       - the second integer is the list size parameter.
 
     - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
@@ -314,7 +315,8 @@ def lee_osullivan_module(points, parameters, wy):
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
-      - the first integer is the multiplicity parameter `s` of Guruswami-Sudan algorithm and
+      - the first integer is the multiplicity parameter `s` of Guruswami-Sudan
+        algorithm and
       - the second integer is the list size parameter.
 
     - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
@@ -368,7 +370,8 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
     - ``tau`` -- an integer, the number of errors one wants to decode.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
-      - the first integer is the multiplicity parameter of Guruswami-Sudan algorithm and
+      - the first integer is the multiplicity parameter of Guruswami-Sudan
+        algorithm and
       - the second integer is the list size parameter.
 
     - ``wy`` -- an integer, the `y`-weight, where we seek ``Q`` of low

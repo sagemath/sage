@@ -69,8 +69,9 @@ def _insert_punctured_positions(l, punctured_points, value = None):
 
     - ``punctured_points`` -- a set of integers
 
-    - ``value`` -- (default: ``None``) an element to insert in every position given in``punctured_points``.
-      If it is let to ``None``, a random value will be chosen for each insertion.
+    - ``value`` -- (default: ``None``) an element to insert in every position
+      given in``punctured_points``.  If it is let to ``None``, a random value
+      will be chosen for each insertion.
 
     EXAMPLES::
 
@@ -121,13 +122,15 @@ class PuncturedCode(AbstractLinearCode):
         r"""
         TESTS:
 
-        If one of the positions to puncture is bigger than the length of ``C``, an exception will be raised::
+        If one of the positions to puncture is bigger than the length of ``C``,
+        an exception will be raised::
 
             sage: C = codes.random_linear_code(GF(7), 11, 5)
             sage: Cp = codes.PuncturedCode(C, {4,8,15})
             Traceback (most recent call last):
             ...
-            ValueError: Positions to puncture must be positive integers smaller than the length of the provided code
+            ValueError: Positions to puncture must be positive integers smaller
+            than the length of the provided code
         """
         if not isinstance(positions, (Integer, int, set, list)):
             raise TypeError("positions must be either a Sage Integer, a Python int, a set or a list")
@@ -439,18 +442,19 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
     - ``strategy`` -- (default: ``None``) the strategy used to decode.
       The available strategies are:
 
-      * ``'error-erasure'`` -- uses an error-erasure decoder over the original code if available,
-        fails otherwise.
+      * ``'error-erasure'`` -- uses an error-erasure decoder over the original
+        code if available, fails otherwise.
 
       * ``'random-values'`` -- fills the punctured positions with random elements
         in ``code``'s base field and tries to decode using
         the default decoder of the original code
 
-      * ``'try-all'`` -- fills the punctured positions with every possible combination of
-        symbols until decoding succeeds, or until every combination have been tried
+      * ``'try-all'`` -- fills the punctured positions with every possible
+        combination of symbols until decoding succeeds, or until every
+        combination have been tried
 
-      * ``None`` -- uses ``error-erasure`` if an error-erasure decoder is available,
-        switch to ``random-values`` behaviour otherwise
+      * ``None`` -- uses ``error-erasure`` if an error-erasure decoder is
+        available, switch to ``random-values`` behaviour otherwise
 
     - ``original_decoder`` -- (default: ``None``) the decoder that will be used over the original code.
       It has to be a decoder object over the original code.
@@ -468,10 +472,11 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         Decoder of Puncturing of [15, 7, 9] Reed-Solomon Code over GF(16) on position(s) [3]
          through Error-Erasure decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
 
-    As seen above, if all optional are left blank, and if an error-erasure decoder is
-    available, it will be chosen as the original decoder.
-    Now, if one forces ``strategy`` to ``'try-all'`` or ``'random-values'``, the
-    default decoder of the original code will be chosen, even if an error-erasure is available::
+    As seen above, if all optional are left blank, and if an error-erasure
+    decoder is available, it will be chosen as the original decoder.  Now, if
+    one forces ``strategy`` to ``'try-all'`` or ``'random-values'``, the default
+    decoder of the original code will be chosen, even if an error-erasure is
+    available::
 
         sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
         sage: Cp = codes.PuncturedCode(C, 3)
@@ -479,8 +484,8 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         sage: "error-erasure" in D.decoder_type()
         False
 
-    And if one fills ``original_decoder`` and ``strategy`` fields with contradictory
-    elements, the ``original_decoder`` takes precedence::
+    And if one fills ``original_decoder`` and ``strategy`` fields with
+    contradictory elements, the ``original_decoder`` takes precedence::
 
         sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
         sage: Cp = codes.PuncturedCode(C, 3)

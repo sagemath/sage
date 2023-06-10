@@ -37,9 +37,9 @@ from sage.misc.functional import sqrt
 
 def n_k_params(C, n_k):
     r"""
-    Internal helper function for the :class:`GRSGuruswamiSudanDecoder` class for allowing to
-    specify either a GRS code `C` or the length and dimensions `n, k` directly,
-    in all the static functions.
+    Internal helper function for the :class:`GRSGuruswamiSudanDecoder` class for
+    allowing to specify either a GRS code `C` or the length and dimensions `n,
+    k` directly, in all the static functions.
 
     If neither `C` or `n,k` were specified to those functions, an appropriate
     error should be raised. Otherwise, `n, k` of the code or the supplied tuple
@@ -49,7 +49,8 @@ def n_k_params(C, n_k):
 
     - ``C`` -- A GRS code or ``None``
 
-    - ``n_k`` -- A tuple `(n,k)` being length and dimension of a GRS code, or ``None``.
+    - ``n_k`` -- A tuple `(n,k)` being length and dimension of a GRS code, or
+      ``None``.
 
     OUTPUT:
 
@@ -164,7 +165,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
       that will be used. The following possibilities are currently available:
 
       * ``"LinearAlgebra"`` -- uses a linear system solver.
-      * ``"LeeOSullivan"`` -- uses Lee O'Sullivan method based on row reduction of a matrix
+      * ``"LeeOSullivan"`` -- uses Lee O'Sullivan method based on row reduction
+        of a matrix
       * ``None`` -- one of the above will be chosen based on the size of the
         code and the parameters.
 

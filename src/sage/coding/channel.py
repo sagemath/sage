@@ -446,8 +446,8 @@ class ErrorErasureChannel(Channel):
     r"""
     Channel which adds errors and erases several positions in any message it transmits.
 
-    The output space of this channel is a Cartesian product
-    between its input space and a VectorSpace of the same dimension over `\GF{2}`.
+    The output space of this channel is a Cartesian product between its input
+    space and a VectorSpace of the same dimension over `\GF{2}`.
 
     INPUT:
 
@@ -561,8 +561,8 @@ class ErrorErasureChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Return ``message`` with as many errors as ``self._number_errors`` in it, and as many erasures
-        as ``self._number_erasures`` in it.
+        Return ``message`` with as many errors as ``self._number_errors`` in it,
+        and as many erasures as ``self._number_erasures`` in it.
 
         If ``self._number_errors`` was passed as an tuple for the number of errors, it will
         pick a random integer between the bounds of the tuple and use it as the number of errors.
@@ -583,9 +583,10 @@ class ErrorErasureChannel(Channel):
 
         - a couple of vectors, namely:
 
-          - the transmitted message, which is ``message`` with erroneous and erased positions
-          - the erasure vector, which contains ``1`` at the erased positions of the transmitted message
-            and ``0`` elsewhere.
+          - the transmitted message, which is ``message`` with erroneous and
+            erased positions
+          - the erasure vector, which contains ``1`` at the erased positions of
+            the transmitted message and ``0`` elsewhere.
 
         EXAMPLES::
 
@@ -672,14 +673,15 @@ class QarySymmetricChannel(Channel):
 
     EXAMPLES:
 
-    We construct a :class:`QarySymmetricChannel` which corrupts 30% of all transmitted
-    symbols::
+    We construct a :class:`QarySymmetricChannel` which corrupts 30% of all
+    transmitted symbols::
 
         sage: epsilon = 0.3
         sage: Chan = channels.QarySymmetricChannel(GF(59)^50, epsilon)
         sage: Chan
         q-ary symmetric channel with error probability 0.300000000000000,
-        of input and output space Vector space of dimension 50 over Finite Field of size 59
+         of input and output space
+          Vector space of dimension 50 over Finite Field of size 59
     """
 
     def __init__(self, space, epsilon):
