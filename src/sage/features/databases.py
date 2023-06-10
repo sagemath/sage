@@ -62,7 +62,7 @@ class DatabaseCremona(StaticFile):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of :ref:`John Cremona's
     database of elliptic curves <spkg_database_cremona_ellcurve>`
-    (or its :ref:`small version <database_cremona_mini_ellcurve>`.
+    (or its :ref:`small version <spkg_database_cremona_mini_ellcurve>`.
 
     INPUT:
 
