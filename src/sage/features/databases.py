@@ -61,8 +61,7 @@ CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
 class DatabaseCremona(StaticFile):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of :ref:`John Cremona's
-    database of elliptic curves <spkg_database_cremona_ellcurve>`
-    (or its :ref:`small version <spkg_database_cremona_mini_ellcurve>`.
+    database of elliptic curves <spkg_database_cremona_ellcurve>`.
 
     INPUT:
 
@@ -74,7 +73,7 @@ class DatabaseCremona(StaticFile):
         sage: from sage.features.databases import DatabaseCremona
         sage: DatabaseCremona('cremona_mini').is_present()
         FeatureTestResult('database_cremona_mini_ellcurve', True)
-        sage: DatabaseCremona().is_present()  # optional - database_cremona_ellcurve
+        sage: DatabaseCremona().is_present()                                    # optional - database_cremona_ellcurve
         FeatureTestResult('database_cremona_ellcurve', True)
     """
     def __init__(self, name="cremona", spkg="database_cremona_ellcurve"):

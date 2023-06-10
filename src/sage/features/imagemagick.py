@@ -107,7 +107,7 @@ class Convert(Executable):
 class ImageMagick(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
-    :ref:`ImageMagick <spkg_imagemagick>_`
+    :ref:`ImageMagick <spkg_imagemagick>`
 
     Currently, only the availability of the :class:`convert` program is checked.
 
