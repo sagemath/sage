@@ -1,5 +1,32 @@
 r"""
 Features for testing the presence of Python modules in the Sage library
+
+All of these features are present in a monolithic installation of the Sage library,
+such as the one made by the SageMath distribution.
+
+The features are defined for the purpose of separately testing modularized
+distributions such as :ref:`sagemath-categories <spkg_sagemath_categories>`
+and :ref:`sagemath-repl <spkg_sagemath_repl>`.
+
+Often, doctests in a module of the Sage library illustrate the
+interplay with a range of different objects; this is a form of integration testing.
+These objects may come from modules shipped in
+other distributions. For example, :mod:`sage.structure.element`
+(shipped by :ref:`sagemath-objects <spkg_sagemath_objects>`,
+one of the most fundamental distributions) contains the
+doctest::
+
+    sage: G = SymmetricGroup(4)                                                         # optional - sage.groups
+    sage: g = G([2, 3, 4, 1])                                                           # optional - sage.groups
+    sage: g.powers(4)                                                                   # optional - sage.groups
+    [(), (1,2,3,4), (1,3)(2,4), (1,4,3,2)]
+
+This test cannot pass when the distribution :ref:`sagemath-objects <sagemath-objects>`
+is tested separately (in a virtual environment): In this situation,
+:class:`SymmetricGroup` is not defined anywhere (and thus not present
+in the top-level namespace).
+Hence, we conditionalize this doctest on the presence of the feature
+:class:`sage.groups <sage__groups>`.
 """
 
 # *****************************************************************************
