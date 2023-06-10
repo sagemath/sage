@@ -183,16 +183,16 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_group_divisible_design
-        sage: TD = designs.transversal_design(4,10)                                     # optional - sage.matrix
-        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.matrix
-        sage: is_group_divisible_design(groups,TD,40,lambd=1)                           # optional - sage.matrix
+        sage: TD = designs.transversal_design(4,10)                                     # optional - sage.modules
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.modules
+        sage: is_group_divisible_design(groups,TD,40,lambd=1)                           # optional - sage.modules
         True
 
     TESTS::
 
-        sage: TD = designs.transversal_design(4,10)                                     # optional - sage.matrix
-        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.matrix
-        sage: is_group_divisible_design(groups, TD, 40, lambd=2, verbose=True)          # optional - sage.matrix
+        sage: TD = designs.transversal_design(4,10)                                     # optional - sage.modules
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.modules
+        sage: is_group_divisible_design(groups, TD, 40, lambd=2, verbose=True)          # optional - sage.modules
         the pair (0,10) has been seen 1 times but lambda=2
         False
         sage: is_group_divisible_design([[1,2],[3,4]],[[1,2]],40,lambd=1,verbose=True)
@@ -362,18 +362,18 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
         sage: sts = designs.steiner_triple_system(9)
         sage: is_pairwise_balanced_design(sts,9,[3],1)
         True
-        sage: TD = designs.transversal_design(4,10).blocks()                            # optional - sage.matrix
-        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.matrix
-        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 1, verbose=True)     # optional - sage.matrix
+        sage: TD = designs.transversal_design(4,10).blocks()                            # optional - sage.modules
+        sage: groups = [list(range(i*10,(i+1)*10)) for i in range(4)]                   # optional - sage.modules
+        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 1, verbose=True)     # optional - sage.modules
         True
 
     TESTS::
 
         sage: from sage.combinat.designs.designs_pyx import is_pairwise_balanced_design
-        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 2, verbose=True)     # optional - sage.matrix
+        sage: is_pairwise_balanced_design(TD + groups, 40, [4,10], 2, verbose=True)     # optional - sage.modules
         the pair (0,1) has been seen 1 times but lambda=2
         False
-        sage: is_pairwise_balanced_design(TD + groups, 40, [10], 1, verbose=True)       # optional - sage.matrix
+        sage: is_pairwise_balanced_design(TD + groups, 40, [10], 1, verbose=True)       # optional - sage.modules
         a block has size 4 while K=[10]
         False
         sage: is_pairwise_balanced_design([[2,2]],40,[2],1,verbose=True)
