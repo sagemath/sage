@@ -89,8 +89,8 @@ fi
 OUTPUT_INDEX="$OUTPUT_DIR"/index.rst
 cat > "$OUTPUT_INDEX" <<EOF
 
-External Packages
-=================
+Features, Distributions, and External Packages
+==============================================
 
 Standard Packages
 -----------------
@@ -139,15 +139,6 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
 
-All External Packages
----------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   index_alph
-
-
 Runtime-Detectable Features and Conditional Doctests
 ----------------------------------------------------
 
@@ -185,10 +176,19 @@ Runtime-Detectable Features and Conditional Doctests
    sage/features/join_feature
    sage/features/all
 
+All External Packages
+---------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   index_alph
+
 EOF
 
 OUTPUT_INDEX="$OUTPUT_DIR"/index_alph.rst
 cat >> "$OUTPUT_INDEX" <<EOF
+
 Details of external packages
 ============================
 

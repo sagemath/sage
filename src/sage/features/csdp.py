@@ -25,7 +25,7 @@ from . import Executable, FeatureTestResult
 class CSDP(Executable):
     r"""
     A :class:`~sage.features.Feature` which checks for the ``theta`` binary
-    of CSDP.
+    of :ref:`CSDP <spkg_sdp>`.
 
     EXAMPLES::
 

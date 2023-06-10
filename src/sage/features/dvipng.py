@@ -15,7 +15,7 @@ from . import Executable
 
 class dvipng(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``dvipng``
+    A :class:`~sage.features.Feature` describing the presence of :ref:`dvipng <spkg_dvipng>`.
 
     EXAMPLES::
 

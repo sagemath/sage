@@ -1,7 +1,7 @@
 r"""
 Feature for testing the presence of ``imagemagick``
 
-Currently we only check for the presence of ``convert``. When needed other
+Currently we only check for the presence of ``convert``. When needed, other
 commands like ``magick``, ``magick-script``, ``convert``, ``mogrify``,
 ``identify``, ``composite``, ``montage``, ``compare``, etc. could be also
 checked in this module.
@@ -22,7 +22,7 @@ from .join_feature import JoinFeature
 
 class Convert(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``convert``
+    A :class:`~sage.features.Feature` describing the presence of ``convert``.
 
     EXAMPLES::
 
@@ -103,12 +103,13 @@ class Convert(Executable):
         # The command seems functional
         return FeatureTestResult(self, True)
 
+
 class ImageMagick(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
-    ``ImageMagick``
+    :ref:`ImageMagick <spkg_imagemagick>_`
 
-    Currently, only the availability of ``convert`` is checked.
+    Currently, only the availability of the :class:`convert` program is checked.
 
     EXAMPLES::
 
