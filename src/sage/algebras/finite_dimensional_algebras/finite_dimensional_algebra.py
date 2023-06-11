@@ -814,7 +814,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B.maximal_ideal()
+            sage: B.maximal_ideal()                                                     # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: algebra is not local
@@ -860,7 +860,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B.primary_decomposition()
+            sage: B.primary_decomposition()                                             # optional - sage.libs.pari
             [Morphism
               from Finite-dimensional algebra of degree 3 over Rational Field
                 to Finite-dimensional algebra of degree 1 over Rational Field
