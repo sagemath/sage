@@ -306,7 +306,7 @@ cdef class IntList:
 
     def list(self):
         """
-        Return Python list version of self with Python ints as entries.
+        Return Python list version of ``self`` with Python ints as entries.
 
         EXAMPLES::
 
@@ -324,7 +324,7 @@ cdef class IntList:
 
     cpdef int sum(self):
         """
-        Return the sum of the entries of self.
+        Return the sum of the entries of ``self``.
 
         EXAMPLES::
 
@@ -348,7 +348,7 @@ cdef class IntList:
 
     cpdef int prod(self):
         """
-        Return the product of the entries of self.
+        Return the product of the entries of ``self``.
 
         EXAMPLES::
 
@@ -416,18 +416,18 @@ cdef class IntList:
     def min(self, bint index=False):
         """
         Return the smallest value in this integer list.  If this
-        series has length 0 we raise a ValueError.
+        series has length 0 we raise a :class:`ValueError`.
 
         INPUT:
 
-            - index -- bool (default: False); if True, also return
-              index of minimal entry.
+        - ``index`` -- bool (default: ``False``); if ``True``, also return
+          index of minimal entry.
 
         OUTPUT:
 
-            - float -- smallest value
-            - integer -- index of smallest value; only returned if
-              index=True
+        - float -- smallest value
+        - integer -- index of smallest value; only returned if
+          ``index=True``
 
         EXAMPLES::
 
@@ -454,17 +454,17 @@ cdef class IntList:
     def max(self, bint index=False):
         """
         Return the largest value in this time series. If this series
-        has length 0 we raise a ValueError
+        has length 0 we raise a :class:`ValueError`
 
         INPUT:
 
-            - index -- bool (default: False); if True, also return
-              index of maximum entry.
+        - ``index`` -- bool (default: ``False``); if ``True``, also return
+          index of maximum entry.
 
         OUTPUT:
 
-            - int -- largest value
-            - int -- index of largest value; only returned if index=True
+        - int -- largest value
+        - int -- index of largest value; only returned if ``index=True``
 
         EXAMPLES::
 
@@ -489,7 +489,7 @@ cdef class IntList:
 
     def time_series(self):
         """
-        Return TimeSeries version of self, which involves changing
+        Return :class:`TimeSeries` version of ``self``, which involves changing
         each entry to a double.
 
         EXAMPLES::
@@ -511,8 +511,10 @@ cdef class IntList:
 
     def plot(self, *args, **kwds):
         """
-        Return a plot of this IntList.  This just constructs the
-        corresponding double-precision floating point TimeSeries
+        Return a plot of this :class:`IntList`.
+
+        This just constructs the
+        corresponding double-precision floating point :class:`TimeSeries`
         object, passing on all arguments.
 
         EXAMPLES::
@@ -527,8 +529,10 @@ cdef class IntList:
 
     def plot_histogram(self, *args, **kwds):
         """
-        Return a histogram plot of this IntList.  This just constructs
-        the corresponding double-precision floating point TimeSeries object,
+        Return a histogram plot of this :class:`IntList`.
+
+        This just constructs
+        the corresponding double-precision floating point :class:`TimeSeries` object,
         and plots it, passing on all arguments.
 
         EXAMPLES::
