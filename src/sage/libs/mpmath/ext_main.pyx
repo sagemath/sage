@@ -480,7 +480,7 @@ cdef class Context:
             100
             sage: mp.prec = 53
         """
-        return libmp.prec_to_dps(global_opts.prec)
+        return prec_to_dps(global_opts.prec)
 
     dps = property(_get_dps, _set_dps, doc=_get_dps.__doc__)
     prec = property(_get_prec, _set_prec, doc=_get_dps.__doc__)

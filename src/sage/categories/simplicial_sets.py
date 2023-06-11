@@ -500,7 +500,7 @@ class SimplicialSets(Category_singleton):
                                 faces_dict[cell] = grelems
                 cover = SimplicialSet(faces_dict, base_point=cells_dict[(self.base_point(), G.one())])
                 cover_map_data = {c : s[0] for (s,c) in cells_dict.items()}
-                return SimplicialSetMorphism(data = cover_map_data, domain = cover, codomain = self)
+                return SimplicialSetMorphism(data=cover_map_data, domain=cover, codomain=self)
 
             def cover(self, character):
                 r"""

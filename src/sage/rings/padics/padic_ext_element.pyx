@@ -16,8 +16,7 @@ AUTHORS:
 
 - Julian Rueth (2012-10-18): added residue
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2010 David Roe <roed.math@gmail.com>
 #                     2012 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -25,11 +24,10 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.padics.pow_computer cimport PowComputer_class
-from sage.rings.integer import Integer
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 
 cdef class pAdicExtElement(pAdicGenericElement):
