@@ -3052,7 +3052,7 @@ class MPolynomialIdeal_singular_repr(
 
     @require_field
     @handle_AA_and_QQbar
-    def hilbert_numerator(self, grading = None, algorithm = 'sage'):
+    def hilbert_numerator(self, grading=None, algorithm='sage'):
         r"""
         Return the Hilbert numerator of this ideal.
 
@@ -3419,7 +3419,7 @@ class MPolynomialIdeal_macaulay2_repr:
         return R(k)
 
 class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
-    def __init__(self, ring, gens, coerce=True, side = "left"):
+    def __init__(self, ring, gens, coerce=True, side="left"):
         r"""
         Creates a non-commutative polynomial ideal.
 
@@ -3464,7 +3464,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
             raise ValueError("Only left and two-sided ideals are allowed.")
         Ideal_nc.__init__(self, ring, gens, coerce=coerce, side=side)
 
-    def __call_singular(self, cmd, arg = None):
+    def __call_singular(self, cmd, arg=None):
         """
         Internal function for calling a Singular function.
 
