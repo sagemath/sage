@@ -15,6 +15,8 @@ from sage.matroids.all import *
 from sage.quadratic_forms.all__sagemath_modules import *
 from sage.coding.all import *
 from sage.crypto.all import *
+from sage.stats.all__sagemath_modules import *
+from sage.probability.all import *
 
 import sage.crypto.mq as mq
 

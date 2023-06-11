@@ -63,13 +63,6 @@ from .all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sage
 
 ###################################################################
 
-# This import also sets up the interrupt handler
-from cysignals.signals import (AlarmInterrupt, SignalError,
-        sig_on_reset as sig_on_count)
-
-from time                import sleep
-from functools import reduce  # in order to keep reduce in python3
-
 import sage.misc.lazy_import
 
 from sage.misc.all       import *         # takes a while
@@ -92,7 +85,6 @@ from sage.all__sagemath_graphs import *
 from sage.groups.all     import *
 from sage.databases.all  import *
 from sage.sets.all       import *
-from sage.probability.all import *
 from sage.interfaces.all import *
 
 lazy_import('sage.tests', 'all', as_='tests', deprecation=27337)
@@ -114,9 +106,6 @@ from sage.logic.all      import *
 
 from sage.numerical.all  import *
 
-from sage.stats.all      import *
-import sage.stats.all as stats
-
 lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
 
 from sage.knots.all import *
@@ -125,8 +114,6 @@ from cysignals.alarm import alarm, cancel_alarm
 
 # Lazily import interacts (#15335)
 lazy_import('sage.interacts', 'all', 'interacts')
-
-from copy import copy, deepcopy
 
 # The code executed here uses a large amount of Sage components
 from sage.rings.qqbar import _init_qqbar
@@ -150,8 +137,6 @@ except ImportError:
 # when they are first needed.
 ###########################################################
 
-true = True
-false = False
 from sage.rings.imaginary_unit import I
 i = I
 

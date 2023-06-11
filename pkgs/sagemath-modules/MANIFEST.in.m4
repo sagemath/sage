@@ -181,6 +181,9 @@ graft sage/crypto
 ## include sage/crypto/util*.p*
 ## graft sage/crypto/public_key
 
+graft sage/stats/distributions                          # discrete_gaussian needed for sage.crypto.lwe
+# other parts of sage.stats need sage.modules.vector_real_double_dense (which cimports numpy)
+graft sage/probability                                  # uses gsl
 
 global-exclude *.py[co]
 global-exclude *.so
