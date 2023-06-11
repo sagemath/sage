@@ -38,7 +38,7 @@ install_requires =
 [options.extras_require]
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
 
-lrcalc =
+lrcalc = esyscmd(`sage-get-system-packages install-requires lrcalc_python')
 symmetrica =
 
 graphs = esyscmd(`sage-get-system-packages install-requires sagemath_graphs')

@@ -18,6 +18,11 @@ graft sage/sat
 include sage/data_structures/stream.p*
 include sage/rings/lazy_series*.p*
 
+include sage/groups/indexed_free_group.p*               # these words go together well
+
+graft sage/libs/lrcalc
+graft sage/libs/symmetrica
+
 # included in sagemath-categories
 prune sage/combinat/integer_lists
 exclude sage/combinat/integer_vector.p*
