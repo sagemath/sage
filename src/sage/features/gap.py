@@ -1,5 +1,5 @@
 r"""
-Features for testing the presence of GAP packages
+Features for testing the presence of the SageMath interfaces to ``gap`` and of GAP packages
 """
 # *****************************************************************************
 #       Copyright (C) 2016 Julian Rüth
@@ -66,7 +66,7 @@ class GapPackage(Feature):
 class sage__libs__gap(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.gap`
-    (the library interface to GAP) and :mod:`sage.interfaces.gap` (the pexpect
+    (the library interface to :ref:`GAP <spkg_gap>`) and :mod:`sage.interfaces.gap` (the pexpect
     interface to GAP). By design, we do not distinguish between these two, in order
     to facilitate the conversion of code from the pexpect interface to the library
     interface.

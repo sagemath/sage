@@ -24,7 +24,7 @@ LATTE_URL = "https://www.math.ucdavis.edu/~latte/software.php"
 
 class Latte_count(Executable):
     r"""
-    Feature for the executable ``count`` from the LattE suite.
+    Feature for the executable ``count`` from :ref:`LattE integrale <spkg_latte_int>`.
     """
     def __init__(self):
         r"""
@@ -41,7 +41,7 @@ class Latte_count(Executable):
 
 class Latte_integrate(Executable):
     r"""
-    Feature for the executable ``integrate`` from the LattE suite.
+    Feature for the executable ``integrate`` from :ref:`LattE integrale <spkg_latte_int>`.
     """
     def __init__(self):
         r"""
@@ -58,8 +58,7 @@ class Latte_integrate(Executable):
 
 class Latte(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the ``LattE``
-    binaries which comes as a part of ``latte_int``.
+    A :class:`~sage.features.Feature` describing the presence of excecutables from :ref:`LattE integrale <spkg_latte_int>`.
 
     EXAMPLES::
 
