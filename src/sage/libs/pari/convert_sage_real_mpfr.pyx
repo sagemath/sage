@@ -1,6 +1,8 @@
 from cypari2.stack cimport new_gen
 from cypari2.paridecl cimport *
 
+from sage.libs.mpfr cimport *
+from sage.libs.mpfr.types cimport mpfr_t, mpfr_prec_t
 
 cpdef Gen new_gen_from_real_mpfr_element(RealNumber self):
 
