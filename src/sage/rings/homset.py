@@ -36,7 +36,7 @@ def is_RingHomset(H):
     return isinstance(H, RingHomset_generic)
 
 
-def RingHomset(R, S, category = None):
+def RingHomset(R, S, category=None):
     """
     Construct a space of homomorphisms between the rings ``R`` and ``S``.
 
@@ -51,8 +51,8 @@ def RingHomset(R, S, category = None):
     if quotient_ring.is_QuotientRing(R):
         from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
         if not is_PolynomialQuotientRing(R):  # backwards compatibility
-            return RingHomset_quo_ring(R, S, category = category)
-    return RingHomset_generic(R, S, category = category)
+            return RingHomset_quo_ring(R, S, category=category)
+    return RingHomset_generic(R, S, category=category)
 
 
 class RingHomset_generic(HomsetWithBase):
@@ -69,7 +69,7 @@ class RingHomset_generic(HomsetWithBase):
 
     Element = morphism.RingHomomorphism
 
-    def __init__(self, R, S, category = None):
+    def __init__(self, R, S, category=None):
         """
         Initialize ``self``.
 

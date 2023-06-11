@@ -1,5 +1,5 @@
 """
-Symbolic matrices
+Symbolic dense matrices
 
 EXAMPLES::
 

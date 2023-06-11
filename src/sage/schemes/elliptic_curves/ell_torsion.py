@@ -140,7 +140,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         INPUT:
 
-        - ``E`` -- An elliptic curve defined over a number field (including `\Q`)
+        - ``E`` -- An elliptic curve defined over a number field (including `\QQ`)
 
         EXAMPLES::
 
@@ -212,7 +212,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
                                                     [T1, T2], structure)
 
     def _repr_(self):
-        """
+        r"""
         String representation of an instance of the EllipticCurveTorsionSubgroup class.
 
         EXAMPLES::
@@ -242,7 +242,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         return richcmp(self.__E, other.__E, op)
 
     def curve(self):
-        """
+        r"""
         Return the curve of this torsion subgroup.
 
         EXAMPLES::
@@ -259,7 +259,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
     @cached_method
     def points(self):
-        """
+        r"""
         Return a list of all the points in this torsion subgroup.
 
         The list is cached.
