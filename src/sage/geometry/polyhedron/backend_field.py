@@ -58,11 +58,13 @@ class Polyhedron_field(Polyhedron_base):
 
     Check that :trac:`19013` is fixed::
 
-        sage: K.<phi> = NumberField(x^2-x-1, embedding=1.618)                   # optional - sage.rings.number_field
-        sage: P1 = Polyhedron([[0,1],[1,1],[1,-phi+1]])                         # optional - sage.rings.number_field
-        sage: P2 = Polyhedron(ieqs=[[-1,-phi,0]])                               # optional - sage.rings.number_field
-        sage: P1.intersection(P2)                                               # optional - sage.rings.number_field
-        The empty polyhedron in (Number Field in phi with defining polynomial x^2 - x - 1 with phi = 1.618033988749895?)^2
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<phi> = NumberField(x^2-x-1, embedding=1.618)                           # optional - sage.rings.number_field
+        sage: P1 = Polyhedron([[0,1],[1,1],[1,-phi+1]])                                 # optional - sage.rings.number_field
+        sage: P2 = Polyhedron(ieqs=[[-1,-phi,0]])                                       # optional - sage.rings.number_field
+        sage: P1.intersection(P2)                                                       # optional - sage.rings.number_field
+        The empty polyhedron
+         in (Number Field in phi with defining polynomial x^2 - x - 1 with phi = 1.618033988749895?)^2
 
     Check that :trac:`28654` is fixed::
 

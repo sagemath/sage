@@ -424,8 +424,8 @@ class QuantuminoSolver(SageObject):
             Quantumino solver for the box (5, 8, 2)
             Aside pentamino number: 9
         """
-        if not(0 <= aside < 17):
-            raise ValueError("aside (=%s) must be between 0 and 16" % aside)
+        if not (0 <= aside < 17):
+            raise ValueError(f"aside (={aside}) must be between 0 and 16")
         self._aside = aside
         self._box = box
 

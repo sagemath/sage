@@ -479,11 +479,11 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     Check that it works with non hashable non sortable edge labels (relying
     on string representations of the labels)::
 
-        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])
-        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])
-        sage: g1can = canonical_form(g1, use_edge_labels=True)               # optional - bliss
-        sage: g2can = canonical_form(g2, use_edge_labels=True)               # optional - bliss
-        sage: g1can == g2can                                                 # optional - bliss
+        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])        # optional - sage.modules
+        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])        # optional - sage.modules
+        sage: g1can = canonical_form(g1, use_edge_labels=True)                    # optional - bliss sage.modules
+        sage: g2can = canonical_form(g2, use_edge_labels=True)                    # optional - bliss sage.modules
+        sage: g1can == g2can                                                      # optional - bliss sage.modules
         True
 
     Check that :trac:`32395` is fixed::

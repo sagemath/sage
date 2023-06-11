@@ -93,12 +93,12 @@ AUTHOR:
 - Martin Albrecht (2010-01): better interface, verbosity options
 - Simon King (2010-07): Python-ic option names; deg_bound and mult_bound
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.libs.singular.decl cimport singular_options, singular_verbose_options, Kstd1_deg, Kstd1_mu
 
@@ -108,7 +108,7 @@ from sage.libs.singular.decl cimport OPT_WEIGHTM, Sy_bit
 
 from sage.libs.singular.decl cimport V_SHOW_MEM, V_YACC, V_REDEFINE, V_READING, V_LOAD_LIB, V_DEBUG_LIB
 from sage.libs.singular.decl cimport V_LOAD_PROC, V_DEF_RES, V_SHOW_USE, V_IMAP, V_PROMPT
-from sage.libs.singular.decl cimport V_NSB, V_CONTENTSB, V_CANCELUNIT, V_DEG_STOP
+from sage.libs.singular.decl cimport V_NSB, V_CONTENTSB, V_CANCELUNIT
 
 _options_py_to_singular={'return_sb':'returnSB',
                          'fast_hc':'fastHC',

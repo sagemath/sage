@@ -67,9 +67,9 @@ class Test:
             weights = list(range(2, int(weights) + 1))
         self.levels = levels
         self.weights = weights
-        if not(levels):
+        if not levels:
             raise RuntimeError("levels must have positive length")
-        if not(weights):
+        if not weights:
             raise RuntimeError("weights must have positive length")
         self.current_space = None
         self.onlyg0 = onlyg0
@@ -78,7 +78,7 @@ class Test:
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 

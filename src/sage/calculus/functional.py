@@ -48,6 +48,7 @@ def simplify(f):
     except AttributeError:
         return f
 
+
 def derivative(f, *args, **kwds):
     r"""
     The derivative of `f`.
@@ -151,7 +152,9 @@ def derivative(f, *args, **kwds):
         f = SR(f)
     return f.derivative(*args, **kwds)
 
+
 diff = derivative
+
 
 def integral(f, *args, **kwds):
     r"""
@@ -299,7 +302,9 @@ def integral(f, *args, **kwds):
         f = SR(f)
     return f.integral(*args, **kwds)
 
+
 integrate = integral
+
 
 def limit(f, dir=None, taylor=False, **argv):
     r"""
@@ -353,7 +358,9 @@ def limit(f, dir=None, taylor=False, **argv):
         f = SR(f)
     return f.limit(dir=dir, taylor=taylor, **argv)
 
+
 lim = limit
+
 
 def taylor(f, *args):
     """
@@ -396,6 +403,7 @@ def taylor(f, *args):
         from sage.symbolic.ring import SR
         f = SR(f)
     return f.taylor(*args)
+
 
 def expand(x, *args, **kwds):
     """

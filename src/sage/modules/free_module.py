@@ -3796,6 +3796,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
 
         We intersect two modules over the ring of integers of a number field::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<w> = NumberField(x^2 - x + 2)
             sage: OL = L.ring_of_integers()
             sage: V = L**3
@@ -8183,9 +8184,13 @@ def element_class(R, is_sparse):
     elif isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing) and not is_sparse:
         import sage.modules.vector_callable_symbolic_dense
         return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
-    elif isinstance(R, sage.rings.abc.SymbolicRing) and not is_sparse:
-        import sage.modules.vector_symbolic_dense
-        return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
+    elif isinstance(R, sage.rings.abc.SymbolicRing):
+        if not is_sparse:
+            import sage.modules.vector_symbolic_dense
+            return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
+        else:
+            import sage.modules.vector_symbolic_sparse
+            return sage.modules.vector_symbolic_sparse.Vector_symbolic_sparse
 
     if is_sparse:
         return free_module_element.FreeModuleElement_generic_sparse

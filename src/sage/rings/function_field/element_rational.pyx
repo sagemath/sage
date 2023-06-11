@@ -2,18 +2,17 @@ r"""
 Elements of function fields: rational
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp, richcmp_not_equal
-from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport FieldElement
 
 from sage.rings.function_field.element cimport FunctionFieldElement
 
@@ -106,7 +105,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
     def __bool__(self):
         """
-        Return True if the element is not zero.
+        Return ``True`` if the element is not zero.
 
         EXAMPLES::
 

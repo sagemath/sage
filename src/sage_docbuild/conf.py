@@ -242,8 +242,6 @@ def set_intersphinx_mappings(app, config):
     app.config.intersphinx_mapping['sagemath'] = (refpath, dst)
 
     # Add intersphinx mapping for subdirectories
-    # We intentionally do not name these such that these get higher
-    # priority in case of conflicts
     for directory in os.listdir(os.path.join(invpath)):
         if directory == 'jupyter_execute':
             # This directory is created by jupyter-sphinx extension for
@@ -252,7 +250,7 @@ def set_intersphinx_mappings(app, config):
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
             dst = os.path.join(invpath, directory, 'objects.inv')
-            app.config.intersphinx_mapping[src] = dst
+            app.config.intersphinx_mapping[directory] = (src, dst)
 
     intersphinx.normalize_intersphinx_mapping(app, config)
 

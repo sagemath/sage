@@ -377,8 +377,8 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
         sage: f[5]
         1
     """
-    assert(isinstance(hidden_keys, list))
-    assert(isinstance(lazy, bool))
+    assert isinstance(hidden_keys, list)
+    assert isinstance(lazy, bool)
 
     if not hidden_keys:
         if hidden_function is not None:
@@ -488,13 +488,14 @@ class AbstractFamily(Parent):
             sage: list(h)
             ['a1', 'b2', 'd3']
         """
-        assert(self.keys() == other.keys())
-        assert(self.hidden_keys() == other.hidden_keys())
-        return Family(self.keys(), lambda i: f(self[i],other[i]), hidden_keys=self.hidden_keys(), name=name)
+        assert self.keys() == other.keys()
+        assert self.hidden_keys() == other.hidden_keys()
+        return Family(self.keys(), lambda i: f(self[i], other[i]),
+                      hidden_keys=self.hidden_keys(), name=name)
 
     def map(self, f, name=None):
         r"""
-        Returns the family `( f(\mathtt{self}[i]) )_{i \in I}`, where
+        Return the family `( f(\mathtt{self}[i]) )_{i \in I}`, where
         `I` is the index set of self.
 
         .. TODO:: good name?
