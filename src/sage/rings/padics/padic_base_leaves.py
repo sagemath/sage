@@ -729,7 +729,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
         if (algorithm == 'default'):
             k = ZZ.random_element()
             a = ZZ.random_element(self.prime()**self.precision_cap())
-            return self(self.prime()**k * a, absprec = k + self.precision_cap())
+            return self(self.prime()**k * a, absprec=k + self.precision_cap())
         else:
             raise NotImplementedError("Don't know %s algorithm"%algorithm)
 

@@ -1036,7 +1036,7 @@ def _PBD_4_5_8_9_12_closure(B):
     BB = []
     for X in B:
         if len(X) not in [4,5,8,9,12]:
-            PBD = PBD_4_5_8_9_12(len(X), check = False)
+            PBD = PBD_4_5_8_9_12(len(X), check=False)
             X = [[X[i] for i in XX] for XX in PBD]
             BB.extend(X)
         else:
