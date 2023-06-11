@@ -1048,7 +1048,7 @@ class WordGenerator():
         if a not in ZZ or a <= 0 or b not in ZZ or b <= 0 or a == b:
             msg = 'the alphabet (=%s) must consist of two distinct positive integers' % (alphabet,)
             raise ValueError(msg)
-        return InfiniteWords(alphabet)(self._KolakoskiWord_iterator(a, b), datatype = 'iter')
+        return InfiniteWords(alphabet)(self._KolakoskiWord_iterator(a, b), datatype='iter')
 
     def _KolakoskiWord_iterator(self, a=1, b=2):
         r"""

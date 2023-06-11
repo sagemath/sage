@@ -52,7 +52,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         #else:
         #    self._PQR = pqr.PolynomialQuotientRing_domain(poly.parent(), poly, name = names)
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
-        self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()), name = names[1], modulus = poly.change_ring(poly.base_ring().residue_field()))
+        self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()), name=names[1], modulus=poly.change_ring(poly.base_ring().residue_field()))
 
     def _extension_type(self):
         """
@@ -211,7 +211,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         return self([0,1])
 
     @cached_method
-    def _frob_gen(self, arithmetic = True):
+    def _frob_gen(self, arithmetic=True):
         """
         Return frobenius of the generator for this unramified extension
 

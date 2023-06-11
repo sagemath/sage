@@ -1,7 +1,6 @@
 r"""
 Elements of multivariate Laurent polynomial rings
 """
-
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,14 +10,11 @@ Elements of multivariate Laurent polynomial rings
 # ****************************************************************************
 
 from sage.rings.integer cimport Integer
-from sage.categories.map cimport Map
 from sage.structure.element cimport CommutativeAlgebraElement, Element, ModuleElement, RingElement
-from sage.structure.element import is_Element, coerce_binop, parent
+from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.richcmp cimport richcmp, rich_to_bool
 from sage.matrix.matrix0 cimport Matrix
 
 

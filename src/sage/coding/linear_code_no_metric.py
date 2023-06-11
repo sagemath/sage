@@ -406,7 +406,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         gens = self.gens()
         from sage.structure.sequence import Sequence
-        return Sequence(gens, universe=self.ambient_space(), check = False, immutable=True, cr=True)
+        return Sequence(gens, universe=self.ambient_space(), check=False, immutable=True, cr=True)
 
     @cached_method
     def parity_check_matrix(self):

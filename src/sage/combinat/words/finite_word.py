@@ -1731,8 +1731,7 @@ class FiniteWord_class(Word_class):
         """
         if n is None:
             for i in range(self.length()):
-                for w in self.left_special_factors_iterator(i):
-                    yield w
+                yield from self.left_special_factors_iterator(i)
         else:
             left_extensions = defaultdict(set)
             for w in self.factor_iterator(n+1):
@@ -1799,8 +1798,7 @@ class FiniteWord_class(Word_class):
         """
         if n is None:
             for i in range(self.length()):
-                for w in self.right_special_factors_iterator(i):
-                    yield w
+                yield from self.right_special_factors_iterator(i)
         else:
             right_extensions = defaultdict(set)
             for w in self.factor_iterator(n+1):
@@ -1890,8 +1888,7 @@ class FiniteWord_class(Word_class):
         """
         if n is None:
             for i in range(self.length()):
-                for w in self.bispecial_factors_iterator(i):
-                    yield w
+                yield from self.bispecial_factors_iterator(i)
         else:
             left_extensions = defaultdict(set)
             right_extensions = defaultdict(set)
