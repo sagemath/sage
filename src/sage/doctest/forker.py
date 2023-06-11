@@ -2552,6 +2552,9 @@ class DocTestTask():
         # implementation of widgets and interacts
         from importlib import import_module
         sage_all = import_module(options.environment)
+        if options.environment != 'sage.all':
+            import sage
+            sage.all = sage_all
         dict_all = sage_all.__dict__
         # When using global environments other than sage.all,
         # make sure startup is finished so we don't get "Resolving lazy import"
