@@ -626,7 +626,7 @@ cdef class TimeSeries:
     def autoregressive_forecast(self, filter):
         """
         Given the autoregression coefficients as outputted by the
-        ``autoregressive_fit`` command, compute the forecast for the next
+        :meth:`autoregressive_fit` command, compute the forecast for the next
         term in the series.
 
         INPUT:
@@ -942,7 +942,7 @@ cdef class TimeSeries:
 
         .. NOTE::
 
-            To add componentwise, use the ``add_entries`` method.
+            To add componentwise, use the :meth:`add_entries` method.
 
         INPUT:
 
@@ -981,7 +981,7 @@ cdef class TimeSeries:
 
         OUTPUT:
 
-        A time series with length the maxima of the lengths of
+        A time series with length the maximum of the lengths of
         ``self`` and ``t``.
 
         EXAMPLES::
@@ -1023,8 +1023,9 @@ cdef class TimeSeries:
 
     def show(self, *args, **kwds):
         """
-        Calls plot and passes all arguments onto the plot function.  This is
-        thus just an alias for plot.
+        Return a plot of this time series.
+
+        This is an alias of :meth:`plot`.
 
         EXAMPLES:
 
@@ -1037,7 +1038,9 @@ cdef class TimeSeries:
 
     def plot(self, Py_ssize_t plot_points=1000, points=False, **kwds):
         r"""
-        Return a plot of this time series as a line or points through
+        Return a plot of this time series.
+
+        The plot shows a line or points through
         `(i,T(i))`, where `i` ranges over nonnegative integers up to the
         length of ``self``.
 
@@ -1089,11 +1092,12 @@ cdef class TimeSeries:
 
     def simple_moving_average(self, Py_ssize_t k):
         """
-        Return the moving average time series over the last ``k`` time units.
+        Return the moving average time series over the last `k` time units.
+
         Assumes the input time series was constant with its starting value
-        for negative time.  The t-th step of the output is the sum of
-        the previous ``k - 1`` steps of ``self`` and the ``k``-th step
-        divided by ``k``. Thus ``k`` values are averaged at each point.
+        for negative time.  The `t`-th step of the output is the sum of
+        the previous `k - 1` steps of ``self`` and the `k`-th step
+        divided by `k`. Thus `k` values are averaged at each point.
 
         INPUT:
 
@@ -1139,10 +1143,12 @@ cdef class TimeSeries:
 
     def exponential_moving_average(self, double alpha):
         """
-        Return the exponential moving average time series.  Assumes
-        the input time series was constant with its starting value for
-        negative time.  The t-th step of the output is the sum of the
-        previous k-1 steps of ``self`` and the k-th step divided by k.
+        Return the exponential moving average time series.
+
+        Assumes the input time series was constant with its starting
+        value for negative time.  The `t`-th step of the output is the
+        sum of the previous `k-1` steps of ``self`` and the `k`-th
+        step divided by `k`.
 
         The 0-th term is formally undefined, so we define it to be 0,
         and we define the first term to be ``self[0]``.
@@ -1217,8 +1223,9 @@ cdef class TimeSeries:
 
     cpdef double sum(self):
         """
-        Return the sum of all the entries of ``self``.  If ``self`` has
-        length 0, returns 0.
+        Return the sum of all the entries of ``self``.
+
+        If ``self`` has length 0, returns 0.
 
         OUTPUT:
 
@@ -1239,8 +1246,9 @@ cdef class TimeSeries:
 
     def prod(self):
         """
-        Return the product of all the entries of ``self``.  If ``self`` has
-        length 0, returns 1.
+        Return the product of all the entries of ``self``.
+
+        If ``self`` has length 0, returns 1.
 
         OUTPUT:
 
@@ -1279,8 +1287,8 @@ cdef class TimeSeries:
 
     def pow(self, double k):
         """
-        Return a new time series with every elements of ``self`` raised to the
-        k-th power.
+        Return a new time series with all elements of ``self`` raised to the
+        `k`-th power.
 
         INPUT:
 
@@ -1305,8 +1313,8 @@ cdef class TimeSeries:
 
     def moment(self, int k):
         """
-        Return the k-th moment of ``self``, which is just the
-        mean of the k-th powers of the elements of ``self``.
+        Return the `k`-th moment of ``self``, which is just the
+        mean of the `k`-th powers of the elements of ``self``.
 
         INPUT:
 
@@ -1337,8 +1345,8 @@ cdef class TimeSeries:
 
     def central_moment(self, int k):
         """
-        Return the k-th central moment of ``self``, which is just the mean
-        of the k-th powers of the differences ``self[i] - mu``, where ``mu`` is
+        Return the `k`-th central moment of ``self``, which is just the mean
+        of the `k`-th powers of the differences ``self[i] - mu``, where ``mu`` is
         the mean of ``self``.
 
         INPUT:
@@ -1405,7 +1413,8 @@ cdef class TimeSeries:
 
     def autocovariance(self, Py_ssize_t k=0):
         r"""
-        Return the k-th autocovariance function `\gamma(k)` of ``self``.
+        Return the `k`-th autocovariance function `\gamma(k)` of ``self``.
+
         This is the covariance of ``self`` with ``self`` shifted by `k`, i.e.,
 
         .. MATH::
@@ -1436,7 +1445,8 @@ cdef class TimeSeries:
             14.4
             sage: v.autocovariance(1)
             -2.7
-            sage: mu = v.mean(); sum([(v[i]-mu)*(v[i+1]-mu) for i in range(len(v)-1)])/len(v)
+            sage: mu = v.mean()
+            sage: sum((v[i]-mu)*(v[i+1]-mu) for i in range(len(v)-1)])/len(v)
             -2.7
             sage: v.autocovariance(1)
             -2.7
@@ -1449,7 +1459,8 @@ cdef class TimeSeries:
             sage: set_random_seed(0)
             sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('normal', 0, 5)
-            [3.3835, -2.0055, 1.7882, -2.9319, -4.6827 ... -5.1868, 9.2613, 0.9274, -6.2282, -8.7652]
+            [3.3835, -2.0055, 1.7882, -2.9319, -4.6827 ...
+             -5.1868, 9.2613, 0.9274, -6.2282, -8.7652]
             sage: v.autocovariance(0)
             24.95410689...
             sage: v.autocovariance(1)
@@ -1491,7 +1502,7 @@ cdef class TimeSeries:
 
     def autocorrelation(self, Py_ssize_t k=1):
         r"""
-        Return the k-th sample autocorrelation of this time series
+        Return the `k`-th sample autocorrelation of this time series
         `x_i`.
 
         Let `\mu` be the sample mean.  Then the sample autocorrelation
@@ -1503,7 +1514,7 @@ cdef class TimeSeries:
                  {\sum_{t=0}^{n-1}   (x_t - \mu)^2}.
 
         Note that the variance must be nonzero or you will get a
-        ``ZeroDivisionError``.
+        :class:`ZeroDivisionError`.
 
         INPUT:
 
@@ -1617,7 +1628,7 @@ cdef class TimeSeries:
         statistics of disjoint blocks of size ``b``.
 
         Let `\sigma` be the standard deviation of the sequence of
-        differences of ``self``, and let `Y_k` be the k-th term of ``self``.
+        differences of ``self``, and let `Y_k` be the `k`-th term of ``self``.
         Let `n` be the number of terms of ``self``, and set
         `Z_k = Y_k - ((k+1)/n) \cdot Y_n`. Then
 
@@ -1684,7 +1695,8 @@ cdef class TimeSeries:
 
             sage: set_random_seed(0)
             sage: bm = stats.TimeSeries(10^5).randomize('normal').sums(); bm
-            [0.6767, 0.2756, 0.6332, 0.0469, -0.8897 ... 152.2437, 151.5327, 152.7629, 152.9169, 152.9084]
+            [0.6767, 0.2756, 0.6332, 0.0469, -0.8897 ...
+             152.2437, 151.5327, 152.7629, 152.9169, 152.9084]
             sage: bm.hurst_exponent()
             0.527450972...
 
@@ -1788,7 +1800,7 @@ cdef class TimeSeries:
     def max(self, bint index=False):
         """
         Return the largest value in this time series. If this series
-        has length 0 we raise a ``ValueError``.
+        has length 0 we raise a :class:`ValueError`.
 
         INPUT:
 
