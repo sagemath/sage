@@ -33,9 +33,6 @@ lazy_import('sage.rings.polynomial.omega', 'MacMahonOmega')
 lazy_import('sage.rings.polynomial.ore_polynomial_ring', 'OrePolynomialRing')
 SkewPolynomialRing = OrePolynomialRing
 
-# Evaluation of cyclotomic polynomials
-from sage.rings.polynomial.cyclotomic import cyclotomic_value
-
 # Integer-valued Univariate Polynomial Ring
 lazy_import('sage.rings.polynomial.integer_valued_polynomials',
             'IntegerValuedPolynomialRing')

@@ -16,3 +16,6 @@ from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRin
 
 # Laurent Polynomial Rings
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+
+# Evaluation of cyclotomic polynomials
+from sage.rings.polynomial.cyclotomic import cyclotomic_value
