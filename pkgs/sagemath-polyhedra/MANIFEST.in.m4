@@ -36,6 +36,9 @@ include sage/numerical/backends/scip_*.p*
 
 graft sage/game_theory
 
+global-exclude all__sagemath_categories.py
+global-exclude all__sagemath_modules.py
+
 global-exclude *.py[co]
 global-exclude *.so
 global-exclude *.bak
