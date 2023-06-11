@@ -1810,9 +1810,9 @@ class TikzPicture(Standalone):
 
         ::
 
-            sage: P = posets.SymmetricGroupWeakOrderPoset(4)     # optional sage.combinat
-            sage: tikz = TikzPicture.from_poset(P)               # optional sage.combinat dot2tex graphviz # long time (4s)
-            sage: tikz = TikzPicture.from_poset(P, prog='neato') # optional sage.combinat dot2tex graphviz # long time (4s)
+            sage: P = posets.SymmetricGroupWeakOrderPoset(4)     # optional - sage.combinat sage.graphs
+            sage: tikz = TikzPicture.from_poset(P)               # optional - sage.combinat sage.graphs dot2tex graphviz # long time (4s)
+            sage: tikz = TikzPicture.from_poset(P, prog='neato') # optional - sage.combinat sage.graphs dot2tex graphviz # long time (4s)
         """
         graph = poset.hasse_diagram()
         return cls.from_graph(graph, **kwds)

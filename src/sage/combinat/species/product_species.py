@@ -215,7 +215,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             Product of (Permutation species) and (Permutation species)
             sage: F == loads(dumps(F))
             True
-            sage: F._check()
+            sage: F._check()                                                            # optional - sage.libs.flint
             True
 
         TESTS::
@@ -340,7 +340,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: F = P * P
-            sage: F.isotype_generating_series()[0:5]
+            sage: F.isotype_generating_series()[0:5]                                    # optional - sage.libs.flint
             [1, 2, 5, 10, 20]
         """
         res = (self.left_factor().isotype_generating_series(base_ring) *

@@ -255,7 +255,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
         TESTS::
 
             sage: from sage.combinat.shuffle import SetShuffleProduct
-            sage: ascii_art(SetShuffleProduct([[BinaryTree()], [BinaryTree([]), BinaryTree([[],[]])]],
+            sage: ascii_art(SetShuffleProduct([[BinaryTree()], [BinaryTree([]), BinaryTree([[],[]])]],  # optional - sage.graphs
             ....: [[1,4]]))
             Set shuffle product of:
             [       [ o,   o   ] ]
@@ -377,8 +377,8 @@ class ShuffleProduct(ShuffleProduct_abstract):
             sage: from sage.combinat.shuffle import ShuffleProduct
             sage: ShuffleProduct([1,2,3],[4,5])
             Shuffle product of: [1, 2, 3] and [4, 5]
-            sage: B = BinaryTree
-            sage: ShuffleProduct([B(), B([[],[]])], [])
+            sage: B = BinaryTree                                                        # optional - sage.graphs
+            sage: ShuffleProduct([B(), B([[],[]])], [])                                 # optional - sage.graphs
             Shuffle product of: [., [[., .], [., .]]] and []
         """
         return "Shuffle product of: %s and %s" % (self._l1, self._l2)
@@ -391,8 +391,8 @@ class ShuffleProduct(ShuffleProduct_abstract):
             sage: ascii_art(ShuffleProduct([1,2,3],[4,5]))
             Shuffle product of:
             [ 1, 2, 3 ] and [ 4, 5 ]
-            sage: B = BinaryTree
-            sage: ascii_art(ShuffleProduct([B([]), B([[],[]])],
+            sage: B = BinaryTree                                                        # optional - sage.graphs
+            sage: ascii_art(ShuffleProduct([B([]), B([[],[]])],                         # optional - sage.graphs
             ....:   [B([[[],[]],[[],None]])]))
             Shuffle product of:
                              [     __o__   ]
@@ -418,8 +418,8 @@ class ShuffleProduct(ShuffleProduct_abstract):
             sage: list(ShuffleProduct([1,2,3],[4,5]))
             [[1, 2, 3, 4, 5], [1, 4, 2, 3, 5], [4, 1, 2, 3, 5], [1, 2, 4, 3, 5], [1, 4, 5, 2, 3],
              [4, 1, 5, 2, 3], [4, 5, 1, 2, 3], [1, 4, 2, 5, 3], [4, 1, 2, 5, 3], [1, 2, 4, 5, 3]]
-            sage: B = BinaryTree
-            sage: ascii_art(list(ShuffleProduct([B([]), B([[],[]])],
+            sage: B = BinaryTree                                                        # optional - sage.graphs
+            sage: ascii_art(list(ShuffleProduct([B([]), B([[],[]])],                    # optional - sage.graphs
             ....:   [B([[[],[]],[[],None]])])))
             [ [ o,   o  ,     __o__   ]  [     __o__  , o,   o   ]
             [ [     / \      /     \  ]  [    /     \       / \  ]

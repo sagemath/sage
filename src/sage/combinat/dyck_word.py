@@ -2061,9 +2061,10 @@ class DyckWord_complete(DyckWord):
 
             sage: R = QQ['q','t'].fraction_field()
             sage: (q,t) = R.gens()
-            sage: f = sum(t**D.area()*D.characteristic_symmetric_function() for D in DyckWords(3)); f
+            sage: f = sum(t**D.area() * D.characteristic_symmetric_function()           # optional - sage.modules
+            ....:         for D in DyckWords(3)); f
             (q^3+q^2*t+q*t^2+t^3+q*t)*s[1, 1, 1] + (q^2+q*t+t^2+q+t)*s[2, 1] + s[3]
-            sage: f.nabla(power=-1)
+            sage: f.nabla(power=-1)                                                     # optional - sage.modules
             s[1, 1, 1]
         """
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions

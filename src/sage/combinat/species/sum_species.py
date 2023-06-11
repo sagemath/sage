@@ -38,7 +38,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: F = P + P
-            sage: F._check()
+            sage: F._check()                                                            # optional - sage.libs.flint
             True
             sage: F == loads(dumps(F))
             True
@@ -126,7 +126,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: F = P + P
-            sage: F.isotypes([1,2]).list()
+            sage: F.isotypes([1,2]).list()                                              # optional - sage.libs.flint
             [[2, 1], [1, 2], [2, 1], [1, 2]]
         """
         for res in self._F.isotypes(labels):
@@ -157,7 +157,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: F = P + P
-            sage: F.isotype_generating_series()[:5]
+            sage: F.isotype_generating_series()[:5]                                     # optional - sage.libs.flint
             [2, 2, 4, 6, 10]
         """
         return (self.left_summand().isotype_generating_series(base_ring) +

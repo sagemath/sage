@@ -42,21 +42,21 @@ lazy_import('sage.libs.pari.all', 'pari')
 
 def cyclotomic_coeffs(nn, sparse=None):
     """
-    Return the coefficients of the n-th cyclotomic polynomial
+    Return the coefficients of the `n`-th cyclotomic polynomial
     by using the formula
 
     .. MATH::
 
         \\Phi_n(x) = \\prod_{d|n} (1-x^{n/d})^{\\mu(d)}
 
-    where `\\mu(d)` is the Möbius function that is 1 if d has an even
-    number of distinct prime divisors, -1 if it has an odd number of
-    distinct prime divisors, and 0 if d is not squarefree.
+    where `\\mu(d)` is the Möbius function that is 1 if `d` has an even
+    number of distinct prime divisors, `-1` if it has an odd number of
+    distinct prime divisors, and `0` if `d` is not squarefree.
 
     Multiplications and divisions by polynomials of the
     form `1-x^n` can be done very quickly in a single pass.
 
-    If sparse is ``True``, the result is returned as a dictionary of
+    If ``sparse`` is ``True``, the result is returned as a dictionary of
     the non-zero entries, otherwise the result is returned as a list
     of python ints.
 
@@ -81,9 +81,11 @@ def cyclotomic_coeffs(nn, sparse=None):
     The coefficients are not always +/-1::
 
         sage: cyclotomic_coeffs(105)
-        [1, 1, 1, 0, 0, -1, -1, -2, -1, -1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, -1, -1, -2, -1, -1, 0, 0, 1, 1, 1]
+        [1, 1, 1, 0, 0, -1, -1, -2, -1, -1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, -1,
+         0, -1, 0, -1, 0, -1, 0, -1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, -1, -1, -2,
+         -1, -1, 0, 0, 1, 1, 1]
 
-    In fact the height is not bounded by any polynomial in n (Erdos),
+    In fact the height is not bounded by any polynomial in `n` (Erdos),
     although takes a while just to exceed linear::
 
         sage: v = cyclotomic_coeffs(1181895)
@@ -201,10 +203,10 @@ def cyclotomic_value(n, x):
 
     INPUT:
 
-    - `n` -- an Integer, specifying which cyclotomic polynomial is to be
+    - ``n`` -- an Integer, specifying which cyclotomic polynomial is to be
       evaluated
 
-    - `x` -- an element of a ring
+    - ``x`` -- an element of a ring
 
     OUTPUT:
 
@@ -248,9 +250,12 @@ def cyclotomic_value(n, x):
 
     TESTS::
 
-        sage: R.<x> = QQ[]
-        sage: K.<i> = NumberField(x^2 + 1)
-        sage: for y in [-1, 0, 1, 2, 1/2, Mod(3, 8), Mod(3,11), GF(9,'a').gen(), Zp(3)(54), i, x^2+2]:
+        sage: elements = [-1, 0, 1, 2, 1/2, Mod(3, 8), Mod(3,11)]
+        sage: R.<x> = QQ[]; elements += [x^2 + 2]
+        sage: K.<i> = NumberField(x^2 + 1); elements += [i]                             # optional - sage.rings.number_fields
+        sage: elements += [GF(9,'a').gen()]                                             # optional - sage.rings.finite_rings
+        sage: elements += [Zp(3)(54)]                                                   # optional - sage.rings.padics
+        sage: for y in elements:
         ....:     for n in [1..60]:
         ....:         val1 = cyclotomic_value(n, y)
         ....:         val2 = cyclotomic_polynomial(n)(y)
@@ -267,21 +272,21 @@ def cyclotomic_value(n, x):
         Ring of integers modulo 11
         sage: cyclotomic_value(30, -1.0)
         1.00000000000000
-        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
-        sage: cyclotomic_value(15, t)
+        sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))                           # optional - sage.libs.pari
+        sage: cyclotomic_value(15, t)                                                   # optional - sage.libs.pari
         0
-        sage: cyclotomic_value(30, t)
+        sage: cyclotomic_value(30, t)                                                   # optional - sage.libs.pari
         2*t^7 - 2*t^5 - 2*t^3 + 2*t
-        sage: S.<t> = R.quotient(x^10)
-        sage: cyclotomic_value(2^128-1, t)
+        sage: S.<t> = R.quotient(x^10)                                                  # optional - sage.libs.pari
+        sage: cyclotomic_value(2^128 - 1, t)                                            # optional - sage.libs.pari
         -t^7 - t^6 - t^5 + t^2 + t + 1
-        sage: cyclotomic_value(10,mod(3,4))
+        sage: cyclotomic_value(10, mod(3,4))
         1
 
     Check that the issue with symbolic element in :trac:`14982` is fixed::
 
-        sage: a = cyclotomic_value(3, I)
-        sage: parent(a)
+        sage: a = cyclotomic_value(3, I)                                                # optional - sage.rings.number_fields
+        sage: parent(a)                                                                 # optional - sage.rings.number_fields
         Number Field in I with defining polynomial x^2 + 1 with I = 1*I
     """
     n = ZZ(n)
@@ -388,7 +393,7 @@ def bateman_bound(nn):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.cyclotomic import bateman_bound
-        sage: bateman_bound(2**8*1234567893377)
+        sage: bateman_bound(2**8 * 1234567893377)
         66944986927
     """
     _, n = nn.val_unit(2)

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.singular
 r"""
 Symmetric Reduction of Infinite Polynomials
 

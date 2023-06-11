@@ -419,10 +419,12 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: path_tableaux.FriezePattern([1,2,7,5,3,7,4,1]).change_ring(RealField())
-            [0.000000000000000, 1.00000000000000, ... 4.00000000000000, 1.00000000000000, 0.000000000000000]
+            sage: fp = path_tableaux.FriezePattern([1,2,7,5,3,7,4,1])
+            sage: fp.change_ring(RealField())                                           # optional - sage.rings.real_mpfr
+            [0.000000000000000, 1.00000000000000, ...
+             4.00000000000000, 1.00000000000000, 0.000000000000000]
 
-            sage: path_tableaux.FriezePattern([1,2,7,5,3,7,4,1]).change_ring(GF(7))
+            sage: fp.FriezePattern([1,2,7,5,3,7,4,1]).change_ring(GF(7))                # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no base extension defined

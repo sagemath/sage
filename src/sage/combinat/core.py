@@ -433,13 +433,13 @@ class Core(CombinatorialElement):
 
             sage: c = Core([4,2],3)
             sage: x = Core([5,3,1],3)
-            sage: c.weak_le(x)
+            sage: c.weak_le(x)                                                          # optional - sage.modules
             True
-            sage: c.weak_le([5,3,1])
+            sage: c.weak_le([5,3,1])                                                    # optional - sage.modules
             True
 
             sage: x = Core([4,2,2,1,1],3)
-            sage: c.weak_le(x)
+            sage: c.weak_le(x)                                                          # optional - sage.modules
             False
 
             sage: x = Core([5,3,1],6)
@@ -464,11 +464,11 @@ class Core(CombinatorialElement):
         EXAMPLES::
 
             sage: c = Core([1],3)
-            sage: c.weak_covers()
+            sage: c.weak_covers()                                                       # optional - sage.modules
             [[1, 1], [2]]
 
             sage: c = Core([4,2],3)
-            sage: c.weak_covers()
+            sage: c.weak_covers()                                                       # optional - sage.modules
             [[5, 3, 1]]
         """
         w = self.to_grassmannian()

@@ -1,3 +1,4 @@
+# sage.doctest: optional - lrcalc_python
 r"""
 Littlewood-Richardson tableaux
 

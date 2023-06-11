@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.numerical.mip
 r"""
 A bijectionist's toolkit
 

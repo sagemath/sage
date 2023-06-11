@@ -401,7 +401,7 @@ class GenericCombinatorialSpecies(SageObject):
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
-            sage: P._check()
+            sage: P._check()                                                            # optional - sage.libs.flint
             True
         """
         st = self.structures(range(n))
@@ -622,7 +622,7 @@ class GenericCombinatorialSpecies(SageObject):
 
             sage: P = species.PermutationSpecies()
             sage: g = P.isotype_generating_series()
-            sage: g[0:4]
+            sage: g[0:4]                                                                # optional - sage.libs.flint
             [1, 1, 2, 3]
             sage: g.counts(4)
             [1, 1, 2, 3]

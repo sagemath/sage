@@ -12,13 +12,15 @@ standard tableaux to semistandard tableaux. The local rule is the Bender-Knuth i
 
 EXAMPLES::
 
-    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[4,3,3,1,0]])
+    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],
+    ....:                                             [3,3,2,1],[4,3,3,1,0]])
     sage: pt.promotion()
     [(), (2,), (3, 1), (3, 2, 1), (4, 3, 1, 0), (4, 3, 3, 1, 0)]
     sage: pt.evacuation()
     [(), (2,), (4, 0), (4, 2, 0), (4, 3, 1, 0), (4, 3, 3, 1, 0)]
 
-    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[9/2,3,3,1,0]])
+    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],
+    ....:                                             [3,3,2,1],[9/2,3,3,1,0]])
     sage: pt.promotion()
     [(), (2,), (3, 1), (3, 2, 1), (9/2, 3, 1, 0), (9/2, 3, 3, 1, 0)]
     sage: pt.evacuation()
@@ -31,7 +33,8 @@ EXAMPLES::
     [         ,          ,        (),      (4,),    (4, 3), (5, 4, 1)]
     [         ,          ,          ,        (),      (3,),    (5, 1), (5, 4, 1)]
 
-    sage: pt2 = path_tableaux.SemistandardPathTableau([[3,2],[3,3,1],[3,3,2,1],[4,3,3,1,0]])
+    sage: pt2 = path_tableaux.SemistandardPathTableau([[3,2],[3,3,1],
+    ....:                                              [3,3,2,1],[4,3,3,1,0]])
     sage: pt1 = path_tableaux.SemistandardPathTableau([[],[3],[3,2]])
     sage: pt1.commutor(pt2)
     ([(), (2,), (2, 2), (4, 2, 0)], [(4, 2, 0), (4, 3, 2, 0), (4, 3, 3, 1, 0)])
@@ -41,7 +44,9 @@ EXAMPLES::
     [(), (2,), (2, 2), (4, 2, 0)]
     ([(), (2,), (2, 2), (4, 2, 0)], [(4, 2, 0), (4, 3, 2, 0), (4, 3, 3, 1, 0)])
 
-    sage: st = SkewTableau([[None,None,None,4,4,5,6,7],[None,2,4,6,7,7,7],[None,4,5,8,8,9],[None,6,7,10],[None,8,8,11],[None],[4]])
+    sage: st = SkewTableau([[None, None, None, 4, 4, 5, 6, 7], [None, 2, 4, 6, 7, 7, 7],
+    ....:                   [None, 4, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11],
+    ....:                   [None], [4]])
     sage: pt = path_tableaux.SemistandardPathTableau(st)
     sage: bk = [SkewTableau(st.bender_knuth_involution(i+1)) for i in range(10)]
     sage: lr = [pt.local_rule(i+1) for i in range(10)]
@@ -198,12 +203,14 @@ class SemistandardPathTableau(PathTableau):
             sage: path_tableaux.SemistandardPathTableau([[],[3],[2,2]]) # indirect test
             Traceback (most recent call last):
             ...
-            ValueError: [(), (3,), (2, 2)] does not satisfy the required inequalities in row 1
+            ValueError: [(), (3,), (2, 2)] does not satisfy
+            the required inequalities in row 1
 
             sage: path_tableaux.SemistandardPathTableau([[],[3/2],[2,5/2]]) # indirect test
             Traceback (most recent call last):
             ...
-            ValueError: [(), (3/2,), (2, 5/2)] does not satisfy the required inequalities in row 1
+            ValueError: [(), (3/2,), (2, 5/2)] does not satisfy
+            the required inequalities in row 1
 
 
         TESTS::
@@ -325,14 +332,18 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: st = SkewTableau([[None, None, None, 4],[None,None,1,6],[None,None,5],[2,3]])
+            sage: st = SkewTableau([[None, None, None, 4], [None, None, 1, 6],
+            ....:                   [None, None, 5], [2, 3]])
             sage: path_tableaux.SemistandardPathTableau(st).rectify()
             [(), (1,), (1, 1), (2, 1, 0), (3, 1, 0, 0), (3, 2, 0, 0, 0), (4, 2, 0, 0, 0, 0)]
             sage: path_tableaux.SemistandardPathTableau(st).rectify(verbose=True)
-            [[(3, 2, 2), (3, 3, 2, 0), (3, 3, 2, 1, 0), (3, 3, 2, 2, 0, 0), (4, 3, 2, 2, 0, 0, 0), (4, 3, 3, 2, 0, 0, 0, 0), (4, 4, 3, 2, 0, 0, 0, 0, 0)],
-            [(3, 2), (3, 3, 0), (3, 3, 1, 0), (3, 3, 2, 0, 0), (4, 3, 2, 0, 0, 0), (4, 3, 3, 0, 0, 0, 0), (4, 4, 3, 0, 0, 0, 0, 0)],
-            [(3,), (3, 1), (3, 1, 1), (3, 2, 1, 0), (4, 2, 1, 0, 0), (4, 3, 1, 0, 0, 0), (4, 4, 1, 0, 0, 0, 0)],
-            [(), (1,), (1, 1), (2, 1, 0), (3, 1, 0, 0), (3, 2, 0, 0, 0), (4, 2, 0, 0, 0, 0)]]
+            [[(3, 2, 2), (3, 3, 2, 0), (3, 3, 2, 1, 0), (3, 3, 2, 2, 0, 0),
+              (4, 3, 2, 2, 0, 0, 0), (4, 3, 3, 2, 0, 0, 0, 0), (4, 4, 3, 2, 0, 0, 0, 0, 0)],
+             [(3, 2), (3, 3, 0), (3, 3, 1, 0), (3, 3, 2, 0, 0), (4, 3, 2, 0, 0, 0),
+              (4, 3, 3, 0, 0, 0, 0), (4, 4, 3, 0, 0, 0, 0, 0)],
+             [(3,), (3, 1), (3, 1, 1), (3, 2, 1, 0), (4, 2, 1, 0, 0), (4, 3, 1, 0, 0, 0),
+              (4, 4, 1, 0, 0, 0, 0)],
+             [(), (1,), (1, 1), (2, 1, 0), (3, 1, 0, 0), (3, 2, 0, 0, 0), (4, 2, 0, 0, 0, 0)]]
 
         TESTS::
 
@@ -387,14 +398,16 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[4,3,3,1,0]])
+            sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],
+            ....:                                             [3,3,2,1],[4,3,3,1,0]])
             sage: pt.to_tableau()
             [[1, 1, 1, 5], [2, 2, 3], [3, 4, 5], [4]]
 
         TESTS::
 
-            sage: SST = SemistandardTableaux(shape=[5,5,3],eval=[2,2,3,4,2])
-            sage: all(st == path_tableaux.SemistandardPathTableau(st).to_tableau() for st in SST)
+            sage: SST = SemistandardTableaux(shape=[5,5,3], eval=[2,2,3,4,2])
+            sage: all(st == path_tableaux.SemistandardPathTableau(st).to_tableau()      # optional - sage.modules
+            ....:     for st in SST)
             True
         """
         from sage.combinat.tableau import from_chain
@@ -415,7 +428,8 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[4,3,3,1]])
+            sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],
+            ....:                                             [3,3,2,1],[4,3,3,1]])
             sage: pt.to_pattern()
             [[4, 3, 3, 1, 0], [3, 3, 2, 1], [3, 3, 1], [3, 2], [3]]
 

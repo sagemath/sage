@@ -108,7 +108,7 @@ The :meth:`jacobi_trudi()` method computes the Jacobi-Trudi matrix. See
 
 ::
 
-    sage: SkewPartition([[4,3,1],[2]]).jacobi_trudi()
+    sage: SkewPartition([[4,3,1],[2]]).jacobi_trudi()                                   # optional - sage.modules
     [h[2]  h[]    0]
     [h[5] h[3]  h[]]
     [h[6] h[4] h[1]]

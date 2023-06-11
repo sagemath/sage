@@ -3113,7 +3113,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
 
         An example over the ring of symmetric functions::
 
-            sage: e = SymmetricFunctions(QQ).e()
+            sage: e = SymmetricFunctions(QQ).e()                                        # optional - sage.modules
             sage: R.<z> = LazyLaurentSeriesRing(e)                                      # optional - sage.modules
             sage: 1 / (1 - e[1]*z)                                                      # optional - sage.modules
             e[] + e[1]*z + e[1, 1]*z^2 + e[1, 1, 1]*z^3 + e[1, 1, 1, 1]*z^4
@@ -5829,7 +5829,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         orderings satisfy the relationship `C' = L`::
 
             sage: p = SymmetricFunctions(QQ).p()                                        # optional - sage.modules
-            sage: C = T(lambda n: (sum(euler_phi(k)*p([k])**(n//k)
+            sage: C = T(lambda n: (sum(euler_phi(k)*p([k])**(n//k)                      # optional - sage.modules
             ....:                      for k in divisors(n))/n if n > 0 else 0))
             sage: L = T(lambda n: p([1]*n))                                             # optional - sage.modules
             sage: L - C.derivative_with_respect_to_p1()                                 # optional - sage.modules
@@ -6339,7 +6339,7 @@ class LazyDirichletSeries(LazyModuleElement):
         sage: f = L(constant=1)^2
         sage: f                                                                         # optional - sage.symbolic
         1 + 2/2^z + 2/3^z + 3/4^z + 2/5^z + 4/6^z + 2/7^z + O(1/(8^z))
-        sage: f.coefficient(100) == number_of_divisors(100)
+        sage: f.coefficient(100) == number_of_divisors(100)                             # optional - sage.libs.pari
         True
 
     Lazy Dirichlet series is picklable::
@@ -6385,9 +6385,9 @@ class LazyDirichletSeries(LazyModuleElement):
         EXAMPLES::
 
             sage: L = LazyDirichletSeriesRing(ZZ, "z")
-            sage: mu = L(moebius); mu.valuation()
+            sage: mu = L(moebius); mu.valuation()                                       # optional - sage.libs.pari
             0
-            sage: (mu - mu).valuation()
+            sage: (mu - mu).valuation()                                                 # optional - sage.libs.pari
             +Infinity
             sage: g = L(constant=1, valuation=2)
             sage: g.valuation()

@@ -116,22 +116,22 @@ cdef class PrimePi(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: prime_pi._eval_(7)
+            sage: prime_pi._eval_(7)                                                    # optional - primecountpy
             4
-            sage: prime_pi._eval_(100)
+            sage: prime_pi._eval_(100)                                                  # optional - primecountpy
             25
-            sage: prime_pi._eval_(1000)
+            sage: prime_pi._eval_(1000)                                                 # optional - primecountpy
             168
-            sage: prime_pi._eval_(100000)
+            sage: prime_pi._eval_(100000)                                               # optional - primecountpy
             9592
-            sage: prime_pi._eval_(500509)
+            sage: prime_pi._eval_(500509)                                               # optional - primecountpy
             41581
-            sage: prime_pi._eval_(mod(30957, 9750979))
+            sage: prime_pi._eval_(mod(30957, 9750979))                                  # optional - primecountpy
             3337
 
         Make sure we actually compute correct results for 64-bit entries::
 
-            sage: for i in (32..42): prime_pi(2^i) # long time (13s on sage.math, 2011)
+            sage: for i in (32..42): prime_pi(2^i)  # long time (13s on sage.math, 2011), optional - primecountpy
             203280221
             393615806
             762939111
@@ -147,7 +147,7 @@ cdef class PrimePi(BuiltinFunction):
         This implementation uses 64-bit ints and does not support
         :math:`x \geq 2^63`::
 
-            sage: prime_pi(2^63)
+            sage: prime_pi(2^63)                                                        # optional - primecountpy
             Traceback (most recent call last):
             ...
             OverflowError: ...to convert...
@@ -156,9 +156,9 @@ cdef class PrimePi(BuiltinFunction):
 
         Check that :trac:`24960` is fixed::
 
-            sage: prime_pi(642763101936913)
+            sage: prime_pi(642763101936913)                                             # optional - primecountpy
             19439675999019
-            sage: prime_pi(10.5)
+            sage: prime_pi(10.5)                                                        # optional - primecountpy
             4
         """
         from sage.functions.other import floor
@@ -229,11 +229,11 @@ cpdef Integer legendre_phi(x, a):
 
         sage: legendre_phi(100, 0)
         100
-        sage: legendre_phi(29375, 1)
+        sage: legendre_phi(29375, 1)                                                    # optional - primecountpy
         14688
-        sage: legendre_phi(91753, 5973)
+        sage: legendre_phi(91753, 5973)                                                 # optional - primecountpy
         2893
-        sage: legendre_phi(4215701455, 6450023226)
+        sage: legendre_phi(4215701455, 6450023226)                                      # optional - primecountpy
         1
 
     """

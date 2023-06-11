@@ -515,8 +515,8 @@ def deprecated_function_alias(issue_number, func):
     EXAMPLES::
 
         sage: from sage.misc.superseded import deprecated_function_alias
-        sage: g = deprecated_function_alias(13109, number_of_partitions)                # optional - sage.combinat
-        sage: g(5)                                                                      # optional - sage.combinat
+        sage: g = deprecated_function_alias(13109, number_of_partitions)                # optional - sage.combinat sage.libs.flint
+        sage: g(5)                                                                      # optional - sage.combinat sage.libs.flint
         doctest:...: DeprecationWarning: g is deprecated.
         Please use sage.combinat.partition.number_of_partitions instead.
         See https://github.com/sagemath/sage/issues/13109 for details.

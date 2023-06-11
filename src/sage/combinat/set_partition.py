@@ -381,7 +381,7 @@ class AbstractSetPartition(ClonableArray,
 
         EXAMPLES::
 
-            sage: [x.standard_form() for x in SetPartitions(4, [2,2])]
+            sage: [x.standard_form() for x in SetPartitions(4, [2,2])]                  # optional - sage.graphs
             [[[1, 2], [3, 4]], [[1, 4], [2, 3]], [[1, 3], [2, 4]]]
 
         TESTS::
@@ -466,13 +466,13 @@ class AbstractSetPartition(ClonableArray,
 
         EXAMPLES::
 
-            sage: from sage.combinat.diagram_algebras import PartitionDiagram, PartitionDiagrams
-            sage: pd = PartitionDiagram([[1,-3,-5],[2,4],[3,-1,-2],[5],[-4]])
-            sage: pd.max_block_size()
+            sage: from sage.combinat.diagram_algebras import PartitionDiagram, PartitionDiagrams    # optional - sage.modules
+            sage: pd = PartitionDiagram([[1,-3,-5],[2,4],[3,-1,-2],[5],[-4]])           # optional - sage.modules
+            sage: pd.max_block_size()                                                   # optional - sage.modules
             3
-            sage: sorted(d.max_block_size() for d in PartitionDiagrams(2))
+            sage: sorted(d.max_block_size() for d in PartitionDiagrams(2))              # optional - sage.modules
             [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4]
-            sage: sorted(sp.max_block_size() for sp in SetPartitions(3))
+            sage: sorted(sp.max_block_size() for sp in SetPartitions(3))                # optional - sage.modules
             [1, 2, 2, 2, 3]
         """
         return max(len(block) for block in self)
@@ -562,18 +562,18 @@ class SetPartition(AbstractSetPartition,
 
     There are 5 set partitions of the set `\{1,2,3\}`::
 
-        sage: SetPartitions(3).cardinality()
+        sage: SetPartitions(3).cardinality()                                            # optional - sage.libs.flint
         5
 
     Here is the list of them::
 
-        sage: SetPartitions(3).list()
+        sage: SetPartitions(3).list()                                                   # optional - sage.graphs
         [{{1, 2, 3}}, {{1, 2}, {3}}, {{1, 3}, {2}}, {{1}, {2, 3}}, {{1}, {2}, {3}}]
 
     There are 6 set partitions of `\{1,2,3,4\}` whose underlying partition is
     `[2, 1, 1]`::
 
-        sage: SetPartitions(4, [2,1,1]).list()
+        sage: SetPartitions(4, [2,1,1]).list()                                          # optional - sage.graphs
         [{{1}, {2, 4}, {3}},
          {{1}, {2}, {3, 4}},
          {{1, 4}, {2}, {3}},
@@ -1798,14 +1798,14 @@ class SetPartition(AbstractSetPartition,
 
         EXAMPLES::
 
-            sage: SetPartition([[1,3],[2,4]]).refinements()
+            sage: SetPartition([[1,3],[2,4]]).refinements()                             # optional - sage.graphs
             [{{1, 3}, {2, 4}},
              {{1, 3}, {2}, {4}},
              {{1}, {2, 4}, {3}},
              {{1}, {2}, {3}, {4}}]
-            sage: SetPartition([[1],[2,4],[3]]).refinements()
+            sage: SetPartition([[1],[2,4],[3]]).refinements()                           # optional - sage.graphs
             [{{1}, {2, 4}, {3}}, {{1}, {2}, {3}, {4}}]
-            sage: SetPartition([]).refinements()
+            sage: SetPartition([]).refinements()                                        # optional - sage.graphs
             [{}]
         """
         L = [SetPartitions(part) for part in self]
@@ -2020,17 +2020,17 @@ class SetPartitions(UniqueRepresentation, Parent):
         sage: S = [1,2,3,4]
         sage: SetPartitions(S, 2)
         Set partitions of {1, 2, 3, 4} with 2 parts
-        sage: SetPartitions([1,2,3,4], [3,1]).list()
+        sage: SetPartitions([1,2,3,4], [3,1]).list()                                    # optional - sage.graphs
         [{{1}, {2, 3, 4}}, {{1, 2, 3}, {4}}, {{1, 2, 4}, {3}}, {{1, 3, 4}, {2}}]
-        sage: SetPartitions(7, [3,3,1]).cardinality()
+        sage: SetPartitions(7, [3,3,1]).cardinality()                                   # optional - sage.libs.flint
         70
 
     In strings, repeated letters are not considered distinct as of
     :trac:`14140`::
 
-        sage: SetPartitions('abcde').cardinality()
+        sage: SetPartitions('abcde').cardinality()                                      # optional - sage.libs.flint
         52
-        sage: SetPartitions('aabcd').cardinality()
+        sage: SetPartitions('aabcd').cardinality()                                      # optional - sage.libs.flint
         15
 
     REFERENCES:
@@ -2080,13 +2080,13 @@ class SetPartitions(UniqueRepresentation, Parent):
 
             sage: S = SetPartitions(4, [2,2])
             sage: SA = SetPartitions()
-            sage: all(sp in SA for sp in S)
+            sage: all(sp in SA for sp in S)                                             # optional - sage.graphs
             True
-            sage: Set([Set([1,2]),Set([3,7])]) in SA
+            sage: Set([Set([1,2]),Set([3,7])]) in SA                                    # optional - sage.graphs
             True
-            sage: Set([Set([1,2]),Set([2,3])]) in SA
+            sage: Set([Set([1,2]),Set([2,3])]) in SA                                    # optional - sage.graphs
             False
-            sage: Set([]) in SA
+            sage: Set([]) in SA                                                         # optional - sage.graphs
             True
         """
         # x must be a set
@@ -2750,13 +2750,13 @@ class SetPartitions_set(SetPartitions):
         TESTS::
 
             sage: S = SetPartitions(4, [2,2])
-            sage: all(sp in S for sp in S)
+            sage: all(sp in S for sp in S)                                              # optional - sage.graphs
             True
-            sage: SetPartition([[1,3],[2,4]]) in SetPartitions(3)
+            sage: SetPartition([[1,3],[2,4]]) in SetPartitions(3)                       # optional - sage.graphs
             False
-            sage: SetPartition([[1,3],[2,4]]) in SetPartitions(4, [3,1])
+            sage: SetPartition([[1,3],[2,4]]) in SetPartitions(4, [3,1])                # optional - sage.graphs
             False
-            sage: SetPartition([[2],[1,3,4]]) in SetPartitions(4, [3,1])
+            sage: SetPartition([[2],[1,3,4]]) in SetPartitions(4, [3,1])                # optional - sage.graphs
             True
         """
         # Must pass the general check
@@ -2780,16 +2780,16 @@ class SetPartitions_set(SetPartitions):
         EXAMPLES::
 
             sage: S = SetPartitions(10)
-            sage: s = S.random_element()
-            sage: s.parent() is S
+            sage: s = S.random_element()                                                # optional - sage.symbolic
+            sage: s.parent() is S                                                       # optional - sage.symbolic
             True
-            sage: assert s in S, s
+            sage: assert s in S, s                                                      # optional - sage.symbolic
 
             sage: S = SetPartitions(["a", "b", "c"])
-            sage: s = S.random_element()
-            sage: s.parent() is S
+            sage: s = S.random_element()                                                # optional - sage.symbolic
+            sage: s.parent() is S                                                       # optional - sage.symbolic
             True
-            sage: assert s in S, s
+            sage: assert s in S, s                                                      # optional - sage.symbolic
         """
         base_set = list(self.base_set())
         N = len(base_set)
@@ -2818,13 +2818,13 @@ class SetPartitions_set(SetPartitions):
 
         EXAMPLES::
 
-            sage: SetPartitions([1,2,3,4]).cardinality()
+            sage: SetPartitions([1,2,3,4]).cardinality()                                # optional - sage.libs.flint
             15
-            sage: SetPartitions(3).cardinality()
+            sage: SetPartitions(3).cardinality()                                        # optional - sage.libs.flint
             5
-            sage: SetPartitions(3,2).cardinality()
+            sage: SetPartitions(3,2).cardinality()                                      # optional - sage.libs.flint
             3
-            sage: SetPartitions([]).cardinality()
+            sage: SetPartitions([]).cardinality()                                       # optional - sage.libs.flint
             1
         """
         return bell_number(len(self._set))
@@ -2905,7 +2905,7 @@ class SetPartitions_setparts(SetPartitions_set):
         TESTS::
 
             sage: S = SetPartitions(4, [2,2])
-            sage: TestSuite(S).run()
+            sage: TestSuite(S).run()                                                    # optional - sage.graphs
         """
         SetPartitions_set.__init__(self, s)
         self._parts = parts

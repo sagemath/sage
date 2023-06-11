@@ -1957,7 +1957,7 @@ class StandardSkewTableaux(SkewTableaux):
 
     ::
 
-        sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()                          # optional - sage.graphs
+        sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()                          # optional - sage.graphs sage.rings.finite_rings
         [[[None, 2, 3], [None, 4], [1]],
          [[None, 1, 2], [None, 3], [4]],
          [[None, 1, 2], [None, 4], [3]],

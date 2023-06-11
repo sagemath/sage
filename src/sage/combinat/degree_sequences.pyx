@@ -236,16 +236,16 @@ The sequences produced by random graphs *are* degree sequences::
 
     sage: n = 30
     sage: DS = DegreeSequences(30)
-    sage: for i in range(10):
+    sage: for i in range(10):                                                           # optional - networkx sage.graphs
     ....:     g = graphs.RandomGNP(n,.2)
     ....:     if not g.degree_sequence() in DS:
     ....:         print("Something is very wrong !")
 
 Checking that we indeed enumerate *all* the degree sequences for `n=5`::
 
-    sage: ds1 = Set([tuple(g.degree_sequence()) for g in graphs(5)])
+    sage: ds1 = Set([tuple(g.degree_sequence()) for g in graphs(5)])                    # optional - sage.graphs
     sage: ds2 = Set(map(tuple,list(DegreeSequences(5))))
-    sage: ds1 == ds2
+    sage: ds1 == ds2                                                                    # optional - sage.graphs
     True
 
 Checking the consistency of enumeration and test::

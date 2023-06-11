@@ -617,9 +617,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.IntegerPartitionsDominanceOrder(6); P                      # optional - sage.combinat
+            sage: P = posets.IntegerPartitionsDominanceOrder(6); P                      # optional - sage.combinat sage.modules
             Finite lattice containing 11 elements
-            sage: P.cover_relations()                                                   # optional - sage.combinat
+            sage: P.cover_relations()                                                   # optional - sage.combinat sage.modules
             [[[1, 1, 1, 1, 1, 1], [2, 1, 1, 1, 1]],
              [[2, 1, 1, 1, 1], [2, 2, 1, 1]],
              [[2, 2, 1, 1], [2, 2, 2]],
@@ -941,7 +941,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: posets.SetPartitions(4)                                               # optional - sage.combinat
+            sage: posets.SetPartitions(4)                                               # optional - sage.combinat sage.modules
             Finite lattice containing 15 elements
         """
         from sage.combinat.set_partition import SetPartitions
@@ -1381,7 +1381,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         Fibonacci numbers as the number of antichains of a poset::
 
-            sage: [len(posets.UpDownPoset(n).antichains().list()) for n in range(6)]    # optional - sage.combinat
+            sage: [len(posets.UpDownPoset(n).antichains().list()) for n in range(6)]    # optional - sage.combinat sage.rings.finite_rings
             [1, 2, 3, 5, 8, 13]
 
         TESTS::
@@ -1415,13 +1415,13 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.YoungDiagramPoset(Partition([2, 2])); P                    # optional - sage.combinat
+            sage: P = posets.YoungDiagramPoset(Partition([2, 2])); P                    # optional - sage.combinat sage.modules
             Finite meet-semilattice containing 4 elements
 
-            sage: sorted(P.cover_relations())                                           # optional - sage.combinat
+            sage: sorted(P.cover_relations())                                           # optional - sage.combinat sage.modules
             [[(0, 0), (0, 1)], [(0, 0), (1, 0)], [(0, 1), (1, 1)], [(1, 0), (1, 1)]]
 
-            sage: posets.YoungDiagramPoset([3, 2], dual=True)                           # optional - sage.combinat
+            sage: posets.YoungDiagramPoset([3, 2], dual=True)                           # optional - sage.combinat sage.modules
             Finite join-semilattice containing 5 elements
         """
         from sage.combinat.partition import Partition
@@ -1461,9 +1461,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.YoungsLattice(3); P                                        # optional - sage.combinat
+            sage: P = posets.YoungsLattice(3); P                                        # optional - sage.combinat sage.modules
             Finite meet-semilattice containing 7 elements
-            sage: P.cover_relations()                                                   # optional - sage.combinat
+            sage: P.cover_relations()                                                   # optional - sage.combinat sage.modules
             [[[], [1]],
              [[1], [1, 1]],
              [[1], [2]],
@@ -1489,10 +1489,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P = posets.YoungsLatticePrincipalOrderIdeal(Partition([2,2]))         # optional - sage.combinat
-            sage: P                                                                     # optional - sage.combinat
+            sage: P = posets.YoungsLatticePrincipalOrderIdeal(Partition([2,2])); P      # optional - sage.combinat sage.modules
             Finite lattice containing 6 elements
-            sage: P.cover_relations()                                                   # optional - sage.combinat
+            sage: P.cover_relations()                                                   # optional - sage.combinat sage.modules
             [[[], [1]],
              [[1], [1, 1]],
              [[1], [2]],
@@ -1528,16 +1527,16 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: Y5 = posets.YoungFibonacci(5); Y5                                     # optional - sage.combinat
+            sage: Y5 = posets.YoungFibonacci(5); Y5                                     # optional - sage.combinat sage.modules
             Finite meet-semilattice containing 20 elements
-            sage: sorted(Y5.upper_covers(Word('211')))                                  # optional - sage.combinat
+            sage: sorted(Y5.upper_covers(Word('211')))                                  # optional - sage.combinat sage.modules
             [word: 1211, word: 2111, word: 221]
 
         TESTS::
 
-            sage: posets.YoungFibonacci(0)                                              # optional - sage.combinat
+            sage: posets.YoungFibonacci(0)                                              # optional - sage.combinat sage.modules
             Finite meet-semilattice containing 1 elements
-            sage: posets.YoungFibonacci(1)                                              # optional - sage.combinat
+            sage: posets.YoungFibonacci(1)                                              # optional - sage.combinat sage.modules
             Finite meet-semilattice containing 2 elements
         """
         from sage.combinat.posets.lattices import FiniteMeetSemilattice
@@ -1819,11 +1818,11 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: len(M.cover_relations())
             7
 
-            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # optional - sage.combinat
-            ....: {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
-            ....: 3: [posets.DoubleTailedDiamond(6)]},
-            ....: anchor=(4, 2, posets.ChainPoset(6)))
-            sage: len(P.cover_relations())                                              # optional - sage.combinat
+            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # optional - sage.combinat sage.modules
+            ....:         {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
+            ....:          3: [posets.DoubleTailedDiamond(6)]},
+            ....:         anchor=(4, 2, posets.ChainPoset(6)))
+            sage: len(P.cover_relations())                                              # optional - sage.combinat sage.modules
             33
         """
         elements = []

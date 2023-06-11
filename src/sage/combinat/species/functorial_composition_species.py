@@ -35,7 +35,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series()[0:5]
+            sage: G.isotype_generating_series()[0:5]                                    # optional - sage.modules
             [1, 1, 2, 4, 11]
 
             sage: G = species.SimpleGraphSpecies()
@@ -82,7 +82,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotypes([1,2,3]).list()
+            sage: G.isotypes([1,2,3]).list()                                            # optional - sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -104,7 +104,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotype_generating_series()[0:5]
+            sage: G.isotype_generating_series()[0:5]                                    # optional - sage.modules
             [1, 1, 2, 4, 11]
         """
         return self.cycle_index_series(base_ring).isotype_generating_series()
@@ -114,7 +114,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.cycle_index_series()[0:5]
+            sage: G.cycle_index_series()[0:5]                                           # optional - sage.modules
             [p[],
              p[1],
              p[1, 1] + p[2],

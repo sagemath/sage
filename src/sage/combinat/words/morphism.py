@@ -709,7 +709,7 @@ class WordMorphism(SageObject):
             sage: tm('a', 6.7)
             Traceback (most recent call last):
             ...
-            TypeError: order (6.70000000000000) must be a non-negative integer or plus Infinity
+            TypeError: order (6.7...) must be a non-negative integer or plus Infinity
 
         Only the first letter is considered for infinitely iterated image of
         a word under a morphism::
@@ -976,7 +976,7 @@ class WordMorphism(SageObject):
             sage: m^1.5
             Traceback (most recent call last):
             ...
-            ValueError: exponent (1.50000000000000) must be an integer
+            ValueError: exponent (1.5...) must be an integer
             sage: m^-2
             Traceback (most recent call last):
             ...
@@ -2100,7 +2100,7 @@ class WordMorphism(SageObject):
             sage: set(A2) == B2                                                         # optional - sage.modules
             True
 
-            sage: len(A0), len(A2)
+            sage: len(A0), len(A2)                                                      # optional - sage.modules
             (6, 20)
 
         The Chacon transformation (non-primitive)::

@@ -7173,7 +7173,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: G = Permutations(5)
-            sage: G.conjugacy_classes_representatives()                                 # optional - sage.combinat
+            sage: G.conjugacy_classes_representatives()                                 # optional - sage.combinat sage.libs.flint
             [[1, 2, 3, 4, 5],
              [2, 1, 3, 4, 5],
              [2, 1, 4, 3, 5],
@@ -7187,10 +7187,10 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         Check some border cases::
 
             sage: S = Permutations(0)
-            sage: S.conjugacy_classes_representatives()                                 # optional - sage.combinat
+            sage: S.conjugacy_classes_representatives()                                 # optional - sage.combinat sage.libs.flint
             [[]]
             sage: S = Permutations(1)
-            sage: S.conjugacy_classes_representatives()                                 # optional - sage.combinat
+            sage: S.conjugacy_classes_representatives()                                 # optional - sage.combinat sage.libs.flint
             [[1]]
         """
         from sage.combinat.partition import Partitions_n

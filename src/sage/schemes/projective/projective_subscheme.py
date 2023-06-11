@@ -1190,8 +1190,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: L = P.subscheme([y - x])
-            sage: v = L.veronese_embedding(2)
-            sage: v
+            sage: v = L.veronese_embedding(2); v                                        # optional - sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of Projective Space of dimension 2
                     over Rational Field defined by: -x + y
@@ -1203,17 +1202,17 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                       x0 - x3
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^2 : x*y : x*z : y^2 : y*z : z^2)
-            sage: v.codomain().degree()
+            sage: v.codomain().degree()                                                 # optional - sage.libs.singular
             2
-            sage: C = P.subscheme([y*z - x^2])
-            sage: C.veronese_embedding(2).codomain().degree()
+            sage: C = P.subscheme([y*z - x^2])                                          # optional - sage.libs.singular
+            sage: C.veronese_embedding(2).codomain().degree()                           # optional - sage.libs.singular
             4
 
         twisted cubic::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: Q.<u,v,s,t> = ProjectiveSpace(QQ, 3)
-            sage: P.subscheme([]).veronese_embedding(3, Q)
+            sage: P.subscheme([]).veronese_embedding(3, Q)                              # optional - sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of Projective Space of dimension 1
                     over Rational Field defined by: (no polynomials)

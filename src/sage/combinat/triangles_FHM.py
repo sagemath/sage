@@ -27,9 +27,9 @@ simplicial complexes endowed with a distinguished facet. One can also
 think about complete fans endowed with a distinguished maximal
 cone. A typical example is::
 
-    sage: C = ClusterComplex(['A',3])
-    sage: f = C.greedy_facet()
-    sage: C.F_triangle(f)
+    sage: C = ClusterComplex(['A',3])                                                   # optional - sage.modules
+    sage: f = C.greedy_facet()                                                          # optional - sage.modules
+    sage: C.F_triangle(f)                                                               # optional - sage.modules
     F: 5*x^3 + 5*x^2*y + 3*x*y^2 + y^3 + 10*x^2 + 8*x*y + 3*y^2 + 6*x + 3*y + 1
     sage: unicode_art(_)                                                                # optional - sage.modules
     ⎛ 1  0  0  0⎞
@@ -352,8 +352,8 @@ class M_triangle(Triangle):
     EXAMPLES::
 
         sage: x, y = polygens(ZZ, 'x,y')
-        sage: P = Poset({2:[1]})
-        sage: P.M_triangle()
+        sage: P = Poset({2: [1]})                                                       # optional - sage.graphs
+        sage: P.M_triangle()                                                            # optional - sage.graphs
         M: x*y - y + 1
     """
     _prefix = 'M'

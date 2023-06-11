@@ -1139,7 +1139,7 @@ class SignedPermutation(ColoredPermutation,
             sage: S = SignedPermutations(4)
             sage: s1,s2,s3,s4 = S.gens()
             sage: x = s4*s1*s2*s3*s4
-            sage: M = x.to_matrix(); M
+            sage: M = x.to_matrix(); M                                                  # optional - sage.modules
             [ 0  1  0  0]
             [ 0  0  1  0]
             [ 0  0  0 -1]
@@ -1147,8 +1147,8 @@ class SignedPermutation(ColoredPermutation,
 
         The matrix multiplication is in the *opposite* order::
 
-            sage: m1,m2,m3,m4 = [g.to_matrix() for g in S.gens()]
-            sage: M == m4 * m3 * m2 * m1 * m4
+            sage: m1,m2,m3,m4 = [g.to_matrix() for g in S.gens()]                       # optional - sage.modules
+            sage: M == m4 * m3 * m2 * m1 * m4                                           # optional - sage.modules
             True
         """
         return self._perm.to_matrix() * diagonal_matrix(self._colors)

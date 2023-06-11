@@ -1,3 +1,4 @@
+# sage.doctest: optional - lrcalc_python sage.combinat
 r"""
 An interface to Anders Buch's Littlewood-Richardson Calculator ``lrcalc``
 

@@ -67,7 +67,7 @@ EXAMPLES:
 
 There are `5` partitions of the integer `4`::
 
-    sage: Partitions(4).cardinality()
+    sage: Partitions(4).cardinality()                                                   # optional - sage.libs.flint
     5
     sage: Partitions(4).list()
     [[4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
@@ -5750,9 +5750,9 @@ class Partitions(UniqueRepresentation, Parent):
 
     TESTS::
 
-        sage: TestSuite(Partitions(0)).run()
-        sage: TestSuite(Partitions(5)).run()
-        sage: TestSuite(Partitions(5, min_part=2)).run()
+        sage: TestSuite(Partitions(0)).run()                                            # optional - sage.libs.flint
+        sage: TestSuite(Partitions(5)).run()                                            # optional - sage.libs.flint
+        sage: TestSuite(Partitions(5, min_part=2)).run()                                # optional - sage.libs.flint
 
         sage: repr( Partitions(5, min_part=2) )
         'Partitions of the integer 5 satisfying constraints min_part=2'
@@ -5783,7 +5783,7 @@ class Partitions(UniqueRepresentation, Parent):
         ...
         ValueError: the size must be specified with any keyword argument
 
-        sage: Partitions(max_part = 3)
+        sage: Partitions(max_part=3)
         3-Bounded Partitions
 
     Check that :trac:`14145` has been fixed::
@@ -6521,8 +6521,8 @@ class Partitions_n(Partitions):
 
     TESTS::
 
-        sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()
-        sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()
+        sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()                # optional - sage.libs.flint
+        sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()                # optional - sage.libs.flint
     """
 
     def __init__(self, n):
@@ -6614,7 +6614,7 @@ class Partitions_n(Partitions):
             7
             sage: Partitions(5).cardinality(algorithm='pari')
             7
-            sage: number_of_partitions(5, algorithm='flint')
+            sage: number_of_partitions(5, algorithm='flint')                            # optional - sage.libs.flint
             7
 
         ::
@@ -6695,9 +6695,9 @@ class Partitions_n(Partitions):
 
         EXAMPLES::
 
-            sage: Partitions(5).random_element() # random
+            sage: Partitions(5).random_element() # random                               # optional - sage.libs.flint
             [2, 1, 1, 1]
-            sage: Partitions(5).random_element(measure='Plancherel') # random
+            sage: Partitions(5).random_element(measure='Plancherel') # random           # optional - sage.libs.flint
             [2, 1, 1, 1]
         """
         if measure == 'uniform':
@@ -6713,9 +6713,9 @@ class Partitions_n(Partitions):
 
         EXAMPLES::
 
-            sage: Partitions(5).random_element_uniform()  # random
+            sage: Partitions(5).random_element_uniform()  # random                      # optional - sage.libs.flint
             [2, 1, 1, 1]
-            sage: Partitions(20).random_element_uniform() # random
+            sage: Partitions(20).random_element_uniform() # random                      # optional - sage.libs.flint
             [9, 3, 3, 2, 2, 1]
 
         TESTS::
@@ -7007,7 +7007,7 @@ class Partitions_nk(Partitions):
             [[]]
 
             sage: from sage.combinat.partition import number_of_partitions_length
-            sage: all( len(Partitions(n, length=k).list())
+            sage: all( len(Partitions(n, length=k).list())                              # optional - sage.libs.flint
             ....:      == number_of_partitions_length(n, k)
             ....:      for n in range(9) for k in range(n+2) )
             True
@@ -7063,23 +7063,23 @@ class Partitions_nk(Partitions):
 
         Further examples::
 
-            sage: Partitions(5, length=3).cardinality()
+            sage: Partitions(5, length=3).cardinality()                                 # optional - sage.libs.flint
             2
-            sage: Partitions(6, length=3).cardinality()
+            sage: Partitions(6, length=3).cardinality()                                 # optional - sage.libs.flint
             3
-            sage: Partitions(8, length=4).cardinality()
+            sage: Partitions(8, length=4).cardinality()                                 # optional - sage.libs.flint
             5
-            sage: Partitions(8, length=5).cardinality()
+            sage: Partitions(8, length=5).cardinality()                                 # optional - sage.libs.flint
             3
-            sage: Partitions(15, length=6).cardinality()
+            sage: Partitions(15, length=6).cardinality()                                # optional - sage.libs.flint
             26
-            sage: Partitions(0, length=0).cardinality()
+            sage: Partitions(0, length=0).cardinality()                                 # optional - sage.libs.flint
             1
-            sage: Partitions(0, length=1).cardinality()
+            sage: Partitions(0, length=1).cardinality()                                 # optional - sage.libs.flint
             0
-            sage: Partitions(1, length=0).cardinality()
+            sage: Partitions(1, length=0).cardinality()                                 # optional - sage.libs.flint
             0
-            sage: Partitions(1, length=4).cardinality()
+            sage: Partitions(1, length=4).cardinality()                                 # optional - sage.libs.flint
             0
 
         TESTS:
@@ -7088,11 +7088,12 @@ class Partitions_nk(Partitions):
 
             sage: N = [0, 1, 2, 3, 5, 10, 20, 500, 850]
             sage: K = [0, 1, 2, 3, 5, 10, 11, 20, 21, 250, 499, 500]
-            sage: all(Partitions(n,length=k).cardinality() == Partitions(n,length=k).cardinality('gap')
+            sage: all(Partitions(n, length=k).cardinality()                             # optional - sage.libs.flint
+            ....:       == Partitions(n,length=k).cardinality('gap')
             ....:     for n in N for k in K)
             True
             sage: P = Partitions(4562, length=2800)
-            sage: P.cardinality() == P.cardinality('gap')
+            sage: P.cardinality() == P.cardinality('gap')                               # optional - sage.libs.flint
             True
         """
         return number_of_partitions_length(self.n, self.k, algorithm)
@@ -8292,12 +8293,12 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
         EXAMPLES::
 
             sage: P = Partitions(5, regular=3)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # optional - sage.libs.flint
             5
             sage: P = Partitions(5, regular=6)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # optional - sage.libs.flint
             7
-            sage: P.cardinality() == Partitions(5).cardinality()
+            sage: P.cardinality() == Partitions(5).cardinality()                        # optional - sage.libs.flint
             True
 
         TESTS:
@@ -8652,7 +8653,7 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
 
         TESTS::
 
-            sage: all(PartitionsGreatestEQ(n, a).cardinality() ==
+            sage: all(PartitionsGreatestEQ(n, a).cardinality() ==                       # optional - sage.libs.flint
             ....:     len(PartitionsGreatestEQ(n, a).list())
             ....:     for n in range(20) for a in range(6))
             True
@@ -8984,17 +8985,17 @@ def number_of_partitions(n, algorithm='default'):
 
     ::
 
-        sage: number_of_partitions(10)
+        sage: number_of_partitions(10)                                                  # optional - sage.libs.flint
         42
-        sage: number_of_partitions(3)
+        sage: number_of_partitions(3)                                                   # optional - sage.libs.flint
         3
-        sage: number_of_partitions(10)
+        sage: number_of_partitions(10)                                                  # optional - sage.libs.flint
         42
-        sage: number_of_partitions(40)
+        sage: number_of_partitions(40)                                                  # optional - sage.libs.flint
         37338
-        sage: number_of_partitions(100)
+        sage: number_of_partitions(100)                                                 # optional - sage.libs.flint
         190569292
-        sage: number_of_partitions(100000)
+        sage: number_of_partitions(100000)                                              # optional - sage.libs.flint
         27493510569775696512677516320986352688173429315980054758203125984302147328114964173055050741660736621590157844774296248940493063070200461792764493033510116079342457190155718943509725312466108452006369558934464248716828789832182345009262853831404597021307130674510624419227311238999702284408609370935531629697851569569892196108480158600569421098519
 
     A generating function for the number of partitions `p_n` is given by the
@@ -9021,31 +9022,31 @@ def number_of_partitions(n, algorithm='default'):
     TESTS::
 
         sage: n = 500 + randint(0,500)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # optional - sage.libs.flint
         True
         sage: n = 1500 + randint(0,1500)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # optional - sage.libs.flint
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # optional - sage.libs.flint
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # optional - sage.libs.flint
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # optional - sage.libs.flint
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # optional - sage.libs.flint
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # optional - sage.libs.flint
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # optional - sage.libs.flint
         True
         sage: n = 100000000 + randint(0,100000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0  # long time (4s on sage.math, 2011)
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0  # long time (4s on sage.math, 2011)    # optional - sage.libs.flint
         True
 
     """

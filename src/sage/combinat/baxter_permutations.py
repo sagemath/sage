@@ -332,11 +332,12 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
 
         EXAMPLES::
 
-            sage: BaxterPermutations().to_pair_of_twin_binary_trees(Permutation([]))
+            sage: BP = BaxterPermutations()
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([]))                      # optional - sage.graphs
             (., .)
-            sage: BaxterPermutations().to_pair_of_twin_binary_trees(Permutation([1, 2, 3]))
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([1, 2, 3]))               # optional - sage.graphs
             (1[., 2[., 3[., .]]], 3[2[1[., .], .], .])
-            sage: BaxterPermutations().to_pair_of_twin_binary_trees(Permutation([3, 4, 1, 2]))
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([3, 4, 1, 2]))            # optional - sage.graphs
             (3[1[., 2[., .]], 4[., .]], 2[1[., .], 4[3[., .], .]])
         """
         from sage.combinat.binary_tree import LabelledBinaryTree
