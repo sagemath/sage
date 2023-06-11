@@ -36,6 +36,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     INPUT:
 
     - ``type`` -- one of the following strings
+
       - ``'modular'`` (default) -- A class of lattices for which
         asymptotic worst-case to average-case connections hold. For
         more refer to [Aj1996]_.
@@ -46,6 +47,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         compact representation proposed by [LM2006]_.
       - ``'cyclotomic'`` -- Special case of ideal. Allows for
         efficient processing proposed by [LM2006]_.
+
     - ``n`` -- Determinant size, primal: `det(L) = q^n`, dual: `det(L) = q^{m-n}`.
       For ideal lattices this is also the degree of the quotient polynomial.
     - ``m`` -- Lattice dimension, `L \subseteq Z^m`.
