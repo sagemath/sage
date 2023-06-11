@@ -301,7 +301,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
         Decoder of Extension of [15, 7, 9] Reed-Solomon Code over GF(16) through Gao decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
     """
 
-    def __init__(self, code, original_decoder = None, **kwargs):
+    def __init__(self, code, original_decoder=None, **kwargs):
         r"""
         TESTS:
 
