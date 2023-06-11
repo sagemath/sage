@@ -3156,21 +3156,21 @@ cdef class Rational(sage.structure.element.FieldElement):
             3*log(5)/log(3)
             sage: QQ(8).log(1/2)
             -3
-            sage: (1/8).log(1/2)
+            sage: (1/8).log(1/2)                                                        # optional - sage.libs.pari
             3
-            sage: (1/2).log(1/8)
+            sage: (1/2).log(1/8)                                                        # optional - sage.libs.pari
             1/3
-            sage: (1/2).log(8)
+            sage: (1/2).log(8)                                                          # optional - sage.libs.pari
             -1/3
-            sage: (16/81).log(8/27)
+            sage: (16/81).log(8/27)                                                     # optional - sage.libs.pari
             4/3
-            sage: (8/27).log(16/81)
+            sage: (8/27).log(16/81)                                                     # optional - sage.libs.pari
             3/4
-            sage: log(27/8, 16/81)
+            sage: log(27/8, 16/81)                                                      # optional - sage.libs.pari
             -3/4
-            sage: log(16/81, 27/8)
+            sage: log(16/81, 27/8)                                                      # optional - sage.libs.pari
             -4/3
-            sage: (125/8).log(5/2)
+            sage: (125/8).log(5/2)                                                      # optional - sage.libs.pari
             3
             sage: (125/8).log(5/2, prec=53)
             3.00000000000000

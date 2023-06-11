@@ -857,15 +857,15 @@ cdef class FractionFieldElement(FieldElement):
             sage: x,y = FR.gens()
             sage: a = x^2; a
             x^2
-            sage: type(a.numerator())
+            sage: type(a.numerator())                                                   # optional - sage.lings.singular
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
-            sage: type(a.denominator())
+            sage: type(a.denominator())                                                 # optional - sage.lings.singular
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: a = x^(-2); a
             1/x^2
-            sage: type(a.numerator())
+            sage: type(a.numerator())                                                   # optional - sage.lings.singular
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
-            sage: type(a.denominator())
+            sage: type(a.denominator())                                                 # optional - sage.lings.singular
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: x^0
             1

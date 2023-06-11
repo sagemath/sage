@@ -270,9 +270,9 @@ class LocalizationElement(IntegralDomainElement):
 
             sage: from sage.rings.localization import LocalizationElement
             sage: P.<x> = RR[]
-            sage: L = Localization(P, x**2 + x + 1)
-            sage: l = LocalizationElement(L, (x**2+1)/(x**2+x+1))
-            sage: l._value == (x**2+1)/(x**2+x+1)
+            sage: L = Localization(P, x**2 + x + 1)                                     # optional - sage.libs.pari
+            sage: l = LocalizationElement(L, (x**2+1)/(x**2+x+1))                       # optional - sage.libs.pari
+            sage: l._value == (x**2+1)/(x**2+x+1)                                       # optional - sage.libs.pari
             True
         """
         IntegralDomainElement.__init__(self, parent)

@@ -842,17 +842,17 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
             sage: k = ComplexField(100)
             sage: R.<x> = k[]
-            sage: k._factor_univariate_polynomial( x )
+            sage: k._factor_univariate_polynomial( x )                                  # optional - sage.libs.pari
             x
-            sage: k._factor_univariate_polynomial( 2*x )
+            sage: k._factor_univariate_polynomial( 2*x )                                # optional - sage.libs.pari
             (2.0000000000000000000000000000) * x
-            sage: k._factor_univariate_polynomial( x^2 )
+            sage: k._factor_univariate_polynomial( x^2 )                                # optional - sage.libs.pari
             x^2
-            sage: k._factor_univariate_polynomial( x^2 + 3 )
+            sage: k._factor_univariate_polynomial( x^2 + 3 )                            # optional - sage.libs.pari
             (x - 1.7320508075688772935274463415*I) * (x + 1.7320508075688772935274463415*I)
-            sage: k._factor_univariate_polynomial( x^2 + 1 )
+            sage: k._factor_univariate_polynomial( x^2 + 1 )                            # optional - sage.libs.pari
             (x - I) * (x + I)
-            sage: k._factor_univariate_polynomial( k(I) * (x^2 + 1) )
+            sage: k._factor_univariate_polynomial( k(I) * (x^2 + 1) )                   # optional - sage.libs.pari
             (1.0000000000000000000000000000*I) * (x - I) * (x + I)
 
         """
