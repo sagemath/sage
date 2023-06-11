@@ -1454,7 +1454,7 @@ class BinaryQF(SageObject):
         EXAMPLES::
 
             sage: Q = BinaryQF([1, 0, 1])
-            sage: Q.complex_point()
+            sage: Q.complex_point()                                                     # optional - sage.libs.pari
             1.00000000000000*I
         """
         if self.discriminant() >= 0:
@@ -1613,8 +1613,8 @@ class BinaryQF(SageObject):
 
             sage: abc = [1, 0, randrange(1,10^3)]
             sage: Q = BinaryQF(abc)
-            sage: n = random_prime(10^9)
-            sage: if randrange(2):
+            sage: n = random_prime(10^9)                                                # optional - sage.libs.pari
+            sage: if randrange(2):                                                      # optional - sage.libs.pari
             ....:     n *= 4
             sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')                      # optional - sage.libs.pari
             sage: xy1 is None or Q(*xy1) == n                                           # optional - sage.libs.pari
