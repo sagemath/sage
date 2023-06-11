@@ -878,21 +878,21 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         EXAMPLES::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(5, 'first')
+            sage: A.chebyshev_polynomial(5, 'first')                                    # optional - sage.schemes
             Dynamical System of Affine Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x) to (16*x^5 - 20*x^3 + 5*x)
 
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(3, 'second')
+            sage: A.chebyshev_polynomial(3, 'second')                                   # optional - sage.schemes
             Dynamical System of Affine Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x) to (8*x^3 - 4*x)
 
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(3, 2)
+            sage: A.chebyshev_polynomial(3, 2)                                          # optional - sage.schemes
             Traceback (most recent call last):
             ...
             ValueError: keyword 'kind' must have a value of either 'first' or 'second'
@@ -900,7 +900,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(-4, 'second')
+            sage: A.chebyshev_polynomial(-4, 'second')                                  # optional - sage.schemes
             Traceback (most recent call last):
             ...
             ValueError: first parameter 'n' must be a non-negative integer
@@ -908,7 +908,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         ::
 
             sage: A = AffineSpace(QQ, 2, 'x')
-            sage: A.chebyshev_polynomial(2)
+            sage: A.chebyshev_polynomial(2)                                             # optional - sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: affine space must be of dimension 1
@@ -916,7 +916,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
-            sage: A.chebyshev_polynomial(7, monic=True)
+            sage: A.chebyshev_polynomial(7, monic=True)                                 # optional - sage.schemes
             Dynamical System of Affine Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x) to (x^7 - 7*x^5 + 14*x^3 - 7*x)
 
@@ -924,7 +924,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
             sage: F.<t> = FunctionField(QQ)
             sage: A.<x> = AffineSpace(F, 1)
-            sage: A.chebyshev_polynomial(4, monic=True)
+            sage: A.chebyshev_polynomial(4, monic=True)                                 # optional - sage.schemes
             Dynamical System of Affine Space of dimension 1
             over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (x) to (x^4 + (-4)*x^2 + 2)

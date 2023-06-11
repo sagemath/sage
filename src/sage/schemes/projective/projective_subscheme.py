@@ -718,7 +718,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: H = Hom(P2, P1)
             sage: f = H([x^2, y*z])
             sage: X = P2.subscheme([x - y])
-            sage: f(X)
+            sage: f(X)                                                                  # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: map must be a morphism
