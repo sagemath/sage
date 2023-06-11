@@ -25,7 +25,7 @@ TESTS:
     sage: r = len(mons)
     sage: M = MatrixSpace(QQ,r)
     sage: mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]),
-....:             M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]) ]
+    ....:         M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]) ]
     sage: H2.<i,j> = A.quotient(mons, mats)
     sage: H2 == loads(dumps(H2))
     True
