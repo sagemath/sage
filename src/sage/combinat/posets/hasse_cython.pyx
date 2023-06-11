@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Some fast computations for finite posets
 """
@@ -15,9 +16,9 @@ from sage.misc.lazy_import import LazyImport
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
 
 coxeter_matrix_fast = LazyImport('sage.combinat.posets.hasse_cython_flint', 'coxeter_matrix_fast',
-                                 deprecation=35564)
+                                 deprecation=35741)
 moebius_matrix_fast = LazyImport('sage.combinat.posets.hasse_cython_flint', 'moebius_matrix_fast',
-                                 deprecation=35564)
+                                 deprecation=35741)
 
 
 class IncreasingChains(RecursivelyEnumeratedSet_forest):

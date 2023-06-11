@@ -1,3 +1,4 @@
+# cython: binding=True
 """
 Fast computation of combinatorial functions (Cython + mpz)
 
@@ -22,9 +23,9 @@ from sage.libs.gmp.all cimport *
 from sage.rings.integer cimport Integer
 from sage.misc.lazy_import import LazyImport
 
-set_partition_iterator = LazyImport('sage.combinat.set_partition_iterator', 'set_partition_iterator', deprecation=35564)
-set_partition_iterator_blocks = LazyImport('sage.combinat.set_partition_iterator', 'set_partition_iterator_blocks', deprecation=35564)
-linear_extension_iterator = LazyImport('sage.combinat.posets.linear_extension_iterator', 'linear_extension_iterator', deprecation=35564)
+set_partition_iterator = LazyImport('sage.combinat.set_partition_iterator', 'set_partition_iterator', deprecation=35741)
+set_partition_iterator_blocks = LazyImport('sage.combinat.set_partition_iterator', 'set_partition_iterator_blocks', deprecation=35741)
+linear_extension_iterator = LazyImport('sage.combinat.posets.linear_extension_iterator', 'linear_extension_iterator', deprecation=35741)
 
 
 cdef void mpz_addmul_alt(mpz_t s, mpz_t t, mpz_t u, unsigned long parity):
