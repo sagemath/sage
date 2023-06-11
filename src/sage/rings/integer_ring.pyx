@@ -598,10 +598,11 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         - ``x``, ``y`` integers -- bounds for the result.
 
         - ``distribution``-- a string:
-            - ``'uniform'``
-            - ``'mpz_rrandomb'``
-            - ``'1/n'``
-            - ``'gaussian'``
+
+          - ``'uniform'``
+          - ``'mpz_rrandomb'``
+          - ``'1/n'``
+          - ``'gaussian'``
 
         OUTPUT:
 
