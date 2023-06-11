@@ -44,7 +44,7 @@ from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
 from sage.combinat.crystals.tensor_product import CrystalOfTableaux
 from sage.combinat.tableau import Tableau
-from sage.combinat.partition import Partition, Partitions
+from sage.combinat.partition import Partition, Partitions, partitions_in_box
 from sage.combinat.integer_vector import IntegerVectors
 
 
@@ -3954,19 +3954,6 @@ class PMDiagram(CombinatorialObject):
 
 
 #####################################################################################
-
-def partitions_in_box(r, s):
-    """
-    Returns all partitions in a box of width s and height r.
-
-    EXAMPLES::
-
-        sage: sage.combinat.crystals.kirillov_reshetikhin.partitions_in_box(3,2)
-        [[], [1], [2], [1, 1], [2, 1], [1, 1, 1], [2, 2], [2, 1, 1],
-        [2, 2, 1], [2, 2, 2]]
-    """
-    return [x for n in range(r*s+1) for x in Partitions(n,max_part=s,max_length=r)]
-
 
 def vertical_dominoes_removed(r, s):
     """

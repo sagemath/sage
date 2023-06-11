@@ -598,7 +598,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
         sage: G = GelfandTsetlinPatterns(3,3)
         sage: c = 0
-        sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
+        sage: from sage.combinat.partitions import partitions_in_box
         sage: for p in partitions_in_box(3,3):
         ....:    S = SemistandardTableaux(p, max_entry=3)
         ....:    c += S.cardinality()
@@ -812,7 +812,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
             sage: L = list(GelfandTsetlinPatterns(3,3))
             sage: c = 0
-            sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
+            sage: from sage.combinat.partitions import partitions_in_box
             sage: for p in partitions_in_box(3,3):
             ....:    S = SemistandardTableaux(p, max_entry=3)
             ....:    c += S.cardinality()

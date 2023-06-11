@@ -9120,6 +9120,19 @@ def number_of_partitions_length(n, k, algorithm='hybrid'):
     return ZZ(libgap.NrPartitions(ZZ(n), ZZ(k)))
 
 
+def partitions_in_box(r, s):
+    """
+    Return all partitions in a box of width ``s`` and height ``r``.
+
+    EXAMPLES::
+
+        sage: sage.combinat.partition.partitions_in_box(3,2)
+        [[], [1], [2], [1, 1], [2, 1], [1, 1, 1], [2, 2], [2, 1, 1],
+        [2, 2, 1], [2, 2, 2]]
+    """
+    return [x for n in range(r*s + 1) for x in Partitions(n, max_part=s, max_length=r)]
+
+
 ##########
 # trac 14225: Partitions() is frequently used, but only weakly cached. Hence,
 # establish a strong reference to it.
