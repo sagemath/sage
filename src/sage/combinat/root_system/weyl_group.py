@@ -77,6 +77,7 @@ def WeylGroup(x, prefix=None, implementation='matrix'):
       to products of simple reflections
 
     - ``implementation`` -- one of the following:
+
       * ``'matrix'`` - as matrices acting on a root system
       * ``"permutation"`` - as a permutation group acting on the roots
 

@@ -19,13 +19,15 @@ Schur symmetric functions
 # ****************************************************************************
 
 from . import classical
-import sage.libs.lrcalc.lrcalc as lrcalc
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.data_structures.blas_dict import convert_remove_zeroes
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.misc import factorial
 from sage.combinat.tableau import StandardTableaux
+
+lazy_import('sage.libs.lrcalc', 'lrcalc')
 
 
 class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classical):
