@@ -32,13 +32,14 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.arith.misc import factor
 from sage.combinat.subset import subsets
-from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.structure.element cimport parent
 
-lazy_import('sage.libs.pari.all', 'pari')
-
+try:
+    from sage.libs.pari.all import pari
+except ImportError:
+    pass
 
 def cyclotomic_coeffs(nn, sparse=None):
     """
@@ -73,7 +74,7 @@ def cyclotomic_coeffs(nn, sparse=None):
 
     Check that it has the right degree::
 
-        sage: euler_phi(30)
+        sage: euler_phi(30)                                                             # optional - sage.libs.pari
         8
         sage: R(cyclotomic_coeffs(14)).factor()
         x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
@@ -393,7 +394,7 @@ def bateman_bound(nn):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.cyclotomic import bateman_bound
-        sage: bateman_bound(2**8 * 1234567893377)
+        sage: bateman_bound(2**8 * 1234567893377)                                       # optional - sage.libs.pari
         66944986927
     """
     _, n = nn.val_unit(2)
