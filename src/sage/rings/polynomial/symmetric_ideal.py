@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.singular
 """
 Symmetric Ideals of Infinite Polynomial Rings
 
