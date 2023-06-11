@@ -199,21 +199,23 @@ class QAryReedMullerCode(AbstractLinearCode):
 
     .. NOTE::
 
-        It is better to use the aforementioned method rather than calling
-        this class directly, as :meth:`ReedMullerCode` creates either
-        a binary or a `q`-ary Reed-Muller code according to the arguments it receives.
+        It is better to use the aforementioned method rather than calling this
+        class directly, as :meth:`ReedMullerCode` creates either a binary or a
+        `q`-ary Reed-Muller code according to the arguments it receives.
 
     INPUT:
 
     - ``base_field`` -- A finite field, which is the base field of the code.
 
-    - ``order`` -- The order of the Reed-Muller Code, i.e., the maximum degree of the polynomial to be used in the code.
+    - ``order`` -- The order of the Reed-Muller Code, i.e., the maximum degree
+      of the polynomial to be used in the code.
 
     - ``num_of_var`` -- The number of variables used in polynomial.
 
     .. WARNING::
 
-        For now, this implementation only supports Reed-Muller codes whose order is less than q.
+        For now, this implementation only supports Reed-Muller codes whose order
+        is less than q.
 
     EXAMPLES::
 
@@ -304,7 +306,8 @@ class QAryReedMullerCode(AbstractLinearCode):
         r"""
         Return the minimum distance between two words in ``self``.
 
-        The minimum distance of a `q`-ary Reed-Muller code with order `d` and number of variables `m` is `(q-d)q^{m-1}`
+        The minimum distance of a `q`-ary Reed-Muller code with order `d` and
+        number of variables `m` is `(q-d)q^{m-1}`
 
         EXAMPLES::
 
@@ -379,14 +382,15 @@ class BinaryReedMullerCode(AbstractLinearCode):
 
     .. NOTE::
 
-        It is better to use the aforementioned method rather than calling
-        this class directly, as :meth:`ReedMullerCode` creates either
-        a binary or a `q`-ary Reed-Muller code according to the arguments it receives.
+        It is better to use the aforementioned method rather than calling this
+        class directly, as :meth:`ReedMullerCode` creates either a binary or a
+        `q`-ary Reed-Muller code according to the arguments it receives.
 
 
     INPUT:
 
-    - ``order`` -- The order of the Reed-Muller Code, i.e., the maximum degree of the polynomial to be used in the code.
+    - ``order`` -- The order of the Reed-Muller Code, i.e., the maximum degree
+      of the polynomial to be used in the code.
 
     - ``num_of_var`` -- The number of variables used in the polynomial.
 
@@ -437,7 +441,9 @@ class BinaryReedMullerCode(AbstractLinearCode):
 
     def order(self):
         r"""
-        Return the order of ``self``. Order is the maximum degree of the polynomial used in the Reed-Muller code.
+        Return the order of ``self``.
+
+        Order is the maximum degree of the polynomial used in the Reed-Muller code.
 
         EXAMPLES::
 
@@ -463,7 +469,8 @@ class BinaryReedMullerCode(AbstractLinearCode):
         r"""
         Return the minimum distance of ``self``.
 
-        The minimum distance of a binary Reed-Muller code of order `d` and number of variables `m` is `q^{m-d}`
+        The minimum distance of a binary Reed-Muller code of order `d` and
+        number of variables `m` is `q^{m-d}`
 
         EXAMPLES::
 
@@ -522,8 +529,8 @@ class ReedMullerVectorEncoder(Encoder):
     Consider a Reed-Muller code of order `r`, number of variables `m`, length `n`,
     dimension `k` over some finite field `F`.
     Let those variables be `(x_1, x_2, \dots, x_m)`.
-    We order the monomials by lowest power on lowest index variables. If we have three monomials
-    `x_1 x_2`, `x_1 x_2^2` and `x_1^2 x_2`, the ordering is:
+    We order the monomials by lowest power on lowest index variables. If we have
+    three monomials `x_1 x_2`, `x_1 x_2^2` and `x_1^2 x_2`, the ordering is:
     `x_1 x_2 < x_1 x_2^2 < x_1^2 x_2`
 
     Let now `(v_1,v_2,\ldots,v_k)` be a vector of `F`, which corresponds to the polynomial
@@ -537,7 +544,7 @@ class ReedMullerVectorEncoder(Encoder):
     `(f(\alpha_{11},\alpha_{12},\ldots,\alpha_{1m}),f(\alpha_{21},\alpha_{22},\ldots,
     \alpha_{2m}),\ldots,f(\alpha_{q^m1},\alpha_{q^m2},\ldots,\alpha_{q^mm}))`
 
-    with `\alpha_{ij}=\beta_{i \bmod{q^j}} \forall (i,j)`
+    with `\alpha_{ij}=\beta_{i \bmod{q^j}}` for all `i`, `j)`.
 
     INPUT:
 
@@ -669,7 +676,8 @@ class ReedMullerVectorEncoder(Encoder):
 
     def points(self):
         r"""
-        Return the points of `F^m`, where `F` is base field and `m` is the number of variables, in order of which polynomials are evaluated on.
+        Return the points of `F^m`, where `F` is the base field and `m` is the
+        number of variables, in order of which polynomials are evaluated on.
 
         EXAMPLES::
 
@@ -705,15 +713,15 @@ class ReedMullerPolynomialEncoder(Encoder):
     `(f(\alpha_{11},\alpha_{12},\ldots,\alpha_{1m}),f(\alpha_{21},\alpha_{22},\ldots,
     \alpha_{2m}),\ldots,f(\alpha_{q^m1},\alpha_{q^m2},\ldots,\alpha_{q^mm}))`
 
-    with `\alpha_{ij}=\beta_{i \bmod{q^j}} \forall (i,j)`
+    with `\alpha_{ij}=\beta_{i \bmod{q^j}}` for all `i`, `j`.
 
     INPUT:
 
     - ``code`` -- The associated code of this encoder.
 
-    - ``polynomial_ring`` -- (default:``None``) The polynomial ring from which the message is chosen.
-      If this is set to ``None``, a polynomial ring in `x` will be built
-      from the code parameters.
+    - ``polynomial_ring`` -- (default:``None``) The polynomial ring from which
+      the message is chosen.  If this is set to ``None``, a polynomial ring in
+      `x` will be built from the code parameters.
 
     EXAMPLES::
 

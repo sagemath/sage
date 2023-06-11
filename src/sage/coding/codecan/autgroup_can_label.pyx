@@ -137,21 +137,21 @@ class LinearCodeAutGroupCanLabel:
 
     There are several notions of equivalence for linear codes:
     Let `C`, `D` be linear codes of length `n` and dimension `k`.
-    `C` and `D` are said to be
+    The codes `C` and `D` are said to be
 
-        - permutational equivalent, if there is some permutation `\pi \in S_n`
-          such that `(c_{\pi(0)}, \ldots, c_{\pi(n-1)}) \in D` for all `c \in C`.
+    - permutational equivalent, if there is some permutation `\pi \in S_n`
+      such that `(c_{\pi(0)}, \ldots, c_{\pi(n-1)}) \in D` for all `c \in C`.
 
-        - linear equivalent, if there is some permutation `\pi \in S_n` and a
-          vector `\phi \in {\GF{q}^*}^n` of units of length `n` such that
-          `(c_{\pi(0)} \phi_0^{-1}, \ldots, c_{\pi(n-1)} \phi_{n-1}^{-1}) \in D`
-          for all `c \in C`.
+    - linear equivalent, if there is some permutation `\pi \in S_n` and a
+      vector `\phi \in {\GF{q}^*}^n` of units of length `n` such that
+      `(c_{\pi(0)} \phi_0^{-1}, \ldots, c_{\pi(n-1)} \phi_{n-1}^{-1}) \in D`
+      for all `c \in C`.
 
-        - semilinear equivalent, if there is some permutation `\pi \in S_n`, a
-          vector `\phi` of units of length `n` and a field automorphism `\alpha`
-          such that
-          `(\alpha(c_{\pi(0)}) \phi_0^{-1}, \ldots, \alpha( c_{\pi(n-1)}) \phi_{n-1}^{-1} ) \in D`
-          for all `c \in C`.
+    - semilinear equivalent, if there is some permutation `\pi \in S_n`, a
+      vector `\phi` of units of length `n` and a field automorphism `\alpha`
+      such that
+      `(\alpha(c_{\pi(0)}) \phi_0^{-1}, \ldots, \alpha( c_{\pi(n-1)}) \phi_{n-1}^{-1} ) \in D`
+      for all `c \in C`.
 
     These are group actions. This class provides an algorithm that will compute
     a unique representative `D` in the orbit of the given linear code `C`.

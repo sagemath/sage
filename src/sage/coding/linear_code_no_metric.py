@@ -77,9 +77,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     :class:`sage.coding.linear_code.LinearCode`.
 
 
-    As the class :class:`AbstractLinearCodeNoMetric` is not designed to be instantiated, it does not
-    have any representation methods. You should implement ``_repr_`` and ``_latex_``
-    methods in the subclass.
+    As the class :class:`AbstractLinearCodeNoMetric` is not designed to be
+    instantiated, it does not have any representation methods. You should
+    implement ``_repr_`` and ``_latex_`` methods in the subclass.
 
     .. WARNING::
 

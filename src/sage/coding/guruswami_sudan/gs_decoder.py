@@ -39,9 +39,9 @@ from sage.misc.functional import sqrt
 
 def n_k_params(C, n_k):
     r"""
-    Internal helper function for the :class:`GRSGuruswamiSudanDecoder` class for allowing to
-    specify either a GRS code `C` or the length and dimensions `n, k` directly,
-    in all the static functions.
+    Internal helper function for the :class:`GRSGuruswamiSudanDecoder` class for
+    allowing to specify either a GRS code `C` or the length and dimensions `n,
+    k` directly, in all the static functions.
 
     If neither `C` or `n,k` were specified to those functions, an appropriate
     error should be raised. Otherwise, `n, k` of the code or the supplied tuple
@@ -49,9 +49,10 @@ def n_k_params(C, n_k):
 
     INPUT:
 
-    - ``C`` -- A GRS code or `None`
+    - ``C`` -- A GRS code or ``None``
 
-    - ``n_k`` -- A tuple `(n,k)` being length and dimension of a GRS code, or `None`.
+    - ``n_k`` -- A tuple `(n,k)` being length and dimension of a GRS code, or
+      ``None``.
 
     OUTPUT:
 
@@ -88,7 +89,7 @@ def n_k_params(C, n_k):
 def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
     """
     Wrapper for Roth-Ruckenstein algorithm to compute the roots of a polynomial
-    with coefficients in ``F[x]``.
+    with coefficients in `F[x]`.
 
     TESTS::
 
@@ -107,7 +108,7 @@ def roth_ruckenstein_root_finder(p, maxd=None, precision=None):
 def alekhnovich_root_finder(p, maxd=None, precision=None):
     """
     Wrapper for Alekhnovich's algorithm to compute the roots of a polynomial
-    with coefficients in ``F[x]``.
+    with coefficients in `F[x]`.
 
     TESTS::
 
@@ -158,6 +159,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
       Guruswami-Sudan algorithm to correct.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
+
       - the first integer is the multiplicity parameter, and
       - the second integer is the list size parameter.
 
@@ -165,7 +167,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
       that will be used. The following possibilities are currently available:
 
       * ``"LinearAlgebra"`` -- uses a linear system solver.
-      * ``"LeeOSullivan"`` -- uses Lee O'Sullivan method based on row reduction of a matrix
+      * ``"LeeOSullivan"`` -- uses Lee O'Sullivan method based on row reduction
+        of a matrix
       * ``None`` -- one of the above will be chosen based on the size of the
         code and the parameters.
 
@@ -245,7 +248,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
     @staticmethod
     def parameters_given_tau(tau, C = None, n_k = None):
         r"""
-        Returns the smallest possible multiplicity and list size given the
+        Return the smallest possible multiplicity and list size given the
         given parameters of the code and decoding radius.
 
         INPUT:
@@ -259,6 +262,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         OUTPUT:
 
         - ``(s, l)`` -- a pair of integers, where:
+
           - ``s`` is the multiplicity parameter, and
           - ``l`` is the list size parameter.
 
@@ -316,7 +320,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
     @staticmethod
     def guruswami_sudan_decoding_radius(C = None, n_k = None, l = None, s = None):
         r"""
-        Returns the maximal decoding radius of the Guruswami-Sudan decoder and
+        Return the maximal decoding radius of the Guruswami-Sudan decoder and
         the parameter choices needed for this.
 
         If ``s`` is set but ``l`` is not it will return the best decoding radius using this ``s``
@@ -433,6 +437,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         OUTPUT:
 
         - ``(s, l)`` -- a pair of integers, where:
+
           - ``s`` is the multiplicity parameter, and
           - ``l`` is the list size parameter.
 
@@ -486,7 +491,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
     @staticmethod
     def gs_satisfactory(tau, s, l, C = None, n_k = None):
         r"""
-        Returns whether input parameters satisfy the governing equation of
+        Return whether input parameters satisfy the governing equation of
         Guruswami-Sudan.
 
         See [Nie2013]_ page 49, definition 3.3 and proposition 3.4 for details.
@@ -630,7 +635,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -643,7 +648,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def _latex_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -676,7 +681,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def interpolation_algorithm(self):
         r"""
-        Returns the interpolation algorithm that will be used.
+        Return the interpolation algorithm that will be used.
 
         Remember that its signature has to be:
         ``my_inter(interpolation_points, tau, s_and_l, wy)``.
@@ -694,7 +699,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def rootfinding_algorithm(self):
         r"""
-        Returns the rootfinding algorithm that will be used.
+        Return the rootfinding algorithm that will be used.
 
         Remember that its signature has to be:
         ``my_rootfinder(Q, maxd=default_value, precision=default_value)``.
@@ -712,7 +717,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def parameters(self):
         r"""
-        Returns the multiplicity and list size parameters of ``self``.
+        Return the multiplicity and list size parameters of ``self``.
 
         EXAMPLES::
 
@@ -725,7 +730,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def multiplicity(self):
         r"""
-        Returns the multiplicity parameter of ``self``.
+        Return the multiplicity parameter of ``self``.
 
         EXAMPLES::
 
@@ -738,7 +743,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def list_size(self):
         r"""
-        Returns the list size parameter of ``self``.
+        Return the list size parameter of ``self``.
 
         EXAMPLES::
 
@@ -863,7 +868,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def decoding_radius(self):
         r"""
-        Returns the maximal number of errors that ``self`` is able to correct.
+        Return the maximal number of errors that ``self`` is able to correct.
 
         EXAMPLES::
 

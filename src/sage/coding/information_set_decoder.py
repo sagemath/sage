@@ -357,7 +357,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
     This implements the Lee-Brickell variant of ISD, see [LB1988]_ for the
     original binary case, and [Pet2010]_ for the `q`-ary extension.
 
-    Let `C` be a `[n, k]`-linear code over `GF(q)`, and let `r \in GF(q)^{n}` be
+    Let `C` be a `[n, k]`-linear code over `\GF{q}`, and let `r \in \GF{q}^{n}` be
     a received word in a transmission. We seek the codeword whose Hamming
     distance from `r` is minimal. Let `p` and `w` be integers, such that `0\leq
     p\leq w`, Let `G` be a generator matrix of `C`, and for any set of indices
@@ -365,10 +365,10 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
     `I`. The Lee-Brickell ISD loops the following until it is successful:
 
         1. Choose an information set `I` of `C`.
-        2. Compute `r' = r - r_{I}\times G_I^{-1} \times G`
+        2. Compute `r' = r - r_{I} G_I^{-1}  G`
         3. Consider every size-`p` subset of `I`, `\{a_1, \dots, a_p\}`.
-           For each `m = (m_1, \dots, m_p) \in GF(q)^{p}`, compute
-           the error vector `e = r' - \sum_{i=1}^{p} m_i\times g_{a_i}`,
+           For each `m = (m_1, \dots, m_p) \in \GF{q}^{p}`, compute
+           the error vector `e = r' - \sum_{i=1}^{p} m_i g_{a_i}`,
         4. If `e` has a Hamming weight at most `w`, return `r-e`.
 
     INPUT:
