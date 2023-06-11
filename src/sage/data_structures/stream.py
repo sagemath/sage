@@ -1931,15 +1931,15 @@ class Stream_plethysm(Stream_binary):
 
     Check corner cases::
 
-        sage: f0 = Stream_exact([p([])])
-        sage: f1 = Stream_exact([p[1]], order=1)
-        sage: f2 = Stream_exact([p[2]], order=2 )
-        sage: f11 = Stream_exact([p[1,1]], order=2 )
-        sage: r = Stream_plethysm(f0, f1, True, p); [r[n] for n in range(3)]
+        sage: f0 = Stream_exact([p([])])                                                # optional - sage.modules
+        sage: f1 = Stream_exact([p[1]], order=1)                                        # optional - sage.modules
+        sage: f2 = Stream_exact([p[2]], order=2 )                                       # optional - sage.modules
+        sage: f11 = Stream_exact([p[1,1]], order=2 )                                    # optional - sage.modules
+        sage: r = Stream_plethysm(f0, f1, True, p); [r[n] for n in range(3)]            # optional - sage.modules
         [p[], 0, 0]
-        sage: r = Stream_plethysm(f0, f2, True, p); [r[n] for n in range(3)]
+        sage: r = Stream_plethysm(f0, f2, True, p); [r[n] for n in range(3)]            # optional - sage.modules
         [p[], 0, 0]
-        sage: r = Stream_plethysm(f0, f11, True, p); [r[n] for n in range(3)]
+        sage: r = Stream_plethysm(f0, f11, True, p); [r[n] for n in range(3)]           # optional - sage.modules
         [p[], 0, 0]
 
     Check that degree one elements are treated in the correct way::
