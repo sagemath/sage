@@ -7,6 +7,7 @@
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
 
+from sage.data_structures.bitset_base cimport *
 from sage.groups.perm_gps.partn_ref.data_structures cimport OrbitPartition, PartitionStack
 from sage.libs.gap.element cimport GapElement, GapElement_Permutation
 from sage.structure.parent cimport Parent
