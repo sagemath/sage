@@ -1517,7 +1517,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             R = LaurentPolynomialRing(self.base_ring(), x)
 
         return R({m[i]: c for m,c in self.dict().iteritems()})
-    
+
     def polynomial_construction(self):
         """
         Return a polynomial having no monomial as a factor
@@ -1530,7 +1530,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
-            sage: f = y / x + x^2 / y + 3 * x^4 * y^-2 
+            sage: f = y / x + x^2 / y + 3 * x^4 * y^-2
             sage: f.polynomial_construction()
             (3*x^5 + x^3*y + y^3, x^-1*y^-2)
         """
