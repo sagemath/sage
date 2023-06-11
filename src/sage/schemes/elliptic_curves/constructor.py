@@ -308,7 +308,7 @@ class EllipticCurveFactory(UniqueFactory):
         TypeError: invalid input to EllipticCurve constructor
     """
     def create_key_and_extra_args(self, x=None, y=None, j=None, minimal_twist=True, **kwds):
-        """
+        r"""
         Return a ``UniqueFactory`` key and possibly extra parameters.
 
         INPUT: See the documentation for :class:`EllipticCurveFactory`.
@@ -329,7 +329,7 @@ class EllipticCurveFactory(UniqueFactory):
             sage: EllipticCurve.create_key_and_extra_args(j=8000)
             ((Rational Field, (0, 1, 0, -3, 1)), {})
 
-        When constructing a curve over `\\QQ` from a Cremona or LMFDB
+        When constructing a curve over `\QQ` from a Cremona or LMFDB
         label, the invariants from the database are returned as
         ``extra_args``::
 
@@ -454,7 +454,7 @@ class EllipticCurveFactory(UniqueFactory):
         return (R, tuple(R(a) for a in x)), kwds
 
     def create_object(self, version, key, **kwds):
-        """
+        r"""
         Create an object from a ``UniqueFactory`` key.
 
         EXAMPLES::
@@ -466,7 +466,7 @@ class EllipticCurveFactory(UniqueFactory):
         .. NOTE::
 
             Keyword arguments are currently only passed to the
-            constructor for elliptic curves over `\\QQ`; elliptic
+            constructor for elliptic curves over `\QQ`; elliptic
             curves over other fields do not support them.
         """
         R, x = key
@@ -494,7 +494,7 @@ EllipticCurve = EllipticCurveFactory('sage.schemes.elliptic_curves.constructor.E
 
 
 def EllipticCurve_from_Weierstrass_polynomial(f):
-    """
+    r"""
     Return the elliptic curve defined by a cubic in (long) Weierstrass
     form.
 
@@ -534,7 +534,7 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
     return EllipticCurve(coefficients_from_Weierstrass_polynomial(f))
 
 def coefficients_from_Weierstrass_polynomial(f):
-    """
+    r"""
     Return the coefficients `[a_1, a_2, a_3, a_4, a_6]` of a cubic in
     Weierstrass form.
 
@@ -582,7 +582,7 @@ def coefficients_from_Weierstrass_polynomial(f):
 
 
 def EllipticCurve_from_c4c6(c4, c6):
-    """
+    r"""
     Return an elliptic curve with given `c_4` and
     `c_6` invariants.
 
@@ -664,7 +664,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
 
 
 def coefficients_from_j(j, minimal_twist=True):
-    """
+    r"""
     Return Weierstrass coefficients `(a_1, a_2, a_3, a_4, a_6)` for an
     elliptic curve with given `j`-invariant.
 
@@ -680,7 +680,7 @@ def coefficients_from_j(j, minimal_twist=True):
         sage: coefficients_from_j(1)
         [1, 0, 0, 36, 3455]
 
-    The ``minimal_twist`` parameter (ignored except over `\\QQ` and
+    The ``minimal_twist`` parameter (ignored except over `\QQ` and
     True by default) controls whether or not a minimal twist is
     computed::
 
@@ -696,14 +696,14 @@ def coefficients_from_j(j, minimal_twist=True):
     if K not in _Fields:
         K = K.fraction_field()
 
-    char=K.characteristic()
-    if char==2:
+    char = K.characteristic()
+    if char == 2:
         if j == 0:
             return Sequence([0, 0, 1, 0, 0], universe=K)
         else:
             return Sequence([1, 0, 0, 0, 1/j], universe=K)
     if char == 3:
-        if j==0:
+        if j == 0:
             return Sequence([0, 0, 0, 1, 0], universe=K)
         else:
             return Sequence([0, j, 0, 0, -j**2], universe=K)
@@ -717,7 +717,7 @@ def coefficients_from_j(j, minimal_twist=True):
             return Sequence([0, 0, 0, -1, 0], universe=K) # 32a2
 
         if not minimal_twist:
-            k=j-1728
+            k = j-1728
             return Sequence([0, 0, 0, -3*j*k, -2*j*k**2], universe=K)
 
         n = j.numerator()
@@ -729,7 +729,7 @@ def coefficients_from_j(j, minimal_twist=True):
         from sage.sets.set import Set
         for p in Set(n.prime_divisors()+m.prime_divisors()):
             e = min(a4.valuation(p)//2,a6.valuation(p)//3)
-            if e>0:
+            if e > 0:
                 p = p**e
                 a4 /= p**2
                 a6 /= p**3
@@ -754,7 +754,7 @@ def coefficients_from_j(j, minimal_twist=True):
         return Sequence([0, 0, 0, 0, 1], universe=K)
     if j == 1728:
         return Sequence([0, 0, 0, 1, 0], universe=K)
-    k=j-1728
+    k = j-1728
     return Sequence([0, 0, 0, -3*j*k, -2*j*k**2], universe=K)
 
 
@@ -1112,7 +1112,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     # Test whether P is a flex; if not test whether there are any rational flexes:
 
     hessian = Matrix([[F.derivative(v1, v2) for v1 in R.gens()] for v2 in R.gens()]).det()
-    if P and hessian(P)==0:
+    if P and hessian(P) == 0:
         flex_point = P
     else:
         flexes = C.intersection(Curve(hessian)).rational_points()
@@ -1174,11 +1174,11 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         if not P:
             raise ValueError('A point must be given when the cubic has no rational flexes')
         L = tangent_at_smooth_point(C,P)
-        Qlist = [Q for Q in C.intersection(Curve(L)).rational_points() if C(Q)!=CP]
+        Qlist = [Q for Q in C.intersection(Curve(L)).rational_points() if C(Q) != CP]
         # assert Qlist
         P2 = C(Qlist[0])
         L2 = tangent_at_smooth_point(C,P2)
-        Qlist = [Q for Q in C.intersection(Curve(L2)).rational_points() if C(Q)!=P2]
+        Qlist = [Q for Q in C.intersection(Curve(L2)).rational_points() if C(Q) != P2]
         # assert Qlist
         P3 = C(Qlist[0])
 
@@ -1238,7 +1238,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
 
 def tangent_at_smooth_point(C,P):
-    """Return the tangent at the smooth point `P` of projective curve `C`.
+    r"""Return the tangent at the smooth point `P` of projective curve `C`.
 
     INPUT:
 
@@ -1278,7 +1278,7 @@ def tangent_at_smooth_point(C,P):
         return C.tangents(P,factor=False)[0]
 
 def chord_and_tangent(F, P):
-    """Return the third point of intersection of a cubic with the tangent at one point.
+    r"""Return the third point of intersection of a cubic with the tangent at one point.
 
     INPUT:
 
@@ -1345,14 +1345,14 @@ def chord_and_tangent(F, P):
         raise TypeError('{} does not define a point on a projective curve over {} defined by {}'.format(P,K,F))
 
     L = Curve(tangent_at_smooth_point(C,P))
-    Qlist = [Q for Q in C.intersection(L).rational_points() if Q!=P]
+    Qlist = [Q for Q in C.intersection(L).rational_points() if Q != P]
     if Qlist:
         return Qlist[0]
     return P
 
 
 def projective_point(p):
-    """
+    r"""
     Return equivalent point with denominators removed
 
     INPUT:
@@ -1384,7 +1384,7 @@ def projective_point(p):
 
 
 def are_projectively_equivalent(P, Q, base_ring):
-    """
+    r"""
     Test whether ``P`` and ``Q`` are projectively equivalent.
 
     INPUT:
@@ -1409,7 +1409,7 @@ def are_projectively_equivalent(P, Q, base_ring):
 
 def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False):
     r"""
-    Return a sorted list of all elliptic curves defined over `Q`
+    Return a sorted list of all elliptic curves defined over `\QQ`
     with good reduction outside the set `S` of primes.
 
     INPUT:

@@ -318,7 +318,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         from . import integer_ring
         return FractionField(), integer_ring.ZZ
 
-    def completion(self, p, prec, extras = {}):
+    def completion(self, p, prec, extras={}):
         r"""
         Return the completion of `\QQ` at `p`.
 
@@ -540,8 +540,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             return
 
         from sage.arith.misc import primes
-        for p in primes(B+1):
-            yield p
+        yield from primes(B + 1)
 
     def discriminant(self):
         """
@@ -1054,6 +1053,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         We make a single absolute extension::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = QQ.extension(x^3 + 5); K                                      # optional - sage.rings.number_field
             Number Field in a with defining polynomial x^3 + 5
 

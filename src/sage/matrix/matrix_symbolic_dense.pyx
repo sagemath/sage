@@ -1,5 +1,5 @@
 """
-Symbolic matrices
+Symbolic dense matrices
 
 EXAMPLES::
 
@@ -155,7 +155,6 @@ Check that :trac:`12778` is fixed::
 """
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
 from .matrix_generic_dense cimport Matrix_generic_dense
@@ -163,7 +162,8 @@ from .constructor import matrix
 
 cdef maxima
 
-from sage.calculus.calculus import symbolic_expression_from_maxima_string, maxima
+from sage.calculus.calculus import maxima
+
 
 cdef class Matrix_symbolic_dense(Matrix_generic_dense):
     def echelonize(self, **kwds):

@@ -1031,7 +1031,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             self.__gen = self(self.polynomial_ring().gen())
             return self.__gen
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return whether or not this quotient ring is a field.
 
@@ -1077,7 +1077,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             self._refine_category_(Fields())
         return ret
 
-    def is_integral_domain(self, proof = True):
+    def is_integral_domain(self, proof=True):
         """
         Return whether or not this quotient ring is an integral domain.
 
@@ -1557,6 +1557,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: K.class_group()                                                       # optional - sage.rings.number_field
             Class group of order 1 of Number Field in a
              with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)                                     # optional - sage.libs.pari sage.rings.number_field
             sage: K.class_group()                                                       # optional - sage.libs.pari sage.rings.number_field
             []

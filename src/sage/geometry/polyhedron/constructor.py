@@ -198,6 +198,7 @@ Even faster than all algebraic real numbers (the field ``AA``) is
 to take the smallest extension field. For the equilateral
 triangle, that would be::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3)**(1/2))                      # optional - sage.rings.number_field
     sage: Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])                                    # optional - sage.rings.number_field
     A 2-dimensional polyhedron in
@@ -465,6 +466,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     When the input contains elements of a Number Field, they require an
     embedding::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x^2 - 2,'s')                                              # optional - sage.rings.number_field
         sage: s = K.0                                                                   # optional - sage.rings.number_field
         sage: L = NumberField(x^3 - 2,'t')                                              # optional - sage.rings.number_field

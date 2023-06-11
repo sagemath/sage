@@ -433,7 +433,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         return False
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         EXAMPLES::
 
@@ -480,7 +480,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
-    def random_element(self, low_degree = -2, high_degree = 2, terms = 5, choose_degree=False,*args, **kwds):
+    def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False,*args, **kwds):
         """
         EXAMPLES::
 
@@ -530,11 +530,11 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         if names is None:
             names = self.variable_names()
         if isinstance(self, LaurentPolynomialRing_univariate):
-            return LaurentPolynomialRing(base_ring, names[0], sparse = sparse)
+            return LaurentPolynomialRing(base_ring, names[0], sparse=sparse)
 
         if order is None:
             order = self.polynomial_ring().term_order()
-        return LaurentPolynomialRing(base_ring, self._n, names, order = order)
+        return LaurentPolynomialRing(base_ring, self._n, names, order=order)
 
     def fraction_field(self):
         """

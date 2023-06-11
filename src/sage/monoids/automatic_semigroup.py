@@ -557,7 +557,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: [m.lift() for m in M]
             [1, 3, 5, 9, 0, 10, 12, 6]
         """
-        assert(x in self)
+        assert x in self
         return x.lift()
 
     def semigroup_generators(self):
@@ -744,14 +744,14 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: a*b
             [1]
         """
-        assert(x in self)
-        assert(y in self)
+        assert x in self
+        assert y in self
         red = y._reduced_word
         if red is None:
             return self._retract(self._mul(x.lift(), y.lift()))
-        else:
-            for i in red:
-                x = x.transition(i)
+
+        for i in red:
+            x = x.transition(i)
         return x
 
     def from_reduced_word(self, l):
@@ -942,7 +942,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 [1, 2]
             """
             parent = self.parent()
-            assert(i in parent._generators.keys())
+            assert i in parent._generators.keys()
             return parent._retract(parent._mul(self.lift(), parent._generators_in_ambient[i]))
 
         def _repr_(self):

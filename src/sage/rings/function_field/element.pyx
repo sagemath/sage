@@ -65,7 +65,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport FieldElement
 from sage.misc.cachefunc import cached_method
 
 

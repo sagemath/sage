@@ -2115,6 +2115,7 @@ def dummy_pochhammer(*args):
     from sage.functions.gamma import gamma
     return gamma(x + y) / gamma(x)
 
+
 #######################################################
 #
 # Helper functions for printing latex expression

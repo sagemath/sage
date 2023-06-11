@@ -147,7 +147,6 @@ from sage.modules.free_module_element import free_module_element as vector
 from sage.modules.free_module import FreeModule
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import polygen
 from sage.misc.functional import numerator, denominator
 from sage.misc.misc_c import prod
 
