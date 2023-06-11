@@ -273,7 +273,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
             sage: PCL.check_consistency(60)  # long time
         """
         p = self.p
-        K = FiniteField(p**n, modulus = self.polynomial(n), names='a')
+        K = FiniteField(p**n, modulus=self.polynomial(n), names='a')
         a = K.gen()
         for m in n.divisors():
             assert (a**((p**n-1)//(p**m-1))).minimal_polynomial() == self.polynomial(m)

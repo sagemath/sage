@@ -575,8 +575,7 @@ def extend_multiplicative_basis(B, n) -> Iterator:
         [((7,),), ((5,), (2,)), ((3,), (2,), (2,))]
     """
     for pi in Partitions(n, min_part=2):
-        for liste in cartesian_product([B[i] for i in pi]):
-            yield liste
+        yield from cartesian_product([B[i] for i in pi])
 
 
 # several classes for the algebra of MZV

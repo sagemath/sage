@@ -360,7 +360,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
                 return False
             raise EmptySetError("There exists no TD({},{})!".format(k,n))
 
-        OA = orthogonal_array(k,n, check = False)
+        OA = orthogonal_array(k,n, check=False)
         TD = [[i*n+c for i,c in enumerate(l)] for l in OA]
 
     else:
@@ -1843,7 +1843,7 @@ def OA_from_Vmt(m,t,V):
         sage: _ = designs.orthogonal_arrays.build(6,46) # indirect doctest
     """
     Fq, M = QDM_from_Vmt(m,t,V)
-    return OA_from_quasi_difference_matrix(M,Fq,add_col = False)
+    return OA_from_quasi_difference_matrix(M,Fq,add_col=False)
 
 
 def QDM_from_Vmt(m,t,V):
