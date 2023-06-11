@@ -52,7 +52,7 @@ def _required_threejs_version():
     EXAMPLES::
 
         sage: from sage.repl.rich_output.display_manager import _required_threejs_version
-        sage: _required_threejs_version()
+        sage: _required_threejs_version()                                               # optional - sage.plot
         'r...'
     """
     import os
@@ -757,9 +757,9 @@ class DisplayManager(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
-            sage: get_display_manager().threejs_scripts(online=True)
+            sage: get_display_manager().threejs_scripts(online=True)                    # optional - sage.plot
             '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
-            sage: get_display_manager().threejs_scripts(online=False)
+            sage: get_display_manager().threejs_scripts(online=False)                   # optional - sage.plot
             Traceback (most recent call last):
             ...
             ValueError: current backend does not support

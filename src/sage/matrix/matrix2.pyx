@@ -1795,7 +1795,7 @@ cdef class Matrix(Matrix1):
             [1, 0, 0]
             sage: matrix([[0,0],[0,0]]).rook_vector(algorithm="Ryser")
             [1, 0, 0]
-            sage: matrix([[0,0],[0,0]]).rook_vector(algorithm="Godsil")
+            sage: matrix([[0,0],[0,0]]).rook_vector(algorithm="Godsil")                 # optional - sage.graphs
             [1, 0, 0]
             sage: matrix.ones(4, 2).rook_vector("Ryser")
             [1, 8, 12]

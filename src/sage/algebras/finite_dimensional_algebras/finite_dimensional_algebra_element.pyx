@@ -642,12 +642,12 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B(0).minimal_polynomial()
+            sage: B(0).minimal_polynomial()                                             # optional - sage.libs.pari
             x
             sage: b = B.random_element()
-            sage: f = b.minimal_polynomial(); f  # random
+            sage: f = b.minimal_polynomial(); f  # random                               # optional - sage.libs.pari
             x^3 + 1/2*x^2 - 7/16*x + 1/16
-            sage: f(b) == 0
+            sage: f(b) == 0                                                             # optional - sage.libs.pari
             True
         """
         A = self.parent()
@@ -673,12 +673,12 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B(0).characteristic_polynomial()
+            sage: B(0).characteristic_polynomial()                                      # optional - sage.libs.pari
             x^3
             sage: b = B.random_element()
-            sage: f = b.characteristic_polynomial(); f  # random
+            sage: f = b.characteristic_polynomial(); f  # random                        # optional - sage.libs.pari
             x^3 - 8*x^2 + 16*x
-            sage: f(b) == 0
+            sage: f(b) == 0                                                             # optional - sage.libs.pari
             True
         """
         return self.matrix().characteristic_polynomial()
