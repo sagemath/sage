@@ -337,7 +337,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             sage: X = DiscreteProbabilitySpace(S,P)
             sage: X
             Discrete probability space defined by {'A': 1/2, 'B': 1/4, 'C': 1/4}
-            sage: X.entropy().n()
+            sage: X.entropy().n()                                                       # optional - sage.libs.pari
             1.50000000000000
         """
         if codomain is None:
