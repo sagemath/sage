@@ -136,8 +136,11 @@ PYPI_WHEEL_PACKAGES =				\
 	sagemath_objects			\
 	sagemath_repl				\
 	sagemath_categories			\
+	sagemath_modules			\
 	sagemath_polyhedra			\
-	sagemath_graphs
+	sagemath_graphs				\
+	sagemath_combinat			\
+	sagemath_schemes
 
 # sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
 WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\
