@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.numerical.mip
 r"""
 Delsarte (or linear programming) bounds
 

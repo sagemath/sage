@@ -251,26 +251,26 @@ def codesize_upper_bound(n, d, q, algorithm=None):
 
     EXAMPLES::
 
-        sage: codes.bounds.codesize_upper_bound(10,3,2)
+        sage: codes.bounds.codesize_upper_bound(10, 3, 2)
         93
-        sage: codes.bounds.codesize_upper_bound(24,8,2,algorithm="LP")
+        sage: codes.bounds.codesize_upper_bound(24, 8, 2, algorithm="LP")               # optional - sage.numerical.mip
         4096
-        sage: codes.bounds.codesize_upper_bound(10,3,2,algorithm="gap")  # optional - gap_packages (Guava package)
+        sage: codes.bounds.codesize_upper_bound(10, 3, 2, algorithm="gap")    # optional - gap_packages (Guava package)
         85
-        sage: codes.bounds.codesize_upper_bound(11,3,4,algorithm=None)
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm=None)
         123361
-        sage: codes.bounds.codesize_upper_bound(11,3,4,algorithm="gap")  # optional - gap_packages (Guava package)
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="gap")    # optional - gap_packages (Guava package)
         123361
-        sage: codes.bounds.codesize_upper_bound(11,3,4,algorithm="LP")
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="LP")               # optional - sage.numerical.mip
         109226
 
     TESTS:
 
     Make sure :trac:`22961` is fixed::
 
-        sage: codes.bounds.codesize_upper_bound(19,10,2)
+        sage: codes.bounds.codesize_upper_bound(19, 10, 2)
         20
-        sage: codes.bounds.codesize_upper_bound(19,10,2,algorithm="gap") # optional - gap_packages (Guava package)
+        sage: codes.bounds.codesize_upper_bound(19, 10, 2, algorithm="gap")   # optional - gap_packages (Guava package)
         20
 
     Meaningless parameters are rejected::
