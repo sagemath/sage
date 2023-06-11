@@ -366,8 +366,7 @@ def declare_ring(blocks, context=None):
             if isinstance(elt, str):
                 yield elt
             else:
-                for subelt in elt:
-                    yield subelt
+                yield from elt
 
     blocks = list(blocks)
     n = 0

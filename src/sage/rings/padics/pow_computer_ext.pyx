@@ -42,8 +42,7 @@ AUTHORS:
 
 - David Roe  (2008-01-01) initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
@@ -51,8 +50,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.list cimport *
 from cpython.dict cimport *
@@ -61,9 +60,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 include "sage/libs/ntl/decl.pxi"
 
-import weakref
 from sage.misc.misc import cputime
-from sage.rings.infinity import infinity
 from sage.libs.gmp.mpz cimport *
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_factory
 from sage.libs.ntl.ntl_ZZ_pContext import ZZ_pContext_factory

@@ -3082,14 +3082,11 @@ cdef class Expression(Expression_abc):
                     if op.is_numeric():
                         yield op
                     else:
-                        for opp in numelems_gen(op):
-                            yield opp
+                        yield from numelems_gen(op)
         # stop at the first inexact number in the subexpression tree of self,
         # and if there is no such element, then self is exact
-        for nelem in numelems_gen(self):
-            if not nelem.pyobject().base_ring().is_exact():
-                return False
-        return True
+        return all(nelem.pyobject().base_ring().is_exact()
+                   for nelem in numelems_gen(self))
 
     cpdef bint is_infinity(self):
         """
