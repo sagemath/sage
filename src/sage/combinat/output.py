@@ -767,7 +767,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
 
 
 def box_exists(tab, i, j):
-   r """
+    r"""
     Return ``True`` if ``tab[i][j]`` exists and is not ``None``; in particular this
     allows for `tab[i][j]` to be ``''`` or ``0``.
 
