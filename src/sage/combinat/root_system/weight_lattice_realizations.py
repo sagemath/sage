@@ -228,7 +228,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             # Build and register the embeddings
             for domain in domains:
                 domain.module_morphism(self.fundamental_weight,
-                                       codomain = self
+                                       codomain=self
                                        ).register_as_coercion()
 
         def _test_weight_lattice_realization(self, **options):
@@ -818,7 +818,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             Lambda = self.fundamental_weights()
             return rho - Lambda[0] * rho.level() / Lambda[0].level()
 
-        def embed_at_level(self, x, level = 1):
+        def embed_at_level(self, x, level=1):
             r"""
             Embed the classical weight `x` in the level ``level`` hyperplane
 
@@ -1071,7 +1071,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
         #    assert( t == self.plus(t.scalar(alphac[i]) * Lambda[i] for i in self.index_set() ) )
         #    t = self.plus( t.scalar(alphac[i]) * c[i] * Lambda[i] for i in self.index_set() )
 
-        def to_weight_space(self, base_ring = None):
+        def to_weight_space(self, base_ring=None):
             r"""
             Map ``self`` to the weight space.
 

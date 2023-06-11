@@ -1752,8 +1752,7 @@ class DiGraphGenerators():
             if vertices is None:
                 vertices = 0
                 while True:
-                    for g in self(vertices, sparse=sparse, copy=copy):
-                        yield g
+                    yield from self(vertices, sparse=sparse, copy=copy)
                     vertices += 1
 
             from sage.graphs.graph_generators import canaug_traverse_edge

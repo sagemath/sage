@@ -74,7 +74,7 @@ class PublicKeyCipher(Cipher):
     """
     Public key cipher class
     """
-    def __init__(self, parent, key, public = True):
+    def __init__(self, parent, key, public=True):
         """
         Create a public key cipher
 

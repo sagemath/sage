@@ -176,13 +176,13 @@ class FromRCIsomorphism(Morphism):
         if ct.type() == 'D':
             lam[-2] = max(lam[-2], lam[-1])
             lam.pop()
-            l = sum([ [[r+1,1]]*v for r,v in enumerate(lam[:-1]) ], [])
+            l = sum([[[r+1, 1]]*v for r, v in enumerate(lam[:-1])], [])
             n = len(I)
-            l = l + sum([ [[n,1], [n-1,1]] for k in range(lam[-1])], [])
+            l = l + sum([[[n,1], [n-1,1]] for k in range(lam[-1])], [])
         else:
             if ct.type() == 'B':
                 lam[-1] *= 2
-            l = sum([ [[r,1]]*lam[i] for i,r in enumerate(I) ], [])
+            l = sum([[[r, 1]]*lam[i] for i, r in enumerate(I)], [])
 
         RC = RiggedConfigurations(ct.affine(), reversed(l))
         elt = RC(x)

@@ -62,9 +62,9 @@ class LFSRCipher(SymmetricKeyCipher):
             sage: E == loads(dumps(E))
             True
         """
-        SymmetricKeyCipher.__init__(self, parent, key = (poly, IS))
+        SymmetricKeyCipher.__init__(self, parent, key=(poly, IS))
 
-    def __call__(self, M, mode = "ECB"):
+    def __call__(self, M, mode="ECB"):
         r"""
         Generate key stream from the binary string ``M``.
 
@@ -180,7 +180,7 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
             raise TypeError("Argument e1 (= %s) must be a LFSR cipher." % e1)
         if not isinstance(e2, LFSRCipher):
             raise TypeError("Argument e2 (= %s) must be a LFSR cipher." % e2)
-        SymmetricKeyCipher.__init__(self, parent, key = (e1, e2))
+        SymmetricKeyCipher.__init__(self, parent, key=(e1, e2))
 
     def keystream_cipher(self):
         """
@@ -222,7 +222,7 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         """
         return self.key()[1]
 
-    def __call__(self, M, mode = "ECB"):
+    def __call__(self, M, mode="ECB"):
         r"""
         INPUT:
 

@@ -21,7 +21,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -33,8 +33,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_C import KRTToRCBijectionTypeC
 from sage.combinat.rigged_configurations.bij_type_C import RCToKRTBijectionTypeC
@@ -156,7 +156,7 @@ class KRTToRCBijectionTypeA2Dual(KRTToRCBijectionTypeC):
                     else:
                         j = i - 1
                         while j >= 0 and partition._list[j] <= max_width + 2:
-                            partition.rigging[j+1] = partition.rigging[j] # Shuffle it along
+                            partition.rigging[j+1] = partition.rigging[j]  # Shuffle it along
                             j -= 1
                         partition._list.pop(i)
                         partition._list.insert(j+1, max_width + 2)
@@ -220,7 +220,7 @@ class RCToKRTBijectionTypeA2Dual(RCToKRTBijectionTypeC):
             sage: bijection.next_state(2)
             -1
         """
-        height -= 1 # indexing
+        height -= 1  # indexing
         n = self.n
         ell = [None] * (2*n)
         case_S = [False] * n
@@ -334,4 +334,4 @@ class RCToKRTBijectionTypeA2Dual(RCToKRTBijectionTypeC):
             else:
                 self.cur_partitions[n-1].rigging[row_num_bar_next] = self.cur_partitions[n-1].vacancy_numbers[row_num_bar_next]
 
-        return(b)
+        return b

@@ -4246,8 +4246,8 @@ def is_triconnected(G):
     Comparing different methods on random graphs that are not always
     triconnected::
 
-        sage: G = graphs.RandomBarabasiAlbert(50, 3)                            # optional - networkx
-        sage: G.is_triconnected() == G.vertex_connectivity(k=3)                 # optional - networkx
+        sage: G = graphs.RandomBarabasiAlbert(50, 3)                                    # optional - networkx
+        sage: G.is_triconnected() == G.vertex_connectivity(k=3)                         # optional - networkx
         True
 
     .. SEEALSO::

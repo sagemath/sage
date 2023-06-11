@@ -530,7 +530,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         return self.dual.root_space(base_ring)
 
     @cached_method
-    def weight_lattice(self, extended = False):
+    def weight_lattice(self, extended=False):
         """
         Returns the weight lattice associated to self.
 
@@ -548,10 +548,10 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3,1]).weight_space(extended = True)
             Extended weight space over the Rational Field of the Root system of type ['A', 3, 1]
         """
-        return WeightSpace(self, ZZ, extended = extended)
+        return WeightSpace(self, ZZ, extended=extended)
 
     @cached_method
-    def weight_space(self, base_ring=QQ, extended = False):
+    def weight_space(self, base_ring=QQ, extended=False):
         """
         Returns the weight space associated to self.
 
@@ -569,9 +569,9 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3,1]).weight_space(extended = True)
             Extended weight space over the Rational Field of the Root system of type ['A', 3, 1]
         """
-        return WeightSpace(self, base_ring, extended = extended)
+        return WeightSpace(self, base_ring, extended=extended)
 
-    def coweight_lattice(self, extended = False):
+    def coweight_lattice(self, extended=False):
         """
         Returns the coweight lattice associated to self.
 
@@ -591,9 +591,9 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3,1]).coweight_lattice(extended = True)
             Extended coweight lattice of the Root system of type ['A', 3, 1]
         """
-        return self.dual.weight_lattice(extended = extended)
+        return self.dual.weight_lattice(extended=extended)
 
-    def coweight_space(self, base_ring=QQ, extended = False):
+    def coweight_space(self, base_ring=QQ, extended=False):
         """
         Returns the coweight space associated to self.
 
@@ -613,7 +613,7 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3,1]).coweight_space(extended=True)
             Extended coweight space over the Rational Field of the Root system of type ['A', 3, 1]
         """
-        return self.dual.weight_space(base_ring, extended = extended)
+        return self.dual.weight_space(base_ring, extended=extended)
 
     def ambient_lattice(self):
         r"""

@@ -407,7 +407,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
                                  EnumeratedSets()))
         else:
             cat = Groups().Commutative().Infinite()
-        Parent.__init__(self, category = cat)
+        Parent.__init__(self, category=cat)
 
     @cached_method
     def one(self):

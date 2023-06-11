@@ -1231,8 +1231,7 @@ class Polyomino(SageObject):
         all_distinct_cano = self.canonical_isometric_copies(orientation_preserving,
                                                             mod_box_isometries)
         for cano in all_distinct_cano:
-            for t in cano.translated_copies(box=box):
-                yield t
+            yield from cano.translated_copies(box=box)
 
     def isometric_copies_intersection(self, box, orientation_preserving=True):
         r"""

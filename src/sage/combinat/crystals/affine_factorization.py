@@ -97,7 +97,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
         ValueError: x cannot be in reduced word of s0*s3*s2
     """
     @staticmethod
-    def __classcall_private__(cls, w, n, x = None, k = None):
+    def __classcall_private__(cls, w, n, x=None, k=None):
         r"""
         Classcall to mend the input.
 
@@ -122,7 +122,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             w = w0*(w1.inverse())
         return super().__classcall__(cls, w, n, x)
 
-    def __init__(self, w, n, x = None):
+    def __init__(self, w, n, x=None):
         r"""
         EXAMPLES::
 
@@ -148,7 +148,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             sage: B = crystals.AffineFactorization(w,3)
             sage: TestSuite(B).run()  # long time
         """
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.n = n
         self.k = w.parent().n-1
         self.w = w

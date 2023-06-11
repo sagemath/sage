@@ -4399,7 +4399,7 @@ class Partition(CombinatorialElement):
         """
         return SkewPartition([self, self.k_interior(k)])
 
-    def add_cell(self, i, j = None):
+    def add_cell(self, i, j=None):
         r"""
         Return a partition corresponding to ``self`` with a cell added in
         row ``i``. (This does not change ``self``.)
@@ -6679,7 +6679,7 @@ class Partitions_n(Partitions):
 
         raise ValueError("unknown algorithm '%s'" % algorithm)
 
-    def random_element(self, measure = 'uniform'):
+    def random_element(self, measure='uniform'):
         """
         Return a random partitions of `n` for the specified measure.
 

@@ -5093,8 +5093,8 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         This lack of bounds checking causes trouble later::
 
             sage: v                                                                     # optional - sage.symbolic
-            <repr(<sage.modules.free_module_element.FreeModuleElement_generic_sparse at 0x...>)
-             failed: IndexError: list assignment index out of range>
+            <repr(<sage.modules.free_module.FreeModule_ambient_field_with_category.element_class at 0x...>) failed:
+             IndexError: list assignment index out of range>
         """
         if value:
             self._entries[i] = value

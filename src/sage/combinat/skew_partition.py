@@ -1876,7 +1876,7 @@ class SkewPartitions_n(SkewPartitions):
             return ZZ.one()
 
         if self.overlap > 0:
-            gg = Compositions(self.n, min_part = max(1, self.overlap))
+            gg = Compositions(self.n, min_part=max(1, self.overlap))
         else:
             gg = Compositions(self.n)
 
@@ -1927,7 +1927,7 @@ class SkewPartitions_n(SkewPartitions):
             sage: SkewPartitions(3, overlap=4).list()
             []
         """
-        for co in Compositions(self.n, min_part = max(1, self.overlap)):
+        for co in Compositions(self.n, min_part=max(1, self.overlap)):
             for sp in SkewPartitions(row_lengths=co, overlap=self.overlap):
                 yield self.element_class(self, sp)
 

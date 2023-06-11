@@ -1711,8 +1711,7 @@ class BipartiteGraph(Graph):
 
         # For each unlabeled matching, we yield all its possible labelings
         for m in rec(G):
-            for pm in itertools.product(*[edges[frozenset(e)] for e in m]):
-                yield pm
+            yield from itertools.product(*[edges[frozenset(e)] for e in m])
 
     def load_afile(self, fname):
         r"""

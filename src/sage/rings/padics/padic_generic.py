@@ -498,7 +498,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
             return self.change(field=False, **print_mode)
 
-    def teichmuller(self, x, prec = None):
+    def teichmuller(self, x, prec=None):
         r"""
         Return the Teichmüller representative of ``x``.
 
@@ -615,7 +615,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 #         """
 #         raise NotImplementedError
 
-    def extension(self, modulus, prec = None, names = None, print_mode = None, implementation='FLINT', **kwds):
+    def extension(self, modulus, prec=None, names=None, print_mode=None, implementation='FLINT', **kwds):
         r"""
         Create an extension of this p-adic ring.
 
@@ -666,7 +666,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         print_mode[option] = kwds[option]
                     else:
                         print_mode[option] = self._printer.dict()[option]
-        return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+        return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check=True, implementation=implementation, **print_mode)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""

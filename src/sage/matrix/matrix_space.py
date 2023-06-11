@@ -170,11 +170,13 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
 
         sage: type(matrix(SR, 2, 2, 0))                                                 # optional - sage.symbolic
         <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+        sage: type(matrix(SR, 2, 2, 0, sparse=True))                                    # optional - sage.symbolic
+        <class 'sage.matrix.matrix_symbolic_sparse.Matrix_symbolic_sparse'>
         sage: type(matrix(GF(7), 2, range(4)))                                          # optional - sage.rings.finite_rings
         <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
         sage: type(matrix(GF(16007), 2, range(4)))                                      # optional - sage.rings.finite_rings
         <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
-        sage: type(matrix(CBF, 2, range(4)))
+        sage: type(matrix(CBF, 2, range(4)))                                            # optional - sage.libs.flint
         <class 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
         sage: type(matrix(GF(2), 2, range(4)))                                          # optional - sage.rings.finite_rings
         <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
@@ -404,6 +406,18 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
     if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
         from . import matrix_double_sparse
         return matrix_double_sparse.Matrix_double_sparse
+    try:
+        from sage.symbolic.ring import SR
+    except ImportError:
+        pass
+    else:
+        if R is SR:
+            try:
+                from . import matrix_symbolic_sparse
+            except ImportError:
+                pass
+            else:
+                return matrix_symbolic_sparse.Matrix_symbolic_sparse
 
     # the fallback
     from sage.matrix.matrix_generic_sparse import Matrix_generic_sparse

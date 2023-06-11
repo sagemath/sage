@@ -233,8 +233,8 @@ class RiggedConfigurationElement(ClonableArray):
             nu = []
             for i in range(n):
                 nu.append(RiggedPartition())
-            #raise ValueError("Invalid input")
-            #raise ValueError("Incorrect number of rigged partitions")
+            # raise ValueError("Invalid input")
+            # raise ValueError("Incorrect number of rigged partitions")
 
         # Set the vacancy numbers
         for a, partition in enumerate(nu):
@@ -331,7 +331,7 @@ class RiggedConfigurationElement(ClonableArray):
         ret_str = ""
         for tableau in self:
             ret_str += "\n" + repr(tableau)
-        return(ret_str)
+        return ret_str
 
     def _repr_horizontal(self):
         """
@@ -1040,7 +1040,7 @@ class RCNonSimplyLacedElement(RiggedConfigurationElement):
         return self.parent().from_virtual(virtual_rc)
 
 ##########################################################
-## Highest weight crystal rigged configuration elements ##
+#  Highest weight crystal rigged configuration elements  #
 ##########################################################
 
 
@@ -1230,7 +1230,7 @@ class RCHWNonSimplyLacedElement(RCNonSimplyLacedElement):
         return self.parent()._wt - sum(sum(x) * alpha[i] for i,x in enumerate(self))
 
 ##############################################
-## KR crystal rigged configuration elements ##
+#  KR crystal rigged configuration elements  #
 ##############################################
 
 
@@ -2279,7 +2279,7 @@ class KRRCNonSimplyLacedElement(KRRiggedConfigurationElement, RCNonSimplyLacedEl
             sage: RC(partition_list=[[1,1],[2,1],[1,1]]).cocharge()
             1
         """
-        #return self.to_virtual_configuration().cocharge() / self.parent()._folded_ct.gamma[0]
+        # return self.to_virtual_configuration().cocharge() / self.parent()._folded_ct.gamma[0]
         vct = self.parent()._folded_ct
         cc = ZZ.zero()
         rigging_sum = ZZ.zero()

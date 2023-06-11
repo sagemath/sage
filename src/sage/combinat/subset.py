@@ -1129,8 +1129,7 @@ class SubMultiset_s(Parent):
              [1, 2, 2, 3]]
         """
         for k in range(len(self._l) + 1):
-            for s in SubMultiset_sk(self._l, k):
-                yield s
+            yield from SubMultiset_sk(self._l, k)
 
     def __call__(self, el):
         r"""

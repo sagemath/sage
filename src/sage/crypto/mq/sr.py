@@ -1092,7 +1092,7 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         return self.vector(self.random_state_array(*args, **kwds))
 
-    def random_element(self, elem_type = "vector", *args, **kwds):
+    def random_element(self, elem_type="vector", *args, **kwds):
         """
         Return a random element for self.  Other arguments and keywords are
         passed to random_* methods.
@@ -1570,7 +1570,7 @@ class SR_generic(MPolynomialSystemGenerator):
         format_string = self.varformatstr(name, self.n, self.r*self.c, self.e)
         return format_string % (nr, rc, e)
 
-    def varstrs(self, name, nr, rc = None, e = None):
+    def varstrs(self, name, nr, rc=None, e=None):
         """
         Return a list of strings representing variables in ``self``.
 
@@ -2285,7 +2285,7 @@ class SR_gf2n(SR_generic):
 
         return shift_rows
 
-    def lin_matrix(self, length = None):
+    def lin_matrix(self, length=None):
         """
         Return the ``Lin`` matrix.
 
@@ -3052,7 +3052,7 @@ class SR_gf2(SR_generic):
 
         return l
 
-    def _inversion_polynomials_single_sbox(self, x= None, w=None, biaffine_only=None, correct_only=None):
+    def _inversion_polynomials_single_sbox(self, x=None, w=None, biaffine_only=None, correct_only=None):
         """
         Generate inversion polynomials of a single S-box.
 

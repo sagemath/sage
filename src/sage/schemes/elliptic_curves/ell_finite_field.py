@@ -861,8 +861,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             ...
             (10 : 0 : 1) 2
         """
-        for P in self.points():
-            yield P
+        yield from self.points()
 
     def __getitem__(self, n):
         """

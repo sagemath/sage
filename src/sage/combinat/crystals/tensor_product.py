@@ -494,7 +494,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         assert isinstance(crystals, tuple)
         assert isinstance(generators, tuple)
         category = Category.meet([crystal.category() for crystal in crystals])
-        Parent.__init__(self, category = category)
+        Parent.__init__(self, category=category)
         self.crystals = crystals
         self._cartan_type = cartan_type
         self.module_generators = tuple([self(*x) for x in generators])
@@ -892,7 +892,7 @@ class CrystalOfTableaux(CrystalOfWords):
     """
 
     @staticmethod
-    def __classcall_private__(cls, cartan_type, shapes = None, shape = None):
+    def __classcall_private__(cls, cartan_type, shapes=None, shape=None):
         """
         Normalizes the input arguments to ensure unique representation,
         and to delegate the construction of spin tableaux.
@@ -992,7 +992,7 @@ class CrystalOfTableaux(CrystalOfWords):
             sage: TestSuite(T).run()
         """
 #        super().__init__(category = FiniteEnumeratedSets())
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.letters = CrystalOfLetters(cartan_type)
         self.shapes = shapes
         self.module_generators = tuple(self.module_generator(la) for la in shapes)

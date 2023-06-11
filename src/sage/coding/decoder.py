@@ -350,7 +350,7 @@ class Decoder(SageObject):
         else:
             raise NotImplementedError("Decoder does not have an _input_space parameter")
 
-    @abstract_method(optional = True)
+    @abstract_method(optional=True)
     def decoding_radius(self, **kwargs):
         r"""
         Return the maximal number of errors that ``self`` is able to correct.

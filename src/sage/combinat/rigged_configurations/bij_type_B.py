@@ -21,7 +21,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -33,8 +33,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_C import KRTToRCBijectionTypeC
@@ -93,7 +93,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
         """
         if verbose:
             from sage.combinat.rigged_configurations.tensor_product_kr_tableaux_element \
-              import TensorProductOfKirillovReshetikhinTableauxElement
+                import TensorProductOfKirillovReshetikhinTableauxElement
 
         for cur_crystal in reversed(self.tp_krt):
             r = cur_crystal.parent().r()
@@ -109,7 +109,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                 if verbose:
                     print("====================")
                     if len(self.cur_path) == 0:
-                        print(repr([])) # Special case for displaying when the rightmost factor is a spinor
+                        print(repr([]))  # Special case for displaying when the rightmost factor is a spinor
                     else:
                         print(repr(TensorProductOfKirillovReshetikhinTableauxElement(self.tp_krt.parent(), self.cur_path)))
                     print("--------------------")
@@ -144,14 +144,14 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                 r = cur_crystal.parent().r()
                 # Iterate through the columns
                 for col_number, cur_column in enumerate(reversed(cur_crystal.to_array(False))):
-                    bij.cur_path.insert(0, []) # Prepend an empty list
+                    bij.cur_path.insert(0, [])  # Prepend an empty list
                     bij.cur_dims.insert(0, [0, 1])
 
                     # Note that we do not need to worry about iterating over columns
                     #   (see previous note about the data structure).
                     for letter in reversed(cur_column):
                         bij.cur_dims[0][0] += 1
-                        val = letter.value # Convert from a CrystalOfLetter to an Integer
+                        val = letter.value  # Convert from a CrystalOfLetter to an Integer
 
                         if verbose:
                             print("====================")
@@ -161,7 +161,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                             print("--------------------\n")
 
                         # Build the next state
-                        bij.cur_path[0].insert(0, [letter]) # Prepend the value
+                        bij.cur_path[0].insert(0, [letter])  # Prepend the value
                         bij.next_state(val)
 
                     # If we've split off a column, we need to merge the current column
@@ -202,14 +202,14 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                 # Perform the regular type B_n^{(1)} bijection
                 # Iterate through the columns
                 for col_number, cur_column in enumerate(reversed(cur_crystal.to_array(False))):
-                    self.cur_path.insert(0, []) # Prepend an empty list
+                    self.cur_path.insert(0, [])  # Prepend an empty list
                     self.cur_dims.insert(0, [0, 1])
 
                     # Note that we do not need to worry about iterating over columns
                     #   (see previous note about the data structure).
                     for letter in reversed(cur_column):
                         self.cur_dims[0][0] += 1
-                        val = letter.value # Convert from a CrystalOfLetter to an Integer
+                        val = letter.value  # Convert from a CrystalOfLetter to an Integer
 
                         if verbose:
                             print("====================")
@@ -219,7 +219,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                             print("--------------------\n")
 
                         # Build the next state
-                        self.cur_path[0].insert(0, [letter]) # Prepend the value
+                        self.cur_path[0].insert(0, [letter])  # Prepend the value
                         self.next_state(val)
 
                     # If we've split off a column, we need to merge the current column
@@ -242,7 +242,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                         # And perform the inverse column splitting map on the RC
                         for a in range(self.n):
                             self._update_vacancy_nums(a)
-        self.ret_rig_con.set_immutable() # Return it to immutable
+        self.ret_rig_con.set_immutable()  # Return it to immutable
         return self.ret_rig_con
 
     def next_state(self, val):
@@ -372,7 +372,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                         # Add 2 boxes
                         j = i - 1
                         while j >= 0 and p._list[j] <= max_width + 2:
-                            p.rigging[j+1] = p.rigging[j] # Shuffle it along
+                            p.rigging[j+1] = p.rigging[j]  # Shuffle it along
                             j -= 1
                         p._list.pop(i)
                         p._list.insert(j+1, max_width + 2)
@@ -380,7 +380,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                     break
 
                 if p._list[i] == max_width and not singular_max_width:
-                    p._list[i] += 1 # We always at least add a box to the first singular value
+                    p._list[i] += 1  # We always at least add a box to the first singular value
                     p.rigging[i] = None
                     if case_QS:
                         width_n = p._list[i]
@@ -403,7 +403,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
             #   to attempt both
             # Make a *deep* copy of the element
             cp = self.ret_rig_con.__copy__()
-            for i,rp in enumerate(cp):
+            for i, rp in enumerate(cp):
                 cp[i] = rp._clone()
             # We attempt case (S) first
             self._insert_cell_case_S(p)
@@ -494,7 +494,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
                 p.rigging[i] = None
                 case_QS = True
                 break
-        if not case_QS: # we have not added a box yet
+        if not case_QS:  # we have not added a box yet
             p._list.append(1)
             p.rigging.append(None)
             p.vacancy_numbers.append(None)
@@ -642,7 +642,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                             y = self.rigged_con.parent()(*[x._clone() for x in self.cur_partitions], use_vacancy_numbers=True)
                             self._graph.append([self._graph[-1][1], (y, len(self._graph)), 'ls'])
 
-                    while bij.cur_dims[0][0]: # > 0:
+                    while bij.cur_dims[0][0]:  # > 0:
                         if verbose:
                             print("====================")
                             print(repr(RC(*bij.cur_partitions, use_vacancy_numbers=True)))
@@ -654,15 +654,15 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                         bij.cur_dims[0][0] = bij._next_index(ht)
                         b = bij.next_state(ht)
                         # Make sure we have a crystal letter
-                        ret_crystal_path[-1].append(letters(b)) # Append the rank
+                        ret_crystal_path[-1].append(letters(b))  # Append the rank
 
                         if build_graph:
                             y = self.rigged_con.parent()(*[x._clone() for x in self.cur_partitions], use_vacancy_numbers=True)
                             self._graph.append([self._graph[-1][1], (y, len(self._graph)), letters(b)])
 
-                    bij.cur_dims.pop(0) # Pop off the leading column
+                    bij.cur_dims.pop(0)  # Pop off the leading column
 
-                self.cur_dims.pop(0) # Pop off the spin rectangle
+                self.cur_dims.pop(0)  # Pop off the spin rectangle
 
                 self.cur_partitions = bij.cur_partitions
                 # Convert the n-th partition back into the special type B one
@@ -713,7 +713,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                             y = self.rigged_con.parent()(*[x._clone() for x in self.cur_partitions], use_vacancy_numbers=True)
                             self._graph.append([self._graph[-1][1], (y, len(self._graph)), '2x'])
 
-                    while self.cur_dims[0][0]: #> 0:
+                    while self.cur_dims[0][0]:  # > 0:
                         if verbose:
                             print("====================")
                             print(repr(self.rigged_con.parent()(*self.cur_partitions, use_vacancy_numbers=True)))
@@ -721,20 +721,20 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                             print(ret_crystal_path)
                             print("--------------------\n")
 
-                        self.cur_dims[0][0] -= 1 # This takes care of the indexing
+                        self.cur_dims[0][0] -= 1  # This takes care of the indexing
                         b = self.next_state(self.cur_dims[0][0])
 
                         # Make sure we have a crystal letter
-                        ret_crystal_path[-1].append(letters(b)) # Append the rank
+                        ret_crystal_path[-1].append(letters(b))  # Append the rank
 
                         if build_graph:
                             y = self.rigged_con.parent()(*[x._clone() for x in self.cur_partitions], use_vacancy_numbers=True)
                             self._graph.append([self._graph[-1][1], (y, len(self._graph)), letters(b)])
 
-                    self.cur_dims.pop(0) # Pop off the leading column
+                    self.cur_dims.pop(0)  # Pop off the leading column
 
         if build_graph:
-            self._graph.pop(0) # Remove the dummy at the start
+            self._graph.pop(0)  # Remove the dummy at the start
             from sage.graphs.digraph import DiGraph
             from sage.graphs.dot2tex_utils import have_dot2tex
             self._graph = DiGraph(self._graph)
@@ -797,7 +797,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                                 last_size = partition[j]
                                 case_S = True
                                 break
-                        if not case_Q: # We found a singular string above the quasi-singular one
+                        if not case_Q:  # We found a singular string above the quasi-singular one
                             break
                         ell[n-1] = i
                         last_size = partition[i]
@@ -883,7 +883,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
         self._update_vacancy_numbers(n - 1)
         if row_num_next is not None:
             self.cur_partitions[n-1].rigging[row_num_next] = self.cur_partitions[n-1].vacancy_numbers[row_num_next]
-        if row_num_bar_next is not None: # If we enter here, it means case (Q, S) holds
+        if row_num_bar_next is not None:  # If we enter here, it means case (Q, S) holds
             vac_num = self.cur_partitions[n-1].vacancy_numbers[row_num_bar_next]
             self.cur_partitions[n-1].rigging[row_num_bar_next] = vac_num
             if make_quasisingular:
@@ -896,4 +896,4 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                     j += 1
                 self.cur_partitions[n-1].rigging[j-1] = vac_num - 1
 
-        return(b)
+        return b

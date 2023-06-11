@@ -58,7 +58,7 @@ def _puncture(v, points):
     new_v = [v[i] for i in range(len(v)) if i not in points]
     return S(new_v)
 
-def _insert_punctured_positions(l, punctured_points, value = None):
+def _insert_punctured_positions(l, punctured_points, value=None):
     r"""
     Return ``l`` with ``value`` inserted in the corresponding
     position from ``punctured_points``.
@@ -496,7 +496,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         True
     """
 
-    def __init__(self, code, strategy = None, original_decoder = None, **kwargs):
+    def __init__(self, code, strategy=None, original_decoder=None, **kwargs):
         r"""
         TESTS:
 
@@ -682,7 +682,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         y = A(yl)
         return _puncture(D.decode_to_code(y), pts)
 
-    def decoding_radius(self, number_erasures = None):
+    def decoding_radius(self, number_erasures=None):
         r"""
         Return the maximal number of errors that ``self`` can decode.
 

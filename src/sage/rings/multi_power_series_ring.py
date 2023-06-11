@@ -371,8 +371,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         # Multivariate power series rings inherit from power series rings. But
         # apparently we can not call their initialisation. Instead, initialise
         # CommutativeRing and Nonexact:
-        CommutativeRing.__init__(self, base_ring, name_list, category =
-                                 _IntegralDomains if base_ring in
+        CommutativeRing.__init__(self, base_ring, name_list, category=_IntegralDomains if base_ring in
                                  _IntegralDomains else _CommutativeRings)
         Nonexact.__init__(self, default_prec)
 
@@ -567,7 +566,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: S.change_ring(GF(5))                                                  # optional - sage.rings.finite_rings
             Multivariate Power Series Ring in x, y over Finite Field of size 5
         """
-        return PowerSeriesRing(R, names = self.variable_names(), default_prec = self.default_prec())
+        return PowerSeriesRing(R, names=self.variable_names(), default_prec=self.default_prec())
 
     def remove_var(self, *var):
         """

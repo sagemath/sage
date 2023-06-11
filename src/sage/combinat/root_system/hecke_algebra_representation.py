@@ -393,7 +393,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         """
         word = self.straighten_word(word)
         result = self._domain.module_morphism(functools.partial(self.on_basis, word=word, signs=signs, scalar=scalar),
-                                            codomain = self._domain)
+                                            codomain=self._domain)
         # For debugging purpose, make the parameters easily accessible:
         result.word = word
         result.signs = signs
@@ -811,7 +811,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         classical operators `T_1, \ldots, T_n` from `T` and `T_Y` coincide.
     """
 
-    def __init__(self, T, T_Y = None, normalized = True):
+    def __init__(self, T, T_Y=None, normalized=True):
         r"""
         INPUT:
 

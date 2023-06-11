@@ -287,7 +287,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
          through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
     """
 
-    def __init__(self, code, original_decoder = None, **kwargs):
+    def __init__(self, code, original_decoder=None, **kwargs):
         r"""
         TESTS:
 

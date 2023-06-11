@@ -235,7 +235,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             return (-ring.one())**(n)*self.sum_of_terms(
                 (compo, ring((-1)**(len(compo)))) for compo in Compositions(n) )
 
-        def alternating_sum_of_finer_compositions(self, composition, conjugate = False):
+        def alternating_sum_of_finer_compositions(self, composition, conjugate=False):
             """
             Return the alternating sum of finer compositions in a basis of the
             non-commutative symmetric functions.
@@ -997,7 +997,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
     A class for algebra morphism defined on a free algebra from the image of the generators
     """
 
-    def __init__(self, domain, on_generators, position = 0, codomain = None, category = None, anti = False):
+    def __init__(self, domain, on_generators, position=0, codomain=None, category=None, anti=False):
         """
         Given a map on the multiplicative basis of a free algebra, this method
         returns the algebra morphism that is the linear extension of its image

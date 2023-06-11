@@ -832,7 +832,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         return self.__I
 
     @cached_method
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         r"""
         Returns ``True`` if the quotient ring is a field. Checks to see if the
         defining ideal is maximal.

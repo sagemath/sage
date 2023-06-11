@@ -190,17 +190,17 @@ class WeightSpace(CombinatorialFreeModule):
         self.root_system = root_system
         CombinatorialFreeModule.__init__(self, base_ring,
                                          basis_keys,
-                                         prefix = "Lambdacheck" if root_system.dual_side else "Lambda",
-                                         latex_prefix = "\\Lambda^\\vee" if root_system.dual_side else "\\Lambda",
+                                         prefix="Lambdacheck" if root_system.dual_side else "Lambda",
+                                         latex_prefix="\\Lambda^\\vee" if root_system.dual_side else "\\Lambda",
                                          sorting_key=sortkey,
-                                         category = WeightLatticeRealizations(base_ring))
+                                         category=WeightLatticeRealizations(base_ring))
 
         if root_system.cartan_type().is_affine() and not extended:
             # For an affine type, register the quotient map from the
             # extended weight lattice/space to the weight lattice/space
             domain = root_system.weight_space(base_ring, extended=True)
             domain.module_morphism(self.fundamental_weight,
-                                   codomain = self
+                                   codomain=self
                                    ).register_as_coercion()
 
     def is_extended(self):
@@ -454,7 +454,7 @@ class WeightSpace(CombinatorialFreeModule):
 
         def basis_value(basis, i):
             return basis[i]
-        return self.module_morphism(on_basis = functools.partial(basis_value, basis), codomain=L)
+        return self.module_morphism(on_basis=functools.partial(basis_value, basis), codomain=L)
 
 
 class WeightSpaceElement(CombinatorialFreeModule.Element):

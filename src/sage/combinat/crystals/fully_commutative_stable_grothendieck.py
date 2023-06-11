@@ -393,7 +393,7 @@ class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
             sage: F = DecreasingHeckeFactorizations(w, 3, 1)
             sage: TestSuite(F).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self.w = tuple(w.reduced_word())
         self.factors = factors
         self.H = w.parent()
@@ -569,7 +569,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
         if p.has_pattern([3,2,1]):
             raise ValueError("w should be fully commutative")
 
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.w = tuple(word)
         self.factors = factors
         self.H = w.parent()

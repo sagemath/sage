@@ -231,7 +231,7 @@ class LocalGeneric(CommutativeRing):
             sage: latex(Zq(27,names='a')) #indirect doctest
             \Bold{Z}_{3^{3}}
         """
-        return self._repr_(do_latex = True)
+        return self._repr_(do_latex=True)
 
     def change(self, **kwds):
         r"""

@@ -2610,7 +2610,7 @@ class RuleLLMS(Rule):
                 # the addable cell with largest content at most e
                 cprime = sorted([c for c in y.to_partition().addable_cells()
                                  if c[1]-c[0] <= e],
-                                key = lambda c: -(c[1]-c[0]))[0]
+                                key=lambda c: -(c[1]-c[0]))[0]
                 h = cprime[1] - cprime[0]
                 z = y.affine_symmetric_group_simple_action(h % self.k)
 

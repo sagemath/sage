@@ -5100,24 +5100,24 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             poly = repr_lincomb([(1, m) for m in mons + bigO], is_latex=True, strip_one=True)
         elif formatter == ascii_art:
             if atomic_repr:
-                poly = ascii_art(*(mons + bigO), sep = " + ")
+                poly = ascii_art(*(mons + bigO), sep=" + ")
             else:
                 def parenthesize(m):
                     a = ascii_art(m)
                     h = a.height()
                     return ascii_art(ascii_left_parenthesis.character_art(h),
                                      a, ascii_right_parenthesis.character_art(h))
-                poly = ascii_art(*([parenthesize(m) for m in mons] + bigO), sep = " + ")
+                poly = ascii_art(*([parenthesize(m) for m in mons] + bigO), sep=" + ")
         elif formatter == unicode_art:
             if atomic_repr:
-                poly = unicode_art(*(mons + bigO), sep = " + ")
+                poly = unicode_art(*(mons + bigO), sep=" + ")
             else:
                 def parenthesize(m):
                     a = unicode_art(m)
                     h = a.height()
                     return unicode_art(unicode_left_parenthesis.character_art(h),
                                        a, unicode_right_parenthesis.character_art(h))
-                poly = unicode_art(*([parenthesize(m) for m in mons] + bigO), sep = " + ")
+                poly = unicode_art(*([parenthesize(m) for m in mons] + bigO), sep=" + ")
 
         return poly
 
@@ -5414,24 +5414,24 @@ class LazyCompletionGradedAlgebraElement(LazyCauchyProductSeries):
             poly = repr_lincomb([(1, m) for m in mons + bigO], is_latex=True, strip_one=True)
         elif formatter == ascii_art:
             if atomic_repr:
-                poly = ascii_art(*(mons + bigO), sep = " + ")
+                poly = ascii_art(*(mons + bigO), sep=" + ")
             else:
                 def parenthesize(m):
                     a = ascii_art(m)
                     h = a.height()
                     return ascii_art(ascii_left_parenthesis.character_art(h),
                                      a, ascii_right_parenthesis.character_art(h))
-                poly = ascii_art(*([parenthesize(m) for m in mons] + bigO), sep = " + ")
+                poly = ascii_art(*([parenthesize(m) for m in mons] + bigO), sep=" + ")
         elif formatter == unicode_art:
             if atomic_repr:
-                poly = unicode_art(*(mons + bigO), sep = " + ")
+                poly = unicode_art(*(mons + bigO), sep=" + ")
             else:
                 def parenthesize(m):
                     a = unicode_art(m)
                     h = a.height()
                     return unicode_art(unicode_left_parenthesis.character_art(h),
                                        a, unicode_right_parenthesis.character_art(h))
-                poly = unicode_art(*([parenthesize(m) for m in mons] + bigO), sep = " + ")
+                poly = unicode_art(*([parenthesize(m) for m in mons] + bigO), sep=" + ")
 
         return poly
 

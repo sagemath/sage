@@ -1745,7 +1745,7 @@ class Permutation(CombinatorialElement):
             if representation == "cycles":
                 d.show(**args)
             else:
-                d.show(layout = "circular", **args)
+                d.show(layout="circular", **args)
 
         elif representation == "braid":
             from sage.plot.line import line
@@ -1766,7 +1766,7 @@ class Permutation(CombinatorialElement):
                 L += line([r(i, 1.0), r(p[i]-1, 0)])
                 L += text(str(i), r(i, 1.05)) + text(str(i), r(p[i]-1, -.05))
 
-            return L.show(axes = False, **args)
+            return L.show(axes=False, **args)
 
         else:
             raise ValueError("The value of 'representation' must be equal to "+
@@ -4826,7 +4826,7 @@ class Permutation(CombinatorialElement):
                 return LBT(None)
             mn = compare(perm)
             k = perm.index(mn)
-            return LBT([rec(perm[:k]), rec(perm[k + 1:])], label = mn)
+            return LBT([rec(perm[:k]), rec(perm[k + 1:])], label=mn)
         return rec(self)
 
     @combinatorial_map(name="Increasing tree")
@@ -4901,7 +4901,7 @@ class Permutation(CombinatorialElement):
             res = res.binary_search_insert(i)
         return res
 
-    @combinatorial_map(name = "Binary search tree (left to right)")
+    @combinatorial_map(name="Binary search tree (left to right)")
     def binary_search_tree_shape(self, left_to_right=True):
         r"""
         Return the shape of the binary search tree of the permutation
@@ -5283,7 +5283,7 @@ class Permutation(CombinatorialElement):
     # Binary operations #
     #####################
 
-    def shifted_concatenation(self, other, side = "right"):
+    def shifted_concatenation(self, other, side="right"):
         r"""
         Return the right (or left) shifted concatenation of ``self``
         with a permutation ``other``. These operations are also known
@@ -7810,7 +7810,7 @@ def from_reduced_word(rw, parent=None):
     return parent(p)
 
 
-def bistochastic_as_sum_of_permutations(M, check = True):
+def bistochastic_as_sum_of_permutations(M, check=True):
     r"""
     Return the positive sum of permutations corresponding to
     the bistochastic matrix ``M``.
@@ -7911,7 +7911,7 @@ def bistochastic_as_sum_of_permutations(M, check = True):
     if not all(x >= 0 for x in M.list()):
         raise ValueError("The matrix should have nonnegative entries")
 
-    if check and not M.is_bistochastic(normalized = False):
+    if check and not M.is_bistochastic(normalized=False):
         raise ValueError("The matrix is not bistochastic")
 
     if not RR.has_coerce_map_from(M.base_ring()):

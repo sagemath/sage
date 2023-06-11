@@ -3955,9 +3955,8 @@ class CohomologyClass(SageObject, CachedRepresentation):
         sage: CohomologyClass(x^2+2*y*z, A)
         [2*y*z + x^2]
 
-
     TESTS:
-    
+
     In order for the cache to not confuse objects with the same representation,
     we can pass the parent of the representative as a parameter::
 

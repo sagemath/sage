@@ -1641,7 +1641,7 @@ class KR_type_A2(KirillovReshetikhinGenericCrystal):
             The crystal of tableaux of type ['B', 2] and shape(s) [[], [2], [2, 2]]
         """
         return CrystalOfTableaux(['B', self.cartan_type().rank()-1],
-                                 shapes = horizontal_dominoes_removed(self.r(),self.s()))
+                                 shapes=horizontal_dominoes_removed(self.r(),self.s()))
 
     def ambient_crystal(self):
         r"""
@@ -1921,7 +1921,7 @@ class KR_type_box(KirillovReshetikhinGenericCrystal, AffineCrystalFromClassical)
             The crystal of tableaux of type ['B', 3] and shape(s) [[], [1], [2], [1, 1], [3], [2, 1], [3, 1], [2, 2], [3, 2], [3, 3]]
         """
         return CrystalOfTableaux(self.cartan_type().classical(),
-                                 shapes = partitions_in_box(self.r(),self.s()))
+                                 shapes=partitions_in_box(self.r(),self.s()))
 
     def ambient_crystal(self):
         r"""
@@ -2444,7 +2444,7 @@ class KR_type_Cn(KirillovReshetikhinGenericCrystal):
             sage: K.classical_decomposition()
             The crystal of tableaux of type ['C', 3] and shape(s) [[2, 2, 2]]
         """
-        return CrystalOfTableaux(self.cartan_type().classical(), shape = [self.s()]*self.r() )
+        return CrystalOfTableaux(self.cartan_type().classical(), shape=[self.s()]*self.r() )
 
     def from_highest_weight_vector_to_pm_diagram(self, b):
         r"""
@@ -2679,7 +2679,7 @@ class KR_type_Dn_twisted(KirillovReshetikhinGenericCrystal):
             s = s // 2
         else:
             s = s / 2
-        return CrystalOfTableaux(self.cartan_type().classical(), shape = [s]*self.r() )
+        return CrystalOfTableaux(self.cartan_type().classical(), shape=[s]*self.r() )
 
     def from_highest_weight_vector_to_pm_diagram(self, b):
         r"""
@@ -3734,7 +3734,7 @@ class PMDiagram(CombinatorialObject):
         True
     """
 
-    def __init__(self, pm_diagram, from_shapes = None):
+    def __init__(self, pm_diagram, from_shapes=None):
         r"""
         Initialize ``self``.
 

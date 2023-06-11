@@ -321,7 +321,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
                 and len(x) == len(self._weights)
                 and all(i in ZZ and i >= 0 for i in x))
 
-    def subset(self, size = None):
+    def subset(self, size=None):
         """
         EXAMPLES::
 

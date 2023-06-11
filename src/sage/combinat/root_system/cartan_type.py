@@ -1140,7 +1140,7 @@ class CartanType_abstract():
     # be used for Coxeter groups etc. (experimental feature)
     _index_set_coloring = {1:"blue", 2:"red", 3:"green"}
 
-    @abstract_method(optional = True)
+    @abstract_method(optional=True)
     def coxeter_diagram(self):
         """
         Return the Coxeter diagram for ``self``.
@@ -1732,7 +1732,7 @@ class CartanType_crystallographic(CartanType_abstract):
         from sage.matrix.constructor import matrix, diagonal_matrix
         m = self.cartan_matrix()
         n = m.nrows()
-        M = matrix(ZZ, n, n*n, sparse = True)
+        M = matrix(ZZ, n, n*n, sparse=True)
         for (i,j) in m.nonzero_positions():
             M[i, n * i + j] = m[i,j]
             M[j, n * i + j] -= m[j,i]
@@ -2080,7 +2080,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             ['D', 4]
         """
 
-    def row_annihilator(self, m = None):
+    def row_annihilator(self, m=None):
         r"""
         Return the unique minimal non trivial annihilating linear
         combination of `\alpha_0, \alpha_1, \ldots, \alpha_n` with
@@ -2421,7 +2421,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
 class CartanType_standard(UniqueRepresentation, SageObject):
     # Technical methods
-    def _repr_(self, compact = False):
+    def _repr_(self, compact=False):
         """
         TESTS::
 
@@ -2679,7 +2679,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
     A concrete class for affine simple Cartan types.
     """
 
-    def __init__(self, letter, n, affine = 1):
+    def __init__(self, letter, n, affine=1):
         """
         EXAMPLES::
 
@@ -2704,7 +2704,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
         self.n = n
         self.affine = affine
 
-    def _repr_(self, compact = False):
+    def _repr_(self, compact=False):
         """
         TESTS::
 
@@ -3014,7 +3014,7 @@ class CartanType_decorator(UniqueRepresentation, SageObject, CartanType_abstract
 
 class SuperCartanType_standard(UniqueRepresentation, SageObject):
     # Technical methods
-    def _repr_(self, compact = False):
+    def _repr_(self, compact=False):
         """
         TESTS::
 

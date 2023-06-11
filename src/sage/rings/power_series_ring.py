@@ -1019,7 +1019,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             Power Series Ring in T over Number Field in a
              with defining polynomial x^2 - 3 with a = 1.732050807568878?
         """
-        return PowerSeriesRing(R, name = self.variable_name(), default_prec = self.default_prec())
+        return PowerSeriesRing(R, name=self.variable_name(), default_prec=self.default_prec())
 
     def change_var(self, var):
         """
@@ -1032,7 +1032,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: R.change_var('D')
             Power Series Ring in D over Rational Field
         """
-        return PowerSeriesRing(self.base_ring(), names = var, sparse=self.is_sparse())
+        return PowerSeriesRing(self.base_ring(), names=var, sparse=self.is_sparse())
 
     def is_exact(self):
         """
@@ -1190,7 +1190,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         return self.has_coerce_map_from(parent(x))
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``False`` since the ring of power series over any ring is never
         a field.
@@ -1359,4 +1359,4 @@ def unpickle_power_series_ring_v0(base_ring, name, default_prec, sparse):
         sage: loads(dumps(P)) == P  # indirect doctest
         True
     """
-    return PowerSeriesRing(base_ring, name=name, default_prec = default_prec, sparse=sparse)
+    return PowerSeriesRing(base_ring, name=name, default_prec=default_prec, sparse=sparse)

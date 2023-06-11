@@ -1157,8 +1157,7 @@ class GroebnerFan(SageObject):
             sage: next(a)
             [y^9 - 3*y^6 + 3*y^3 - y - 1, -y^3 + x + 1]
         """
-        for x in self.reduced_groebner_bases():
-            yield x
+        yield from self.reduced_groebner_bases()
 
     def __getitem__(self, i):
         """

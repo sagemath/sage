@@ -1018,7 +1018,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
 
         trial = Factorization(factorization).value()
 
-        return Factorization(factorization, unit = f.lc() / trial.lc())
+        return Factorization(factorization, unit=f.lc() / trial.lc())
 
 
 class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicRealField):

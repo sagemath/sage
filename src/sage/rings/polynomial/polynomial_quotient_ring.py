@@ -1030,7 +1030,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             self.__gen = self(self.polynomial_ring().gen())
             return self.__gen
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return whether or not this quotient ring is a field.
 
@@ -1076,7 +1076,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             self._refine_category_(Fields())
         return ret
 
-    def is_integral_domain(self, proof = True):
+    def is_integral_domain(self, proof=True):
         """
         Return whether or not this quotient ring is an integral domain.
 

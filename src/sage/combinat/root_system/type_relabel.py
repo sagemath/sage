@@ -229,7 +229,7 @@ class CartanType(cartan_type.CartanType_decorator):
                 return 'D4^3'
             return "['D', 4, 3]"
         relab = pformat(self._relabelling)
-        return self._type._repr_(compact = compact) + " relabelled by {}".format(relab)
+        return self._type._repr_(compact=compact) + " relabelled by {}".format(relab)
 
     def _latex_(self):
         r"""

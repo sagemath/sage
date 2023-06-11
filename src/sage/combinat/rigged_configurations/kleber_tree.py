@@ -171,7 +171,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
         else:
             lines_str += "\\draw%s (%s%s) -- (%s%s%s);\n"%(style_line_str, node_name, node_place_str, node_name, i, node_place_str)
 
-    #drawing root
+    # drawing root
     if style_node is None:
         style_node = ''
     else:
@@ -430,8 +430,8 @@ class KleberTreeNode(Element):
             sage: KT.root
             Kleber tree node with weight [0, 2, 0, 2, 0] and upwards edge root [0, 0, 0, 0, 0]
         """
-        return "Kleber tree node with weight %s and upwards edge root %s"%(
-            list(self.weight.to_vector()), list(self.up_root.to_vector()) )
+        return "Kleber tree node with weight %s and upwards edge root %s" % (
+            list(self.weight.to_vector()), list(self.up_root.to_vector()))
 
     def _latex_(self):
         r"""

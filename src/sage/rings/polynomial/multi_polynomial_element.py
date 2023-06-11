@@ -2121,13 +2121,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         # try to use univariate factoring
         try:
             F = self.univariate_polynomial().factor()
-            return Factorization([(R(f),m) for f,m in F], unit=F.unit())
+            return Factorization([(R(f), m) for f, m in F], unit=F.unit())
         except TypeError:
             pass
 
         base_ring = self.base_ring()
         if base_ring.is_finite():
-            if base_ring.characteristic() > 1<<29:
+            if base_ring.characteristic() > 1 << 29:
                 raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
         if proof is None:

@@ -543,7 +543,7 @@ class PolynomialRing_general(ring.Algebra):
             return [None, "generic"]
         return NotImplemented
 
-    def is_integral_domain(self, proof = True):
+    def is_integral_domain(self, proof=True):
         """
         EXAMPLES::
 
@@ -554,7 +554,7 @@ class PolynomialRing_general(ring.Algebra):
         """
         return self.base_ring().is_integral_domain(proof)
 
-    def is_unique_factorization_domain(self, proof = True):
+    def is_unique_factorization_domain(self, proof=True):
         """
         EXAMPLES::
 
@@ -1071,9 +1071,9 @@ class PolynomialRing_general(ring.Algebra):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-        return PolynomialRing(self.base_ring(), names = var, sparse=self.is_sparse())
+        return PolynomialRing(self.base_ring(), names=var, sparse=self.is_sparse())
 
-    def extend_variables(self, added_names, order = 'degrevlex'):
+    def extend_variables(self, added_names, order='degrevlex'):
         r"""
         Return a multivariate polynomial ring with the same base ring but
         with ``added_names`` as additional variables.
@@ -1091,7 +1091,7 @@ class PolynomialRing_general(ring.Algebra):
 
         if isinstance(added_names, str):
             added_names = added_names.split(',')
-        return PolynomialRing(self.base_ring(), names = self.variable_names() + tuple(added_names), order = order)
+        return PolynomialRing(self.base_ring(), names=self.variable_names() + tuple(added_names), order=order)
 
     def variable_names_recursive(self, depth=sage.rings.infinity.infinity):
         r"""
@@ -1253,7 +1253,7 @@ class PolynomialRing_general(ring.Algebra):
     def is_exact(self):
         return self.base_ring().is_exact()
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return False, since polynomial rings are never fields.
 
@@ -1451,7 +1451,7 @@ class PolynomialRing_general(ring.Algebra):
 
         return p
 
-    def _monics_degree( self, of_degree ):
+    def _monics_degree(self, of_degree):
         """
         Refer to monics() for full documentation.
         """
@@ -1462,15 +1462,14 @@ class PolynomialRing_general(ring.Algebra):
             coeffs.reverse()
             yield self(coeffs)
 
-    def _monics_max( self, max_degree ):
+    def _monics_max(self, max_degree):
         """
         Refer to monics() for full documentation.
         """
         for degree in range(max_degree + 1):
-            for m in self._monics_degree( degree ):
-                yield m
+            yield from self._monics_degree(degree)
 
-    def _polys_degree( self, of_degree ):
+    def _polys_degree(self, of_degree):
         """
         Refer to polynomials() for full documentation.
         """
@@ -1564,7 +1563,7 @@ class PolynomialRing_general(ring.Algebra):
         """
         self._Karatsuba_threshold = int(Karatsuba_threshold)
 
-    def polynomials( self, of_degree = None, max_degree = None ):
+    def polynomials( self, of_degree=None, max_degree=None ):
         """
         Return an iterator over the polynomials of specified degree.
 
@@ -1629,7 +1628,7 @@ class PolynomialRing_general(ring.Algebra):
             return self._polys_max( max_degree )
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
-    def monics( self, of_degree = None, max_degree = None ):
+    def monics( self, of_degree=None, max_degree=None ):
         """
         Return an iterator over the monic polynomials of specified degree.
 
@@ -1804,8 +1803,8 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
         if ring is not None and ring is not self:
             p = p.change_ring(ring)
             if degree_bound is None:
-                return p.roots(multiplicities = multiplicities, algorithm = algorithm)
-            return p.roots(multiplicities = multiplicities, algorithm = algorithm, degree_bound = degree_bound)
+                return p.roots(multiplicities=multiplicities, algorithm=algorithm)
+            return p.roots(multiplicities=multiplicities, algorithm=algorithm, degree_bound=degree_bound)
 
         roots = p._roots_from_factorization(p.factor(), multiplicities)
         if degree_bound is not None:

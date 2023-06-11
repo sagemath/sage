@@ -198,7 +198,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # Build and register the embeddings
             for domain in domains:
                 domain.module_morphism(self.simple_root,
-                                       codomain = self
+                                       codomain=self
                                        ).register_as_coercion()
             if self.cartan_type().is_affine():
                 self._to_classical.register_as_conversion()
@@ -714,7 +714,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                        structure='graded', enumeration='breadth')
 
         @cached_method
-        def nonparabolic_positive_roots(self, index_set = None):
+        def nonparabolic_positive_roots(self, index_set=None):
             r"""
             Return the positive roots of ``self`` that are not in the
             parabolic subsystem indicated by ``index_set``.
@@ -891,7 +891,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             return F
 
         @cached_method
-        def positive_roots_by_height(self, increasing = True):
+        def positive_roots_by_height(self, increasing=True):
             r"""
             Return a list of positive roots in increasing order by height.
 
@@ -928,7 +928,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             return [x.element for x in roots]
 
         @cached_method
-        def positive_roots_parabolic(self, index_set = None):
+        def positive_roots_parabolic(self, index_set=None):
             r"""
             Return the set of positive roots for the parabolic subsystem with Dynkin node set ``index_set``.
 
@@ -966,7 +966,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                     structure='graded', enumeration='breadth')
 
         @cached_method
-        def positive_roots_nonparabolic(self, index_set = None):
+        def positive_roots_nonparabolic(self, index_set=None):
             r"""
             Return the set of positive roots outside the parabolic subsystem with Dynkin node set ``index_set``.
 
@@ -1001,7 +1001,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             return [x for x in self.positive_roots() if not x.is_parabolic_root(index_set)]
 
         @cached_method
-        def positive_roots_nonparabolic_sum(self, index_set = None):
+        def positive_roots_nonparabolic_sum(self, index_set=None):
             r"""
             Return the sum of positive roots outside the parabolic subsystem with Dynkin node set ``index_set``.
 
@@ -1243,7 +1243,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             return self.root_system.coroot_lattice()
 
-        def coroot_space(self, base_ring = QQ):
+        def coroot_space(self, base_ring=QQ):
             r"""
             Return the coroot space over ``base_ring``.
 
@@ -1261,7 +1261,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                  of the Root system of type ['A', 2]
 
             """
-            return self.root_system.coroot_space(base_ring = base_ring)
+            return self.root_system.coroot_space(base_ring=base_ring)
 
         def simple_coroot(self, i):
             """
@@ -1913,7 +1913,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L._to_classical(e[2])
                 (0, 0, 1)
             """
-            return self.module_morphism(self._to_classical_on_basis, codomain = self.classical())
+            return self.module_morphism(self._to_classical_on_basis, codomain=self.classical())
 
         def _classical_alpha_0(self):
             """
@@ -2652,7 +2652,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             else:
                 I = cartan_type.index_set()
                 lines = []
-            return plot_options.cone(rays = [Lambda[i] for i in I],
+            return plot_options.cone(rays=[Lambda[i] for i in I],
                                      lines=lines,
                                      color="lightgrey",
                                      alpha=.3)
@@ -3609,7 +3609,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 alphacheck[1]
             """
 
-        def reflection(self, root, use_coroot = False):
+        def reflection(self, root, use_coroot=False):
             r"""
             Reflect ``self`` across the hyperplane orthogonal to ``root``.
 
@@ -3712,7 +3712,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 index_set=self.parent().index_set()
             return [ i for i in index_set if self.has_descent(i, positive) ]
 
-        def to_dominant_chamber(self, index_set = None, positive = True, reduced_word = False):
+        def to_dominant_chamber(self, index_set=None, positive=True, reduced_word=False):
             r"""
             Return the unique dominant element in the Weyl group orbit of the vector ``self``.
 
@@ -3806,7 +3806,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                         direction.append(i)
                     self = self.simple_reflection(i)
 
-        def reduced_word(self, index_set = None, positive = True):
+        def reduced_word(self, index_set=None, positive=True):
             r"""
             Return a reduced word for the inverse of the shortest Weyl group element that sends the vector ``self`` into the dominant chamber.
 
@@ -3825,9 +3825,9 @@ class RootLatticeRealizations(Category_over_base_ring):
                 [2]
 
             """
-            return self.to_dominant_chamber(index_set=index_set,positive=positive,reduced_word = True)[1]
+            return self.to_dominant_chamber(index_set=index_set,positive=positive,reduced_word=True)[1]
 
-        def is_dominant(self, index_set = None, positive = True):
+        def is_dominant(self, index_set=None, positive=True):
             r"""
             Return whether ``self`` is dominant.
 

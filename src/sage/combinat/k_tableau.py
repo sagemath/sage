@@ -51,7 +51,7 @@ import copy
 lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
-def WeakTableau(t, k, inner_shape = [], representation = "core"):
+def WeakTableau(t, k, inner_shape=[], representation="core"):
     r"""
     This is the dispatcher method for the element class of weak `k`-tableaux.
 
@@ -191,12 +191,12 @@ def WeakTableau(t, k, inner_shape = [], representation = "core"):
     elif representation == "bounded":
         return WeakTableau_bounded(t, k)
     elif representation == "factorized_permutation":
-        return WeakTableau_factorized_permutation(t, k, inner_shape = inner_shape)
+        return WeakTableau_factorized_permutation(t, k, inner_shape=inner_shape)
     else:
         raise NotImplementedError("The representation option needs to be 'core', 'bounded', or 'factorized_permutation'")
 
 
-def WeakTableaux(k, shape , weight, representation = "core"):
+def WeakTableaux(k, shape , weight, representation="core"):
     r"""
     This is the dispatcher method for the parent class of weak `k`-tableaux.
 
@@ -480,7 +480,7 @@ class WeakTableau_abstract(ClonableList,
         else:
             return "["+"".join(self[i]._latex_()+',' for i in range(len(self)-1))+self[len(self)-1]._latex_()+"]"
 
-    def representation(self, representation = 'core'):
+    def representation(self, representation='core'):
         r"""
         Return the analogue of ``self`` in the specified representation.
 
@@ -608,7 +608,7 @@ class WeakTableaux_abstract(UniqueRepresentation, Parent):
         else:
             return self._outer_shape.length() - self._inner_shape.length()
 
-    def representation(self, representation = 'core'):
+    def representation(self, representation='core'):
         r"""
         Return the analogue of ``self`` in the specified representation.
 
@@ -659,7 +659,7 @@ class WeakTableaux_abstract(UniqueRepresentation, Parent):
         if self._representation == 'bounded' and (representation in ['core', 'factorized_permutation']):
             outer_shape = outer_shape.to_core(self.k)
             inner_shape = inner_shape.to_core(self.k)
-        return WeakTableaux(self.k, [outer_shape, inner_shape], weight, representation = representation)
+        return WeakTableaux(self.k, [outer_shape, inner_shape], weight, representation=representation)
 
 
 #Weak Tableaux in terms of cores
@@ -901,7 +901,7 @@ class WeakTableau_core(WeakTableau_abstract):
         """
         shapes = [ Core(p,self.k+1).to_grassmannian() for p in self.intermediate_shapes() ]
         perms = [ shapes[i]*(shapes[i-1].inverse()) for i in range(len(shapes)-1,0,-1)]
-        return WeakTableau_factorized_permutation(perms, self.k, inner_shape = self.parent()._inner_shape)
+        return WeakTableau_factorized_permutation(perms, self.k, inner_shape=self.parent()._inner_shape)
 
     def residues_of_entries(self, v):
         r"""
@@ -1036,7 +1036,7 @@ class WeakTableau_core(WeakTableau_abstract):
             out.append(standard_cells)
         return out
 
-    def k_charge(self, algorithm = "I"):
+    def k_charge(self, algorithm="I"):
         r"""
         Return the `k`-charge of ``self``.
 
@@ -1292,7 +1292,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
         self._shape = (self._outer_shape, self._inner_shape)
         self._weight = weight
         self._representation = 'core'
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -1656,7 +1656,7 @@ class WeakTableau_bounded(WeakTableau_abstract):
             l = l_new
         return cls(l, k)
 
-    def k_charge(self, algorithm = 'I'):
+    def k_charge(self, algorithm='I'):
         r"""
         Return the `k`-charge of ``self``.
 
@@ -1683,7 +1683,7 @@ class WeakTableau_bounded(WeakTableau_abstract):
             sage: t.k_charge()
             12
         """
-        return self.to_core_tableau().k_charge(algorithm = algorithm)
+        return self.to_core_tableau().k_charge(algorithm=algorithm)
 
 
 class WeakTableaux_bounded(WeakTableaux_abstract):
@@ -1758,7 +1758,7 @@ class WeakTableaux_bounded(WeakTableaux_abstract):
         self._shape = (self._outer_shape, self._inner_shape)
         self._weight = tuple(weight)
         self._representation = 'bounded'
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -1840,7 +1840,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
         return w_tuple
 
     @staticmethod
-    def __classcall_private__(cls, t, k, inner_shape = []):
+    def __classcall_private__(cls, t, k, inner_shape=[]):
         r"""
         Implements the shortcut ``WeakTableau_factorized_permutation(t, k)`` to
         ``WeakTableaux_factorized_permutation(k, shape, weight)(t)``
@@ -2088,9 +2088,9 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
         t = SkewTableau(list(t))
         shapes = [ Core(p, k+1).to_grassmannian() for p in intermediate_shapes(t) ] #t.to_chain() ]
         perms = [ shapes[i]*(shapes[i-1].inverse()) for i in range(len(shapes)-1,0,-1)]
-        return cls(perms, k, inner_shape = t.inner_shape())
+        return cls(perms, k, inner_shape=t.inner_shape())
 
-    def k_charge(self, algorithm = 'I'):
+    def k_charge(self, algorithm='I'):
         r"""
         Return the `k`-charge of ``self``.
 
@@ -2110,7 +2110,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
             sage: t.k_charge()
             12
         """
-        return self.to_core_tableau().k_charge(algorithm = algorithm)
+        return self.to_core_tableau().k_charge(algorithm=algorithm)
 
 
 class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
@@ -2181,7 +2181,7 @@ class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
         self._shape = (self._outer_shape, self._inner_shape)
         self._weight = weight
         self._representation = 'factorized_permutation'
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -3948,7 +3948,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
             self._weight = (1,)*(self._outer_shape.length()-self._inner_shape.length())
         else:
             self._weight = weight
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     @staticmethod
     def __classcall_private__(cls, k, shape, weight=None):
@@ -4594,7 +4594,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         out = copy.deepcopy(emptyTableau)
         for i in range(1,len(transeq)+1):
             out = StrongTableaux._left_action_list(out, transeq[-i], i, k)
-        return StrongTableau(out, k, weight = (1,)*len(transeq))
+        return StrongTableau(out, k, weight=(1,)*len(transeq))
 
     Element = StrongTableau
 

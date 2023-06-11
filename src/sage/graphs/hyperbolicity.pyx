@@ -146,7 +146,7 @@ Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  https://www.gnu.org/licenses/
+#                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
 from libc.stdint cimport uint16_t, uint32_t, uint64_t

@@ -246,7 +246,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
     ####################### static methods ###############################
 
     @staticmethod
-    def parameters_given_tau(tau, C = None, n_k = None):
+    def parameters_given_tau(tau, C=None, n_k=None):
         r"""
         Return the smallest possible multiplicity and list size given the
         given parameters of the code and decoding radius.
@@ -318,7 +318,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         return (s, l)
 
     @staticmethod
-    def guruswami_sudan_decoding_radius(C = None, n_k = None, l = None, s = None):
+    def guruswami_sudan_decoding_radius(C=None, n_k=None, l=None, s=None):
         r"""
         Return the maximal decoding radius of the Guruswami-Sudan decoder and
         the parameter choices needed for this.
@@ -415,7 +415,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             return (tau, (s,l))
 
     @staticmethod
-    def _suitable_parameters_given_tau(tau, C = None, n_k = None):
+    def _suitable_parameters_given_tau(tau, C=None, n_k=None):
         r"""
         Return quite good multiplicity and list size parameters for the code
         parameters and the decoding radius.
@@ -489,7 +489,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         return (s, l)
 
     @staticmethod
-    def gs_satisfactory(tau, s, l, C = None, n_k = None):
+    def gs_satisfactory(tau, s, l, C=None, n_k=None):
         r"""
         Return whether input parameters satisfy the governing equation of
         Guruswami-Sudan.
@@ -552,7 +552,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         return l > 0 and s > 0 and n * s * (s+1) < (l+1) * (2*s*(n-tau) - (k-1) * l)
 
     ####################### decoder itself ###############################
-    def __init__(self, code, tau = None, parameters = None, interpolation_alg = None, root_finder = None):
+    def __init__(self, code, tau=None, parameters=None, interpolation_alg=None, root_finder=None):
         r"""
         TESTS:
 
@@ -603,16 +603,16 @@ class GRSGuruswamiSudanDecoder(Decoder):
             raise ValueError("code has to be a generalized Reed-Solomon code")
         n, k = code.length(), code.dimension()
         if tau and parameters:
-            if not GRSGuruswamiSudanDecoder.gs_satisfactory(tau, parameters[0], parameters[1], C = code):
+            if not GRSGuruswamiSudanDecoder.gs_satisfactory(tau, parameters[0], parameters[1], C=code):
                 raise ValueError("Impossible parameters for the Guruswami-Sudan algorithm")
             self._tau, self._s, self._ell = tau, parameters[0], parameters[1]
         elif tau:
             self._tau = tau
-            self._s, self._ell = GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k = (n, k))
+            self._s, self._ell = GRSGuruswamiSudanDecoder.parameters_given_tau(tau, n_k=(n, k))
         elif parameters:
             self._s = parameters[0]
             self._ell = parameters[1]
-            (self._tau,_) = GRSGuruswamiSudanDecoder.guruswami_sudan_decoding_radius(C = code, s=self._s, l=self._ell)
+            (self._tau,_) = GRSGuruswamiSudanDecoder.guruswami_sudan_decoding_radius(C=code, s=self._s, l=self._ell)
         else:
             raise ValueError("Specify either tau or parameters")
         if callable(interpolation_alg):
@@ -855,7 +855,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             raise ValueError("The provided interpolation algorithm has a wrong signature. See the documentation of `codes.decoders.GRSGuruswamiSudanDecoder.interpolation_algorithm()` for details")
         ## EXAMINE THE FACTORS AND CONVERT TO CODEWORDS
         try:
-            polynomials = self.rootfinding_algorithm()(Q, maxd = wy)
+            polynomials = self.rootfinding_algorithm()(Q, maxd=wy)
         except TypeError:
             raise ValueError("The provided root-finding algorithm has a wrong signature. See the documentation of `codes.decoders.GRSGuruswamiSudanDecoder.rootfinding_algorithm()` for details")
         if not polynomials:
