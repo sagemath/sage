@@ -644,10 +644,10 @@ class QuotientRingElement(RingElement):
 
         See :trac:`7797`::
 
-            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')             # optional - sage.combinat
-            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                        # optional - sage.combinat
-            sage: Q = F.quo(I)                                                          # optional - sage.combinat sage.libs.singular
-            sage: Q.0^4    # indirect doctest                                           # optional - sage.combinat sage.libs.singular
+            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')             # optional - sage.combinat sage.libs.singular sage.modules
+            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F                        # optional - sage.combinat sage.libs.singular sage.modules
+            sage: Q = F.quo(I)                                                          # optional - sage.combinat sage.libs.singular sage.modules
+            sage: Q.0^4    # indirect doctest                                           # optional - sage.combinat sage.libs.singular sage.modules
             ybar*zbar*zbar*xbar + ybar*zbar*zbar*ybar + ybar*zbar*zbar*zbar
 
         The issue from :trac:`8005` was most likely fixed as part of
