@@ -30,13 +30,14 @@ import sys
 from cysignals.memory cimport sig_malloc, check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
+from sage.arith.misc import factor
+from sage.combinat.subset import subsets
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.rings.integer_ring import ZZ
 from sage.structure.element cimport parent
 
-from sage.arith.misc import factor
-from sage.rings.integer_ring import ZZ
-from sage.misc.misc_c import prod
-from sage.combinat.subset import subsets
-from sage.libs.pari.all import pari
+lazy_import('sage.libs.pari.all', 'pari')
 
 
 def cyclotomic_coeffs(nn, sparse=None):

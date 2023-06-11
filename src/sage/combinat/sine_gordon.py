@@ -44,7 +44,6 @@ REFERENCES:
 from sage.structure.sage_object import SageObject
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.trig", ["cos", "sin"])
@@ -466,6 +465,8 @@ class SineGordonYsystem(SageObject):
             sage: Y.plot()  # long time 2s
             Graphics object consisting of 219 graphics primitives
         """
+        from sage.rings.real_mpfr import RR
+
         # Set up plotting options
         if 'radius' in kwds:
             radius = kwds['radius']
