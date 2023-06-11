@@ -33,12 +33,12 @@ class ElementWithLabel():
         Graphics object consisting of 6 graphics primitives
 
         sage: from sage.misc.element_with_label import ElementWithLabel
-        sage: W = WeylGroup("A1")                                                       # optional - sage.combinat
-        sage: P = W.bruhat_poset(facade=True)                                           # optional - sage.combinat sage.graphs
-        sage: D = W.domain()                                                            # optional - sage.combinat sage.graphs
-        sage: v = D.rho() - D.fundamental_weight(1)                                     # optional - sage.combinat sage.graphs
-        sage: nP = P.relabel(lambda w: ElementWithLabel(w, w.action(v)))                # optional - sage.combinat sage.graphs
-        sage: list(nP)                                                                  # optional - sage.combinat sage.graphs
+        sage: W = WeylGroup("A1")                                                       # optional - sage.combinat sage.modules
+        sage: P = W.bruhat_poset(facade=True)                                           # optional - sage.combinat sage.graphs sage.modules
+        sage: D = W.domain()                                                            # optional - sage.combinat sage.graphs sage.modules
+        sage: v = D.rho() - D.fundamental_weight(1)                                     # optional - sage.combinat sage.graphs sage.modules
+        sage: nP = P.relabel(lambda w: ElementWithLabel(w, w.action(v)))                # optional - sage.combinat sage.graphs sage.modules
+        sage: list(nP)                                                                  # optional - sage.combinat sage.graphs sage.modules
         [(0, 0), (0, 0)]
     """
     def __init__(self, element, label):
