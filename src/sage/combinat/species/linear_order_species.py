@@ -43,7 +43,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.LinearOrderSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ['a', 'b', 'c']
-            sage: p = PermutationGroupElement((1,2))
+            sage: p = PermutationGroupElement((1,2))                                    # optional - sage.groups
             sage: a.transport(p)
             ['b', 'a', 'c']
         """
@@ -60,7 +60,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.LinearOrderSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ['a', 'b', 'c']
-            sage: a.automorphism_group()
+            sage: a.automorphism_group()                                                # optional - sage.groups
             Symmetric group of order 1! as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -155,7 +155,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: L = species.LinearOrderSpecies()
-            sage: g = L.cycle_index_series()
+            sage: g = L.cycle_index_series()                                            # optional - sage.modules
             sage: g[0:5]
             [p[], p[1], p[1, 1], p[1, 1, 1], p[1, 1, 1, 1]]
         """

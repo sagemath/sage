@@ -277,9 +277,9 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
-            sage: s = (P+P).structures([1,2,3])[1]; s
+            sage: s = (P+P).structures([1,2,3])[1]; s                                   # optional - sage.libs.flint
             {{1, 3}, {2}}
-            sage: s.transport(PermutationGroupElement((2,3)))
+            sage: s.transport(PermutationGroupElement((2,3)))                           # optional - sage.groups sage.libs.flint
             {{1, 2}, {3}}
         """
         return self.__class__(self._parent, self._s.transport(perm), **self._options)
@@ -289,7 +289,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
-            sage: s = (P+P).structures([1,2,3])[1]; s
+            sage: s = (P+P).structures([1,2,3])[1]; s                                   # optional - sage.libs.flint
             {{1, 3}, {2}}
             sage: s.canonical_label()
             {{1, 2}, {3}}
