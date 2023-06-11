@@ -684,8 +684,7 @@ cdef class PartitionRefinement_generic:
         bitset_init(b, self._n)
         PS_move_all_mins_to_front(self._part)
         cdef int second_pos
-        cdef int smallest = PS_first_smallest(self._part, b, &second_pos,
-                                              self)
+        cdef int smallest = PS_first_smallest_PR(self._part, b, &second_pos, self)
         if second_pos != -1:
             self._fixed_not_minimized.append(second_pos)
         cdef int pos = smallest
