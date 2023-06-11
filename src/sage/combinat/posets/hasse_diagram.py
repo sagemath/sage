@@ -1170,7 +1170,7 @@ class HasseDiagram(DiGraph):
             [-1  1  1  0 -1]
             [-1  1  0  1 -1]
             sage: P.__dict__['coxeter_transformation'].clear_cache()                    # optional - sage.libs.flint sage.modules
-            sage: P.coxeter_transformation(algorithm="matrix") == M                     # optional - sage.modules
+            sage: P.coxeter_transformation(algorithm="matrix") == M                     # optional - sage.libs.flint sage.modules
             True
 
         TESTS::
