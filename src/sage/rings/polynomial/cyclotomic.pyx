@@ -76,7 +76,7 @@ def cyclotomic_coeffs(nn, sparse=None):
 
         sage: euler_phi(30)                                                             # optional - sage.libs.pari
         8
-        sage: R(cyclotomic_coeffs(14)).factor()
+        sage: R(cyclotomic_coeffs(14)).factor()                                         # optional - sage.libs.pari
         x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
 
     The coefficients are not always +/-1::

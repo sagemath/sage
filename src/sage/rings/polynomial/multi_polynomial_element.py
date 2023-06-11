@@ -2061,7 +2061,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
             sage: K.<a> = PolynomialRing(QQ)
             sage: R.<x,y> = PolynomialRing(FractionField(K))
-            sage: factor(x)
+            sage: factor(x)                                                             # optional - sage.libs.pari
             x
 
         In the example below, we set the special method

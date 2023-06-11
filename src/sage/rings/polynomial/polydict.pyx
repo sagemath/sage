@@ -1982,9 +1982,9 @@ cdef class ETuple:
         Verify that :trac:`6428` has been addressed::
 
             sage: R.<y, z> = Frac(QQ['x'])[]
-            sage: type(y)
+            sage: type(y)                                                               # optional - sage.libs.singular
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
-            sage: y^(2^32)
+            sage: y^(2^32)                                                              # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             OverflowError: exponent overflow (...)   # 64-bit
