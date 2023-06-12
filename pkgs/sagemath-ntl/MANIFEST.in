@@ -31,7 +31,7 @@ include sage/rings/*.pxd
 include sage/rings/finite_rings/*.pxd
 include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/polynomial/*.pxd
-
+include sage/misc/binary_tree.pxd
 
 include sage/schemes/hyperelliptic_curves/hypellfrob.p*
 
