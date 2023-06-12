@@ -157,7 +157,6 @@ include sage/rings/complex_mpfr.p*
 include sage/rings/complex_conversion.p*
 
 # More from algebras with compile-time dependencies on sagemath-modules
-#include sage/algebras/free_algebra*.p*
 include sage/algebras/clifford_algebra*.p*
 include sage/algebras/exterior_algebra*.p*
 include sage/algebras/octonion_algebra.p*

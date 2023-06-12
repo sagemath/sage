@@ -29,7 +29,7 @@ graft sage/combinat/cluster_algebra_quiver
 #include sage/combinat/root_system/dynkin_diagram.p*     # want?
 #include sage/combinat/root_system/cartan_type.p*        # dep of dynkin_diagram
 
-include sage/combinat/finite_state_machine.p*
+include sage/combinat/finite_state_machine*.p*
 
 #include src/sage/combinat/rigged_configurations/kleber_tree.py # want?
 

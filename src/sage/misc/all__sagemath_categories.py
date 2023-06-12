@@ -4,6 +4,8 @@ from .all__sagemath_objects import *
 
 from .html import html, pretty_print_default
 
+from .mathml import mathml
+
 from .table import table
 
 from .map_threaded import map_threaded

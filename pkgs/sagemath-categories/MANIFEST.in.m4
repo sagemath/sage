@@ -32,9 +32,14 @@ exclude sage/categories/with_realizations.*
 
 include sage/geometry/abc.p*
 
+# Interfaces
 include sage/interfaces/abc.p*
 include sage/interfaces/process.p*                      # needed for sage.parallel
 include sage/interfaces/tab_completion.p*
+include sage/misc/object_multiplexer.p*
+include sage/misc/multireplace.p*
+include sage/misc/sagespawn.p*
+include sage/interfaces/quit.p*
 
 graft sage/parallel
 
@@ -60,6 +65,7 @@ include sage/rings/sum_of_squares.p*
 include sage/misc/allocator.*
 include sage/misc/latex*.*
 include sage/misc/html.p*
+include sage/misc/mathml.p*
 include sage/misc/table.p*
 include sage/misc/map_threaded.p*
 include sage/misc/mrange.p*
@@ -70,11 +76,6 @@ include sage/misc/method_decorator.p*
 include sage/misc/random_testing.p*
 include sage/misc/rest_index_of_methods.p*
 include sage/misc/callable_dict.p*
-
-# For sage.interfaces
-include sage/misc/object_multiplexer.p*
-include sage/misc/multireplace.p*
-include sage/misc/pager.p*                                      # should go to sagemath-repl
 
 ## Data structures
 include sage/misc/binary_tree.p*

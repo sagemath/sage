@@ -40,3 +40,6 @@ from .prandom import *
 from .timing import walltime, cputime
 
 from .sage_timeit_class import timeit
+
+from .session import load_session, save_session, show_identifiers
+from .reset import reset, restore
