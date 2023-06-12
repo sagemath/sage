@@ -830,8 +830,8 @@ class PSModularSymbolElement(ModuleElement):
         # fundamental domain
         t = self.parent().coefficient_module().zero()
         for g in MR.gens()[1:]:
-            if not(g in MR.reps_with_two_torsion()
-                   or g in MR.reps_with_three_torsion()):
+            if not (g in MR.reps_with_two_torsion()
+                    or g in MR.reps_with_three_torsion()):
                 t += f[g] * MR.gammas[g] - f[g]
             else:
                 if g in MR.reps_with_two_torsion():
@@ -843,7 +843,7 @@ class PSModularSymbolElement(ModuleElement):
         if f[id] * MR.gammas[id] - f[id] != -t:
             print(t)
             print(f[id] * MR.gammas[id] - f[id])
-            raise ValueError("Does not add up correctly around loop")
+            raise ValueError("does not add up correctly around loop")
 
         print("This modular symbol satisfies the Manin relations")
 

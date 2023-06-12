@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 """
 Base class for finite fields
 
@@ -1282,13 +1283,12 @@ cdef class FiniteField(Field):
         else:
             raise ValueError("{} is not a subfield".format(base))
 
-        if map is False: # shortcut
+        if map is False:  # shortcut
             return V
 
         if inclusion_map is None:
             inclusion_map = self.coerce_map_from(base)
 
-        from sage.modules.free_module_element import vector
         from sage.matrix.constructor import matrix
         from .maps_finite_field import (
             MorphismVectorSpaceToFiniteField, MorphismFiniteFieldToVectorSpace)

@@ -70,7 +70,6 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
     cdef bint loops = 0
 
     from sage.graphs.graph import Graph
-    from sage.graphs.digraph import DiGraph
     from sage.graphs.generic_graph import GenericGraph
     from copy import copy
     which_G = 1
@@ -380,7 +379,6 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     cdef aut_gp_and_can_lab *output
     cdef PartitionStack *part
     from sage.graphs.graph import Graph
-    from sage.graphs.digraph import DiGraph
     from sage.graphs.generic_graph import GenericGraph
     from copy import copy
     if isinstance(G_in, GenericGraph):

@@ -1,3 +1,4 @@
 # Packages needed for ./bootstrap
 autoconf automake libtool
 xtools mk-configure
+pkg-config

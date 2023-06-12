@@ -178,10 +178,8 @@ from cython.parallel cimport prange, threadid
 from cysignals.memory cimport check_allocarray, sig_free
 from memory_allocator cimport MemoryAllocator
 
-from sage.rings.integer     cimport smallInteger
 from cysignals.signals      cimport sig_check
-from .conversions           cimport bit_rep_to_Vrep_list, Vrep_list_to_bit_rep
-from .conversions            import facets_tuple_to_bit_rep_of_facets
+from .conversions           cimport bit_rep_to_Vrep_list
 from .base                  cimport CombinatorialPolyhedron
 
 from sage.geometry.polyhedron.face import combinatorial_face_to_polyhedral_face, PolyhedronFace

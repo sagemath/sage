@@ -5,7 +5,6 @@ This document describes the individual wrappers for various GAP
 elements. For general information about GAP, you should read the
 :mod:`~sage.libs.gap.libgap` module documentation.
 """
-
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
@@ -24,8 +23,6 @@ from .libgap import libgap
 from .util cimport *
 from .util import GAPError
 from sage.cpython.string cimport str_to_bytes, char_to_str
-from sage.misc.cachefunc import cached_method
-from sage.structure.sage_object cimport SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
@@ -195,7 +192,7 @@ cdef Obj make_gap_record(sage_dict) except NULL:
 
     try:
         GAP_Enter()
-        rec = NEW_PREC(len(data))
+        rec = GAP_NewPrecord(len(data))
         for d in data:
             key, val = d
             rnam = RNamName(str_to_bytes(key))
@@ -305,9 +302,9 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         if obj is NULL:
             return make_GapElement(parent, obj)
         num = TNUM_OBJ(obj)
-        if IS_INT(obj):
+        if GAP_IsInt(obj):
             return make_GapElement_Integer(parent, obj)
-        elif num == T_MACFLOAT:
+        elif GAP_IsMacFloat(obj):
             return make_GapElement_Float(parent, obj)
         elif num == T_CYC:
             return make_GapElement_Cyclotomic(parent, obj)
@@ -321,15 +318,15 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
             return make_GapElement_Function(parent, obj)
         elif num == T_PERM2 or num == T_PERM4:
             return make_GapElement_Permutation(parent, obj)
-        elif IS_REC(obj):
+        elif GAP_IsRecord(obj):
             return make_GapElement_Record(parent, obj)
-        elif IS_LIST(obj) and LEN_LIST(obj) == 0:
+        elif GAP_IsList(obj) and GAP_LenList(obj) == 0:
             # Empty lists are lists and not strings in Python
             return make_GapElement_List(parent, obj)
         elif IsStringConv(obj):
             # GAP strings are lists, too. Make sure this comes before non-empty make_GapElement_List
             return make_GapElement_String(parent, obj)
-        elif IS_LIST(obj):
+        elif GAP_IsList(obj):
             return make_GapElement_List(parent, obj)
         elif num == T_CHAR:
             ch = make_GapElement(parent, obj).IntChar().sage()
@@ -549,7 +546,7 @@ cdef class GapElement(RingElement):
 
         INPUT:
 
-        - ``mut`` - (boolean) wheter to return an mutable copy
+        - ``mut`` - (boolean) whether to return an mutable copy
 
         EXAMPLES::
 
@@ -1209,7 +1206,7 @@ cdef class GapElement(RingElement):
             sage: libgap.eval('3/2').is_list()
             False
         """
-        return IS_LIST(self.value)
+        return GAP_IsList(self.value)
 
     def is_record(self):
         r"""
@@ -1226,7 +1223,7 @@ cdef class GapElement(RingElement):
             sage: libgap.eval('rec(a:=1, b:=3)').is_record()
             True
         """
-        return IS_REC(self.value)
+        return GAP_IsRecord(self.value)
 
     cpdef is_bool(self):
         r"""
@@ -1456,7 +1453,7 @@ cdef class GapElement_Integer(GapElement):
             sage: N.IsInt()
             true
         """
-        return IS_INTOBJ(self.value)
+        return GAP_IsSmallInt(self.value)
 
     def _rational_(self):
         r"""
@@ -1607,7 +1604,7 @@ cdef class GapElement_Float(GapElement):
         """
         if ring is None:
             ring = RDF
-        return ring(VAL_MACFLOAT(self.value))
+        return ring(GAP_ValueMacFloat(self.value))
 
     def __float__(self):
         r"""
@@ -1616,7 +1613,7 @@ cdef class GapElement_Float(GapElement):
             sage: float(libgap.eval("Float(3.5)"))
             3.5
         """
-        return VAL_MACFLOAT(self.value)
+        return GAP_ValueMacFloat(self.value)
 
 
 
@@ -2750,7 +2747,7 @@ cdef class GapElement_List(GapElement):
             sage: len(lst)
             4
         """
-        return LEN_LIST(self.value)
+        return GAP_LenList(self.value)
 
     def __getitem__(self, i):
         r"""
@@ -2798,15 +2795,15 @@ cdef class GapElement_List(GapElement):
 
         if isinstance(i, tuple):
             for j in i:
-                if not IS_LIST(obj):
+                if not GAP_IsList(obj):
                     raise ValueError('too many indices')
-                if j < 0 or j >= LEN_LIST(obj):
+                if j < 0 or j >= GAP_LenList(obj):
                     raise IndexError('index out of range')
                 obj = ELM_LIST(obj, j+1)
 
         else:
             j = i
-            if j < 0 or j >= LEN_LIST(obj):
+            if j < 0 or j >= GAP_LenList(obj):
                 raise IndexError('index out of range.')
             obj = ELM_LIST(obj, j+1)
 
@@ -2869,12 +2866,12 @@ cdef class GapElement_List(GapElement):
 
         if isinstance(i, tuple):
             for j in i[:-1]:
-                if not IS_LIST(obj):
+                if not GAP_IsList(obj):
                     raise ValueError('too many indices')
-                if j < 0 or j >= LEN_LIST(obj):
+                if j < 0 or j >= GAP_LenList(obj):
                     raise IndexError('index out of range')
                 obj = ELM_LIST(obj, j+1)
-            if not IS_LIST(obj):
+            if not GAP_IsList(obj):
                 raise ValueError('too many indices')
             j = i[-1]
         else:

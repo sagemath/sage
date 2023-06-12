@@ -187,10 +187,7 @@ import operator
 
 from sage.cpython.string cimport str_to_bytes, char_to_str
 
-from sage.misc.cachefunc import cached_method
-
 from sage.misc.randstate import current_randstate
-from sage.arith.long cimport pyobject_to_long
 import sage.misc.weak_dict
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -202,7 +199,6 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 
 from sage.rings.ideal import FieldIdeal
 
-from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element
 
 from sage.structure.parent cimport Parent
@@ -4634,7 +4630,6 @@ cdef class BooleanPolynomial(MPolynomial):
             ...
             TypeError: argument must be a BooleanPolynomial
         """
-        from sage.rings.polynomial.pbori.pbori import red_tail
         if not I:
             return self
         if isinstance(I, BooleanPolynomialIdeal):
@@ -5128,7 +5123,6 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             sage: I.reduce(gb[0]*B.gen(1))
             0
         """
-        from sage.rings.polynomial.pbori.pbori import red_tail
         try:
             g = self.__gb
         except AttributeError:

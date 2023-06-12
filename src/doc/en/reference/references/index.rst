@@ -1900,9 +1900,9 @@ REFERENCES:
 .. [CW2005] \J. E. Cremona and M. Watkins. Computing isogenies of elliptic
             curves. preprint, 2005.
 
-.. [CHW2015] Cui, Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation 
+.. [CHW2015] Cui, Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation
              with weakly integral anyons. Quantum Inf. Process. 14 (2015),
-             no. 8, 2687-2727. 
+             no. 8, 2687-2727.
 
 .. [CW2015] Cui, S. X. and Wang, Z. (2015). Universal quantum computation with
             metaplectic anyons. Journal of Mathematical Physics, 56(3), 032202.
@@ -2020,6 +2020,11 @@ REFERENCES:
 
 .. [DeVi1984] \M.-P. Delest, and G. Viennot, *Algebraic Languages and
               Polyominoes Enumeration.* Theoret. Comput. Sci. 34, 169-206, 1984.
+
+.. [DJP2014] Luca De Feo, David Jao and Jérôme Plût: Towards quantum-resistant
+             cryptosystems from supersingular elliptic curve isogenies. Journal
+             of Mathematical Cryptology, vol. 8, no. 3, 2014, pp. 209-247.
+             https://eprint.iacr.org/2011/506.pdf
 
 .. [DFMS1996] Philipppe Di Francesco, Pierre Mathieu, and David Sénéchal.
               *Conformal Field Theory*. Graduate Texts in Contemporary
@@ -2287,7 +2292,7 @@ REFERENCES:
 .. [Dy1993] \M. J. Dyer. *Hecke algebras and shellings of Bruhat
             intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
 
-.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and 
+.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and
             Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
 
 .. _ref-E:
@@ -3033,6 +3038,9 @@ REFERENCES:
 
 .. [Har1994] Frank Harary. *Graph Theory*. Reading, MA: Addison-Wesley, 1994.
 
+.. [Har2009] Harvey, David. *Efficient computation of p-adic heights*.
+             LMS J. Comput. Math. **11** (2008), 40–59.
+
 .. [Harako2020] Shuichi Harako. *The second homology group of the commutative
                 case of Kontsevich's symplectic derivation Lie algebra*.
                 Preprint, 2020, :arxiv:`2006.06064`.
@@ -3526,7 +3534,7 @@ REFERENCES:
             :doi:`10.1016/j.bbr.2011.03.031`, :arxiv:`0909.2442`.
 
 .. [JS2021] \D. Jahn, C. Stump.
-            *Bruhat intervals, subword complexes and brick polyhedra for 
+            *Bruhat intervals, subword complexes and brick polyhedra for
             finite Coxeter groups*, 2021, :arxiv:`2103.03715`.
 
 .. [JV2000] \J. Justin, L. Vuillon, *Return words in Sturmian and
@@ -3946,7 +3954,7 @@ REFERENCES:
              set as the intersection of super greedy linear extensions. Order 4,
              293-311 (1987).
              :doi:`10.1007/BF00337892`
-             
+
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 
@@ -4210,7 +4218,7 @@ REFERENCES:
              889-929. :doi:`10.1090/mcom/3358`.
 
 .. [Lon2013] \S. London,
-            *Constructing New Turyn Type Sequences, T-Sequences and Hadamard Matrices*. 
+            *Constructing New Turyn Type Sequences, T-Sequences and Hadamard Matrices*.
             PhD Thesis, University of Illinois at Chicago, 2013.
             https://hdl.handle.net/10027/9916
 
@@ -4732,17 +4740,21 @@ REFERENCES:
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35
               (2001) 551-564.
 
+.. [MST2006] Barry Mazur, William Stein, John Tate.
+             *Computation of p-adic heights and log convergence*.
+             Doc. Math. 2006, Extra Vol., 577-614.
+
 .. [MSZ2013] Michael Maschler, Solan Eilon, and Zamir Shmuel. *Game
              Theory*. Cambridge: Cambridge University Press,
              (2013). ISBN 9781107005488.
 
-.. [MT1991] Mazur, B., & Tate, J. (1991). The `p`-adic sigma
-            function. Duke Mathematical Journal, 62(3), 663-688.
+.. [MT1991] Mazur, B., & Tate, J. (1991). *The `p`-adic sigma
+            function*. Duke Mathematical Journal, **62** (3), 663-688.
 
-.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum, On `p`-adic
-             analogues of the conjectures of Birch and
-             Swinnerton-Dyer, Inventiones Mathematicae 84, (1986),
-             1-48.
+.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum,
+             *On `p`-adic analogues of the conjectures of Birch and
+             Swinnerton-Dyer*,
+             Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
@@ -5448,6 +5460,9 @@ REFERENCES:
 .. [Sch1996] \E. Schaefer. A simplified data encryption
              algorithm. Cryptologia, 20(1):77--84, 1996.
 
+.. [Scha1996] Richard D. Schaefer. *An Introduction to Nonassociative Algebras*.
+              Dover, New York, 1996.
+
 .. [Sch1999] Gilles Schaeffer, *Random Sampling of Large Planar Maps and Convex
              Polyhedra*, Annual ACM Symposium on Theory of Computing
              (Atlanta, GA, 1999). :doi:`10.1145/301250.301448`.
@@ -5621,7 +5636,7 @@ REFERENCES:
              Journal of Cryptology. 12. 193-196. 1999.
              :doi:`10.1007/s001459900052`.
 
-.. [Smi2023] \D. Smith, J. S. Myers, C. S. Kaplan and C. Goodman-Strauss, 
+.. [Smi2023] \D. Smith, J. S. Myers, C. S. Kaplan and C. Goodman-Strauss,
              *An aperiodic monotile*,
              :arxiv:`2303.10798`
 
@@ -6501,7 +6516,7 @@ REFERENCES:
             Combinatorics, 19(1), P53, 2012. :doi:`10.37236/2087`
 
 .. [Zie1959] \N. Zierler. *Linear Recurring Sequences*.
-             Journal of the Society for Industrial and Applied Mathematics 7(1) 
+             Journal of the Society for Industrial and Applied Mathematics 7(1)
              (1959): 31-48. :doi:`10.1137/0107003`
 
 .. [Zie1998] \G. M. Ziegler. *Shelling polyhedral 3-balls and

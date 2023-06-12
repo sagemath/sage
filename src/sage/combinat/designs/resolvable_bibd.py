@@ -125,7 +125,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
 
         B = BalancedIncompleteBlockDesign(v,
                                           sum(classes,[]),
-                                          k = k,
+                                          k=k,
                                           check=True,
                                           copy=False)
         B._classes = classes
@@ -355,7 +355,7 @@ def kirkman_triple_system(v,existence=False):
             classs.append([2*i,2*i+1,v-1])
 
         KTS = BalancedIncompleteBlockDesign(v,
-                                            blocks = [tr for cl in classes for tr in cl],
+                                            blocks=[tr for cl in classes for tr in cl],
                                             k=3,
                                             lambd=1,
                                             check=True,
@@ -428,7 +428,7 @@ def v_4_1_rbibd(v,existence=False):
                for g in G]
 
     BIBD = BalancedIncompleteBlockDesign(v,
-                                         blocks = sum(classes,[]),
+                                         blocks=sum(classes,[]),
                                          k=4,
                                          check=True,
                                          copy=False)
@@ -592,19 +592,19 @@ def PBD_4_7(v,check=True, existence=False):
         parall = []
         plus_one = None
         for S in AF:
-            if all(all(x not in SS for x in S) for SS in parall):
+            if all(x not in SS for SS in parall for x in S):
                 parall.append(S)
             elif plus_one is None:
                 plus_one = S
             if len(parall) == 4 and plus_one is not None:
                 break
-        X = set(sum(parall,plus_one))
+        X = set(sum(parall, plus_one))
 
         S_4_5_7 = [X.intersection(S) for S in AF]
         S_4_5_7 = [S for S in S_4_5_7 if len(S)>1]
         S_4_5_7 = PairwiseBalancedDesign(X,
-                                         blocks = S_4_5_7,
-                                         K = [4,5,7],
+                                         blocks=S_4_5_7,
+                                         K=[4,5,7],
                                          check=False)
         S_4_5_7.relabel()
         return PBD_4_7_from_Y(S_4_5_7,check=check)
@@ -626,11 +626,11 @@ def PBD_4_7(v,check=True, existence=False):
             groups = [[x] for x in range(40)]
             groups.append(list(range(40,40+points_to_add)))
         GDD = GroupDivisibleDesign(40+points_to_add,
-                                   groups = groups,
-                                   blocks = GDD,
-                                   K = [2,4,5,7],
-                                   check = False,
-                                   copy = False)
+                                   groups=groups,
+                                   blocks=GDD,
+                                   K=[2,4,5,7],
+                                   check=False,
+                                   copy=False)
 
         return PBD_4_7_from_Y(GDD,check=check)
 
@@ -669,18 +669,18 @@ def PBD_4_7(v,check=True, existence=False):
                 domain = set(range(vv))
                 GDD = transversal_design(5,g)
                 GDD = GroupDivisibleDesign(vv,
-                                           groups = [[x for x in gr if x in domain] for gr in GDD.groups()],
-                                           blocks = [[x for x in B if x in domain] for B in GDD],
-                                           G = set([g,u]),
-                                           K = [4,5],
+                                           groups=[[x for x in gr if x in domain] for gr in GDD.groups()],
+                                           blocks=[[x for x in B if x in domain] for B in GDD],
+                                           G=set([g,u]),
+                                           K=[4,5],
                                            check=False)
                 return PBD_4_7_from_Y(GDD,check=check)
 
     return PairwiseBalancedDesign(v,
-                                  blocks = blocks,
-                                  K = [4,7],
-                                  check = check,
-                                  copy = False)
+                                  blocks=blocks,
+                                  K=[4,7],
+                                  check=check,
+                                  copy=False)
 
 def PBD_4_7_from_Y(gdd,check=True):
     r"""
@@ -771,7 +771,7 @@ def PBD_4_7_from_Y(gdd,check=True):
                         for x in B])
 
     return PairwiseBalancedDesign(3*gdd.num_points()+1,
-                                  blocks = PBD,
-                                  K = [4,7],
-                                  check = check,
-                                  copy = False)
+                                  blocks=PBD,
+                                  K=[4,7],
+                                  check=check,
+                                  copy=False)
