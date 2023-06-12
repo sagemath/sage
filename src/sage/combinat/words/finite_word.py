@@ -3172,8 +3172,10 @@ class FiniteWord_class(Word_class):
         morphisms is not in `morphisms`, then it is added automatically.
 
         - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
-        on the alphabet of ``self``. Letter permutations must be callable on
-        letters as well as words (e.g. ``WordMorphism``).
+        on the alphabet of ``self``. If ``antimorphisms`` is empty, then 
+        antimorphism which acts as identity on letters is added to it. 
+        Letter permutations must be callable on letters as well 
+        as words (e.g. ``WordMorphism``).
 
         OUTPUT:
 
@@ -3224,6 +3226,8 @@ class FiniteWord_class(Word_class):
             raise ValueError("Collision between domain of (anti)morphisms and generated letters `%s` and `%s`", 
                              specialLetterOne, specialLetterTwo)
         properMorphisms.append(specialMorphism.extend_by(WordMorphism({x: x for x in domain})))
+        if not properAntimorphisms:
+            properAntimorphisms.append(specialAntimorphism.extend_by(WordMorphism({x: x for x in domain})))
         domain = list(domain)
         domain.append(specialLetterOne)
         domain.append(specialLetterTwo)
