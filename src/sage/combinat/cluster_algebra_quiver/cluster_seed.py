@@ -1,4 +1,4 @@
-# sage.doctest - sage.graphs sage.modules
+# sage.doctest: optional - sage.graphs sage.modules
 r"""
 ClusterSeed
 
