@@ -1046,8 +1046,8 @@ cdef class CoercionModel:
             <class 'int'>
             sage: cm.common_parent(int, float, ZZ)
             <class 'float'>
-            sage: real_fields = [RealField(prec) for prec in [10,20..100]]
-            sage: cm.common_parent(*real_fields)
+            sage: real_fields = [RealField(prec) for prec in [10,20..100]]              # optional - sage.rings.real_mpfr
+            sage: cm.common_parent(*real_fields)                                        # optional - sage.rings.real_mpfr
             Real Field with 10 bits of precision
 
         There are some cases where the ordering does matter, but if a parent
@@ -1670,9 +1670,9 @@ cdef class CoercionModel:
 
         Sometimes there is a reasonable "cover," but no canonical coercion::
 
-            sage: sage.categories.pushout.pushout(QQ, QQ^3)
+            sage: sage.categories.pushout.pushout(QQ, QQ^3)                             # optional - sage.modules
             Vector space of dimension 3 over Rational Field
-            sage: print(cm.discover_coercion(QQ, QQ^3))
+            sage: print(cm.discover_coercion(QQ, QQ^3))                                 # optional - sage.modules
             None
         """
         if R is S:

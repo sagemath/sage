@@ -55,14 +55,15 @@ cdef class GenericAction(Action):
         for otherwise they could be garbage collected, giving rise to
         random errors (see :trac:`18157`). ::
 
+            sage: from sage.structure.coerce_actions import ActedUponAction, GenericAction
             sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)         # optional - sage.modular sage.modules
+            sage: ActedUponAction(M, Cusps, True)                                       # optional - sage.modular sage.modules
             Left action
              by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
              on Set P^1(QQ) of all cusps
 
             sage: Z6 = Zmod(6)
-            sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True)
+            sage: GenericAction(QQ, Z6, True)
             Traceback (most recent call last):
             ...
             NotImplementedError: action for <class 'sage.structure.coerce_actions.GenericAction'> not implemented
