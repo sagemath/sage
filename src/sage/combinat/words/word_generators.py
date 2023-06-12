@@ -778,9 +778,9 @@ class WordGenerator():
 
             sage: words.CharacteristicSturmianWord(1/golden_ratio^2)                    # optional - sage.symbolic
             word: 0100101001001010010100100101001001010010...
-            sage: words.CharacteristicSturmianWord(4/5)
+            sage: words.CharacteristicSturmianWord(4/5)                                 # optional - sage.rings.real_mpfr
             word: 11110
-            sage: words.CharacteristicSturmianWord(5/14)
+            sage: words.CharacteristicSturmianWord(5/14)                                # optional - sage.rings.real_mpfr
             word: 01001001001001
             sage: words.CharacteristicSturmianWord(pi - 3)                              # optional - sage.symbolic
             word: 0000001000000100000010000001000000100000...

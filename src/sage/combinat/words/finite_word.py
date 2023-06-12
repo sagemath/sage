@@ -5977,7 +5977,7 @@ class FiniteWord_class(Word_class):
 
             sage: words.LowerMechanicalWord(random(),alphabet='01')[:100].is_sturmian_factor()
             True
-            sage: words.CharacteristicSturmianWord(random())[:100].is_sturmian_factor()
+            sage: words.CharacteristicSturmianWord(random())[:100].is_sturmian_factor()     # optional - sage.rings.real_mpfr
             True
 
         ::

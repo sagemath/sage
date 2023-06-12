@@ -32,7 +32,7 @@ from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 
-lazy_import('sage.modules.free_module_element', 'import vector')
+lazy_import('sage.modules.free_module_element', 'vector')
 
 
 class WordDatatype_morphic(WordDatatype_callable):
