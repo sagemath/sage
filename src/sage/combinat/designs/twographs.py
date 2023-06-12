@@ -224,12 +224,12 @@ def is_twograph(T):
 
     wrong size of blocks::
 
-        sage: is_twograph(designs.projective_plane(3))
+        sage: is_twograph(designs.projective_plane(3))                                  # optional - sage.schemes
         False
 
     a triple system which is not a two-graph::
 
-        sage: is_twograph(designs.projective_plane(2))
+        sage: is_twograph(designs.projective_plane(2))                                  # optional - sage.schemes
         False
     """
     if not T.is_uniform(3):

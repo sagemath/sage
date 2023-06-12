@@ -363,10 +363,11 @@ class IncidenceStructure():
             True
             sage: ["Am", "I", "finally", "done ?"] in IS
             False
-            sage: IS = designs.ProjectiveGeometryDesign(3, 1, GF(2), point_coordinates=False)   # optional - sage.rings.finite_rings
-            sage: [3,8,7] in IS                                                                 # optional - sage.rings.finite_rings
+            sage: IS = designs.ProjectiveGeometryDesign(3, 1, GF(2),                    # optional - sage.rings.finite_rings
+            ....:                                       point_coordinates=False)
+            sage: [3,8,7] in IS                                                         # optional - sage.rings.finite_rings
             True
-            sage: [3,8,9] in IS                                                                 # optional - sage.rings.finite_rings
+            sage: [3,8,9] in IS                                                         # optional - sage.rings.finite_rings
             False
         """
         try:
@@ -393,13 +394,13 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: fano1 = designs.balanced_incomplete_block_design(7,3)
-            sage: fano2 = designs.projective_plane(2)
-            sage: fano1 == fano2
+            sage: fano1 = designs.balanced_incomplete_block_design(7,3)                 # optional - sage.schemes
+            sage: fano2 = designs.projective_plane(2)                                   # optional - sage.schemes
+            sage: fano1 == fano2                                                        # optional - sage.schemes
             False
-            sage: fano1.relabel(fano1.canonical_label())
-            sage: fano2.relabel(fano2.canonical_label())
-            sage: fano1 == fano2
+            sage: fano1.relabel(fano1.canonical_label())                                # optional - sage.schemes
+            sage: fano2.relabel(fano2.canonical_label())                                # optional - sage.schemes
+            sage: fano1 == fano2                                                        # optional - sage.schemes
             True
         """
         if self._canonical_label is None:
@@ -427,11 +428,11 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: fano1 = designs.balanced_incomplete_block_design(7,3)
-            sage: fano2 = designs.projective_plane(2)
-            sage: fano1.is_isomorphic(fano2)
+            sage: fano1 = designs.balanced_incomplete_block_design(7,3)                 # optional - sage.schemes
+            sage: fano2 = designs.projective_plane(2)                                   # optional - sage.schemes
+            sage: fano1.is_isomorphic(fano2)                                            # optional - sage.schemes
             True
-            sage: fano1.is_isomorphic(fano2,certificate=True)
+            sage: fano1.is_isomorphic(fano2,certificate=True)                           # optional - sage.schemes
             {0: 0, 1: 1, 2: 2, 3: 6, 4: 4, 5: 3, 6: 5}
 
         TESTS::
@@ -548,10 +549,10 @@ class IncidenceStructure():
         The number of copies of `H` in itself is the size of its automorphism
         group::
 
-            sage: H = designs.projective_plane(3)
-            sage: sum(1 for _ in H.isomorphic_substructures_iterator(H))
+            sage: H = designs.projective_plane(3)                                       # optional - sage.schemes
+            sage: sum(1 for _ in H.isomorphic_substructures_iterator(H))                # optional - sage.schemes
             5616
-            sage: H.automorphism_group().cardinality()
+            sage: H.automorphism_group().cardinality()                                  # optional - sage.groups sage.schemes
             5616
         """
         from sage.combinat.designs.subhypergraph_search import SubHypergraphSearch
@@ -673,26 +674,26 @@ class IncidenceStructure():
 
         A Baer subplane of order 2 (i.e. a Fano plane) in a projective plane of order 4::
 
-            sage: P4 = designs.projective_plane(4)
-            sage: F = designs.projective_plane(2)
-            sage: for x in Subsets(P4.ground_set(),7):
+            sage: P4 = designs.projective_plane(4)                                      # optional - sage.schemes
+            sage: F = designs.projective_plane(2)                                       # optional - sage.schemes
+            sage: for x in Subsets(P4.ground_set(),7):                                  # optional - sage.schemes
             ....:     if P4.trace(x,min_size=2).is_isomorphic(F):
             ....:         break
-            sage: subplane = P4.trace(x,min_size=2); subplane
+            sage: subplane = P4.trace(x,min_size=2); subplane                           # optional - sage.schemes
             Incidence structure with 7 points and 7 blocks
-            sage: subplane.is_isomorphic(F)
+            sage: subplane.is_isomorphic(F)                                             # optional - sage.schemes
             True
 
         TESTS::
 
-            sage: F.trace([0..50])
+            sage: F.trace([0..50])                                                      # optional - sage.schemes
             Traceback (most recent call last):
             ...
             ValueError: 7 is not a point of the incidence structure
-            sage: F.relabel(dict(enumerate("abcdefg")))
-            sage: F.trace("abc")
+            sage: F.relabel(dict(enumerate("abcdefg")))                                 # optional - sage.schemes
+            sage: F.trace("abc")                                                        # optional - sage.schemes
             Incidence structure with 3 points and ...
-            sage: F.trace("Y")
+            sage: F.trace("Y")                                                          # optional - sage.schemes
             Traceback (most recent call last):
             ...
             ValueError: 'Y' is not a point of the incidence structure
@@ -929,11 +930,11 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: designs.balanced_incomplete_block_design(7,3).is_regular()
+            sage: designs.balanced_incomplete_block_design(7,3).is_regular()            # optional - sage.schemes
             3
-            sage: designs.balanced_incomplete_block_design(7,3).is_regular(r=3)
+            sage: designs.balanced_incomplete_block_design(7,3).is_regular(r=3)         # optional - sage.schemes
             True
-            sage: designs.balanced_incomplete_block_design(7,3).is_regular(r=4)
+            sage: designs.balanced_incomplete_block_design(7,3).is_regular(r=4)         # optional - sage.schemes
             False
 
         TESTS::
@@ -980,11 +981,11 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: designs.balanced_incomplete_block_design(7,3).is_uniform()
+            sage: designs.balanced_incomplete_block_design(7,3).is_uniform()            # optional - sage.schemes
             3
-            sage: designs.balanced_incomplete_block_design(7,3).is_uniform(k=3)
+            sage: designs.balanced_incomplete_block_design(7,3).is_uniform(k=3)         # optional - sage.schemes
             True
-            sage: designs.balanced_incomplete_block_design(7,3).is_uniform(k=4)
+            sage: designs.balanced_incomplete_block_design(7,3).is_uniform(k=4)         # optional - sage.schemes
             False
 
         TESTS::
@@ -1263,10 +1264,10 @@ class IncidenceStructure():
         :class:`~sage.combinat.designs.bibd.BalancedIncompleteBlockDesign` is
         also a `2`-design::
 
-            sage: bibd = designs.balanced_incomplete_block_design(13,4)
-            sage: bibd.is_t_design(return_parameters=True)
+            sage: bibd = designs.balanced_incomplete_block_design(13,4)                 # optional - sage.schemes
+            sage: bibd.is_t_design(return_parameters=True)                              # optional - sage.schemes
             (True, (2, 13, 4, 1))
-            sage: bibd.complement().is_t_design(return_parameters=True)
+            sage: bibd.complement().is_t_design(return_parameters=True)                 # optional - sage.schemes
             (True, (2, 13, 9, 6))
 
         The "uniform" complement of a graph is a graph::
@@ -1282,8 +1283,8 @@ class IncidenceStructure():
 
         TESTS::
 
-            sage: bibd.relabel({i:str(i) for i in bibd.ground_set()})
-            sage: bibd.complement().ground_set()
+            sage: bibd.relabel({i:str(i) for i in bibd.ground_set()})                   # optional - sage.schemes
+            sage: bibd.complement().ground_set()                                        # optional - sage.schemes
             ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
 
             sage: I = IncidenceStructure('abc', ['ab','ac','bc'])
@@ -1339,17 +1340,18 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: TD=designs.transversal_design(5,5)
-            sage: TD.relabel({i:chr(97+i) for i in range(25)})
-            sage: TD.ground_set()
-            ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y']
-            sage: TD.blocks()[:3]
+            sage: TD = designs.transversal_design(5,5)                                  # optional - sage.schemes
+            sage: TD.relabel({i: chr(97+i) for i in range(25)})                         # optional - sage.schemes
+            sage: TD.ground_set()                                                       # optional - sage.schemes
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y']
+            sage: TD.blocks()[:3]                                                       # optional - sage.schemes
             [['a', 'f', 'k', 'p', 'u'], ['a', 'g', 'm', 's', 'y'], ['a', 'h', 'o', 'q', 'x']]
 
         Relabel to integer points::
 
-            sage: TD.relabel()
-            sage: TD.blocks()[:3]
+            sage: TD.relabel()                                                          # optional - sage.schemes
+            sage: TD.blocks()[:3]                                                       # optional - sage.schemes
             [[0, 5, 10, 15, 20], [0, 6, 12, 18, 24], [0, 7, 14, 16, 23]]
 
         TESTS:
@@ -1368,7 +1370,7 @@ class IncidenceStructure():
 
         And one can also verify that we have exactly two automorphisms::
 
-            sage: I.automorphism_group()
+            sage: I.automorphism_group()                                                # optional - sage.groups
             Permutation Group with generators [(2,4)]
         """
         if not inplace:
@@ -1434,10 +1436,10 @@ class IncidenceStructure():
 
         EXAMPLES::
 
-            sage: P = IncidenceStructure([[1,2],[3,4],[2,3]]).packing()
-            sage: sorted(sorted(b) for b in P)
+            sage: P = IncidenceStructure([[1,2],[3,4],[2,3]]).packing()                 # optional - sage.numerical.mip
+            sage: sorted(sorted(b) for b in P)                                          # optional - sage.numerical.mip
             [[1, 2], [3, 4]]
-            sage: len(designs.steiner_triple_system(9).packing())
+            sage: len(designs.steiner_triple_system(9).packing())                       # optional - sage.numerical.mip
             3
         """
         from sage.numerical.mip import MixedIntegerLinearProgram
@@ -1935,10 +1937,10 @@ class IncidenceStructure():
 
         A non-resolvable design::
 
-            sage: Fano = designs.balanced_incomplete_block_design(7,3)
-            sage: Fano.is_resolvable()
+            sage: Fano = designs.balanced_incomplete_block_design(7,3)                  # optional - sage.schemes
+            sage: Fano.is_resolvable()                                                  # optional - sage.schemes
             False
-            sage: Fano.is_resolvable(True)
+            sage: Fano.is_resolvable(True)                                              # optional - sage.schemes
             (False, [])
 
         TESTS::
@@ -2042,12 +2044,12 @@ class IncidenceStructure():
 
         The Fano plane has chromatic number 3::
 
-            sage: len(designs.steiner_triple_system(7).coloring())
+            sage: len(designs.steiner_triple_system(7).coloring())                      # optional - sage.numerical.mip
             3
 
         One admissible 3-coloring::
 
-            sage: designs.steiner_triple_system(7).coloring() # not tested - architecture-dependent
+            sage: designs.steiner_triple_system(7).coloring()  # not tested - architecture-dependent, optional - sage.numerical.mip
             [[0, 2, 5, 1], [4, 3], [6]]
 
         The chromatic number of a graph is equal to the chromatic number of its
@@ -2055,9 +2057,9 @@ class IncidenceStructure():
 
             sage: g = graphs.PetersenGraph()
             sage: H = IncidenceStructure(g.edges(sort=True, labels=False))
-            sage: len(g.coloring())
+            sage: len(g.coloring())                                                     # optional - sage.numerical.mip
             3
-            sage: len(H.coloring())
+            sage: len(H.coloring())                                                     # optional - sage.numerical.mip
             3
         """
         if k is None:

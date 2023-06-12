@@ -37,37 +37,37 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
-        sage: OA = designs.orthogonal_arrays.build(8,9)
-        sage: is_orthogonal_array(OA,8,9)
+        sage: OA = designs.orthogonal_arrays.build(8,9)                                 # optional - sage.schemes
+        sage: is_orthogonal_array(OA,8,9)                                               # optional - sage.schemes
         True
-        sage: is_orthogonal_array(OA,8,10)
+        sage: is_orthogonal_array(OA,8,10)                                              # optional - sage.schemes
         False
-        sage: OA[4][3] = 1
-        sage: is_orthogonal_array(OA,8,9)
+        sage: OA[4][3] = 1                                                              # optional - sage.schemes
+        sage: is_orthogonal_array(OA,8,9)                                               # optional - sage.schemes
         False
-        sage: is_orthogonal_array(OA,8,9,verbose=True)
+        sage: is_orthogonal_array(OA,8,9,verbose=True)                                  # optional - sage.schemes
         Columns 0 and 3 are not orthogonal
         False
-        sage: is_orthogonal_array(OA,8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array(OA,8,9, verbose=True, terminology="MOLS")             # optional - sage.schemes
         Squares 0 and 3 are not orthogonal
         False
 
     TESTS::
 
-        sage: is_orthogonal_array(OA,8,9,t=3)
+        sage: is_orthogonal_array(OA,8,9, t=3)                                          # optional - sage.schemes
         Traceback (most recent call last):
         ...
         NotImplementedError: only implemented for t=2
-        sage: is_orthogonal_array([[3]*8],8,9,verbose=True)
+        sage: is_orthogonal_array([[3]*8],8,9, verbose=True)                            # optional - sage.schemes
         The number of rows is 1 instead of 9^2=81
         False
-        sage: is_orthogonal_array([[3]*8],8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array([[3]*8],8,9, verbose=True, terminology="MOLS")        # optional - sage.schemes
         All squares do not have dimension n^2=9^2
         False
-        sage: is_orthogonal_array([[3]*7],8,9,verbose=True)
+        sage: is_orthogonal_array([[3]*7],8,9, verbose=True)                            # optional - sage.schemes
         Some row does not have length 8
         False
-        sage: is_orthogonal_array([[3]*7],8,9,verbose=True,terminology="MOLS")
+        sage: is_orthogonal_array([[3]*7],8,9, verbose=True, terminology="MOLS")        # optional - sage.schemes
         The number of squares is not 6
         False
 
@@ -214,13 +214,13 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         a block has size 2 while K=[1]
         False
 
-        sage: p = designs.projective_plane(3)
-        sage: is_group_divisible_design(None, p.blocks(), 13)
+        sage: p = designs.projective_plane(3)                                           # optional - sage.schemes
+        sage: is_group_divisible_design(None, p.blocks(), 13)                           # optional - sage.schemes
         (True, [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]])
-        sage: is_group_divisible_design(None, p.blocks()*2, 13, verbose=True)
+        sage: is_group_divisible_design(None, p.blocks()*2, 13, verbose=True)           # optional - sage.schemes
         the pair (0,1) has been seen 2 times but lambda=1
         False
-        sage: is_group_divisible_design(None, p.blocks()*2, 13, lambd=2)
+        sage: is_group_divisible_design(None, p.blocks()*2, 13, lambd=2)                # optional - sage.schemes
         (True, [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]])
     """
     cdef int n = v
@@ -415,17 +415,17 @@ def is_projective_plane(blocks, verbose=False):
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_projective_plane
-        sage: p = designs.projective_plane(4)
-        sage: b = p.blocks()
-        sage: is_projective_plane(b, verbose=True)
+        sage: p = designs.projective_plane(4)                                           # optional - sage.schemes
+        sage: b = p.blocks()                                                            # optional - sage.schemes
+        sage: is_projective_plane(b, verbose=True)                                      # optional - sage.schemes
         True
 
-        sage: p = designs.projective_plane(2)
-        sage: b = p.blocks()
-        sage: is_projective_plane(b)
+        sage: p = designs.projective_plane(2)                                           # optional - sage.schemes
+        sage: b = p.blocks()                                                            # optional - sage.schemes
+        sage: is_projective_plane(b)                                                    # optional - sage.schemes
         True
-        sage: b[0][2] = 5
-        sage: is_projective_plane(b, verbose=True)
+        sage: b[0][2] = 5                                                               # optional - sage.schemes
+        sage: is_projective_plane(b, verbose=True)                                      # optional - sage.schemes
         the pair (0,5) has been seen 2 times but lambda=1
         False
 
@@ -437,10 +437,10 @@ def is_projective_plane(blocks, verbose=False):
         First block has less than 3 points.
         False
 
-        sage: p = designs.projective_plane(2)
-        sage: b = p.blocks()
-        sage: b[2].append(4)
-        sage: is_projective_plane(b, verbose=True)
+        sage: p = designs.projective_plane(2)                                           # optional - sage.schemes
+        sage: b = p.blocks()                                                            # optional - sage.schemes
+        sage: b[2].append(4)                                                            # optional - sage.schemes
+        sage: is_projective_plane(b, verbose=True)                                      # optional - sage.schemes
         a block has size 4 while K=[3]
         False
     """
