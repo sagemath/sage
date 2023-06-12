@@ -202,8 +202,8 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-gap/requirements.txt
 /pkgs/sagemath-giac/requirements.txt
 /pkgs/sagemath-homfly/requirements.txt
-/pkgs/sagemath-ntl/pyproject.toml
-/pkgs/sagemath-pari/pyproject.toml
+/pkgs/sagemath-ntl/requirements.txt
+/pkgs/sagemath-pari/requirements.txt
 /pkgs/sagemath-categories/MANIFEST.in
 
 # same for old locations - before Issue #31577
