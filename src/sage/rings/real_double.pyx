@@ -84,7 +84,7 @@ def is_RealDoubleField(x):
         use isinstance(..., sage.rings.abc.RealDoubleField) instead
         See https://github.com/sagemath/sage/issues/32610 for details.
         True
-        sage: is_RealDoubleField(RealField(53))
+        sage: is_RealDoubleField(RealField(53))                                         # optional - sage.rings.real_mpfr
         False
     """
     from sage.misc.superseded import deprecation
@@ -128,15 +128,15 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
     numbers and higher-precision ones, though of course there may be
     loss of precision::
 
-        sage: a = RealField(200)(2).sqrt(); a
+        sage: a = RealField(200)(2).sqrt(); a                                           # optional - sage.rings.real_mpfr
         1.4142135623730950488016887242096980785696718753769480731767
-        sage: b = RDF(a); b
+        sage: b = RDF(a); b                                                             # optional - sage.rings.real_mpfr
         1.4142135623730951
-        sage: a.parent()(b)
+        sage: a.parent()(b)                                                             # optional - sage.rings.real_mpfr
         1.4142135623730951454746218587388284504413604736328125000000
-        sage: a.parent()(b) == b
+        sage: a.parent()(b) == b                                                        # optional - sage.rings.real_mpfr
         True
-        sage: b == RR(a)
+        sage: b == RR(a)                                                                # optional - sage.rings.real_mpfr
         True
 
     TESTS::
@@ -446,7 +446,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: RDF.to_prec(52)
+            sage: RDF.to_prec(52)                                                       # optional - sage.rings.real_mpfr
             Real Field with 52 bits of precision
             sage: RDF.to_prec(53)
             Real Double Field
@@ -1167,8 +1167,8 @@ cdef class RealDoubleElement(FieldElement):
 
             sage: RDF(2.1)._im_gens_(RR, [RR(1)])
             2.10000000000000
-            sage: R = RealField(20)
-            sage: RDF(2.1)._im_gens_(R, [R(1)])
+            sage: R = RealField(20)                                                     # optional - sage.rings.real_mpfr
+            sage: RDF(2.1)._im_gens_(R, [R(1)])                                         # optional - sage.rings.real_mpfr
             2.1000
         """
         return codomain(self) # since 1 |--> 1

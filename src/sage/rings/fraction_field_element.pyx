@@ -173,10 +173,10 @@ cdef class FractionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: R.<x> = RealField(10)[]
-            sage: f = (x^2+2*x+1)/(x+1); f
+            sage: R.<x> = RealField(10)[]                                               # optional - sage.rings.real_mpfr
+            sage: f = (x^2+2*x+1)/(x+1); f                                              # optional - sage.rings.real_mpfr
             (x^2 + 2.0*x + 1.0)/(x + 1.0)
-            sage: f.reduce(); f
+            sage: f.reduce(); f                                                         # optional - sage.rings.real_mpfr
             x + 1.0
 
         TESTS:
