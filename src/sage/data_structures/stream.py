@@ -1960,7 +1960,7 @@ class Stream_plethysm(Stream_binary):
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
 
         sage: r2 = Stream_plethysm(f, g, True, p, include=[])                           # optional - sage.modules
-        sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))
+        sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))                       # optional - sage.modules
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
 
     """
