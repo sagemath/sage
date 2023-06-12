@@ -661,11 +661,11 @@ def path_decomposition(G, algorithm="BAB", cut_off=None, upper_bound=None, verbo
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import path_decomposition
         sage: g = graphs.CycleGraph(6)
-        sage: pw, L = path_decomposition(g, algorithm = "BAB"); pw
+        sage: pw, L = path_decomposition(g, algorithm="BAB"); pw
         2
-        sage: pw, L = path_decomposition(g, algorithm = "exponential"); pw
+        sage: pw, L = path_decomposition(g, algorithm="exponential"); pw
         2
-        sage: pw, L = path_decomposition(g, algorithm = "MILP"); pw
+        sage: pw, L = path_decomposition(g, algorithm="MILP"); pw                       # optional - sage.numerical.mip
         2
 
     TESTS:
@@ -771,14 +771,14 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
         2
         sage: vs,L = vertex_separation(G, algorithm="exponential"); vs                  # optional - sage.combinat
         2
-        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs                         # optional - sage.combinat
+        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs                         # optional - sage.combinat sage.numerical.mip
         2
         sage: G = graphs.Grid2dGraph(3,3)
         sage: vs,L = vertex_separation(G, algorithm="BAB"); vs
         3
         sage: vs,L = vertex_separation(G, algorithm="exponential"); vs
         3
-        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs
+        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs                         # optional - sage.numerical.mip
         3
 
     Digraphs with multiple strongly connected components::
@@ -805,7 +805,7 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
         sage: G = graphs.PetersenGraph()
-        sage: vs, L = vertex_separation(G, algorithm="MILP", solver="SCIP"); vs  # optional - pyscipopt
+        sage: vs, L = vertex_separation(G, algorithm="MILP", solver="SCIP"); vs  # optional - pyscipopt sage.numerical.mip
         5
 
     TESTS:
@@ -1306,8 +1306,8 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import _vertex_separation_MILP_formulation
         sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: p, x, u, y, z = _vertex_separation_MILP_formulation(G)                    # optional - sage.combinat
-        sage: p                                                                         # optional - sage.combinat
+        sage: p, x, u, y, z = _vertex_separation_MILP_formulation(G)                    # optional - sage.combinat sage.numerical.mip
+        sage: p                                                                         # optional - sage.combinat sage.numerical.mip
         Mixed Integer Program (minimization, 193 variables, 449 constraints)
     """
     from sage.graphs.graph import Graph
@@ -1421,9 +1421,9 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # optional - sage.combinat
+        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # optional - sage.combinat sage.numerical.mip
         2
-        sage: vs == vertex_separation.width_of_path_decomposition(G, L)                 # optional - sage.combinat
+        sage: vs == vertex_separation.width_of_path_decomposition(G, L)                 # optional - sage.combinat sage.numerical.mip
         True
         sage: vse, Le = vertex_separation.vertex_separation(G); vse                     # optional - sage.combinat
         2
@@ -1432,7 +1432,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = digraphs.Circuit(6)
-        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs
+        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # optional - sage.numerical.mip
         1
 
     TESTS:
@@ -1440,7 +1440,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Comparison with exponential algorithm::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: for i in range(10):
+        sage: for i in range(10):                                                       # optional - sage.numerical.mip
         ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
         ....:     ve, le = vertex_separation.vertex_separation(G)
         ....:     vm, lm = vertex_separation.vertex_separation_MILP(G)
@@ -1450,7 +1450,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Comparison with different values of the integrality parameter::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: for i in range(10):  # long time (11s on sage.math, 2012)
+        sage: for i in range(10):  # long time (11s on sage.math, 2012)                 # optional - sage.numerical.mip
         ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
         ....:     va, la = vertex_separation.vertex_separation_MILP(G, integrality=False)
         ....:     vb, lb = vertex_separation.vertex_separation_MILP(G, integrality=True)
@@ -1460,7 +1460,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Giving anything else than a Graph or a DiGraph::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: vertex_separation.vertex_separation_MILP([])
+        sage: vertex_separation.vertex_separation_MILP([])                              # optional - sage.numerical.mip
         Traceback (most recent call last):
         ...
         ValueError: the first input parameter must be a Graph or a DiGraph

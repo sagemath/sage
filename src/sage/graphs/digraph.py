@@ -1462,7 +1462,7 @@ class DiGraph(GenericGraph):
             x^2 + 3*x*y + y^2
 
             sage: G = posets.BooleanLattice(4).hasse_diagram()
-            sage: G.degree_polynomial().factor()
+            sage: G.degree_polynomial().factor()                                        # optional - sage.libs.pari
             (x + y)^4
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -1559,11 +1559,11 @@ class DiGraph(GenericGraph):
         is an edge, then `vu` is an edge too), then obviously the cardinality of
         its feedback arc set is the number of edges in the first graph::
 
-            sage: cycle=graphs.CycleGraph(5)
-            sage: dcycle=DiGraph(cycle)
+            sage: cycle = graphs.CycleGraph(5)
+            sage: dcycle = DiGraph(cycle)
             sage: cycle.size()
             5
-            sage: dcycle.feedback_edge_set(value_only=True)
+            sage: dcycle.feedback_edge_set(value_only=True)                             # optional - sage.numerical.mip
             5
 
         And in this situation, for any edge `uv` of the first graph, `uv` of
@@ -1573,9 +1573,9 @@ class DiGraph(GenericGraph):
            sage: while not g.num_edges():
            ....:     g = graphs.RandomGNP(5,.3)
            sage: dg = DiGraph(g)
-           sage: feedback = dg.feedback_edge_set()
+           sage: feedback = dg.feedback_edge_set()                                      # optional - sage.numerical.mip
            sage: u,v,l = next(g.edge_iterator())
-           sage: (u,v) in feedback or (v,u) in feedback
+           sage: (u,v) in feedback or (v,u) in feedback                                 # optional - sage.numerical.mip
            True
 
         TESTS:
@@ -1583,7 +1583,7 @@ class DiGraph(GenericGraph):
         Comparing with/without constraint generation. Also double-checks issue
         :trac:`12833`::
 
-            sage: for i in range(20):
+            sage: for i in range(20):                                                   # optional - sage.numerical.mip
             ....:     g = digraphs.RandomDirectedGNP(10, .3)
             ....:     x = g.feedback_edge_set(value_only=True)
             ....:     y = g.feedback_edge_set(value_only=True,
@@ -1597,31 +1597,33 @@ class DiGraph(GenericGraph):
             sage: D = digraphs.DeBruijn(2, 2)
             sage: sorted(D.loops(labels=None))
             [('00', '00'), ('11', '11')]
-            sage: FAS = D.feedback_edge_set(value_only=False)
-            sage: all(l in FAS for l in D.loops(labels=None))
+            sage: FAS = D.feedback_edge_set(value_only=False)                           # optional - sage.numerical.mip
+            sage: all(l in FAS for l in D.loops(labels=None))                           # optional - sage.numerical.mip
             True
-            sage: FAS2 =  D.feedback_edge_set(value_only=False, constraint_generation=False)
-            sage: len(FAS) == len(FAS2)
+            sage: FAS2 = D.feedback_edge_set(value_only=False,                          # optional - sage.numerical.mip
+            ....:                            constraint_generation=False)
+            sage: len(FAS) == len(FAS2)                                                 # optional - sage.numerical.mip
             True
 
         Check that multi-edges are properly taken into account::
 
             sage: cycle = graphs.CycleGraph(5)
             sage: dcycle = DiGraph(cycle)
-            sage: dcycle.feedback_edge_set(value_only=True)
+            sage: dcycle.feedback_edge_set(value_only=True)                             # optional - sage.numerical.mip
             5
             sage: dcycle.allow_multiple_edges(True)
             sage: dcycle.add_edges(dcycle.edges(sort=True))
-            sage: dcycle.feedback_edge_set(value_only=True)
+            sage: dcycle.feedback_edge_set(value_only=True)                             # optional - sage.numerical.mip
             10
-            sage: dcycle.feedback_edge_set(value_only=True, constraint_generation=False)
+            sage: dcycle.feedback_edge_set(value_only=True,                             # optional - sage.numerical.mip
+            ....:                          constraint_generation=False)
             10
 
         Strongly connected components are well handled (:trac:`23989`)::
 
             sage: g = digraphs.Circuit(3) * 2
             sage: g.add_edge(0, 3)
-            sage: g.feedback_edge_set(value_only=True)
+            sage: g.feedback_edge_set(value_only=True)                                  # optional - sage.numerical.mip
             2
         """
         # It would be a pity to start a LP if the digraph is already acyclic

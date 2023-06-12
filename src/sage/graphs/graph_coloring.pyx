@@ -468,7 +468,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
 
        sage: from sage.graphs.graph_coloring import vertex_coloring
        sage: g = graphs.PetersenGraph()
-       sage: vertex_coloring(g, value_only=True)
+       sage: vertex_coloring(g, value_only=True)                                        # optional - sage.numerical.mip
        3
 
     TESTS:
@@ -487,7 +487,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
     :trac:`33559` is fixed::
 
         sage: G = Graph('MgCgS?_O@IeTHKG??')
-        sage: len(G.coloring(algorithm='MILP'))
+        sage: len(G.coloring(algorithm='MILP'))                                         # optional - sage.numerical.mip
         4
     """
     g._scream_if_not_simple(allow_multiple_edges=True)
@@ -739,15 +739,15 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
     The fractional chromatic number of a `C_5` is `5/2`::
 
         sage: g = graphs.CycleGraph(5)
-        sage: g.fractional_chromatic_number()
+        sage: g.fractional_chromatic_number()                                           # optional - sage.numerical.mip
         5/2
 
     TESTS::
 
         sage: G = graphs.RandomGNP(20, .2)
-        sage: a = G.fractional_chromatic_number(check_components=True)
-        sage: b = G.fractional_chromatic_number(check_components=False)
-        sage: a == b
+        sage: a = G.fractional_chromatic_number(check_components=True)                  # optional - sage.numerical.mip
+        sage: b = G.fractional_chromatic_number(check_components=False)                 # optional - sage.numerical.mip
+        sage: a == b                                                                    # optional - sage.numerical.mip
         True
     """
     G._scream_if_not_simple()
@@ -848,7 +848,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
     The fractional chromatic index of a `C_5` is `5/2`::
 
         sage: g = graphs.CycleGraph(5)
-        sage: g.fractional_chromatic_index()
+        sage: g.fractional_chromatic_index()                                            # optional - sage.numerical.mip
         5/2
 
     TESTS:
@@ -857,9 +857,9 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
     solvers::
 
         sage: g = graphs.PetersenGraph()
-        sage: g.fractional_chromatic_index(solver='GLPK')  # known bug (#23798)
+        sage: g.fractional_chromatic_index(solver='GLPK')  # known bug (#23798)         # optional - sage.numerical.mip
         3.0
-        sage: g.fractional_chromatic_index(solver='PPL')
+        sage: g.fractional_chromatic_index(solver='PPL')                                # optional - sage.numerical.mip
         3
     """
     G._scream_if_not_simple()
@@ -989,13 +989,13 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_coloring import grundy_coloring
         sage: g = graphs.PathGraph(4)
-        sage: grundy_coloring(g, 4)
+        sage: grundy_coloring(g, 4)                                                     # optional - sage.numerical.mip
         3
 
     The Grundy number of the PetersenGraph is equal to 4::
 
         sage: g = graphs.PetersenGraph()
-        sage: grundy_coloring(g, 5)
+        sage: grundy_coloring(g, 5)                                                     # optional - sage.numerical.mip
         4
 
     It would have been sufficient to set the value of ``k`` to 4 in
@@ -1143,13 +1143,13 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_coloring import b_coloring
         sage: g = graphs.PathGraph(5)
-        sage: b_coloring(g, 5)
+        sage: b_coloring(g, 5)                                                          # optional - sage.numerical.mip
         3
 
     The b-chromatic number of the Petersen Graph is equal to 3::
 
         sage: g = graphs.PetersenGraph()
-        sage: b_coloring(g, 5)
+        sage: b_coloring(g, 5)                                                          # optional - sage.numerical.mip
         3
 
     It would have been sufficient to set the value of ``k`` to 4 in this case,
@@ -1344,32 +1344,33 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
        sage: from sage.graphs.graph_coloring import edge_coloring
        sage: g = graphs.PetersenGraph()
-       sage: edge_coloring(g, value_only=True, solver='GLPK')
+       sage: edge_coloring(g, value_only=True, solver='GLPK')                           # optional - sage.numerical.mip
        4
-       sage: color_classes = edge_coloring(g, value_only=False, solver='GLPK')
-       sage: len(color_classes)
+       sage: color_classes = edge_coloring(g, value_only=False, solver='GLPK')          # optional - sage.numerical.mip
+       sage: len(color_classes)                                                         # optional - sage.numerical.mip
        4
-       sage: len(set(frozenset(e) for C in color_classes for e in C)) == g.size()
+       sage: len(set(frozenset(e) for C in color_classes for e in C)) == g.size()       # optional - sage.numerical.mip
        True
-       sage: all(g.has_edge(e) for C in color_classes for e in C)
+       sage: all(g.has_edge(e) for C in color_classes for e in C)                       # optional - sage.numerical.mip
        True
-       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)
+       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)             # optional - sage.numerical.mip
        True
-       sage: color_classes = edge_coloring(g, value_only=False, hex_colors=True, solver='GLPK')
-       sage: sorted(color_classes.keys())
+       sage: color_classes = edge_coloring(g, value_only=False,                         # optional - sage.numerical.mip
+       ....:                               hex_colors=True, solver='GLPK')
+       sage: sorted(color_classes.keys())                                               # optional - sage.numerical.mip
        ['#00ffff', '#7f00ff', '#7fff00', '#ff0000']
 
     Complete graphs are colored using the linear-time round-robin coloring::
 
        sage: from sage.graphs.graph_coloring import edge_coloring
-       sage: len(edge_coloring(graphs.CompleteGraph(20)))
+       sage: len(edge_coloring(graphs.CompleteGraph(20)))                               # optional - sage.numerical.mip
        19
 
     The chromatic index of a non connected graph is the maximum over its
     connected components::
 
        sage: g = graphs.CompleteGraph(4) + graphs.CompleteGraph(10)
-       sage: edge_coloring(g, value_only=True)
+       sage: edge_coloring(g, value_only=True)                                          # optional - sage.numerical.mip
        9
 
     TESTS:
@@ -1377,11 +1378,11 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
     Graph without edge::
 
        sage: g = Graph(2)
-       sage: edge_coloring(g)
+       sage: edge_coloring(g)                                                           # optional - sage.numerical.mip
        []
-       sage: edge_coloring(g, value_only=True)
+       sage: edge_coloring(g, value_only=True)                                          # optional - sage.numerical.mip
        0
-       sage: edge_coloring(g, hex_colors=True)
+       sage: edge_coloring(g, hex_colors=True)                                          # optional - sage.numerical.mip
        {}
     """
     g._scream_if_not_simple()
@@ -1800,22 +1801,23 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
     horizontal lines and the set of vertical lines are an admissible partition::
 
         sage: from sage.graphs.graph_coloring import linear_arboricity
-        sage: g = graphs.Grid2dGraph(4, 4)
-        sage: g1,g2 = linear_arboricity(g)
+        sage: g = graphs.Grid2dGraph(4, 4)                                              # optional - sage.numerical.mip
+        sage: g1,g2 = linear_arboricity(g)                                              # optional - sage.numerical.mip
 
     Each graph is of course a forest::
 
-        sage: g1.is_forest() and g2.is_forest()
+        sage: g1.is_forest() and g2.is_forest()                                         # optional - sage.numerical.mip
         True
 
     Of maximum degree 2::
 
-        sage: max(g1.degree()) <= 2 and max(g2.degree()) <= 2
+        sage: max(g1.degree()) <= 2 and max(g2.degree()) <= 2                           # optional - sage.numerical.mip
         True
 
     Which constitutes a partition of the whole edge set::
 
-        sage: all((g1.has_edge(e) or g2.has_edge(e)) for e in g.edge_iterator(labels=None))
+        sage: all((g1.has_edge(e) or g2.has_edge(e))                                    # optional - sage.numerical.mip
+        ....:     for e in g.edge_iterator(labels=None))
         True
 
     TESTS:
@@ -1823,15 +1825,15 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
     Asking for the value of the linear arboricity only (:trac:`24991`)::
 
         sage: from sage.graphs.graph_coloring import linear_arboricity
-        sage: sorted(linear_arboricity(G, value_only=True) for G in graphs(4))
+        sage: sorted(linear_arboricity(G, value_only=True) for G in graphs(4))          # optional - sage.numerical.mip
         [0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
 
     Test parameter ``hex_color`` (:trac:`26228`)::
 
         sage: from sage.graphs.graph_coloring import linear_arboricity
         sage: g = graphs.Grid2dGraph(4, 4)
-        sage: d = linear_arboricity(g, hex_colors=True)
-        sage: sorted(d)
+        sage: d = linear_arboricity(g, hex_colors=True)                                 # optional - sage.numerical.mip
+        sage: sorted(d)                                                                 # optional - sage.numerical.mip
         ['#00ffff', '#ff0000']
     """
     g._scream_if_not_simple()
@@ -2009,21 +2011,22 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: g = graphs.CompleteGraph(8)
-        sage: colors = acyclic_edge_coloring(g)
+        sage: colors = acyclic_edge_coloring(g)                                         # optional - sage.numerical.mip
 
     Each color class is of course a matching ::
 
-        sage: all(max(gg.degree()) <= 1 for gg in colors)
+        sage: all(max(gg.degree()) <= 1 for gg in colors)                               # optional - sage.numerical.mip
         True
 
     These matchings being a partition of the edge set::
 
-        sage: all(any(gg.has_edge(e) for gg in colors) for e in g.edge_iterator(labels=False))
+        sage: all(any(gg.has_edge(e) for gg in colors)                                  # optional - sage.numerical.mip
+        ....:     for e in g.edge_iterator(labels=False))
         True
 
     Besides, the union of any two of them is a forest ::
 
-        sage: all(g1.union(g2).is_forest() for g1 in colors for g2 in colors)
+        sage: all(g1.union(g2).is_forest() for g1 in colors for g2 in colors)           # optional - sage.numerical.mip
         True
 
     If one wants to acyclically color a cycle on `4` vertices, at least 3 colors
@@ -2031,15 +2034,15 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
     with only 2::
 
         sage: g = graphs.CycleGraph(4)
-        sage: acyclic_edge_coloring(g, k=2)
+        sage: acyclic_edge_coloring(g, k=2)                                             # optional - sage.numerical.mip
         Traceback (most recent call last):
         ...
         ValueError: this graph cannot be colored with the given number of colors
 
     The optimal coloring give us `3` classes::
 
-        sage: colors = acyclic_edge_coloring(g, k=None)
-        sage: len(colors)
+        sage: colors = acyclic_edge_coloring(g, k=None)                                 # optional - sage.numerical.mip
+        sage: len(colors)                                                               # optional - sage.numerical.mip
         3
 
     TESTS:
@@ -2047,32 +2050,32 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
     Issue :trac:`24991` is fixed::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
-        sage: sorted(acyclic_edge_coloring(G, value_only=True) for G in graphs(4))
+        sage: sorted(acyclic_edge_coloring(G, value_only=True) for G in graphs(4))      # optional - sage.numerical.mip
         [2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5]
 
     Test parameter ``hex_color`` (:trac:`26228`)::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: g = graphs.CompleteGraph(4)
-        sage: d = acyclic_edge_coloring(g, hex_colors=True)
-        sage: sorted(d)
+        sage: d = acyclic_edge_coloring(g, hex_colors=True)                             # optional - sage.numerical.mip
+        sage: sorted(d)                                                                 # optional - sage.numerical.mip
         ['#0066ff', '#00ff66', '#cbff00', '#cc00ff', '#ff0000']
 
     The acyclic chromatic index of a graph without edge is 0 (:trac:`27079`)::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: g = Graph(3)
-        sage: acyclic_edge_coloring(g, k=None, value_only=True)
+        sage: acyclic_edge_coloring(g, k=None, value_only=True)                         # optional - sage.numerical.mip
         0
-        sage: acyclic_edge_coloring(g, k=None, hex_colors=True)
+        sage: acyclic_edge_coloring(g, k=None, hex_colors=True)                         # optional - sage.numerical.mip
         {}
-        sage: acyclic_edge_coloring(g, k=None, hex_colors=False)
+        sage: acyclic_edge_coloring(g, k=None, hex_colors=False)                        # optional - sage.numerical.mip
         []
 
     Empty graph  (:trac:`27079`)::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
-        sage: acyclic_edge_coloring(Graph(), k=None, value_only=True)
+        sage: acyclic_edge_coloring(Graph(), k=None, value_only=True)                   # optional - sage.numerical.mip
         0
     """
     g._scream_if_not_simple(allow_multiple_edges=True)

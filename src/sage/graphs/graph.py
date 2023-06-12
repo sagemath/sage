@@ -915,7 +915,7 @@ class Graph(GenericGraph):
 
     Check that :trac:`27505` is fixed::
 
-        sage: Graph(Graph().networkx_graph(), weighted=None, format='NX')
+        sage: Graph(Graph().networkx_graph(), weighted=None, format='NX')               # optional - networkx
         Graph on 0 vertices
     """
     _directed = False
@@ -2147,7 +2147,7 @@ class Graph(GenericGraph):
             sage: g = graphs.ClawGraph()
             sage: g
             Claw graph: Graph on 4 vertices
-            sage: edge_coloring(g, value_only=True)
+            sage: edge_coloring(g, value_only=True)                                     # optional - sage.numerical_mip
             3
             sage: g.is_overfull()
             False
@@ -2202,7 +2202,7 @@ class Graph(GenericGraph):
             sage: g.is_overfull()
             False
             sage: from sage.graphs.graph_coloring import edge_coloring
-            sage: max(g.degree()) + 1 ==  edge_coloring(g, value_only=True)
+            sage: max(g.degree()) + 1 ==  edge_coloring(g, value_only=True)             # optional - sage.numerical_mip
             True
         """
         # # A possible optimized version. But the gain in speed is very little.
@@ -2970,8 +2970,8 @@ class Graph(GenericGraph):
 
             sage: g = graphs.CycleGraph(6)
             sage: bounds = lambda x: [1,1]
-            sage: m = g.degree_constrained_subgraph(bounds=bounds)
-            sage: m.size()
+            sage: m = g.degree_constrained_subgraph(bounds=bounds)                      # optional - sage.numerical.mip
+            sage: m.size()                                                              # optional - sage.numerical.mip
             3
         """
         self._scream_if_not_simple()
@@ -3176,8 +3176,8 @@ class Graph(GenericGraph):
         optimal orientation is `\left\lceil \frac {nm} {n+m}\right\rceil`::
 
             sage: g = graphs.CompleteBipartiteGraph(3,4)
-            sage: o = g.minimum_outdegree_orientation()
-            sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))
+            sage: o = g.minimum_outdegree_orientation()                                 # optional - sage.numerical.mip
+            sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))                      # optional - sage.numerical.mip
             True
         """
         self._scream_if_not_simple()
@@ -3647,23 +3647,23 @@ class Graph(GenericGraph):
 
         The path `P_n` with `n \geq 2` has chromatic index 2::
 
-            sage: graphs.PathGraph(5).chromatic_index()
+            sage: graphs.PathGraph(5).chromatic_index()                                 # optional - sage.numerical.mip
             2
 
         The windmill graph with parameters `k,n` has chromatic index `(k-1)n`::
 
             sage: k,n = 3,4
             sage: G = graphs.WindmillGraph(k,n)
-            sage: G.chromatic_index() == (k-1)*n
+            sage: G.chromatic_index() == (k-1)*n                                        # optional - sage.numerical.mip
             True
 
         TESTS:
 
         Graphs without vertices or edges::
 
-            sage: Graph().chromatic_index()
+            sage: Graph().chromatic_index()                                             # optional - sage.numerical.mip
             0
-            sage: Graph(2).chromatic_index()
+            sage: Graph(2).chromatic_index()                                            # optional - sage.numerical.mip
             0
         """
         if not self.order() or not self.size():
@@ -3940,7 +3940,7 @@ class Graph(GenericGraph):
             sage: G = graphs.ClawGraph()
             sage: XG = G.chromatic_symmetric_function(); XG                             # optional - sage.combinat sage.modules
             p[1, 1, 1, 1] - 3*p[2, 1, 1] + 3*p[3, 1] - p[4]
-            sage: s(XG)
+            sage: s(XG)                                                                 # optional - sage.combinat sage.modules
             8*s[1, 1, 1, 1] + 5*s[2, 1, 1] - s[2, 2] + s[3, 1]
 
         We show that given a triangle `\{e_1, e_2, e_3\}`, we have
@@ -4514,8 +4514,8 @@ class Graph(GenericGraph):
            with this method ::
 
                sage: g = graphs.CycleGraph(10)
-               sage: mapping = g.has_homomorphism_to(g, core=True)
-               sage: print("The size of the core is {}".format(len(set(mapping.values()))))
+               sage: mapping = g.has_homomorphism_to(g, core=True)                      # optional - sage.numerical.mip
+               sage: print("The size of the core is {}".format(len(set(mapping.values()))))     # optional - sage.numerical.mip
                The size of the core is 2
 
         OUTPUT:
@@ -4529,18 +4529,18 @@ class Graph(GenericGraph):
         Is Petersen's graph 3-colorable::
 
             sage: P = graphs.PetersenGraph()
-            sage: P.has_homomorphism_to(graphs.CompleteGraph(3)) is not False
+            sage: P.has_homomorphism_to(graphs.CompleteGraph(3)) is not False           # optional - sage.numerical.mip
             True
 
         An odd cycle admits a homomorphism to a smaller odd cycle, but not to an
         even cycle::
 
             sage: g = graphs.CycleGraph(9)
-            sage: g.has_homomorphism_to(graphs.CycleGraph(5)) is not False
+            sage: g.has_homomorphism_to(graphs.CycleGraph(5)) is not False              # optional - sage.numerical.mip
             True
-            sage: g.has_homomorphism_to(graphs.CycleGraph(7)) is not False
+            sage: g.has_homomorphism_to(graphs.CycleGraph(7)) is not False              # optional - sage.numerical.mip
             True
-            sage: g.has_homomorphism_to(graphs.CycleGraph(4)) is not False
+            sage: g.has_homomorphism_to(graphs.CycleGraph(4)) is not False              # optional - sage.numerical.mip
             False
         """
         self._scream_if_not_simple()
@@ -4632,7 +4632,7 @@ class Graph(GenericGraph):
         The fractional clique number of a `C_7` is `7/3`::
 
             sage: g = graphs.CycleGraph(7)
-            sage: g.fractional_clique_number()
+            sage: g.fractional_clique_number()                                          # optional - sage.numerical.mip
             7/3
         """
         return self.fractional_chromatic_number(solver=solver, verbose=verbose,
@@ -4676,7 +4676,7 @@ class Graph(GenericGraph):
         In any graph, the `Mad` is always larger than the average degree::
 
             sage: g = graphs.RandomGNP(20,.3)
-            sage: mad_g = g.maximum_average_degree()
+            sage: mad_g = g.maximum_average_degree()                                    # optional - sage.numerical.mip
             sage: g.average_degree() <= mad_g
             True
 
@@ -4684,40 +4684,40 @@ class Graph(GenericGraph):
         is the maximum of the `Mad` of each graphs::
 
             sage: h = graphs.RandomGNP(20,.3)
-            sage: mad_h = h.maximum_average_degree()
-            sage: (g+h).maximum_average_degree() == max(mad_g, mad_h)
+            sage: mad_h = h.maximum_average_degree()                                    # optional - sage.numerical.mip
+            sage: (g+h).maximum_average_degree() == max(mad_g, mad_h)                   # optional - sage.numerical.mip
             True
 
         The subgraph of a regular graph realizing the maximum average degree is
         always the whole graph ::
 
             sage: g = graphs.CompleteGraph(5)
-            sage: mad_g = g.maximum_average_degree(value_only=False)
-            sage: g.is_isomorphic(mad_g)
+            sage: mad_g = g.maximum_average_degree(value_only=False)                    # optional - sage.numerical.mip
+            sage: g.is_isomorphic(mad_g)                                                # optional - sage.numerical.mip
             True
 
         This also works for complete bipartite graphs ::
 
             sage: g = graphs.CompleteBipartiteGraph(3,4)
-            sage: mad_g = g.maximum_average_degree(value_only=False)
-            sage: g.is_isomorphic(mad_g)
+            sage: mad_g = g.maximum_average_degree(value_only=False)                    # optional - sage.numerical.mip
+            sage: g.is_isomorphic(mad_g)                                                # optional - sage.numerical.mip
             True
 
         TESTS:
 
         Check corner cases::
 
-            sage: Graph().maximum_average_degree(value_only=True)
+            sage: Graph().maximum_average_degree(value_only=True)                       # optional - sage.numerical.mip
             0
-            sage: Graph().maximum_average_degree(value_only=False)
+            sage: Graph().maximum_average_degree(value_only=False)                      # optional - sage.numerical.mip
             Graph on 0 vertices
-            sage: Graph(1).maximum_average_degree(value_only=True)
+            sage: Graph(1).maximum_average_degree(value_only=True)                      # optional - sage.numerical.mip
             0
-            sage: Graph(1).maximum_average_degree(value_only=False)
+            sage: Graph(1).maximum_average_degree(value_only=False)                     # optional - sage.numerical.mip
             Graph on 1 vertex
-            sage: Graph(2).maximum_average_degree(value_only=True)
+            sage: Graph(2).maximum_average_degree(value_only=True)                      # optional - sage.numerical.mip
             0
-            sage: Graph(2).maximum_average_degree(value_only=False)
+            sage: Graph(2).maximum_average_degree(value_only=False)                     # optional - sage.numerical.mip
             Graph on 1 vertex
         """
         self._scream_if_not_simple()
@@ -4810,7 +4810,7 @@ class Graph(GenericGraph):
 
            sage: g = graphs.CompleteBipartiteGraph(3,3)
            sage: g.delete_edge(1,4)
-           sage: g.independent_set_of_representatives([[0,1,2],[3,4,5]])
+           sage: g.independent_set_of_representatives([[0,1,2],[3,4,5]])                # optional - sage.numerical.mip
            [1, 4]
 
         The Petersen Graph is 3-colorable, which can be expressed as an
@@ -4822,12 +4822,12 @@ class Graph(GenericGraph):
             sage: g = 3 * graphs.PetersenGraph()
             sage: n = g.order() / 3
             sage: f = [[i, i + n, i + 2*n] for i in range(n)]
-            sage: isr = g.independent_set_of_representatives(f)
-            sage: c = [integer_floor(i / n) for i in isr]
+            sage: isr = g.independent_set_of_representatives(f)                         # optional - sage.numerical.mip
+            sage: c = [integer_floor(i / n) for i in isr]                               # optional - sage.numerical.mip
             sage: color_classes = [[], [], []]
-            sage: for v, i in enumerate(c):
+            sage: for v, i in enumerate(c):                                             # optional - sage.numerical.mip
             ....:   color_classes[i].append(v)
-            sage: for classs in color_classes:
+            sage: for classs in color_classes:                                          # optional - sage.numerical.mip
             ....:   g.subgraph(classs).size() == 0
             True
             True
@@ -4941,7 +4941,7 @@ class Graph(GenericGraph):
 
             sage: g = graphs.GridGraph([4,4])
             sage: h = graphs.CompleteGraph(4)
-            sage: L = g.minor(h)
+            sage: L = g.minor(h)                                                        # optional - sage.numerical.mip
             sage: gg = g.subgraph(flatten(L.values(), max_level = 1))
             sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
             sage: gg.is_isomorphic(h)
@@ -4951,11 +4951,11 @@ class Graph(GenericGraph):
         as it has a `K_5` minor::
 
             sage: g = graphs.PetersenGraph()
-            sage: K5_minor = g.minor(graphs.CompleteGraph(5))                    # long time
+            sage: K5_minor = g.minor(graphs.CompleteGraph(5))              # long time  # optional - sage.numerical.mip
 
         And even a `K_{3,3}` minor::
 
-            sage: K33_minor = g.minor(graphs.CompleteBipartiteGraph(3,3))        # long time
+            sage: K33_minor = g.minor(graphs.CompleteBipartiteGraph(3,3))  # long time  # optional - sage.numerical.mip
 
         (It is much faster to use the linear-time test of planarity in this
         situation, though.)
@@ -4964,10 +4964,10 @@ class Graph(GenericGraph):
         This function will raise an exception in this case::
 
             sage: g = graphs.RandomGNP(20,.5)
-            sage: g = g.subgraph(edges = g.min_spanning_tree())
+            sage: g = g.subgraph(edges=g.min_spanning_tree())
             sage: g.is_tree()
             True
-            sage: L = g.minor(graphs.CompleteGraph(3))
+            sage: L = g.minor(graphs.CompleteGraph(3))                                  # optional - sage.numerical.mip
             Traceback (most recent call last):
             ...
             ValueError: This graph has no minor isomorphic to H !
@@ -6358,19 +6358,19 @@ class Graph(GenericGraph):
         Petersen's graph has a topological `K_4`-minor::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.topological_minor(graphs.CompleteGraph(4))
+            sage: g.topological_minor(graphs.CompleteGraph(4))                          # optional - sage.numerical.mip
             Subgraph of (Petersen graph): Graph on ...
 
         And a topological `K_{3,3}`-minor::
 
-            sage: g.topological_minor(graphs.CompleteBipartiteGraph(3,3))
+            sage: g.topological_minor(graphs.CompleteBipartiteGraph(3,3))               # optional - sage.numerical.mip
             Subgraph of (Petersen graph): Graph on ...
 
         And of course, a tree has no topological `C_3`-minor::
 
             sage: g = graphs.RandomGNP(15,.3)
-            sage: g = g.subgraph(edges = g.min_spanning_tree())
-            sage: g.topological_minor(graphs.CycleGraph(3))
+            sage: g = g.subgraph(edges=g.min_spanning_tree())
+            sage: g.topological_minor(graphs.CycleGraph(3))                             # optional - sage.numerical.mip
             False
         """
         self._scream_if_not_simple()
@@ -6761,9 +6761,9 @@ class Graph(GenericGraph):
         TESTS::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.clique_number(algorithm="MILP")
+            sage: g.clique_number(algorithm="MILP")                                     # optional - sage.numerical.mip
             2
-            sage: for i in range(10):                                            # optional - mcqd
+            sage: for i in range(10):                       # optional - mcqd           # optional - sage.numerical.mip
             ....:     g = graphs.RandomGNP(15,.5)
             ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"):
             ....:         print("This is dead wrong !")
@@ -6974,7 +6974,7 @@ class Graph(GenericGraph):
         As a linear program::
 
             sage: C = graphs.PetersenGraph()
-            sage: len(C.independent_set(algorithm="MILP"))
+            sage: len(C.independent_set(algorithm="MILP"))                              # optional - sage.numerical.mip
             4
 
         .. PLOT::
@@ -7073,9 +7073,9 @@ class Graph(GenericGraph):
         The two algorithms should return the same result::
 
            sage: g = graphs.RandomGNP(10, .5)
-           sage: vc1 = g.vertex_cover(algorithm="MILP")
+           sage: vc1 = g.vertex_cover(algorithm="MILP")                                 # optional - sage.numerical.mip
            sage: vc2 = g.vertex_cover(algorithm="Cliquer")
-           sage: len(vc1) == len(vc2)
+           sage: len(vc1) == len(vc2)                                                   # optional - sage.numerical.mip
            True
 
         The cardinality of the vertex cover is unchanged when reduction rules
@@ -7126,9 +7126,9 @@ class Graph(GenericGraph):
         Issue :trac:`24287` is fixed::
 
             sage: G = Graph([(0,1)]*5 + [(1,2)]*2, multiedges=True)
-            sage: G.vertex_cover(reduction_rules=True, algorithm='MILP')
+            sage: G.vertex_cover(reduction_rules=True, algorithm='MILP')                # optional - sage.numerical.mip
             [1]
-            sage: G.vertex_cover(reduction_rules=False)
+            sage: G.vertex_cover(reduction_rules=False)                                 # optional - sage.numerical.mip
             [1]
 
         Issue :trac:`25988` is fixed::
@@ -8143,22 +8143,22 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: C = graphs.CubeGraph(3)
-            sage: C.is_circumscribable()
+            sage: C.is_circumscribable()                                                # optional - sage.numerical.mip
             True
 
             sage: O = graphs.OctahedralGraph()
-            sage: O.is_circumscribable()
+            sage: O.is_circumscribable()                                                # optional - sage.numerical.mip
             True
 
-            sage: TT = polytopes.truncated_tetrahedron().graph()
-            sage: TT.is_circumscribable()
+            sage: TT = polytopes.truncated_tetrahedron().graph()                        # optional - sage.geometry.polyhedron
+            sage: TT.is_circumscribable()                                               # optional - sage.geometry.polyhedron sage.numerical.mip
             False
 
         Stellating in a face of the octahedral graph is not circumscribable::
 
             sage: f = set(flatten(choice(O.faces())))
             sage: O.add_edges([[6, i] for i in f])
-            sage: O.is_circumscribable()
+            sage: O.is_circumscribable()                                                # optional - sage.numerical.mip
             False
 
         .. SEEALSO::
@@ -8265,7 +8265,7 @@ class Graph(GenericGraph):
             True
 
             sage: C = graphs.CubeGraph(3)
-            sage: C.is_inscribable()
+            sage: C.is_inscribable()                                                    # optional - sage.numerical.mip
             True
 
         Cutting off a vertex from the cube yields an uninscribable graph::
@@ -8276,7 +8276,7 @@ class Graph(GenericGraph):
             sage: C.add_edges(Combinations(triangle, 2))
             sage: C.add_edges(zip(triangle, C.neighbors(v)))
             sage: C.delete_vertex(v)
-            sage: C.is_inscribable()
+            sage: C.is_inscribable()                                                    # optional - sage.numerical.mip
             False
 
         Breaking a face of the cube yields an uninscribable graph::
@@ -8284,7 +8284,7 @@ class Graph(GenericGraph):
             sage: C = graphs.CubeGraph(3)
             sage: face = choice(C.faces())
             sage: C.add_edge([face[0][0], face[2][0]])
-            sage: C.is_inscribable()
+            sage: C.is_inscribable()                                                    # optional - sage.numerical.mip
             False
 
 
@@ -9699,18 +9699,18 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
-            sage: a, F = G.arboricity(True)
-            sage: a
+            sage: a, F = G.arboricity(True)                                             # optional - sage.modules
+            sage: a                                                                     # optional - sage.modules
             2
-            sage: all([f.is_forest() for f in F])
+            sage: all([f.is_forest() for f in F])                                       # optional - sage.modules
             True
-            sage: len(set.union(*[set(f.edges(sort=False)) for f in F])) == G.size()
+            sage: len(set.union(*[set(f.edges(sort=False)) for f in F])) == G.size()    # optional - sage.modules
             True
 
         TESTS::
 
             sage: g = Graph()
-            sage: g.arboricity(True)
+            sage: g.arboricity(True)                                                    # optional - sage.modules
             (0, [])
         """
         from sage.matroids.constructor import Matroid

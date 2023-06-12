@@ -811,7 +811,7 @@ def Balaban10Cage(embedding=1):
         2
         sage: g.diameter()                                                              # optional - networkx
         6
-        sage: g.is_hamiltonian()                                                        # optional - networkx
+        sage: g.is_hamiltonian()                                                        # optional - networkx sage.numerical.mip
         True
         sage: g.show(figsize=[10,10])   # long time                                     # optional - networkx sage.plot
 
@@ -1071,7 +1071,7 @@ def BidiakisCube():
 
     It is a Hamiltonian graph with diameter 3 and girth 4::
 
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
         sage: g.diameter()
         3
@@ -1312,7 +1312,7 @@ def BrinkmannGraph():
 
     The Brinkmann graph is also Hamiltonian with chromatic number 4::
 
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
         sage: G.chromatic_number()
         4
@@ -1573,9 +1573,9 @@ def DoubleStarSnark():
         45
         sage: g.chromatic_number()
         3
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - sage.numerical.mip
         False
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         80
         sage: g.show()                                                                  # optional - sage.plot
     """
@@ -1641,7 +1641,7 @@ def MeredithGraph():
         4
         sage: g.chromatic_number()
         3
-        sage: g.is_hamiltonian()  # long time
+        sage: g.is_hamiltonian()  # long time                                           # optional - sage.numerical.mip
         False
     """
     g = Graph(name="Meredith Graph")
@@ -2012,7 +2012,7 @@ def DyckGraph():
 
         sage: G.is_planar()
         False
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
         sage: G.is_bipartite()
         True
@@ -2100,7 +2100,7 @@ def HortonGraph():
         96
         sage: g.chromatic_number()                                                      # optional - networkx
         2
-        sage: g.is_hamiltonian()  # not tested -- veeeery long                          # optional - networkx
+        sage: g.is_hamiltonian()  # not tested -- veeeery long                          # optional - networkx sage.numerical.mip
         False
     """
     g = Graph(name="Horton Graph")
@@ -2167,7 +2167,7 @@ def EllinghamHorton54Graph():
 
     It is not Hamiltonian::
 
-        sage: g.is_hamiltonian()  # not tested - too long
+        sage: g.is_hamiltonian()  # not tested - too long                               # optional - sage.numerical.mip
         False
 
     ... and it has a nice drawing ::
@@ -2244,7 +2244,7 @@ def EllinghamHorton78Graph():
 
     It is not Hamiltonian::
 
-        sage: g.is_hamiltonian()  # not tested - too long
+        sage: g.is_hamiltonian()  # not tested - too long                               # optional - sage.numerical.mip
         False
 
     ... and it has a nice drawing ::
@@ -2321,7 +2321,7 @@ def ErreraGraph():
     The Errera graph is Hamiltonian with radius 3, diameter 4, girth 3, and
     chromatic number 4::
 
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
         sage: G.radius()
         3
@@ -2450,7 +2450,7 @@ def FolkmanGraph():
         2
         sage: g.is_eulerian()                                                           # optional - networkx
         True
-        sage: g.is_hamiltonian()                                                        # optional - networkx
+        sage: g.is_hamiltonian()                                                        # optional - networkx sage.numerical_mip
         True
         sage: g.is_vertex_transitive()                                                  # optional - networkx
         False
@@ -2482,7 +2482,7 @@ def FosterGraph():
         10
         sage: g.automorphism_group().cardinality()                                      # optional - networkx
         4320
-        sage: g.is_hamiltonian()                                                        # optional - networkx
+        sage: g.is_hamiltonian()                                                        # optional - networkx sage.numerical_mip
         True
     """
     from sage.graphs.generators.families import LCFGraph
@@ -2514,7 +2514,7 @@ def FranklinGraph():
     The Franklin graph is a Hamiltonian, bipartite graph with radius 3, diameter
     3, and girth 4::
 
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.numerical_mip
         True
         sage: G.is_bipartite()
         True
@@ -2762,7 +2762,7 @@ def GrotzschGraph():
 
         sage: G = graphs.GrotzschGraph(); G
         Grotzsch graph: Graph on 11 vertices
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
         sage: G.order()
         11
@@ -2786,8 +2786,8 @@ def GrotzschGraph():
 
         sage: G.chromatic_number()
         4
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(5))
+        sage: ag = G.automorphism_group()                                               # optional - sage.groups
+        sage: ag.is_isomorphic(DihedralGroup(5))                                        # optional - sage.groups
         True
     """
     edges = [(0, u) for u in range(1, 6)]
@@ -3186,7 +3186,7 @@ def HoffmanGraph():
         sage: g = graphs.HoffmanGraph()
         sage: g.is_bipartite()
         True
-        sage: g.is_hamiltonian()  # long time
+        sage: g.is_hamiltonian()  # long time                                           # optional - sage.numerical.mip
         True
         sage: g.radius()
         3
@@ -3235,7 +3235,7 @@ def HoltGraph():
         True
         sage: g.chromatic_number()
         3
-        sage: g.is_hamiltonian()  # long time
+        sage: g.is_hamiltonian()  # long time                                           # optional - sage.numerical.mip
         True
         sage: g.radius()
         3
@@ -3755,7 +3755,7 @@ def MoserSpindle():
 
     It is a Hamiltonian graph with radius 2, diameter 2, and girth 3::
 
-        sage: G.is_hamiltonian()                                                        # optional - sage.symbolic
+        sage: G.is_hamiltonian()                                                        # optional - sage.numerical.mip sage.symbolic
         True
         sage: G.radius()                                                                # optional - sage.symbolic
         2
@@ -3984,7 +3984,7 @@ def RobertsonGraph():
          * (x^2 - 3)^2 * (x^2 + x - 4)^2 * (x^2 + x - 3)^2
         sage: g.chromatic_number()                                                      # optional - networkx
         3
-        sage: g.is_hamiltonian()                                                        # optional - networkx
+        sage: g.is_hamiltonian()                                                        # optional - networkx sage.numerical.mip
         True
         sage: g.is_vertex_transitive()                                                  # optional - networkx
         False
@@ -4079,7 +4079,7 @@ def ShrikhandeGraph():
 
         sage: G.is_planar()
         False
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
         sage: G.is_eulerian()
         True
@@ -4238,10 +4238,10 @@ def SousselierGraph():
         3
         sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         2
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - sage.numerical.mip
         False
         sage: g.delete_vertex(g.random_vertex())
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
     """
     g = Graph(name="Sousselier Graph")
@@ -4518,7 +4518,7 @@ def TutteGraph():
         4
         sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         3
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - sage.numerical.mip
         False
     """
     g = Graph(name="Tutte Graph")
@@ -4637,10 +4637,10 @@ def WienerArayaGraph():
         4
         sage: g.is_planar()
         True
-        sage: g.is_hamiltonian()  # not tested -- around 30s long
+        sage: g.is_hamiltonian()  # not tested -- around 30s long                       # optional - sage.numerical.mip
         False
         sage: g.delete_vertex(g.random_vertex())
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
     """
     g = Graph(name="Wiener-Araya Graph")

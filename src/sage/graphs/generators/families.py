@@ -40,7 +40,7 @@ def JohnsonGraph(n, k):
     The Johnson graph is a Hamiltonian graph::
 
         sage: g = graphs.JohnsonGraph(7, 3)
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
 
     Every Johnson graph is vertex transitive::
@@ -2074,15 +2074,15 @@ def HararyGraph(k, n):
         9
         sage: h.size()
         23
-        sage: h.vertex_connectivity()
+        sage: h.vertex_connectivity()                                                   # optional - sage.numerical.mip
         5
 
     TESTS:
 
     Connectivity of some Harary graphs::
 
-        sage: n=10
-        sage: for k in range(2,n):
+        sage: n = 10
+        sage: for k in range(2,n):                                                      # optional - sage.numerical.mip
         ....:     g = graphs.HararyGraph(k,n)
         ....:     if k != g.vertex_connectivity():
         ....:        print("Connectivity of Harary graphs not satisfied.")

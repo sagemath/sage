@@ -417,20 +417,20 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     The 5-cycle or the Petersen Graph are not transitively orientable::
 
       sage: from sage.graphs.comparability import is_comparability_MILP as is_comparability
-      sage: is_comparability(graphs.CycleGraph(5), certificate = True)
+      sage: is_comparability(graphs.CycleGraph(5), certificate=True)                    # optional - sage.numerical.mip
       (False, None)
       sage: g = graphs.PetersenGraph()
-      sage: is_comparability(g, certificate = True)
+      sage: is_comparability(g, certificate=True)                                       # optional - sage.numerical.mip
       (False, None)
 
     But the Bull graph is::
 
       sage: g = graphs.BullGraph()
-      sage: is_comparability(g)
+      sage: is_comparability(g)                                                         # optional - sage.numerical.mip
       True
-      sage: is_comparability(g, certificate = True)
+      sage: is_comparability(g, certificate=True)                                       # optional - sage.numerical.mip
       (True, Digraph on 5 vertices)
-      sage: is_comparability(g, certificate = True)[1].is_transitive()
+      sage: is_comparability(g, certificate=True)[1].is_transitive()                    # optional - sage.numerical.mip
       True
     """
     from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
@@ -664,7 +664,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
     Then with MILP::
 
        sage: from sage.graphs.comparability import is_permutation
-       sage: for i in range(20):
+       sage: for i in range(20):                                                        # optional - sage.numerical.mip
        ....:     p = Permutations(10).random_element()
        ....:     g1 = graphs.PermutationGraph(p)
        ....:     isit, certif = is_permutation(g1, algorithm="MILP", certificate=True)

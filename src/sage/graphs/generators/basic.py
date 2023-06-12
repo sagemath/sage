@@ -831,7 +831,7 @@ def Toroidal6RegularGrid2dGraph(p, q):
         True
         sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         300
-        sage: g.is_hamiltonian()
+        sage: g.is_hamiltonian()                                                        # optional - sage.numerical.mip
         True
 
     TESTS:

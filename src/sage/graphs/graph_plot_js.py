@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.plot
 r"""
 Graph plotting in Javascript with d3.js
 

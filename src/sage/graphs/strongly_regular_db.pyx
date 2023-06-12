@@ -163,12 +163,12 @@ def is_muzychuk_S6(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_muzychuk_S6
-        sage: t = is_muzychuk_S6(378, 116, 34, 36)
-        sage: G = t[0](*t[1:]); G
+        sage: t = is_muzychuk_S6(378, 116, 34, 36)                                      # optional - sage.libs.pari
+        sage: G = t[0](*t[1:]); G                                                       # optional - sage.libs.pari
         Muzychuk S6 graph with parameters (3,3): Graph on 378 vertices
         sage: G.is_strongly_regular(parameters=True)
         (378, 116, 34, 36)
-        sage: t = is_muzychuk_S6(5, 5, 5, 5); t
+        sage: t = is_muzychuk_S6(5, 5, 5, 5); t                                         # optional - sage.libs.pari
     """
     cdef int n, d
     from sage.rings.integer_ring import ZZ
@@ -568,9 +568,9 @@ def is_NOodd(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_NOodd
-        sage: t = is_NOodd(120, 51, 18, 24); t
+        sage: t = is_NOodd(120, 51, 18, 24); t                                          # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 4, '-')
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         NO^-(5, 4): Graph on 120 vertices
         sage: g.is_strongly_regular(parameters=True)
         (120, 51, 18, 24)
@@ -579,21 +579,21 @@ def is_NOodd(int v, int k, int l, int mu):
 
     All of ``NO^+(2m+1,q)`` and ``NO^-(2m+1,q)`` appear::
 
-        sage: t = is_NOodd(120, 51, 18, 24); t
+        sage: t = is_NOodd(120, 51, 18, 24); t                                          # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 4, '-')
-        sage: t = is_NOodd(136, 75, 42, 40); t
+        sage: t = is_NOodd(136, 75, 42, 40); t                                          # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 4, '+')
-        sage: t=is_NOodd(378, 260, 178, 180); t
+        sage: t = is_NOodd(378, 260, 178, 180); t                                       # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 7, 3, '+')
-        sage: t=is_NOodd(45, 32, 22, 24); t
+        sage: t = is_NOodd(45, 32, 22, 24); t                                           # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 3, '+')
-        sage: t=is_NOodd(351, 224, 142, 144); t
+        sage: t = is_NOodd(351, 224, 142, 144); t                                       # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 7, 3, '-')
-        sage: t = is_NOodd(325, 144, 68, 60); t
+        sage: t = is_NOodd(325, 144, 68, 60); t                                         # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 5, '+')
-        sage: t = is_NOodd(300, 104, 28, 40); t
+        sage: t = is_NOodd(300, 104, 28, 40); t                                         # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 5, '-')
-        sage: t = is_NOodd(5,5,5,5); t
+        sage: t = is_NOodd(5,5,5,5); t                                                  # optional - sage.libs.pari
     """
     cdef int n, q
     r, s = eigenvalues(v, k, l, mu)  # -eq^(n-1)-1 and eq^(n-1)(q-2)-1; q=3 is special case
@@ -638,22 +638,22 @@ def is_NOperp_F5(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_NOperp_F5
-        sage: t = is_NOperp_F5(10, 3, 0, 1); t
+        sage: t = is_NOperp_F5(10, 3, 0, 1); t                                          # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 3, 5, '-', 1)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         NO^-,perp(3, 5): Graph on 10 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (10, 3, 0, 1)
 
     TESTS:
 
     All of ``NO^+,perp(2m+1,5)`` and ``NO^-,perp(2m+1,5)`` appear::
 
-        sage: t = is_NOperp_F5(325, 60, 15, 10); t
+        sage: t = is_NOperp_F5(325, 60, 15, 10); t                                      # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 5, '+', 1)
-        sage: t = is_NOperp_F5(300, 65, 10, 15); t
+        sage: t = is_NOperp_F5(300, 65, 10, 15); t                                      # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 5, '-', 1)
-        sage: t = is_NOperp_F5(5,5,5,5); t
+        sage: t = is_NOperp_F5(5,5,5,5); t                                              # optional - sage.libs.pari
     """
     cdef int n
     r, s = eigenvalues(v, k, l, mu)  # 2*e*5**(n-1), -e*5**(n-1); note exceptional case n=1
@@ -693,22 +693,22 @@ def is_NO_F2(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_NO_F2
-        sage: t = is_NO_F2(10, 3, 0, 1); t
+        sage: t = is_NO_F2(10, 3, 0, 1); t                                              # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 4, 2, '-')
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         NO^-(4, 2): Graph on 10 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (10, 3, 0, 1)
 
     TESTS:
 
     All of ``NO^+(2m,2)`` and ``NO^-(2m,2)`` appear::
 
-        sage: t = is_NO_F2(36, 15, 6, 6); t
+        sage: t = is_NO_F2(36, 15, 6, 6); t                                             # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 6, 2, '-')
-        sage: t = is_NO_F2(28, 15, 6, 10); t
+        sage: t = is_NO_F2(28, 15, 6, 10); t                                            # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 6, 2, '+')
-        sage: t = is_NO_F2(5,5,5,5); t
+        sage: t = is_NO_F2(5,5,5,5); t                                                  # optional - sage.libs.pari
     """
     cdef int n, e, p
     p, n = is_prime_power(k+1, get_data=True)  # k+1==2**(2*n-2)
@@ -744,22 +744,22 @@ def is_NO_F3(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_NO_F3
-        sage: t = is_NO_F3(15, 6, 1, 3); t
+        sage: t = is_NO_F3(15, 6, 1, 3); t                                              # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 4, 3, '-')
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         NO^-(4, 3): Graph on 15 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (15, 6, 1, 3)
 
     TESTS:
 
     All of ``NO^+(2m,3)`` and ``NO^-(2m,3)`` appear::
 
-        sage: t = is_NO_F3(126, 45, 12, 18); t
+        sage: t = is_NO_F3(126, 45, 12, 18); t                                          # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 6, 3, '-')
-        sage: t = is_NO_F3(117, 36, 15, 9); t
+        sage: t = is_NO_F3(117, 36, 15, 9); t                                           # optional - sage.libs.pari
         (<function NonisotropicOrthogonalPolarGraph at ...>, 6, 3, '+')
-        sage: t = is_NO_F3(5,5,5,5); t
+        sage: t = is_NO_F3(5,5,5,5); t                                                  # optional - sage.libs.pari
     """
     cdef int n, e, p
     r, s = eigenvalues(v, k, l, mu)  # e*3**(n-1), -e*3**(n-2)
@@ -800,22 +800,22 @@ def is_NU(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_NU
-        sage: t = is_NU(40, 27, 18, 18); t
+        sage: t = is_NU(40, 27, 18, 18); t                                              # optional - sage.libs.pari
         (<function NonisotropicUnitaryPolarGraph at ...>, 4, 2)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         NU(4, 2): Graph on 40 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (40, 27, 18, 18)
 
     TESTS::
 
-        sage: t = is_NU(176, 135, 102, 108); t
+        sage: t = is_NU(176, 135, 102, 108); t                                          # optional - sage.libs.pari
         (<function NonisotropicUnitaryPolarGraph at ...>, 5, 2)
-        sage: t = is_NU(540, 224, 88, 96); t
+        sage: t = is_NU(540, 224, 88, 96); t                                            # optional - sage.libs.pari
         (<function NonisotropicUnitaryPolarGraph at ...>, 4, 3)
-        sage: t = is_NU(208, 75, 30, 25); t
+        sage: t = is_NU(208, 75, 30, 25); t                                             # optional - sage.libs.pari
         (<function NonisotropicUnitaryPolarGraph at ...>, 3, 4)
-        sage: t = is_NU(5,5,5,5); t
+        sage: t = is_NU(5,5,5,5); t                                                     # optional - sage.libs.pari
     """
     cdef int n, q, e               # special cases: n=3 or q=2
     r, s = eigenvalues(v, k, l, mu)  # r,s = eq^{n-2} - 1, -e(q^2-q-1)q^{n-3} - 1, e=(-1)^n
@@ -867,11 +867,11 @@ def is_haemers(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_haemers
-        sage: t = is_haemers(96, 19, 2, 4); t
+        sage: t = is_haemers(96, 19, 2, 4); t                                           # optional - sage.libs.pari
         (<function HaemersGraph at ...>, 4)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         Haemers(4): Graph on 96 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (96, 19, 2, 4)
 
     TESTS::
@@ -909,20 +909,20 @@ def is_cossidente_penttila(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_cossidente_penttila
-        sage: t =  is_cossidente_penttila(378, 52, 1, 8); t
+        sage: t =  is_cossidente_penttila(378, 52, 1, 8); t                             # optional - sage.libs.pari
         (<function CossidentePenttilaGraph at ...>, 5)
-        sage: g = t[0](*t[1:]); g                      # optional - gap_packages
+        sage: g = t[0](*t[1:]); g                      # optional - gap_packages        # optional - sage.libs.pari
         CossidentePenttila(5): Graph on 378 vertices
-        sage: g.is_strongly_regular(parameters=True)   # optional - gap_packages
+        sage: g.is_strongly_regular(parameters=True)   # optional - gap_packages        # optional - sage.libs.pari
         (378, 52, 1, 8)
 
     TESTS::
 
-        sage: t =  is_cossidente_penttila(56,10,0,2); t
+        sage: t =  is_cossidente_penttila(56,10,0,2); t                                 # optional - sage.libs.pari
         (<function CossidentePenttilaGraph at ...>, 3)
-        sage: t =  is_cossidente_penttila(1376,150,2,18); t
+        sage: t =  is_cossidente_penttila(1376,150,2,18); t                             # optional - sage.libs.pari
         (<function CossidentePenttilaGraph at ...>, 7)
-        sage: t = is_cossidente_penttila(5,5,5,5); t
+        sage: t = is_cossidente_penttila(5,5,5,5); t                                    # optional - sage.libs.pari
     """
     cdef int q, n, p
     q = 2*l + 3
@@ -1010,19 +1010,19 @@ def is_polhill(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_polhill
-        sage: t = is_polhill(1024, 231,  38,  56); t
+        sage: t = is_polhill(1024, 231,  38,  56); t                                    # optional - sage.rings.finite_rings
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
         sage: g = t[0](*t[1:]); g                    # not tested (too long)            # optional - sage.rings.finite_rings
         Graph on 1024 vertices
         sage: g.is_strongly_regular(parameters=True) # not tested (too long)            # optional - sage.rings.finite_rings
         (1024, 231, 38, 56)
-        sage: t = is_polhill(1024, 264,  56,  72); t
+        sage: t = is_polhill(1024, 264,  56,  72); t                                    # optional - sage.rings.finite_rings
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
-        sage: t = is_polhill(1024, 297,  76,  90); t
+        sage: t = is_polhill(1024, 297,  76,  90); t                                    # optional - sage.rings.finite_rings
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
-        sage: t = is_polhill(1024, 330,  98, 110); t
+        sage: t = is_polhill(1024, 330,  98, 110); t                                    # optional - sage.rings.finite_rings
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
-        sage: t = is_polhill(1024, 462, 206, 210); t
+        sage: t = is_polhill(1024, 462, 206, 210); t                                    # optional - sage.rings.finite_rings
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
     """
     if (v, k, l, mu) not in [(1024, 231,  38,  56),
@@ -1268,26 +1268,26 @@ def is_unitary_polar(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_unitary_polar
-        sage: t = is_unitary_polar(45, 12, 3, 3); t
+        sage: t = is_unitary_polar(45, 12, 3, 3); t                                     # optional - sage.libs.pari
         (<function UnitaryPolarGraph at ...>, 4, 2)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         Unitary Polar Graph U(4, 2); GQ(4, 2): Graph on 45 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (45, 12, 3, 3)
 
-        sage: t = is_unitary_polar(5,5,5,5); t
+        sage: t = is_unitary_polar(5,5,5,5); t                                          # optional - sage.libs.pari
 
     TESTS:
 
     All the ``U(n,q)`` appear::
 
-        sage: t = is_unitary_polar(45, 12, 3, 3); t
+        sage: t = is_unitary_polar(45, 12, 3, 3); t                                     # optional - sage.libs.pari
         (<function UnitaryPolarGraph at ...>, 4, 2)
-        sage: t = is_unitary_polar(165, 36, 3, 9); t
+        sage: t = is_unitary_polar(165, 36, 3, 9); t                                    # optional - sage.libs.pari
         (<function UnitaryPolarGraph at ...>, 5, 2)
-        sage: t = is_unitary_polar(693, 180, 51, 45); t
+        sage: t = is_unitary_polar(693, 180, 51, 45); t                                 # optional - sage.libs.pari
         (<function UnitaryPolarGraph at ...>, 6, 2)
-        sage: t = is_unitary_polar(1105, 80, 15, 5); t
+        sage: t = is_unitary_polar(1105, 80, 15, 5); t                                  # optional - sage.libs.pari
         (<function UnitaryPolarGraph at ...>, 4, 4)
     """
     r, s = eigenvalues(v, k, l, mu)
@@ -1344,17 +1344,17 @@ def is_unitary_dual_polar(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_unitary_dual_polar
-        sage: t = is_unitary_dual_polar(297, 40, 7, 5); t
+        sage: t = is_unitary_dual_polar(297, 40, 7, 5); t                               # optional - sage.libs.pari
         (<function UnitaryDualPolarGraph at ...>, 5, 2)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         Unitary Dual Polar Graph DU(5, 2); GQ(8, 4): Graph on 297 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (297, 40, 7, 5)
-        sage: t = is_unitary_dual_polar(5,5,5,5); t
+        sage: t = is_unitary_dual_polar(5,5,5,5); t                                     # optional - sage.libs.pari
 
     TESTS::
 
-        sage: is_unitary_dual_polar(6832, 270, 26, 10)
+        sage: is_unitary_dual_polar(6832, 270, 26, 10)                                  # optional - sage.libs.pari
         (<function UnitaryDualPolarGraph at ...>, 5, 3)
     """
     r, s = eigenvalues(v, k, l, mu)
@@ -1394,44 +1394,44 @@ def is_GQqmqp(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_GQqmqp
-        sage: t = is_GQqmqp(27,10,1,5); t
+        sage: t = is_GQqmqp(27,10,1,5); t                                               # optional - sage.libs.pari
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 3, False)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         AS(3); GQ(2, 4): Graph on 27 vertices
-        sage: t = is_GQqmqp(45,12,3,3); t
+        sage: t = is_GQqmqp(45,12,3,3); t                                               # optional - sage.libs.pari
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 3, True)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         AS(3)*; GQ(4, 2): Graph on 45 vertices
         sage: g.is_strongly_regular(parameters=True)
         (45, 12, 3, 3)
-        sage: t = is_GQqmqp(16,6,2,2); t
+        sage: t = is_GQqmqp(16,6,2,2); t                                                # optional - sage.libs.pari
         (<function T2starGeneralizedQuadrangleGraph at ...>, 2, True)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         T2*(O,2)*; GQ(3, 1): Graph on 16 vertices
         sage: g.is_strongly_regular(parameters=True)
         (16, 6, 2, 2)
-        sage: t = is_GQqmqp(64,18,2,6); t
+        sage: t = is_GQqmqp(64,18,2,6); t                                               # optional - sage.libs.pari
         (<function T2starGeneralizedQuadrangleGraph at ...>, 4, False)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         T2*(O,4); GQ(3, 5): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)
         (64, 18, 2, 6)
 
     TESTS::
 
-        sage: (S,T)=(127,129)
-        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
+        sage: (S,T) = (127,129)
+        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t                        # optional - sage.libs.pari
         (<function T2starGeneralizedQuadrangleGraph at ...>, 128, False)
-        sage: (S,T)=(129,127)
-        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
+        sage: (S,T) = (129,127)
+        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t                        # optional - sage.libs.pari
         (<function T2starGeneralizedQuadrangleGraph at ...>, 128, True)
-        sage: (S,T)=(124,126)
-        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
+        sage: (S,T) = (124,126)
+        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t                        # optional - sage.libs.pari
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 125, False)
-        sage: (S,T)=(126,124)
-        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
+        sage: (S,T) = (126,124)
+        sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t                        # optional - sage.libs.pari
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 125, True)
-        sage: t = is_GQqmqp(5,5,5,5); t
+        sage: t = is_GQqmqp(5,5,5,5); t                                                 # optional - sage.libs.pari
     """
     # do we have GQ(s,t)? we must have mu=t+1, s=l+1,
     # v=(s+1)(st+1), k=s(t+1)
@@ -1547,17 +1547,17 @@ def is_taylor_twograph_srg(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_taylor_twograph_srg
-        sage: t = is_taylor_twograph_srg(28, 15, 6, 10); t
+        sage: t = is_taylor_twograph_srg(28, 15, 6, 10); t                              # optional - sage.libs.pari
         (<function TaylorTwographSRG at ...>, 3)
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         Taylor two-graph SRG: Graph on 28 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (28, 15, 6, 10)
-        sage: t = is_taylor_twograph_srg(5,5,5,5); t
+        sage: t = is_taylor_twograph_srg(5,5,5,5); t                                    # optional - sage.libs.pari
 
     TESTS::
 
-        sage: is_taylor_twograph_srg(730, 369, 168, 205)
+        sage: is_taylor_twograph_srg(730, 369, 168, 205)                                # optional - sage.libs.pari
         (<function TaylorTwographSRG at ...>, 9)
 
     """

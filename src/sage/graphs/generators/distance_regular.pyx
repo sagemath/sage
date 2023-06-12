@@ -2525,10 +2525,9 @@ def near_polygon_graph(family, params):
 
     EXAMPLES::
 
-        sage: from sage.graphs.generators.distance_regular import (
-        ....: is_near_polygon, near_polygon_graph)
-        sage: near_polygon_graph(*is_near_polygon([6, 5, 5, 4, 4, 3, 3, 2, 2, \         # optional - sage.combinat
-        ....: 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6]))
+        sage: from sage.graphs.generators.distance_regular import is_near_polygon, near_polygon_graph
+        sage: near_polygon_graph(*is_near_polygon(                                      # optional - sage.combinat
+        ....:     [6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6]))
         Bipartite double of Odd graph on a set of 11 elements: Graph on 924 vertices
         sage: G=_; G.is_distance_regular(True)                                          # optional - sage.combinat
         ([6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, None],
