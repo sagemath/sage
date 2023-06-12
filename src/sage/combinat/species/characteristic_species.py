@@ -204,7 +204,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: F = species.CharacteristicSpecies(2)
             sage: g = F.cycle_index_series()                                            # optional - sage.modules
-            sage: g[0:5]
+            sage: g[0:5]                                                                # optional - sage.modules
             [0, 0, 1/2*p[1, 1] + 1/2*p[2], 0, 0]
         """
         cis = SetSpecies(weight=self._weight).cycle_index_series(base_ring)

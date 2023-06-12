@@ -105,7 +105,7 @@ enumerated sets::
     ([1], [1], [1], [1], [1])
     sage: PartitionTuples(4,5).an_element()
     ([1], [], [], [4])
-    sage: PartitionTuples(3,2)[:]
+    sage: PartitionTuples(3,2)[:]                                                       # optional - sage.libs.flint
     [([2], [], []),
      ([1, 1], [], []),
      ([1], [1], []),
@@ -115,7 +115,7 @@ enumerated sets::
      ([], [1], [1]),
      ([], [], [2]),
      ([], [], [1, 1])]
-    sage: PartitionTuples(2,3).list()
+    sage: PartitionTuples(2,3).list()                                                   # optional - sage.libs.flint
     [([3], []),
      ([2, 1], []),
      ([1, 1, 1], []),
@@ -155,7 +155,7 @@ dominance and so::
        *   **        *
        *             *
                      *
-    sage: lam=PartitionTuples(3)([[3,2],[],[1,1,1,1]]); lam
+    sage: lam = PartitionTuples(3)([[3,2],[],[1,1,1,1]]); lam
     ([3, 2], [], [1, 1, 1, 1])
     sage: lam.level()
     3
@@ -200,7 +200,7 @@ dominance and so::
 
 Every partition tuple behaves every much like a tuple of partitions::
 
-    sage: mu=PartitionTuple([[4,1],[],[2,2,1],[3]])
+    sage: mu = PartitionTuple([[4,1],[],[2,2,1],[3]])
     sage: [ nu for nu in mu ]
     [[4, 1], [], [2, 2, 1], [3]]
     sage: Set([ type(nu) for nu in mu ])
@@ -228,18 +228,21 @@ Every partition tuple behaves every much like a tuple of partitions::
     sage: len(mu)
     4
     sage: mu.cells()
-    [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), (0, 1, 0), (2, 0, 0), (2, 0, 1), (2, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 0), (3, 0, 1), (3, 0, 2)]
+    [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), (0, 1, 0), (2, 0, 0), (2, 0, 1),
+     (2, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 0), (3, 0, 1), (3, 0, 2)]
     sage: mu.addable_cells()
-    [(0, 0, 4), (0, 1, 1), (0, 2, 0), (1, 0, 0), (2, 0, 2), (2, 2, 1), (2, 3, 0), (3, 0, 3), (3, 1, 0)]
+    [(0, 0, 4), (0, 1, 1), (0, 2, 0), (1, 0, 0), (2, 0, 2), (2, 2, 1),
+     (2, 3, 0), (3, 0, 3), (3, 1, 0)]
     sage: mu.removable_cells()
     [(0, 0, 3), (0, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 2)]
 
 Attached to a partition tuple is the corresponding Young, or parabolic,
 subgroup::
 
-    sage: mu.young_subgroup()
-    Permutation Group with generators [(), (12,13), (11,12), (8,9), (6,7), (3,4), (2,3), (1,2)]
-    sage: mu.young_subgroup_generators()
+    sage: mu.young_subgroup()                                                           # optional - sage.groups
+    Permutation Group with generators
+     [(), (12,13), (11,12), (8,9), (6,7), (3,4), (2,3), (1,2)]
+    sage: mu.young_subgroup_generators()                                                # optional - sage.groups
     [1, 2, 3, 6, 8, 11, 12]
 
 """
@@ -1476,7 +1479,7 @@ class PartitionTuple(CombinatorialElement):
 
         TESTS::
 
-            sage: all(mu==PartitionTuple(mu.to_list()) for mu in PartitionTuples(4,4))
+            sage: all(mu==PartitionTuple(mu.to_list()) for mu in PartitionTuples(4,4))  # optional - sage.libs.flint
             True
         """
         return [mu.to_list() for mu in self]
@@ -1957,7 +1960,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
             True
             sage: PartitionTuple([[2,1],[],[1,1],[],[3]]) in PartitionTuples()
             True
-            sage: all(mu in PartitionTuples() for mu in PartitionTuples(3,8))
+            sage: all(mu in PartitionTuples() for mu in PartitionTuples(3,8))           # optional - sage.libs.flint
             True
             sage: [5,1,1] in PartitionTuples()
             True
@@ -1992,7 +1995,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: PartitionTuples()[10:20]
+            sage: PartitionTuples()[10:20]                                              # optional - sage.libs.flint
             [([1, 1, 1]),
              ([2], []),
              ([1, 1], []),

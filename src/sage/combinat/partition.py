@@ -6610,28 +6610,28 @@ class Partitions_n(Partitions):
             [[5], [4, 1], [3, 2], [3, 1, 1], [2, 2, 1], [2, 1, 1, 1], [1, 1, 1, 1, 1]]
             sage: len(v)
             7
-            sage: Partitions(5).cardinality(algorithm='gap')
+            sage: Partitions(5).cardinality(algorithm='gap')                            # optional - sage.libs.gap
             7
-            sage: Partitions(5).cardinality(algorithm='pari')
+            sage: Partitions(5).cardinality(algorithm='pari')                           # optional - sage.libs.pari
             7
             sage: number_of_partitions(5, algorithm='flint')                            # optional - sage.libs.flint
             7
 
         ::
 
-            sage: Partitions(10).cardinality()
+            sage: Partitions(10).cardinality()                                          # optional - sage.libs.flint
             42
-            sage: Partitions(3).cardinality()
+            sage: Partitions(3).cardinality()                                           # optional - sage.libs.flint
             3
-            sage: Partitions(10).cardinality()
+            sage: Partitions(10).cardinality()                                          # optional - sage.libs.flint
             42
-            sage: Partitions(3).cardinality(algorithm='pari')
+            sage: Partitions(3).cardinality(algorithm='pari')                           # optional - sage.libs.pari
             3
-            sage: Partitions(10).cardinality(algorithm='pari')
+            sage: Partitions(10).cardinality(algorithm='pari')                          # optional - sage.libs.pari
             42
-            sage: Partitions(40).cardinality()
+            sage: Partitions(40).cardinality()                                          # optional - sage.libs.flint
             37338
-            sage: Partitions(100).cardinality()
+            sage: Partitions(100).cardinality()                                         # optional - sage.libs.flint
             190569292
 
         A generating function for `p_n` is given by the reciprocal of
@@ -6647,12 +6647,13 @@ class Partitions_n(Partitions):
             sage: q = PowerSeriesRing(QQ, 'q', default_prec=9).gen()
             sage: prod([(1-q^k)^(-1) for k in range(1,9)])  # partial product of
             1 + q + 2*q^2 + 3*q^3 + 5*q^4 + 7*q^5 + 11*q^6 + 15*q^7 + 22*q^8 + O(q^9)
-            sage: [Partitions(k).cardinality() for k in range(2,10)]
+            sage: [Partitions(k).cardinality() for k in range(2,10)]                    # optional - sage.libs.flint
             [2, 3, 5, 7, 11, 15, 22, 30]
 
         Another consistency test for ``n`` up to 500::
 
-            sage: len([n for n in [1..500] if Partitions(n).cardinality() != Partitions(n).cardinality(algorithm='pari')])
+            sage: len([n for n in [1..500]                                              # optional - sage.libs.flint sage.libs.pari
+            ....:     if Partitions(n).cardinality() != Partitions(n).cardinality(algorithm='pari')])
             0
 
         For negative inputs, the result is zero (the algorithm is ignored)::
@@ -6720,15 +6721,15 @@ class Partitions_n(Partitions):
 
         TESTS::
 
-            sage: all(Part.random_element_uniform() in Part
+            sage: all(Part.random_element_uniform() in Part                             # optional - sage.libs.flint
             ....:     for Part in map(Partitions, range(10)))
             True
 
         Check that :trac:`18752` is fixed::
 
             sage: P = Partitions(5)
-            sage: la = P.random_element_uniform()
-            sage: la.parent() is P
+            sage: la = P.random_element_uniform()                                       # optional - sage.libs.flint
+            sage: la.parent() is P                                                      # optional - sage.libs.flint
             True
 
         ALGORITHM:
@@ -8306,16 +8307,16 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
         Check the corner case::
 
             sage: P = Partitions(0, regular=3)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # optional - sage.libs.flint
             1
 
         Check for 1-regular partitions::
 
             sage: P = Partitions(0, regular=1)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # optional - sage.libs.flint
             1
             sage: P = Partitions(5, regular=1)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # optional - sage.libs.flint
             0
 
         """
@@ -8911,12 +8912,12 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
         EXAMPLES::
 
             sage: P = Partitions(5, restricted=3)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # optional - sage.libs.flint
             5
             sage: P = Partitions(5, restricted=6)
-            sage: P.cardinality()
+            sage: P.cardinality()                                                       # optional - sage.libs.flint
             7
-            sage: P.cardinality() == Partitions(5).cardinality()
+            sage: P.cardinality() == Partitions(5).cardinality()                        # optional - sage.libs.flint
             True
         """
         if self._ell > self.n:
@@ -9012,7 +9013,7 @@ def number_of_partitions(n, algorithm='default'):
         sage: q = PowerSeriesRing(QQ, 'q', default_prec=9).gen()
         sage: prod([(1-q^k)^(-1) for k in range(1,9)])  # partial product of
         1 + q + 2*q^2 + 3*q^3 + 5*q^4 + 7*q^5 + 11*q^6 + 15*q^7 + 22*q^8 + O(q^9)
-        sage: [number_of_partitions(k) for k in range(2,10)]
+        sage: [number_of_partitions(k) for k in range(2,10)]                            # optional - sage.libs.flint
         [2, 3, 5, 7, 11, 15, 22, 30]
 
     REFERENCES:

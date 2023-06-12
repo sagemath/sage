@@ -226,7 +226,7 @@ class PerfectMatching(SetPartition):
         EXAMPLES::
 
             sage: P = PerfectMatching([(1,3),(2,5),(4,6)])
-            sage: latex(P)  # random                                                    # optional - sage.graphs
+            sage: latex(P)  # random                                                    # optional - sage.graphs sage.plot
             \begin{tikzpicture}
             ...
             \end{tikzpicture}
@@ -236,7 +236,7 @@ class PerfectMatching(SetPartition):
         Above we added ``random`` since warnings might be displayed
         once. The second time, there should be no warnings::
 
-            sage: print(P._latex_())                                                    # optional - sage.graphs
+            sage: print(P._latex_())                                                    # optional - sage.graphs sage.plot
             \begin{tikzpicture}
             ...
             \end{tikzpicture}

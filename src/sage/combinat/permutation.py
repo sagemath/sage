@@ -5533,14 +5533,14 @@ class Permutations(UniqueRepresentation, Parent):
 
         sage: p = Permutations(recoils_fatter=[2,1]); p
         Standard permutations whose recoils composition is fatter than [2, 1]
-        sage: p.list()                                                                  # optional - sage.graphs
+        sage: p.list()                                                                  # optional - sage.graphs sage.modules sage.rings.finite_rings
         [[3, 1, 2], [3, 2, 1], [1, 3, 2]]
 
     ::
 
         sage: p = Permutations(recoils=[2,1]); p
         Standard permutations whose recoils composition is [2, 1]
-        sage: p.list()                                                                  # optional - sage.graphs
+        sage: p.list()                                                                  # optional - sage.graphs sage.modules sage.rings.finite_rings
         [[3, 1, 2], [1, 3, 2]]
 
     ::
@@ -7204,7 +7204,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: G = Permutations(4)
-            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()         # optional - sage.combinat sage.graphs
+            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()         # optional - sage.combinat sage.graphs sage.groups
             True
         """
         from sage.combinat.partition import Partitions_n
@@ -7219,7 +7219,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: G = Permutations(4)
-            sage: G.conjugacy_classes()                                                 # optional - sage.combinat sage.graphs
+            sage: G.conjugacy_classes()                                                 # optional - sage.combinat sage.graphs sage.groups
             [Conjugacy class of cycle type [1, 1, 1, 1] in Standard permutations of 4,
              Conjugacy class of cycle type [2, 1, 1] in Standard permutations of 4,
              Conjugacy class of cycle type [2, 2] in Standard permutations of 4,
@@ -7240,9 +7240,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
             sage: G = Permutations(5)
             sage: g = G([2,3,4,1,5])
-            sage: G.conjugacy_class(g)                                                  # optional - sage.combinat sage.graphs
+            sage: G.conjugacy_class(g)                                                  # optional - sage.combinat sage.graphs sage.groups
             Conjugacy class of cycle type [4, 1] in Standard permutations of 5
-            sage: G.conjugacy_class(Partition([2, 1, 1, 1]))                            # optional - sage.combinat sage.graphs
+            sage: G.conjugacy_class(Partition([2, 1, 1, 1]))                            # optional - sage.combinat sage.graphs sage.groups
             Conjugacy class of cycle type [2, 1, 1, 1] in Standard permutations of 5
         """
         from sage.groups.perm_gps.symgp_conjugacy_class import PermutationsConjugacyClass
@@ -8026,7 +8026,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
         TESTS::
 
             sage: P = Permutations(descents=([1,0,2], 5))
-            sage: TestSuite(P).run()                                                    # optional - sage.graphs
+            sage: TestSuite(P).run()                                                    # optional - sage.graphs sage.rings.finite_rings
         """
         StandardPermutations_n_abstract.__init__(self, n)
         self._d = d
@@ -8251,7 +8251,7 @@ class StandardPermutations_recoilsfiner(Permutations):
         TESTS::
 
             sage: P = Permutations(recoils_finer=[2,2])
-            sage: TestSuite(P).run()                                                    # optional - sage.graphs
+            sage: TestSuite(P).run()                                                    # optional - sage.graphs sage.rings.finite_rings
         """
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
@@ -8319,7 +8319,7 @@ class StandardPermutations_recoilsfatter(Permutations):
         TESTS::
 
             sage: P = Permutations(recoils_fatter=[2,2])
-            sage: TestSuite(P).run()                                                    # optional - sage.graphs
+            sage: TestSuite(P).run()                                                    # optional - sage.graphs sage.rings.finite_rings
         """
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
@@ -8394,7 +8394,7 @@ class StandardPermutations_recoils(Permutations):
         TESTS::
 
             sage: P = Permutations(recoils=[2,2])
-            sage: TestSuite(P).run()                                                    # optional - sage.graphs
+            sage: TestSuite(P).run()                                                    # optional - sage.graphs sage.rings.finite_rings
         """
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
@@ -8415,7 +8415,7 @@ class StandardPermutations_recoils(Permutations):
 
         EXAMPLES::
 
-            sage: Permutations(recoils=[2,2]).list()                                    # optional - sage.graphs
+            sage: Permutations(recoils=[2,2]).list()                                    # optional - sage.graphs sage.rings.finite_rings
             [[3, 1, 4, 2], [3, 4, 1, 2], [1, 3, 4, 2], [1, 3, 2, 4], [3, 1, 2, 4]]
         """
         recoils = self.recoils

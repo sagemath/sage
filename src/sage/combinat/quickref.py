@@ -47,7 +47,7 @@ Words::
 
 Polytopes::
 
-    sage: points = random_matrix(ZZ, 6, 3, x=7).rows()
+    sage: points = random_matrix(ZZ, 6, 3, x=7).rows()                                  # optional - sage.modules
     sage: L = LatticePolytope(points)                                                   # optional - sage.geometry.polyhedron
     sage: L.npoints(); L.plot3d()                           # random                    # optional - sage.geometry.polyhedron sage.plot
 

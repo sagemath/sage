@@ -3546,9 +3546,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         Checking that the sylvester class is the set of linear extensions
         of the poset of the tree::
 
-            sage: all( sorted(t.canonical_labelling().sylvester_class())                # optional - sage.combinat
-            ....:      == sorted(list(v) for v in t.canonical_labelling().to_poset().linear_extensions())
-            ....:      for t in BinaryTrees(4) )
+            sage: all(sorted(t.canonical_labelling().sylvester_class())                # optional - sage.combinat sage.modules
+            ....:       == sorted(list(v)
+            ....:                 for v in t.canonical_labelling().to_poset().linear_extensions())
+            ....:     for t in BinaryTrees(4))
             True
 
         TESTS::

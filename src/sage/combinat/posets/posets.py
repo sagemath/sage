@@ -1687,7 +1687,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.spectrum(5)                                                         # optional - sage.modules sage.rings.finite_rings
             [0, 0, 0, 4, 12, 16, 16, 0]
 
-            sage: P = posets.YoungDiagramPoset(Partition([3,2,1]))                      # optional - sage.combinat
+            sage: P = posets.YoungDiagramPoset(Partition([3,2,1]))                      # optional - sage.combinat sage.modules
             sage: P.spectrum((0,1))                                                     # optional - sage.combinat sage.modules sage.rings.finite_rings
             [0, 8, 6, 2, 0, 0]
 
@@ -2289,8 +2289,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.diamonds()
             ([(0, 1, 2, 3)], True)
 
-            sage: P = posets.YoungDiagramPoset(Partition([3, 2, 2]))                    # optional - sage.combinat
-            sage: P.diamonds()                                                          # optional - sage.combinat
+            sage: P = posets.YoungDiagramPoset(Partition([3, 2, 2]))                    # optional - sage.combinat sage.modules
+            sage: P.diamonds()                                                          # optional - sage.combinat sage.modules
             ([((0, 0), (0, 1), (1, 0), (1, 1)), ((1, 0), (1, 1), (2, 0), (2, 1))], False)
         """
         diamonds, all_diamonds_completed = self._hasse_diagram.diamonds()
@@ -2418,8 +2418,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: D.is_d_complete()
             False
 
-            sage: P = Posets.YoungDiagramPoset(Partition([3, 2, 2]), dual=True)         # optional - sage.combinat
-            sage: P.is_d_complete()                                                     # optional - sage.combinat
+            sage: P = Posets.YoungDiagramPoset(Partition([3, 2, 2]), dual=True)         # optional - sage.combinat sage.modules
+            sage: P.is_d_complete()                                                     # optional - sage.combinat sage.modules
             True
         """
         min_diamond = {}  # Maps max of double-tailed diamond to min of double-tailed diamond
@@ -4738,12 +4738,12 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         To get the antichains of a given size one can currently use::
 
-            sage: list(A.elements_of_depth_iterator(2))
+            sage: list(A.elements_of_depth_iterator(2))                                 # optional - sage.modules
             [[1, 2], [1, 3]]
 
         Eventually the following syntax will be accepted::
 
-            sage: A.subset(size=2)  # todo: not implemented
+            sage: A.subset(size=2)  # todo: not implemented                             # optional - sage.modules
 
         .. NOTE::
 
@@ -8033,7 +8033,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: posets.SetPartitions(3).is_sperner()                                  # optional - sage.combinat
+            sage: posets.SetPartitions(3).is_sperner()                                  # optional - sage.combinat sage.modules
             True
 
             sage: P = Poset({0:[3,4,5],1:[5],2:[5]})
@@ -8473,41 +8473,41 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset([[1,2,3,4],[[1,4],[2,4],[4,3]]])
-            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ, check=True); FP          # optional - sage.combinat
+            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ, check=True); FP          # optional - sage.combinat sage.modules
             2*M[1, 1, 1, 1] + 2*M[1, 2, 1] + M[2, 1, 1] + M[3, 1]
 
-            sage: expansion = FP.expand(5)                                              # optional - sage.combinat
-            sage: xs = expansion.parent().gens()                                        # optional - sage.combinat
-            sage: expansion == sum(xs[a]*xs[b]*xs[c]*xs[d]                              # optional - sage.combinat
+            sage: expansion = FP.expand(5)                                              # optional - sage.combinat sage.modules
+            sage: xs = expansion.parent().gens()                                        # optional - sage.combinat sage.modules
+            sage: expansion == sum(xs[a]*xs[b]*xs[c]*xs[d]                              # optional - sage.combinat sage.modules
             ....:                  for a in range(5) for b in range(5)
             ....:                  for c in range(5) for d in range(5)
             ....:                  if a <= b and c <= b and b < d)
             True
 
             sage: P = Poset([[],[]])
-            sage: FP = P.p_partition_enumerator((), QQ, check=True); FP                 # optional - sage.combinat
+            sage: FP = P.p_partition_enumerator((), QQ, check=True); FP                 # optional - sage.combinat sage.modules
             M[]
 
         With the ``weights`` parameter::
 
             sage: P = Poset([[1,2,3,4],[[1,4],[2,4],[4,3]]])
-            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ,                          # optional - sage.combinat
+            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ,                          # optional - sage.combinat sage.modules
             ....:          weights={1: 1, 2: 2, 3: 1, 4: 1}, check=True); FP
             M[1, 2, 1, 1] + M[1, 3, 1] + M[2, 1, 1, 1] + M[2, 2, 1] + M[3, 1, 1] + M[4, 1]
-            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ,                          # optional - sage.combinat
+            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ,                          # optional - sage.combinat sage.modules
             ....:          weights={2: 2}, check=True); FP
             M[1, 2, 1, 1] + M[1, 3, 1] + M[2, 1, 1, 1] + M[2, 2, 1] + M[3, 1, 1] + M[4, 1]
 
             sage: P = Poset([['a','b','c'], [['a','b'], ['a','c']]])
-            sage: FP = P.p_partition_enumerator(('b','c','a'), QQ,                      # optional - sage.combinat
+            sage: FP = P.p_partition_enumerator(('b','c','a'), QQ,                      # optional - sage.combinat sage.modules
             ....:          weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
             M[3, 5, 7] + M[3, 7, 5] + M[3, 12]
 
             sage: P = Poset([['a','b','c'], [['a','c'], ['b','c']]])
-            sage: FP = P.p_partition_enumerator(('b','c','a'), QQ,                      # optional - sage.combinat
+            sage: FP = P.p_partition_enumerator(('b','c','a'), QQ,                      # optional - sage.combinat sage.modules
             ....:          weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
             M[3, 5, 7] + M[3, 12] + M[5, 3, 7] + M[8, 7]
-            sage: FP = P.p_partition_enumerator(('a','b','c'), QQ,                      # optional - sage.combinat
+            sage: FP = P.p_partition_enumerator(('a','b','c'), QQ,                      # optional - sage.combinat sage.modules
             ....:          weights={'a': 3, 'b': 5, 'c': 7}, check=True); FP
             M[3, 5, 7] + M[3, 12] + M[5, 3, 7] + M[5, 10] + M[8, 7] + M[15]
         """

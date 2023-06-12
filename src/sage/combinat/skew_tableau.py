@@ -607,7 +607,7 @@ class SkewTableau(ClonableList,
             sage: by_word(t) == t.weight()
             True
             sage: SST = SemistandardTableaux(shape=[3,1,1])
-            sage: all(by_word(t) == SkewTableau(t).weight() for t in SST)
+            sage: all(by_word(t) == SkewTableau(t).weight() for t in SST)               # optional - sage.modules
             True
         """
         if (not self) or all(c is None for row in self for c in row):
@@ -1289,8 +1289,9 @@ class SkewTableau(ClonableList,
         Standard skew tableaux are fixed under standardization::
 
             sage: p = Partition([4,3,3,2])
-            sage: q = Partitions(3).random_element()
-            sage: all((t == t.standardization() for t in StandardSkewTableaux([p, q])))
+            sage: q = Partitions(3).random_element()                                    # optional - sage.libs.flint
+            sage: all(t == t.standardization()                                          # optional - sage.libs.flint
+            ....:     for t in StandardSkewTableaux([p, q]))
             True
 
         The reading word of the standardization is the
@@ -2017,7 +2018,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
         EXAMPLES::
 
             sage: s = StandardSkewTableaux()
-            sage: TestSuite(s).run()                                                    # optional - sage.graphs
+            sage: TestSuite(s).run()                                                    # optional - sage.graphs sage.rings.finite_rings
         """
         StandardSkewTableaux.__init__(self, category=InfiniteEnumeratedSets())
 
@@ -2039,7 +2040,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
         EXAMPLES::
 
             sage: it = StandardSkewTableaux().__iter__()
-            sage: [next(it) for x in range(10)]                                         # optional - sage.graphs
+            sage: [next(it) for x in range(10)]                                         # optional - sage.graphs sage.rings.finite_rings
             [[],
              [[1]],
              [[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]],

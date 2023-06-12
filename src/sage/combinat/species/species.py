@@ -624,11 +624,11 @@ class GenericCombinatorialSpecies(SageObject):
             sage: g = P.isotype_generating_series()
             sage: g[0:4]                                                                # optional - sage.libs.flint
             [1, 1, 2, 3]
-            sage: g.counts(4)
+            sage: g.counts(4)                                                           # optional - sage.libs.flint
             [1, 1, 2, 3]
-            sage: P.isotypes([1,2,3]).list()
+            sage: P.isotypes([1,2,3]).list()                                            # optional - sage.libs.flint
             [[2, 3, 1], [2, 1, 3], [1, 2, 3]]
-            sage: len(_)
+            sage: len(_)                                                                # optional - sage.libs.flint
             3
         """
         return self._get_series(OrdinaryGeneratingSeriesRing, "itgs", base_ring)

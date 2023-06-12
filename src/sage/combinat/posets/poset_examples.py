@@ -981,19 +981,19 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: posets.SSTPoset([2,1])                                                # optional - sage.combinat
+            sage: posets.SSTPoset([2,1])                                                # optional - sage.combinat sage.modules
             Finite lattice containing 8 elements
 
-            sage: posets.SSTPoset([2,1],4)                                              # optional - sage.combinat
+            sage: posets.SSTPoset([2,1],4)                                              # optional - sage.combinat sage.modules
             Finite lattice containing 20 elements
 
-            sage: posets.SSTPoset([2,1],2).cover_relations()                            # optional - sage.combinat
+            sage: posets.SSTPoset([2,1],2).cover_relations()                            # optional - sage.combinat sage.modules
             [[[[1, 1], [2]], [[1, 2], [2]]]]
 
-            sage: posets.SSTPoset([3,2]).bottom()  # long time (6s on sage.math, 2012)  # optional - sage.combinat
+            sage: posets.SSTPoset([3,2]).bottom()  # long time (6s on sage.math, 2012)  # optional - sage.combinat sage.modules
             [[1, 1, 1], [2, 2]]
 
-            sage: posets.SSTPoset([3,2],4).maximal_elements()                           # optional - sage.combinat
+            sage: posets.SSTPoset([3,2],4).maximal_elements()                           # optional - sage.combinat sage.modules
             [[[3, 3, 4], [4, 4]]]
         """
         from sage.combinat.tableau import SemistandardTableaux
@@ -2095,7 +2095,7 @@ def _random_stone_lattice(n):
 
     EXAMPLES::
 
-        sage: g = sage.combinat.posets.poset_examples._random_stone_lattice(10)         # optional - sage.combinat
+        sage: g = sage.combinat.posets.poset_examples._random_stone_lattice(10)         # optional - sage.combinat sage.libs.flint
         sage: LatticePoset(g).is_stone()                                                # optional - sage.combinat
         True
 

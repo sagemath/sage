@@ -534,14 +534,14 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: P = Poset((divisors(15), attrcall("divides")))
             sage: L = P.linear_extensions()
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                    # optional - sage.modules sage.rings.finite_rings
 
             sage: P = Poset((divisors(15), attrcall("divides")), facade=True)
             sage: L = P.linear_extensions()
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                    # optional - sage.modules sage.rings.finite_rings
 
-            sage: L = P.linear_extensions(facade = True)
-            sage: TestSuite(L).run(skip="_test_an_element")
+            sage: L = P.linear_extensions(facade=True)
+            sage: TestSuite(L).run(skip="_test_an_element")                             # optional - sage.modules sage.rings.finite_rings
         """
         self._poset = poset
         self._is_facade = facade
@@ -927,7 +927,7 @@ class LinearExtensionsOfPosetWithHooks(LinearExtensionsOfPoset):
         EXAMPLES::
 
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: P = Posets.YoungDiagramPoset(Partition([3,2]), dual=True)             # optional - sage.combinat
+            sage: P = Posets.YoungDiagramPoset(Partition([3,2]), dual=True)             # optional - sage.combinat sage.modules
             sage: P.linear_extensions().cardinality()                                   # optional - sage.combinat sage.modules
             5
         """
@@ -986,7 +986,7 @@ class LinearExtensionsOfMobile(LinearExtensionsOfPoset):
             sage: M1.linear_extensions().cardinality()                                  # optional - sage.modules
             61
 
-            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # optional - sage.combinat
+            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # optional - sage.combinat sage.modules
             ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
             ....:                         3: [posets.DoubleTailedDiamond(6)]},
             ....:                        anchor=(4, 2, posets.ChainPoset(6)))

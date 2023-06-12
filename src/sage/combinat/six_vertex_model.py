@@ -710,7 +710,7 @@ class SquareIceModel(SixVertexModel):
         TESTS::
 
             sage: M = SixVertexModel(5, boundary_conditions='ice')
-            sage: ASM = AlternatingSignMatrices(5)
+            sage: ASM = AlternatingSignMatrices(5)                                          # optional - sage.modules
             sage: all(M.from_alternating_sign_matrix(x.to_alternating_sign_matrix()) == x   # optional - sage.modules
             ....:     for x in M)
             True

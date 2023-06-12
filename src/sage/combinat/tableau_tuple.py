@@ -2735,23 +2735,23 @@ class RowStandardTableauTuples(TableauTuples):
         sage: tabs[100]                                                                 # optional - sage.libs.flint
         ([], [], [[2, 3], [1]])
 
-        sage: RowStandardTableauTuples()[0]
+        sage: RowStandardTableauTuples()[0]                                             # optional - sage.libs.flint
         ([])
 
     TESTS::
 
-        sage: TestSuite( RowStandardTableauTuples() ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=1) ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=4) ).run()
-        sage: TestSuite( RowStandardTableauTuples(size=0) ).run(max_runs=50) # recursion depth exceeded with default max_runs
-        sage: TestSuite( RowStandardTableauTuples(size=6) ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=1, size=10) ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()
-        sage: TestSuite( RowStandardTableauTuples(level=4, size=10) ).run() # long time
-        sage: TestSuite( RowStandardTableauTuples(shape=[[1],[3,1],[],[2,1]]) ).run()
+        sage: TestSuite( RowStandardTableauTuples() ).run()                             # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(level=1) ).run()                      # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(level=4) ).run()                      # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(size=0) ).run(max_runs=50)  # recursion depth exceeded with default max_runs   # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(size=6) ).run()                       # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()              # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(level=1, size=0) ).run()              # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(level=1, size=10) ).run()             # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()              # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(level=4, size=0) ).run()              # optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(level=4, size=10) ).run()  # long time, optional - sage.libs.flint
+        sage: TestSuite( RowStandardTableauTuples(shape=[[1],[3,1],[],[2,1]]) ).run()   # optional - sage.libs.flint
 
     .. SEEALSO::
 
@@ -4024,7 +4024,7 @@ class StandardTableauTuples(RowStandardTableauTuples):
         sage: tabs[100]                                                                 # optional - sage.libs.flint
         ([[1, 2], [3]], [], [[4]])
 
-        sage: StandardTableauTuples()[0]
+        sage: StandardTableauTuples()[0]                                                # optional - sage.libs.flint
         ()
 
     TESTS::

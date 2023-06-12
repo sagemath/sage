@@ -871,7 +871,7 @@ def q_stirling_number1(n, k, q=None):
 
         sage: x = polygen(QQ['q'],'x')
         sage: S = sum(q_stirling_number1(5,k)*x**k for k in range(1, 6))
-        sage: factor(S)
+        sage: factor(S)                                                                 # optional - sage.libs.singular
         x * (x + 1) * (x + q + 1) * (x + q^2 + q + 1) * (x + q^3 + q^2 + q + 1)
 
     TESTS::

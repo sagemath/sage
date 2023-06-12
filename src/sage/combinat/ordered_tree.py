@@ -362,20 +362,20 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         EXAMPLES::
 
             sage: T = OrderedTree([[[], [[], [[]]]], [], [[[],[]]], [], []])
-            sage: T.to_parallelogram_polyomino(bijection='Boussicault-Socci')           # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino(bijection='Boussicault-Socci')           # optional - sage.combinat sage.modules
             [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
              [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
             sage: T = OrderedTree( [] )
-            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat sage.modules
             [[1], [1]]
             sage: T = OrderedTree( [[]] )
-            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat sage.modules
             [[0, 1], [1, 0]]
             sage: T = OrderedTree( [[],[]] )
-            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat sage.modules
             [[0, 1, 1], [1, 1, 0]]
             sage: T = OrderedTree( [[[]]] )
-            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat
+            sage: T.to_parallelogram_polyomino()                                        # optional - sage.combinat sage.modules
             [[0, 0, 1], [1, 0, 0]]
         """
         if (bijection is None) or (bijection == 'Boussicault-Socci'):
@@ -394,19 +394,19 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             sage: T = OrderedTree(
             ....:     [[[], [[], [[]]]], [], [[[],[]]], [], []]
             ....: )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat sage.modules
             [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
             sage: T = OrderedTree( [] )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat sage.modules
             [[1], [1]]
             sage: T = OrderedTree( [[]] )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat sage.modules
             [[0, 1], [1, 0]]
             sage: T = OrderedTree( [[],[]] )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat sage.modules
             [[0, 1, 1], [1, 1, 0]]
             sage: T = OrderedTree( [[[]]] )
-            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()                     # optional - sage.combinat sage.modules
             [[0, 0, 1], [1, 0, 0]]
         """
         from sage.combinat.parallelogram_polyomino import ParallelogramPolyomino

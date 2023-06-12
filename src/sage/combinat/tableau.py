@@ -1413,24 +1413,29 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         The Bender--Knuth involution is an involution::
 
             sage: T = SemistandardTableaux(shape=[3,1,1], max_entry=4)
-            sage: all(all(t.bender_knuth_involution(k).bender_knuth_involution(k) == t for k in range(1,5)) for t in T)
+            sage: all(t.bender_knuth_involution(k).bender_knuth_involution(k) == t      # optional - sage.modules
+            ....:     for k in range(1, 5) for t in T)
             True
 
         The same holds for the single switches::
 
-            sage: all(all(t.bender_knuth_involution(k, j).bender_knuth_involution(k, j) == t for k in range(1,5) for j in range(1, 5)) for t in T)
+            sage: all(t.bender_knuth_involution(k, j).bender_knuth_involution(k, j) == t    # optional - sage.modules
+            ....:     for k in range(1, 5) for j in range(1, 5) for t in T)
             True
 
         Locality of the Bender--Knuth involutions::
 
-            sage: all(all(t.bender_knuth_involution(k).bender_knuth_involution(l) == t.bender_knuth_involution(l).bender_knuth_involution(k) for k in range(1,5) for l in range(1,5) if abs(k - l) > 1) for t in T)
+            sage: all(t.bender_knuth_involution(k).bender_knuth_involution(l)           # optional - sage.modules
+            ....:       == t.bender_knuth_involution(l).bender_knuth_involution(k)
+            ....:     for k in range(1, 5) for l in range(1, 5) if abs(k - l) > 1
+            ....:     for t in T)
             True
 
         Berenstein and Kirillov [KB1995]_ have shown that
         `(s_1 s_2)^6 = id` (for tableaux of straight shape)::
 
             sage: p = lambda t, k: t.bender_knuth_involution(k).bender_knuth_involution(k + 1)
-            sage: all(p(p(p(p(p(p(t,1),1),1),1),1),1) == t for t in T)
+            sage: all(p(p(p(p(p(p(t,1),1),1),1),1),1) == t for t in T)                  # optional - sage.modules
             True
 
         However, `(s_2 s_3)^6 = id` is false::
@@ -6344,15 +6349,15 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
         EXAMPLES::
 
             sage: SST = SemistandardTableaux([3, 1], max_entry=oo)
-            sage: SST[1000]
+            sage: SST[1000]                                                             # optional - sage.modules
             [[1, 1, 10], [6]]
-            sage: [ SST[t] for t in range(5) ]
+            sage: [ SST[t] for t in range(5) ]                                          # optional - sage.modules
             [[[1, 1, 1], [2]],
              [[1, 1, 2], [2]],
              [[1, 2, 2], [2]],
              [[1, 1, 1], [3]],
              [[1, 1, 2], [3]]]
-            sage: SST[0].parent() is SST
+            sage: SST[0].parent() is SST                                                # optional - sage.modules
             True
         """
         # Iterates through with maximum entry as order
@@ -6641,7 +6646,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
              [[2], [3], [4]]]
 
             sage: sst = SemistandardTableaux([3])
-            sage: sst[0].parent() is sst
+            sage: sst[0].parent() is sst                                                # optional - sage.modules
             True
         """
         for c in integer_vectors_nk_fast_iter(sum(self.shape), self.max_entry):
@@ -6655,7 +6660,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             sage: SST = SemistandardTableaux([2,1])
             sage: all(sst in SST for sst in SST)                                        # optional - sage.modules
             True
-            sage: len([x for x in SemistandardTableaux(3) if x in SST])
+            sage: len([x for x in SemistandardTableaux(3) if x in SST])                 # optional - sage.modules
             8
             sage: SST.cardinality()
             8
@@ -6826,7 +6831,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
             sage: SST = SemistandardTableaux([2,1], [2,1])
             sage: all(sst in SST for sst in SST)                                        # optional - sage.modules
             True
-            sage: len([x for x in SemistandardTableaux(3) if x in SST])
+            sage: len([x for x in SemistandardTableaux(3) if x in SST])                 # optional - sage.modules
             1
             sage: SST.cardinality()
             1
@@ -6859,13 +6864,13 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
 
         EXAMPLES::
 
-            sage: SemistandardTableaux([2,2], [2, 1, 1]).cardinality()
+            sage: SemistandardTableaux([2,2], [2, 1, 1]).cardinality()                  # optional - sage.modules
             1
-            sage: SemistandardTableaux([2,2,2], [2, 2, 1,1]).cardinality()
+            sage: SemistandardTableaux([2,2,2], [2, 2, 1,1]).cardinality()              # optional - sage.modules
             1
-            sage: SemistandardTableaux([2,2,2], [2, 2, 2]).cardinality()
+            sage: SemistandardTableaux([2,2,2], [2, 2, 2]).cardinality()                # optional - sage.modules
             1
-            sage: SemistandardTableaux([3,2,1], [2, 2, 2]).cardinality()
+            sage: SemistandardTableaux([3,2,1], [2, 2, 2]).cardinality()                # optional - sage.modules
             2
         """
         return symmetrica.kostka_number(self.shape, self.weight)
@@ -6875,9 +6880,9 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         TESTS::
 
             sage: sst = SemistandardTableaux([3,1],[2,1,1])
-            sage: [sst[i] for i in range(2)]
+            sage: [sst[i] for i in range(2)]                                            # optional - sage.modules
             [[[1, 1, 2], [3]], [[1, 1, 3], [2]]]
-            sage: sst[0].parent() is sst
+            sage: sst[0].parent() is sst                                                # optional - sage.modules
             True
         """
         for t in symmetrica.kostka_tab(self.shape, self.weight):
@@ -7209,9 +7214,9 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
 
     TESTS::
 
-        sage: TestSuite( RowStandardTableaux(4) ).run()                                 # optional - sage.graphs
+        sage: TestSuite(RowStandardTableaux(4)).run()                                   # optional - sage.graphs
 
-        sage: RowStandardTableaux(3).cardinality()
+        sage: RowStandardTableaux(3).cardinality()                                      # optional - sage.libs.flint
         10
         sage: ns = [1,2,3,4,5,6]
         sage: sts = [RowStandardTableaux(n) for n in ns]
