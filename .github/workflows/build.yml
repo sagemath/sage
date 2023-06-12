@@ -66,7 +66,7 @@ jobs:
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
 
-      - name: Incremental build and test --new
+      - name: Incremental build, test changed files (sage -t --new)
         id: incremental
         run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
@@ -122,7 +122,7 @@ jobs:
           # Increase the length of the lines in the "short summary"
           COLUMNS: 120
 
-      - name: Test --all --long
+      - name: Test all files (sage -t --all --long)
         if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
           ../sage -python -m pip install coverage
