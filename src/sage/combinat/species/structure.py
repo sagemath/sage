@@ -291,7 +291,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
             sage: P = species.PartitionSpecies()
             sage: s = (P+P).structures([1,2,3])[1]; s                                   # optional - sage.libs.flint
             {{1, 3}, {2}}
-            sage: s.canonical_label()
+            sage: s.canonical_label()                                                   # optional - sage.libs.flint
             {{1, 2}, {3}}
         """
         return self.__class__(self._parent, self._s.canonical_label(), **self._options)
