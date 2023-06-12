@@ -33,10 +33,7 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ import unpickle_class_value
 
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 from sage.arith.power cimport generic_power_pos
 
 ZZ = IntegerRing()

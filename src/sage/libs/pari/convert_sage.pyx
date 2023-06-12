@@ -4,7 +4,7 @@ r"""
 Convert PARI objects to Sage types
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #       Copyright (C) 2016 Luca De Feo <luca.defeo@polytechnique.edu>
 #       Copyright (C) 2016 Vincent Delecroix <vincent.delecroix@u-bordeaux.fr>
@@ -13,8 +13,8 @@ Convert PARI objects to Sage types
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -22,9 +22,7 @@ from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
                             t_INTMOD, t_PADIC, t_INFINITY, t_VEC, t_COL,
                             t_VECSMALL, t_MAT, t_STR,
                             lg, precp)
-from cypari2.pari_instance cimport prec_words_to_bits
 from cypari2.paridecl cimport *
-from cypari2.gen cimport objtogen
 from cypari2.stack cimport new_gen
 from .convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 

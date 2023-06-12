@@ -135,7 +135,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             self.__pari_rhnf = rnf.rnfidealabstorel(nfzk * L_hnf)
             return self.__pari_rhnf
 
-    def absolute_ideal(self, names = 'a'):
+    def absolute_ideal(self, names='a'):
         r"""
         If this is an ideal in the extension `L/K`, return the ideal with
         the same generators in the absolute field `L/\QQ`.

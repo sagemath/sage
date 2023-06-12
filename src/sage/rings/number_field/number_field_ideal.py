@@ -3197,7 +3197,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         """
         if not self.is_prime():
             raise ValueError("The ideal must be prime")
-        return self.number_field().residue_field(self, names = names)
+        return self.number_field().residue_field(self, names=names)
 
     def residue_class_degree(self):
         r"""

@@ -158,7 +158,7 @@ cdef void gasman_callback() with gil:
     """
     global owned_objects_refcount
     for obj in owned_objects_refcount:
-        MarkBag((<ObjWrapper>obj).value)
+        GAP_MarkBag((<ObjWrapper>obj).value)
 
 
 ############################################################################
@@ -369,7 +369,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # If an error occurred in GAP_EvalString we won't even get
         # here if the error handler was set; but in case it wasn't
         # let's still check the result...
-        nresults = LEN_LIST(result)
+        nresults = GAP_LenList(result)
         if nresults > 1:  # to mimick the old libGAP
             # TODO: Get rid of this restriction eventually?
             raise GAPError("can only evaluate a single statement")

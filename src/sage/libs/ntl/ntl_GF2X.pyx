@@ -22,7 +22,6 @@
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 include 'misc.pxi'
@@ -30,7 +29,6 @@ include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer cimport Integer
-from sage.misc.superseded import deprecation_cython as deprecation
 
 from .ntl_ZZ import unpickle_class_value
 from .ntl_GF2 cimport ntl_GF2

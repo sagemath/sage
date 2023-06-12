@@ -18,7 +18,7 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 include 'misc.pxi'
@@ -26,8 +26,6 @@ include 'decl.pxi'
 
 from sage.ext.cplusplus cimport ccrepr
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
-from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 
 
 ZZ_pEContextDict = {}
