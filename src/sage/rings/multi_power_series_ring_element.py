@@ -516,8 +516,8 @@ class MPowerSeries(PowerSeries):
             -2/33*z^3 - 1/5*z^5
             sage: f(z,1) #indirect doctest
             -1/5 - 2/33*z + z^2 - z^5
-            sage: RF = RealField(10)
-            sage: f(z,RF(1)) #indirect doctest
+            sage: RF = RealField(10)                                                    # optional - sage.rings.real_mpfr
+            sage: f(z, RF(1))  # indirect doctest                                       # optional - sage.rings.real_mpfr
             -0.20 - 0.061*z + 1.0*z^2 - 0.00*z^3 - 0.00*z^4 - 1.0*z^5
 
             sage: m = matrix(QQ,[[1,0,1],[0,2,1],[-1,0,0]])

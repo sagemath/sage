@@ -1126,9 +1126,9 @@ cdef class Ring(ParentWithGens):
 
             sage: RDF.epsilon()
             2.220446049250313e-16
-            sage: ComplexField(53).epsilon()
+            sage: ComplexField(53).epsilon()                                            # optional - sage.rings.real_mpfr
             2.22044604925031e-16
-            sage: RealField(10).epsilon()
+            sage: RealField(10).epsilon()                                               # optional - sage.rings.real_mpfr
             0.0020
 
         For exact rings, zero is returned::
@@ -1145,7 +1145,7 @@ cdef class Ring(ParentWithGens):
 
         For the symbolic ring, there is no reasonable answer::
 
-            sage: SR.epsilon()                                                          # optional - sage.symbolics
+            sage: SR.epsilon()                                                          # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError

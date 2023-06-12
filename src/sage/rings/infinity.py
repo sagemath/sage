@@ -1772,8 +1772,8 @@ def test_comparison(ring):
     EXAMPLES::
 
         sage: from sage.rings.infinity import test_comparison
-        sage: rings = [ZZ, QQ, RR, RealField(200), RDF, RLF, RIF]
-        sage: for R in rings:
+        sage: rings = [ZZ, QQ, RR, RealField(200), RDF, RLF, RIF]                       # optional - sage.rings.real_mpfr
+        sage: for R in rings:                                                           # optional - sage.rings.real_mpfr
         ....:     print('testing {}'.format(R))
         ....:     test_comparison(R)
         testing Integer Ring

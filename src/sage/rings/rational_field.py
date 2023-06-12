@@ -665,7 +665,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.places()
+            sage: QQ.places()                                                           # optional - sage.rings.real_mpfr
             [Ring morphism:
               From: Rational Field
               To:   Real Field with 53 bits of precision
@@ -675,7 +675,7 @@ class RationalField(Singleton, number_field_base.NumberField):
               From: Rational Field
               To:   Real Double Field
               Defn: 1 |--> 1.0]
-            sage: QQ.places(prec=200, all_complex=True)
+            sage: QQ.places(prec=200, all_complex=True)                                 # optional - sage.rings.real_mpfr
             [Ring morphism:
               From: Rational Field
               To:   Complex Field with 200 bits of precision
@@ -704,12 +704,12 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.complex_embedding()
+            sage: QQ.complex_embedding()                                                # optional - sage.rings.real_mpfr
             Ring morphism:
               From: Rational Field
               To:   Complex Field with 53 bits of precision
               Defn: 1 |--> 1.00000000000000
-            sage: QQ.complex_embedding(20)
+            sage: QQ.complex_embedding(20)                                              # optional - sage.rings.real_mpfr
             Ring morphism:
               From: Rational Field
               To:   Complex Field with 20 bits of precision

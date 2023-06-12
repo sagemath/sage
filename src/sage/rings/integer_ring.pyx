@@ -717,7 +717,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         We return a sample from a discrete Gaussian distribution::
 
-             sage: ZZ.random_element(11.0, distribution="gaussian").parent() is ZZ
+             sage: ZZ.random_element(11.0, distribution="gaussian").parent() is ZZ      # optional - sage.modules
              True
 
         TESTS:
@@ -726,7 +726,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
             sage: ZZ.random_element(5, -5, distribution="1/n").parent() is ZZ
             True
-            sage: ZZ.random_element(5, -5, distribution="gaussian").parent() is ZZ
+            sage: ZZ.random_element(5, -5, distribution="gaussian").parent() is ZZ      # optional - sage.modules
             True
             sage: ZZ.random_element(5, -5, distribution="mpz_rrandomb").parent() is ZZ
             True
@@ -735,7 +735,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             Traceback (most recent call last):
             ...
             TypeError: x must be > 0
-            sage: ZZ.random_element(-10, -5, distribution="gaussian")
+            sage: ZZ.random_element(-10, -5, distribution="gaussian")                   # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: x must be > 0

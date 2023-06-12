@@ -1197,7 +1197,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
              and Category of infinite sets
 
             sage: L = LazyLaurentSeriesRing(ZZ['x, y'], 't')
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                    # optional - sage.libs.singular
             sage: L.category()
             Category of infinite commutative no zero divisors algebras over
              (unique factorization domains and commutative algebras over
@@ -1220,8 +1220,8 @@ class LazyLaurentSeriesRing(LazySeriesRing):
              (finite commutative rings and subquotients of monoids
               and quotients of semigroups and finite enumerated sets)
 
-            sage: E.<x,y> = ExteriorAlgebra(QQ)
-            sage: L = LazyLaurentSeriesRing(E, 't')  # not tested
+            sage: E.<x,y> = ExteriorAlgebra(QQ)                                         # optional - sage.modules
+            sage: L = LazyLaurentSeriesRing(E, 't')  # not tested                       # optional - sage.modules
 
             sage: LazyLaurentSeriesRing.options._reset()  # reset the options
         """
@@ -1603,7 +1603,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
             sage: P = 1 / phi; P
             1 + q + 2*q^2 + 3*q^3 + 5*q^4 + 7*q^5 + 11*q^6 + O(q^7)
-            sage: P[:20] == [Partitions(n).cardinality() for n in range(20)]
+            sage: P[:20] == [Partitions(n).cardinality() for n in range(20)]            # optional - sage.libs.flint
             True
 
         TESTS::
@@ -1937,11 +1937,11 @@ class LazyPowerSeriesRing(LazySeriesRing):
             (a + b + 1)/(c^3 + a*b + 1)
             sage: f.parent()
             Fraction Field of Multivariate Polynomial Ring in a, b, c over Integer Ring
-            sage: L(f)
+            sage: L(f)                                                                  # optional - sage.libs.singular
             1 + (a+b) + (-a*b) + (-a^2*b-a*b^2-c^3) + (a^2*b^2-a*c^3-b*c^3)
              + (a^3*b^2+a^2*b^3+2*a*b*c^3) + (-a^3*b^3+2*a^2*b*c^3+2*a*b^2*c^3+c^6)
              + O(a,b,c)^7
-            sage: L(f) == (1 + aa + bb) / (1 + aa*bb + cc^3)
+            sage: L(f) == (1 + aa + bb) / (1 + aa*bb + cc^3)                            # optional - sage.libs.singular
             True
 
         TESTS::
@@ -2743,10 +2743,10 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             sage: LazyDirichletSeriesRing.options.halting_precision(12)
 
             sage: L = LazyDirichletSeriesRing(ZZ, 't')
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                    # optional - sage.symbolic
 
             sage: L = LazyDirichletSeriesRing(QQ, 't')
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                    # optional - sage.symbolic
 
             sage: LazyDirichletSeriesRing.options._reset()  # reset the options
 
@@ -2990,8 +2990,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         EXAMPLES::
 
             sage: L = LazyDirichletSeriesRing(ZZ, 'z')
-            sage: m = L._monomial(5, 3)
-            sage: m                                                                     # optional - sage.symbolic
+            sage: m = L._monomial(5, 3); m                                              # optional - sage.symbolic
             5/3^z
         """
         try:

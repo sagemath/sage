@@ -388,7 +388,7 @@ class PolynomialRing_general(ring.Algebra):
         Throw a TypeError if any of the coefficients cannot be coerced
         into the base ring (:trac:`6777`)::
 
-            sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])
+            sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: unable to convert '1.00...00*I' to a real number

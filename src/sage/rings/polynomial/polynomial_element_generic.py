@@ -432,30 +432,30 @@ class Polynomial_generic_sparse(Polynomial):
             0.0
             sage: f[-1]                                                                 # optional - sage.symbolic
             0.0
-            sage: R.<x> = PolynomialRing(RealField(19), sparse=True)
-            sage: f = (2-3.5*x)^3; f
+            sage: R.<x> = PolynomialRing(RealField(19), sparse=True)                    # optional - sage.rings.real_mpfr
+            sage: f = (2-3.5*x)^3; f                                                    # optional - sage.rings.real_mpfr
             -42.875*x^3 + 73.500*x^2 - 42.000*x + 8.0000
 
         Using slices, we can truncate polynomials::
 
-            sage: f[:2]
+            sage: f[:2]                                                                 # optional - sage.rings.real_mpfr
             -42.000*x + 8.0000
 
         Any other kind of slicing is an error, see :trac:`18940`::
 
-            sage: f[1:3]
+            sage: f[1:3]                                                                # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             IndexError: polynomial slicing with a start is not defined
 
-            sage: f[1:3:2]
+            sage: f[1:3:2]                                                              # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             IndexError: polynomial slicing with a step is not defined
 
         TESTS::
 
-            sage: f["hello"]
+            sage: f["hello"]                                                            # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: list indices must be integers, not str
