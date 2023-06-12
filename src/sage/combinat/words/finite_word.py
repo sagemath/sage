@@ -588,11 +588,11 @@ class FiniteWord_class(Word_class):
             sage: w.not_used_letters(2)
             [0, 1]
             sage: w = Word([1, 2, 3])
-            sage: w.not_used_letter(3)
+            sage: w.not_used_letters(3)
             [0, 4, 5]
             sage: w = Word([3, 1, 'ab', 0, 'c', 2, 4])
-            sage: w.not_used_letter(2)
-            []
+            sage: w.not_used_letters(2)
+            [5, 6]
         """
         if n < 0:
             raise ValueError("Parameter `n` must be a non-negative integer")
@@ -2974,7 +2974,7 @@ class FiniteWord_class(Word_class):
             [word: , word: ab, word: abbabaab, word: ba, word: baba, word: bbabaa]
         """
         _, palindromesTree = self._get_palindromic_factors_data(f=f)
-        return self._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree)
+        return self._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree, f=f)
 
     def palindromic_complexity(self, n, f=None):
         r"""
@@ -3496,7 +3496,7 @@ class FiniteWord_class(Word_class):
 
             sage: word, morphism, letter = Word('aba')._insert_not_used_letter_between_consecutive_letters()
             sage: word
-            ['a', 0, 'b', 0, 'a']
+            word: a0b0a
             sage: morphism
             WordMorphism: 0->0, a->a, b->b
             sage: letter
@@ -3545,11 +3545,13 @@ class FiniteWord_class(Word_class):
             sage: Word('aaaa')._find_lps_for_all_prefixes_from_maximal_palindrome_lengths([1, 2, 3, 4, 3, 2, 1])
             [0, 1, 2, 3, 4]
         """
+        result = [0]
+        if len(maximalPalindromeLengths) == 0:
+            return result
         from collections import deque
         currentIndexesWithRemoveIndexes = deque()
         if maximalPalindromeLengths[0] == 1:
             currentIndexesWithRemoveIndexes.append([0, 1])
-        result = [0]
         i = 1
         currentPos = 0
         while i + 1 < len(maximalPalindromeLengths):
@@ -3597,7 +3599,7 @@ class FiniteWord_class(Word_class):
         ....: [{'a': 8}, 4, 1, True], [{0: 9}, 4, 3, False], [{}, 4, 3, True]]
         sage: factors = word._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree)
         sage: sorted(factors)
-        [word: a, word: aa, word: aba, word: b, word: bab]
+        [word: , word: a, word: aa, word: aba, word: b, word: bab]
         sage: f = WordMorphism('a->b,b->a')
         sage: palindromesTree = [[{'s': 1}, None, 0, False],
         ....: [{'b': 2, 'a': 5}, 1, 0, True], [{'s': 3}, 5, 2, False],
@@ -3605,11 +3607,18 @@ class FiniteWord_class(Word_class):
         ....: [{'s': 6}, 3, 2, False], [{}, 3, 2, True]]
         sage: factors = word._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree, f=f)
         sage: sorted(factors)
-        [word: ab, word: abab, word: ba]
+        [word: , word: ab, word: abab, word: ba]
         """
+        from sage.combinat.words.morphism import WordMorphism
+        if f is not None:
+            if not isinstance(f, WordMorphism):
+                f = WordMorphism(f)
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
         from sage.combinat.words.word import Word
         from collections import deque
         result = set()
+        result.add(Word())
         currentWordLetters = deque()
         currentPalindromes = [palindrome for palindrome in palindromesTree[0][0].items()]
         while currentPalindromes:
@@ -3630,7 +3639,10 @@ class FiniteWord_class(Word_class):
                         currentWordLetters.append(leftLetter)
                     else:
                         currentWordLetters.appendleft(leftLetter)
-                        currentWordLetters.append(f(leftLetter)[0])
+                        if f is not None:
+                            currentWordLetters.append(f(leftLetter)[0])
+                        else:
+                            currentWordLetters.append(leftLetter)
                     result.add(Word(currentWordLetters))
                 for neighbour in palindrome[0].items():
                     currentPalindromes.append(neighbour)
@@ -6001,7 +6013,7 @@ class FiniteWord_class(Word_class):
             sage: Word('aab').iterated_left_palindromic_closure(f=f)
             Traceback (most recent call last):
             ...
-            TypeError: self (=a->b, b->b) is not an endomorphism
+            ValueError: f must be an involution
 
         See [DeLuca2006]_.
         """

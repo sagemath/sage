@@ -1455,7 +1455,7 @@ class WordMorphism(SageObject):
             sage: m.partition_of_domain_alphabet()
             Traceback (most recent call last):
             ...
-            TypeError: self (=a->b, b->a, c->a) is not an endomorphism
+            TypeError: self is not an involution
         """
         if not self.is_involution():
             raise TypeError("self is not an involution")
