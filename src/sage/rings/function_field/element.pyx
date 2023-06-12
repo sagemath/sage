@@ -65,9 +65,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport FieldElement
 from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp cimport richcmp, richcmp_not_equal
+
 
 def is_FunctionFieldElement(x):
     """

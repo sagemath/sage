@@ -283,7 +283,7 @@ class LWE(SageObject):
             sage: L = []
             sage: def add_samples():
             ....:     global L
-            ....:     L += [lwe() for _ in range(1000)]
+            ....:     L += [lwe() for _ in range(100)]
             sage: add_samples()
 
         To test the oracle, we use the internal secret to evaluate the samples
@@ -298,6 +298,7 @@ class LWE(SageObject):
 
             sage: from numpy import std
             sage: while abs(std([e if e <= 200 else e-401 for e in S()]) - 3.0) > 0.01:
+            ....:     L = []  # reset L to avoid quadratic behaviour
             ....:     add_samples()
 
         If ``m`` is not ``None`` the number of available samples is restricted::

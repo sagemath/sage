@@ -342,7 +342,7 @@ class PlaceSet(UniqueRepresentation, Parent):
             sage: TestSuite(places).run()                                               # optional - sage.rings.finite_rings sage.rings.function_field
         """
         self.Element = field._place_class
-        Parent.__init__(self, category = Sets().Infinite())
+        Parent.__init__(self, category=Sets().Infinite())
 
         self._field = field
 
