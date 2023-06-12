@@ -520,22 +520,21 @@ class MPowerSeries(PowerSeries):
             sage: f(z, RF(1))  # indirect doctest                                       # optional - sage.rings.real_mpfr
             -0.20 - 0.061*z + 1.0*z^2 - 0.00*z^3 - 0.00*z^4 - 1.0*z^5
 
-            sage: m = matrix(QQ,[[1,0,1],[0,2,1],[-1,0,0]])
-            sage: m
+            sage: m = matrix(QQ,[[1,0,1],[0,2,1],[-1,0,0]]); m                          # optional - sage.modules
             [ 1  0  1]
             [ 0  2  1]
             [-1  0  0]
-            sage: f(m,m) #indirect doctest
+            sage: f(m,m)  # indirect doctest                                            # optional - sage.modules
             [     2/33         0       1/5]
             [   131/55 -1136/165    -24/11]
             [     -1/5         0   -23/165]
-            sage: f(m,m) == -2/33*m^3 - 1/5*m^5 #indirect doctest
+            sage: f(m,m) == -2/33*m^3 - 1/5*m^5  # indirect doctest                     # optional - sage.modules
             True
 
             sage: f = f.add_bigoh(10)
             sage: f(z,z)
             -2/33*z^3 - 1/5*z^5 + O(z^10)
-            sage: f(m,m)
+            sage: f(m,m)                                                                # optional - sage.modules
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.matrix.matrix_rational_dense.Matrix_rational_dense' object has no attribute 'add_bigoh'
