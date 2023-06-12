@@ -1,6 +1,7 @@
 from cypari2.stack cimport new_gen
 from cypari2.paridecl cimport *
 
+from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
 from sage.libs.mpfr.types cimport mpfr_t, mpfr_prec_t
 
