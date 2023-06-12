@@ -63,14 +63,14 @@ def expect_quitall(verbose=False):
     EXAMPLES::
 
         sage: sage.interfaces.quit.expect_quitall()
-        sage: gp.eval('a=10')
+        sage: gp.eval('a=10')                                                           # optional - sage.libs.pari
         '10'
-        sage: gp('a')
+        sage: gp('a')                                                                   # optional - sage.libs.pari
         10
         sage: sage.interfaces.quit.expect_quitall()
-        sage: gp('a')
+        sage: gp('a')                                                                   # optional - sage.libs.pari
         a
-        sage: sage.interfaces.quit.expect_quitall(verbose=True)
+        sage: sage.interfaces.quit.expect_quitall(verbose=True)                         # optional - sage.libs.pari
         Exiting PARI/GP interpreter with PID ... running .../gp --fast --emacs --quiet --stacksize 10000000
     """
     for P in expect_objects:
@@ -87,18 +87,18 @@ def kill_spawned_jobs(verbose=False):
     """
     INPUT:
 
-        - ``verbose`` -- bool (default: False); if True, display a
-          message each time a process is sent a kill signal
+    - ``verbose`` -- bool (default: ``False``); if ``True``, display a
+      message each time a process is sent a kill signal
 
     EXAMPLES::
 
-        sage: gp.eval('a=10')
+        sage: gp.eval('a=10')                                                           # optional - sage.libs.pari
         '10'
         sage: sage.interfaces.quit.kill_spawned_jobs(verbose=False)
         sage: sage.interfaces.quit.expect_quitall()
-        sage: gp.eval('a=10')
+        sage: gp.eval('a=10')                                                           # optional - sage.libs.pari
         '10'
-        sage: sage.interfaces.quit.kill_spawned_jobs(verbose=True)
+        sage: sage.interfaces.quit.kill_spawned_jobs(verbose=True)                      # optional - sage.libs.pari
         Killing spawned job ...
 
     After doing the above, we do the following to avoid confusion in other doctests::

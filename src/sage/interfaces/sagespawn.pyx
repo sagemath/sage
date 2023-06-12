@@ -1,3 +1,4 @@
+# sage.doctest: optional - ptyprocess
 """
 Sage wrapper around pexpect's ``spawn`` class and
 the ptyprocess's ``PtyProcess`` class.
