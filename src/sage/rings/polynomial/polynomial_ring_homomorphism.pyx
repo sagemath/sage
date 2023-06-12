@@ -55,7 +55,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: g = QQ.hom(RR)
             sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)
             sage: G(A.gen()^1000000)
-            1.00000000000000*x^1000000
+            1.0...*x^1000000
 
         """
         P = self.codomain()
