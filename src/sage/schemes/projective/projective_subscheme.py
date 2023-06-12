@@ -729,7 +729,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: H = End(PS)
             sage: f = H([x^3, x*y^2, x*z^2])
             sage: X = PS.subscheme([x - y])
-            sage: X._forward_image(f)
+            sage: X._forward_image(f)                                                   # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: map must be a morphism
@@ -741,7 +741,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: Y = P1.subscheme([u - v])
             sage: H = End(PS)
             sage: f = H([x^2, y^2, z^2])
-            sage: Y._forward_image(f)
+            sage: Y._forward_image(f)                                                   # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: subscheme must be in ambient space of domain of map

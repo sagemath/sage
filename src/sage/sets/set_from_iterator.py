@@ -526,8 +526,8 @@ class Decorator():
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: from sage.sets.set_from_iterator import Decorator
             sage: d = Decorator()
-            sage: d.f = find_local_minimum
-            sage: sage_getargspec(d)  # indirect doctest
+            sage: d.f = find_local_minimum                                              # optional - scipy
+            sage: sage_getargspec(d)  # indirect doctest                                # optional - scipy
             FullArgSpec(args=['f', 'a', 'b', 'tol', 'maxfun'],
                         varargs=None, varkw=None, defaults=(1.48e-08, 500),
                         kwonlyargs=[], kwonlydefaults=None, annotations={})

@@ -490,14 +490,14 @@ class DIMACS(SatSolver):
         TESTS::
 
             sage: from sage.sat.boolean_polynomials import solve as solve_sat
-            sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                       # optional - sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: while True:  # workaround (see :trac:`31891`)                         # optional - sage.rings.finite_rings sage.rings.polynomial.pbori
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: solve_sat(F, solver=sage.sat.solvers.RSat)  # optional - RSat
+            sage: solve_sat(F, solver=sage.sat.solvers.RSat)  # optional - RSat         # optional - sage.rings.finite_rings sage.rings.polynomial.pbori
 
         """
         if assumptions is not None:

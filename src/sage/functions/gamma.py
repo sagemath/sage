@@ -687,9 +687,9 @@ def gamma(a, *args, **kwds):
     input. Convert the input to a higher precision explicitly if a result
     with higher precision is desired.::
 
-        sage: t = gamma(RealField(100)(2.5)); t
+        sage: t = gamma(RealField(100)(2.5)); t                                         # optional - sage.rings.real_mpfr
         1.3293403881791370204736256125
-        sage: t.prec()
+        sage: t.prec()                                                                  # optional - sage.rings.real_mpfr
         100
 
     The gamma function only works with input that can be coerced to the

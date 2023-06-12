@@ -496,7 +496,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             False
             sage: A(CC)._coerce_map_from_(H(QQ))
             True
-            sage: H(CC)._coerce_map_from_(L(RR))
+            sage: H(CC)._coerce_map_from_(L(RR))                                        # optional - sage.libs.singular
             True
 
         ::

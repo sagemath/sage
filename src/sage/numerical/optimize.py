@@ -1,3 +1,4 @@
+# sage.doctest: optional - scipy
 """
 Numerical Root Finding and Optimization
 

@@ -1193,8 +1193,8 @@ cdef class CachedFunction():
         EXAMPLES::
 
             sage: g = CachedFunction(number_of_partitions)                              # optional - sage.combinat
-            sage: a = g(5)                                                              # optional - sage.combinat
-            sage: g.cache                                                               # optional - sage.combinat
+            sage: a = g(5)                                                              # optional - sage.combinat sage.libs.flint
+            sage: g.cache                                                               # optional - sage.combinat sage.libs.flint
             {((5, 'default'), ()): 7}
             sage: g.clear_cache()                                                       # optional - sage.combinat
             sage: g.cache                                                               # optional - sage.combinat

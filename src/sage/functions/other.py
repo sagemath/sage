@@ -1723,7 +1723,7 @@ class Function_binomial(GinacFunction):
             10.0
             sage: type(binomial._evalf_(5.r, 3))
             <... 'float'>
-            sage: binomial._evalf_(1/2, 1/1)
+            sage: binomial._evalf_(1/2, 1/1)                                            # optional - sage.libs.pari
             1/2
             sage: binomial._evalf_(10^20 + 1/1, 10^20)
             100000000000000000001

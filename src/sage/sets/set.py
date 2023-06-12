@@ -800,10 +800,10 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         EXAMPLES::
 
             sage: X = Set([1,2,3])
-            sage: X.subsets_lattice()                                                   # optional - sage.combinat
+            sage: X.subsets_lattice()                                                   # optional - sage.combinat sage.graphs sage.modules
             Finite lattice containing 8 elements
             sage: Y = Set()
-            sage: Y.subsets_lattice()                                                   # optional - sage.combinat
+            sage: Y.subsets_lattice()                                                   # optional - sage.combinat sage.graphs sage.modules
             Finite lattice containing 1 elements
 
         """

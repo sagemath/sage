@@ -41,7 +41,7 @@ class Fields(CategoryWithAxiom):
         sage: K(PolynomialRing(GF(3), 'x'))                                             # optional - sage.rings.finite_rings
         Fraction Field of Univariate Polynomial Ring in x over
         Finite Field of size 3
-        sage: K(RealField())
+        sage: K(RealField())                                                            # optional - sage.rings.real_mpfr
         Real Field with 53 bits of precision
 
     TESTS::
@@ -172,7 +172,7 @@ class Fields(CategoryWithAxiom):
             sage: K(PolynomialRing(GF(3), 'x')) # indirect doctest                      # optional - sage.rings.finite_rings
             Fraction Field of Univariate Polynomial Ring in x over
             Finite Field of size 3
-            sage: K(RealField())
+            sage: K(RealField())                                                        # optional - sage.rings.real_mpfr
             Real Field with 53 bits of precision
         """
         try:

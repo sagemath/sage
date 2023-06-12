@@ -277,7 +277,7 @@ algorithms succeed; along the way, we collect some statistics::
 
     sage: L = P.linear_extensions()                                                     # optional - sage.combinat sage.graphs
     sage: stats = []                                                                    # optional - sage.combinat sage.graphs
-    sage: for l in L:                                                                   # optional - sage.combinat sage.graphs
+    sage: for l in L:                                                                   # optional - sage.combinat sage.graphs sage.modules sage.ring.finite_rings
     ....:     x = HierarchyElement(10, l.to_poset())
     ....:     try: # Check that x.mro_standard always fails with a ValueError
     ....:         x.mro_standard
@@ -294,7 +294,7 @@ Depending on the linear extension `l` it was necessary to add between
 one and five bases for control; for example, `216` linear extensions
 required the addition of four bases::
 
-    sage: sorted(Word(stats).evaluation_sparse())                                       # optional - sage.combinat sage.graphs
+    sage: sorted(Word(stats).evaluation_sparse())                                       # optional - sage.combinat sage.graphs sage.modules sage.ring.finite_rings
     [(1, 36), (2, 108), (3, 180), (4, 216), (5, 180)]
 
 We now consider a hierarchy of categories::

@@ -57,8 +57,8 @@ class Function_zeta(GinacFunction):
             1/6*pi^2
             sage: zeta(2.)                                                              # optional - sage.symbolic
             1.64493406684823
-            sage: RR = RealField(200)
-            sage: zeta(RR(2))
+            sage: RR = RealField(200)                                                   # optional - sage.rings.real_mpfr
+            sage: zeta(RR(2))                                                           # optional - sage.rings.real_mpfr
             1.6449340668482264364724151666460251892189499012067984377356
             sage: zeta(I)                                                               # optional - sage.symbolic
             zeta(I)
@@ -184,8 +184,8 @@ class Function_stieltjes(GinacFunction):
             stieltjes(2)
             sage: stieltjes(2).n(100)                                                   # optional - sage.symbolic
             -0.0096903631928723184845303860352
-            sage: RR = RealField(200)
-            sage: stieltjes(RR(2))
+            sage: RR = RealField(200)                                                   # optional - sage.rings.real_mpfr
+            sage: stieltjes(RR(2))                                                      # optional - sage.rings.real_mpfr
             -0.0096903631928723184845303860352125293590658061013407498807014
 
         It is possible to use the ``hold`` argument to prevent

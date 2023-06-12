@@ -766,7 +766,7 @@ class Function_lambert_w(BuiltinFunction):
 
             sage: N(lambert_w(1))                                                       # optional - sage.symbolic
             0.567143290409784
-            sage: lambert_w(RealField(100)(1))
+            sage: lambert_w(RealField(100)(1))                                          # optional - sage.rings.real_mpfr
             0.56714329040978387299996866221
 
         SciPy is used to evaluate for float, RDF, and CDF inputs::

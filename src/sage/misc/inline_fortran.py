@@ -111,7 +111,7 @@ class InlineFortran:
             ....:       END
             ....: C END FILE FIB1.F
             ....: '''
-            sage: fortran(code, globals())
+            sage: fortran(code, globals())                                              # optional - numpy
             sage: import numpy                                                          # optional - numpy
             sage: a = numpy.array(range(10), dtype=float)                               # optional - numpy
             sage: fib(a, 10)                                                            # optional - numpy

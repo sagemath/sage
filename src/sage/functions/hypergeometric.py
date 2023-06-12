@@ -358,7 +358,7 @@ class Hypergeometric(BuiltinFunction):
 
             sage: hypergeometric([1, 1], [2], -1).n()                                   # optional - sage.symbolic
             0.693147180559945
-            sage: hypergeometric([], [], RealField(100)(1))
+            sage: hypergeometric([], [], RealField(100)(1))                             # optional - sage.rings.real_mpfr
             2.7182818284590452353602874714
 
         """

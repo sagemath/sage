@@ -449,14 +449,14 @@ class QuotientFields(Category_singleton):
 
             We do the best we can over inexact fields::
 
-                sage: R.<x> = RealField(20)[]
-                sage: q = 1/(x^2 + x + 2)^2 + 1/(x-1); q
+                sage: R.<x> = RealField(20)[]                                           # optional - sage.rings.real_mpfr
+                sage: q = 1/(x^2 + x + 2)^2 + 1/(x-1); q                                # optional - sage.rings.real_mpfr
                 (x^4 + 2.0000*x^3
                   + 5.0000*x^2 + 5.0000*x + 3.0000)/(x^5 + x^4 + 3.0000*x^3 - x^2 - 4.0000)
-                sage: whole, parts = q.partial_fraction_decomposition(); parts          # optional - sage.rings.number_field
+                sage: whole, parts = q.partial_fraction_decomposition(); parts          # optional - sage.rings.number_field sage.rings.real_mpfr
                 [1.0000/(x - 1.0000),
                  1.0000/(x^4 + 2.0000*x^3 + 5.0000*x^2 + 4.0000*x + 4.0000)]
-                sage: sum(parts)                                                        # optional - sage.rings.number_field
+                sage: sum(parts)                                                        # optional - sage.rings.number_field sage.rings.real_mpfr
                 (x^4 + 2.0000*x^3
                   + 5.0000*x^2 + 5.0000*x + 3.0000)/(x^5 + x^4 + 3.0000*x^3 - x^2 - 4.0000)
 

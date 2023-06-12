@@ -1859,8 +1859,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 sage: P = Partitions(6)                                                 # optional - sage.combinat
                 sage: H = Hom(P, ZZ)                                                    # optional - sage.combinat
                 sage: f = H(ZZ.sum)                                                     # optional - sage.combinat
-                sage: X = f.image()                                                     # optional - sage.combinat
-                sage: list(X)                                                           # optional - sage.combinat
+                sage: X = f.image()                                                     # optional - sage.combinat sage.libs.flint
+                sage: list(X)                                                           # optional - sage.combinat sage.libs.flint
                 [6]
             """
             D = self.domain()

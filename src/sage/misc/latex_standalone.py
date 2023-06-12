@@ -1798,15 +1798,16 @@ class TikzPicture(Standalone):
         EXAMPLES::
 
             sage: from sage.misc.latex_standalone import TikzPicture
-            sage: P = posets.PentagonPoset()       # optional - sage.graphs
-            sage: tikz = TikzPicture.from_poset(P) # optional - sage.combinat sage.graphs dot2tex graphviz
+            sage: P = posets.PentagonPoset()                                            # optional - sage.graphs sage.modules
+            sage: tikz = TikzPicture.from_poset(P)               # optional - dot2tex graphviz sage.combinat sage.graphs sage.modules
             doctest:...: FutureWarning: This class/method/function is marked as experimental.
             It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/20343 for details.
 
         ::
 
-            sage: tikz = TikzPicture.from_poset(P, prog='neato', color_by_label=True) # optional sage.combinat dot2tex # long time (3s)
+            sage: tikz = TikzPicture.from_poset(P, prog='neato', # optional - dot2tex sage.combinat # long time (3s)
+            ....:                               color_by_label=True)
 
         ::
 

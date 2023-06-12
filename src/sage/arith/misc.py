@@ -107,18 +107,18 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     compute a 200-bit approximation to `sqrt(2)` which is wrong in the
     33'rd bit::
 
-        sage: z = sqrt(RealField(200)(2)) + (1/2)^33
-        sage: p = algdep(z, 4); p                                                       # optional - sage.libs.pari
+        sage: z = sqrt(RealField(200)(2)) + (1/2)^33                                    # optional - sage.rings.real_mpfr
+        sage: p = algdep(z, 4); p                                                       # optional - sage.libs.pari sage.rings.real_mpfr
         227004321085*x^4 - 216947902586*x^3 - 99411220986*x^2 + 82234881648*x - 211871195088
-        sage: factor(p)                                                                 # optional - sage.libs.pari
+        sage: factor(p)                                                                 # optional - sage.libs.pari sage.rings.real_mpfr
         227004321085*x^4 - 216947902586*x^3 - 99411220986*x^2 + 82234881648*x - 211871195088
-        sage: algdep(z, 4, known_bits=32)                                               # optional - sage.libs.pari
+        sage: algdep(z, 4, known_bits=32)                                               # optional - sage.libs.pari sage.rings.real_mpfr
         x^2 - 2
-        sage: algdep(z, 4, known_digits=10)                                             # optional - sage.libs.pari
+        sage: algdep(z, 4, known_digits=10)                                             # optional - sage.libs.pari sage.rings.real_mpfr
         x^2 - 2
-        sage: algdep(z, 4, use_bits=25)                                                 # optional - sage.libs.pari
+        sage: algdep(z, 4, use_bits=25)                                                 # optional - sage.libs.pari sage.rings.real_mpfr
         x^2 - 2
-        sage: algdep(z, 4, use_digits=8)                                                # optional - sage.libs.pari
+        sage: algdep(z, 4, use_digits=8)                                                # optional - sage.libs.pari sage.rings.real_mpfr
         x^2 - 2
 
     Using the ``height_bound`` and ``proof`` parameters, we can see that
@@ -3665,7 +3665,7 @@ def binomial(x, m, **kwds):
         -6
         sage: binomial(-5, -2)
         0
-        sage: binomial(RealField()('2.5'), 2)
+        sage: binomial(RealField()('2.5'), 2)                                           # optional - sage.rings.real_mpfr
         1.87500000000000
         sage: n = var('n'); binomial(n, 2)                                              # optional - sage.symbolic
         1/2*(n - 1)*n
@@ -3687,7 +3687,7 @@ def binomial(x, m, **kwds):
     'pari' (faster for large values)::
 
         sage: a = binomial(100, 45, algorithm='gmp')
-        sage: b = binomial(100, 45, algorithm='pari')
+        sage: b = binomial(100, 45, algorithm='pari')                                   # optional - sage.libs.pari
         sage: a == b
         True
 

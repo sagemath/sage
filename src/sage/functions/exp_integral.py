@@ -334,7 +334,7 @@ class Function_exp_integral_e1(BuiltinFunction):
 
             sage: N(exp_integral_e1(1+I))                                               # optional - sage.symbolic
             0.000281624451981418 - 0.179324535039359*I
-            sage: exp_integral_e1(RealField(200)(0.5))
+            sage: exp_integral_e1(RealField(200)(0.5))                                  # optional - sage.rings.real_mpfr
             0.55977359477616081174679593931508523522684689031635351524829
 
         """
@@ -480,7 +480,7 @@ class Function_log_integral(BuiltinFunction):
 
             sage: N(log_integral(1e6))                                                  # optional - sage.symbolic
             78627.5491594622
-            sage: log_integral(RealField(200)(1e6))
+            sage: log_integral(RealField(200)(1e6))                                     # optional - sage.rings.real_mpfr
             78627.549159462181919862910747947261161321874382421767074759
 
         """
@@ -851,7 +851,7 @@ class Function_sin_integral(BuiltinFunction):
         At 200 bits of precision `\operatorname{Si}(10^{23})` agrees with `\pi/2` up to
         `10^{-24}`::
 
-            sage: sin_integral(RealField(200)(1e23))
+            sage: sin_integral(RealField(200)(1e23))                                    # optional - sage.rings.real_mpfr
             1.5707963267948966192313288218697837425815368604836679189519
             sage: N(pi/2, prec=200)                                                     # optional - sage.symbolic
             1.5707963267948966192313216916397514420985846996875529104875

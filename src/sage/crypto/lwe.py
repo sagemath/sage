@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - scipy
 """
 (Ring-)LWE oracle generators
 

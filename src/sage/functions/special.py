@@ -805,7 +805,7 @@ def elliptic_eu_f(u, m):
     EXAMPLES::
 
         sage: from sage.functions.special import elliptic_eu_f
-        sage: elliptic_eu_f(0.5, 0.1)
+        sage: elliptic_eu_f(0.5, 0.1)                                                   # optional - mpmath
         mpf('0.49605455128659691')
     """
     from mpmath import mp as ctx

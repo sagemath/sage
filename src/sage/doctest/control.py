@@ -514,7 +514,7 @@ class DocTestController(SageObject):
             sage: DC.options.warn_long = 5.0
             sage: DC._init_warn_long()
             sage: DC.options.warn_long    # existing command-line options are not changed
-            5.00000000000000
+            5.0...
         """
         # default is -1.0
         if self.options.warn_long >= 0:     # Specified on the command line
