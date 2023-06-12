@@ -42,6 +42,14 @@ py_modules =
     sage.misc.sagedoc
     sage.misc.sage_input
     sage.misc.sage_eval
+    sage.misc.explain_pickle
+    sage.misc.trace
+    sage.misc.profiler
+    sage.misc.dev_tools
+    sage.misc.edit_module
+    sage.misc.pager
+    sage.misc.cython
+    sage.misc.inline_fortran
 
 packages =
     sage.doctest
