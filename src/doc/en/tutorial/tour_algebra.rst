@@ -216,8 +216,11 @@ the notation :math:`x=x_{1}`, :math:`y=x_{2}`):
 
 ::
 
-    sage: de1 = maxima("2*diff(x(t),t, 2) + 6*x(t) - 2*y(t)")
-    sage: lde1 = de1.laplace("t","s"); lde1.sage()
+    sage: t,s = SR.var('t,s')
+    sage: x = function('x')
+    sage: y = function('y')
+    sage: f = 2*x(t).diff(t,2) + 6*x(t) - 2*y(t)
+    sage: f.laplace(t,s)
     2*s^2*laplace(x(t), t, s) - 2*s*x(0) + 6*laplace(x(t), t, s) - 2*laplace(y(t), t, s) - 2*D[0](x)(0)
 
 This is hard to read, but it says that
