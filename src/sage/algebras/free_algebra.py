@@ -149,12 +149,15 @@ from sage.algebras.free_algebra_element import FreeAlgebraElement
 
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import Algebra
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.word import Word
 from sage.structure.category_object import normalize_names
+
+lazy_import('sage.algebras.letterplace.free_algebra_letterplace', 'FreeAlgebra_letterplace')
 
 
 class FreeAlgebraFactory(UniqueFactory):
@@ -361,8 +364,7 @@ def is_FreeAlgebra(x):
         True
 
     """
-    from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
-    return isinstance(x, (FreeAlgebra_generic,FreeAlgebra_letterplace))
+    return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
 
 
 class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
