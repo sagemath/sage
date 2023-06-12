@@ -9,30 +9,28 @@ AUTHORS:
 
 - Miguel Marco (2021): added transcendental extensions over Q
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.cpython.string cimport str_to_bytes
 
 from sage.libs.gmp.types cimport __mpz_struct
-from sage.libs.gmp.mpz cimport mpz_init_set_ui, mpz_init_set
+from sage.libs.gmp.mpz cimport mpz_init_set_ui
 
-from sage.libs.singular.decl cimport number, poly, ring, currRing
-from sage.libs.singular.decl cimport rChangeCurrRing, rCopy0, rComplete, rDelete, idInit
-from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc, omAlloc0Bin,  sip_sring_bin, rnumber_bin
+from sage.libs.singular.decl cimport ring, currRing
+from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
+from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
 from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
-from sage.libs.singular.decl cimport p_Copy, prCopyR
-from sage.libs.singular.decl cimport n_unknown,  n_Zp,  n_Q,   n_R,   n_GF,  n_long_R,  n_algExt,n_transExt,n_long_C,   n_Z,   n_Zn,  n_Znm,  n_Z2m,  n_CF
-from sage.libs.singular.decl cimport n_coeffType, cfInitCharProc
-from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, nRegister, naInitChar, TransExtInfo
+from sage.libs.singular.decl cimport prCopyR
+from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
+from sage.libs.singular.decl cimport n_coeffType
+from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, TransExtInfo
 
 
-
-from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
 from sage.rings.integer_ring import ZZ
 import sage.rings.abc
@@ -46,7 +44,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_field
 
-from sage.rings.fraction_field import FractionField_generic, FractionField_1poly_field
+from sage.rings.fraction_field import FractionField_generic
 
 from cpython.object cimport Py_EQ, Py_NE
 

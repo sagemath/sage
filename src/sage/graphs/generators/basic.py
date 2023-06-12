@@ -20,8 +20,6 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # import from Sage library
 from sage.graphs.graph import Graph
 from math import sin, cos, pi
-from numpy import corrcoef
-from sage.matrix.constructor import Matrix
 
 
 def BullGraph():
@@ -406,18 +404,20 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     EXAMPLES:
 
         sage: from sage.graphs.generators.basic import CorrelationGraph
-        sage: data=[[1,2,3],[4,5,6],[7,8,9999]]
-        sage: CG1 = CorrelationGraph(data, 0.9, False)
-        sage: CG2 = CorrelationGraph(data, 0.9, True)
-        sage: CG3 = CorrelationGraph(data, 0.1, True)
-        sage: CG1.edges(sort=False)
+        sage: data = [[1,2,3], [4,5,6], [7,8,9999]]
+        sage: CG1 = CorrelationGraph(data, 0.9, False)                                  # optional - numpy
+        sage: CG2 = CorrelationGraph(data, 0.9, True)                                   # optional - numpy
+        sage: CG3 = CorrelationGraph(data, 0.1, True)                                   # optional - numpy
+        sage: CG1.edges(sort=False)                                                     # optional - numpy
         [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
-        sage: CG2.edges(sort=False)
+        sage: CG2.edges(sort=False)                                                     # optional - numpy
         [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
-        sage: CG3.edges(sort=False)
+        sage: CG3.edges(sort=False)                                                     # optional - numpy
         [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
 
     """
+    from numpy import corrcoef
+    from sage.matrix.constructor import Matrix
 
     # compute pairwise correlation coeffecients
     corrs = corrcoef(seqs)
@@ -825,11 +825,11 @@ def Toroidal6RegularGrid2dGraph(p, q):
         sage: g = graphs.Toroidal6RegularGrid2dGraph(5,5)
         sage: g.is_regular(k=6)
         True
-        sage: g.is_vertex_transitive()
+        sage: g.is_vertex_transitive()                                                  # optional - sage.groups
         True
-        sage: g.line_graph().is_vertex_transitive()
+        sage: g.line_graph().is_vertex_transitive()                                     # optional - sage.groups
         True
-        sage: g.automorphism_group().cardinality()
+        sage: g.automorphism_group().cardinality()                                      # optional - sage.groups
         300
         sage: g.is_hamiltonian()
         True

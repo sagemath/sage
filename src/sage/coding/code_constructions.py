@@ -367,8 +367,8 @@ def DuadicCodeEvenPair(F,S1,S2):
     x = P2.gen()
     gg1 = P2([_lift2smallest_field(c)[0] for c in g1.coefficients(sparse=False)])
     gg2 = P2([_lift2smallest_field(c)[0] for c in g2.coefficients(sparse=False)])
-    C1 = CyclicCode(length = n, generator_pol = gg1)
-    C2 = CyclicCode(length = n, generator_pol = gg2)
+    C1 = CyclicCode(length=n, generator_pol=gg1)
+    C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
 def DuadicCodeOddPair(F,S1,S2):
@@ -422,8 +422,8 @@ def DuadicCodeOddPair(F,S1,S2):
     gg2 = P2(coeffs2)
     gg1 = gcd(gg1, x**n - 1)
     gg2 = gcd(gg2, x**n - 1)
-    C1 = CyclicCode(length = n, generator_pol = gg1)
-    C2 = CyclicCode(length = n, generator_pol = gg2)
+    C1 = CyclicCode(length=n, generator_pol=gg1)
+    C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
 def ExtendedQuadraticResidueCode(n,F):

@@ -9,14 +9,12 @@ Helper code for ternary quadratic forms
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.arith.misc import gcd, inverse_mod, xgcd
 from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
 from sage.misc.prandom import randint
-from sage.modules.free_module_element import vector
-from sage.quadratic_forms.extras import extend_to_primitive
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
 

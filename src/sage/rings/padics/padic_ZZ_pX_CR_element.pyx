@@ -176,8 +176,7 @@ AUTHORS:
 - Julian Rueth (2014-05-09): enable caching through ``_cache_key``
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #                     2014 Julian Rueth <julian.rueth@fsfe.org>
@@ -186,8 +185,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.stdsage cimport PY_NEW
@@ -201,7 +200,6 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
@@ -209,13 +207,9 @@ from sage.rings.finite_rings.integer_mod import is_IntegerMod
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
 from sage.rings.padics.precision_error import PrecisionError
 
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_small_Eis
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_big_Eis
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.padics.unramified_extension_generic import UnramifiedExtensionGeneric
-
-from sage.rings.real_double cimport RealDoubleElement
 
 cdef object infinity
 from sage.rings.infinity import infinity
