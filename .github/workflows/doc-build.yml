@@ -52,19 +52,32 @@ jobs:
           # Keep track of changes to built HTML
           (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git init && (echo ".buildinfo"; echo ".inv") > .gitignore; git add -A && git commit --quiet -m "old")
 
-      - name: Incremental build and docbuild
+      - name: Incremental build
         id: incremental
         run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap && make doc-html
+          ./bootstrap && make build
         working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
-      - name: Build and docbuild (fallback to non-incremental)
+      - name: Build (fallback to non-incremental)
         id: build
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+        run: |
+          set -ex
+          make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Build docs
+        id: docbuild
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        # Always non-incremental because of the concern that
+        # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
           set -ex
           make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make doc-html
@@ -75,7 +88,7 @@ jobs:
 
       - name: Copy docs
         id: copy
-        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: always() && steps.docbuild.outcome == 'success'
         run: |
           set -ex
           mkdir -p ./docs
