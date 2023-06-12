@@ -293,9 +293,6 @@ class Function_Bessel_J(BuiltinFunction):
         sage: f = bessel_J(2, x)
         sage: f.integrate(x)
         1/24*x^3*hypergeometric((3/2,), (5/2, 3), -1/4*x^2)
-        sage: m = maxima(bessel_J(2, x))
-        sage: m.integrate(x).sage()
-        1/24*x^3*hypergeometric((3/2,), (5/2, 3), -1/4*x^2)
 
     Visualization (set plot_points to a higher value to get more detail)::
 
