@@ -12,6 +12,7 @@ graft sage/rings/number_field
 exclude sage/rings/number_field/number_field_element_quadratic.p*  # needs arb; will be shipped by sagemath-flint
 #exclude sage/rings/number_field/number_field_base.p*           # FIXME: will be shipped by sagemath-categories
 #exclude sage/rings/number_field/number_field_element_base.p*   # FIXME: will be shipped by sagemath-categories
+exclude sage/rings/number_field/totallyreal*.p*                 # cimports cypari2
 
 include sage/rings/bernoulli_mod_p.p*
 include sage/rings/finite_rings/*_ntl_*.p*
