@@ -652,7 +652,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
                 try:
                     shift = 0
                     for i in list_pts:
-                        yl[i + shift] =  values[shift]
+                        yl[i + shift] = values[shift]
                         shift += 1
                     y = A(yl)
                     values = next(I)

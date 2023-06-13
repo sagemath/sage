@@ -99,7 +99,7 @@ from sage.misc.instancedoc import instancedoc
 # Unit conversions dictionary.
 ###############################################################################
 
-unitdict =  {
+unitdict = {
 'acceleration':
         {'gal':'1/100',
         'galileo':'1/100',

@@ -1208,7 +1208,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     zero = [zero] * len(indices)
                 for X in combinations(Ind, k):
                     if not sparse:
-                        ret =  list(zero)
+                        ret = list(zero)
                     for i in range(k):
                         Y = list(X)
                         Y.pop(i)

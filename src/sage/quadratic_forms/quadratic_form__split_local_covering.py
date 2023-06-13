@@ -236,7 +236,7 @@ def vectors_by_length(self, bound):
         Q_val = Q_val_double.round()
 
         # SANITY CHECK: Roundoff Error is < 0.001
-        if abs(Q_val_double -  Q_val) > 0.001:
+        if abs(Q_val_double - Q_val) > 0.001:
             print(" x = ", x)
             print(" Float = ", Q_val_double, "   Long = ", Q_val)
             raise RuntimeError("The roundoff error is bigger than 0.001, so we should use more precision somewhere...")

@@ -180,18 +180,18 @@ def subgraphs_to_query(subgraphs, db):
 
 # tables     columns                    input data type     sqlite data type
 # -----------------------------------------------------------------------------
-aut_grp =  ['aut_grp_size',             # Integer           INTEGER
+aut_grp = ['aut_grp_size',             # Integer           INTEGER
             'num_orbits',               # Integer           INTEGER
             'num_fixed_points',         # Integer           INTEGER
             'vertex_transitive',        # bool              BOOLEAN
             'edge_transitive']          # bool              BOOLEAN
-degrees =  ['degree_sequence',          # list              INTEGER (see degseq_to_data module function)
+degrees = ['degree_sequence',          # list              INTEGER (see degseq_to_data module function)
             'min_degree',               # Integer           INTEGER
             'max_degree',               # Integer           INTEGER
             'average_degree',           # Real              REAL
             'degrees_sd',               # Real              REAL
             'regular']                  # bool              BOOLEAN
-misc =     ['vertex_connectivity',      # Integer           INTEGER
+misc = ['vertex_connectivity',      # Integer           INTEGER
             'edge_connectivity',        # Integer           INTEGER
             'num_components',           # Integer           INTEGER
             'girth',                    # Integer           INTEGER
