@@ -815,7 +815,7 @@ class Factorization(SageObject):
         if len(self) == 0:
             return repr(self.__unit)
         s = ''
-        mul =  ' * '
+        mul = ' * '
         if cr:
             mul += '\n'
         x = self.__x[0][0]
@@ -846,7 +846,7 @@ class Factorization(SageObject):
                 u = repr(self.__unit)
             else:
                 u = '(%s)'%self.__unit
-            s =  u + mul + s
+            s = u + mul + s
         return s
 
     def _latex_(self):
@@ -887,7 +887,7 @@ class Factorization(SageObject):
                 u = self.__unit._latex_()
             else:
                 u = '\\left(%s\\right)'%self.__unit._latex_()
-            s =  u + ' \\cdot ' + s
+            s = u + ' \\cdot ' + s
         return s
 
     @cached_method
