@@ -142,7 +142,7 @@ graft sage/algebras/finite_dimensional_algebras  # for hyperplane arrangements
 include sage/algebras/group_algebra.py
 
 graft sage/matrix
-exclude sage/matrix/misc.*  # until refactored
+exclude sage/matrix/misc*.*  # until refactored
 exclude sage/matrix/matrix_gap.*
 exclude sage/matrix/matrix_*ball*.*     # depends on arb
 exclude sage/matrix/matrix_*double_dense.*   # depends on numpy
