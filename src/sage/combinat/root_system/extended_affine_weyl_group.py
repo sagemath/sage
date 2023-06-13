@@ -574,7 +574,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         self._extended = True
 
-        Parent.__init__(self, category = Groups().WithRealizations().Infinite())
+        Parent.__init__(self, category=Groups().WithRealizations().Infinite())
 
         # create the realizations (they are cached)
         PW0 = self.PW0()
@@ -1974,7 +1974,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             def twist(w,l):
                 return E.exp_lattice()(w.action(l.value))
 
-            GroupSemidirectProduct.__init__(self, E.exp_lattice(), E.classical_weyl(), twist = twist, act_to_right=False, prefix0=E._prefixt, print_tuple = E._print_tuple, category=E.Realizations())
+            GroupSemidirectProduct.__init__(self, E.exp_lattice(), E.classical_weyl(), twist=twist, act_to_right=False, prefix0=E._prefixt, print_tuple=E._print_tuple, category=E.Realizations())
             self._style = "PW0"
 
         def _repr_(self):
@@ -2348,7 +2348,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             def twist(g,w):
                 return g.act_on_affine_weyl(w)
 
-            GroupSemidirectProduct.__init__(self, E.affine_weyl(), E.fundamental_group(), twist = twist, act_to_right=False, print_tuple = E._print_tuple, category=E.Realizations())
+            GroupSemidirectProduct.__init__(self, E.affine_weyl(), E.fundamental_group(), twist=twist, act_to_right=False, print_tuple=E._print_tuple, category=E.Realizations())
             self._style = "WF"
 
         def _repr_(self):
@@ -2506,7 +2506,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             def twist(g,w):
                 return g.act_on_affine_weyl(w)
 
-            GroupSemidirectProduct.__init__(self, E.fundamental_group(), E.affine_weyl(), twist = twist, act_to_right=True, print_tuple = E._print_tuple, category=E.Realizations())
+            GroupSemidirectProduct.__init__(self, E.fundamental_group(), E.affine_weyl(), twist=twist, act_to_right=True, print_tuple=E._print_tuple, category=E.Realizations())
             self._style = "FW"
 
         def _repr_(self):
@@ -2678,7 +2678,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             def twist(w,l):
                 return E.exp_dual_lattice()(w.action(l.value))
 
-            GroupSemidirectProduct.__init__(self, E.exp_dual_lattice(), E.dual_classical_weyl(), twist = twist, act_to_right=False, prefix0=E._prefixt, print_tuple = E._print_tuple, category=E.Realizations())
+            GroupSemidirectProduct.__init__(self, E.exp_dual_lattice(), E.dual_classical_weyl(), twist=twist, act_to_right=False, prefix0=E._prefixt, print_tuple=E._print_tuple, category=E.Realizations())
             self._style = "PvW0"
 
         def _repr_(self):
@@ -2844,7 +2844,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             def twist(w,l):
                 return E.exp_dual_lattice()(w.action(l.value))
 
-            GroupSemidirectProduct.__init__(self, E.dual_classical_weyl(), E.exp_dual_lattice(), twist = twist, act_to_right=True, prefix1=E._prefixt, print_tuple = E._print_tuple, category=E.Realizations())
+            GroupSemidirectProduct.__init__(self, E.dual_classical_weyl(), E.exp_dual_lattice(), twist=twist, act_to_right=True, prefix1=E._prefixt, print_tuple=E._print_tuple, category=E.Realizations())
             self._style = "W0Pv"
 
         def _repr_(self):

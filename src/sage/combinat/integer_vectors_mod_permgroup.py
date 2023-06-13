@@ -278,7 +278,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
             Category of infinite enumerated quotients of sets
             sage: TestSuite(I).run()
         """
-        RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'breadth', category = InfiniteEnumeratedSets().Quotients())
+        RecursivelyEnumeratedSet_forest.__init__(self, algorithm='breadth', category=InfiniteEnumeratedSets().Quotients())
         self._permgroup = G
         self.n = G.degree()
 
@@ -602,7 +602,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
             sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 6, max_part=4)
         """
-        RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'breadth', category = (FiniteEnumeratedSets(), FiniteEnumeratedSets().Quotients()))
+        RecursivelyEnumeratedSet_forest.__init__(self, algorithm='breadth', category=(FiniteEnumeratedSets(), FiniteEnumeratedSets().Quotients()))
         self._permgroup = G
         self.n = G.degree()
         self._sum = d
@@ -757,7 +757,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         else:
             SF = RecursivelyEnumeratedSet_forest((self([0]*(self.n), check=False),),
                               lambda x : [self(y, check=False) for y in canonical_children(self._sgs, x, self._max_part)],
-                              algorithm = 'breadth')
+                              algorithm='breadth')
             if self._sum is None:
                 return iter(SF)
             else:
