@@ -941,7 +941,12 @@ cdef class LazyWrapper(LazyFieldElement):
         FieldElement.__init__(self, parent)
         self._value = value
         if check:
-            self._parent.interval_field()(value)
+            try:
+                ivf = self._parent.interval_field()
+            except ImportError:
+                pass
+            else:
+                ivf(value)
 
     def __neg__(self):
         """
