@@ -439,7 +439,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)                                                                           # optional - sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
 
-        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
+        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)  # optional - sage.libs.singular
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
         sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)                                                       # optional - sage.libs.singular
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
