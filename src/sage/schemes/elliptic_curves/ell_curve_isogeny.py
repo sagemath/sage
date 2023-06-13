@@ -1250,6 +1250,16 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi = E.isogeny(3^99*P)                                               # optional - sage.rings.finite_rings
             sage: phi(Q)._order                                                         # optional - sage.rings.finite_rings
             27
+        
+        Check that copying the order of a point with infinite order works (added for issue:'35763')::
+            
+            sage: E = EllipticCurve([0, 0, 1, 0, 20]);
+            sage: a = E.gens()[0];
+            sage: P_list = E.torsion_points();
+            sage: phi = EllipticCurveIsogeny(E, P_list); phi(a)
+            sage: n = a.order()
+            sage: phi(a)
+            (73/4 : 591/8 : 1)
         """
         if P.is_zero():
             return self._codomain(0)
@@ -1281,7 +1291,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             xP = self.__posti_ratl_maps[0](xP)
 
         Q = self._codomain(xP, yP)
-        if hasattr(P, '_order') and P._order.gcd(self._degree).is_one():
+        if hasattr(P, '_order') and
+            (P._order == +Infinity or P._order.gcd(self._degree).is_one()):
             # TODO: For non-coprime degree, the order of the point
             # gets reduced by a divisor of the degree when passing
             # through the isogeny. We could run something along the
