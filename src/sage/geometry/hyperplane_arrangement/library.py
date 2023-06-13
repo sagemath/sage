@@ -441,7 +441,6 @@ class HyperplaneArrangementLibrary():
             \cup
             \{ x_i = a : 1 \leq i\leq n, \quad i - n \leq a \leq n - i + 1 \}.
 
-
         EXAMPLES::
 
             sage: a = hyperplane_arrangements.IshB(2)
@@ -460,7 +459,7 @@ class HyperplaneArrangementLibrary():
             True
 
         .. PLOT::
-            :width: 300 px
+            :width: 500 px
 
             a = hyperplane_arrangements.IshB(2)
             sphinx_plot(a.plot())
