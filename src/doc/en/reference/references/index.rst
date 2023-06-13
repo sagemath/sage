@@ -6113,6 +6113,10 @@ REFERENCES:
 .. [TOPCOM] \J. Rambau, TOPCOM
             <http://www.rambau.wm.uni-bayreuth.de/TOPCOM/>.
 
+.. [TT2023] Tan Nhat Tran and Shuhei Tsujie.
+            *A type B analog of Ish arrangement*.
+            Preprint, :arxiv:`2304.12022`. (2023)
+
 .. [TTWL2009] Trebst, Troyer, Wang and Ludwig, A short introduction to
               Fibonacci anyon models, :arxiv:`0902.3275`.
 
