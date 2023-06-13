@@ -247,8 +247,13 @@ class WeightLatticeRealizations(Category_over_base_ring):
             """
             from sage.rings.integer_ring import ZZ
             tester = self._tester(**options)
-            Lambda = self.fundamental_weights()
-            alphacheck = self.simple_coroots()
+
+            try:
+                Lambda = self.fundamental_weights()
+                alphacheck = self.simple_coroots()
+            except ImportError:
+                return
+
             tester.assertEqual(tuple(Lambda.keys()), self.index_set())
 
             # Check the consistency between simple_root and simple_roots
