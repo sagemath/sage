@@ -90,6 +90,7 @@ from sage.rings.integer import Integer
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.fraction_field import FractionField
+from sage.rings.infinity import Infinity
 
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
@@ -1256,10 +1257,12 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: E = EllipticCurve([0, 0, 1, 0, 20]);
             sage: a = E.gens()[0];
             sage: P_list = E.torsion_points();
-            sage: phi = EllipticCurveIsogeny(E, P_list); phi(a)
-            sage: n = a.order()
-            sage: phi(a)
+            sage: phi = EllipticCurveIsogeny(E, P_list);
+            sage: n = a.order();
+            sage: b = phi(a); b
             (73/4 : 591/8 : 1)
+            sage: b.order()
+            +Infinity
         """
         if P.is_zero():
             return self._codomain(0)
@@ -1291,8 +1294,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             xP = self.__posti_ratl_maps[0](xP)
 
         Q = self._codomain(xP, yP)
-        if hasattr(P, '_order') and (P._order == +Infinity 
-                                     or P._order.gcd(self._degree).is_one()):
+        if hasattr(P, '_order') and (P._order == Infinity or 
+                                     P._order.gcd(self._degree).is_one()):
             # TODO: For non-coprime degree, the order of the point
             # gets reduced by a divisor of the degree when passing
             # through the isogeny. We could run something along the
