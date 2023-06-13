@@ -114,8 +114,8 @@ cdef class ProbabilityDistribution:
             sage: from sage.probability.probability_distribution import GeneralDiscreteDistribution
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: h, b = X.generate_histogram_data(bins = 10)
-            sage: h  # rel tol 1e-08
+            sage: h, b = X.generate_histogram_data(bins=10)                             # optional - sage.plot
+            sage: h  # rel tol 1e-08                                                    # optional - sage.plot
             [1.6299999999999999,
              0.0,
              0.0,
@@ -126,7 +126,7 @@ cdef class ProbabilityDistribution:
              0.0,
              0.0,
              1.4650000000000003]
-            sage: b
+            sage: b                                                                     # optional - sage.plot
             [0.0,
              0.2,
              0.4,
