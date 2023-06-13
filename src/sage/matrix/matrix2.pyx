@@ -14980,7 +14980,6 @@ cdef class Matrix(Matrix1):
             12215
         """
         from sage.rings.real_double import RDF
-        from sage.rings.real_mpfr import RealField
         try:
             A = self.change_ring(RDF)
             m1 = A._hadamard_row_bound()
@@ -14988,13 +14987,14 @@ cdef class Matrix(Matrix1):
             m2 = A._hadamard_row_bound()
             return min(m1, m2)
         except (OverflowError, TypeError):
+            from sage.rings.real_mpfr import RealField
             # Try using MPFR, which handles large numbers much better, but is slower.
-            from . import misc
+            from .misc_mpfr import hadamard_row_bound_mpfr
             R = RealField(53, rnd='RNDU')
             A = self.change_ring(R)
-            m1 = misc.hadamard_row_bound_mpfr(A)
+            m1 = hadamard_row_bound_mpfr(A)
             A = A.transpose()
-            m2 = misc.hadamard_row_bound_mpfr(A)
+            m2 = hadamard_row_bound_mpfr(A)
             return min(m1, m2)
 
     def find(self,f, indices=False):
