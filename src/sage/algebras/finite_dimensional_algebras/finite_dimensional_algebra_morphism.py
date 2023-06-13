@@ -86,9 +86,9 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
             ....:                                   Matrix([[0, 1], [0, 0]])])
-            sage: I = A.maximal_ideal()
-            sage: q = A.quotient_map(I)
-            sage: q._repr_()
+            sage: I = A.maximal_ideal()                                                 # optional - sage.libs.pari
+            sage: q = A.quotient_map(I)                                                 # optional - sage.libs.pari
+            sage: q._repr_()                                                            # optional - sage.libs.pari
             'Morphism from Finite-dimensional algebra of degree 2 over Rational Field to Finite-dimensional algebra of degree 1 over Rational Field given by matrix\n[1]\n[0]'
         """
         return "Morphism from {} to {} given by matrix\n{}".format(
@@ -100,9 +100,9 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
             ....:                                   Matrix([[0, 1], [0, 0]])])
-            sage: I = A.maximal_ideal()
-            sage: q = A.quotient_map(I)
-            sage: q(0) == 0 and q(1) == 1
+            sage: I = A.maximal_ideal()                                                 # optional - sage.libs.pari
+            sage: q = A.quotient_map(I)                                                 # optional - sage.libs.pari
+            sage: q(0) == 0 and q(1) == 1                                               # optional - sage.libs.pari
             True
         """
         x = self.domain()(x)
@@ -182,10 +182,10 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
             ....:                                   Matrix([[0, 1], [0, 0]])])
-            sage: I = A.maximal_ideal()
-            sage: q = A.quotient_map(I)
-            sage: B = q.codomain()
-            sage: q.inverse_image(B.zero_ideal()) == I
+            sage: I = A.maximal_ideal()                                                 # optional - sage.libs.pari
+            sage: q = A.quotient_map(I)                                                 # optional - sage.libs.pari
+            sage: B = q.codomain()                                                      # optional - sage.libs.pari
+            sage: q.inverse_image(B.zero_ideal()) == I                                  # optional - sage.libs.pari
             True
         """
         coker_I = I.basis_matrix().transpose().kernel().basis_matrix().transpose()
