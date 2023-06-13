@@ -81,6 +81,7 @@ distributions = ['',
                  'sagemath-gap',
                  'sagemath-giac',
                  'sagemath-homfly',
+                 'sagemath-pari',
                  ]
 from sage.misc.package import is_package_installed_and_updated
 optional_packages_with_extensions = ['mcqd', 'bliss', 'tdlib',
