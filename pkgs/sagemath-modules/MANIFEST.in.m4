@@ -11,22 +11,99 @@ global-include all__sagemath_modules.py
 
 graft sage/misc
 exclude sage/misc/all.py
-# see sage.misc.all__sagemath_modules -- exclude dev tools, session management
-exclude sage/misc/dev_tools.p*
+# exclude what's in sagemath-objects
+exclude sage/misc/classcall_metaclass.*
+exclude sage/misc/inherit_comparison*.*
+exclude sage/misc/weak_dict.*
+exclude sage/misc/nested_class*.*
+exclude sage/misc/test_nested_class*.p*
+exclude sage/misc/abstract_method.*
+exclude sage/misc/cachefunc.*
+exclude sage/misc/decorators.*
+exclude sage/misc/c3_controlled.*
+exclude sage/misc/lazy_attribute.*
+exclude sage/misc/function_mangling.*
+exclude sage/misc/lazy_string.*
+exclude sage/misc/lazy_format.*
+exclude sage/misc/unknown.*
+exclude sage/misc/fast_methods.*
+exclude sage/misc/constant_function.*
+exclude sage/misc/call.*
+exclude sage/misc/bindable_class.*
+exclude sage/misc/namespace_package.p*
+exclude sage/misc/package_dir.py
+exclude sage/misc/verbose.*
+exclude sage/misc/repr.*
+exclude sage/misc/superseded.*
+exclude sage/misc/misc_c.*
+exclude sage/misc/flatten.*
+exclude sage/misc/lazy_list.p*
+exclude sage/misc/lazy_import*.*
+exclude sage/misc/sageinspect.*
+exclude sage/misc/instancedoc.*
+exclude sage/misc/persist.*
+exclude sage/misc/sage_unittest.*
+exclude sage/misc/fpickle.p*
+exclude sage/misc/randstate.*
+exclude sage/misc/prandom.*
+exclude sage/misc/misc.*
+exclude sage/misc/timing.p*
+exclude sage/misc/globals.p*
+exclude sage/misc/sage_timeit*.p*
+exclude sage/misc/session.p*
+exclude sage/misc/reset.p*
+exclude sage/misc/sage_ostools.p*
+
+# exclude what's in sagemath-categories
+exclude sage/misc/object_multiplexer.p*
+exclude sage/misc/multireplace.p*
+exclude sage/misc/sagespawn.p*
+exclude sage/misc/allocator.*
+exclude sage/misc/latex*.*
+exclude sage/misc/html.p*
+exclude sage/misc/mathml.p*
+exclude sage/misc/table.p*
+exclude sage/misc/map_threaded.p*
+exclude sage/misc/mrange.p*
+exclude sage/misc/defaults.p*
+exclude sage/misc/converting_dict.p*
+exclude sage/misc/parser.p*
+exclude sage/misc/method_decorator.p*
+exclude sage/misc/random_testing.p*
+exclude sage/misc/rest_index_of_methods.p*
+exclude sage/misc/callable_dict.p*
+exclude sage/misc/derivative.p*
+exclude sage/misc/functional.p*
+exclude sage/misc/binary_tree.p*
+
+# Exclude what's in sagemath-environment
+exclude sage/misc/package.py
+exclude sage/misc/package_dir.py
+exclude sage/misc/temporary_file.py
+include sage/misc/viewer.py
+
+
+# Exclude what's in sagemath-repl
+exclude sage/misc/banner.py
+exclude sage/misc/sagedoc.py
+exclude sage/misc/sage_input.py
+exclude sage/misc/sage_eval.py
+exclude sage/misc/explain_pickle.py
+exclude sage/misc/trace.py
+exclude sage/misc/profiler.py
+exclude sage/misc/dev_tools.py
+exclude sage/misc/edit_module.py
+exclude sage/misc/pager.py
+exclude sage/misc/cython.py
+exclude sage/misc/inline_fortran.py
+
+# see sage.misc.all__sagemath_modules -- exclude dev tools, session management not already excluded above.
 exclude sage/misc/sage_timeit_class.p*
 exclude sage/misc/edit_module.p*
-exclude sage/misc/session.p*
 exclude sage/misc/remote_file.p*
-exclude sage/misc/profiler.p*
 exclude sage/misc/dist.p*
-exclude sage/misc/pager.p*
 #??? sage/misc/sagedoc.p*
 exclude sage/misc/classgraph.p*
-exclude sage/misc/reset.p*
-exclude sage/misc/cython.p*
-exclude sage/misc/trace.p*
-exclude sage/misc/explain_pickle.p*
-exclude sage/misc/inline_fortran.p*
 exclude sage/misc/benchmark.p*
 exclude sage/misc/citation.p*
 exclude sage/misc/copying.p*
@@ -34,15 +111,8 @@ exclude sage/misc/gperftools.p*
 exclude sage/misc/messaging.p*
 exclude sage/misc/python.p*
 exclude sage/misc/sh.p*
-exclude sage/misc/viewer.p*
 # lost and abandoned
 prune sage/misc/notes
-# belongs to sagemath-categories
-exclude sage/misc/derivative.p*
-# can hopefully be eliminated
-exclude sage/misc/sage_ostools.p*
-# still needed for the doctester
-##exclude sage/misc/package.p*
 
 graft sage/modules
 exclude sage/modules/vector_*double*.*  # depends on numpy
@@ -143,7 +213,7 @@ include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimpo
 
 include sage/rings/ring_extension*.p*
 
-# mpfr, mpmath
+# mpfr, mpmath, gsl
 graft sage/libs/mpfr
 graft sage/libs/mpmath
 graft sage/libs/gsl
@@ -155,6 +225,23 @@ include sage/rings/complex_double.p*
 include sage/rings/complex_field.p*
 include sage/rings/complex_mpfr.p*
 include sage/rings/complex_conversion.p*
+# uses gsl
+graft sage/calculus
+# exclude what is included in sagemath-categories
+exclude sage/calculus/functional.p*
+# exclude symbolics
+exclude sage/calculus/all.*
+exclude sage/calculus/calculus.*
+exclude sage/calculus/desolvers.*
+exclude sage/calculus/predefined.*
+exclude sage/calculus/tests.*
+exclude sage/calculus/var.*
+# needs numpy
+# exclude sage/calculus/interpolators.*
+# exclude sage/calculus/riemann.*
+
+# temporarily exclude what needs ext/interpreters
+exclude sage/calculus/integration.*
 
 # More from algebras with compile-time dependencies on sagemath-modules
 include sage/algebras/clifford_algebra*.p*
@@ -184,6 +271,18 @@ graft sage/stats/distributions                          # discrete_gaussian need
 # other parts of sage.stats need sage.modules.vector_real_double_dense (which cimports numpy)
 graft sage/probability                                  # uses gsl
 
+global-exclude all__sagemath_objects.*
+global-exclude all__sagemath_categories.*
+global-exclude all__sagemath_environment.*
+global-exclude all__sagemath_graphs.*
+global-exclude all__sagemath_repl.*
+global-exclude all__sagemath_*symbolics*.*
+
+global-exclude __pycache__
 global-exclude *.py[co]
-global-exclude *.so
 global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

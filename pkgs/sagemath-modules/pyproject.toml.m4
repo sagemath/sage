@@ -10,6 +10,7 @@ requires = [
         sagemath_categories \
         cython         \
         gmpy2          \
+        numpy          \
         cysignals      \
         memory_allocator   \
                     ')]

@@ -1,3 +1,4 @@
+from .all__sagemath_modules import *
 from .all__sagemath_standard_no_symbolics import *
 
 from sage.misc.lazy_import import lazy_import
@@ -12,9 +13,6 @@ from .desolvers import (desolve, desolve_laplace, desolve_system,
                         desolve_odeint, desolve_mintides, desolve_tides_mpfr)
 
 from .var import (var, function, clear_vars)
-
-from .transforms.all import *
-
 
 lazy_import('sage.modules.free_module_element', ['vector', 'FreeModuleElement'])
 lazy_import('sage.matrix.constructor', 'matrix')
