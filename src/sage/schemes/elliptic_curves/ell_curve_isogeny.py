@@ -1291,8 +1291,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             xP = self.__posti_ratl_maps[0](xP)
 
         Q = self._codomain(xP, yP)
-        if hasattr(P, '_order') and
-            (P._order == +Infinity or P._order.gcd(self._degree).is_one()):
+        if hasattr(P, '_order') and (P._order == +Infinity 
+                                     or P._order.gcd(self._degree).is_one()):
             # TODO: For non-coprime degree, the order of the point
             # gets reduced by a divisor of the degree when passing
             # through the isogeny. We could run something along the
