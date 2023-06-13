@@ -544,7 +544,7 @@ class WeylGroup_gens(UniqueRepresentation,
                  [twothirds, twothirds, -third]]
             m = matrix(QQ, 3, l)
         else:
-            m = diagonal_matrix([-1 for _ in range(self.n)])
+            m = diagonal_matrix([-1] * self.n)
         return self(m)
 
     def classical(self):
@@ -554,7 +554,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
         Caveat: we assume that 0 is a special node of the Dynkin diagram
 
-        TODO: extract parabolic subgroup method
+        .. TODO:: extract parabolic subgroup method
 
         EXAMPLES::
 

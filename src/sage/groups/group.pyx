@@ -215,13 +215,11 @@ cdef class Group(Parent):
             sage: G.an_element()                                                        # optional - sage.groups
             f0*f1*f2*f3
         """
-        from sage.misc.misc_c import prod
         return self.prod(self.gens())
 
     def quotient(self, H, **kwds):
         """
-        Return the quotient of this group by the normal subgroup
-        `H`.
+        Return the quotient of this group by the normal subgroup `H`.
 
         EXAMPLES::
 
