@@ -3410,7 +3410,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ...
             ZeroDivisionError: The modulus cannot be zero
         """
-        from .misc import matrix_integer_dense_rational_reconstruction
+        from .misc_flint import matrix_integer_dense_rational_reconstruction
         return matrix_integer_dense_rational_reconstruction(self, N)
 
     def randomize(self, density=1, x=None, y=None, distribution=None,
