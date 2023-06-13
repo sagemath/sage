@@ -1127,7 +1127,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             raise NotImplementedError("cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain")
         return [i for i in self.codomain().basis().keys() if self._inverse_on_support(i) is None]
 
-    def cokernel_projection(self, category = None):
+    def cokernel_projection(self, category=None):
         """
         Return a projection on the co-kernel of ``self``.
 
@@ -1517,7 +1517,7 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         """
         return self.codomain().module_morphism(
             diagonal=pointwise_inverse_function(self._diagonal),
-            codomain=self.domain(), category = self.category_for())
+            codomain=self.domain(), category=self.category_for())
 
 
 def pointwise_inverse_function(f):

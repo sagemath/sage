@@ -4519,7 +4519,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     # we now deform by a parameter t
                     T = R['t']
                     t = T.gens()[0]
-                    Pt = ProjectiveSpace(N-1, R=T, names = [str(i) for i in CR.gens()])
+                    Pt = ProjectiveSpace(N-1, R=T, names=[str(i) for i in CR.gens()])
                     deformed_polys = [poly + t*Pt.gens()[-1]**d for poly in new_f.defining_polynomials()[:-1]]
                     deformed_polys += [new_f.defining_polynomials()[-1]]
                     f_deformed = DynamicalSystem(deformed_polys)
@@ -4869,7 +4869,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                             # we now deform by a parameter t
                             T = R['t']
                             t = T.gens()[0]
-                            Pt = ProjectiveSpace(N-1, R=T, names = [str(i) for i in CR.gens()])
+                            Pt = ProjectiveSpace(N-1, R=T, names=[str(i) for i in CR.gens()])
                             deformed_polys = [poly + t*Pt.gens()[-1]**d for poly in new_f.defining_polynomials()[:-1]]
                             deformed_polys += [new_f.defining_polynomials()[-1]]
                             f_deformed = DynamicalSystem(deformed_polys)
@@ -5694,7 +5694,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 # we now deform by a parameter t
                 T = base_ring['k']
                 k = T.gens()[0]
-                Pt = ProjectiveSpace(N, R=T, names = [str(i) for i in CR.gens()])
+                Pt = ProjectiveSpace(N, R=T, names=[str(i) for i in CR.gens()])
                 deformed_polys = [poly + k*Pt.gens()[-1]**d for poly in new_f.defining_polynomials()[:-1]]
                 deformed_polys += [new_f.defining_polynomials()[-1]]
                 f_deformed = DynamicalSystem(deformed_polys)
@@ -6331,7 +6331,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         # we calculate the canonical height without considering
         # if the domain is a subscheme
-        h = f.canonical_height(P, error_bound = err)
+        h = f.canonical_height(P, error_bound=err)
         # we know canonical height 0 if and only if preperiodic
         # however precision issues can occur so we can only tell *not* preperiodic
         # if the value is larger than the error
