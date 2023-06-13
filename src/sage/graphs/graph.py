@@ -424,7 +424,7 @@ from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_i
 from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
 
-from sage.misc.lazy_import import lazy_import
+from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features import PythonModule
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=PythonModule('sage.graphs.mcqd', spkg='mcqd'))
@@ -10022,7 +10022,7 @@ class Graph(GenericGraph):
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
-    from sage.graphs.chrompoly import chromatic_polynomial
+    chromatic_polynomial = LazyImport('sage.graphs.chrompoly', 'chromatic_polynomial', at_startup=True)
     from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
     from sage.graphs.graph_decompositions.tree_decomposition import treewidth
     from sage.graphs.graph_decompositions.vertex_separation import pathwidth
@@ -10030,7 +10030,7 @@ class Graph(GenericGraph):
     from sage.graphs.graph_decompositions.clique_separators import atoms_and_clique_separators
     from sage.graphs.graph_decompositions.bandwidth import bandwidth
     from sage.graphs.graph_decompositions.cutwidth import cutwidth
-    from sage.graphs.matchpoly import matching_polynomial
+    matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
     from sage.graphs.cliquer import all_max_clique as cliques_maximum
     from sage.graphs.cliquer import all_cliques
     from sage.graphs.spanning_tree import random_spanning_tree
@@ -10047,7 +10047,7 @@ class Graph(GenericGraph):
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
     from sage.graphs.comparability import is_permutation
-    from sage.graphs.convexity_properties import geodetic_closure
+    geodetic_closure = LazyImport('sage.graphs.convexity_properties', 'geodetic_closure', at_startup=True)
     from sage.graphs.domination import is_dominating
     from sage.graphs.domination import is_redundant
     from sage.graphs.domination import private_neighbors

@@ -15,18 +15,18 @@ AUTHORS:
 - Martin Albrecht <malb@informatik.uni-bremen.de> (2007-10)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 include "sage/libs/ntl/decl.pxi"
