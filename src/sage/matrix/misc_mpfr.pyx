@@ -33,7 +33,7 @@ def hadamard_row_bound_mpfr(Matrix A):
     happens to be sharp. ::
 
         sage: a = matrix(ZZ, 2, [2^10000, 3^10000, 2^50, 3^19292])
-        sage: from sage.matrix.misc import hadamard_row_bound_mpfr
+        sage: from sage.matrix.misc_mpfr import hadamard_row_bound_mpfr
         sage: hadamard_row_bound_mpfr(a.change_ring(RR))
         13976
         sage: len(str(a.det()))

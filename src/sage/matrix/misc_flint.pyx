@@ -32,7 +32,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
     EXAMPLES::
 
         sage: B = ((matrix(ZZ, 3,4, [1,2,3,-4,7,2,18,3,4,3,4,5])/3)%500).change_ring(ZZ)
-        sage: from sage.matrix.misc import matrix_integer_dense_rational_reconstruction
+        sage: from sage.matrix.misc_flint import matrix_integer_dense_rational_reconstruction
         sage: matrix_integer_dense_rational_reconstruction(B, 500)
         [ 1/3  2/3    1 -4/3]
         [ 7/3  2/3    6    1]
