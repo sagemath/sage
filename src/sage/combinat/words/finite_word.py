@@ -3262,45 +3262,63 @@ class FiniteWord_class(Word_class):
             for letter in morphism.domain().alphabet():
                 inverseMorphismDict[morphism(letter)[0]] = letter
             inverseMorphismsG.append(WordMorphism(inverseMorphismDict))
-        # Compute g_G TODO
+        # Compute g_G
         g_G = 0
-
+        alreadyFoundLetters = set()
+        for letter in self.letters():
+            if not(letter in alreadyFoundLetters):
+                letterContributes = True
+                alreadyFoundLetters.add(letter)
+                for antimorphism in antimorphismsG:
+                    if letter == antimorphism(letter)[0]:
+                        letterContributes = False
+                    alreadyFoundLetters.add(antimorphism(letter)[0])
+                for morphism in morphismsG:
+                    alreadyFoundLetters.add(morphism(letter)[0])
+                if letterContributes:
+                    g_G += 1
         # Compute amount of distinct palindromic classes of equivalency
+        specialLetter = self.not_used_letter()
         palindromesTrees = []
         for antimorphism in antimorphismsG:
             _, palindromesTree = self._get_palindromic_factors_data(f=antimorphism)
-            palindromesTrees.append(palindromesTree)
-        for palindromeTree in palindromesTrees:
-            pass
-
-        from sage.combinat.words.word import Word
-        from collections import deque
-        result = set()
-        currentWordLetters = deque()
-        currentPalindromes = [palindrome for palindrome in palindromesTree[0][0].items()]
-        while currentPalindromes:
-            if currentPalindromes[-1] == None:
-                currentPalindromes.pop()
-                if len(currentWordLetters) == 1:
-                    currentWordLetters.pop()
+            palindromesTrees.append((palindromesTree, antimorphism))
+        emptyStringDict = dict()
+        emptyStringDictList = []
+        emptyStringDictLocalIndexesList = []
+        for morphism in morphismsG:
+            emptyStringDictList.append(emptyStringDict)
+            emptyStringDictLocalIndexesList.append(0)
+        gPalindromesTree = [[dict(), emptyStringDictList, emptyStringDictLocalIndexesList, False]]
+        for palindromesTree, antimorphism in palindromesTrees:
+            currentGNodesPath = [(gPalindromesTree[0], gPalindromesTree[0][1][0])]
+            currentPalindromes = [palindrome for palindrome in palindromesTree[0][0].items()]
+            while currentPalindromes:
+                if currentPalindromes[-1] is None:
+                    currentPalindromes.pop()
+                    currentGNodesPath.pop()
                 else:
-                    currentWordLetters.pop()
-                    currentWordLetters.popleft()
-            else:
-                leftLetter, palindromeIndex = currentPalindromes.pop()
-                palindrome = palindromesTree[palindromeIndex]
-                actualPalindromeLength, endsWithSpecialLetter = palindrome[2], palindrome[3]
-                if not endsWithSpecialLetter:
-                    currentPalindromes.append(None)
-                    if actualPalindromeLength == 1:
-                        currentWordLetters.append(leftLetter)
+                    leftLetter, palindromeIndex = currentPalindromes.pop()
+                    palindrome = palindromesTree[palindromeIndex]
+                    actualPalindromeLength, endsWithSpecialLetter = palindrome[2], palindrome[3]
+                    rightLetter = leftLetter
+                    if endsWithSpecialLetter:
+                        leftLetter, rightLetter = specialLetter, specialLetter
+                    elif actualPalindromeLength != 1:
+                        rightLetter = antimorphism(leftLetter)[0]
+                    _, gNodeDict = currentGNodesPath[-1]
+                    if (leftLetter, rightLetter) in gNodeDict:
+                        gNodeIndex, gDictIndex = gNodeDict[(leftLetter, rightLetter)]
+                        currentGNodesPath.append((gPalindromesTree[gNodeIndex], gPalindromesTree[gNodeIndex][1][gDictIndex]))
                     else:
-                        currentWordLetters.appendleft(leftLetter)
-                        currentWordLetters.append(f(leftLetter)[0])
-                    result.add(Word(currentWordLetters))
-                for neighbour in palindrome[0].items():
-                    currentPalindromes.append(neighbour)
-
+                        pass # TODO - add a new node, append it into currentGNodesPath
+                    currentPalindromes.append(None)
+                    for neighbour in palindrome[0].items():
+                        currentPalindromes.append(neighbour)
+        distinctPalindromesCount = 0
+        for node in gPalindromesTree:
+            if not node[3]:
+                distinctPalindromesCount += 1
         return self.length() + 1 - g_G - distinctPalindromesCount
 
     def is_full(self, f=None):
@@ -3622,7 +3640,7 @@ class FiniteWord_class(Word_class):
         currentWordLetters = deque()
         currentPalindromes = [palindrome for palindrome in palindromesTree[0][0].items()]
         while currentPalindromes:
-            if currentPalindromes[-1] == None:
+            if currentPalindromes[-1] is None:
                 currentPalindromes.pop()
                 if len(currentWordLetters) == 1:
                     currentWordLetters.pop()
@@ -3752,7 +3770,7 @@ class FiniteWord_class(Word_class):
         i = 0 
         while i < len(previousPositions):
             if initialPalindromeRadiuses[i] != maximalPalindromeRadiuses[i]:
-                if previousPositions[i] == None:
+                if previousPositions[i] is None:
                     treeIndex, nodeIndex = len(diffForest), 0
                     diffForest.append([[i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []]])
                     treeAndNodeIndexes[i] = (treeIndex, nodeIndex)
