@@ -539,7 +539,7 @@ class Gap(Parent):
             ...
             GAPError: Error, VAL_GVAR: No value bound to FooBar
         """
-        return make_any_gap_element(GAP_ValueGlobalVariable(variable.value))
+        return make_any_gap_element(self, GAP_ValueGlobalVariable(variable.value))
 
     def global_context(self, variable, value):
         """
