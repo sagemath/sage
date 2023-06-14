@@ -1252,7 +1252,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi(Q)._order                                                         # optional - sage.rings.finite_rings
             27
         
-        Check that copying the order of a point with infinite order works (added for issue:'35763')::
+        Copying the order of a non-torsion point works (issue:'35763')::
             
             sage: E = EllipticCurve([0, 0, 1, 0, 20]);
             sage: a = E.gens()[0];
