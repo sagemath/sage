@@ -63,7 +63,7 @@ Available in other distribution packages
   Graphs, posets, hypergraphs, designs, abstract complexes, combinatorial polyhedra, abelian sandpiles, quivers
 
 * `sagemath-groups <https://pypi.org/project/sagemath-groups>`_:
-  Groups, semigroups, invariant theory
+  Groups, invariant theory
 
 * `sagemath-modules <https://pypi.org/project/sagemath-modules>`_:
   Vectors, matrices, tensors, vector spaces, affine spaces,
@@ -78,9 +78,11 @@ Available in other distribution packages
 * `sagemath-repl <https://pypi.org/project/sagemath-repl>`_:
   IPython REPL, the interactive language of SageMath (preparser), interacts, development tools
 
-* `sagemath-symbolics <https://pypi.org/project/sagemath-symbolics>`_:
-  Symbolic expressions, calculus, differentiable manifolds, schemes, varieties, Groebner bases, asymptotics
+* `sagemath-schemes <https://pypi.org/project/sagemath-schemes>`_:
+  Schemes, varieties, Groebner bases, elliptic curves, algebraic Riemann surfaces, modular forms, arithmetic dynamics
 
+* `sagemath-symbolics <https://pypi.org/project/sagemath-symbolics>`_:
+  Symbolic expressions, calculus, differentiable manifolds, asymptotics
 
 
 Dependencies
