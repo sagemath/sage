@@ -1793,6 +1793,24 @@ class QuaternionOrder(Parent):
         else:
             raise NotImplementedError("ideal only implemented for quaternion algebras over QQ")
 
+    def basis_matrix(self):
+        r"""
+        Return the basis matrix of this quaternion order.
+
+        Convenience wrapper for ``O.unit_ideal().basis_matrix()``.
+
+        OUTPUT: matrix over `\QQ`
+
+        EXAMPLES::
+
+            sage: QuaternionAlgebra(-11,-1).maximal_order().basis_matrix()
+            [1/2 1/2   0   0]
+            [  0   1   0   0]
+            [  0   0 1/2 1/2]
+            [  0   0   0   1]
+        """
+        return self.unit_ideal().basis_matrix()
+
     def __mul__(self, other):
         """
         Every order equals its own unit ideal. Overload ideal multiplication
