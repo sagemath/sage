@@ -6643,6 +6643,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 return (H_q)
     #<-------------------------------------------------------------------------
     #>-------------------------------------------------------------------------
+
         def S_integral_points_with_bounded_mw_coeffs():
             r"""
             Return the set of S-integers x which are x-coordinates of
@@ -6727,6 +6728,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return xs
     #<-------------------------------------------------------------------------
     #>-------------------------------------------------------------------------
+
         def S_integral_x_coords_with_abs_bounded_by(abs_bound):
             r"""
             Extra search of points with `|x|< ` abs_bound, assuming

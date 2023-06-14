@@ -139,7 +139,9 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
         """
         return "[{}, {}] Goppa code over GF({})".format(
-                self.length(), self.dimension(), self.base_field().cardinality())
+            self.length(), self.dimension(),
+            self.base_field().cardinality())
+
     def _latex_(self):
         r"""
         Return a latex representation of ``self``.

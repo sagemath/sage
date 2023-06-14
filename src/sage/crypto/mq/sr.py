@@ -3301,6 +3301,7 @@ class AllowZeroInversionsContext:
             a^2 + a
         """
         self.sr = sr
+
     def __enter__(self):
         """
         EXAMPLES::
@@ -3318,6 +3319,7 @@ class AllowZeroInversionsContext:
         """
         self.allow_zero_inversions = self.sr._allow_zero_inversions
         self.sr._allow_zero_inversions = True
+
     def __exit__(self, typ, value, tb):
         """
         EXAMPLES::

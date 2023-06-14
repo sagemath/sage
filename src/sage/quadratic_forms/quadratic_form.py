@@ -940,7 +940,6 @@ class QuadraticForm(SageObject):
             raise TypeError("cannot add these since the quadratic forms do not have the same base rings")
         return QuadraticForm(self.__base_ring, self.__n, [self.__coeffs[i] + right.__coeffs[i]  for i in range(len(self.__coeffs))])
 
-
 # ========================  CHANGE THIS TO A TENSOR PRODUCT?!?  Even in Characteristic 2?!?  =======================
 #    def __mul__(self, right):
 #        """
@@ -964,19 +963,22 @@ class QuadraticForm(SageObject):
 #            raise TypeError, "Oh no! The multiplier cannot be coerced into the base ring of the quadratic form. =("
 #
 #        return QuadraticForm(self.base_ring(), self.dim(), [c * self.__coeffs[i]  for i in range(len(self.__coeffs))])
-# =========================================================================================================================
+
+    # =================================================================
 
     def __call__(self, v):
         r"""
         Evaluate this quadratic form `Q` on a vector or matrix of elements
-        coercible to the base ring of the quadratic form.  If a vector
+        coercible to the base ring of the quadratic form.
+
+        If a vector
         is given then the output will be the ring element `Q(v)`, but if a
         matrix is given then the output will be the quadratic form `Q'`
         which in matrix notation is given by:
 
         .. MATH::
-                Q' = v^t\cdot Q\cdot v.
 
+            Q' = v^t\cdot Q\cdot v.
 
         EXAMPLES:
 
@@ -1077,8 +1079,7 @@ class QuadraticForm(SageObject):
         else:
             raise TypeError
 
-
-# =====================================================================================================
+    # ===============================================
 
     def _is_even_symmetric_matrix_(self, A, R=None):
         """
@@ -1137,13 +1138,12 @@ class QuadraticForm(SageObject):
         # Test that the diagonal is even (if 1/2 isn't in R)
         if not R(2).is_unit():
             for i in range(n):
-                if not is_even(R(A[i,i])):
+                if not is_even(R(A[i, i])):
                     return False
 
         return True
 
-
-# =====================================================================================================
+    # =====================================================================
 
     def matrix(self):
         r"""

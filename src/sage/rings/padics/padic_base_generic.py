@@ -30,8 +30,10 @@ from sage.rings.padics.padic_capped_absolute_element import pAdicCoercion_ZZ_CA,
 from sage.rings.padics.padic_fixed_mod_element import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
 from sage.rings.padics.padic_floating_point_element import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP, pAdicConvert_QQ_FP
 
+
 class pAdicBaseGeneric(pAdicGeneric):
     _implementation = 'GMP'
+
     def __init__(self, p, prec, print_mode, names, element_class):
         """
         Initialization
