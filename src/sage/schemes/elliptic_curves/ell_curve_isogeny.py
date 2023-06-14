@@ -1243,22 +1243,22 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         Check that copying the order over works::
 
-            sage: E = EllipticCurve(GF(431), [1,0])                                     # optional - sage.rings.finite_rings
-            sage: P, = E.gens()                                                         # optional - sage.rings.finite_rings
-            sage: Q = 2^99*P; Q.order()                                                 # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(431), [1,0])                                     # optional - sage.rings.finite_rings    sage.rings.Integer_Ring
+            sage: P, = E.gens()                                                         # optional - sage.rings.finite_rings    sage.rings.Integer_Ring
+            sage: Q = 2^99*P; Q.order()                                                 # optional - sage.rings.finite_rings    sage.rings.Integer_Ring
             27
-            sage: phi = E.isogeny(3^99*P)                                               # optional - sage.rings.finite_rings
-            sage: phi(Q)._order                                                         # optional - sage.rings.finite_rings
+            sage: phi = E.isogeny(3^99*P)                                               # optional - sage.rings.finite_rings    sage.rings.Integer_Ring
+            sage: phi(Q)._order                                                         # optional - sage.rings.finite_rings    sage.rings.Integer_Ring
             27
         
         Copying the order of a non-torsion point works (added for :trac:'35763')::
             
-            sage: E = EllipticCurve([0, 0, 1, 0, 20]);
-            sage: a = E.gens()[0];
-            sage: P_list = E.torsion_points();
-            sage: phi = EllipticCurveIsogeny(E, P_list);
-            sage: n = a.order();
-            sage: b = phi(a); b
+            sage: E = EllipticCurve([0, 0, 1, 0, 20]);                                  # optional - sage.rings.Integer_Ring
+            sage: a = E.gens()[0];                                                      # optional - sage.rings.Integer_Ring
+            sage: P_list = E.torsion_points();                                          # optional - sage.rings.Integer_Ring
+            sage: phi = EllipticCurveIsogeny(E, P_list);                                # optional - sage.rings.Integer_Ring
+            sage: n = a.order();                                                        # optional - sage.rings.Integer_Ring
+            sage: b = phi(a); b                                                         # optional - sage.rings.Integer_Ring
             (73/4 : 591/8 : 1)
         """
         if P.is_zero():
@@ -1291,7 +1291,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             xP = self.__posti_ratl_maps[0](xP)
 
         Q = self._codomain(xP, yP)
-        if hasattr(P, '_order') and (P._order not in ZZ or 
+        if hasattr(P, '_order') and (not P._order in Integer_Ring() or 
                                      P._order.gcd(self._degree).is_one()):
             # TODO: For non-coprime degree, the order of the point
             # gets reduced by a divisor of the degree when passing
