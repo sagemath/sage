@@ -32,6 +32,11 @@ install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         sage_conf \
         six \
+        sagemath_polyhedra \
+        sagemath_graphs \
+        sagemath_combinat \
+        sagemath_repl \
+        sagemath_schemes \
         | sed "2,\$s/^/    /;"')dnl'
 dnl From build/pkgs/sagelib/dependencies
     esyscmd(`sage-get-system-packages install-requires \

@@ -9,10 +9,6 @@ include requirements.txt
 global-include all__sagemath_standard_no_symbolics.py
 
 prune sage/symbolic
-include sage/symbolic/all__sagemath_standard_no_symbolics.py
-include sage/symbolic/symbols.p*
-include sage/symbolic/function.p*
-
 prune sage/manifolds
 prune sage/lfunctions
 prune sage/geometry/riemannian_manifolds
@@ -23,16 +19,6 @@ prune sage/modular/modform_hecketriangle
 prune sage/rings/asymptotic
 
 prune sage/plot
-include sage/plot/all.p*
-include sage/plot/colors.p*                     # needed by sage.graphs even when not plotting
-
-exclude sage/calculus/all.*
-exclude sage/calculus/calculus.*
-exclude sage/calculus/desolvers.*
-exclude sage/calculus/predefined.*
-exclude sage/calculus/tests.*
-exclude sage/calculus/var.*
-prune sage/calculus/transforms
 
 exclude sage/modules/vector_*symbol*.*
 exclude sage/matrix/matrix_symbolic_*.*
@@ -53,3 +39,57 @@ exclude sage/interfaces/maxima*.p*
 exclude sage/interfaces/qepcad.p*
 exclude sage/interfaces/sympy*.p*
 exclude sage/interfaces/tides.p*
+
+
+# Exclude what is included in other distros
+prune sage/algebras/finite_dimensional_algebras
+prune sage/arith
+prune sage/calculus
+prune sage/categories
+prune sage/coding/guruswami_sudan
+prune sage/combinat/crystals
+prune sage/combinat/designs
+prune sage/combinat/integer_lists
+prune sage/combinat/rigged_configurations
+prune sage/combinat/sf
+prune sage/combinat/species
+prune sage/combinat/words
+prune sage/crypto
+prune sage/doctest
+prune sage/dynamics/arithmetic_dynamics
+prune sage/features
+prune sage/functions
+prune sage/game_theory
+prune sage/games
+prune sage/geometry/hyperplane_arrangement
+prune sage/geometry/polyhedron
+prune sage/geometry/triangulation
+prune sage/groups/additive_abelian
+prune sage/libs/gsl
+prune sage/libs/lrcalc
+prune sage/libs/mpfr
+prune sage/libs/mpmath
+prune sage/libs/symmetrica
+prune sage/matroids
+prune sage/monoids
+prune sage/parallel
+prune sage/repl
+prune sage/rings/semirings
+prune sage/sandpiles
+prune sage/sat
+prune sage/schemes/affine
+prune sage/schemes/product_projective
+prune sage/schemes/projective
+prune sage/sets
+prune sage/stats/distributions
+prune sage/structure
+prune sage/symbolic
+prune sage/tensor
+prune sage/topology
+
+include sage/calculus/all__sagemath_standard_no_symbolics.py
+include sage/calculus/integration.p*
+
+include sage/*/all.py
+include sage/*/*/all.py
+include sage/*/*/*/all.py
