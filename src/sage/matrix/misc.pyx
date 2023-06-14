@@ -31,10 +31,10 @@ hadamard_row_bound_mpfr = \
 
 
 def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integer N):
-    """
+    r"""
     Given a sparse matrix over the integers and an integer modulus, do
     rational reconstruction on all entries of the matrix, viewed as
-    numbers mod N.
+    numbers mod `N`.
 
     EXAMPLES::
 
@@ -327,7 +327,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
 
 
 def cmp_pivots(x, y):
-    """
+    r"""
     Compare two sequences of pivot columns.
 
     If `x` is shorter than `y`, return `-1`, i.e., `x < y`, "not as good".

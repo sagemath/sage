@@ -18,7 +18,7 @@ from .matrix_rational_dense cimport Matrix_rational_dense
 
 
 def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer N):
-    """
+    r"""
     Given a matrix over the integers and an integer modulus, do
     rational reconstruction on all entries of the matrix, viewed as
     numbers mod `N`.  This is done efficiently by assuming there is a

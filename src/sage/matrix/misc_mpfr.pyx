@@ -13,7 +13,7 @@ from .matrix0 cimport Matrix
 
 
 def hadamard_row_bound_mpfr(Matrix A):
-    """
+    r"""
     Given a matrix `A` with entries that coerce to ``RR``, compute the row
     Hadamard bound on the determinant.
 
