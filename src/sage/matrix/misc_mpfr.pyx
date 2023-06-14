@@ -14,17 +14,17 @@ from .matrix0 cimport Matrix
 
 def hadamard_row_bound_mpfr(Matrix A):
     """
-    Given a matrix A with entries that coerce to RR, compute the row
+    Given a matrix `A` with entries that coerce to ``RR``, compute the row
     Hadamard bound on the determinant.
 
     INPUT:
 
-        A -- a matrix over RR
+    - ``A`` -- a matrix over ``RR``
 
     OUTPUT:
 
-        integer -- an integer n such that the absolute value of the
-                   determinant of this matrix is at most $10^n$.
+    integer -- an integer n such that the absolute value of the
+    determinant of this matrix is at most `10^n`.
 
     EXAMPLES:
 
@@ -32,13 +32,13 @@ def hadamard_row_bound_mpfr(Matrix A):
     and also compute the row Hadamard bound of the transpose, which
     happens to be sharp. ::
 
-        sage: a = matrix(ZZ, 2, [2^10000,3^10000,2^50,3^19292])
-        sage: import sage.matrix.misc
-        sage: sage.matrix.misc.hadamard_row_bound_mpfr(a.change_ring(RR))
+        sage: a = matrix(ZZ, 2, [2^10000, 3^10000, 2^50, 3^19292])
+        sage: from sage.matrix.misc import hadamard_row_bound_mpfr
+        sage: hadamard_row_bound_mpfr(a.change_ring(RR))
         13976
         sage: len(str(a.det()))
         12215
-        sage: sage.matrix.misc.hadamard_row_bound_mpfr(a.transpose().change_ring(RR))
+        sage: hadamard_row_bound_mpfr(a.transpose().change_ring(RR))
         12215
 
     Note that in the above example using RDF would overflow::
