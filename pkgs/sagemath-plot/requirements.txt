@@ -1,0 +1,7 @@
+cysignals==1.11.2
+Cython==0.29.32
+gmpy2==2.1.2
+ipython==8.6.0
+memory_allocator==0.1.3
+
+pplpy==0.8.7
