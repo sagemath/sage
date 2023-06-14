@@ -73,7 +73,7 @@ def degseq_to_data(degree_sequence):
         3221
     """
     degree_sequence.sort()
-    return sum(degree_sequence[i]*10**i for i in range(len(degree_sequence)))
+    return sum(di * 10**i for i, di in enumerate(degree_sequence))
 
 
 def data_to_degseq(data, graph6=None):
@@ -101,9 +101,8 @@ def data_to_degseq(data, graph6=None):
     if not degseq:
         # compute number of 0's in list from graph6 string
         from sage.graphs.generic_graph_pyx import length_and_string_from_graph6
-        return length_and_string_from_graph6(str(graph6))[0]*[0]
-    else:
-        return degseq
+        return length_and_string_from_graph6(str(graph6))[0] * [0]
+    return degseq
 
 
 def graph6_to_plot(graph6):
@@ -181,43 +180,43 @@ def subgraphs_to_query(subgraphs, db):
 # tables     columns                    input data type     sqlite data type
 # -----------------------------------------------------------------------------
 aut_grp = ['aut_grp_size',             # Integer           INTEGER
-            'num_orbits',               # Integer           INTEGER
-            'num_fixed_points',         # Integer           INTEGER
-            'vertex_transitive',        # bool              BOOLEAN
-            'edge_transitive']          # bool              BOOLEAN
+           'num_orbits',               # Integer           INTEGER
+           'num_fixed_points',         # Integer           INTEGER
+           'vertex_transitive',        # bool              BOOLEAN
+           'edge_transitive']          # bool              BOOLEAN
 degrees = ['degree_sequence',          # list              INTEGER (see degseq_to_data module function)
-            'min_degree',               # Integer           INTEGER
-            'max_degree',               # Integer           INTEGER
-            'average_degree',           # Real              REAL
-            'degrees_sd',               # Real              REAL
-            'regular']                  # bool              BOOLEAN
+           'min_degree',               # Integer           INTEGER
+           'max_degree',               # Integer           INTEGER
+           'average_degree',           # Real              REAL
+           'degrees_sd',               # Real              REAL
+           'regular']                  # bool              BOOLEAN
 misc = ['vertex_connectivity',      # Integer           INTEGER
-            'edge_connectivity',        # Integer           INTEGER
-            'num_components',           # Integer           INTEGER
-            'girth',                    # Integer           INTEGER
-            'radius',                   # Integer           INTEGER
-            'diameter',                 # Integer           INTEGER
-            'clique_number',            # Integer           INTEGER
-            'independence_number',      # Integer           INTEGER
-            'num_cut_vertices',         # Integer           INTEGER
-            'min_vertex_cover_size',    # Integer           INTEGER
-            'num_spanning_trees',       # Integer           INTEGER
-            'induced_subgraphs']        # String            STRING
+        'edge_connectivity',        # Integer           INTEGER
+        'num_components',           # Integer           INTEGER
+        'girth',                    # Integer           INTEGER
+        'radius',                   # Integer           INTEGER
+        'diameter',                 # Integer           INTEGER
+        'clique_number',            # Integer           INTEGER
+        'independence_number',      # Integer           INTEGER
+        'num_cut_vertices',         # Integer           INTEGER
+        'min_vertex_cover_size',    # Integer           INTEGER
+        'num_spanning_trees',       # Integer           INTEGER
+        'induced_subgraphs']        # String            STRING
 spectrum = ['spectrum',                 # String            STRING
             'min_eigenvalue',           # Real              REAL
             'max_eigenvalue',           # Real              REAL
             'eigenvalues_sd',           # Real              REAL
             'energy']                   # Real              REAL
-graph_data=['complement_graph6',        # String            STRING
-            'eulerian',                 # bool              BOOLEAN
-            'graph6',                   # String            STRING
-            'lovasz_number',            # Real              REAL
-            'num_cycles',               # Integer           INTEGER
-            'num_edges',                # Integer           INTEGER
-            'num_hamiltonian_cycles',   # Integer           INTEGER
-            'num_vertices',             # Integer           INTEGER
-            'perfect',                  # bool              BOOLEAN
-            'planar']                   # bool              BOOLEAN
+graph_data = ['complement_graph6',        # String            STRING
+              'eulerian',                 # bool              BOOLEAN
+              'graph6',                   # String            STRING
+              'lovasz_number',            # Real              REAL
+              'num_cycles',               # Integer           INTEGER
+              'num_edges',                # Integer           INTEGER
+              'num_hamiltonian_cycles',   # Integer           INTEGER
+              'num_vertices',             # Integer           INTEGER
+              'perfect',                  # bool              BOOLEAN
+              'planar']                   # bool              BOOLEAN
 
 valid_kwds = aut_grp + degrees + misc + spectrum + graph_data
 
