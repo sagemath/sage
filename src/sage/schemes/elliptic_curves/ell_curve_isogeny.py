@@ -90,7 +90,6 @@ from sage.rings.integer import Integer
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.fraction_field import FractionField
-from sage.rings.infinity import Infinity
 
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
@@ -1252,7 +1251,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi(Q)._order                                                         # optional - sage.rings.finite_rings
             27
         
-        Copying the order of a non-torsion point works (issue:'35763')::
+        Copying the order of a non-torsion point works (added for :trac:'35763')::
             
             sage: E = EllipticCurve([0, 0, 1, 0, 20]);
             sage: a = E.gens()[0];
@@ -1261,8 +1260,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: n = a.order();
             sage: b = phi(a); b
             (73/4 : 591/8 : 1)
-            sage: b.order()
-            +Infinity
         """
         if P.is_zero():
             return self._codomain(0)
@@ -1294,7 +1291,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             xP = self.__posti_ratl_maps[0](xP)
 
         Q = self._codomain(xP, yP)
-        if hasattr(P, '_order') and (P._order == Infinity or 
+        if hasattr(P, '_order') and (P._order not in ZZ or 
                                      P._order.gcd(self._degree).is_one()):
             # TODO: For non-coprime degree, the order of the point
             # gets reduced by a divisor of the degree when passing
