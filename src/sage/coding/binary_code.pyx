@@ -202,10 +202,10 @@ def test_word_perms(t_limit=5.0):
         raise MemoryError("Error allocating memory.")
     from sage.misc.prandom import randint
     from sage.combinat.permutation import Permutations
-    S = Permutations(list(xrange(n)))
+    S = Permutations(list(range(n)))
     t = cputime()
     while cputime(t) < t_limit:
-        word = [randint(0, 1) for _ in xrange(n)]
+        word = [randint(0, 1) for _ in range(n)]
         cw1 = 0
         for j from 0 <= j < n:
             cw1 += (<codeword>word[j]) << (<codeword>j)
@@ -298,7 +298,7 @@ cdef WordPermutation *create_word_perm(object list_perm):
     word_perm.chunk_num = num_chunks
     words_per_chunk = 1 << chunk_size
     word_perm.gate = ( (<codeword>1) << chunk_size ) - 1
-    list_perm += list(xrange(len(list_perm), chunk_size*num_chunks))
+    list_perm += list(range(len(list_perm), chunk_size*num_chunks))
     word_perm.chunk_words = words_per_chunk
     for i from 0 <= i < num_chunks:
         images_i = <codeword *> sig_malloc(words_per_chunk * sizeof(codeword))
@@ -661,7 +661,7 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
     for j from i <= j < n:
         basis[j] = 0
     # now basis is length i
-    perm = list(xrange(B.nrows))
+    perm = list(range(B.nrows))
     perm_c = []
     for j from B.nrows <= j < B.ncols:
         if (<codeword>1 << j) & pivots:
@@ -669,7 +669,7 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
         else:
             perm_c.append(j)
     perm.extend(perm_c)
-    perm.extend(list(xrange(B.ncols, n)))
+    perm.extend(list(range(B.ncols, n)))
     perm_c = [0]*n
     for j from 0 <= j < n:
         perm_c[perm[j]] = j
@@ -4017,7 +4017,7 @@ cdef class BinaryCodeClassifier:
 
 
         for i from 0 <= i < len(aut_gp_gens):
-            parent_generators[i] = create_word_perm(aut_gp_gens[i] + list(xrange(B.ncols, n)))
+            parent_generators[i] = create_word_perm(aut_gp_gens[i] + list(range(B.ncols, n)))
 
         word = 0
         while ortho_basis[k] & (((<codeword>1) << B.ncols) - 1):
@@ -4116,7 +4116,7 @@ cdef class BinaryCodeClassifier:
                             aut_B_aug = libgap(PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in aug_aut_gp_gens]))
                         H = libgap(aut_m).Intersection2(aut_B_aug)
                         rt_transversal = [[int(a) - 1 for a in g.ListPerm(n)] for g in aut_B_aug.RightTransversal(H) if not g.IsOne()]
-                        rt_transversal.append(list(xrange(n)))
+                        rt_transversal.append(list(range(n)))
 
                         bingo2 = 0
                         for coset_rep in rt_transversal:
