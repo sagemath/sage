@@ -125,7 +125,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
     """
     from sage.arith.misc import hilbert_symbol
     # normalize input
-    if F!=QQ:
+    if F != QQ:
         raise NotImplementedError('base field must be QQ. If you want this over any field, implement weak approximation.')
     P = [ZZ(p) for p in P]
     rk = ZZ(rk)
@@ -153,9 +153,9 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
             else:
                 a = ZZ(1)
         elif rk == 3:
-            Pprime = [p for p in P if hilbert_symbol(-1, -d, p)==1]
-            Pprime += [p for p in (2*d).prime_divisors()
-                       if hilbert_symbol(-1, -d, p)==-1 and p not in P]
+            Pprime = [p for p in P if hilbert_symbol(-1, -d, p) == 1]
+            Pprime += [p for p in (2 * d).prime_divisors()
+                       if hilbert_symbol(-1, -d, p) == -1 and p not in P]
             if sminus > 0:
                 a = ZZ(-1)
             else:
@@ -163,23 +163,23 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
             for p in Pprime:
                 if d.valuation(p) % 2 == 0:
                     a *= p
-            assert all((a*d).valuation(p)%2==1 for p in Pprime)
+            assert all((a * d).valuation(p) % 2 == 1 for p in Pprime)
         elif rk == 2:
             S = P
             if sminus == 2:
                 S += [-1]
-            a = QQ.hilbert_symbol_negative_at_S(S,-d)
+            a = QQ.hilbert_symbol_negative_at_S(S, -d)
             a = ZZ(a)
         P = ([p for p in P if hilbert_symbol(a, -d, p) == 1]
-            +[p for p in (2*a*d).prime_divisors()
-              if hilbert_symbol(a, -d, p)==-1 and p not in P])
-        sminus = max(0, sminus-1)
+             + [p for p in (2 * a * d).prime_divisors()
+                if hilbert_symbol(a, -d, p) == -1 and p not in P])
+        sminus = max(0, sminus - 1)
         rk = rk - 1
-        d = a*d
+        d = a * d
         D.append(a.squarefree_part())
     d = d.squarefree_part()
     D.append(d)
-    return DiagonalQuadraticForm(QQ,D)
+    return DiagonalQuadraticForm(QQ, D)
 
 
 class QuadraticForm(SageObject):
@@ -606,10 +606,10 @@ class QuadraticForm(SageObject):
             self.__coeffs = []
             for i in range(M.nrows()):
                 for j in range(i, M.nrows()):
-                    if (i == j):
-                        self.__coeffs += [ M_ring(M[i,j] / 2) ]
+                    if i == j:
+                        self.__coeffs += [M_ring(M[i, j] / 2)]
                     else:
-                        self.__coeffs += [ M_ring(M[i,j]) ]
+                        self.__coeffs += [M_ring(M[i, j])]
 
             return
 
@@ -649,8 +649,8 @@ class QuadraticForm(SageObject):
             # Set the number of automorphisms
             if number_of_automorphisms is not None:
                 self.set_number_of_automorphisms(number_of_automorphisms)
-                #self.__number_of_automorphisms = number_of_automorphisms
-                #self.__external_initialization_list.append('number_of_automorphisms')
+                # self.__number_of_automorphisms = number_of_automorphisms
+                # self.__external_initialization_list.append('number_of_automorphisms')
 
             # Set the determinant
             if determinant is not None:
@@ -827,7 +827,7 @@ class QuadraticForm(SageObject):
 
         # Set the entry
         try:
-            self.__coeffs[i*self.__n - i*(i-1)//2 + j -i] = self.__base_ring(coeff)
+            self.__coeffs[i*self.__n - i*(i-1)//2 + j - i] = self.__base_ring(coeff)
         except Exception:
             raise RuntimeError("this coefficient cannot be coerced to an element of the base ring for the quadratic form")
 
@@ -934,47 +934,42 @@ class QuadraticForm(SageObject):
         """
         if not isinstance(right, QuadraticForm):
             raise TypeError("cannot add these objects since they are not both quadratic forms")
-        elif (self.__n != right.__n):
+        elif self.__n != right.__n:
             raise TypeError("cannot add these since the quadratic forms do not have the same sizes")
-        elif (self.__base_ring != right.__base_ring):
+        elif self.__base_ring != right.__base_ring:
             raise TypeError("cannot add these since the quadratic forms do not have the same base rings")
-        return QuadraticForm(self.__base_ring, self.__n, [self.__coeffs[i] + right.__coeffs[i]  for i in range(len(self.__coeffs))])
+        return QuadraticForm(self.__base_ring, self.__n, [self.__coeffs[i] + right.__coeffs[i] for i in range(len(self.__coeffs))])
 
-# ========================  CHANGE THIS TO A TENSOR PRODUCT?!?  Even in Characteristic 2?!?  =======================
-#    def __mul__(self, right):
-#        """
-#        Multiply (on the right) the quadratic form Q by an element of the ring that Q is defined over.
-#
-#        EXAMPLES::
-#
-#            sage: Q = QuadraticForm(ZZ, 2, [1,4,10])
-#            sage: Q*2
-#            Quadratic form in 2 variables over Integer Ring with coefficients:
-#            [ 2 8 ]
-#            [ * 20 ]
-#
-#            sage: Q+Q == Q*2
-#            True
-#
-#        """
-#        try:
-#            c = self.base_ring()(right)
-#        except Exception:
-#            raise TypeError, "Oh no! The multiplier cannot be coerced into the base ring of the quadratic form. =("
-#
-#        return QuadraticForm(self.base_ring(), self.dim(), [c * self.__coeffs[i]  for i in range(len(self.__coeffs))])
-
-    # =================================================================
+    # ========================  CHANGE THIS TO A TENSOR PRODUCT?!?  Even in Characteristic 2?!?  =======================
+    #    def __mul__(self, right):
+    #        """
+    #        Multiply (on the right) the quadratic form Q by an element of the ring that Q is defined over.
+    #
+    #        EXAMPLES::
+    #
+    #            sage: Q = QuadraticForm(ZZ, 2, [1,4,10])
+    #            sage: Q*2
+    #            Quadratic form in 2 variables over Integer Ring with coefficients:
+    #            [ 2 8 ]
+    #            [ * 20 ]
+    #
+    #            sage: Q+Q == Q*2
+    #            True
+    #        """
+    #        try:
+    #            c = self.base_ring()(right)
+    #        except Exception:
+    #            raise TypeError("the multiplier cannot be coerced into the base ring of the quadratic form")
+    #        return QuadraticForm(self.base_ring(), self.dim(), [c * self.__coeffs[i]  for i in range(len(self.__coeffs))])
 
     def __call__(self, v):
         r"""
         Evaluate this quadratic form `Q` on a vector or matrix of elements
         coercible to the base ring of the quadratic form.
 
-        If a vector
-        is given then the output will be the ring element `Q(v)`, but if a
-        matrix is given then the output will be the quadratic form `Q'`
-        which in matrix notation is given by:
+        If a vector is given then the output will be the ring element
+        `Q(v)`, but if a matrix is given then the output will be the
+        quadratic form `Q'` which in matrix notation is given by:
 
         .. MATH::
 
@@ -1116,23 +1111,17 @@ class QuadraticForm(SageObject):
         if not isinstance(R, Ring):
             raise TypeError("R is not a ring.")
 
-        if not A.is_square():
+        if not (A.is_square() and A.is_symmetric()):
             return False
 
-        # Test that the matrix is symmetric
-        n = A.nrows()
-        for i in range(n):
-            for j in range(i+1, n):
-                if A[i,j] != A[j,i]:
-                    return False
-
         # Test that all entries coerce to R
+        n = A.nrows()
         if not ((A.base_ring() == R) or ring_coerce_test):
             try:
                 for i in range(n):
                     for j in range(i, n):
-                        R(A[i,j])
-            except Exception:
+                        R(A[i, j])
+            except (TypeError, ValueError):
                 return False
 
         # Test that the diagonal is even (if 1/2 isn't in R)
@@ -1180,10 +1169,10 @@ class QuadraticForm(SageObject):
         mat_entries = []
         for i in range(self.dim()):
             for j in range(self.dim()):
-                if (i == j):
-                    mat_entries += [ 2 * self[i,j] ]
+                if i == j:
+                    mat_entries += [2 * self[i, j]]
                 else:
-                    mat_entries += [ self[i,j] ]
+                    mat_entries += [self[i, j]]
 
         return matrix(self.base_ring(), self.dim(), self.dim(), mat_entries)
 
@@ -1384,11 +1373,11 @@ class QuadraticForm(SageObject):
         if not isinstance(R, MPolynomialRing_base):
             raise TypeError(f'not a multivariate polynomial ring: {R}')
         if not all(mon.degree() == 2 for mon in poly.monomials()):
-            raise ValueError(f'polynomial has monomials of degree != 2')
+            raise ValueError('polynomial has monomials of degree != 2')
         base = R.base_ring()
         vs = R.gens()
         coeffs = []
-        for i,v in enumerate(vs):
+        for i, v in enumerate(vs):
             for w in vs[i:]:
                 coeffs.append(poly.monomial_coefficient(v*w))
         return QuadraticForm(base, len(vs), coeffs)
@@ -1625,7 +1614,7 @@ class QuadraticForm(SageObject):
             # Warn the user if the form is defined over a field!
             if self.base_ring().is_field():
                 warn("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
-                #raise RuntimeError, "Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?"
+                # raise RuntimeError("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
 
             # Check invertibility and find the inverse
             try:
@@ -1747,7 +1736,7 @@ class QuadraticForm(SageObject):
             raise TypeError("vectors must have length " + str(self.dim()))
         if self.base_ring().characteristic() == 2:
             raise TypeError("not defined for rings of characteristic 2")
-        return (self(v+w) - self(v) - self(w))/2
+        return (self(v + w) - self(v) - self(w)) / 2
 
 
 def DiagonalQuadraticForm(R, diag):
