@@ -33,8 +33,8 @@ cpdef inline parent(x):
         sage: b = 42/1
         sage: parent(b)
         Rational Field
-        sage: c = 42.0
-        sage: parent(c)
+        sage: c = 42.0                                                                  # optional - sage.rings.real_mpfr
+        sage: parent(c)                                                                 # optional - sage.rings.real_mpfr
         Real Field with 53 bits of precision
 
     Some more complicated examples::
