@@ -5,7 +5,7 @@ import sage.rings.abc
 
 from sage.functions.all import exp
 from sage.symbolic.expression_conversions import Converter
-from sage.symbolic.operators add_vararg, mul_vararg
+from sage.symbolic.operators import add_vararg, mul_vararg
 from sage.symbolic.ring import SR
 
 
