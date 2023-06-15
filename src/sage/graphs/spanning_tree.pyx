@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 # cython: binding=True
 r"""
 Spanning trees
