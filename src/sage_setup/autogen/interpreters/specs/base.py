@@ -50,6 +50,7 @@ class InterpreterSpec(object):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
+            sage: from sage_setup.autogen.interpreters.specs.rr import RRInterpreter
             sage: interp = RDFInterpreter()
             sage: interp.c_header
             '#include <gsl/gsl_math.h>'
