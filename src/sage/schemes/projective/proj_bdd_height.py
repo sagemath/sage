@@ -26,6 +26,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.rings.number_field.unit_group import UnitGroup
 from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.matrix.constructor import matrix, column_matrix
 from sage.libs.pari.all import pari
 from sage.modules.free_module_element import vector
@@ -75,6 +76,7 @@ def QQ_points_of_bounded_height(dim, bound):
                 for u in unit_tuples:
                     point = PN([a*b for a, b in zip(u, p)] + [p[dim]])
                     if point not in points_of_bounded_height:
+                        point.scale_by(lcm([idx.denominator() for idx in point]))
                         points_of_bounded_height.add(point)
                         yield point
 
@@ -149,6 +151,7 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
                     for u in unit_tuples:
                         point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
                         if point not in points_in_class_a:
+                            point.scale_by(lcm([idx.denominator() for idx in point]))
                             points_in_class_a.add(point)
                             yield point
 
@@ -346,5 +349,6 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
                     for u in unit_tuples:
                         point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
                         if point not in points_in_class_a:
+                            point.scale_by(lcm([idx.denominator() for idx in point]))
                             points_in_class_a.add(point)
                             yield point

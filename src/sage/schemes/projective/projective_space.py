@@ -1892,8 +1892,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: sorted(list(P.points_of_bounded_height(bound=2)))
-            [(-2 : 1), (-1 : 1), (-1/2 : 1), (0 : 1),
-             (1/2 : 1), (1 : 0), (1 : 1), (2 : 1)]
+            [(-2 : 1), (-1 : 1), (-1 : 2), (0 : 1),
+             (1 : 0), (1 : 1), (1 : 2), (2 : 1)]
 
         ::
 
@@ -1909,8 +1909,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: L.<l> = CF.extension(x^3 + 2)                                         # optional - sage.rings.number_field
             sage: Q.<x,y> = ProjectiveSpace(L, 1)                                       # optional - sage.rings.number_field
             sage: sorted(list(Q.points_of_bounded_height(bound=1)))                     # optional - sage.rings.number_field
-            [(0 : 1), (1 : 0), (a + 1 : 1), (a : 1),
-             (-1 : 1), (-a - 1 : 1), (-a : 1), (1 : 1)]
+            [(0 : 1), (1 : 0), (9*a + 9 : 9), (9*a : 9),
+             (-1 : 1), (-9*a - 9 : 9), (-9*a : 9), (1 : 1)]
 
         ::
 
@@ -1952,6 +1952,17 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: L = P.points_of_bounded_height(bound=1.2)                             # optional - sage.rings.number_field
             sage: len(list(L))                                                          # optional - sage.rings.number_field
             109
+
+        ::
+
+            sage: from sage.schemes.projective.proj_bdd_height import points_of_bounded_height
+            sage: K.<v> = QuadraticField(2)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: sorted(list(P.points_of_bounded_height(bound=2)))
+            [(-v - 2 : 1), (-v - 2 : 2), (-v - 1 : 1), (-2 : 1), (-v : 1), (-v : 2),
+             (-1 : 1), (-1 : 2), (v - 2 : 1), (v - 2 : 2), (-v + 1 : 1), (0 : 1),
+             (v - 1 : 1), (-v + 2 : 1), (-v + 2 : 2), (1 : 0), (1 : 1), (1 : 2),
+             (v : 1), (v : 2), (2 : 1), (v + 1 : 1), (v + 2 : 1), (v + 2 : 2)]
         """
         from sage.schemes.projective.proj_bdd_height import QQ_points_of_bounded_height, IQ_points_of_bounded_height, points_of_bounded_height
 
