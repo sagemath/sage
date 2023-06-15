@@ -932,7 +932,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     Here we plot a couple of simple functions::
 
-        sage: complex_plot(sqrt(x), (-5, 5), (-5, 5))
+        sage: complex_plot(sqrt(x), (-5, 5), (-5, 5))                                   # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -941,7 +941,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     ::
 
-        sage: complex_plot(sin(x), (-5, 5), (-5, 5))
+        sage: complex_plot(sin(x), (-5, 5), (-5, 5))                                    # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -950,7 +950,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     ::
 
-        sage: complex_plot(log(x), (-10, 10), (-10, 10))
+        sage: complex_plot(log(x), (-10, 10), (-10, 10))                                # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -959,7 +959,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     ::
 
-        sage: complex_plot(exp(x), (-10, 10), (-10, 10))
+        sage: complex_plot(exp(x), (-10, 10), (-10, 10))                                # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -968,7 +968,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     A plot with a different choice of colormap::
 
-        sage: complex_plot(exp(x), (-10, 10), (-10, 10), cmap='viridis')
+        sage: complex_plot(exp(x), (-10, 10), (-10, 10), cmap='viridis')                # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -977,8 +977,8 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     A function with some nice zeros and a pole::
 
-        sage: f(z) = z^5 + z - 1 + 1/z
-        sage: complex_plot(f, (-3, 3), (-3, 3))
+        sage: f(z) = z^5 + z - 1 + 1/z                                                  # optional - sage.symbolic
+        sage: complex_plot(f, (-3, 3), (-3, 3))                                         # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -989,8 +989,8 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     The same function as above, but with contours. Contours render poorly with
     few plot points, so we use 300 here::
 
-        sage: f(z) = z^5 + z - 1 + 1/z
-        sage: complex_plot(f, (-3, 3), (-3, 3), plot_points=300, contoured=True)
+        sage: f(z) = z^5 + z - 1 + 1/z                                                  # optional - sage.symbolic
+        sage: complex_plot(f, (-3, 3), (-3, 3), plot_points=300, contoured=True)        # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1000,8 +1000,8 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     The same function as above, but tiled and with the *plasma* colormap::
 
-        sage: f(z) = z^5 + z - 1 + 1/z
-        sage: complex_plot(f, (-3, 3), (-3, 3),
+        sage: f(z) = z^5 + z - 1 + 1/z                                                  # optional - sage.symbolic
+        sage: complex_plot(f, (-3, 3), (-3, 3),                                         # optional - sage.symbolic
         ....:              plot_points=300, tiled=True, cmap='plasma')
         Graphics object consisting of 1 graphics primitive
 
@@ -1014,8 +1014,8 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     controlled by adjusting ``nphases``. We make the same plot with fewer
     tilings::
 
-        sage: f(z) = z^5 + z - 1 + 1/z
-        sage: complex_plot(f, (-3, 3), (-3, 3), plot_points=300,
+        sage: f(z) = z^5 + z - 1 + 1/z                                                  # optional - sage.symbolic
+        sage: complex_plot(f, (-3, 3), (-3, 3), plot_points=300,                        # optional - sage.symbolic
         ....:              tiled=True, nphases=5, cmap='plasma')
         Graphics object consisting of 1 graphics primitive
 
@@ -1027,8 +1027,8 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     It is also possible to use *linear* contours. We plot the same function
     above on an inset, setting contours to appear `1` apart::
 
-        sage: f(z) = z^5 + z - 1 + 1/z
-        sage: complex_plot(f, (0, 1), (0, 1), plot_points=300,
+        sage: f(z) = z^5 + z - 1 + 1/z                                                  # optional - sage.symbolic
+        sage: complex_plot(f, (0, 1), (0, 1), plot_points=300,                          # optional - sage.symbolic
         ....:              contoured=True, contour_type='linear', contour_base=1)
         Graphics object consisting of 1 graphics primitive
 
@@ -1040,8 +1040,8 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     Note that tightly spaced contours can lead to Moiré patterns and aliasing
     problems. For example::
 
-        sage: f(z) = z^5 + z - 1 + 1/z
-        sage: complex_plot(f, (-3, 3), (-3, 3), plot_points=300,
+        sage: f(z) = z^5 + z - 1 + 1/z                                                  # optional - sage.symbolic
+        sage: complex_plot(f, (-3, 3), (-3, 3), plot_points=300,                        # optional - sage.symbolic
         ....:              contoured=True, contour_type='linear', contour_base=1)
         Graphics object consisting of 1 graphics primitive
 
@@ -1054,8 +1054,8 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     be considered more appropriate for showing changes in phase without sharp
     color contrasts::
 
-        sage: f(z) = z^5 + z - 1 + 1/z
-        sage: complex_plot(f, (-3, 3), (-3, 3), plot_points=300, cmap='twilight')
+        sage: f(z) = z^5 + z - 1 + 1/z                                                  # optional - sage.symbolic
+        sage: complex_plot(f, (-3, 3), (-3, 3), plot_points=300, cmap='twilight')       # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1066,8 +1066,8 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     Passing *matplotlib* as the colormap gives a special colormap that is
     similar to the default::
 
-        sage: f(z) = z^5 + z - 1 + 1/z
-        sage: complex_plot(f, (-3, 3), (-3, 3),
+        sage: f(z) = z^5 + z - 1 + 1/z                                                  # optional - sage.symbolic
+        sage: complex_plot(f, (-3, 3), (-3, 3),                                         # optional - sage.symbolic
         ....:              plot_points=300, contoured=True, cmap='matplotlib')
         Graphics object consisting of 1 graphics primitive
 
@@ -1078,7 +1078,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     Here is the identity, useful for seeing what values map to what colors::
 
-        sage: complex_plot(lambda z: z, (-3, 3), (-3, 3))
+        sage: complex_plot(lambda z: z, (-3, 3), (-3, 3))                               # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1087,7 +1087,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     The Riemann Zeta function::
 
-        sage: complex_plot(zeta, (-30,30), (-30,30))
+        sage: complex_plot(zeta, (-30,30), (-30,30))                                    # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1098,7 +1098,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     ``dark_rate`` will make regions become darker/lighter faster when there are no
     contours::
 
-        sage: complex_plot(zeta, (-30, 30), (-30, 30), dark_rate=1.0)
+        sage: complex_plot(zeta, (-30, 30), (-30, 30), dark_rate=1.0)                   # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1108,7 +1108,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     Decreasing ``dark_rate`` has the opposite effect. When there are contours,
     adjust ``dark_rate`` affects how visible contours are. Compare::
 
-        sage: complex_plot(zeta, (-1, 9), (10, 20), plot_points=200,  # long time
+        sage: complex_plot(zeta, (-1, 9), (10, 20), plot_points=200,  # long time       # optional - sage.symbolic
         ....:              contoured=True, cmap='twilight', dark_rate=0.2)
         Graphics object consisting of 1 graphics primitive
 
@@ -1118,7 +1118,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     and::
 
-        sage: complex_plot(zeta, (-1, 9), (10, 20), plot_points=200,  # long time
+        sage: complex_plot(zeta, (-1, 9), (10, 20), plot_points=200,  # long time       # optional - sage.symbolic
         ....:              contoured=True, cmap='twilight', dark_rate=0.75)
         Graphics object consisting of 1 graphics primitive
 
@@ -1131,12 +1131,12 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: complex_plot(lambda z: z, (-3, 3), (-3, 3), figsize=[1,1])
+        sage: complex_plot(lambda z: z, (-3, 3), (-3, 3), figsize=[1,1])                # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     ::
 
-        sage: complex_plot(lambda z: z, (-3, 3), (-3, 3)).show(figsize=[1,1]) # These are equivalent
+        sage: complex_plot(lambda z: z, (-3, 3), (-3, 3)).show(figsize=[1,1]) # These are equivalent    # optional - sage.symbolic
 
     REFERENCES:
 
