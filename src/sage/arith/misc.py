@@ -3685,7 +3685,7 @@ def binomial(x, m, **kwds):
 
         sage: a = binomial(100, 45, algorithm='gmp')
         sage: b = binomial(100, 45, algorithm='pari')                                   # optional - sage.libs.pari
-        sage: a == b
+        sage: a == b                                                                    # optional - sage.libs.pari
         True
 
     TESTS:
