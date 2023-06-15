@@ -3192,7 +3192,28 @@ class FiniteWord_class(Word_class):
 
         EXAMPLES::
 
-        TODO
+            sage: Word('ara').g_defect()
+            0
+            sage: Word('abcacba').g_defect()
+            1
+            sage: w = Word('abbabca')
+            sage: f = WordMorphism('a->b,b->a,c->c')
+            sage: g = WordMorphism('a->c,b->b,c->a')
+            sage: w.g_defect(antimorphisms=[f, g])
+            1
+            sage: w.g_defect(morphisms=[f, g])
+            0
+            sage: words.FibonacciWord()[:100].g_defect()
+            0
+            sage: w = words.ThueMorseWord()
+            sage: w[:50].g_defect()
+            12
+            sage: w[:100].g_defect()
+            16
+            sage: w[:300].g_defect()
+            52
+            sage: Word().g_defect()
+            0
         """
         from sage.combinat.words.morphism import WordMorphism
         # Generate G
