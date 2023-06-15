@@ -142,6 +142,7 @@ def build_interp(interp_spec, dir):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
         sage: testdir = tmp_dir()
         sage: rdf_interp = RDFInterpreter()
         sage: build_interp(rdf_interp, testdir)
