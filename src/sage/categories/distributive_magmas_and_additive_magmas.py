@@ -68,7 +68,7 @@ class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
             However, the elements tested can be customized with the
             ``elements`` keyword argument::
 
-                sage: CC._test_distributivity(elements=[CC(0),CC(1),CC(3),CC(I)])
+                sage: CC._test_distributivity(elements=[CC(0),CC(1),CC(3),CC(I)])       # optional - sage.rings.real_mpfr
 
             See the documentation for :class:`TestSuite` for more information.
             """

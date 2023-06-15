@@ -339,17 +339,17 @@ def Hom(X, Y, category=None, check=True):
 
     Case of a non parent::
 
-        sage: cls = type(SimplicialComplex([[1,2], [1,4]]))
-        sage: S = unpickle_newobj(cls, ())
-        sage: H = Hom(S, S, Sets(),                check=False)
-        sage: H = Hom(S, S, Groups(),              check=False)
-        sage: H = Hom(S, S, SimplicialComplexes(), check=False)
+        sage: cls = type(SimplicialComplex([[1,2], [1,4]]))                             # optional - sage.graphs
+        sage: S = unpickle_newobj(cls, ())                                              # optional - sage.graphs
+        sage: H = Hom(S, S, Sets(),                check=False)                         # optional - sage.graphs
+        sage: H = Hom(S, S, Groups(),              check=False)                         # optional - sage.graphs
+        sage: H = Hom(S, S, SimplicialComplexes(), check=False)                         # optional - sage.graphs
 
     Typical example where unpickling involves calling Hom on an
     uninitialized parent::
 
         sage: P.<x,y> = QQ['x,y']
-        sage: Q = P.quotient([x^2-1, y^2-1])                                            # optional - sage.libs.singular
+        sage: Q = P.quotient([x^2 - 1, y^2 - 1])                                        # optional - sage.libs.singular
         sage: q = Q.an_element()                                                        # optional - sage.libs.singular
         sage: explain_pickle(dumps(Q))                                                  # optional - sage.libs.singular
         pg_...

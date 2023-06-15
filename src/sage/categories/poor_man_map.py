@@ -209,12 +209,13 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         But it is detected here::
 
             sage: g = PoorManMap(factorial, domain=ZZ, codomain=ZZ)
-            sage: h = PoorManMap(sqrt, domain=RR, codomain=CC)
-            sage: g*h
+            sage: h = PoorManMap(sqrt, domain=RR, codomain=CC)                          # optional - sage.rings.real_mpfr
+            sage: g*h                                                                   # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
-            ValueError: the codomain Complex Field with 53 bits of precision does not coerce into the domain Integer Ring
-            sage: h*g
+            ValueError: the codomain Complex Field with 53 bits of precision
+            does not coerce into the domain Integer Ring
+            sage: h*g                                                                   # optional - sage.rings.real_mpfr
             A map from Integer Ring to Complex Field with 53 bits of precision
         """
         self_domain = self.domain()
