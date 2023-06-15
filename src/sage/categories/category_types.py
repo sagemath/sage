@@ -428,7 +428,7 @@ class Category_over_base_ring(Category_over_base):
 
             sage: VectorSpaces(QQ)._subcategory_hook_(Algebras(QQ))
             True
-            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))       # base ring in different categories
+            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))       # base ring in different categories           # optional - sage.rings.real_mpfr
             False
             sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3))) # base ring in the same category              # optional - sage.rings.finite_rings
             False

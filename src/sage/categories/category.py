@@ -2754,7 +2754,7 @@ class CategoryWithParameters(Category):
 
             sage: Bimodules(ZZ,RR).parent_class is Bimodules(ZZ,RDF).parent_class  # indirect doctest
             True
-            sage: Bimodules(CC,ZZ).element_class is Bimodules(RR,ZZ).element_class
+            sage: Bimodules(CC,ZZ).element_class is Bimodules(RR,ZZ).element_class      # optional - sage.rings.real_mpfr
             True
 
         On the other hand, modules over a field have more methods than
@@ -2786,9 +2786,10 @@ class CategoryWithParameters(Category):
             Join of Category of number fields
              and Category of quotient fields
              and Category of metric spaces
-            sage: RR.category()
-            Join of Category of fields and Category of infinite sets and Category of complete metric spaces
-            sage: Modules(QQ).parent_class is Modules(RR).parent_class
+            sage: RR.category()                                                         # optional - sage.rings.real_mpfr
+            Join of Category of fields and Category of infinite sets
+                and Category of complete metric spaces
+            sage: Modules(QQ).parent_class is Modules(RR).parent_class                  # optional - sage.rings.real_mpfr
             False
 
         Some other cases where one could potentially share those classes::
