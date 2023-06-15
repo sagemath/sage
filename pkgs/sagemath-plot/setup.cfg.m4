@@ -29,10 +29,15 @@ classifiers =
 python_requires = >=3.8, <3.12
 install_requires =
     esyscmd(`sage-get-system-packages install-requires \
+        sage_conf \
         gmpy2          \
         cysignals      \
         memory_allocator \
         sagemath_categories \
+        sagemath_modules \
+        numpy \
+        scipy \
+        pillow \
         matplotlib \
         | sed "2,\$s/^/    /;"')dnl
 

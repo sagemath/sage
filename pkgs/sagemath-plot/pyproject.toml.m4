@@ -7,6 +7,8 @@ requires = [
         pkgconfig      \
         sagemath_environment \
         sagemath_categories \
+        sagemath_modules \
+        numpy            \
         cython         \
         gmpy2          \
         cysignals      \

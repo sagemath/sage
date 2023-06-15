@@ -183,6 +183,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-graphs/setup.cfg
 /pkgs/sagemath-modules/setup.cfg
 /pkgs/sagemath-schemes/setup.cfg
+/pkgs/sagemath-plot/setup.cfg
 /pkgs/sagemath-symbolics/setup.cfg
 /pkgs/sagemath-standard-no-symbolics/setup.cfg
 
@@ -194,6 +195,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-combinat/pyproject.toml
 /pkgs/sagemath-graphs/pyproject.toml
 /pkgs/sagemath-modules/pyproject.toml
+/pkgs/sagemath-plot/pyproject.toml
 /pkgs/sagemath-schemes/pyproject.toml
 /pkgs/sagemath-symbolics/pyproject.toml
 /pkgs/sagemath-standard-no-symbolics/pyproject.toml
@@ -206,6 +208,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-combinat/requirements.txt
 /pkgs/sagemath-graphs/requirements.txt
 /pkgs/sagemath-modules/requirements.txt
+/pkgs/sagemath-plot/requirements.txt
 /pkgs/sagemath-schemes/requirements.txt
 /pkgs/sagemath-symbolics/requirements.txt
 /pkgs/sagemath-standard-no-symbolics/requirements.txt
@@ -215,6 +218,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-combinat/MANIFEST.in
 /pkgs/sagemath-graphs/MANIFEST.in
 /pkgs/sagemath-modules/MANIFEST.in
+/pkgs/sagemath-plot/MANIFEST.in
 /pkgs/sagemath-schemes/MANIFEST.in
 /pkgs/sagemath-symbolics/MANIFEST.in
 /pkgs/sagemath-standard-no-symbolics/MANIFEST.in

@@ -120,8 +120,7 @@ from sage.rings.qqbar import _init_qqbar
 _init_qqbar()
 
 try:
-    from sage.plot.all       import *
-    from sage.plot.plot3d.all     import *
+    from .all__sagemath_plot import *
     from sage.manifolds.all import *
     from .all__sagemath_symbolics import *
     from sage.lfunctions.all import *
