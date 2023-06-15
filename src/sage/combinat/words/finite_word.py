@@ -3291,7 +3291,7 @@ class FiniteWord_class(Word_class):
             emptyStringDictLocalIndexesList.append(0)
         gPalindromesTree = [[dict(), emptyStringDictList, emptyStringDictLocalIndexesList, False]]
         for palindromesTree, antimorphism in palindromesTrees:
-            currentGNodesPath = [(gPalindromesTree[0], gPalindromesTree[0][1][0])]
+            currentGNodesPath = [(gPalindromesTree[0], 0)]
             currentPalindromes = [palindrome for palindrome in palindromesTree[0][0].items()]
             while currentPalindromes:
                 if currentPalindromes[-1] is None:
@@ -3306,12 +3306,49 @@ class FiniteWord_class(Word_class):
                         leftLetter, rightLetter = specialLetter, specialLetter
                     elif actualPalindromeLength != 1:
                         rightLetter = antimorphism(leftLetter)[0]
-                    _, gNodeDict = currentGNodesPath[-1]
+                    gNode, gNodeDictIndex = currentGNodesPath[-1]
+                    gNodeDict = gNode[1][gNodeDictIndex]
                     if (leftLetter, rightLetter) in gNodeDict:
                         gNodeIndex, gDictIndex = gNodeDict[(leftLetter, rightLetter)]
-                        currentGNodesPath.append((gPalindromesTree[gNodeIndex], gPalindromesTree[gNodeIndex][1][gDictIndex]))
+                        currentGNodesPath.append((gPalindromesTree[gNodeIndex], gDictIndex))
                     else:
-                        pass # TODO - add a new node, append it into currentGNodesPath
+                        newGNodeIndex = len(gPalindromesTree)
+                        inverseMorphism = inverseMorphismsG[gNodeDictIndex]
+                        equivalenceLeftLetter, equivalenceRightLetter = specialLetter, specialLetter
+                        if leftLetter != specialLetter:
+                            equivalenceLeftLetter, equivalenceRightLetter = inverseMorphism(leftLetter)[0], inverseMorphism(rightLetter)[0]
+                        gNode[0][(equivalenceLeftLetter, equivalenceRightLetter)] = newGNodeIndex
+                        i = 0
+                        while i < len(morphismsG):
+                            morphism = morphismsG[i]
+                            curLeftLetter, curRightLetter = specialLetter, specialLetter
+                            if equivalenceLeftLetter != specialLetter:
+                                curLeftLetter, curRightLetter = morphism(equivalenceLeftLetter)[0], morphism(equivalenceRightLetter)[0]
+                            gNode[1][i][(curLeftLetter, curRightLetter)] = (newGNodeIndex, i)
+                            i += 1
+                        i = 0
+                        curMaxDictIndex = 0
+                        nextDictsIdentifiers = dict()
+                        nextDicts = []
+                        newGNodeDictRefList = []
+                        newGNodeDictLocalIndexesList = []
+                        while i < len(morphismsG):
+                            morphism = morphismsG[i]
+                            curLeftLetter, curRightLetter = specialLetter, specialLetter
+                            if equivalenceLeftLetter != specialLetter:
+                                curLeftLetter, curRightLetter = morphism(equivalenceLeftLetter)[0], morphism(equivalenceRightLetter)[0]
+                            if not((gNode[2][i], curLeftLetter, curRightLetter) in nextDictsIdentifiers):
+                                nextDictsIdentifiers[(gNode[2][i], curLeftLetter, curRightLetter)] = curMaxDictIndex
+                                curMaxDictIndex += 1
+                                nextDicts.append(dict())
+                            curDictIndex = nextDictsIdentifiers[(gNode[2][i], curLeftLetter, curRightLetter)]
+                            newGNodeDictRefList.append(nextDicts[curDictIndex])
+                            newGNodeDictLocalIndexesList.append(curDictIndex)
+                            i += 1
+                        newGNode = [dict(), newGNodeDictRefList, newGNodeDictLocalIndexesList, endsWithSpecialLetter]
+                        gPalindromesTree.append(newGNode)
+                        _, nextGDictIndex = gNodeDict[(leftLetter, rightLetter)]
+                        currentGNodesPath.append((newGNode, nextGDictIndex))
                     currentPalindromes.append(None)
                     for neighbour in palindrome[0].items():
                         currentPalindromes.append(neighbour)
