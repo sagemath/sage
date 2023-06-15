@@ -486,14 +486,14 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: psi = CC['x'].hom([-CC['x'].0])
-            sage: J = ideal([CC['x'].0 + 1]); J
+            sage: psi = CC['x'].hom([-CC['x'].0])                                       # optional - sage.rings.real_mpfr
+            sage: J = ideal([CC['x'].0 + 1]); J                                         # optional - sage.rings.real_mpfr
             Principal ideal (x + 1.00000000000000) of Univariate Polynomial Ring in x
              over Complex Field with 53 bits of precision
-            sage: psi(J)
+            sage: psi(J)                                                                # optional - sage.rings.real_mpfr
             Principal ideal (x - 1.00000000000000) of Univariate Polynomial Ring in x
              over Complex Field with 53 bits of precision
-            sage: J.apply_morphism(psi)
+            sage: J.apply_morphism(psi)                                                 # optional - sage.rings.real_mpfr
             Principal ideal (x - 1.00000000000000) of Univariate Polynomial Ring in x
              over Complex Field with 53 bits of precision
 
@@ -965,8 +965,8 @@ class Ideal_generic(MonoidElement):
 
         ::
 
-            sage: I = CC['x'].ideal(0)
-            sage: I.is_trivial()
+            sage: I = CC['x'].ideal(0)                                                  # optional - sage.rings.real_mpfr
+            sage: I.is_trivial()                                                        # optional - sage.rings.real_mpfr
             True
 
         This test addresses issue :trac:`20514`::

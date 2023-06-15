@@ -120,7 +120,7 @@ class RationalFunctionField(FunctionField):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(CC); K
+            sage: K.<t> = FunctionField(CC); K                                          # optional - sage.rings.real_mpfr
             Rational function field in t over Complex Field with 53 bits of precision
             sage: TestSuite(K).run()               # long time (5s)
 

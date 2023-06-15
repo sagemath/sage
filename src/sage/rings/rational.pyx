@@ -830,9 +830,9 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: a = (355/113).continued_fraction(); a
             [3; 7, 16]
-            sage: a.n(digits=10)
+            sage: a.n(digits=10)                                                        # optional - sage.rings.real_mpfr
             3.141592920
-            sage: pi.n(digits=10)                                                       # optional - sage.symbolic
+            sage: pi.n(digits=10)                                                       # optional - sage.rings.real_mpfr sage.symbolic
             3.141592654
 
         It's almost pi!
@@ -1221,11 +1221,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: a = QQ(25/6)
-            sage: a.local_height(2)
+            sage: a.local_height(2)                                                     # optional - sage.rings.real_mpfr
             0.693147180559945
-            sage: a.local_height(3)
+            sage: a.local_height(3)                                                     # optional - sage.rings.real_mpfr
             1.09861228866811
-            sage: a.local_height(5)
+            sage: a.local_height(5)                                                     # optional - sage.rings.real_mpfr
             0.000000000000000
         """
         from sage.rings.real_mpfr import RealField
@@ -1259,11 +1259,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: a = QQ(6/25)
-            sage: a.local_height_arch()
+            sage: a.local_height_arch()                                                 # optional - sage.rings.real_mpfr
             0.000000000000000
-            sage: (1/a).local_height_arch()
+            sage: (1/a).local_height_arch()                                             # optional - sage.rings.real_mpfr
             1.42711635564015
-            sage: (1/a).local_height_arch(100)
+            sage: (1/a).local_height_arch(100)                                          # optional - sage.rings.real_mpfr
             1.4271163556401457483890413081
         """
         from sage.rings.real_mpfr import RealField
@@ -1302,11 +1302,11 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: a = QQ(5/6)
             sage: a.support()
             [2, 3, 5]
-            sage: a.global_height_non_arch()
+            sage: a.global_height_non_arch()                                            # optional - sage.rings.real_mpfr
             1.79175946922805
-            sage: [a.local_height(p) for p in a.support()]
+            sage: [a.local_height(p) for p in a.support()]                              # optional - sage.rings.real_mpfr
             [0.693147180559945, 1.09861228866811, 0.000000000000000]
-            sage: sum([a.local_height(p) for p in a.support()])
+            sage: sum([a.local_height(p) for p in a.support()])                         # optional - sage.rings.real_mpfr
             1.79175946922805
         """
         from sage.rings.real_mpfr import RealField
@@ -1343,11 +1343,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: a = QQ(6/25)
-            sage: a.global_height_arch()
+            sage: a.global_height_arch()                                                # optional - sage.rings.real_mpfr
             0.000000000000000
-            sage: (1/a).global_height_arch()
+            sage: (1/a).global_height_arch()                                            # optional - sage.rings.real_mpfr
             1.42711635564015
-            sage: (1/a).global_height_arch(100)
+            sage: (1/a).global_height_arch(100)                                         # optional - sage.rings.real_mpfr
             1.4271163556401457483890413081
         """
         return self.local_height_arch(prec)
@@ -1375,15 +1375,15 @@ cdef class Rational(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: a = QQ(6/25)
-            sage: a.global_height_arch() + a.global_height_non_arch()
+            sage: a.global_height_arch() + a.global_height_non_arch()                   # optional - sage.rings.real_mpfr
             3.21887582486820
-            sage: a.global_height()
+            sage: a.global_height()                                                     # optional - sage.rings.real_mpfr
             3.21887582486820
-            sage: (1/a).global_height()
+            sage: (1/a).global_height()                                                 # optional - sage.rings.real_mpfr
             3.21887582486820
-            sage: QQ(0).global_height()
+            sage: QQ(0).global_height()                                                 # optional - sage.rings.real_mpfr
             0.000000000000000
-            sage: QQ(1).global_height()
+            sage: QQ(1).global_height()                                                 # optional - sage.rings.real_mpfr
             0.000000000000000
         """
         from sage.rings.real_mpfr import RealField
@@ -1935,13 +1935,13 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: n = 2/3
             sage: n.sqrt()                                                              # optional - sage.symbolic
             sqrt(2/3)
-            sage: n.sqrt(prec=10)
+            sage: n.sqrt(prec=10)                                                       # optional - sage.rings.real_mpfr
             0.82
-            sage: n.sqrt(prec=100)
+            sage: n.sqrt(prec=100)                                                      # optional - sage.rings.real_mpfr
             0.81649658092772603273242802490
-            sage: n.sqrt(prec=100)^2
+            sage: n.sqrt(prec=100)^2                                                    # optional - sage.rings.real_mpfr
             0.66666666666666666666666666667
-            sage: n.sqrt(prec=53, all=True)
+            sage: n.sqrt(prec=53, all=True)                                             # optional - sage.rings.real_mpfr
             [0.816496580927726, -0.816496580927726]
             sage: n.sqrt(extend=False, all=True)
             Traceback (most recent call last):
@@ -1949,9 +1949,9 @@ cdef class Rational(sage.structure.element.FieldElement):
             ValueError: square root of 2/3 not a rational number
             sage: sqrt(-2/3, all=True)                                                  # optional - sage.symbolic
             [sqrt(-2/3), -sqrt(-2/3)]
-            sage: sqrt(-2/3, prec=53)
+            sage: sqrt(-2/3, prec=53)                                                   # optional - sage.rings.real_mpfr
             0.816496580927726*I
-            sage: sqrt(-2/3, prec=53, all=True)
+            sage: sqrt(-2/3, prec=53, all=True)                                         # optional - sage.rings.real_mpfr
             [0.816496580927726*I, -0.816496580927726*I]
 
         AUTHORS:
@@ -2218,12 +2218,12 @@ cdef class Rational(sage.structure.element.FieldElement):
         Test that conversion agrees with `RR`::
 
             sage: Q = [a/b for a in [-99..99] for b in [1..99]]
-            sage: all(RDF(q) == RR(q) for q in Q)
+            sage: all(RDF(q) == RR(q) for q in Q)                                       # optional - sage.rings.real_mpfr
             True
 
         Test that the conversion has correct rounding on simple rationals::
 
-            sage: for p in [-100..100]:
+            sage: for p in [-100..100]:                                                 # optional - sage.rings.real_mpfr
             ....:   for q in [1..100]:
             ....:       r = RDF(p/q)
             ....:       assert (RR(r).exact_rational() - p/q) <= r.ulp()/2
@@ -3146,7 +3146,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: (124/345).log(5)                                                      # optional - sage.symbolic
             log(124/345)/log(5)
-            sage: (124/345).log(5, 100)
+            sage: (124/345).log(5, 100)                                                 # optional - sage.rings.real_mpfr
             -0.63578895682825611710391773754
             sage: log(QQ(125))                                                          # optional - sage.symbolic
             3*log(5)
@@ -3172,7 +3172,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             -4/3
             sage: (125/8).log(5/2)                                                      # optional - sage.libs.pari
             3
-            sage: (125/8).log(5/2, prec=53)
+            sage: (125/8).log(5/2, prec=53)                                             # optional - sage.rings.real_mpfr
             3.00000000000000
 
         TESTS::
@@ -3261,9 +3261,9 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         This function accepts an optional precision argument::
 
-            sage: (1/3).gamma(prec=100)
+            sage: (1/3).gamma(prec=100)                                                 # optional - sage.rings.real_mpfr
             2.6789385347077476336556929410
-            sage: (1/2).gamma(prec=100)
+            sage: (1/2).gamma(prec=100)                                                 # optional - sage.rings.real_mpfr
             1.7724538509055160272981674833
 
         TESTS:

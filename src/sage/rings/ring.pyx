@@ -789,16 +789,16 @@ cdef class Ring(ParentWithGens):
 
             sage: QQbar.is_subring(QQbar)                                               # optional - sage.rings.number_field
             True
-            sage: RR.is_subring(RR)
+            sage: RR.is_subring(RR)                                                     # optional - sage.rings.real_mpfr
             True
-            sage: CC.is_subring(CC)
+            sage: CC.is_subring(CC)                                                     # optional - sage.rings.real_mpfr
             True
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - x + 1/10)                                   # optional - sage.rings.number_field
             sage: K.is_subring(K)                                                       # optional - sage.rings.number_field
             True
-            sage: R.<x> = RR[]
-            sage: R.is_subring(R)
+            sage: R.<x> = RR[]                                                          # optional - sage.rings.real_mpfr
+            sage: R.is_subring(R)                                                       # optional - sage.rings.real_mpfr
             True
         """
         if self is other:
@@ -2134,9 +2134,9 @@ cdef class Field(PrincipalIdealDomain):
 
             sage: QQ.fraction_field()
             Rational Field
-            sage: RR.fraction_field()
+            sage: RR.fraction_field()                                                   # optional - sage.rings.real_mpfr
             Real Field with 53 bits of precision
-            sage: CC.fraction_field()
+            sage: CC.fraction_field()                                                   # optional - sage.rings.real_mpfr
             Complex Field with 53 bits of precision
 
             sage: x = polygen(ZZ, 'x')

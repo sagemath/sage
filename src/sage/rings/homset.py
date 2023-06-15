@@ -28,9 +28,9 @@ def is_RingHomset(H):
         True
         sage: is_RH(ZZ)
         False
-        sage: is_RH(Hom(RR, CC))
+        sage: is_RH(Hom(RR, CC))                                                        # optional - sage.rings.real_mpfr
         True
-        sage: is_RH(Hom(FreeModule(ZZ,1), FreeModule(QQ,1)))
+        sage: is_RH(Hom(FreeModule(ZZ,1), FreeModule(QQ,1)))                            # optional - sage.modules
         False
     """
     return isinstance(H, RingHomset_generic)
