@@ -974,7 +974,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
     Some checks are performed to make sure the given polynomials
     define a morphism::
 
-        sage: f = H([exp(x),exp(y)])
+        sage: f = H([exp(x),exp(y)])                                                    # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: polys (=[e^x, e^y]) must be elements of Multivariate
@@ -1406,8 +1406,9 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: A.<x,y,z> = AffineSpace(RR, 3)
             sage: h = Hom(A, A)
             sage: f = h([x^2 + 1.5, y^3, z^5 - 2.0])
-            sage: f.change_ring(CC)
-            Scheme endomorphism of Affine Space of dimension 3 over Complex Field with 53 bits of precision
+            sage: f.change_ring(CC)                                                     # optional - sage.rings.real_mpfr
+            Scheme endomorphism of Affine Space of dimension 3 over
+             Complex Field with 53 bits of precision
               Defn: Defined on coordinates by sending (x, y, z) to
                     (x^2 + 1.50000000000000, y^3, z^5 - 2.00000000000000)
 
@@ -1977,7 +1978,7 @@ class SchemeMorphism_point(SchemeMorphism):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: P(-2/3,1).change_ring(CC)
+            sage: P(-2/3,1).change_ring(CC)                                             # optional - sage.rings.real_mpfr
             (-0.666666666666667 : 1.00000000000000)
 
         ::

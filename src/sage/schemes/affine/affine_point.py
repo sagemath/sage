@@ -181,14 +181,14 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
             sage: P.<x,y> = AffineSpace(QQ, 2)
             sage: Q = P(41, 1/12)
-            sage: Q.global_height()
+            sage: Q.global_height()                                                     # optional - sage.rings.real_mpfr
             3.71357206670431
 
         ::
 
             sage: P = AffineSpace(ZZ, 4, 'x')
             sage: Q = P(3, 17, -51, 5)
-            sage: Q.global_height()
+            sage: Q.global_height()                                                     # optional - sage.rings.real_mpfr
             3.93182563272433
 
         ::
@@ -196,7 +196,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             sage: R.<x> = PolynomialRing(QQ)
             sage: k.<w> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
             sage: A = AffineSpace(k, 2, 'z')                                            # optional - sage.rings.number_field
-            sage: A([3, 5*w + 1]).global_height(prec=100)                               # optional - sage.rings.number_field
+            sage: A([3, 5*w + 1]).global_height(prec=100)                               # optional - sage.rings.number_field sage.rings.real_mpfr
             2.4181409534757389986565376694
 
         .. TODO::

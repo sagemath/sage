@@ -1166,15 +1166,14 @@ class AffineSpace_field(AffineSpace_generic):
             sage: A3.<x,y,z> = AffineSpace(3, QQ)
             sage: p1 = A3(1, 2, 3)
             sage: p2 = A3(4, 5, 6)
-            sage: A3.line_through(p1, p2)
+            sage: L = A3.line_through(p1, p2); L                                        # optional - sage.schemes
             Affine Curve over Rational Field defined by -1/6*x + 1/6*y - 1/6,
               -1/6*x + 1/6*z - 1/3, -1/6*y + 1/6*z - 1/6, -1/6*x + 1/3*y - 1/6*z
-            sage: L = _
-            sage: L(p1)
+            sage: L(p1)                                                                 # optional - sage.schemes
             (1, 2, 3)
-            sage: L(p2)
+            sage: L(p2)                                                                 # optional - sage.schemes
             (4, 5, 6)
-            sage: A3.line_through(p1, p1)
+            sage: A3.line_through(p1, p1)                                               # optional - sage.schemes
             Traceback (most recent call last):
             ...
             ValueError: not distinct points

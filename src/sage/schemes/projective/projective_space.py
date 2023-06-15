@@ -24,7 +24,7 @@ base rings.
 
     sage: X = ProjectiveSpace(5)/QQ; X
     Projective Space of dimension 5 over Rational Field
-    sage: X/CC
+    sage: X/CC                                                                          # optional - sage.rings.real_mpfr
     Projective Space of dimension 5 over Complex Field with 53 bits of precision
 
 The third argument specifies the printing names of the generators of the
@@ -209,8 +209,7 @@ def ProjectiveSpace(n, R=None, names=None):
 
     ::
 
-        sage: PS.<x,y> = ProjectiveSpace(1, CC)
-        sage: PS
+        sage: PS.<x,y> = ProjectiveSpace(1, CC); PS                                     # optional - sage.rings.real_mpfr
         Projective Space of dimension 1 over Complex Field with 53 bits of precision
 
     ::

@@ -239,9 +239,9 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(CC, 2)
-            sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])                               # optional - sage.libs.singular
-            sage: E(A.base_ring()).points()                                             # optional - sage.libs.singular
+            sage: A.<x,y> = AffineSpace(CC, 2)                                          # optional - sage.rings.real_mpfr
+            sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])                               # optional - sage.libs.singular sage.rings.real_mpfr
+            sage: E(A.base_ring()).points()                                             # optional - sage.libs.singular sage.rings.real_mpfr
             verbose 0 (...: affine_homset.py, points)
             Warning: computations in the numerical fields are inexact;points
             may be computed partially or incorrectly.

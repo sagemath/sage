@@ -340,10 +340,10 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         ::
 
-            sage: PP.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], CC)
-            sage: X = PP.subscheme([a^2 + b^2])
-            sage: P = X([2, 2*i, -3, 6*i, 3 - 6*i])
-            sage: P.dehomogenize([1,0])
+            sage: PP.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], CC)                  # optional - sage.rings.real_mpfr
+            sage: X = PP.subscheme([a^2 + b^2])                                         # optional - sage.rings.real_mpfr
+            sage: P = X([2, 2*i, -3, 6*i, 3 - 6*i])                                     # optional - sage.rings.real_mpfr
+            sage: P.dehomogenize([1,0])                                                 # optional - sage.rings.real_mpfr
             (-1.00000000000000*I, -2.00000000000000*I, -1.00000000000000 + 2.00000000000000*I)
 
         ::
@@ -492,14 +492,14 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
             sage: PP = ProductProjectiveSpaces(QQ, [1, 1], 'x')
             sage: A = PP([11, 5, 10, 2])
-            sage: A.local_height(5)
+            sage: A.local_height(5)                                                     # optional - sage.rings.real_mpfr
             1.60943791243410
 
         ::
 
             sage: P = ProductProjectiveSpaces(QQ, [1, 2], 'x')
             sage: Q = P([1, 4, 1/2, 2, 32])
-            sage: Q.local_height(2)
+            sage: Q.local_height(2)                                                     # optional - sage.rings.real_mpfr
             4.15888308335967
         """
         K = FractionField(self.domain().base_ring())

@@ -145,9 +145,9 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
-            sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: L = E(P.base_ring()).points(); sorted(L, key=str)                     # optional - sage.libs.singular
+            sage: P.<x,y,z> = ProjectiveSpace(CC, 2)                                    # optional - sage.rings.real_mpfr
+            sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])                           # optional - sage.rings.real_mpfr
+            sage: L = E(P.base_ring()).points(); sorted(L, key=str)                     # optional - sage.libs.singular sage.rings.real_mpfr
             verbose 0 (...: projective_homset.py, points) Warning: computations in
             the numerical fields are inexact;points may be computed partially or incorrectly.
             [(-0.500000000000000 + 0.866025403784439*I : 1.00000000000000 : 0.000000000000000),
@@ -156,7 +156,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
              (0.000000000000000 : 0.000000000000000 : 1.00000000000000),
              (1.00000000000000 : 1.00000000000000 : 0.000000000000000),
              (1.00000000000000*I : 0.000000000000000 : 1.00000000000000)]
-            sage: L[0].codomain()                                                       # optional - sage.libs.singular
+            sage: L[0].codomain()                                                       # optional - sage.libs.singular sage.rings.real_mpfr
             Projective Space of dimension 2 over Complex Field with 53 bits of precision
 
         ::

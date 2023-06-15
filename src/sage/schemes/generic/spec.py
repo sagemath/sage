@@ -152,7 +152,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
 
             sage: from sage.schemes.generic.spec import SpecFunctor
             sage: F = SpecFunctor()
-            sage: F(RR) # indirect doctest
+            sage: F(RR)  # indirect doctest                                             # optional - sage.rings.real_mpfr
             Spectrum of Real Field with 53 bits of precision
         """
         # The second argument of AffineScheme defaults to None.

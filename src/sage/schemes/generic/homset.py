@@ -479,8 +479,8 @@ class SchemeHomset_points(SchemeHomset_generic):
         ::
 
             sage: P = ProjectiveSpace(QQ, 1, 'x')
-            sage: P2 = ProjectiveSpace(CC, 1, 'y')
-            sage: P2(CC)._coerce_map_from_(P(QQ))
+            sage: P2 = ProjectiveSpace(CC, 1, 'y')                                      # optional - sage.rings.real_mpfr
+            sage: P2(CC)._coerce_map_from_(P(QQ))                                       # optional - sage.rings.real_mpfr
             False
 
         ::
@@ -494,9 +494,9 @@ class SchemeHomset_points(SchemeHomset_generic):
             True
             sage: L(QQ).has_coerce_map_from(H(QQ))                                      # optional - sage.libs.singular
             False
-            sage: A(CC)._coerce_map_from_(H(QQ))
+            sage: A(CC)._coerce_map_from_(H(QQ))                                        # optional - sage.rings.real_mpfr
             True
-            sage: H(CC)._coerce_map_from_(L(RR))                                        # optional - sage.libs.singular
+            sage: H(CC)._coerce_map_from_(L(RR))                                        # optional - sage.libs.singular sage.rings.real_mpfr
             True
 
         ::
@@ -558,8 +558,8 @@ class SchemeHomset_points(SchemeHomset_generic):
         ::
 
             sage: A = AffineSpace(QQ, 1, 'x')
-            sage: AC = AffineSpace(CC, 1, 'x')
-            sage: A(3/2) == AC(3/2)
+            sage: AC = AffineSpace(CC, 1, 'x')                                          # optional - sage.rings.real_mpfr
+            sage: A(3/2) == AC(3/2)                                                     # optional - sage.rings.real_mpfr
             True
 
         ::

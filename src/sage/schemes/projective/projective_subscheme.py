@@ -634,11 +634,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         ::
 
-            sage: PS.<x,y,z,w> = ProjectiveSpace(CC, 3)
-            sage: H = End(PS)
-            sage: f = H([x^2 + y^2, y^2, z^2-y^2, w^2])
-            sage: X = PS.subscheme([z - 2*w])
-            sage: f(X)                                                                  # optional - sage.libs.singular
+            sage: PS.<x,y,z,w> = ProjectiveSpace(CC, 3)                                 # optional - sage.rings.real_mpfr
+            sage: H = End(PS)                                                           # optional - sage.rings.real_mpfr
+            sage: f = H([x^2 + y^2, y^2, z^2-y^2, w^2])                                 # optional - sage.rings.real_mpfr
+            sage: X = PS.subscheme([z - 2*w])                                           # optional - sage.rings.real_mpfr
+            sage: f(X)                                                                  # optional - sage.libs.singular sage.rings.real_mpfr
             Closed subscheme of Projective Space of dimension 3 over Complex Field
              with 53 bits of precision defined by:
               y + z + (-4.00000000000000)*w
@@ -1137,10 +1137,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         ::
 
-            sage: P.<x,y,z,w> = ProjectiveSpace(CC, 3)
-            sage: X = P.subscheme([z^5*x^2*w - y^8])
-            sage: Q = P([2,0,0,1])
-            sage: X.multiplicity(Q)                                                     # optional - sage.libs.singular
+            sage: P.<x,y,z,w> = ProjectiveSpace(CC, 3)                                  # optional - sage.rings.real_mpfr
+            sage: X = P.subscheme([z^5*x^2*w - y^8])                                    # optional - sage.rings.real_mpfr
+            sage: Q = P([2,0,0,1])                                                      # optional - sage.rings.real_mpfr
+            sage: X.multiplicity(Q)                                                     # optional - sage.libs.singular sage.rings.real_mpfr
             5
 
         ::

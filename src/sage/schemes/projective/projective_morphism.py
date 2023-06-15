@@ -213,11 +213,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         When elements of the quotient ring is used, they are reduced::
 
-            sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
-            sage: X = P.subscheme([x - y])
-            sage: u,v,w = X.coordinate_ring().gens()                                    # optional - sage.libs.singular
-            sage: H = End(X)
-            sage: H([u^2, v^2, w*u])                                                    # optional - sage.libs.singular
+            sage: P.<x,y,z> = ProjectiveSpace(CC, 2)                                    # optional - sage.rings.real_mpfr
+            sage: X = P.subscheme([x - y])                                              # optional - sage.rings.real_mpfr
+            sage: u,v,w = X.coordinate_ring().gens()                                    # optional - sage.libs.singular sage.rings.real_mpfr
+            sage: H = End(X)                                                            # optional - sage.rings.real_mpfr
+            sage: H([u^2, v^2, w*u])                                                    # optional - sage.libs.singular sage.rings.real_mpfr
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 2
              over Complex Field with 53 bits of precision defined by: x - y
               Defn: Defined on coordinates by sending (x : y : z) to
@@ -331,7 +331,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = End(PS)
             sage: f = H([y^2, x^2, w^2, z^2])
             sage: X = PS.subscheme([z^2 + y*w])
-            sage: f(X)
+            sage: f(X)                                                                  # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 3 over Rational Field
             defined by:
               x*z - w^2
@@ -377,13 +377,13 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (u : v) to
                     (u^2 + v^2 : u*v)
 
-            sage: F.<a> = GF(4)                                                                     # optional - sage.rings.finite_rings
-            sage: P = T(F)(1, a)                                                                    # optional - sage.rings.finite_rings
-            sage: h(P)                                                                              # optional - sage.rings.finite_rings
+            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: P = T(F)(1, a)                                                        # optional - sage.rings.finite_rings
+            sage: h(P)                                                                  # optional - sage.rings.finite_rings
             (a : a)
-            sage: h(P).domain()                                                                     # optional - sage.rings.finite_rings
+            sage: h(P).domain()                                                         # optional - sage.rings.finite_rings
             Spectrum of Finite Field in a of size 2^2
-            sage: h.change_ring(F)(P)                                                               # optional - sage.rings.finite_rings
+            sage: h.change_ring(F)(P)                                                   # optional - sage.rings.finite_rings
             (1 : 1)
         """
         from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_ring
@@ -478,24 +478,24 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             ::
 
-            sage: T.<z> = PolynomialRing(CC)
-            sage: I = T.ideal(z^3)
-            sage: P.<x,y> = ProjectiveSpace(T.quotient_ring(I), 1)
-            sage: H = End(P)
-            sage: f = H([x^2 + x*y, y^2])
-            sage: Q = P(z^2, 1)
-            sage: f._fast_eval(list(Q))
+            sage: T.<z> = PolynomialRing(CC)                                            # optional - sage.rings.real_mpfr
+            sage: I = T.ideal(z^3)                                                      # optional - sage.rings.real_mpfr
+            sage: P.<x,y> = ProjectiveSpace(T.quotient_ring(I), 1)                      # optional - sage.rings.real_mpfr
+            sage: H = End(P)                                                            # optional - sage.rings.real_mpfr
+            sage: f = H([x^2 + x*y, y^2])                                               # optional - sage.rings.real_mpfr
+            sage: Q = P(z^2, 1)                                                         # optional - sage.rings.real_mpfr
+            sage: f._fast_eval(list(Q))                                                 # optional - sage.rings.real_mpfr
             [zbar^2, 1.00000000000000]
 
             ::
 
-            sage: T.<z> = LaurentSeriesRing(CC)
-            sage: R.<t> = PolynomialRing(T)
-            sage: P.<x,y> = ProjectiveSpace(R,1)
-            sage: H = End(P)
-            sage: f = H([x^2 + x*y, y^2])
-            sage: Q = P(t^2, z)
-            sage: f._fast_eval(list(Q))
+            sage: T.<z> = LaurentSeriesRing(CC)                                         # optional - sage.rings.real_mpfr
+            sage: R.<t> = PolynomialRing(T)                                             # optional - sage.rings.real_mpfr
+            sage: P.<x,y> = ProjectiveSpace(R,1)                                        # optional - sage.rings.real_mpfr
+            sage: H = End(P)                                                            # optional - sage.rings.real_mpfr
+            sage: f = H([x^2 + x*y, y^2])                                               # optional - sage.rings.real_mpfr
+            sage: Q = P(t^2, z)                                                         # optional - sage.rings.real_mpfr
+            sage: f._fast_eval(list(Q))                                                 # optional - sage.rings.real_mpfr
             [t^4 + z*t^2, z^2]
         """
         P = [f(*x) for f in self._fastpolys]
@@ -569,8 +569,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
             sage: f = H([x^3 - 2*x^2*y, 5*x*y^2])
-            sage: g = f.change_ring(GF(7))                                                          # optional - sage.rings.finite_rings
-            sage: f != g                                                                            # optional - sage.rings.finite_rings
+            sage: g = f.change_ring(GF(7))                                              # optional - sage.rings.finite_rings
+            sage: f != g                                                                # optional - sage.rings.finite_rings
             True
 
         ::
@@ -1031,10 +1031,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
-            sage: H = Hom(P, P)
-            sage: f = H([x^3 + y^3, y^2*z, z*x*y])
-            sage: f.degree()
+            sage: P.<x,y,z> = ProjectiveSpace(CC, 2)                                    # optional - sage.rings.real_mpfr
+            sage: H = Hom(P, P)                                                         # optional - sage.rings.real_mpfr
+            sage: f = H([x^3 + y^3, y^2*z, z*x*y])                                      # optional - sage.rings.real_mpfr
+            sage: f.degree()                                                            # optional - sage.rings.real_mpfr
             3
 
         ::

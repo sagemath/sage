@@ -90,8 +90,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         ::
 
-            sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1, 1, 1], CC)
-            sage: PP.subscheme([]).segre_embedding()                                    # optional - sage.libs.singular
+            sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1, 1, 1], CC)             # optional - sage.rings.real_mpfr
+            sage: PP.subscheme([]).segre_embedding()                                    # optional - sage.libs.singular sage.rings.real_mpfr
             Scheme morphism:
               From: Closed subscheme of Product of projective spaces P^1 x P^1 x P^1
                     over Complex Field with 53 bits of precision defined by:
@@ -207,8 +207,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         ::
 
-            sage: PP = ProductProjectiveSpaces([2, 1, 3], CC, 't')
-            sage: PP.subscheme([]).dimension()                                          # optional - sage.libs.singular
+            sage: PP = ProductProjectiveSpaces([2, 1, 3], CC, 't')                      # optional - sage.rings.real_mpfr
+            sage: PP.subscheme([]).dimension()                                          # optional - sage.libs.singular sage.rings.real_mpfr
             6
 
         ::
@@ -219,9 +219,9 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         ::
 
-            sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1,1,1], CC)
-            sage: X = PP.subscheme([x^2 - y^2, u - v, s^2 - t^2])
-            sage: X.dimension()                                                         # optional - sage.libs.singular
+            sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1,1,1], CC)               # optional - sage.rings.real_mpfr
+            sage: X = PP.subscheme([x^2 - y^2, u - v, s^2 - t^2])                       # optional - sage.libs.singular sage.rings.real_mpfr
+            sage: X.dimension()                                                         # optional - sage.libs.singular sage.rings.real_mpfr
             0
         """
         try:

@@ -990,7 +990,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
             ::
 
-            sage: T = ProductProjectiveSpaces([1, 2], CC, 'z')
+            sage: T = ProductProjectiveSpaces([1, 2], CC, 'z')                          # optional - sage.rings.real_mpfr
             sage: T.segre_embedding()                                                   # optional - sage.libs.singular
             Scheme morphism:
               From: Product of projective spaces P^1 x P^2
