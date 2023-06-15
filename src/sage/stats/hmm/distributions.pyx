@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Distributions used in implementing Hidden Markov Models
 
