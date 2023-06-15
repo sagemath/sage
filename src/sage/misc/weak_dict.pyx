@@ -363,9 +363,9 @@ cdef class WeakValueDictionary(dict):
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
             sage: D[1] = QQ
             sage: D[2] = ZZ
-            sage: D[None] = CC
-            sage: E = copy(D)    # indirect doctest
-            sage: set(E.items()) == set(D.items())
+            sage: D[None] = CC                                                          # optional - sage.rings.real_mpfr
+            sage: E = copy(D)    # indirect doctest                                     # optional - sage.rings.real_mpfr
+            sage: set(E.items()) == set(D.items())                                      # optional - sage.rings.real_mpfr
             True
 
         """

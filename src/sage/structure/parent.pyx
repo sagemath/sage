@@ -1081,7 +1081,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: 5 in QQ
             True
-            sage: I in RR
+            sage: I in RR                                                               # optional - sage.rings.real_mpfr
             False
             sage: SR(2) in ZZ                                                           # optional - sage.symbolic
             True
@@ -2834,7 +2834,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: QuadraticField(-1)._is_numerical()                                    # optional - sage.rings.number_field
             True
-            sage: [R._is_numerical() for R in [RR, CC, QQ]]
+            sage: QQ._is_numerical()
+            True
+            sage: [RR._is_numerical(), CC._is_numerical()]                              # optional - sage.rings.real_mpfr
             [True, True, True]
             sage: SR._is_numerical()                                                    # optional - sage.symbolic
             False
@@ -2866,11 +2868,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: QuadraticField(2)._is_real_numerical()                                # optional - sage.rings.number_field
             True
-            sage: [R._is_real_numerical() for R in [RR, QQ, ZZ, RLF]]
-            [True, True, True, True]
+            sage: [QQ._is_real_numerical(), ZZ._is_real_numerical]
+            [True, True]
+            sage: [RR._is_real_numerical(), RLF._is_real_numerical()]                   # optional - sage.rings.real_mpfr
+            [True, True]
             sage: QuadraticField(-1)._is_real_numerical()                               # optional - sage.rings.number_field
             False
-            sage: CC._is_real_numerical()
+            sage: CC._is_real_numerical()                                               # optional - sage.rings.real_mpfr
             False
             sage: SR._is_real_numerical()                                               # optional - sage.symbolic
             False
