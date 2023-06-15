@@ -1,3 +1,6 @@
+# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-pari
+
 r"""
 Enumeration of Primitive Totally Real Fields
 

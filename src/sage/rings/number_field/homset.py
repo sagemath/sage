@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 Sets of homomorphisms between number fields
 """

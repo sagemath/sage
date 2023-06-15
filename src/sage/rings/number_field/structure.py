@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Helper classes for structural embeddings and isomorphisms of number fields
 

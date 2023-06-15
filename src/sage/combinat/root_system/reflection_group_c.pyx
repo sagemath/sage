@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 #cython: wraparound=False, boundscheck=False
 r"""
 This contains a few time-critical auxiliary cython functions for

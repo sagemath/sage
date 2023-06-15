@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 r"""
 Convert PARI objects to Sage types
 """

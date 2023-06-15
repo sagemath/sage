@@ -1,3 +1,6 @@
+# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-pari
+
 # distutils: libraries = gmp
 """
 Enumeration of Totally Real Fields

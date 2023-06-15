@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 from .matrix_dense cimport Matrix_dense
 from sage.libs.gap.element cimport GapElement
 

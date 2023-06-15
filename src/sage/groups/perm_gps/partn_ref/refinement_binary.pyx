@@ -1,4 +1,5 @@
 # sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage_setup: distribution = sagemath-gap
 """
 Partition backtrack functions for binary codes
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.rings.ring cimport Field
 
 cdef class NumberField(Field):

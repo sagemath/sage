@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 """
 Python interface to partition backtrack functions
 

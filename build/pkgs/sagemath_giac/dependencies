@@ -1,0 +1,1 @@
+$(PYTHON) sagemath_categories giac | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig

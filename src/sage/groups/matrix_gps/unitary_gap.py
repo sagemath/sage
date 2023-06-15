@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-gap
+
 r"""
 Unitary Groups `GU(n,q)` and `SU(n,q)` with GAP
 """

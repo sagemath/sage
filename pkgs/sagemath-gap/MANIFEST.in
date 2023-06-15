@@ -1,0 +1,39 @@
+include VERSION.txt
+
+prune sage
+global-include    all__sagemath_gap.py
+
+graft             sage/coding/codecan
+include           sage/combinat/enumeration_mod_permgroup.p*
+include           sage/combinat/root_system/reflection_group*.p*
+graft             sage/data_structures                                  # FIXME
+recursive-include sage/graphs *.pxd                                     # FIXME
+include           sage/graphs/all.py                                    # FIXME
+include           sage/graphs/base/all.py                               # FIXME
+include           sage/graphs/spanning_tree.p*
+graft             sage/groups/perm_gps
+include           sage/groups/libgap_wrapper.p*
+include           sage/groups/matrix_gps/group_element.pxd              # FIXME
+include           sage/groups/matrix_gps/*_gap.*
+include           sage/groups/semimonomial_transformations/all.py       # FIXME
+recursive-include sage/groups/semimonomial_transformations *.pxd        # FIXME
+graft             sage/libs/gap
+recursive-include sage/matrix *.pxd                                     # FIXME
+include           sage/matrix/matrix_gap.p*
+recursive-include sage/modules *.pxd                                    # FIXME
+include           sage/modules/all.py                                   # FIXME
+recursive-include sage/rings *.pxd                                      # FIXME
+include           sage/rings/polynomial/all.py                          # FIXME
+include           sage/sets/disjoint_set.p*
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

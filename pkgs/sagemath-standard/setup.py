@@ -76,7 +76,13 @@ if any(x in sys.argv
 # TODO: This should be quiet by default
 print("Discovering Python/Cython source code....")
 t = time.time()
-distributions = ['']
+distributions = ['',
+                 'sagemath-flint',
+                 'sagemath-gap',
+                 'sagemath-giac',
+                 'sagemath-homfly',
+                 'sagemath-pari',
+                 ]
 from sage.misc.package import is_package_installed_and_updated
 optional_packages_with_extensions = ['mcqd', 'bliss', 'tdlib',
                                      'coxeter3', 'sirocco', 'meataxe']

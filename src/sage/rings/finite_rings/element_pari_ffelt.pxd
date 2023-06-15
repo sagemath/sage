@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 from cypari2.types cimport GEN
 from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
 

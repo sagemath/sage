@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 """
 Arithmetic functions using the arb library
 """

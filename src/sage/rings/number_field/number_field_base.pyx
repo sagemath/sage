@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # sage.doctest: optional - sage.rings.number_field
 """
 Base class for all number fields

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-gap
 r"""
 Disjoint-set data structure
 

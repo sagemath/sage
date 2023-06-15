@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 """
 `p`-adic Capped Absolute Elements
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # sage.doctest: optional - sage.libs.pari
 """
 Number Field Ideals

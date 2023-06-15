@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 r"""
 `p`-adic Floating Point Elements
 
