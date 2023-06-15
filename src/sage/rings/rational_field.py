@@ -16,11 +16,11 @@ function).
 
 ::
 
-    sage: RealField(9).pi()
+    sage: RealField(9).pi()                                                             # optional - sage.rings.real_mpfr
     3.1
-    sage: QQ(RealField(9).pi())
+    sage: QQ(RealField(9).pi())                                                         # optional - sage.rings.real_mpfr
     22/7
-    sage: QQ(RealField().pi())
+    sage: QQ(RealField().pi())                                                          # optional - sage.rings.real_mpfr
     245850922/78256779
     sage: QQ(35)
     35
@@ -98,11 +98,11 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     ::
 
-        sage: QQ(RR(3929329/32))
+        sage: QQ(RR(3929329/32))                                                        # optional - sage.rings.real_mpfr
         3929329/32
-        sage: QQ(-RR(3929329/32))
+        sage: QQ(-RR(3929329/32))                                                       # optional - sage.rings.real_mpfr
         -3929329/32
-        sage: QQ(RR(1/7)) - 1/7
+        sage: QQ(RR(1/7)) - 1/7                                                         # optional - sage.rings.real_mpfr
         0
 
     If you specify the optional second argument ``base``, then the string

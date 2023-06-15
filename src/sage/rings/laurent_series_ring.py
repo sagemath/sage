@@ -114,10 +114,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         sage: W is T                                                                    # optional - sage.rings.padics
         False
 
-        sage: K = LaurentSeriesRing(CC, 'q')
-        sage: K
+        sage: K = LaurentSeriesRing(CC, 'q'); K                                         # optional - sage.rings.real_mpfr
         Laurent Series Ring in q over Complex Field with 53 bits of precision
-        sage: loads(K.dumps()) == K
+        sage: loads(K.dumps()) == K                                                     # optional - sage.rings.real_mpfr
         True
         sage: P = QQ[['x']]
         sage: F = Frac(P)
