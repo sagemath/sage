@@ -119,24 +119,9 @@ from .generator import InterpreterGenerator, AUTOGEN_WARN
 from .instructions import *
 from .memory import *
 from .specs.base import *
-from .specs.cdf import *
-from .specs.element import *
-from .specs.python import *
-from .specs.rdf import *
-from .specs.rr import *
-from .specs.cc import *
 from .storage import *
 from .utils import *
 
-
-# Gather up a list of all interpreter classes imported into this module
-# A better way might be to recursively iterate InterpreterSpec.__subclasses__
-# or to use a registry, but this is fine for now.
-_INTERPRETERS = sorted(filter(lambda c: (isinstance(c, type) and
-                                         issubclass(c, InterpreterSpec) and
-                                         c.name),
-                              globals().values()),
-                       key=lambda c: c.name)
 
 # Tuple of (filename_root, extension, method) where filename_root is the
 # root of the filename to be joined with "_<interpreter_name>".ext and
@@ -174,7 +159,7 @@ def build_interp(interp_spec, dir):
         write_if_changed(path, method())
 
 
-def rebuild(dirname, force=False):
+def rebuild(dirname, force=False, interpreters=None, distribution=None):
     r"""
     Check whether the interpreter and wrapper sources have been written
     since the last time this module was changed.  If not, write them.
@@ -193,6 +178,20 @@ def rebuild(dirname, force=False):
     # This line will show up in "sage -b" (once per upgrade, not every time
     # you run it).
     print("Building interpreters for fast_callable")
+
+    if interpreters is None:
+        interpreters = ['CDF', 'Element', 'Python', 'RDF', 'RR', 'CC']
+
+    from importlib import import_module
+
+    _INTERPRETERS = [getattr(import_module('sage_setup.autogen.interpreters.specs.' + interpreter.lower()),
+                             interpreter + 'Interpreter')
+                     for interpreter in interpreters]
+
+    if distribution is None:
+        all_py = 'all.py'
+    else:
+        all_py = f'all__{distribution.replace("-", "_")}.py'
 
     try:
         os.makedirs(dirname)
@@ -213,7 +212,7 @@ def rebuild(dirname, force=False):
     try:
         if force:
             raise NeedToRebuild("-> Force rebuilding interpreters")
-        gen_file = os.path.join(dirname, 'all.py')
+        gen_file = os.path.join(dirname, all_py)
         if not os.path.isfile(gen_file):
             raise NeedToRebuild("-> First build of interpreters")
 
@@ -235,5 +234,5 @@ def rebuild(dirname, force=False):
     for interp in _INTERPRETERS:
         build_interp(interp(), dirname)
 
-    with open(os.path.join(dirname, 'all.py'), 'w') as f:
+    with open(os.path.join(dirname, all_py), 'w') as f:
         f.write("# " + AUTOGEN_WARN)
