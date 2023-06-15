@@ -488,7 +488,7 @@ def _builder_and_stream(vars, domain):
     EXAMPLES:
 
         sage: from sage.ext.fast_callable import _builder_and_stream
-        sage: _builder_and_stream(ZZ, ["x", "y"])
+        sage: _builder_and_stream(["x", "y"], ZZ)
 
     """
     if isinstance(domain, sage.rings.abc.RealField):
