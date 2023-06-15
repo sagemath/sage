@@ -339,7 +339,7 @@ cdef class LeanMatrix:
         """
         Get coordinates of nonzero entries of row ``r``.
         """
-        return [i for i in xrange(self._ncols) if self.is_nonzero(r, i)]
+        return [i for i in range(self._ncols) if self.is_nonzero(r, i)]
 
     cdef LeanMatrix transpose(self):
         """
@@ -545,7 +545,7 @@ cdef class LeanMatrix:
         - `True, E` -- if there exist a ``m``-separator ``E``.
 
         """
-        for z in xrange(self.ncols()):
+        for z in range(self.ncols()):
             if z in P_cols+Q_cols:
                 continue
             sol,cert = self.shifting(P_rows,P_cols,Q_rows,Q_cols,z,None,m)
@@ -610,22 +610,22 @@ cdef class LeanMatrix:
         if len(X_1) + len(Y_1) < m:
             return False, None
 
-        cdef set X=set(xrange(self.nrows()))
-        cdef set Y=set(xrange(self.ncols()))
+        cdef set X=set(range(self.nrows()))
+        cdef set Y=set(range(self.ncols()))
 
         cdef set X_3 = X-set(X_1+X_2)
         cdef set Y_3 = Y-set(Y_1+Y_2)
 
         cdef list lU_2 = sorted(list(U_2))
         cdef list lV_2 = sorted(list(V_2))
-        cdef dict rU = dict(zip(lU_2,xrange(len(U_2))))
-        cdef dict rV = dict(zip(lV_2,xrange(len(V_2))))
+        cdef dict rU = dict(zip(lU_2,range(len(U_2))))
+        cdef dict rV = dict(zip(lV_2,range(len(V_2))))
 
         # find a unique representation of every column in U_1xY_3 using columns in U_1xV_2
-        B = self.matrix_from_rows_and_columns(list(U_1), xrange(len(Y)))
+        B = self.matrix_from_rows_and_columns(list(U_1), range(len(Y)))
         B.gauss_jordan_reduce(lV_2)
         # find a unique representation of every rows in X_3xV_1 using rows in U_2xV_1
-        BT = self.matrix_from_rows_and_columns(xrange(len(X)),list(V_1)).transpose()
+        BT = self.matrix_from_rows_and_columns(range(len(X)),list(V_1)).transpose()
         BT.gauss_jordan_reduce(lU_2)
 
         cdef set X_p = set(X_1)
@@ -1349,17 +1349,17 @@ cdef class BinaryMatrix(LeanMatrix):
         bitset_complement(mask, mask)
         # copy relevant part of this matrix into A
         cdef bitset_t row, row2
-        for r in xrange(len(rows)):
+        for r in range(len(rows)):
             row = self._M[rows[r]]
             row2 = A._M[r]
             bitset_intersection(row2, row, mask) # yes, this is safe
-            for g in xrange(lg):
+            for g in range(lg):
                 if bitset_in(row, cols[g]):
                     bitset_add(row2, gaps[g])
         # record order of the columns in list `order`
-        cdef list order = list(xrange(lc))
+        cdef list order = list(range(lc))
         g = 0
-        for g in xrange(lg):
+        for g in range(lg):
             order[gaps[g]] = cols[g]
         # free up the two arrays and the bitset
         sig_free(gaps)
@@ -2026,14 +2026,14 @@ cdef class TernaryMatrix(LeanMatrix):
         # copy relevant part of this matrix into A
         cdef bitset_t row0, row1, row0_2, row1_2
         cdef mp_bitcnt_t p, q
-        for r in xrange(len(rows)):
+        for r in range(len(rows)):
             row0 = self._M0[rows[r]]
             row1 = self._M1[rows[r]]
             row0_2 = A._M0[r]
             row1_2 = A._M1[r]
             bitset_intersection(row0_2, row0, mask) # yes, this is safe
             bitset_intersection(row1_2, row1, mask) # yes, this is safe
-            for g in xrange(lg):
+            for g in range(lg):
                 p = cols[g]
                 if bitset_in(row0, p):
                     q = gaps[g]
@@ -2041,9 +2041,9 @@ cdef class TernaryMatrix(LeanMatrix):
                     if bitset_in(row1, p):
                         bitset_add(row1_2, q)
         # record order of the columns in list `order`
-        cdef list order = list(xrange(lc))
+        cdef list order = list(range(lc))
         g = 0
-        for g in xrange(lg):
+        for g in range(lg):
             order[gaps[g]] = cols[g]
         # free up the two arrays and the bitset
         sig_free(gaps)
@@ -2610,14 +2610,14 @@ cdef class QuaternaryMatrix(LeanMatrix):
         # copy relevant part of this matrix into A
         cdef bitset_t row0, row1, row0_2, row1_2
         cdef mp_bitcnt_t p, q
-        for r in xrange(len(rows)):
+        for r in range(len(rows)):
             row0 = self._M0[rows[r]]
             row1 = self._M1[rows[r]]
             row0_2 = A._M0[r]
             row1_2 = A._M1[r]
             bitset_intersection(row0_2, row0, mask) # yes, this is safe
             bitset_intersection(row1_2, row1, mask)
-            for g in xrange(lg):
+            for g in range(lg):
                 p = cols[g]
                 q = gaps[g]
                 if bitset_in(row0, p):
@@ -2625,9 +2625,9 @@ cdef class QuaternaryMatrix(LeanMatrix):
                 if bitset_in(row1, p):
                     bitset_add(row1_2, q)
         # record order of the columns in list `order`
-        cdef list order = list(xrange(lc))
+        cdef list order = list(range(lc))
         g = 0
-        for g in xrange(lg):
+        for g in range(lg):
             order[gaps[g]] = cols[g]
         # free up the two arrays and the bitset
         sig_free(gaps)

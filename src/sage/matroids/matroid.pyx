@@ -2357,7 +2357,7 @@ cdef class Matroid(SageObject):
                 rX = self._rank(XX)
                 if rX > i:
                     return False
-                for j in xrange(i, len(E) + 1):
+                for j in range(i, len(E) + 1):
                     for Y in combinations(E, j):
                         YY = frozenset(Y)
                         rY = self._rank(YY)
@@ -2510,10 +2510,10 @@ cdef class Matroid(SageObject):
             sage: [sorted(X) for X in CC[3]]
             [['a', 'b', 'c', 'd', 'e', 'f', 'g']]
         """
-        CC = [set([]) for r in xrange(self.rank() + 1)]
+        CC = [set([]) for r in range(self.rank() + 1)]
         for C in self.circuits():
             CC[len(C) - 1].add(self.closure(C))
-        return {r: CC[r] for r in xrange(self.rank() + 1) if CC[r]}
+        return {r: CC[r] for r in range(self.rank() + 1) if CC[r]}
 
     cpdef nonspanning_circuit_closures(self):
         """
@@ -2543,10 +2543,10 @@ cdef class Matroid(SageObject):
             ...
             KeyError: 3
         """
-        CC = [set([]) for r in xrange(self.rank() + 1)]
+        CC = [set([]) for r in range(self.rank() + 1)]
         for C in self.nonspanning_circuits():
             CC[len(C) - 1].add(self.closure(C))
-        return {r: CC[r] for r in xrange(self.rank() + 1) if CC[r]}
+        return {r: CC[r] for r in range(self.rank() + 1) if CC[r]}
 
     cpdef nonbases(self):
         r"""
@@ -2791,7 +2791,7 @@ cdef class Matroid(SageObject):
             return []
         loops = self._closure(set())
         flags = [[loops, set(), self.groundset() - loops]]
-        for r in xrange(r):
+        for r in range(r):
             flags = self._extend_flags(flags)
         return flags
 
@@ -2912,7 +2912,7 @@ cdef class Matroid(SageObject):
         loops = self._closure(set())
         flags = [[loops, set(), self.groundset() - loops]]
         f_vec = [1]
-        for r in xrange(self.full_rank()):
+        for r in range(self.full_rank()):
             flags = self._extend_flags(flags)
             f_vec.append(len(flags))
         return f_vec
@@ -5571,9 +5571,9 @@ cdef class Matroid(SageObject):
                         B[x, y] = 0
 
             # remove row x1 and y1
-            Xp = list(xrange(n))
+            Xp = list(range(n))
             Xp.remove(x1)
-            Yp = list(xrange(m))
+            Yp = list(range(m))
             Yp.remove(y1)
             B = B.matrix_from_rows_and_columns(Xp,Yp)
 

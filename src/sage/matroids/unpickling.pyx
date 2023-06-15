@@ -39,6 +39,7 @@ from .graphic_matroid import GraphicMatroid
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport mpq_set
 
+
 #############################################################################
 # BasisMatroid
 #############################################################################
@@ -224,7 +225,7 @@ def unpickle_binary_matrix(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     nrows, ncols, versionB, size, limbs, longsize, M = data
     A = BinaryMatrix(nrows, ncols)
-    for i from 0 <= i < nrows:
+    for i in range(nrows):
         bitset_unpickle(A._M[i], (versionB, size, limbs, longsize, M[i]))
     return A
 
@@ -253,7 +254,7 @@ def unpickle_ternary_matrix(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     nrows, ncols, versionB, size, limbs, longsize, M0, M1 = data
     A = TernaryMatrix(nrows, ncols)
-    for i from 0 <= i < nrows:
+    for i in range(nrows):
         bitset_unpickle(A._M0[i], (versionB, size, limbs, longsize, M0[i]))
         bitset_unpickle(A._M1[i], (versionB, size, limbs, longsize, M1[i]))
     return A
@@ -283,7 +284,7 @@ def unpickle_quaternary_matrix(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     nrows, ncols, ring, versionB, size, limbs, longsize, M0, M1 = data
     A = QuaternaryMatrix(nrows, ncols, ring=ring)
-    for i from 0 <= i < nrows:
+    for i in range(nrows):
         bitset_unpickle(A._M0[i], (versionB, size, limbs, longsize, M0[i]))
         bitset_unpickle(A._M1[i], (versionB, size, limbs, longsize, M1[i]))
     return A
@@ -324,13 +325,14 @@ def unpickle_plus_minus_one_matrix(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     cdef PlusMinusOneMatrix A = PlusMinusOneMatrix(data[0], data[1])
     cdef long i
-    for i from 0 <= i < A._nrows * A._ncols:
+    for i in range(A._nrows * A._ncols):
         A._entries[i] = data[2][i]
     return A
 
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.matroids.unpickling", "unpickle_integer_matrix", unpickle_plus_minus_one_matrix)
+
 
 def unpickle_rational_matrix(version, data):
     """
