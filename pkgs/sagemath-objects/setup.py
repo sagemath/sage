@@ -21,7 +21,7 @@ from sage_setup.setenv import setenv
 setenv()
 
 import sage.env
-sage.env.default_required_modules = sage.env.default_optional_modules = ('gsl', )
+sage.env.default_required_modules = sage.env.default_optional_modules = ()
 print(f'##################### {sage.env.SAGE_SRC=}')
 
 from sage_setup.command.sage_build_cython import sage_build_cython

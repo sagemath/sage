@@ -179,7 +179,7 @@ graft sage/rings/semirings
 include sage/rings/tests.p*
 include sage/rings/big_oh.p*
 
-include src/sage/ext/fast_*.p*
+include sage/ext/fast_*.p*
 
 include sage/combinat/integer_vector.p*
 graft sage/combinat/integer_lists

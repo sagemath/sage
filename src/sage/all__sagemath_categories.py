@@ -22,3 +22,6 @@ from sage.calculus.all__sagemath_categories import *
 from sage.functions.all import *
 
 from sage.parallel.all import *
+
+from sage.ext.fast_callable  import fast_callable
+from sage.ext.fast_eval      import fast_float

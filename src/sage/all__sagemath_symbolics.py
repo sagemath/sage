@@ -11,6 +11,3 @@ from sage.calculus.all import *
 from sage.dynamics.all__sagemath_symbolics import *
 
 from sage.calculus.predefined import x
-
-from sage.ext.fast_callable  import fast_callable
-from sage.ext.fast_eval      import fast_float
