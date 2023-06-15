@@ -41,10 +41,11 @@ AUTHOR:
 
 from sage.rings.integer_ring import ZZ
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.constants", "NaN")
 from sage.misc.functional import sqrt
 from sage.misc.superseded import deprecation
 
+lazy_import("sage.symbolic.constants", "NaN")
+lazy_import("numpy", "ndarray", as_="numpy_ndarray")
 
 def mean(v):
     """

@@ -115,8 +115,6 @@ exclude sage/misc/sh.p*
 prune sage/misc/notes
 
 graft sage/modules
-exclude sage/modules/vector_*double*.*  # depends on numpy
-exclude sage/modules/vector_numpy*.*    # depends on numpy
 exclude sage/modules/vector_mod2*.*     # depends on m4ri
 exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 prune sage/modules/fp_graded
@@ -145,8 +143,6 @@ graft sage/matrix
 exclude sage/matrix/misc*.*  # until refactored
 exclude sage/matrix/matrix_gap.*
 exclude sage/matrix/matrix_*ball*.*     # depends on arb
-exclude sage/matrix/matrix_*double_dense.*   # depends on numpy
-exclude sage/matrix/matrix_numpy*.*  # depends on numpy
 exclude sage/matrix/matrix_*cyclo*.*    # depends on ntl
 exclude sage/matrix/matrix_*gap*.*      # depends on gap
 exclude sage/matrix/matrix_gf2*.*       # depends on m4ri, m4rie
@@ -225,6 +221,7 @@ include sage/rings/complex_double.p*
 include sage/rings/complex_field.p*
 include sage/rings/complex_mpfr.p*
 include sage/rings/complex_conversion.p*
+include sage/rings/real_double_element_gsl.p*
 # uses gsl
 graft sage/calculus
 # exclude what is included in sagemath-categories
@@ -236,12 +233,6 @@ exclude sage/calculus/desolvers.*
 exclude sage/calculus/predefined.*
 exclude sage/calculus/tests.*
 exclude sage/calculus/var.*
-# needs numpy
-# exclude sage/calculus/interpolators.*
-# exclude sage/calculus/riemann.*
-
-# temporarily exclude what needs ext/interpreters
-exclude sage/calculus/integration.*
 
 # More from algebras with compile-time dependencies on sagemath-modules
 include sage/algebras/clifford_algebra*.p*
@@ -267,9 +258,15 @@ graft sage/crypto
 ## include sage/crypto/util*.p*
 ## graft sage/crypto/public_key
 
-graft sage/stats/distributions                          # discrete_gaussian needed for sage.crypto.lwe
-# other parts of sage.stats need sage.modules.vector_real_double_dense (which cimports numpy)
+# sage.stats.distributions.discrete_gaussian is needed for sage.crypto.lwe.
+# We include other parts of sage.stats for simplicity,
+# although they cimports numpy directly or via sage.modules.vector_real_double_dense
+graft sage/stats
 graft sage/probability                                  # uses gsl
+
+# only needed by interpreter
+graft sage/libs/mpc
+src/sage/rings/complex_mpc.p*
 
 global-exclude all__sagemath_objects.*
 global-exclude all__sagemath_categories.*

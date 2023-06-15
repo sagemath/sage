@@ -39,3 +39,47 @@ install_requires =
 
 [options.extras_require]
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+
+# extras by packages
+flint = esyscmd(`sage-get-system-packages install-requires sagemath_flint')
+linbox = esyscmd(`sage-get-system-packages install-requires sagemath_linbox')
+m4ri = # FIXME
+m4rie = # FIXME
+meataxe = esyscmd(`sage-get-system-packages install-requires sagemath_meataxe')
+mpfi = # FIXME
+ntl = # FIXME
+numpy = esyscmd(`sage-get-system-packages install-requires numpy')
+
+# extras by rings
+RDF = sagemath-modules[numpy]
+CDF = sagemath-modules[numpy]
+RR  =                            # no extra needed
+CC  =                            # no extra needed
+RIF =
+CIF =
+RBF = sagemath-modules[flint]
+CBF = sagemath-modules[flint]
+GF   = sagemath-modules[linbox]
+GF2  = sagemath-modules[m4ri]
+GF2e = sagemath-modules[m4rie]
+GF2n = sagemath-modules[m4rie]
+GFpn = sagemath-modules[meataxe]
+FiniteField = sagemath-modules[GF]
+NumberField = # FIXME
+QuadraticField = sagemath-modules[NumberField]
+QQbar = sagemath-modules[NumberField]
+AA = sagemath-modules[NumberField]
+CyclotomicField = sagemath-modules[NumberField]
+UCF = sagemath-modules[NumberField]
+Zp = # FIXME
+Qp = sagemath-modules[Zp]
+Zq = sagemath-modules[Zp]
+Qq = sagemath-modules[Zp]
+
+# extras by features
+invariant = esyscmd(`sage-get-system-packages install-requires sagemath_groups')
+combinat = esyscmd(`sage-get-system-packages install-requires sagemath_combinat')
+padics = sagemath-modules[Zp]
+
+# the whole package
+standard = sagemath-modules[invariant,combinat,padics,NumberField,FiniteField,m4ri,m4rie,flint,linbox,numpy,mpfi,ntl]

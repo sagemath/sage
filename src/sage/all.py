@@ -127,7 +127,7 @@ try:
     from sage.lfunctions.all import *
     from sage.geometry.riemannian_manifolds.all   import *
 except ImportError:
-    from sage.calculus.all__sagemath_standard_no_symbolics import *
+    pass
 
 ###########################################################
 #### WARNING:
