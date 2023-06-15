@@ -1622,7 +1622,7 @@ class IntegerPowerFunction():
             sage: cube = IntegerPowerFunction(3)
             sage: cube
             (^3)
-            sage: cube(AA(7)^(1/3))
+            sage: cube(AA(7)^(1/3))                                                     # optional - sage.rings.number_field
             7.000000000000000?
             sage: cube.exponent
             3
