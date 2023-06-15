@@ -157,8 +157,8 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         3.1298141479492283e-07
         sage: min(s.series)    # random output
         2.9258728027343752e-07
-        sage: t = stats.TimeSeries(s.series)
-        sage: t.scale(10^6).plot_histogram(bins=20,figsize=[12,6], ymax=2)              # optional - sage.plot
+        sage: t = stats.TimeSeries(s.series)                                            # optional - numpy sage.modules
+        sage: t.scale(10^6).plot_histogram(bins=20,figsize=[12,6], ymax=2)              # optional - numpy sage.modules sage.plot
         Graphics object consisting of 20 graphics primitives
 
 

@@ -72,7 +72,7 @@ def mean(v):
         use numpy.mean or numpy.nanmean instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         1/2*pi + 1/2*e
-        sage: mean([])
+        sage: mean([])                                                                  # optional - sage.symbolic
         NaN
         sage: mean([I, sqrt(2), 3/5])                                                   # optional - sage.symbolic
         1/3*sqrt(2) + 1/3*I + 1/5
@@ -80,7 +80,7 @@ def mean(v):
         1.5051500000000000?
         sage: mean(range(4))
         3/2
-        sage: v = stats.TimeSeries([1..100])
+        sage: v = stats.TimeSeries([1..100])                                            # optional - numpy
         sage: mean(v)
         50.5
     """
@@ -225,8 +225,8 @@ def std(v, bias=False):
         sage: x = numpy.array([1,2,3,4,5])                                              # optional - numpy
         sage: std(x, bias=False)                                                        # optional - numpy
         1.5811388300841898
-        sage: x = stats.TimeSeries([1..100])
-        sage: std(x)
+        sage: x = stats.TimeSeries([1..100])                                            # optional - numpy
+        sage: std(x)                                                                    # optional - numpy
         29.011491975882016
 
     TESTS::
@@ -242,8 +242,6 @@ def std(v, bias=False):
 
     if hasattr(v, 'standard_deviation'):
         return v.standard_deviation(bias=bias)
-
-    import numpy
 
     if isinstance(v, numpy.ndarray):
         # accounts for numpy arrays
@@ -340,7 +338,6 @@ def variance(v, bias=False):
 
     if hasattr(v, 'variance'):
         return v.variance(bias=bias)
-    import numpy
 
     x = 0
     if isinstance(v, numpy.ndarray):
@@ -400,7 +397,7 @@ def median(v):
         1/2*pi + 1/2*e
         sage: median(['sage', 'linux', 'python'])
         'python'
-        sage: median([])
+        sage: median([])                                                                # optional - sage.symbolic
         NaN
         sage: class MyClass:
         ....:    def median(self):

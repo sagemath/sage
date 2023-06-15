@@ -877,8 +877,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [3 4]
 
             sage: MS = MatrixSpace(ZZ, 2)
-            sage: g = Gamma0(5)([1,1,0,1])
-            sage: MS(g)
+            sage: g = Gamma0(5)([1,1,0,1])                                              # optional - sage.modular
+            sage: MS(g)                                                                 # optional - sage.modular
             [1 1]
             [0 1]
 
@@ -903,7 +903,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: rings.append(SR)                                                      # optional - sage.symbolic
             sage: rings.extend([GF(2), GF(11), GF(2^8,'a'), GF(3^19,'a')])              # optional - sage.rings.finite_rings
             sage: x = polygen(QQ)
-            sage: rings.extend([NumberField(x^3+2, 'a'), CyclotomicField(4)])           # optional - sage.rings.number_field
+            sage: rings.extend([NumberField(x^3 + 2, 'a'), CyclotomicField(4)])         # optional - sage.rings.number_field
             sage: for R in rings:
             ....:     A = MatrixSpace(R, 60, 30, sparse=False)(0)
             ....:     B = A.augment(A)
@@ -1180,7 +1180,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: m = R([[1, 0], [0, 1]])
             sage: m in G
             True
-            sage: m in list(G)
+            sage: m in list(G)                                                          # optional - sage.libs.gap
             True
             sage: m == G(m)
             True

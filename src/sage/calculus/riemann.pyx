@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.symbolic
+# sage.doctest: optional - numpy sage.symbolic
 """
 Riemann Mapping
 

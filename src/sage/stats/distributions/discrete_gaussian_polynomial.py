@@ -15,10 +15,11 @@ EXAMPLES::
 
     sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
     sage: sigma = 3.0; n = 1000
-    sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)() for _ in range(n)]
-    sage: l = [vector(f).norm().n() for f in l]
+    sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)()
+    ....:      for _ in range(n)]
+    sage: l = [vector(f).norm().n() for f in l]                                         # optional - sage.symbolic
     sage: from numpy import mean                                                        # optional - numpy
-    sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # optional - numpy
+    sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # optional - numpy sage.symbolic
     (24.0, 24.0)
 
 """

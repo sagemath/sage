@@ -155,8 +155,8 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         sage: t = tmp_filename(ext=".F")
         sage: with open(t, 'w') as f:
         ....:     _ = f.write(code)
-        sage: load(t)
-        sage: hello
+        sage: load(t)                                                                   # optional - numpy
+        sage: hello                                                                     # optional - numpy
         <fortran ...>
     """
     import sage.repl.load
