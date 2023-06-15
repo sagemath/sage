@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 r"""
 Dense complex double vectors using a NumPy backend
 

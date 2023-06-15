@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Hidden Markov Models -- Utility functions
 

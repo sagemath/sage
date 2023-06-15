@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Continuous Emission Hidden Markov Models
 
