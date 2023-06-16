@@ -162,8 +162,8 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
       returns a dictionary ``{color: [list of vertices]}``
 
     * ``color_classes`` -- boolean (default: ``False``); when set to ``True``,
-      the method returns only a list of the the color classes and ignores
-      parameters ``hex_colors`` and ``vertex_color_dict``
+      the method returns only a list of the color classes and ignores parameters
+      ``hex_colors`` and ``vertex_color_dict``
 
     .. WARNING::
 
@@ -1124,9 +1124,9 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
     proper coloring where each color class has a b-vertex.
 
     In the worst case, after successive applications of the above procedure, one
-    get a proper coloring that uses a number of colors equal to the the
-    b-chromatic number of `G` (denoted `\chi_b(G)`): the maximum `k` such that
-    `G` admits a b-coloring with `k` colors.
+    get a proper coloring that uses a number of colors equal to the b-chromatic
+    number of `G` (denoted `\chi_b(G)`): the maximum `k` such that `G` admits a
+    b-coloring with `k` colors.
 
     A useful upper bound for calculating the b-chromatic number is the
     following. If `G` admits a b-coloring with `k` colors, then there are `k`
