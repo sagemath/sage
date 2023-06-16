@@ -81,8 +81,8 @@ from sage.algebras.all   import *
 from sage.all__sagemath_modules import *
 from sage.all__sagemath_schemes import *
 from sage.all__sagemath_graphs import *
+from sage.all__sagemath_groups import *
 
-from sage.groups.all     import *
 from sage.databases.all  import *
 from sage.sets.all       import *
 from sage.interfaces.all import *
