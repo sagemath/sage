@@ -446,6 +446,33 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         """
         return len(m)
 
+    def as_cdga(self):
+        """
+        Return the commutative differential graded algebra corresponding to self, with
+        trivial differential.
+
+        EXAMPLES::
+
+            sage: H = hyperplane_arrangements.braid(3)
+            sage: O = H.orlik_solomon_algebra(QQ)
+            sage: O.as_cdga()
+            Commutative Differential Graded Algebra with generators ('e0', 'e1', 'e2') in degrees (1, 1, 1) with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field with differential:
+               e0 --> 0
+               e1 --> 0
+               e2 --> 0
+        """
+        from sage.algebras.commutative_dga import GradedCommutativeAlgebra
+        gens = list(self.algebra_generators())
+        names = ['e{}'.format(i) for i in range(len(gens))]
+        A = GradedCommutativeAlgebra(self.base_ring(), names)
+        bas2 = [(i,j) for j in range(len(gens)) for i in range(j) if gens[i]*gens[j] in self.basis()]
+        non_basis = [(i,j) for j in range(len(gens)) for i in range(j) if not gens[i]*gens[j] in self.basis()]
+        rels = {(i,j) : {p : (gens[i]*gens[j]).coefficient(frozenset(p)) for p in bas2} for (i,j) in non_basis}
+        I = A.ideal([A.gen(l)*A.gen(m) - sum(k*A.gen(i)*A.gen(j) for ((i,j),k) in rels[(l,m)].items()) for (l,m) in non_basis])
+        B = A.quotient(I)
+        return B.cdg_algebra({})
+
+
 class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
     r"""
     The invariant algebra of the Orlik-Solomon algebra from the

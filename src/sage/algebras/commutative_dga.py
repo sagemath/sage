@@ -2424,7 +2424,7 @@ class DifferentialGCAlgebra(GCAlgebra):
                                for g in Q.basis()]
         return res
 
-    def minimal_model(self, i=3, max_iterations=3):
+    def minimal_model(self, i=3, max_iterations=3, partial_result=False):
         r"""
         Try to compute a map from a ``i``-minimal gcda that is a
         ``i``-quasi-isomorphism to self.
@@ -2437,7 +2437,12 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         - ``max_iterations`` -- integer (default: `3`); the number of
           iterations of the method at each degree. If the algorithm does not
-          finish in this many iterations at each degree, an error is raised.
+          finish in this many iterations at each degree, an error is raised,
+          or the partial result computed up to that point is returned, deppending
+          on the `partial_result` flag.
+
+        - ``partial_result``  -- boolean (default: `False`); wether to return
+          the partial result if the `max_iterations` limit is reached.
 
         OUTPUT:
 
@@ -2576,6 +2581,31 @@ class DifferentialGCAlgebra(GCAlgebra):
                t --> 0
               Defn: (x3_0, x3_1) --> (z, t)
 
+        ::
+
+            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ)
+            sage: I = A.ideal([a*b-a*c+b*c])
+            sage: B = A.quotient(I)
+            sage: S = B.cdg_algebra({})
+            sage: S.minimal_model()
+            ...
+            ValueError: could not cover all relations in max iterations in degree 2
+            sage: S.minimal_model(partial_result=True)
+            Commutative Differential Graded Algebra morphism:
+              From: Commutative Differential Graded Algebra with generators ('x1_0', 'x1_1', 'x1_2', 'y1_0', 'y1_1', 'y1_2') in degrees (1, 1, 1, 1, 1, 1) over Rational Field with differential:
+               x1_0 --> 0
+               x1_1 --> 0
+               x1_2 --> 0
+               y1_0 --> x1_0*x1_1 - x1_0*x1_2 + x1_1*x1_2
+               y1_1 --> x1_0*y1_0 - x1_2*y1_0
+               y1_2 --> x1_1*y1_0 - x1_2*y1_0
+              To:   Commutative Differential Graded Algebra with generators ('a', 'b', 'c') in degrees (1, 1, 1) with relations [a*b - a*c + b*c] over Rational Field with differential:
+               a --> 0
+               b --> 0
+               c --> 0
+              Defn: (x1_0, x1_1, x1_2, y1_0, y1_1, y1_2) --> (a, b, c, 0, 0, 0)
+
+
         REFERENCES:
 
         - [Fel2001]_
@@ -2661,7 +2691,7 @@ class DifferentialGCAlgebra(GCAlgebra):
                 if K.dimension() == 0:
                     return phi
                 if iteration == max_iterations - 1:
-                    raise ValueError("could not cover all relations in max iterations in degree {}".format(degree))
+                    return (phi,)
                 ndifs = [CB.lift(g) for g in K.basis()]
                 basisdegree = B.basis(degree)
                 ndifs = [sum(basisdegree[j] * g[j] for j in
@@ -2699,7 +2729,13 @@ class DifferentialGCAlgebra(GCAlgebra):
             B = A.cdg_algebra(A.differential({}))
             # Solve case that fails with one generator return B,gens
             phi = B.hom(gens)
-            phi = extendy(phi, degnzero + 1)
+            phiext = extendy(phi, degnzero + 1)
+            if isinstance(phiext, tuple):
+                if partial_result:
+                    return phiext[0]
+                else:
+                    raise ValueError("could not cover all relations in max iterations in degree {}".format(degnzero + 1))
+            phi = phiext
             self._minimalmodels[degnzero] = phi
         else:
             degnzero = max(self._minimalmodels)
@@ -2707,9 +2743,14 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         for degree in range(degnzero + 1, max_degree + 1):
             phi = extendx(phi, degree)
-            phi = extendy(phi, degree + 1)
+            phiext = extendy(phi, degree + 1)
+            if isinstance(phiext, tuple):
+                if partial_result:
+                    return phiext[0]
+                else:
+                    raise ValueError("could not cover all relations in max iterations in degree {}".format(degree + 1))
+            phi = phiext
             self._minimalmodels[degree] = phi
-
         return phi
 
     def cohomology_algebra(self, max_degree=3):
