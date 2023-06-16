@@ -163,12 +163,6 @@ lazy_import('sage.combinat.knutson_tao_puzzles', 'KnutsonTaoPuzzleSolver')
 lazy_import('sage.combinat.gelfand_tsetlin_patterns',
             ['GelfandTsetlinPattern', 'GelfandTsetlinPatterns'])
 
-# Finite State Machines (Automaton, Transducer)
-lazy_import('sage.combinat.finite_state_machine',
-            ['Automaton', 'Transducer', 'FiniteStateMachine'])
-lazy_import('sage.combinat.finite_state_machine_generators',
-            ['automata', 'transducers'])
-
 # Sequences
 lazy_import('sage.combinat.binary_recurrence_sequences',
             'BinaryRecurrenceSequence')
