@@ -217,6 +217,7 @@ from .gap_includes cimport *
 from .util cimport *
 from .element cimport *
 
+from sage.cpython.string cimport str_to_bytes
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Vector
 from sage.rings.integer_ring import ZZ
@@ -539,7 +540,7 @@ class Gap(Parent):
             ...
             GAPError: Error, VAL_GVAR: No value bound to FooBar
         """
-        return make_any_gap_element(self, GAP_ValueGlobalVariable(variable))
+        return make_any_gap_element(self, GAP_ValueGlobalVariable(str_to_bytes(variable)))
 
     def global_context(self, variable, value):
         """
