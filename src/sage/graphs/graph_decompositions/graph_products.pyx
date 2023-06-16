@@ -130,8 +130,6 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
-
 
 def is_cartesian_product(g, certificate=False, relabeling=False):
     r"""
@@ -208,8 +206,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
 
     Wagner's Graph (:trac:`13599`)::
 
-        sage: g = graphs.WagnerGraph()
-        sage: g.is_cartesian_product()
+        sage: g = graphs.WagnerGraph()                                                  # optional - networkx
+        sage: g.is_cartesian_product()                                                  # optional - networkx
         False
 
     Empty and one-element graph (:trac:`19546`)::

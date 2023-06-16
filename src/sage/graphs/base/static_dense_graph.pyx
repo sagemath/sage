@@ -216,7 +216,7 @@ def is_strongly_regular(g, parameters=False):
     cdef bitset_t b_tmp
     cdef int n = g.order()
     cdef int inter
-    cdef int i, j, l, k
+    cdef int i, j, k
 
     if not g.order() or not g.size():  # no vertices or no edges
         return False

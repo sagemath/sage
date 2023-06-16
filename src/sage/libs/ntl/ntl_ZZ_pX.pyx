@@ -35,7 +35,7 @@ from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 from sage.libs.gmp.mpz cimport *
 
 
@@ -265,9 +265,7 @@ cdef class ntl_ZZ_pX():
         if i < 0:
             r.set_from_int(0)
         else:
-            sig_on()
             r.x = ZZ_pX_coeff( self.x, i)
-            sig_off()
         return r
 
     cdef int getitem_as_int(ntl_ZZ_pX self, long i):

@@ -99,7 +99,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.flatten import FlatteningMorphism, UnflatteningMorphism
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
-from sage.rings.padics.all import Qp
+from sage.rings.padics.factory import Qp
 from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
@@ -1219,9 +1219,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.arakelov_zhang_pairing(g)
             0.326954667248466
             sage: # Correct value should be = 0.323067...
-            sage: f.arakelov_zhang_pairing(g, n=9)
+            sage: f.arakelov_zhang_pairing(g, n=9)  # long time
             0.323091061918965
-            sage: _ - 0.323067
+            sage: _ - 0.323067                      # long time
             0.0000240619189654789
 
         Also from Prop. 18 of Petsche, Szpiro and Tucker, includes places of bad reduction::
@@ -1232,11 +1232,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: a = 7/(b - 1)
             sage: f = DynamicalSystem_projective([a*y^2 - (a*y - x)^2, y^2])
             sage: g = DynamicalSystem_projective([x^2, y^2])
-            sage: # If all archimedean absolute values of a have modulus > 2,
-            sage: # then the pairing should be h(a).
-            sage: f.arakelov_zhang_pairing(g, n=6)
+
+        If all archimedean absolute values of a have modulus > 2,
+        then the pairing should be h(a).::
+
+            sage: f.arakelov_zhang_pairing(g, n=6)  # long time
             1.93846423207664
-            sage: _ - a.global_height()
+            sage: _ - a.global_height()             # long time
             -0.00744591697867292
         """
         n = kwds.pop('n', 5)
@@ -2336,7 +2338,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # is always nonnegative, so if this value is within -err of 0, return 0.
             if h < 0:
                 assert h > -err, "A negative height less than -error_bound was computed. " + \
-                 "This should be impossible, please report bug on trac.sagemath.org."
+                 "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     # This should be impossible. The error bound for Wells' is rigorous
                     # and the actual height is always >= 0. If we see something less than -err,
                     # something has g one very wrong.
@@ -4794,8 +4796,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: f = DynamicalSystem([x^2 - 2*y^2, y^2, z^2])
-            sage: X = f.periodic_points(2, minimal=False, formal=True, return_scheme=True)
-            sage: len(X.defining_polynomials())
+            sage: X = f.periodic_points(2, minimal=False, formal=True, return_scheme=True)  # long time
+            sage: len(X.defining_polynomials())                                             # long time
             19
 
         TESTS::
@@ -5006,7 +5008,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
-            sage: f.multiplier_spectra(2, formal=True)
+            sage: f.multiplier_spectra(2, formal=True)  # long time
             [
             [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [0 0]  [0 0]
             [0 4], [0 0], [0 0], [0 4], [0 4], [0 0], [0 0], [0 4], [0 0], [0 0],
@@ -5132,7 +5134,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
             sage: g = f.change_ring(QQbar)
-            sage: f.multiplier_spectra(1) == g.multiplier_spectra(1)
+            sage: f.multiplier_spectra(1) == g.multiplier_spectra(1)    # long time
             True
 
         ::
@@ -5140,7 +5142,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: K.<w> = QuadraticField(5)
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: f = DynamicalSystem_projective([x^2 + w*x*y + y^2, y^2, z^2])
-            sage: f.multiplier_spectra(1)
+            sage: f.multiplier_spectra(1)                               # long time
             [
             [1.000000000000000? - 1.572302755514847?*I                                         0]
             [1.000000000000000? - 1.572302755514847?*I 0.618033988749895? - 1.757887921270715?*I]
@@ -6226,10 +6228,6 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         Determine if the point is preperiodic with respect to this
         dynamical system.
 
-        .. NOTE::
-
-            This is only implemented for projective space (not subschemes).
-
         ALGORITHM:
 
         We know that a point is preperiodic if and only if it has
@@ -6284,15 +6282,56 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: Q = P.point([a,1])
             sage: Q.is_preperiodic(f)
             True
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(z)
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)
+            sage: p = X((-1, 1, 0))
+            sage: f._is_preperiodic(p, return_period=True)
+            (0, 2)
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(x)
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)
+            sage: p = X((0, 1, 0))
+            sage: f._is_preperiodic(p, return_period=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: orbit of point leaves domain
+
+        ::
+
+            sage: R.<t> = QQ[]
+            sage: K.<a> = NumberField(t^2 - t - 1)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: X = P.subscheme(z)
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)
+            sage: p = X((-a + 1, 1, 0))
+            sage: f._is_preperiodic(p)
+            True
         """
-        if not is_ProjectiveSpace(self.codomain()):
-            raise NotImplementedError("must be over projective space")
-        if not self.is_morphism():
-            raise TypeError("must be a morphism")
+        codomain = self.codomain()
+        if not is_ProjectiveSpace(codomain):
+            # in order to calculate the canonical height, we need
+            # this map to be a morphism of projective space
+            ambient_space = codomain.ambient_space()
+            f = DynamicalSystem(self.defining_polynomials(), domain=ambient_space)
+            if not f.is_morphism():
+                raise ValueError('must be a morphism of projective space')
+        else:
+            f = self
+            if not f.is_morphism():
+                raise TypeError("must be a morphism")
         if not P.codomain() == self.domain():
             raise TypeError("point must be in domain of map")
 
-        h = self.canonical_height(P, error_bound = err)
+        # we calculate the canonical height without considering
+        # if the domain is a subscheme
+        h = f.canonical_height(P, error_bound = err)
         # we know canonical height 0 if and only if preperiodic
         # however precision issues can occur so we can only tell *not* preperiodic
         # if the value is larger than the error
@@ -6302,14 +6341,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # either we can find the cycle or the height is
             # larger than the difference between the canonical height
             # and the height, so the canonical height cannot be 0
-            B = self.height_difference_bound()
+            B = f.height_difference_bound()
             orbit = [P]
             n = 1 # to compute period
-            Q = self(P)
+            try:
+                Q = self(P)
+            except TypeError:
+                raise ValueError('orbit of point leaves domain')
             H = Q.global_height()
             while Q not in orbit and H <= B:
                 orbit.append(Q)
-                Q = self(Q)
+                try:
+                    Q = self(Q)
+                except TypeError:
+                    raise ValueError('orbit of point leaves domain')
                 H = Q.global_height()
                 n += 1
             if H <= B: #it must have been in the cycle
@@ -7480,8 +7525,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: f = DynamicalSystem_projective([2*x + 12*y, 11*y+2*z, x+z])
             sage: m1 = matrix(L, 3, 3, [1,4,v^2,0,2,1,1,1,1])
             sage: g = f.conjugate(m1)
-            sage: m = f.conjugating_set(g)[0]
-            sage: f.conjugate(m) == g
+            sage: m = f.conjugating_set(g)[0]   # long time
+            sage: f.conjugate(m) == g           # long time
             True
 
         TESTS:
@@ -8191,7 +8236,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: system = DynamicalSystem_projective([3^5*x^3 + x^2*y - 3^5*x*y^2, -3^5*x^2*y + x*y^2 + 3^5*y^3])
-            sage: system.potential_good_reduction(3, return_conjugation=True)
+            sage: system.potential_good_reduction(3, return_conjugation=True)  # long time
             (False, None, None)
 
         ::

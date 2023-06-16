@@ -61,7 +61,7 @@ from sage.graphs.digraph import DiGraph
 
 
 class TamariIntervalPoset(Element,
-        metaclass=InheritComparisonClasscallMetaclass):
+                          metaclass=InheritComparisonClasscallMetaclass):
     r"""
     The class of Tamari interval-posets.
 
@@ -2146,31 +2146,26 @@ class TamariIntervalPoset(Element,
 
             if poset.le(n, m):
                 # there is already a link n->m, so we go to the next n
-                for pos in add_relations(poset, n - 1, m):
-                    yield pos
+                yield from add_relations(poset, n - 1, m)
             elif poset.le(m, n):
                 # there is an inverse link m->n, we know we won't be able
                 # to create a link i->m with i<=n, so we go to the next m
-                for pos in add_relations(poset, m, m + 1):
-                    yield pos
+                yield from add_relations(poset, m, m + 1)
             else:
                 # there is no link n->m
                 # first option : we don't create the link and go to the next m
                 # (since the lack of a link n->m forbids any links i->m
                 # with i<n)
-                for pos in add_relations(poset, m, m + 1):
-                    yield pos
+                yield from add_relations(poset, m, m + 1)
                 # second option : we create the link
                 # (this is allowed because links i->m already exist for all
                 # n<i<m, or else we wouldn't be here)
                 poset = TamariIntervalPoset(poset.size(), poset._cover_relations + ((n, m),))
                 yield poset
                 # and then, we go to the next n
-                for pos in add_relations(poset, n - 1, m):
-                    yield pos
+                yield from add_relations(poset, n - 1, m)
 
-        for inter in add_relations(self, 1, 2):
-            yield inter
+        yield from add_relations(self, 1, 2)
 
     def interval_cardinality(self) -> Integer:
         r"""
@@ -3231,7 +3226,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         final_forest = TamariIntervalPosets.final_forest(tree1)
         try:
             return initial_forest.intersection(final_forest)
-        except Exception:
+        except ValueError:
             raise ValueError("the two binary trees are not comparable on the Tamari lattice")
 
     @staticmethod
@@ -3280,7 +3275,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         tree2 = dw2.to_binary_tree_tamari()
         try:
             return TamariIntervalPosets.from_binary_trees(tree1, tree2)
-        except Exception:
+        except ValueError:
             raise ValueError("the two Dyck words are not comparable on the Tamari lattice")
 
     @staticmethod
@@ -3539,7 +3534,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         The comparison is first by size, then using the
         cubical coordinates.
 
-        .. SEEALSO:: :meth:`cubical_coordinates`
+        .. SEEALSO:: :meth:`~TamariIntervalPoset.cubical_coordinates`
 
         INPUT:
 

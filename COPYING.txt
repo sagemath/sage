@@ -51,7 +51,6 @@ elliptic_curves             None (database)
 extcode                     GPLv2+
 fflas_ffpack                LGPLv2.1+
 flint                       GPLv2+
-flintqs                     GPLv2+
 fplll                       LGPLv2.1+
 freetype                    FreeType License (similar to BSD; see below)
 gap                         GPLv2+

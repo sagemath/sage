@@ -1393,8 +1393,8 @@ class PlotOptions():
         if self.level:
             old_rays = rays
             vertices = [self.intersection_at_level_1(ray) for ray in old_rays if ray.level() > 0]
-            rays     = [ray for ray in old_rays if ray.level() == 0]
-            rays    += [vertex - self.intersection_at_level_1(ray) for ray in old_rays if ray.level() < 0 for vertex in vertices]
+            rays = [ray for ray in old_rays if ray.level() == 0]
+            rays += [vertex - self.intersection_at_level_1(ray) for ray in old_rays if ray.level() < 0 for vertex in vertices]
         else:
             vertices = []
 
@@ -1404,7 +1404,7 @@ class PlotOptions():
         rays = [ ray for ray in rays if ray ] # Polyhedron does not accept yet zero rays
 
         # Build the polyhedron
-        p = Polyhedron(vertices=vertices, rays = rays)
+        p = Polyhedron(vertices=vertices, rays=rays)
         if as_polyhedron:
             return p
 
@@ -1417,7 +1417,7 @@ class PlotOptions():
                 q = q.translation(-center).dilation(ZZ(95)/ZZ(100)).translation(center)
             else:
                 options = dict(wireframe=False, line={"thickness":thickness})
-            result = q.plot(color = color, alpha=alpha, **options)
+            result = q.plot(color=color, alpha=alpha, **options)
             if label is not None:
                 # Put the label on the vertex having largest z, then y, then x coordinate.
                 vertices = sorted([vector(v) for v in q.vertices()],
@@ -1489,7 +1489,7 @@ class PlotOptions():
             text_label = "H_%s$" % (str(label))
         else:
             text_label = "$H_{%s}$" % (latex(label))
-        return self.cone(lines = basis, color = self.color(label), label=text_label,
+        return self.cone(lines=basis, color=self.color(label), label=text_label,
                          as_polyhedron=as_polyhedron)
 
 

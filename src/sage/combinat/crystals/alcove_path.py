@@ -193,9 +193,9 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         sage: K = crystals.KirillovReshetikhin(['B',3,1],2,1)
         sage: T = crystals.TensorProduct(K,K)
         sage: g = T.digraph() #long time
-        sage: for e in g.edges(sort=False): #long time
-        ....:     if e[0].phi(0) == 1 and e[2] == 0: #long time
-        ....:         g.delete_edge(e)  #long time
+        sage: for e in g.edges(sort=False):  #long time
+        ....:     if e[0].phi(0) == 1 and e[2] == 0:
+        ....:         g.delete_edge(e)
 
         sage: C = crystals.AlcovePaths(['B',3,1],[0,2,0], highest_weight_crystal=False)
         sage: g2 = C.digraph() #long time
@@ -1426,7 +1426,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
     """
 
     @staticmethod
-    def __classcall_private__(cls, starting_weight, cartan_type = None):
+    def __classcall_private__(cls, starting_weight, cartan_type=None):
         """
         Classcall to mend the input.
 
@@ -1472,7 +1472,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
             sage: R = RootsWithHeight(['A',2],[3,2])
             sage: TestSuite(R).run()
         """
-        Parent.__init__(self, category = Sets() )
+        Parent.__init__(self, category=Sets() )
 
         cartan_type = weight.parent().cartan_type()
         self._cartan_type = cartan_type
@@ -1959,7 +1959,7 @@ def _test_against_tableaux(R, N, k, clss=CrystalOfAlcovePaths):
     shapes = Partitions(k).list()
     for shape in shapes:
         print("** Shape ", shape)
-        T = CrystalOfTableaux(R, shape = shape)
+        T = CrystalOfTableaux(R, shape=shape)
         ct = len(T.list())
         print("  T has ", ct, " nodes.")
         #T.digraph().show(edge_labels=True)

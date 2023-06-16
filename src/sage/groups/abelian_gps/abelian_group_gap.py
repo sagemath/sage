@@ -994,7 +994,6 @@ class AbelianGroupQuotient_gap(AbelianGroup_gap):
         if isinstance(S, AbelianGroup_gap):
             return self._cover._coerce_map_from_(S)
 
-
     def cover(self):
         r"""
         Return the covering group of this quotient group.

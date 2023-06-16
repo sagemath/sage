@@ -1845,14 +1845,14 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
                 out = R(self)
                 self.parent().eval('short=%s'%is_short)
                 return out
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (\
-                    self.name(),variable_str)).split(",")
+            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
+                self.name(),variable_str)).split(",")
             self.parent().eval('short=%s'%is_short)
         else:
             if isinstance(R, MPolynomialRing_libsingular):
                 return R(self)
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (\
-                    self.name(),variable_str)).split(",")
+            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
+                self.name(),variable_str)).split(",")
 
         # Directly treat constants
         if singular_poly_list[0] in ['1', '(1.000e+00)']:
@@ -2405,7 +2405,7 @@ def generate_docstring_dictionary():
                     a, b = m.groups()
                     node_names[a] = b.strip()
 
-            if line == "6 Index\n":
+            if line in ("6 Index\n", "F Index\n"):
                 in_node = False
 
     nodes[curr_node] = "".join(L)  # last node

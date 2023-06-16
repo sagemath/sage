@@ -39,7 +39,7 @@ import operator
 # Sage matrix imports see :trac:`34283`
 
 # Sage imports
-import sage.structure.coerce
+import sage.structure.coerce_actions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.integer as integer
@@ -170,6 +170,8 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
 
         sage: type(matrix(SR, 2, 2, 0))
         <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+        sage: type(matrix(SR, 2, 2, 0, sparse=True))
+        <class 'sage.matrix.matrix_symbolic_sparse.Matrix_symbolic_sparse'>
         sage: type(matrix(GF(7), 2, range(4)))
         <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
         sage: type(matrix(GF(16007), 2, range(4)))
@@ -400,6 +402,18 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
     if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
         from . import matrix_double_sparse
         return matrix_double_sparse.Matrix_double_sparse
+    try:
+        from sage.symbolic.ring import SR
+    except ImportError:
+        pass
+    else:
+        if R is SR:
+            try:
+                from . import matrix_symbolic_sparse
+            except ImportError:
+                pass
+            else:
+                return matrix_symbolic_sparse.Matrix_symbolic_sparse
 
     # the fallback
     from sage.matrix.matrix_generic_sparse import Matrix_generic_sparse
@@ -1054,7 +1068,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         return matrix_action.MatrixPolymapAction(self, S)
                     else:
                         # action of base ring
-                        return sage.structure.coerce.RightModuleAction(S, self)
+                        return sage.structure.coerce_actions.RightModuleAction(S, self)
                 else:
                     if is_MatrixSpace(S):
                         # matrix multiplications
@@ -1065,7 +1079,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         return matrix_action.PolymapMatrixAction(self, S)
                     else:
                         # action of base ring
-                        return sage.structure.coerce.LeftModuleAction(S, self)
+                        return sage.structure.coerce_actions.LeftModuleAction(S, self)
         except TypeError:
             return None
 
@@ -1230,12 +1244,24 @@ class MatrixSpace(UniqueRepresentation, Parent):
             pass
         else:
             MS = meth_matrix_space()
-            from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
-            from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
-            if is_MatrixGroup(S) or is_ArithmeticSubgroup(S):
-                return self.has_coerce_map_from(MS)
+
+            try:
+                from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
+            except ImportError:
+                pass
             else:
-                return False
+                if is_MatrixGroup(S):
+                    return self.has_coerce_map_from(MS)
+
+            try:
+                from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
+            except ImportError:
+                pass
+            else:
+                if is_ArithmeticSubgroup(S):
+                    return self.has_coerce_map_from(MS)
+
+            return False
 
         # The parent is not matrix-like: coerce via base ring
         return (self.nrows() == self.ncols()) and self._coerce_map_via([B], S)
@@ -2019,9 +2045,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MS([[1],[2]])
             [1]
             [2]
-            sage: MS = MatrixSpace(CC,2,1)
-            sage: F = NumberField(x^2+1, name='x')
-            sage: MS([F(1),F(0)])
+            sage: MS = MatrixSpace(CC, 2, 1)
+            sage: x = polygen(ZZ, 'x')
+            sage: F = NumberField(x^2 + 1, name='x')                                    # optional - sage.rings.number_field
+            sage: MS([F(1), F(0)])                                                      # optional - sage.rings.number_field
             [ 1.00000000000000]
             [0.000000000000000]
 

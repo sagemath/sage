@@ -26,8 +26,6 @@ EXAMPLES::
 cimport numpy
 import numpy
 
-from sage.structure.element cimport Element, Vector
-
 from sage.rings.integer_ring import ZZ
 
 # This is for the NumPy C API (the PyArray... functions) to work

@@ -543,8 +543,9 @@ def is_prime(n):
     However, number fields redefine ``.is_prime()`` in an incompatible fashion
     (cf. :trac:`32340`) and we should not warn::
 
-        sage: K.<i> = NumberField(x^2+1)
-        sage: is_prime(1+i)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<i> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
+        sage: is_prime(1 + i)                                                           # optional - sage.rings.number_field
         True
     """
     try:
@@ -1010,7 +1011,7 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start, stop=None, proof=None):
+def primes(start=2, stop=None, proof=None):
     r"""
     Return an iterator over all primes between start and stop-1,
     inclusive. This is much slower than ``prime_range``, but
@@ -1027,10 +1028,11 @@ def primes(start, stop=None, proof=None):
 
     INPUT:
 
-    - ``start`` - an integer - lower bound for the primes
+    - ``start`` - an integer (default: 2) optional argument -
+      giving lower bound for the primes
 
-    - ``stop`` - an integer (or infinity) optional argument -
-      giving upper (open) bound for the primes
+    - ``stop`` - an integer (or infinity) - giving upper (open) bound for the
+      primes
 
     - ``proof`` - bool or None (default: None)  If True, the function
       yields only proven primes.  If False, the function uses a
@@ -2530,6 +2532,8 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
        - ``'pari'`` - (default) use the PARI c library
 
+       - ``'flint'`` - use the FLINT library
+
        - ``'kash'`` - use KASH computer algebra system (requires that
          kash be installed)
 
@@ -2577,6 +2581,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         -20
         sage: factor( -next_prime(10^2) * next_prime(10^7) )
         -1 * 101 * 10000019
+
+    ::
+
+        sage: factor(293292629867846432923017396246429, algorithm='flint')
+        3 * 4852301647696687 * 20148007492971089
 
     ::
 
@@ -3338,11 +3347,12 @@ def crt(a, b, m=None, n=None):
 
     Note that this also works for polynomial rings::
 
-        sage: K.<a> = NumberField(x^3 - 7)
-        sage: R.<y> = K[]
-        sage: f = y^2 + 3
-        sage: g = y^3 - 5
-        sage: CRT(1,3,f,g)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
+        sage: R.<y> = K[]                                                               # optional - sage.rings.number_field
+        sage: f = y^2 + 3                                                               # optional - sage.rings.number_field
+        sage: g = y^3 - 5                                                               # optional - sage.rings.number_field
+        sage: CRT(1, 3, f, g)                                                           # optional - sage.rings.number_field
         -3/26*y^4 + 5/26*y^3 + 15/26*y + 53/26
         sage: CRT(1,a,f,g)
         (-3/52*a + 3/52)*y^4 + (5/52*a - 5/52)*y^3 + (15/52*a - 15/52)*y + 27/52*a + 25/52

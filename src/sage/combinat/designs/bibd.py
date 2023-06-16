@@ -772,8 +772,8 @@ def v_4_1_BIBD(v, check=True):
 
         sage: from sage.combinat.designs.bibd import v_4_1_BIBD  # long time
         sage: for n in range(13,100):                            # long time
-        ....:    if n%12 in [1,4]:                               # long time
-        ....:       _ = v_4_1_BIBD(n, check = True)              # long time
+        ....:    if n%12 in [1,4]:
+        ....:       _ = v_4_1_BIBD(n, check = True)
 
     TESTS:
 
@@ -787,8 +787,8 @@ def v_4_1_BIBD(v, check=True):
     Check some larger `(v,4,1)`-BIBD (see :trac:`17557`)::
 
         sage: for v in range(400):                                      # long time
-        ....:     if v%12 in [1,4]:                                     # long time
-        ....:         _ = designs.balanced_incomplete_block_design(v,4) # long time
+        ....:     if v%12 in [1,4]:
+        ....:         _ = designs.balanced_incomplete_block_design(v,4)
     """
     k = 4
     if v == 0:
@@ -1036,7 +1036,7 @@ def _PBD_4_5_8_9_12_closure(B):
     BB = []
     for X in B:
         if len(X) not in [4,5,8,9,12]:
-            PBD = PBD_4_5_8_9_12(len(X), check = False)
+            PBD = PBD_4_5_8_9_12(len(X), check=False)
             X = [[X[i] for i in XX] for XX in PBD]
             BB.extend(X)
         else:
@@ -1262,7 +1262,7 @@ def BIBD_5q_5_for_q_prime_power(q):
 
         sage: from sage.combinat.designs.bibd import BIBD_5q_5_for_q_prime_power
         sage: for q in [25, 45, 65, 85, 125, 145, 185, 205, 305, 405, 605]: # long time
-        ....:     _ = BIBD_5q_5_for_q_prime_power(q/5)                      # long time
+        ....:     _ = BIBD_5q_5_for_q_prime_power(q/5)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
@@ -1372,15 +1372,15 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
     from sage.libs.gap.libgap import libgap
     from sage.matrix.constructor import Matrix
 
-    K   = GF(q,'a')
+    K = GF(q,'a')
     one = K.one()
 
     # An irreducible quadratic form over K[X,Y]
     GO = libgap.GeneralOrthogonalGroup(-1,2,q)
-    M  = libgap.InvariantQuadraticForm(GO)['matrix']
-    M  = Matrix(M)
-    M  = M.change_ring(K)
-    Q  = lambda xx,yy : M[0,0]*xx**2+(M[0,1]+M[1,0])*xx*yy+M[1,1]*yy**2
+    M = libgap.InvariantQuadraticForm(GO)['matrix']
+    M = Matrix(M)
+    M = M.change_ring(K)
+    Q = lambda xx,yy : M[0,0]*xx**2+(M[0,1]+M[1,0])*xx*yy+M[1,1]*yy**2
 
     # Here, the additive subgroup H (of order n) of K mentioned in
     # [Denniston69] is the set of all elements of K of degree < log_n

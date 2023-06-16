@@ -3,7 +3,8 @@ Reduction Theory
 """
 from copy import deepcopy
 from sage.matrix.constructor import matrix
-from sage.functions.all import floor
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "floor")
 from sage.misc.mrange import mrange
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
@@ -17,7 +18,7 @@ def reduced_binary_form1(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ,2,[5,5,2]).reduced_binary_form1()
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form1()                  # optional - sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -79,7 +80,7 @@ def reduced_binary_form(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ,2,[5,5,2]).reduced_binary_form()
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()                   # optional - sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -133,28 +134,29 @@ def reduced_binary_form(self):
 
 
 def minkowski_reduction(self):
-    """
+    r"""
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
     .. MATH::
 
-            Q(v_k) <= Q(s_1 * v_1 + ... + s_n * v_n)
+            Q(v_k) \leq Q(s_1\cdot v_1 + ... + s_n\cdot v_n)
 
-    for all `s_i` where GCD`(s_k, ... s_n) = 1`.
+    for all `s_i` where `\gcd(s_k, ... s_n) = 1`.
 
-    Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
+    .. NOTE::
 
-    References:
+        When `Q` has dim `\leq 4` we can take all `s_i` in `\{1, 0, -1\}`.
 
-        Schulze-Pillot's paper on "An algorithm for computing genera
-            of ternary and quaternary quadratic forms", p138.
-        Donaldson's 1979 paper "Minkowski Reduction of Integral
-            Matrices", p203.
+    REFERENCES:
+
+    - Schulze-Pillot's paper on "An algorithm for computing genera
+      of ternary and quaternary quadratic forms", p138.
+    - Donaldson's 1979 paper "Minkowski Reduction of Integral Matrices", p203.
 
     EXAMPLES::
 
-        sage: Q = QuadraticForm(ZZ,4,[30, 17, 11, 12, 29, 25, 62, 64, 25, 110])
+        sage: Q = QuadraticForm(ZZ, 4, [30, 17, 11, 12, 29, 25, 62, 64, 25, 110])
         sage: Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 30 17 11 12 ]
@@ -262,26 +264,29 @@ def minkowski_reduction(self):
 
 
 def minkowski_reduction_for_4vars__SP(self):
-    """
+    r"""
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
-        Q(`v_k`) <= Q(`s_1 * v_1 + ... + s_n * v_n`)
+    .. MATH::
+
+        Q(v_k) \leq Q(s_1\cdot v_1 + ... + s_n\cdot v_n)
 
     for all `s_i` where GCD(`s_k, ... s_n`) = 1.
 
-    Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
+    .. NOTE::
 
-    References:
-        Schulze-Pillot's paper on "An algorithm for computing genera
-            of ternary and quaternary quadratic forms", p138.
-        Donaldson's 1979 paper "Minkowski Reduction of Integral
-            Matrices", p203.
+        When `Q` has dim `\leq 4`, we can take all `s_i` in `\{1, 0, -1\}`.
+
+    REFERENCES:
+
+    - Schulze-Pillot's paper on "An algorithm for computing genera
+      of ternary and quaternary quadratic forms", p138.
+    - Donaldson's 1979 paper "Minkowski Reduction of Integral Matrices", p203.
 
     EXAMPLES::
 
-        sage: Q = QuadraticForm(ZZ,4,[30,17,11,12,29,25,62,64,25,110])
-        sage: Q
+        sage: Q = QuadraticForm(ZZ, 4, [30,17,11,12,29,25,62,64,25,110]); Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 30 17 11 12 ]
         [ * 29 25 62 ]
@@ -388,80 +393,79 @@ def minkowski_reduction_for_4vars__SP(self):
                         if (r == i) or (r == j):
                             M_new[r,r] = 0
                         else:
-                            M_new[r,r] = 1
+                            M_new[r, r] = 1
                     M = M * M_new
 
-                elif (i_sum == j_sum):
-                    for k in [2,1,0]:   # TO DO: These steps are a little redundant...
+                elif i_sum == j_sum:
+                    for k in [2, 1, 0]:  # TO DO: These steps are a little redundant...
                         Q1 = Q.matrix()
 
-                        c_flag = True
-                        for l in range(k+1,4):
-                            c_flag = c_flag and (abs(Q1[i,l]) == abs(Q1[j,l]))
+                        c_flag = all(abs(Q1[i, l]) == abs(Q1[j, l])
+                                     for l in range(k + 1, 4))
 
                         # Condition (c)
-                        if c_flag and (abs(Q1[i,k]) > abs(Q1[j,k])):
-                            Q.swap_variables(i,j,in_place=True)
-                            M_new = matrix(R,n,n)
-                            M_new[i,j] = -1
-                            M_new[j,i] = 1
+                        if c_flag and abs(Q1[i, k]) > abs(Q1[j, k]):
+                            Q.swap_variables(i, j, in_place=True)
+                            M_new = matrix(R, n, n)
+                            M_new[i, j] = -1
+                            M_new[j, i] = 1
                             for r in range(4):
                                 if (r == i) or (r == j):
-                                    M_new[r,r] = 0
+                                    M_new[r, r] = 0
                                 else:
-                                    M_new[r,r] = 1
+                                    M_new[r, r] = 1
                             M = M * M_new
 
     # Step 3: Order the signs
     for i in range(4):
-        if Q[i,3] < 0:
+        if Q[i, 3] < 0:
             Q.multiply_variable(-1, i, in_place=True)
-            M_new = matrix(R,n,n)
+            M_new = matrix(R, n, n)
             for r in range(4):
                 if r == i:
-                    M_new[r,r] = -1
+                    M_new[r, r] = -1
                 else:
-                    M_new[r,r] = 1
+                    M_new[r, r] = 1
             M = M * M_new
 
     for i in range(4):
         j = 3
-        while (Q[i,j] == 0):
+        while Q[i, j] == 0:
             j += -1
-        if (Q[i,j] < 0):
+        if Q[i, j] < 0:
             Q.multiply_variable(-1, i, in_place=True)
-            M_new = matrix(R,n,n)
+            M_new = matrix(R, n, n)
             for r in range(4):
                 if r == i:
-                    M_new[r,r] = -1
+                    M_new[r, r] = -1
                 else:
-                    M_new[r,r] = 1
+                    M_new[r, r] = 1
             M = M * M_new
 
-    if Q[1,2] < 0:
+    if Q[1, 2] < 0:
         # Test a row 1 sign change
-        if (Q[1,3] <= 0 and \
-            ((Q[1,3] < 0) or (Q[1,3] == 0 and Q[1,2] < 0)  \
-                or (Q[1,3] == 0 and Q[1,2] == 0 and Q[1,1] < 0))):
+        if (Q[1, 3] <= 0 and (Q[1, 3] < 0
+                              or Q[1, 2] < 0
+                              or (Q[1, 2] == 0 and Q[1, 1] < 0))):
             Q.multiply_variable(-1, i, in_place=True)
-            M_new = matrix(R,n,n)
+            M_new = matrix(R, n, n)
             for r in range(4):
                 if r == i:
-                    M_new[r,r] = -1
+                    M_new[r, r] = -1
                 else:
-                    M_new[r,r] = 1
+                    M_new[r, r] = 1
             M = M * M_new
 
-        elif (Q[2,3] <= 0 and \
-            ((Q[2,3] < 0) or (Q[2,3] == 0 and Q[2,2] < 0)  \
-                or (Q[2,3] == 0 and Q[2,2] == 0 and Q[2,1] < 0))):
+        elif (Q[2, 3] <= 0 and ((Q[2, 3] < 0)
+                                or Q[2, 2] < 0
+                                or (Q[2, 2] == 0 and Q[2, 1] < 0))):
             Q.multiply_variable(-1, i, in_place=True)
-            M_new = matrix(R,n,n)
+            M_new = matrix(R, n, n)
             for r in range(4):
                 if r == i:
-                    M_new[r,r] = -1
+                    M_new[r, r] = -1
                 else:
-                    M_new[r,r] = 1
+                    M_new[r, r] = 1
             M = M * M_new
 
     # Return the results

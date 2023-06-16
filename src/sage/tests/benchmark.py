@@ -382,7 +382,6 @@ class MPolynomialPower(Benchmark):
 ##         f = z**self.exp
 ##         return float(gp.eval('gettime/1000.0'))
 
-
     def magma(self):
         """
         Time the computation in Magma.
@@ -402,7 +401,6 @@ class MPolynomialPower(Benchmark):
         t = magma.cputime()
         w = z**magma(self.exp)
         return magma.cputime(t)
-
 
 
 class MPolynomialMult(Benchmark):
@@ -747,7 +745,6 @@ class MPolynomialMult2(Benchmark):
         return magma.cputime(t)
 
 
-
 class CharPolyTp(Benchmark):
     def __init__(self, N=37,k=2,p=2,sign=1):
         self.N = N
@@ -832,8 +829,6 @@ class CharPolyTp(Benchmark):
         return magma.cputime(t)
 
 
-
-
 class PolyFactor(Benchmark):
     def __init__(self, n, R):
         self.__n = n
@@ -901,7 +896,6 @@ class PolyFactor(Benchmark):
         gp.eval('gettime')
         f.factor()
         return float(gp.eval('gettime/1000.0'))
-
 
 
 class SquareInts(Benchmark):
@@ -1284,7 +1278,6 @@ class Fibonacci(Benchmark):
         gp.eval('gettime')
         n = gp('fibonacci(%s)'%self.__n)
         return float(gp.eval('gettime/1000.0'))
-
 
 
 class SEA(Benchmark):
@@ -1840,8 +1833,6 @@ class FiniteExtFieldAdd(Benchmark):
 """
 
 
-
-
 def suite1():
     PolySquare(10000,QQ).run()
     PolySquare(20000,ZZ).run()
@@ -1855,9 +1846,9 @@ def suite1():
 
     SquareInts(10,150000).run()
 
-    Factorial(2*10**6).run(systems = ['sage', 'magma'])
+    Factorial(2*10**6).run(systems=['sage', 'magma'])
     Fibonacci(10**6).run()
-    Fibonacci(2*10^7).run(systems=["sage", "magma", "mathematica"])
+    Fibonacci(2*10**7).run(systems=["sage", "magma", "mathematica"])
 
     MatrixKernel(150,QQ).run()
 
@@ -1870,7 +1861,7 @@ def suite1():
     PolyFactor(700,GF(19))
 
     PolyFactor(500,GF(49,'a'))
-    PolyFactor(100,GF(10007^3,'a'))
+    PolyFactor(100,GF((10007,3),'a'))
 
     CharPolyTp(54,4).run()
     CharPolyTp(389,2).run()

@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
+    'sphinx_copybutton',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
     'jupyter_sphinx',
@@ -230,15 +231,17 @@ def set_intersphinx_mappings(app, config):
     'python': ('https://docs.python.org/',
                 os.path.join(SAGE_DOC_SRC, "common",
                              "python{}.inv".format(python_version))),
-    'pplpy': (PPLPY_DOCS, None)}
+    }
+    if PPLPY_DOCS and os.path.exists(os.path.join(PPLPY_DOCS, 'objects.inv')):
+        app.config.intersphinx_mapping['pplpy'] = (PPLPY_DOCS, None)
+    else:
+        app.config.intersphinx_mapping['pplpy'] = ('https://www.labri.fr/perso/vdelecro/pplpy/latest/', None)
 
     # Add master intersphinx mapping
     dst = os.path.join(invpath, 'objects.inv')
     app.config.intersphinx_mapping['sagemath'] = (refpath, dst)
 
     # Add intersphinx mapping for subdirectories
-    # We intentionally do not name these such that these get higher
-    # priority in case of conflicts
     for directory in os.listdir(os.path.join(invpath)):
         if directory == 'jupyter_execute':
             # This directory is created by jupyter-sphinx extension for
@@ -247,13 +250,19 @@ def set_intersphinx_mappings(app, config):
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
             dst = os.path.join(invpath, directory, 'objects.inv')
-            app.config.intersphinx_mapping[src] = dst
+            app.config.intersphinx_mapping[directory] = (src, dst)
 
     intersphinx.normalize_intersphinx_mapping(app, config)
 
 
 # By default document are not master.
 multidocs_is_master = True
+
+# https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+copybutton_prompt_text = r"sage: |[.][.][.][.]: |\$ "
+copybutton_prompt_is_regexp = True
+copybutton_exclude = '.linenos, .c1'  # exclude single comments (in particular, # optional!)
+copybutton_only_copy_prompt_lines = True
 
 # Options for HTML output
 # -----------------------
@@ -918,6 +927,7 @@ def setup(app):
         app.add_config_value('intersphinx_mapping', {}, False)
         app.add_config_value('intersphinx_cache_limit', 5, False)
         app.add_config_value('intersphinx_disabled_reftypes', [], False)
+        app.add_config_value('intersphinx_timeout', None, False)
         app.connect('config-inited', set_intersphinx_mappings)
         app.connect('builder-inited', intersphinx.load_mappings)
         # We do *not* fully initialize intersphinx since we call it by hand

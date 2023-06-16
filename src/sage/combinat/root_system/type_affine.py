@@ -158,10 +158,10 @@ class AmbientSpace(CombinatorialFreeModule):
             return (1 if isinstance(x, str) else 0, x)
         CombinatorialFreeModule.__init__(self, base_ring,
                                          basis_keys,
-                                         prefix = "e",
-                                         latex_prefix = "e",
+                                         prefix="e",
+                                         latex_prefix="e",
                                          sorting_key=sortkey,
-                                         category = WeightLatticeRealizations(base_ring))
+                                         category=WeightLatticeRealizations(base_ring))
         self._weight_space = self.root_system.weight_space(base_ring=base_ring,extended=True)
         self.classical().module_morphism(self.monomial, codomain=self).register_as_coercion()
         # Duplicated from ambient_space.AmbientSpace
@@ -347,7 +347,7 @@ class AmbientSpace(CombinatorialFreeModule):
             - :meth:`CartanType.col_annihilator`
             - :meth:`null_root`
         """
-        cartan_type  = self.cartan_type()
+        cartan_type = self.cartan_type()
         special_node = cartan_type.special_node()
         if i == special_node:
             return self(self._classical_alpha_0()) + self.monomial("delta")

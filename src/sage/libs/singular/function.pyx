@@ -93,11 +93,11 @@ from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ideal_libsingular cimport sage_ideal_to_singular_ideal, singular_ideal_to_sage_sequence
-from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, PolynomialSequence_generic
+from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
 
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
-from sage.libs.singular.polynomial cimport singular_vector_maximal_component, singular_polynomial_check
+from sage.libs.singular.polynomial cimport singular_vector_maximal_component
 from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec
 from sage.libs.singular.singular import error_messages
 
@@ -1299,7 +1299,7 @@ cdef class SingularFunction(SageObject):
             ring = self.common_ring(args, ring)
             if ring is None:
                 if dummy_ring is None:
-                    from sage.rings.polynomial.all import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                     from sage.rings.rational_field import QQ
                     dummy_ring = PolynomialRing(QQ, "dummy", implementation="singular") # seems a reasonable default
                 ring = dummy_ring

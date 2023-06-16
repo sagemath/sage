@@ -265,9 +265,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             False
         """
         # Fail without computing the generator matrix if possible:
-        if not (isinstance(other, AbstractLinearCodeNoMetric)\
-                and self.length() == other.length()\
-                and self.dimension() == other.dimension()\
+        if not (isinstance(other, AbstractLinearCodeNoMetric)
+                and self.length() == other.length()
+                and self.dimension() == other.dimension()
                 and self.base_ring() == other.base_ring()):
             return False
         # Check that basis elements of `other` are all in `self.`
@@ -276,10 +276,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # This implementation may avoid linear algebra altogether, if `self`
         # implements an efficient way to obtain a parity check matrix, and in
         # the worst case does only one system solving.
-        for c in other.gens():
-            if not (c in self):
-                return False
-        return True
+        return all(c in self for c in other.gens())
 
     def __ne__(self, other):
         r"""
@@ -409,7 +406,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         gens = self.gens()
         from sage.structure.sequence import Sequence
-        return Sequence(gens, universe=self.ambient_space(), check = False, immutable=True, cr=True)
+        return Sequence(gens, universe=self.ambient_space(), check=False, immutable=True, cr=True)
 
     @cached_method
     def parity_check_matrix(self):

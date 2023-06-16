@@ -511,7 +511,7 @@ def P(alpha, m):
                 return [(2*a, (2*a - 2*b - 1)%(2*m)) for a in range(m)]
         else:
             y = alpha - m
-            pairs  = [(b,(2*y-b)%(2*m)) for b in range(y)]
+            pairs = [(b,(2*y-b)%(2*m)) for b in range(y)]
             pairs += [(c,(2*m+2*y-c-2)%(2*m)) for c in range(2*y+1,m+y-1)]
             pairs += [(2*m+int(-1.5-.5*(-1)**y),y),(2*m+int(-1.5+.5*(-1)**y),m+y-1)]
             return pairs
@@ -525,7 +525,7 @@ def P(alpha, m):
                 return [(2*a,(2*a-2*b-1)%(2*m)) for a in range(m)]
         else:
             y = alpha-m+1
-            pairs  = [(b,2*y-b) for b in range(y)]
+            pairs = [(b,2*y-b) for b in range(y)]
             pairs += [(c,2*m+2*y-c) for c in range(2*y+1,m+y)]
             pairs += [(y,m+y)]
             return pairs
@@ -677,7 +677,7 @@ def barP_system(m):
     return pairs
 
 @cached_function
-def steiner_quadruple_system(n, check = False):
+def steiner_quadruple_system(n, check=False):
     r"""
     Return a Steiner Quadruple System on `n` points.
 
@@ -705,36 +705,36 @@ def steiner_quadruple_system(n, check = False):
     TESTS::
 
         sage: for n in range(4, 100):                                      # long time
-        ....:     if (n%6) in [2,4]:                                        # long time
-        ....:         sqs = designs.steiner_quadruple_system(n, check=True) # long time
+        ....:     if (n%6) in [2,4]:
+        ....:         sqs = designs.steiner_quadruple_system(n, check=True)
     """
     n = int(n)
     if not ((n%6) in [2, 4]):
         raise ValueError("n mod 6 must be equal to 2 or 4")
     elif n == 4:
-        sqs = IncidenceStructure(4, [[0,1,2,3]], copy = False, check = False)
+        sqs = IncidenceStructure(4, [[0,1,2,3]], copy=False, check=False)
     elif n == 14:
-        sqs = IncidenceStructure(14, _SQS14(), copy = False, check = False)
+        sqs = IncidenceStructure(14, _SQS14(), copy=False, check=False)
     elif n == 38:
-        sqs = IncidenceStructure(38, _SQS38(), copy = False, check = False)
+        sqs = IncidenceStructure(38, _SQS38(), copy=False, check=False)
     elif n%12 in [4, 8]:
         nn =  n // 2
-        sqs = two_n(steiner_quadruple_system(nn, check = False))
+        sqs = two_n(steiner_quadruple_system(nn, check=False))
     elif n%18 in [4,10]:
         nn = (n+2) // 3
-        sqs = three_n_minus_two(steiner_quadruple_system(nn, check = False))
+        sqs = three_n_minus_two(steiner_quadruple_system(nn, check=False))
     elif (n%36) == 34:
         nn = (n+8) // 3
-        sqs = three_n_minus_eight(steiner_quadruple_system(nn, check = False))
+        sqs = three_n_minus_eight(steiner_quadruple_system(nn, check=False))
     elif (n%36) == 26:
         nn = (n+4) // 3
-        sqs = three_n_minus_four(steiner_quadruple_system(nn, check = False))
+        sqs = three_n_minus_four(steiner_quadruple_system(nn, check=False))
     elif n%24 in [2, 10]:
         nn = (n+6) // 4
-        sqs = four_n_minus_six(steiner_quadruple_system(nn, check = False))
+        sqs = four_n_minus_six(steiner_quadruple_system(nn, check=False))
     elif n%72 in [14, 38]:
         nn = (n+10) // 12
-        sqs = twelve_n_minus_ten(steiner_quadruple_system(nn, check = False))
+        sqs = twelve_n_minus_ten(steiner_quadruple_system(nn, check=False))
     else:
         raise ValueError("this should never happen")
 

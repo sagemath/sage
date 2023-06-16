@@ -561,13 +561,13 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         self._base = R # Won't be needed once CategoryObject won't override base_ring
         category = GradedHopfAlgebras(R).Commutative()
         self._category = category
-        Parent.__init__(self, category = category.WithRealizations())
+        Parent.__init__(self, category=category.WithRealizations())
 
         # Bases
-        Monomial    = self.Monomial()
+        Monomial = self.Monomial()
         Fundamental = self.Fundamental()
         dualImmaculate = self.dualImmaculate()
-        QS          = self.Quasisymmetric_Schur()
+        QS = self.Quasisymmetric_Schur()
 
         # Change of bases
         Fundamental.module_morphism(Monomial.sum_of_finer_compositions,
@@ -578,11 +578,11 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                                     ).register_as_coercion()
         #This changes dualImmaculate into Monomial
         dualImmaculate.module_morphism(dualImmaculate._to_Monomial_on_basis,
-                                          codomain = Monomial, category = category
+                                          codomain=Monomial, category=category
                                           ).register_as_coercion()
         #This changes Monomial into dualImmaculate
         Monomial.module_morphism(dualImmaculate._from_Monomial_on_basis,
-                                          codomain = dualImmaculate, category = category
+                                          codomain=dualImmaculate, category=category
                                           ).register_as_coercion()
         #This changes Quasisymmetric Schur into Monomial
         QS         .module_morphism(QS._to_monomial_on_basis,
@@ -1922,7 +1922,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             QQ_result *= (-1) ** n
             # QQ_result is now \lambda^n(M_I) over QQ.
             result = self.sum_of_terms([(J, ZZ(coeff)) for (J, coeff) in QQ_result],
-                                        distinct = True)
+                                        distinct=True)
             return result
 
         class Element(CombinatorialFreeModule.Element):
@@ -2052,7 +2052,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                         return x[i-1]**comp[-1] * on_basis(comp[:-1], i-1) + \
                                                   on_basis(comp,      i-1)
                 return M._apply_module_morphism(self, lambda comp: on_basis(comp,n),
-                                                codomain = P)
+                                                codomain=P)
 
             def is_symmetric( self ):
                 r"""
@@ -3380,11 +3380,11 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             category = self.realization_of()._category
             # This changes Monomial into Hazewinkel Lambda
             M.module_morphism(self._from_Monomial_on_basis,
-                                              codomain = self, category = category
+                                              codomain=self, category=category
                                               ).register_as_coercion()
             # This changes Hazewinkel Lambda into Monomial
             self.module_morphism(self._to_Monomial_on_basis,
-                                              codomain = M, category = category
+                                              codomain=M, category=category
                                               ).register_as_coercion()
 
             # cache for the coordinates of the elements

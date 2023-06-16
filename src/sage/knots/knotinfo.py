@@ -31,22 +31,17 @@ for :class:`KnotInfo` and :class:`KnotInfoSeries`, which can be seen in the open
 lines of the examples, are unnecessary.
 
 Be aware that there are a couple of conventions used differently on KnotInfo as
-in Sage, especially concerning the selection of the symmetry version of the link.
+in Sage.
 
-In this context you should note that the PD notation is recorded counter
-clockwise in KnotInfo (see note in :meth:`KnotInfoBase.link`). In our transition
-to Sage objects this is translated (by default) in order to avoid confusion about
-exchanged mirror versions.
+For different conventions regarding normalization of the polynomial invariants see
+the according documentation of :meth:`KnotInfoBase.homfly_polynomial`,
+:meth:`KnotInfoBase.jones_polynomial` and :meth:`KnotInfoBase.alexander_polynomial`.
 
 Also, note that the braid notation is used according to Sage, even thought in
 the source where it is taken from, the braid generators are assumed to have a
 negative crossing which would be opposite to the convention in Sage (see definition
 3 of
 :arxiv:`Gittings, T., "Minimum Braids: A Complete Invariant of Knots and Links" <math/0401051>`).
-
-For different conventions regarding normalization of the polynomial invariants see
-the according documentation of :meth:`KnotInfoBase.homfly_polynomial`,
-:meth:`KnotInfoBase.jones_polynomial` and :meth:`KnotInfoBase.alexander_polynomial`.
 
 Furthermore, note that not all columns available in the database are visible on the web
 pages (see also the related note under :meth:`KnotInfoBase.khovanov_polynomial`).
@@ -239,7 +234,6 @@ Thanks to Chuck Livingston and Allison Moore for their support. For further ackn
 ##############################################################################
 
 
-
 from enum import Enum
 from sage.misc.cachefunc import cached_method
 from sage.misc.sage_eval import sage_eval
@@ -249,8 +243,6 @@ from sage.rings.integer_ring import ZZ
 from sage.groups.braid import BraidGroup
 from sage.knots.knot import Knots
 from sage.databases.knotinfo_db import KnotInfoColumns, db
-
-
 
 
 def eval_knotinfo(string, locals={}, to_tuple=True):
@@ -299,7 +291,6 @@ def knotinfo_bool(string):
     elif string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
-
 
 
 # ---------------------------------------------------------------------------------
@@ -446,7 +437,6 @@ class KnotInfoBase(Enum):
             return BraidGroup(2)
         else:
             return BraidGroup(n)
-
 
     @cached_method
     def _homfly_pol_ring(self, var1, var2):
@@ -1159,7 +1149,6 @@ class KnotInfoBase(Enum):
         """
         return not knotinfo_bool(self[self.items.unoriented])
 
-
     @cached_method
     def homfly_polynomial(self, var1='v', var2='z', original=False):
         r"""
@@ -1344,7 +1333,6 @@ class KnotInfoBase(Enum):
         a, z = R.gens()
         lc = {'a':  a, 'z': z}
         return R(eval_knotinfo(kauffman_polynomial, locals=lc))
-
 
     @cached_method
     def jones_polynomial(self, variab=None, skein_normalization=False, puiseux=False, original=False, use_sqrt=False):
@@ -1534,9 +1522,7 @@ class KnotInfoBase(Enum):
             else:
                 lc = {'x':  t}
 
-
         return R(eval_knotinfo(jones_polynomial, locals=lc))
-
 
     @cached_method
     def alexander_polynomial(self, var='t', original=False, laurent_poly=False):
@@ -1833,14 +1819,6 @@ class KnotInfoBase(Enum):
             coincides with the crossing number as a topological
             invariant.
 
-            But attention: The convention on how the edges are
-            listed are opposite to each other
-
-            - KnotInfo: counter clockwise
-            - Sage:     clockwise
-
-            Therefore, we take the mirror version of the ``pd_notation``!
-
             Furthermore, note that the mirror version may depend
             on the used KnotInfo-notation. For instance, regarding to
             the knot ``5_1`` the Gauss- and the DT-notation refer to
@@ -1914,7 +1892,7 @@ class KnotInfoBase(Enum):
 
             sage: K4_1 = KnotInfo.K4_1
             sage: K4_1.link().pd_code()
-            [[4, 1, 5, 2], [8, 5, 1, 6], [6, 4, 7, 3], [2, 8, 3, 7]]
+            [[4, 2, 5, 1], [8, 6, 1, 5], [6, 3, 7, 4], [2, 7, 3, 8]]
             sage: K4_1.pd_notation()
             [[4, 2, 5, 1], [8, 6, 1, 5], [6, 3, 7, 4], [2, 7, 3, 8]]
 
@@ -1940,8 +1918,7 @@ class KnotInfoBase(Enum):
             from sage.knots.link import Link
 
         if use_item == self.items.pd_notation:
-            pd_code = [[a[0], a[3], a[2], a[1]] for a in self.pd_notation()] # take mirror version, see note above
-            return Link(pd_code)
+            return Link(self.pd_notation())
         elif use_item == self.items.braid_notation:
             return Link(self.braid())
         elif use_item == self.items.name and snappy:
@@ -1957,7 +1934,6 @@ class KnotInfoBase(Enum):
                 return Knots().from_gauss_code(self.gauss_notation())
 
         raise ValueError('Link construction using %s not possible' %use_item)
-
 
     @cached_method
     def is_unique(self):
@@ -2170,7 +2146,6 @@ class KnotInfoBase(Enum):
         else:
             return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
 
-
     def knot_atlas_webpage(self, new=0, autoraise=True):
         r"""
         Launch the Knot Atlas web-page for ``self``.
@@ -2210,7 +2185,6 @@ class KnotInfoBase(Enum):
         """
         import webbrowser
         return webbrowser.open(self[self.items.knotilus_page_anon], new=new, autoraise=autoraise)
-
 
 
 # --------------------------------------------------------------------------------------------
@@ -2255,7 +2229,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         sage: L6a2(0) == L6a2('0')
         True
     """
-
 
     def __init__(self, crossing_number, is_knot, is_alternating, name_unoriented=None):
         r"""
@@ -2363,7 +2336,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             res.append(KnotInfoSeries(cross_nr, is_knot, is_alt, curr_n_unori))
         return res
 
-
     @cached_method
     def lower_list(self, oriented=False, comp=None, det=None, homfly=None):
         r"""
@@ -2408,7 +2380,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             l = LS.lower_list(oriented=oriented, comp=comp, det=det, homfly=homfly)
         return l + self.list(oriented=oriented, comp=comp, det=det, homfly=homfly)
 
-
     def __repr__(self):
         r"""
         Return the representation string of ``self``.
@@ -2425,7 +2396,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return 'Series of knots %s' %(self._name())
         else:
             return 'Series of links %s' %(self._name())
-
 
     def __getitem__(self, item):
         r"""
@@ -2585,7 +2555,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
         else:
             tester.assertTrue(self.is_recoverable(unique=False))
-
 
     def inject(self, verbose=True):
         r"""

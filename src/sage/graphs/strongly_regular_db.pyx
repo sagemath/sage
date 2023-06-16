@@ -30,21 +30,22 @@ Functions
 import json
 import os
 
-from sage.categories.sets_cat import EmptySetError
-from sage.misc.unknown import Unknown
-from sage.arith.misc import is_square
-from sage.arith.misc import is_prime_power
-from sage.arith.misc import divisors
-from sage.misc.cachefunc import cached_function
-from sage.combinat.designs.orthogonal_arrays import orthogonal_array
-from sage.combinat.designs.bibd import balanced_incomplete_block_design
-from sage.graphs.graph import Graph
 from libc.math cimport sqrt, floor
-from sage.matrix.constructor import Matrix
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.coding.linear_code import LinearCode
-from sage.rings.sum_of_squares cimport two_squares_c
 from libc.stdint cimport uint_fast32_t
+
+from sage.arith.misc import divisors, is_prime_power, is_square
+from sage.categories.sets_cat import EmptySetError
+from sage.graphs.graph import Graph
+from sage.misc.cachefunc import cached_function
+from sage.misc.lazy_import import LazyImport
+from sage.misc.unknown import Unknown
+from sage.rings.sum_of_squares cimport two_squares_c
+
+orthogonal_array = LazyImport('sage.combinat.designs.orthogonal_arrays', 'orthogonal_array')
+balanced_incomplete_block_design = LazyImport('sage.combinat.designs.bibd', 'balanced_incomplete_block_design')
+GF = LazyImport('sage.rings.finite_rings.finite_field_constructor', 'GF')
+Matrix = LazyImport('sage.matrix.constructor', 'Matrix')
+LinearCode = LazyImport('sage.coding.linear_code', 'LinearCode')
 
 cdef dict _brouwer_database = None
 _small_srg_database = None
@@ -2574,8 +2575,6 @@ def SRG_176_90_38_54():
         sage: G.is_strongly_regular(parameters=True)
         (176, 90, 38, 54)
     """
-    from sage.graphs.generators.basic import CompleteGraph
-    from sage.misc.flatten import flatten
     g = SRG_175_72_20_36()
     g.relabel(range(175))
     # c=filter(lambda x: len(x)==5, g.cliques_maximal())
@@ -2873,13 +2872,13 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
         sage: from sage.graphs.strongly_regular_db import apparently_feasible_parameters
         sage: for p in sorted(apparently_feasible_parameters(1300)):   # not tested
-        ....:     if graphs.strongly_regular_graph(*p,existence=True) is True: # not tested
-        ....:         try:                                             # not tested
-        ....:             _ = graphs.strongly_regular_graph(*p)        # not tested
-        ....:             print(p, "built successfully")               # not tested
-        ....:         except RuntimeError as e:                        # not tested
-        ....:             if 'Brouwer' not in str(e):                  # not tested
-        ....:                 raise                                    # not tested
+        ....:     if graphs.strongly_regular_graph(*p,existence=True) is True:
+        ....:         try:
+        ....:             _ = graphs.strongly_regular_graph(*p)
+        ....:             print(p, "built successfully")
+        ....:         except RuntimeError as e:
+        ....:             if 'Brouwer' not in str(e):
+        ....:                 raise
 
     `\mu=0` behaves correctly (:trac:`19712`)::
 

@@ -65,13 +65,14 @@ Methods
 # ****************************************************************************
 
 from copy import copy
-from sage.combinat.matrices.dlxcpp import DLXCPP
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
 
-from sage.numerical.mip import MixedIntegerLinearProgram
-from sage.numerical.mip import MIPSolverException
 from sage.graphs.independent_sets import IndependentSets
+from sage.misc.lazy_import import LazyImport
+
+DLXCPP = LazyImport('sage.combinat.matrices.dlxcpp', 'DLXCPP')
+MixedIntegerLinearProgram = LazyImport('sage.numerical.mip', 'MixedIntegerLinearProgram')
 
 
 def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_dict=False):
@@ -643,6 +644,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
         # it, and it can help.
         p.add_constraint(color[next(g.vertex_iterator()), 0],  max=1, min=1)
 
+        from sage.numerical.mip import MIPSolverException
         try:
             if value_only:
                 p.solve(objective_only=True, log=verbose)
@@ -1038,6 +1040,7 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
     # Trying to use as many colors as possible
     p.set_objective(p.sum(is_used[i] for i in range(k)))
 
+    from sage.numerical.mip import MIPSolverException
     try:
         p.solve(log=verbose)
     except MIPSolverException:
@@ -1227,6 +1230,7 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
     # We want to maximize the number of used colors
     p.set_objective(p.sum(is_used[i] for i in range(k)))
 
+    from sage.numerical.mip import MIPSolverException
     try:
         p.solve(log=verbose)
     except MIPSolverException:
@@ -1458,6 +1462,8 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
             # We color the edges of the vertex of maximum degree
             for i, v in enumerate(h.neighbor_iterator(X)):
                 p.add_constraint(color[frozenset((v, X)), i] == 1)
+
+            from sage.numerical.mip import MIPSolverException
             try:
                 p.solve(objective_only=value_only, log=verbose)
             except MIPSolverException:
@@ -1643,7 +1649,7 @@ def _vizing_edge_coloring(g):
         e_colors[frozenset((fan_center, fan[-1]))] = d
 
     matchings = dict()
-    for edge, c in e_colors.items(): 
+    for edge, c in e_colors.items():
         matchings[c] = matchings.get(c, []) + [tuple(edge)]
     classes = list(matchings.values())
 
@@ -1885,6 +1891,7 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
             # no cycles
             p.add_constraint(p.sum(r[i, (u, v)] for v in g.neighbor_iterator(u)), max=MAD)
 
+    from sage.numerical.mip import MIPSolverException
     try:
         p.solve(objective_only=value_only, log=verbose)
         if value_only:
@@ -2139,6 +2146,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
     p.set_objective(None)
 
+    from sage.numerical.mip import MIPSolverException
     try:
         p.solve(objective_only=value_only, log=verbose)
         if value_only:
@@ -2181,9 +2189,9 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
 cdef class Test:
     r"""
-    This class performs randomized testing for all_graph_colorings.
+    This class performs randomized testing for :func:`all_graph_colorings`.
 
-    Since everything else in this file is derived from all_graph_colorings, this
+    Since everything else in this file is derived from :func:`all_graph_colorings`, this
     is a pretty good randomized tester for the entire file.  Note that for a
     graph `G`, ``G.chromatic_polynomial()`` uses an entirely different
     algorithm, so we provide a good, independent test.

@@ -243,7 +243,8 @@ def skipfile(filename, tested_optional_tags=False):
         sage: skipfile(filename)
         True
         sage: with open(filename, "w") as f:
-        ....:     _ = f.write("# sage.doctest: optional - xyz")
+        ....:     _ = f.write("# sage.doctest: "    # broken in two source lines to avoid the pattern
+        ....:                 "optional - xyz")     # of relint (multiline_doctest_comment)
         sage: skipfile(filename, False)
         'optional - xyz'
         sage: bool(skipfile(filename, False))
@@ -1082,7 +1083,7 @@ class DocTestController(SageObject):
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
             sage: from sage.env import SAGE_SRC
             sage: import os
-            sage: dirname = os.path.join(SAGE_SRC, 'sage', 'rings', 'infinity.py')
+            sage: dirname = os.path.join(SAGE_SRC, 'sage', 'rings', 'all.py')
             sage: DD = DocTestDefaults()
 
             sage: DC = DocTestController(DD, [dirname])
@@ -1096,7 +1097,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../rings/infinity.py
+            sage -t .../rings/all.py
                 [... tests, ... s]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1401,10 +1402,10 @@ def run_doctests(module, options=None):
 
     EXAMPLES::
 
-        sage: run_doctests(sage.rings.infinity)
+        sage: run_doctests(sage.rings.all)
         Running doctests with ID ...
         Doctesting 1 file.
-        sage -t .../sage/rings/infinity.py
+        sage -t .../sage/rings/all.py
             [... tests, ... s]
         ----------------------------------------------------------------------
         All tests passed!

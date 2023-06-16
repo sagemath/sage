@@ -91,8 +91,7 @@ We can also evaluate series in a point of the domain of convergence
     sage: f(a^2, 2*a)
     1 + 2^2 + a*2^4 + O(2^5)
 
-    sage: var('u')
-    u
+    sage: u = polygen(ZZ, 'u')
     sage: L.<pi> = K.change(print_mode="series").extension(u^3 - 2)
     sage: g(pi, 2*pi)
     pi^7 + pi^8 + pi^19 + pi^20 + O(pi^21)
@@ -683,7 +682,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
         return elts
 
 
-
 # Tate algebras
 ###############
 
@@ -842,6 +840,7 @@ class TateAlgebra_generic(CommutativeAlgebra):
             sage: from sage.categories.pushout import pushout
             sage: R = Zp(2)
             sage: R1.<a> = Zq(4)
+            sage: x = polygen(ZZ, 'x')
             sage: R2.<pi> = R.extension(x^2 - 2)
 
             sage: A.<u,v> = TateAlgebra(R, log_radii=[1,2])
@@ -1197,6 +1196,7 @@ class TateAlgebra_generic(CommutativeAlgebra):
             sage: A.absolute_e()
             1
 
+            sage: x = polygen(ZZ, 'x')
             sage: S.<a> = R.extension(x^2 - 2)
             sage: A.<u,v> = TateAlgebra(S)
             sage: A.absolute_e()
