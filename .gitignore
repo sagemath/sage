@@ -175,6 +175,12 @@ build/bin/sage-build-env-config
 /pkgs/*/.tox
 
 /pkgs/sagemath-objects/setup.cfg
+/pkgs/sagemath-bliss/setup.cfg
+/pkgs/sagemath-coxeter3/setup.cfg
+/pkgs/sagemath-mcqd/setup.cfg
+/pkgs/sagemath-meataxe/setup.cfg
+/pkgs/sagemath-sirocco/setup.cfg
+/pkgs/sagemath-tdlib/setup.cfg
 /pkgs/sagemath-categories/setup.cfg
 /pkgs/sagemath-environment/setup.cfg
 /pkgs/sagemath-repl/setup.cfg
@@ -195,6 +201,12 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-pari/setup.cfg
 
 /pkgs/sagemath-objects/pyproject.toml
+/pkgs/sagemath-bliss/pyproject.toml
+/pkgs/sagemath-coxeter3/pyproject.toml
+/pkgs/sagemath-mcqd/pyproject.toml
+/pkgs/sagemath-meataxe/pyproject.toml
+/pkgs/sagemath-sirocco/pyproject.toml
+/pkgs/sagemath-tdlib/pyproject.toml
 /pkgs/sagemath-categories/pyproject.toml
 /pkgs/sagemath-environment/pyproject.toml
 /pkgs/sagemath-repl/pyproject.toml
@@ -215,6 +227,12 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-pari/pyproject.toml
 
 /pkgs/sagemath-objects/requirements.txt
+/pkgs/sagemath-bliss/requirements.txt
+/pkgs/sagemath-coxeter3/requirements.txt
+/pkgs/sagemath-mcqd/requirements.txt
+/pkgs/sagemath-meataxe/requirements.txt
+/pkgs/sagemath-sirocco/requirements.txt
+/pkgs/sagemath-tdlib/requirements.txt
 /pkgs/sagemath-categories/requirements.txt
 /pkgs/sagemath-environment/requirements.txt
 /pkgs/sagemath-repl/requirements.txt
