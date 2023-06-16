@@ -1,4 +1,3 @@
-# sage.doctest: optional - sage.groups
 # sage_setup: distribution = sagemath-gap
 r"""
 Automorphism groups and canonical labels

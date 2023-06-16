@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 """
 Partition backtrack functions for matrices
 

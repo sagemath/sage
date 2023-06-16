@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 """
 Graph-theoretic partition backtrack functions
 

@@ -1,5 +1,4 @@
 # sage.doctest: optional - sage.groups
-# sage_setup: distribution = sagemath-gap
 r"""
 Double cosets
 
