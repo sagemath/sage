@@ -237,7 +237,8 @@ class Fields(CategoryWithAxiom):
 
             TESTS::
 
-                sage: fields = [RR, CC]
+                sage: fields = []
+                sage: field += [RR, CC]                                                 # optional - sage.rings.real_mpfr
                 sage: fields.append(QQbar)                                              # optional - sage.rings.number_field
                 sage: for A in fields:
                 ....:     g = A._gcd_univariate_polynomial
@@ -248,22 +249,22 @@ class Fields(CategoryWithAxiom):
                 ....:            g(2*x, z) == x and
                 ....:            g(z, z) == z)
 
-                sage: R.<x> = RR[]
-                sage: (x^3).gcd(x^5+1)
+                sage: R.<x> = RR[]                                                      # optional - sage.rings.real_mpfr
+                sage: (x^3).gcd(x^5 + 1)                                                # optional - sage.rings.real_mpfr
                 1.00000000000000
-                sage: (x^3).gcd(x^5+x^2)
+                sage: (x^3).gcd(x^5 + x^2)                                              # optional - sage.rings.real_mpfr
                 x^2
-                sage: f = (x+3)^2 * (x-1)
-                sage: g = (x+3)^5
-                sage: f.gcd(g)
+                sage: f = (x+3)^2 * (x-1)                                               # optional - sage.rings.real_mpfr
+                sage: g = (x+3)^5                                                       # optional - sage.rings.real_mpfr
+                sage: f.gcd(g)                                                          # optional - sage.rings.real_mpfr
                 x^2 + 6.00000000000000*x + 9.00000000000000
 
             The following example illustrates the fact that for inexact
             base rings, the returned gcd is often 1 due to rounding::
 
-                sage: f = (x+RR.pi())^2 * (x-1)
-                sage: g = (x+RR.pi())^5
-                sage: f.gcd(g)
+                sage: f = (x+RR.pi())^2 * (x-1)                                         # optional - sage.rings.real_mpfr
+                sage: g = (x+RR.pi())^5                                                 # optional - sage.rings.real_mpfr
+                sage: f.gcd(g)                                                          # optional - sage.rings.real_mpfr
                 1.00000000000000
 
             Check :trac:`23012`::
@@ -332,7 +333,8 @@ class Fields(CategoryWithAxiom):
 
             TESTS::
 
-                sage: fields = [RR, CC]
+                sage: field = []
+                sage: fields += [RR, CC]                                                # optional - sage.rings.real_mpfr
                 sage: fields.append(QQbar)                                              # optional - sage.rings.number_field
                 sage: for A in fields:
                 ....:     g = A._xgcd_univariate_polynomial
