@@ -412,10 +412,10 @@ cdef class Element(SageObject):
             sage: q = 3/5
             sage: parent(q)
             Rational Field
-            sage: q._set_parent(CC)
-            sage: parent(q)
+            sage: q._set_parent(CC)                                                     # optional - sage.rings.real_mpfr
+            sage: parent(q)                                                             # optional - sage.rings.real_mpfr
             Complex Field with 53 bits of precision
-            sage: q._set_parent(float)
+            sage: q._set_parent(float)                                                  # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: Cannot convert type to sage.structure.parent.Parent
