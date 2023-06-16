@@ -162,8 +162,8 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
       returns a dictionary ``{color: [list of vertices]}``
 
     * ``color_classes`` -- boolean (default: ``False``); when set to ``True``,
-      the method returns only the color classes and ignores parameters
-      ``hex_colors`` and ``vertex_color_dict``
+      the method returns only a list of the the color classes and ignores
+      parameters ``hex_colors`` and ``vertex_color_dict``
 
     .. WARNING::
 
