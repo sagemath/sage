@@ -35,3 +35,11 @@ install_requires =
         sagemath_environment \
         sagemath_categories \
         | sed "2,\$s/^/    /;"')dnl
+
+[options.package_data]
+
+sage.libs.gap =
+    sage.gaprc
+
+sage.ext_data =
+    *
