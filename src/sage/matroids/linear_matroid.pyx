@@ -5042,7 +5042,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: QuaternaryMatroid(matrix=Matrix(GF(4, 'x'),       # indirect doctest  # optional - sage.rings.finite_rings
+            sage: QuaternaryMatroid(matrix=Matrix(GF(4, 'x'),         # indirect doctest, optional - sage.rings.finite_rings
             ....:                                 [[1, 0, 1, 1, 1],
             ....:                                  [0, 1, 1, 1, 1]]))
             Quaternary matroid of rank 2 on 5 elements

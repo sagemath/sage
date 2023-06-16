@@ -132,7 +132,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),  # indirect doctest  # optional - sage.rings.finite_rings
+            sage: M = MinorMatroid(matroids.named_matroids.Fano(),    # indirect doctest, optional - sage.rings.finite_rings
             ....:                  contractions=set(), deletions=set(['g']))
             sage: M.is_isomorphic(matroids.Wheel(3))                                    # optional - sage.rings.finite_rings
             True
