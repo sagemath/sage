@@ -3367,7 +3367,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: K.<z> = CyclotomicField(3)                                            # optional - sage.rings.number_field
             sage: f = K.defining_polynomial()                                           # optional - sage.rings.number_field
-            sage: f.change_ring(GF(7))                                                  # optional - sage.rings.finite_rings     # optional - sage.rings.number_field
+            sage: f.change_ring(GF(7))                                                  # optional - sage.rings.finite_rings sage.rings.number_field
             x^2 + x + 1
 
         ::
@@ -3375,14 +3375,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: K.<z> = CyclotomicField(3)                                            # optional - sage.rings.number_field
             sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
             sage: f = x^2 + z                                                           # optional - sage.rings.number_field
-            sage: f.change_ring(K.embeddings(CC)[1])                                    # optional - sage.rings.number_field
+            sage: f.change_ring(K.embeddings(CC)[1])                                    # optional - sage.rings.number_field sage.rings.real_mpfr
             x^2 - 0.500000000000000 - 0.866025403784438*I
 
         ::
 
             sage: R.<x> = QQ[]
             sage: f = x^2 + 1
-            sage: f.change_ring(QQ.embeddings(CC)[0])
+            sage: f.change_ring(QQ.embeddings(CC)[0])                                   # optional - sage.rings.real_mpfr
             x^2 + 1.00000000000000
 
         TESTS:
@@ -4135,18 +4135,18 @@ cdef class Polynomial(CommutativePolynomial):
             sage: factor(x^2 + 1)                                                       # optional - sage.rings.real_mpfr
             x^2 + 1.0000000000000000000000000000
 
-            sage: R.<x> = ComplexField(100)[]
-            sage: F = factor(x^2 + 3); F
+            sage: R.<x> = ComplexField(100)[]                                           # optional - sage.rings.real_mpfr
+            sage: F = factor(x^2 + 3); F                                                # optional - sage.rings.real_mpfr
             (x - 1.7320508075688772935274463415*I) * (x + 1.7320508075688772935274463415*I)
-            sage: expand(F)                                                             # optional - sage.symbolic
+            sage: expand(F)                                                             # optional - sage.rings.real_mpfr
             x^2 + 3.0000000000000000000000000000
-            sage: factor(x^2 + 1)
+            sage: factor(x^2 + 1)                                                       # optional - sage.rings.real_mpfr
             (x - I) * (x + I)
-            sage: f = R(I) * (x^2 + 1) ; f
+            sage: f = R(I) * (x^2 + 1) ; f                                              # optional - sage.rings.real_mpfr
             I*x^2 + I
-            sage: F = factor(f); F
+            sage: F = factor(f); F                                                      # optional - sage.rings.real_mpfr
             (1.0000000000000000000000000000*I) * (x - I) * (x + I)
-            sage: expand(F)                                                             # optional - sage.symbolic
+            sage: expand(F)                                                             # optional - sage.rings.real_mpfr
             I*x^2 + I
 
         Over a number field::
@@ -8656,12 +8656,12 @@ cdef class Polynomial(CommutativePolynomial):
             sage: pol.number_of_roots_in_interval()                                     # optional - sage.libs.pari
             3
             sage: pol = (x - 1) * (x - 2) * (x - 3)
-            sage: pol2 = pol.change_ring(CC)
-            sage: pol2.number_of_roots_in_interval()                                    # optional - sage.libs.pari
+            sage: pol2 = pol.change_ring(CC)                                            # optional - sage.rings.real_mpfr
+            sage: pol2.number_of_roots_in_interval()                                    # optional - sage.libs.pari sage.rings.real_mpfr
             3
-            sage: R.<x> = PolynomialRing(CC)
-            sage: pol = (x - 1) * (x - CC(I))
-            sage: pol.number_of_roots_in_interval(0, 2)                                 # optional - sage.libs.pari
+            sage: R.<x> = PolynomialRing(CC)                                            # optional - sage.rings.real_mpfr
+            sage: pol = (x - 1) * (x - CC(I))                                           # optional - sage.rings.real_mpfr
+            sage: pol.number_of_roots_in_interval(0, 2)                                 # optional - sage.libs.pari sage.rings.real_mpfr
             1
 
         TESTS::
@@ -11326,8 +11326,8 @@ cdef class Polynomial_generic_dense(Polynomial):
         sage: from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense
         sage: isinstance(f, Polynomial_generic_dense)
         True
-        sage: f = CC['x'].random_element()
-        sage: isinstance(f, Polynomial_generic_dense)
+        sage: f = CC['x'].random_element()                                              # optional - sage.rings.real_mpfr
+        sage: isinstance(f, Polynomial_generic_dense)                                   # optional - sage.rings.real_mpfr
         True
 
         sage: R.<x> = QQ[]

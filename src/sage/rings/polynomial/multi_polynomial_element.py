@@ -127,22 +127,21 @@ class MPolynomial_element(MPolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y> = CC[]
-            sage: f = x^2 + y^2
-            sage: f(1,2)
+            sage: R.<x,y> = CC[]                                                        # optional - sage.rings.real_mpfr
+            sage: f = x^2 + y^2                                                         # optional - sage.rings.real_mpfr
+            sage: f(1,2)                                                                # optional - sage.rings.real_mpfr
             5.00000000000000
-            sage: f((1,2))
+            sage: f((1,2))                                                              # optional - sage.rings.real_mpfr
             5.00000000000000
 
         ::
 
-            sage: x = PolynomialRing(CC,3,'x').gens()
-            sage: f = x[0] + x[1] - 2*x[1]*x[2]
-            sage: f
+            sage: x = PolynomialRing(CC, 3, 'x').gens()                                 # optional - sage.rings.real_mpfr
+            sage: f = x[0] + x[1] - 2*x[1]*x[2]; f                                      # optional - sage.rings.real_mpfr
             (-2.00000000000000)*x1*x2 + x0 + x1
-            sage: f(1,2,0)
+            sage: f(1,2,0)                                                              # optional - sage.rings.real_mpfr
             3.00000000000000
-            sage: f(1,2,5)
+            sage: f(1,2,5)                                                              # optional - sage.rings.real_mpfr
             -17.0000000000000
 
         TESTS:
@@ -195,10 +194,10 @@ class MPolynomial_element(MPolynomial):
 
         ::
 
-            sage: R.<x,y,z> = PolynomialRing(CC, 3, order='deglex')
-            sage: x^1*y^2*z^3 > x^3*y^2*z^0
+            sage: R.<x,y,z> = PolynomialRing(CC, 3, order='deglex')                     # optional - sage.rings.real_mpfr
+            sage: x^1*y^2*z^3 > x^3*y^2*z^0                                             # optional - sage.rings.real_mpfr
             True
-            sage: x^1*y^2*z^4 < x^1*y^1*z^5
+            sage: x^1*y^2*z^4 < x^1*y^1*z^5                                             # optional - sage.rings.real_mpfr
             False
 
         ::
@@ -250,19 +249,19 @@ class MPolynomial_element(MPolynomial):
 
         EXAMPLES::
 
-            sage: R.<x, y> = CC[]
-            sage: f = x^3 - y
-            sage: f.number_of_terms()
+            sage: R.<x, y> = CC[]                                                       # optional - sage.rings.real_mpfr
+            sage: f = x^3 - y                                                           # optional - sage.rings.real_mpfr
+            sage: f.number_of_terms()                                                   # optional - sage.rings.real_mpfr
             2
-            sage: R(0).number_of_terms()
+            sage: R(0).number_of_terms()                                                # optional - sage.rings.real_mpfr
             0
-            sage: f = (x+y)^100
-            sage: f.number_of_terms()
+            sage: f = (x+y)^100                                                         # optional - sage.rings.real_mpfr
+            sage: f.number_of_terms()                                                   # optional - sage.rings.real_mpfr
             101
 
         The method :meth:`hamming_weight` is an alias::
 
-            sage: f.hamming_weight()
+            sage: f.hamming_weight()                                                    # optional - sage.rings.real_mpfr
             101
         """
         return len(self.element().dict())
@@ -371,19 +370,19 @@ class MPolynomial_element(MPolynomial):
         r"""
         EXAMPLES::
 
-            sage: R.<x,y> = CC['x,y']
-            sage: f = (x + y)/x; f
+            sage: R.<x,y> = CC['x,y']                                                   # optional - sage.rings.real_mpfr
+            sage: f = (x + y)/x; f                                                      # optional - sage.rings.real_mpfr
             (x + y)/x
-            sage: f.parent()
+            sage: f.parent()                                                            # optional - sage.rings.real_mpfr
             Fraction Field of Multivariate Polynomial Ring in x, y over
             Complex Field with 53 bits of precision
 
         If dividing by a scalar, there is no need to go to the fraction
         field of the polynomial ring::
 
-            sage: f = (x + y)/2; f
+            sage: f = (x + y)/2; f                                                      # optional - sage.rings.real_mpfr
             0.500000000000000*x + 0.500000000000000*y
-            sage: f.parent()
+            sage: f.parent()                                                            # optional - sage.rings.real_mpfr
             Multivariate Polynomial Ring in x, y over Complex Field with
             53 bits of precision
 
@@ -1682,10 +1681,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
-            sage: R.<x,y,z> = PolynomialRing(CC, 3, order='deglex')
-            sage: (x^1*y^2*z^3 + x^3*y^2*z^0).lm()
+            sage: R.<x,y,z> = PolynomialRing(CC, 3, order='deglex')                     # optional - sage.rings.real_mpfr
+            sage: (x^1*y^2*z^3 + x^3*y^2*z^0).lm()                                      # optional - sage.rings.real_mpfr
             x*y^2*z^3
-            sage: (x^1*y^2*z^4 + x^1*y^1*z^5).lm()
+            sage: (x^1*y^2*z^4 + x^1*y^1*z^5).lm()                                      # optional - sage.rings.real_mpfr
             x*y^2*z^4
 
         ::
@@ -2021,8 +2020,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         Check if we can factor a constant polynomial, see :trac:`8207`::
 
-            sage: R.<x,y> = CC[]
-            sage: R(1).factor()
+            sage: R.<x,y> = CC[]                                                        # optional - sage.rings.real_mpfr
+            sage: R(1).factor()                                                         # optional - sage.rings.real_mpfr
             1.00000000000000
 
         Check that we prohibit too large moduli, :trac:`11829`::
@@ -2082,9 +2081,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Check that a "multivariate" polynomial in one variable is factored
         correctly::
 
-            sage: R.<z> = PolynomialRing(CC,1)
-            sage: f = z^4 - 6*z + 3
-            sage: f.factor()
+            sage: R.<z> = PolynomialRing(CC,1)                                          # optional - sage.rings.real_mpfr
+            sage: f = z^4 - 6*z + 3                                                     # optional - sage.rings.real_mpfr
+            sage: f.factor()                                                            # optional - sage.rings.real_mpfr
             (z - 1.60443920904349) * (z - 0.511399619393097) * (z + 1.05791941421830 - 1.59281852704435*I) * (z + 1.05791941421830 + 1.59281852704435*I)
 
         We check a case that failed with an exception at some point::
@@ -2160,12 +2159,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         EXAMPLES::
 
-            sage: A.<x,y> = PolynomialRing(CC, 2, order='degrevlex')
-            sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7])
-            sage: f = x*y^13 + y^12
-            sage: M = f.lift(I); M                                                      # optional - sage.libs.singular
+            sage: A.<x,y> = PolynomialRing(CC, 2, order='degrevlex')                    # optional - sage.rings.real_mpfr
+            sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7])                          # optional - sage.rings.real_mpfr
+            sage: f = x*y^13 + y^12                                                     # optional - sage.rings.real_mpfr
+            sage: M = f.lift(I); M                                                      # optional - sage.libs.singular sage.rings.real_mpfr
             [y^7, x^7*y^2 + x^8 + x^5*y^3 + x^6*y + x^3*y^4 + x^4*y^2 + x*y^5 + x^2*y^3 + y^4]
-            sage: sum(map(mul, zip(M, I.gens()))) == f                                  # optional - sage.libs.singular
+            sage: sum(map(mul, zip(M, I.gens()))) == f                                  # optional - sage.libs.singular sage.rings.real_mpfr
             True
 
         TESTS:
