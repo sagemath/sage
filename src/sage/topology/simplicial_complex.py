@@ -915,9 +915,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     or e.g. the simplicial complex of all 168 hyperovals of the projective plane of order 4::
 
-        sage: l = designs.ProjectiveGeometryDesign(2,1,GF(4,name='a'))
-        sage: f = lambda S: not any(len(set(S).intersection(x))>2 for x in l)
-        sage: SimplicialComplex(from_characteristic_function=(f, l.ground_set()))
+        sage: l = designs.ProjectiveGeometryDesign(2, 1, GF(4,name='a'))                # optional - sage.rings.finite_rings
+        sage: f = lambda S: not any(len(set(S).intersection(x))>2 for x in l)           # optional - sage.rings.finite_rings
+        sage: SimplicialComplex(from_characteristic_function=(f, l.ground_set()))       # optional - sage.rings.finite_rings
         Simplicial complex with 21 vertices and 168 facets
 
     TESTS:
@@ -4772,35 +4772,35 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Simplices are trivially partitionable::
 
             sage: X = SimplicialComplex([[1,2,3,4]])
-            sage: X.is_partitionable()
+            sage: X.is_partitionable()                                                  # optional - sage.numerical.mip
             True
-            sage: X.is_partitionable(certificate=True)
+            sage: X.is_partitionable(certificate=True)                                  # optional - sage.numerical.mip
             [((), (1, 2, 3, 4), 4)]
 
         Shellable complexes are partitionable::
 
             sage: X = SimplicialComplex([[1,3,5], [1,3,6], [1,4,5], [1,4,6],
             ....:                        [2,3,5], [2,3,6], [2,4,5]])
-            sage: X.is_partitionable()
+            sage: X.is_partitionable()                                                  # optional - sage.numerical.mip
             True
-            sage: P = X.is_partitionable(certificate=True)
+            sage: P = X.is_partitionable(certificate=True)                              # optional - sage.numerical.mip
             sage: def n_intervals_containing(f):
             ....:     return len([RF for RF in P
             ....:                    if RF[0].is_face(f) and f.is_face(RF[1])])
-            sage: all(n_intervals_containing(f) == 1
+            sage: all(n_intervals_containing(f) == 1                                    # optional - sage.numerical.mip
             ....:     for k in X.faces().keys() for f in X.faces()[k])
             True
 
         A non-shellable, non-Cohen-Macaulay, partitionable example, constructed by Björner::
 
             sage: X = SimplicialComplex([[1,2,3], [1,2,4], [1,3,4], [2,3,4], [1,5,6]])
-            sage: X.is_partitionable()
+            sage: X.is_partitionable()                                                  # optional - sage.numerical.mip
             True
 
         The bowtie complex is not partitionable::
 
             sage: X = SimplicialComplex([[1,2,3], [1,4,5]])
-            sage: X.is_partitionable()
+            sage: X.is_partitionable()                                                  # optional - sage.numerical.mip
             False
         """
         from sage.numerical.mip import MixedIntegerLinearProgram

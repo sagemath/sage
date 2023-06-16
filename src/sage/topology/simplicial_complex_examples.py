@@ -1329,7 +1329,7 @@ def SumComplex(n, A):
         Sum complex on vertices Z/13Z associated to {0, 1, 2, 3, 5}
         sage: S.homology()  # long time                                                 # optional - sage.modules
         {0: 0, 1: 0, 2: 0, 3: C3 x C237 x C706565607945, 4: 0}
-        sage: factor(706565607945)
+        sage: factor(706565607945)                                                      # optional - sage.libs.pari
         3 * 5 * 53 * 79 * 131 * 157 * 547
 
         sage: S = simplicial_complexes.SumComplex(17, [0, 1, 4]); S
@@ -1342,13 +1342,13 @@ def SumComplex(n, A):
         Sum complex on vertices Z/19Z associated to {0, 1, 4}
         sage: S.homology(1)
         C5670599
-        sage: factor(5670599)                                                           # optional - sage.modules
+        sage: factor(5670599)                                                           # optional - sage.libs.pari
         11 * 191 * 2699
         sage: S = simplicial_complexes.SumComplex(31, [0, 1, 4]); S
         Sum complex on vertices Z/31Z associated to {0, 1, 4}
         sage: S.homology(1)  # long time                                                # optional - sage.modules
         C5 x C5 x C5 x C5 x C26951480558170926865
-        sage: factor(26951480558170926865)
+        sage: factor(26951480558170926865)                                              # optional - sage.libs.pari
         5 * 311 * 683 * 1117 * 11657 * 1948909
     """
     from sage.rings.finite_rings.integer_mod_ring import Integers
