@@ -587,7 +587,8 @@ class SageDocTestParser(doctest.DocTestParser):
             sage: print(m)
             87654321
 
-        Optional tags at the start of an example block persists to the end of the block::
+        Optional tag at the start of an example block persists to the end of
+        the block::
 
             sage: # long time
             sage: QQbar(I)^10000
