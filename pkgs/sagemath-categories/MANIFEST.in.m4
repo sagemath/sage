@@ -33,13 +33,17 @@ exclude sage/categories/with_realizations.*
 include sage/geometry/abc.p*
 
 # Interfaces
+include sage/interfaces/all.p*
 include sage/interfaces/abc.p*
 include sage/interfaces/process.p*                      # needed for sage.parallel
 include sage/interfaces/tab_completion.p*
 include sage/misc/object_multiplexer.p*
 include sage/misc/multireplace.p*
-include sage/misc/sagespawn.p*
+include sage/interfaces/sagespawn.p*
 include sage/interfaces/quit.p*
+include sage/interfaces/cleaner.p*
+include sage/interfaces/expect.p*
+include sage/interfaces/interface.p*
 
 graft sage/parallel
 
@@ -84,8 +88,9 @@ graft sage/data_structures               # bitset needed by sage.graphs and sage
 exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
 exclude sage/data_structures/stream.*
 graft sage/groups/perm_gps/partn_ref  # but not partn_ref2, which depends on GAP
-exclude sage/groups/perm_gps/partn_ref/refinement_graphs.p*    # needs graphs
-exclude sage/groups/perm_gps/partn_ref/refinement_matrices.p*  # needs matrices
+exclude sage/groups/perm_gps/partn_ref/refinement_graphs.p*    # sagemath-graphs
+exclude sage/groups/perm_gps/partn_ref/refinement_matrices.p*  # sagemath-modules
+exclude sage/groups/perm_gps/partn_ref/refinement_binary.p*    # sagemath-modules
 
 
 # These might later go to a separate distribution sagemath-functions (> sagemath-objects);

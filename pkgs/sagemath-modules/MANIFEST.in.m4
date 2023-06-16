@@ -57,7 +57,6 @@ exclude sage/misc/sage_ostools.p*
 # exclude what's in sagemath-categories
 exclude sage/misc/object_multiplexer.p*
 exclude sage/misc/multireplace.p*
-exclude sage/misc/sagespawn.p*
 exclude sage/misc/allocator.*
 exclude sage/misc/latex*.*
 exclude sage/misc/html.p*
@@ -179,6 +178,9 @@ include sage/groups/matrix_gps/named_group.p*
 include sage/groups/matrix_gps/orthogonal.p*
 include sage/groups/matrix_gps/symplectic.p*
 include sage/groups/matrix_gps/unitary.p*
+
+include sage/groups/perm_gps/partn_ref/refinement_matrices.p*
+include sage/groups/perm_gps/partn_ref/refinement_binary.p*
 
 graft sage/tensor
 graft sage/matroids            # though many doctests use graphs, finite fields
