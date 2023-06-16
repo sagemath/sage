@@ -5873,9 +5873,9 @@ def _key_complex_for_display(a):
         sage: import sage.arith.misc
         sage: key_c = sage.arith.misc._key_complex_for_display
 
-        sage: key_c(CC(5))
+        sage: key_c(CC(5))                                                              # optional - sage.rings.real_mpfr
         (0, 5.00000000000000)
-        sage: key_c(CC(5, 5))
+        sage: key_c(CC(5, 5))                                                           # optional - sage.rings.real_mpfr
         (1, 5.00000000, 5.00000000000000)
 
         sage: CIF200 = ComplexIntervalField(200)
