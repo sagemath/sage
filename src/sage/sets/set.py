@@ -1665,13 +1665,13 @@ class Set_object_intersection(Set_object_binary):
             sage: X = Set(QQ).intersection(Set(RR))
             sage: 5 in X
             True
-            sage: ComplexField().0 in X
+            sage: ComplexField().0 in X                                                 # optional - sage.rings.real_mpfr
             False
 
         Any specific floating-point number in Sage is to finite precision,
         hence it is rational::
 
-            sage: RR(sqrt(2)) in X                                                      # optional - sage.symbolic
+            sage: RR(sqrt(2)) in X                                                      # optional - sage.rings.real_mpfr sage.symbolic
             True
 
         Real constants are not rational::
@@ -1839,11 +1839,11 @@ class Set_object_difference(Set_object_binary):
             sage: X = Set(QQ).difference(Set(ZZ))
             sage: 5 in X
             False
-            sage: ComplexField().0 in X
+            sage: ComplexField().0 in X                                                 # optional - sage.rings.real_mpfr
             False
             sage: sqrt(2) in X     # since sqrt(2) is not a numerical approx            # optional - sage.symbolic
             False
-            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is a numerical approx            # optional - sage.symbolic
+            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is a numerical approx            # optional - sage.rings.real_mpfr sage.symbolic
             True
             sage: 5/2 in X
             True
@@ -2012,13 +2012,13 @@ class Set_object_symmetric_difference(Set_object_binary):
             sage: X = Set(QQ).symmetric_difference(Primes())
             sage: 4 in X
             True
-            sage: ComplexField().0 in X
+            sage: ComplexField().0 in X                                                 # optional - sage.rings.real_mpfr
             False
             sage: sqrt(2) in X      # since sqrt(2) is currently symbolic               # optional - sage.symbolic
             False
-            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is currently approximated
+            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is currently approximated        # optional - sage.rings.real_mpfr
             True
-            sage: pi in X
+            sage: pi in X                                                               # optional - sage.symbolic
             False
             sage: 5/2 in X
             True
