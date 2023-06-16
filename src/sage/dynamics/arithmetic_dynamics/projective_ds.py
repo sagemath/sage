@@ -1869,9 +1869,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``M`` -- a square invertible matrix
 
-        - ``adjugate`` -- (default: ``False``) boolean, also classically called adjoint, takes a square matrix ``M`` and finds the transpose of its cofactor matrix. Used for conjugation in place of inverse when specified ``True``. Functionality is the same in projective space.
+        - ``adjugate`` -- (default: ``False``) boolean, also classically called
+          adjoint, takes a square matrix ``M`` and finds the transpose of its
+          cofactor matrix. Used for conjugation in place of inverse when
+          specified ``True``. Functionality is the same in projective space.
 
-        - ``normalize`` -- (default: ``False``) boolean, if normalize is ``'True'``, then the function ``normalize_coordinates`` is called.
+        - ``normalize`` -- (default: ``False``) boolean, if ``normalize`` is
+          ``True``, then the method ``normalize_coordinates`` is called.
 
         OUTPUT: a dynamical system
 
@@ -2720,34 +2724,41 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``return_points`` -- (default: ``False``) boolean; if ``True``, return a list of lists
-          where the index ``i`` is the level of the tree and the elements of the list at that
-          index are the ``i``-th preimage points as an algebraic element of the splitting field
-          of the polynomial ``f^n - Q = 0``
+        - ``return_points`` -- (default: ``False``) boolean; if ``True``,
+          return a list of lists where the index `i` is the level of the tree
+          and the elements of the list at that index are the `i`-th preimage
+          points as an algebraic element of the splitting field of the
+          polynomial `f^n - Q = 0`
 
-        - ``numerical`` -- (default: ``False``) boolean; calculate pre-images numerically. Note if this
-          is set to ``True``, preimage points are displayed as complex numbers
+        - ``numerical`` -- (default: ``False``) boolean; calculate pre-images
+          numerically. Note if this is set to ``True``, preimage points are
+          displayed as complex numbers
 
-        - ``prec`` -- (default: 100) positive integer; the precision of the ``ComplexField`` if
-          we compute the preimage points numerically
+        - ``prec`` -- (default: 100) positive integer; the precision of the
+          ``ComplexField`` if we compute the preimage points numerically
 
-        - ``display_labels`` -- (default: ``True``) boolean; whether to display vertex labels. Since labels
-          can be very cluttered, can set ``display_labels`` to ``False`` and use ``return_points`` to get a
+        - ``display_labels`` -- (default: ``True``) boolean; whether to display
+          vertex labels. Since labels can be very cluttered, can set
+          ``display_labels`` to ``False`` and use ``return_points`` to get a
           hold of the points themselves, either as algebraic or complex numbers
 
-        - ``display_complex`` -- (default: ``False``) boolean; display vertex labels as
-          complex numbers. Note if this option is chosen that we must choose an embedding
-          from the splitting field ``field_def`` of the nth-preimage equation into C. We make
-          the choice of the first embedding returned by ``field_def.embeddings(ComplexField())``
+        - ``display_complex`` -- (default: ``False``) boolean; display vertex
+          labels as complex numbers. Note if this option is chosen that we must
+          choose an embedding from the splitting field ``field_def`` of the
+          `n`-th-preimage equation into `\CC`. We make the choice of the first
+          embedding returned by ``field_def.embeddings(ComplexField())``
 
-        - ``digits`` -- a positive integer, the number of decimal digits to display for complex
-          numbers. This only applies if ``display_complex`` is set to ``True``
+        - ``digits`` -- a positive integer, the number of decimal digits to
+          display for complex numbers. This only applies if ``display_complex``
+          is set to ``True``
 
         OUTPUT:
 
-        If ``return_points`` is ``False``, a ``GraphPlot`` object representing the ``n``-th pre-image tree.
-        If ``return_points`` is ``True``, a tuple ``(GP, points)``, where ``GP`` is a ``GraphPlot`` object,
-        and ``points`` is  a list of lists as described above under ``return_points``.
+        If ``return_points`` is ``False``, a :class:`GraphPlot` object representing
+        the `n`-th pre-image tree.  If ``return_points`` is ``True``, a tuple
+        ``(GP, points)``, where ``GP`` is a :class:`GraphPlot` object, and
+        ``points`` is a list of lists as described above under
+        ``return_points``.
 
         EXAMPLES::
 
