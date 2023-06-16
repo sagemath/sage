@@ -21,10 +21,9 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         EXAMPLES::
 
-            sage: R.<q> = PowerSeriesRing(CC)
-            sage: R
+            sage: R.<q> = PowerSeriesRing(CC); R                                        # optional - sage.rings.real_mpfr
             Power Series Ring in q over Complex Field with 53 bits of precision
-            sage: loads(q.dumps()) == q
+            sage: loads(q.dumps()) == q                                                 # optional - sage.rings.real_mpfr
             True
 
             sage: R.<t> = QQ[[]]

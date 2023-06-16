@@ -25,11 +25,11 @@ Quotienting is a constructor for an element of the fraction field::
 The GCD is not taken (since it doesn't converge sometimes) in the
 inexact case::
 
-    sage: Z.<z> = CC[]
-    sage: I = CC.gen()
-    sage: (1+I+z)/(z+0.1*I)
+    sage: Z.<z> = CC[]                                                                  # optional - sage.rings.real_mpfr
+    sage: I = CC.gen()                                                                  # optional - sage.rings.real_mpfr
+    sage: (1+I+z)/(z+0.1*I)                                                             # optional - sage.rings.real_mpfr
     (z + 1.00000000000000 + I)/(z + 0.100000000000000*I)
-    sage: (1+I*z)/(z+1.1)
+    sage: (1+I*z)/(z+1.1)                                                               # optional - sage.rings.real_mpfr
     (I*z + 1.00000000000000)/(z + 1.10000000000000)
 
 TESTS::
@@ -306,8 +306,8 @@ class FractionField_generic(ring.Field):
         Test for :trac:`31320`::
 
             sage: FQt = Frac(QQ['t'])
-            sage: LCt = LaurentPolynomialRing(CC,'t')
-            sage: coercion_model.common_parent(FQt, LCt)
+            sage: LCt = LaurentPolynomialRing(CC,'t')                                   # optional - sage.rings.real_mpfr
+            sage: coercion_model.common_parent(FQt, LCt)                                # optional - sage.rings.real_mpfr
             Fraction Field of Univariate Polynomial Ring in t
             over Complex Field with 53 bits of precision
 

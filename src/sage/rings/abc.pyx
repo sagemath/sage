@@ -177,7 +177,7 @@ cdef class RealField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(RR, sage.rings.abc.RealField)
+        sage: isinstance(RR, sage.rings.abc.RealField)                                  # optional - sage.rings.real_mpfr
         True
 
     By design, there is a unique direct subclass::
@@ -277,7 +277,7 @@ cdef class ComplexField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(CC, sage.rings.abc.ComplexField)
+        sage: isinstance(CC, sage.rings.abc.ComplexField)                               # optional - sage.rings.real_mpfr
         True
 
     By design, there is a unique direct subclass::

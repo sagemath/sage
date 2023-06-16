@@ -23,16 +23,16 @@ We compute with a Laurent series over the complex mpfr numbers.
 
     sage: K.<q> = Frac(CC[['q']]); K                                                    # optional - sage.rings.real_mpfr
     Laurent Series Ring in q over Complex Field with 53 bits of precision
-    sage: q
+    sage: q                                                                             # optional - sage.rings.real_mpfr
     1.00000000000000*q
 
 Saving and loading.
 
 ::
 
-    sage: loads(q.dumps()) == q
+    sage: loads(q.dumps()) == q                                                         # optional - sage.rings.real_mpfr
     True
-    sage: loads(K.dumps()) == K
+    sage: loads(K.dumps()) == K                                                         # optional - sage.rings.real_mpfr
     True
 
 IMPLEMENTATION: Laurent series in Sage are represented internally

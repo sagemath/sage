@@ -285,14 +285,14 @@ class LocalizationElement(IntegralDomainElement):
         EXAMPLES::
 
             sage: from sage.rings.localization import LocalizationElement
-            sage: P.<x> = CC[]
-            sage: L = Localization(P, x**2+x+1)
-            sage: l = LocalizationElement(L, (x**2+1)/(x**2+x+1))
-            sage: l._repr_() == str(l)
+            sage: P.<x> = CC[]                                                          # optional - sage.rings.real_mpfr
+            sage: L = Localization(P, x**2 + x + 1)                                     # optional - sage.rings.real_mpfr
+            sage: l = LocalizationElement(L, (x**2+1)/(x**2+x+1))                       # optional - sage.rings.real_mpfr
+            sage: l._repr_() == str(l)                                                  # optional - sage.rings.real_mpfr
             True
 
             sage: R.<X, Y> = ZZ[]
-            sage: L.<x, y> = R.localization(X-Y)
+            sage: L.<x, y> = R.localization(X - Y)
             sage: x*y/(x-y)
             x*y/(x - y)
         """

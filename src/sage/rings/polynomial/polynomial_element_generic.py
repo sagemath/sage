@@ -490,17 +490,17 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<z> = PolynomialRing(CC, sparse=True)
-            sage: f = z^2 + CC.0; f
+            sage: R.<z> = PolynomialRing(CC, sparse=True)                               # optional - sage.rings.real_mpfr
+            sage: f = z^2 + CC.0; f                                                     # optional - sage.rings.real_mpfr
             1.00000000000000*z^2 + 1.00000000000000*I
-            sage: f._unsafe_mutate(0, 10)
-            sage: f
+            sage: f._unsafe_mutate(0, 10)                                               # optional - sage.rings.real_mpfr
+            sage: f                                                                     # optional - sage.rings.real_mpfr
             1.00000000000000*z^2 + 10.0000000000000
 
         Much more nasty::
 
-            sage: z._unsafe_mutate(1, 0)
-            sage: z
+            sage: z._unsafe_mutate(1, 0)                                                # optional - sage.rings.real_mpfr
+            sage: z                                                                     # optional - sage.rings.real_mpfr
             0
         """
         n = int(n)
