@@ -1084,11 +1084,11 @@ def BidiakisCube():
 
         sage: g.is_planar()
         True
-        sage: char_poly = g.characteristic_polynomial()
-        sage: x = char_poly.parent()('x')
-        sage: char_poly == (x - 3) * (x - 2) * (x^4) * (x + 1) * (x + 2) * (x^2 + x - 4)^2
+        sage: char_poly = g.characteristic_polynomial()                                 # optional - sage.modules
+        sage: x = char_poly.parent()('x')                                               # optional - sage.modules
+        sage: char_poly == (x - 3) * (x - 2) * (x^4) * (x + 1) * (x + 2) * (x^2 + x - 4)^2  # optional - sage.modules
         True
-        sage: g.chromatic_number()
+        sage: g.chromatic_number()                                                      # optional - sage.modules
         3
     """
     edge_dict = {
@@ -1319,8 +1319,8 @@ def BrinkmannGraph():
 
     Its automorphism group is isomorphic to `D_7`::
 
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(7))
+        sage: ag = G.automorphism_group()                                               # optional - sage.groups
+        sage: ag.is_isomorphic(DihedralGroup(7))                                        # optional - sage.groups
         True
     """
     edge_dict = {
@@ -2030,12 +2030,12 @@ def DyckGraph():
 
         sage: G.chromatic_number()
         2
-        sage: G.automorphism_group().cardinality()
+        sage: G.automorphism_group().cardinality()                                      # optional - sage.groups
         192
 
     It is a non-integral graph as it has irrational eigenvalues::
 
-        sage: G.characteristic_polynomial().factor()
+        sage: G.characteristic_polynomial().factor()                                    # optional - sage.modules
         (x - 3) * (x + 3) * (x - 1)^9 * (x + 1)^9 * (x^2 - 5)^6
 
     It is a toroidal graph, and its embedding on a torus is dual to an embedding
@@ -2343,8 +2343,8 @@ def ErreraGraph():
     The automorphism group of the Errera graph is isomorphic to the dihedral
     group of order 20::
 
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(10))
+        sage: ag = G.automorphism_group()                                               # optional - sage.groups
+        sage: ag.is_isomorphic(DihedralGroup(10))                                       # optional - sage.groups
         True
     """
     edge_dict = {
@@ -4097,12 +4097,12 @@ def ShrikhandeGraph():
 
         sage: G.chromatic_number()
         4
-        sage: G.automorphism_group().cardinality()
+        sage: G.automorphism_group().cardinality()                                      # optional - sage.groups
         192
 
     It is an integral graph since it has only integral eigenvalues::
 
-        sage: G.characteristic_polynomial().factor()
+        sage: G.characteristic_polynomial().factor()                                    # optional - sage.modules
         (x - 6) * (x - 2)^6 * (x + 2)^9
 
     It is a toroidal graph, and its embedding on a torus is dual to an

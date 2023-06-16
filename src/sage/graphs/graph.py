@@ -4677,7 +4677,7 @@ class Graph(GenericGraph):
 
             sage: g = graphs.RandomGNP(20,.3)
             sage: mad_g = g.maximum_average_degree()                                    # optional - sage.numerical.mip
-            sage: g.average_degree() <= mad_g
+            sage: g.average_degree() <= mad_g                                           # optional - sage.numerical.mip
             True
 
         Unlike the average degree, the `Mad` of the disjoint union of two graphs
@@ -4942,9 +4942,9 @@ class Graph(GenericGraph):
             sage: g = graphs.GridGraph([4,4])
             sage: h = graphs.CompleteGraph(4)
             sage: L = g.minor(h)                                                        # optional - sage.numerical.mip
-            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))
-            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
-            sage: gg.is_isomorphic(h)
+            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))                   # optional - sage.numerical.mip
+            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]            # optional - sage.numerical.mip
+            sage: gg.is_isomorphic(h)                                                   # optional - sage.numerical.mip
             True
 
         We can also try to prove this way that the Petersen graph is not planar,
@@ -8570,22 +8570,24 @@ class Graph(GenericGraph):
         edge-partitionned into `2`-regular graphs::
 
             sage: g = graphs.CompleteGraph(7)
-            sage: classes = g.two_factor_petersen()
-            sage: for c in classes:
+            sage: classes = g.two_factor_petersen()                                     # optional - sage.numerical.mip
+            sage: for c in classes:                                                     # optional - sage.numerical.mip
             ....:     gg = Graph()
             ....:     gg.add_edges(c)
             ....:     print(max(gg.degree())<=2)
             True
             True
             True
-            sage: Set(set(classes[0]) | set(classes[1]) | set(classes[2])).cardinality() == g.size()
+            sage: Set(set(classes[0])                                                   # optional - sage.numerical.mip
+            ....:     | set(classes[1])
+            ....:     | set(classes[2])).cardinality() == g.size()
             True
 
         ::
 
             sage: g = graphs.CirculantGraph(24, [7, 11])
-            sage: cl = g.two_factor_petersen()
-            sage: g.plot(edge_colors={'black':cl[0], 'red':cl[1]})                      # optional - sage.plot
+            sage: cl = g.two_factor_petersen()                                          # optional - sage.numerical.mip
+            sage: g.plot(edge_colors={'black':cl[0], 'red':cl[1]})                      # optional - sage.numerical.mip sage.plot
             Graphics object consisting of 73 graphics primitives
 
         """

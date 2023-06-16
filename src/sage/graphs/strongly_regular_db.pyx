@@ -166,7 +166,7 @@ def is_muzychuk_S6(int v, int k, int l, int mu):
         sage: t = is_muzychuk_S6(378, 116, 34, 36)                                      # optional - sage.libs.pari
         sage: G = t[0](*t[1:]); G                                                       # optional - sage.libs.pari
         Muzychuk S6 graph with parameters (3,3): Graph on 378 vertices
-        sage: G.is_strongly_regular(parameters=True)
+        sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (378, 116, 34, 36)
         sage: t = is_muzychuk_S6(5, 5, 5, 5); t                                         # optional - sage.libs.pari
     """
@@ -572,7 +572,7 @@ def is_NOodd(int v, int k, int l, int mu):
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 4, '-')
         sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         NO^-(5, 4): Graph on 120 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (120, 51, 18, 24)
 
     TESTS:
@@ -1402,13 +1402,13 @@ def is_GQqmqp(int v, int k, int l, int mu):
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 3, True)
         sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         AS(3)*; GQ(4, 2): Graph on 45 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (45, 12, 3, 3)
         sage: t = is_GQqmqp(16,6,2,2); t                                                # optional - sage.libs.pari
         (<function T2starGeneralizedQuadrangleGraph at ...>, 2, True)
         sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         T2*(O,2)*; GQ(3, 1): Graph on 16 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (16, 6, 2, 2)
         sage: t = is_GQqmqp(64,18,2,6); t                                               # optional - sage.libs.pari
         (<function T2starGeneralizedQuadrangleGraph at ...>, 4, False)

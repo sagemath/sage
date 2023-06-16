@@ -1594,15 +1594,15 @@ class DiGraph(GenericGraph):
 
         Loops are part of the feedback edge set (:trac:`23989`)::
 
-            sage: D = digraphs.DeBruijn(2, 2)
-            sage: sorted(D.loops(labels=None))
+            sage: D = digraphs.DeBruijn(2, 2)                                           # optional - sage.combinat
+            sage: sorted(D.loops(labels=None))                                          # optional - sage.combinat
             [('00', '00'), ('11', '11')]
-            sage: FAS = D.feedback_edge_set(value_only=False)                           # optional - sage.numerical.mip
-            sage: all(l in FAS for l in D.loops(labels=None))                           # optional - sage.numerical.mip
+            sage: FAS = D.feedback_edge_set(value_only=False)                           # optional - sage.combinat sage.numerical.mip
+            sage: all(l in FAS for l in D.loops(labels=None))                           # optional - sage.combinat sage.numerical.mip
             True
-            sage: FAS2 = D.feedback_edge_set(value_only=False,                          # optional - sage.numerical.mip
+            sage: FAS2 = D.feedback_edge_set(value_only=False,                          # optional - sage.combinat sage.numerical.mip
             ....:                            constraint_generation=False)
-            sage: len(FAS) == len(FAS2)                                                 # optional - sage.numerical.mip
+            sage: len(FAS) == len(FAS2)                                                 # optional - sage.combinat sage.numerical.mip
             True
 
         Check that multi-edges are properly taken into account::

@@ -6876,7 +6876,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = digraphs.RandomDirectedGNP(11, .3)  # reduced from 30 to 11, cf. #32169
             sage: k = Integer(g.edge_connectivity())
-            sage: while not k:
+            sage: while not k:                                                          # optional - sage.numerical.mip
             ....:     g = digraphs.RandomDirectedGNP(11, .3)
             ....:     k = Integer(g.edge_connectivity())
             sage: arborescences = g.edge_disjoint_spanning_trees(k)    # long time (up to 15s on sage.math, 2011), optional - sage.numerical.mip
@@ -9630,9 +9630,9 @@ class GenericGraph(GenericGraph_pyx):
 
         The de Bruijn digraph admits a 2-nowhere zero flow::
 
-            sage: g = digraphs.DeBruijn(2, 3)
-            sage: h = g.nowhere_zero_flow(k=2)                                          # optional - sage.numerical.mip
-            sage: sorted(set(h.edge_labels()))                                          # optional - sage.numerical.mip
+            sage: g = digraphs.DeBruijn(2, 3)                                           # optional - sage.combinat
+            sage: h = g.nowhere_zero_flow(k=2)                                          # optional - sage.combinat sage.numerical.mip
+            sage: sorted(set(h.edge_labels()))                                          # optional - sage.combinat sage.numerical.mip
             [-1, 1]
 
         TESTS:
