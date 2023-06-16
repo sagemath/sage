@@ -294,10 +294,10 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(CC, 3)
-            sage: H = End(A)
-            sage: f = H([x^2 - CC.0*x*y + z*x, 1/z^2 - y^2, 5*x])
-            sage: f == f
+            sage: A.<x,y,z> = AffineSpace(CC, 3)                                        # optional - sage.rings.real_mpfr
+            sage: H = End(A)                                                            # optional - sage.rings.real_mpfr
+            sage: f = H([x^2 - CC.0*x*y + z*x, 1/z^2 - y^2, 5*x])                       # optional - sage.rings.real_mpfr
+            sage: f == f                                                                # optional - sage.rings.real_mpfr
             True
         """
         if not isinstance(right, SchemeMorphism_polynomial):
@@ -320,13 +320,13 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(RR, 2)
-            sage: H = End(A)
-            sage: f = H([x^2 - y, y^2])
-            sage: g = H([x^3 - x*y, x*y^2])
-            sage: f != g
+            sage: A.<x,y> = AffineSpace(RR, 2)                                          # optional - sage.rings.real_mpfr
+            sage: H = End(A)                                                            # optional - sage.rings.real_mpfr
+            sage: f = H([x^2 - y, y^2])                                                 # optional - sage.rings.real_mpfr
+            sage: g = H([x^3 - x*y, x*y^2])                                             # optional - sage.rings.real_mpfr
+            sage: f != g                                                                # optional - sage.rings.real_mpfr
             True
-            sage: f != f
+            sage: f != f                                                                # optional - sage.rings.real_mpfr
             False
         """
         if not isinstance(right, SchemeMorphism_polynomial):
@@ -456,10 +456,10 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(CC, 2)
-            sage: H = Hom(A, A)
-            sage: f = H([(x^2-2)/(x*y), y^2 - x])
-            sage: f.homogenize((2, 0))
+            sage: A.<x,y> = AffineSpace(CC, 2)                                          # optional - sage.rings.real_mpfr
+            sage: H = Hom(A, A)                                                         # optional - sage.rings.real_mpfr
+            sage: f = H([(x^2-2)/(x*y), y^2 - x])                                       # optional - sage.rings.real_mpfr
+            sage: f.homogenize((2, 0))                                                  # optional - sage.rings.real_mpfr
             Scheme endomorphism of Projective Space of dimension 2
              over Complex Field with 53 bits of precision
               Defn: Defined on coordinates by sending (x0 : x1 : x2) to

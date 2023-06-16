@@ -343,7 +343,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = End(PS)
             sage: f = H([x^2, y^2, z^2])
             sage: X = P1.subscheme([u - v])
-            sage: f(X)
+            sage: f(X)                                                                  # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: subscheme must be in ambient space of domain of map
@@ -354,11 +354,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P1.<u,v> = ProjectiveSpace(ZZ, 1)
             sage: H = End(P1)
             sage: f = H([u^2, v^2])
-            sage: f([u-v])
+            sage: f([u - v])                                                            # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 1 over Integer Ring defined by:
               u - v
             sage: X = PS.subscheme([x - z])
-            sage: f([x-z])
+            sage: f([x - z])                                                            # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: [x - z] fails to convert into the map's domain Projective Space of
@@ -379,7 +379,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
             sage: P = T(F)(1, a)                                                        # optional - sage.rings.finite_rings
-            sage: h(P)                                                                  # optional - sage.rings.finite_rings
+            sage: h(P)                                                                  # optional - sage.libs.singular sage.rings.finite_rings
             (a : a)
             sage: h(P).domain()                                                         # optional - sage.rings.finite_rings
             Spectrum of Finite Field in a of size 2^2
@@ -526,12 +526,12 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: P2.<u,v> = ProjectiveSpace(CC, 1)
-            sage: H = End(P)
-            sage: H2 = End(P2)
-            sage: f = H([x^2 - 2*x*y, y^2])
-            sage: g = H2([u^2 - 2*u*v, v^2])
-            sage: f == g
+            sage: P2.<u,v> = ProjectiveSpace(CC, 1)                                     # optional - sage.rings.real_mpfr
+            sage: H = End(P)                                                            # optional - sage.rings.real_mpfr
+            sage: H2 = End(P2)                                                          # optional - sage.rings.real_mpfr
+            sage: f = H([x^2 - 2*x*y, y^2])                                             # optional - sage.rings.real_mpfr
+            sage: g = H2([u^2 - 2*u*v, v^2])                                            # optional - sage.rings.real_mpfr
+            sage: f == g                                                                # optional - sage.rings.real_mpfr
             False
 
         ::
