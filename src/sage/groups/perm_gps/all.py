@@ -11,8 +11,6 @@ from .permgroup_named import (SymmetricGroup, AlternatingGroup,
 
 from .permgroup import PermutationGroup, PermutationGroup_generic, PermutationGroup_subgroup, direct_product_permgroups
 
-from .constructor import PermutationGroupElement
-
 from .permgroup_morphism import (PermutationGroupMorphism as PermutationGroupMap,
                                  PermutationGroupMorphism_im_gens,
                                  PermutationGroupMorphism_id)

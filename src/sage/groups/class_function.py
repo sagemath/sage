@@ -27,10 +27,12 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.interfaces.gap import gap
 from sage.rings.integer import Integer
-from sage.rings.number_field.number_field import CyclotomicField
 from sage.libs.gap.element import GapElement
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement as LibGapElement
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
 # TODO:
 #

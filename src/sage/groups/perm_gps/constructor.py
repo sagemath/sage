@@ -24,9 +24,14 @@ from . import permgroup_element
 from sage.misc.sage_eval import sage_eval
 from sage.misc.lazy_import import lazy_import
 from sage.interfaces.gap import GapElement
-from sage.libs.pari.all import pari_gen
 from sage.libs.gap.element import GapElement_Permutation
+
 lazy_import('sage.combinat.permutation', ['Permutation', 'from_cycles'])
+
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
 
 
 def PermutationGroupElement(g, parent=None, check=True):

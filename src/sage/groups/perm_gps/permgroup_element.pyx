@@ -116,7 +116,10 @@ from libc.stdlib cimport qsort
 from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 from cpython.list cimport *
 
-from cypari2.gen cimport Gen
+try:
+    from cypari2.gen import Gen
+except ImportError:
+    Gen = ()
 
 import sage.interfaces.abc
 import sage.groups.old as group
@@ -124,7 +127,6 @@ import sage.structure.coerce as coerce
 
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.interfaces.abc import GpElement
-from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -1935,6 +1937,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             [0 0 0 0 1]
             [0 0 0 1 0]
         """
+        from sage.matrix.matrix_space import MatrixSpace
         M = MatrixSpace(ZZ, self.n, self.n, sparse=True)
         cdef int i
         entries = {}
