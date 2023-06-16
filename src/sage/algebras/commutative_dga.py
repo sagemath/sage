@@ -2588,6 +2588,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: B = A.quotient(I)
             sage: S = B.cdg_algebra({})
             sage: S.minimal_model()
+            Traceback (most recent call last):
             ...
             ValueError: could not cover all relations in max iterations in degree 2
             sage: S.minimal_model(partial_result=True)
