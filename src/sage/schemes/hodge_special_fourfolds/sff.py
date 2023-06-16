@@ -34,6 +34,7 @@ from sage.misc.functional import symbolic_prod as product
 from sage.matrix.constructor import matrix
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.rational_field import RationalField
 from sage.calculus.functions import jacobian
@@ -451,7 +452,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             assert(p._is_point())
             return p
         else:
-            raise Exception("function _raw_point() failed: reached maximum number of 10 attempts to find rational point")
+            raise RuntimeError("function _raw_point() failed: reached maximum number of 10 attempts to find rational point")
 
     def point(self, verbose=None, algorithm='sage'):
         r"""Pick a random point on the variety defined over a finite field.
@@ -583,10 +584,6 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
     def describe(self):
         r"""Print a brief description of the variety.
 
-        OUTPUT:
-
-        Nothing.
-
         EXAMPLES::
 
             sage: X = Veronese(2,2)
@@ -690,7 +687,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         """
         if codomain is not None:
             if not self.is_subset(codomain):
-                raise Exception("expected containment")
+                raise ValueError("expected containment")
             return(Rational_map_between_embedded_projective_varieties(self,codomain,self.coordinate_ring().gens()))
         try:
             return self._embedding_morphism
@@ -789,7 +786,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             L.extend([sum([K.random_element() * g for g in B]) for i in range(args.count(i))])
         X = Embedded_projective_variety(self.ambient_space(),L)
         if X.codimension() != len(args):
-            raise Exception("unable to construct complete intersection containing the variety, maybe too many degrees are given")
+            raise ValueError("unable to construct complete intersection containing the variety, maybe too many degrees are given")
         else:
             return(X)
 
@@ -1135,7 +1132,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
 
         def fast_dec(degree=Infinity):
             if V.dimension() != 1:
-                raise Exception("cone of lines must have dimension 1")
+                raise ValueError("cone of lines must have dimension 1")
             Y = V.hyperplane_section()
             h = rational_map([_random1(Y.ambient().coordinate_ring()),_random1(Y.ambient().coordinate_ring())])
             hY = h(Y)
@@ -1981,7 +1978,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         try:
             g = f.inverse(macaulay2("Verify")._operator('=>',macaulay2(-1)))
         except Exception as err:
-            raise Exception(err)
+            raise RuntimeError(err)
         g = _from_macaulay2map_to_sagemap(g, self.target(), self.source())
         assert(g.source() is self.target() and g.target() is self.source())
         if check:
@@ -2357,7 +2354,7 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
             macaulay2('needsPackage "K3Surfaces"')
             E = macaulay2(v[0]).K3(macaulay2('CoefficientRing => ZZ/' + str(KK if isinstance(KK,(Integer,int)) else KK.characteristic())))
         except Exception as err:
-            raise Exception(err)
+            raise RuntimeError(err)
         multiplicities = []
         for i in range(1,len(v)):
             multiplicities.extend([i for j in range(v[i])])
@@ -2365,7 +2362,7 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
             try:
                 E = (macaulay2(multiplicities)).project(E)
             except Exception as err:
-                raise Exception(err)
+                raise RuntimeError(err)
         return _from_macaulay2_to_sage(E.removeUnderscores(), PP(E.ambient().dim().sage(), KK=KK).ambient_space())
     R = PP(2,KK=KK,var='t').coordinate_ring()
     I = ideal(R.one())
@@ -2395,7 +2392,7 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
             ambient_changed = True
     S = f.image()
     if S.dimension() != 2:
-        raise Exception("failed to construct the surface")
+        raise RuntimeError("failed to construct the surface")
     S = _Rational_projective_surface(S)
     S._linear_system = list(v)
     if nodes is not None and nodes > 0 and S.linear_span().dimension() >= 5:
@@ -2409,10 +2406,10 @@ class _Virtual_projective_surface(Embedded_projective_variety):
 
     TESTS::
 
-        sage: S = _Virtual_projective_surface(ambient=32, degree=62, sectional_genus=32, constant_coefficient_hilbert_polynomial=2, topological_euler_characteristic=24); S
-        virtual surface in PP^32 of degree 62 and sectional genus 32 cut out by at least 435 hypersurfaces of degree 2
+        sage: S = surface(32, virtual=True, class_surfaces='K3'); S
+        virtual K3 surface in PP^32 of degree 62 and sectional genus 32 cut out by at least 435 hypersurfaces of degree 2
         sage: S.projection(4,0,2,1)
-        virtual surface in PP^6 of degree 24 and sectional genus 20 cut out by at least 44 hypersurfaces of degree 4
+        virtual K3 surface in PP^6 of degree 24 and sectional genus 20 cut out by at least 44 hypersurfaces of degree 4
 
     """
     def __init__(self, ambient=None, degree=None, sectional_genus=None, constant_coefficient_hilbert_polynomial=None, topological_euler_characteristic=None, KK=33331):
@@ -2513,20 +2510,20 @@ class _Virtual_projective_surface(Embedded_projective_variety):
             raise NotImplementedError
         S = surface(*self._input_tuple, KK=self.ambient().base_ring(), ambient=self.ambient().dimension(), nodes=None, virtual=False, class_surfaces=self._class_surfaces)
         if S.degree() != self.degree():
-            raise Exception("failed to materialize the virtual surface, wrong degree")
+            raise RuntimeError("failed to materialize the virtual surface, wrong degree")
         if S.sectional_genus() != self.sectional_genus():
-            raise Exception("failed to materialize the virtual surface, wrong sectional genus")
+            raise RuntimeError("failed to materialize the virtual surface, wrong sectional genus")
         if S.hilbert_polynomial().constant_coefficient() != self.hilbert_polynomial().constant_coefficient():
-            raise Exception("failed to materialize the virtual surface, wrong Hilbert polynomial")
+            raise RuntimeError("failed to materialize the virtual surface, wrong Hilbert polynomial")
         if S.linear_span().codimension() != self._dim_homogeneous_component(1):
-            raise Exception("failed to materialize the virtual surface, wrong linear span")
+            raise RuntimeError("failed to materialize the virtual surface, wrong linear span")
         if S.linear_span().codimension() == 0:
             if S.degrees_generators().count(2) != self._dim_homogeneous_component(2):
                 print("warning: got wrong number of quadrics in materialization of virtual surface")
             elif S.degrees_generators().count(2) == 0 and S.degrees_generators().count(3) != self._dim_homogeneous_component(3):
                 print("warning: got wrong number of cubics in materialization of virtual surface")
         if S.topological_euler_characteristic() != self.topological_euler_characteristic():
-            raise Exception("failed to materialize the virtual surface, wrong topological Euler characteristic")
+            raise RuntimeError("failed to materialize the virtual surface, wrong topological Euler characteristic")
         self._materialization = S
         return S
 
@@ -2672,7 +2669,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         try:
             return self._ambient_fivefold
         except AttributeError:
-            raise Exception("cannot find ambient fivefold")
+            raise RuntimeError("cannot find ambient fivefold")
 
     def _lattice_intersection_matrix(self, verbose=None):
         r"""Return the matrix from which we compute the discriminant of ``self``."""
@@ -2866,10 +2863,10 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
         def function_congruence(p, degree=None, verbose=false):
             if degree is None and hasattr(self,"_possible_degrees_for_curves_of_congruence") and len(self._possible_degrees_for_curves_of_congruence) == 0:
-                raise Exception("function 'congruence' failed (with previous runs)")
+                raise RuntimeError("function 'congruence' failed (with previous runs)")
             p = _check_type_embedded_projective_variety(p)
             if not (p._is_point() and p.is_subset(self.ambient_fivefold())):
-                raise Exception("expected a point on the ambient fivefold")
+                raise ValueError("expected a point on the ambient fivefold")
             q = f(p)
             if verbose:
                 print("--computing cone of lines (using sage)...")
@@ -2879,7 +2876,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             D = V._fast_decomposition(degree=1)
             if len(D) == 0:
                 self._possible_degrees_for_curves_of_congruence = set()
-                raise Exception("function 'congruence' failed")
+                raise RuntimeError("function 'congruence' failed")
             if verbose:
                 print("--computing inverse images of lines...")
             curves = [f.inverse_image(q.linear_span()) for q in D]
@@ -2889,7 +2886,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             if degree is None and hasattr(self,"_possible_degrees_for_curves_of_congruence"):
                 degs = list(set(degs).intersection(self._possible_degrees_for_curves_of_congruence))
                 if len(degs) == 0:
-                    raise Exception("function 'congruence' failed (with previous runs)")
+                    raise RuntimeError("function 'congruence' failed (with previous runs)")
             W = []
             for d in degs:
                 E = [C for C in curves if dim_and_degree(C) == (1,d) and dim_and_degree(C.intersection(self.surface())) == (0, d * self._degree_as_hypersurface - 1)]
@@ -2901,12 +2898,12 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 else:
                     self._possible_degrees_for_curves_of_congruence = self._possible_degrees_for_curves_of_congruence.intersection(set([w.degree() for w in W]))
                     if len(self._possible_degrees_for_curves_of_congruence) == 0:
-                        raise Exception("function 'congruence' failed (with previous runs)")
+                        raise RuntimeError("function 'congruence' failed (with previous runs)")
                 if verbose:
                     print("found possible degrees for curves of congruences: " + str(self._possible_degrees_for_curves_of_congruence) + ", rerunning the computation using another point...")
                 return function_congruence(self.ambient_fivefold().point(verbose=verbose, algorithm=algorithm_for_point), degree=None, verbose=verbose)
             if len(W) == 0:
-                raise Exception("function 'congruence' failed")
+                raise RuntimeError("function 'congruence' failed")
                 self._possible_degrees_for_curves_of_congruence = set()
             assert(p.is_subset(W[0]))
             self._possible_degrees_for_curves_of_congruence = set([w.degree() for w in W])
@@ -2916,7 +2913,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         try:
             Curve = function_congruence(p, degree=degree, verbose=verbose)
         except Exception as err:
-            raise Exception(err)
+            raise RuntimeError(err)
         d = Curve.degree()
 
         def function_congruence_with_degree(p):
@@ -2927,7 +2924,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         try:
             congr.check(num_checks, verbose=verbose, algorithm_for_point=algorithm_for_point)
         except Exception:
-            raise Exception("congruence check failed")
+            raise RuntimeError("congruence check failed")
         return congr
 
     def fano_map(self, verbose=None):
@@ -2954,7 +2951,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         try:
             f = X.fanoMap().multirationalMap()
         except Exception as err:
-            raise Exception(err)
+            raise RuntimeError(err)
         F = _from_macaulay2map_to_sagemap(f,Sage_Source = self.ambient_fivefold())
         if verbose:
             print("-- function fanoMap() has successfully terminated. --")
@@ -3109,7 +3106,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             def f_s(p):
                 p = _check_type_embedded_projective_variety(p)
                 if not (p._is_point() and p.is_subset(self.ambient_fivefold())):
-                    raise Exception("expected a point on the ambient fivefold")
+                    raise ValueError("expected a point on the ambient fivefold")
                 C = f(p)
                 D = _from_macaulay2_to_sage(C,self.ambient_space())
                 assert(p.is_subset(D) and D.is_subset(self.ambient_fivefold()) and D.dimension() == 1 and D.degree() == deg_congr)
@@ -3168,7 +3165,7 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
     def __init__(self, S, X, V=None, check=True):
         super().__init__(S,X,V,check=check)
         if not(self.degrees_generators() == (2,2,2) and self.ambient_fivefold().degrees_generators() == (2,2)):
-            raise Exception("something went wrong in constructing complete intersections of three quadrics in PP^7")
+            raise ValueError("something went wrong in constructing complete intersections of three quadrics in PP^7")
         self._degree_as_hypersurface = 2
 
     def _repr_(self):
@@ -3259,7 +3256,7 @@ class Cubic_fourfold(Hodge_special_fourfold):
     def __init__(self, S, X, V=None, check=True):
         super().__init__(S,X,V,check=check)
         if not(self.degree() == 3 and self.codimension() == 1 and len(self.degrees_generators()) == 1):
-            raise Exception("something went wrong in constructing cubic fourfold in PP^5")
+            raise ValueError("something went wrong in constructing cubic fourfold in PP^5")
         self._degree_as_hypersurface = 3
 
     def _repr_(self):
@@ -3354,7 +3351,7 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
     def __init__(self, S, X, V=None, check=True):
         super().__init__(S,X,V,check=check)
         if not(self.ambient().dimension() == 8 and self.degrees_generators() == (2,2,2,2,2,2) and self.degree() == 10 and self.sectional_genus() == 6):
-            raise Exception("something went wrong in constructing Gushel-Mukai fourfold in PP^8")
+            raise ValueError("something went wrong in constructing Gushel-Mukai fourfold in PP^8")
         self._degree_as_hypersurface = 2
 
     def _repr_(self):
@@ -3367,7 +3364,7 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
             elif (a+b) % 2 == 1 and b % 2 == 0:
                 e = "('')"
             else:
-                raise Exception("Internal error encountered.")
+                raise RuntimeError("Internal error encountered.")
         return("Gushel-Mukai fourfold of discriminant " + str(d) + e + " containing a " + str(self.surface()) + ", class of the surface in GG(1,4): " + str((a,b)))
 
     def _latex_(self):
@@ -3478,7 +3475,7 @@ def fourfold(S, X=None, V=None, check=True):
         return F
     if isinstance(S,_Virtual_projective_surface):
         if X is not None or V is not None:
-            raise Exception("fourfold and ambient fivefold don't have to be passed along with a virtual surface")
+            raise TypeError("fourfold and ambient fivefold don't have to be passed along with a virtual surface")
         if S.ambient().dimension() == 5:
             return _Virtual_cubic_fourfold(S, check=check)
         if S.ambient().dimension() == 7:
@@ -3503,7 +3500,7 @@ def fourfold(S, X=None, V=None, check=True):
             X = S.random(3)
         return Cubic_fourfold(S,X,V,check)
     if X is None:
-        raise Exception("missing fourfold in input")
+        raise TypeError("missing fourfold in input")
     if n == 8 and X.degree() == 10 and X.sectional_genus() == 6 and X.degrees_generators() == (2,2,2,2,2,2):
         return GushelMukai_fourfold(S,X,V,check)
     return Hodge_special_fourfold(S,X,V,check)
