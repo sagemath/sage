@@ -238,7 +238,7 @@ class Fields(CategoryWithAxiom):
             TESTS::
 
                 sage: fields = []
-                sage: field += [RR, CC]                                                 # optional - sage.rings.real_mpfr
+                sage: fields += [RR, CC]                                                # optional - sage.rings.real_mpfr
                 sage: fields.append(QQbar)                                              # optional - sage.rings.number_field
                 sage: for A in fields:
                 ....:     g = A._gcd_univariate_polynomial
@@ -333,7 +333,7 @@ class Fields(CategoryWithAxiom):
 
             TESTS::
 
-                sage: field = []
+                sage: fields = []
                 sage: fields += [RR, CC]                                                # optional - sage.rings.real_mpfr
                 sage: fields.append(QQbar)                                              # optional - sage.rings.number_field
                 sage: for A in fields:
