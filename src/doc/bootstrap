@@ -105,8 +105,8 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^s
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
 
-Packages of the Modularized Sage Library
-----------------------------------------
+Distribution Packages of the Sage Library
+-----------------------------------------
 
 EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_' | sort); do
