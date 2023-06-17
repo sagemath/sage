@@ -21,20 +21,12 @@ prune sage/geometry/riemannian_manifolds
 exclude sage/geometry/ribbon_graph.p*                    # depends on sage.groups.perm_gps
 exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense
 
-include sage/numerical/mip.p*
-include sage/numerical/interactive_simplex_method.p*
-include sage/numerical/linear_*.p*
-include sage/numerical/sdp.p*
-include sage/numerical/backends/cvxopt_*.p*
-include sage/numerical/backends/cvxpy_*.p*
-include sage/numerical/backends/generic_*.p*
-include sage/numerical/backends/interactivelp_*.p*
-include sage/numerical/backends/logging_*.p*
-include sage/numerical/backends/matrix_*.p*
-include sage/numerical/backends/ppl_*.p*
-include sage/numerical/backends/scip_*.p*
-
 graft sage/game_theory
+
+graft sage/numerical
+exclude sage/numerical/gauss_legendre.p*                # sagemath-modules
+exclude sage/numerical/optimize.p*                      # sagemath-modules
+exclude sage/numerical/glpk*.p*                         # sagemath-glpk
 
 global-exclude all__sagemath_categories.py
 global-exclude all__sagemath_modules.py

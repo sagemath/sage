@@ -34,9 +34,29 @@ install_requires =
         pplpy          \
         memory_allocator \
         sagemath_modules \
+        sagemath_glpk \
         | sed "2,\$s/^/    /;"')dnl
 
 [options.extras_require]
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
-normaliz = esyscmd(`sage-get-system-packages install-requires pynormaliz')
-polymake = esyscmd(`sage-get-system-packages install-requires jupymake')
+
+# polyhedral libraries
+normaliz    = esyscmd(`sage-get-system-packages install-requires pynormaliz')
+polymake    = esyscmd(`sage-get-system-packages install-requires jupymake')
+ppl =                   # no extra required
+
+# optimization libraries
+cbc         = sagemath-polyhedra[cbc_sage]
+cbc_sage    = esyscmd(`sage-get-system-packages install-requires sage_numerical_backends_coin')
+coin        = sagemath-polyhedra[cbc_sage]
+coin_sage   = sagemath-polyhedra[cbc_sage]
+cplex       = sagemath-polyhedra[cplex_sage]
+cplex_sage  = esyscmd(`sage-get-system-packages install-requires sage_numerical_backends_cplex')
+cvxopt      = sagemath-polyhedra[cvxopt_sage]
+cvxopt_sage = esyscmd(`sage-get-system-packages install-requires cvxopt')
+cvxpy       = esyscmd(`sage-get-system-packages install-requires cvxpy')
+glpk        = sagemath-polyhedra[glpk_sage]
+glpk_sage   =           # no extra required
+gurobi      = sagemath-polyhedra[gurobi_sage]
+gurobi_sage = esyscmd(`sage-get-system-packages install-requires sage_numerical_backends_gurobi')
+scip        = esyscmd(`sage-get-system-packages install-requires pyscipopt')
