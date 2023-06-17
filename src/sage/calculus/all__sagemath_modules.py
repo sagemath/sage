@@ -1,7 +1,7 @@
 from .all__sagemath_categories import *
 
-# from .integration import numerical_integral, monte_carlo_integral
-# integral_numerical = numerical_integral
+from .integration import numerical_integral, monte_carlo_integral
+integral_numerical = numerical_integral
 
 from .interpolation import spline, Spline
 
