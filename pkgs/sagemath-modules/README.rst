@@ -20,22 +20,38 @@ The traditional and recommended way to install SageMath is from source via Sage-
 About this experimental pip-installable source distribution
 -----------------------------------------------------------
 
-This pip-installable source distribution `sagemath-polyhedra` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`), sufficient for computations with convex polyhedra in arbitrary dimension, in exact rational arithmetic.
+This pip-installable source distribution `sagemath-modules` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`).
 
-By default, `sagemath-polyhedra` makes use of the Parma Polyhedra Library (PPL) as a backend for the computations, via https://pypi.org/project/pplpy/, which is a dependency of this distribution.
 
-Using `sagemath-polyhedra`'s unified interface, other optional backends can also be used:
+What is included
+----------------
 
-* Normaliz, via https://pypi.org/project/PyNormaliz/,
-* Polymake, via https://pypi.org/project/JuPyMake/;
-* `cddlib <https://github.com/cddlib/cddlib>`_
+* `Vectors, Vector Spaces, Modules <https://doc.sagemath.org/html/en/reference/modules/index.html>`_
 
-`sagemath-polyhedra` also provides integration with other packages for additional functionality:
+* `Free Modules with Combinatorial Bases <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/free_module.html>`_
 
-* `LattE integrale <https://www.math.ucdavis.edu/~latte/software.php>`_
-* `lrslib <http://cgm.cs.mcgill.ca/~avis/C/lrs.html>`_
+* `Matrices and Spaces of Matrices <https://doc.sagemath.org/html/en/reference/matrices/index.html>`_
 
-Documentation
--------------
+* `Tensor Modules <https://doc.sagemath.org/html/en/reference/tensor_free_modules/index.html>`_
 
-* `Combinatorial and Discrete Geometry <https://doc.sagemath.org/html/en/reference/discrete_geometry/index.html>`_
+* `Additive Abelian Groups <https://doc.sagemath.org/html/en/reference/groups/sage/groups/additive_abelian/additive_abelian_group.html>`_
+
+* `Matrix and Affine Groups <https://doc.sagemath.org/html/en/reference/groups/index.html#matrix-and-affine-groups>`_
+
+* `Root Systems <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/root_system/all.html#sage-combinat-root-system-all>`_
+
+* `Quadratic Forms <https://doc.sagemath.org/html/en/reference/quadratic_forms/index.html>`_
+
+* `Ring Extensions <https://doc.sagemath.org/html/en/reference/rings/sage/rings/ring_extension.html>`_ and `Derivations <https://doc.sagemath.org/html/en/reference/rings/sage/rings/derivation.html>`_
+
+* `Clifford, Exterior <https://doc.sagemath.org/html/en/reference/algebras/sage/algebras/clifford_algebra.html>`_, and  `Weyl Algebras <https://doc.sagemath.org/html/en/reference/algebras/sage/algebras/weyl_algebra.html>`_
+
+* `Chain Complexes, Homology <https://doc.sagemath.org/html/en/reference/homology/index.html>`_, `Free Resolutions <https://doc.sagemath.org/html/en/reference/resolutions/index.html>`_
+
+* `Matroid Theory <https://doc.sagemath.org/html/en/reference/matroids/index.html>`_
+
+* `Coding Theory <https://doc.sagemath.org/html/en/reference/coding/index.html>`_
+
+* `Cryptography <https://doc.sagemath.org/html/en/reference/cryptography/index.html>`_
+
+* `Probability Spaces and Distributions <https://doc.sagemath.org/html/en/reference/probability/index.html>`_, `Statistics <https://doc.sagemath.org/html/en/reference/stats/index.html>`_
