@@ -45,8 +45,8 @@ class KnotInfoColumnTypes(Enum):
         <KnotInfoColumnTypes.OnlyLinks: 'L'>,
         <KnotInfoColumnTypes.KnotsAndLinks: 'B'>]
     """
-    OnlyKnots =     'K'       # column that is only used in the KnotInfo table
-    OnlyLinks =     'L'       # column that is only used in the LinkInfo table
+    OnlyKnots = 'K'       # column that is only used in the KnotInfo table
+    OnlyLinks = 'L'       # column that is only used in the LinkInfo table
     KnotsAndLinks = 'B'       # column that is only used in both tables
 
 
@@ -451,7 +451,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
                 num_knots_file = os.path.join(self._sobj_path, self.filename.knots.num_knots(self.version()))
                 from builtins import FileNotFoundError
                 try:
-                    self._num_knots =  load(num_knots_file)
+                    self._num_knots = load(num_knots_file)
                 except FileNotFoundError:
                     self.create_filecache()
                 self._demo = False
@@ -582,7 +582,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         # ----------------------------------------------------------------
         # Columns that exist for knots and links
         # ----------------------------------------------------------------
-        column_dict =  load('%s/%s' %(sobj_path, self.filename.knots.sobj_column()))
+        column_dict = load('%s/%s' %(sobj_path, self.filename.knots.sobj_column()))
         cols = KnotInfoColumns('ColsTemp', column_dict)
         for col in cols:
             val_list = []

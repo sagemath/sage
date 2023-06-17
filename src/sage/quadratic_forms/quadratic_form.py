@@ -780,7 +780,7 @@ class QuadraticForm(SageObject):
 
         """
         # Unpack the list of indices
-        i, j =  ij
+        i, j = ij
         i = int(i)
         j = int(j)
 
@@ -813,7 +813,7 @@ class QuadraticForm(SageObject):
 
         """
         # Unpack the list of indices
-        i, j =  ij
+        i, j = ij
         i = int(i)
         j = int(j)
 

@@ -4174,7 +4174,7 @@ class TensorField(ModuleElementWithMutability):
             metric = self._domain.metric()
         nabla = metric.connection()
         if n_cov == 0:
-            resu =  nabla(self).trace(n_con-1, n_con)
+            resu = nabla(self).trace(n_con-1, n_con)
         else:
             tup = self.up(metric, self._tensor_rank-1)
             resu = nabla(tup).trace(n_con, self._tensor_rank)
