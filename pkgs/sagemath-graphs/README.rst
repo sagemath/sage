@@ -1,6 +1,6 @@
-===================================================================
- Sage: Open Source Mathematics Software: Graphs, posets, complexes
-===================================================================
+=======================================================================================================================================================
+ Sage: Open Source Mathematics Software: Graphs, posets, hypergraphs, designs, abstract complexes, combinatorial polyhedra, abelian sandpiles, quivers
+=======================================================================================================================================================
 
 About SageMath
 --------------
@@ -20,4 +20,24 @@ The traditional and recommended way to install SageMath is from source via Sage-
 About this experimental pip-installable source distribution
 -----------------------------------------------------------
 
-This pip-installable source distribution `sagemath-graphs` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`) for computations with graphs, posets, and complexes.
+This pip-installable source distribution `sagemath-graphs` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`) for computations with graphs, posets, complexes, etc.
+
+
+What is included
+----------------
+
+* `Graph Theory <https://doc.sagemath.org/html/en/reference/graphs/index.html>`_
+
+* `Trees <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/enumerated_sets.html#trees>`_
+
+* `Posets <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/posets/all.html>`_
+
+* `Abstract Complexes <https://doc.sagemath.org/html/en/reference/topology/index.html>`_
+
+* `Combinatorial Designs and Incidence Structure <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/designs/all.html>`_
+
+* `Finite State Machines, Automata, Transducers <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/finite_state_machine.html>`_
+
+* `Cluster Algebras and Quivers <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/cluster_algebra_quiver/all.html>`_
+
+* `Sandpiles <https://doc.sagemath.org/html/en/reference/dynamics/sage/sandpiles/sandpile.html>`_
