@@ -317,8 +317,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 A = (<LeanMatrix>matrix).copy()   # Deprecated Sage matrix operation
             if keep_initial_representation:
                 self._representation = A.copy()   # Deprecated Sage matrix operation
-            P = gauss_jordan_reduce(A, xrange(A.ncols()))
-            self._A = A.matrix_from_rows_and_columns(range(len(P)), [c for c in xrange(matrix.ncols()) if c not in P])
+            P = gauss_jordan_reduce(A, range(A.ncols()))
+            self._A = A.matrix_from_rows_and_columns(range(len(P)), [c for c in range(matrix.ncols()) if c not in P])
         else:
             reduced = True
             if not isinstance(reduced_matrix, LeanMatrix):
@@ -328,20 +328,20 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                     self._A = GenericMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix, ring=ring)
             else:
                 self._A = (<LeanMatrix>reduced_matrix).copy()   # Deprecated Sage matrix operation
-            P = list(xrange(self._A.nrows()))
+            P = list(range(self._A.nrows()))
         self._prow = <long* > sig_malloc((self._A.nrows() + self._A.ncols()) * sizeof(long))
         if matrix is not None:
-            for r in xrange(len(P)):
+            for r in range(len(P)):
                 self._prow[P[r]] = r
             r = 0
-            for c in xrange(A.ncols()):
+            for c in range(A.ncols()):
                 if c not in P:
                     self._prow[c] = r
                     r += 1
         else:
-            for r from 0 <= r < self._A.nrows():
+            for r in range(self._A.nrows()):
                 self._prow[r] = r
-            for r from 0 <= r < self._A.ncols():
+            for r in range(self._A.ncols()):
                 self._prow[self._A.nrows() + r] = r
         return P
 
@@ -413,7 +413,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         pivi = piv ** (-1)
         self._A.rescale_row_c(px, pivi, 0)
         self._A.set_unsafe(px, py, pivi + self._one)       # pivoting without column scaling. Add extra so column does not need adjusting
-        for r in xrange(self._A.nrows()):            # if A and A' are the matrices before and after pivoting, then
+        for r in range(self._A.nrows()):            # if A and A' are the matrices before and after pivoting, then
             a = self._A.get_unsafe(r, py)       # ker[I A] equals ker[I A'] except for the labelling of the columns
             if a and r != px:
                 self._A.add_multiple_of_row_c(r, px, -a, 0)
@@ -1179,7 +1179,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             return False
         if len(PS) == len(self):
             morphism = {}
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 morphism[min(PS[i])] = min(PO[i])
             return self._is_field_isomorphism(other, morphism)
 
@@ -1191,7 +1191,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             return False
         if len(PS) == len(self):
             morphism = {}
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 morphism[min(PS[i])] = min(PO[i])
             return self._is_field_isomorphism(other, morphism)
 
@@ -2098,11 +2098,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         else:
             M = type(self._A)(self._representation.nrows(), self.size() + 1, self._representation)
         E = self._E + (element,)
-        D = {}
-        for i from 0 <= i < self.size():
-            D[E[i]] = i
+        D = {E[i]: i for i in range(self.size())}
         for chain in chains:
-            for i from 0 <= i < M.nrows():
+            for i in range(M.nrows()):
                 a = self._zero
                 for e in chain:
                     a += M.get_unsafe(i, D[e]) * chain[e]
@@ -2149,11 +2147,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             M = type(self._A)(self._representation.nrows() + 1, self.size() + 1, self._representation)
         M.set_unsafe(M.nrows() - 1, M.ncols() - 1, self._one)
         E = self._E + (element,)
-        D = {}
-        for i from 0 <= i < self.size():
-            D[E[i]] = i
+        D = {E[i]: i for i in range(self.size())}
         for cochain in cochains:
-            for i from 0 <= i < M.ncols() - 1:
+            for i in range(M.ncols() - 1):
                 M.set_unsafe(M.nrows() - 1, i, 0)
             for e in cochain:
                 M.set_unsafe(M.nrows() - 1, D[e], -cochain[e])
@@ -2785,9 +2781,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                         B[x, y] = 0
 
             # remove row x1 and y1
-            Xp = list(xrange(n))
+            Xp = list(range(n))
             Xp.remove(x1)
-            Yp = list(xrange(m))
+            Yp = list(range(m))
             Yp.remove(y1)
 
             B = B.matrix_from_rows_and_columns(Xp,Yp)
@@ -2867,7 +2863,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: OTG1 is OTG2
             True
 
-         """
+        """
         if R is None:
             R = self.base_ring()
 
@@ -2881,7 +2877,6 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                     G, action = action, G
             else:
                 G, action = G_action, None # the None action is g.__call__
-
 
             from sage.algebras.orlik_terao import OrlikTeraoInvariantAlgebra
 
@@ -3091,17 +3086,17 @@ cdef class BinaryMatroid(LinearMatroid):
             if keep_initial_representation:
                 self._representation = A.copy()   # Deprecated Sage matrix operation
             if basis is None:
-                P = gauss_jordan_reduce(A, xrange(A.ncols()))
+                P = gauss_jordan_reduce(A, range(A.ncols()))
                 A.resize(len(P))   # Not a Sage matrix operation
             self._A = A
         else:
             A = BinaryMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix)
-            P = list(xrange(A.nrows()))
+            P = list(range(A.nrows()))
             self._A = A.prepend_identity()   # Not a Sage matrix operation
 
         # Setup groundset, BasisExchangeMatroid data
         if groundset is None:
-            groundset = list(xrange(self._A.ncols()))
+            groundset = list(range(self._A.ncols()))
         else:
             if len(groundset) != self._A.ncols():
                 raise ValueError("size of groundset does not match size of matrix")
@@ -3113,17 +3108,17 @@ cdef class BinaryMatroid(LinearMatroid):
 
         # Setup index of displayed basis
         self._prow = <long* > sig_malloc((self._A.ncols()) * sizeof(long))
-        for c in xrange(self._A.ncols()):
+        for c in range(self._A.ncols()):
             self._prow[c] = -1
         if matrix is not None:
             if basis is None:
-                for r in xrange(len(P)):
+                for r in range(len(P)):
                     self._prow[P[r]] = r
             else:
-                for r in xrange(self._A.nrows()):
+                for r in range(self._A.nrows()):
                     self._prow[self._idx[basis[r]]] = r
         else:
-            for r from 0 <= r < self._A.nrows():
+            for r in range(self._A.nrows()):
                 self._prow[r] = r
 
         self._zero = GF2_zero
@@ -3452,12 +3447,12 @@ cdef class BinaryMatroid(LinearMatroid):
         i = 0
         U = set()
         while i + d < r:
-            for j in xrange(i, r - d):
+            for j in range(i, r - d):
                 if B.row_len(j) % 2 == 1:   # Not a Sage matrix operation
                     B.swap_rows_c(i, j)
                     break
             if B.row_len(i) % 2 == 1:   # Not a Sage matrix operation
-                for j in xrange(i + 1, r - d):
+                for j in range(i + 1, r - d):
                     if B.row_inner_product(i, j):   # Not a Sage matrix operation
                         B.add_multiple_of_row_c(j, i, 1, 0)
                 if B.row_len(i) % 4 == 1:   # Not a Sage matrix operation
@@ -3467,13 +3462,13 @@ cdef class BinaryMatroid(LinearMatroid):
                 U.add(i)
                 i += 1
             else:
-                for j in xrange(i + 1, r - d):
+                for j in range(i + 1, r - d):
                     if B.row_inner_product(i, j):   # Not a Sage matrix operation
                         B.swap_rows_c(i + 1, j)
                         break
                 if i + 1 < r - d:
                     if B.row_inner_product(i, i + 1):   # Not a Sage matrix operation
-                        for j in xrange(i + 2, r):
+                        for j in range(i + 2, r):
                             if B.row_inner_product(i, j):   # Not a Sage matrix operation
                                 B.add_multiple_of_row_c(j, i + 1, 1, 0)
                             if B.row_inner_product(i + 1, j):   # Not a Sage matrix operation
@@ -3488,7 +3483,7 @@ cdef class BinaryMatroid(LinearMatroid):
                     d += 1
 
         doubly_even = True
-        for i in xrange(r - d, r):
+        for i in range(r - d, r):
             if B.row_len(i) % 4 == 2:   # Not a Sage matrix operation
                 doubly_even = False
                 break
@@ -3505,8 +3500,8 @@ cdef class BinaryMatroid(LinearMatroid):
         self._b_projection = BT._matrix_times_matrix_((B._matrix_times_matrix_(BT))._matrix_times_matrix_(B))
         P = [F0, Fp]
         p = []
-        for a in xrange(2):
-            for b in xrange(a + 1):
+        for a in range(2):
+            for b in range(a + 1):
                 x = 0
                 for i in P[a]:
                     for j in P[b]:
@@ -3839,16 +3834,16 @@ cdef class BinaryMatroid(LinearMatroid):
 
         c = 1
         col = {}
-        for e in xrange(len(B)):
+        for e in range(len(B)):
             for f in range(len(B)):
                 if e is not f:
                     col[e, f] = c
                     c += 1
         M = []
         r = 0
-        for e in xrange(len(B)):
-            for f in xrange(e):
-                for g in xrange(f):
+        for e in range(len(B)):
+            for f in range(e):
+                for g in range(f):
                     if not C[e].issuperset(C[f] & C[g]):
                         M.append([col[e,f], col[e,g]])
                         r += 1
@@ -4158,17 +4153,17 @@ cdef class TernaryMatroid(LinearMatroid):
             if keep_initial_representation:
                 self._representation = A.copy()   # Deprecated Sage matrix operation
             if basis is None:
-                P = gauss_jordan_reduce(A, xrange(A.ncols()))
+                P = gauss_jordan_reduce(A, range(A.ncols()))
                 A.resize(len(P))   # Not a Sage matrix operation
             self._A = A
         else:
             A = TernaryMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix)
-            P = list(xrange(A.nrows()))
+            P = list(range(A.nrows()))
             self._A = A.prepend_identity()   # Not a Sage matrix operation
 
         # Setup groundset, BasisExchangeMatroid data
         if groundset is None:
-            groundset = list(xrange(self._A.ncols()))
+            groundset = list(range(self._A.ncols()))
         else:
             if len(groundset) != self._A.ncols():
                 raise ValueError("size of groundset does not match size of matrix")
@@ -4180,17 +4175,17 @@ cdef class TernaryMatroid(LinearMatroid):
 
         # Setup index of displayed basis
         self._prow = <long* > sig_malloc((self._A.ncols()) * sizeof(long))
-        for c in xrange(self._A.ncols()):
+        for c in range(self._A.ncols()):
             self._prow[c] = -1
         if matrix is not None:
             if basis is None:
-                for r in xrange(len(P)):
+                for r in range(len(P)):
                     self._prow[P[r]] = r
             else:
-                for r in xrange(self._A.nrows()):
+                for r in range(self._A.nrows()):
                     self._prow[self._idx[basis[r]]] = r
         else:
-            for r from 0 <= r < self._A.nrows():
+            for r in range(self._A.nrows()):
                 self._prow[r] = r
 
         self._zero = GF3_zero
@@ -4486,7 +4481,7 @@ cdef class TernaryMatroid(LinearMatroid):
         c = self._one
         i = 0
         while i < r - d:
-            for j in xrange(i, r - d):
+            for j in range(i, r - d):
                 if T.row_inner_product(j, j) != 0:   # Not a Sage matrix operation
                     if j > i:
                         T.swap_rows_c(i, j)
@@ -4501,7 +4496,7 @@ cdef class TernaryMatroid(LinearMatroid):
                 T.swap_rows_c(i, r - d)
             else:
                 c = c * GF3(x)
-                for j in xrange(i + 1, r - d):
+                for j in range(i + 1, r - d):
                     y = T.row_inner_product(i, j)   # Not a Sage matrix operation
                     if y == 0:
                         continue
@@ -4514,16 +4509,16 @@ cdef class TernaryMatroid(LinearMatroid):
         TT = T.transpose()
         self._t_projection = TT._matrix_times_matrix_((T._matrix_times_matrix_(TT))._matrix_times_matrix_(T))
         F = frozenset()
-        for i in xrange(r - d, r):
+        for i in range(r - d, r):
             F = F | frozenset(T.nonzero_positions_in_row(i))
-        Fa = frozenset([j for j in xrange(len(self)) if self._t_projection.get(j, j) == 0]) - F   # Not a Sage matrix operation
-        Fb = frozenset([j for j in xrange(len(self)) if self._t_projection.get(j, j) == 1]) - F   # Not a Sage matrix operation
-        Fc = frozenset([j for j in xrange(len(self)) if self._t_projection.get(j, j) == -1]) - F   # Not a Sage matrix operation
+        Fa = frozenset([j for j in range(len(self)) if self._t_projection.get(j, j) == 0]) - F   # Not a Sage matrix operation
+        Fb = frozenset([j for j in range(len(self)) if self._t_projection.get(j, j) == 1]) - F   # Not a Sage matrix operation
+        Fc = frozenset([j for j in range(len(self)) if self._t_projection.get(j, j) == -1]) - F   # Not a Sage matrix operation
 
         P = [Fa, Fb, Fc]
         p = []
-        for a in xrange(3):
-            for b in xrange(a + 1):
+        for a in range(3):
+            for b in range(a + 1):
                 x = 0
                 for i in P[a]:
                     for j in P[b]:
@@ -5057,17 +5052,17 @@ cdef class QuaternaryMatroid(LinearMatroid):
             if keep_initial_representation:
                 self._representation = A.copy()   # Deprecated Sage matrix operation
             if basis is None:
-                P = gauss_jordan_reduce(A, xrange(A.ncols()))
+                P = gauss_jordan_reduce(A, range(A.ncols()))
                 A.resize(len(P))   # Not a Sage matrix operation
             self._A = A
         else:
             A = QuaternaryMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix, ring=ring)
-            P = list(xrange(A.nrows()))
+            P = list(range(A.nrows()))
             self._A = A.prepend_identity()   # Not a Sage matrix operation
 
         # Setup groundset, BasisExchangeMatroid data
         if groundset is None:
-            groundset = list(xrange(self._A.ncols()))
+            groundset = list(range(self._A.ncols()))
         else:
             if len(groundset) != self._A.ncols():
                 raise ValueError("size of groundset does not match size of matrix")
@@ -5079,17 +5074,17 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         # Setup index of displayed basis
         self._prow = <long* > sig_malloc((self._A.ncols()) * sizeof(long))
-        for c in xrange(self._A.ncols()):
+        for c in range(self._A.ncols()):
             self._prow[c] = -1
         if matrix is not None:
             if basis is None:
-                for r in xrange(len(P)):
+                for r in range(len(P)):
                     self._prow[P[r]] = r
             else:
-                for r in xrange(self._A.nrows()):
+                for r in range(self._A.nrows()):
                     self._prow[self._idx[basis[r]]] = r
         else:
-            for r from 0 <= r < self._A.nrows():
+            for r in range(self._A.nrows()):
                 self._prow[r] = r
 
         self._zero = (<QuaternaryMatrix>self._A)._zero
@@ -5340,7 +5335,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         d = 0
         i = 0
         while i < r - d:
-            for j in xrange(i, r - d):
+            for j in range(i, r - d):
                 if Q.row_inner_product(j, j) != 0:   # Not a Sage matrix operation
                     if j > i:
                         Q.swap_rows_c(i, j)
@@ -5355,7 +5350,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
                 d += 1
                 Q.swap_rows_c(i, r - d)
             else:
-                for j in xrange(i + 1, r - d):
+                for j in range(i + 1, r - d):
                     y = Q.row_inner_product(j, i)   # Not a Sage matrix operation
                     if y == 0:
                         continue
@@ -5366,15 +5361,15 @@ cdef class QuaternaryMatroid(LinearMatroid):
         QT.conjugate()   # Not a Sage matrix operation
         self._q_projection = QT._matrix_times_matrix_((Q._matrix_times_matrix_(QT))._matrix_times_matrix_(Q))
         F = frozenset()
-        for i in xrange(r - d, r):
+        for i in range(r - d, r):
             F = F | frozenset(Q.nonzero_positions_in_row(i))
-        Fa = frozenset([j for j in xrange(len(self)) if self._q_projection.get(j, j) == 0]) - F   # Not a Sage matrix operation
-        Fb = frozenset([j for j in xrange(len(self)) if self._q_projection.get(j, j) == 1]) - F   # Not a Sage matrix operation
+        Fa = frozenset([j for j in range(len(self)) if self._q_projection.get(j, j) == 0]) - F   # Not a Sage matrix operation
+        Fb = frozenset([j for j in range(len(self)) if self._q_projection.get(j, j) == 1]) - F   # Not a Sage matrix operation
 
         P = [Fa, Fb]
         p = []
-        for a in xrange(2):
-            for b in xrange(a + 1):
+        for a in range(2):
+            for b in range(a + 1):
                 x = 0
                 for i in P[a]:
                     for j in P[b]:
@@ -5787,28 +5782,28 @@ cdef class RegularMatroid(LinearMatroid):
                 A = (<PlusMinusOneMatrix>matrix).copy()   # Deprecated Sage matrix operation
             if keep_initial_representation:
                 self._representation = A.copy()   # Deprecated Sage matrix operation
-            P = gauss_jordan_reduce(A, xrange(A.ncols()))
-            self._A = A.matrix_from_rows_and_columns(range(len(P)), [c for c in xrange(matrix.ncols()) if c not in P])
+            P = gauss_jordan_reduce(A, range(A.ncols()))
+            self._A = A.matrix_from_rows_and_columns(range(len(P)), [c for c in range(matrix.ncols()) if c not in P])
         else:
             reduced = True
             if not isinstance(reduced_matrix, PlusMinusOneMatrix):
                 self._A = PlusMinusOneMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix)
             else:
                 self._A = (<PlusMinusOneMatrix>reduced_matrix).copy()   # Deprecated Sage matrix operation
-            P = list(xrange(self._A.nrows()))
+            P = list(range(self._A.nrows()))
         self._prow = <long* > sig_malloc((self._A.nrows() + self._A.ncols()) * sizeof(long))
         if matrix is not None:
-            for r in xrange(len(P)):
+            for r in range(len(P)):
                 self._prow[P[r]] = r
             r = 0
-            for c in xrange(A.ncols()):
+            for c in range(A.ncols()):
                 if c not in P:
                     self._prow[c] = r
                     r += 1
         else:
-            for r from 0 <= r < self._A.nrows():
+            for r in range(self._A.nrows()):
                 self._prow[r] = r
-            for r from 0 <= r < self._A.ncols():
+            for r in range(self._A.ncols()):
                 self._prow[self._A.nrows() + r] = r
         return P
 
@@ -5860,7 +5855,7 @@ cdef class RegularMatroid(LinearMatroid):
         pivi = piv  # NOTE: 1 and -1 are their own inverses.
         (<PlusMinusOneMatrix>self._A).rescale_row_c(px, pivi, 0)
         (<PlusMinusOneMatrix>self._A).set(px, py, pivi + 1)       # pivoting without column scaling. Add extra so column does not need adjusting   # Not a Sage matrix operation
-        for r in xrange(self._A.nrows()):                 # if A and A' are the matrices before and after pivoting, then
+        for r in range(self._A.nrows()):                 # if A and A' are the matrices before and after pivoting, then
             a = (<PlusMinusOneMatrix>self._A).get(r, py)       # ker[I A] equals ker[I A'] except for the labelling of the columns   # Not a Sage matrix operation
             if a and r != px:
                 (<PlusMinusOneMatrix>self._A).add_multiple_of_row_c(r, px, -a, 0)
@@ -5986,14 +5981,14 @@ cdef class RegularMatroid(LinearMatroid):
         A = {}
         B = {}
         N = 0
-        for i in xrange(P.nrows()):
+        for i in range(P.nrows()):
             w = P.get_unsafe(i, i)
             if w != 0:
                 if w in A:
                     A[w] += 1
                 else:
                     A[w] = 1
-            for j in xrange(i):
+            for j in range(i):
                 w = abs(P.get_unsafe(i, j))
                 if w != 0:
                     if w in B:
@@ -6052,7 +6047,7 @@ cdef class RegularMatroid(LinearMatroid):
                 else:
                     A[w] = [e]
                 V.append(e)
-            for j in xrange(i):
+            for j in range(i):
                 f = self._E[j]
                 w = abs(P.get_unsafe(i, j))
                 if w != 0:
