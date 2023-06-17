@@ -519,7 +519,6 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         except ImportError:
             pass
 
-
     def Y_lambdacheck(self, lambdacheck):
         r"""
         Return the Cherednik operators `Y^{\lambda^\vee}` for this representation of an affine Hecke algebra.
