@@ -37,6 +37,7 @@ class RDFInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import *
             sage: interp = RDFInterpreter()
             sage: interp.name
             'rdf'
@@ -60,14 +61,14 @@ class RDFInterpreter(StackInterpreter):
 
         Make sure that pow behaves reasonably::
 
-            sage: var('x,y')
+            sage: var('x,y')                                                            # optional - sage.symbolic
             (x, y)
-            sage: ff = fast_callable(x^y, vars=[x,y], domain=RDF)
-            sage: ff(1.5, 3)
+            sage: ff = fast_callable(x^y, vars=[x,y], domain=RDF)                       # optional - sage.symbolic
+            sage: ff(1.5, 3)                                                            # optional - sage.symbolic
             3.375
-            sage: ff(-2, 3)
+            sage: ff(-2, 3)                                                             # optional - sage.symbolic
             -8.0
-            sage: ff(-2, 1/3)
+            sage: ff(-2, 1/3)                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: negative number to a fractional power not real

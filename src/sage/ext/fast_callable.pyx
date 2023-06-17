@@ -490,7 +490,8 @@ def _builder_and_stream(vars, domain):
 
         sage: from sage.ext.fast_callable import _builder_and_stream
         sage: _builder_and_stream(["x", "y"], ZZ)
-
+        (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
+         <sage.ext.fast_callable.InstructionStream object at 0x...>)
     """
     if isinstance(domain, sage.rings.abc.RealField):
         try:
