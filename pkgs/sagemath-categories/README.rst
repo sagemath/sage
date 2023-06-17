@@ -42,16 +42,19 @@ What is included
 
 * `Categories and functorial constructions <https://doc.sagemath.org/html/en/reference/categories/index.html>`_
 
-* `Sets <https://doc.sagemath.org/html/en/reference/sets/index.html>`_ (except `RealSet`)
+* `Sets <https://doc.sagemath.org/html/en/reference/sets/index.html>`_
 
-* Basic Combinatorial and Data Structures: `Binary trees <https://doc.sagemath.org/html/en/reference/data_structures/sage/misc/binary_tree.html>`_, `Bitsets <https://doc.sagemath.org/html/en/reference/data_structures/sage/data_structures/bitset.html>`_, `Permutations <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/permutation.html>_`,
+* Basic Combinatorial and Data Structures: `Binary trees <https://doc.sagemath.org/html/en/reference/data_structures/sage/misc/binary_tree.html>`_, `Bitsets <https://doc.sagemath.org/html/en/reference/data_structures/sage/data_structures/bitset.html>`_, `Permutations <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/permutation.html>`_, Combinations
 
-* Basic Rings and Fields: `Integers, Rationals <https://doc.sagemath.org/html/en/reference/rings_standard/index.html>`_
+* Basic Rings and Fields: `Integers, Rationals <https://doc.sagemath.org/html/en/reference/rings_standard/index.html>`_, `Double Precision Reals <https://doc.sagemath.org/html/en/reference/rings_numerical/sage/rings/real_double.html>`_, `Z/nZ <https://doc.sagemath.org/html/en/reference/finite_rings/sage/rings/finite_rings/integer_mod_ring.html>`_
 
-* `Commutative Polynomials <https://doc.sagemath.org/html/en/reference/polynomial_rings/index.html>`_, `Power Series and Laurent Series <https://doc.sagemath.org/html/en/reference/power_series/index.html>`_,
+* `Commutative Polynomials <https://doc.sagemath.org/html/en/reference/polynomial_rings/index.html>`_, `Power Series and Laurent Series <https://doc.sagemath.org/html/en/reference/power_series/index.html>`_, `Rational Function Fields <https://doc.sagemath.org/html/en/reference/function_fields/index.html>`_
 
 * Arithmetic Functions, `Elementary and Special Functions <https://doc.sagemath.org/html/en/reference/functions/index.html>`_ as generic entry points
 
+* Base classes for Groups, Rings, `Finite Fields <https://doc.sagemath.org/html/en/reference/finite_rings/sage/rings/finite_rings/finite_field_constructor.html>`_, `Number Fields <https://doc.sagemath.org/html/en/reference/number_fields/sage/rings/number_field/number_field_base.html>`_, `Schemes <https://doc.sagemath.org/html/en/reference/schemes/index.html>`_
+
+* Facilities for `Parallel Computing <https://doc.sagemath.org/html/en/reference/parallel/index.html>`_, `Formatted Output <https://doc.sagemath.org/html/en/reference/misc/index.html#formatted-output>`_
 
 Available in other distribution packages
 ----------------------------------------
