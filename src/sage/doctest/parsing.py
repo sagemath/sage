@@ -139,7 +139,7 @@ def parse_optional_tags(string):
     # strip_string_literals replaces comments
     comment = "#" + (literals[comment]).lower()
 
-    optional_regex = re.compile(r'arb216|arb218|py2|long time|not implemented|not tested|known bug' \
+    optional_regex = re.compile(r'arb216|arb218|py2|long time|not implemented|not tested|known bug'
                                 r'|[^ a-z]\s*(optional|needs)\s*[:-]*((?:\s|\w|[.])*)')
 
     tags = []
