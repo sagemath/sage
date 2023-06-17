@@ -89,8 +89,8 @@ fi
 OUTPUT_INDEX="$OUTPUT_DIR"/index.rst
 cat > "$OUTPUT_INDEX" <<EOF
 
-Features, Distributions, and External Packages
-==============================================
+Packages and Features
+=====================
 
 Standard Packages
 -----------------
@@ -122,19 +122,6 @@ optional packages.
 
 EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | grep -v '^sagemath_' | sort); do
-    echo "* :ref:\`spkg_$PKG_BASE\`"
-done >> "$OUTPUT_INDEX"
-cat >> "$OUTPUT_INDEX" <<EOF
-
-Experimental Packages
----------------------
-
-Some packages that provide additional functionality are marked as
-"experimental".  Developers are needed in order to improve the
-integration of these packages into the Sage distribution.
-
-EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_' | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -185,6 +172,19 @@ All External Packages
    index_alph
 
 EOF
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Experimental Packages
+---------------------
+
+Some packages that provide additional functionality are marked as
+"experimental".  Developers are needed in order to improve the
+integration of these packages into the Sage distribution.
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_' | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
 
 OUTPUT_INDEX="$OUTPUT_DIR"/index_alph.rst
 cat >> "$OUTPUT_INDEX" <<EOF
