@@ -146,6 +146,8 @@ Features
    :maxdepth: 1
 
    sage/features
+   sage/features/join_feature
+   sage/features/all
    sage/features/sagemath
    sage/features/pkg_systems
    sage/features/bliss
@@ -173,8 +175,6 @@ Features
    sage/features/polymake
    sage/features/rubiks
    sage/features/tdlib
-   sage/features/join_feature
-   sage/features/all
 
 All External Packages
 ---------------------
