@@ -153,15 +153,6 @@ Features
    sage/features/polymake
    sage/features/rubiks
    sage/features/tdlib
-
-All External Packages
----------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   index_alph
-
 EOF
 cat >> "$OUTPUT_INDEX" <<EOF
 
@@ -185,6 +176,18 @@ EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_' | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
+
+cat >> "$OUTPUT_INDEX" <<EOF
+
+All External Packages
+---------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   index_alph
+
+EOF
 
 OUTPUT_INDEX="$OUTPUT_DIR"/index_alph.rst
 cat >> "$OUTPUT_INDEX" <<EOF
