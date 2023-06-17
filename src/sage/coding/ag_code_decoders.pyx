@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.finite_rings sage.schemes
 r"""
 Decoders for AG codes
 

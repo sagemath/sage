@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Cyclic code
 
@@ -50,7 +51,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Zmod
 
 def find_generator_polynomial(code, check=True):
     r"""
-    Returns a possible generator polynomial for ``code``.
+    Return a possible generator polynomial for ``code``.
 
     If the code is cyclic, the generator polynomial is the gcd of all the
     polynomial forms of the codewords. Conversely, if this gcd exactly
@@ -95,7 +96,7 @@ def find_generator_polynomial(code, check=True):
 
 def _to_complete_list(poly, length):
     r"""
-    Returns the vector of length exactly ``length`` corresponding to the
+    Return the vector of length exactly ``length`` corresponding to the
     coefficients of the provided polynomial. If needed, zeros are added.
 
     INPUT:
@@ -122,7 +123,7 @@ def _to_complete_list(poly, length):
 
 def bch_bound(n, D, arithmetic=False):
     r"""
-    Returns the BCH bound obtained for a cyclic code of length ``n`` and
+    Return the BCH bound obtained for a cyclic code of length ``n`` and
     defining set ``D``.
 
     Consider a cyclic code `C`, with defining set `D`, length `n`, and minimum
@@ -212,7 +213,7 @@ class CyclicCode(AbstractLinearCode):
     r"""
     Representation of a cyclic code.
 
-    We propose three different ways to create a new CyclicCode, either by
+    We propose three different ways to create a new :class:`CyclicCode`, either by
     providing:
 
     - the generator polynomial and the length (1)
@@ -224,7 +225,7 @@ class CyclicCode(AbstractLinearCode):
     cyclic codes such that its length `n` and field order `q` are coprimes.
 
     Depending on which behaviour you want, you need to specify the names of the
-    arguments to CyclicCode. See EXAMPLES section below for details.
+    arguments to :class:`CyclicCode`. See EXAMPLES section below for details.
 
     INPUT:
 
@@ -256,13 +257,13 @@ class CyclicCode(AbstractLinearCode):
 
     EXAMPLES:
 
-    We can construct a CyclicCode object using three different methods.
+    We can construct a :class:`CyclicCode` object using three different methods.
     First (1), we provide a generator polynomial and a code length::
 
         sage: F.<x> = GF(2)[]
         sage: n = 7
         sage: g = x ** 3 + x + 1
-        sage: C = codes.CyclicCode(generator_pol = g, length = n)
+        sage: C = codes.CyclicCode(generator_pol=g, length=n)
         sage: C
         [7, 4] Cyclic Code over GF(2)
 
@@ -280,7 +281,7 @@ class CyclicCode(AbstractLinearCode):
 
         sage: F = GF(16, 'a')
         sage: n = 15
-        sage: Cc = codes.CyclicCode(length = n, field = F, D = [1,2])
+        sage: Cc = codes.CyclicCode(length=n, field=F, D = [1,2])
         sage: Cc
         [15, 13] Cyclic Code over GF(16)
     """
@@ -299,7 +300,7 @@ class CyclicCode(AbstractLinearCode):
             sage: F.<x> = GF(2)[]
             sage: n = 2
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             Traceback (most recent call last):
             ...
             ValueError: Only cyclic codes whose length and field order are coprimes are implemented.
@@ -465,7 +466,7 @@ class CyclicCode(AbstractLinearCode):
 
     def __contains__(self, word):
         r"""
-        Returns ``True`` if ``word`` belongs to ``self``, ``False`` otherwise.
+        Return ``True`` if ``word`` belongs to ``self``, ``False`` otherwise.
 
         INPUT:
 
@@ -513,7 +514,7 @@ class CyclicCode(AbstractLinearCode):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -530,7 +531,7 @@ class CyclicCode(AbstractLinearCode):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -547,7 +548,7 @@ class CyclicCode(AbstractLinearCode):
 
     def generator_polynomial(self):
         r"""
-        Returns the generator polynomial of ``self``.
+        Return the generator polynomial of ``self``.
 
         EXAMPLES::
 
@@ -562,7 +563,7 @@ class CyclicCode(AbstractLinearCode):
 
     def field_embedding(self):
         r"""
-        Returns the base field embedding into the splitting field.
+        Return the base field embedding into the splitting field.
 
         EXAMPLES::
 
@@ -582,7 +583,7 @@ class CyclicCode(AbstractLinearCode):
 
     def defining_set(self, primitive_root=None):
         r"""
-        Returns the set of exponents of the roots of ``self``'s generator
+        Return the set of exponents of the roots of ``self``'s generator
         polynomial over the extension field. Of course, it depends on the
         choice of the primitive root of the splitting field.
 
@@ -674,7 +675,7 @@ class CyclicCode(AbstractLinearCode):
 
     def primitive_root(self):
         r"""
-        Returns the primitive root of the splitting field that is used
+        Return the primitive root of the splitting field that is used
         to build the defining set of the code.
 
         If it has not been specified by the user, it is set by default with the
@@ -692,7 +693,8 @@ class CyclicCode(AbstractLinearCode):
             sage: F = GF(16, 'a')
             sage: n = 15
             sage: a = F.gen()
-            sage: Cc = codes.CyclicCode(length = n, field = F, D = [1,2], primitive_root = a^2 + 1)
+            sage: Cc = codes.CyclicCode(length=n, field=F, D=[1,2],
+            ....:                       primitive_root=a^2 + 1)
             sage: Cc.primitive_root()
             a^2 + 1
         """
@@ -705,7 +707,7 @@ class CyclicCode(AbstractLinearCode):
     @cached_method
     def check_polynomial(self):
         r"""
-        Returns the check polynomial of ``self``.
+        Return the check polynomial of ``self``.
 
         Let `C` be a cyclic code of length `n` and `g` its generator
         polynomial. The following: `h = \frac{x^n - 1}{g(x)}` is called `C`'s
@@ -716,7 +718,7 @@ class CyclicCode(AbstractLinearCode):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: h = C.check_polynomial()
             sage: h == (x**n - 1)/C.generator_polynomial()
             True
@@ -729,7 +731,7 @@ class CyclicCode(AbstractLinearCode):
     @cached_method
     def parity_check_matrix(self):
         r"""
-        Returns the parity check matrix of ``self``.
+        Return the parity check matrix of ``self``.
 
         The parity check matrix of a linear code `C` corresponds to the
         generator matrix of the dual code of `C`.
@@ -739,7 +741,7 @@ class CyclicCode(AbstractLinearCode):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: C.parity_check_matrix()
             [1 0 1 1 1 0 0]
             [0 1 0 1 1 1 0]
@@ -755,7 +757,7 @@ class CyclicCode(AbstractLinearCode):
 
     def bch_bound(self, arithmetic=False):
         r"""
-        Returns the BCH bound of ``self`` which is a bound on ``self``
+        Return the BCH bound of ``self`` which is a bound on ``self``
         minimum distance.
 
         See :meth:`sage.coding.cyclic_code.bch_bound` for details.
@@ -776,14 +778,14 @@ class CyclicCode(AbstractLinearCode):
             sage: F = GF(16, 'a')
             sage: n = 15
             sage: D = [14,1,2,11,12]
-            sage: C = codes.CyclicCode(field = F, length = n, D = D)
+            sage: C = codes.CyclicCode(field=F, length=n, D = D)
             sage: C.bch_bound()
             (3, (1, 1))
 
             sage: F = GF(16, 'a')
             sage: n = 15
             sage: D = [14,1,2,11,12]
-            sage: C = codes.CyclicCode(field = F, length = n, D = D)
+            sage: C = codes.CyclicCode(field=F, length=n, D = D)
             sage: C.bch_bound(True)
             (4, (2, 12))
         """
@@ -791,7 +793,7 @@ class CyclicCode(AbstractLinearCode):
 
     def surrounding_bch_code(self):
         r"""
-        Returns the surrounding BCH code of ``self``.
+        Return the surrounding BCH code of ``self``.
 
         EXAMPLES::
 
@@ -818,7 +820,7 @@ class CyclicCodePolynomialEncoder(Encoder):
     and let `g` be its generator polynomial.
 
     This encoder encodes any polynomial `p \in F[x]_{<k}` by computing
-    `c = p \times g` and returning the vector of its coefficients.
+    `c = p g` and returning the vector of its coefficients.
 
     INPUT:
 
@@ -829,7 +831,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         sage: F.<x> = GF(2)[]
         sage: n = 7
         sage: g = x ** 3 + x + 1
-        sage: C = codes.CyclicCode(generator_pol = g, length = n)
+        sage: C = codes.CyclicCode(generator_pol=g, length=n)
         sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
         sage: E
         Polynomial-style encoder for [7, 4] Cyclic Code over GF(2)
@@ -842,7 +844,7 @@ class CyclicCodePolynomialEncoder(Encoder):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: E
             Polynomial-style encoder for [7, 4] Cyclic Code over GF(2)
@@ -861,7 +863,7 @@ class CyclicCodePolynomialEncoder(Encoder):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E1 = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: E2 = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: E1 == E2
@@ -872,14 +874,14 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: E
             Polynomial-style encoder for [7, 4] Cyclic Code over GF(2)
@@ -888,14 +890,14 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: latex(E)
             \textnormal{Polynomial-style encoder for }[7, 4] \textnormal{ Cyclic Code over } \Bold{F}_{2}
@@ -920,7 +922,7 @@ class CyclicCodePolynomialEncoder(Encoder):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: m = x ** 2 + 1
             sage: E.encode(m)
@@ -936,7 +938,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def unencode_nocheck(self, c):
         r"""
-        Returns the message corresponding to ``c``.
+        Return the message corresponding to ``c``.
         Does not check if ``c`` belongs to the code.
 
         INPUT:
@@ -952,7 +954,7 @@ class CyclicCodePolynomialEncoder(Encoder):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: c = vector(GF(2), (1, 1, 1, 0, 0, 1, 0))
             sage: E.unencode_nocheck(c)
@@ -965,14 +967,14 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Returns the message space of ``self``
+        Return the message space of ``self``
 
         EXAMPLES::
 
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
             sage: E.message_space()
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
@@ -991,8 +993,7 @@ class CyclicCodeVectorEncoder(Encoder):
     This codeword can be seen as a polynomial over `F[x]`, as follows:
     `P_m = \Sigma_{i=0}^{k-1} m_i \times x^i`.
 
-    To encode `m`, this encoder does the following multiplication:
-    `P_m \times g`.
+    To encode `m`, this encoder does the multiplication `P_m  g`.
 
     INPUT:
 
@@ -1003,7 +1004,7 @@ class CyclicCodeVectorEncoder(Encoder):
         sage: F.<x> = GF(2)[]
         sage: n = 7
         sage: g = x ** 3 + x + 1
-        sage: C = codes.CyclicCode(generator_pol = g, length = n)
+        sage: C = codes.CyclicCode(generator_pol=g, length=n)
         sage: E = codes.encoders.CyclicCodeVectorEncoder(C)
         sage: E
         Vector-style encoder for [7, 4] Cyclic Code over GF(2)
@@ -1017,7 +1018,7 @@ class CyclicCodeVectorEncoder(Encoder):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: E
             Vector-style encoder for [7, 4] Cyclic Code over GF(2)
@@ -1036,7 +1037,7 @@ class CyclicCodeVectorEncoder(Encoder):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E1 = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: E2 = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: E1 == E2
@@ -1047,14 +1048,14 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: E
             Vector-style encoder for [7, 4] Cyclic Code over GF(2)
@@ -1063,14 +1064,14 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: latex(E)
             \textnormal{Vector-style encoder for }[7, 4] \textnormal{ Cyclic Code over } \Bold{F}_{2}
@@ -1095,7 +1096,7 @@ class CyclicCodeVectorEncoder(Encoder):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: m = vector(GF(2), (1, 0, 1, 0))
             sage: E.encode(m)
@@ -1116,7 +1117,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def unencode_nocheck(self, c):
         r"""
-        Returns the message corresponding to ``c``.
+        Return the message corresponding to ``c``.
         Does not check if ``c`` belongs to the code.
 
         INPUT:
@@ -1132,7 +1133,7 @@ class CyclicCodeVectorEncoder(Encoder):
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: c = vector(GF(2), (1, 1, 1, 0, 0, 1, 0))
             sage: E.unencode_nocheck(c)
@@ -1148,14 +1149,14 @@ class CyclicCodeVectorEncoder(Encoder):
     @cached_method
     def generator_matrix(self):
         r"""
-        Returns a generator matrix of ``self``
+        Return a generator matrix of ``self``
 
         EXAMPLES::
 
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: E.generator_matrix()
             [1 1 0 1 0 0 0]
@@ -1173,14 +1174,14 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Returns the message space of ``self``
+        Return the message space of ``self``
 
         EXAMPLES::
 
             sage: F.<x> = GF(2)[]
             sage: n = 7
             sage: g = x ** 3 + x + 1
-            sage: C = codes.CyclicCode(generator_pol = g, length = n)
+            sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodeVectorEncoder(C)
             sage: E.message_space()
             Vector space of dimension 4 over Finite Field of size 2
@@ -1239,7 +1240,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -1253,7 +1254,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -1267,7 +1268,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def bch_code(self):
         r"""
-        Returns the surrounding BCH code of
+        Return the surrounding BCH code of
         :meth:`sage.coding.encoder.Encoder.code`.
 
         EXAMPLES::
@@ -1281,14 +1282,15 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def bch_decoder(self):
         r"""
-        Returns the decoder that will be used over the surrounding BCH code.
+        Return the decoder that will be used over the surrounding BCH code.
 
         EXAMPLES::
 
             sage: C = codes.CyclicCode(field=GF(16), length=15, D=[14, 1, 2, 11, 12])
             sage: D = codes.decoders.CyclicCodeSurroundingBCHDecoder(C)
             sage: D.bch_decoder()
-            Decoder through the underlying GRS code of [15, 12] BCH Code over GF(16) with designed distance 4
+            Decoder through the underlying GRS code of [15, 12] BCH Code
+             over GF(16) with designed distance 4
         """
         return self._bch_decoder
 
@@ -1302,7 +1304,9 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
             sage: C = codes.CyclicCode(field=F, length=15, D=[14, 1, 2, 11, 12])
             sage: a = F.gen()
             sage: D = codes.decoders.CyclicCodeSurroundingBCHDecoder(C)
-            sage: y = vector(F, [0, a^3, a^3 + a^2 + a, 1, a^2 + 1, a^3 + a^2 + 1, a^3 + a^2 + a, a^3 + a^2 + a, a^2 + a, a^2 + 1, a^2 + a + 1, a^3 + 1, a^2, a^3 + a, a^3 + a])
+            sage: y = vector(F, [0, a^3, a^3 + a^2 + a, 1, a^2 + 1, a^3 + a^2 + 1,
+            ....:                a^3 + a^2 + a, a^3 + a^2 + a, a^2 + a, a^2 + 1,
+            ....:                a^2 + a + 1, a^3 + 1, a^2, a^3 + a, a^3 + a])
             sage: D.decode_to_code(y) in C
             True
         """
@@ -1310,7 +1314,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def decoding_radius(self):
         r"""
-        Returns maximal number of errors that ``self`` can decode.
+        Return maximal number of errors that ``self`` can decode.
 
         EXAMPLES::
 

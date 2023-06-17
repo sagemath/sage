@@ -1,9 +1,13 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Access functions to online databases for coding theory
 """
-from sage.libs.gap.libgap import libgap
 from sage.features.gap import GapPackage
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
+
+del lazy_import
 
 # Do not put any global imports here since this module is accessible as
 # sage.codes.databases.<tab>
@@ -142,8 +146,8 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
         <BLANKLINE>
         last modified: 2002-03-20
 
-    This function raises an ``IOError`` if an error occurs downloading data or
-    parsing it. It raises a ``ValueError`` if the ``q`` input is invalid.
+    This function raises an :class:`IOError` if an error occurs downloading data or
+    parsing it. It raises a :class:`ValueError` if the ``q`` input is invalid.
 
     AUTHORS:
 
@@ -184,22 +188,22 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
 
     INPUT:
 
-    -  ``n`` - Integer, maximal length
+    -  ``n`` -- Integer, maximal length
 
-    -  ``k`` - Integer, maximal dimension
+    -  ``k`` -- Integer, maximal dimension
 
-    -  ``b`` - Integer, requires that the generators all have weight divisible
+    -  ``b`` -- Integer, requires that the generators all have weight divisible
        by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
        ``b=4``, all doubly even codes are generated). Must be an even positive
        integer.
 
-    -  ``parent`` - Used in recursion (default: ``None``)
+    -  ``parent``- - Used in recursion (default: ``None``)
 
-    -  ``BC`` - Used in recursion (default: ``None``)
+    -  ``BC`` -- Used in recursion (default: ``None``)
 
-    -  ``equal`` - If ``True`` generates only [n, k] codes (default: ``False``)
+    -  ``equal`` -- If ``True``, generates only [n, k] codes (default: ``False``)
 
-    -  ``in_test`` - Used in recursion (default: ``None``)
+    -  ``in_test`` -- Used in recursion (default: ``None``)
 
     EXAMPLES:
 
