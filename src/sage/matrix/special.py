@@ -362,28 +362,28 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: expected_density = (1 - (4/5)^3)
         sage: float(expected_density)
         0.488
-        sage: while abs(density_sum/total_count - expected_density) > 0.001:
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:            # optional - sage.libs.flint (o/w timeout)
         ....:     add_sample(ZZ, 5, x=-10, y=10, density=0.75)
 
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=20, y=30, density=0.75)
-        sage: while abs(density_sum/total_count - expected_density) > 0.001:
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:            # optional - sage.libs.flint
         ....:     add_sample(ZZ, 5, x=20, y=30, density=0.75)
 
         sage: density_sum = 0.0
         sage: total_count = 0.0
-        sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)
+        sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)                             # optional - sage.libs.flint
         sage: expected_density = (1 - (99/100)^75)
         sage: float(expected_density)
         0.529...
-        sage: while abs(density_sum/total_count - expected_density) > 0.001:
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:            # optional - sage.libs.flint
         ....:     add_sample(ZZ, 100, x=20, y=30, density=0.75)
 
     For a matrix with low density it may be advisable to insist on a sparse
     representation, as this representation is not selected automatically. ::
 
-        sage: A=random_matrix(ZZ, 5, 5)
+        sage: A = random_matrix(ZZ, 5, 5)
         sage: A.is_sparse()
         False
         sage: A = random_matrix(ZZ, 5, 5, sparse=True)
@@ -393,7 +393,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     For algorithm testing you might want to control the number of bits,
     say 10,000 entries, each limited to 16 bits.  ::
 
-        sage: A = random_matrix(ZZ, 100, 100, x=2^16); A
+        sage: A = random_matrix(ZZ, 100, 100, x=2^16); A                                # optional - sage.libs.flint
         100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 
     One can prescribe a specific matrix implementation::
