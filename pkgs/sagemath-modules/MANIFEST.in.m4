@@ -270,6 +270,12 @@ graft sage/probability                                  # uses gsl
 graft sage/libs/mpc
 src/sage/rings/complex_mpc.p*
 
+# because it needs real_mpfr
+include sage/numerical/gauss_legendre.p*
+# uses vector
+include sage/numerical/optimize.p*
+
+
 global-exclude all__sagemath_objects.*
 global-exclude all__sagemath_categories.*
 global-exclude all__sagemath_environment.*

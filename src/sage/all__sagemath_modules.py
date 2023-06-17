@@ -18,6 +18,7 @@ from sage.crypto.all import *
 from sage.stats.all import *
 from sage.probability.all import *
 from sage.calculus.all__sagemath_modules import *
+from sage.numerical.all__sagemath_modules import *
 
 import sage.crypto.mq as mq
 import sage.stats.all as stats
