@@ -109,6 +109,8 @@ def parse_optional_tags(string):
         ['bar', 'foo']
         sage: parse_optional_tags("sage: #optional -- foo.bar, baz")
         {'foo.bar'}
+        sage: parse_optional_tags("sage: #needs foo.bar, baz")
+        {'foo.bar'}
         sage: sorted(list(parse_optional_tags("    sage: factor(10^(10^10) + 1) # LoNg TiME, NoT TeSTED; OptioNAL -- P4cka9e")))
         ['long time', 'not tested', 'p4cka9e']
         sage: parse_optional_tags("    sage: raise RuntimeError # known bug")
@@ -137,17 +139,18 @@ def parse_optional_tags(string):
     # strip_string_literals replaces comments
     comment = "#" + (literals[comment]).lower()
 
-    optional_regex = re.compile(r'(arb216|arb218|py2|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))')
+    optional_regex = re.compile(r'arb216|arb218|py2|long time|not implemented|not tested|known bug' \
+                                r'|[^ a-z]\s*(optional|needs)\s*[:-]*((?:\s|\w|[.])*)')
 
     tags = []
     for m in optional_regex.finditer(comment):
-        cmd = m.group(1)
+        cmd = m.group(0)
         if cmd == 'known bug':
             tags.append('bug')  # so that such tests will be run by sage -t ... -only-optional=bug
+        elif m.group(1) is not None:
+            tags.extend(m.group(2).split() or [""])
         elif cmd:
             tags.append(cmd)
-        else:
-            tags.extend(m.group(3).split() or [""])
     return set(tags)
 
 
