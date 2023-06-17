@@ -28,9 +28,11 @@ What is included
 
 * `Vectors, Vector Spaces, Modules <https://doc.sagemath.org/html/en/reference/modules/index.html>`_
 
-* `Free Modules with Combinatorial Bases <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/free_module.html>`_
-
 * `Matrices and Spaces of Matrices <https://doc.sagemath.org/html/en/reference/matrices/index.html>`_
+
+* Fields of real and complex numbers in arbitrary precision floating point arithmetic (using MPFR, GSL, mpmath, MPC)
+
+* `Free Modules with Combinatorial Bases <https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/free_module.html>`_
 
 * `Tensor Modules <https://doc.sagemath.org/html/en/reference/tensor_free_modules/index.html>`_
 
@@ -55,3 +57,31 @@ What is included
 * `Cryptography <https://doc.sagemath.org/html/en/reference/cryptography/index.html>`_
 
 * `Probability Spaces and Distributions <https://doc.sagemath.org/html/en/reference/probability/index.html>`_, `Statistics <https://doc.sagemath.org/html/en/reference/stats/index.html>`_
+
+
+Available as extras, from other distributions
+---------------------------------------------
+
+`pip install "sagemath-modules[RDF,CDF]"`
+ Linear algebra over fields of real and complex numbers using NumPy
+
+`pip install "sagemath-modules[RBF,CBF]"`
+ Linear algebra over fields of real and complex numbers with ball arithmetic using FLINT/arb
+
+`pip install "sagemath-modules[GF,GF2,GF2e,GFpn]"`
+ Linear algebra over finite fields (various implementations)
+
+`pip install "sagemath-modules[QQbar,NumberField,CyclotomicField]"`
+ Linear algebra over the algebraic numbers or number fields
+
+`pip install "sagemath-modules[padics]"`
+ Linear algebra over p-adic rings and fields
+
+`pip install "sagemath-modules[combinat]"`
+ Modules and algebras with combinatorial bases; algebraic combinatorics
+
+`pip install "sagemath-modules[invariant]"`
+ Submodules invariant under group actions
+
+`pip install "sagemath-modules[standard]"`
+ All related features as in a standard installation of SageMath
