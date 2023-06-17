@@ -23,6 +23,26 @@ About this experimental pip-installable source distribution
 This pip-installable source distribution `sagemath-schemes` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`).
 
 
+What is included
+----------------
+
+* `Ideals and Varieties <https://doc.sagemath.org/html/en/reference/polynomial_rings/sage/rings/polynomial/multi_polynomial_ideal.html>`_
+
+* `Schemes <https://doc.sagemath.org/html/en/reference/schemes/index.html>`_
+
+* `Plane and Space Curves <https://doc.sagemath.org/html/en/reference/curves/index.html>`_
+
+* `Elliptic and Hyperelliptic Curves <https://doc.sagemath.org/html/en/reference/arithmetic_curves/index.html>`_
+
+* `Modular Forms <https://doc.sagemath.org/html/en/reference/modfrm/index.html>`_
+
+* `Modular Symbols <https://doc.sagemath.org/html/en/reference/modsym/index.html>`_
+
+* `Modular Abelian Varieties <https://doc.sagemath.org/html/en/reference/modabvar/index.html>`_
+
+* `Arithmetic Dynamical Systems <https://doc.sagemath.org/html/en/reference/dynamics/index.html#arithmetic-dynamical-systems>`_
+
+
 Status
 ------
 
