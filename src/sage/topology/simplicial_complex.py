@@ -4957,16 +4957,25 @@ class SimplicialComplex(Parent, GenericCellComplex):
         A simplicial complex is Golod if multiplication and all higher
         Massey operations in the associated Tor-algebra are trivial. This
         is done by checking the bigraded Betti numbers.
+
+        EXAMPLES::
+
+            sage: X = SimplicialComplex([[0,1],[1,2],[2,3],[3,0]])
+            sage: Y = SimplicialComplex([[0,1,2],[0,2],[0,4]])
+            sage: X.is_golod()
+            False
+            sage: Y.is_golod()
+            True
         """
         H = set(a+b for (a, b) in self.bigraded_betti_numbers())
 
         for i in H:
             for j in H:
-                if i + j in H:
+                if i+j in H and i != 0 and j != 0:
                     return False
         return True
 
-    def is_minimally_non_golod(self, decomposition=True):
+    def is_minimally_non_golod(self):
         r"""
         Return whether `self` is minimally non-Golod.
 
@@ -4974,11 +4983,23 @@ class SimplicialComplex(Parent, GenericCellComplex):
         gives us a full subcomplex that is Golod, then we say that a simplicial
         complex is minimally non-Golod.
 
-        :param decomposition: If ``False``, do not print the decomposition
-           of the corresponding moment-angle complex
-        :type decomposition: boolean; optional, default ``True``
+        .. SEEALSO::
+
+            See :meth:`is_golod` for more information.
+
+        EXAMPLES::
+
+            sage: X = SimplicialComplex([[0,1],[1,2],[2,3],[3,0]])
+            sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
+            sage: X.is_golod()
+            False
+            sage: X.is_minimally_non_golod()
+            True
+            sage: Y.is_golod()
+            False
+            sage: Y.is_minimally_non_golod()
+            True
         """
-        #TODO
         L = self.vertices()
         n = len(L)
 
