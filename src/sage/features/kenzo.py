@@ -19,7 +19,7 @@ from . import Feature, FeatureTestResult
 
 class Kenzo(Feature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :class:`Kenzo <spkg_kenzo>`.
+    A :class:`~sage.features.Feature` describing the presence of :ref:`Kenzo <spkg_kenzo>`.
 
     EXAMPLES::
 
