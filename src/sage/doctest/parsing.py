@@ -109,7 +109,7 @@ def parse_optional_tags(string):
         ['bar', 'foo']
         sage: parse_optional_tags("sage: #optional -- foo.bar, baz")
         {'foo.bar'}
-        sage: parse_optional_tags("sage: #needs: foo.bar, baz")
+        sage: parse_optional_tags("sage: #needs foo.bar, baz")
         {'foo.bar'}
         sage: sorted(list(parse_optional_tags("    sage: factor(10^(10^10) + 1) # LoNg TiME, NoT TeSTED; OptioNAL -- P4cka9e")))
         ['long time', 'not tested', 'p4cka9e']
@@ -140,7 +140,7 @@ def parse_optional_tags(string):
     comment = "#" + (literals[comment]).lower()
 
     optional_regex = re.compile(r'arb216|arb218|py2|long time|not implemented|not tested|known bug'
-                                r'|[^ a-z]\s*(optional\s*[:-]*|needs:\s*)((?:\s|\w|[.])*)')
+                                r'|[^ a-z]\s*(optional|needs)\s*[:-]*((?:\s|\w|[.])*)')
 
     tags = []
     for m in optional_regex.finditer(comment):
@@ -593,13 +593,13 @@ class SageDocTestParser(doctest.DocTestParser):
         Optional tags at the start of an example block persist to the end of
         the block (delimited by a blank line)::
 
-            sage: # needs: sage.rings.number_field, long time
+            sage: # needs sage.rings.number_field, long time
             sage: QQbar(I)^10000
             1
             sage: QQbar(I)^10000  # not tested
             I
 
-            sage: # needs: sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
             sage: GF(7)
             Finite Field of size 7
             sage: GF(10)
