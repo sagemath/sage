@@ -17,7 +17,7 @@ from . import Executable
 class CddExecutable(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of an executable
-    which comes as a part of ``cddlib``.
+    which comes as a part of :ref:`cddlib <spkg_cddlib>`.
 
     EXAMPLES::
 
