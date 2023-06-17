@@ -409,20 +409,20 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=60, q=2^60, seed=42)
-            sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)
+            sage: L = IntegerLattice(A, lll_reduce=False)                               # optional - sage.libs.flint
+            sage: min(v.norm().n() for v in L.reduced_basis)                            # optional - sage.libs.flint
             4.17330740711759e15
 
-            sage: L.LLL()
+            sage: L.LLL()                                                               # optional - sage.libs.flint
             60 x 60 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 
-            sage: min(v.norm().n() for v in L.reduced_basis)
+            sage: min(v.norm().n() for v in L.reduced_basis)                            # optional - sage.libs.flint
             5.19615242270663
 
-            sage: L.BKZ(block_size=10)
+            sage: L.BKZ(block_size=10)                                                  # optional - sage.libs.flint
             60 x 60 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 
-            sage: min(v.norm().n() for v in L.reduced_basis)
+            sage: min(v.norm().n() for v in L.reduced_basis)                            # optional - sage.libs.flint
             4.12310562561766
 
         .. NOTE::
