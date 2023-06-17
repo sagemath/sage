@@ -105,15 +105,6 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^s
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
 
-Distribution Packages of the Sage Library
------------------------------------------
-
-EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_' | sort); do
-    echo "* :ref:\`spkg_$PKG_BASE\`"
-done >> "$OUTPUT_INDEX"
-cat >> "$OUTPUT_INDEX" <<EOF
-
 Optional Packages
 -----------------
 
@@ -172,6 +163,15 @@ All External Packages
    index_alph
 
 EOF
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Distribution Packages of the Sage Library
+-----------------------------------------
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_' | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
 
 Experimental Packages
