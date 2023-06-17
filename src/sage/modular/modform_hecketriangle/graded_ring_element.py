@@ -6,15 +6,14 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.geometry.abc
 
@@ -195,15 +194,14 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: QuasiModularForms(n=infinity, k=10)(x*(x-y^2)*z)._rat_repr()          # optional - sage.symbolic
             '-E4*f_i^2*E2 + E4^2*E2'
         """
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             with localvars(self.parent()._pol_ring, "E4, f_i, E2, d"):
                 pol_str = str(self._rat)
         else:
             with localvars(self.parent()._pol_ring, "f_rho, f_i, E2, d"):
                 pol_str = str(self._rat)
 
-        return "{}".format(pol_str)
+        return pol_str
 
     def _qexp_repr(self):
         r"""
@@ -427,10 +425,9 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: ModularForms(n=infinity).f_rho().degree()
             (0, 1)
         """
+        return (self._weight, self._ep)
 
-        return (self._weight,self._ep)
-
-    def is_modular(self):
+    def is_modular(self) -> bool:
         r"""
         Return whether ``self`` (resp. its homogeneous components)
         transform like modular forms.
@@ -451,7 +448,6 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: QuasiModularForms(n=infinity).f_inf().is_modular()
             True
         """
-
         return not (self.AT("quasi") <= self._analytic_type)
 
     def is_weakly_holomorphic(self):
@@ -643,7 +639,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         new_parent = self.parent().extend_type("holo", ring=True).reduce_type(["holo", "quasi"])
         return new_parent(res).reduce()
 
-    def _add_(self,other):
+    def _add_(self, other):
         r"""
         Return the sum of ``self`` and ``other``.
 
@@ -719,10 +715,9 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.parent()
             ModularFormsRing(n=+Infinity) over Integer Ring
         """
+        return self.parent()(self._rat + other._rat)
 
-        return self.parent()(self._rat+other._rat)
-
-    def _sub_(self,other):
+    def _sub_(self, other):
         r"""
         Return the difference of ``self`` and ``other``.
 
@@ -775,9 +770,8 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.parent()
             ModularFormsRing(n=+Infinity) over Integer Ring
         """
-
-        #reduce at the end? See example "sage: ((E4+E6)-E6).parent()"
-        return self.parent()(self._rat-other._rat)
+        # reduce at the end? See example "sage: ((E4+E6)-E6).parent()"
+        return self.parent()(self._rat - other._rat)
 
     def _neg_(self):
         r"""
@@ -803,7 +797,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         """
         return self.parent()(-self._rat)
 
-    def _mul_(self,other):
+    def _mul_(self, other):
         r"""
         Return the product of ``self`` and ``other``.
 
@@ -880,13 +874,12 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.parent()
             QuasiModularForms(n=+Infinity, k=8, ep=1) over Integer Ring
         """
-
-        res = self.parent().rat_field()(self._rat*other._rat)
+        res = self.parent().rat_field()(self._rat * other._rat)
         new_parent = self.parent().extend_type(ring=True)
         # The product of two homogeneous elements is homogeneous
         return new_parent(res).reduce()
 
-    def _div_(self,other):
+    def _div_(self, other):
         r"""
         Return the division of ``self`` by ``other``.
 
@@ -966,8 +959,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.parent()
             QuasiMeromorphicModularForms(n=+Infinity, k=0, ep=1) over Integer Ring
         """
-
-        res = self.parent().rat_field()(self._rat/other._rat)
+        res = self.parent().rat_field()(self._rat / other._rat)
         new_parent = self.parent().extend_type("mero", ring=True)
         # The division of two homogeneous elements is homogeneous
         return new_parent(res).reduce()
@@ -1002,7 +994,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         """
         res = self._rat.sqrt()
         assert res.parent() is self.parent().rat_field()
-        #new_parent = self.parent().extend_type(ring=True)
+        # new_parent = self.parent().extend_type(ring=True)
         # The sqrt of a homogeneous element is homogeneous if it exists
         new_parent = self.parent().extend_type(ring=True)
         return new_parent(res).reduce()
@@ -1095,20 +1087,19 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: E2.diff_op(ran_op)
             E4*E2 + 1
         """
-
-        (x,y,z,d) = self.parent().rat_field().gens()
-        (X,Y,Z,dX,dY,dZ) = self.parent().diff_alg().gens()
+        x, y, z, d = self.parent().rat_field().gens()
+        X, Y, Z, dX, dY, dZ = self.parent().diff_alg().gens()
         L = op.monomials()
         new_rat = 0
         for mon in L:
             mon_summand = self._rat
-            mon_summand = mon_summand.derivative(x,mon.degree(dX))
-            mon_summand = mon_summand.derivative(y,mon.degree(dY))
-            mon_summand = mon_summand.derivative(z,mon.degree(dZ))
+            mon_summand = mon_summand.derivative(x, mon.degree(dX))
+            mon_summand = mon_summand.derivative(y, mon.degree(dY))
+            mon_summand = mon_summand.derivative(z, mon.degree(dZ))
             mon_summand *= x**(mon.degree(X))
             mon_summand *= y**(mon.degree(Y))
             mon_summand *= z**(mon.degree(Z))
-            new_rat += op.monomial_coefficient(mon)*mon_summand
+            new_rat += op.monomial_coefficient(mon) * mon_summand
         res = self.parent().rat_field()(new_rat)
         if (new_parent is None):
             new_parent = self.parent().extend_type(["quasi", "mero"], ring=True)
@@ -1353,7 +1344,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             R = self.parent().pol_ring()
             numerator = R(rat.numerator())
             denom = R(rat.denominator())
-            (x,y,z,d) = R.gens()
+            x, y, z, d = R.gens()
             n = self.hecke_n()
 
             if (tau == i):
@@ -1382,7 +1373,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             try:
                 while (f_pol.divides(numerator)):
                     numerator = numerator.quo_rem(f_pol)[0]
-                    #numerator /= f_pol
+                    # numerator /= f_pol
                     numerator = R(numerator)
                     order_f += 1
             except TypeError:
@@ -1390,7 +1381,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             try:
                 while (f_pol.divides(denom)):
                     denom = denom.quo_rem(f_pol)[0]
-                    #denom     /= f_pol
+                    # denom /= f_pol
                     denom = R(denom)
                     order_f -= 1
             except TypeError:
@@ -1398,11 +1389,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             return order_f
         else:
-            if (tau != infinity):
+            if tau != infinity:
                 raise NotImplementedError("Only the order at infinity is supported for non-homogeneous or quasi forms!")
 
-            num_val = prec_num_bound = 1 #(self.parent()._prec/ZZ(2)).ceil()
-            denom_val = prec_denom_bound = 1 #(self.parent()._prec/ZZ(2)).ceil()
+            num_val = prec_num_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
+            denom_val = prec_denom_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
 
             while (num_val >= prec_num_bound):
                 prec_num_bound *= 2
@@ -1411,7 +1402,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
                 prec_denom_bound *= 2
                 denom_val = self.denominator().q_expansion(prec=prec_denom_bound, fix_prec=True).valuation()
 
-            return (num_val-denom_val)
+            return num_val - denom_val
 
     def as_ring_element(self):
         r"""
@@ -1524,7 +1515,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return self.reduced_parent()(self._rat)
 
-    #precision is actually accuracy, maybe add "real precision" meaning number of rel. coef
+    # precision is actually accuracy, maybe add "real precision" meaning number of rel. coef
     @cached_method
     def _q_expansion_cached(self, prec, fix_d, subs_d, d_num_prec, fix_prec=False):
         """
@@ -1577,7 +1568,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             qexp = self._rat.subs(x=X, y=Y, z=Z, d=formal_d)
 
         qexp = (qexp + O(formal_q**prec)).parent()(qexp)
-        qexp = qexp(formal_q/formal_d)
+        qexp = qexp(formal_q / formal_d)
         cur_prec = qexp.prec()
 
         if (subs_d):
@@ -1823,12 +1814,12 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         qexp = self.q_expansion(prec=prec, **kwargs)
 
-        if (min_exp is None):
+        if min_exp is None:
             min_exp = qexp.valuation()
         else:
             min_exp = ZZ(min_exp)
 
-        return vector([qexp[m] for m in range(min_exp, max_exp +1)])
+        return vector([qexp[m] for m in range(min_exp, max_exp + 1)])
 
     def evaluate(self, tau, prec=None, num_prec=None, check=False):
         r"""
@@ -2187,16 +2178,16 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
                 return q_exp.laurent_polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
             else:
                 return q_exp.polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
-        elif (self._rat == z):
+        elif self._rat == z:
             E2 = self.parent().graded_ring().E2().reduce(force=True)
             (A, w) = self.group().get_FD(tau)
             aut_factor = E2.parent().aut_factor(A, w)
             E2_wvalue = E2.q_expansion_fixed_d(prec=prec, d_num_prec=num_prec).polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w))
             if (self.hecke_n() == infinity):
-                E2_cor_term = 4 * self.group().lam() / (2*pi*i).n(num_prec) * A.c() * (A.c()*w + A.d())
+                E2_cor_term = 4 * self.group().lam() / (2 * pi * i).n(num_prec) * A.c() * (A.c() * w + A.d())
             else:
-                E2_cor_term = 4 * self.group().lam() / (2*pi*i).n(num_prec) * self.hecke_n() / (self.hecke_n()-2) * A.c() * (A.c()*w + A.d())
-            return E2_wvalue*aut_factor + E2_cor_term
+                E2_cor_term = 4 * self.group().lam() / (2 * pi * i).n(num_prec) * self.hecke_n() / (self.hecke_n() - 2) * A.c() * (A.c() * w + A.d())
+            return E2_wvalue * aut_factor + E2_cor_term
         else:
             f_i = self.parent().graded_ring().f_i()
             E2 = self.parent().graded_ring().E2()
