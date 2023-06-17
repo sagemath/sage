@@ -89,8 +89,8 @@ fi
 OUTPUT_INDEX="$OUTPUT_DIR"/index.rst
 cat > "$OUTPUT_INDEX" <<EOF
 
-Features, Distributions, and External Packages
-==============================================
+Packages and Features
+=====================
 
 Standard Packages
 -----------------
@@ -101,15 +101,6 @@ equivalent system packages.
 
 EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_' | sort); do
-    echo "* :ref:\`spkg_$PKG_BASE\`"
-done >> "$OUTPUT_INDEX"
-cat >> "$OUTPUT_INDEX" <<EOF
-
-Packages of the Modularized Sage Library
-----------------------------------------
-
-EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_' | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -126,26 +117,15 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | grep -v '^s
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
 
-Experimental Packages
----------------------
-
-Some packages that provide additional functionality are marked as
-"experimental".  Developers are needed in order to improve the
-integration of these packages into the Sage distribution.
-
-EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_' | sort); do
-    echo "* :ref:\`spkg_$PKG_BASE\`"
-done >> "$OUTPUT_INDEX"
-cat >> "$OUTPUT_INDEX" <<EOF
-
-Runtime-Detectable Features and Conditional Doctests
-----------------------------------------------------
+Features
+--------
 
 .. toctree::
    :maxdepth: 1
 
    sage/features
+   sage/features/join_feature
+   sage/features/all
    sage/features/sagemath
    sage/features/pkg_systems
    sage/features/bliss
@@ -173,8 +153,31 @@ Runtime-Detectable Features and Conditional Doctests
    sage/features/polymake
    sage/features/rubiks
    sage/features/tdlib
-   sage/features/join_feature
-   sage/features/all
+EOF
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Distribution Packages of the Sage Library
+-----------------------------------------
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_' | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Experimental Packages
+---------------------
+
+Some packages that provide additional functionality are marked as
+"experimental".  Developers are needed in order to improve the
+integration of these packages into the Sage distribution.
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_' | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+
+cat >> "$OUTPUT_INDEX" <<EOF
 
 All External Packages
 ---------------------
