@@ -557,11 +557,11 @@ def _find_zeros_mod_p_odd(long long a, long long b, long long c, long long r, lo
     cdef long long x0
     cdef long long y0
 
-    zeros=[v]
-    x0=v[0]
-    y0=v[1]
-    more=False
-    for i in xrange(p):
+    zeros = [v]
+    x0 = v[0]
+    y0 = v[1]
+    more = False
+    for i in range(p):
         a_i=(a*x0**2+b*i**2-2*b*i*y0+b*y0**2-t*i*x0+t*x0*y0-2*a*x0+t*i-t*y0+s*x0-r*i+r*y0+a+c-s)%p
         #b_i=(-2*b*i**2+2*b*i*y0+t*i*x0+2*a*x0-2*t*i+t*y0+r*i-2*a+s)%p
         if a_i==0:
