@@ -2,7 +2,7 @@
 [metadata]
 name = sagemath-groups
 version = file: VERSION.txt
-description = Sage: Open Source Mathematics Software: Groups
+description = Sage: Open Source Mathematics Software: Groups and Invariant Theory
 long_description = file: README.rst
 long_description_content_type = text/x-rst
 license = GNU General Public License (GPL) v2 or later

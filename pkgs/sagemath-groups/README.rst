@@ -1,6 +1,6 @@
-================================================
- Sage: Open Source Mathematics Software: Groups
-================================================
+=====================================================================
+ Sage: Open Source Mathematics Software: Groups and Invariant Theory
+=====================================================================
 
 About SageMath
 --------------
@@ -20,4 +20,10 @@ The traditional and recommended way to install SageMath is from source via Sage-
 About this experimental pip-installable source distribution
 -----------------------------------------------------------
 
-This pip-installable source distribution `sagemath-graphs` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`).
+This pip-installable source distribution `sagemath-groups` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`).
+
+
+What is included
+----------------
+
+* `Groups <https://doc.sagemath.org/html/en/reference/groups/index.html>`_
