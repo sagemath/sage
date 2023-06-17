@@ -196,6 +196,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-flint/setup.cfg
 /pkgs/sagemath-gap/setup.cfg
 /pkgs/sagemath-giac/setup.cfg
+/pkgs/sagemath-glpk/setup.cfg
 /pkgs/sagemath-homfly/setup.cfg
 /pkgs/sagemath-ntl/setup.cfg
 /pkgs/sagemath-pari/setup.cfg
@@ -222,6 +223,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-flint/pyproject.toml
 /pkgs/sagemath-gap/pyproject.toml
 /pkgs/sagemath-giac/pyproject.toml
+/pkgs/sagemath-glpk/pyproject.toml
 /pkgs/sagemath-homfly/pyproject.toml
 /pkgs/sagemath-ntl/pyproject.toml
 /pkgs/sagemath-pari/pyproject.toml
@@ -248,6 +250,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-flint/requirements.txt
 /pkgs/sagemath-gap/requirements.txt
 /pkgs/sagemath-giac/requirements.txt
+/pkgs/sagemath-glpk/requirements.txt
 /pkgs/sagemath-homfly/requirements.txt
 /pkgs/sagemath-ntl/requirements.txt
 /pkgs/sagemath-pari/requirements.txt
