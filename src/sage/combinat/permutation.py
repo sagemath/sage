@@ -7962,11 +7962,11 @@ def bounded_affine_permutation(A):
 
         sage: from sage.combinat.permutation import bounded_affine_permutation
         sage: A = Matrix(ZZ, [[1,0,0,0], [0,1,0,0]])                                    # optional - sage.modules
-        sage: bounded_affine_permutation(A)                                             # optional - sage.modules
+        sage: bounded_affine_permutation(A)                                             # optional - sage.modules sage.libs.flint (FIXME: infinite recursion with generic impl)
         [5, 6, 3, 4]
 
         sage: A = Matrix(ZZ, [[0,1,0,1,0], [0,0,1,1,0]])                                # optional - sage.modules
-        sage: bounded_affine_permutation(A)                                             # optional - sage.modules
+        sage: bounded_affine_permutation(A)                                             # optional - sage.modules sage.libs.flint
         [1, 4, 7, 8, 5]
 
     REFERENCES:
