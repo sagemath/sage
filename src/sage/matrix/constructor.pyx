@@ -577,7 +577,7 @@ def matrix(*args, **kwds):
 
     Check :trac:`24459`::
 
-        sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
+        sage: Matrix(ZZ, sys.maxsize, sys.maxsize)                                      # optional - sage.libs.flint
         Traceback (most recent call last):
         ...
         RuntimeError...

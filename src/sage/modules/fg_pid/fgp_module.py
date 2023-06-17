@@ -1867,7 +1867,7 @@ class FGP_Module_class(Module):
             sage: T2 = A2 / B2
             sage: t1 = T1.an_element()
             sage: t2 = T2.an_element()
-            sage: t1 + t2
+            sage: t1 + t2                                                               # optional - sage.libs.flint (o/w infinite recursion)
             (1, 1)
         """
         from sage.modules.module_functors import QuotientModuleFunctor
@@ -2068,8 +2068,8 @@ def _test_morphism_0(*args, **kwds):
         sage: set_random_seed(s); v = [fgp._test_morphism_0(1) for _ in range(30)]
         sage: set_random_seed(s); v = [fgp._test_morphism_0(2) for _ in range(30)]
         sage: set_random_seed(s); v = [fgp._test_morphism_0(3) for _ in range(10)]
-        sage: set_random_seed(s); v = [fgp._test_morphism_0(i) for i in range(1,20)]
-        sage: set_random_seed(s); v = [fgp._test_morphism_0(4) for _ in range(50)]    # long time
+        sage: set_random_seed(s); v = [fgp._test_morphism_0(i) for i in range(1,20)]    # optional - sage.libs.flint (o/w timeout)
+        sage: set_random_seed(s); v = [fgp._test_morphism_0(4) for _ in range(50)]    # long time, optional - sage.libs.flint
     """
     phi = random_fgp_morphism_0(*args, **kwds)
     K = phi.kernel()
