@@ -15,20 +15,22 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.misc.unknown import Unknown
 
-def is_covering_array(array,strength=None,symbol_set=None,verbose=False,parameters=False):
+#Current Version
+#***********************************************************#
+
+def is_covering_array(array, strength=None, levels=None, verbose=False, parameters=False):
     r"""
-    Checks if the input is a covering array with given strength.
+    Check if the input is a covering array with given strength.
 
     - ``array`` -- The Covering Array to be tested.
 
     - ``strength`` (integer) -- The parameter `t` of the covering array,
-      such thatin any selection of `t` columns of the array, every `t`
-      -tuple appearsat least once. If set to None then all t>0 are
-      tested to and themaximal strength is used.
+      such that in any selection of `t` columns of the array, every `t`
+      -tuple appears at least once. If set to None then all t > 0 are
+      tested to and the maximal strength is used.
 
-    - ``symbol_set`` -- The collection of symbols that is used in
-      ``array``. If set to None, then a symbol set will be assumed by
-      checking for each unique entry in the given ``array``.
+    - ``levels`` -- The number of symbols that appear in ``array``.
+      If set to None, then each unique entry in ``array`` is counted.
 
     - ``verbose`` (boolean) -- whether to display some information about
       the covering array.
@@ -38,6 +40,7 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
       pair ``(boolean_answer,(N,t,k,v))``.
 
     EXAMPLES::
+
         sage: from sage.combinat.designs.designs_pyx import is_covering_array
         sage: C = ((1, 1, 1, 0),
         ....:      (1, 1, 0, 0),
@@ -47,24 +50,12 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
         ...
         ValueError: Not all rows are the same length, row 2 is not the same length as row 0
 
-        sage: C = (('a', 'a', 'a', 'b'),
-        ....:      ('a', 'a', 'b', 'a'),
-        ....:      ('a', 'b', 'a', 'a'),
-        ....:      ('b', 'a', 'a', 'a'),
-        ....:      ('b', 'b', 'b', 'b'))
-        sage: is_covering_array(C,verbose=True)
-        A 5 by 4 Covering Array with strength 2 with entries from ['a', 'b']
-        True
-        sage: is_covering_array(C,strength=3,verbose=True)
-        A 5 by 4 Covering Array with strength 0 with entries from ['a', 'b']
-        False
-
         sage: from sage.combinat.designs.designs_pyx import is_covering_array
         sage: C = ((0, 1, 0),
         ....:      (1, 1, 0),
         ....:      (1, 0, 0))
         sage: is_covering_array(C,verbose=True)
-        A 3 by 3 Covering Array with strength 0 with entries from [0, 1]
+        A 3 by 3 Covering Array with strength 0 with entries from {0, 1}
         True
 
         sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -73,10 +64,10 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
         ....:      (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),
         ....:      (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),
         ....:      (1, 1, 1, 0, 1, 1, 0, 1, 2, 0))
-        sage: is_covering_array(C,symbol_set=(0,1))
+        sage: is_covering_array(C,levels=2)
         Traceback (most recent call last):
         ...
-        ValueError: 2 appears in the array but not in the given symbol set
+        ValueError: array should contain integer symbols from 0 to 1
 
         sage: C = ((1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2),
         ....:      (1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2),
@@ -136,73 +127,71 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
 
     """
     from itertools import product, combinations
+    from sage.rings.integer import Integer
 
-    number_rows=len(array)
-    number_columns=len(array[0])
-
-    for row in range(number_rows):
-        if len(array[row]) != number_columns:
-            raise ValueError("Not all rows are the same length, row {} is not the same length as row 0".format(row))
-
-    if symbol_set is None:
-        symbol_set = list({x for l in array for x in l})
-        symbol_set.sort()
+    if levels is None:
+        symbol_set = {x for l in array for x in l}
+        levels = len(symbol_set)
     else:
-        for l in array:
-            for x in l:
-                if x not in symbol_set:
-                    raise ValueError("{} appears in the array but not in the given symbol set".format(x))
+        symbol_set = {num for num in range(levels)}
 
+    number_rows = len(array)
+    number_columns = len(array[0])
+
+    # Set wstrength to be the current t value to be checked
     if strength is None:
         wstrength = 1
     else:
+        if strength > number_columns:
+            raise ValueError("strength must be equal or less than number of columns")
         wstrength = strength
-    finished = False
 
-    # if no strength inputted, tries increasing values for t until one
-    # does not work. If strength is inputted ends after one check
+    for row in array:
+        if len(row) != number_columns:
+            raise ValueError("Not all rows are the same length, row {} is not the same length as row 0".format(array.index(row)))
+        else:
+            for entry in row:
+                if type(entry) != Integer or entry < -1 or entry >= levels:
+                    raise ValueError("array should contain integer symbols from 0 to {}".format(levels-1))
+
+    finished = False
+    # If no strength inputted, try increasing values for t until one
+    # does not work. If strength is inputted end after one check
     while finished is False:
-        # Iterates over every possible selections of t columns, and
+        # Iterate over every possible selections of t columns, and
         # count the t-tuples appearing in each selection
-        for comb in combinations(range(number_columns),wstrength):
+        for comb in combinations(range(number_columns), wstrength):
             tuple_dictionary = {item: 0 for item in product(symbol_set, repeat=wstrength)}
             for row in array:
-                tuple_dictionary[tuple([row[ti] for ti in comb])]+=1
+                tuple_dictionary[tuple([row[ti] for ti in comb])] += 1
 
-            # Checks if any t-tuple is not covered in current columns
+            # Check if any t-tuple is not covered in current columns
             if 0 in tuple_dictionary.values():
-                if strength != None:
+                if strength is None:
+                    wstrength -= 1
+                    finished = True
+                    break
+                else:
                     wstrength = 0
                     result = False
                     finished = True
                     break
-                else:
-                    wstrength -=1
-                    finished = True
-                    break
 
-            else:
-                if strength != None:
-                    result = True
-                    finished = True
-                    break
-        if finished is False:
-            wstrength +=1
+        if strength is None and finished is False and wstrength < number_columns:
+            wstrength += 1
+        else:
+            result = True
+            finished = True
+            break
 
     if verbose:
             print('A {} by {} Covering Array with strength {} with entries from {}'.format(number_rows,number_columns,wstrength,symbol_set))
 
-    if strength is None:
-        if parameters:
-            return (True,(number_rows,wstrength,number_columns,len(symbol_set)))
-        else:
-            return True
-
+    if parameters:
+        return (result, (number_rows, wstrength, number_columns, levels))
     else:
-        if parameters:
-            return (result,(number_rows,wstrength,number_columns,len(symbol_set)))
-        else:
-            return result
+        return result
+
 
 def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="OA"):
     r"""
