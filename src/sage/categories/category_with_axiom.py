@@ -2764,6 +2764,7 @@ class TestObjects(Category_singleton):
     class FiniteDimensional(CategoryWithAxiom):
         class Finite(CategoryWithAxiom):
             pass
+
         class Unital(CategoryWithAxiom):
             class Commutative(CategoryWithAxiom):
                 pass
@@ -2771,13 +2772,16 @@ class TestObjects(Category_singleton):
     class Commutative(CategoryWithAxiom):
         class Facade(CategoryWithAxiom):
             pass
+
         class FiniteDimensional(CategoryWithAxiom):
             pass
+
         class Finite(CategoryWithAxiom):
             pass
 
     class Unital(CategoryWithAxiom):
         pass
+
 
 class TestObjectsOverBaseRing(Category_over_base_ring):
     r"""
@@ -2805,6 +2809,7 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
     class FiniteDimensional(CategoryWithAxiom_over_base_ring):
         class Finite(CategoryWithAxiom_over_base_ring):
             pass
+
         class Unital(CategoryWithAxiom_over_base_ring):
             class Commutative(CategoryWithAxiom_over_base_ring):
                 pass
@@ -2812,8 +2817,10 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
     class Commutative(CategoryWithAxiom_over_base_ring):
         class Facade(CategoryWithAxiom_over_base_ring):
             pass
+
         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
             pass
+
         class Finite(CategoryWithAxiom_over_base_ring):
             pass
 

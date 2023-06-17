@@ -6627,22 +6627,24 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 raise RuntimeError('Unexpected intermediate result. Please try another Mordell-Weil base')
             d_L_0 = R(b1_norm**2 / c1_LLL)
 
-            #Reducing of upper bound
+            # Reducing of upper bound
             Q = r * H_q**2
             T = (1 + (Z(3)/2*r*H_q))/2
             if d_L_0 < R(T**2+Q):
                 d_L_0 = 10*(T**2*Q)
             low_bound = (R(d_L_0 - Q).sqrt() - T) / c
 
-            ##new bound according to low_bound and upper bound
-            ##[k5*k6 exp(-k7**H_q^2)]
+            # new bound according to low_bound and upper bound
+            # [k5*k6 exp(-k7**H_q^2)]
             if low_bound != 0:
                 H_q_infinity = R(((low_bound/(k6)).log()/(-k7)).sqrt())
-                return (H_q_infinity.ceil())
+                return H_q_infinity.ceil()
             else:
-                return (H_q)
-    #<-------------------------------------------------------------------------
-    #>-------------------------------------------------------------------------
+                return H_q
+
+        # --------------------------------------------------------------------
+        # --------------------------------------------------------------------
+
         def S_integral_points_with_bounded_mw_coeffs():
             r"""
             Return the set of S-integers x which are x-coordinates of
@@ -6725,8 +6727,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                     Pi[i] = Pi[i-1] + mw_baseN[i]
 
             return xs
-    #<-------------------------------------------------------------------------
-    #>-------------------------------------------------------------------------
+
+        # --------------------------------------------------------------------
+        # --------------------------------------------------------------------
+
         def S_integral_x_coords_with_abs_bounded_by(abs_bound):
             r"""
             Extra search of points with `|x|< ` abs_bound, assuming
@@ -6800,8 +6804,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                                     xs += [-tmp]
 
                 return set(xs)
-    #<-------------------------------------------------------------------------
-        #End internal functions ###############################################
+        # -------------------------------------------------------------------
+        # End internal functions ############################################
         from sage.misc.mrange import cartesian_product_iterator
 
         E = self
