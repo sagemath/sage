@@ -10667,7 +10667,7 @@ cdef class Expression(Expression_abc):
             sage: ex.simplify(algorithm="giac")
             I*sqrt(x^2 - 1)
             sage: ex.simplify(algorithm="fricas")  # optional - fricas
-            I*sqrt(x^2 - 1)?
+            (I*x^2 + I*sqrt(x^2 - 1)*x - I)/(x + sqrt(x^2 - 1))
 
         TESTS:
 
