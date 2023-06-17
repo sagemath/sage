@@ -20,4 +20,14 @@ The traditional and recommended way to install SageMath is from source via Sage-
 About this experimental pip-installable source distribution
 -----------------------------------------------------------
 
-This pip-installable source distribution `sagemath-graphs` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`).
+This pip-installable source distribution `sagemath-plot` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`).
+
+
+What is included
+----------------
+
+* `2D Graphics <https://doc.sagemath.org/html/en/reference/plotting/index.html>`_
+
+* `3D Graphics <https://doc.sagemath.org/html/en/reference/plot3d/index.html>`_
+
+* Interfaces: `Gnuplot <https://doc.sagemath.org/html/en/reference/interfaces/sage/interfaces/gnuplot.html>`_, `Jmol <https://doc.sagemath.org/html/en/reference/interfaces/sage/interfaces/jmoldata.html>`_, `POV-Ray <https://doc.sagemath.org/html/en/reference/interfaces/sage/interfaces/povray.html>`_, `Tachyon <https://doc.sagemath.org/html/en/reference/interfaces/sage/interfaces/tachyon.html>`_
