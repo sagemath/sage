@@ -977,8 +977,8 @@ written.
   - If you have to break an expression at a place that is not already
     nested in parentheses, wrap it in parentheses::
 
-      sage: (length(list(Permutations(['a', 'b', 'c', 'd', 'e', 'f', 'g'])))
-      ....:    == length(list(Permutations(7))))
+      sage: (len(list(Permutations(['a', 'b', 'c', 'd', 'e', 'f', 'g'])))
+      ....:    == len(list(Permutations(7))))
       True
 
   - If the output in your only example is very wide and cannot be reasonably
