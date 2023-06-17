@@ -590,19 +590,19 @@ class SageDocTestParser(doctest.DocTestParser):
             sage: print(m)
             87654321
 
-        Optional tag at the start of an example block persists to the end of
+        Optional tags at the start of an example block persist to the end of
         the block (delimited by a blank line)::
 
-            sage: # long time
+            sage: # needs sage.rings.number_field, long time
             sage: QQbar(I)^10000
             1
             sage: QQbar(I)^10000  # not tested
             I
 
-            sage: # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
             sage: GF(7)
             Finite Field of size 7
-            sage: GF(10)  # not tested
+            sage: GF(10)
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
