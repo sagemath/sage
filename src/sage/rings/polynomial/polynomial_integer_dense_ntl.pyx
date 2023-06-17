@@ -996,15 +996,14 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: f = -30*x; f.factor()
             (-1) * 2 * 3 * 5 * x
         """
-        cdef int i
         cdef int deg = ZZX_deg(self.__poly)
-        # it appears that pari has a window from about degrees 30 and 300 in which it beats NTL.
+        # it appears that pari has a window from about degrees 30 and 300
+        # in which it beats NTL.
         c = self.content()
-        g = self//c
+        g = self // c
         if deg < 30 or deg > 300:
-            return c.factor()*g._factor_ntl()
-        else:
-            return c.factor()*g._factor_pari()
+            return c.factor() * g._factor_ntl()
+        return c.factor() * g._factor_pari()
 
     def factor_mod(self, p):
         """
