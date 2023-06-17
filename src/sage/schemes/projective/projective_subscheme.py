@@ -35,7 +35,7 @@ from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomia
 
 lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
 lazy_import('sage.matrix.constructor', 'matrix')
-lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve')
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
 class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
