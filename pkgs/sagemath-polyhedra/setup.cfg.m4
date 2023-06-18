@@ -41,9 +41,13 @@ install_requires =
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
 
 # polyhedral libraries
+4ti2        = # FIXME
+cddlib      = # FIXME
+latte_int   = # FIXME
 normaliz    = esyscmd(`sage-get-system-packages install-requires pynormaliz')
 polymake    = esyscmd(`sage-get-system-packages install-requires jupymake')
-ppl =                   # no extra required
+ppl         =                   # no extra required
+topcom      = # FIXME
 
 # optimization libraries
 cbc         = sagemath-polyhedra[cbc_sage]
@@ -60,3 +64,11 @@ glpk_sage   =           # no extra required
 gurobi      = sagemath-polyhedra[gurobi_sage]
 gurobi_sage = esyscmd(`sage-get-system-packages install-requires sage_numerical_backends_gurobi')
 scip        = esyscmd(`sage-get-system-packages install-requires pyscipopt')
+
+# supported rings
+QQ =
+ZZ =
+RDF = # FIXME: cddlib
+NumberField = # FIXME
+
+# features

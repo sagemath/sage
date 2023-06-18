@@ -26,7 +26,7 @@ graft sage/game_theory
 graft sage/numerical
 exclude sage/numerical/gauss_legendre.p*                # sagemath-modules
 exclude sage/numerical/optimize.p*                      # sagemath-modules
-exclude sage/numerical/glpk*.p*                         # sagemath-glpk
+exclude sage/numerical/backends/glpk*.p*                # sagemath-glpk
 
 global-exclude all__sagemath_categories.py
 global-exclude all__sagemath_modules.py
