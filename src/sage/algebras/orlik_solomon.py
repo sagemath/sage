@@ -465,10 +465,24 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         gens = list(self.algebra_generators())
         names = ['e{}'.format(i) for i in range(len(gens))]
         A = GradedCommutativeAlgebra(self.base_ring(), names)
-        bas2 = [(i,j) for j in range(len(gens)) for i in range(j) if gens[i]*gens[j] in self.basis()]
-        non_basis = [(i,j) for j in range(len(gens)) for i in range(j) if not gens[i]*gens[j] in self.basis()]
-        rels = {(i,j) : {p : (gens[i]*gens[j]).coefficient(frozenset(p)) for p in bas2} for (i,j) in non_basis}
-        I = A.ideal([A.gen(l)*A.gen(m) - sum(k*A.gen(i)*A.gen(j) for ((i,j),k) in rels[(l,m)].items()) for (l,m) in non_basis])
+        B = self.basis()
+        bas2 = []
+        non_basis = []
+        for j, gj in enumerate(gens):
+            for i in range(j):
+                if gens[i] * gj in B:
+                    bas2.append((i, j))
+                else:
+                    non_basis.append((i, j))
+        AG = A.gens()
+        AGbas = {(i, j): AG[i] * AG[j] for (i, j) in bas2}
+        gij = {(i, j): gens[i] * gens[j] for (i, j) in bas2}
+
+        def rhs(l, m):
+            P = gens[l] * gens[m]
+            return A.sum(P.coefficient(gij[p]) * AGbas[p] for p in bas2)
+
+        I = A.ideal([AG[l]*AG[m] - rhs(l, m) for (l,m) in non_basis])
         B = A.quotient(I)
         return B.cdg_algebra({})
 
