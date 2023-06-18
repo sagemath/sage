@@ -354,7 +354,7 @@ def import_statements(*objects, **kwds):
 
     EXAMPLES::
 
-        sage: import_statements(WeylGroup, lazy_attribute)
+        sage: import_statements(WeylGroup, lazy_attribute)                              # optional - sage.libs.gap
         from sage.combinat.root_system.weyl_group import WeylGroup
         from sage.misc.lazy_attribute import lazy_attribute
 
@@ -364,7 +364,7 @@ def import_statements(*objects, **kwds):
     If ``lazy`` is True, then :func:`lazy_import` statements are
     displayed instead::
 
-        sage: import_statements(WeylGroup, lazy_attribute, lazy=True)
+        sage: import_statements(WeylGroup, lazy_attribute, lazy=True)                   # optional - sage.libs.gap
         from sage.misc.lazy_import import lazy_import
         lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
         lazy_import('sage.misc.lazy_attribute', 'lazy_attribute')
@@ -396,7 +396,7 @@ def import_statements(*objects, **kwds):
     If the object has several names, an other way to get the import
     statement you expect is to use a string instead of the object::
 
-        sage: import_statements(matrix)
+        sage: import_statements(matrix)                                                 # optional - sage.modules
         # ** Warning **: several names for that object: Matrix, matrix
         from sage.matrix.constructor import Matrix
 

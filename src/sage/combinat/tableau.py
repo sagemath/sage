@@ -7024,11 +7024,11 @@ class RowStandardTableaux(Tableaux):
         Row standard tableaux of size 3
         sage: ST.first()                                                                # optional - sage.graphs
         [[1, 2, 3]]
-        sage: ST.last()                                                                 # optional - sage.graphs
+        sage: ST.last()                                                                 # optional - sage.graphs sage.modules
         [[3], [1], [2]]
-        sage: ST.cardinality()                                                          # optional - sage.graphs
+        sage: ST.cardinality()                                                          # optional - sage.graphs sage.modules
         10
-        sage: ST.list()                                                                 # optional - sage.graphs
+        sage: ST.list()                                                                 # optional - sage.graphs sage.modules
         [[[1, 2, 3]],
          [[2, 3], [1]],
          [[1, 2], [3]],
@@ -7057,11 +7057,11 @@ class RowStandardTableaux(Tableaux):
         Row standard tableaux of shape [2, 2]
         sage: ST.first()                                                                # optional - sage.graphs
         [[2, 4], [1, 3]]
-        sage: ST.last()                                                                 # optional - sage.graphs
+        sage: ST.last()                                                                 # optional - sage.graphs sage.modules
         [[2, 3], [1, 4]]
-        sage: ST.cardinality()                                                          # optional - sage.graphs
+        sage: ST.cardinality()                                                          # optional - sage.graphs sage.modules
         6
-        sage: ST.list()                                                                 # optional - sage.graphs
+        sage: ST.list()                                                                 # optional - sage.graphs sage.modules
         [[[2, 4], [1, 3]],
          [[3, 4], [1, 2]],
          [[1, 4], [2, 3]],

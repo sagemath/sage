@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.symbolic
 r"""
 Graphics 3D object for representing and triangulating isosurfaces
 

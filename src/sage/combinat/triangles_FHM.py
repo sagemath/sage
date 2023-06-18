@@ -400,9 +400,9 @@ class M_triangle(Triangle):
             sage: x, y = polygens(ZZ, 'x,y')
             sage: nc3 = x^2*y^2 - 3*x*y^2 + 3*x*y + 2*y^2 - 3*y + 1
             sage: m = M_triangle(nc3)
-            sage: m2 = m.transmute(); m2
+            sage: m2 = m.transmute(); m2                                                # optional - sage.libs.flint
             M: 2*x^2*y^2 - 3*x*y^2 + 2*x*y + y^2 - 2*y + 1
-            sage: m2.transmute() == m
+            sage: m2.transmute() == m                                                   # optional - sage.libs.flint
             True
         """
         return self.h().transpose().m()

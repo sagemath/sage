@@ -41,9 +41,9 @@ Printing a graphics object just prints a string, whereas
 :func:`pretty_print` does not print anything and just shows the
 graphics instead::
 
-    sage: print(plot(sin))                                                              # optional - sage.symbolic  # optional - sage.plot
+    sage: print(plot(sin))                                                              # optional - sage.symbolic sage.plot
     Graphics object consisting of 1 graphics primitive
-    sage: pretty_print(plot(sin))                                                       # optional - sage.symbolic  # optional - sage.plot
+    sage: pretty_print(plot(sin))                                                       # optional - sage.symbolic sage.plot
 """
 
 # ****************************************************************************
@@ -117,10 +117,10 @@ class SequencePrettyPrinter(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
-            sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()   # optional - sage.graphs    # optional - sage.plot
-            sage: type(plt)                                                             # optional - sage.graphs    # optional - sage.plot
+            sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()   # optional - sage.graphs sage.plot
+            sage: type(plt)                                                             # optional - sage.graphs sage.plot
             <class 'sage.plot.multigraphics.GraphicsArray'>
-            sage: plt                                                                   # optional - sage.graphs    # optional - sage.plot
+            sage: plt                                                                   # optional - sage.graphs sage.plot
             Graphics Array of size 1 x 4
         """
         import sage.graphs.graph_list as graphs_list
@@ -137,10 +137,10 @@ class SequencePrettyPrinter(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
-            sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()                               # optional - sage.plot
-            sage: type(ga)                                                                                          # optional - sage.plot
+            sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()   # optional - sage.plot
+            sage: type(ga)                                                              # optional - sage.plot
             <class 'sage.plot.multigraphics.GraphicsArray'>
-            sage: ga.nrows(), ga.ncols()                                                                            # optional - sage.plot
+            sage: ga.nrows(), ga.ncols()                                                # optional - sage.plot
             (2, 4)
         """
         from sage.plot.plot import graphics_array
@@ -159,9 +159,9 @@ class SequencePrettyPrinter(SageObject):
         The keyword arguments are only used the first time graphics
         output is generated::
 
-            sage: seq = SequencePrettyPrinter(Graph(), Graph(), edge_labels=True)                                   # optional - sage.plot
-            sage: seq.pretty_print()   # does not pass edge_labels to graphics object                               # optional - sage.plot
-            sage: seq._concatenate_graphs().show(edge_labels=True)                                                  # optional - sage.plot
+            sage: seq = SequencePrettyPrinter(Graph(), Graph(), edge_labels=True)       # optional - sage.graphs sage.plot
+            sage: seq.pretty_print()   # does not pass edge_labels to graphics object   # optional - sage.graphs sage.plot
+            sage: seq._concatenate_graphs().show(edge_labels=True)                      # optional - sage.graphs sage.plot
             Traceback (most recent call last):
             ...
             TypeError: ...matplotlib() got an unexpected keyword argument 'edge_labels'

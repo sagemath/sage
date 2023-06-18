@@ -1197,11 +1197,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Verify which coercion maps are allowed (this should form a
         poset)::
 
-            sage: M1 = MatrixSpace(ZZ, 3, implementation='flint')
-            sage: M2 = MatrixSpace(ZZ, 3, implementation='generic')
-            sage: M3 = MatrixSpace(ZZ, 3, implementation='gap')
-            sage: M4 = MatrixSpace(ZZ, 3, sparse=True)
-            sage: S = [M1, M2, M3, M4]
+            sage: S = []
+            sage: S += [MatrixSpace(ZZ, 3, implementation='flint')]                     # optional - sage.libs.flint
+            sage: S += [MatrixSpace(ZZ, 3, implementation='generic')]
+            sage: S += [MatrixSpace(ZZ, 3, implementation='gap')]                       # optional - sage.libs.gap
+            sage: S += [MatrixSpace(ZZ, 3, sparse=True)]
             sage: mult = ''
             sage: for A in S:
             ....:     for B in S:
@@ -1210,7 +1210,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             ....:         else:
             ....:             mult += ' '
             ....:     mult += '\n'
-            sage: print(mult)
+            sage: print(mult)                                                           # optional - sage.libs.flint sage.libs.gap
             XXXX
              X X
               XX
