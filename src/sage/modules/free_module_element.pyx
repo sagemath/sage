@@ -3610,13 +3610,13 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         EXAMPLES::
 
-            sage: vector((1,2,3), QQ)._mathematica_init_()
+            sage: vector((1,2,3), QQ)._mathematica_init_()                              # optional - sage.symbolic
             '{1/1, 2/1, 3/1}'
-            sage: mathematica(vector((1,2,3), QQ))  # optional - mathematica
+            sage: mathematica(vector((1,2,3), QQ))                              # optional - mathematica sage.symbolic
             {1, 2, 3}
-            sage: a = vector(SR, 5, [1, x, x^2, sin(x), pi]); a
+            sage: a = vector(SR, 5, [1, x, x^2, sin(x), pi]); a                         # optional - sage.symbolic
             (1, x, x^2, sin(x), pi)
-            sage: a._mathematica_init_()
+            sage: a._mathematica_init_()                                        # optional - mathematica sage.symbolic
             '{1, x, (x)^(2), Sin[x], Pi}'
         """
         return '{' + ', '.join(x._mathematica_init_() for x in self.list()) + '}'

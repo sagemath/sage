@@ -2837,7 +2837,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: QQ._is_numerical()
             True
             sage: [RR._is_numerical(), CC._is_numerical()]                              # optional - sage.rings.real_mpfr
-            [True, True, True]
+            [True, True]
             sage: SR._is_numerical()                                                    # optional - sage.symbolic
             False
             sage: [R._is_numerical() for R in [QQ['x'], QQ[['x']]]]
@@ -2868,7 +2868,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: QuadraticField(2)._is_real_numerical()                                # optional - sage.rings.number_field
             True
-            sage: [QQ._is_real_numerical(), ZZ._is_real_numerical]
+            sage: [QQ._is_real_numerical(), ZZ._is_real_numerical()]
             [True, True]
             sage: [RR._is_real_numerical(), RLF._is_real_numerical()]                   # optional - sage.rings.real_mpfr
             [True, True]

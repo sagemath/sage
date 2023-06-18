@@ -922,12 +922,12 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         TESTS::
 
-            sage: P = toric_varieties.P2()
-            sage: T_P = P.sheaves.tangent_bundle()
-            sage: O_P = P.sheaves.trivial_bundle(1)
-            sage: S1 = T_P + O_P
-            sage: S2 = O_P + T_P
-            sage: S1._filt[0].is_isomorphic(S2._filt[0])  # known bug
+            sage: P = toric_varieties.P2()                                              # optional - sage.geometry.polyhedron sage.schemes
+            sage: T_P = P.sheaves.tangent_bundle()                                      # optional - sage.geometry.polyhedron sage.schemes
+            sage: O_P = P.sheaves.trivial_bundle(1)                                     # optional - sage.geometry.polyhedron sage.schemes
+            sage: S1 = T_P + O_P                                                        # optional - sage.geometry.polyhedron sage.schemes
+            sage: S2 = O_P + T_P                                                        # optional - sage.geometry.polyhedron sage.schemes
+            sage: S1._filt[0].is_isomorphic(S2._filt[0])  # known bug                   # optional - sage.geometry.polyhedron sage.schemes
             True
 
             sage: FilteredVectorSpace(2, base_ring=QQ) == FilteredVectorSpace(2, base_ring=GF(5))   # optional - sage.rings.finite_rings

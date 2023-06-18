@@ -480,11 +480,11 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: T.<z> = PolynomialRing(CC)                                            # optional - sage.rings.real_mpfr
             sage: I = T.ideal(z^3)                                                      # optional - sage.rings.real_mpfr
-            sage: P.<x,y> = ProjectiveSpace(T.quotient_ring(I), 1)                      # optional - sage.rings.real_mpfr
-            sage: H = End(P)                                                            # optional - sage.rings.real_mpfr
-            sage: f = H([x^2 + x*y, y^2])                                               # optional - sage.rings.real_mpfr
-            sage: Q = P(z^2, 1)                                                         # optional - sage.rings.real_mpfr
-            sage: f._fast_eval(list(Q))                                                 # optional - sage.rings.real_mpfr
+            sage: P.<x,y> = ProjectiveSpace(T.quotient_ring(I), 1)                      # optional - sage.libs.pari sage.rings.real_mpfr
+            sage: H = End(P)                                                            # optional - sage.libs.pari sage.rings.real_mpfr
+            sage: f = H([x^2 + x*y, y^2])                                               # optional - sage.libs.pari sage.rings.real_mpfr
+            sage: Q = P(z^2, 1)                                                         # optional - sage.libs.pari sage.rings.real_mpfr
+            sage: f._fast_eval(list(Q))                                                 # optional - sage.libs.pari sage.rings.real_mpfr
             [zbar^2, 1.00000000000000]
 
             ::
