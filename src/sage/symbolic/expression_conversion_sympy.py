@@ -1,3 +1,9 @@
+r"""
+Conversion of symbolic expressions to SymPy
+"""
+
+from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
+
 from sage.structure.element import Expression
 from sage.symbolic.expression_conversions import Converter
 from sage.symbolic.operators import arithmetic_operators

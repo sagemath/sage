@@ -1,3 +1,7 @@
+r"""
+Conversion of symbolic expressions to algebraic numbers
+"""
+
 from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 from functools import reduce
 
