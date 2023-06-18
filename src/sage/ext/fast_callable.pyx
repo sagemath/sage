@@ -707,8 +707,8 @@ cdef class ExpressionTreeBuilder:
             sage: etb = ExpressionTreeBuilder('x')
             sage: etb.constant(pi)                                                      # optional - sage.symbolic
             pi
-            sage: etb = ExpressionTreeBuilder('x', domain=RealField(200))
-            sage: etb.constant(pi)                                                      # optional - sage.symbolic
+            sage: etb = ExpressionTreeBuilder('x', domain=RealField(200))               # optional - sage.rings.real_mpfr
+            sage: etb.constant(pi)                                                      # optional - sage.rings.real_mpfr sage.symbolic
             3.1415926535897932384626433832795028841971693993751058209749
         """
         if self._domain is not None:
@@ -1609,7 +1609,7 @@ class IntegerPowerFunction():
         (^2)
         sage: square(pi)                                                                # optional - sage.symbolic
         pi^2
-        sage: square(I)
+        sage: square(I)                                                                 # optional - sage.symbolic
         -1
         sage: square(RIF(-1, 1)).str(style='brackets')
         '[0.0000000000000000 .. 1.0000000000000000]'
@@ -1802,10 +1802,10 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         sage: fc = fast_callable(etb.call(my_sin, x), domain=RDF)
         sage: fc(3)                                                                     # optional - sage.symbolic
         0.1411200080598672
-        sage: fc = fast_callable(etb.call(my_sin, x), domain=RealField(100))
-        sage: fc(3)                                                                     # optional - sage.symbolic
+        sage: fc = fast_callable(etb.call(my_sin, x), domain=RealField(100))            # optional - sage.rings.real_mpfr
+        sage: fc(3)                                                                     # optional - sage.rings.real_mpfr sage.symbolic
         0.14112000805986722210074480281
-        sage: fc.op_list()
+        sage: fc.op_list()                                                              # optional - sage.rings.real_mpfr
         [('load_arg', 0), ('py_call', <function my_sin at 0x...>, 1), 'return']
         sage: fc = fast_callable(etb.call(my_sqrt, x), domain=RDF)
         sage: fc(3)
@@ -1833,8 +1833,8 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         [('load_arg', 0), ('load_arg', 1), ('py_call', <function my_norm at 0x...>, 2), 'sqrt', 'return']
         sage: fc.python_calls()
         [<function my_norm at 0x...>]
-        sage: fc = fast_callable(etb2.call(sqrt, etb2.call(my_norm, y, z)), domain=RR)
-        sage: fc(3, 4)
+        sage: fc = fast_callable(etb2.call(sqrt, etb2.call(my_norm, y, z)), domain=RR)  # optional - sage.rings.real_mpfr
+        sage: fc(3, 4)                                                                  # optional - sage.rings.real_mpfr
         5.00000000000000
         sage: fc = fast_callable(etb2.call(my_norm, y, z), domain=ZZ)
         sage: fc(3, 4)
@@ -1878,18 +1878,18 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         [('load_arg', 0), ('ipow', 100), 'return']
         sage: fc(1.1)
         13780.61233982...
-        sage: fc = fast_callable(etb(x)^100, domain=RR)
-        sage: fc.op_list()
+        sage: fc = fast_callable(etb(x)^100, domain=RR)                                 # optional - sage.rings.real_mpfr
+        sage: fc.op_list()                                                              # optional - sage.rings.real_mpfr
         [('load_arg', 0), ('ipow', 100), 'return']
-        sage: fc(1.1)
+        sage: fc(1.1)                                                                   # optional - sage.rings.real_mpfr
         13780.6123398224
         sage: fc = fast_callable(etb(x)^(-100), domain=RDF)
         sage: fc.op_list()
         [('load_arg', 0), ('ipow', -100), 'return']
         sage: fc(1.1)
         7.25657159014...e-05
-        sage: fc = fast_callable(etb(x)^(-100), domain=RR)
-        sage: fc(1.1)
+        sage: fc = fast_callable(etb(x)^(-100), domain=RR)                              # optional - sage.rings.real_mpfr
+        sage: fc(1.1)                                                                   # optional - sage.rings.real_mpfr
         0.0000725657159014814
         sage: expo = 2^32
         sage: base = (1.0).nextabove()
@@ -1900,10 +1900,10 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         1.0000009536747712
         sage: RDF(base)^expo
         1.0000009536747712
-        sage: fc = fast_callable(etb(x)^expo, domain=RR)
-        sage: fc.op_list()
+        sage: fc = fast_callable(etb(x)^expo, domain=RR)                                # optional - sage.rings.real_mpfr
+        sage: fc.op_list()                                                              # optional - sage.rings.real_mpfr
         [('load_arg', 0), ('py_call', (^4294967296), 1), 'return']
-        sage: fc(base)
+        sage: fc(base)                                                                  # optional - sage.rings.real_mpfr
         1.00000095367477
         sage: base^expo
         1.00000095367477
@@ -1911,14 +1911,14 @@ cpdef generate_code(Expression expr, InstructionStream stream):
     Make sure we do not overflow the stack with highly nested expressions
     (:trac:`11766`)::
 
-        sage: R.<x> = CC[]
-        sage: f = R(list(range(100000)))
-        sage: ff = fast_callable(f)
-        sage: f(0.5)
+        sage: R.<x> = CC[]                                                              # optional - sage.rings.real_mpfr
+        sage: f = R(list(range(100000)))                                                # optional - sage.rings.real_mpfr
+        sage: ff = fast_callable(f)                                                     # optional - sage.rings.real_mpfr
+        sage: f(0.5)                                                                    # optional - sage.rings.real_mpfr
         2.00000000000000
-        sage: ff(0.5)
+        sage: ff(0.5)                                                                   # optional - sage.rings.real_mpfr
         2.00000000000000
-        sage: f(0.9), ff(0.9)
+        sage: f(0.9), ff(0.9)                                                           # optional - sage.rings.real_mpfr
         (90.0000000000000, 90.0000000000000)
     """
     cdef ExpressionConstant econst
@@ -2028,7 +2028,8 @@ cdef class InstructionStream:
 
         EXAMPLES::
 
-            sage: from sage.ext.interpreters.wrapper_rdf import metadata
+            sage: from sage.ext.interpreters.wrapper_el import metadata
+            sage: from sage.ext.interpreters.wrapper_rdf import metadata                # optional - sage.modules
             sage: from sage.ext.fast_callable import InstructionStream
             sage: instr_stream = InstructionStream(metadata, 1)
             sage: instr_stream.get_current()
@@ -2064,7 +2065,8 @@ cdef class InstructionStream:
 
         EXAMPLES::
 
-            sage: from sage.ext.interpreters.wrapper_rdf import metadata
+            sage: from sage.ext.interpreters.wrapper_el import metadata
+            sage: from sage.ext.interpreters.wrapper_rdf import metadata                # optional - sage.modules
             sage: from sage.ext.fast_callable import InstructionStream, op_list
             sage: instr_stream = InstructionStream(metadata, 1)
             sage: instr_stream.load_const(5)
@@ -2089,7 +2091,8 @@ cdef class InstructionStream:
 
         EXAMPLES::
 
-            sage: from sage.ext.interpreters.wrapper_rdf import metadata
+            sage: from sage.ext.interpreters.wrapper_el import metadata
+            sage: from sage.ext.interpreters.wrapper_rdf import metadata                # optional - sage.modules
             sage: from sage.ext.fast_callable import InstructionStream
             sage: instr_stream = InstructionStream(metadata, 12)
             sage: instr_stream.load_arg(5)
@@ -2108,7 +2111,8 @@ cdef class InstructionStream:
 
         EXAMPLES::
 
-            sage: from sage.ext.interpreters.wrapper_rdf import metadata
+            sage: from sage.ext.interpreters.wrapper_el import metadata
+            sage: from sage.ext.interpreters.wrapper_rdf import metadata                # optional - sage.modules
             sage: from sage.ext.fast_callable import InstructionStream
             sage: instr_stream = InstructionStream(metadata, 1)
             sage: instr_stream.has_instr('return')
@@ -2131,7 +2135,8 @@ cdef class InstructionStream:
 
         EXAMPLES::
 
-            sage: from sage.ext.interpreters.wrapper_rdf import metadata
+            sage: from sage.ext.interpreters.wrapper_el import metadata
+            sage: from sage.ext.interpreters.wrapper_rdf import metadata                # optional - sage.modules
             sage: from sage.ext.fast_callable import InstructionStream
             sage: instr_stream = InstructionStream(metadata, 1)
             sage: instr_stream.instr('load_arg', 0)
@@ -2208,7 +2213,8 @@ cdef class InstructionStream:
 
         EXAMPLES::
 
-            sage: from sage.ext.interpreters.wrapper_rdf import metadata
+            sage: from sage.ext.interpreters.wrapper_el import metadata
+            sage: from sage.ext.interpreters.wrapper_rdf import metadata                # optional - sage.modules
             sage: from sage.ext.fast_callable import InstructionStream
             sage: instr_stream = InstructionStream(metadata, 1)
             sage: md = instr_stream.get_metadata()
@@ -2226,7 +2232,8 @@ cdef class InstructionStream:
 
         EXAMPLES::
 
-            sage: from sage.ext.interpreters.wrapper_rdf import metadata
+            sage: from sage.ext.interpreters.wrapper_el import metadata
+            sage: from sage.ext.interpreters.wrapper_rdf import metadata                # optional - sage.modules
             sage: from sage.ext.fast_callable import InstructionStream
             sage: instr_stream = InstructionStream(metadata, 1)
             sage: instr_stream.instr('load_arg', 0)
@@ -2248,7 +2255,8 @@ cdef class InstructionStream:
 
         EXAMPLES::
 
-            sage: from sage.ext.interpreters.wrapper_rdf import metadata
+            sage: from sage.ext.interpreters.wrapper_el import metadata
+            sage: from sage.ext.interpreters.wrapper_rdf import metadata                # optional - sage.modules
             sage: from sage.ext.fast_callable import InstructionStream
             sage: instr_stream = InstructionStream(metadata, 1)
             sage: instr_stream.get_current()
@@ -2309,7 +2317,9 @@ cdef class InterpreterMetadata():
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import InterpreterMetadata
-            sage: metadata = InterpreterMetadata(by_opname={'opname dict goes here': True}, by_opcode=['opcode list goes here'], ipow_range=(2, 57))
+            sage: metadata = InterpreterMetadata(by_opname={'opname dict goes here': True},
+            ....:                                by_opcode=['opcode list goes here'],
+            ....:                                ipow_range=(2, 57))
             sage: metadata.by_opname
             {'opname dict goes here': True}
             sage: metadata.by_opcode
@@ -2398,7 +2408,8 @@ def op_list(args, metadata):
 
     EXAMPLES::
 
-        sage: from sage.ext.interpreters.wrapper_rdf import metadata
+        sage: from sage.ext.interpreters.wrapper_el import metadata
+        sage: from sage.ext.interpreters.wrapper_rdf import metadata                    # optional - sage.modules
         sage: from sage.ext.fast_callable import InstructionStream, op_list
         sage: instr_stream = InstructionStream(metadata, 1)
         sage: instr_stream.instr('load_arg', 0)
