@@ -246,15 +246,16 @@ def save(obj, filename, compress=True, **kwargs):
         sage: load(objfile_short)                                                                                       # optional - sage.modules
         [   1    2]
         [   3 -5/2]
-        sage: E = EllipticCurve([-1,0])                                                                                 # optional - sage.plot
-        sage: P = plot(E)                                                                                               # optional - sage.plot
-        sage: save(P, objfile_short)   # saves the plot to "test.sobj"                                                  # optional - sage.plot
-        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)                                               # optional - sage.plot
-        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))                                             # optional - sage.plot
+        sage: E = EllipticCurve([-1,0])                                                 # optional - sage.plot sage.schemes
+        sage: P = plot(E)                                                               # optional - sage.plot sage.schemes
+        sage: save(P, objfile_short)   # saves the plot to "test.sobj"                  # optional - sage.plot sage.schemes
+        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)               # optional - sage.plot sage.schemes
+        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))             # optional - sage.plot sage.schemes
         Traceback (most recent call last):
         ...
-        ValueError: allowed file extensions for images are '.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg'!
-        sage: print(load(objfile))                                                                                      # optional - sage.plot
+        ValueError: allowed file extensions for images are
+        '.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg'!
+        sage: print(load(objfile))                                                      # optional - sage.plot sage.schemes
         Graphics object consisting of 2 graphics primitives
         sage: save("A python string", os.path.join(d.name, 'test'))
         sage: load(objfile)
