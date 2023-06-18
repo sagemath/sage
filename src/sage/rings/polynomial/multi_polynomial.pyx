@@ -98,7 +98,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: A.<u> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
-            sage: A(A['x,y'](u))
+            sage: A(A['x,y'](u))                                                        # optional - sage.rings.number_field
             u
         """
         if self.degree() <= 0:
