@@ -2444,16 +2444,17 @@ def random_rref_matrix(parent, num_pivots):
 
     Matrices can be generated over other exact rings. ::
 
-        sage: B = random_matrix(FiniteField(7), 4, 4, algorithm='echelon_form', num_pivots=3); B # random
+        sage: B = random_matrix(FiniteField(7), 4, 4,                       # random    # optional - sage.rings.finite_rings
+        ....:                   algorithm='echelon_form', num_pivots=3); B
         [1 0 0 0]
         [0 1 0 6]
         [0 0 1 4]
         [0 0 0 0]
-        sage: B.rank() == 3
+        sage: B.rank() == 3                                                             # optional - sage.rings.finite_rings
         True
-        sage: B.base_ring()
+        sage: B.base_ring()                                                             # optional - sage.rings.finite_rings
         Finite Field of size 7
-        sage: B == B.rref()
+        sage: B == B.rref()                                                             # optional - sage.rings.finite_rings
         True
 
     TESTS:
@@ -2617,7 +2618,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     An example with default settings (i.e. no entry size control). ::
 
-        sage: C=random_matrix(QQ, 6, 7, algorithm='echelonizable', rank=5)
+        sage: C = random_matrix(QQ, 6, 7, algorithm='echelonizable', rank=5)
         sage: C.rank()
         5
         sage: C.rref() == C.rref().change_ring(ZZ)
@@ -2625,7 +2626,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     A matrix without size control may have very large entry sizes. ::
 
-        sage: D=random_matrix(ZZ, 7, 8, algorithm='echelonizable', rank=6); D  # random
+        sage: D = random_matrix(ZZ, 7, 8, algorithm='echelonizable', rank=6); D  # random
         [    1     2     8   -35  -178  -239  -284   778]
         [    4     9    37  -163  -827 -1111 -1324  3624]
         [    5     6    21   -88  -454  -607  -708  1951]
@@ -2636,11 +2637,12 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     Matrices can be generated over any exact ring. ::
 
-        sage: F.<a>=GF(2^3)
-        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4, upper_bound=None)
-        sage: B.rank()
+        sage: F.<a> = GF(2^3)                                                           # optional - sage.rings.finite_rings
+        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4,             # optional - sage.rings.finite_rings
+        ....:                   upper_bound=None)
+        sage: B.rank()                                                                  # optional - sage.rings.finite_rings
         4
-        sage: B.base_ring() is F
+        sage: B.base_ring() is F                                                        # optional - sage.rings.finite_rings
         True
 
     Square matrices over ZZ or QQ with full rank are always unimodular. ::
@@ -2679,7 +2681,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     Works for rank==1, too. ::
 
-        sage: random_matrix( QQ, 3, 3, algorithm='echelonizable', rank=1).ncols()
+        sage: random_matrix(QQ, 3, 3, algorithm='echelonizable', rank=1).ncols()
         3
 
 
@@ -2981,11 +2983,11 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
     A matrix over the number Field in `y` with defining polynomial `y^2-2y-2`. ::
 
         sage: y = polygen(ZZ, 'y')
-        sage: K = NumberField(y^2 - 2*y - 2, 'y')
-        sage: C = random_matrix(K, 3, algorithm='unimodular')
-        sage: det(C)
+        sage: K = NumberField(y^2 - 2*y - 2, 'y')                                       # optional - sage.rings.number_field
+        sage: C = random_matrix(K, 3, algorithm='unimodular')                           # optional - sage.rings.number_field
+        sage: det(C)                                                                    # optional - sage.rings.number_field
         1
-        sage: C.base_ring() is K
+        sage: C.base_ring() is K                                                        # optional - sage.rings.number_field
         True
 
     TESTS:
@@ -2999,8 +3001,8 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     Only matrices over ZZ and QQ can have size control. ::
 
-        sage: F.<a>=GF(5^7)
-        sage: random_matrix(F, 5, algorithm='unimodular', upper_bound=20)
+        sage: F.<a> = GF(5^7)                                                           # optional - sage.rings.finite_rings
+        sage: random_matrix(F, 5, algorithm='unimodular', upper_bound=20)               # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: only matrices over ZZ or QQ can have size control.
@@ -3036,11 +3038,11 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     If eigenvalues and dimensions are not specified in a list,
     they will be assigned randomly.
 
-    - ``parent`` - the desired size of the square matrix.
+    - ``parent`` -- the desired size of the square matrix.
 
-    - ``eigenvalues`` - the list of desired eigenvalues (default=None).
+    - ``eigenvalues`` -- the list of desired eigenvalues (default=None).
 
-    - ``dimensions`` - the list of dimensions corresponding to each
+    - ``dimensions`` -- the list of dimensions corresponding to each
       eigenspace (default=None).
 
     OUTPUT:
@@ -3064,10 +3066,10 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         sage: from sage.matrix.constructor import random_diagonalizable_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
         sage: A = random_diagonalizable_matrix(matrix_space)
-        sage: eigenvalues = A.eigenvalues()
-        sage: S = A.right_eigenmatrix()[1]
-        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()
-        sage: sorted(eigenvalues) == sorted(eigenvalues2)
+        sage: eigenvalues = A.eigenvalues()                                             # optional - sage.rings.number_field
+        sage: S = A.right_eigenmatrix()[1]                                              # optional - sage.rings.number_field
+        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()                               # optional - sage.rings.number_field
+        sage: sorted(eigenvalues) == sorted(eigenvalues2)                               # optional - sage.rings.number_field
         True
 
     A diagonalizable matrix with eigenvalues and dimensions designated,
@@ -3075,7 +3077,8 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     entries would all be integers. ::
 
         sage: eigenvalues = [ZZ.random_element() for _ in range(3)]
-        sage: B = random_matrix(QQ, 6, algorithm='diagonalizable', eigenvalues=eigenvalues, dimensions=[2,3,1])
+        sage: B = random_matrix(QQ, 6, algorithm='diagonalizable',
+        ....:                   eigenvalues=eigenvalues, dimensions=[2,3,1])
         sage: all(x in ZZ for x in (B-(-12*identity_matrix(6))).rref().list())
         True
         sage: all(x in ZZ for x in (B-(4*identity_matrix(6))).rref().list())
