@@ -28,7 +28,7 @@ from sage.rings.ideal import is_Ideal
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
 
-lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve')
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
 def is_Scheme(x):
