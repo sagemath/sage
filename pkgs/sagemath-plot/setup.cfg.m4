@@ -43,3 +43,6 @@ install_requires =
 
 [options.extras_require]
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+
+# extras by libraries
+matplotlib =                    # no extra needed
