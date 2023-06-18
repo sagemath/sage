@@ -26,7 +26,7 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 import sage.libs.symmetrica.all as symmetrica
 
-lazy_import('sage.libs.symmetrica.all', 'symmetrica')
+lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
 
 from . import classical
 
