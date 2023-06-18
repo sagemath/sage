@@ -1,4 +1,4 @@
-# optional - sage.symbolic
+# sage.doctest: optional - sage.symbolic
 """
 Plotting 3D fields
 """

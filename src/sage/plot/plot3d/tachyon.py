@@ -599,13 +599,13 @@ class Tachyon(WithEqualityById, SageObject):
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: d.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
-            sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,          # optional -- sage.symbolic
+            sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
-            sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3,
+            sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3,         # optional -- sage.symbolic
             ....:        num_colors=60)  # increase min_depth for better picture
             sage: get_verbose()
             0
-            sage: d.show(verbose=2)
+            sage: d.show(verbose=2)                                                # optional -- sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...

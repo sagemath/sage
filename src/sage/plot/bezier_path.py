@@ -168,9 +168,9 @@ class BezierPath(GraphicPrimitive_xydata):
         EXAMPLES::
 
             sage: b = bezier_path([[(0,0),(0,1),(1,0)]])
-            sage: A = b.plot3d()
-            sage: B = b.plot3d(z=2)
-            sage: A + B
+            sage: A = b.plot3d()                                                        # optional - sage.symbolic
+            sage: B = b.plot3d(z=2)                                                     # optional - sage.symbolic
+            sage: A + B                                                                 # optional - sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -182,7 +182,7 @@ class BezierPath(GraphicPrimitive_xydata):
 
         ::
 
-            sage: bezier3d([[(0,0,0),(1,0,0),(0,1,0),(0,1,1)]])
+            sage: bezier3d([[(0,0,0),(1,0,0),(0,1,0),(0,1,1)]])                         # optional - sage.symbolic
             Graphics3d Object
 
         .. PLOT::
