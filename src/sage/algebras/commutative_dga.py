@@ -2732,10 +2732,9 @@ class DifferentialGCAlgebra(GCAlgebra):
             phi = B.hom(gens)
             phiext = extendy(phi, degnzero + 1)
             if isinstance(phiext, tuple):
-                if partial_result:
-                    return phiext[0]
-                else:
+                if not partial_result:
                     raise ValueError("could not cover all relations in max iterations in degree {}".format(degnzero + 1))
+                return phiext[0]
             phi = phiext
             self._minimalmodels[degnzero] = phi
         else:
