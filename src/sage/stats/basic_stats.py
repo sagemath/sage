@@ -244,7 +244,7 @@ def std(v, bias=False):
     if hasattr(v, 'standard_deviation'):
         return v.standard_deviation(bias=bias)
 
-    if isinstance(v, numpy.ndarray):
+    if isinstance(v, numpy_ndarray):
         # accounts for numpy arrays
         if bias:
             return v.std()
@@ -341,7 +341,7 @@ def variance(v, bias=False):
         return v.variance(bias=bias)
 
     x = 0
-    if isinstance(v, numpy.ndarray):
+    if isinstance(v, numpy_ndarray):
         # accounts for numpy arrays
         if bias:
             return v.var()
