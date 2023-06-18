@@ -80,7 +80,7 @@ def mean(v):
         sage: mean(range(4))
         3/2
         sage: v = stats.TimeSeries([1..100])                                            # optional - numpy
-        sage: mean(v)
+        sage: mean(v)                                                                   # optional - numpy
         50.5
     """
     deprecation(29662, 'sage.stats.basic_stats.mean is deprecated; use numpy.mean or numpy.nanmean instead')
