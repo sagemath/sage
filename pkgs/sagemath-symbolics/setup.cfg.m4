@@ -54,3 +54,17 @@ sage =
 
 [options.extras_require]
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+
+# extras by libraries
+axiom           = # FIXME
+giac            = esyscmd(`sage-get-system-packages install-requires sagemath_giac')
+ginac           = # no extra needed, same as pynac
+maxima          = # no extra needed
+primecount      = esyscmd(`sage-get-system-packages install-requires primecountpy')
+pynac           = # no extra needed
+singular        = # no extra needed
+sympy           = esyscmd(`sage-get-system-packages install-requires sympy')
+
+# extras by other features
+matrices        = esyscmd(`sage-get-system-packages install-requires sagemath_modules')
+plot            = esyscmd(`sage-get-system-packages install-requires sagemath_plot')
