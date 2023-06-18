@@ -22,12 +22,16 @@ class DifferentialPolynomialRing(OrePolynomialRing):
 
             sage: R.<t> = ZZ[]
             sage: derivation = t*R.derivation()
-            sage: from sage.rings.polynomial.differential_polynomial_ring import DifferentialPolynomialRing
-            sage: S.<D> = DifferentialPolynomialRing(R,derivation)
+            sage: S.<D> = OrePolynomialRing(R,derivation)
             sage: S.category()
             Category of algebras over Univariate Polynomial Ring in t over Integer Ring
             sage: D*t
             t*D + t
+
+            We test that S has the good type
+
+            sage: type(S)
+            <class 'sage.rings.polynomial.differential_polynomial_ring.DifferentialPolynomialRing_with_category'>
         """
         if morphism is not None:
             raise NotImplementedError

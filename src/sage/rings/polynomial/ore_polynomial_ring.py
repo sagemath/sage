@@ -263,6 +263,8 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         Construct the Ore polynomial ring associated to the given parameters.
 
         TESTS::
+        
+        When there is no twisting morphism a special class is used
 
             sage: R.<t> = QQ[]
             sage: der = R.derivation()
@@ -270,7 +272,8 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             sage: A
             Ore Polynomial Ring in d over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
             sage: type(A)
-            <class 'sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing_with_category'>
+            <class
+            'sage.rings.polynomial.differential_polynomial_ring.DifferentialPolynomialRing_with_category'>
 
         We check the uniqueness property of parents::
 
