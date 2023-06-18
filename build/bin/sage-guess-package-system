@@ -18,7 +18,17 @@ elif apt-get --version > /dev/null 2>&1; then
 elif yum --version > /dev/null 2>&1; then
     echo fedora
 elif pacman --version > /dev/null 2>&1; then
-    echo arch
+    case `uname -s` in
+        MINGW64*)
+            # All the package names for MSYS hardcode the
+            # architecture and whether they're 32 or 64-bit
+            # so just assume we're on x86 on 64-bit for now
+            echo msys_x86_64
+            ;;
+        *)
+            echo arch
+            ;;
+    esac
 elif slackpkg --version > /dev/null 2>&1; then
     echo slackware
 elif zypper --version > /dev/null 2>&1; then
