@@ -248,7 +248,8 @@ def cut_edge_by_bisection(pointa, pointb, condition, eps=1.0e-6, N=100):
     EXAMPLES::
 
         sage: from sage.plot.plot3d.index_face_set import cut_edge_by_bisection
-        sage: cut_edge_by_bisection((0.0,0.0,0.0),(1.0,1.0,0.0),( (lambda x,y,z: x**2+y**2+z**2<1) ),eps=1.0E-12)
+        sage: cut_edge_by_bisection((0.0,0.0,0.0), (1.0,1.0,0.0),
+        ....:                       lambda x,y,z: x**2+y**2+z**2 < 1, eps=1.0E-12)
         (0.7071067811864395, 0.7071067811864395, 0.0)
     """
     cdef point_c a, b
@@ -302,9 +303,10 @@ cdef class IndexFaceSet(PrimitiveObject):
     EXAMPLES::
 
         sage: from sage.plot.plot3d.index_face_set import IndexFaceSet
-        sage: S = IndexFaceSet([[(1,0,0),(0,1,0),(0,0,1)],[(1,0,0),(0,1,0),(0,0,0)]])
+        sage: S = IndexFaceSet([[(1,0,0),(0,1,0),(0,0,1)], [(1,0,0),(0,1,0),(0,0,0)]])
         sage: S.face_list()
-        [[(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)], [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 0.0)]]
+        [[(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 0.0)]]
         sage: S.vertex_list()
         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0), (0.0, 0.0, 0.0)]
 
@@ -317,13 +319,13 @@ cdef class IndexFaceSet(PrimitiveObject):
         sage: S = IndexFaceSet(face_list, point_list, color='red')
         sage: S.face_list()
         [[(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 0.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 2.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 3.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 4.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 5.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 6.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 7.0)]]
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 2.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 3.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 4.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 5.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 6.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 7.0)]]
         sage: S.show()
 
     A simple example of colored IndexFaceSet (:trac:`12212`)::
@@ -698,13 +700,13 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: point_list = [(2,0,0),(0,2,0),(0,0,2),(0,1,1),(1,0,1),(1,1,0)]
             sage: face_list = [[0,4,5],[3,4,5],[2,3,4],[1,3,5]]
             sage: col = rainbow(10, 'rgbtuple')
-            sage: t_list=[Texture(col[i]) for i in range(10)]
+            sage: t_list = [Texture(col[i]) for i in range(10)]
             sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
             sage: S.index_faces_with_colors()
             [([0, 4, 5], '#ff0000'),
-            ([3, 4, 5], '#ff9900'),
-            ([2, 3, 4], '#cbff00'),
-            ([1, 3, 5], '#33ff00')]
+             ([3, 4, 5], '#ff9900'),
+             ([2, 3, 4], '#cbff00'),
+             ([1, 3, 5], '#33ff00')]
 
         When the texture is global, an error is raised::
 
@@ -847,7 +849,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: point_list = [(2,0,0),(0,2,0),(0,0,2),(0,1,1),(1,0,1),(1,1,0)]
             sage: face_list = [[0,4,5],[3,4,5],[2,3,4],[1,3,5]]
             sage: col = rainbow(10, 'rgbtuple')
-            sage: t_list=[Texture(col[i]) for i in range(10)]
+            sage: t_list = [Texture(col[i]) for i in range(10)]
             sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
             sage: print(S.x3d_geometry())
             <BLANKLINE>
@@ -931,7 +933,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             sage: from sage.plot.plot3d.shapes import *
             sage: S = Box(1,2,3)
-            sage: len(S.partition(lambda x,y,z : floor(x+y+z)))
+            sage: len(S.partition(lambda x,y,z: floor(x+y+z)))
             6
         """
         cdef Py_ssize_t i, j, ix, face_ix
@@ -1028,7 +1030,8 @@ cdef class IndexFaceSet(PrimitiveObject):
             ....:     return bool(x*x+y*y <= 1.1)
             sage: cm = colormaps.hsv
             sage: cf = lambda x,y,z: float(x+y) % 1
-            sage: P = implicit_plot3d(x**2+y**2+z**2-1-x**2*z+y**2*z,(-2,2),(-2,2),(-2,2),color=(cm,cf))
+            sage: P = implicit_plot3d(x**2+y**2+z**2-1-x**2*z+y**2*z,
+            ....:                     (-2,2),(-2,2),(-2,2),color=(cm,cf))
             sage: R = P.add_condition(condi,40); R
             Graphics3d Object
 
@@ -1044,7 +1047,8 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         An example with transparency::
 
-            sage: P = implicit_plot3d(x**4+y**4+z**2-4,(x,-2,2),(y,-2,2),(z,-2,2),alpha=0.3)
+            sage: P = implicit_plot3d(x**4+y**4+z**2-4, (x,-2,2), (y,-2,2), (z,-2,2),
+            ....:                     alpha=0.3)
             sage: def cut(a,b,c):
             ....:     return a*a+c*c > 2
             sage: Q = P.add_condition(cut,40); Q
@@ -1060,8 +1064,8 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         A sombrero with quadrilaterals::
 
-            sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y),(x,-2,2),(y,-2,2),
-            ....:     color='gold')
+            sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y), (x,-2,2), (y,-2,2),
+            ....:            color='gold')
             sage: def cut(x,y,z):
             ....:     return x*x+y*y < 1
             sage: Q = P.add_condition(cut);Q
@@ -1214,7 +1218,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: point_list = [(2,0,0),(0,2,0),(0,0,2),(0,1,1),(1,0,1),(1,1,0)]
             sage: face_list = [[0,4,5],[3,4,5],[2,3,4],[1,3,5]]
             sage: col = rainbow(10, 'rgbtuple')
-            sage: t_list=[Texture(col[i]) for i in range(10)]
+            sage: t_list = [Texture(col[i]) for i in range(10)]
             sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
             sage: S.tachyon_repr(S.default_render_params())
             ['TRI V0 2 0 0 V1 1 0 1 V2 1 1 0',
