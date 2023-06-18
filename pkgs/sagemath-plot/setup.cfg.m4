@@ -45,4 +45,10 @@ install_requires =
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
 
 # extras by libraries
+jsmol = esyscmd(`sage-get-system-packages install-requires jupyter_jsmol`)
 matplotlib =                    # no extra needed
+
+# extras by other features
+graphs = esyscmd(`sage-get-system-packages install-requires sagemath_graphs`)
+polyhedra = esyscmd(`sage-get-system-packages install-requires sagemath_polyhedra`)
+symbolics = esyscmd(`sage-get-system-packages install-requires sagemath_symbolics`)
