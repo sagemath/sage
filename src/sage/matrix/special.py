@@ -398,10 +398,10 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
     One can prescribe a specific matrix implementation::
 
-        sage: K.<a> = FiniteField(2^8)
-        sage: type(random_matrix(K, 2, 5))
+        sage: K.<a> = FiniteField(2^8)                                                  # optional - sage.rings.finite_rings
+        sage: type(random_matrix(K, 2, 5))                                              # optional - sage.rings.finite_rings
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-        sage: type(random_matrix(K, 2, 5, implementation="generic"))
+        sage: type(random_matrix(K, 2, 5, implementation="generic"))                    # optional - sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
     Random rational matrices.  Now ``num_bound`` and ``den_bound`` control the
@@ -421,7 +421,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         ....:     for a in A.list())
         True
 
-        sage: A = random_matrix(QQ, 4, density = 0.5, sparse=True)
+        sage: A = random_matrix(QQ, 4, density=0.5, sparse=True)
         sage: type(A)
         <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
         sage: A.density() <= 0.5
@@ -460,11 +460,11 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     randomisation when using the optional meataxe package, we have to make sure
     that we use the default implementation in this test::
 
-        sage: K.<a>=FiniteField(3^2)
-        sage: A = random_matrix(K, 2, 5, implementation='generic')
-        sage: type(A)
+        sage: K.<a> = FiniteField(3^2)                                                  # optional - sage.rings.finite_rings
+        sage: A = random_matrix(K, 2, 5, implementation='generic')                      # optional - sage.rings.finite_rings
+        sage: type(A)                                                                   # optional - sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-        sage: A.base_ring() is K
+        sage: A.base_ring() is K                                                        # optional - sage.rings.finite_rings
         True
         sage: TestSuite(A).run()
 
@@ -544,12 +544,13 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     When the eigenvalues and dimensions are not specified the result will have
     randomly generated values for both that fit with the designated size. ::
 
-        sage: A = random_matrix(QQ, 5, algorithm='diagonalizable', eigenvalues=[2,3,-1], dimensions=[1,2,2]); A # random
-        sage: all(x in ZZ for x in (A-(2*identity_matrix(5))).rref().list())
+        sage: A = random_matrix(QQ, 5, algorithm='diagonalizable',  # random
+        ....:                   eigenvalues=[2,3,-1], dimensions=[1,2,2]); A
+        sage: all(x in ZZ for x in (A - (2*identity_matrix(5))).rref().list())
         True
-        sage: all(x in ZZ for x in (A-(3*identity_matrix(5))).rref().list())
+        sage: all(x in ZZ for x in (A - 3*identity_matrix(5)).rref().list())
         True
-        sage: all(x in ZZ for x in (A-(-1*identity_matrix(5))).rref().list())
+        sage: all(x in ZZ for x in (A - (-1)*identity_matrix(5)).rref().list())
         True
         sage: A.jordan_form()
         [ 2| 0| 0| 0| 0]
@@ -575,14 +576,14 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     contain only integer entries.  If ``rank``, is not set, the
     rank of the matrix will be generated randomly. ::
 
-        sage: B = random_matrix(QQ, 5, 6, algorithm='subspaces', rank=3); B #random
-        sage: B_expanded=B.augment(identity_matrix(5)).rref()
+        sage: B = random_matrix(QQ, 5, 6, algorithm='subspaces', rank=3); B  # random
+        sage: B_expanded = B.augment(identity_matrix(5)).rref()
         sage: (B.nrows(), B.ncols())
         (5, 6)
         sage: all(x in ZZ for x in B_expanded.list())
         True
-        sage: C=B_expanded.submatrix(0,0,B.nrows()-B.nullity(),B.ncols())
-        sage: L=B_expanded.submatrix(B.nrows()-B.nullity(),B.ncols())
+        sage: C = B_expanded.submatrix(0, 0, B.nrows() - B.nullity(), B.ncols())
+        sage: L = B_expanded.submatrix(B.nrows() - B.nullity(), B.ncols())
         sage: B.right_kernel() == C.right_kernel()
         True
         sage: B.row_space() == C.row_space()
@@ -604,7 +605,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     or ``QQ`` the result has integer entries, whose magnitudes
     can be limited by the value of ``upper_bound``. ::
 
-        sage: C=random_matrix(QQ, 5, algorithm='unimodular', upper_bound=70); C # random
+        sage: C = random_matrix(QQ, 5, algorithm='unimodular', upper_bound=70); C  # random
         sage: det(C)
         1
         sage: C.base_ring()
@@ -624,7 +625,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
     We return an error for a bogus value of ``algorithm``::
 
-        sage: random_matrix(ZZ, 5, algorithm = 'bogus')
+        sage: random_matrix(ZZ, 5, algorithm='bogus')
         Traceback (most recent call last):
         ...
         ValueError: random matrix algorithm "bogus" is not recognized
@@ -2298,9 +2299,9 @@ def companion_matrix(poly, format='right'):
         sage: t = polygen(QQ, 't')
         sage: p = t^12 - 7*t^4 + 28*t^2 - 456
         sage: C = companion_matrix(p, format='top')
-        sage: q = C.minpoly(var='t'); q
+        sage: q = C.minpoly(var='t'); q                                                 # optional - sage.libs.pari
         t^12 - 7*t^4 + 28*t^2 - 456
-        sage: p == q
+        sage: p == q                                                                    # optional - sage.libs.pari
         True
 
         sage: p = t^3 + 3*t - 8
@@ -2309,9 +2310,9 @@ def companion_matrix(poly, format='right'):
         ....:                            companion_matrix(p^2),
         ....:                            companion_matrix(q),
         ....:                            companion_matrix(q) )
-        sage: A.charpoly(var='t').factor()
+        sage: A.charpoly(var='t').factor()                                              # optional - sage.libs.pari
         (t^3 + 3*t - 8)^3 * (t^5 + t - 17)^2
-        sage: A.minpoly(var='t').factor()
+        sage: A.minpoly(var='t').factor()                                               # optional - sage.libs.pari
         (t^3 + 3*t - 8)^2 * (t^5 + t - 17)
 
     TESTS::
@@ -2324,12 +2325,14 @@ def companion_matrix(poly, format='right'):
         sage: companion_matrix(sin(x))                                                  # optional - sage.symbolic
         Traceback (most recent call last):
         ...
-        TypeError: input must be a polynomial (not a symbolic expression, see docstring), or other iterable, not sin(x)
+        TypeError: input must be a polynomial (not a symbolic expression, see docstring),
+        or other iterable, not sin(x)
 
         sage: companion_matrix([2, 3, 896])
         Traceback (most recent call last):
         ...
-        ValueError: polynomial (or the polynomial implied by coefficients) must be monic, not a leading coefficient of 896
+        ValueError: polynomial (or the polynomial implied by coefficients) must be monic,
+        not a leading coefficient of 896
 
         sage: F.<a> = GF(2^2)                                                           # optional - sage.rings.finite_rings
         sage: companion_matrix([4/3, a+1, 1])                                           # optional - sage.rings.finite_rings
