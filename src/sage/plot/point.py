@@ -8,7 +8,7 @@ TESTS::
     sage: P = E(0,0)                                                                    # optional - sage.schemes
     sage: def get_points(n):
     ....:     return sum(point(list(i*P)[:2], size=3)
-....:                    for i in range(-n,n) if i != 0 and (i*P)[0] < 3)
+    ....:                for i in range(-n,n) if i != 0 and (i*P)[0] < 3)
     sage: sum(get_points(15*n).plot3d(z=n) for n in range(1,10))                        # optional - sage.schemes
     Graphics3d Object
 """
