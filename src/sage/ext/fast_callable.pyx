@@ -477,6 +477,8 @@ def _builder_and_stream(vars, domain):
     r"""
     Return a builder and a stream.
 
+    This is an internal function used only once, by :func:`fast_callable`.
+
     INPUT:
 
     - ``vars`` -- a sequence of variable names
@@ -486,10 +488,24 @@ def _builder_and_stream(vars, domain):
 
     OUTPUT: A :class:`Wrapper`, an class:`InstructionStream`
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.ext.fast_callable import _builder_and_stream
         sage: _builder_and_stream(["x", "y"], ZZ)
+        (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
+         <sage.ext.fast_callable.InstructionStream object at 0x...>)
+        sage: _builder_and_stream(["x", "y"], RR)                                       # optional - sage.rings.real_mpfr
+        (<class 'sage.ext.interpreters.wrapper_rr.Wrapper_rr'>,
+         <sage.ext.fast_callable.InstructionStream object at 0x...>)
+
+    Modularized test with sagemath-categories after :issue:`35095`, which has
+    (a basic version of) ``RDF`` but not the specialized interpreter for it.
+    In this case, the function falls back to using the :class:`Element`
+    interpreter::
+
+        sage: domain = RDF
+        sage: from sage.structure.element import Element as domain                      # optional - sage.modules
+        sage: _builder_and_stream(["x", "y"], domain)
         (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
     """
