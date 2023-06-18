@@ -45,7 +45,8 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): initial version
 
 """
-#*****************************************************************************
+
+# ****************************************************************************
 #       Copyright (C) 2016-2019 Kwankyu Lee <ekwankyu@gmail.com>
 #                     2019      Brent Baccala
 #                     2019      Travis Scrimshaw
@@ -54,7 +55,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.misc.latex import latex
 
