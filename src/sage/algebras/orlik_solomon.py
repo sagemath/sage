@@ -480,7 +480,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
         def rhs(l, m):
             P = gens[l] * gens[m]
-            return A.sum(P.coefficient(gij[p]) * AGbas[p] for p in bas2)
+            return A.sum(P.coefficient(frozenset(p)) * AGbas[p] for p in bas2)
 
         I = A.ideal([AG[l]*AG[m] - rhs(l, m) for (l,m) in non_basis])
         B = A.quotient(I)
