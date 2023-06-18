@@ -1143,14 +1143,14 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     Test to make sure that using fast_callable functions works::
 
-        sage: f(x) = x^2
-        sage: g = fast_callable(f, domain=CC, vars='x')
-        sage: h = fast_callable(f, domain=CDF, vars='x')
-        sage: P = complex_plot(f, (-10, 10), (-10, 10))
-        sage: Q = complex_plot(g, (-10, 10), (-10, 10))
-        sage: R = complex_plot(h, (-10, 10), (-10, 10))
-        sage: S = complex_plot(exp(x)-sin(x), (-10, 10), (-10, 10))
-        sage: P; Q; R; S
+        sage: f(x) = x^2                                                                # optional - sage.symbolic
+        sage: g = fast_callable(f, domain=CC, vars='x')                                 # optional - sage.symbolic
+        sage: h = fast_callable(f, domain=CDF, vars='x')                                # optional - sage.symbolic
+        sage: P = complex_plot(f, (-10, 10), (-10, 10))                                 # optional - sage.symbolic
+        sage: Q = complex_plot(g, (-10, 10), (-10, 10))                                 # optional - sage.symbolic
+        sage: R = complex_plot(h, (-10, 10), (-10, 10))                                 # optional - sage.symbolic
+        sage: S = complex_plot(exp(x)-sin(x), (-10, 10), (-10, 10))                     # optional - sage.symbolic
+        sage: P; Q; R; S                                                                # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
         Graphics object consisting of 1 graphics primitive
         Graphics object consisting of 1 graphics primitive
@@ -1162,7 +1162,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
 
     ::
 
-        sage: complex_plot(sqrt, (-5, 5), (-5, 5))
+        sage: complex_plot(sqrt, (-5, 5), (-5, 5))                                      # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
     """
     import matplotlib as mpl

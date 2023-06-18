@@ -841,6 +841,7 @@ cdef class Graphics3d(SageObject):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: from sage.plot.plot3d.shapes import Cone
             sage: v = (1,2,3)
             sage: G = arrow3d((0, 0, 0), v)
@@ -861,6 +862,7 @@ cdef class Graphics3d(SageObject):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: from sage.plot.plot3d.shapes import Cone
             sage: G = Cone(1/5, 1) + Cone(1/5, 1, opacity=.25).rotateX(pi/2)
             sage: G.show(aspect_ratio=1)
@@ -873,6 +875,7 @@ cdef class Graphics3d(SageObject):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: from sage.plot.plot3d.shapes import Cone
             sage: G = Cone(1/5, 1) + Cone(1/5, 1, opacity=.25).rotateY(pi/3)
             sage: G.show(aspect_ratio=1)
@@ -885,6 +888,7 @@ cdef class Graphics3d(SageObject):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: from sage.plot.plot3d.shapes import Box
             sage: G = Box(1/2, 1/3, 1/5) + Box(1/2, 1/3, 1/5, opacity=.25).rotateZ(pi/5)
             sage: G.show(aspect_ratio=1)
@@ -1761,17 +1765,17 @@ end_scene""".format(
 
         EXAMPLES: We illustrate use of the ``aspect_ratio`` option::
 
-            sage: x, y = var('x,y')
-            sage: p = plot3d(2*sin(x*y), (x, -pi, pi), (y, -pi, pi))
-            sage: p.show(aspect_ratio=[1,1,1])
+            sage: x, y = var('x,y')                                                     # optional -- sage.symbolic
+            sage: p = plot3d(2*sin(x*y), (x, -pi, pi), (y, -pi, pi))                    # optional -- sage.symbolic
+            sage: p.show(aspect_ratio=[1,1,1])                                          # optional -- sage.symbolic
 
         This looks flattened, but filled with the plot::
 
-            sage: p.show(frame_aspect_ratio=[1,1,1/16])
+            sage: p.show(frame_aspect_ratio=[1,1,1/16])                                 # optional -- sage.symbolic
 
         This looks flattened, but the plot is square and smaller::
 
-            sage: p.show(aspect_ratio=[1,1,1], frame_aspect_ratio=[1,1,1/8])
+            sage: p.show(aspect_ratio=[1,1,1], frame_aspect_ratio=[1,1,1/8])            # optional -- sage.symbolic
 
         This example shows indirectly that the defaults
         from :func:`~sage.plot.plot.plot` are dealt with properly::
@@ -1782,17 +1786,17 @@ end_scene""".format(
         We use the 'canvas3d' backend from inside the notebook to get a view of
         the plot rendered inline using HTML canvas::
 
-            sage: p.show(viewer='canvas3d')
+            sage: p.show(viewer='canvas3d')                                             # optional -- sage.symbolic
 
         Sometimes shadows in Tachyon-produced images can lead to confusing
         plots. To remove them::
 
-            sage: p.show(viewer="tachyon", shade="medium")
+            sage: p.show(viewer="tachyon", shade="medium")                              # optional -- sage.symbolic
 
         One can also pass Tachyon command line flags directly. For example,
         the following line produces the same result as the previous one::
 
-            sage: p.show(viewer="tachyon", extra_opts="-mediumshade")
+            sage: p.show(viewer="tachyon", extra_opts="-mediumshade")                   # optional -- sage.symbolic
         """
         from sage.repl.rich_output import get_display_manager
         dm = get_display_manager()
@@ -1986,10 +1990,10 @@ end_scene""".format(
 
         EXAMPLES::
 
-            sage: x,y,z = var('x,y,z')
-            sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
-            sage: astl = a.stl_binary()
-            sage: print(astl[:40].decode('ascii'))
+            sage: x,y,z = var('x,y,z')                                                  # optional -- sage.symbolic
+            sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])         # optional -- sage.symbolic
+            sage: astl = a.stl_binary()                                                 # optional -- sage.symbolic
+            sage: print(astl[:40].decode('ascii'))                                      # optional -- sage.symbolic
             STL binary file / made by SageMath / ###
 
             sage: p = polygon3d([[0,0,0], [1,2,3], [3,0,0]])
@@ -1998,9 +2002,9 @@ end_scene""".format(
 
         This works when faces have more then 3 sides::
 
-            sage: P = polytopes.dodecahedron()
-            sage: Q = P.plot().all[-1]
-            sage: print(Q.stl_binary()[:40].decode('ascii'))
+            sage: P = polytopes.dodecahedron()                                          # optional -- sage.geometry.polyhedron
+            sage: Q = P.plot().all[-1]                                                  # optional -- sage.geometry.polyhedron
+            sage: print(Q.stl_binary()[:40].decode('ascii'))                            # optional -- sage.geometry.polyhedron
             STL binary file / made by SageMath / ###
         """
         import struct
@@ -2033,10 +2037,10 @@ end_scene""".format(
 
         EXAMPLES::
 
-            sage: x,y,z = var('x,y,z')
-            sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
-            sage: astl = a.stl_ascii_string()
-            sage: astl.splitlines()[:7]  # abs tol 1e-10
+            sage: x,y,z = var('x,y,z')                                                  # optional -- sage.symbolic
+            sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])         # optional -- sage.symbolic
+            sage: astl = a.stl_ascii_string()                                           # optional -- sage.symbolic
+            sage: astl.splitlines()[:7]  # abs tol 1e-10                                # optional -- sage.symbolic
             ['solid surface',
             'facet normal 0.9733285267845754 -0.16222142113076257 -0.16222142113076257',
             '    outer loop',
@@ -2059,9 +2063,9 @@ end_scene""".format(
 
         Now works when faces have more then 3 sides::
 
-            sage: P = polytopes.dodecahedron()
-            sage: Q = P.plot().all[-1]
-            sage: print(Q.stl_ascii_string().splitlines()[:7])
+            sage: P = polytopes.dodecahedron()                                          # optional -- sage.geometry.polyhedron
+            sage: Q = P.plot().all[-1]                                                  # optional -- sage.geometry.polyhedron
+            sage: print(Q.stl_ascii_string().splitlines()[:7])                          # optional -- sage.geometry.polyhedron
             ['solid surface',
              'facet normal 0.0 0.5257311121191338 0.8506508083520399',
              '    outer loop',
@@ -2128,10 +2132,10 @@ end_scene""".format(
 
         EXAMPLES::
 
-            sage: x,y,z = var('x,y,z')
-            sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
-            sage: astl = a.ply_ascii_string()
-            sage: astl.splitlines()[:10]
+            sage: x,y,z = var('x,y,z')                                                  # optional -- sage.symbolic
+            sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])         # optional -- sage.symbolic
+            sage: astl = a.ply_ascii_string()                                           # optional -- sage.symbolic
+            sage: astl.splitlines()[:10]                                                # optional -- sage.symbolic
             ['ply',
             'format ascii 1.0',
             'comment surface',
@@ -2202,10 +2206,10 @@ end_scene""".format(
 
         EXAMPLES::
 
-            sage: x,y,z = var('x,y,z')
-            sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
-            sage: a_amf = a.amf_ascii_string()
-            sage: a_amf[:160]
+            sage: x,y,z = var('x,y,z')                                                  # optional -- sage.symbolic
+            sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])         # optional -- sage.symbolic
+            sage: a_amf = a.amf_ascii_string()                                          # optional -- sage.symbolic
+            sage: a_amf[:160]                                                           # optional -- sage.symbolic
             '<?xml version="1.0" encoding="utf-8"?><amf><object id="surface"><mesh><vertices><vertex><coordinates><x>2.948717948717948</x><y>-0.384615384615385</y><z>-0.3935'
 
             sage: p = polygon3d([[0,0,0], [1,2,3], [3,0,0]])
@@ -2601,6 +2605,7 @@ class TransformGroup(Graphics3dGroup):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: G = cube()
             sage: G.bounding_box()
             ((-0.5, -0.5, -0.5), (0.5, 0.5, 0.5))

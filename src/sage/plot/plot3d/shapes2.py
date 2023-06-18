@@ -117,6 +117,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         ....:            (-sqrt(2.)/3,-sqrt(6.)/3,-1./3), (2*sqrt(2.)/3,0,-1./3)],\
         ....:            color=col, thickness=10, aspect_ratio=[1,1,1])
 
+        sage: from math import pi
         sage: v  = (sqrt(5.)/2-5/6, 5/6*sqrt(3.)-sqrt(15.)/2, sqrt(5.)/3)
         sage: t  = acos(sqrt(5.)/3)/2
         sage: t1 = tetra('blue').rotateZ(t)
@@ -273,15 +274,16 @@ def bezier3d(path, **options):
 
     Check for :trac:`31640`::
 
-        sage: p2d = [[(3,0.0),(3,0.13),(2,0.2),(2,0.3)],                                # optional - sage.symbolic
+        sage: p2d = [[(3,0.0),(3,0.13),(2,0.2),(2,0.3)],
         ....:        [(2.7,0.4),(2.6,0.5),(2.5,0.5)], [(2.3,0.5),(2.2,0.4),(2.1,0.3)]]
         sage: bp = bezier_path(p2d)                                                     # optional - sage.symbolic
         sage: bp.plot3d()                                                               # optional - sage.symbolic
         Graphics3d Object
 
-        sage: p3d = [[(3,0,0),(3,0.1,0),(2.9,0.2,0),(2.8,0.3,0)],                       # optional - sage.symbolic
-        ....:        [(2.7,0.4,0),(2,0.5,0),(2.5,0.5,0)], [(2.3,0.5,0),(2.2,0.4,0),(2.1,0.3,0)]]
-        sage: bezier3d(p3d)
+        sage: p3d = [[(3,0,0),(3,0.1,0),(2.9,0.2,0),(2.8,0.3,0)],
+        ....:        [(2.7,0.4,0),(2,0.5,0),(2.5,0.5,0)],
+        ....:        [(2.3,0.5,0),(2.2,0.4,0),(2.1,0.3,0)]]
+        sage: bezier3d(p3d)                                                             # optional - sage.symbolic
         Graphics3d Object
     """
     from . import parametric_plot3d as P3D

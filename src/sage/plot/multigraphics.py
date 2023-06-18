@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.symbolic
 r"""
 Graphics arrays and insets
 

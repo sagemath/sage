@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.symbolic
 r"""
 2D plotting
 
