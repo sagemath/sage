@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Complex Interpolation
 

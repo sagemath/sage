@@ -287,10 +287,10 @@ class IndexedSequence(SageObject):
             sage: J = list(range(6))
             sage: A = [ZZ(1) for i in J]
             sage: s = IndexedSequence(A,J)
-            sage: s.dft(lambda x: x^2)
+            sage: s.dft(lambda x: x^2)                                                  # optional - sage.rings.number_field
             Indexed sequence: [6, 0, 0, 6, 0, 0]
              indexed by [0, 1, 2, 3, 4, 5]
-            sage: s.dft()
+            sage: s.dft()                                                               # optional - sage.rings.number_field
             Indexed sequence: [6, 0, 0, 0, 0, 0]
              indexed by [0, 1, 2, 3, 4, 5]
             sage: G = SymmetricGroup(3)                                                                 # optional - sage.groups
@@ -319,10 +319,10 @@ class IndexedSequence(SageObject):
                                -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I,
                                -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
              indexed by Cyclic group of order 6 as a permutation group
-            sage: p = 7; J = list(range(p)); A = [kronecker_symbol(j,p) for j in J]
-            sage: s = IndexedSequence(A, J)
-            sage: Fs = s.dft()
-            sage: c = Fs.list()[1]; [x/c for x in Fs.list()]; s.list()
+            sage: p = 7; J = list(range(p)); A = [kronecker_symbol(j,p) for j in J]     # optional - sage.rings.number_field
+            sage: s = IndexedSequence(A, J)                                             # optional - sage.rings.number_field
+            sage: Fs = s.dft()                                                          # optional - sage.rings.number_field
+            sage: c = Fs.list()[1]; [x/c for x in Fs.list()]; s.list()                  # optional - sage.rings.number_field
             [0, 1, 1, -1, 1, -1, -1]
             [0, 1, 1, -1, 1, -1, -1]
 
@@ -375,13 +375,13 @@ class IndexedSequence(SageObject):
             sage: J = list(range(5))
             sage: A = [ZZ(1) for i in J]
             sage: s = IndexedSequence(A,J)
-            sage: fs = s.dft(); fs
+            sage: fs = s.dft(); fs                                                      # optional - sage.rings.number_field
             Indexed sequence: [5, 0, 0, 0, 0]
                 indexed by [0, 1, 2, 3, 4]
-            sage: it = fs.idft(); it
+            sage: it = fs.idft(); it                                                    # optional - sage.rings.number_field
             Indexed sequence: [1, 1, 1, 1, 1]
                 indexed by [0, 1, 2, 3, 4]
-            sage: it == s
+            sage: it == s                                                               # optional - sage.rings.number_field
             True
         """
         F = self.base_ring()   # elements must be coercible into QQ(zeta_N)
@@ -401,9 +401,9 @@ class IndexedSequence(SageObject):
         EXAMPLES::
 
             sage: J = list(range(5))
-            sage: A = [exp(-2*pi*i*I/5) for i in J]
-            sage: s = IndexedSequence(A,J)
-            sage: s.dct()
+            sage: A = [exp(-2*pi*i*I/5) for i in J]                                     # optional - sage.symbolic
+            sage: s = IndexedSequence(A,J)                                              # optional - sage.symbolic
+            sage: s.dct()                                                               # optional - sage.symbolic
             Indexed sequence: [0, 1/16*(sqrt(5) + I*sqrt(-2*sqrt(5) + 10) + ...
             indexed by [0, 1, 2, 3, 4]
         """
@@ -423,11 +423,11 @@ class IndexedSequence(SageObject):
         EXAMPLES::
 
             sage: J = list(range(5))
-            sage: I = CC.0; pi = CC(pi)
-            sage: A = [exp(-2*pi*i*I/5) for i in J]
-            sage: s = IndexedSequence(A,J)
+            sage: I = CC.0; pi = CC(pi)                                                 # optional - sage.symbolic
+            sage: A = [exp(-2*pi*i*I/5) for i in J]                                     # optional - sage.symbolic
+            sage: s = IndexedSequence(A,J)                                              # optional - sage.symbolic
 
-            sage: s.dst()        # discrete sine
+            sage: s.dst()        # discrete sine                                        # optional - sage.symbolic
             Indexed sequence: [0.000000000000000, 1.11022302462516e-16 - 2.50000000000000*I, ...]
             indexed by [0, 1, 2, 3, 4]
         """
