@@ -737,11 +737,11 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: toric_varieties.P2().point_set().cardinality()
+            sage: toric_varieties.P2().point_set().cardinality()                        # optional - sage.geometry.polyhedron
             +Infinity
 
-            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # optional - sage.rings.finite_rings
-            sage: P2.point_set().cardinality()                                          # optional - sage.rings.finite_rings
+            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # optional - sage.geometry.polyhedron sage.rings.finite_rings
+            sage: P2.point_set().cardinality()                                          # optional - sage.geometry.polyhedron sage.rings.finite_rings
             13
         """
         if hasattr(self, 'is_finite') and not self.is_finite():
@@ -761,8 +761,8 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # optional - sage.rings.finite_rings
-            sage: P1.point_set().list()                                                 # optional - sage.rings.finite_rings
+            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # optional - sage.geometry.polyhedron sage.rings.finite_rings
+            sage: P1.point_set().list()                                                 # optional - sage.geometry.polyhedron sage.rings.finite_rings
             ([0 : 1], [1 : 0], [1 : 1], [1 : 2])
         """
         return tuple(self)

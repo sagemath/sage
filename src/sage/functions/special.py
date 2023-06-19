@@ -409,14 +409,14 @@ def elliptic_j(z, prec=53):
 
     EXAMPLES::
 
-        sage: elliptic_j(CC(i))
+        sage: elliptic_j(CC(i))                                                         # optional - sage.rings.real_mpfr
         1728.00000000000
         sage: elliptic_j(sqrt(-2.0))
         8000.00000000000
-        sage: z = ComplexField(100)(1, sqrt(11))/2                                      # optional - sage.symbolic
-        sage: elliptic_j(z)                                                             # optional - sage.symbolic
+        sage: z = ComplexField(100)(1, sqrt(11))/2                                      # optional - sage.rings.real_mpfr sage.symbolic
+        sage: elliptic_j(z)                                                             # optional - sage.rings.real_mpfr sage.symbolic
         -32768.000...
-        sage: elliptic_j(z).real().round()                                              # optional - sage.symbolic
+        sage: elliptic_j(z).real().round()                                              # optional - sage.rings.real_mpfr sage.symbolic
         -32768
 
     ::

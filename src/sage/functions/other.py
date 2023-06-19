@@ -2061,7 +2061,7 @@ class Function_cases(GinacFunction):
         EXAMPLES::
 
             sage: ex = cases(((x<0, pi), (x==1, 1), (True, 0)))                         # optional - sage.symbolic
-            sage: assert ex == ex._sympy_()._sage_()                                    # optional - sage.symbolic
+            sage: assert ex == ex._sympy_()._sage_()                                    # optional - sympy sage.symbolic
         """
         from sympy import Piecewise as pw
         args = []

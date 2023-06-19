@@ -691,11 +691,11 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             A number less than infinity
             sage: UnsignedInfinityRing(RDF(oo)), UnsignedInfinityRing(RDF(-oo))
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(RR(oo)), UnsignedInfinityRing(RR(-oo))
+            sage: UnsignedInfinityRing(RR(oo)), UnsignedInfinityRing(RR(-oo))           # optional - sage.rings.real_mpfr
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(CDF(oo)), UnsignedInfinityRing(CDF(-oo))
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(CC(oo)), UnsignedInfinityRing(CC(-oo))
+            sage: UnsignedInfinityRing(CC(oo)), UnsignedInfinityRing(CC(-oo))           # optional - sage.rings.real_mpfr
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(RIF(oo)), UnsignedInfinityRing(RIF(-oo))
             (Infinity, Infinity)
@@ -746,7 +746,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
 
             sage: UnsignedInfinityRing.has_coerce_map_from(int) # indirect doctest
             True
-            sage: UnsignedInfinityRing.has_coerce_map_from(CC)
+            sage: UnsignedInfinityRing.has_coerce_map_from(CC)                          # optional - sage.rings.real_mpfr
             True
             sage: UnsignedInfinityRing.has_coerce_map_from(QuadraticField(-163, 'a'))   # optional - sage.rings.number_field
             True
@@ -983,7 +983,7 @@ def is_Infinite(x):
         True
         sage: sage.rings.infinity.is_Infinite(3)
         False
-        sage: sage.rings.infinity.is_Infinite(RR(infinity))
+        sage: sage.rings.infinity.is_Infinite(RR(infinity))                             # optional - sage.rings.real_mpfr
         False
         sage: sage.rings.infinity.is_Infinite(ZZ)
         False
@@ -1137,7 +1137,7 @@ class InfinityRing_class(Singleton, Ring):
             A negative finite number
             sage: InfinityRing(RDF(oo)), InfinityRing(RDF(-oo))
             (+Infinity, -Infinity)
-            sage: InfinityRing(RR(oo)), InfinityRing(RR(-oo))
+            sage: InfinityRing(RR(oo)), InfinityRing(RR(-oo))                           # optional - sage.rings.real_mpfr
             (+Infinity, -Infinity)
             sage: InfinityRing(RIF(oo)), InfinityRing(RIF(-oo))
             (+Infinity, -Infinity)
@@ -1149,7 +1149,7 @@ class InfinityRing_class(Singleton, Ring):
         The following rings have ``is_positive_infinity`` /
         ``is_negative_infinity`` methods::
 
-            sage: RR(oo).is_positive_infinity(), RR(-oo).is_negative_infinity()
+            sage: RR(oo).is_positive_infinity(), RR(-oo).is_negative_infinity()         # optional - sage.rings.real_mpfr
             (True, True)
             sage: SR(oo).is_positive_infinity(), SR(-oo).is_negative_infinity()         # optional - sage.symbolic
             (True, True)
@@ -1157,10 +1157,10 @@ class InfinityRing_class(Singleton, Ring):
         Complex infinity raises an exception. This is fine (there is
         no coercion, so there is no promise of functoriality)::
 
-            sage: i_infinity = CC(0, oo)
-            sage: InfinityRing(CC(oo)), InfinityRing(CC(-oo))
+            sage: i_infinity = CC(0, oo)                                                # optional - sage.rings.real_mpfr
+            sage: InfinityRing(CC(oo)), InfinityRing(CC(-oo))                           # optional - sage.rings.real_mpfr
             (+Infinity, -Infinity)
-            sage: InfinityRing(i_infinity)
+            sage: InfinityRing(i_infinity)                                              # optional - sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             ValueError: infinite but not with +/- phase
@@ -1263,9 +1263,9 @@ class InfinityRing_class(Singleton, Ring):
 
             sage: InfinityRing.has_coerce_map_from(CDF)
             False
-            sage: InfinityRing.has_coerce_map_from(CC)
+            sage: InfinityRing.has_coerce_map_from(CC)                                  # optional - sage.rings.real_mpfr
             False
-            sage: CC(0, oo) < CC(1)   # does not coerce to infinity ring
+            sage: CC(0, oo) < CC(1)   # does not coerce to infinity ring                # optional - sage.rings.real_mpfr
             True
         """
         from sage.structure.coerce import parent_is_real_numerical

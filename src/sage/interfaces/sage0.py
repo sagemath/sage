@@ -506,9 +506,9 @@ class SageElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)
-            sage: F,s = sr.polynomial_system()
-            sage: F == sage0(F)._sage_()
+            sage: sr = mq.SR(allow_zero_inversions=True)                        # optional - sage.modules
+            sage: F,s = sr.polynomial_system()                                  # optional - sage.modules
+            sage: F == sage0(F)._sage_()                                        # optional - sage.modules
             True
         """
         P = self.parent()
