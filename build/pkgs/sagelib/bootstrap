@@ -1,5 +1,6 @@
 #! /bin/sh
 set -e
+export M4PATH="$SAGE_ROOT/m4"
 for infile in src/*.m4; do
     if [ -f "$infile" ]; then
         outfile="src/$(basename $infile .m4)"
