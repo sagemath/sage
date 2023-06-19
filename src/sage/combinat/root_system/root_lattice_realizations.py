@@ -2539,7 +2539,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 Line defined by 2 points: [(1.5, -0.5), (1.5, 0.5)]
                 Point set defined by 8 point(s): [(-1.5, -0.5), (-1.5, 0.5), (-0.5, -1.5), (-0.5, 1.5), (0.5, -1.5), (0.5, 1.5), (1.5, -0.5), (1.5, 0.5)]
             """
-            from sage.geometry.polyhedron.all import Polyhedron
+            from sage.geometry.polyhedron.constructor import Polyhedron
             plot_options = self.plot_parse_options(**options)
             if not self.cartan_type().is_finite():
                 raise ValueError("the Cartan type must be finite")
@@ -3061,7 +3061,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L.plot_mv_polytope(p)
                 Graphics3d Object
             """
-            from sage.geometry.polyhedron.all import Polyhedron
+            from sage.geometry.polyhedron.constructor import Polyhedron
             plot_options = self.plot_parse_options(**options)
 
             # Setup the shift for plotting
