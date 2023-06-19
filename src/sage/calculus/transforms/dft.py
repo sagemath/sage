@@ -800,6 +800,7 @@ class IndexedSequence(SageObject):
             sage: t.idwt("bspline", 103) == s
             True
         """
+        from sage.rings.real_mpfr import RR
         # elements must be coercible into RR
         J = self.index_object()   # must be = range(N)
         N = len(J)             # must be 1 minus a power of 2
