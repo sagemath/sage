@@ -1031,7 +1031,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             MPoly[x,y]
             sage: F(ZZ)
             Multivariate Polynomial Ring in x, y over Integer Ring
-            sage: F(CC)
+            sage: F(CC)                                                                 # optional - sage.rings.real_mpfr
             Multivariate Polynomial Ring in x, y over Complex Field with 53 bits of precision
         """
         Functor.__init__(self, Rings(), Rings())
@@ -3634,7 +3634,7 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
         sage: F = CDF.construction()[0]
         sage: F(QQ)                                                                     # optional - sage.rings.number_field
         Algebraic Field
-        sage: F(RR)
+        sage: F(RR)                                                                     # optional - sage.rings.real_mpfr
         Complex Field with 53 bits of precision
         sage: F(F(QQ)) is F(QQ)                                                         # optional - sage.rings.number_field
         True
@@ -3650,7 +3650,7 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
             sage: F = AlgebraicClosureFunctor()
             sage: F(QQ)                                                                 # optional - sage.rings.number_field
             Algebraic Field
-            sage: F(RR)
+            sage: F(RR)                                                                 # optional - sage.rings.real_mpfr
             Complex Field with 53 bits of precision
             sage: F == loads(dumps(F))
             True
