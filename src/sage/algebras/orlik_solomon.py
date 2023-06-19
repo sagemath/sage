@@ -447,8 +447,8 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         return len(m)
 
     def as_gca(self):
-        """
-        Return the graded commutative algebra corresponding to self.
+        r"""
+        Return the graded commutative algebra corresponding to ``self``.
 
         EXAMPLES::
 
