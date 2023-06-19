@@ -37,7 +37,7 @@ from sage.rings.rational_field import QQ
 
 lazy_import('sage.rings.complex_mpfr', 'ComplexField')
 lazy_import('sage.rings.real_mpfr', 'RealField')
-lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve')
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 prec = 32
 
