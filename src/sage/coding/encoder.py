@@ -356,7 +356,7 @@ class Encoder(SageObject):
         """
         return self.code().base_field()**(self.code().dimension())
 
-    @abstract_method(optional = True)
+    @abstract_method(optional=True)
     def generator_matrix(self):
         r"""
         Returns a generator matrix of the associated code of ``self``.

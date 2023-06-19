@@ -175,7 +175,6 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
@@ -183,10 +182,6 @@ from sage.rings.finite_rings.integer_mod import is_IntegerMod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
 from sage.rings.padics.precision_error import PrecisionError
-
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_small_Eis
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_big_Eis
 
 cdef object infinity
 from sage.rings.infinity import infinity

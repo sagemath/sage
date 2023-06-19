@@ -782,9 +782,7 @@ class Gap(Parent):
             sage: libgap.collect()
         """
         initialize()
-        rc = CollectBags(0, 1)
-        if rc != 1:
-            raise RuntimeError('Garbage collection failed.')
+        GAP_CollectBags(1)
 
 
 libgap = Gap()

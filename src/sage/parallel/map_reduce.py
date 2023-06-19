@@ -2010,8 +2010,7 @@ class RESetParallelIterator(RESetMapReduce):
             newres = self._results.get()
             if newres is not None:
                 logger.debug("Got some results")
-                for r in newres:
-                    yield r
+                yield from newres
             else:
                 active_proc -= 1
                 if active_proc == 0:

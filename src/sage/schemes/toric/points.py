@@ -350,8 +350,7 @@ class NaiveFinitePointEnumerator():
         """
         fan = self.fan
         for d in range(fan.dim(), -1, -1):
-            for cone in fan.cones(d):
-                yield cone
+            yield from fan.cones(d)
 
     def coordinate_iter(self):
         """
