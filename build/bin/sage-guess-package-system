@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 #
 # First test for user-installable package systems, then system package systems
 if conda --version > /dev/null 2>&1; then
