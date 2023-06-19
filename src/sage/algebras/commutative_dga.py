@@ -2605,6 +2605,7 @@ class DifferentialGCAlgebra(GCAlgebra):
                b --> 0
                c --> 0
               Defn: (x1_0, x1_1, x1_2, y1_0, y1_1, y1_2) --> (a, b, c, 0, 0, 0)
+
         REFERENCES:
 
         - [Fel2001]_
