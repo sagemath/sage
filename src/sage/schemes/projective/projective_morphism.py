@@ -967,12 +967,15 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             self.scale_by(uniformizer**(-1 * min_val))
             return
 
+        R = self.domain().base_ring()
+
         # clear any denominators from the coefficients
         N = self.codomain().ambient_space().dimension_relative() + 1
-        LCM = lcm([self[i].denominator() for i in range(N)])
-        self.scale_by(LCM)
 
-        R = self.domain().base_ring()
+        if R in NumberFields():
+            if not all([self[i] in R.maximal_order() for i in range(N)]):
+                LCM = lcm([self[i].denominator() for i in range(N)])
+                self.scale_by(LCM)
 
         # There are cases, such as the example above over GF(7),
         # where we want to compute GCDs, but NOT in the case
