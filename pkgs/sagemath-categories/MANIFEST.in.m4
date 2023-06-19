@@ -44,6 +44,7 @@ include sage/interfaces/quit.p*
 include sage/interfaces/cleaner.p*
 include sage/interfaces/expect.p*
 include sage/interfaces/interface.p*
+include sage/interfaces/sage0.p*
 
 graft sage/parallel
 
