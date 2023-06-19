@@ -455,7 +455,8 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             sage: H = hyperplane_arrangements.braid(3)
             sage: O = H.orlik_solomon_algebra(QQ)
             sage: O.as_gca()
-            Graded Commutative Algebra with generators ('e0', 'e1', 'e2') in degrees (1, 1, 1) with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field
+            Graded Commutative Algebra with generators ('e0', 'e1', 'e2') in degrees (1, 1, 1)
+             with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field
         """
         from sage.algebras.commutative_dga import GradedCommutativeAlgebra
         gens = list(self.algebra_generators())
