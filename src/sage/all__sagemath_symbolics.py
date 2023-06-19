@@ -1,9 +1,9 @@
-from .all__sagemath_categories import *
+from .all__sagemath_modules import *
 
-#from sage.dynamics.complex_dynamics import *
+from sage.dynamics.complex_dynamics import *
 from sage.interfaces.all import *
 from sage.libs.all__sagemath_symbolics import *
-#from sage.manifolds.all import *
+from sage.manifolds.all import *
 from sage.matrix.all__sagemath_symbolics import *
 from sage.rings.all__sagemath_symbolics import *
 from sage.symbolic.all import *

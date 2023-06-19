@@ -35,6 +35,7 @@ install_requires =
         mpmath         \
         numpy          \
         sagemath_categories \
+        sagemath_modules \
         sage_conf \
         | sed "2,\$s/^/    /;"')dnl
 
@@ -66,5 +67,4 @@ singular        = # no extra needed
 sympy           = esyscmd(`sage-get-system-packages install-requires sympy')
 
 # extras by other features
-matrices        = esyscmd(`sage-get-system-packages install-requires sagemath_modules')
 plot            = esyscmd(`sage-get-system-packages install-requires sagemath_plot')
