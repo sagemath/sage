@@ -15,6 +15,7 @@ Manifold Subsets Defined as Pullbacks of Subsets under Continuous Maps
 
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.categories.metric_spaces import MetricSpaces
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module import is_FreeModule
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
@@ -29,7 +30,8 @@ from sage.manifolds.chart import Chart
 from sage.manifolds.scalarfield import ScalarField
 from sage.sets.real_set import RealSet
 import sage.geometry.abc
-from sage.geometry.relative_interior import RelativeInterior
+
+lazy_import('sage.geometry.relative_interior', 'RelativeInterior')
 
 
 class ManifoldSubsetPullback(ManifoldSubset):

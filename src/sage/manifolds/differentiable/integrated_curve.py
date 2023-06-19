@@ -116,11 +116,14 @@ from sage.manifolds.differentiable.tangent_vector import TangentVector
 from sage.calculus.interpolation import Spline
 from sage.misc.decorators import options
 from sage.misc.functional import numerical_approx
+from sage.misc.lazy_import import lazy_import
 from sage.arith.srange import srange
 from sage.ext.fast_callable import fast_callable
 from sage.symbolic.ring import SR
-from scipy.integrate import ode
 from random import shuffle
+
+lazy_import('scipy.integrate', 'ode')
+
 
 class IntegratedCurve(DifferentiableCurve):
     r"""
