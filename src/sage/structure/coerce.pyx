@@ -365,8 +365,10 @@ def parent_is_numerical(P):
 
         sage: from sage.structure.coerce import parent_is_numerical
         sage: import gmpy2
-        sage: [parent_is_numerical(R) for R in [RR, CC, QQ, int, complex, gmpy2.mpc]]
-        [True, True, True, True, True, True]
+        sage: [parent_is_numerical(R) for R in [QQ, int, complex, gmpy2.mpc]]
+        [True, True, True, True]
+        sage: [parent_is_numerical(R) for R in [RR, CC]]                                # optional - sage.rings.real_mpfr
+        [True, True]
         sage: parent_is_numerical(QuadraticField(-1))                                   # optional - sage.rings.number_field
         True
         sage: import numpy; parent_is_numerical(numpy.complexfloating)                  # optional - numpy
