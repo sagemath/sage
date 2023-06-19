@@ -30,8 +30,9 @@ from sage.misc.latex import latex
 
 try:
     import sympy
+    from sympy import latex as sympy_latex
 except ImportError:
-    pass
+    sympy_latex = None
 
 
 # Conversion functions
@@ -206,7 +207,7 @@ class CalculusMethod(SageObject):
             self._simplify_dict['SR'] = simplify_chain_generic
         # The default simplifying functions are saved:
         self._simplify_dict_default = self._simplify_dict.copy()
-        self._latex_dict = {'sympy': sympy.latex, 'SR': latex}
+        self._latex_dict = {'sympy': sympy_latex, 'SR': latex}
 
     def simplify(self, expression, method=None):
         r"""

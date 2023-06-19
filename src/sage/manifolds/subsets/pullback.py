@@ -79,32 +79,33 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
     Pulling back a polytope under a chart::
 
-        sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [2, 1]]); P
+        sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [2, 1]]); P                      # optional - sage.geometry.polyhedron
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-        sage: S = ManifoldSubsetPullback(c_cart, P); S
+        sage: S = ManifoldSubsetPullback(c_cart, P); S                                  # optional - sage.geometry.polyhedron
         Subset x_y_inv_P of the 2-dimensional topological manifold R^2
-        sage: M((1, 2)) in S
+        sage: M((1, 2)) in S                                                            # optional - sage.geometry.polyhedron
         True
-        sage: M((2, 0)) in S
+        sage: M((2, 0)) in S                                                            # optional - sage.geometry.polyhedron
         False
 
     Pulling back the interior of a polytope under a chart::
 
-        sage: int_P = P.interior(); int_P
-        Relative interior of a 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-        sage: int_S = ManifoldSubsetPullback(c_cart, int_P, name='int_S'); int_S
+        sage: int_P = P.interior(); int_P                                               # optional - sage.geometry.polyhedron
+        Relative interior of a
+         2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
+        sage: int_S = ManifoldSubsetPullback(c_cart, int_P, name='int_S'); int_S        # optional - sage.geometry.polyhedron
         Open subset int_S of the 2-dimensional topological manifold R^2
-        sage: M((0, 0)) in int_S
+        sage: M((0, 0)) in int_S                                                        # optional - sage.geometry.polyhedron
         False
-        sage: M((1, 1)) in int_S
+        sage: M((1, 1)) in int_S                                                        # optional - sage.geometry.polyhedron
         True
 
     Using the embedding map of a submanifold::
 
         sage: M = Manifold(3, 'M', structure="topological")
-        sage: N = Manifold(2, 'N', ambient=M, structure="topological")
-        sage: N
-        2-dimensional topological submanifold N immersed in the 3-dimensional topological manifold M
+        sage: N = Manifold(2, 'N', ambient=M, structure="topological"); N
+        2-dimensional topological submanifold N
+         immersed in the 3-dimensional topological manifold M
         sage: CM.<x,y,z> = M.chart()
         sage: CN.<u,v> = N.chart()
         sage: t = var('t')
@@ -117,7 +118,9 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
         sage: S = M.open_subset('S', coord_def={CM: z<1})
-        sage: phi_without_t = N.continuous_map(M, {(CN, CM): [expr.subs(t=0) for expr in phi.expr()]}); phi_without_t
+        sage: phi_without_t = N.continuous_map(M, {(CN, CM): [expr.subs(t=0)
+        ....:                                                 for expr in phi.expr()]})
+        sage: phi_without_t
         Continuous map
          from the 2-dimensional topological submanifold N
           embedded in the 3-dimensional topological manifold M
@@ -125,7 +128,8 @@ class ManifoldSubsetPullback(ManifoldSubset):
         sage: phi_without_t.expr()
         (u, v, u^2 + v^2)
         sage: D = ManifoldSubsetPullback(phi_without_t, S); D
-        Subset f_inv_S of the 2-dimensional topological submanifold N embedded in the 3-dimensional topological manifold M
+        Subset f_inv_S of the 2-dimensional topological submanifold N
+         embedded in the 3-dimensional topological manifold M
         sage: N.point((2,0)) in D
         False
 
@@ -141,11 +145,11 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(2, 'R^2', structure='topological')
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
-            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
+            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P                  # optional - sage.geometry.polyhedron
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: S = ManifoldSubsetPullback(c_cart, P); S
+            sage: S = ManifoldSubsetPullback(c_cart, P); S                              # optional - sage.geometry.polyhedron
             Subset x_y_inv_P of the 2-dimensional topological manifold R^2
-            sage: S is ManifoldSubsetPullback(c_cart, P)
+            sage: S is ManifoldSubsetPullback(c_cart, P)                                # optional - sage.geometry.polyhedron
             True
 
         """
@@ -245,20 +249,21 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         Polyhedra::
 
-            sage: Empty = Polyhedron(ambient_dim=2); Empty
+            sage: Empty = Polyhedron(ambient_dim=2); Empty                              # optional - sage.geometry.polyhedron
             The empty polyhedron in ZZ^2
-            sage: ManifoldSubsetPullback._is_open(Empty)
+            sage: ManifoldSubsetPullback._is_open(Empty)                                # optional - sage.geometry.polyhedron
             True
-            sage: C = polytopes.cube(); C
+            sage: C = polytopes.cube(); C                                               # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: ManifoldSubsetPullback._is_open(C)
+            sage: ManifoldSubsetPullback._is_open(C)                                    # optional - sage.geometry.polyhedron
             False
 
         Interiors of polyhedra::
 
-            sage: int_C = C.interior(); int_C
-            Relative interior of a 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: ManifoldSubsetPullback._is_open(int_C)
+            sage: int_C = C.interior(); int_C                                           # optional - sage.geometry.polyhedron
+            Relative interior of a
+             3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
+            sage: ManifoldSubsetPullback._is_open(int_C)                                # optional - sage.geometry.polyhedron
             True
 
         PPL polyhedra and not-necessarily-closed polyhedra::
@@ -456,10 +461,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: _polyhedron_restriction = ManifoldSubsetPullback._polyhedron_restriction
             sage: var('x y z')
             (x, y, z)
-            sage: c = polytopes.cube()
-            sage: _polyhedron_restriction((x, y, z), c)
+            sage: c = polytopes.cube()                                                  # optional - sage.geometry.polyhedron
+            sage: _polyhedron_restriction((x, y, z), c)                                 # optional - sage.geometry.polyhedron
             [-x + 1 >= 0, -y + 1 >= 0, -z + 1 >= 0, x + 1 >= 0, z + 1 >= 0, y + 1 >= 0]
-            sage: _polyhedron_restriction((x, y, z), c, relint=True)
+            sage: _polyhedron_restriction((x, y, z), c, relint=True)                    # optional - sage.geometry.polyhedron
             [-x + 1 > 0, -y + 1 > 0, -z + 1 > 0, x + 1 > 0, z + 1 > 0, y + 1 > 0]
         """
         conjunction = []
@@ -512,16 +517,16 @@ class ManifoldSubsetPullback(ManifoldSubset):
         Coordinate definition of an open chart polyhedron::
 
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
-            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
+            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P                  # optional - sage.geometry.polyhedron
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: ri_P = P.relative_interior(); ri_P
+            sage: ri_P = P.relative_interior(); ri_P                                    # optional - sage.geometry.polyhedron
             Relative interior of a 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: _coord_def(c_cart, ri_P)
+            sage: _coord_def(c_cart, ri_P)                                              # optional - sage.geometry.polyhedron
             {Chart (R^2, (x, y)): [2*x - y > 0, -4*x + 3*y > 0, x - y + 1 > 0]}
 
         Coordinate definition of the pullback of an open interval under a scalar field::
 
-            sage: r_squared = M.scalar_field(x^2+y^2)
+            sage: r_squared = M.scalar_field(x^2 + y^2)
             sage: I = RealSet((1, 4)); I
             (1, 4)
             sage: _coord_def(r_squared, I)
@@ -599,19 +604,20 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
-            sage: Cube = polytopes.cube(); Cube
+            sage: Cube = polytopes.cube(); Cube                                         # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube
+            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube  # optional - sage.geometry.polyhedron
             Subset McCube of the 3-dimensional topological manifold R^3
-            sage: p = McCube.an_element(); p
+            sage: p = McCube.an_element(); p                                            # optional - sage.geometry.polyhedron
             Point on the 3-dimensional topological manifold R^3
-            sage: p.coordinates(c_cart)
+            sage: p.coordinates(c_cart)                                                 # optional - sage.geometry.polyhedron
             (0, 0, 0)
 
-            sage: Empty = Polyhedron(ambient_dim=3)
-            sage: McEmpty = ManifoldSubsetPullback(c_cart, Empty, name='McEmpty'); McEmpty
+            sage: Empty = Polyhedron(ambient_dim=3)                                     # optional - sage.geometry.polyhedron
+            sage: McEmpty = ManifoldSubsetPullback(c_cart, Empty, name='McEmpty')       # optional - sage.geometry.polyhedron
+            sage: McEmpty                                                               # optional - sage.geometry.polyhedron
             Subset McEmpty of the 3-dimensional topological manifold R^3
-            sage: McEmpty.an_element()
+            sage: McEmpty.an_element()                                                  # optional - sage.geometry.polyhedron
             Traceback (most recent call last):
             ...
             sage.categories.sets_cat.EmptySetError
@@ -630,18 +636,18 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
-            sage: Cube = polytopes.cube(); Cube
+            sage: Cube = polytopes.cube(); Cube                                         # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube
+            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube  # optional - sage.geometry.polyhedron
             Subset McCube of the 3-dimensional topological manifold R^3
-            sage: L = list(McCube.some_elements()); L
+            sage: L = list(McCube.some_elements()); L                                   # optional - sage.geometry.polyhedron
             [Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3]
-            sage: list(p.coordinates(c_cart) for p in L)
+            sage: list(p.coordinates(c_cart) for p in L)                                # optional - sage.geometry.polyhedron
             [(0, 0, 0),
              (1, -1, -1),
              (1, 0, -1),
@@ -649,10 +655,11 @@ class ManifoldSubsetPullback(ManifoldSubset):
              (1, -1/4, 1/2),
              (0, -5/8, 3/4)]
 
-            sage: Empty = Polyhedron(ambient_dim=3)
-            sage: McEmpty = ManifoldSubsetPullback(c_cart, Empty, name='McEmpty'); McEmpty
+            sage: Empty = Polyhedron(ambient_dim=3)                                     # optional - sage.geometry.polyhedron
+            sage: McEmpty = ManifoldSubsetPullback(c_cart, Empty, name='McEmpty')       # optional - sage.geometry.polyhedron
+            sage: McEmpty                                                               # optional - sage.geometry.polyhedron
             Subset McEmpty of the 3-dimensional topological manifold R^3
-            sage: list(McEmpty.some_elements())
+            sage: list(McEmpty.some_elements())                                         # optional - sage.geometry.polyhedron
             []
         """
         if self._inverse is not None:
@@ -675,9 +682,9 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
-            sage: Cube = polytopes.cube(); Cube
+            sage: Cube = polytopes.cube(); Cube                                         # optional - sage.geometry.polyhedron
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: Cube.vertices_list()
+            sage: Cube.vertices_list()                                                  # optional - sage.geometry.polyhedron
             [[1, -1, -1],
             [1, 1, -1],
             [1, 1, 1],
@@ -686,15 +693,15 @@ class ManifoldSubsetPullback(ManifoldSubset):
             [-1, -1, -1],
             [-1, 1, -1],
             [-1, 1, 1]]
-            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube
+            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube  # optional - sage.geometry.polyhedron
             Subset McCube of the 3-dimensional topological manifold R^3
-            sage: p = M.point((0, 0, 0)); p
+            sage: p = M.point((0, 0, 0)); p                                             # optional - sage.geometry.polyhedron
             Point on the 3-dimensional topological manifold R^3
-            sage: p in McCube
+            sage: p in McCube                                                           # optional - sage.geometry.polyhedron
             True
-            sage: q = M.point((2, 3, 4)); q
+            sage: q = M.point((2, 3, 4)); q                                             # optional - sage.geometry.polyhedron
             Point on the 3-dimensional topological manifold R^3
-            sage: q in McCube
+            sage: q in McCube                                                           # optional - sage.geometry.polyhedron
             False
          """
         if super().__contains__(point):
@@ -724,13 +731,13 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: M = Manifold(2, 'R^2', structure='topological')
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
 
-            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
+            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P                  # optional - sage.geometry.polyhedron
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: P.is_open()
+            sage: P.is_open()                                                           # optional - sage.geometry.polyhedron
             False
-            sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP
+            sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP              # optional - sage.geometry.polyhedron
             Subset McP of the 2-dimensional topological manifold R^2
-            sage: McP.is_open()
+            sage: McP.is_open()                                                         # optional - sage.geometry.polyhedron
             False
         """
         return super().is_open()
@@ -758,11 +765,11 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         The pullback of a (closed convex) polyhedron under a chart is closed::
 
-            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
+            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P                  # optional - sage.geometry.polyhedron
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP
+            sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP              # optional - sage.geometry.polyhedron
             Subset McP of the 2-dimensional topological manifold R^2
-            sage: McP.is_closed()
+            sage: McP.is_closed()                                                       # optional - sage.geometry.polyhedron
             True
 
         The pullback of real vector subspaces under a chart is closed::
