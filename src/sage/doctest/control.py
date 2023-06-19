@@ -422,7 +422,6 @@ class DocTestController(SageObject):
                 feature_names = set([f.name for f in all_features() if f.is_optional()])
                 options.hide = options.hide.union(feature_names)
 
-
         options.disabled_optional = set()
         if isinstance(options.optional, str):
             s = options.optional.lower()
