@@ -119,7 +119,10 @@ implementing them on your own as a patch for inclusion!
 
 import re
 
-from sage.geometry.all import Cone, FaceFan, Fan, LatticePolytope
+from sage.geometry.cone import Cone
+from sage.geometry.fan import FaceFan
+from sage.geometry.fan import Fan
+from sage.geometry.lattice_polytope import LatticePolytope
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
