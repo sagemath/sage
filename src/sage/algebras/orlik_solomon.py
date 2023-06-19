@@ -446,20 +446,16 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         """
         return len(m)
 
-    def as_cdga(self):
+    def as_gca(self):
         """
-        Return the commutative differential graded algebra corresponding to self, with
-        trivial differential.
+        Return the graded commutative algebra corresponding to self.
 
         EXAMPLES::
 
             sage: H = hyperplane_arrangements.braid(3)
             sage: O = H.orlik_solomon_algebra(QQ)
-            sage: O.as_cdga()
-            Commutative Differential Graded Algebra with generators ('e0', 'e1', 'e2') in degrees (1, 1, 1) with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field with differential:
-               e0 --> 0
-               e1 --> 0
-               e2 --> 0
+            sage: O.as_gca()
+            Graded Commutative Algebra with generators ('e0', 'e1', 'e2') in degrees (1, 1, 1) with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field
         """
         from sage.algebras.commutative_dga import GradedCommutativeAlgebra
         gens = list(self.algebra_generators())
@@ -483,8 +479,24 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             return A.sum(P.coefficient(frozenset(p)) * AGbas[p] for p in bas2)
 
         I = A.ideal([AG[l]*AG[m] - rhs(l, m) for (l,m) in non_basis])
-        B = A.quotient(I)
-        return B.cdg_algebra({})
+        return A.quotient(I)
+
+    def as_cdga(self):
+        """
+        Return the commutative differential graded algebra corresponding to self, with
+        trivial differential.
+
+        EXAMPLES::
+
+            sage: H = hyperplane_arrangements.braid(3)
+            sage: O = H.orlik_solomon_algebra(QQ)
+            sage: O.as_cdga()
+            Commutative Differential Graded Algebra with generators ('e0', 'e1', 'e2') in degrees (1, 1, 1) with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field with differential:
+               e0 --> 0
+               e1 --> 0
+               e2 --> 0
+        """
+        return self.as_gca().cdg_algebra({})
 
 
 class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
