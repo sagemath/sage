@@ -26,5 +26,5 @@ ls -l "$wheel"
 
 if [ "$SAGE_CHECK" != no ]; then
     export TOX_PARALLEL_NO_SPINNER=1
-    (set -x; tox -r -p auto -v -e sagepython-sagewheels-nopypi-norequirements --installpkg $wheel) && (ls -l $(pwd)/.tox/sagepython-sagewheels-nopypi-norequirements*/log/*-command*.log; :)
+    (set -x; tox -r -p auto -v --installpkg $wheel) && (ls -l $(pwd)/.tox/sagepython-sagewheels-nopypi-norequirements*/log/*-command*.log; :)
 fi
