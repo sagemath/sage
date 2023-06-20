@@ -483,9 +483,9 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         return A.quotient(I)
 
     def as_cdga(self):
-        """
-        Return the commutative differential graded algebra corresponding to self, with
-        trivial differential.
+        r"""
+        Return the commutative differential graded algebra corresponding to ``self``
+        with the trivial differential.
 
         EXAMPLES::
 
