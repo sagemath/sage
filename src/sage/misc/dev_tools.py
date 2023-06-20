@@ -219,7 +219,7 @@ def find_objects_from_name(name, module_name=None):
     EXAMPLES::
 
         sage: import sage.misc.dev_tools as dt
-        sage: dt.find_objects_from_name('FareySymbol')
+        sage: dt.find_objects_from_name('FareySymbol')                                  # optional - sage.modular
         [<class 'sage.modular.arithgroup.farey_symbol.Farey'>]
 
         sage: import sympy
