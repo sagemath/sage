@@ -9912,7 +9912,7 @@ cdef class Matrix(Matrix1):
             sage: M = random_matrix(CC, 5, 7)
             sage: for i in range(5):  M[i,i] = 0
             sage: M[4, 0] = M[0, 6] = M[4, 6] = 0
-            sage: img = M.visualize_structure();  img
+            sage: img = M.visualize_structure();  img                                   # optional - pillow
             7x5px 24-bit RGB image
 
         You can use :meth:`~sage.repl.image.Image.save` to save the

@@ -152,9 +152,9 @@ class UnorderedTuples(Parent, UniqueRepresentation):
     EXAMPLES::
 
         sage: S = [1,2]
-        sage: UnorderedTuples(S,3).list()
+        sage: UnorderedTuples(S,3).list()                                               # optional - sage.libs.gap
         [[1, 1, 1], [1, 1, 2], [1, 2, 2], [2, 2, 2]]
-        sage: UnorderedTuples(["a","b","c"],2).list()
+        sage: UnorderedTuples(["a","b","c"],2).list()                                   # optional - sage.libs.gap
         [['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'b'], ['b', 'c'],
          ['c', 'c']]
     """
@@ -198,9 +198,9 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = [1,2]
-            sage: UnorderedTuples(S,3).list()
+            sage: UnorderedTuples(S,3).list()                                           # optional - sage.libs.gap
             [[1, 1, 1], [1, 1, 2], [1, 2, 2], [2, 2, 2]]
-            sage: UnorderedTuples(["a","b","c"],2).list()
+            sage: UnorderedTuples(["a","b","c"],2).list()                               # optional - sage.libs.gap
             [['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'b'], ['b', 'c'],
              ['c', 'c']]
         """

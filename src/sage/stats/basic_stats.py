@@ -46,6 +46,8 @@ from sage.misc.superseded import deprecation
 
 lazy_import("sage.symbolic.constants", "NaN")
 lazy_import("numpy", "ndarray", as_="numpy_ndarray")
+lazy_import("sage.stats.time_series", "TimeSeries")
+
 
 def mean(v):
     """
@@ -197,7 +199,7 @@ def std(v, bias=False):
 
     EXAMPLES::
 
-        sage: std([1..6], bias=True)
+        sage: std([1..6], bias=True)                                                    # optional - sage.symbolic
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.std is deprecated;
         use numpy.std or numpy.nanstd instead
@@ -215,7 +217,7 @@ def std(v, bias=False):
         sqrt(7/2)
         sage: std([e, pi])                                                              # optional - sage.symbolic
         sqrt(1/2)*abs(pi - e)
-        sage: std([])
+        sage: std([])                                                                   # optional - sage.symbolic
         NaN
         sage: std([I, sqrt(2), 3/5])                                                    # optional - sage.symbolic
         1/15*sqrt(1/2)*sqrt((10*sqrt(2) - 5*I - 3)^2
@@ -475,7 +477,6 @@ def moving_average(v, n):
 
     if not v:
         return v
-    from .time_series import TimeSeries
     if isinstance(v, TimeSeries):
         return v.simple_moving_average(n)[n - 1:]
     n = int(n)
