@@ -8456,7 +8456,7 @@ cdef class Matrix(Matrix1):
             [-1  5]
             [ 2  4]
 
-            sage: M.permutation_normal_form(check=True)                                             # optional - sage.graphs
+            sage: M.permutation_normal_form(check=True)                                 # optional - sage.graphs sage.groups
             (
             [ 5 -1]
             [ 4  2]

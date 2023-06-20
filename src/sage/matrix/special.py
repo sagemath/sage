@@ -3088,9 +3088,9 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         True
         sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
         True
-        sage: S = B.right_eigenmatrix()[1]
-        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
-        sage: all(e in eigenvalues for e in eigenvalues2)
+        sage: S = B.right_eigenmatrix()[1]                                              # optional - sage.rings.number_field
+        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()                               # optional - sage.rings.number_field
+        sage: all(e in eigenvalues for e in eigenvalues2)                               # optional - sage.rings.number_field
         True
 
     TESTS:
