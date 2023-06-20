@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# From sage-spkg.
+# For type=script packages, the build rule in build/make/Makefile sources
+# sage-env but not sage-dist-helpers.
+lib="$SAGE_ROOT/build/bin/sage-dist-helpers"
+source "$lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: failed to source $lib"
+    echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
+    exit 1
+fi
+cd src
+
+rm -rf build *.egg_info
+
+export PIP_NO_INDEX=true
+export PIP_FIND_LINKS="file://$SAGE_DISTFILES"
+vendoring sync
+
+export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
+
+# The metadata are set up to use the modularized distributions as dependencies.
+# Hence here we install with --no-build-isolation --no-deps
+sdh_pip_install --no-build-isolation --no-deps .

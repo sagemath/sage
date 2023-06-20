@@ -1,0 +1,1 @@
+$(PYTHON) cysignals mpmath | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig vendoring
