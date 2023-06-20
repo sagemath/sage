@@ -650,29 +650,29 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         TESTS::
 
             sage: R.<x> = RDF[]
-            sage: RDF._factor_univariate_polynomial(x)
+            sage: RDF._factor_univariate_polynomial(x)                                  # optional - numpy
             x
-            sage: RDF._factor_univariate_polynomial(2*x)
+            sage: RDF._factor_univariate_polynomial(2*x)                                # optional - numpy
             (2.0) * x
-            sage: RDF._factor_univariate_polynomial(x^2)
+            sage: RDF._factor_univariate_polynomial(x^2)                                # optional - numpy
             x^2
-            sage: RDF._factor_univariate_polynomial(x^2 + 1)
+            sage: RDF._factor_univariate_polynomial(x^2 + 1)                            # optional - numpy
             x^2 + 1.0
-            sage: RDF._factor_univariate_polynomial(x^2 - 1)
+            sage: RDF._factor_univariate_polynomial(x^2 - 1)                            # optional - numpy
             (x - 1.0) * (x + 1.0)
 
         The implementation relies on the ``roots()`` method which often reports
         roots not to be real even though they are::
 
             sage: f = (x-1)^3
-            sage: f.roots(ring=CDF)  # abs tol 2e-5
+            sage: f.roots(ring=CDF)  # abs tol 2e-5                                     # optional - numpy
             [(1.0000065719436413, 1),
              (0.9999967140281792 - 5.691454546815028e-06*I, 1),
              (0.9999967140281792 + 5.691454546815028e-06*I, 1)]
 
         This leads to the following incorrect factorization::
 
-            sage: f.factor()  # abs tol 2e-5
+            sage: f.factor()  # abs tol 2e-5                                            # optional - numpy
             (x - 1.0000065719436413) * (x^2 - 1.9999934280563585*x + 0.9999934280995487)
         """
         roots = f.roots(sage.rings.complex_double.CDF)
