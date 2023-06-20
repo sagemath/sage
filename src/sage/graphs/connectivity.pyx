@@ -58,9 +58,6 @@ Methods
 -------
 """
 
-from sage.rings.integer cimport Integer
-from cysignals.memory cimport sig_malloc, sig_free
-
 
 def is_connected(G):
     """
@@ -215,12 +212,12 @@ def connected_components_subgraphs(G):
         sage: from sage.graphs.connectivity import connected_components_subgraphs
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(G)
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(D)
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
         sage: L = D.connected_components_subgraphs()
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
 
     TESTS:
 
@@ -4249,8 +4246,8 @@ def is_triconnected(G):
     Comparing different methods on random graphs that are not always
     triconnected::
 
-        sage: G = graphs.RandomBarabasiAlbert(50, 3)
-        sage: G.is_triconnected() == G.vertex_connectivity(k=3)
+        sage: G = graphs.RandomBarabasiAlbert(50, 3)                                    # optional - networkx
+        sage: G.is_triconnected() == G.vertex_connectivity(k=3)                         # optional - networkx
         True
 
     .. SEEALSO::

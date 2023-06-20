@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.groups
 r"""
 Common category for Generalized Coxeter Groups or Complex Reflection Groups
 """

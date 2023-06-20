@@ -46,7 +46,7 @@ class HeckeModules(Category_module):
 
         sage: HeckeModules(IntegerRing())
         Category of Hecke modules over Integer Ring
-        sage: HeckeModules(FiniteField(5))
+        sage: HeckeModules(FiniteField(5))                                              # optional - sage.rings.finite_rings
         Category of Hecke modules over Finite Field of size 5
 
     The base ring doesn't have to be a principal ideal domain::
@@ -64,7 +64,7 @@ class HeckeModules(Category_module):
 
             sage: TestSuite(HeckeModules(ZZ)).run()
 
-            sage: HeckeModules(Partitions(3)).run()
+            sage: HeckeModules(Partitions(3)).run()                                     # optional - sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: R (=Partitions of the integer 3) must be a commutative ring
@@ -123,7 +123,10 @@ class HeckeModules(Category_module):
 
                 sage: M = ModularForms(Gamma0(7), 4)
                 sage: H = M._Hom_(M, category = HeckeModules(QQ)); H
-                Set of Morphisms from Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field to Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field in Category of Hecke modules over Rational Field
+                Set of Morphisms
+                 from Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
+                   to Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
+                   in Category of Hecke modules over Rational Field
                 sage: H.__class__
                 <class 'sage.modular.hecke.homspace.HeckeModuleHomspace_with_category'>
                 sage: TestSuite(H).run(skip=["_test_elements", "_test_an_element", "_test_elements_eq",
@@ -142,7 +145,8 @@ class HeckeModules(Category_module):
                 sage: H = M._Hom_(M, category = HeckeModules(GF(5))); H
                 Traceback (most recent call last):
                 ...
-                TypeError: Category of Hecke modules over Finite Field of size 5 is not a subcategory of Category of Hecke modules over Rational Field
+                TypeError: Category of Hecke modules over Finite Field of size 5
+                is not a subcategory of Category of Hecke modules over Rational Field
             """
             # TODO: double check that it's the correct HeckeModules category below:
             if category is not None and not category.is_subcategory(HeckeModules(self.base_ring())):

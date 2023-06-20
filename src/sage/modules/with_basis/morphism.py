@@ -396,9 +396,9 @@ class ModuleMorphismByLinearity(ModuleMorphism):
             Add more tests for multi-parameter module morphisms.
         """
         before = args[0:self._position]
-        after = args[self._position+1:len(args)]
+        after = args[self._position + 1:len(args)]
         x = args[self._position]
-        assert(x.parent() is self.domain())
+        assert x.parent() is self.domain()
 
         mc = x.monomial_coefficients(copy=False)
         if self._is_module_with_basis_over_same_base_ring:

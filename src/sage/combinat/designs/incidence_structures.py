@@ -2069,7 +2069,7 @@ class IncidenceStructure():
             raise RuntimeError("No coloring can be defined "
                                "when there is a set of size 1")
         elif k == 1:
-            if any(x for x in self._blocks):
+            if any(self._blocks):
                 raise ValueError("This hypergraph contains a set. "
                                  "It is not 1-chromatic")
             return [self.ground_set()]
@@ -2172,7 +2172,7 @@ class IncidenceStructure():
             for x in s:
                 g.add_edge((0, s), (1, x))
 
-        _ = g.plot(iterations = 50000,save_pos=True)
+        _ = g.plot(iterations=50000,save_pos=True)
 
         # The values are rounded as TikZ does not like accuracy.
         return {k[1]: (round(x, 3), round(y, 3))
@@ -2257,7 +2257,7 @@ class IncidenceStructure():
             # "center", i.e. the vertex representing the set s
             cx, cy = pos[Set(s)]
             s = [pos[_] for _ in s]
-            s = sorted(s, key = lambda x_y: arctan2(x_y[0] - cx, x_y[1] - cy))
+            s = sorted(s, key=lambda x_y: arctan2(x_y[0] - cx, x_y[1] - cy))
 
             for x in s:
                 tex += str(x)+" "

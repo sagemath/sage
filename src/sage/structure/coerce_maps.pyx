@@ -1,8 +1,6 @@
 """
 Coerce maps
 """
-
-import re
 import types
 
 from sage.structure.parent cimport Parent
