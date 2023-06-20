@@ -1683,7 +1683,7 @@ class KnotInfoBase(Enum):
         return R(eval_knotinfo(conway_polynomial, locals=lc))
 
     @cached_method
-    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ, original=False):
+    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ, original=False, reduced=False, odd=False, KhoHo=False):
         r"""
         Return the Khovanov polynomial according to the value of column
         ``khovanov_polynomial`` for this knot or link as an instance of
@@ -1695,8 +1695,16 @@ class KnotInfoBase(Enum):
         - ``var2`` -- (default: ``'t'``) the second variable
         - ``base_ring`` -- (default: ``ZZ``) the ring of the polynomial's
           coefficients
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
+        - ``reduced`` -- boolean (default: ``False``) if set to ``True``
+          the reduced version of the homology is used.
+        - ``odd`` -- boolean (default: ``False``) if set to ``True``
+          the odd version of the homology is used.
+        - ``KhoHo`` -- boolean (default: ``False``for knots and ``True``
+          for multi-component links) if set to ``True`` the data calculated
+          using `KhoHo <https://github.com/AShumakovitch/KhoHo>`__ is used
+          (see the note below).
 
         OUTPUT:
 
@@ -1706,23 +1714,25 @@ class KnotInfoBase(Enum):
 
         .. NOTE ::
 
-            The data used here were calculated with the program
-            `KhoHo <https://github.com/AShumakovitch/KhoHo>`__. They are no longer
-            visible on the website as of October 30, 2022. Instead, data
-            computed with `KnotJob <https://www.maths.dur.ac.uk/users/dirk.schuetz/knotjob.html>`__
-            are now displayed. The latter program is more accurate in terms of
-            orientation and reflection as it is based on ``PD`` code.
+            The data used for multi-component links were calculated with the program
+            `KhoHo <https://github.com/AShumakovitch/KhoHo>`__. These can still be
+            used for knots by setting the optional argument ``KhoHo`` to ``True``,
+            even though they will no longer be visible on the Knot website as of
+            October 30, 2022. Otherwise, for knots data calculated with
+            `KnotJob <https://www.maths.dur.ac.uk/users/dirk.schuetz/knotjob.html>`__
+            are used. The latter program is more accurate in terms of orientation
+            and reflection as it is based on ``PD`` code.
 
-            Even if they are not visible on the website, the data produced by
-            ``KhoHo`` are still available in the database. But maybe this will be
-            discontinued (check out the `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__ for updated information).
-            This interface will be adapted to the changes in an upcoming
-            release.
+            Note that in the future columns that are not visible on the web page may
+            also be removed in the database (see the
+            `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__
+            for updated information). Therefore, the ``KhoHo`` option cannot be
+            guaranteed to work after upgrading the ``database_knotinfo``-SPKG.
 
-            Since the results of ``KhoHo`` were computed using the ``DT`` notation,
-            the Khovanov polynomial returned by this method belongs to the
+            Furthermore, since the results of ``KhoHo`` were computed using the ``DT``
+            notation, the Khovanov polynomial returned by this option belongs to the
             mirror image of the given knot for a `list of 140 exceptions
-            <https://raw.githubusercontent.com/soehms/database_knotinfo/ main /hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
+            <https://raw.githubusercontent.com/soehms/database_knotinfo/main/hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
 
         EXAMPLES::
 
@@ -1737,6 +1747,35 @@ class KnotInfoBase(Enum):
             sage: L = KnotInfo.L5a1_0
             sage: Lk = L.khovanov_polynomial(); Lk
             q^4*t^2 + t + 2 + 2*q^-2 + q^-2*t^-1 + q^-4*t^-2 + q^-6*t^-2 + q^-8*t^-3
+            sage: L.khovanov_polynomial(original=True)
+             '2 + 2/q^2 + 1/(q^8*t^3) + 1/(q^6*t^2) + 1/(q^4*t^2) + 1/(q^2*t) + t + q^4*t^2'
+
+        Obtaining the reduced homology (for knots only)::
+
+            sage: Kkr = K.khovanov_polynomial(reduced=True); Kkr
+            q^6*t^3 + 2*q^4*t^2 + 2*q^2*t + 3 + 2*q^-2*t^-1 + 2*q^-4*t^-2 + q^-6*t^-3
+            sage: K.khovanov_polynomial(base_ring=QQ, reduced=True) == Kkr
+            True
+            sage: Kkr2 = K.khovanov_polynomial(base_ring=GF(2), reduced=True); Kkr2
+            q^6*t^3 + 1 + q^-6*t^-3
+            sage: KnotInfo.K8_19.inject()                               # optional database_knotinfo
+            Defining K8_19
+            sage: K8kr = K8_19.khovanov_polynomial(reduced=True); K8kr  # optional database_knotinfo
+            q^16*t^5 + q^12*t^4 + q^12*t^3 + q^10*t^2 + q^6
+
+        Obtaining the odd Khovanov homology (for knots only)::
+
+            sage: K.khovanov_polynomial(odd=True) == Kkr
+            True
+            sage: K.khovanov_polynomial(base_ring=QQ, odd=True) == Kkr
+            True
+            sage: K.khovanov_polynomial(base_ring=GF(2), odd=True) == Kkr2
+            True
+            sage: K8ko = K8_19.khovanov_polynomial(odd=True); K8ko     # optional database_knotinfo
+            q^16*t^5 + q^10*t^2 + q^6
+            sage: K8kr == K8ko
+            False
+
 
         Comparision to Sage's results::
 
@@ -1746,8 +1785,42 @@ class KnotInfoBase(Enum):
             True
             sage: Lk == L.link().khovanov_polynomial()
             True
+
+        REFERENCES:
+
+        - :wikipedia:`Khovanov_homology`
+        - :wikipedia:`Reduced_homology`
+        - [ORS2013]_
         """
-        khovanov_polynomial = self[self.items.khovanov_polynomial]
+        ch = base_ring.characteristic()
+        integral = ch == 0 and base_ring.is_field()
+        if not self.is_knot():
+            # KnotJob calculated results only available for knots
+            KhoHo = True
+        if KhoHo:
+            # use the old results obtained by the KhoHo software
+            khovanov_polynomial = self[self.items.khovanov_polynomial]
+        else:
+            if reduced:
+                if integral:
+                    khovanov_polynomial = self[self.items.khovanov_reduced_integral_polynomial]
+                elif ch == 0:
+                    khovanov_polynomial = self[self.items.khovanov_reduced_rational_polynomial]
+                elif ch == 2:
+                    khovanov_polynomial = self[self.items.khovanov_reduced_mod2_polynomial]
+                else:
+                    raise ValueError('Characteristic %s of base ring is not supported' % ch)
+            elif odd:
+                if integral:
+                    khovanov_polynomial = self[self.items.khovanov_odd_integral_polynomial]
+                elif ch == 0:
+                    khovanov_polynomial = self[self.items.khovanov_odd_rational_polynomial]
+                elif ch == 2:
+                    khovanov_polynomial = self[self.items.khovanov_odd_mod2_polynomial]
+                else:
+                    raise ValueError('Characteristic %s of base ring is not supported' % ch)
+            else:
+                khovanov_polynomial = self[self.items.khovanov_unreduced_integral_polynomial]
 
         if original:
             return khovanov_polynomial
@@ -1757,15 +1830,18 @@ class KnotInfoBase(Enum):
         R = LaurentPolynomialRing(base_ring, var_names)
 
         if not khovanov_polynomial and self.crossing_number() == 0:
-            return R({(1, 0): 1, (-1, 0): 1})
+            if reduced or odd:
+                return R.one()
+            else:
+                return R({(1, 0): 1, (-1, 0): 1})
 
-        ch = base_ring.characteristic()
         if ch == 2:
             if not self.is_knot():
                 raise NotImplementedError('Khovanov polynomial available only for knots in characteristic 2')
-            khovanov_torsion_polynomial = self[self.items.khovanov_torsion_polynomial]
-            khovanov_torsion_polynomial = khovanov_torsion_polynomial.replace('Q', 'q')
-            khovanov_polynomial = '%s + %s' % (khovanov_polynomial, khovanov_torsion_polynomial)
+            if KhoHo:
+                khovanov_torsion_polynomial = self[self.items.khovanov_torsion_polynomial]
+                khovanov_torsion_polynomial = khovanov_torsion_polynomial.replace('Q', 'q')
+                khovanov_polynomial = '%s + %s' % (khovanov_polynomial, khovanov_torsion_polynomial)
 
         if not khovanov_polynomial:
             # given just for links with less than 12 crossings
@@ -1774,14 +1850,18 @@ class KnotInfoBase(Enum):
         from sage.repl.preparse import implicit_mul
         # since implicit_mul does not know about the choice of variable names
         # we have to insert * between them separately
-        for i in ['q', 't',')']:
-            for j in ['q', 't', '(']:
+        for i in ['q', 't', 'T', ')']:
+            for j in ['q', 't', 'T', '(']:
                 khovanov_polynomial = khovanov_polynomial.replace('%s%s' % (i, j), '%s*%s' % (i, j))
         khovanov_polynomial = implicit_mul(khovanov_polynomial)
         gens = R.gens_dict()
         lc = {}
         lc['q'] = gens[var1]
         lc['t'] = gens[var2]
+        if ch == 2:
+            lc['T'] = 1
+        else:
+            lc['T'] = 0
 
         return R(eval_knotinfo(khovanov_polynomial, locals=lc))
 
