@@ -454,8 +454,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
               Defn: (z + 1)*t^3 + t^2 + z
 
         """
-        u = self.ore_polynomial() + other.ore_polynomial()
-        return self.parent()(u)
+        return self.parent()(self.ore_polynomial() + other.ore_polynomial())
 
     def _composition_(self, other, H):
         r"""
@@ -559,7 +558,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         T = KT.gen()
         for i in range(1, r):
             row = [c.map_coefficients(Frob) for c in row]
-            row = [(inv*T - B[0]) * row[-1]] + [row[j-1] - B[j]*row[-1] for j in range(1, r)]
+            row = [(inv*T - B[0]) * row[-1]] \
+                + [row[j-1] - B[j]*row[-1] for j in range(1, r)]
             rows.append(row)
 
         return matrix(KT, rows)
@@ -625,8 +625,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             nu = A([c.in_base() for c in nu.monic().list()])
             return A.ideal(nu)
         elif self.domain() is self.codomain():
-            nu = A([c.in_base() for c in nu.list()])
-            return nu
+            return A([c.in_base() for c in nu.list()])
         else:
             raise ValueError("norm is defined as an actual element only for endomorphisms")
 
