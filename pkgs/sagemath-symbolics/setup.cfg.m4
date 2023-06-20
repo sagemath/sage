@@ -1,4 +1,4 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-symbolics
 version = file: VERSION.txt
@@ -10,16 +10,14 @@ include(`setup_cfg_metadata.m4')dnl'
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        gmpy2          \
-        cypari         \
-        cysignals      \
-        mpmath         \
-        numpy          \
-        sagemath_categories \
-        sagemath_modules \
-        sage_conf \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_gmpy2
+    SPKG_INSTALL_REQUIRES_cypari
+    SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_mpmath
+    SPKG_INSTALL_REQUIRES_numpy
+    SPKG_INSTALL_REQUIRES_sagemath_categories
+    SPKG_INSTALL_REQUIRES_sagemath_modules
+    SPKG_INSTALL_REQUIRES_sage_conf
 
 [options.package_data]
 
@@ -36,17 +34,17 @@ sage =
     ext_data/magma/sage/*
 
 [options.extras_require]
-test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+test            = SPKG_INSTALL_REQUIRES_sagemath_repl
 
 # extras by libraries
 axiom           = # FIXME
-giac            = esyscmd(`sage-get-system-packages install-requires sagemath_giac')
+giac            = SPKG_INSTALL_REQUIRES_sagemath_giac
 ginac           = # no extra needed, same as pynac
 maxima          = # no extra needed
-primecount      = esyscmd(`sage-get-system-packages install-requires primecountpy')
+primecount      = SPKG_INSTALL_REQUIRES_primecountpy
 pynac           = # no extra needed
 singular        = # no extra needed
-sympy           = esyscmd(`sage-get-system-packages install-requires sympy')
+sympy           = SPKG_INSTALL_REQUIRES_sympy
 
 # extras by other features
-plot            = esyscmd(`sage-get-system-packages install-requires sagemath_plot')
+plot            = SPKG_INSTALL_REQUIRES_sagemath_plot

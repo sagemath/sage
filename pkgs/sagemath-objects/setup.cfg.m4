@@ -8,12 +8,11 @@ long_description_content_type = text/x-rst
 include(`setup_cfg_metadata.m4')dnl'
 
 [options]
+include(`sage_spkg_versions.m4')dnl'
 python_requires = >=3.8, <3.12
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        gmpy2          \
-        cysignals      \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_gmpy2
+    SPKG_INSTALL_REQUIRES_cysignals
 
 [options.extras_require]
 # Currently we do not use the sage doctester to test sagemath-objects,

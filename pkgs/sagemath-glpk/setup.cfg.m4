@@ -1,4 +1,4 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-glpk
 version = file: VERSION.txt
@@ -10,16 +10,13 @@ include(`setup_cfg_metadata.m4')dnl'
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        sagemath_objects \
-        memory_allocator \
-        cysignals \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_sagemath_objects
+    SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_cysignals
 
 [options.extras_require]
 
 # No test requirements; see comment in tox.ini
 test =
-
-##     esyscmd(`sage-get-system-packages install-requires sagemath_repl')
-##     esyscmd(`sage-get-system-packages install-requires sagemath_polyhedra')
+##     SPKG_INSTALL_REQUIRES_sagemath_repl
+##     SPKG_INSTALL_REQUIRES_sagemath_polyhedra

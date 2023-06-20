@@ -1,4 +1,4 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-groups
 version = file: VERSION.txt
@@ -10,31 +10,28 @@ include(`setup_cfg_metadata.m4')dnl'
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        sagemath_categories \
-        sagemath_gap \
-        sagemath_modules \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_sagemath_categories
+    SPKG_INSTALL_REQUIRES_sagemath_gap
+    SPKG_INSTALL_REQUIRES_sagemath_modules
 
 [options.extras_require]
-test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+test            = SPKG_INSTALL_REQUIRES_sagemath_repl
 
 # extras by packages
-coxeter3 = esyscmd(`sage-get-system-packages install-requires sagemath_coxeter3')
-gap =                            # no extra needed
-
+coxeter3        = SPKG_INSTALL_REQUIRES_sagemath_coxeter3
+gap             = # no extra needed
 
 # extras by groups_catalog
-additive =                       # no extra needed
-affine =                         # no extra needed
-lie =  # FIXME
-matrix =                         # no extra needed
-permutation =                    # no extra needed
-presentation =                   # no extra needed
+additive        = # no extra needed
+affine          = # no extra needed
+lie             = # FIXME
+matrix          = # no extra needed
+permutation     = # no extra needed
+presentation    = # no extra needed
 
 # extras by other features
-representations = esyscmd(`sage-get-system-packages install-requires sagemath_combinat')
-semigroups = esyscmd(`sage-get-system-packages install-requires sagemath_combinat')
+representations = SPKG_INSTALL_REQUIRES_sagemath_combinat
+semigroups      = SPKG_INSTALL_REQUIRES_sagemath_combinat
 
 # the whole package
-standard = sagemath-groups[additive,matrix,representations,semigroups]
+standard        = sagemath-groups[additive,matrix,representations,semigroups]

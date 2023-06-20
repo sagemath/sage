@@ -1,4 +1,4 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-environment
 version = file: VERSION.txt
@@ -10,8 +10,6 @@ include(`setup_cfg_metadata.m4')dnl'
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        | sed "2,\$s/^/    /;"')dnl
 
 py_modules =
     sage.all__sagemath_environment
@@ -44,16 +42,25 @@ scripts =
 
 [options.extras_require]
 # sage.env can optionally use sage_conf
-conf = esyscmd(`sage-get-system-packages install-requires sage_conf')
+conf = SPKG_INSTALL_REQUIRES_sage_conf
+
 # For "sage --docbuild"
-docbuild = esyscmd(`sage-get-system-packages install-requires sage_docbuild')
+docbuild = SPKG_INSTALL_REQUIRES_sage_docbuild
+
 # For "sage", "sage -t", ...
-sage = esyscmd(`sage-get-system-packages install-requires sagelib')
+sage = SPKG_INSTALL_REQUIRES_sagelib
+
 # For "sage --cython"
-cython = esyscmd(`sage-get-system-packages install-requires cython')
+cython = SPKG_INSTALL_REQUIRES_cython
+
 # For "sage --pytest"
-pytest = esyscmd(`sage-get-system-packages install-requires pytest')
+pytest = SPKG_INSTALL_REQUIRES_pytest
+
 # For "sage --rst2ipynb"
-rst2ipynb = esyscmd(`sage-get-system-packages install-requires rst2ipynb')
+rst2ipynb = SPKG_INSTALL_REQUIRES_rst2ipynb
+
+# For "sage --tox"
+tox = SPKG_INSTALL_REQUIRES_tox
+
 # For "sage --sws2rst"
-sws2rst = esyscmd(`sage-get-system-packages install-requires sage_sws2rst')
+sws2rst = SPKG_INSTALL_REQUIRES_sage_sws2rst

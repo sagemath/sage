@@ -1,9 +1,8 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-modules
 version = file: VERSION.txt
-description = Sage: Open Source Mathematics Software: Vectors, matrices, tensors, vector spaces, affine spaces,
-  modules and algebras, additive groups, quadratic forms, homology, coding theory, matroids
+description = Sage: Open Source Mathematics Software: Vectors, matrices, tensors, vector spaces, affine spaces, modules and algebras, additive groups, quadratic forms, homology, coding theory, matroids
 long_description = file: README.rst
 long_description_content_type = text/x-rst
 include(`setup_cfg_metadata.m4')dnl'
@@ -11,57 +10,55 @@ include(`setup_cfg_metadata.m4')dnl'
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        gmpy2          \
-        cysignals      \
-        memory_allocator \
-        sagemath_categories \
-        mpmath \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_gmpy2
+    SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_sagemath_categories
+    SPKG_INSTALL_REQUIRES_mpmath
 
 [options.extras_require]
-test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+test    = SPKG_INSTALL_REQUIRES_sagemath_repl
 
 # extras by packages
-flint = esyscmd(`sage-get-system-packages install-requires sagemath_flint')
-linbox = esyscmd(`sage-get-system-packages install-requires sagemath_linbox')
-m4ri = # FIXME
-m4rie = # FIXME
-meataxe = esyscmd(`sage-get-system-packages install-requires sagemath_meataxe')
-mpfi = # FIXME
-ntl = # FIXME
-numpy = esyscmd(`sage-get-system-packages install-requires numpy')
+flint   = SPKG_INSTALL_REQUIRES_sagemath_flint
+linbox  = SPKG_INSTALL_REQUIRES_sagemath_linbox
+m4ri    = # FIXME
+m4rie   = # FIXME
+meataxe = SPKG_INSTALL_REQUIRES_sagemath_meataxe
+mpfi    = # FIXME
+ntl     = # FIXME
+numpy   = SPKG_INSTALL_REQUIRES_numpy
 
 # extras by rings
-RDF = sagemath-modules[numpy]
-CDF = sagemath-modules[numpy]
-RR  =                            # no extra needed
-CC  =                            # no extra needed
-RIF =
-CIF =
-RBF = sagemath-modules[flint]
-CBF = sagemath-modules[flint]
-GF   = sagemath-modules[linbox]
-GF2  = sagemath-modules[m4ri]
-GF2e = sagemath-modules[m4rie]
-GF2n = sagemath-modules[m4rie]
-GFpn = sagemath-modules[meataxe]
-FiniteField = sagemath-modules[GF]
-NumberField = # FIXME
-QuadraticField = sagemath-modules[NumberField]
-QQbar = sagemath-modules[NumberField]
-AA = sagemath-modules[NumberField]
+RDF     = sagemath-modules[numpy]
+CDF     = sagemath-modules[numpy]
+RR      =                            # no extra needed
+CC      =                            # no extra needed
+RIF     =
+CIF     =
+RBF     = sagemath-modules[flint]
+CBF     = sagemath-modules[flint]
+GF      = sagemath-modules[linbox]
+GF2     = sagemath-modules[m4ri]
+GF2e    = sagemath-modules[m4rie]
+GF2n    = sagemath-modules[m4rie]
+GFpn    = sagemath-modules[meataxe]
+QQbar   = sagemath-modules[NumberField]
+AA      = sagemath-modules[NumberField]
+UCF     = sagemath-modules[NumberField]
+Zp      = # FIXME
+Qp      = sagemath-modules[Zp]
+Zq      = sagemath-modules[Zp]
+Qq      = sagemath-modules[Zp]
+FiniteField     = sagemath-modules[GF]
+NumberField     = # FIXME
+QuadraticField  = sagemath-modules[NumberField]
 CyclotomicField = sagemath-modules[NumberField]
-UCF = sagemath-modules[NumberField]
-Zp = # FIXME
-Qp = sagemath-modules[Zp]
-Zq = sagemath-modules[Zp]
-Qq = sagemath-modules[Zp]
 
 # extras by features
-invariant = esyscmd(`sage-get-system-packages install-requires sagemath_groups')
-combinat = esyscmd(`sage-get-system-packages install-requires sagemath_combinat')
-padics = sagemath-modules[Zp]
+invariant   = SPKG_INSTALL_REQUIRES_sagemath_groups
+combinat    = SPKG_INSTALL_REQUIRES_sagemath_combinat
+padics      = sagemath-modules[Zp]
 
 # the whole package
-standard = sagemath-modules[invariant,combinat,padics,NumberField,FiniteField,m4ri,m4rie,flint,linbox,numpy,mpfi,ntl]
+standard    = sagemath-modules[invariant,combinat,padics,NumberField,FiniteField,m4ri,m4rie,flint,linbox,numpy,mpfi,ntl]

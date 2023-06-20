@@ -1,4 +1,4 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-graphs
 version = file: VERSION.txt
@@ -10,32 +10,30 @@ include(`setup_cfg_metadata.m4')dnl'
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        gmpy2          \
-        cysignals      \
-        memory_allocator \
-        sagemath_categories \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_gmpy2
+    SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_sagemath_categories
 
 [options.extras_require]
-test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+test        = SPKG_INSTALL_REQUIRES_sagemath_repl
 
-bliss = esyscmd(`sage-get-system-packages install-requires sagemath_bliss')
-mcqd = esyscmd(`sage-get-system-packages install-requires sagemath_mcqd')
-tdlib = esyscmd(`sage-get-system-packages install-requires sagemath_tdlib')
-igraph = esyscmd(`sage-get-system-packages install-requires python_igraph')
+# libraries
+bliss       = SPKG_INSTALL_REQUIRES_sagemath_bliss
+gap         = SPKG_INSTALL_REQUIRES_sagemath_gap
+igraph      = SPKG_INSTALL_REQUIRES_python_igraph
+mcqd        = SPKG_INSTALL_REQUIRES_sagemath_mcqd
+networkx    = SPKG_INSTALL_REQUIRES_networkx
+tdlib       = SPKG_INSTALL_REQUIRES_sagemath_tdlib
 
-networkx = esyscmd(`sage-get-system-packages install-requires networkx')
-gap = esyscmd(`sage-get-system-packages install-requires sagemath_gap')
+# features
+combinat    = SPKG_INSTALL_REQUIRES_sagemath_combinat
+databases   = # FIXME
+editor      = SPKG_INSTALL_REQUIRES_phitigra
+mip         = SPKG_INSTALL_REQUIRES_sagemath_polyhedra
+plot        = SPKG_INSTALL_REQUIRES_sagemath_plot
+polyhedra   = SPKG_INSTALL_REQUIRES_sagemath_polyhedra
+repl        = SPKG_INSTALL_REQUIRES_sagemath_repl
+sat         = SPKG_INSTALL_REQUIRES_sagemath_combinat
 
-combinat =
-databases =
-editor = esyscmd(`sage-get-system-packages install-requires phitigra')
-mip =
-plot =
-polyhedra = esyscmd(`sage-get-system-packages install-requires sagemath_polyhedra')
-repl = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
-sat =
-
-standard =
-    sagemath-graphs[combinat,databases,mip,plot,polyhedra,repl]
+standard    = sagemath-graphs[combinat,databases,mip,plot,polyhedra,repl]
