@@ -1313,7 +1313,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 raise NotImplementedError("cannot solve the equation u^%s == %s" % (e, ue))
             return True
 
-
     def is_supersingular(self):
         r"""
         Return ``True`` whether the Drinfeld module is supersingular.
