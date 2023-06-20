@@ -124,8 +124,8 @@ class Polyhedron_base(Polyhedron_base7):
 
     ::
 
-        sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2))                       # optional - sage.graphs
-        sage: TestSuite(p).run()                                                        # optional - sage.graphs
+        sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2))                       # optional - sage.combinat sage.graphs
+        sage: TestSuite(p).run()                                                        # optional - sage.combinat sage.graphs
 
     ::
 
@@ -264,10 +264,10 @@ class Polyhedron_base(Polyhedron_base7):
 
         TESTS::
 
-            sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p                # optional - sage.graphs
+            sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p                # optional - sage.combinat sage.graphs
             A 19-dimensional polyhedron in QQ^27
              defined as the convex hull of 1 vertex and 148 rays
-            sage: p.to_linear_program().polyhedron() == p                               # optional - sage.graphs
+            sage: p.to_linear_program().polyhedron() == p                               # optional - sage.combinat sage.graphs
             True
 
             sage: p = polytopes.icosahedron()                                           # optional - sage.rings.number_field
