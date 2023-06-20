@@ -5,7 +5,7 @@ Difference families
 This module gathers everything related to difference families. One can build a
 difference family (or check that it can be built) with :func:`difference_family`::
 
-    sage: G,F = designs.difference_family(13,4,1)                                       # optional - sage.modules
+    sage: G,F = designs.difference_family(13,4,1)                                       # optional - sage.libs.pari sage.modules
 
 It defines the following functions:
 
@@ -1564,15 +1564,15 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
         sage: from sage.combinat.designs.difference_family import _get_submodule_of_order, relative_difference_set_from_m_sequence, is_relative_difference_set
         sage: q, N = 5, 2
         sage: params = ((q^N-1) // (q-1), q - 1, q^(N-1), q^(N-2))
-        sage: G, R = relative_difference_set_from_m_sequence(q, N, return_group=True)   # optional - sage.modules
-        sage: H = _get_submodule_of_order(G, q - 1)                                     # optional - sage.modules
-        sage: is_relative_difference_set(R, G, H, params)                               # optional - sage.modules
+        sage: G, R = relative_difference_set_from_m_sequence(q, N, return_group=True)   # optional - sage.libs.pari sage.modules
+        sage: H = _get_submodule_of_order(G, q - 1)                                     # optional - sage.libs.pari sage.modules
+        sage: is_relative_difference_set(R, G, H, params)                               # optional - sage.libs.pari sage.modules
         True
 
     If we pass the ``verbose`` argument, the function will explain why it failed::
 
-        sage: R2 = [G[1], G[2], G[3], G[5], G[6]]                                       # optional - sage.modules
-        sage: is_relative_difference_set(R2, G, H, params, verbose=True)                # optional - sage.modules
+        sage: R2 = [G[1], G[2], G[3], G[5], G[6]]                                       # optional - sage.libs.pari sage.modules
+        sage: is_relative_difference_set(R2, G, H, params, verbose=True)                # optional - sage.libs.pari sage.modules
         There is a value in the difference set which is not repeated d times
         False
     """
@@ -1741,7 +1741,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
-        sage: supplementary_difference_set_from_rel_diff_set(17) #random
+        sage: supplementary_difference_set_from_rel_diff_set(17) #random                # optional - sage.libs.pari
         (Additive abelian group isomorphic to Z/16,
          [[(1), (5), (6), (7), (9), (13), (14), (15)],
           [(0), (2), (3), (5), (6), (10), (11), (13), (14)],
@@ -1750,39 +1750,39 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
 
     If ``existence=True``, the function returns a boolean::
 
-        sage: supplementary_difference_set_from_rel_diff_set(7, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(7, existence=True)         # optional - sage.libs.pari
         False
-        sage: supplementary_difference_set_from_rel_diff_set(17, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(17, existence=True)        # optional - sage.libs.pari
         True
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
-        sage: G, sets = supplementary_difference_set_from_rel_diff_set(17, check=False)
-        sage: is_supplementary_difference_set(sets, lmbda=16, G=G)
+        sage: G, sets = supplementary_difference_set_from_rel_diff_set(17, check=False)     # optional - sage.libs.pari
+        sage: is_supplementary_difference_set(sets, lmbda=16, G=G)                          # optional - sage.libs.pari
         True
-        sage: G, sets = supplementary_difference_set_from_rel_diff_set(9, check=False)
-        sage: is_supplementary_difference_set(sets, lmbda=8, G=G)
+        sage: G, sets = supplementary_difference_set_from_rel_diff_set(9, check=False)      # optional - sage.libs.pari
+        sage: is_supplementary_difference_set(sets, lmbda=8, G=G)                           # optional - sage.libs.pari
         True
-        sage: supplementary_difference_set_from_rel_diff_set(7)
+        sage: supplementary_difference_set_from_rel_diff_set(7)                             # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: There is no s for which m-1 is an odd prime power
-        sage: supplementary_difference_set_from_rel_diff_set(8)
+        sage: supplementary_difference_set_from_rel_diff_set(8)                             # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: q must be an odd prime power
-        sage: supplementary_difference_set_from_rel_diff_set(8, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(8, existence=True)             # optional - sage.libs.pari
         False
-        sage: supplementary_difference_set_from_rel_diff_set(7, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(7, existence=True)             # optional - sage.libs.pari
         False
-        sage: supplementary_difference_set_from_rel_diff_set(1, existence=True)
+        sage: supplementary_difference_set_from_rel_diff_set(1, existence=True)             # optional - sage.libs.pari
         False
 
     Check that the function works even when s > 1::
 
-        sage: G, sets = supplementary_difference_set_from_rel_diff_set(353, check=False) #long time
-        sage: is_supplementary_difference_set(sets, lmbda=352, G=G) #long time
+        sage: G, sets = supplementary_difference_set_from_rel_diff_set(353, check=False)  # long time, optional - sage.libs.pari
+        sage: is_supplementary_difference_set(sets, lmbda=352, G=G)                       # long time, optional - sage.libs.pari
         True
 
     .. SEEALSO::

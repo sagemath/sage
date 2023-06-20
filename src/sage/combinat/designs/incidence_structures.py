@@ -458,14 +458,15 @@ class IncidenceStructure():
         incidentally computes their canonical label (if necessary). Thus,
         subsequent calls to :meth:`is_isomorphic` will be faster::
 
-            sage: IS1 = designs.projective_plane(3)
-            sage: IS2 = IS1.relabel(Permutations(IS1.ground_set()).random_element(), inplace=False)
-            sage: IS2 = IncidenceStructure(IS2.blocks())
-            sage: IS1._canonical_label is None and IS2._canonical_label is None
+            sage: IS1 = designs.projective_plane(3)                                     # optional - sage.schemes
+            sage: IS2 = IS1.relabel(Permutations(IS1.ground_set()).random_element(),    # optional - sage.schemes
+            ....:                   inplace=False)
+            sage: IS2 = IncidenceStructure(IS2.blocks())                                # optional - sage.schemes
+            sage: IS1._canonical_label is None and IS2._canonical_label is None         # optional - sage.schemes
             True
-            sage: IS1.is_isomorphic(IS2)
+            sage: IS1.is_isomorphic(IS2)                                                # optional - sage.schemes
             True
-            sage: IS1._canonical_label is None or IS2._canonical_label is None
+            sage: IS1._canonical_label is None or IS2._canonical_label is None          # optional - sage.schemes
             False
 
         """
