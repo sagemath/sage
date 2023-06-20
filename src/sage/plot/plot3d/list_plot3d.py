@@ -602,7 +602,7 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
         from .parametric_surface import ParametricSurface
 
         def g(x, y):
-            z = f([x, y])
+            z = f([x, y]).item()
             return (x, y, z)
         G = ParametricSurface(g, (list(numpy.r_[xmin:xmax:num_points * j]),
                                   list(numpy.r_[ymin:ymax:num_points * j])),
