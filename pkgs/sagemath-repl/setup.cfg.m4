@@ -1,4 +1,4 @@
-# -*- conf-unix -*-
+include(`sage_spkg_versions.m4')dnl' -*- conf-unix -*-
 [metadata]
 name = sagemath-repl
 version = file: VERSION.txt
@@ -10,12 +10,10 @@ include(`setup_cfg_metadata.m4')dnl'
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
-    esyscmd(`sage-get-system-packages install-requires \
-        sagemath_objects \
-        sagemath_environment \
-        ipython \
-        ipywidgets \
-        | sed "2,\$s/^/    /;"')dnl
+    SPKG_INSTALL_REQUIRES_sagemath_objects
+    SPKG_INSTALL_REQUIRES_sagemath_environment
+    SPKG_INSTALL_REQUIRES_ipython
+    SPKG_INSTALL_REQUIRES_ipywidgets
 
 py_modules =
     sage.all__sagemath_repl
