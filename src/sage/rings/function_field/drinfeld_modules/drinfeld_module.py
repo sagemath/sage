@@ -1259,7 +1259,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         TESTS:
 
-        A Drifeld module is always isomorphic to itself::
+        A Drinfeld module is always isomorphic to itself::
 
             sage: phi = DrinfeldModule(A, [z] + [K.random_element() for _ in range(3)] + [1])
             sage: phi.is_isomorphic(phi)
