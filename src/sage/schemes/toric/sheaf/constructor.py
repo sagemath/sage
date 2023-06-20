@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.geometry.polyhedron sage.graphs
 r"""
 Construct sheaves on toric varieties
 

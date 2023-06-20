@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.geometry.polyhedron sage.graphs
 """
 Enumerate points of a toric variety
 

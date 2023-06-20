@@ -2988,7 +2988,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         We can perform the same examples using other algorithms::
 
             sage: o = lattice_polytope.cross_polytope(2)
-            sage: o.normal_form(algorithm="palp_native")
+            sage: o.normal_form(algorithm="palp_native")                                # optional - sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -2996,7 +2996,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             in 2-d lattice M
 
             sage: o = lattice_polytope.cross_polytope(2)
-            sage: o.normal_form(algorithm="palp_modified")
+            sage: o.normal_form(algorithm="palp_modified")                              # optional - sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3054,13 +3054,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0),
             M( 0, -1)
             in 2-d lattice M
-            sage: o._palp_modified_normal_form()                                        # optional - sage.graphs
+            sage: o._palp_modified_normal_form()                                        # optional - sage.graphs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
             M(-1,  0)
             in 2-d lattice M
-            sage: o._palp_modified_normal_form(permutation=True)                        # optional - sage.graphs
+            sage: o._palp_modified_normal_form(permutation=True)                        # optional - sage.graphs sage.groups
             (M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3159,7 +3159,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: o = lattice_polytope.cross_polytope(2)
             sage: PM = o.vertex_facet_pairing_matrix()
             sage: PM_max = PM.permutation_normal_form()                                 # optional - sage.graphs
-            sage: PM_max == o._palp_PM_max()                                            # optional - sage.graphs
+            sage: PM_max == o._palp_PM_max()                                            # optional - sage.graphs sage.groups
             True
             sage: P2 = ReflexivePolytope(2, 0)
             sage: PM_max, permutations = P2._palp_PM_max(check=True)

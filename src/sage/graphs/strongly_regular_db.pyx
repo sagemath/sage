@@ -212,11 +212,11 @@ def is_orthogonal_array_block_graph(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_orthogonal_array_block_graph
-        sage: t = is_orthogonal_array_block_graph(64, 35, 18, 20); t                    # optional - sage.modules
+        sage: t = is_orthogonal_array_block_graph(64, 35, 18, 20); t                    # optional - sage.combinat sage.modules
         (..., 5, 8)
-        sage: g = t[0](*t[1:]); g                                                       # optional - sage.modules
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.combinat sage.modules
         OA(5,8): Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.modules
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.combinat sage.modules
         (64, 35, 18, 20)
         sage: t = is_orthogonal_array_block_graph(225,98,43,42); t                      # optional - sage.combinat sage.modules
         (..., 4)
@@ -876,7 +876,7 @@ def is_haemers(int v, int k, int l, int mu):
 
     TESTS::
 
-        sage: t = is_haemers(5,5,5,5); t
+        sage: t = is_haemers(5,5,5,5); t                                                # optional - sage.libs.pari
     """
     cdef int q, n, p
     p, n = is_prime_power(mu, get_data=True)
@@ -1157,11 +1157,11 @@ def is_RSHCD(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_RSHCD
-        sage: t = is_RSHCD(64,27,10,12); t                                              # optional - sage.modules
+        sage: t = is_RSHCD(64,27,10,12); t                                              # optional - sage.combinat sage.modules
         [<built-in function SRG_from_RSHCD>, 64, 27, 10, 12]
-        sage: g = t[0](*t[1:]); g                                                       # optional - sage.modules
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.combinat sage.modules
         Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.modules
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.combinat sage.modules
         (64, 27, 10, 12)
     """
     if SRG_from_RSHCD(v, k, l, mu, existence=True) is True:
@@ -1192,26 +1192,26 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     some graphs ::
 
         sage: from sage.graphs.strongly_regular_db import SRG_from_RSHCD
-        sage: SRG_from_RSHCD(784, 0, 14, 38, existence=True)                            # optional - sage.modules
+        sage: SRG_from_RSHCD(784, 0, 14, 38, existence=True)                            # optional - sage.combinat sage.modules
         False
-        sage: SRG_from_RSHCD(784, 377, 180, 182, existence=True)                        # optional - sage.modules
+        sage: SRG_from_RSHCD(784, 377, 180, 182, existence=True)                        # optional - sage.combinat sage.modules
         True
-        sage: SRG_from_RSHCD(144, 65, 28, 30)                                           # optional - sage.modules
+        sage: SRG_from_RSHCD(144, 65, 28, 30)                                           # optional - sage.combinat sage.modules
         Graph on 144 vertices
 
     an example with vertex-transitive automorphism group, found during the
     implementation of the case `v=324` ::
 
-        sage: G = SRG_from_RSHCD(324,152,70,72)  # long time                            # optional - sage.modules
-        sage: a = G.automorphism_group()         # long time                            # optional - sage.modules
-        sage: a.order()                          # long time                            # optional - sage.modules
+        sage: G = SRG_from_RSHCD(324,152,70,72)  # long time                            # optional - sage.combinat sage.modules
+        sage: a = G.automorphism_group()         # long time                            # optional - sage.combinat sage.modules
+        sage: a.order()                          # long time                            # optional - sage.combinat sage.modules
         2592
-        sage: len(a.orbits())                    # long time                            # optional - sage.modules
+        sage: len(a.orbits())                    # long time                            # optional - sage.combinat sage.modules
         1
 
     TESTS::
 
-        sage: SRG_from_RSHCD(784, 0, 14, 38)                                            # optional - sage.modules
+        sage: SRG_from_RSHCD(784, 0, 14, 38)                                            # optional - sage.combinat sage.modules
         Traceback (most recent call last):
         ...
         ValueError: I do not know how to build a (784, 0, 14, 38)-SRG from a RSHCD
@@ -1414,7 +1414,7 @@ def is_GQqmqp(int v, int k, int l, int mu):
         (<function T2starGeneralizedQuadrangleGraph at ...>, 4, False)
         sage: g = t[0](*t[1:]); g                                                       # optional - sage.libs.pari
         T2*(O,4); GQ(3, 5): Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.libs.pari
         (64, 18, 2, 6)
 
     TESTS::
@@ -1485,13 +1485,13 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_twograph_descendant_of_srg
-        sage: t = is_twograph_descendant_of_srg(27, 10, 1, 5); t
+        sage: t = is_twograph_descendant_of_srg(27, 10, 1, 5); t                        # optional - sage.rings.finite_rings
         (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...
-        sage: g = t[0](*t[1:]); g
+        sage: g = t[0](*t[1:]); g                                                       # optional - sage.rings.finite_rings
         descendant of complement(Johnson graph with parameters 8,2) at {0, 1}: Graph on 27 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.rings.finite_rings
         (27, 10, 1, 5)
-        sage: t = is_twograph_descendant_of_srg(5,5,5,5); t
+        sage: t = is_twograph_descendant_of_srg(5,5,5,5); t                             # optional - sage.rings.finite_rings
 
     TESTS::
 
@@ -1596,13 +1596,13 @@ def is_switch_skewhad(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: graphs.strongly_regular_graph(226, 105, 48, 49)
+        sage: graphs.strongly_regular_graph(226, 105, 48, 49)                           # optional - sage.combinat sage.modules
         switch skewhad^2+*_4: Graph on 226 vertices
 
     TESTS::
 
         sage: from sage.graphs.strongly_regular_db import is_switch_skewhad
-        sage: t = is_switch_skewhad(5,5,5,5); t
+        sage: t = is_switch_skewhad(5,5,5,5); t                                         # optional - sage.combinat sage.modules
 
     """
     from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
@@ -1643,7 +1643,7 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: graphs.strongly_regular_graph(170, 78, 35, 36) # indirect doctest
+        sage: graphs.strongly_regular_graph(170, 78, 35, 36) # indirect doctest         # optional - sage.combinat sage.modules
         Graph on 170 vertices
 
     TESTS::
@@ -1701,7 +1701,7 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: graphs.strongly_regular_graph(196, 60, 14, 20)
+        sage: graphs.strongly_regular_graph(196, 60, 14, 20)                            # optional - sage.combinat sage.modules
         Nowhere0WordsTwoWeightCodeGraph(8): Graph on 196 vertices
 
     TESTS::
@@ -1811,9 +1811,9 @@ def eigenmatrix(int v, int k, int l, int mu):
     A strongly regular graph with a non-isomorphic dual coming from another
     strongly regular graph::
 
-        sage: graphs.strongly_regular_graph(243,220,199,200, existence=True)
+        sage: graphs.strongly_regular_graph(243,220,199,200, existence=True)            # optional - sage.combinat sage.modules
         True
-        sage: graphs.strongly_regular_graph(243,110,37,60, existence=True)
+        sage: graphs.strongly_regular_graph(243,110,37,60, existence=True)              # optional - sage.combinat sage.modules
         True
         sage: P = eigenmatrix(243,220,199,200); P                                       # optional - sage.modules
         [  1 220  22]
@@ -2692,7 +2692,7 @@ cdef bint seems_feasible(int v, int k, int l, int mu):
     :trac:`32306` is fixed::
 
         sage: from sage.graphs.strongly_regular_db import strongly_regular_graph
-        sage: strongly_regular_graph(16384, 8256, 4160, 4160, existence=True)
+        sage: strongly_regular_graph(16384, 8256, 4160, 4160, existence=True)           # optional - sage.combinat sage.modules
         True
     """
     cdef uint_fast32_t tmp[2]
@@ -2822,9 +2822,9 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     An set of parameters proved in a paper to be infeasible::
 
-        sage: graphs.strongly_regular_graph(324,57,0,12,existence=True)
+        sage: graphs.strongly_regular_graph(324,57,0,12,existence=True)                 # optional - sage.combinat sage.modules
         False
-        sage: graphs.strongly_regular_graph(324,57,0,12)
+        sage: graphs.strongly_regular_graph(324,57,0,12)                                # optional - sage.combinat sage.modules
         Traceback (most recent call last):
         ...
         EmptySetError: Andries Brouwer's database reports that no (324, 57, 0,
@@ -2931,11 +2931,11 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
          (3, 4))
         sage: g(p)
         complement(Multipartite Graph with set sizes [4, 4, 4]): Graph on 12 vertices
-        sage: g=strongly_regular_graph_lazy(539,250,105); g
+        sage: g = strongly_regular_graph_lazy(539,250,105); g                           # optional - sage.combinat sage.modules
         (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...>,
          5,
          11)
-        sage: g[0](*g[1:])
+        sage: g[0](*g[1:])                                                              # optional - sage.combinat sage.modules
         descendant of (540, 275, 130, 150)-strongly regular graph at 0: Graph on 539 vertices
     """
     load_brouwer_database()
@@ -3066,14 +3066,16 @@ def apparently_feasible_parameters(int n):
          (16, 9, 4, 6),
          (16, 10, 6, 6),
          (17, 8, 3, 4)}
-        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True for x in small_feasible)
+        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # optional - sage.libs.pari
+        ....:     for x in small_feasible)
         True
 
     But that becomes wrong for `v<60` (because of the non-existence of a
     `(49,16,3,6)`-strongly regular graph)::
 
         sage: small_feasible = apparently_feasible_parameters(60)
-        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True for x in small_feasible)
+        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # optional - sage.libs.pari
+        ....:     for x in small_feasible)
         False
     """
     cdef int v, k, l, mu
@@ -3101,7 +3103,7 @@ def _build_small_srg_database():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import _build_small_srg_database
-        sage: _build_small_srg_database()                                               # optional - sage.modules
+        sage: _build_small_srg_database()                                               # optional - sage.modules sage.rings.finite_rings
 
     TESTS:
 

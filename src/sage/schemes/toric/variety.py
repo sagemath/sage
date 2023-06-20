@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.geometry.polyhedron sage.graphs
 # -*- coding: utf-8 -*-
 r"""
 Toric varieties
@@ -1221,11 +1222,11 @@ class ToricVariety_field(AmbientSpace):
 
         EXAMPLES::
 
-            sage: toric_varieties.P4_11169().dimension_singularities()
+            sage: toric_varieties.P4_11169().dimension_singularities()                  # optional - sage.graphs
             1
-            sage: toric_varieties.Conifold().dimension_singularities()
+            sage: toric_varieties.Conifold().dimension_singularities()                  # optional - sage.graphs
             0
-            sage: toric_varieties.P2().dimension_singularities()
+            sage: toric_varieties.P2().dimension_singularities()                        # optional - sage.graphs
             -1
         """
         for codim in range(self.dimension()+1):

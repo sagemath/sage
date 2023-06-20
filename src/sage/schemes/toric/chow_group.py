@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.geometry.polyhedron sage.graphs
 # -*- coding: utf-8 -*-
 r"""
 The Chow group of a toric variety

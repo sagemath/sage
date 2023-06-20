@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.schemes
 r"""
 Hypersurfaces in affine and projective space
 

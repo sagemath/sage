@@ -599,14 +599,14 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             sage: t.to_poset()
             Finite poset containing 1 elements
             sage: p = OrderedTree([[[]],[],[]]).to_poset()
-            sage: p.height(), p.width()
+            sage: p.height(), p.width()                                                 # optional - networkx
             (3, 3)
 
         If the tree is labelled, we use its labelling to label the poset.
         Otherwise, we use the poset canonical labelling::
 
             sage: t = OrderedTree([[[]],[],[]]).canonical_labelling().to_poset()
-            sage: t.height(), t.width()
+            sage: t.height(), t.width()                                                 # optional - networkx
             (3, 3)
         """
         if self in LabelledOrderedTrees():

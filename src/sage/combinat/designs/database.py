@@ -768,8 +768,8 @@ def OA_9_120():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_9_120
-        sage: OA = OA_9_120()                                                           # optional - sage.modules
-        sage: is_orthogonal_array(OA,9,120,2)                                           # optional - sage.modules
+        sage: OA = OA_9_120()                                                           # optional - sage.modules sage.schemes
+        sage: is_orthogonal_array(OA,9,120,2)                                           # optional - sage.modules sage.schemes
         True
 
     The design is available from the general constructor::
@@ -828,8 +828,7 @@ def OA_9_135():
     As this orthogonal array requires a `(273,17,1)` cyclic difference set, we check that
     it is available::
 
-        sage: G,D = designs.difference_family(273,17,1)
-        sage: G
+        sage: G,D = designs.difference_family(273,17,1); G                              # optional - sage.libs.pari
         Ring of integers modulo 273
     """
     from .bibd import BIBD_from_difference_family
@@ -1837,7 +1836,7 @@ def OA_14_524():
 
     The design is available from the general constructor::
 
-        sage: designs.orthogonal_arrays.is_available(14,524)
+        sage: designs.orthogonal_arrays.is_available(14,524)                            # optional - sage.schemes
         True
     """
     return OA_520_plus_x(4)
@@ -2432,7 +2431,7 @@ def QDM_57_9_1_1_8():
         sage: from sage.combinat.designs.database import QDM_57_9_1_1_8
         sage: from sage.combinat.designs.designs_pyx import is_quasi_difference_matrix
         sage: G,M = QDM_57_9_1_1_8()
-        sage: is_quasi_difference_matrix(M,G,9,1,1,8)
+        sage: is_quasi_difference_matrix(M,G,9,1,1,8)                                   # optional - sage.schemes
         True
     """
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as G
@@ -3271,7 +3270,7 @@ def DM_28_6_1():
 
     Can be obtained from the constructor::
 
-        sage: _ = designs.difference_matrix(28,6)                                       # optional - sage.modules
+        sage: _ = designs.difference_matrix(28,6)                                       # optional - sage.libs.pari sage.modules
     """
     z=2
     M = [
@@ -3388,7 +3387,7 @@ def DM_36_9_1():
 
     Can be obtained from the constructor::
 
-        sage: _ = designs.difference_matrix(36,9)                                       # optional - sage.modules
+        sage: _ = designs.difference_matrix(36,9)                                       # optional - sage.libs.pari sage.modules
     """
     M = [
         [(0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0), (0,0,0,0)],

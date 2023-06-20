@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.geometry.polyhedron sage.graphs
 r"""
 Set of homomorphisms between two toric varieties
 

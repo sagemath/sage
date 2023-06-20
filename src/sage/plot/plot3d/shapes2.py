@@ -161,7 +161,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
     This function should work for anything than can be turned into a
     list, such as iterators and such (see :trac:`10478`)::
 
-        sage: line3d(iter([(0,0,0), (sqrt(3), 2, 4)]))
+        sage: line3d(iter([(0,0,0), (sqrt(3), 2, 4)]))                                  # optional - sage.symbolic
         Graphics3d Object
         sage: line3d((x, x^2, x^3) for x in range(5))
         Graphics3d Object

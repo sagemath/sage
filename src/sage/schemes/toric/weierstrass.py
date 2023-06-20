@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.geometry.polyhedron sage.graphs
 r"""
 Weierstrass form of a toric elliptic curve
 

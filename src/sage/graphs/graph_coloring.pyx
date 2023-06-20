@@ -1353,7 +1353,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
        True
        sage: all(g.has_edge(e) for C in color_classes for e in C)                       # optional - sage.numerical.mip
        True
-       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)             # optional - sage.numerical.mip
+       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)             # optional - networkx sage.numerical.mip
        True
        sage: color_classes = edge_coloring(g, value_only=False,                         # optional - sage.numerical.mip
        ....:                               hex_colors=True, solver='GLPK')
@@ -1533,7 +1533,7 @@ def _vizing_edge_coloring(g):
        True
        sage: all(g.has_edge(e) for C in color_classes for e in C)
        True
-       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)
+       sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)             # optional - networkx
        True
 
     Coloring the edges of the Star Graph::

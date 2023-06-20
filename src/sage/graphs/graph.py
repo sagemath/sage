@@ -783,8 +783,8 @@ class Graph(GenericGraph):
 
     #. A Seidel adjacency matrix::
 
-          sage: from sage.combinat.matrices.hadamard_matrix import \                    # optional - sage.modules
-          ....:  regular_symmetric_hadamard_matrix_with_constant_diagonal as rshcd
+          sage: from sage.combinat.matrices.hadamard_matrix import (                    # optional - sage.modules
+          ....:  regular_symmetric_hadamard_matrix_with_constant_diagonal as rshcd)
           sage: m = rshcd(16,1) - matrix.identity(16)                                   # optional - sage.modules
           sage: Graph(m,                                                                # optional - sage.modules
           ....:       format="seidel_adjacency_matrix").is_strongly_regular(parameters=True)
@@ -4145,7 +4145,7 @@ class Graph(GenericGraph):
         Maximum matching in a Pappus Graph::
 
            sage: g = graphs.PappusGraph()
-           sage: g.matching(value_only=True)
+           sage: g.matching(value_only=True)                                            # optional - sage.networkx
            9
 
         Same test with the Linear Program formulation::
@@ -4165,7 +4165,7 @@ class Graph(GenericGraph):
         and LP formulation::
 
             sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
-            sage: sorted(g.matching())
+            sage: sorted(g.matching())                                                  # optional - sage.networkx
             [(0, 1, 0), (2, 3, -5)]
             sage: sorted(g.matching(algorithm="LP"))
             [(0, 1, 0), (2, 3, -5)]
@@ -4174,7 +4174,7 @@ class Graph(GenericGraph):
         LP formulation::
 
             sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
-            sage: g.matching(use_edge_labels=True)
+            sage: g.matching(use_edge_labels=True)                                      # optional - sage.networkx
             [(1, 2, 999)]
             sage: g.matching(algorithm="LP", use_edge_labels=True)
             [(1, 2, 999)]
@@ -4184,7 +4184,7 @@ class Graph(GenericGraph):
             sage: edge_list = [(0,0,5), (0,1,1), (0,2,2), (0,3,3), (1,2,6)
             ....: , (1,2,3), (1,3,3), (2,3,3)]
             sage: g = Graph(edge_list, loops=True, multiedges=True)
-            sage: m = g.matching(use_edge_labels=True)
+            sage: m = g.matching(use_edge_labels=True)                                  # optional - sage.networkx
             sage: type(m)
             <class 'sage.graphs.views.EdgesView'>
             sage: sorted(m)
@@ -6130,7 +6130,7 @@ class Graph(GenericGraph):
 
             sage: G = graphs.CycleGraph(5)
             sage: G = G.disjoint_union(graphs.CompleteGraph(1))
-            sage: G.seidel_adjacency_matrix().minpoly()                                 # optional - sage.modules
+            sage: G.seidel_adjacency_matrix().minpoly()                                 # optional - sage.libs.pari sage.modules
             x^2 - 5
 
         Selecting the base ring::
@@ -6177,7 +6177,7 @@ class Graph(GenericGraph):
             sage: G = graphs.CycleGraph(5)
             sage: G = G.disjoint_union(graphs.CompleteGraph(1))
             sage: G.seidel_switching([(0,1),(1,0),(0,0)])
-            sage: G.seidel_adjacency_matrix().minpoly()                                 # optional - sage.modules
+            sage: G.seidel_adjacency_matrix().minpoly()                                 # optional - sage.libs.pari sage.modules
             x^2 - 5
             sage: G.is_connected()
             True
@@ -7486,10 +7486,10 @@ class Graph(GenericGraph):
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
             sage: E = C.cliques_maximal(); E
             [[0, 4], [1, 2, 3, 4]]
-            sage: C.cliques_vertex_clique_number(cliques=E, algorithm="networkx")       # optional - sage.plot
+            sage: C.cliques_vertex_clique_number(cliques=E, algorithm="networkx")       # optional - networkx sage.plot
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
             sage: F = graphs.Grid2dGraph(2,3)
-            sage: F.cliques_vertex_clique_number(algorithm="networkx")                  # optional - sage.plot
+            sage: F.cliques_vertex_clique_number(algorithm="networkx")                  # optional - networkx sage.plot
             {(0, 0): 2, (0, 1): 2, (0, 2): 2, (1, 0): 2, (1, 1): 2, (1, 2): 2}
             sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])             # optional - sage.plot
             {(0, 1): 2, (1, 2): 2}
@@ -8659,30 +8659,30 @@ class Graph(GenericGraph):
         For the cycle of length 5::
 
             sage: G = graphs.CycleGraph(5)
-            sage: G.kirchhoff_symanzik_polynomial()                                     # optional - sage.modules
+            sage: G.kirchhoff_symanzik_polynomial()                                     # optional - networkx sage.modules
             t0 + t1 + t2 + t3 + t4
 
         One can use another letter for variables::
 
-            sage: G.kirchhoff_symanzik_polynomial(name='u')                             # optional - sage.modules
+            sage: G.kirchhoff_symanzik_polynomial(name='u')                             # optional - networkx sage.modules
             u0 + u1 + u2 + u3 + u4
 
         For the 'coffee bean' graph::
 
             sage: G = Graph([(0,1,'a'),(0,1,'b'),(0,1,'c')], multiedges=True)
-            sage: G.kirchhoff_symanzik_polynomial()                                     # optional - sage.modules
+            sage: G.kirchhoff_symanzik_polynomial()                                     # optional - networkx sage.modules
             t0*t1 + t0*t2 + t1*t2
 
         For the 'parachute' graph::
 
             sage: G = Graph([(0,2,'a'),(0,2,'b'),(0,1,'c'),(1,2,'d')], multiedges=True)
-            sage: G.kirchhoff_symanzik_polynomial()                                     # optional - sage.modules
+            sage: G.kirchhoff_symanzik_polynomial()                                     # optional - networkx sage.modules
             t0*t1 + t0*t2 + t1*t2 + t1*t3 + t2*t3
 
         For the complete graph with 4 vertices::
 
             sage: G = graphs.CompleteGraph(4)
-            sage: G.kirchhoff_symanzik_polynomial()                                     # optional - sage.modules
+            sage: G.kirchhoff_symanzik_polynomial()                                     # optional - networkx sage.modules
             t0*t1*t3 + t0*t2*t3 + t1*t2*t3 + t0*t1*t4 + t0*t2*t4 + t1*t2*t4
             + t1*t3*t4 + t2*t3*t4 + t0*t1*t5 + t0*t2*t5 + t1*t2*t5 + t0*t3*t5
             + t2*t3*t5 + t0*t4*t5 + t1*t4*t5 + t3*t4*t5
@@ -8823,20 +8823,20 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: G = graphs.CompleteGraph(4)
-            sage: factor(G.ihara_zeta_function_inverse())                               # optional - sage.modules
+            sage: factor(G.ihara_zeta_function_inverse())                               # optional - sage.libs.pari sage.modules
             (2*t - 1) * (t + 1)^2 * (t - 1)^3 * (2*t^2 + t + 1)^3
 
             sage: G = graphs.CompleteGraph(5)
-            sage: factor(G.ihara_zeta_function_inverse())                               # optional - sage.modules
+            sage: factor(G.ihara_zeta_function_inverse())                               # optional - sage.libs.pari sage.modules
             (-1) * (3*t - 1) * (t + 1)^5 * (t - 1)^6 * (3*t^2 + t + 1)^4
 
             sage: G = graphs.PetersenGraph()
-            sage: factor(G.ihara_zeta_function_inverse())                               # optional - sage.modules
+            sage: factor(G.ihara_zeta_function_inverse())                               # optional - sage.libs.pari sage.modules
             (-1) * (2*t - 1) * (t + 1)^5 * (t - 1)^6 * (2*t^2 + 2*t + 1)^4
             * (2*t^2 - t + 1)^5
 
             sage: G = graphs.RandomTree(10)
-            sage: G.ihara_zeta_function_inverse()                                       # optional - sage.modules
+            sage: G.ihara_zeta_function_inverse()                                       # optional - sage.libs.pari sage.modules
             1
 
         REFERENCES:
@@ -9019,11 +9019,11 @@ class Graph(GenericGraph):
 
         EXAMPLES::
 
-            sage: graphs.PetersenGraph().has_perfect_matching()
+            sage: graphs.PetersenGraph().has_perfect_matching()                         # optional - networkx
             True
-            sage: graphs.WheelGraph(6).has_perfect_matching()
+            sage: graphs.WheelGraph(6).has_perfect_matching()                           # optional - networkx
             True
-            sage: graphs.WheelGraph(5).has_perfect_matching()
+            sage: graphs.WheelGraph(5).has_perfect_matching()                           # optional - networkx
             False
             sage: graphs.PetersenGraph().has_perfect_matching(algorithm="LP_matching")
             True
@@ -9041,14 +9041,16 @@ class Graph(GenericGraph):
         TESTS::
 
             sage: G = graphs.EmptyGraph()
-            sage: all(G.has_perfect_matching(algorithm=algo) for algo in ['Edmonds', 'LP_matching', 'LP'])
+            sage: all(G.has_perfect_matching(algorithm=algo)                            # optional - networkx
+            ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
             True
 
         Be careful with isolated vertices::
 
             sage: G = graphs.PetersenGraph()
             sage: G.add_vertex(11)
-            sage: any(G.has_perfect_matching(algorithm=algo) for algo in ['Edmonds', 'LP_matching', 'LP'])
+            sage: any(G.has_perfect_matching(algorithm=algo)                            # optional - networkx
+            ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
             False
         """
         if self.order() % 2:
@@ -9324,7 +9326,7 @@ class Graph(GenericGraph):
             [0 1 0 0]
             sage: G = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(1,2),(2,3),(3,4),(4,5),(5,1)])
             sage: r = G.effective_resistance_matrix(nonedgesonly=False)[0,3]            # optional - sage.modules
-            sage: r == fibonacci(2*(5-3)+1)*fibonacci(2*3-1)/fibonacci(2*5)             # optional - sage.modules
+            sage: r == fibonacci(2*(5-3)+1)*fibonacci(2*3-1)/fibonacci(2*5)             # optional - sage.libs.pari sage.modules
             True
 
         Ask for an immutable matrix::

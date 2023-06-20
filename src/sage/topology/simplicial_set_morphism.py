@@ -1111,7 +1111,7 @@ class SimplicialSetMorphism(Morphism):
             [-+-]
             [0|2]
             sage: X = h.mapping_cone()                                                  # optional - sage.graphs
-            sage: X.homology() == simplicial_sets.RealProjectiveSpace(2).homology()     # optional - sage.graphs sage.modules
+            sage: X.homology() == simplicial_sets.RealProjectiveSpace(2).homology()     # optional - sage.graphs sage.groups sage.modules
             True
         """
         dom = self.domain()

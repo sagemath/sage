@@ -417,7 +417,7 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     EXAMPLES::
 
-        sage: G = graphs.OrthogonalArrayBlockGraph(5,5); G                              # optional - sage.modules
+        sage: G = graphs.OrthogonalArrayBlockGraph(5,5); G                              # optional - sage.modules sage.schemes
         OA(5,5): Graph on 25 vertices
         sage: G.is_strongly_regular(parameters=True)                                    # optional - sage.modules
         (25, 20, 15, 20)

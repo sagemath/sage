@@ -7638,7 +7638,7 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: bsetA, bsetB = map(list, g.bipartite_sets())                          # optional - sage.numerical.mip
             sage: ((bsetA == setA and bsetB == setB)                                    # optional - sage.numerical.mip
-            ....:  or (bsetA == setB and bsetB == setA)
+            ....:  or (bsetA == setB and bsetB == setA))
             True
 
         The max cut of a Petersen graph::
@@ -9670,7 +9670,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = graphs.CycleGraph(3) * 2
             sage: h = g.nowhere_zero_flow()                                             # optional - sage.numerical.mip
-            sage: h.connected_components_sizes()
+            sage: h.connected_components_sizes()                                        # optional - sage.numerical.mip
             [3, 3]
 
         (Di)Graphs with bridges::
@@ -10009,22 +10009,22 @@ class GenericGraph(GenericGraph_pyx):
         matching in a graph, and to consider the paired vertices as terminals ::
 
             sage: g = graphs.PetersenGraph()
-            sage: matching = [(u,v) for u,v,_ in g.matching()]
-            sage: h = g.multicommodity_flow(matching)
-            sage: len(h)
+            sage: matching = [(u,v) for u,v,_ in g.matching()]                          # optional - networkx
+            sage: h = g.multicommodity_flow(matching)                                   # optional - networkx
+            sage: len(h)                                                                # optional - networkx
             5
 
         We could also have considered ``g`` as symmetric and computed the
         multicommodity flow in this version instead. In this case, however edges
         can be used in both directions at the same time::
 
-            sage: h = DiGraph(g).multicommodity_flow(matching)
-            sage: len(h)
+            sage: h = DiGraph(g).multicommodity_flow(matching)                          # optional - networkx
+            sage: len(h)                                                                # optional - networkx
             5
 
         An exception is raised when the problem has no solution ::
 
-            sage: h = g.multicommodity_flow([(u,v,3) for u,v in matching])
+            sage: h = g.multicommodity_flow([(u,v,3) for u,v in matching])              # optional - networkx
             Traceback (most recent call last):
             ...
             EmptySetError: the multicommodity flow problem has no solution
@@ -10506,14 +10506,14 @@ class GenericGraph(GenericGraph_pyx):
              4: 0.3063198690713853,
              5: 0.1700057609707141,
              6: 0.05390084497706962}
-            sage: G.pagerank(algorithm="Scipy")                     # abs tol 1e-9      # optional - scipy
+            sage: G.pagerank(algorithm="Scipy")                     # abs tol 1e-9      # optional - networkx scipy
             {1: 0.16112205885619563,
              2: 0.1619531043247219,
              3: 0.16112205885619563,
              4: 0.2374999999999999,
              5: 0.17775588228760858,
              6: 0.100546895675278}
-            sage: G.pagerank(algorithm="Scipy", by_weight=True)     # abs tol 1e-9      # optional - scipy
+            sage: G.pagerank(algorithm="Scipy", by_weight=True)     # abs tol 1e-9      # optional - networkx scipy
             {1: 0.16459583718588994,
              2: 0.13977928595154515,
              3: 0.16539840184339605,
@@ -16181,17 +16181,17 @@ class GenericGraph(GenericGraph_pyx):
             sage: import itertools
             sage: n = random.randint(2,20)
             sage: m = random.randint(0, n*(n-1)/2)
-            sage: g = graphs.RandomGNM(n,m)
-            sage: c1 = g.centrality_closeness(algorithm='BFS')
-            sage: c2 = g.centrality_closeness(algorithm='NetworkX')
-            sage: c3 = g.centrality_closeness(algorithm='Dijkstra_Boost')
-            sage: c4 = g.centrality_closeness(algorithm='Floyd-Warshall-Cython')
-            sage: c5 = g.centrality_closeness(algorithm='Floyd-Warshall-Python')
-            sage: c6 = g.centrality_closeness(algorithm='Johnson_Boost')
-            sage: len(c1)==len(c2)==len(c3)==len(c4)==len(c5)==len(c6)
+            sage: g = graphs.RandomGNM(n,m)                                             # optional - networkx
+            sage: c1 = g.centrality_closeness(algorithm='BFS')                          # optional - networkx
+            sage: c2 = g.centrality_closeness(algorithm='NetworkX')                     # optional - networkx
+            sage: c3 = g.centrality_closeness(algorithm='Dijkstra_Boost')               # optional - networkx
+            sage: c4 = g.centrality_closeness(algorithm='Floyd-Warshall-Cython')        # optional - networkx
+            sage: c5 = g.centrality_closeness(algorithm='Floyd-Warshall-Python')        # optional - networkx
+            sage: c6 = g.centrality_closeness(algorithm='Johnson_Boost')                # optional - networkx
+            sage: len(c1)==len(c2)==len(c3)==len(c4)==len(c5)==len(c6)                  # optional - networkx
             True
-            sage: c = [c1,c2,c3,c4,c5,c6]
-            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12
+            sage: c = [c1,c2,c3,c4,c5,c6]                                               # optional - networkx
+            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12        # optional - networkx
             ....:      for ci, cj in itertools.combinations(c, 2) )
             True
 
@@ -16221,16 +16221,16 @@ class GenericGraph(GenericGraph_pyx):
             sage: import itertools
             sage: n = random.randint(2,20)
             sage: m = random.randint(0, n*(n-1)/2)
-            sage: g = graphs.RandomGNM(n,m)
-            sage: for v,w in g.edges(sort=True, labels=False):
+            sage: g = graphs.RandomGNM(n,m)                                             # optional - networkx
+            sage: for v,w in g.edges(sort=True, labels=False):                          # optional - networkx
             ....:     g.set_edge_label(v,w,float(random.uniform(1,100)))
-            sage: c1 = g.centrality_closeness(by_weight=True, algorithm='NetworkX')
-            sage: c2 = g.centrality_closeness(by_weight=True, algorithm='Dijkstra_Boost')
-            sage: c3 = g.centrality_closeness(by_weight=True, algorithm='Floyd-Warshall-Python')
-            sage: c4 = g.centrality_closeness(by_weight=True, algorithm='Johnson_Boost')
-            sage: len(c1)==len(c2)==len(c3)==len(c4)
+            sage: c1 = g.centrality_closeness(by_weight=True, algorithm='NetworkX')                 # optional - networkx
+            sage: c2 = g.centrality_closeness(by_weight=True, algorithm='Dijkstra_Boost')           # optional - networkx
+            sage: c3 = g.centrality_closeness(by_weight=True, algorithm='Floyd-Warshall-Python')    # optional - networkx
+            sage: c4 = g.centrality_closeness(by_weight=True, algorithm='Johnson_Boost')            # optional - networkx
+            sage: len(c1)==len(c2)==len(c3)==len(c4)                                                # optional - networkx
             True
-            sage: c = [c1,c2,c3,c4]
+            sage: c = [c1,c2,c3,c4]                                                                 # optional - networkx
             sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12
             ....:      for ci, cj in itertools.combinations(c, 2) )
             True
@@ -16370,8 +16370,8 @@ class GenericGraph(GenericGraph_pyx):
 
         The 2-dimensional DeBruijn graph of 2 symbols has 2 directed `C_3`::
 
-            sage: G = digraphs.DeBruijn(2,2)
-            sage: G.triangles_count()
+            sage: G = digraphs.DeBruijn(2,2)                                                        # optional - sage.combinat
+            sage: G.triangles_count()                                                               # optional - sage.combinat
             2
 
         The directed `n`-cycle is trivially triangle free for `n > 3`::
@@ -17045,7 +17045,8 @@ class GenericGraph(GenericGraph_pyx):
         However, if ``check_weight`` is set to ``False``, unexpected behavior
         may occur::
 
-            sage: D.shortest_paths(0, algorithm='Dijkstra_NetworkX', weight_function=lambda e:e[2], check_weight=False)
+            sage: D.shortest_paths(0, algorithm='Dijkstra_NetworkX',                    # optional - networkx
+            ....:                  weight_function=lambda e:e[2], check_weight=False)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand type(s) for +: 'int' and 'dict'
@@ -17088,7 +17089,7 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             RuntimeError: Dijkstra algorithm does not work with negative weights, use Bellman-Ford instead
-            sage: D.shortest_paths(0, algorithm='Dijkstra_NetworkX', by_weight=True)
+            sage: D.shortest_paths(0, algorithm='Dijkstra_NetworkX', by_weight=True)    # optional - networkx
             Traceback (most recent call last):
             ...
             ValueError: ('Contradictory paths found:', 'negative weights?')
@@ -17307,7 +17308,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: d2 = g.shortest_path_lengths((0,0), algorithm="Dijkstra_NetworkX")    # optional - networkx
             sage: d3 = g.shortest_path_lengths((0,0), algorithm="Dijkstra_Boost")
             sage: d4 = g.shortest_path_lengths((0,0), algorithm="Bellman-Ford_Boost")
-            sage: d1 == d2 == d3 == d4
+            sage: d1 == d2 == d3 == d4                                                  # optional - networkx
             True
         """
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
@@ -17426,7 +17427,7 @@ class GenericGraph(GenericGraph_pyx):
         Some standard examples (see :meth:`~GenericGraph.shortest_paths` for
         more examples on how to use the input variables)::
 
-            sage: G = Graph( { 0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2} }, sparse=True)
+            sage: G = Graph({0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True)
             sage: G.plot(edge_labels=True).show() # long time
             sage: dist, pred = G.shortest_path_all_pairs(by_weight = True)
             sage: dist
@@ -17443,8 +17444,9 @@ class GenericGraph(GenericGraph_pyx):
              4: {0: 4, 1: 0, 2: 3, 3: 4, 4: None}}
             sage: pred[0]
             {0: None, 1: 0, 2: 1, 3: 2, 4: 0}
-            sage: G = Graph( { 0: {1: {'weight':1}}, 1: {2: {'weight':1}}, 2: {3: {'weight':1}}, 3: {4: {'weight':2}}, 4: {0: {'weight':2}} }, sparse=True)
-            sage: dist, pred = G.shortest_path_all_pairs(weight_function = lambda e:e[2]['weight'])
+            sage: G = Graph({0: {1: {'weight':1}}, 1: {2: {'weight':1}}, 2: {3: {'weight':1}},
+            ....:            3: {4: {'weight':2}}, 4: {0: {'weight':2}}}, sparse=True)
+            sage: dist, pred = G.shortest_path_all_pairs(weight_function=lambda e: e[2]['weight'])
             sage: dist
             {0: {0: 0, 1: 1, 2: 2, 3: 3, 4: 2},
              1: {0: 1, 1: 0, 2: 1, 3: 2, 4: 3},
@@ -17465,7 +17467,7 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: G = Graph( { 0: {1:None}, 1: {2:None}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2} }, sparse=True )
+            sage: G = Graph({0: {1:None}, 1: {2:None}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True)
             sage: G.shortest_path_all_pairs()
             ({0: {0: 0, 1: 1, 2: 2, 3: 2, 4: 1},
             1: {0: 1, 1: 0, 2: 1, 3: 2, 4: 2},
@@ -17495,12 +17497,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: d1, _ = g.shortest_path_all_pairs(algorithm="BFS")
             sage: d2, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall-Cython")
             sage: d3, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall-Python")
-            sage: d4, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_NetworkX")
+            sage: d4, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_NetworkX")      # optional - networkx
             sage: d5, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_Boost")
             sage: d6, _ = g.shortest_path_all_pairs(algorithm="Johnson_Boost")
             sage: d7, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_Boost")
-            sage: d8, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")
-            sage: d1 == d2 == d3 == d4 == d5 == d6 == d7 == d8
+            sage: d8, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")   # optional - scipy
+            sage: d1 == d2 == d3 == d4 == d5 == d6 == d7 == d8                          # optional - networkx scipy
             True
 
         Checking that distances are equal regardless of the algorithm used::
@@ -17509,12 +17511,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: d1, _ = g.shortest_path_all_pairs(algorithm="BFS")
             sage: d2, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall-Cython")
             sage: d3, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall-Python")
-            sage: d4, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_NetworkX")
+            sage: d4, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_NetworkX")      # optional - networkx
             sage: d5, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_Boost")
             sage: d6, _ = g.shortest_path_all_pairs(algorithm="Johnson_Boost")
             sage: d7, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_Boost")
-            sage: d8, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")
-            sage: d1 == d2 == d3 == d4 == d5 == d6 == d7 == d8
+            sage: d8, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")   # optional - scipy
+            sage: d1 == d2 == d3 == d4 == d5 == d6 == d7 == d8                          # optional - networkx scipy
             True
 
         Checking that weighted distances are equal regardless of the algorithm
@@ -17525,12 +17527,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: for v, w in g.edges(labels=False, sort=False):
             ....:     g.add_edge(v, w, random.uniform(1, 10))
             sage: d1, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall-Python")
-            sage: d2, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_NetworkX")
+            sage: d2, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_NetworkX")      # optional - networkx
             sage: d3, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_Boost")
             sage: d4, _ = g.shortest_path_all_pairs(algorithm="Johnson_Boost")
             sage: d5, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_Boost")
-            sage: d6, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")
-            sage: d1 == d2 == d3 == d4 == d5 == d6
+            sage: d6, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")   # optional - scipy
+            sage: d1 == d2 == d3 == d4 == d5 == d6                                      # optional - networkx scipy
             True
 
         Checking a random path is valid::
@@ -17557,7 +17559,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.shortest_path_all_pairs(algorithm='BFS')
             ({0: {0: 0, 1: 1, 2: 2}, 1: {1: 0, 2: 1}, 2: {2: 0}},
              {0: {0: None, 1: 0, 2: 1}, 1: {1: None, 2: 1}, 2: {2: None}})
-            sage: g.shortest_path_all_pairs(algorithm='Dijkstra_NetworkX')
+            sage: g.shortest_path_all_pairs(algorithm='Dijkstra_NetworkX')              # optional - networkx
             ({0: {0: 0, 1: 1, 2: 2}, 1: {1: 0, 2: 1}, 2: {2: 0}},
              {0: {0: None, 1: 1, 2: 1}, 1: {1: None, 2: 2}, 2: {2: None}})
             sage: g.shortest_path_all_pairs(algorithm='Dijkstra_Boost')
@@ -17569,7 +17571,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.shortest_path_all_pairs(algorithm='Floyd-Warshall-Cython')
             ({0: {0: 0, 1: 1, 2: 2}, 1: {1: 0, 2: 1}, 2: {2: 0}},
              {0: {0: None, 1: 0, 2: 1}, 1: {1: None, 2: 1}, 2: {2: None}})
-            sage: g.shortest_path_all_pairs(algorithm='Floyd-Warshall_SciPy')
+            sage: g.shortest_path_all_pairs(algorithm='Floyd-Warshall_SciPy')           # optional - scipy
             ({0: {0: 0.0, 1: 1.0, 2: 2.0}, 1: {1: 0.0, 2: 1.0}, 2: {2: 0.0}},
              {0: {0: None, 1: 0, 2: 1}, 1: {1: None, 2: 1}, 2: {2: None}})
 
@@ -17600,7 +17602,7 @@ class GenericGraph(GenericGraph_pyx):
 
         Algorithms that do not work with weights::
 
-            sage: g = Graph({0: {1:1}, 1: {2:1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True )
+            sage: g = Graph({0: {1:1}, 1: {2:1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True)
             sage: g.shortest_path_all_pairs(algorithm="BFS", by_weight=True)
             Traceback (most recent call last):
             ...
@@ -22058,26 +22060,26 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: P = graphs.PetersenGraph()
-            sage: P.spectrum()                                                          # optional - sage.modules
+            sage: P.spectrum()                                                          # optional - sage.modules sage.rings.number_field
             [3, 1, 1, 1, 1, 1, -2, -2, -2, -2]
-            sage: P.spectrum(laplacian=True)                                            # optional - sage.modules
+            sage: P.spectrum(laplacian=True)                                            # optional - sage.modules sage.rings.number_field
             [5, 5, 5, 5, 2, 2, 2, 2, 2, 0]
             sage: D = P.to_directed()
             sage: D.delete_edge(7, 9)
-            sage: D.spectrum()                                                          # optional - sage.modules
+            sage: D.spectrum()                                                          # optional - sage.modules sage.rings.number_field
             [2.9032119259..., 1, 1, 1, 1, 0.8060634335..., -1.7092753594..., -2, -2, -2]
 
         ::
 
             sage: C = graphs.CycleGraph(8)
-            sage: C.spectrum()                                                          # optional - sage.modules
+            sage: C.spectrum()                                                          # optional - sage.modules sage.rings.number_field
             [2, 1.4142135623..., 1.4142135623..., 0, 0, -1.4142135623..., -1.4142135623..., -2]
 
         A digraph may have complex eigenvalues. Previously, the complex parts of
         graph eigenvalues were being dropped. For a 3-cycle, we have::
 
             sage: T = DiGraph({0: [1], 1: [2], 2: [0]})
-            sage: T.spectrum()                                                          # optional - sage.modules
+            sage: T.spectrum()                                                          # optional - sage.modules sage.rings.number_field
             [1, -0.5000000000... + 0.8660254037...*I, -0.5000000000... - 0.8660254037...*I]
 
         TESTS:
@@ -22091,10 +22093,10 @@ class GenericGraph(GenericGraph_pyx):
         eigenvalues. ::
 
             sage: H = graphs.HoffmanSingletonGraph()
-            sage: evals = H.spectrum()                                                  # optional - sage.modules
-            sage: lap = [7 - x for x in evals]                                          # optional - sage.modules
-            sage: lap.sort(reverse=True)                                                # optional - sage.modules
-            sage: lap == H.spectrum(laplacian=True)                                     # optional - sage.modules
+            sage: evals = H.spectrum()                                                  # optional - sage.modules sage.rings.number_field
+            sage: lap = [7 - x for x in evals]                                          # optional - sage.modules sage.rings.number_field
+            sage: lap.sort(reverse=True)                                                # optional - sage.modules sage.rings.number_field
+            sage: lap == H.spectrum(laplacian=True)                                     # optional - sage.modules sage.rings.number_field
             True
         """
         # Ideally the spectrum should return something like a Factorization object
@@ -22180,7 +22182,7 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: P = graphs.PetersenGraph()
-            sage: P.eigenvectors()                                                      # optional - sage.modules
+            sage: P.eigenvectors()                                                      # optional - sage.modules sage.rings.number_field
             [(3, [
             (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
             ], 1), (-2, [
@@ -22200,7 +22202,7 @@ class GenericGraph(GenericGraph_pyx):
         graph is regular.  However, since the output also contains the
         eigenvalues, the two outputs are slightly different::
 
-            sage: P.eigenvectors(laplacian=True)                                        # optional - sage.modules
+            sage: P.eigenvectors(laplacian=True)                                        # optional - sage.modules sage.rings.number_field
             [(0, [
             (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
             ], 1), (5, [
@@ -22219,7 +22221,7 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: C = graphs.CycleGraph(8)
-            sage: C.eigenvectors()                                                      # optional - sage.modules
+            sage: C.eigenvectors()                                                      # optional - sage.modules sage.rings.number_field
             [(2,
               [
               (1, 1, 1, 1, 1, 1, 1, 1)
@@ -22249,7 +22251,7 @@ class GenericGraph(GenericGraph_pyx):
         graph eigenvalues were being dropped. For a 3-cycle, we have::
 
             sage: T = DiGraph({0:[1], 1:[2], 2:[0]})
-            sage: T.eigenvectors()                                                      # optional - sage.modules
+            sage: T.eigenvectors()                                                      # optional - sage.modules sage.rings.number_field
             [(1,
               [
               (1, 1, 1)
@@ -22290,7 +22292,7 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: P = graphs.PetersenGraph()
-            sage: P.eigenspaces()                                                       # optional - sage.modules
+            sage: P.eigenspaces()                                                       # optional - sage.modules sage.rings.number_field
             [
             (3,  Vector space of degree 10 and dimension 1 over Rational Field
                  User basis matrix:
@@ -22314,7 +22316,7 @@ class GenericGraph(GenericGraph_pyx):
         graph is regular.  However, since the output also contains the
         eigenvalues, the two outputs are slightly different::
 
-            sage: P.eigenspaces(laplacian=True)                                         # optional - sage.modules
+            sage: P.eigenspaces(laplacian=True)                                         # optional - sage.modules sage.rings.number_field
             [
             (0, Vector space of degree 10 and dimension 1 over Rational Field
                 User basis matrix:
@@ -22339,7 +22341,7 @@ class GenericGraph(GenericGraph_pyx):
         corresponding eigenspace::
 
             sage: C = graphs.CycleGraph(8)
-            sage: C.eigenspaces()                                                       # optional - sage.modules
+            sage: C.eigenspaces()                                                       # optional - sage.modules sage.rings.number_field
             [
             (2,  Vector space of degree 8 and dimension 1 over Rational Field
                  User basis matrix:
@@ -22362,7 +22364,7 @@ class GenericGraph(GenericGraph_pyx):
         we have::
 
             sage: T = DiGraph({0: [1], 1: [2], 2: [0]})
-            sage: T.eigenspaces()                                                       # optional - sage.modules
+            sage: T.eigenspaces()                                                       # optional - sage.modules sage.rings.number_field
             [
             (1,  Vector space of degree 3 and dimension 1 over Rational Field
                  User basis matrix:
@@ -24316,7 +24318,7 @@ class GenericGraph(GenericGraph_pyx):
         We find the Katz matrix of an undirected 4-cycle.  ::
 
             sage: G = graphs.CycleGraph(4)
-            sage: G.katz_matrix(1/20)                                                   # optional - sage.modules
+            sage: G.katz_matrix(1/20)                                                   # optional - sage.modules sage.rings.number_field
             [1/198  5/99 1/198  5/99]
             [ 5/99 1/198  5/99 1/198]
             [1/198  5/99 1/198  5/99]
@@ -24325,7 +24327,7 @@ class GenericGraph(GenericGraph_pyx):
         We find the Katz matrix of an undirected 4-cycle with all entries
         other than those which correspond to non-edges zeroed out.  ::
 
-            sage: G.katz_matrix(1/20, True)                                             # optional - sage.modules
+            sage: G.katz_matrix(1/20, True)                                             # optional - sage.modules sage.rings.number_field
             [    0     0 1/198     0]
             [    0     0     0 1/198]
             [1/198     0     0     0]
@@ -24337,7 +24339,7 @@ class GenericGraph(GenericGraph_pyx):
         We find the Katz matrix in a fan on 6 vertices. ::
 
             sage: H = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(2,3),(3,4),(4,5)])
-            sage: H.katz_matrix(1/10)                                                   # optional - sage.modules
+            sage: H.katz_matrix(1/10)                                                   # optional - sage.modules sage.rings.number_field
             [   169/2256    545/4512      25/188    605/4512      25/188    545/4512    485/4512]
             [   545/4512 7081/297792  4355/37224    229/9024   595/37224 4073/297792    109/9024]
             [     25/188  4355/37224    172/4653      45/376    125/4653   595/37224       5/376]
@@ -24353,22 +24355,22 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: (graphs.CompleteGraph(4)).katz_matrix(1/4)                            # optional - sage.modules
+            sage: (graphs.CompleteGraph(4)).katz_matrix(1/4)                            # optional - sage.modules sage.rings.number_field
             [3/5 4/5 4/5 4/5]
             [4/5 3/5 4/5 4/5]
             [4/5 4/5 3/5 4/5]
             [4/5 4/5 4/5 3/5]
-            sage: (graphs.CompleteGraph(4)).katz_matrix(1/4, nonedgesonly=True)         # optional - sage.modules
+            sage: (graphs.CompleteGraph(4)).katz_matrix(1/4, nonedgesonly=True)         # optional - sage.modules sage.rings.number_field
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
-            sage: (graphs.PathGraph(4)).katz_matrix(1/4, nonedgesonly=False)            # optional - sage.modules
+            sage: (graphs.PathGraph(4)).katz_matrix(1/4, nonedgesonly=False)            # optional - sage.modules sage.rings.number_field
             [15/209 60/209 16/209  4/209]
             [60/209 31/209 64/209 16/209]
             [16/209 64/209 31/209 60/209]
             [ 4/209 16/209 60/209 15/209]
-            sage: (graphs.PathGraph(4)).katz_matrix(1/4, nonedgesonly=True)             # optional - sage.modules
+            sage: (graphs.PathGraph(4)).katz_matrix(1/4, nonedgesonly=True)             # optional - sage.modules sage.rings.number_field
             [     0      0 16/209  4/209]
             [     0      0      0 16/209]
             [16/209      0      0      0]

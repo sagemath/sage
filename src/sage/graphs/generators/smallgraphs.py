@@ -1361,18 +1361,17 @@ def BrouwerHaemersGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.BrouwerHaemersGraph()                                          # optional - sage.modules
-        sage: g                                                                         # optional - sage.modules
+        sage: g = graphs.BrouwerHaemersGraph(); g                                       # optional - sage.modules sage.rings.finite_rings
         Brouwer-Haemers: Graph on 81 vertices
 
     It is indeed strongly regular with parameters `(81,20,1,6)`::
 
-        sage: g.is_strongly_regular(parameters=True)  # long time                       # optional - sage.modules
+        sage: g.is_strongly_regular(parameters=True)  # long time                       # optional - sage.modules sage.rings.finite_rings
         (81, 20, 1, 6)
 
     Its has as eigenvalues `20,2` and `-7`::
 
-        sage: set(g.spectrum()) == {20,2,-7}                                            # optional - sage.modules
+        sage: set(g.spectrum()) == {20,2,-7}                                            # optional - sage.modules sage.rings.finite_rings
         True
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1419,10 +1418,10 @@ def BuckyBall():
     The Bucky Ball can also be created by extracting the 1-skeleton of the Bucky
     Ball polyhedron, but this is much slower::
 
-        sage: g = polytopes.buckyball().vertex_graph()                                  # optional - sage.geometry.polyhedron
-        sage: g.remove_loops()                                                          # optional - sage.geometry.polyhedron
+        sage: g = polytopes.buckyball().vertex_graph()                                  # optional - sage.geometry.polyhedron sage.rings.number_field
+        sage: g.remove_loops()                                                          # optional - sage.geometry.polyhedron sage.rings.number_field
         sage: h = graphs.BuckyBall()
-        sage: g.is_isomorphic(h)                                                        # optional - sage.geometry.polyhedron
+        sage: g.is_isomorphic(h)                                                        # optional - sage.geometry.polyhedron sage.rings.number_field
         True
 
     The graph is returned along with an attractive embedding::
@@ -4370,11 +4369,11 @@ def TruncatedIcosidodecahedralGraph():
 
     Unfortunately, this graph can not be constructed currently, due to numerical issues::
 
-        sage: g = graphs.TruncatedIcosidodecahedralGraph(); g                           # optional - sage.geometry.polyhedron
+        sage: g = graphs.TruncatedIcosidodecahedralGraph(); g                           # optional - sage.geometry.polyhedron sage.rings.number_field sage.groups
         Traceback (most recent call last):
         ...
         ValueError: *Error: Numerical inconsistency is found.  Use the GMP exact arithmetic.
-        sage: g.order(), g.size()  # not tested                                         # optional - sage.geometry.polyhedron
+        sage: g.order(), g.size()  # not tested                                         # optional - sage.geometry.polyhedron sage.rings.number_field sage.groups
         (120, 180)
     """
     from sage.geometry.polyhedron.library import polytopes

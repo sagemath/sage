@@ -2680,11 +2680,11 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             False
             sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()         # optional - sage.graphs
             True
-            sage: M = matroids.named_matroids.R6()                                      # optional - sage.graphs
-            sage: M._is_3connected_shifting()                                           # optional - sage.graphs
+            sage: M = matroids.named_matroids.R6()                                      # optional - sage.graphs sage.rings.finite_rings
+            sage: M._is_3connected_shifting()                                           # optional - sage.graphs sage.rings.finite_rings
             False
-            sage: B, X = M._is_3connected_shifting(True)                                # optional - sage.graphs
-            sage: M.connectivity(X) < 3                                                 # optional - sage.graphs
+            sage: B, X = M._is_3connected_shifting(True)                                # optional - sage.graphs sage.rings.finite_rings
+            sage: M.connectivity(X) < 3                                                 # optional - sage.graphs sage.rings.finite_rings
             True
         """
         if not self.is_connected():
@@ -6339,9 +6339,9 @@ cdef class RegularMatroid(LinearMatroid):
             sage: M.is_graphic()                                                        # optional - sage.rings.finite_rings
             False
             sage: M = Matroid(graphs.CompleteGraph(5), regular=True)                    # optional - sage.graphs
-            sage: M.is_graphic()                                                        # optional - sage.graphs
+            sage: M.is_graphic()                                                        # optional - sage.graphs sage.rings.finite_rings
             True
-            sage: M.dual().is_graphic()                                                 # optional - sage.graphs
+            sage: M.dual().is_graphic()                                                 # optional - sage.graphs sage.rings.finite_rings
             False
 
         ALGORITHM:
