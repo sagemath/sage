@@ -71,6 +71,7 @@ exclude sage/misc/method_decorator.p*
 exclude sage/misc/random_testing.p*
 exclude sage/misc/rest_index_of_methods.p*
 exclude sage/misc/callable_dict.p*
+exclude sage/misc/search.p*
 exclude sage/misc/derivative.p*
 exclude sage/misc/functional.p*
 exclude sage/misc/binary_tree.p*
@@ -114,6 +115,7 @@ exclude sage/misc/sh.p*
 prune sage/misc/notes
 
 graft sage/modules
+exclude sage/modules/module.*           # in sagemath-objects
 exclude sage/modules/vector_mod2*.*     # depends on m4ri
 exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 prune sage/modules/fp_graded

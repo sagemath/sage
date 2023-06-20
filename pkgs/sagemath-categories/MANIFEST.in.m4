@@ -82,6 +82,7 @@ include sage/misc/method_decorator.p*
 include sage/misc/random_testing.p*
 include sage/misc/rest_index_of_methods.p*
 include sage/misc/callable_dict.p*
+include sage/misc/search.p*
 
 ## Data structures
 include sage/misc/binary_tree.p*
@@ -211,13 +212,7 @@ include sage/combinat/matrices/dancing_links_c.h
 include sage/combinat/matrices/dlxcpp.p*
 
 # see src/sage/schemes/generic/notes/imports.txt
-include sage/schemes/generic/point.py
-include sage/schemes/generic/scheme.py
-include sage/schemes/generic/ambient_space.py
-include sage/schemes/generic/morphism.py
-include sage/schemes/generic/homset.py
-include sage/schemes/generic/spec.py
-include sage/schemes/generic/algebraic_scheme.py
+graft sage/schemes/generic
 graft sage/schemes/affine
 graft sage/schemes/projective
 graft sage/schemes/product_projective

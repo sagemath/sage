@@ -15,13 +15,7 @@ graft sage/dynamics/arithmetic_dynamics
 # Included in sagemath-categories
 prune sage/schemes/affine
 prune sage/schemes/projective
-exclude sage/schemes/generic/point.py
-exclude sage/schemes/generic/scheme.py
-exclude sage/schemes/generic/ambient_space.py
-exclude sage/schemes/generic/morphism.py
-exclude sage/schemes/generic/homset.py
-exclude sage/schemes/generic/spec.py
-exclude sage/schemes/generic/algebraic_scheme.py
+prune sage/schemes/generic
 # Has compile-time dependencies on sagemath-ntl
 exclude sage/schemes/hyperelliptic_curves/hypellfrob.pyx
 # Has compile-time dependencies on flint

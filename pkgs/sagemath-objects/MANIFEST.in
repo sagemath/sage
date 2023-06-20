@@ -3,8 +3,6 @@ graft sage/cpython
 
 include VERSION.txt
 
-global-include all__sagemath_objects.py
-
 graft sage/structure
 include sage/categories/action.*
 include sage/categories/algebra_functor.*
@@ -81,6 +79,8 @@ include sage/rings/integer_fake.*
 include sage/groups/group.*
 include sage/groups/old.*
 
+# needed for sage.structure.formal_sum
+include sage/modules/module.p*
 
 graft sage/libs/gmp
 include sage/libs/gmpxx.pxd
@@ -98,6 +98,9 @@ include sage/misc/sage_timeit*.p*
 include sage/misc/session.p*
 include sage/misc/reset.p*
 include sage/misc/sage_ostools.p*
+
+global-exclude all__*.py
+global-include all__sagemath_objects.py
 
 global-exclude *.c
 global-exclude *.cpp

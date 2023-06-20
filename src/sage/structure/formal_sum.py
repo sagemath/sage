@@ -1,4 +1,3 @@
-# sage.doctest: optional - sage.modules
 """
 Formal sums
 
@@ -15,10 +14,11 @@ AUTHORS:
    added. FormalSums now derives from UniqueRepresentation.
 
 FUNCTIONS:
-    - ``FormalSums(ring)`` -- create the module of formal finite sums with
-                          coefficients in the given ring.
 
-    - ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum
+- ``FormalSums(ring)`` -- create the module of formal finite sums with
+  coefficients in the given ring.
+
+- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum.
 
 EXAMPLES::
 

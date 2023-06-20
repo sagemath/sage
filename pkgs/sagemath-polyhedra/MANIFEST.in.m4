@@ -7,8 +7,6 @@ prune .tox
 exclude *.m4
 include requirements.txt
 
-global-include all__sagemath_polyhedra.py
-
 include sage/interfaces/latte.p*
 include sage/interfaces/four_ti_2.p*
 
@@ -19,7 +17,7 @@ exclude sage/geometry/all.py
 prune sage/geometry/hyperbolic_space
 prune sage/geometry/riemannian_manifolds
 exclude sage/geometry/ribbon_graph.p*                    # depends on sage.groups.perm_gps
-exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense
+exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_integer_dense (flint)
 
 graft sage/game_theory
 
@@ -28,8 +26,8 @@ exclude sage/numerical/gauss_legendre.p*                # sagemath-modules
 exclude sage/numerical/optimize.p*                      # sagemath-modules
 exclude sage/numerical/backends/glpk*.p*                # sagemath-glpk
 
-global-exclude all__sagemath_categories.py
-global-exclude all__sagemath_modules.py
+global-exclude all__sagemath_*.py
+global-include all__sagemath_polyhedra.py
 
 global-exclude *.py[co]
 global-exclude *.so
