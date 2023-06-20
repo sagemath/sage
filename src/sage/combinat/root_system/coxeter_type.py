@@ -357,16 +357,16 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: CoxeterType(['A', 2, 1]).bilinear_form()                              # optional - sage.graphs
+            sage: CoxeterType(['A', 2, 1]).bilinear_form()                              # optional - sage.graphs sage.rings.number_field
             [   1 -1/2 -1/2]
             [-1/2    1 -1/2]
             [-1/2 -1/2    1]
-            sage: CoxeterType(['H', 3]).bilinear_form()                                 # optional - sage.graphs
+            sage: CoxeterType(['H', 3]).bilinear_form()                                 # optional - sage.graphs sage.rings.number_field
             [                      1                    -1/2                       0]
             [                   -1/2                       1 1/2*E(5)^2 + 1/2*E(5)^3]
             [                      0 1/2*E(5)^2 + 1/2*E(5)^3                       1]
-            sage: C = CoxeterMatrix([[1,-1,-1],[-1,1,-1],[-1,-1,1]])                    # optional - sage.graphs
-            sage: C.bilinear_form()                                                     # optional - sage.graphs
+            sage: C = CoxeterMatrix([[1,-1,-1],[-1,1,-1],[-1,-1,1]])                    # optional - sage.graphs sage.rings.number_field
+            sage: C.bilinear_form()                                                     # optional - sage.graphs sage.rings.number_field
             [ 1 -1 -1]
             [-1  1 -1]
             [-1 -1  1]
