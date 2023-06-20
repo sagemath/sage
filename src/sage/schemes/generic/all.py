@@ -1,5 +1,5 @@
 # code exports
 
-from .all__sagemath_categories import *
+from .spec import Spec
 
 from .hypersurface import ProjectiveHypersurface, AffineHypersurface

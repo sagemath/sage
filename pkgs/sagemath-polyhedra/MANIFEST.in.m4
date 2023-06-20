@@ -26,6 +26,8 @@ exclude sage/numerical/gauss_legendre.p*                # sagemath-modules
 exclude sage/numerical/optimize.p*                      # sagemath-modules
 exclude sage/numerical/backends/glpk*.p*                # sagemath-glpk
 
+graft sage/schemes/toric
+
 global-exclude all__sagemath_*.py
 global-include all__sagemath_polyhedra.py
 

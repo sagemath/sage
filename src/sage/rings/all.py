@@ -37,6 +37,7 @@ Tests for deprecations of imports in global namespace from :trac:`33602`::
 from sage.misc.lazy_import import lazy_import
 
 from .all__sagemath_combinat import *
+from .all__sagemath_flint import *
 from .all__sagemath_modules import *
 from .all__sagemath_symbolics import *
 
@@ -55,9 +56,6 @@ from .padics.padic_printing import _printer_defaults as padic_printing
 
 # valuations
 from .valuation.all import *
-
-# Real numbers
-from sage.rings.real_arb import RealBallField, RBF
 
 # Polynomial Rings and Polynomial Quotient Rings
 from .polynomial.all import *
@@ -81,8 +79,6 @@ from .complex_interval_field import ComplexIntervalField
 from .complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
 
 from .complex_mpc import MPComplexField
-
-from sage.rings.complex_arb import ComplexBallField, CBF
 
 lazy_import("sage.rings.imaginary_unit", "I")
 

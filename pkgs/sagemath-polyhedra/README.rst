@@ -42,6 +42,17 @@ What is included
 Available as extras, from other distributions
 ---------------------------------------------
 
+Additional features:
+
+`pip install "sagemath-polyhedra[graphs]"`
+ Face lattices, combinatorial polyhedra, graph-theoretic constructions
+
+`pip install "sagemath-polyhedra[groups]"`
+ Constructing symmetric polyhedra, computing automorphisms, lattice point counting modulo group actions
+
+`pip install "sagemath-polyhedra[toric]"`
+ `Toric Varieties <https://doc.sagemath.org/html/en/reference/schemes/index.html#toric-varieties>`_
+
 Other backends for polyhedral computations can be installed:
 
 `pip install "sagemath-polyhedra[normaliz]"`

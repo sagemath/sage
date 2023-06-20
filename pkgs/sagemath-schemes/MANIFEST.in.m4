@@ -16,6 +16,8 @@ graft sage/dynamics/arithmetic_dynamics
 prune sage/schemes/affine
 prune sage/schemes/projective
 prune sage/schemes/generic
+# in sagemath-polyhedra
+prune sage/schemes/toric
 # Has compile-time dependencies on sagemath-ntl
 exclude sage/schemes/hyperelliptic_curves/hypellfrob.pyx
 # Has compile-time dependencies on flint

@@ -14,11 +14,15 @@ install_requires =
     SPKG_INSTALL_REQUIRES_cysignals
     SPKG_INSTALL_REQUIRES_pplpy
     SPKG_INSTALL_REQUIRES_memory_allocator
-    SPKG_INSTALL_REQUIRES_sagemath_modules
+    SPKG_INSTALL_REQUIRES_sagemath_environment
     SPKG_INSTALL_REQUIRES_sagemath_glpk
+    SPKG_INSTALL_REQUIRES_sagemath_modules
 
 [options.extras_require]
 test        = SPKG_INSTALL_REQUIRES_sagemath_repl
+
+# general libraries
+flint       =
 
 # polyhedral libraries
 4ti2        = # FIXME
@@ -52,3 +56,11 @@ RDF = # FIXME: cddlib
 NumberField = # FIXME
 
 # features
+graphs      = SPKG_INSTALL_REQUIRES_sagemath_graphs
+groups      = SPKG_INSTALL_REQUIRES_sagemath_groups
+plot        = SPKG_INSTALL_REQUIRES_sagemath_plot
+posets      = SPKG_INSTALL_REQUIRES_sagemath_graphs
+toric       = SPKG_INSTALL_REQUIRES_sagemath_graphs
+
+# the whole package
+standard    = sagemath-polyhedra[flint,glpk,graphs,plot,RDF]

@@ -1,7 +1,6 @@
 include VERSION.txt
 
 prune sage
-global-include    all__sagemath_flint.py
 
 graft             sage/libs/arb
 graft             sage/libs/flint
@@ -32,6 +31,9 @@ include           sage/rings/padics/*.pxd                                       
 include           sage/rings/padics/*.pxi                                       # FIXME
 include           sage/rings/polynomial/*_flint.p*
 include           sage/rings/polynomial/*_arb.p*
+
+global-exclude    all__sagemath_*.p*
+global-include    all__sagemath_flint.py
 
 global-exclude *.c
 global-exclude *.cpp

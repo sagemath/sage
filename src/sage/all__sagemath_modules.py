@@ -1,5 +1,10 @@
 from .all__sagemath_categories import *
 
+try:  # extra
+    from sage.all__sagemath_flint import *
+except ImportError:
+    pass
+
 from sage.misc.all__sagemath_modules import *
 from sage.rings.all__sagemath_modules import *
 from sage.combinat.all__sagemath_modules import *

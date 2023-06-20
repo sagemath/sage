@@ -34,10 +34,6 @@ from .elliptic_curves.all import *
 
 from .plane_quartics.all import *
 
-from .generic.all import *
-
-from .toric.all import *
-
 from .cyclic_covers.all import *
 
 from .berkovich.all import *

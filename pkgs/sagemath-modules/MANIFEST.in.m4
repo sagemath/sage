@@ -7,8 +7,6 @@ prune .tox
 exclude *.m4
 include requirements.txt
 
-global-include all__sagemath_modules.py
-
 graft sage/misc
 exclude sage/misc/all.py
 # exclude what's in sagemath-objects
@@ -141,7 +139,7 @@ graft sage/algebras/finite_dimensional_algebras  # for hyperplane arrangements
 include sage/algebras/group_algebra.py
 
 graft sage/matrix
-exclude sage/matrix/misc*.*  # until refactored
+exclude sage/matrix/misc_flint.p*
 exclude sage/matrix/matrix_gap.*
 exclude sage/matrix/matrix_*ball*.*     # depends on arb
 exclude sage/matrix/matrix_*cyclo*.*    # depends on ntl
@@ -277,13 +275,8 @@ include sage/numerical/gauss_legendre.p*
 # uses vector
 include sage/numerical/optimize.p*
 
-
-global-exclude all__sagemath_objects.*
-global-exclude all__sagemath_categories.*
-global-exclude all__sagemath_environment.*
-global-exclude all__sagemath_graphs.*
-global-exclude all__sagemath_repl.*
-global-exclude all__sagemath_*symbolics*.*
+global-exclude all__sagemath_*.*
+global-include all__sagemath_modules.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

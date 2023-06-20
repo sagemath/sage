@@ -1,1 +1,1 @@
-tox sagemath_repl
+tox sagemath_repl sagemath_flint sagemath_graphs sagemath_plot

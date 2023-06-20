@@ -1,1 +1,1 @@
-sagemath_graphs sagemath_modules
+tox sagemath_repl sagemath_graphs sagemath_modules
