@@ -1690,7 +1690,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Return the homomorphism defined by ``x`` having this Drinfeld
         module as domain.
 
-        We recall that an endomorphism `f : \phi \to \psi` between
+        We recall that a homomorphism `f : \phi \to \psi` between
         two Drinfeld modules is defined by a Ore polynomial `u`,
         which is subject to the relation `phi_T u = u \psi_T`.
 
