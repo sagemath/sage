@@ -139,6 +139,7 @@ graft sage/algebras/finite_dimensional_algebras  # for hyperplane arrangements
 include sage/algebras/group_algebra.py
 
 graft sage/matrix
+exclude sage/matrix/misc.p*             # Matrix_integer_sparse
 exclude sage/matrix/misc_flint.p*
 exclude sage/matrix/matrix_gap.*
 exclude sage/matrix/matrix_*ball*.*     # depends on arb
