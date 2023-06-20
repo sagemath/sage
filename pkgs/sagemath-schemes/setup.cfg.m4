@@ -21,7 +21,7 @@ test = SPKG_INSTALL_REQUIRES_sagemath_repl
 
 # extras by packages (same as sagemath-modules)
 flint   = SPKG_INSTALL_REQUIRES_sagemath_flint
-linbox  = SPKG_INSTALL_REQUIRES_sagemath_linbox
+linbox  = # FIXME
 m4ri    = # FIXME
 m4rie   = # FIXME
 meataxe = SPKG_INSTALL_REQUIRES_sagemath_meataxe

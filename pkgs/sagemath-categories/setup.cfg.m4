@@ -11,7 +11,7 @@ include(`setup_cfg_metadata.m4')dnl'
 python_requires = >=3.8, <3.12
 install_requires =
     SPKG_INSTALL_REQUIRES_sagemath_objects
-    SPKG_INSTALL_REQUIRES_allocator
+    SPKG_INSTALL_REQUIRES_memory_allocator
 
 [options.extras_require]
 test = SPKG_INSTALL_REQUIRES_sagemath_repl
