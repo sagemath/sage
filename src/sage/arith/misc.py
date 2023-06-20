@@ -3133,8 +3133,8 @@ class Euler_Phi:
         EXAMPLES::
 
             sage: from sage.arith.misc import Euler_Phi
-            sage: p = Euler_Phi().plot()                                                # optional - sage.plot
-            sage: p.ymax()                                                              # optional - sage.plot
+            sage: p = Euler_Phi().plot()                                                # optional - sage.libs.pari sage.plot
+            sage: p.ymax()                                                              # optional - sage.libs.pari sage.plot
             46.0
         """
         v = [(n, euler_phi(n)) for n in range(xmin, xmax + 1)]
@@ -4567,8 +4567,8 @@ class Moebius:
         EXAMPLES::
 
             sage: from sage.arith.misc import Moebius
-            sage: p = Moebius().plot()                                                  # optional - sage.plot
-            sage: p.ymax()                                                              # optional - sage.plot
+            sage: p = Moebius().plot()                                                  # optional - sage.libs.pari sage.plot
+            sage: p.ymax()                                                              # optional - sage.libs.pari sage.plot
             1.0
         """
         values = self.range(xmin, xmax + 1)
