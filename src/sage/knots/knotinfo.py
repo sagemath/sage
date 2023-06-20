@@ -1865,9 +1865,8 @@ class KnotInfoBase(Enum):
             sage: K7   = KnotInfo.K7_2
             sage: k7s  = K7.link(snappy=True); k7s        # optional - snappy
             <Link: 1 comp; 7 cross>
-            sage: K7.link(K7.items.name, snappy=True)     # optional - snappy
+            sage: k7sn = K7.link(K7.items.name, snappy=True); k7sn     # optional - snappy
             <Link 7_2: 1 comp; 7 cross>
-            sage: k7sn = _                                # optional - snappy
             sage: k7s.sage_link().is_isotopic(k7sn)       # optional - snappy
             False
             sage: k7snm = k7sn.sage_link().mirror_image() # optional - snappy
