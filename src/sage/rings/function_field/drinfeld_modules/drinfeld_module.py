@@ -1152,16 +1152,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         ::
 
-            sage: B.<Y> = Fq[]
-            sage: L = Frac(B)
-            sage: phi = DrinfeldModule(A, [L(2), L(1)])
-            sage: phi.height()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: height not implemented in this case
-
-        ::
-
             sage: Fq = GF(343)
             sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
@@ -1171,13 +1161,32 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_supersingular()
             True
 
-        ::
+        In characteristic zero, height is not defined::
 
-            sage
+            sage: L = A.fraction_field()
+            sage: phi = DrinfeldModule(A, [L(T), L(1)])
+            sage: phi.height()
+            Traceback (most recent call last):
+            ...
+            ValueError: height is only defined for prime function field characteristic
+
+        TESTS:
+
+        In the following case, sage is unable to determine the
+        characteristic; that is why an error is raised::
+
+            sage: B.<Y> = Fq[]
+            sage: L = Frac(B)
+            sage: phi = DrinfeldModule(A, [L(2), L(1)])
+            sage: phi.height()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: height not implemented in this case
+
         """
         try:
             if self.characteristic().is_zero():
-                raise ValueError('height is defined for prime '
+                raise ValueError('height is only defined for prime '
                                  'function field characteristic')
             else:
                 p = self.characteristic()
@@ -1271,6 +1280,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_isomorphic(psi)
             False
 
+        Two Drinfeld modules which are patterned-alike are also not
+        isomorphic::
+
+            sage: phi = DrinfeldModule(A, [T, 1, 0, 1])
+            sage: psi = DrinfeldModule(A, [T, 1, 1, 1])
+            sage: phi.is_isomorphic(psi)
+            False
         """
         if self.category() is not other.category():
             raise ValueError("Drinfeld modules are not in the same category")

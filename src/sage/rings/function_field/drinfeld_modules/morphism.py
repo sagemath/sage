@@ -477,7 +477,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return H(self.ore_polynomial() * other.ore_polynomial())
 
-    def __invert__(self):
+    def inverse(self):
         r"""
         Return the inverse of this morphism.
 
@@ -493,22 +493,59 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: f = phi.hom(2); f
             Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
               Defn: 2
-            sage: f.inverse()  # indirect doctest
+            sage: f.inverse()
             Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
               Defn: 3
 
-        ::
+        Inversion of general isomorphisms between different Drinfeld modules
+        also works::
+
+            sage: g = phi.hom(z); g
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+              To:   Drinfeld module defined by T |--> z^2*t^3 + (z^2 + 2*z + 3)*t^2 + (z^2 + 3*z)*t + z
+              Defn: z
+            sage: g.inverse()
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z^2*t^3 + (z^2 + 2*z + 3)*t^2 + (z^2 + 3*z)*t + z
+              To:   Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+              Defn: 3*z^2 + 4
+
+        When the morphism is not invertible, an error is raised::
 
             sage: F = phi.frobenius_endomorphism()
-            sage: F.inverse()  # indirect doctest
+            sage: F.inverse()
             Traceback (most recent call last):
             ...
             ZeroDivisionError: this morphism is not invertible
 
         """
+        return self.__invert__()
+
+    def __invert__(self):
+        r"""
+        Return the inverse of this morphism.
+
+        TESTS::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: coeffs = [z] + [K.random_element() for _ in range(10)]
+            sage: phi = DrinfeldModule(A, coeffs)
+            sage: f = phi.hom(K.random_element())
+            sage: g = ~f
+
+            sage: (f*g).is_identity()
+            True
+            sage: (g*f).is_identity()
+            True
+
+        """
         if not self.is_isomorphism():
             raise ZeroDivisionError("this morphism is not invertible")
-        return self.parent()(~(self.ore_polynomial()[0]))
+        H = self.codomain().Hom(self.domain())
+        return H(~(self.ore_polynomial()[0]))
 
     def _motive_matrix(self):
         r"""
@@ -557,9 +594,9 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         B = inv * phiT
         T = KT.gen()
         for i in range(1, r):
-            row = [c.map_coefficients(Frob) for c in row]
-            row = [(inv*T - B[0]) * row[-1]] \
-                + [row[j-1] - B[j]*row[-1] for j in range(1, r)]
+            twist = [c.map_coefficients(Frob) for c in row]
+            row = [(inv*T - B[0]) * twist[-1]]
+            row += [twist[j-1] - B[j]*twist[-1] for j in range(1, r)]
             rows.append(row)
 
         return matrix(KT, rows)
