@@ -363,7 +363,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         from sage.numerical.mip import MixedIntegerLinearProgram
         k1, k2=len(p1), len(p2)
         p = MixedIntegerLinearProgram(solver=solver)
-        b = p.new_variable(binary = True)
+        b = p.new_variable(binary=True)
         for (i,c) in enumerate(p1):
             p.add_constraint(p.sum([b[i,j] for j in range(k2)]) ==c)
         for (i,c) in enumerate(p2):

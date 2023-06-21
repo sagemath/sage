@@ -31,9 +31,10 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.combinat import bell_number, catalan_number
 from sage.structure.global_options import GlobalOptions
-from sage.combinat.combinat_cython import (set_partition_iterator, perfect_matchings_iterator,
+from sage.combinat.combinat_cython import (perfect_matchings_iterator,
                                            set_partition_composition)
 from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
+from sage.combinat.set_partition_iterator import set_partition_iterator
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra_n
 from sage.combinat.permutation import Permutations
 from sage.graphs.graph import Graph
@@ -231,7 +232,7 @@ def planar_partitions_rec(X):
         if len(X) > 1:
             yield ([X[0]], [X[1]])
         return
-    from sage.misc.misc import powerset
+    from sage.combinat.subset import powerset
     from itertools import product
     for S in powerset(range(len(X)-1)):
         if not S:

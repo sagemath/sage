@@ -2116,9 +2116,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             return "()"
         # compute column widths
         S = [repr(x) for x in self.list(copy=False)]
-        #width = max([len(x) for x in S])
+        # width = max([len(x) for x in S])
         s = "("
-        for i in xrange(d):
+        for i in range(d):
             if i == d-1:
                 sep = ""
             else:
@@ -5080,7 +5080,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         This lack of bounds checking causes trouble later::
 
             sage: v
-            <repr(<sage.modules.free_module_element.FreeModuleElement_generic_sparse at 0x...>) failed: IndexError: list assignment index out of range>
+            <repr(<sage.modules.free_module.FreeModule_ambient_field_with_category.element_class at 0x...>) failed: IndexError: list assignment index out of range>
         """
         if value:
             self._entries[i] = value

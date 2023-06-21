@@ -667,7 +667,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: list(L)                                                               # optional - sage.modules sage.rings.finite_rings
             [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         """
-        from sage.combinat.combinat_cython import linear_extension_iterator
+        from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
         vertex_to_element = self._poset._vertex_to_element
         for lin_ext in linear_extension_iterator(self._poset._hasse_diagram):
             yield self._element_constructor_([vertex_to_element(_) for _ in lin_ext])

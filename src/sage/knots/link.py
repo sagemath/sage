@@ -3652,7 +3652,6 @@ class Link(SageObject):
             ims += sum(line(a[0], **kwargs) for a in im)
         return image
 
-
     def _markov_move_cmp(self, braid):
         r"""
         Return whether ``self`` can be transformed to the closure of ``braid``
@@ -4120,7 +4119,6 @@ class Link(SageObject):
 
             raise NotImplementedError('this link cannot be uniquely determined%s' %non_unique_hint)
 
-
         self_m = self.mirror_image()
         ls, proved_s = self._knotinfo_matching_list()
         lm, proved_m = self_m._knotinfo_matching_list()
@@ -4147,18 +4145,18 @@ class Link(SageObject):
         cr = len(self.pd_code())
         if self.is_knot() and cr > 12:
             # we cannot not be sure if this link is recorded in the KnotInfo database
-            raise NotImplementedError('this knot having more than 12 crossings cannot be%s determined%s' %uniq_txt)
+            raise NotImplementedError('this knot having more than 12 crossings cannot be%s determined%s' % uniq_txt)
 
         if not self.is_knot() and cr > 11:
             # we cannot not be sure if this link is recorded in the KnotInfo database
-            raise NotImplementedError('this link having more than 11 crossings cannot be%s determined%s' %uniq_txt)
+            raise NotImplementedError('this link having more than 11 crossings cannot be%s determined%s' % uniq_txt)
 
         H = self.homfly_polynomial(normalization='vz')
 
         if sum(exp for f, exp in H.factor()) > 1:
             # we cannot be sure if this is a prime link (see the example for the connected
             # sum of K4_1 and K5_2 in the doctest of :meth:`_knotinfo_matching_list`)
-            raise NotImplementedError('this (possibly non prime) link cannot be%s determined%s' %uniq_txt)
+            raise NotImplementedError('this (possibly non prime) link cannot be%s determined%s' % uniq_txt)
 
         if not l:
             from sage.features.databases import DatabaseKnotInfo
@@ -4166,7 +4164,6 @@ class Link(SageObject):
             return l
 
         return answer_list(l)
-
 
     def is_isotopic(self, other):
         r"""

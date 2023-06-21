@@ -665,8 +665,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
             sage: list(Y.__iter__())                                                    # optional - sage.combinat
             [(1, 0, 2, 1, 0), (1, 2, 0, 1, 0), (1, 2, 1, 0, 0), (2, 1, 0, 1, 0), (2, 1, 1, 0, 0)]
         """
-        for v in self._vertex_ordering:
-            yield v
+        yield from self._vertex_ordering
 
     def _swap_operator(self, operator, u):
         r"""

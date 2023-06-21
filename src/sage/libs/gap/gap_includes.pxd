@@ -33,11 +33,6 @@ cdef extern from "gap/ariths.h" nogil:
     bint LT(Obj opL, Obj opR)
 
 
-cdef extern from "gap/bool.h" nogil:
-    cdef Obj GAP_True "True"
-    cdef Obj GAP_False "False"
-
-
 cdef extern from "gap/calls.h" nogil:
     bint IS_FUNC(Obj)
     Obj CALL_0ARGS(Obj f)              # 0 arguments
@@ -50,26 +45,9 @@ cdef extern from "gap/calls.h" nogil:
     Obj CALL_XARGS(Obj f, Obj args)   # more than 6 arguments
 
 
-cdef extern from "gap/gasman.h" nogil:
-    void MarkBag(Obj bag)
-    UInt CollectBags(UInt size, UInt full)
-
-
-cdef extern from "gap/integer.h" nogil:
-    Int IS_INT(Obj)
-
-
 cdef extern from "gap/intobj.h" nogil:
-    bint IS_INTOBJ(Obj obj)
     Obj INTOBJ_INT(Int)
     Int INT_INTOBJ(Obj)
-
-
-cdef extern from "gap/io.h" nogil:
-    ctypedef struct TypOutputFile:
-        pass
-    UInt OpenOutputStream(TypOutputFile* output, Obj stream)
-    UInt CloseOutput(TypOutputFile* output)
 
 
 cdef extern from "gap/libgap-api.h" nogil:
@@ -90,10 +68,29 @@ cdef extern from "gap/libgap-api.h" nogil:
     cdef void GAP_Leave()
     cdef int GAP_Error_Setjmp() except 0
 
+    void GAP_MarkBag(Obj bag)
+    void GAP_CollectBags(UInt full)
+
+    cdef Obj GAP_True
+    cdef Obj GAP_False
+
+    bint GAP_IsMacFloat(Obj obj)
+    double GAP_ValueMacFloat(Obj obj)
+
+    bint GAP_IsInt(Obj)
+    bint GAP_IsSmallInt(Obj)
+
+    bint GAP_IsList(Obj lst)
+    UInt GAP_LenList(Obj lst)
+    void GAP_AssList(Obj lst, UInt pos, Obj val)
+    Obj GAP_ElmList(Obj lst, UInt pos)
+    Obj GAP_NewPlist(Int capacity)
+
+    bint GAP_IsRecord(Obj obj)
+    Obj GAP_NewPrecord(Int capacity)
+
 
 cdef extern from "gap/lists.h" nogil:
-    bint IS_LIST(Obj lst)
-    int LEN_LIST(Obj lst)
     Obj ELM_LIST(Obj lst, int pos)
     Obj ELM0_LIST(Obj lst, int pos)
     void ASS_LIST(Obj lst, int pos, Obj elt)
@@ -101,10 +98,6 @@ cdef extern from "gap/lists.h" nogil:
 
 cdef extern from "gap/listfunc.h" nogil:
     void AddList(Obj list, Obj obj)
-
-
-cdef extern from "gap/macfloat.h" nogil:
-    double VAL_MACFLOAT(Obj obj)
 
 
 cdef extern from "gap/objects.h" nogil:
@@ -119,7 +112,6 @@ cdef extern from "gap/objects.h" nogil:
         T_RAT
         T_CYC
         T_FFE
-        T_MACFLOAT
         T_PERM2
         T_PERM4
         T_BOOL
@@ -142,7 +134,6 @@ cdef extern from "gap/permutat.h" nogil:
 
 
 cdef extern from "gap/precord.h" nogil:
-    Obj NEW_PREC(int len)
     int LEN_PREC(Obj rec)
     int GET_RNAM_PREC(Obj rec, int i)
     Obj GET_ELM_PREC(Obj rec, int i)
@@ -151,7 +142,6 @@ cdef extern from "gap/precord.h" nogil:
 
 cdef extern from "gap/records.h" nogil:
     char* NAME_RNAM(UInt rnam)
-    bint IS_REC(Obj obj)
     Obj ELM_REC(Obj rec, UInt rnam)
     UInt RNamName(Char* name)
 

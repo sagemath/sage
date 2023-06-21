@@ -615,7 +615,7 @@ class Diagrams(UniqueRepresentation, Parent):
         """
         from sage.sets.non_negative_integers import NonNegativeIntegers
         from sage.categories.cartesian_product import cartesian_product
-        from sage.misc.misc import subsets
+        from sage.combinat.subset import subsets
         # the product of positive integers automatically implements an
         # an enumeration which allows us to get out of the first column
         N = NonNegativeIntegers()

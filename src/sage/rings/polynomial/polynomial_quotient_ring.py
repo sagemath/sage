@@ -1031,7 +1031,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             self.__gen = self(self.polynomial_ring().gen())
             return self.__gen
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return whether or not this quotient ring is a field.
 
@@ -1077,7 +1077,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             self._refine_category_(Fields())
         return ret
 
-    def is_integral_domain(self, proof = True):
+    def is_integral_domain(self, proof=True):
         """
         Return whether or not this quotient ring is an integral domain.
 
@@ -2017,7 +2017,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 lambda f: f.lift().map_coefficients(base_to_isomorphic_base)(isomorphic_quotient.gen()))
 
             return (from_isomorphic_quotient * isomorphic_ring_to_isomorphic_quotient,
-                isomorphic_quotient_to_isomorphic_ring *  to_isomorphic_quotient,
+                isomorphic_quotient_to_isomorphic_ring * to_isomorphic_quotient,
                 isomorphic_ring)
 
         if self.modulus().degree() == 1:

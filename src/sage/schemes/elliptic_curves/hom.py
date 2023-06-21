@@ -56,7 +56,7 @@ class EllipticCurveHom(Morphism):
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='velusqrt')  # indirect doctest
-            Elliptic-curve isogeny (using √élu) of degree 127:
+            Elliptic-curve isogeny (using square-root Vélu) of degree 127:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 119*x + 231 over Finite Field in z2 of size 257^2
             sage: E.montgomery_model(morphism=True)   # indirect doctest
@@ -75,7 +75,7 @@ class EllipticCurveHom(Morphism):
             self._domain._fetch_cached_order(self._codomain)
 
     def _repr_type(self):
-        """
+        r"""
         Return a textual representation of what kind of morphism
         this is. Used by :meth:`Morphism._repr_`.
 
@@ -89,7 +89,7 @@ class EllipticCurveHom(Morphism):
 
     @staticmethod
     def _composition_impl(left, right):
-        """
+        r"""
         Called by :meth:`_composition_`.
 
         TESTS::
@@ -101,7 +101,7 @@ class EllipticCurveHom(Morphism):
         return NotImplemented
 
     def _composition_(self, other, homset):
-        """
+        r"""
         Return the composition of this elliptic-curve morphism
         with another elliptic-curve morphism.
 
@@ -133,7 +133,7 @@ class EllipticCurveHom(Morphism):
 
     @staticmethod
     def _comparison_impl(left, right, op):
-        """
+        r"""
         Called by :meth:`_richcmp_`.
 
         TESTS::
@@ -626,7 +626,7 @@ class EllipticCurveHom(Morphism):
         return self.degree() == 1
 
     def is_zero(self):
-        """
+        r"""
         Check whether this elliptic-curve morphism is the zero map.
 
         .. NOTE::
@@ -664,7 +664,7 @@ class EllipticCurveHom(Morphism):
 
     @cached_method
     def __hash__(self):
-        """
+        r"""
         Return a hash value for this elliptic-curve morphism.
 
         ALGORITHM:
@@ -899,7 +899,7 @@ def compare_via_evaluation(left, right):
         d = left.degree()
         e = integer_floor(1 + 2 * (2*d.sqrt() + 1).log(q))  # from Hasse bound
         e = next(i for i, n in enumerate(E.count_points(e+1), 1) if n > 4*d)
-        EE = E.base_extend(F.extension(e))
+        EE = E.base_extend(F.extension(e, 'U'))  # named extension is faster
         Ps = EE.gens()
         return all(left._eval(P) == right._eval(P) for P in Ps)
     elif isinstance(F, number_field_base.NumberField):
@@ -982,7 +982,7 @@ def find_post_isomorphism(phi, psi):
                 if len(isos) <= 1:
                     break
             else:
-                E = E.base_extend(E.base_field().extension(2))
+                E = E.base_extend(E.base_field().extension(2, 'U'))  # named extension is faster
 
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):

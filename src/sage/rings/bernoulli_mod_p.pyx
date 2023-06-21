@@ -311,8 +311,6 @@ def bernoulli_mod_p_single(long p, long k):
     if not sage.arith.all.is_prime(p):
         raise ValueError("p (=%s) must be a prime" % p)
 
-    R = Integers(p)
-
     cdef long x = bernmm_bern_modp(p, k)
     if x == -1:
         raise ArithmeticError("B_k is not integral at p")

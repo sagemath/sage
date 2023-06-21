@@ -491,7 +491,6 @@ cdef class Polynomial_rational_flint(Polynomial):
         """
         cdef Polynomial_rational_flint f
         cdef Rational r
-        cdef mpz_t tmpz
         cdef fmpz_t tmpfz
         cdef fmpq_t tmpfq
         cdef RealBall arb_a, arb_z

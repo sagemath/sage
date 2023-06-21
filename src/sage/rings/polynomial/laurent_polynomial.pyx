@@ -1,7 +1,6 @@
 r"""
 Elements of Laurent polynomial rings
 """
-
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -9,16 +8,14 @@ Elements of Laurent polynomial rings
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from sage.rings.integer cimport Integer
 from sage.categories.map cimport Map
 from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
-from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.structure.richcmp cimport richcmp, rich_to_bool
+
 
 cdef class LaurentPolynomial(CommutativeAlgebraElement):
     """

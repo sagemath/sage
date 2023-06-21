@@ -266,9 +266,9 @@ def to_graphics_array(graph_list, **kwds):
     options, all of which are available from :func:`to_graphics_array`::
 
         sage: glist = []
-        sage: for _ in range(10):
+        sage: for _ in range(10):                                                       # optional - networkx
         ....:     glist.append(graphs.RandomLobster(41, .3, .4))
-        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)     # optional - sage.plot
+        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)     # optional - networkx sage.plot
         Graphics Array of size 3 x 4
     """
     from sage.graphs import graph

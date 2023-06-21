@@ -39,10 +39,13 @@ Methods
 #                    https://www.gnu.org/licenses/                          #
 # **************************************************************************
 from __future__ import annotations
-from sage.rings.integer import Integer
+
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer import Integer
 from sage.sets.set import Set
-from sage.libs.gap.libgap import libgap
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
 class IncidenceStructure():
@@ -173,7 +176,6 @@ class IncidenceStructure():
             sage: IncidenceStructure([])
             Incidence structure with 0 points and 0 blocks
         """
-        from sage.matrix.constructor import matrix
         from sage.structure.element import Matrix
 
         # Reformatting input
@@ -189,6 +191,7 @@ class IncidenceStructure():
             assert incidence_matrix is None, "'incidence_matrix' cannot be defined when 'points' is defined"
 
         if incidence_matrix:
+            from sage.matrix.constructor import matrix
             M = matrix(incidence_matrix)
             v = M.nrows()
             self._points = list(range(v))
@@ -2173,7 +2176,7 @@ class IncidenceStructure():
             for x in s:
                 g.add_edge((0, s), (1, x))
 
-        _ = g.plot(iterations = 50000,save_pos=True)
+        _ = g.plot(iterations=50000,save_pos=True)
 
         # The values are rounded as TikZ does not like accuracy.
         return {k[1]: (round(x, 3), round(y, 3))
@@ -2258,7 +2261,7 @@ class IncidenceStructure():
             # "center", i.e. the vertex representing the set s
             cx, cy = pos[Set(s)]
             s = [pos[_] for _ in s]
-            s = sorted(s, key = lambda x_y: arctan2(x_y[0] - cx, x_y[1] - cy))
+            s = sorted(s, key=lambda x_y: arctan2(x_y[0] - cx, x_y[1] - cy))
 
             for x in s:
                 tex += str(x)+" "

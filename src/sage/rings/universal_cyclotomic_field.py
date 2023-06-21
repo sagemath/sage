@@ -163,6 +163,8 @@ AUTHORS:
 - Sebastian Oehms (2019): add :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
 """
 
+import sage.rings.abc
+
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import rich_to_bool
@@ -1281,7 +1283,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         return QQ[var](QQ['x_1'](str(gap_p)))
 
 
-class UniversalCyclotomicField(UniqueRepresentation, Field):
+class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyclotomicField):
     r"""
     The universal cyclotomic field.
 
