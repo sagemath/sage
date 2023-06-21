@@ -6,15 +6,14 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
@@ -119,6 +118,7 @@ class QuasiMeromorphicModularFormsRing(FormsRing_abstract, CommutativeAlgebra, U
         CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["quasi", "mero"])
 
+
 class QuasiWeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
     r"""
     Graded ring of (Hecke) quasi weakly holomorphic modular forms
@@ -177,6 +177,7 @@ class QuasiWeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRe
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
         CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["quasi", "weak"])
+
 
 class QuasiModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
     r"""
@@ -237,6 +238,7 @@ class QuasiModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepres
         CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["quasi", "holo"])
 
+
 class QuasiCuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
     r"""
     Graded ring of (Hecke) quasi cusp forms
@@ -295,6 +297,7 @@ class QuasiCuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresent
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
         CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["quasi", "cusp"])
+
 
 class MeromorphicModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
     r"""
@@ -355,6 +358,7 @@ class MeromorphicModularFormsRing(FormsRing_abstract, CommutativeAlgebra, Unique
         CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["mero"])
 
+
 class WeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
     r"""
     Graded ring of (Hecke) weakly holomorphic modular forms
@@ -414,6 +418,7 @@ class WeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueReprese
         CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["weak"])
 
+
 class ModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
     r"""
     Graded ring of (Hecke) modular forms
@@ -471,6 +476,7 @@ class ModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentat
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
         CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["holo"])
+
 
 class CuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
     r"""

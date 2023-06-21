@@ -50,13 +50,6 @@ cdef extern from "gap/intobj.h" nogil:
     Int INT_INTOBJ(Obj)
 
 
-cdef extern from "gap/io.h" nogil:
-    ctypedef struct TypOutputFile:
-        pass
-    UInt OpenOutputStream(TypOutputFile* output, Obj stream)
-    UInt CloseOutput(TypOutputFile* output)
-
-
 cdef extern from "gap/libgap-api.h" nogil:
     """
     #define sig_GAP_Enter()  {int t = GAP_Enter(); if (!t) sig_error();}
@@ -89,6 +82,9 @@ cdef extern from "gap/libgap-api.h" nogil:
 
     bint GAP_IsList(Obj lst)
     UInt GAP_LenList(Obj lst)
+    void GAP_AssList(Obj lst, UInt pos, Obj val)
+    Obj GAP_ElmList(Obj lst, UInt pos)
+    Obj GAP_NewPlist(Int capacity)
 
     bint GAP_IsRecord(Obj obj)
     Obj GAP_NewPrecord(Int capacity)

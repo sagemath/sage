@@ -94,7 +94,7 @@ def O(*x, **kwds):
         sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ',            # optional - sage.symbolic
         ....:                        coefficient_ring=QQ); A
         Asymptotic Ring <QQ^n * n^QQ * log(n)^QQ * Signs^n> over Rational Field
-        sage: O(n)
+        sage: O(n)                                                                      # optional - sage.symbolic
         O(n)
 
     Application with Puiseux series::
@@ -108,17 +108,17 @@ def O(*x, **kwds):
 
     TESTS::
 
-        sage: var('x, y')
+        sage: var('x, y')                                                               # optional - sage.symbolic
         (x, y)
-        sage: O(x)
+        sage: O(x)                                                                      # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ArithmeticError: O(x) not defined
-        sage: O(y)
+        sage: O(y)                                                                      # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ArithmeticError: O(y) not defined
-        sage: O(x, y)
+        sage: O(x, y)                                                                   # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ArithmeticError: O(x, y) not defined

@@ -132,7 +132,7 @@ class FunctionFieldDifferential(ModuleElement):
         if self._f.is_zero(): # zero differential
             return '0'
 
-        r =  'd({})'.format(self.parent()._gen_base_differential)
+        r = 'd({})'.format(self.parent()._gen_base_differential)
 
         if self._f.is_one():
             return r
@@ -154,7 +154,7 @@ class FunctionFieldDifferential(ModuleElement):
         if self._f.is_zero(): # zero differential
             return '0'
 
-        r =  'd{}'.format(self.parent()._gen_base_differential)
+        r = 'd{}'.format(self.parent()._gen_base_differential)
 
         if self._f.is_one():
             return r

@@ -40,19 +40,21 @@ from sage.structure.list_clone import ClonableArray
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.combinat_cython import (set_partition_iterator,
-                                           set_partition_iterator_blocks)
+from sage.combinat.set_partition_iterator import (set_partition_iterator,
+                                                  set_partition_iterator_blocks)
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.combinat import bell_number, stirling_number2 as stirling2
 from sage.combinat.permutation import Permutation
 from sage.arith.misc import factorial
 from sage.misc.prandom import random, randint, sample
-from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.sets.disjoint_set import DisjointSet
-from sage.combinat.posets.hasse_diagram import HasseDiagram
+
+lazy_import('sage.combinat.posets.hasse_diagram', 'HasseDiagram')
+lazy_import('sage.probability.probability_distribution', 'GeneralDiscreteDistribution')
 
 
 class AbstractSetPartition(ClonableArray,
