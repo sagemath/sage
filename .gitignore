@@ -273,6 +273,8 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-symbolics/MANIFEST.in
 /pkgs/sagemath-standard-no-symbolics/MANIFEST.in
 
+/pkgs/sagemath-mpmath/vendor.txt
+
 # same for old locations - before Issue #31577
 /build/pkgs/*/src/build
 /build/pkgs/*/src/dist

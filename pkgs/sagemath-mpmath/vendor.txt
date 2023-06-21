@@ -1,2 +1,0 @@
-#line 1 "/Users/mkoeppe/s/sage/sage-rebasing/worktree-clean/build/pkgs/sagemath_mpmath/src/vendor.txt.m4"
-mpmath ~= 1.2.1
