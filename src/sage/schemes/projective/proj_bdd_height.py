@@ -149,9 +149,24 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
                 for p in itertools.permutations(point_coordinates):
                     for u in unit_tuples:
                         point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
+
+                        O = K.maximal_order()
+
                         if point not in points_in_class_a:
-                            if not all([term in K.maximal_order() for term in point]):
-                                point.scale_by(lcm([term.denominator() for term in point]))
+                            denom_list = []
+
+                            for entry in point:
+                                if entry == 0:
+                                    continue
+
+                                frac_ideal = O.fractional_ideal(entry)
+                                if K.is_relative():
+                                    frac_ideal_norm = frac_ideal.absolute_norm()
+                                else:
+                                    frac_ideal_norm = frac_ideal.norm()
+                                denom_list.append(frac_ideal_norm.denominator())
+
+                            point.scale_by(lcm(denom_list))
                             points_in_class_a.add(point)
                             yield point
 
@@ -348,8 +363,23 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
                 for p in itertools.permutations(point_coordinates):
                     for u in unit_tuples:
                         point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
+
+                        O = K.maximal_order()
+
                         if point not in points_in_class_a:
-                            if not all([term in K.maximal_order() for term in point]):
-                                point.scale_by(lcm([term.denominator() for term in point]))
+                            denom_list = []
+
+                            for entry in point:
+                                if entry == 0:
+                                    continue
+
+                                frac_ideal = O.fractional_ideal(entry)
+                                if K.is_relative():
+                                    frac_ideal_norm = frac_ideal.absolute_norm()
+                                else:
+                                    frac_ideal_norm = frac_ideal.norm()
+                                denom_list.append(frac_ideal_norm.denominator())
+
+                            point.scale_by(lcm(denom_list))
                             points_in_class_a.add(point)
                             yield point
