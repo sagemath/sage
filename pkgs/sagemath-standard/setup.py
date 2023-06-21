@@ -83,6 +83,7 @@ distributions = ['',
                  'sagemath-gap',
                  'sagemath-giac',
                  'sagemath-homfly',
+                 'sagemath-mpmath',
                  'sagemath-pari',
                  ]
 optional_packages_with_extensions = os.environ.get('SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS', '').split(',')
