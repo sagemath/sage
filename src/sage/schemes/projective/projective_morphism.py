@@ -992,7 +992,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                     continue
 
                 O = R.maximal_order()
-                if is_NumberFieldOrder(O):
+
+                if O is ZZ:
+                    denom_list.append(entry.denominator())
+                elif is_NumberFieldOrder(O):
                     frac_ideal = O.fractional_ideal(entry)
                     if K.is_relative():
                         frac_ideal_norm = frac_ideal.absolute_norm()
