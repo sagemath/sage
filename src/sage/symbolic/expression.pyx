@@ -10623,20 +10623,20 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``algorithm`` - one of :
+        - ``algorithm`` -- one of :
 
-            - ``maxima`` : currently, sends the expression to
-              ``maxima`` and converts it back to Sage.
+            - ``maxima`` : (default) sends the expression to
+              ``maxima`` and converts it back to Sage
 
             - ``sympy`` : converts the expression to ``sympy``,
               simplifies it (passing any optional keyword(s)), and
-              converts the result to Sage.
+              converts the result to Sage
 
             - ``giac`` : converts the expression to ``giac``,
-              simplifies it, and converts the result to Sage.
+              simplifies it, and converts the result to Sage
 
             - ``fricas`` : converts the expression to ``fricas``,
-              simplifies it, and converts the result to Sage.
+              simplifies it, and converts the result to Sage
 
         .. SEEALSO::
 
@@ -10684,13 +10684,13 @@ cdef class Expression(Expression_abc):
             sage: expr.simplify(algorithm='sympy')
             1/5*sqrt(5) - 1/5
         """
-        if algorithm == "maxima" :
+        if algorithm == "maxima":
             return self._parent(self._maxima_())
-        if algorithm == "sympy" :
+        if algorithm == "sympy":
             return self._sympy_().simplify(**kwds)._sage_()
-        if algorithm == "giac" :
+        if algorithm == "giac":
             return self._giac_().simplify()._sage_()
-        if algorithm == "fricas" :
+        if algorithm == "fricas":
             return self._fricas_().simplify()._sage_()
         raise ValueError(f"algorithm {algorithm} unknown to simplify")
 

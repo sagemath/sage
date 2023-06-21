@@ -32,12 +32,13 @@ def simplify(f, algorithm="maxima", **kwds):
     r"""
     Simplify the expression `f`.
 
-    See the documentation of the :meth:`simplify` method of symbolic
+    See the documentation of the
+    :meth:`~sage.symbolic.expression.Expression.simplify` method of symbolic
     expressions for details on options.
 
-    EXAMPLES: We simplify the expression `i + x - x`.
+    EXAMPLES:
 
-    ::
+    We simplify the expression `i + x - x`::
 
         sage: f = I + x - x; simplify(f)
         I
@@ -45,9 +46,7 @@ def simplify(f, algorithm="maxima", **kwds):
     In fact, printing `f` yields the same thing - i.e., the
     simplified form.
 
-    Some simplifications are algorithm-specific :
-
-    ::
+    Some simplifications are algorithm-specific::
 
         sage: x, t = var("x, t")
         sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
