@@ -1,4 +1,4 @@
-$(PYTHON) mdurl | $(PYTHON_TOOLCHAIN)
+mdurl | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

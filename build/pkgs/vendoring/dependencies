@@ -1,4 +1,4 @@
-$(PYTHON) rich click toml | $(PYTHON_TOOLCHAIN)
+rich click toml | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
