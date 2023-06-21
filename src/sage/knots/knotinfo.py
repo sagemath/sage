@@ -1786,6 +1786,29 @@ class KnotInfoBase(Enum):
             sage: Lk == L.link().khovanov_polynomial()
             True
 
+        TESTS:
+
+            sage: KnotInfo.K0_1.inject()
+            Defining K0_1
+            sage: K0_1.khovanov_polynomial()
+            q + q^-1
+            sage: K0_1.khovanov_polynomial(reduced=True)
+            1
+            sage: K0_1.khovanov_polynomial(odd=True)
+            1
+            sage: K0_1.khovanov_polynomial(base_ring=GF(3), reduced=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: Characteristic 3 of base ring is not valid
+            sage: K0_1.khovanov_polynomial(base_ring=GF(3), odd=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: Characteristic 3 of base ring is not valid
+            sage: L.khovanov_polynomial(base_ring=GF(2))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Khovanov polynomial available only for knots in characteristic 2
+
         REFERENCES:
 
         - :wikipedia:`Khovanov_homology`
@@ -1809,7 +1832,7 @@ class KnotInfoBase(Enum):
                 elif ch == 2:
                     khovanov_polynomial = self[self.items.khovanov_reduced_mod2_polynomial]
                 else:
-                    raise ValueError('Characteristic %s of base ring is not supported' % ch)
+                    raise ValueError('Characteristic %s of base ring is not valid' % ch)
             elif odd:
                 if integral:
                     khovanov_polynomial = self[self.items.khovanov_odd_integral_polynomial]
@@ -1818,7 +1841,7 @@ class KnotInfoBase(Enum):
                 elif ch == 2:
                     khovanov_polynomial = self[self.items.khovanov_odd_mod2_polynomial]
                 else:
-                    raise ValueError('Characteristic %s of base ring is not supported' % ch)
+                    raise ValueError('Characteristic %s of base ring is not valid' % ch)
             else:
                 khovanov_polynomial = self[self.items.khovanov_unreduced_integral_polynomial]
 
