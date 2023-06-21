@@ -1701,7 +1701,7 @@ class KnotInfoBase(Enum):
           the reduced version of the homology is used.
         - ``odd`` -- boolean (default: ``False``) if set to ``True``
           the odd version of the homology is used.
-        - ``KhoHo`` -- boolean (default: ``False``for knots and ``True``
+        - ``KhoHo`` -- boolean (default: ``False`` for knots and ``True``
           for multi-component links) if set to ``True`` the data calculated
           using `KhoHo <https://github.com/AShumakovitch/KhoHo>`__ is used
           (see the note below).
