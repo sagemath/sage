@@ -4952,7 +4952,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def is_golod(self):
         r"""
-        Return whether `self` is Golod.
+        Return whether ``self`` is Golod.
 
         A simplicial complex is Golod if multiplication and all higher
         Massey operations in the associated Tor-algebra are trivial. This
@@ -4977,7 +4977,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def is_minimally_non_golod(self):
         r"""
-        Return whether `self` is minimally non-Golod.
+        Return whether ``self`` is minimally non-Golod.
 
         If a simplicial complex itself is not Golod, but deleting each vertex
         gives us a full subcomplex that is Golod, then we say that a simplicial
