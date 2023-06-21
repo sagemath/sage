@@ -1773,7 +1773,7 @@ class KnotInfoBase(Enum):
             True
             sage: K8ko = K8_19.khovanov_polynomial(odd=True); K8ko     # optional database_knotinfo
             q^16*t^5 + q^10*t^2 + q^6
-            sage: K8kr == K8ko
+            sage: K8kr == K8ko                                         # optional database_knotinfo
             False
 
 
