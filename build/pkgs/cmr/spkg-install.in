@@ -4,6 +4,6 @@ cd src
 export CXX="$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g') -std=gnu++14"
 mkdir build
 cd build
-sdh_cmake ..
-sdh_make
+sdh_cmake -DGENERATORS=on -DCMAKE_SYSTEM_PREFIX_PATH="$SAGE_LOCAL" -DHAVE_FLAG_SEARCH_PATHS_FIRST=0 -DSHARED=on ..
+sdh_make VERBOSE=1
 sdh_make_install
