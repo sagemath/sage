@@ -1019,36 +1019,35 @@ def eratosthenes(n):
 
 def primes(start=2, stop=None, proof=None):
     r"""
-    Return an iterator over all primes between start and stop-1,
-    inclusive. This is much slower than ``prime_range``, but
+    Return an iterator over all primes between ``start`` and ``stop-1``,
+    inclusive. This is much slower than :func:`prime_range`, but
     potentially uses less memory.  As with :func:`next_prime`, the optional
-    argument proof controls whether the numbers returned are
+    argument ``proof`` controls whether the numbers returned are
     guaranteed to be prime or not.
 
-    This command is like the Python 3 ``range`` command, except it only iterates
-    over primes. In some cases it is better to use primes than
-    ``prime_range``, because primes does not build a list of all primes in
-    the range in memory all at once. However, it is potentially much
-    slower since it simply calls the :func:`next_prime` function
-    repeatedly, and :func:`next_prime` is slow.
+    This command is like the Python 3 :func:`range` command, except it only
+    iterates over primes. In some cases it is better to use :func:`primes` than
+    :func:`prime_range`, because :func:`primes` does not build a list of all
+    primes in the range in memory all at once. However, it is potentially much
+    slower since it simply calls the :func:`next_prime` function repeatedly, and
+    :func:`next_prime` is slow.
 
     INPUT:
 
-    - ``start`` - an integer (default: 2) optional argument -
-      giving lower bound for the primes
+    - ``start`` -- an integer (optional, default: 2) lower bound for the primes
 
-    - ``stop`` - an integer (or infinity) - giving upper (open) bound for the
+    - ``stop`` -- an integer (or infinity) upper (open) bound for the
       primes
 
-    - ``proof`` - bool or None (default: None)  If True, the function
-      yields only proven primes.  If False, the function uses a
-      pseudo-primality test, which is much faster for really big
-      numbers but does not provide a proof of primality. If None,
-      uses the global default (see :mod:`sage.structure.proof.proof`)
+    - ``proof`` -- bool or ``None`` (default: ``None``) If ``True``, the
+      function yields only proven primes.  If ``False``, the function uses a
+      pseudo-primality test, which is much faster for really big numbers but
+      does not provide a proof of primality. If ``None``, uses the global
+      default (see :mod:`sage.structure.proof.proof`)
 
     OUTPUT:
 
-    -  an iterator over primes from start to stop-1, inclusive
+    -  an iterator over primes from ``start`` to ``stop-1``, inclusive
 
 
     EXAMPLES::
@@ -1384,14 +1383,14 @@ def random_prime(n, proof=None, lbound=2):
 
     INPUT:
 
-    -  ``n`` - an integer >= 2.
+    -  ``n`` - an integer `\geq 2`.
 
-    -  ``proof`` - bool or None (default: None) If False, the function uses a
+    -  ``proof`` - bool or ``None`` (default: ``None``) If ``False``, the function uses a
        pseudo-primality test, which is much faster for really big numbers but
-       does not provide a proof of primality. If None, uses the global default
+       does not provide a proof of primality. If ``None``, uses the global default
        (see :mod:`sage.structure.proof.proof`)
 
-    - ``lbound`` - an integer >= 2, lower bound for the chosen primes
+    - ``lbound`` - an integer `\geq 2`, lower bound for the chosen primes
 
     EXAMPLES::
 
@@ -2506,14 +2505,14 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
     type of ``n``.
 
     If ``n`` is an integer, returns the factorization as an object
-    of type ``Factorization``.
+    of type :class:`Factorization`.
 
-    If n is not an integer, ``n.factor(proof=proof, **kwds)`` gets called.
+    If ``n`` is not an integer, ``n.factor(proof=proof, **kwds)`` gets called.
     See ``n.factor??`` for more documentation in this case.
 
     .. warning::
 
-       This means that applying ``factor`` to an integer result of
+       This means that applying :func:`factor` to an integer result of
        a symbolic computation will not factor the integer, because it is
        considered as an element of a larger symbolic ring.
 
@@ -2527,48 +2526,46 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     INPUT:
 
-    -  ``n`` - an nonzero integer
+    -  ``n`` -- a nonzero integer
 
-    -  ``proof`` - bool or None (default: None)
+    -  ``proof`` -- bool or ``None`` (default: ``None``)
 
-    -  ``int_`` - bool (default: False) whether to return
+    -  ``int_`` -- bool (default: ``False``) whether to return
        answers as Python ints
 
-    -  ``algorithm`` - string
+    -  ``algorithm`` -- string
 
-       - ``'pari'`` - (default) use the PARI c library
+       - ``'pari'`` -- (default) use the PARI c library
 
-       - ``'flint'`` - use the FLINT library
-
-       - ``'kash'`` - use KASH computer algebra system (requires that
+       - ``'kash'`` -- use KASH computer algebra system (requires that
          kash be installed)
 
-       - ``'magma'`` - use Magma (requires magma be installed)
+       - ``'magma'`` -- use Magma (requires magma be installed)
 
-    -  ``verbose`` - integer (default: 0); PARI's debug
+    -  ``verbose`` -- integer (default: 0); PARI's debug
        variable is set to this; e.g., set to 4 or 8 to see lots of output
        during factorization.
 
     OUTPUT:
 
-    -  factorization of n
+    -  factorization of `n`
 
     The qsieve and ecm commands give access to highly optimized
     implementations of algorithms for doing certain integer
     factorization problems. These implementations are not used by the
-    generic factor command, which currently just calls PARI (note that
+    generic :func:`factor` command, which currently just calls PARI (note that
     PARI also implements sieve and ecm algorithms, but they are not as
     optimized). Thus you might consider using them instead for certain
     numbers.
 
     The factorization returned is an element of the class
-    :class:`~sage.structure.factorization.Factorization`; see Factorization??
-    for more details, and examples below for usage. A Factorization contains
-    both the unit factor (+1 or -1) and a sorted list of (prime, exponent)
+    :class:`~sage.structure.factorization.Factorization`; use ``Factorization??``
+    to see more details, and examples below for usage. A :class:`~sage.structure.factorization.Factorization` contains
+    both the unit factor (`+1` or `-1`) and a sorted list of ``(prime, exponent)``
     pairs.
 
     The factorization displays in pretty-print format but it is easy to
-    obtain access to the (prime,exponent) pairs and the unit, to
+    obtain access to the ``(prime, exponent)`` pairs and the unit, to
     recover the number from its factorization, and even to multiply two
     factorizations. See examples below.
 
@@ -2613,13 +2610,13 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         1
         sage: factor(-1)
         -1
-        sage: factor(2^(2^7)  +1)                                                       # optional - sage.libs.pari
+        sage: factor(2^(2^7) + 1)                                                       # optional - sage.libs.pari
         59649589127497217 * 5704689200685129054721
 
-    Sage calls PARI's factor, which has proof False by default.
-    Sage has a global proof flag, set to True by default (see
-    :mod:`sage.structure.proof.proof`, or proof.[tab]). To override
-    the default, call this function with proof=False.
+    Sage calls PARI's :pari:`factor`, which has ``proof=False`` by default.
+    Sage has a global proof flag, set to ``True`` by default (see
+    :mod:`sage.structure.proof.proof`, or use ``proof.[tab]``). To override
+    the default, call this function with ``proof=False``.
 
     ::
 

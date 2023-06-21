@@ -218,6 +218,7 @@ from .gap_includes cimport *
 from .util cimport *
 from .element cimport *
 
+from sage.cpython.string cimport str_to_bytes
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Vector
 from sage.rings.integer_ring import ZZ
@@ -479,9 +480,7 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
         is_bound = self.function_factory('IsBoundGlobal')
         bind_global = self.function_factory('BindGlobal')
@@ -504,9 +503,7 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
         is_readonlyglobal = self.function_factory('IsReadOnlyGlobal')
         make_readwrite = self.function_factory('MakeReadWriteGlobal')
@@ -536,12 +533,9 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
-        value_global = self.function_factory('ValueGlobal')
-        return value_global(variable)
+        return make_any_gap_element(self, GAP_ValueGlobalVariable(str_to_bytes(variable)))
 
     def global_context(self, variable, value):
         """

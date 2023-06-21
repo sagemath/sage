@@ -1317,9 +1317,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: R.<x,y> = QQ[]
             sage: R.some_elements()
             [x, y, x + y, x^2 + x*y, 0, 1]
-
         """
-        R = self.base_ring()
         L = list(self.gens())
         if L:
             L.append(L[0] + L[-1])
@@ -1703,7 +1701,6 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         mons_idx = {str(mon): idx for idx, mon in enumerate(mons)}
         mons_num = len(mons)
         mons_to_keep = []
-        newflist = []
         # strip coefficients of the input polynomials:
         flist = [[f.exponents(), f.coefficients()] for f in flist]
         numer_matrix = zero_matrix(self.base_ring(), mons_num, sparse=sparse)

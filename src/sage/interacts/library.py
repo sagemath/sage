@@ -717,6 +717,7 @@ def special_points(
     """
     import math
     # Return the intersection point of the bisector of the angle <(A[a],A[c],A[b]) and the unit circle. Angles given in radians.
+
     def half(A, a, b, c):
         if (A[a] < A[b] and (A[c] < A[a] or A[c] > A[b])) or (A[a] > A[b] and (A[c] > A[a] or A[c] < A[b])):
             p = A[a] + 0.5 * (A[b] - A[a])
@@ -1301,6 +1302,7 @@ def simpson_integration(
         interval = interval_s
     else:
         interval = interval_g[0]
+
     def parabola(a, b, c):
         from sage.symbolic.relation import solve
         A, B, C = SR.var("A, B, C")

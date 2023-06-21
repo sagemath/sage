@@ -344,14 +344,14 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         # ------------------------------------------------------------------
         if cf0_inv is not None:
             deg_cf = len(cf)-1
-            pf =  P(cf)
+            pf = P(cf)
             for root in self._splitting_roots:
                 check = self(pf)
                 if not check.is_zero():
                     continue
                 root_inv = self.one()
                 for pos in range(deg_cf-1 ):
-                    root_inv =  (-1 )**(pos+1 ) * cf[deg_cf-pos-1 ] - root_inv * root
+                    root_inv = (-1 )**(pos+1 ) * cf[deg_cf-pos-1 ] - root_inv * root
                 verbose("inverse %s of root %s" % (root_inv, root))
                 root_inv = (-1 )**(deg_cf) * cf0_inv * root_inv
                 self._invertible_elements.update({root:root_inv})

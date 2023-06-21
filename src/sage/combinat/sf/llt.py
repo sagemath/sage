@@ -257,7 +257,7 @@ class LLT_class(UniqueRepresentation):
 
         elif isinstance(skp, list) and skp[0] in sage.combinat.skew_partition.SkewPartitions():
             #skp is a list of skew partitions
-            skp2 =  [Partition(core=[], quotient=[skp[i][0] for i in range(len(skp))])]
+            skp2 = [Partition(core=[], quotient=[skp[i][0] for i in range(len(skp))])]
             skp2 += [Partition(core=[], quotient=[skp[i][1] for i in range(len(skp))])]
             mu = Partitions(ZZ((skp2[0].size()-skp2[1].size()) / self.level()))
             skp = skp2

@@ -791,7 +791,7 @@ class DocTestController(SageObject):
         # SAGE_ROOT_GIT can be None on distributions which typically
         # only have the SAGE_LOCAL install tree but not SAGE_ROOT
         if SAGE_ROOT_GIT is not None:
-            have_git = os.path.isdir(SAGE_ROOT_GIT)
+            have_git = os.path.exists(SAGE_ROOT_GIT)
         else:
             have_git = False
 
@@ -866,11 +866,12 @@ class DocTestController(SageObject):
                 data = line.strip().split(' ')
                 status, filename = data[0], data[-1]
                 if (set(status).issubset("MARCU")
-                    and filename.startswith("src/sage")
-                    and (filename.endswith(".py") or
-                         filename.endswith(".pyx") or
-                         filename.endswith(".rst"))):
-                    self.files.append(os.path.relpath(opj(SAGE_ROOT,filename)))
+                        and filename.startswith("src/sage")
+                        and (filename.endswith(".py") or
+                             filename.endswith(".pyx") or
+                             filename.endswith(".rst"))
+                        and not skipfile(opj(SAGE_ROOT, filename), self.options.optional)):
+                    self.files.append(os.path.relpath(opj(SAGE_ROOT, filename)))
 
     def expand_files_into_sources(self):
         r"""

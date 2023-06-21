@@ -105,7 +105,7 @@ on:
         default: "$BUILD_TAG"
         type: string
       #
-      # For use in upstream CIs
+      # For use in upstream CIs. sage_trac_* are now ignored and will be removed later.
       #
       upstream_artifact:
         required: false
@@ -163,21 +163,6 @@ jobs:
           sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono)') || echo "(error ignored)"
           df -h
         if: inputs.free_disk_space
-      - name: Check out git-trac-command
-        uses: actions/checkout@v3
-        with:
-          repository: sagemath/git-trac-command
-          path: git-trac-command
-        if: inputs.sage_trac_git != ''
-      - name: Check out SageMath from trac.sagemath.org
-        shell: bash {0}
-        # Random sleep and retry to limit the load on trac.sagemath.org
-        run: |
-          git config --global user.email "ci-sage@example.com"
-          git config --global user.name "ci-sage workflow"
-          if [ ! -d .git ]; then git init; fi; git remote add trac ${{ inputs.sage_trac_git }} && x=1 && while [ $x -le 5 ]; do x=$(( $x + 1 )); sleep $(( $RANDOM % 60 + 1 )); if git-trac-command/git-trac fetch ${{ inputs.sage_trac_ticket }}; then git merge FETCH_HEAD || echo "(ignored)"; exit 0; fi; sleep 40; done; exit 1
-        if: inputs.sage_trac_git != ''
-
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
         with:

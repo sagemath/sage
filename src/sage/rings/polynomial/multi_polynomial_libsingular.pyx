@@ -1603,7 +1603,6 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *res
         cdef ring *r = self._ring
         cdef number *n
-        cdef number *denom
 
         if self is not f._parent:
             f = self.coerce(f)
@@ -1722,7 +1721,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         if g._poly == NULL:
             raise ArithmeticError("Cannot compute LCM of zero and nonzero element.")
 
-        if(self._ring != currRing): rChangeCurrRing(self._ring)
+        if self._ring != currRing:
+            rChangeCurrRing(self._ring)
 
         pLcm(f._poly, g._poly, m)
         p_Setm(m, self._ring)
@@ -3241,7 +3241,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             2
         """
         cdef ring *_ring = self._parent_ring
-        if(_ring != currRing): rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
 
         if not (p_IsUnit(self._poly,_ring)):
             raise ArithmeticError("Element is not a unit.")
@@ -3272,7 +3273,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             True
         """
         cdef ring *_ring = self._parent_ring
-        if(_ring != currRing): rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
         return bool(p_IsHomogeneous(self._poly,_ring))
 
     cpdef _homogenize(self, int var):
@@ -3304,17 +3306,16 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         cdef ring *_ring = self._parent_ring
         cdef MPolynomialRing_libsingular parent = self._parent
-        cdef MPolynomial_libsingular f
 
         if self.is_homogeneous():
             return self
 
-        if(_ring != currRing): rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
 
         if var < parent._ring.N:
-            return new_MP(parent, p_Homogen(self._poly, var+1, _ring))
-        else:
-            raise TypeError("var must be < self.parent().ngens()")
+            return new_MP(parent, p_Homogen(self._poly, var + 1, _ring))
+        raise TypeError("var must be < self.parent().ngens()")
 
     def is_monomial(self):
         """
@@ -3345,12 +3346,13 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if self._poly == NULL:
             return False
 
-        if(_ring != currRing): rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
 
         _p = p_Head(self._poly, _ring)
         _n = p_GetCoeff(_p, _ring)
 
-        ret = bool((not self._poly.next) and _ring.cf.cfIsOne(_n,_ring.cf))
+        ret = bool((not self._poly.next) and _ring.cf.cfIsOne(_n, _ring.cf))
 
         p_Delete(&_p, _ring)
         return ret
@@ -3673,7 +3675,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef list l = []
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef ring *_ring = parent._ring
-        if(_ring != currRing): rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
         cdef poly *p = p_Copy(self._poly, _ring)
         cdef poly *t
 
@@ -3772,7 +3775,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         zero = k(0)
 
-        if(r != currRing): rChangeCurrRing(r)
+        if r != currRing:
+            rChangeCurrRing(r)
 
         pTotDegMax = -1
         while p2:
@@ -3856,7 +3860,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef poly *p
         cdef poly *v
         cdef ring *r = self._parent_ring
-        if(r != currRing): rChangeCurrRing(r)
+        if r != currRing:
+            rChangeCurrRing(r)
         cdef int i
         l = list()
         si = set()
@@ -3984,7 +3989,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if self._poly == NULL:
             return self._parent._base._zero_element
 
-        if(_ring != currRing): rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
 
         _p = p_Head(self._poly, _ring)
         _n = p_GetCoeff(_p, _ring)

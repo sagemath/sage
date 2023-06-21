@@ -199,6 +199,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         """
         return "Point on %s defined by the %s"%(self.scheme(),
                                                 self.prime_ideal())
+
     def prime_ideal(self):
         """
         Return the prime ideal that defines this scheme point.

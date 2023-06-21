@@ -411,7 +411,7 @@ class MPolynomialMult(Benchmark):
         self.nvars = nvars
         self.base = base
         self.allow_singular = allow_singular
-        s =  'Compute (x_0 + ... + x_%s) * (x_%s + ... + x_%s) over %s'%(
+        s = 'Compute (x_0 + ... + x_%s) * (x_%s + ... + x_%s) over %s'%(
             self.nvars/2 - 1, self.nvars/2, self.nvars, self.base)
         if self.allow_singular:
             s += ' (use singular for Sage mult.)'
@@ -564,7 +564,7 @@ class MPolynomialMult2(Benchmark):
         self.nvars = nvars
         self.base = base
         self.allow_singular = allow_singular
-        s =  'Compute (x_1 + 2*x_2 + 3*x_3 + ... + %s*x_%s) * (%s * x_%s + ... + %s*x_%s) over %s'%(
+        s = 'Compute (x_1 + 2*x_2 + 3*x_3 + ... + %s*x_%s) * (%s * x_%s + ... + %s*x_%s) over %s'%(
             self.nvars/2, self.nvars/2, self.nvars/2+1, self.nvars/2+1,
             self.nvars+1, self.nvars+1, self.base)
         if self.allow_singular:

@@ -324,7 +324,7 @@ class NumberField_relative(NumberField_generic):
                                      embedding=embedding, structure=structure)
 
         self._zero_element = self(0)
-        self._one_element =  self(1)
+        self._one_element = self(1)
 
     def change_names(self, names):
         r"""

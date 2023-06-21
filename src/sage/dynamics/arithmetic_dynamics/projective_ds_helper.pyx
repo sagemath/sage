@@ -89,7 +89,7 @@ cpdef _fast_possible_periods(self, return_points=False):
     p = PS.base_ring().order()
     N = int(PS.dimension_relative())
 
-    point_table = [[0,0] for i in xrange(p**(N + 1))]
+    point_table = [[0,0] for i in range(p**(N + 1))]
     index = 1
     periods = set()
     points_periods = []
@@ -173,7 +173,7 @@ def _enum_points(int prime, int dimension):
     highest_range = prime**dimension
 
     while current_range <= highest_range:
-        for value in xrange(current_range, 2*current_range):
+        for value in range(current_range, 2*current_range):
             yield _get_point_from_hash(value, prime, dimension)
         current_range = current_range * prime
 
@@ -211,7 +211,7 @@ cpdef list _get_point_from_hash(int value, int prime, int dimension):
     cdef list P = []
     cdef int i
 
-    for i in xrange(dimension + 1):
+    for i in range(dimension + 1):
         P.append(value % prime)
         value /= prime
 
@@ -258,7 +258,7 @@ cpdef _normalize_coordinates(list point, int prime, int len_points):
     """
     cdef int last_coefficient, coefficient, mod_inverse, val
 
-    for coefficient in xrange(len_points):
+    for coefficient in range(len_points):
         val = ((<int> point[coefficient]) + prime) % prime
         point[coefficient] = val
         if val != 0:
@@ -266,7 +266,7 @@ cpdef _normalize_coordinates(list point, int prime, int len_points):
 
     mod_inverse = _mod_inv(last_coefficient, prime)
 
-    for coefficient in xrange(len_points):
+    for coefficient in range(len_points):
         point[coefficient] = (point[coefficient] * mod_inverse) % prime
 
 cpdef _all_periodic_points(self):

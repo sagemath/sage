@@ -1377,7 +1377,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         if largest_conductor:
             print("largest conductor =", largest_conductor)
-            self.__largest_conductor__ =  largest_conductor
+            self.__largest_conductor__ = largest_conductor
 
         # Since July 2014 the data files have been arranged in
         # subdirectories (see trac #16903).

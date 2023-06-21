@@ -1805,7 +1805,7 @@ class SR_generic(MPolynomialSystemGenerator):
             names += self.varstrs("s", _n, r, e)
 
         if reverse_variables:
-            names +=  self.varstrs("k", 0, r*c, e)
+            names += self.varstrs("k", 0, r*c, e)
 
         #from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
 
@@ -1971,7 +1971,7 @@ class SR_generic(MPolynomialSystemGenerator):
                     sbox += self.inversion_polynomials( kj[(4*c-3)*e  : (4*c-3)*e + e] , si[2*e : 3*e] , e )
                     sbox += self.inversion_polynomials( kj[(4*c-4)*e  : (4*c-4)*e + e] , si[3*e : 4*e] , e )
 
-            si =  L * si + d + rc
+            si = L * si + d + rc
             Sum = Matrix(R, r*e, 1)
             lin = []
             if c > 1:
@@ -3284,7 +3284,7 @@ class SR_gf2_2(SR_gf2):
             w = P.gens()[:e]
 
         S = self.sbox(inversion_only=True)
-        F =  S.polynomials(w, x, degree=e-2, groebner=groebner)
+        F = S.polynomials(w, x, degree=e-2, groebner=groebner)
         return F
 
 class AllowZeroInversionsContext:
@@ -3302,6 +3302,7 @@ class AllowZeroInversionsContext:
             a^2 + a
         """
         self.sr = sr
+
     def __enter__(self):
         """
         EXAMPLES::
@@ -3319,6 +3320,7 @@ class AllowZeroInversionsContext:
         """
         self.allow_zero_inversions = self.sr._allow_zero_inversions
         self.sr._allow_zero_inversions = True
+
     def __exit__(self, typ, value, tb):
         """
         EXAMPLES::

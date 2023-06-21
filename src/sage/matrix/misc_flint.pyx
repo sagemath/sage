@@ -18,21 +18,22 @@ from .matrix_rational_dense cimport Matrix_rational_dense
 
 
 def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer N):
-    """
+    r"""
     Given a matrix over the integers and an integer modulus, do
     rational reconstruction on all entries of the matrix, viewed as
-    numbers mod N.  This is done efficiently by assuming there is a
+    numbers mod `N`.  This is done efficiently by assuming there is a
     large common factor dividing the denominators.
 
     INPUT:
 
-        A -- matrix
-        N -- an integer
+    - ``A`` -- matrix
+    - ``N`` -- an integer
 
     EXAMPLES::
 
         sage: B = ((matrix(ZZ, 3,4, [1,2,3,-4,7,2,18,3,4,3,4,5])/3)%500).change_ring(ZZ)
-        sage: sage.matrix.misc.matrix_integer_dense_rational_reconstruction(B, 500)
+        sage: from sage.matrix.misc_flint import matrix_integer_dense_rational_reconstruction
+        sage: matrix_integer_dense_rational_reconstruction(B, 500)
         [ 1/3  2/3    1 -4/3]
         [ 7/3  2/3    6    1]
         [ 4/3    1  4/3  5/3]
@@ -42,7 +43,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
     Check that :trac:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3)
-        sage: sage.matrix.misc.matrix_integer_dense_rational_reconstruction(A, 0)
+        sage: matrix_integer_dense_rational_reconstruction(A, 0)
         Traceback (most recent call last):
         ...
         ZeroDivisionError: The modulus cannot be zero

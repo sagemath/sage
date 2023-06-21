@@ -4738,6 +4738,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
 #                fields = "SageCodeElementToString,SageCodeElementsOnLevel,SageCodeStringToElement"
 #                url = FINDSTAT_API_COLLECTIONS + id + "?fields=" + fields
 #                print(json.load(urlopen(url))["included"]["Collections"][id])
+
         def position(item):
             try:
                 return tuple(_SupportedFindStatCollections).index(item[1]["NameWiki"])

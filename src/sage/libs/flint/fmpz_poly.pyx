@@ -153,7 +153,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f.list()
             [2, 1, 0, -1]
         """
-        return [self[i] for i in xrange(self.degree() + 1)]
+        return [self[i] for i in range(self.degree() + 1)]
 
     def __add__(left, right):
         """

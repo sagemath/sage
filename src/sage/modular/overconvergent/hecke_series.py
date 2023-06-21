@@ -925,8 +925,8 @@ def katz_expansions(k0, p, ellp, mdash, n):
     S = Zmod(p ** mdash)
 
     Ep1 = eisenstein_series_qexp(p - 1, ellp, K=S, normalization="constant")
-    E4 =  eisenstein_series_qexp(4, ellp, K=S, normalization="constant")
-    E6 =  eisenstein_series_qexp(6, ellp, K=S, normalization="constant")
+    E4 = eisenstein_series_qexp(4, ellp, K=S, normalization="constant")
+    E6 = eisenstein_series_qexp(6, ellp, K=S, normalization="constant")
 
     delta = delta_qexp(ellp, K=S)
     h = delta / E6 ** 2

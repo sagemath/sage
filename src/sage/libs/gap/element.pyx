@@ -105,8 +105,7 @@ cdef char *capture_stdout(Obj func, Obj obj):
     print objects such as ``Print()`` and ``ViewObj()``.
     """
     cdef Obj s, stream, output_text_string
-    cdef UInt res
-    cdef TypOutputFile output
+    cdef Obj l
     # The only way to get a string representation of an object that is truly
     # consistent with how it would be represented at the GAP REPL is to call
     # ViewObj on it.  Unfortunately, ViewObj *prints* to the output stream,
@@ -122,12 +121,11 @@ cdef char *capture_stdout(Obj func, Obj obj):
         output_text_string = GAP_ValueGlobalVariable("OutputTextString")
         stream = CALL_2ARGS(output_text_string, s, GAP_True)
 
-        if not OpenOutputStream(&output, stream):
-            raise GAPError("failed to open output capture stream for "
-                           "representing GAP object")
+        l = GAP_NewPlist(1)
+        GAP_AssList(l, 1, obj)
 
-        CALL_1ARGS(func, obj)
-        CloseOutput(&output)
+        CALL_WITH_STREAM = GAP_ValueGlobalVariable("CALL_WITH_STREAM")
+        CALL_3ARGS(CALL_WITH_STREAM, stream, func, l)
         return CSTR_STRING(s)
     finally:
         GAP_Leave()
@@ -170,7 +168,7 @@ cdef char *gap_element_str(Obj obj):
 
 cdef Obj make_gap_record(sage_dict) except NULL:
     """
-    Convert Sage lists into Gap lists
+    Convert Sage dictionary into Gap record
 
     INPUT:
 

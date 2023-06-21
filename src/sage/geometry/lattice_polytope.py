@@ -3248,7 +3248,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 # This row is smaller than 1st row, so nothing to do
                 del permutations[n_s]
                 continue
-            permutations[n_s][0] =  PGE(S_f, 1, k + 1) * permutations[n_s][0]
+            permutations[n_s][0] = PGE(S_f, 1, k + 1) * permutations[n_s][0]
             if d == 0:
                 # This row is the same, so we have a symmetry!
                 n_s += 1

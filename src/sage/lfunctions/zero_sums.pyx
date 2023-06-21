@@ -209,8 +209,8 @@ cdef class LFunctionZeroSum_abstract(SageObject):
             (11, -0.21799047934530644)
         """
         if not python_floats:
-            return [self.cn(i) for i in xrange(n + 1)]
-        return [float(self.cn(i)) for i in xrange(n + 1)]
+            return [self.cn(i) for i in range(n + 1)]
+        return [float(self.cn(i)) for i in range(n + 1)]
 
     def digamma(self, s, include_constant_term=True):
         r"""

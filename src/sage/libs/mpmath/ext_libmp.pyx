@@ -2,10 +2,8 @@
 """
 Faster versions of some key functions in mpmath.libmp
 """
-
 from .ext_impl cimport *
 from sage.libs.gmp.all cimport *
-from sage.rings.integer cimport Integer
 
 from .ext_impl import exp_fixed, cos_sin_fixed, log_int_fixed
 

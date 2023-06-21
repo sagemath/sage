@@ -447,7 +447,7 @@ def zeta_symmetric(s):
     if s == 1:  # deal with poles, hopefully
         return R(0.5)
 
-    return (s/2 + 1).gamma() *    (s-1) * (R.pi()**(-s/2)) *  s.zeta()
+    return (s/2 + 1).gamma() * (s-1) * (R.pi()**(-s/2)) * s.zeta()
 
 
 class DickmanRho(BuiltinFunction):

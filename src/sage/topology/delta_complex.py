@@ -1386,9 +1386,9 @@ class DeltaComplex(GenericCellComplex):
             for cell in n_cells:
                 if n > 1:
                     faces = [tuple(simplex_cells[n-1][cell[j]]) for j in range(0,n+1)]
-                    one_cell =  dict(zip(faces, self_cells[n][n_cells[cell]]))
+                    one_cell = dict(zip(faces, self_cells[n][n_cells[cell]]))
                 else:
-                    temp =  dict(zip(cell, self_cells[n][n_cells[cell]]))
+                    temp = dict(zip(cell, self_cells[n][n_cells[cell]]))
                     one_cell = {}
                     for j in temp:
                         one_cell[(j,)] = temp[j]

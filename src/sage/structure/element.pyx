@@ -2561,7 +2561,7 @@ cdef class MonoidElement(Element):
             return []
         x = self._parent.one()
         l = [x]
-        for i in xrange(n - 1):
+        for i in range(n - 1):
             x = x * self
             l.append(x)
         return l
@@ -2727,7 +2727,7 @@ cdef class RingElement(ModuleElement):
             return []
         x = self._parent.one()
         l = [x]
-        for i in xrange(n - 1):
+        for i in range(n - 1):
             x = x * self
             l.append(x)
         return l
@@ -2793,8 +2793,8 @@ cdef class RingElement(ModuleElement):
 
         ::
 
-            sage: R.<x> = GF(7)[]                                                       # optional - sage.libs.pari
-            sage: divmod(x^2, x - 1)                                                    # optional - sage.libs.pari
+            sage: R.<x> = GF(7)[]                                                       # optional - sage.rings.finite_rings
+            sage: divmod(x^2, x - 1)                                                    # optional - sage.rings.finite_rings
             (x + 1, 1)
 
         ::
@@ -2980,16 +2980,16 @@ cdef class CommutativeRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: F = GF(25)                                                            # optional - sage.libs.pari
-            sage: x = F.gen()                                                           # optional - sage.libs.pari
-            sage: z = F.zero()                                                          # optional - sage.libs.pari
-            sage: x.inverse_mod(F.ideal(z))                                             # optional - sage.libs.pari
+            sage: F = GF(25)                                                            # optional - sage.rings.finite_rings
+            sage: x = F.gen()                                                           # optional - sage.rings.finite_rings
+            sage: z = F.zero()                                                          # optional - sage.rings.finite_rings
+            sage: x.inverse_mod(F.ideal(z))                                             # optional - sage.rings.finite_rings
             2*z2 + 3
-            sage: x.inverse_mod(F.ideal(1))                                             # optional - sage.libs.pari
+            sage: x.inverse_mod(F.ideal(1))                                             # optional - sage.rings.finite_rings
             1
-            sage: z.inverse_mod(F.ideal(1))                                             # optional - sage.libs.pari
+            sage: z.inverse_mod(F.ideal(1))                                             # optional - sage.rings.finite_rings
             1
-            sage: z.inverse_mod(F.ideal(z))                                             # optional - sage.libs.pari
+            sage: z.inverse_mod(F.ideal(z))                                             # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: an element of a proper ideal does not have an inverse modulo that ideal
@@ -3026,10 +3026,10 @@ cdef class CommutativeRingElement(RingElement):
 
         :trac:`5347` has been fixed::
 
-            sage: K = GF(7)                                                             # optional - sage.libs.pari
-            sage: K(3).divides(1)                                                       # optional - sage.libs.pari
+            sage: K = GF(7)                                                             # optional - sage.rings.finite_rings
+            sage: K(3).divides(1)                                                       # optional - sage.rings.finite_rings
             True
-            sage: K(3).divides(K(1))                                                    # optional - sage.libs.pari
+            sage: K(3).divides(K(1))                                                    # optional - sage.rings.finite_rings
             True
 
         ::
@@ -3059,7 +3059,8 @@ cdef class CommutativeRingElement(RingElement):
             sage: Zmod(5)(1).divides(Zmod(2)(1))
             Traceback (most recent call last):
             ...
-            TypeError: no common canonical parent for objects with parents: 'Ring of integers modulo 5' and 'Ring of integers modulo 2'
+            TypeError: no common canonical parent for objects with parents:
+            'Ring of integers modulo 5' and 'Ring of integers modulo 2'
             sage: Zmod(35)(4).divides(Zmod(7)(1))
             True
             sage: Zmod(35)(7).divides(Zmod(7)(1))
@@ -4514,12 +4515,12 @@ def coercion_traceback(dump=True):
         sage: 1 + 1/5
         6/5
         sage: coercion_traceback()  # Should be empty, as all went well.
-        sage: 1/5 + GF(5).gen()                                                         # optional - sage.libs.pari
+        sage: 1/5 + GF(5).gen()                                                         # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: unsupported operand parent(s) for +:
         'Rational Field' and 'Finite Field of size 5'
-        sage: coercion_traceback()                                                      # optional - sage.libs.pari
+        sage: coercion_traceback()                                                      # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: no common canonical parent for objects with parents:

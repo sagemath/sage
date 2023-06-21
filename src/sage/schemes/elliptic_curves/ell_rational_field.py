@@ -2320,6 +2320,22 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E1.gens(algorithm="pari")   #random
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
 
+        TESTS::
+
+            sage: E = EllipticCurve('389a')
+            sage: len(E.gens())
+            2
+            sage: E.saturation(E.gens())[1]
+            1
+            sage: len(E.gens(algorithm="pari"))
+            2
+            sage: E.saturation(E.gens(algorithm="pari"))[1]
+            1
+            sage: E = EllipticCurve([-3/8,-2/3])
+            sage: P = E.lift_x(10/9)
+            sage: set(E.gens()) <= set([P,-P])
+            True
+
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
@@ -2371,23 +2387,29 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: proved
             True
 
+            sage: E = EllipticCurve([-127^2,0])
+            sage: E.gens(use_database=False, algorithm="pari",pari_effort=4)   # random
+            [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
+
         TESTS::
 
-            sage: E = EllipticCurve([-127^2,0])
-            sage: E.gens(use_database=False, algorithm="pari")
-            Traceback (most recent call last):
-            ...
-            RuntimeError: generators could not be determined. So far we found []. Hint: increase pari_effort.
-            sage: E.gens(use_database=False, algorithm="pari",pari_effort=4)
-            [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
+            sage: P = E.lift_x(611429153205013185025/9492121848205441)
+            sage: set(E.gens(use_database=False, algorithm="pari",pari_effort=4)) <= set([P+T for T
+            ....:  in E.torsion_points()] + [-P+T for T in E.torsion_points()])
+            True
 
             sage: E = EllipticCurve([-157^2,0])
             sage: E.gens(use_database=False, algorithm="pari")
             Traceback (most recent call last):
             ...
             RuntimeError: generators could not be determined. So far we found []. Hint: increase pari_effort.
-            sage: E.gens(use_database=False, algorithm="pari",pari_effort=10) # long time
+            sage: ge = E.gens(use_database=False, algorithm="pari",pari_effort=10)
+            sage: ge   #random
             [(-166136231668185267540804/2825630694251145858025 : 167661624456834335404812111469782006/150201095200135518108761470235125 : 1)]
+            sage: P = E.lift_x(-166136231668185267540804/2825630694251145858025)
+            sage: set(E.gens(use_database=False, algorithm="pari",pari_effort=4)) <= set([P+T for T
+            ....:  in E.torsion_points()] + [-P+T for T in E.torsion_points()])
+            True
 
         """
         # If the optional extended database is installed and an
@@ -2532,6 +2554,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             True
 
         TESTS::
+
+            sage: E = EllipticCurve('37a1')
+            sage: P = E([0,-1])
+            sage: set(E.gens()) <= set([P,-P])
+            True
 
             sage: E = EllipticCurve([2, 4, 6, 8, 10])
             sage: E.gens_certain()
@@ -6628,22 +6655,24 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 raise RuntimeError('Unexpected intermediate result. Please try another Mordell-Weil base')
             d_L_0 = R(b1_norm**2 / c1_LLL)
 
-            #Reducing of upper bound
+            # Reducing of upper bound
             Q = r * H_q**2
             T = (1 + (Z(3)/2*r*H_q))/2
             if d_L_0 < R(T**2+Q):
                 d_L_0 = 10*(T**2*Q)
             low_bound = (R(d_L_0 - Q).sqrt() - T) / c
 
-            ##new bound according to low_bound and upper bound
-            ##[k5*k6 exp(-k7**H_q^2)]
+            # new bound according to low_bound and upper bound
+            # [k5*k6 exp(-k7**H_q^2)]
             if low_bound != 0:
                 H_q_infinity = R(((low_bound/(k6)).log()/(-k7)).sqrt())
-                return (H_q_infinity.ceil())
+                return H_q_infinity.ceil()
             else:
-                return (H_q)
-    #<-------------------------------------------------------------------------
-    #>-------------------------------------------------------------------------
+                return H_q
+
+        # --------------------------------------------------------------------
+        # --------------------------------------------------------------------
+
         def S_integral_points_with_bounded_mw_coeffs():
             r"""
             Return the set of S-integers x which are x-coordinates of
@@ -6726,8 +6755,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                     Pi[i] = Pi[i-1] + mw_baseN[i]
 
             return xs
-    #<-------------------------------------------------------------------------
-    #>-------------------------------------------------------------------------
+
+        # --------------------------------------------------------------------
+        # --------------------------------------------------------------------
+
         def S_integral_x_coords_with_abs_bounded_by(abs_bound):
             r"""
             Extra search of points with `|x|< ` abs_bound, assuming
@@ -6801,8 +6832,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                                     xs += [-tmp]
 
                 return set(xs)
-    #<-------------------------------------------------------------------------
-        #End internal functions ###############################################
+        # -------------------------------------------------------------------
+        # End internal functions ############################################
         from sage.misc.mrange import cartesian_product_iterator
 
         E = self

@@ -615,7 +615,7 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
                 y_exp = min(f_poly.dict())
                 coeff = f_poly.dict()[y_exp]
                 g_theta = tuple(g_vect + B*vector(y_exp))
-                out[g_theta] = out.get(g_theta, zero_A) +  A({zero_t + tuple(y_exp):coeff})
+                out[g_theta] = out.get(g_theta, zero_A) + A({zero_t + tuple(y_exp):coeff})
                 f_poly -= U({y_exp:coeff}) * A.theta_basis_F_polynomial(g_theta)
 
         return out

@@ -896,7 +896,8 @@ cdef class BooleanFunction(SageObject):
                 temp[i] = W[i]*W[i]
 
             walsh_hadamard(temp, self._nvariables)
-            self._autocorrelation = tuple([temp[i] >> self._nvariables for i in xrange(n)])
+            self._autocorrelation = tuple([temp[i] >> self._nvariables
+                                           for i in range(n)])
             sig_free(temp)
 
         return self._autocorrelation

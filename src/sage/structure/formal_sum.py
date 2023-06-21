@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 """
 Formal sums
 
@@ -104,24 +105,25 @@ class FormalSum(ModuleElement):
             sage: a.reduce()
             sage: a
             4*2/3 - 5*7
-            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)))                # optional - sage.rings.finite_rings
+            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)))    # optional - sage.rings.finite_rings
             4*2/3
 
         Notice below that the coefficient 5 doesn't get reduced modulo 5::
 
-            sage: FormalSum([(1,2/3), (3,2/3), (-5, 7)], parent=FormalSums(GF(5)), check=False)     # optional - sage.rings.finite_rings
+            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)),    # optional - sage.rings.finite_rings
+            ....:           check=False)
             4*2/3 - 5*7
 
         Make sure we first reduce before checking coefficient types::
 
-            sage: x,y = var('x, y')                                                                 # optional - sage.symbolic
-            sage: FormalSum([(1/2,x), (2,y)], FormalSums(QQ))                                       # optional - sage.symbolic
+            sage: x,y = var('x, y')                                                     # optional - sage.symbolic
+            sage: FormalSum([(1/2,x), (2,y)], FormalSums(QQ))                           # optional - sage.symbolic
             1/2*x + 2*y
-            sage: FormalSum([(1/2,x), (2,y)], FormalSums(ZZ))                                       # optional - sage.symbolic
+            sage: FormalSum([(1/2,x), (2,y)], FormalSums(ZZ))                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no conversion of this rational to integer
-            sage: FormalSum([(1/2,x), (1/2,x), (2,y)], FormalSums(ZZ))                              # optional - sage.symbolic
+            sage: FormalSum([(1/2,x), (1/2,x), (2,y)], FormalSums(ZZ))                  # optional - sage.symbolic
             x + 2*y
         """
         if x == 0:
@@ -324,6 +326,7 @@ class FormalSums(UniqueRepresentation, Module):
 
     """
     Element = FormalSum
+
     @staticmethod
     def __classcall__(cls, base_ring=ZZ):
         """

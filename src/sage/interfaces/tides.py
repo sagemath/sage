@@ -853,7 +853,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
 
     VAR = n-1
     PAR = len(parameters)
-    TT =  len(code)+1-VAR
+    TT = len(code)+1-VAR
 
     outfile = open(integrator, 'a')
 

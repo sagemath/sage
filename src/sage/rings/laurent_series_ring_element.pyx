@@ -1254,7 +1254,6 @@ cdef class LaurentSeries(AlgebraElement):
             deg = prec - 1
 
         cdef long i
-        cdef int c
         for i in range(val, deg + 1):
             li = self[i]
             ri = right[i]

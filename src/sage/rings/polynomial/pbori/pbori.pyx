@@ -2168,8 +2168,6 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
                             var_mapping = get_var_mapping(self, other)
                         except NameError as msg:
                             raise ValueError("cannot convert polynomial %s to %s: %s" % (other, self, msg))
-                        t = (<BooleanPolynomial>other)._pbpoly.lead()
-
                         m = self._one_element
                         for i in new_BMI_from_BooleanMonomial(other.lm()):
                             m*= var_mapping[i]
@@ -2353,7 +2351,6 @@ cdef class BooleanMonomial(MonoidElement):
             sage: m(x=B(1))
             y
         """
-        P = self.parent()
         if args and kwds:
             raise ValueError("using keywords and regular arguments not supported")
         if args:
@@ -6440,7 +6437,6 @@ cdef class ReductionStrategy:
         return deref(self._strat).size()
 
     def __getitem__(self, Py_ssize_t i):
-        cdef PBPoly t
         if i < 0 or <size_t>i >= deref(self._strat).size():
             raise IndexError
         return BooleanPolynomialEntry(new_BP_from_PBPoly(self._parent,
@@ -6941,7 +6937,6 @@ cdef class GroebnerStrategy:
         return deref(self._strat).generators.size()
 
     def __getitem__(self, Py_ssize_t i):
-        cdef PBPoly t
         if i < 0 or <size_t>i >= deref(self._strat).generators.size():
             raise IndexError
         return new_BP_from_PBPoly(self._parent, deref(self._strat).generators[i].p)
@@ -7510,10 +7505,9 @@ def if_then_else(root, a, b):
         if not isinstance(root, int):
             raise TypeError("only variables are acceptable as root")
 
-    cdef Py_ssize_t* pbind = ring.pbind
     root = ring.pbind[root]
 
-    if (root >= a_set.navigation().value()) or (root >= b_set.navigation().value()):
+    if root >= a_set.navigation().value() or root >= b_set.navigation().value():
         raise IndexError("index of root must be less than "
                          "the values of roots of the branches")
 
@@ -7592,7 +7586,7 @@ cdef BooleanPolynomialRing BooleanPolynomialRing_from_PBRing(PBRing _ring):
     """
     Get BooleanPolynomialRing from C++-implementation
     """
-    cdef int i, j
+    cdef int i
     cdef BooleanPolynomialRing self = BooleanPolynomialRing.__new__(BooleanPolynomialRing)
 
     cdef int n = _ring.nVariables()

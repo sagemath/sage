@@ -4874,6 +4874,7 @@ class PermutationGroup_generic(FiniteGroup):
         return [self.subgroup(gap_group=group) for group in UCS]
 
     from sage.groups.generic import structure_description
+
     def sign_representation(self, base_ring=None, side="twosided"):
         r"""
         Return the sign representation of ``self`` over ``base_ring``.

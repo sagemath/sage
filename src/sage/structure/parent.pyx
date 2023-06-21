@@ -1200,8 +1200,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         We make an exception for zero::
 
-            sage: V = GF(7)^7                                                           # optional - sage.rings.finite_rings
-            sage: V.coerce(0)                                                           # optional - sage.rings.finite_rings
+            sage: V = GF(7)^7                                                           # optional - sage.modules sage.rings.finite_rings
+            sage: V.coerce(0)                                                           # optional - sage.modules sage.rings.finite_rings
             (0, 0, 0, 0, 0, 0, 0)
         """
         cdef R = parent(x)

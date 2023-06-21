@@ -931,15 +931,15 @@ class CubeGroup(PermutationGroup_generic):
         """
         g = self.parse(mv)
         lst = self.facets(g)
-        line1 =  "             +--------------+\n"
-        line2 =  "             |%3d  %3d  %3d |\n"%(lst[0],lst[1],lst[2])
-        line3 =  "             |%3d   top %3d |\n"%(lst[3],lst[4])
-        line4 =  "             |%3d  %3d  %3d |\n"%(lst[5],lst[6],lst[7])
-        line5 =  "+------------+--------------+-------------+------------+\n"
-        line6 =  "|%3d %3d %3d |%3d  %3d  %3d |%3d  %3d %3d |%3d %3d %3d |\n"%(lst[8],lst[9],lst[10],lst[16],lst[17],lst[18],lst[24],lst[25],lst[26],lst[32],lst[33],lst[34])
-        line7 =  "|%3d left%3d |%3d  front%3d |%3d right%3d |%3d rear%3d |\n"%(lst[11],lst[12],lst[19],lst[20],lst[27],lst[28],lst[35],lst[36])
-        line8 =  "|%3d %3d %3d |%3d  %3d  %3d |%3d  %3d %3d |%3d %3d %3d |\n"%(lst[13],lst[14],lst[15],lst[21],lst[22],lst[23],lst[29],lst[30],lst[31],lst[37],lst[38],lst[39])
-        line9 =  "+------------+--------------+-------------+------------+\n"
+        line1 = "             +--------------+\n"
+        line2 = "             |%3d  %3d  %3d |\n"%(lst[0],lst[1],lst[2])
+        line3 = "             |%3d   top %3d |\n"%(lst[3],lst[4])
+        line4 = "             |%3d  %3d  %3d |\n"%(lst[5],lst[6],lst[7])
+        line5 = "+------------+--------------+-------------+------------+\n"
+        line6 = "|%3d %3d %3d |%3d  %3d  %3d |%3d  %3d %3d |%3d %3d %3d |\n"%(lst[8],lst[9],lst[10],lst[16],lst[17],lst[18],lst[24],lst[25],lst[26],lst[32],lst[33],lst[34])
+        line7 = "|%3d left%3d |%3d  front%3d |%3d right%3d |%3d rear%3d |\n"%(lst[11],lst[12],lst[19],lst[20],lst[27],lst[28],lst[35],lst[36])
+        line8 = "|%3d %3d %3d |%3d  %3d  %3d |%3d  %3d %3d |%3d %3d %3d |\n"%(lst[13],lst[14],lst[15],lst[21],lst[22],lst[23],lst[29],lst[30],lst[31],lst[37],lst[38],lst[39])
+        line9 = "+------------+--------------+-------------+------------+\n"
         line10 = "             |%3d  %3d  %3d |\n"%(lst[40],lst[41],lst[42])
         line11 = "             |%3d bottom%3d |\n"%(lst[43],lst[44])
         line12 = "             |%3d  %3d  %3d |\n"%(lst[45],lst[46],lst[47])
@@ -1004,9 +1004,9 @@ class CubeGroup(PermutationGroup_generic):
         cubeU = sum(cubiesU)
         cubiesF = [plot3d_cubie(cubie_centers(c),cubie_colors(c,state)) for c in [22,23,24,20,21]]
         cubeF = sum(cubiesF)
-        centerR =  polygon_plot3d([[1,3,1],[2,3,1],[2,3,2],[1,3,2],[1,3,1]],rgbcolor=green)
-        centerF =  polygon_plot3d([[3,1,1],[3,2,1],[3,2,2],[3,1,2],[3,1,1]],rgbcolor=red)
-        centerU =  polygon_plot3d([[1,1,3],[1,2,3],[2,2,3],[2,1,3],[1,1,3]],rgbcolor=lpurple)
+        centerR = polygon_plot3d([[1,3,1],[2,3,1],[2,3,2],[1,3,2],[1,3,1]],rgbcolor=green)
+        centerF = polygon_plot3d([[3,1,1],[3,2,1],[3,2,2],[3,1,2],[3,1,1]],rgbcolor=red)
+        centerU = polygon_plot3d([[1,1,3],[1,2,3],[2,2,3],[2,1,3],[1,1,3]],rgbcolor=lpurple)
         centers = centerF+centerR+centerU
         P = cubeR+cubeF+cubeU+centers
         P.axes(show=False)

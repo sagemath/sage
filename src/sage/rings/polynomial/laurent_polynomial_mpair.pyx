@@ -1705,7 +1705,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef dict d, dr
         cdef ETuple v
         cdef LaurentPolynomial_mpair ans
-        cdef list L, mon, exp
+        cdef list mon, exp
         cdef Matrix mat = M
 
         n = self._parent.ngens()

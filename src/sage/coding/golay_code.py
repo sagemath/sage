@@ -119,7 +119,7 @@ class GolayCode(AbstractLinearCode):
         """
         return isinstance(other, GolayCode) \
                 and self.base_field() == other.base_field() \
-                and self.length() == other.length() \
+                and self.length() == other.length()
 
     def _repr_(self):
         r"""
@@ -134,8 +134,8 @@ class GolayCode(AbstractLinearCode):
         ext = ""
         if n % 2 == 0:
             ext = "Extended"
-        return "[%s, %s, %s] %s Golay code over GF(%s)"\
-                % (n, self.dimension(), self.minimum_distance(), ext, self.base_field().cardinality())
+        return "[%s, %s, %s] %s Golay code over GF(%s)" % (n, self.dimension(),
+            self.minimum_distance(), ext, self.base_field().cardinality())
 
     def _latex_(self):
         r"""

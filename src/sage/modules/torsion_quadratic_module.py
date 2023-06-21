@@ -884,7 +884,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
                 pass
             # the ambient knows what to do with the generators
             gens = tuple(ambient(g) for g in gens)
-        Oq =  FqfOrthogonalGroup(ambient, gens, self, check=check)
+        Oq = FqfOrthogonalGroup(ambient, gens, self, check=check)
         return Oq
 
     def orthogonal_submodule_to(self, S):

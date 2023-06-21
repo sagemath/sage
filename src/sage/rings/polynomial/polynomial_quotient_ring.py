@@ -2016,7 +2016,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 lambda f: f.lift().map_coefficients(base_to_isomorphic_base)(isomorphic_quotient.gen()))
 
             return (from_isomorphic_quotient * isomorphic_ring_to_isomorphic_quotient,
-                isomorphic_quotient_to_isomorphic_ring *  to_isomorphic_quotient,
+                isomorphic_quotient_to_isomorphic_ring * to_isomorphic_quotient,
                 isomorphic_ring)
 
         if self.modulus().degree() == 1:

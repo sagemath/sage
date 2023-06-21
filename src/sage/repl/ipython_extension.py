@@ -197,9 +197,10 @@ class SageMagics(Magics):
         self.shell.readline_startup_hook(pre_readline)
         self.shell.pre_readline = pre_readline
 
-        print('Interactively loading "%s"'%args)
+        print('Interactively loading "%s"' % args)
 
     _magic_display_status = 'simple'
+
     @line_magic
     def display(self, args):
         r"""

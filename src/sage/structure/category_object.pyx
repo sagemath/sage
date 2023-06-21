@@ -893,8 +893,8 @@ cdef class CategoryObject(SageObject):
             _test_some_elements
             _test_zero
             _test_zero_divisors
-            sage: F = GF(9,'a')                                                 # optional - sage.rings.finite_rings
-            sage: dir(F)                                                        # optional - sage.rings.finite_rings
+            sage: F = GF(9,'a')                                                         # optional - sage.rings.finite_rings
+            sage: dir(F)                                                                # optional - sage.rings.finite_rings
             [..., '__class__', ..., '_test_pickling', ..., 'extension', ...]
 
         """

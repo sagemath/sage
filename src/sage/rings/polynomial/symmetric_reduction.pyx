@@ -584,8 +584,8 @@ cdef class SymmetricReductionStrategy:
         while True:
             REDUCTOR = []
             for q in lml:
-                c, P, w = q.symmetric_cancellation_order(p)
-                if (c is not None) and (c <= 0):
+                c, P, _ = q.symmetric_cancellation_order(p)
+                if c is not None and c <= 0:
                     REDUCTOR = [self(q ** P)]
                     break
             if not REDUCTOR:

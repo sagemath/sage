@@ -24,22 +24,23 @@ from .matrix_rational_sparse cimport Matrix_rational_sparse
 
 matrix_integer_dense_rational_reconstruction = \
   LazyImport('sage.matrix.misc_flint', 'matrix_integer_dense_rational_reconstruction',
-             deprecation=99999)
+             deprecation=35758)
 hadamard_row_bound_mpfr = \
   LazyImport('sage.matrix.misc_mpfr', 'hadamard_row_bound_mpfr',
-             deprecation=99999)
+             deprecation=35758)
 
 
 def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integer N):
-    """
+    r"""
     Given a sparse matrix over the integers and an integer modulus, do
     rational reconstruction on all entries of the matrix, viewed as
-    numbers mod N.
+    numbers mod `N`.
 
     EXAMPLES::
 
         sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500, 7, 2, 2, 3, 4, 3, 4, (5/7)%500], sparse=True)
-        sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 500)
+        sage: from sage.matrix.misc import matrix_integer_sparse_rational_reconstruction
+        sage: matrix_integer_sparse_rational_reconstruction(A, 500)
         [1/3   2   3  -4]
         [  7   2   2   3]
         [  4   3   4 5/7]
@@ -326,32 +327,33 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
 
 
 def cmp_pivots(x, y):
-    """
+    r"""
     Compare two sequences of pivot columns.
 
-    If x is shorter than y, return -1, i.e., x < y, "not as good".
-    If x is longer than y, then x > y, so "better" and return +1.
-    If the length is the same, then x is better, i.e., x > y
-    if the entries of x are correspondingly <= those of y with
+    If `x` is shorter than `y`, return `-1`, i.e., `x < y`, "not as good".
+    If `x` is longer than `y`, then `x > y`, so "better" and return `+1`.
+    If the length is the same, then `x` is better, i.e., `x > y`
+    if the entries of `x` are correspondingly `\leq` those of `y` with
     one being strictly less.
 
     INPUT:
 
-    - x, y -- lists or tuples of integers
+    - ``x``, ``y`` -- lists or tuples of integers
 
     EXAMPLES:
 
     We illustrate each of the above comparisons. ::
 
-        sage: sage.matrix.misc.cmp_pivots([1,2,3], [4,5,6,7])
+        sage: from sage.matrix.misc import cmp_pivots
+        sage: cmp_pivots([1,2,3], [4,5,6,7])
         -1
-        sage: sage.matrix.misc.cmp_pivots([1,2,3,5], [4,5,6])
+        sage: cmp_pivots([1,2,3,5], [4,5,6])
         1
-        sage: sage.matrix.misc.cmp_pivots([1,2,4], [1,2,3])
+        sage: cmp_pivots([1,2,4], [1,2,3])
         -1
-        sage: sage.matrix.misc.cmp_pivots([1,2,3], [1,2,3])
+        sage: cmp_pivots([1,2,3], [1,2,3])
         0
-        sage: sage.matrix.misc.cmp_pivots([1,2,3], [1,2,4])
+        sage: cmp_pivots([1,2,3], [1,2,4])
         1
     """
     x = tuple(x)

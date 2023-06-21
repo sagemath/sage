@@ -70,7 +70,7 @@ cdef class GenericAction(Action):
 
         This will break if we tried to use it::
 
-            sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True, check=False)
+            sage: GenericAction(QQ, Z6, True, check=False)
             Left action by Rational Field on Ring of integers modulo 6
 
         """

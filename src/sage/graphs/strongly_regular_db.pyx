@@ -3162,7 +3162,6 @@ def _build_small_srg_database():
     from sage.graphs.generators.smallgraphs import M22Graph
     from sage.graphs.generators.smallgraphs import SimsGewirtzGraph
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
-    from sage.graphs.generators.smallgraphs import SchlaefliGraph
     from sage.graphs.generators.smallgraphs import HigmanSimsGraph
     from sage.graphs.generators.smallgraphs import IoninKharaghani765Graph
     from sage.graphs.generators.smallgraphs import JankoKharaghaniGraph
