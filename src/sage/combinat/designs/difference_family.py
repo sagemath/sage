@@ -1530,7 +1530,6 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
         return G2, second_diff_set
     return second_diff_set
 
-
 def is_relative_difference_set(R, G, H, params, verbose=False):
     r"""
     Check if ``R`` is a difference set of ``G`` relative to ``H``, with the given parameters.
@@ -2040,9 +2039,6 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
         ...
         NotImplementedError: skew SDS of order 7 not yet implemented
     """
-    from sage.symbolic.ring import SymbolicRing
-    from sage.rings.finite_rings.integer_mod_ring import Zmod
-
     data = {
         81: (3, lambda x: x**4 - x**3 - 1, 16, 5,
              [1, 2, 4, 6, 8, 10, 12, 14], [1, 2, 3, 4, 10, 11, 13],
@@ -2060,9 +2056,11 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
 
     mod, poly, exp, order, ind1, ind2, ind3, ind4 = data[n]
 
+    from sage.rings.finite_rings.integer_mod_ring import Zmod
+
     Z3 = Zmod(mod)
-    R = SymbolicRing()
-    x = R.var('x')
+    R = ZZ['x']
+    x = R.gen()
     F = Z3.extension(poly(x))
 
     H = [F.gen() ** (exp * i) for i in range(order)]

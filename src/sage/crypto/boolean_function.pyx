@@ -10,7 +10,7 @@ and also algebraic immunity.
 
 EXAMPLES::
 
-    sage: R.<x>=GF(2^8,'a')[]
+    sage: R.<x> = GF(2^8,'a')[]
     sage: from sage.crypto.boolean_function import BooleanFunction
     sage: B = BooleanFunction( x^254 ) # the Boolean function Tr(x^254)
     sage: B
@@ -900,7 +900,8 @@ cdef class BooleanFunction(SageObject):
                 temp[i] = W[i]*W[i]
 
             walsh_hadamard(temp, self._nvariables)
-            self._autocorrelation = tuple([temp[i] >> self._nvariables for i in xrange(n)])
+            self._autocorrelation = tuple([temp[i] >> self._nvariables
+                                           for i in range(n)])
             sig_free(temp)
 
         return self._autocorrelation

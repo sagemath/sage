@@ -17,11 +17,11 @@ from .join_feature import JoinFeature
 
 class PalpExecutable(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of a PALP executable.
+    A :class:`~sage.features.Feature` describing the presence of a :ref:`PALP <spkg_palp>` executable.
 
     INPUT:
 
-    - ``palpprog`` -- string, one of "poly", "class", "nef", "cws".
+    - ``palpprog`` -- string, one of ``"poly"``, ``"class"``, ``"nef"``, ``"cws"``.
 
     - ``suff`` -- string or ``None``.
     """
@@ -44,7 +44,7 @@ class PalpExecutable(Executable):
 
 class Palp(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``PALP``.
+    A :class:`~sage.features.Feature` describing the presence of :ref:`PALP <spkg_palp>`.
     """
     def __init__(self):
         r"""

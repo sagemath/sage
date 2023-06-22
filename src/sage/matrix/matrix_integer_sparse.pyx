@@ -399,13 +399,15 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
     def rational_reconstruction(self, N):
         """
-        Use rational reconstruction to lift self to a matrix over the
-        rational numbers (if possible), where we view self as a matrix
-        modulo N.
+        Use rational reconstruction to lift ``self`` to a matrix over the
+        rational numbers (if possible), where we view ``self`` as a matrix
+        modulo `N`.
 
         EXAMPLES::
 
-            sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500, 7, 2, 2, 3, 4, 3, 4, (5/7)%500], sparse=True)
+            sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500,
+            ....:                       7, 2, 2, 3,
+            ....:                       4, 3, 4, (5/7)%500], sparse=True)
             sage: A.rational_reconstruction(500)
             [1/3   2   3  -4]
             [  7   2   2   3]
@@ -415,7 +417,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         Check that :trac:`9345` is fixed::
 
-            sage: A = random_matrix(ZZ, 3, 3, sparse = True)
+            sage: A = random_matrix(ZZ, 3, 3, sparse=True)
             sage: A.rational_reconstruction(0)
             Traceback (most recent call last):
             ...

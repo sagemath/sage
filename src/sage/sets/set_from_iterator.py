@@ -990,7 +990,8 @@ class DummyExampleForPicklingTest:
         {10, 11, 12, 13, 14, ...}
     """
     start = 10
-    stop  = 100
+    stop = 100
+
     @set_from_method
     def f(self):
         r"""

@@ -2315,7 +2315,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             if K.crossing_number() != cross_nr:
                 continue
             if not is_knot or cross_nr > 10:
-                if K.is_alternating() !=  is_alt:
+                if K.is_alternating() != is_alt:
                     continue
             if is_knot or oriented:
                 res.append(K)
@@ -2475,7 +2475,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         is_knot  = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   =  self._is_alternating
+        is_alt   = self._is_alternating
         n_unori  = self._name_unoriented
 
         alt = 'a'

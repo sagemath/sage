@@ -655,15 +655,15 @@ cdef class FunctionFieldElement(FieldElement):
             sage: (y/x + 1).evaluate(p)                                                 # optional - sage.rings.finite_rings sage.rings.function_field
             1
         """
-        R, fr_R, to_R = place._residue_field()
+        R, _, to_R = place._residue_field()
 
         v = self.valuation(place)
         if v > 0:
             return R.zero()
-        elif v  == 0:
+        if v  == 0:
             return to_R(self)
-        else: # v < 0
-            raise ValueError('has a pole at the place')
+        # v < 0
+        raise ValueError('has a pole at the place')
 
     cpdef bint is_nth_power(self, n):
         r"""

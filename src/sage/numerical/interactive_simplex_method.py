@@ -4510,7 +4510,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
                              "for auxiliary problems")
         super().__init__()
         self._problem = problem
-        R =  problem.coordinate_ring()
+        R = problem.coordinate_ring()
         self._x_B = vector(R, [variable(R, v) for v in basic_variables])
 
     def __eq__(self, other):
@@ -4611,7 +4611,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
             headers.append("B^{-1} A_{%s}" % latex(entering))
         if show_ratios:
             headers.append(r"\hbox{Ratio}")
-        lines.append(" & ".join(headers) +  r" \\")
+        lines.append(" & ".join(headers) + r" \\")
         lines.append(r"\hline")
         Bi = self.B_inverse()
         c_B = self.c_B()
