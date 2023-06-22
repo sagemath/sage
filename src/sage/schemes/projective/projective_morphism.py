@@ -985,26 +985,14 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         # Only clear denominators from the coefficients in the ring of integers
         if R in NumberFields():
-            denom_list = []
+            O = R.maximal_order()
 
-            for entry in self:
-                if entry == 0:
-                    continue
+            if O is ZZ:
+                denom = lcm([self[i].denominator() for i in range(len(list(self)))])
+            else:
+                denom = R.ideal(list(self)).absolute_norm().denominator()
 
-                O = R.maximal_order()
-
-                if O is ZZ:
-                    denom_list.append(entry.denominator())
-                elif is_NumberFieldOrder(O):
-                    frac_ideal = O.fractional_ideal(entry)
-                    if K.is_relative():
-                        frac_ideal_norm = frac_ideal.absolute_norm()
-                    else:
-                        frac_ideal_norm = frac_ideal.norm()
-
-                    denom_list.append(frac_ideal_norm.denominator())
-
-            self.scale_by(lcm(denom_list))
+            self.scale_by(denom)
 
         # There are cases, such as the example above over GF(7),
         # where we want to compute GCDs, but NOT in the case
