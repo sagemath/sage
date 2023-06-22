@@ -2439,10 +2439,10 @@ class DifferentialGCAlgebra(GCAlgebra):
           iterations of the method at each degree. If the algorithm does not
           finish in this many iterations at each degree, an error is raised,
           or the partial result computed up to that point is returned, deppending
-          on the `partial_result` flag.
+          on the ``partial_result`` flag.
 
-        - ``partial_result``  -- boolean (default: `False`); wether to return
-          the partial result if the `max_iterations` limit is reached.
+        - ``partial_result``  -- boolean (default: ``False``); wether to return
+          the partial result if the ``max_iterations`` limit is reached.
 
         OUTPUT:
 
@@ -2593,14 +2593,17 @@ class DifferentialGCAlgebra(GCAlgebra):
             ValueError: could not cover all relations in max iterations in degree 2
             sage: S.minimal_model(partial_result=True)
             Commutative Differential Graded Algebra morphism:
-              From: Commutative Differential Graded Algebra with generators ('x1_0', 'x1_1', 'x1_2', 'y1_0', 'y1_1', 'y1_2') in degrees (1, 1, 1, 1, 1, 1) over Rational Field with differential:
+              From: Commutative Differential Graded Algebra with generators
+               ('x1_0', 'x1_1', 'x1_2', 'y1_0', 'y1_1', 'y1_2') in degrees (1, 1, 1, 1, 1, 1)
+                over Rational Field with differential:
                x1_0 --> 0
                x1_1 --> 0
                x1_2 --> 0
                y1_0 --> x1_0*x1_1 - x1_0*x1_2 + x1_1*x1_2
                y1_1 --> x1_0*y1_0 - x1_2*y1_0
                y1_2 --> x1_1*y1_0 - x1_2*y1_0
-              To:   Commutative Differential Graded Algebra with generators ('a', 'b', 'c') in degrees (1, 1, 1) with relations [a*b - a*c + b*c] over Rational Field with differential:
+              To:   Commutative Differential Graded Algebra with generators ('a', 'b', 'c')
+               in degrees (1, 1, 1) with relations [a*b - a*c + b*c] over Rational Field with differential:
                a --> 0
                b --> 0
                c --> 0
