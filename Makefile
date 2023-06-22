@@ -47,14 +47,20 @@ CONFIG_FILES = build/make/Makefile src/bin/sage-env-config build/bin/sage-build-
 # SPKG_COLLECT_FILES contains all files that influence the SAGE_SPKG_COLLECT macro
 SPKG_COLLECT_FILES = build/pkgs/*/type build/pkgs/*/package-version.txt build/pkgs/*/dependencies build/pkgs/*/requirements.txt build/pkgs/*/checksums.ini build/pkgs/*/spkg-install
 
-# If configure was run before, rerun it with the old arguments.
-# Otherwise, run configure with argument $PREREQ_OPTIONS.
+# If configure was not run before, complain.
+# If configure is newer than the files it generated (we test build/make/Makefile),
+#    we regenerate config.status by running the "config.status --recheck".
+# Either way we regenerate the generated files by calling "config.status".
 build/make/Makefile: configure $(SPKG_COLLECT_FILES) $(CONFIG_FILES:%=%.in)
-	rm -f config.log
-	mkdir -p logs/pkgs
-	ln -s logs/pkgs/config.log config.log
 	@if [ -x config.status ]; then \
-		./config.status --recheck && ./config.status; \
+		case '$?' in					\
+		  *configure*)					\
+			rm -f config.log;			\
+			mkdir -p logs/pkgs;			\
+			ln -s logs/pkgs/config.log config.log;	\
+			./config.status --recheck;;		\
+		esac &&						\
+		./config.status; \
 	else \
 		echo >&2 '****************************************************************************'; \
 		echo >&2 'error: Sage source tree is unconfigured. Please run "./configure" first.'; \
@@ -325,7 +331,7 @@ ptestoptionallong-nodoc:
 
 ###############################################################################
 
-configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt build/pkgs/*/distros/*.txt
+configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt build/pkgs/*/distros/*.txt build/pkgs/*/src/*.m4
 	./bootstrap -d
 
 install: all
