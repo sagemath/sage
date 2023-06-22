@@ -262,9 +262,9 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         r"""
         Construct the Ore polynomial ring associated to the given parameters.
 
-        TESTS::
+        TESTS:
         
-        When there is no twisting morphism a special class is used
+        When there is no twisting morphism a special class is used::
 
             sage: R.<t> = QQ[]
             sage: der = R.derivation()
