@@ -915,6 +915,18 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
              3-adic Field with capped relative precision 20
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + (2 + O(3^20))*y^2 : (3 + O(3^21))*x*y)
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(3*x^2 + 1)
+            sage: P.<z,w> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([a*(z^2 + w^2), z*w])
+            sage: f.normalize_coordinates(); f
+            Dynamical System of Projective Space of dimension 1 over
+            Number Field in a with defining polynomial 3*x^2 + 1
+            Defn: Defined on coordinates by sending (z : w) to
+                    ((3*a)*z^2 + (3*a)*w^2 : z*w)
         """
         # if ideal or valuation is specified, we scale according the norm defined by the ideal/valuation
         ideal = kwds.pop('ideal', None)
@@ -967,12 +979,32 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             self.scale_by(uniformizer**(-1 * min_val))
             return
 
-        # clear any denominators from the coefficients
-        N = self.codomain().ambient_space().dimension_relative() + 1
-        LCM = lcm([self[i].denominator() for i in range(N)])
-        self.scale_by(LCM)
-
         R = self.domain().base_ring()
+        K = self.base_ring()
+        N = self.codomain().ambient_space().dimension_relative() + 1
+
+        # Only clear denominators from the coefficients in the ring of integers
+        if R in NumberFields():
+            denom_list = []
+
+            for entry in self:
+                if entry == 0:
+                    continue
+
+                O = R.maximal_order()
+
+                if O is ZZ:
+                    denom_list.append(entry.denominator())
+                elif is_NumberFieldOrder(O):
+                    frac_ideal = O.fractional_ideal(entry)
+                    if K.is_relative():
+                        frac_ideal_norm = frac_ideal.absolute_norm()
+                    else:
+                        frac_ideal_norm = frac_ideal.norm()
+
+                    denom_list.append(frac_ideal_norm.denominator())
+
+            self.scale_by(lcm(denom_list))
 
         # There are cases, such as the example above over GF(7),
         # where we want to compute GCDs, but NOT in the case
