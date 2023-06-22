@@ -90,20 +90,25 @@ Search Sage's list of packages (see 'sage --package list') for a
 matching package, and if a match is found, install it.
 
 Options:
-   -s: do not delete the temporary build directory
-   -c: after installing, run the test suite for the package;
-       exit with an error on test suite failures
-   -w: after installing, run the test suite for the package;
-       print a warning on test suite failures
-   -d: only download the package
    -y: automatically reply "y" for all prompts regarding
        experimental and old-style packages; warning: there
        is no guarantee that these packages will build correctly;
        use at your own risk
    -n: automatically reply "n" for all prompts regarding
        experimental and old-style packages
+   -d: only download the package
    -o: allow fetching the package from its upstream URL
        when it is not available from the Sage mirrors (yet)
+   -b: build and stage only, do not install or check
+   -x: only run the test suite; this may assume that:
+        * the package has been installed already and/or that
+        * the temporary build directory has not been deleted
+   -c: after installing, run the test suite for the package;
+       exit with an error on test suite failures
+   -w: after installing, run the test suite for the package;
+       print a warning on test suite failures
+   -s: do not delete the temporary build directory, even
+       when the installation was successful
 EOF
 }
 
@@ -230,6 +235,8 @@ fi
 INFO=0
 YES=0
 KEEP_EXISTING=0
+BUILD=1
+INSTALL=1
 while true; do
     case "$1" in
         --info)
@@ -246,6 +253,8 @@ while true; do
             export SAGE_CHECK=yes;;
         -w|--check-warning-only)
             export SAGE_CHECK=warn;;
+        -x|--check-only)
+            INSTALL=1;;
         -k|--keep-existing)
             KEEP_EXISTING=yes;;
         -o|--allow-upstream)
