@@ -229,8 +229,10 @@ class DerivativeOperator():
     class DerivativeOperatorWithParameters():
         def __init__(self, parameter_set):
             self._parameter_set = parameter_set
+
         def __call__(self, function):
             return FDerivativeOperator(function, self._parameter_set)
+
         def __repr__(self):
             """
             Return the string representation of this derivative operator.

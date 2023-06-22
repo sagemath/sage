@@ -307,7 +307,7 @@ def four_squares_pyx(uint32_t n):
         sage: all(s(four_squares_pyx(n)) == n for n in range(5000,10000))
         True
     """
-    cdef uint_fast32_t fac, j, nn
+    cdef uint_fast32_t fac, j
     cdef uint_fast32_t i[3]
 
     if n == 0:
@@ -315,7 +315,7 @@ def four_squares_pyx(uint32_t n):
 
     # division by power of 4
     fac = 0
-    while n%4 == 0:
+    while n % 4 == 0:
         n >>= 2
         fac += 1
 

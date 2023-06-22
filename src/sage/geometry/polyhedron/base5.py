@@ -418,7 +418,7 @@ class Polyhedron_base5(Polyhedron_base4):
         from itertools import chain
         new_verts = chain(([0] + list(x) for x in self.vertex_generator()),
                           [[1] + list(c), [-1] + list(c)])
-        new_rays =  ([0] + r for r in self.rays())
+        new_rays = ([0] + r for r in self.rays())
         new_lines = ([0] + l for l in self.lines())
         new_ieqs = chain(([i.b()] + [ c*i.A() + i.b()] + list(i.A()) for i in self.inequalities()),
                          ([i.b()] + [-c*i.A() - i.b()] + list(i.A()) for i in self.inequalities()))
@@ -508,7 +508,7 @@ class Polyhedron_base5(Polyhedron_base4):
         from itertools import chain
         new_verts = chain(([0] + v for v in self.vertices()),
                           ([1] + v for v in self.vertices()))
-        new_rays =  ([0] + r for r in self.rays())
+        new_rays = ([0] + r for r in self.rays())
         new_lines = ([0] + l for l in self.lines())
         new_eqns = ([e.b()] + [0] + list(e[1:]) for e in self.equations())
         new_ieqs = chain(([i.b()] + [0] + list(i[1:]) for i in self.inequalities()),

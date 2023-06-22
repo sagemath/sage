@@ -224,6 +224,7 @@ class DocTestSource():
                 # Line number refers to the end of the docstring
                 sigon = doctest.Example(sig_on_count_doc_doctest, "0\n", lineno=docstring.count("\n"))
                 sigon.sage_source = sig_on_count_doc_doctest
+                sigon.optional_tags = frozenset()
                 dt.examples.append(sigon)
             doctests.append(dt)
 
@@ -787,7 +788,7 @@ class FileDocTestSource(DocTestSource):
             ....:             filename = os.path.join(path, F)
             ....:             FDS = FileDocTestSource(filename, DocTestDefaults(long=True, optional=True, force_lib=True))
             ....:             FDS._test_enough_doctests(verbose=False)
-            There are 3 unexpected tests being run in sage/doctest/parsing.py
+            There are 4 unexpected tests being run in sage/doctest/parsing.py
             There are 1 unexpected tests being run in sage/doctest/reporting.py
             sage: os.chdir(cwd)
         """

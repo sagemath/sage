@@ -1150,7 +1150,7 @@ def get_star_imports(module_name):
         sage: from sage.misc.lazy_import import get_star_imports
         sage: 'get_star_imports' in get_star_imports('sage.misc.lazy_import')
         True
-        sage: 'EllipticCurve' in get_star_imports('sage.schemes.all')
+        sage: 'EllipticCurve' in get_star_imports('sage.schemes.all')                   # optional - sage.schemes
         True
 
     TESTS::
@@ -1164,7 +1164,7 @@ def get_star_imports(module_name):
         sage: import sage.misc.lazy_import_cache as cache
         sage: cache.get_cache_file = (lambda: cache_file)
         sage: lazy.star_imports = None
-        sage: lazy.get_star_imports('sage.schemes.all')
+        sage: lazy.get_star_imports('sage.schemes.all')                                 # optional - sage.schemes
         doctest:...: UserWarning: star_imports cache is corrupted
         [...]
         sage: os.remove(cache_file)
