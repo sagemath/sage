@@ -19,7 +19,7 @@ from .join_feature import JoinFeature
 class python_igraph(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of the
-    Python package ``igraph``.
+    Python package :ref:`igraph <spkg_python_igraph>`.
 
     EXAMPLES::
 

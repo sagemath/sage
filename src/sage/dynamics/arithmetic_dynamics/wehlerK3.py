@@ -815,7 +815,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         for n in range(3):
             affvars = list(R0.gens())
             del affvars[n]
-            R1 = PolynomialRing(K, 2, affvars, order = 'lex')
+            R1 = PolynomialRing(K, 2, affvars, order='lex')
             mapvars = list(R1.gens())
             mapvars.insert(n,1)
             phi1 = R0.hom(mapvars, R1)
@@ -846,7 +846,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         for n in range(3):
             affvars = list(R0.gens())
             del affvars[n]
-            R1 = PolynomialRing(K, 2, affvars, order = 'lex')
+            R1 = PolynomialRing(K, 2, affvars, order='lex')
             mapvars = list(R1.gens())
             mapvars.insert(n, 1)
             phi1 = R0.hom(mapvars,R1)
@@ -867,7 +867,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         return [xFibers,yFibers]
 
     @cached_method
-    def degenerate_primes(self,check = True):
+    def degenerate_primes(self,check=True):
         r"""
         Determine which primes `p` self has degenerate fibers over `GF(p)`.
 
@@ -1179,7 +1179,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         #Defines the ideal whose solution gives `(s0, s1)` and the two points
         #on the fiber
-        RR = PolynomialRing(BR, 5,'s0, s1, z0, z1, z2',order = 'lex')
+        RR = PolynomialRing(BR, 5,'s0, s1, z0, z1, z2',order='lex')
         s0, s1, z0, z1, z2 = RR.gens()
         I = RR.ideal([RR(T[0]),
                       RR(T[1]),
@@ -1189,7 +1189,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                       RR(T[7]) - (P[1][1]*z2 + P[1][2]*z1)])
 
         #Find the points
-        SS = PolynomialRing(BR, 4,'s, z0, z1, z2', order = 'lex')
+        SS = PolynomialRing(BR, 4,'s, z0, z1, z2', order='lex')
         s, z0, z1, z2 = SS.gens()
         phi = RR.hom([s, 1, z0, z1, z2], SS)
         J = phi(I)
@@ -1234,7 +1234,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                            SS(newT[7]) - (P[1][1]*z2 + P[1][2]*z1)])
 
             #Find the points
-            SSS = PolynomialRing(BR, 3, 'z0, z1, z2', order = 'lex')
+            SSS = PolynomialRing(BR, 3, 'z0, z1, z2', order='lex')
             z0,z1,z2 = SSS.gens()
             phi = SS.hom([0, z0, z1, z2], SSS)
             J2 = phi(II)
@@ -1248,7 +1248,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 [a, b, c] = [V[0][z0], V[0][z1], V[0][z2]]
 
             if len(V) == 0 or [a,b,c] == [0, 0, 0]:
-                SS = PolynomialRing(BR, 3, 'z0, z1, z2', order = 'lex')
+                SS = PolynomialRing(BR, 3, 'z0, z1, z2', order='lex')
                 z0,z1,z2 = SS.gens()
                 phi = RR.hom([1, 0, z0, z1, z2], SS)
                 J = phi(I)
@@ -1430,7 +1430,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                       RR(T[6]) - (P[0][0]*z2 + P[0][2]*z0),
                       RR(T[7]) - (P[0][1]*z2 + P[0][2]*z1)])
         #Find the points
-        SS = PolynomialRing(BR, 4, 's, z0, z1, z2', order = 'lex')
+        SS = PolynomialRing(BR, 4, 's, z0, z1, z2', order='lex')
         s, z0, z1, z2 = SS.gens()
         phi = RR.hom([s, 1, z0, z1, z2], SS)
         J = phi(I)
@@ -1486,7 +1486,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             if len(V) == 1:
                 [a, b, c] = [V[0][z0], V[0][z1], V[0][z2]]
             if len(V) == 0 or [a,b,c] == [0, 0, 0]:
-                SS = PolynomialRing(BR, 3, 'z0, z1, z2', order = 'lex')
+                SS = PolynomialRing(BR, 3, 'z0, z1, z2', order='lex')
                 z0,z1,z2 = SS.gens()
                 phi = RR.hom([1, 0, z0, z1, z2], SS)
                 J = phi(I)
@@ -1584,7 +1584,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         kwds.update({"check":False})
         return self.sigmaX(A, **kwds)
 
-    def lambda_plus(self, P, v, N, m, n, prec = 100):
+    def lambda_plus(self, P, v, N, m, n, prec=100):
         r"""
         Evaluates the  local canonical height plus function of Call-Silverman at
         the place ``v`` for ``P`` with ``N`` terms of the series.
@@ -1744,7 +1744,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         local_height = beta*R((PK[1][i]/PK[1][n]).abs()).log() - R((PK[0][j]/PK[0][m]).abs()).log()
         for e in range(N):
             #Take the next iterate
-            Q = W.psi(PK, check = False)
+            Q = W.psi(PK, check=False)
             L = [x.abs() for x in list(Q[0])]
             l = L.index(max(L))
             L = [y.abs() for y in list(Q[1])]

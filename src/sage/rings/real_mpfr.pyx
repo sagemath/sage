@@ -5860,21 +5860,20 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
 
     # Check for a valid base
     if base < 2 or base > 62:
-        raise ValueError("base (=%s) must be an integer between 2 and 62"%base)
+        raise ValueError(f"base (={base}) must be an integer between 2 and 62")
 
     if base == 10 and min_prec == 53 and len(s) <= 15 and rnd == "RNDN":
         R = RR
     else:
         # For bases 15 and up, treat 'e' as digit
         if base <= 14 and ('e' in s or 'E' in s):
-            #Figure out the exponent
-            index = max( s.find('e'), s.find('E') )
-            exponent = int(s[index+1:])
+            # Figure out the exponent
+            index = max(s.find('e'), s.find('E'))
             mantissa = s[:index]
         else:
             mantissa = s
 
-        #Find the first nonzero entry in rest
+        # Find the first nonzero entry in rest
         sigfig_mantissa = mantissa.lstrip('-0.')
         sigfigs = len(sigfig_mantissa) - ('.' in sigfig_mantissa)
 

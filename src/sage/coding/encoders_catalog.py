@@ -26,11 +26,9 @@ The ``codes.encoders`` object may be used to access the encoders that Sage can b
 
 - :class:`punctured_code.PuncturedCodePuncturedMatrixEncoder <sage.coding.punctured_code.PuncturedCodePuncturedMatrixEncoder>`
 
-.. NOTE::
+To import these names into the global namespace, use::
 
-    To import these names into the global namespace, use:
-
-        sage: from sage.coding.encoders_catalog import *
+    sage: from sage.coding.encoders_catalog import *
 """
 #*****************************************************************************
 #       Copyright (C) 2009 David Joyner <wdjoyner@gmail.com>

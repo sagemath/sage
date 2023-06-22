@@ -93,7 +93,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.latex import latex
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp

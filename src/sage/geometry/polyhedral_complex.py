@@ -117,7 +117,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
 from sage.combinat.posets.posets import Poset
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 
 
 class PolyhedralComplex(GenericCellComplex):

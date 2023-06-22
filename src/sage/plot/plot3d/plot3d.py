@@ -911,7 +911,8 @@ class TrivialTriangleFactory:
             sage: tri
             [[0, 0, 0], [0, 0, 1], [1, 1, 0]]
         """
-        return [a,b,c]
+        return [a, b, c]
+
     def smooth_triangle(self, a, b, c, da, db, dc, color=None):
         """
         Function emulating behavior of

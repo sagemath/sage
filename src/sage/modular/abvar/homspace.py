@@ -195,11 +195,13 @@ from sage.structure.element import is_Matrix
 
 ZZ = sage.rings.integer_ring.ZZ
 
+
 class Homspace(HomsetWithBase):
     """
     A space of homomorphisms between two modular abelian varieties.
     """
     Element = morphism.Morphism
+
     def __init__(self, domain, codomain, cat):
         """
         Create a homspace.
