@@ -2949,8 +2949,25 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         return ans
 
     def companion_matrix(self):
+        r"""
+        Return the companion matrix of an Ore polynomial. The companion
+        matrix of an Ore polynomial is defined in a perfectly analoguous
+        way to the companion matrix of a polynomial.
+
+        EXAMPLES::
+
+            sage: R.<t> = ZZ[]
+            sage: sigma = R.hom([t+1])
+            sage: S.<x> = OrePolynomialRing(R,sigma)
+            sage: L = x^2 + (t+1)*x + 3
+            sage: L.companion_matrix()
+            [     0     -3]
+            [     1 -t - 1]
+
+        """
         from sage.matrix.special import companion_matrix
-        return companion_matrix(self.list())
+        lc=self.leading_coefficient()
+        return companion_matrix([coeff/lc for coeff in self.list()])
 
 cdef class ConstantOrePolynomialSection(Map):
     r"""

@@ -29,16 +29,11 @@ class DifferentialPolynomial_generic_dense(OrePolynomial_generic_dense):
 
     TESTS::
 
-    sage: R.<t> = ZZ[]
-    sage: S.<D>=OrePolynomialRing(R, t*R.derivation())
-    sage: type(D)
-    <class 'sage.rings.polynomial.differential_polynomial_element.DifferentialPolynomial_generic_dense'>
-
-    sage: D*t
-    t*D + t
-
-    sage: category(D)
-    Category of elements of Ore Polynomial Ring in D over Univariate Polynomial Ring in t over Integer Ring twisted by t*d/dt
+         sage: R.<t> = ZZ[]
+         sage: S.<D>=OrePolynomialRing(R, t*R.derivation())
+         sage: D*t
+         t*D + t
+         sage: TestSuite(D + t).run()
     """
 
     def p_curvature(self, algorithm=None):

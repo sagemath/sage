@@ -838,7 +838,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         """
         if n != 0:
             raise IndexError("generator %s not defined" % n)
-        return self.Element(self, [0, 1])
+        return self.element_class(self, [0, 1])
 
     parameter = gen
 

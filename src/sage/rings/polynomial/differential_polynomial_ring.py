@@ -29,6 +29,16 @@ AUTHOR:
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
 class DifferentialPolynomialRing(OrePolynomialRing):
+    r"""
+    Class for generic differential operators.
+
+    TESTS::
+
+        sage: R.<t> = ZZ[]
+        sage: S.<D> = OrePolynomialRing(R, t*R.derivation())
+        sage: TestSuite(S).run()
+    """
+
     def __init__(self, base_ring, morphism, derivation, name, sparse, category=None):
         r"""
         Initialize ``self``.
@@ -56,7 +66,7 @@ class DifferentialPolynomialRing(OrePolynomialRing):
             sage: D*t
             t*D + t
 
-            We test that S has the good type
+            We test that S has the good type::
 
             sage: type(S)
             <class 'sage.rings.polynomial.differential_polynomial_ring.DifferentialPolynomialRing_with_category'>
