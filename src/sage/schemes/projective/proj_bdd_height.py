@@ -22,6 +22,7 @@ import itertools
 from math import floor
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.rings.number_field.unit_group import UnitGroup
@@ -112,6 +113,8 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
     if bound < 1:
         return iter([])
 
+    O = K.maximal_order()
+
     unit_tuples = list(itertools.product(K.roots_of_unity(), repeat=dim))
 
     class_group_ideals = [c.ideal() for c in K.class_group()]
@@ -150,23 +153,13 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
                     for u in unit_tuples:
                         point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
 
-                        O = K.maximal_order()
-
                         if point not in points_in_class_a:
-                            denom_list = []
+                            if O is ZZ:
+                                denom = lcm([point[i].denominator() for i in range(list(point))])
+                            else:
+                                denom = K.ideal(list(point)).absolute_norm().denominator()
 
-                            for entry in point:
-                                if entry == 0:
-                                    continue
-
-                                frac_ideal = O.fractional_ideal(entry)
-                                if K.is_relative():
-                                    frac_ideal_norm = frac_ideal.absolute_norm()
-                                else:
-                                    frac_ideal_norm = frac_ideal.norm()
-                                denom_list.append(frac_ideal_norm.denominator())
-
-                            point.scale_by(lcm(denom_list))
+                            point.scale_by(denom)
                             points_in_class_a.add(point)
                             yield point
 
@@ -202,8 +195,11 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 7)                                                          # optional - sage.rings.number_field
         sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
-        sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.rings.number_field
-        13
+        sage: sorted(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.rings.number_field
+        [(0 : 0 : 1), (0 : 1 : 0), (1 : 0 : 0), (0 : -1 : 1), (0 : 1 : 1),
+         (-1 : 0 : 1), (1 : 0 : 1), (1 : 1 : 0), (-1 : 1 : 0), (-1 : -1 : 1),
+         (-1 : 1 : 1), (1 : -1 : 1), (1 : 1 : 1)]
+
     """
     if bound < 1:
         return iter([])
@@ -215,6 +211,8 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
         K_degree = K.relative_degree()
     else:
         K_degree = K.degree()
+
+    O = K.maximal_order()
 
     roots_of_unity = K.roots_of_unity()
     unit_tuples = list(itertools.product(roots_of_unity, repeat=dim))
@@ -364,22 +362,12 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
                     for u in unit_tuples:
                         point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
 
-                        O = K.maximal_order()
-
                         if point not in points_in_class_a:
-                            denom_list = []
+                            if O is ZZ:
+                                denom = lcm([point[i].denominator() for i in range(list(point))])
+                            else:
+                                denom = K.ideal(list(point)).absolute_norm().denominator()
 
-                            for entry in point:
-                                if entry == 0:
-                                    continue
-
-                                frac_ideal = O.fractional_ideal(entry)
-                                if K.is_relative():
-                                    frac_ideal_norm = frac_ideal.absolute_norm()
-                                else:
-                                    frac_ideal_norm = frac_ideal.norm()
-                                denom_list.append(frac_ideal_norm.denominator())
-
-                            point.scale_by(lcm(denom_list))
+                            point.scale_by(denom)
                             points_in_class_a.add(point)
                             yield point
