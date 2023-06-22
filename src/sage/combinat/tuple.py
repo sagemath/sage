@@ -16,7 +16,6 @@ Tuples
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#from sage.libs.gap.libgap import libgap
 from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
