@@ -499,7 +499,7 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
         # the product.
         translate = {}
         for simplices in itertools.product(*nondegen):
-            dims =  [_.dimension() for _ in simplices]
+            dims = [_.dimension() for _ in simplices]
             dim_max = max(dims)
             sum_dims = sum(dims)
             for d in range(dim_max, sum_dims + 1):

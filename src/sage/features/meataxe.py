@@ -19,7 +19,8 @@ from .join_feature import JoinFeature
 
 class Meataxe(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``meataxe``.
+    A :class:`~sage.features.Feature` describing the presence of the Sage modules
+    that depend on the :ref:`meataxe <spkg_meataxe>` library.
 
     EXAMPLES::
 

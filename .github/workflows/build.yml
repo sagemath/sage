@@ -32,50 +32,82 @@ jobs:
         id: checkout
         uses: actions/checkout@v3
 
-      - name: Prepare
+      - name: Update system packages
         id: prepare
         run: |
-          # Install test tools.
-          if apt-get update && apt-get install -y git python3-venv; then
-             # Debian-specific temporary code:
-             # Installation of python3-venv can be removed as soon as a
-             # base image with a release including #33822 is available
-             :
-          else
-             export PATH="build/bin:$PATH"
-             eval $(sage-print-system-package-command auto update)
-             eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
-          fi
-          # Reuse built SAGE_LOCAL contained in the Docker image 
-          ./bootstrap
-          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
-      
+          export PATH="build/bin:$PATH"
+          eval $(sage-print-system-package-command auto update)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
+
+      - name: Add prebuilt tree as a worktree
+        id: worktree
+        run: |
+          set -ex
+          git config --global user.email "ci-sage@example.com"
+          git config --global user.name "Build & Test workflow"
+          git config --global --add safe.directory $(pwd)
+          # If actions/checkout downloaded our source tree using the GitHub REST API
+          # instead of with git (because do not have git installed in our image),
+          # we first make the source tree a repo.
+          if [ ! -d .git ]; then git init && git add -A && git commit --quiet -m "new"; fi
+          # Tag this state of the source tree "new". This is what we want to build and test.
+          git tag -f new
+          # Our container image contains a source tree in /sage with a full build of Sage.
+          # But /sage is not a git repository.
+          # We make /sage a worktree whose index is at tag "new".
+          # We then commit the current sources and set the tag "old". (This keeps all mtimes unchanged.)
+          # Then we update worktree and index with "git reset --hard new".
+          # (This keeps mtimes of unchanged files unchanged and mtimes of changed files newer than unchanged files.)
+          # Finally we reset the index to "old". (This keeps all mtimes unchanged.)
+          # The changed files now show up as uncommitted changes.
+          git worktree add --detach worktree-image
+          rm -rf /sage/.git && mv worktree-image/.git /sage/
+          rm -rf worktree-image && ln -s /sage worktree-image
+          if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
+          (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
+
+      - name: Incremental build, test changed files (sage -t --new)
+        id: incremental
+        run: |
+          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
+          # We run tests with "sage -t --new"; this only tests the uncommitted changes.
+          ./bootstrap && make build && ./sage -t --new -p2
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
       - name: Build and test modularized distributions
-        if: always() && steps.prepare.outcome == 'success'
+        if: always() && steps.worktree.outcome == 'success'
         run: make V=0 tox && make pypi-wheels
+        working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
       - name: Set up node to install pyright
-        if: always() && steps.prepare.outcome == 'success'
+        if: always() && steps.worktree.outcome == 'success'
         uses: actions/setup-node@v3
         with:
           node-version: '12'
 
       - name: Install pyright
-        if: always() && steps.prepare.outcome == 'success'
+        if: always() && steps.worktree.outcome == 'success'
         # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
         run: npm install -g pyright@1.1.232
 
       - name: Static code check with pyright
-        if: always() && steps.prepare.outcome == 'success'
-        run: pyright    
-      
-      - name: Build
+        if: always() && steps.worktree.outcome == 'success'
+        run: pyright
+        working-directory: ./worktree-image
+
+      - name: Build (fallback to non-incremental)
         id: build
-        if: always() && steps.prepare.outcome == 'success'
-        run: make build
+        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+        run: |
+          set -ex
+          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
+        working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
@@ -85,27 +117,28 @@ jobs:
         run: |
           ../sage -python -m pip install coverage pytest-xdist
           ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
-        working-directory: ./src
+        working-directory: ./worktree-image/src
         env:
           # Increase the length of the lines in the "short summary"
           COLUMNS: 120
 
-      - name: Test
-        if: always() && steps.build.outcome == 'success'
+      - name: Test all files (sage -t --all --long)
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
           ../sage -python -m pip install coverage
-          ../sage -python -m coverage run ./bin/sage-runtests --all -p2 --random-seed=286735480429121101562228604801325644303
-        working-directory: ./src
+          ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
+        working-directory: ./worktree-image/src
 
       - name: Prepare coverage results
-        if: always() && steps.build.outcome == 'success'
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
           ./venv/bin/python3 -m coverage combine src/.coverage/
           ./venv/bin/python3 -m coverage xml
           find . -name *coverage*
-      
+        working-directory: ./worktree-image
+
       - name: Upload coverage to codecov
-        if: always() && steps.build.outcome == 'success'
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage.xml
+          files: ./worktree-image/coverage.xml
