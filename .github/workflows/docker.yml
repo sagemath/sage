@@ -24,11 +24,9 @@ on:
            "ubuntu-kinetic",
            "ubuntu-lunar",
            "ubuntu-mantic",
-           "debian-buster",
            "debian-bullseye",
            "debian-bookworm",
            "debian-sid",
-           "linuxmint-19-gcc_8-python3.8",
            "linuxmint-19.3-gcc_8-python3.8",
            "linuxmint-20.1",
            "linuxmint-20.2",
@@ -36,7 +34,6 @@ on:
            "linuxmint-21",
            "linuxmint-21.1",
            "linuxmint-21.2",
-           "fedora-29-python3.8",
            "fedora-30-python3.8",
            "fedora-31",
            "fedora-32",
@@ -59,7 +56,6 @@ on:
            "opensuse-tumbleweed-python3.10",
            "conda-forge",
            "ubuntu-bionic-gcc_8-i386",
-           "debian-buster-i386",
            "debian-bullseye-i386",
            ]
       tox_packages_factors:
