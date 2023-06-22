@@ -26,7 +26,21 @@ class DifferentialPolynomial_generic_dense(OrePolynomial_generic_dense):
     r"""
     Generic implementation of dense differential polynomial supporting
     any valid base ring and derivation.
+
+    TESTS::
+
+    sage: R.<t> = ZZ[]
+    sage: S.<D>=OrePolynomialRing(R, t*R.derivation())
+    sage: type(D)
+    <class 'sage.rings.polynomial.differential_polynomial_element.DifferentialPolynomial_generic_dense'>
+
+    sage: D*t
+    t*D + t
+
+    sage: category(D)
+    Category of elements of Ore Polynomial Ring in D over Univariate Polynomial Ring in t over Integer Ring twisted by t*d/dt
     """
+
     def p_curvature(self, algorithm=None):
         r"""
         Return the `p`-curvature of this differential polynomial.
@@ -125,3 +139,4 @@ class DifferentialPolynomial_generic_dense(OrePolynomial_generic_dense):
         for _ in range(p-1):
             B = A*B + B.apply_morphism(d)
         return B
+
