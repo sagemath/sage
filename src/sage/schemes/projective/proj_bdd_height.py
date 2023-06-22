@@ -195,7 +195,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 7)                                                          # optional - sage.rings.number_field
         sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
-        sage: sorted(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.rings.number_field
+        sage: sorted(list(points_of_bounded_height(P, K, 2, 1)))                                    # optional - sage.rings.number_field
         [(0 : 0 : 1), (0 : 1 : 0), (1 : 0 : 0), (0 : -1 : 1), (0 : 1 : 1),
          (-1 : 0 : 1), (1 : 0 : 1), (1 : 1 : 0), (-1 : 1 : 0), (-1 : -1 : 1),
          (-1 : 1 : 1), (1 : -1 : 1), (1 : 1 : 1)]
