@@ -413,7 +413,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             return self
 
         if isinstance(x, NumberFieldElement_base):
-            K, from_K = parent(x).subfield(x)
+            K, _ = parent(x).subfield(x)
             return K.order(K.gen())
 
         return PrincipalIdealDomain.__getitem__(self, x)
@@ -1651,7 +1651,7 @@ def crt_basis(X, xgcd=None):
     for i in range(len(X)):
         p = X[i]
         others = P // p
-        g, s, t = p.xgcd(others)
+        g, _, t = p.xgcd(others)
         if g != ONE:
             raise ArithmeticError("the elements of the list X must be coprime in pairs")
         Y.append(t * others)

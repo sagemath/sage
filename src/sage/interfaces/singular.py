@@ -1906,7 +1906,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
                 exp = int(0)
 
                 if monomial not in ['1', '(1.000e+00)']:
-                    term =  monomial.split("^")
+                    term = monomial.split("^")
                     if len(term)==int(2):
                         exp = int(term[1])
                     else:
@@ -2060,7 +2060,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         elif typ == 'intmat':
             from sage.matrix.constructor import matrix
             from sage.rings.integer_ring import ZZ
-            A =  matrix(ZZ, int(self.nrows()), int(self.ncols()))
+            A = matrix(ZZ, int(self.nrows()), int(self.ncols()))
             for i in range(A.nrows()):
                 for j in range(A.ncols()):
                     A[i,j] = sage.rings.integer.Integer(str(self[i+1,j+1]))
@@ -2496,7 +2496,7 @@ class SingularGBLogPrettyPrinter:
     cri_hilb = re.compile("h")          # used Hilbert series criterion
     hig_corn = re.compile(r"H\(\d+\)")   # found a 'highest corner' of degree d, no need to consider higher degrees
     num_crit = re.compile(r"\(\d+\)")    # n critical pairs are still to be reduced
-    red_num =  re.compile(r"\(S:\d+\)")  # doing complete reduction of n elements
+    red_num = re.compile(r"\(S:\d+\)")  # doing complete reduction of n elements
     deg_lead = re.compile(r"\d+")        # the degree of the leading terms is currently d
 
     # SlimGB

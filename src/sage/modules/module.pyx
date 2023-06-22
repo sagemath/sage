@@ -186,7 +186,9 @@ cdef class Module(Parent):
 
         EXAMPLES::
 
-            sage: sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], QQ).change_ring(GF(7))
+            sage: from sage.modular.modform.space import ModularFormsSpace              # optional - sage.modular
+            sage: ModularFormsSpace(Gamma0(11), 2,                                      # optional - sage.modular sage.rings.finite_rings
+            ....:                   DirichletGroup(1)[0], QQ).change_ring(GF(7))
             Traceback (most recent call last):
             ...
             NotImplementedError: the method change_ring() has not yet been implemented
@@ -216,26 +218,31 @@ cdef class Module(Parent):
 
         TESTS::
 
-            sage: N = ModularForms(6, 4)
-            sage: N.base_extend(CyclotomicField(7))
-            Modular Forms space of dimension 5 for Congruence Subgroup Gamma0(6) of weight 4 over Cyclotomic Field of order 7 and degree 6
+            sage: N = ModularForms(6, 4)                                                # optional - sage.modular
+            sage: N.base_extend(CyclotomicField(7))                                     # optional - sage.modular sage.rings.number_field
+            Modular Forms space of dimension 5 for Congruence Subgroup Gamma0(6)
+             of weight 4 over Cyclotomic Field of order 7 and degree 6
 
-            sage: m = ModularForms(DirichletGroup(13).0^2,2); m
-            Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
-            sage: m.base_extend(CyclotomicField(12))
-            Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 12 and degree 4
+            sage: m = ModularForms(DirichletGroup(13).0^2,2); m                         # optional - sage.modular sage.rings.number_field
+            Modular Forms space of dimension 3, character [zeta6] and weight 2
+             over Cyclotomic Field of order 6 and degree 2
+            sage: m.base_extend(CyclotomicField(12))                                    # optional - sage.modular sage.rings.number_field
+            Modular Forms space of dimension 3, character [zeta6] and weight 2
+             over Cyclotomic Field of order 12 and degree 4
 
-            sage: chi = DirichletGroup(109, CyclotomicField(3)).0
-            sage: S3 = CuspForms(chi, 2)
-            sage: S9 = S3.base_extend(CyclotomicField(9))
-            sage: S9
-            Cuspidal subspace of dimension 8 of Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2 over Cyclotomic Field of order 9 and degree 6
-            sage: S9.has_coerce_map_from(S3) # not implemented
+            sage: chi = DirichletGroup(109, CyclotomicField(3)).0                       # optional - sage.modular sage.rings.number_field
+            sage: S3 = CuspForms(chi, 2)                                                # optional - sage.modular sage.rings.number_field
+            sage: S9 = S3.base_extend(CyclotomicField(9)); S9                           # optional - sage.modular sage.rings.number_field
+            Cuspidal subspace of dimension 8 of
+             Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2
+              over Cyclotomic Field of order 9 and degree 6
+            sage: S9.has_coerce_map_from(S3)  # not implemented                         # optional - sage.modular sage.rings.number_field
             True
-            sage: S9.base_extend(CyclotomicField(3))
+            sage: S9.base_extend(CyclotomicField(3))                                    # optional - sage.modular sage.rings.number_field
             Traceback (most recent call last):
             ...
-            TypeError: Base extension of self (over 'Cyclotomic Field of order 9 and degree 6') to ring 'Cyclotomic Field of order 3 and degree 2' not defined.
+            TypeError: Base extension of self (over 'Cyclotomic Field of order 9 and degree 6')
+            to ring 'Cyclotomic Field of order 3 and degree 2' not defined.
 
         """
         if R.has_coerce_map_from(self.base_ring()):
@@ -252,7 +259,10 @@ cdef class Module(Parent):
             sage: from sage.modules.module import Module
             sage: M = Module(ZZ)
             sage: M.endomorphism_ring()
-            Set of Morphisms from <sage.modules.module.Module object at ...> to <sage.modules.module.Module object at ...> in Category of modules over Integer Ring
+            Set of Morphisms
+             from <sage.modules.module.Module object at ...>
+               to <sage.modules.module.Module object at ...>
+               in Category of modules over Integer Ring
         """
         from sage.categories.homset import End
         return End(self)

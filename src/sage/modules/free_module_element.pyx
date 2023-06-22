@@ -2116,9 +2116,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             return "()"
         # compute column widths
         S = [repr(x) for x in self.list(copy=False)]
-        #width = max([len(x) for x in S])
+        # width = max([len(x) for x in S])
         s = "("
-        for i in xrange(d):
+        for i in range(d):
             if i == d-1:
                 sep = ""
             else:

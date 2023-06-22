@@ -50,12 +50,16 @@ Functions
 ---------
 """
 
+from sage.arith.misc import binomial, is_prime_power, is_square
 from sage.categories.sets_cat import EmptySetError
+from sage.misc.lazy_import import lazy_import
 from sage.misc.unknown import Unknown
+
 from .design_catalog import transversal_design  # type:ignore
-from sage.arith.misc import binomial, is_prime_power
-from .group_divisible_designs import GroupDivisibleDesign
 from .designs_pyx import is_pairwise_balanced_design
+from .group_divisible_designs import GroupDivisibleDesign
+
+lazy_import('sage.schemes.plane_conics.constructor', 'Conic')
 
 
 def biplane(n, existence=False):
@@ -413,8 +417,6 @@ def BruckRyserChowla_check(v, k, lambd):
         True
 
     """
-    from sage.arith.misc import is_square
-    from sage.schemes.plane_conics.constructor import Conic
     from sage.rings.rational_field import QQ
 
     # design is not symmetric

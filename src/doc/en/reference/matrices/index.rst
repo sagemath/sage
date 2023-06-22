@@ -94,6 +94,8 @@ objects like operation tables (e.g. the multiplication table of a group).
    sage/matrix/matrix_misc
    sage/matrix/matrix_window
    sage/matrix/misc
+   sage/matrix/misc_mpfr
+   sage/matrix/misc_flint
    sage/matrix/symplectic_basis
    sage/matrix/compute_J_ideal
 
