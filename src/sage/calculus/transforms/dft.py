@@ -423,7 +423,7 @@ class IndexedSequence(SageObject):
         EXAMPLES::
 
             sage: J = list(range(5))
-            sage: I = CC.0; pi = CC(pi)                                                 # optional - sage.symbolic
+            sage: I = CC.0; pi = CC.pi()                                                # optional - sage.symbolic
             sage: A = [exp(-2*pi*i*I/5) for i in J]                                     # optional - sage.symbolic
             sage: s = IndexedSequence(A,J)                                              # optional - sage.symbolic
 

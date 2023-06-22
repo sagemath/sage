@@ -119,7 +119,7 @@ cdef class PSpline:
             sage: ps = polygon_spline(pts)
             sage: ps.value(.5)
             (-0.363380227632...-1j)
-            sage: ps.value(0) - ps.value(2*pi)                                          # optional - sage.symbolic
+            sage: ps.value(0) - ps.value(2*RDF.pi())
             0j
             sage: ps.value(10)
             (0.26760455264...+1j)
@@ -152,7 +152,8 @@ cdef class PSpline:
             sage: ps = polygon_spline(pts)
             sage: ps.derivative(1 / 3)
             (1.27323954473...+0j)
-            sage: ps.derivative(0) - ps.derivative(2*pi)                                # optional - sage.symbolic
+            sage: from math import pi
+            sage: ps.derivative(0) - ps.derivative(2*pi)
             0j
             sage: ps.derivative(10)
             (-1.27323954473...+0j)
@@ -170,7 +171,7 @@ def complex_cubic_spline(pts):
 
     INPUT:
 
-    - ``pts`` A list or array of complex numbers, or tuples of the form
+    - ``pts`` -- A list or array of complex numbers, or tuples of the form
       `(x,y)`.
 
     EXAMPLES:
@@ -181,6 +182,7 @@ def complex_cubic_spline(pts):
         sage: cs = complex_cubic_spline(pts)
         sage: fx = lambda x: cs.value(x).real
         sage: fy = lambda x: cs.value(x).imag
+        sage: from math import pi
         sage: show(parametric_plot((fx, fy), (0, 2*pi)))                                # optional - sage.plot
         sage: m = Riemann_Map([lambda x: cs.value(real(x))],
         ....:                 [lambda x: cs.derivative(real(x))], 0)
@@ -188,9 +190,10 @@ def complex_cubic_spline(pts):
 
     Polygon approximation of a circle::
 
-        sage: pts = [e^(I*t / 25) for t in range(25)]                                   # optional - sage.symbolic
-        sage: cs = complex_cubic_spline(pts)                                            # optional - sage.symbolic
-        sage: cs.derivative(2)                                                          # optional - sage.symbolic
+        sage: from cmath import exp
+        sage: pts = [exp(1j * t / 25) for t in range(25)]
+        sage: cs = complex_cubic_spline(pts)
+        sage: cs.derivative(2)
         (-0.0497765406583...+0.151095006434...j)
     """
     return CCSpline(pts)
@@ -272,7 +275,8 @@ cdef class CCSpline:
             sage: cs = complex_cubic_spline(pts)
             sage: cs.value(4 / 7)
             (-0.303961332787...-1.34716728183...j)
-            sage: cs.value(0) - cs.value(2*pi)                                          # optional - sage.symbolic
+            sage: from math import pi
+            sage: cs.value(0) - cs.value(2*pi)
             0j
             sage: cs.value(-2.73452)
             (0.934561222231...+0.881366116402...j)
@@ -303,7 +307,8 @@ cdef class CCSpline:
             sage: cs = complex_cubic_spline(pts)
             sage: cs.derivative(3 / 5)
             (1.40578892327...-0.225417136326...j)
-            sage: cs.derivative(0) - cs.derivative(2 * pi)                              # optional - sage.symbolic
+            sage: from math import pi
+            sage: cs.derivative(0) - cs.derivative(2 * pi)
             0j
             sage: cs.derivative(-6)
             (2.52047692949...-1.89392588310...j)
