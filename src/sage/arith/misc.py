@@ -3759,7 +3759,24 @@ def binomial(x, m, **kwds):
         sage: n = var('n')                                                              # optional - sage.symbolic
         sage: binomial(n,2)                                                             # optional - sage.symbolic
         1/2*(n - 1)*n
-
+    
+    Test p-adic numbers::
+        K=Qp(3)
+        sage: binomial(K(-1/2),4)
+        1 + 3 + 2*3^2 + 3^3 + 2*3^4 + 3^6 + 3^7 + 3^8 + 3^11 + 2*3^14 + 2*3^16 + 2*3^17 + 2*3^19 + O(3^20)
+        sage: binomial(K(1/3),4)
+        2*3^-5 + 2*3^-4 + 3^-3 + 2*3^-2 + 2*3^-1 + 2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^14 + O(3^15)
+        sage: b=binomial(K(1/3),10)
+        sage: b.parent()
+        3-adic Field with capped relative precision 20
+        
+        F.<w>=Qq(9)
+        sage: binomial(w,4)
+        (w + 2)*3^-1 + (w + 1) + (2*w + 1)*3 + 2*w*3^2 + (2*w + 2)*3^3 + 2*w*3^4 + (2*w + 2)*3^5 + 2*w*3^6 + (2*w + 2)*3^7 + 2*w*3^8 + (2*w + 2)*3^9 + 2*w*3^10 + (2*w + 2)*3^11 + 2*w*3^12 + (2*w + 2)*3^13 + 2*w*3^14 + (2*w + 2)*3^15 + 2*w*3^16 + (2*w + 2)*3^17 + 2*w*3^18 + O(3^19)
+        sage: b=binomial(w,10)
+        sage: b.parent()
+        3-adic Unramified Extension Field in w defined by x^2 + 2*x + 2
+        
     Invalid inputs::
 
         sage: x = polygen(ZZ)
@@ -3840,7 +3857,7 @@ def binomial(x, m, **kwds):
     # case 2: conversion to integers
     try:
         x = ZZ(x)
-    except TypeError:
+    except (TypeError, ValueError):
         pass
     else:
         # Check invertibility of factorial(m) in P
