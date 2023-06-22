@@ -35,7 +35,7 @@ from sage.structure.element cimport parent
 from sage.arith.misc import factor
 from sage.rings.integer_ring import ZZ
 from sage.misc.misc_c import prod
-from sage.misc.misc import subsets
+from sage.combinat.subset import subsets
 from sage.libs.pari.all import pari
 
 

@@ -291,6 +291,7 @@ Comprehensive Module List
     sage/combinat/rsk
     sage/combinat/schubert_polynomial
     sage/combinat/set_partition
+    sage/combinat/set_partition_iterator
     sage/combinat/set_partition_ordered
     sage/combinat/sf/all
     sage/combinat/sf/character

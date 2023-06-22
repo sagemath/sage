@@ -429,7 +429,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         from sage.misc.latex import latex
         args = self.args()
         args = [latex(arg) for arg in args]
-        latex_x =  SymbolicRing._latex_element_(self, x)
+        latex_x = SymbolicRing._latex_element_(self, x)
         if len(args) == 1:
             return r"%s \ {\mapsto}\ %s" % (args[0], latex_x)
         else:

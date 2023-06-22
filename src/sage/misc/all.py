@@ -7,7 +7,6 @@ from .all__sagemath_repl import *
 
 from .misc import (BackslashOperator,
                   cputime,
-                  union, uniq, powerset, subsets,
                   exists, forall, is_iterator,
                   random_sublist, walltime,
                   pad_zeros,

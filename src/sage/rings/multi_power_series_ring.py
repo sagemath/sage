@@ -281,6 +281,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
     #
     # sparse setting may not be implemented completely
     Element = MPowerSeries
+
     @staticmethod
     def __classcall__(cls, base_ring, num_gens, name_list,
                  order='negdeglex', default_prec=10, sparse=False):

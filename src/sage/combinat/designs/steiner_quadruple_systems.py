@@ -718,7 +718,7 @@ def steiner_quadruple_system(n, check=False):
     elif n == 38:
         sqs = IncidenceStructure(38, _SQS38(), copy=False, check=False)
     elif n%12 in [4, 8]:
-        nn =  n // 2
+        nn = n // 2
         sqs = two_n(steiner_quadruple_system(nn, check=False))
     elif n%18 in [4,10]:
         nn = (n+2) // 3

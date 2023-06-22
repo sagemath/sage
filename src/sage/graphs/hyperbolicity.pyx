@@ -146,7 +146,7 @@ Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from libc.string cimport memset
@@ -157,7 +157,6 @@ from memory_allocator cimport MemoryAllocator
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
-from sage.data_structures.bitset import Bitset
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
