@@ -16,12 +16,13 @@ Tuples
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.libs.gap.libgap import libgap
+#from sage.libs.gap.libgap import libgap
+from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-
+from itertools import product, combinations_with_replacement
 
 class Tuples(Parent, UniqueRepresentation):
     """
@@ -75,7 +76,7 @@ class Tuples(Parent, UniqueRepresentation):
         """
         self.S = S
         self.k = k
-        self._index_list = [S.index(s) for s in S]
+        self._index_list = list(dict.fromkeys(S.index(s) for s in S))
         category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
 
@@ -105,22 +106,9 @@ class Tuples(Parent, UniqueRepresentation):
              ['i', 'i'], ['n', 'i'], ['s', 'n'], ['t', 'n'], ['e', 'n'],
              ['i', 'n'], ['n', 'n']]
         """
-        S = self.S
-        k = self.k
-        import copy
-        if k <= 0:
-            yield []
-            return
-        if k == 1:
-            for x in S:
-                yield [x]
-            return
 
-        for s in S:
-            for x in Tuples(S, k - 1):
-                y = copy.copy(x)
-                y.append(s)
-                yield y
+        for p in product(self._index_list, repeat=self.k):
+            yield [self.S[i] for i in reversed(p)]
 
     def cardinality(self):
         """
@@ -133,7 +121,7 @@ class Tuples(Parent, UniqueRepresentation):
             sage: Tuples(S,2).cardinality()
             25
         """
-        return ZZ(libgap.NrTuples(self._index_list, ZZ(self.k)))
+        return ZZ(len(self._index_list)).__pow__(self.k)
 
 
 Tuples_sk = Tuples
@@ -178,7 +166,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         """
         self.S = S
         self.k = k
-        self._index_list = [S.index(s) for s in S]
+        self._index_list = list(dict.fromkeys(S.index(s) for s in S))
         category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
 
@@ -191,7 +179,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         """
         return "Unordered tuples of %s of length %s" % (self.S, self.k)
 
-    def list(self):
+    def __iter__(self):
         """
         EXAMPLES::
 
@@ -202,8 +190,9 @@ class UnorderedTuples(Parent, UniqueRepresentation):
             [['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'b'], ['b', 'c'],
              ['c', 'c']]
         """
-        ans = libgap.UnorderedTuples(self._index_list, ZZ(self.k))
-        return [[self.S[i] for i in l] for l in ans]
+        for ans in combinations_with_replacement(self._index_list, self.k):
+            yield [self.S[i] for i in ans]
+
 
     def cardinality(self):
         """
@@ -213,7 +202,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
             sage: UnorderedTuples(S,2).cardinality()
             15
         """
-        return ZZ(libgap.NrUnorderedTuples(self._index_list, ZZ(self.k)))
+        return binomial(len(self._index_list) + self.k - 1, self.k)
 
 
 UnorderedTuples_sk = UnorderedTuples
