@@ -45,11 +45,6 @@ cdef extern from "gap/calls.h" nogil:
     Obj CALL_XARGS(Obj f, Obj args)   # more than 6 arguments
 
 
-cdef extern from "gap/intobj.h" nogil:
-    Obj INTOBJ_INT(Int)
-    Int INT_INTOBJ(Obj)
-
-
 cdef extern from "gap/libgap-api.h" nogil:
     """
     #define sig_GAP_Enter()  {int t = GAP_Enter(); if (!t) sig_error();}
@@ -79,6 +74,8 @@ cdef extern from "gap/libgap-api.h" nogil:
 
     bint GAP_IsInt(Obj)
     bint GAP_IsSmallInt(Obj)
+    Obj GAP_NewObjIntFromInt(Int val)
+    Int GAP_ValueInt(Obj)
 
     bint GAP_IsList(Obj lst)
     UInt GAP_LenList(Obj lst)
