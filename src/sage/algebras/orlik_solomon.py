@@ -457,29 +457,40 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             sage: O.as_gca()
             Graded Commutative Algebra with generators ('e0', 'e1', 'e2') in degrees (1, 1, 1)
              with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field
+
+        ::
+
+            sage: N = matroids.named_matroids.Fano()
+            sage: O = N.orlik_solomon_algebra(QQ)
+            sage: O.as_gca()
+            Graded Commutative Algebra with generators ('e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6') in degrees (1, 1, 1, 1, 1, 1, 1) with relations [e1*e2 - e1*e3 + e2*e3, e0*e2 - e0*e4 + e2*e4, e0*e1 - e0*e5 + e1*e5, e3*e4 - e3*e5 + e4*e5, e0*e3 - e0*e6 + e3*e6, e1*e4 - e1*e6 + e4*e6, e2*e5 - e2*e6 + e5*e6] over Rational Field
+
         """
         from sage.algebras.commutative_dga import GradedCommutativeAlgebra
-        gens = list(self.algebra_generators())
+        gens = self.algebra_generators()
+        gkeys = gens.keys()
         names = ['e{}'.format(i) for i in range(len(gens))]
         A = GradedCommutativeAlgebra(self.base_ring(), names)
         B = self.basis()
         bas2 = []
         non_basis = []
-        for j, gj in enumerate(gens):
-            for i in range(j):
-                if gens[i] * gj in B:
-                    bas2.append((i, j))
+        for (j, gj) in gens.items():
+            for i in range(gkeys.index(j)):
+                indi = gkeys[i]
+                gi = gens[indi]
+                if gi * gj in B:
+                    bas2.append((indi, j))
                 else:
-                    non_basis.append((i, j))
+                    non_basis.append((indi, j))
         AG = A.gens()
-        AGbas = {(i, j): AG[i] * AG[j] for (i, j) in bas2}
+        AGbas = {(i, j): AG[gkeys.index(i)] * AG[gkeys.index(j)] for (i, j) in bas2}
         gij = {(i, j): gens[i] * gens[j] for (i, j) in bas2}
 
         def rhs(l, m):
             P = gens[l] * gens[m]
             return A.sum(P.coefficient(frozenset(p)) * AGbas[p] for p in bas2)
 
-        I = A.ideal([AG[l]*AG[m] - rhs(l, m) for (l,m) in non_basis])
+        I = A.ideal([AG[gkeys.index(l)]*AG[gkeys.index(m)] - rhs(l, m) for (l,m) in non_basis])
         return A.quotient(I)
 
     def as_cdga(self):
