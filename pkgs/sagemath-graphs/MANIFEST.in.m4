@@ -7,8 +7,6 @@ prune .tox
 exclude *.m4
 include requirements.txt
 
-global-include all__sagemath_graphs.py
-
 graft sage/combinat/posets
 exclude sage/combinat/posets/hasse_cython_flint.p*      # needs flint
 include sage/combinat/abstract_tree.p*
@@ -52,10 +50,8 @@ graft sage/topology            # depends on sage.combinat.subset (now in sagemat
 # Could also try to add:
 # sage/geometry/polyhedron/combinatorial_polyhedron
 
-
-include sage/plot/all.p*
-include sage/plot/colors.p*                     # needed by sage.graphs even when not plotting
-
+global-exclude all__sagemath_*.py
+global-include all__sagemath_graphs.py
 
 global-exclude *.py[co]
 global-exclude *.so
