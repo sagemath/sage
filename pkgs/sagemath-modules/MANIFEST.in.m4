@@ -268,7 +268,7 @@ graft sage/probability                                  # uses gsl
 
 # only needed by interpreter
 graft sage/libs/mpc
-src/sage/rings/complex_mpc.p*
+include src/sage/rings/complex_mpc.p*
 
 # because it needs real_mpfr
 include sage/numerical/gauss_legendre.p*
