@@ -104,8 +104,10 @@ class Tuples(Parent, UniqueRepresentation):
              ['n', 'e'], ['s', 'i'], ['t', 'i'], ['e', 'i'],
              ['i', 'i'], ['n', 'i'], ['s', 'n'], ['t', 'n'], ['e', 'n'],
              ['i', 'n'], ['n', 'n']]
+            sage: Tuples([1,1,2],3).list()
+            [[1, 1, 1], [2, 1, 1], [1, 2, 1], [2, 2, 1], [1, 1, 2],
+             [2, 1, 2], [1, 2, 2], [2, 2, 2]]
         """
-
         for p in product(self._index_list, repeat=self.k):
             yield [self.S[i] for i in reversed(p)]
 
@@ -188,10 +190,11 @@ class UnorderedTuples(Parent, UniqueRepresentation):
             sage: UnorderedTuples(["a","b","c"],2).list()
             [['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'b'], ['b', 'c'],
              ['c', 'c']]
+            sage: UnorderedTuples([1,1,2],3).list()
+            [[1, 1, 1], [1, 1, 2], [1, 2, 2], [2, 2, 2]]
         """
         for ans in combinations_with_replacement(self._index_list, self.k):
             yield [self.S[i] for i in ans]
-
 
     def cardinality(self):
         """
