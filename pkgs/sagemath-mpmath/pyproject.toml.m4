@@ -26,4 +26,5 @@ patches-dir = "vendoring_patches"
 substitute = [
   {match='sage[.]all', replace='sage.all__sagemath_categories'},
   {match="'MPMATH_NOSAGE' not in os.environ and", replace='True or'},
+  {match='from mpmath', replace='from sage.libs.mpmath._vendor.mpmath'},
 ]

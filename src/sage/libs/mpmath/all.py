@@ -5,7 +5,7 @@ import sage.libs.mpmath
 from . import utils as _utils
 
 # Also import internal functions
-from sage.libs.mpmath.libmp import *
+from sage.libs.mpmath._vendor.mpmath.libmp import *
 
 # Main namespace
 from sage.libs.mpmath import *

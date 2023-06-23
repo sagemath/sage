@@ -42,11 +42,11 @@ DEF S_NAN = 5
 
 from .ext_impl cimport *
 
-import sage.libs.mpmath.rational as rationallib
-import sage.libs.mpmath.libmp as libmp
-import sage.libs.mpmath.function_docs as function_docs
-from sage.libs.mpmath.libmp import to_str
-from sage.libs.mpmath.libmp import repr_dps, prec_to_dps, dps_to_prec
+import sage.libs.mpmath._vendor.mpmath.rational as rationallib
+import sage.libs.mpmath._vendor.mpmath.libmp as libmp
+import sage.libs.mpmath._vendor.mpmath.function_docs as function_docs
+from sage.libs.mpmath._vendor.mpmath.libmp import to_str
+from sage.libs.mpmath._vendor.mpmath.libmp import repr_dps, prec_to_dps, dps_to_prec
 
 DEF OP_ADD = 0
 DEF OP_SUB = 1
@@ -1403,7 +1403,7 @@ cdef class wrapped_libmp_function:
 
             sage: from sage.libs.mpmath.ext_main import wrapped_libmp_function
             sage: from sage.libs.mpmath import mp
-            sage: from sage.libs.mpmath.libmp import mpf_exp, mpf_sqrt
+            sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpf_exp, mpf_sqrt
             sage: f = lambda x, prec, rnd: mpf_exp(mpf_sqrt(x, prec, rnd), prec, rnd)
             sage: g = wrapped_libmp_function(f)
             sage: g(mp.mpf(3))
