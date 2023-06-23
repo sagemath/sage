@@ -1,4 +1,5 @@
 include(`sage_spkg_versions_toml.m4')dnl' -*- conf-toml -*-
+[build-system]
 # Minimum requirements for the build system to execute.
 requires = [
     SPKG_INSTALL_REQUIRES_setuptools
