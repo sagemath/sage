@@ -465,14 +465,14 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             sage: O.as_gca()
             Graded Commutative Algebra with generators ('e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6')
              in degrees (1, 1, 1, 1, 1, 1, 1) with relations
-             [e0*e1 - e0*e2 + e1*e2, -e0*e1*e2 + e0*e1*e3 - e0*e2*e3 + e1*e2*e3,
-              e0*e1 - e0*e2 + e1*e2, e0*e1 - e0*e2 + e1*e2,
-              -e0*e1*e2 + e0*e1*e3 - e0*e2*e3 + e1*e2*e3, -e0*e1*e2 + e0*e1*e3 - e0*e2*e3 + e1*e2*e3,
-              e0*e1 - e0*e2 + e1*e2, e0*e1 - e0*e2 + e1*e2, -e0*e1*e2 + e0*e1*e3 - e0*e2*e3 + e1*e2*e3,
-              -e0*e1*e2 + e0*e1*e3 - e0*e2*e3 + e1*e2*e3, e0*e1 - e0*e2 + e1*e2,
-              -e0*e1*e2 + e0*e1*e3 - e0*e2*e3 + e1*e2*e3, e0*e1 - e0*e2 + e1*e2,
-              -e0*e1*e2 + e0*e1*e3 - e0*e2*e3 + e1*e2*e3] over Rational Field
-
+             [-e1*e2 + e1*e3 - e2*e3, e0*e1*e3 - e0*e1*e4 - e0*e3*e4 + e1*e3*e4,
+              e0*e2 + e0*e4 + e2*e4, -e3*e4 + e3*e5 - e4*e5,
+              -e1*e2*e4 + e1*e2*e5 + e1*e4*e5 - e2*e4*e5,
+              -e0*e2*e3 - e0*e2*e5 + e0*e3*e5 + e2*e3*e5, -e0*e1 - e0*e5 + e1*e5,
+              e2*e5 - e2*e6 + e5*e6, e1*e3*e5 - e1*e3*e6 - e1*e5*e6 - e3*e5*e6,
+              e0*e4*e5 - e0*e4*e6 + e0*e5*e6 + e4*e5*e6, e1*e4 + e1*e6 - e4*e6,
+              e2*e3*e4 + e2*e3*e6 - e2*e4*e6 + e3*e4*e6, e0*e3 - e0*e6 + e3*e6,
+              e0*e1*e2 + e0*e1*e6 - e0*e2*e6 + e1*e2*e6] over Rational Field
 
         """
         from sage.algebras.commutative_dga import GradedCommutativeAlgebra
