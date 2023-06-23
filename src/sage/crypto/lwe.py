@@ -283,7 +283,7 @@ class LWE(SageObject):
             sage: L = []
             sage: def add_samples():
             ....:     global L
-            ....:     L += [lwe() for _ in range(1000)]
+            ....:     L += [lwe() for _ in range(100)]
             sage: add_samples()
 
         To test the oracle, we use the internal secret to evaluate the samples
@@ -298,6 +298,7 @@ class LWE(SageObject):
 
             sage: from numpy import std
             sage: while abs(std([e if e <= 200 else e-401 for e in S()]) - 3.0) > 0.01:
+            ....:     L = []  # reset L to avoid quadratic behaviour
             ....:     add_samples()
 
         If ``m`` is not ``None`` the number of available samples is restricted::
@@ -311,7 +312,7 @@ class LWE(SageObject):
             IndexError: Number of available samples exhausted.
         """
         self.n  = ZZ(n)
-        self.m =  m
+        self.m = m
         self.__i = 0
         self.K  = IntegerModRing(q)
         self.FM = FreeModule(self.K, n)
@@ -346,7 +347,6 @@ class LWE(SageObject):
             return "LWE(%d, %d, %s, '%s', %s)"%(self.n,self.K.order(),self.D,self.secret_dist, self.m)
         else:
             return "LWE(%d, %d, %s, %s, %s)"%(self.n,self.K.order(),self.D,self.secret_dist, self.m)
-
 
     def __call__(self):
         """
@@ -545,7 +545,7 @@ class RingLWE(SageObject):
         """
         self.N  = ZZ(N)
         self.n = euler_phi(N)
-        self.m =  m
+        self.m = m
         self.__i = 0
         self.K  = IntegerModRing(q)
 
@@ -582,7 +582,6 @@ class RingLWE(SageObject):
             return "RingLWE(%d, %d, %s, %s, '%s', %s)"%(self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
         else:
             return "RingLWE(%d, %d, %s, %s, %s, %s)"%(self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
-
 
     def __call__(self):
         """

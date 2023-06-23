@@ -45,7 +45,7 @@ REFERENCES:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Literal, Optional, overload
 
 from sage.categories.modules import Modules
 from sage.manifolds.differentiable.vectorfield import VectorField, VectorFieldParal
@@ -57,6 +57,8 @@ from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.tensor.modules.reflexive_module import ReflexiveModule_base
 
 if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_form import DiffForm
+    from sage.manifolds.scalarfield import ScalarField
     from sage.manifolds.differentiable.diff_map import DiffMap
     from sage.manifolds.differentiable.manifold import DifferentiableManifold
 
@@ -396,7 +398,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r"\text{" + str(self) + r"}"
         else:
             return self._latex_name
 
@@ -949,9 +951,16 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
         return self.exterior_power(degree).element_class(self, degree,
-                                       name=name, latex_name=latex_name)
+                                                         name=name,
+                                                         latex_name=latex_name)
 
-    def alternating_form(self, degree, name=None, latex_name=None):
+    @overload
+    def alternating_form(
+        self, degree: Literal[0], name=None, latex_name=None
+    ) -> ScalarField:
+        pass
+
+    def alternating_form(self, degree: int, name=None, latex_name=None) -> DiffForm:
         r"""
         Construct an alternating form on the vector field module
         ``self``.
@@ -1205,7 +1214,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
         return PseudoRiemannianMetric(self, name, signature=signature[0]-signature[1],
                                       latex_name=latex_name)
-
 
     def symplectic_form(
         self, name: Optional[str] = None, latex_name: Optional[str] = None

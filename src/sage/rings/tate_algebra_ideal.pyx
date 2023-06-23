@@ -20,15 +20,13 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 from sage.rings.ideal import Ideal_generic
-from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_GT, op_LE, op_GE
 
-from sage.structure.element cimport Element
 from sage.rings.polynomial.polydict cimport PolyDict
 
 from sage.rings.tate_algebra_element cimport TateAlgebraTerm
@@ -858,7 +856,7 @@ def groebner_basis_pote(I, prec, verbose=0):
         sage: I.groebner_basis(algorithm="PoTe", prec=100)  # indirect doctest
         [...0000000001*x^3 + ...2222222222*y + ...000000000*x^2*y^2 + O(3^99 * <x, y>),
          ...0000000001*x^2*y + ...01210121020 + O(3^100 * <x, y>),
-         ...0000000001*y^2 + ...01210121020*x + ...000000000*x^2*y^3 + ...0000000000*x^3*y + O(3^99 * <x, y>)]
+         ...0000000001*y^2 + ...01210121020*x + ...0000000000*x^3*y + O(3^99 * <x, y>)]
     """
     cdef TateAlgebraElement g, v
     cdef TateAlgebraTerm s, sv, S, ti, tj
@@ -1104,7 +1102,7 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
         sage: I.groebner_basis(algorithm="VaPoTe", prec=100)  # indirect doctest
         [...0000000001*x^3 + ...2222222222*y + ...000000000*x^2*y^2 + O(3^99 * <x, y>),
          ...0000000001*x^2*y + ...01210121020 + O(3^100 * <x, y>),
-         ...0000000001*y^2 + ...01210121020*x + ...000000000*x^2*y^3 + ...0000000000*x^3*y + O(3^99 * <x, y>)]
+         ...0000000001*y^2 + ...01210121020*x + ...0000000000*x^3*y + O(3^99 * <x, y>)]
     """
     cdef TateAlgebraElement g, v
     cdef TateAlgebraTerm s, S, sv, ti, tj

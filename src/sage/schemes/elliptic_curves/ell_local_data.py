@@ -16,8 +16,9 @@ The functions in this file will typically be called by using ``local_data``.
 
 EXAMPLES::
 
-    sage: K.<i> = NumberField(x^2+1)
-    sage: E = EllipticCurve([(2+i)^2,(2+i)^7])
+    sage: x = polygen(ZZ, 'x')
+    sage: K.<i> = NumberField(x^2 + 1)
+    sage: E = EllipticCurve([(2+i)^2, (2+i)^7])
     sage: pp = K.fractional_ideal(2+i)
     sage: da = E.local_data(pp)
     sage: da.has_bad_reduction()
@@ -29,29 +30,31 @@ EXAMPLES::
     sage: da.tamagawa_number()
     4
     sage: da.minimal_model()
-    Elliptic Curve defined by y^2 = x^3 + (4*i+3)*x + (-29*i-278) over Number Field in i with defining polynomial x^2 + 1
+    Elliptic Curve defined by y^2 = x^3 + (4*i+3)*x + (-29*i-278)
+     over Number Field in i with defining polynomial x^2 + 1
 
 An example to show how the Neron model can change as one extends the field::
 
     sage: E = EllipticCurve([0,-1])
     sage: E.local_data(2)
     Local data at Principal ideal (2) of Integer Ring:
-    Reduction type: bad additive
-    Local minimal model: Elliptic Curve defined by y^2 = x^3 - 1 over Rational Field
-    Minimal discriminant valuation: 4
-    Conductor exponent: 4
-    Kodaira Symbol: II
-    Tamagawa Number: 1
+      Reduction type: bad additive
+      Local minimal model: Elliptic Curve defined by y^2 = x^3 - 1 over Rational Field
+      Minimal discriminant valuation: 4
+      Conductor exponent: 4
+      Kodaira Symbol: II
+      Tamagawa Number: 1
 
     sage: EK = E.base_extend(K)
     sage: EK.local_data(1+i)
     Local data at Fractional ideal (i + 1):
-    Reduction type: bad additive
-    Local minimal model: Elliptic Curve defined by y^2 = x^3 + (-1) over Number Field in i with defining polynomial x^2 + 1
-    Minimal discriminant valuation: 8
-    Conductor exponent: 2
-    Kodaira Symbol: IV*
-    Tamagawa Number: 3
+      Reduction type: bad additive
+      Local minimal model: Elliptic Curve defined by y^2 = x^3 + (-1)
+                           over Number Field in i with defining polynomial x^2 + 1
+      Minimal discriminant valuation: 8
+      Conductor exponent: 2
+      Kodaira Symbol: IV*
+      Tamagawa Number: 3
 
 Or how the minimal equation changes::
 
@@ -61,7 +64,8 @@ Or how the minimal equation changes::
     sage: EK = E.base_extend(K)
     sage: da = EK.local_data(1+i)
     sage: da.minimal_model()
-    Elliptic Curve defined by y^2 = x^3 + (-i) over Number Field in i with defining polynomial x^2 + 1
+    Elliptic Curve defined by y^2 = x^3 + (-i)
+     over Number Field in i with defining polynomial x^2 + 1
 
 AUTHORS:
 
@@ -95,7 +99,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
 
-from sage.rings.number_field.number_field import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.ideal import is_Ideal
 
 from .constructor import EllipticCurve
@@ -140,12 +144,13 @@ class EllipticCurveLocalData(SageObject):
         sage: E = EllipticCurve('14a1')
         sage: EllipticCurveLocalData(E,2)
         Local data at Principal ideal (2) of Integer Ring:
-        Reduction type: bad non-split multiplicative
-        Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-        Minimal discriminant valuation: 6
-        Conductor exponent: 1
-        Kodaira Symbol: I6
-        Tamagawa Number: 2
+          Reduction type: bad non-split multiplicative
+          Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6
+                               over Rational Field
+          Minimal discriminant valuation: 6
+          Conductor exponent: 1
+          Kodaira Symbol: I6
+          Tamagawa Number: 2
     """
 
     def __init__(self, E, P, proof=None, algorithm="pari", globally=False):
@@ -184,65 +189,70 @@ class EllipticCurveLocalData(SageObject):
 
             sage: from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
             sage: E = EllipticCurve('14a1')
-            sage: EllipticCurveLocalData(E,2)
+            sage: EllipticCurveLocalData(E, 2)
             Local data at Principal ideal (2) of Integer Ring:
-            Reduction type: bad non-split multiplicative
-            Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-            Minimal discriminant valuation: 6
-            Conductor exponent: 1
-            Kodaira Symbol: I6
-            Tamagawa Number: 2
+              Reduction type: bad non-split multiplicative
+              Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6
+                                   over Rational Field
+              Minimal discriminant valuation: 6
+              Conductor exponent: 1
+              Kodaira Symbol: I6
+              Tamagawa Number: 2
 
         ::
 
-            sage: EllipticCurveLocalData(E,2,algorithm="generic")
+            sage: EllipticCurveLocalData(E, 2, algorithm="generic")
             Local data at Principal ideal (2) of Integer Ring:
-            Reduction type: bad non-split multiplicative
-            Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-            Minimal discriminant valuation: 6
-            Conductor exponent: 1
-            Kodaira Symbol: I6
-            Tamagawa Number: 2
+              Reduction type: bad non-split multiplicative
+              Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6
+                                   over Rational Field
+              Minimal discriminant valuation: 6
+              Conductor exponent: 1
+              Kodaira Symbol: I6
+              Tamagawa Number: 2
 
         ::
 
-            sage: EllipticCurveLocalData(E,2,algorithm="pari")
+            sage: EllipticCurveLocalData(E, 2, algorithm="pari")
             Local data at Principal ideal (2) of Integer Ring:
-            Reduction type: bad non-split multiplicative
-            Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-            Minimal discriminant valuation: 6
-            Conductor exponent: 1
-            Kodaira Symbol: I6
-            Tamagawa Number: 2
+              Reduction type: bad non-split multiplicative
+              Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6
+                                   over Rational Field
+              Minimal discriminant valuation: 6
+              Conductor exponent: 1
+              Kodaira Symbol: I6
+              Tamagawa Number: 2
 
         ::
 
-            sage: EllipticCurveLocalData(E,2,algorithm="unknown")
+            sage: EllipticCurveLocalData(E, 2, algorithm="unknown")
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be one of 'pari', 'generic'
 
         ::
 
-            sage: EllipticCurveLocalData(E,3)
+            sage: EllipticCurveLocalData(E, 3)
             Local data at Principal ideal (3) of Integer Ring:
-            Reduction type: good
-            Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-            Minimal discriminant valuation: 0
-            Conductor exponent: 0
-            Kodaira Symbol: I0
-            Tamagawa Number: 1
+              Reduction type: good
+              Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6
+                                   over Rational Field
+              Minimal discriminant valuation: 0
+              Conductor exponent: 0
+              Kodaira Symbol: I0
+              Tamagawa Number: 1
 
         ::
 
-            sage: EllipticCurveLocalData(E,7)
+            sage: EllipticCurveLocalData(E, 7)
             Local data at Principal ideal (7) of Integer Ring:
-            Reduction type: bad split multiplicative
-            Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-            Minimal discriminant valuation: 3
-            Conductor exponent: 1
-            Kodaira Symbol: I3
-            Tamagawa Number: 3
+              Reduction type: bad split multiplicative
+              Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6
+                                   over Rational Field
+              Minimal discriminant valuation: 3
+              Conductor exponent: 1
+              Kodaira Symbol: I3
+              Tamagawa Number: 3
         """
         self._curve = E
         K = E.base_field()
@@ -313,8 +323,8 @@ class EllipticCurveLocalData(SageObject):
 
             sage: from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
             sage: E = EllipticCurve([0,0,0,0,64]); E
-            Elliptic Curve defined by y^2  = x^3 + 64 over Rational Field
-            sage: data = EllipticCurveLocalData(E,2)
+            Elliptic Curve defined by y^2 = x^3 + 64 over Rational Field
+            sage: data = EllipticCurveLocalData(E, 2)
             sage: data.minimal_model()
             Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
             sage: data.minimal_model() == E.local_minimal_model(2)
@@ -322,12 +332,15 @@ class EllipticCurveLocalData(SageObject):
 
         To demonstrate the behaviour of the parameter ``reduce``::
 
-            sage: K.<a> = NumberField(x^3+x+1)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 + x + 1)
             sage: E = EllipticCurve(K, [0, 0, a, 0, 1])
             sage: E.local_data(K.ideal(a-1)).minimal_model()
-            Elliptic Curve defined by y^2 + a*y = x^3 + 1 over Number Field in a with defining polynomial x^3 + x + 1
+            Elliptic Curve defined by y^2 + a*y = x^3 + 1
+             over Number Field in a with defining polynomial x^3 + x + 1
             sage: E.local_data(K.ideal(a-1)).minimal_model(reduce=False)
-            Elliptic Curve defined by y^2 + (a+2)*y = x^3 + 3*x^2 + 3*x + (-a+1) over Number Field in a with defining polynomial x^3 + x + 1
+            Elliptic Curve defined by y^2 + (a+2)*y = x^3 + 3*x^2 + 3*x + (-a+1)
+             over Number Field in a with defining polynomial x^3 + x + 1
 
             sage: E = EllipticCurve([2, 1, 0, -2, -1])
             sage: E.local_data(ZZ.ideal(2), algorithm="generic").minimal_model(reduce=False)
@@ -345,10 +358,15 @@ class EllipticCurveLocalData(SageObject):
 
             sage: t = QQ['t'].0
             sage: K.<g> = NumberField(t^4 - t^3-3*t^2 - t +1)
-            sage: E = EllipticCurve([-2*g^3 + 10/3*g^2 + 3*g - 2/3, -11/9*g^3 + 34/9*g^2 - 7/3*g + 4/9, -11/9*g^3 + 34/9*g^2 - 7/3*g + 4/9, 0, 0])
+            sage: E = EllipticCurve([-2*g^3 + 10/3*g^2 + 3*g - 2/3,
+            ....:                    -11/9*g^3 + 34/9*g^2 - 7/3*g + 4/9,
+            ....:                    -11/9*g^3 + 34/9*g^2 - 7/3*g + 4/9, 0, 0])
             sage: vv = K.fractional_ideal(g^2 - g - 2)
             sage: E.local_data(vv).minimal_model()
-            Elliptic Curve defined by y^2 + (-2*g^3+10/3*g^2+3*g-2/3)*x*y + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*y = x^3 + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*x^2 over Number Field in g with defining polynomial t^4 - t^3 - 3*t^2 - t + 1
+            Elliptic Curve defined by
+             y^2 + (-2*g^3+10/3*g^2+3*g-2/3)*x*y + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*y
+              = x^3 + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*x^2
+             over Number Field in g with defining polynomial t^4 - t^3 - 3*t^2 - t + 1
         """
         if reduce:
             try:
@@ -455,7 +473,7 @@ class EllipticCurveLocalData(SageObject):
 
             sage: from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
             sage: E = EllipticCurve('816a1')
-            sage: data = EllipticCurveLocalData(E,2)
+            sage: data = EllipticCurveLocalData(E, 2)
             sage: data.kodaira_symbol()
             I2*
             sage: data.tamagawa_number()
@@ -464,7 +482,7 @@ class EllipticCurveLocalData(SageObject):
             2
 
             sage: E = EllipticCurve('200c4')
-            sage: data = EllipticCurveLocalData(E,5)
+            sage: data = EllipticCurveLocalData(E, 5)
             sage: data.kodaira_symbol()
             I4*
             sage: data.tamagawa_number()
@@ -499,9 +517,10 @@ class EllipticCurveLocalData(SageObject):
             sage: [(p,E.local_data(p).bad_reduction_type()) for p in prime_range(15)]
             [(2, -1), (3, None), (5, None), (7, 1), (11, None), (13, None)]
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
-            sage: E = EllipticCurve([0,0,0,0,2*a+1])
+            sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
             sage: [(p,E.local_data(p).bad_reduction_type()) for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), None), (Fractional ideal (2*a + 1), 0)]
         """
@@ -517,12 +536,13 @@ class EllipticCurveLocalData(SageObject):
             sage: [(p,E.local_data(p).has_good_reduction()) for p in prime_range(15)]
             [(2, False), (3, True), (5, True), (7, False), (11, True), (13, True)]
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
-            sage: E = EllipticCurve([0,0,0,0,2*a+1])
+            sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
             sage: [(p,E.local_data(p).has_good_reduction()) for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), True),
-            (Fractional ideal (2*a + 1), False)]
+             (Fractional ideal (2*a + 1), False)]
         """
         return self._reduction_type is None
 
@@ -538,12 +558,13 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
-            sage: E = EllipticCurve([0,0,0,0,2*a+1])
+            sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
             sage: [(p,E.local_data(p).has_bad_reduction()) for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), False),
-            (Fractional ideal (2*a + 1), True)]
+             (Fractional ideal (2*a + 1), True)]
         """
         return self._reduction_type is not None
 
@@ -559,14 +580,15 @@ class EllipticCurveLocalData(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('14a1')
-            sage: [(p,E.local_data(p).has_multiplicative_reduction()) for p in prime_range(15)]
+            sage: [(p, E.local_data(p).has_multiplicative_reduction()) for p in prime_range(15)]
             [(2, True), (3, False), (5, False), (7, True), (11, False), (13, False)]
 
         ::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
-            sage: E = EllipticCurve([0,0,0,0,2*a+1])
+            sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
             sage: [(p,E.local_data(p).has_multiplicative_reduction()) for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), False), (Fractional ideal (2*a + 1), False)]
         """
@@ -579,17 +601,20 @@ class EllipticCurveLocalData(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('14a1')
-            sage: [(p,E.local_data(p).has_split_multiplicative_reduction()) for p in prime_range(15)]
+            sage: [(p, E.local_data(p).has_split_multiplicative_reduction())
+            ....:  for p in prime_range(15)]
             [(2, False), (3, False), (5, False), (7, True), (11, False), (13, False)]
 
         ::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
-            sage: E = EllipticCurve([0,0,0,0,2*a+1])
-            sage: [(p,E.local_data(p).has_split_multiplicative_reduction()) for p in [P17a,P17b]]
+            sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
+            sage: [(p,E .local_data(p).has_split_multiplicative_reduction())
+            ....:  for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), False),
-            (Fractional ideal (2*a + 1), False)]
+             (Fractional ideal (2*a + 1), False)]
         """
         return self._reduction_type == +1
 
@@ -600,15 +625,18 @@ class EllipticCurveLocalData(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('14a1')
-            sage: [(p,E.local_data(p).has_nonsplit_multiplicative_reduction()) for p in prime_range(15)]
+            sage: [(p, E.local_data(p).has_nonsplit_multiplicative_reduction())
+            ....:  for p in prime_range(15)]
             [(2, True), (3, False), (5, False), (7, False), (11, False), (13, False)]
 
         ::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
-            sage: E = EllipticCurve([0,0,0,0,2*a+1])
-            sage: [(p,E.local_data(p).has_nonsplit_multiplicative_reduction()) for p in [P17a,P17b]]
+            sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
+            sage: [(p, E.local_data(p).has_nonsplit_multiplicative_reduction())
+            ....:  for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), False), (Fractional ideal (2*a + 1), False)]
         """
         return self._reduction_type == -1
@@ -620,17 +648,18 @@ class EllipticCurveLocalData(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('27a1')
-            sage: [(p,E.local_data(p).has_additive_reduction()) for p in prime_range(15)]
+            sage: [(p, E.local_data(p).has_additive_reduction()) for p in prime_range(15)]
             [(2, False), (3, True), (5, False), (7, False), (11, False), (13, False)]
 
         ::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
-            sage: E = EllipticCurve([0,0,0,0,2*a+1])
-            sage: [(p,E.local_data(p).has_additive_reduction()) for p in [P17a,P17b]]
+            sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
+            sage: [(p, E.local_data(p).has_additive_reduction()) for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), False),
-            (Fractional ideal (2*a + 1), True)]
+             (Fractional ideal (2*a + 1), True)]
         """
         return self._reduction_type == 0
 
@@ -683,7 +712,8 @@ class EllipticCurveLocalData(SageObject):
 
         The following example shows that the bug at :trac:`9324` is fixed::
 
-            sage: K.<a> = NumberField(x^2-x+6)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - x + 6)
             sage: E = EllipticCurve([0,0,0,-53160*a-43995,-5067640*a+19402006])
             sage: E.conductor() # indirect doctest
             Fractional ideal (18, 6*a)
@@ -1111,8 +1141,9 @@ def check_prime(K, P):
         3
         sage: check_prime(QQ,ZZ.ideal(31))
         31
-        sage: K.<a> = NumberField(x^2-5)
-        sage: check_prime(K,a)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 5)
+        sage: check_prime(K, a)
         Fractional ideal (a)
         sage: check_prime(K,a+1)
         Fractional ideal (a + 1)
@@ -1122,11 +1153,14 @@ def check_prime(K, P):
         sage: check_prime(K, L.ideal(5))
         Traceback (most recent call last):
         ...
-        TypeError: The ideal Fractional ideal (5) is not a prime ideal of Number Field in a with defining polynomial x^2 - 5
+        TypeError: The ideal Fractional ideal (5) is not a prime ideal of
+        Number Field in a with defining polynomial x^2 - 5
         sage: check_prime(K, L.ideal(b))
         Traceback (most recent call last):
         ...
-        TypeError: No compatible natural embeddings found for Number Field in a with defining polynomial x^2 - 5 and Number Field in b with defining polynomial x^2 + 3
+        TypeError: No compatible natural embeddings found for
+        Number Field in a with defining polynomial x^2 - 5 and
+        Number Field in b with defining polynomial x^2 + 3
     """
     if K is QQ:
         if P in ZZ or isinstance(P, (Integer, int)):
@@ -1145,7 +1179,7 @@ def check_prime(K, P):
         else:
             raise TypeError("%s is neither an element of QQ or an ideal of %s" % (P, ZZ))
 
-    if not is_NumberField(K):
+    if not isinstance(K, NumberField):
         raise TypeError("%s is not a number field" % (K,))
 
     if is_NumberFieldFractionalIdeal(P) or P in K:

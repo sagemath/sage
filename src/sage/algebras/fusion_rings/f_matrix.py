@@ -10,12 +10,10 @@ The F-Matrix of a Fusion Ring
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
 from copy import deepcopy
 from ctypes import cast, py_object
 from itertools import product, zip_longest
-from multiprocessing import  Pool, cpu_count, set_start_method, shared_memory
+from multiprocessing import Pool, cpu_count, set_start_method, shared_memory
 import numpy as np
 from os import getpid, remove
 import pickle
@@ -132,7 +130,7 @@ class FMatrix(SageObject):
 
     See [TTWL2009]_ for an introduction to this topic,
     [EGNO2015]_ Section 4.9 for a precise mathematical
-    definition, and [Bond2007]_ Section 2.5 for a discussion
+    definition, and [Bond2007]_ Section 2.5 and [Ab2022]_ for discussions
     of how to compute the F-matrix. In addition to
     [Bond2007]_, worked out F-matrices may be found in
     [RoStWa2009]_ and [CHW2015]_.
@@ -2201,7 +2199,7 @@ class FMatrix(SageObject):
             adding equation... fx18 - 1
             adding equation... fx21 - 1
         """
-        while not all(v for v in self._solved):
+        while not all(self._solved):
             # Get a variable that has not been fixed
             # In ascending index order, for consistent results
             for i, var in enumerate(self._poly_ring.gens()):
@@ -2219,7 +2217,7 @@ class FMatrix(SageObject):
         r"""
         Substitute known value from linear univariate polynomial and
         solve, following [Bond2007]_ p.37, for two-term linear equation
-        for one of the variables.
+        for one of the variables. See also [Ab2022]_.
 
         EXAMPLES::
 

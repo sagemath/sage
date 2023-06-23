@@ -21,7 +21,7 @@ from sage.groups.affine_gps.affine_group import AffineGroup
 
 class EuclideanGroup(AffineGroup):
     r"""
-    an Euclidean group.
+    A Euclidean group.
 
     The Euclidean group `E(A)` (or general affine group) of an affine
     space `A` is the group of all invertible affine transformations from
@@ -121,11 +121,11 @@ class EuclideanGroup(AffineGroup):
 
     Some additional ways to create Euclidean groups::
 
-        sage: A = AffineSpace(2, GF(4,'a'));  A
+        sage: A = AffineSpace(2, GF(4,'a'));  A                                                     # optional - sage.rings.finite_rings
         Affine Space of dimension 2 over Finite Field in a of size 2^2
-        sage: G = EuclideanGroup(A); G
+        sage: G = EuclideanGroup(A); G                                                              # optional - sage.rings.finite_rings
         Euclidean Group of degree 2 over Finite Field in a of size 2^2
-        sage: G is EuclideanGroup(2,4) # shorthand
+        sage: G is EuclideanGroup(2,4) # shorthand                                                  # optional - sage.rings.finite_rings
         True
 
         sage: V = ZZ^3;  V
@@ -144,9 +144,9 @@ class EuclideanGroup(AffineGroup):
         sage: V = QQ^6
         sage: E6 is EuclideanGroup(V)
         True
-        sage: G = EuclideanGroup(2, GF(5)); G
+        sage: G = EuclideanGroup(2, GF(5)); G                                                       # optional - sage.rings.finite_rings
         Euclidean Group of degree 2 over Finite Field of size 5
-        sage: TestSuite(G).run()
+        sage: TestSuite(G).run()                                                                    # optional - sage.rings.finite_rings
 
     REFERENCES:
 
@@ -195,8 +195,8 @@ class EuclideanGroup(AffineGroup):
         r"""
         EXAMPLES::
 
-            sage: G = EuclideanGroup(6, GF(5))
-            sage: latex(G)
+            sage: G = EuclideanGroup(6, GF(5))                                                      # optional - sage.rings.finite_rings
+            sage: latex(G)                                                                          # optional - sage.rings.finite_rings
             \mathrm{E}_{6}(\Bold{F}_{5})
         """
         return "\\mathrm{E}_{%s}(%s)"%(self.degree(), self.base_ring()._latex_())
@@ -207,7 +207,7 @@ class EuclideanGroup(AffineGroup):
 
         EXAMPLES::
 
-            sage: EuclideanGroup(6, GF(5))
+            sage: EuclideanGroup(6, GF(5))                                                          # optional - sage.rings.finite_rings
             Euclidean Group of degree 6 over Finite Field of size 5
         """
         return "Euclidean Group of degree %s over %s"%(self.degree(), self.base_ring())
@@ -218,18 +218,18 @@ class EuclideanGroup(AffineGroup):
 
         EXAMPLES::
 
-            sage: G = EuclideanGroup(4, GF(3))
-            sage: G.random_element()  # random
+            sage: G = EuclideanGroup(4, GF(3))                                                      # optional - sage.rings.finite_rings
+            sage: G.random_element()  # random                                                      # optional - sage.rings.finite_rings
                   [2 1 2 1]     [1]
                   [1 2 2 1]     [0]
             x |-> [2 2 2 2] x + [1]
                   [1 1 2 2]     [2]
-            sage: G.random_element() in G
+            sage: G.random_element() in G                                                           # optional - sage.rings.finite_rings
             True
 
         TESTS::
 
-            sage: G.random_element().A().is_unitary()
+            sage: G.random_element().A().is_unitary()                                               # optional - sage.rings.finite_rings
             True
         """
         while True:

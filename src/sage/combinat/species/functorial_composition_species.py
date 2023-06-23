@@ -71,8 +71,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
              {{1, 2}*{3}, {1, 3}*{2}, {2, 3}*{1}}]
         """
         gs = self._G.structures(s).list()
-        for f in self._F.structures(gs):
-            yield f
+        yield from self._F.structures(gs)
 
     def _isotypes(self, structure_class, s):
         """

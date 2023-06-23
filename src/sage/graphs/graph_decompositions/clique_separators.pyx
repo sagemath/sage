@@ -21,7 +21,6 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from libcpp.pair cimport pair
 from libcpp.vector cimport vector
 from libc.stdint cimport uint32_t
 from cysignals.signals cimport sig_on, sig_off, sig_check
@@ -523,8 +522,6 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     cdef vector[int] Sint_min
     cdef vector[int] Cint
     cdef vector[int] Hx
-    cdef size_t ui, vi
-    cdef bint stop
 
     for i in range(N):
         sig_check()

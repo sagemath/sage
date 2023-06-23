@@ -156,7 +156,7 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
         sage: TestSuite(FiniteSetMaps([], [1, 2])).run()
     """
     @staticmethod
-    def __classcall_private__(cls, domain, codomain = None, action = "left", category = None):
+    def __classcall_private__(cls, domain, codomain=None, action="left", category=None):
         """
         TESTS::
 

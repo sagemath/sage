@@ -67,9 +67,9 @@ class Test:
             weights = list(range(2, int(weights) + 1))
         self.levels = levels
         self.weights = weights
-        if not(levels):
+        if not levels:
             raise RuntimeError("levels must have positive length")
-        if not(weights):
+        if not weights:
             raise RuntimeError("weights must have positive length")
         self.current_space = None
         self.onlyg0 = onlyg0
@@ -78,7 +78,7 @@ class Test:
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -310,12 +310,11 @@ class Test:
         M = self._modular_symbols_space()
         V1 = M.cuspidal_submodule().new_submodule()
         V2 = M.new_submodule().cuspidal_submodule()
-        assert V1 == V2, "Test failed for M=\"%s\", where the new cuspidal and cuspidal new spaces are computed differently."%M
+        assert V1 == V2, "Test failed for M=\"%s\", where the new cuspidal and cuspidal new spaces are computed differently." % M
         d = M._cuspidal_new_submodule_dimension_formula()
         assert d == V1.dimension(), \
-            "Test failed for M=\"%s\", where computed dimension is %s but formula dimension is %s."%(
-                     M, V1.dimension(), d)
-
+            "Test failed for M=\"%s\", where computed dimension is %s but formula dimension is %s." % (
+                M, V1.dimension(), d)
 
     def test_decomposition(self):
         """

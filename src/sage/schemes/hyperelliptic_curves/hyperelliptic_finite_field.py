@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Hyperelliptic curves over a finite field
 
@@ -7,7 +8,8 @@ EXAMPLES::
     sage: x = polygen(K)
     sage: C = HyperellipticCurve(x^7 - x^5 - 2, x^2 + a)
     sage: C._points_fast_sqrt()
-    [(0 : 1 : 0), (a + 1 : a : 1), (a + 1 : a + 1 : 1), (2 : a + 1 : 1), (2*a : 2*a + 2 : 1), (2*a : 2*a : 1), (1 : a + 1 : 1)]
+    [(0 : 1 : 0), (a + 1 : a : 1), (a + 1 : a + 1 : 1), (2 : a + 1 : 1),
+     (2*a : 2*a + 2 : 1), (2*a : 2*a : 1), (1 : a + 1 : 1)]
 
 AUTHORS:
 
@@ -204,7 +206,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.frobenius_matrix_hypellfrob()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Computation of Frobenius matrix only implemented for hyperelliptic curves defined over prime fields.
+            NotImplementedError: Computation of Frobenius matrix only implemented
+            for hyperelliptic curves defined over prime fields.
 
         nor too small characteristic::
 
@@ -279,7 +282,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.frobenius_matrix(algorithm='hypellfrob')
             Traceback (most recent call last):
             ...
-            NotImplementedError: Computation of Frobenius matrix only implemented for hyperelliptic curves defined over prime fields.
+            NotImplementedError: Computation of Frobenius matrix only implemented
+            for hyperelliptic curves defined over prime fields.
 
         nor too small characteristic::
 
@@ -333,7 +337,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.frobenius_polynomial_cardinalities()
             x^4 + 8*x^3 + 70*x^2 + 392*x + 2401
 
-        This method may actually be useful when `hypellfrob` does not work::
+        This method may actually be useful when ``hypellfrob`` does not work::
 
             sage: K = GF(7)
             sage: R.<t> = PolynomialRing(K)
@@ -394,10 +398,15 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^9 + t^5 + 1)
             sage: H.frobenius_polynomial_matrix()
-            x^8 + 281*x^7 + 55939*x^6 + 14144175*x^5 + 3156455369*x^4 + 707194605825*x^3 + 139841906155939*x^2 + 35122892542149719*x + 6249500014999800001
+            x^8 + 281*x^7 + 55939*x^6 + 14144175*x^5 + 3156455369*x^4 + 707194605825*x^3
+            + 139841906155939*x^2 + 35122892542149719*x + 6249500014999800001
             sage: H = HyperellipticCurve(t^15 + t^5 + 1)
-            sage: H.frobenius_polynomial_matrix() # long time, 8s on a Corei7
-            x^14 - 76*x^13 + 220846*x^12 - 12984372*x^11 + 24374326657*x^10 - 1203243210304*x^9 + 1770558798515792*x^8 - 74401511415210496*x^7 + 88526169366991084208*x^6 - 3007987702642212810304*x^5 + 3046608028331197124223343*x^4 - 81145833008762983138584372*x^3 + 69007473838551978905211279154*x^2 - 1187357507124810002849977200076*x + 781140631562281254374947500349999
+            sage: H.frobenius_polynomial_matrix()  # long time, 8s on a Corei7
+            x^14 - 76*x^13 + 220846*x^12 - 12984372*x^11 + 24374326657*x^10 - 1203243210304*x^9
+            + 1770558798515792*x^8 - 74401511415210496*x^7 + 88526169366991084208*x^6
+            - 3007987702642212810304*x^5 + 3046608028331197124223343*x^4
+            - 81145833008762983138584372*x^3 + 69007473838551978905211279154*x^2
+            - 1187357507124810002849977200076*x + 781140631562281254374947500349999
 
         This ``hypellfrob`` program doesn't support non-prime fields::
 
@@ -407,7 +416,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.frobenius_polynomial_matrix(algorithm='hypellfrob')
             Traceback (most recent call last):
             ...
-            NotImplementedError: Computation of Frobenius matrix only implemented for hyperelliptic curves defined over prime fields.
+            NotImplementedError: Computation of Frobenius matrix only implemented
+            for hyperelliptic curves defined over prime fields.
         """
         K = self.base_ring()
         p = K.characteristic()
@@ -594,7 +604,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: x = polygen(K)
             sage: C = HyperellipticCurve(x^7 - 1, x^2 + a)
             sage: C._points_fast_sqrt()
-            [(0 : 1 : 0), (a : 2*a + 1 : 1), (2 : a + 1 : 1), (2*a + 2 : 2*a : 1), (2*a + 2 : 1 : 1), (1 : 2*a + 2 : 1), (1 : 0 : 1)]
+            [(0 : 1 : 0), (a : 2*a + 1 : 1), (2 : a + 1 : 1), (2*a + 2 : 2*a : 1),
+             (2*a + 2 : 1 : 1), (1 : 2*a + 2 : 1), (1 : 0 : 1)]
             sage: K.<a> = GF(49, 'a')
             sage: x = polygen(K)
             sage: C = HyperellipticCurve(x^5 - x^2 - 1, x^2 + a)
@@ -614,7 +625,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: x = polygen(GF(13))
             sage: C = HyperellipticCurve(x^3 + x^2 - 1)
             sage: C._points_fast_sqrt()
-            [(0 : 1 : 0), (0 : 5 : 1), (0 : 8 : 1), (1 : 1 : 1), (1 : 12 : 1), (3 : 3 : 1), (3 : 10 : 1), (4 : 1 : 1), (4 : 12 : 1), (6 : 2 : 1), (6 : 11 : 1), (7 : 1 : 1), (7 : 12 : 1), (8 : 4 : 1), (8 : 9 : 1), (9 : 4 : 1), (9 : 9 : 1), (12 : 5 : 1), (12 : 8 : 1)]
+            [(0 : 1 : 0), (0 : 5 : 1), (0 : 8 : 1), (1 : 1 : 1), (1 : 12 : 1),
+             (3 : 3 : 1), (3 : 10 : 1), (4 : 1 : 1), (4 : 12 : 1), (6 : 2 : 1),
+             (6 : 11 : 1), (7 : 1 : 1), (7 : 12 : 1), (8 : 4 : 1), (8 : 9 : 1),
+             (9 : 4 : 1), (9 : 9 : 1), (12 : 5 : 1), (12 : 8 : 1)]
             sage: set(C._points_fast_sqrt()) == set(C._points_cache_sqrt())
             True
         """
@@ -641,7 +655,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         elif K.characteristic() == 2: # deg(P) = 2 and char(K) = 2
             # quadratic equation doesn't work in characteristic 2 so use brute
             # force
-            points += [self.point([K(1), y, K(0)], check=True) for y in K \
+            points += [self.point([K(1), y, K(0)], check=True) for y in K
                        if not P(K(1), y, K(0))]
         else: # deg(P) = 2 and char(K) not 2
             # P(1, y, 0) = y^2 + r*y + s
@@ -714,7 +728,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurve(x^3 + x^2 - 1)
             sage: C._points_cache_sqrt()
-            [(0 : 1 : 0), (1 : 6 : 1), (1 : 1 : 1), (2 : 5 : 1), (2 : 2 : 1), (3 : 0 : 1), (4 : 4 : 1), (4 : 3 : 1), (5 : 4 : 1), (5 : 3 : 1)]
+            [(0 : 1 : 0), (1 : 6 : 1), (1 : 1 : 1), (2 : 5 : 1), (2 : 2 : 1),
+             (3 : 0 : 1), (4 : 4 : 1), (4 : 3 : 1), (5 : 4 : 1), (5 : 3 : 1)]
             sage: set(C._points_cache_sqrt()) == set(C._points_cache_sqrt(brute_force=True))
             True
         """
@@ -733,7 +748,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             # (0:1:0) is a point on the curve
             points = [self.point([K(0), K(1), K(0)], check=True)]
         else:
-            points=[]
+            points = []
         if P.degree() > 2:
             # P(1, y, 0) = r*y + s
             s = P(K(1), K(0), K(0))
@@ -744,7 +759,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         elif K.characteristic() == 2: # deg(P) = 2 and char(K) = 2
             # quadratic equation doesn't work in characteristic 2 so use brute
             # force
-            points += [self.point([K(1), y, K(0)], check=True) for y in K \
+            points += [self.point([K(1), y, K(0)], check=True) for y in K
                        if not P(K(1), y, K(0))]
         else: # deg(P) = 2 and char(K) not 2
             # P(1, y, 0) = y^2 + r*y + s
@@ -796,7 +811,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurve(x^7 - x^2 - 1)
             sage: C.points()
-            [(0 : 1 : 0), (2 : 5 : 1), (2 : 2 : 1), (3 : 0 : 1), (4 : 6 : 1), (4 : 1 : 1), (5 : 0 : 1), (6 : 5 : 1), (6 : 2 : 1)]
+            [(0 : 1 : 0), (2 : 5 : 1), (2 : 2 : 1), (3 : 0 : 1), (4 : 6 : 1),
+             (4 : 1 : 1), (5 : 0 : 1), (6 : 5 : 1), (6 : 2 : 1)]
 
         ::
 
@@ -811,7 +827,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: R.<x> = GF(7)[]
             sage: H = HyperellipticCurve(3*x^2 + 5*x + 1)
             sage: H.points()
-            [(0 : 6 : 1), (0 : 1 : 1), (1 : 4 : 1), (1 : 3 : 1), (2 : 4 : 1), (2 : 3 : 1), (3 : 6 : 1), (3 : 1 : 1)]
+            [(0 : 6 : 1), (0 : 1 : 1), (1 : 4 : 1), (1 : 3 : 1), (2 : 4 : 1),
+             (2 : 3 : 1), (3 : 6 : 1), (3 : 1 : 1)]
 
         The method currently lists points on the plane projective model, that
         is the closure in `\mathbb{P}^2` of the curve defined by `y^2+hy=f`.
@@ -827,7 +844,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: R.<x>=GF(11)[]
             sage: H = HyperellipticCurve(x*(x+1)*(x+2)*(x+3)*(x+4)*(x+5))
             sage: H.points()
-            [(0 : 1 : 0), (0 : 0 : 1), (1 : 7 : 1), (1 : 4 : 1), (5 : 7 : 1), (5 : 4 : 1), (6 : 0 : 1), (7 : 0 : 1), (8 : 0 : 1), (9 : 0 : 1), (10 : 0 : 1)]
+            [(0 : 1 : 0), (0 : 0 : 1), (1 : 7 : 1), (1 : 4 : 1), (5 : 7 : 1), (5 : 4 : 1),
+             (6 : 0 : 1), (7 : 0 : 1), (8 : 0 : 1), (9 : 0 : 1), (10 : 0 : 1)]
 
         The plane model of the genus 2 hyperelliptic curve in the above example
         is the curve in `\mathbb{P}^2` defined by `y^2z^4=g(x,z)` where
@@ -1571,21 +1589,21 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         EXAMPLES::
 
-            sage: K.<x>=GF(9,'x')[]
-            sage: C=HyperellipticCurve(x^7-1,0)
+            sage: K.<x> = GF(9,'x')[]
+            sage: C = HyperellipticCurve(x^7 - 1, 0)
             sage: C.Cartier_matrix()
             [0 0 2]
             [0 0 0]
             [0 1 0]
 
-            sage: K.<x>=GF(49,'x')[]
-            sage: C=HyperellipticCurve(x^5+1,0)
+            sage: K.<x> = GF(49, 'x')[]
+            sage: C = HyperellipticCurve(x^5 + 1, 0)
             sage: C.Cartier_matrix()
             [0 3]
             [0 0]
 
-            sage: P.<x>=GF(9,'a')[]
-            sage: E=HyperellipticCurve(x^29+1,0)
+            sage: P.<x> = GF(9, 'a')[]
+            sage: E = HyperellipticCurve(x^29 + 1, 0)
             sage: E.Cartier_matrix()
             [0 0 1 0 0 0 0 0 0 0 0 0 0 0]
             [0 0 0 0 0 1 0 0 0 0 0 0 0 0]
@@ -1769,21 +1787,21 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         EXAMPLES::
 
-            sage: K.<x>=GF(9,'x')[]
-            sage: C=HyperellipticCurve(x^7-1,0)
+            sage: K.<x> = GF(9, 'x')[]
+            sage: C = HyperellipticCurve(x^7 - 1, 0)
             sage: C.Hasse_Witt()
             [0 0 0]
             [0 0 0]
             [0 0 0]
 
-            sage: K.<x>=GF(49,'x')[]
-            sage: C=HyperellipticCurve(x^5+1,0)
+            sage: K.<x> = GF(49, 'x')[]
+            sage: C = HyperellipticCurve(x^5 + 1, 0)
             sage: C.Hasse_Witt()
             [0 0]
             [0 0]
 
-            sage: P.<x>=GF(9,'a')[]
-            sage: E=HyperellipticCurve(x^29+1,0)
+            sage: P.<x> = GF(9, 'a')[]
+            sage: E = HyperellipticCurve(x^29 + 1, 0)
             sage: E.Hasse_Witt()
             [0 0 0 0 0 0 0 0 0 0 0 0 0 0]
             [0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1823,20 +1841,20 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         - ``a`` : a-number
 
 
-         EXAMPLES::
+        EXAMPLES::
 
-            sage: K.<x>=GF(49,'x')[]
-            sage: C=HyperellipticCurve(x^5+1,0)
+            sage: K.<x> = GF(49, 'x')[]
+            sage: C = HyperellipticCurve(x^5 + 1, 0)
             sage: C.a_number()
             1
 
-            sage: K.<x>=GF(9,'x')[]
-            sage: C=HyperellipticCurve(x^7-1,0)
+            sage: K.<x> = GF(9, 'x')[]
+            sage: C = HyperellipticCurve(x^7 - 1, 0)
             sage: C.a_number()
             1
 
-            sage: P.<x>=GF(9,'a')[]
-            sage: E=HyperellipticCurve(x^29+1,0)
+            sage: P.<x> = GF(9, 'a')[]
+            sage: E = HyperellipticCurve(x^29 + 1, 0)
             sage: E.a_number()
             5
         """
@@ -1867,18 +1885,18 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         EXAMPLES::
 
-            sage: K.<x>=GF(49,'x')[]
-            sage: C=HyperellipticCurve(x^5+1,0)
+            sage: K.<x> = GF(49, 'x')[]
+            sage: C = HyperellipticCurve(x^5 + 1, 0)
             sage: C.p_rank()
             0
 
-            sage: K.<x>=GF(9,'x')[]
-            sage: C=HyperellipticCurve(x^7-1,0)
+            sage: K.<x> = GF(9, 'x')[]
+            sage: C = HyperellipticCurve(x^7 - 1, 0)
             sage: C.p_rank()
             0
 
-            sage: P.<x>=GF(9,'a')[]
-            sage: E=HyperellipticCurve(x^29+1,0)
+            sage: P.<x> = GF(9, 'a')[]
+            sage: E = HyperellipticCurve(x^29 + 1, 0)
             sage: E.p_rank()
             0
         """

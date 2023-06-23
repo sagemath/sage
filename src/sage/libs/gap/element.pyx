@@ -5,7 +5,6 @@ This document describes the individual wrappers for various GAP
 elements. For general information about GAP, you should read the
 :mod:`~sage.libs.gap.libgap` module documentation.
 """
-
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
@@ -24,9 +23,6 @@ from .libgap import libgap
 from .util cimport *
 from .util import GAPError
 from sage.cpython.string cimport str_to_bytes, char_to_str
-from sage.misc.cachefunc import cached_method
-from sage.structure.sage_object cimport SageObject
-from sage.structure.parent import Parent
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
@@ -34,29 +30,6 @@ from sage.rings.real_double import RDF
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.combinat.permutation import Permutation
 from sage.structure.coerce cimport coercion_model as cm
-
-decode_type_number = {
-    0: 'T_INT (integer)',
-    T_INTPOS: 'T_INTPOS (positive integer)',
-    T_INTNEG: 'T_INTNEG (negative integer)',
-    T_RAT: 'T_RAT (rational number)',
-    T_CYC: 'T_CYC (universal cyclotomic)',
-    T_FFE: 'T_FFE (finite field element)',
-    T_PERM2: 'T_PERM2',
-    T_PERM4: 'T_PERM4',
-    T_BOOL: 'T_BOOL',
-    T_CHAR: 'T_CHAR',
-    T_FUNCTION: 'T_FUNCTION',
-    T_PLIST: 'T_PLIST',
-    T_PLIST_CYC: 'T_PLIST_CYC',
-    T_BLIST: 'T_BLIST',
-    T_STRING: 'T_STRING',
-    T_MACFLOAT: 'T_MACFLOAT (hardware floating point number)',
-    T_COMOBJ: 'T_COMOBJ (component object)',
-    T_POSOBJ: 'T_POSOBJ (positional object)',
-    T_DATOBJ: 'T_DATOBJ (data object)',
-    T_WPOBJ:  'T_WPOBJ (weak pointer object)',
-    }
 
 ############################################################################
 ### helper functions to construct lists and records ########################
@@ -131,8 +104,7 @@ cdef char *capture_stdout(Obj func, Obj obj):
     print objects such as ``Print()`` and ``ViewObj()``.
     """
     cdef Obj s, stream, output_text_string
-    cdef UInt res
-    cdef TypOutputFile output
+    cdef Obj l
     # The only way to get a string representation of an object that is truly
     # consistent with how it would be represented at the GAP REPL is to call
     # ViewObj on it.  Unfortunately, ViewObj *prints* to the output stream,
@@ -148,12 +120,11 @@ cdef char *capture_stdout(Obj func, Obj obj):
         output_text_string = GAP_ValueGlobalVariable("OutputTextString")
         stream = CALL_2ARGS(output_text_string, s, GAP_True)
 
-        if not OpenOutputStream(&output, stream):
-            raise GAPError("failed to open output capture stream for "
-                           "representing GAP object")
+        l = GAP_NewPlist(1)
+        GAP_AssList(l, 1, obj)
 
-        CALL_1ARGS(func, obj)
-        CloseOutput(&output)
+        CALL_WITH_STREAM = GAP_ValueGlobalVariable("CALL_WITH_STREAM")
+        CALL_3ARGS(CALL_WITH_STREAM, stream, func, l)
         return CSTR_STRING(s)
     finally:
         GAP_Leave()
@@ -166,9 +137,13 @@ cdef char *gap_element_repr(Obj obj):
     GAP on the command-line (i.e. when evaluating an expression that returns
     that object.
     """
-
-    cdef Obj func = GAP_ValueGlobalVariable("ViewObj")
-    return capture_stdout(func, obj)
+    cdef Obj func
+    try:
+        GAP_Enter()
+        func = GAP_ValueGlobalVariable("ViewObj")
+        return capture_stdout(func, obj)
+    finally:
+        GAP_Leave()
 
 
 cdef char *gap_element_str(Obj obj):
@@ -181,13 +156,18 @@ cdef char *gap_element_str(Obj obj):
     slightly different approach more closely mirroring Python's str/repr
     difference (though this does not map perfectly onto GAP).
     """
-    cdef Obj func = GAP_ValueGlobalVariable("Print")
-    return capture_stdout(func, obj)
+    cdef Obj func
+    try:
+        GAP_Enter()
+        func = GAP_ValueGlobalVariable("Print")
+        return capture_stdout(func, obj)
+    finally:
+        GAP_Leave()
 
 
 cdef Obj make_gap_record(sage_dict) except NULL:
     """
-    Convert Sage lists into Gap lists
+    Convert Sage dictionary into Gap record
 
     INPUT:
 
@@ -210,7 +190,7 @@ cdef Obj make_gap_record(sage_dict) except NULL:
 
     try:
         GAP_Enter()
-        rec = NEW_PREC(len(data))
+        rec = GAP_NewPrecord(len(data))
         for d in data:
             key, val = d
             rnam = RNamName(str_to_bytes(key))
@@ -320,9 +300,9 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         if obj is NULL:
             return make_GapElement(parent, obj)
         num = TNUM_OBJ(obj)
-        if IS_INT(obj):
+        if GAP_IsInt(obj):
             return make_GapElement_Integer(parent, obj)
-        elif num == T_MACFLOAT:
+        elif GAP_IsMacFloat(obj):
             return make_GapElement_Float(parent, obj)
         elif num == T_CYC:
             return make_GapElement_Cyclotomic(parent, obj)
@@ -336,15 +316,15 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
             return make_GapElement_Function(parent, obj)
         elif num == T_PERM2 or num == T_PERM4:
             return make_GapElement_Permutation(parent, obj)
-        elif IS_REC(obj):
+        elif GAP_IsRecord(obj):
             return make_GapElement_Record(parent, obj)
-        elif IS_LIST(obj) and LEN_LIST(obj) == 0:
+        elif GAP_IsList(obj) and GAP_LenList(obj) == 0:
             # Empty lists are lists and not strings in Python
             return make_GapElement_List(parent, obj)
         elif IsStringConv(obj):
             # GAP strings are lists, too. Make sure this comes before non-empty make_GapElement_List
             return make_GapElement_String(parent, obj)
-        elif IS_LIST(obj):
+        elif GAP_IsList(obj):
             return make_GapElement_List(parent, obj)
         elif num == T_CHAR:
             ch = make_GapElement(parent, obj).IntChar().sage()
@@ -564,7 +544,7 @@ cdef class GapElement(RingElement):
 
         INPUT:
 
-        - ``mut`` - (boolean) wheter to return an mutable copy
+        - ``mut`` - (boolean) whether to return an mutable copy
 
         EXAMPLES::
 
@@ -672,11 +652,10 @@ cdef class GapElement(RingElement):
 
             sage: x = libgap(1)
             sage: x._type_number()
-            (0, 'T_INT (integer)')
+            (0, b'integer')
         """
         n = TNUM_OBJ(self.value)
-        global decode_type_number
-        name = decode_type_number.get(n, 'unknown')
+        name = TNAM_OBJ(self.value)
         return (n, name)
 
     def __dir__(self):
@@ -760,7 +739,7 @@ cdef class GapElement(RingElement):
             sage: libgap(0).__str__()
             '0'
         """
-        if  self.value == NULL:
+        if self.value == NULL:
             return 'NULL'
 
         s = char_to_str(gap_element_str(self.value))
@@ -782,7 +761,7 @@ cdef class GapElement(RingElement):
             sage: libgap(0)._repr_()
             '0'
         """
-        if  self.value == NULL:
+        if self.value == NULL:
             return 'NULL'
 
         s = char_to_str(gap_element_repr(self.value))
@@ -1225,7 +1204,7 @@ cdef class GapElement(RingElement):
             sage: libgap.eval('3/2').is_list()
             False
         """
-        return IS_LIST(self.value)
+        return GAP_IsList(self.value)
 
     def is_record(self):
         r"""
@@ -1242,7 +1221,7 @@ cdef class GapElement(RingElement):
             sage: libgap.eval('rec(a:=1, b:=3)').is_record()
             True
         """
-        return IS_REC(self.value)
+        return GAP_IsRecord(self.value)
 
     cpdef is_bool(self):
         r"""
@@ -1472,7 +1451,7 @@ cdef class GapElement_Integer(GapElement):
             sage: N.IsInt()
             true
         """
-        return IS_INTOBJ(self.value)
+        return GAP_IsSmallInt(self.value)
 
     def _rational_(self):
         r"""
@@ -1623,7 +1602,7 @@ cdef class GapElement_Float(GapElement):
         """
         if ring is None:
             ring = RDF
-        return ring(VAL_MACFLOAT(self.value))
+        return ring(GAP_ValueMacFloat(self.value))
 
     def __float__(self):
         r"""
@@ -1632,7 +1611,7 @@ cdef class GapElement_Float(GapElement):
             sage: float(libgap.eval("Float(3.5)"))
             3.5
         """
-        return VAL_MACFLOAT(self.value)
+        return GAP_ValueMacFloat(self.value)
 
 
 
@@ -2766,7 +2745,7 @@ cdef class GapElement_List(GapElement):
             sage: len(lst)
             4
         """
-        return LEN_LIST(self.value)
+        return GAP_LenList(self.value)
 
     def __getitem__(self, i):
         r"""
@@ -2814,15 +2793,15 @@ cdef class GapElement_List(GapElement):
 
         if isinstance(i, tuple):
             for j in i:
-                if not IS_LIST(obj):
+                if not GAP_IsList(obj):
                     raise ValueError('too many indices')
-                if j < 0 or j >= LEN_LIST(obj):
+                if j < 0 or j >= GAP_LenList(obj):
                     raise IndexError('index out of range')
                 obj = ELM_LIST(obj, j+1)
 
         else:
             j = i
-            if j < 0 or j >= LEN_LIST(obj):
+            if j < 0 or j >= GAP_LenList(obj):
                 raise IndexError('index out of range.')
             obj = ELM_LIST(obj, j+1)
 
@@ -2885,12 +2864,12 @@ cdef class GapElement_List(GapElement):
 
         if isinstance(i, tuple):
             for j in i[:-1]:
-                if not IS_LIST(obj):
+                if not GAP_IsList(obj):
                     raise ValueError('too many indices')
-                if j < 0 or j >= LEN_LIST(obj):
+                if j < 0 or j >= GAP_LenList(obj):
                     raise IndexError('index out of range')
                 obj = ELM_LIST(obj, j+1)
-            if not IS_LIST(obj):
+            if not GAP_IsList(obj):
                 raise ValueError('too many indices')
             j = i[-1]
         else:
@@ -3080,7 +3059,7 @@ cdef class GapElement_Permutation(GapElement):
         lst = libgap.ListPerm(self)
 
         if parent is None:
-            return Permutation(lst.sage(), check_input=False)
+            return Permutation(lst.sage(), check=False)
         else:
             return parent.one()._generate_new_GAP(lst)
 

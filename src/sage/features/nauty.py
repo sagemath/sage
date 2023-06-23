@@ -2,6 +2,15 @@ r"""
 Features for testing the presence of nauty executables
 """
 
+# *****************************************************************************
+#       Copyright (C) 2022 Matthias Koeppe
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
 from sage.env import SAGE_NAUTY_BINS_PREFIX
 
 from . import Executable
@@ -10,7 +19,7 @@ from .join_feature import JoinFeature
 
 class NautyExecutable(Executable):
     r"""
-    A :class:`~sage.features.Feature` which checks for nauty executables.
+    A :class:`~sage.features.Feature` which checks for executables from the :ref:`nauty <spkg_nauty>` package.
 
     EXAMPLES::
 
@@ -34,7 +43,7 @@ class NautyExecutable(Executable):
 class Nauty(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of the executables
-    which comes as a part of ``nauty``.
+    which comes as a part of :ref:`nauty <spkg_nauty>`.
 
     EXAMPLES::
 

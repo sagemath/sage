@@ -6145,7 +6145,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             True
         """
         from sage.combinat.posets.lattices import (FiniteLatticePoset,
-             FiniteMeetSemilattice, FiniteJoinSemilattice)
+                                                   FiniteMeetSemilattice,
+                                                   FiniteJoinSemilattice)
 
         if isinstance(self, FiniteLatticePoset):
             constructor = FiniteLatticePoset
@@ -6750,7 +6751,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         return [self._vertex_to_element(w)
                 for w in self._hasse_diagram.interval(
-                        self._element_to_vertex(x), self._element_to_vertex(y))]
+                    self._element_to_vertex(x), self._element_to_vertex(y))]
 
     def closed_interval(self, x, y):
         r"""
@@ -7191,7 +7192,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         ineqs = [[1] + [-ZZ(j in chain) for j in self]
-               for chain in self.maximal_chains_iterator()]
+                 for chain in self.maximal_chains_iterator()]
         for i in self:
             ineqs += [[0] + [ZZ(j == i) for j in self]]
         return Polyhedron(ieqs=ineqs, base_ring=ZZ)
@@ -7295,10 +7296,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         rk = hasse.rank_function()
         if rk is None:
             raise ValueError('the poset is not graded')
-        x, y = polygen(ZZ, 'x,y')
-        p = sum(hasse.moebius_function(a, b) * x**rk(a) * y**rk(b)
-                for a in hasse
-                for b in hasse.principal_order_filter(a))
+        ring = PolynomialRing(ZZ, 'x,y')
+        p = ring.sum(hasse.moebius_function(a, b) * ring.monomial(rk(a), rk(b))
+                     for a in hasse
+                     for b in hasse.principal_order_filter(a))
         return M_triangle(p)
 
     def f_polynomial(self):
@@ -7407,6 +7408,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             :meth:`sage.topology.simplicial_complex.SimplicialComplex.h_vector`
         """
         q = polygen(ZZ, 'q')
+        ring = q.parent()
         hasse = self._hasse_diagram
         if len(hasse) == 1:
             return q.parent().one()
@@ -7414,10 +7416,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         mini = hasse.bottom()
         if (mini is None) or (maxi is None):
             raise ValueError("the poset is not bounded")
-        f = sum(q**(len(ch)) for ch in hasse.chains(exclude=[mini, maxi]))
+        f = ring.sum(ring.monomial(len(ch))
+                     for ch in hasse.chains(exclude=[mini, maxi]))
         d = f.degree()
         f = (1 - q)**d * q * f(q=q / (1 - q))
-        return q.parent(f)
+        return ring(f)
 
     def flag_f_polynomial(self):
         r"""
@@ -7607,16 +7610,16 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.characteristic_polynomial()
             1
         """
-        hasse = self._hasse_diagram
-        rk = hasse.rank_function()
+        H = self._hasse_diagram
+        rk = H.rank_function()
         if not self.is_graded():
             raise ValueError("the poset is not graded")
         if not self.has_bottom():
-            raise ValueError("the poset has not a bottom element")
-        n = rk(hasse.maximal_elements()[0])
-        x0 = hasse.minimal_elements()[0]
-        q = polygen(ZZ, 'q')
-        return sum(hasse.moebius_function(x0, x) * q**(n - rk(x)) for x in hasse)
+            raise ValueError("the poset does not have a bottom element")
+        n = rk(H.maximal_elements()[0])
+        ring = PolynomialRing(ZZ, 'q')
+        return ring.sum(H.bottom_moebius_function(x) * ring.monomial(n - rk(x))
+                        for x in H)
 
     def chain_polynomial(self):
         """
@@ -8954,8 +8957,8 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         # Obtained from The On-Line Encyclopedia of Integer Sequences;
         # this is sequence number A000112.
         known_values = [1, 1, 2, 5, 16, 63, 318, 2045, 16999, 183231,
-                2567284, 46749427, 1104891746, 33823827452, 1338193159771,
-                68275077901156, 4483130665195087]
+                        2567284, 46749427, 1104891746, 33823827452, 1338193159771,
+                        68275077901156, 4483130665195087]
         if not from_iterator and self._n < len(known_values):
             return Integer(known_values[self._n])
         else:

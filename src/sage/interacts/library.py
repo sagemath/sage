@@ -716,6 +716,7 @@ def special_points(
     """
     import math
     # Return the intersection point of the bisector of the angle <(A[a],A[c],A[b]) and the unit circle. Angles given in radians.
+
     def half(A, a, b, c):
         if (A[a] < A[b] and (A[c] < A[a] or A[c] > A[b])) or (A[a] > A[b] and (A[c] > A[a] or A[c] < A[b])):
             p = A[a] + 0.5 * (A[b] - A[a])
@@ -848,7 +849,7 @@ def special_points(
 @library_interact(
     n=lambda: slider(2, 10000, 100, default=1000, label="Number of Tosses"),
     interval=lambda: range_slider(
-        0, 1, default=(0.45, 0.55), label="Plotting range (y)"
+        0.0, 1.0, default=(0.45, 0.55), label="Plotting range (y)"
     ),
 )
 def coin(n, interval):
@@ -877,7 +878,7 @@ def coin(n, interval):
         sage: interacts.statistics.coin()
         ...Interactive function <function coin at ...> with 2 widgets
           n: IntSlider(value=1000, description='Number of Tosses', max=10000, min=2, step=100)
-          interval: IntRangeSlider(value=(0, 0), description='Plotting range (y)', max=1)
+          interval: FloatRangeSlider(value=(0.45, 0.55), description='Plotting range (y)', max=1.0)
     """
     from random import random
     c = []
@@ -1032,7 +1033,7 @@ def secant_method(title, f, interval, d, maxn):
         L = sum(line([(c,k*i), (d,k*i)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(c,k*i-k/4), (c,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(d,k*i-k/4), (d,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
-        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for  (c,d) in intervals)
+        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for (c, d) in intervals)
         show(P + L + S, xmin=a, xmax=b)
 
 
@@ -1300,6 +1301,7 @@ def simpson_integration(
         interval = interval_s
     else:
         interval = interval_g[0]
+
     def parabola(a, b, c):
         from sage.symbolic.relation import solve
         A, B, C = SR.var("A, B, C")
@@ -1436,7 +1438,7 @@ def riemann_sum(
         sage: interacts.calculus.riemann_sum()
         Manual interactive function <function riemann_sum at ...> with 9 widgets
           title: HTMLText(value='<h2>Riemann integral with random sampling</h2>')
-          f: EvalText(value='x^2+1', description='$f(x)=$', layout=Layout(max_width='41em'))
+          f: EvalText(value='x^2+1',... description='$f(x)=$', layout=Layout(max_width='41em'))
           n: IntSlider(value=5, description='# divisions', max=30, min=1)
           hr1: HTMLText(value='<hr>')
           interval_input: ToggleButtons(description='Integration interval', options=('from slider', 'from keyboard'), value='from slider')
@@ -1548,7 +1550,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: interacts.calculus.function_tool()
+        sage: interacts.calculus.function_tool()  # long time
         ...Interactive function <function function_tool at ...> with 7 widgets
           f: EvalText(value='sin(x)', description='f')
           g: EvalText(value='cos(x)', description='g')
@@ -1678,7 +1680,7 @@ def julia(expo, c_real, c_imag, iterations, zoom_x, zoom_y, plot_points, dpi):
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: interacts.fractals.julia()
+        sage: interacts.fractals.julia()  # long time
         ...Interactive function <function julia at ...> with 8 widgets
           expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
           c_real: FloatSlider(value=0.5, description='real part const.', max=2.0, min=-2.0, step=0.01)
@@ -1730,7 +1732,7 @@ def mandelbrot(expo, iterations, zoom_x, zoom_y, plot_points, dpi):
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: interacts.fractals.mandelbrot()
+        sage: interacts.fractals.mandelbrot()  # long time
         ...Interactive function <function mandelbrot at ...> with 6 widgets
           expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
           iterations: IntSlider(value=20, description='# iterations', min=1)
@@ -1775,7 +1777,7 @@ def cellular_automaton(N, rule_number, size):
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: interacts.fractals.cellular_automaton()
+        sage: interacts.fractals.cellular_automaton()  # long time
         ...Interactive function <function cellular_automaton at ...> with 3 widgets
           N: IntSlider(value=100, description='Number of iterations', max=500, min=1)
           rule_number: IntSlider(value=110, description='Rule number', max=255)
@@ -1834,7 +1836,7 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: sage.interacts.algebra.polar_prime_spiral()
+        sage: sage.interacts.algebra.polar_prime_spiral()  # long time
         ...Interactive function <function polar_prime_spiral at ...> with 6 widgets
           interval: IntRangeSlider(value=(1, 1000), description='range', max=4000, min=1, step=10)
           show_factors: Checkbox(value=True, description='show_factors')

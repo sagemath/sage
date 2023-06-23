@@ -4640,7 +4640,6 @@ class BTerm(TermWithCoefficient):
                 raise ValueError('B-Term has not defined all variables which occur in the term in valid_from.')
         self.valid_from = valid_from
 
-
     def construction(self):
         r"""
         Return a construction of this term.
@@ -4968,13 +4967,13 @@ class BTermMonoid(TermWithCoefficientMonoid):
             sage: T = TermMonoid('B', G, ZZ)
             sage: T._default_kwds_construction_()
             {'coefficient': 1, 'valid_from': {'x': 0}}
-            sage: T.from_construction((None, {'growth': G.gen()}))  # indirect doctest
+            sage: T.from_construction((None, {'growth': G.gen()}))          # indirect doctest
             B(x, x >= 0)
-            sage: T.from_construction(
-            ....:     (None, {'growth': G.gen(), 'coefficient': 2}))  # indirect doctest
+            sage: T.from_construction(                                      # indirect doctest
+            ....:     (None, {'growth': G.gen(), 'coefficient': 2}))
             B(2*x, x >= 0)
-            sage: T.from_construction(
-            ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))  # indirect doctest
+            sage: T.from_construction(                                      # indirect doctest
+            ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))
             B(x, x >= 5)
         """
         defaults = {}

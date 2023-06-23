@@ -157,7 +157,7 @@ cdef void gasman_callback() with gil:
     """
     global owned_objects_refcount
     for obj in owned_objects_refcount:
-        MarkBag((<ObjWrapper>obj).value)
+        GAP_MarkBag((<ObjWrapper>obj).value)
 
 
 ############################################################################
@@ -274,10 +274,6 @@ cdef initialize():
     # receive error output
     GAP_EvalString(_reset_error_output_cmd)
 
-    # Prepare global GAP variable to hold temporary GAP objects
-    global reference_holder
-    reference_holder = GVarName("$SAGE_libgap_reference_holder")
-
     # Finished!
     _gap_is_initialized = True
 
@@ -372,7 +368,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # If an error occurred in GAP_EvalString we won't even get
         # here if the error handler was set; but in case it wasn't
         # let's still check the result...
-        nresults = LEN_LIST(result)
+        nresults = GAP_LenList(result)
         if nresults > 1:  # to mimick the old libGAP
             # TODO: Get rid of this restriction eventually?
             raise GAPError("can only evaluate a single statement")
@@ -396,29 +392,6 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     finally:
         GAP_Leave()
         sig_off()
-
-
-###########################################################################
-### Helper to protect temporary objects from deletion ######################
-############################################################################
-
-# Hold a reference (inside the GAP kernel) to obj so that it doesn't
-# get deleted this works by assigning it to a global variable. This is
-# very simple, but you can't use it to keep two objects alive. Be
-# careful.
-cdef UInt reference_holder
-
-cdef void hold_reference(Obj obj):
-    """
-    Hold a reference (inside the GAP kernel) to obj
-
-    This ensures that the GAP garbage collector does not delete
-    ``obj``. This works by assigning it to a global variable. This is
-    very simple, but you can't use it to keep two objects alive. Be
-    careful.
-    """
-    global reference_holder
-    AssGVar(reference_holder, obj)
 
 
 ############################################################################

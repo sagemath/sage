@@ -405,5 +405,4 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: len([X for X in Gd if abs(X(x)-1)>0.01 and abs(X(y)-1)>0.01 and abs(X(z)-1)>0.01])
             880
         """
-        for g in self.list():
-            yield g
+        yield from self.list()

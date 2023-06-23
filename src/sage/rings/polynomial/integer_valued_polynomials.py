@@ -13,8 +13,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 from sage.arith.misc import (binomial, factorial)
+from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
-from sage.categories.all import Algebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
@@ -224,10 +224,15 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     Traceback (most recent call last):
                     ...
                     ValueError: not a polynomial with integer values: 1/3
+
+                    sage: t = polygen(ZZ,'t')
+                    sage: B = IntegerValuedPolynomialRing(QQ).B()
+                    sage: B.from_polynomial(t+1)
+                    B[0] + B[1]
                 """
                 B = self.basis()
                 poly = self._poly
-                remain = p
+                remain = p.change_variable_name('x')
                 result = self.zero()
                 while remain:
                     N = remain.degree()

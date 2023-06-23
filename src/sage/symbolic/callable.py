@@ -429,7 +429,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         from sage.misc.latex import latex
         args = self.args()
         args = [latex(arg) for arg in args]
-        latex_x =  SymbolicRing._latex_element_(self, x)
+        latex_x = SymbolicRing._latex_element_(self, x)
         if len(args) == 1:
             return r"%s \ {\mapsto}\ %s" % (args[0], latex_x)
         else:
@@ -490,11 +490,11 @@ class CallableSymbolicExpressionRingFactory(UniqueFactory):
             (x, y)
         """
         if check:
-            from sage.symbolic.ring import is_SymbolicVariable
+            from sage.structure.element import Expression
             if len(args) == 1 and isinstance(args[0], (list, tuple)):
                 args, = args
             for arg in args:
-                if not is_SymbolicVariable(arg):
+                if not (isinstance(arg, Expression) and arg.is_symbol()):
                     raise TypeError("must construct a function with a tuple (or list) of variables")
             args = tuple(args)
         return args

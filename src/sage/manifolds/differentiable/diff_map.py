@@ -32,11 +32,17 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from sage.manifolds.continuous_map import ContinuousMap
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 
+if TYPE_CHECKING:
+    from sage.manifolds.point import ManifoldPoint
+    from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleMorphism
 
 class DiffMap(ContinuousMap):
     r"""
@@ -515,7 +521,7 @@ class DiffMap(ContinuousMap):
                                           # class
         self._diff.clear()
 
-    def differential(self, point):
+    def differential(self, point: ManifoldPoint) -> FiniteRankFreeModuleMorphism:
         r"""
         Return the differential of ``self`` at a given point.
 
@@ -949,8 +955,12 @@ class DiffMap(ContinuousMap):
         tensor = tensor_or_codomain_subset
 
         from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
-        from sage.tensor.modules.comp import (Components, CompWithSym,
-                                              CompFullySym, CompFullyAntiSym)
+        from sage.tensor.modules.comp import (
+            CompFullyAntiSym,
+            CompFullySym,
+            Components,
+            CompWithSym,
+        )
 
         def _pullback_chart(diff_map, tensor, chart1, chart2):
             r"""
@@ -1134,7 +1144,6 @@ class DiffMap(ContinuousMap):
                             resu._components[frame] = comp
         return resu
 
-
     def pushforward(self, tensor):
         r"""
         Pushforward operator associated with ``self``.
@@ -1195,9 +1204,13 @@ class DiffMap(ContinuousMap):
             Psi_*(u) = -sin(t) ∂/∂x + cos(t) ∂/∂y + ∂/∂z
 
         """
-        from sage.tensor.modules.comp import (Components, CompWithSym,
-                                              CompFullySym, CompFullyAntiSym)
         from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+        from sage.tensor.modules.comp import (
+            CompFullyAntiSym,
+            CompFullySym,
+            Components,
+            CompWithSym,
+        )
         vmodule = tensor.base_module()
         dest_map = vmodule.destination_map()
         dom1 = tensor.domain()

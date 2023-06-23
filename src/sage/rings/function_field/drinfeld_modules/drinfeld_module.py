@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Drinfeld modules
 
@@ -26,10 +27,13 @@ AUTHORS:
 
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
+from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
+from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_string import _LazyString
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.ring_extension import RingExtension_generic
@@ -37,6 +41,8 @@ from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 
 class DrinfeldModule(Parent, UniqueRepresentation):
@@ -171,7 +177,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi(T)  # phi_T, the generator of the Drinfeld module
         t^2 + t + z
         sage: phi(T^3 + T + 1)  # phi_(T^3 + T + 1)
-        t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
+        t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4
+        + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3
+        + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2
+        + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
         sage: phi(1)  # phi_1
         1
 
@@ -228,7 +237,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     ::
 
         sage: phi.ore_polring()  # K{t}
-        Ore Polynomial Ring in t over Finite Field in z of size 3^12 over its base twisted by Frob^2
+        Ore Polynomial Ring in t over Finite Field in z of size 3^12 over its base
+         twisted by Frob^2
 
     ::
 
@@ -252,7 +262,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.morphism()  # The Drinfeld module as a morphism
         Ring morphism:
           From: Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2
-          To:   Ore Polynomial Ring in t over Finite Field in z of size 3^12 over its base twisted by Frob^2
+          To:   Ore Polynomial Ring in t
+                over Finite Field in z of size 3^12 over its base
+                twisted by Frob^2
           Defn: T |--> t^2 + t + z
 
     One can compute the rank and height::
@@ -353,7 +365,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: P = (2*z^6 + z^3 + 2*z^2 + z + 2)*t + z^11 + 2*z^10 + 2*z^9 + 2*z^8 + z^7 + 2*z^6 + z^5 + z^3 + z^2 + z
         sage: psi = phi.velu(P)
         sage: psi
-        Drinfeld module defined by T |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z
+        Drinfeld module defined by T |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2
+         + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z
         sage: P in Hom(phi, psi)
         True
         sage: P * phi(T) == psi(T) * P
@@ -385,7 +398,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 3^12 over its base induced by Drinfeld module defined by T |--> t^2 + t + z
+            Action on Finite Field in z of size 3^12 over its base
+             induced by Drinfeld module defined by T |--> t^2 + t + z
 
     The action on elements is computed by calling the action object::
 
@@ -867,7 +881,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z12 of size 5^12 over its base induced by Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            Action on Finite Field in z12 of size 5^12 over its base
+             induced by Drinfeld module defined by T |--> z12^5*t^2 + z12^3*t + 2*z12^11
+              + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
 
         The action on elements is computed as follows::
 
@@ -901,7 +917,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: phi.coefficient(0)
-            2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5
+            + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi.coefficient(0) == p_root
             True
             sage: phi.coefficient(1)
@@ -938,7 +955,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: phi.coefficients()
-            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
+            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7
+               + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
              z12^3,
              z12^5]
 
@@ -947,16 +965,146 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: rho = DrinfeldModule(A, [p_root, 0, 0, 0, 1])
             sage: rho.coefficients()
-            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
+            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7
+               + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
              1]
             sage: rho.coefficients(sparse=False)
-            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
+            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7
+               + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
              0,
              0,
              0,
              1]
         """
         return self._gen.coefficients(sparse=sparse)
+
+    @cached_method
+    def _compute_coefficient_exp(self, k):
+        r"""
+        Return the `q^k`-th coefficient of the exponential of this Drinfeld module.
+
+        INPUT:
+
+        - ``k`` (integer) -- the index of the coefficient
+
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = A.base_ring().cardinality()
+            sage: phi._compute_coefficient_exp(0)
+            1
+            sage: phi._compute_coefficient_exp(1)
+            1/(T^2 + T)
+            sage: phi._compute_coefficient_exp(2)
+            1/(T^8 + T^6 + T^5 + T^3)
+            sage: phi._compute_coefficient_exp(3)
+            1/(T^24 + T^20 + T^18 + T^17 + T^14 + T^13 + T^11 + T^7)
+        """
+        k = ZZ(k)
+        if k.is_zero():
+            return self._base.one()
+        q = self._Fq.cardinality()
+        c = self._base.zero()
+        for i in range(k):
+            j = k - i
+            c += self._compute_coefficient_exp(i)*self._compute_coefficient_log(j)**(q**i)
+        return -c
+
+    def exponential(self, name='z'):
+        r"""
+        Return the exponential of this Drinfeld module.
+
+        Note that the exponential is only defined when the
+        `\mathbb{F}_q[T]`-characteristic is zero.
+
+        INPUT:
+
+        - ``name`` (string, default: ``'z'``) -- the name of the
+          generator of the lazy power series ring.
+
+        OUTPUT:
+
+        A lazy power series over the base field.
+
+        EXAMPLES::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = A.base_ring().cardinality()
+            sage: exp = phi.exponential(); exp
+            z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
+
+        The exponential is returned as a lazy power series, meaning that
+        any of its coefficients can be computed on demands::
+
+            sage: exp[2^4]
+            1/(T^64 + T^56 + T^52 + ... + T^27 + T^23 + T^15)
+            sage: exp[2^5]
+            1/(T^160 + T^144 + T^136 + ... + T^55 + T^47 + T^31)
+
+        Example in higher rank::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
+            sage: exp = phi.exponential(); exp
+            z + ((T/(T^4+4))*z^5) + O(z^8)
+
+        The exponential is the compositional inverse of the logarithm
+        (see :meth:`logarithm`)::
+
+            sage: log = phi.logarithm(); log
+            z + ((4*T/(T^4+4))*z^5) + O(z^8)
+            sage: exp.compose(log)
+            z + O(z^8)
+            sage: log.compose(exp)
+            z + O(z^8)
+
+        ::
+
+            sage: Fq.<w> = GF(3)
+            sage: A = Fq['T']
+            sage: phi = DrinfeldModule(A, [w, 1])
+            sage: phi.exponential()
+            Traceback (most recent call last):
+            ...
+            ValueError: characteristic must be zero (=T + 2)
+
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: exp = phi.exponential()
+            sage: exp[2] == 1/(T**q - T)  # expected value
+            True
+            sage: exp[2^2] == 1/((T**(q**2) - T)*(T**q - T)**q)  # expected value
+            True
+            sage: exp[2^3] == 1/((T**(q**3) - T)*(T**(q**2) - T)**q*(T**q - T)**(q**2))  # expected value
+            True
+
+        REFERENCE:
+
+        See section 4.6 of [Gos1998]_ for the definition of the
+        exponential.
+        """
+        if self.category()._characteristic:
+            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
+        L = LazyPowerSeriesRing(self._base, name)
+        zero = self._base.zero()
+        q = self._Fq.cardinality()
+
+        def coeff_exp(k):
+            # Return the k-th coefficient of the exponential.
+            k = ZZ(k)
+            if k.is_power_of(q):
+                return self._compute_coefficient_exp(k.log(q))
+            else:
+                return zero
+        return L(coeff_exp, valuation=1)
 
     def gen(self):
         r"""
@@ -1030,7 +1178,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         try:
             if self.characteristic().is_zero():
-                raise ValueError('height is defined for prime ' \
+                raise ValueError('height is defined for prime '
                                  'function field characteristic')
             else:
                 p = self.characteristic()
@@ -1038,7 +1186,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         except NotImplementedError:
             raise NotImplementedError('height not implemented in this case')
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``True`` if this Drinfeld module is finite,
         ``False`` otherwise.
@@ -1103,6 +1251,119 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         q = self._Fq.order()
         return (g**(q+1)) / delta
 
+    @cached_method
+    def _compute_coefficient_log(self, k):
+        r"""
+        Return the `q^k`-th coefficient of the logarithm of this Drinfeld module.
+
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = A.base_ring().cardinality()
+            sage: phi._compute_coefficient_log(0)
+            1
+            sage: phi._compute_coefficient_log(1)
+            1/(T^2 + T)
+            sage: phi._compute_coefficient_log(2)
+            1/(T^6 + T^5 + T^3 + T^2)
+            sage: phi._compute_coefficient_log(3)
+            1/(T^14 + T^13 + T^11 + T^10 + T^7 + T^6 + T^4 + T^3)
+        """
+        k = ZZ(k)
+        if k.is_zero():
+            return self._base.one()
+        r = self._gen.degree()
+        T = self._gen[0]
+        q = self._Fq.cardinality()
+        c = self._base.zero()
+        for i in range(k):
+            j = k - i
+            if j < r + 1:
+                c += self._compute_coefficient_log(i)*self._gen[j]**(q**i)
+        return c/(T - T**(q**k))
+
+    def logarithm(self, name='z'):
+        r"""
+        Return the logarithm of the given Drinfeld module.
+
+        By definition, the logarithm is the compositional inverse of the
+        exponential (see :meth:`exponential`). Note that the logarithm
+        is only defined when the `\mathbb{F}_q[T]`-characteristic is
+        zero.
+
+        INPUT:
+
+        - ``name`` (string, default: ``'z'``) -- the name of the
+          generator of the lazy power series ring.
+
+        OUTPUT:
+
+        A lazy power series over the base field.
+
+        EXAMPLES::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: log = phi.logarithm(); log
+            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
+
+        The logarithm is returned as a lazy power series, meaning that
+        any of its coefficients can be computed on demands::
+
+            sage: log[2^4]
+            1/(T^30 + T^29 + T^27 + ... + T^7 + T^5 + T^4)
+            sage: log[2^5]
+            1/(T^62 + T^61 + T^59 + ... + T^8 + T^6 + T^5)
+
+        Example in higher rank::
+
+            sage: A = GF(5)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
+            sage: phi.logarithm()
+            z + ((4*T/(T^4+4))*z^5) + O(z^8)
+
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: q = 2
+            sage: log[2] == -1/((T**q - T))  # expected value
+            True
+            sage: log[2**2] == 1/((T**q - T)*(T**(q**2) - T))  # expected value
+            True
+            sage: log[2**3] == -1/((T**q - T)*(T**(q**2) - T)*(T**(q**3) - T))  # expected value
+            True
+
+        ::
+
+            sage: Fq.<w> = GF(3)
+            sage: A = Fq['T']
+            sage: phi = DrinfeldModule(A, [w, 1])
+            sage: phi.logarithm()
+            Traceback (most recent call last):
+            ...
+            ValueError: characteristic must be zero (=T + 2)
+        """
+        if self.category()._characteristic:
+            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
+        L = LazyPowerSeriesRing(self._base, name)
+        zero = self._base.zero()
+        q = self._Fq.cardinality()
+
+        def coeff_log(k):
+            # Return the k-th coefficient of the logarithm
+            k = ZZ(k)
+            if k.is_power_of(q):
+                return self._compute_coefficient_log(k.log(q))
+            else:
+                return self._base.zero()
+        return L(coeff_log, valuation=1)
+
     def morphism(self):
         r"""
         Return the morphism object that defines the Drinfeld module.
@@ -1120,8 +1381,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.morphism()
             Ring morphism:
               From: Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
-              To:   Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
-              Defn: T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+              To:   Ore Polynomial Ring in t over Finite Field in z12 of size 5^12
+                    over its base twisted by Frob^2
+              Defn: T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8
+                           + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: from sage.rings.morphism import RingHomomorphism
             sage: isinstance(phi.morphism(), RingHomomorphism)
             True
@@ -1144,7 +1407,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: m.codomain() is phi.ore_polring()
             True
             sage: m.im_gens()
-            [z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12]
+            [z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8
+             + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12]
             sage: phi(T) == m.im_gens()[0]
             True
         """
@@ -1173,6 +1437,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: rho = DrinfeldModule(A, [p_root, 0, 0, 0, 1])
             sage: rho.rank()
             4
+
+        TESTS:
+
+        The rank must be an ``Integer`` (see PR #35519)::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: isinstance(phi.rank(), Integer)
+            True
         """
         return self._gen.degree()
 
@@ -1220,7 +1496,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: isog = t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
             sage: psi = phi.velu(isog)
             sage: psi
-            Drinfeld module defined by T |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            Drinfeld module defined by T |-->
+             (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2
+             + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t
+             + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: isog in Hom(phi, psi)
             True
 

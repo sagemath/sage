@@ -35,18 +35,18 @@ coerce maps. In previous versions of Sage, the cache was by strong
 references and resulted in a memory leak in the following example.
 However, this leak was fixed by :trac:`715`, using weak references::
 
-    sage: K.<t> = GF(2^55)
-    sage: for i in range(50):
+    sage: K.<t> = GF(2^55)                                                                          # optional - sage.rings.finite_rings sage.combinat
+    sage: for i in range(50):                                                                       # optional - sage.rings.finite_rings sage.combinat
     ....:     a = K.random_element()
     ....:     E = EllipticCurve(j=a)
     ....:     P = E.random_point()
     ....:     Q = 2*P
-    sage: L = [Partitions(n) for n in range(200)]  # purge strong cache in CachedRepresentation
+    sage: L = [Partitions(n) for n in range(200)]  # purge strong cache in CachedRepresentation     # optional - sage.rings.finite_rings sage.combinat
     sage: import gc
     sage: n = gc.collect()
-    sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
-    sage: LE = [x for x in gc.get_objects() if isinstance(x, EllipticCurve_finite_field)]
-    sage: len(LE)
+    sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field      # optional - sage.rings.finite_rings sage.combinat
+    sage: LE = [x for x in gc.get_objects() if isinstance(x, EllipticCurve_finite_field)]           # optional - sage.rings.finite_rings sage.combinat
+    sage: len(LE)                                                                                   # optional - sage.rings.finite_rings sage.combinat
     1
 """
 
@@ -404,17 +404,18 @@ cdef class MonoDict:
         sage: import gc
         sage: def count_type(T):
         ....:     return len([c for c in gc.get_objects() if isinstance(c,T)])
-        sage: _ = gc.collect()
+        sage: gc.freeze()  # so that gc.collect() only deals with our trash
         sage: N = count_type(MonoDict)
         sage: for i in range(100):
         ....:     V = [MonoDict({"id":j+100*i}) for j in range(100)]
-        ....:     n= len(V)
-        ....:     for i in range(n): V[i][V[(i+1)%n]]=(i+1)%n
+        ....:     n = len(V)
+        ....:     for i in range(n): V[i][V[(i+1)%n]] = (i+1)%n
         ....:     del V
         ....:     _ = gc.collect()
         ....:     assert count_type(MonoDict) == N
         sage: count_type(MonoDict) == N
         True
+        sage: gc.unfreeze()
 
     AUTHORS:
 

@@ -1079,7 +1079,7 @@ def parse_ellipsis(code, preparse_step=True):
             if preparse_step:
                 arguments = arguments.replace(';', ', step=')
             range_or_iter = 'range' if code[start_list]=='[' else 'iter'
-            code = "%s(ellipsis_%s(%s))%s" %  (code[:start_list],
+            code = "%s(ellipsis_%s(%s))%s" % (code[:start_list],
                                                range_or_iter,
                                                arguments,
                                                code[end_list:])
@@ -1808,7 +1808,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
     if implicit_mul_level:
         # Implicit Multiplication
         # 2x -> 2*x
-        L = implicit_mul(L, level = implicit_mul_level)
+        L = implicit_mul(L, level=implicit_mul_level)
 
     if numeric_literals:
         # Wrapping

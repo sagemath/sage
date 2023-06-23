@@ -562,7 +562,6 @@ s := Cputime(t);
         raise ValueError('unknown system "%s"'%system)
 
 
-
 #######################################################################
 # Dense Benchmarks over GF(p), for small p.
 #######################################################################
@@ -719,7 +718,6 @@ s := Cputime(t);
         return magma.eval('s')
     else:
         raise ValueError('unknown system "%s"'%system)
-
 
 
 # Matrix multiplication over GF(p)
@@ -900,7 +898,7 @@ def hilbert_matrix(n):
     A = Matrix(QQ,n,n)
     for i in range(A.nrows()):
         for j in range(A.ncols()):
-            A[i,j] =  QQ(1)/((i+1)+(j+1)-1)
+            A[i,j] = QQ(1)/((i+1)+(j+1)-1)
     return A
 
 # Reduced row echelon form over QQ

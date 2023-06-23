@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Examples of sets
 """
@@ -147,9 +148,6 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         return p
 
     element_class = Integer
-
-
-
 
 
 from sage.misc.abstract_method import abstract_method
@@ -541,6 +539,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         return self.element_class(self, Integer(e))
 
     from sage.structure.element_wrapper import ElementWrapper
+
     class Element (ElementWrapper, PrimeNumbers_Abstract.Element):
         def _integer_(self, IntRing):
             """
@@ -554,9 +553,6 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
                 47
             """
             return IntRing(self.value)
-
-
-
 
 
 #*************************************************************************#

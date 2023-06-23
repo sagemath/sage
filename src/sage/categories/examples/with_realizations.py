@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Examples of parents endowed with multiple realizations
 """
@@ -302,7 +303,6 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             category = Algebras(A.base_ring()).Commutative()
             return [A.Realizations(),
                     category.Realizations().WithBasis()]
-
 
         class ParentMethods:
 

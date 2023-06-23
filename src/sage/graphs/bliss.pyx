@@ -475,11 +475,11 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     Check that it works with non hashable non sortable edge labels (relying
     on string representations of the labels)::
 
-        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])
-        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])
-        sage: g1can = canonical_form(g1, use_edge_labels=True)               # optional - bliss
-        sage: g2can = canonical_form(g2, use_edge_labels=True)               # optional - bliss
-        sage: g1can == g2can                                                 # optional - bliss
+        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])        # optional - sage.modules
+        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])        # optional - sage.modules
+        sage: g1can = canonical_form(g1, use_edge_labels=True)                    # optional - bliss sage.modules
+        sage: g2can = canonical_form(g2, use_edge_labels=True)                    # optional - bliss sage.modules
+        sage: g1can == g2can                                                      # optional - bliss sage.modules
         True
 
     Check that :trac:`32395` is fixed::
@@ -704,12 +704,12 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 
         sage: G = Graph(graphs.CompleteMultipartiteGraph([8, 2]), sparse=True)  # optional - bliss
         sage: for i,j in G.edges(labels=False, sort=False):                     # optional - bliss
-        ....:     if 0 <= i < 3:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "A")                               # optional - bliss
-        ....:     if 3 <= i < 6:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "B")                               # optional - bliss
-        ....:     if 6 <= i < 8:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "C")                               # optional - bliss
+        ....:     if 0 <= i < 3:
+        ....:         G.set_edge_label(i, j, "A")
+        ....:     if 3 <= i < 6:
+        ....:         G.set_edge_label(i, j, "B")
+        ....:     if 6 <= i < 8:
+        ....:         G.set_edge_label(i, j, "C")
 
         sage: factor(automorphism_group(G).cardinality())                       # optional - bliss
         2^4 * 3^2
@@ -736,12 +736,12 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 
         sage: G = Graph(graphs.CompleteMultipartiteGraph([8,8,8,5]),sparse=True)# optional - bliss
         sage: for i,j in G.edges(labels=False, sort=False):                     # optional - bliss
-        ....:     if 0 <= i < 3:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "A")                               # optional - bliss
-        ....:     if 3 <= i < 6:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "B")                               # optional - bliss
-        ....:     if 6 <= i < 8:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "C")                               # optional - bliss
+        ....:     if 0 <= i < 3:
+        ....:         G.set_edge_label(i, j, "A")
+        ....:     if 3 <= i < 6:
+        ....:         G.set_edge_label(i, j, "B")
+        ....:     if 6 <= i < 8:
+        ....:         G.set_edge_label(i, j, "C")
         sage: automorphism_group(G).cardinality() == prod( factorial(n) for n in [3,3,2,8,8,5,2] )  # optional - bliss
         True
         sage: automorphism_group(G, use_edge_labels=False).cardinality() == prod( factorial(n) for n in [8,8,8,5,3] )  # optional - bliss

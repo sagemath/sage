@@ -115,8 +115,6 @@ TESTS::
     algebras with different term orderings, yet.
 
 """
-
-from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.singular.function import lib, singular_function
 from sage.libs.singular.function cimport RingWrap
@@ -684,7 +682,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         ngens = self.__ngens
         degbound = self._degbound
         cdef list G = [C(x._poly) for x in g]
-        from sage.groups.perm_gps.all import CyclicPermutationGroup
+        from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
         CG = CyclicPermutationGroup(C.ngens())
         for y in G:
             out.extend([y] + [y * CG[ngens * (n + 1)]

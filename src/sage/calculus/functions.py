@@ -2,9 +2,8 @@ r"""
 Calculus functions
 """
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
-from sage.structure.element import is_Vector
-from sage.symbolic.ring import is_SymbolicVariable
+from sage.structure.element import is_Matrix, is_Vector, Expression
+
 from .functional import diff
 
 
@@ -82,7 +81,7 @@ def wronskian(*args):
         # a 1x1 Wronskian is just its argument
         return args[0]
     else:
-        if is_SymbolicVariable(args[-1]):
+        if isinstance(args[-1], Expression) and args[-1].is_symbol():
             # if last argument is a variable, peel it off and
             # differentiate the other args
             v = args[-1]
@@ -135,9 +134,9 @@ def jacobian(functions, variables):
         [    x^3*cos(y)   3*x^2*sin(y)]
         [ cos(x)*cos(y) -sin(x)*sin(y)]
         [             0            e^x]
-
     """
-    if is_Matrix(functions) and (functions.nrows()==1 or functions.ncols()==1):
+    if is_Matrix(functions) and (functions.nrows() == 1
+                                 or functions.ncols() == 1):
         functions = functions.list()
     elif not (isinstance(functions, (tuple, list)) or is_Vector(functions)):
         functions = [functions]

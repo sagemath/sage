@@ -1,7 +1,6 @@
 """
 Clifford algebra elements
 """
-
 from sage.modules.with_basis.indexed_element cimport IndexedFreeModuleElement
 from sage.data_structures.bitset cimport FrozenBitset
 
@@ -14,4 +13,3 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
 
 cdef class CohomologyRAAGElement(CliffordAlgebraElement):
     pass
-

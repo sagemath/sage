@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat
 r"""
 Coalgebras
 """
@@ -78,7 +79,6 @@ class Coalgebras(Category_over_base_ring):
             TODO: implement some tests of the axioms of coalgebras, bialgebras
             and Hopf algebras using the counit.
             """
-
 
         @abstract_method
         def coproduct(self, x):
