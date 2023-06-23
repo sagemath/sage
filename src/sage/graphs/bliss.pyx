@@ -33,6 +33,7 @@ AUTHORS:
 # ****************************************************************************
 
 from libc.limits cimport LONG_MAX
+from libcpp.functional cimport function
 
 from cysignals.memory cimport check_calloc, sig_free
 
@@ -47,20 +48,27 @@ cdef extern from "bliss/graph.hh" namespace "bliss":
     cdef cppclass Graph(AbstractGraph):
         Graph(const unsigned int)
         void add_edge(const unsigned int, const unsigned int)
-        void find_automorphisms(Stats&, void (*)(void*, unsigned int,
-                                                 const unsigned int*), void*)
+        void find_automorphisms(Stats&,
+                                 function[void(void*, unsigned int, const unsigned int*)]*,
+                                 function[bint()]*)
         void change_color(const unsigned int, const unsigned int)
-        const unsigned int* canonical_form(Stats&, void (*)(void*, unsigned int,
-                                                            const unsigned int*), void*)
+        const unsigned int* canonical_form(Stats&,
+                                 function[void(void*, unsigned int, const unsigned int*)]*,
+                                 function[bint()]*)
+        unsigned int get_hash()
+
+cdef extern from "bliss/digraph.hh" namespace "bliss":
 
     cdef cppclass Digraph(AbstractGraph):
         Digraph(const unsigned int)
         void add_edge(const unsigned int, const unsigned int)
-        void find_automorphisms(Stats&, void (*)(void*, unsigned int,
-                                                 const unsigned int*), void*)
+        void find_automorphisms(Stats&,
+                                 function[void(void*, unsigned int, const unsigned int*)]*,
+                                 function[bint()]*)
         void change_color(const unsigned int, const unsigned int)
-        const unsigned int* canonical_form(Stats&, void (*)(void*, unsigned int,
-                                                            const unsigned int*), void*)
+        const unsigned int* canonical_form(Stats&,
+                                 function[void(void*, unsigned int, const unsigned int*)]*,
+                                 function[bint()]*)
         unsigned int get_hash()
 
 
@@ -125,8 +133,13 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
     sig_free(done)
 
 
-cdef void empty_hook(void *user_param, unsigned int n, const unsigned int *aut):
-    return
+# cdef void empty_hook(void *user_param, unsigned int n, const unsigned int *aut):
+# cdef function[void *user_param(unsigned int n, const unsigned int *aut)] empty_hook(n,*aut):
+cdef function[void* (void*, unsigned int, const unsigned int*)]* empty_hook():
+    cdef function[void* (void*, unsigned int, const unsigned int*)]* f
+    f = new function[void* (void*, unsigned int, const unsigned int*)]* (NULL)
+    return f
+
 
 #####################################################
 # constructing bliss graphs from edge lists
