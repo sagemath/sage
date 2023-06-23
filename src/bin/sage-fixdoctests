@@ -15,13 +15,19 @@ AUTHORS::
   Added doctest to sage.tests.cmdline
 """
 import os
+import re
 import subprocess
 from argparse import ArgumentParser, FileType
 from sage.misc.temporary_file import tmp_filename
+from sage.doctest.parsing import update_optional_tags
 
 parser = ArgumentParser(description="Given an input file with doctests, this creates a modified file that passes the doctests (modulo any raised exceptions). By default, the input file is modified. You can also name an output file.")
 parser.add_argument('-l', '--long',
                     dest='long', action="store_true", default=False)
+parser.add_argument("--venv", type=str, default='', help="directory name of a venv where 'sage -t' is to be run")
+parser.add_argument("--environment", type=str, default="sage.repl.ipython_kernel.all_jupyter", help="name of a module that provides the global environment for tests")
+parser.add_argument("--full-tracebacks", default=False, action="store_true",
+                    help="include full tracebacks rather than '...'")
 parser.add_argument("input", help="input filename",
                     type=FileType('r'))
 parser.add_argument('output', nargs='?', help="output filename",
@@ -36,8 +42,11 @@ test_file.close()
 
 # put the output of the test into sage's temporary directory
 doc_file = tmp_filename()
-os.system('sage -t %s %s > %s' % ('--long' if args.long else '',
-                                  test_file.name, doc_file))
+os.system('%s -t %s %s %s > %s' % (
+    f'{args.venv}/bin/sage' if args.venv else 'sage',
+    '--long' if args.long else '',
+    f'--environment {args.environment}' if args.environment else '',
+    test_file.name, doc_file))
 with open(doc_file, 'r') as doc:
     doc_out = doc.read()
 sep = "**********************************************************************\n"
@@ -54,7 +63,7 @@ for block in doctests:
     comma = block.find(', in ')            # we try to extract the line number which gives the test failure
     if line == -1 or comma == -1:
         continue   # but if something goes wrong we give up
-    line_num = eval(block[line + 5:comma])
+    line_num = first_line_num = eval(block[line + 5:comma])
 
     # Take care of multiline examples.
     if 'Expected' in block:
@@ -72,13 +81,36 @@ for block in doctests:
     elif 'Exception raised' in block:
         exp = block.find('Exception raised')
         block = '\nGot:\n' + block[exp + 17:]
+    elif (m := re.search(r"referenced here was set only in doctest marked '([^;']*)")):
+        optional = m.group(1)
+        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1], add_tags=[optional])
+        continue
     else:
         continue
     # Error testing.
+    if m := re.search(r"ModuleNotFoundError: No module named '([^']*)'", block):
+        optional = m.group(1)
+        # FIXME: map module name to feature name
+        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1], add_tags=[optional])
+        continue
+
     if 'Traceback (most recent call last):' in block:
         expected, got = block.split('\nGot:\n')
-        got = got.splitlines()
-        got = ['    Traceback (most recent call last):', '    ...', got[-1]]
+        if args.full_tracebacks:
+            if re.fullmatch(' *\n', got):
+                got = got[re.end(0):]
+            # don't show doctester internals (anything before first "<doctest...>" frame
+            if m := re.search('(Traceback.*\n *)(?s:.*?)(^ *File "<doctest)( [^>]*)>', got, re.MULTILINE):
+                got = m.group(1) + '...\n' + m.group(2) + '...' + got[m.end(3):]
+            while m := re.search(' *File "<doctest( [^>]*)>', got):
+                got = got[:m.start(1)] + '...' + got[m.end(1):]
+            # simplify filenames shown in backtrace
+            while m := re.search('"([-a-zA-Z0-9._/]*/site-packages)/sage/', got):
+                got = got[:m.start(1)] + '...' + got[m.end(1):]
+            got = got.splitlines()
+        else:
+            got = got.splitlines()
+            got = ['    Traceback (most recent call last):', '    ...', got[-1]]
     elif block[-21:] == 'Got:\n    <BLANKLINE>\n':
         expected = block[:-22]
         got = ['']
