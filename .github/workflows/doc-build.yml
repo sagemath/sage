@@ -82,7 +82,7 @@ jobs:
           set -ex
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage
-          mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/
+          mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
           ./config.status && make doc-html
         working-directory: ./worktree-image
         env:
