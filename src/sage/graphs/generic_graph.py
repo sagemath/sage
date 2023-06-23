@@ -20743,11 +20743,11 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: from sage.plot.colors import rainbow
+            sage: from sage.plot.colors import rainbow                                  # optional - sage.plot
             sage: C = graphs.CubeGraph(5)
-            sage: R = rainbow(5)
-            sage: edge_colors = {R[i]: [] for i in range(5)}
-            sage: for u, v, l in C.edges(sort=False):
+            sage: R = rainbow(5)                                                        # optional - sage.plot
+            sage: edge_colors = {R[i]: [] for i in range(5)}                            # optional - sage.plot
+            sage: for u, v, l in C.edges(sort=False):                                   # optional - sage.plot
             ....:  for i in range(5):
             ....:      if u[i] != v[i]:
             ....:          edge_colors[R[i]].append((u, v, l))
@@ -21067,9 +21067,9 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: P = graphs.PetersenGraph().to_directed()
-            sage: from sage.plot.colors import rainbow
-            sage: R = rainbow(P.size(), 'rgbtuple')
-            sage: edge_colors = {R[i]: [e] for i, e in enumerate(P.edge_iterator())}
+            sage: from sage.plot.colors import rainbow                                   # optional - sage.plot
+            sage: R = rainbow(P.size(), 'rgbtuple')                                      # optional - sage.plot
+            sage: edge_colors = {R[i]: [e] for i, e in enumerate(P.edge_iterator())}     # optional - sage.plot
             sage: P.plot3d(engine='tachyon', edge_colors=edge_colors).show()  # long time, optional - sage.plot
 
 

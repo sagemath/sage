@@ -3873,10 +3873,9 @@ class Graph(GenericGraph):
             True
             sage: G.plot(partition=P)                                                   # optional - sage.plot
             Graphics object consisting of 16 graphics primitives
-            sage: G.coloring(hex_colors=True, algorithm="MILP")
+            sage: G.coloring(hex_colors=True, algorithm="MILP")                         # optional - sage.plot
             {'#0000ff': [4], '#00ff00': [0, 6, 5], '#ff0000': [2, 1, 3]}
-            sage: H = G.coloring(hex_colors=True, algorithm="DLX")
-            sage: H
+            sage: H = G.coloring(hex_colors=True, algorithm="DLX"); H                   # optional - sage.plot
             {'#0000ff': [4], '#00ff00': [1, 2, 3], '#ff0000': [0, 5, 6]}
             sage: G.plot(vertex_colors=H)                                               # optional - sage.plot
             Graphics object consisting of 16 graphics primitives

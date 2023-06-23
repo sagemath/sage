@@ -104,11 +104,13 @@ def format_coloring(data, value_only=False, hex_colors=False, vertex_color_dict=
         3
         sage: format_coloring(color_classes, value_only=False)
         {0: ['a', 'b'], 1: ['c'], 2: ['d']}
-        sage: format_coloring(color_classes, value_only=False, hex_colors=True)
+        sage: format_coloring(color_classes, value_only=False, hex_colors=True)         # optional - sage.plot
         {'#0000ff': ['d'], '#00ff00': ['c'], '#ff0000': ['a', 'b']}
-        sage: format_coloring(color_classes, value_only=False, hex_colors=False, vertex_color_dict=True)
+        sage: format_coloring(color_classes, value_only=False, hex_colors=False,
+        ....:                 vertex_color_dict=True)
         {'a': 0, 'b': 0, 'c': 1, 'd': 2}
-        sage: format_coloring(color_classes, value_only=False, hex_colors=True, vertex_color_dict=True)
+        sage: format_coloring(color_classes, value_only=False, hex_colors=True,         # optional - sage.plot
+        ....:                 vertex_color_dict=True)
         {'a': '#ff0000', 'b': '#ff0000', 'c': '#00ff00', 'd': '#0000ff'}
 
     TESTS::
@@ -116,11 +118,13 @@ def format_coloring(data, value_only=False, hex_colors=False, vertex_color_dict=
         sage: from sage.graphs.graph_coloring import format_coloring
         sage: format_coloring([], value_only=True)
         []
-        sage: format_coloring([], value_only=False, hex_colors=True)
+        sage: format_coloring([], value_only=False, hex_colors=True)                    # optional - sage.plot
         {}
-        sage: format_coloring([], value_only=False, hex_colors=True, vertex_color_dict=True)
+        sage: format_coloring([], value_only=False, hex_colors=True,                    # optional - sage.plot
+        ....:                 vertex_color_dict=True)
         {}
-        sage: format_coloring([], value_only=False, hex_colors=False, vertex_color_dict=True)
+        sage: format_coloring([], value_only=False, hex_colors=False,
+        ....:                 vertex_color_dict=True)
         {}
     """
     if value_only:
@@ -210,7 +214,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         sage: from sage.graphs.graph_coloring import all_graph_colorings
         sage: G = Graph({0: [1, 2, 3], 1: [2]})
         sage: n = 0
-        sage: for C in all_graph_colorings(G, 3, hex_colors=True):
+        sage: for C in all_graph_colorings(G, 3, hex_colors=True):                      # optional - sage.plot
         ....:     parts = [C[k] for k in C]
         ....:     for P in parts:
         ....:         l = len(P)
@@ -218,8 +222,8 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         ....:             for j in range(i + 1, l):
         ....:                 if G.has_edge(P[i], P[j]):
         ....:                     raise RuntimeError("Coloring Failed.")
-        ....:     n+=1
-        sage: print("G has %s 3-colorings." % n)
+        ....:     n += 1
+        sage: print("G has %s 3-colorings." % n)                                        # optional - sage.plot
         G has 12 3-colorings.
 
     TESTS::
@@ -237,11 +241,12 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         ....:     print(c)
         {0: 0, 2: 0, 1: 1}
         {1: 0, 0: 1, 2: 1}
-        sage: for c in all_graph_colorings(G, 2, hex_colors=True):
+        sage: for c in all_graph_colorings(G, 2, hex_colors=True):                      # optional - sage.plot
         ....:     print(sorted(c.items()))
         [('#00ffff', [1]), ('#ff0000', [0, 2])]
         [('#00ffff', [0, 2]), ('#ff0000', [1])]
-        sage: for c in all_graph_colorings(G, 2, hex_colors=True, vertex_color_dict=True):
+        sage: for c in all_graph_colorings(G, 2, hex_colors=True,                       # optional - sage.plot
+        ....:                              vertex_color_dict=True):
         ....:     print(c)
         {0: '#ff0000', 2: '#ff0000', 1: '#00ffff'}
         {1: '#ff0000', 0: '#00ffff', 2: '#00ffff'}
