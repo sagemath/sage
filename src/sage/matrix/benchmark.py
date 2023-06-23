@@ -898,7 +898,7 @@ def hilbert_matrix(n):
     A = Matrix(QQ,n,n)
     for i in range(A.nrows()):
         for j in range(A.ncols()):
-            A[i,j] =  QQ(1)/((i+1)+(j+1)-1)
+            A[i,j] = QQ(1)/((i+1)+(j+1)-1)
     return A
 
 # Reduced row echelon form over QQ

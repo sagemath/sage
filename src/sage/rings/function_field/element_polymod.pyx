@@ -298,7 +298,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         # reduce to the separable case
         poly = self._parent._polynomial
         if not poly.gcd(poly.derivative()).is_one():
-            L, from_L, to_L = self._parent.separable_model(('t', 'w'))
+            _, from_L, to_L = self._parent.separable_model(('t', 'w'))
             return from_L(to_L(self).nth_root(n))
 
         constant_base_field = self._parent.constant_base_field()
@@ -347,7 +347,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         # reduce to the separable case
         poly = self._parent._polynomial
         if not poly.gcd(poly.derivative()).is_one():
-            L, from_L, to_L = self._parent.separable_model(('t', 'w'))
+            _, _, to_L = self._parent.separable_model(('t', 'w'))
             return to_L(self).is_nth_power(n)
 
         constant_base_field = self._parent.constant_base_field()

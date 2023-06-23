@@ -3946,7 +3946,7 @@ class Graph(GenericGraph):
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.partition import _Partitions
-        from sage.misc.misc import powerset
+        from sage.combinat.subset import powerset
         if R is None:
             R = ZZ
         p = SymmetricFunctions(R).p()

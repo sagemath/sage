@@ -110,10 +110,10 @@ cdef class InnerGroup:
 
     Those stabilizers can be stored as triples:
 
-    - ``rank`` - an integer in `\{0, \ldots, k\}`
-    - ``row_partition`` - a partition of `\{0, \ldots, k-1\}` with
-        discrete cells for all integers `i \geq rank`.
-    - ``frob_pow`` an integer in `\{0, \ldots, r-1\}` if `q = p^r`
+    - ``rank`` -- an integer in `\{0, \ldots, k\}`
+    - ``row_partition`` -- a partition of `\{0, \ldots, k-1\}` with
+      discrete cells for all integers `i` `\geq` ``rank``.
+    - ``frob_pow`` -- an integer `s` in `\{0, \ldots, r-1\}` if `q = p^r`
 
     The group `G_{\Pi^{(I)}(x)}` contains all elements `(A, \varphi, \alpha) \in G`,
     where
@@ -126,8 +126,8 @@ cdef class InnerGroup:
     - The support of the columns given by `i \in I` intersect exactly one
       cell of the partition. The entry `\varphi_i` is equal to the entries
       of the corresponding diagonal entry of `A`.
-    - `\alpha` is a power of `\tau^{frob_pow}`, where `\tau` denotes the
-       Frobenius automorphism of the finite field `\GF{q}`.
+    - `\alpha` is a power of `\tau^s`, where `\tau` denotes the
+      Frobenius automorphism of the finite field `\GF{q}` and `s` = ``frob_pow``.
 
     See [Feu2009]_ for more details.
     """
@@ -143,8 +143,8 @@ cdef class InnerGroup:
             * "semilinear" --  full group
             * "linear" -- no field automorphisms, i.e. `G = (GL(k,q) \times \GF{q}^n )`
             * "permutational -- no field automorphisms and no column multiplications
-
               i.e. `G = GL(k,q)`
+
         - ``transporter`` (optional) -- set to an element of the group
           :class:`sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup`
           if you would like to modify this element simultaneously

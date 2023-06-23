@@ -188,7 +188,7 @@ def QuadraticBernoulliNumber(k, d):
     f = abs(d1)
 
     # Make the (usual) k-th Bernoulli polynomial
-    x =  PolynomialRing(QQ, 'x').gen()
+    x = PolynomialRing(QQ, 'x').gen()
     bp = bernoulli_polynomial(x, k)
 
     # Make the k-th quadratic Bernoulli number

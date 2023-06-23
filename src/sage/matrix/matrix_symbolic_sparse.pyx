@@ -163,7 +163,6 @@ Check that :issue:`35653` is fixed::
     [  0 1/x]
 """
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
 from .matrix_generic_sparse cimport Matrix_generic_sparse
@@ -171,7 +170,7 @@ from .constructor import matrix
 
 cdef maxima
 
-from sage.calculus.calculus import symbolic_expression_from_maxima_string, maxima
+from sage.calculus.calculus import maxima
 
 cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
     def echelonize(self, **kwds):

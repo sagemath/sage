@@ -516,7 +516,7 @@ class RijndaelGF(SageObject):
         self._all_PR = PolynomialRing(self._F, len(state_names + subkey_names),
                                       state_names + subkey_names)
         self.state_vrs = matrix(4, self._Nb, self._state_PR.gens())
-        fNb =  4 * self._Nb
+        fNb = 4 * self._Nb
         self.subkey_vrs_list = list(self._all_PR.gens()[fNb:])
         self.subkey_vrs = [matrix(4, self._Nb,
                            self.subkey_vrs_list[fNb * i: fNb * (i + 1)])
