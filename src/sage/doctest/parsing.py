@@ -185,6 +185,27 @@ def unparse_optional_tags(tags):
     return ''
 
 
+optional_tag_columns = [88, 100, 120]
+standard_tag_columns = [64, 72, 80, 84]
+
+
+def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None):
+    if not (m := re.match(' *sage: [^#]*', line)):
+        raise ValueError(f'line must start with a sage: prompt, got: {line}')
+    if tags is not None or remove_tags:
+        raise NotImplementedError
+    if not add_tags:
+        return line
+    # FIXME: parse existing tags, merge with given tags; remove them from line, keeping non-tag comments
+    tags = add_tags
+    for column in optional_tag_columns:
+        if len(line) < column - 2:
+            line += ' ' * (column - 2 - len(line))
+            break
+    line += '  ' + unparse_optional_tags(tags)
+    return line
+
+
 def parse_tolerance(source, want):
     r"""
     Return a version of ``want`` marked up with the tolerance tags
