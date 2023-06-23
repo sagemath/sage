@@ -7,12 +7,12 @@ TESTS:
 
 See if :trac:`15118` is fixed::
 
-    sage: import mpmath
-    sage: mpmath.mpf(0)^(-2)
+    sage: import sage.libs.mpmath
+    sage: sage.libs.mpmath.mpf(0)^(-2)
     Traceback (most recent call last):
     ...
     ZeroDivisionError
-    sage: mpmath.zeta(2r, -3r)
+    sage: sage.libs.mpmath.zeta(2r, -3r)
     Traceback (most recent call last):
     ...
     ZeroDivisionError
@@ -1065,9 +1065,9 @@ cdef MPF_pow_int(MPF *r, MPF *x, mpz_t n, MPopts opts):
         mpz_mul(r.exp, x.exp, n)
         return
     # TODO: implement efficiently here
-    import mpmath.libmp
+    import sage.libs.mpmath.libmp
     MPF_set_tuple(r,
-        mpmath.libmp.mpf_pow_int(MPF_to_tuple(x), mpzi(n),
+        sage.libs.mpmath.libmp.mpf_pow_int(MPF_to_tuple(x), mpzi(n),
         opts.prec, rndmode_to_python(opts.rounding)))
 
 cdef mpz_t _pi_value
@@ -1085,7 +1085,7 @@ cdef mpz_set_pi(mpz_t x, int prec):
     if prec <= _pi_prec:
         mpz_tdiv_q_2exp(x, _pi_value, _pi_prec-prec)
     else:
-        from mpmath.libmp import pi_fixed
+        from sage.libs.mpmath.libmp import pi_fixed
         if _pi_prec < 0:
             mpz_init(_pi_value)
         mpz_set_integer(_pi_value, pi_fixed(prec))
@@ -1101,7 +1101,7 @@ cdef mpz_set_ln2(mpz_t x, int prec):
     if prec <= _ln2_prec:
         mpz_tdiv_q_2exp(x, _ln2_value, _ln2_prec-prec)
     else:
-        from mpmath.libmp import ln2_fixed
+        from sage.libs.mpmath.libmp import ln2_fixed
         if _ln2_prec < 0:
             mpz_init(_ln2_value)
         mpz_set_integer(_ln2_value, ln2_fixed(prec))
@@ -1549,7 +1549,7 @@ cdef _MPF_cos_python(MPF *c, MPF *x, MPopts opts):
     """
     Computes c = cos(x) by calling the mpmath.libmp Python implementation.
     """
-    from mpmath.libmp.libelefun import mpf_cos_sin
+    from sage.libs.mpmath.libmp.libelefun import mpf_cos_sin
     ct = mpf_cos_sin(MPF_to_tuple(x), opts.prec,
             rndmode_to_python(opts.rounding), 1, False)
     MPF_set_tuple(c, ct)
@@ -1558,7 +1558,7 @@ cdef _MPF_sin_python(MPF *s, MPF *x, MPopts opts):
     """
     Computes s = sin(x) by calling the mpmath.libmp Python implementation.
     """
-    from mpmath.libmp.libelefun import mpf_cos_sin
+    from sage.libs.mpmath.libmp.libelefun import mpf_cos_sin
     st = mpf_cos_sin(MPF_to_tuple(x), opts.prec,
             rndmode_to_python(opts.rounding), 2, False)
     MPF_set_tuple(s, st)
@@ -1854,7 +1854,7 @@ cdef MPF_complex_pow_int(MPF *zre, MPF *zim, MPF *xre, MPF *xim, mpz_t n, MPopts
 
     xret = MPF_to_tuple(xre)
     ximt = MPF_to_tuple(xim)
-    from mpmath.libmp import mpc_pow_int
+    from sage.libs.mpmath.libmp import mpc_pow_int
     vr, vi = mpc_pow_int((xret, ximt), mpzi(n),
                          opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
@@ -1899,7 +1899,7 @@ cdef MPF_complex_pow_re(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *y, MPopts o
     xret = MPF_to_tuple(xre)
     ximt = MPF_to_tuple(xim)
     yret = MPF_to_tuple(y)
-    from mpmath.libmp import mpc_pow_mpf
+    from sage.libs.mpmath.libmp import mpc_pow_mpf
     vr, vi = mpc_pow_mpf((xret, ximt), yret,
                          opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
@@ -1917,7 +1917,7 @@ cdef MPF_complex_pow(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *yre, MPF *yim,
     ximt = MPF_to_tuple(xim)
     yret = MPF_to_tuple(yre)
     yimt = MPF_to_tuple(yim)
-    from mpmath.libmp import mpc_pow
+    from sage.libs.mpmath.libmp import mpc_pow
     vr, vi = mpc_pow((xret, ximt), (yret, yimt),
                      opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
@@ -2214,7 +2214,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
                 break
 
         if n > MAX:
-            from mpmath.libmp import NoConvergence
+            from sage.libs.mpmath.libmp import NoConvergence
             raise NoConvergence('Hypergeometric series converges too slowly. Try increasing maxterms.')
 
         # +1 all parameters for next iteration

@@ -2051,7 +2051,7 @@ def spherical_bessel_f(F, n, z):
         sage: spherical_bessel_f('bessely', 3, -4)
         mpc(real='-0.21864196590306359', imag='0.0')
     """
-    from mpmath import mp as ctx
+    from sage.libs.mpmath import mp as ctx
     prec = ctx.prec
     try:
         n = ctx.convert(n)

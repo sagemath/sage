@@ -212,7 +212,7 @@ class Jacobi(BuiltinFunction):
 
         Check that the simplifications are correct::
 
-            sage: from mpmath import almosteq                                           # optional - mpmath
+            sage: from sage.libs.mpmath import almosteq                                           # optional - mpmath
             sage: almosteq(n(jacobi_nd(8, 0, hold=True)), n(jacobi_nd(8, 0)))           # optional - mpmath sage.symbolic
             True
             sage: almosteq(n(jacobi_nd(1, 1, hold=True)), n(jacobi_nd(1, 1)))           # optional - mpmath sage.symbolic
@@ -374,7 +374,7 @@ class Jacobi(BuiltinFunction):
         sn, cn, and dn are analytic for all real ``x``, so we can check
         that the derivatives are correct by computing the series::
 
-            sage: from mpmath import almosteq                                           # optional - mpmath
+            sage: from sage.libs.mpmath import almosteq                                           # optional - mpmath
             sage: a = 0.9327542442482303
             sage: b = 0.7402326293643771
             sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),                     # optional - mpmath sage.symbolic
@@ -563,7 +563,7 @@ class InverseJacobi(BuiltinFunction):
 
         Check that the simplifications are correct::
 
-            sage: from mpmath import almosteq                                           # optional - mpmath
+            sage: from sage.libs.mpmath import almosteq                                           # optional - mpmath
             sage: almosteq(n(inverse_jacobi_cd(1, -8, hold=True)),                      # optional - mpmath sage.symbolic
             ....:          n(inverse_jacobi_cd(1, -8)))
             True
@@ -729,7 +729,7 @@ class InverseJacobi(BuiltinFunction):
         Check that ``dy/dx * dx/dy == 1``, where ``y = jacobi_pq(x, m)`` and
         ``x = inverse_jacobi_pq(y, m)``::
 
-            sage: from mpmath import almosteq                                                                           # optional - mpmath
+            sage: from sage.libs.mpmath import almosteq                                                                           # optional - mpmath
             sage: a = 0.130103220857094
             sage: b = 0.437176765041986
             sage: m = var('m')                                                                                          # optional - sage.symbolic
@@ -1146,7 +1146,7 @@ def inverse_jacobi_f(kind, x, m):
 
     TESTS::
 
-        sage: from mpmath import ellipfun, chop                                         # optional - mpmath
+        sage: from sage.libs.mpmath import ellipfun, chop                                         # optional - mpmath
         sage: from sage.functions.jacobi import inverse_jacobi_f
 
         sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 0), 0))                   # optional - mpmath
@@ -1271,7 +1271,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('ds', inverse_jacobi_f('ds', 4, 0.25), 0.25))               # optional - mpmath
         mpf('4.0')
     """
-    from mpmath import mp as ctx
+    from sage.libs.mpmath import mp as ctx
     prec = ctx.prec
     try:
         x = ctx.convert(x)
@@ -1612,7 +1612,7 @@ def jacobi_am_f(x, m):
 
     TESTS::
 
-        sage: from mpmath import ellipf                                                 # optional - mpmath
+        sage: from sage.libs.mpmath import ellipf                                                 # optional - mpmath
         sage: from sage.functions.jacobi import jacobi_am_f
         sage: ellipf(jacobi_am_f(0.5, 1), 1)                                            # optional - mpmath
         mpf('0.5')
@@ -1627,7 +1627,7 @@ def jacobi_am_f(x, m):
         sage: jacobi_am_f(-3, 2)                                                        # optional - mpmath
         mpf('0.36067407399586108')
     """
-    from mpmath import mp as ctx
+    from sage.libs.mpmath import mp as ctx
     prec = ctx.prec
     try:
         x = ctx.convert(x)

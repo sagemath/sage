@@ -478,12 +478,12 @@ cpdef bint is_mpmath_type(t):
         sage: from sage.structure.coerce import is_mpmath_type
         sage: is_mpmath_type(int)
         False
-        sage: import mpmath                                                             # optional - mpmath
-        sage: is_mpmath_type(mpmath.mpc(2))                                             # optional - mpmath
+        sage: import sage.libs.mpmath                                                             # optional - mpmath
+        sage: is_mpmath_type(sage.libs.mpmath.mpc(2))                                             # optional - mpmath
         False
-        sage: is_mpmath_type(type(mpmath.mpc(2)))                                       # optional - mpmath
+        sage: is_mpmath_type(type(sage.libs.mpmath.mpc(2)))                                       # optional - mpmath
         True
-        sage: is_mpmath_type(type(mpmath.mpf(2)))                                       # optional - mpmath
+        sage: is_mpmath_type(type(sage.libs.mpmath.mpf(2)))                                       # optional - mpmath
         True
     """
     return isinstance(t, type) and \

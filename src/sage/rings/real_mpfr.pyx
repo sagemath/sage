@@ -5245,7 +5245,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
                 sig_off()
             return x
         from sage.libs.mpmath.utils import call
-        from mpmath import loggamma
+        from sage.libs.mpmath import loggamma
         return call(loggamma, mpfr_to_mpfval(self.value), parent=parent)
 
     def zeta(self):

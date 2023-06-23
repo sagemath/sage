@@ -808,7 +808,7 @@ def elliptic_eu_f(u, m):
         sage: elliptic_eu_f(0.5, 0.1)                                                   # optional - mpmath
         mpf('0.49605455128659691')
     """
-    from mpmath import mp as ctx
+    from sage.libs.mpmath import mp as ctx
     prec = ctx.prec
     try:
         u = ctx.convert(u)

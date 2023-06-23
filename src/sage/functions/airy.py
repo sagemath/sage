@@ -578,7 +578,6 @@ class FunctionAiryBiGeneral(BuiltinFunction):
 
         """
         parent = kwargs.get('parent')
-        import mpmath
         from sage.libs.mpmath import utils as mpmath_utils
         return _mpmath_utils_call(_mpmath_airybi, x, derivative=alpha,
                                  parent=parent)
@@ -685,7 +684,6 @@ class FunctionAiryBiSimple(BuiltinFunction):
                     return CC(y)
             return parent(y)
         elif algorithm == 'mpmath':
-            import mpmath
             from sage.libs.mpmath import utils as mpmath_utils
             return _mpmath_utils_call(_mpmath_airybi, x, parent=parent)
         else:

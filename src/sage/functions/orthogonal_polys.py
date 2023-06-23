@@ -633,7 +633,7 @@ class ChebyshevFunction(OrthogonalFunction):
         try:
             import sage.libs.mpmath.all as mpmath
             return self._evalf_(n, x)
-        except mpmath.NoConvergence:
+        except sage.libs.mpmath.NoConvergence:
             warnings.warn("mpmath failed, keeping expression unevaluated",
                           RuntimeWarning)
             return None
@@ -2302,8 +2302,8 @@ class Func_ultraspherical(GinacFunction):
 
     Numerical evaluation with the mpmath library::
 
-        sage: from mpmath import gegenbauer as gegenbauer_mp                            # optional - mpmath
-        sage: from mpmath import mp                                                     # optional - mpmath
+        sage: from sage.libs.mpmath import gegenbauer as gegenbauer_mp                            # optional - mpmath
+        sage: from sage.libs.mpmath import mp                                                     # optional - mpmath
         sage: mp.pretty = True; mp.dps=25                                               # optional - mpmath
         sage: gegenbauer_mp(-7,0.5,0.3)                                                 # optional - mpmath
         0.1291811875

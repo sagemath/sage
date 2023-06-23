@@ -350,7 +350,7 @@ class Function_zetaderiv(GinacFunction):
             zetaderiv(n, x)
             sage: zetaderiv(1, 4).n()                                                   # optional - sage.symbolic
             -0.0689112658961254
-            sage: import mpmath; mpmath.diff(lambda x: mpmath.zeta(x), 4)               # optional - mpmath
+            sage: import sage.libs.mpmath; sage.libs.mpmath.diff(lambda x: sage.libs.mpmath.zeta(x), 4)               # optional - mpmath
             mpf('-0.068911265896125382')
 
         TESTS::

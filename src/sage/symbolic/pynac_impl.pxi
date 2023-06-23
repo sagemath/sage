@@ -1634,12 +1634,12 @@ cdef py_stieltjes(x):
     n = ZZ(x)
     if n < 0:
         raise ValueError("Stieltjes constant of negative index")
-    import mpmath
+    import sage.libs.mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(mpmath.stieltjes, n, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.stieltjes, n, prec=prec)
 
 def py_stieltjes_for_doctests(x):
     """
@@ -1991,7 +1991,7 @@ cdef py_lgamma(x):
         sage: py_lgamma(ComplexField(100).0)
         -0.65092319930185633888521683150 - 1.8724366472624298171188533494*I
     """
-    from mpmath import loggamma
+    from sage.libs.mpmath import loggamma
 
     try:
         return x.log_gamma()
@@ -2134,12 +2134,12 @@ cdef py_li(x, n, parent):
         sage: py_li(0, 1, float)
         0.000000000000000
     """
-    import mpmath
+    import sage.libs.mpmath
     try:
         prec = parent.prec()
     except AttributeError:
         prec = 53
-    return mpmath_utils.call(mpmath.polylog, n, x, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.polylog, n, x, prec=prec)
 
 
 def py_li_for_doctests(x, n, parent):
@@ -2170,12 +2170,12 @@ cdef py_psi(x):
         sage: euler_gamma.n()
         0.577215664901533
     """
-    import mpmath
+    import sage.libs.mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(mpmath.psi, 0, x, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.psi, 0, x, prec=prec)
 
 
 def py_psi_for_doctests(x):
@@ -2199,12 +2199,12 @@ cdef py_psi2(n, x):
         sage: py_psi2(2, 1)
         -2.40411380631919
     """
-    import mpmath
+    import sage.libs.mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(mpmath.psi, n, x, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.psi, n, x, prec=prec)
 
 def py_psi2_for_doctests(n, x):
     """
@@ -2227,12 +2227,12 @@ cdef py_li2(x):
         sage: py_li2(-1.1)
         -0.890838090262283
     """
-    import mpmath
+    import sage.libs.mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(mpmath.polylog, 2, x, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.polylog, 2, x, prec=prec)
 
 
 def py_li2_for_doctests(x):

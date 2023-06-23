@@ -23,7 +23,7 @@ cpdef int bitcount(n):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import bitcount
+        sage: from sage.libs.mpmath.libmp import bitcount
         sage: bitcount(0)
         0
         sage: bitcount(1)
@@ -54,7 +54,7 @@ cpdef isqrt(n):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import isqrt
+        sage: from sage.libs.mpmath.libmp import isqrt
         sage: isqrt(0)
         0
         sage: isqrt(100)
@@ -87,7 +87,7 @@ cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import from_man_exp
+        sage: from sage.libs.mpmath.libmp import from_man_exp
         sage: from_man_exp(-6, -1)
         (1, 3, 0, 2)
         sage: from_man_exp(-6, -1, 1, 'd')
@@ -113,7 +113,7 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import normalize
+        sage: from sage.libs.mpmath.libmp import normalize
         sage: normalize(0, 4, 5, 3, 53, 'n')
         (0, 1, 7, 1)
     """
@@ -121,7 +121,7 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
     cdef Integer res
     cdef unsigned long trail
     if mpz_sgn(man.value) == 0:
-        from mpmath.libmp import fzero
+        from sage.libs.mpmath.libmp import fzero
         return fzero
     if bc <= prec and mpz_odd_p(man.value):
         return (sign, man, exp, bc)
@@ -171,7 +171,7 @@ cdef mpfr_from_mpfval(mpfr_t res, tuple x):
             mpfr_neg(res, res, MPFR_RNDZ)
         mpfr_mul_2si(res, res, exp, MPFR_RNDZ)
         return
-    from mpmath.libmp import finf, fninf
+    from sage.libs.mpmath.libmp import finf, fninf
     if exp == 0:
         mpfr_set_ui(res, 0, MPFR_RNDZ)
     elif x == finf:
@@ -187,16 +187,16 @@ cdef mpfr_to_mpfval(mpfr_t value):
     the same number.
     """
     if mpfr_nan_p(value):
-        from mpmath.libmp import fnan
+        from sage.libs.mpmath.libmp import fnan
         return fnan
     if mpfr_inf_p(value):
-        from mpmath.libmp import finf, fninf
+        from sage.libs.mpmath.libmp import finf, fninf
         if mpfr_sgn(value) > 0:
             return finf
         else:
             return fninf
     if mpfr_sgn(value) == 0:
-        from mpmath.libmp import fzero
+        from sage.libs.mpmath.libmp import fzero
         return fzero
     sign = 0
     cdef Integer man = PY_NEW(Integer)
@@ -421,7 +421,7 @@ def call(func, *args, **kwargs):
         3.141592653589793j
 
     """
-    from mpmath import mp
+    from sage.libs.mpmath import mp
     orig = mp.prec
     prec = kwargs.pop('prec', orig)
     parent = kwargs.pop('parent', None)
