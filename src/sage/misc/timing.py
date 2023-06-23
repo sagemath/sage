@@ -37,7 +37,7 @@ def cputime(t=0, subprocesses=False):
 
     INPUT:
 
-    - ``t`` - (optional) time in CPU seconds, if ``t`` is a result
+    - ``t`` -- (optional) time in CPU seconds, if ``t`` is a result
       from an earlier call with ``subprocesses=True``, then
       ``subprocesses=True`` is assumed.
 
@@ -46,26 +46,26 @@ def cputime(t=0, subprocesses=False):
 
     OUTPUT:
 
-    - ``float`` - time in CPU seconds if ``subprocesses=False``
+    - ``float`` -- time in CPU seconds if ``subprocesses=False``
 
-    - :class:`GlobalCputime` - object which holds CPU times of
+    - :class:`GlobalCputime` -- object which holds CPU times of
       subprocesses otherwise
 
     EXAMPLES::
 
         sage: t = cputime()
-        sage: F = gp.factor(2^199-1)
-        sage: cputime(t)          # somewhat random
+        sage: F = gp.factor(2^199-1)                                                    # optional - sage.libs.pari
+        sage: cputime(t)            # somewhat random
         0.010999000000000092
 
         sage: t = cputime(subprocesses=True)
-        sage: F = gp.factor(2^199-1)
-        sage: cputime(t) # somewhat random
+        sage: F = gp.factor(2^199-1)                                                    # optional - sage.libs.pari
+        sage: cputime(t)            # somewhat random
         0.091999
 
         sage: w = walltime()
-        sage: F = gp.factor(2^199-1)
-        sage: walltime(w)         # somewhat random
+        sage: F = gp.factor(2^199-1)                                                    # optional - sage.libs.pari
+        sage: walltime(w)           # somewhat random
         0.58425593376159668
 
     .. NOTE::
@@ -130,7 +130,7 @@ class GlobalCputime:
     Objects of this type are returned if ``subprocesses=True`` is
     passed to :func:`cputime`::
 
-        sage: cputime(subprocesses=True) # indirect doctest, output random
+        sage: cputime(subprocesses=True)        # indirect doctest, output random
         0.2347431
 
     We can use it to keep track of the CPU time spent in Singular for
@@ -138,16 +138,16 @@ class GlobalCputime:
 
         sage: t = cputime(subprocesses=True)
         sage: P = PolynomialRing(QQ,7,'x')
-        sage: I = sage.rings.ideal.Katsura(P)
-        sage: gb = I.groebner_basis() # calls Singular
-        sage: cputime(subprocesses=True) - t # output random
+        sage: I = sage.rings.ideal.Katsura(P)                                           # optional - sage.libs.singular
+        sage: gb = I.groebner_basis() # calls Singular                                  # optional - sage.libs.singular
+        sage: cputime(subprocesses=True) - t    # output random
         0.462987
 
     For further processing we can then convert this container to a
     float::
 
         sage: t = cputime(subprocesses=True)
-        sage: float(t) #output somewhat random
+        sage: float(t)                          # output somewhat random
         2.1088339999999999
 
     .. SEEALSO::
@@ -173,7 +173,7 @@ class GlobalCputime:
         """
         EXAMPLES::
 
-            sage: cputime(subprocesses=True) # indirect doctest, output random
+            sage: cputime(subprocesses=True)    # indirect doctest, output random
             0.2347431
         """
         return str(self.total)
@@ -184,8 +184,8 @@ class GlobalCputime:
 
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: gb = I.groebner_basis() # calls Singular
+            sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.libs.singular
+            sage: gb = I.groebner_basis() # calls Singular                              # optional - sage.libs.singular
             sage: cputime(subprocesses=True) + t # output random
             2.798708
         """
@@ -200,8 +200,8 @@ class GlobalCputime:
 
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: gb = I.groebner_basis() # calls Singular
+            sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.libs.singular
+            sage: gb = I.groebner_basis() # calls Singular                              # optional - sage.libs.singular
             sage: cputime(subprocesses=True) - t # output random
             0.462987
         """
@@ -215,7 +215,7 @@ class GlobalCputime:
         EXAMPLES::
 
             sage: t = cputime(subprocesses=True)
-            sage: float(t) #output somewhat random
+            sage: float(t)                          # output somewhat random
             2.1088339999999999
         """
         return float(self.total)
@@ -223,24 +223,24 @@ class GlobalCputime:
 
 def walltime(t=0):
     """
-    Return the wall time in second, or with optional argument t, return
-    the wall time since time t. "Wall time" means the time on a wall
+    Return the wall time in second, or with optional argument ``t``, return
+    the wall time since time ``t``. "Wall time" means the time on a wall
     clock, i.e., the actual time.
 
     INPUT:
 
 
-    -  ``t`` - (optional) float, time in CPU seconds
+    -  ``t`` -- (optional) float, time in CPU seconds
 
     OUTPUT:
 
-    -  ``float`` - time in seconds
+    -  ``float`` -- time in seconds
 
 
     EXAMPLES::
 
         sage: w = walltime()
-        sage: F = factor(2^199-1)
+        sage: F = factor(2^199-1)                                                       # optional - sage.libs.pari
         sage: walltime(w)   # somewhat random
         0.8823847770690918
     """
