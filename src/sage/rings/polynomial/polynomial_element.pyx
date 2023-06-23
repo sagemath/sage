@@ -900,7 +900,7 @@ cdef class Polynomial(CommutativePolynomial):
         if pol._compiled is None:
             if d < 4 or d > 50000:
                 result = pol.get_unsafe(d)
-                for i in xrange(d - 1, -1, -1):
+                for i in range(d - 1, -1, -1):
                     result = result * a + pol.get_unsafe(i)
                 return result
             pol._compiled = CompiledPolynomialFunction(pol.list())
@@ -4035,7 +4035,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef dict X = {}
         cdef list Y = self.list(copy=False)
         cdef Py_ssize_t i
-        for i in xrange(len(Y)):
+        for i in range(len(Y)):
             c = Y[i]
             if c:
                 X[i] = c
@@ -11549,7 +11549,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             raise IndexError("polynomial coefficient index must be nonnegative")
         elif value != 0:
             zero = self.base_ring().zero()
-            for _ in xrange(len(self.__coeffs), n):
+            for _ in range(len(self.__coeffs), n):
                 self.__coeffs.append(zero)
             self.__coeffs.append(value)
 
