@@ -14,18 +14,21 @@ install_requires =
     SPKG_INSTALL_REQUIRES_cysignals
     SPKG_INSTALL_REQUIRES_memory_allocator
     SPKG_INSTALL_REQUIRES_sagemath_categories
-    SPKG_INSTALL_REQUIRES_mpmath
+    SPKG_INSTALL_REQUIRES_sagemath_mpmath
 
 [options.extras_require]
 test    = SPKG_INSTALL_REQUIRES_sagemath_repl
 
 # extras by packages
 flint   = SPKG_INSTALL_REQUIRES_sagemath_flint
+gsl     = # No extra needed
 linbox  = # FIXME: SPKG_INSTALL_REQUIRES_sagemath_linbox
 m4ri    = # FIXME
 m4rie   = # FIXME
 meataxe = SPKG_INSTALL_REQUIRES_sagemath_meataxe
 mpfi    = # FIXME
+mpfr    = # No extra needed
+mpmath  = # No extra needed
 ntl     = # FIXME
 numpy   = SPKG_INSTALL_REQUIRES_numpy
 

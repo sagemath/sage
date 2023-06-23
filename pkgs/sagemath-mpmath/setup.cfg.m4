@@ -12,3 +12,8 @@ python_requires = >=3.8, <3.12
 install_requires =
     SPKG_INSTALL_REQUIRES_cysignals
     SPKG_INSTALL_REQUIRES_sagemath_categories
+
+[options.package_data]
+
+sage.libs.mpmath =
+    *.pxd

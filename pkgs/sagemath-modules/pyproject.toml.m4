@@ -11,6 +11,7 @@ requires = [
     SPKG_INSTALL_REQUIRES_pkgconfig
     SPKG_INSTALL_REQUIRES_sagemath_environment
     SPKG_INSTALL_REQUIRES_sagemath_categories
+    SPKG_INSTALL_REQUIRES_sagemath_mpmath
     SPKG_INSTALL_REQUIRES_cython
     SPKG_INSTALL_REQUIRES_gmpy2
     SPKG_INSTALL_REQUIRES_numpy

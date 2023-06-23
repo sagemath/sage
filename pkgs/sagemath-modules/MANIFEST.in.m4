@@ -212,9 +212,8 @@ include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimpo
 
 include sage/rings/ring_extension*.p*
 
-# mpfr, mpmath, gsl
+# mpfr, gsl
 graft sage/libs/mpfr
-graft sage/libs/mpmath
 graft sage/libs/gsl
 include sage/rings/real_mpfr.p*
 include sage/rings/real_field.p*

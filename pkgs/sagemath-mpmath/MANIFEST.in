@@ -3,6 +3,8 @@ prune sage
 include VERSION.txt
 include vendor.txt
 
+include sage/libs/mpfr/*.pxd            # FIXME
+
 graft sage/libs/mpmath
 
 global-exclude *.c
