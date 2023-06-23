@@ -47,7 +47,8 @@ class JoinFeature(Feature):
         FeatureTestResult('xxyyyy', False)
     """
 
-    def __init__(self, name, features, spkg=None, url=None, description=None):
+    def __init__(self, name, features, spkg=None, url=None, description=None, type=None,
+                 **kwds):
         """
         TESTS:
 
@@ -69,7 +70,15 @@ class JoinFeature(Feature):
                 raise ValueError('given features have more than one url; provide url argument')
             elif len(urls) == 1:
                 url = next(iter(urls))
-        super().__init__(name, spkg=spkg, url=url, description=description)
+        if type is None:
+            if any(f._spkg_type() == 'experimental' for f in features):
+                type = 'experimental'
+            elif any(f._spkg_type() == 'optional' for f in features):
+                type = 'optional'
+            else:
+                type = 'standard'
+
+        super().__init__(name, spkg=spkg, url=url, description=description, type=type, **kwds)
         self._features = features
 
     def _is_present(self):
