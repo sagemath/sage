@@ -486,9 +486,9 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             indices = [gkeys.index(el) for el in bclist]
             indices.sort()
             rel = A.zero()
-            for i in range(len(indices)):
+            for i in indices:
                 mon = A.one()
-                for j in range(len(indices)):
+                for j in indices:
                     if j != i:
                         mon *= A.gen(j)
                 rel += (-1)**i *mon
