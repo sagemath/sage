@@ -25,5 +25,5 @@ patches-dir = "vendoring_patches"
 [tool.vendoring.transformations]
 substitute = [
   {match='sage[.]all', replace='sage.all__sagemath_categories'},
+  {match="'MPMATH_NOSAGE' not in os.environ and", replace='True or'},
 ]
-## try running 'vendoring' as part of building the sdist!  PIP_FIND_LINKS=upstream
