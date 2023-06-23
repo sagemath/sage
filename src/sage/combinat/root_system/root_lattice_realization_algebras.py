@@ -52,21 +52,19 @@ class Algebras(AlgebrasCategory):
 
                 sage: A = RootSystem(["A",2,1]).ambient_space().algebra(QQ)
                 sage: A.some_elements()
+                [B[2*e[0] + 2*e[1] + 3*e[2]]]
+                sage: A.some_elements()                                                 # optional - sage.graphs
                 [B[2*e[0] + 2*e[1] + 3*e[2]],
-                B[-e[0] + e[2] + e['delta']],
-                B[e[0] - e[1]],
-                B[e[1] - e[2]],
-                B[e['deltacheck']],
-                B[e[0] + e['deltacheck']],
-                B[e[0] + e[1] + e['deltacheck']]]
+                 B[-e[0] + e[2] + e['delta']],
+                 B[e[0] - e[1]],
+                 B[e[1] - e[2]],
+                 B[e['deltacheck']],
+                 B[e[0] + e['deltacheck']],
+                 B[e[0] + e[1] + e['deltacheck']]]
 
                 sage: A = RootSystem(["B",2]).weight_space().algebra(QQ)
                 sage: A.some_elements()
-                [B[2*Lambda[1] + 2*Lambda[2]],
-                B[2*Lambda[1] - 2*Lambda[2]],
-                B[-Lambda[1] + 2*Lambda[2]],
-                B[Lambda[1]],
-                B[Lambda[2]]]
+                [B[2*Lambda[1] + 2*Lambda[2]], B[Lambda[1]], B[Lambda[2]]]
             """
             return [self.monomial(weight) for weight in self.basis().keys().some_elements()]
 
