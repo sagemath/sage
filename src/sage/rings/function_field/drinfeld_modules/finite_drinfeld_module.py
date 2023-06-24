@@ -484,7 +484,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
     def is_ordinary(self):
         r"""
-        Return ``True`` whether the Drinfeld module is ordinary; raise a
+        Return ``True`` if the Drinfeld module is ordinary; raise a
         NotImplementedError if the rank is not two.
 
         A rank two Drinfeld module is *ordinary* if and only if it is

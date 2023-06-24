@@ -1237,7 +1237,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_isomorphic(psi, absolutely=True)
             True
 
-        On certain fields, testing isomorphisms on the base field may
+        On certain fields, testing isomorphisms over the base field may
         fail::
 
             sage: L = A.fraction_field()
@@ -1331,7 +1331,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def is_supersingular(self):
         r"""
-        Return ``True`` whether the Drinfeld module is supersingular.
+        Return ``True`` if the Drinfeld module is supersingular.
 
         A Drinfeld module is supersingular if and only if its
         height equals its rank.
