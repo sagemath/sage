@@ -60,6 +60,7 @@ import math
 ################ end setup warnings ###############################
 
 from .all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
+from .all__sagemath_modules import *
 
 ###################################################################
 
@@ -78,7 +79,6 @@ from sage.all__sagemath_combinat import *
 
 from sage.algebras.all   import *
 
-from sage.all__sagemath_modules import *
 from sage.all__sagemath_schemes import *
 from sage.all__sagemath_graphs import *
 from sage.all__sagemath_groups import *
