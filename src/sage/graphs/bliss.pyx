@@ -59,7 +59,7 @@ cdef extern from "bliss/digraph.hh" namespace "bliss":
         const unsigned int* canonical_form(Stats&)
         unsigned int get_hash()
 
-cdef extern from "bliss_find_automorphisms.h":
+cdef extern from "bliss_cpp/bliss_find_automorphisms.h":
 
     void bliss_find_automorphisms(Graph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
     void bliss_find_automorphisms(Digraph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
