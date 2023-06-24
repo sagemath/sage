@@ -54,6 +54,8 @@ test_file = args.input
 src_in = test_file.read()
 test_file.close()
 
+runtest_default_environment = "sage.repl.ipython_kernel.all_jupyter"
+
 def default_venv_environment_from_distribution():
     if args.distribution:
         # shortcuts / variants
@@ -71,7 +73,7 @@ def default_venv_environment_from_distribution():
         default_environment = 'sage.all__' + plain_distribution.replace('-', '_')
     else:
         default_venv = ''
-        default_environment = "sage.repl.ipython_kernel.all_jupyter"
+        default_environment = runtest_default_environment
     return default_venv, default_environment
 
 default_venv, default_environment = default_venv_environment_from_distribution()
@@ -114,7 +116,7 @@ doc_file = tmp_filename()
 cmdline = '%s -t %s %s %s > %s' % (
     shlex.quote(f'{args.venv}/bin/sage') if args.venv else 'sage',
     '--long' if args.long else '',
-    f'--environment {args.environment}' if args.environment else '',
+    f'--environment {args.environment}' if args.environment != runtest_default_environment else '',
     test_file.name, doc_file)
 print(f'Running {cmdline}')
 os.system(cmdline)
@@ -286,4 +288,4 @@ else:
     if relative.startswith('..'):
         print('Fixed source file is not part of Sage.')
     else:
-        subprocess.call(['git', 'diff', relative], cwd=SAGE_ROOT)
+        subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
