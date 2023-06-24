@@ -772,13 +772,13 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             self.total_walltime += example.walltime + check_duration
 
             # Report the outcome.
+            if example.warnings:
+                for warning in example.warnings:
+                    out(self._failure_header(test, example, f'Warning: {warning}'))
             if outcome is SUCCESS:
                 if self.options.warn_long > 0 and example.walltime + check_duration > self.options.warn_long:
                     self.report_overtime(out, test, example, got,
                                          check_duration=check_duration)
-                elif example.warnings:
-                    for warning in example.warnings:
-                        out(self._failure_header(test, example, f'Warning: {warning}'))
                 elif not quiet:
                     self.report_success(out, test, example, got,
                                         check_duration=check_duration)

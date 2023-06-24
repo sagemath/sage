@@ -80,11 +80,11 @@ def RIFtol(*args):
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
 
 special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
-optional_regex = re.compile(fr'({special_optional_regex})|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))')
-special_optional_regex = re.compile(special_optional_regex)
+optional_regex = re.compile(fr'({special_optional_regex})|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))', re.IGNORECASE)
+special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
 
 
-def parse_optional_tags(string):
+def parse_optional_tags(string, *, return_string_sans_tags=False):
     """
     Return a set consisting of the optional tags from the following
     set that occur in a comment on the first line of the input string.
@@ -97,6 +97,14 @@ def parse_optional_tags(string):
     - 'arb216'
     - 'arb218'
     - 'optional: PKG_NAME' -- the set will just contain 'PKG_NAME'
+
+    INPUT:
+
+    - ``string`` -- a string
+
+    - ``return_string_sans_tags`` -- (boolean, default ``False``); whether to
+      additionally return ``string`` with the optional tags removed but other
+      comments kept.
 
     EXAMPLES::
 
@@ -133,13 +141,20 @@ def parse_optional_tags(string):
          set()
     """
     safe, literals, state = strip_string_literals(string)
-    first_line = safe.split('\n', 1)[0]
-    if '#' not in first_line:
-        return set()
-    comment = first_line[first_line.find('#') + 1:]
-    comment = comment[comment.index('(') + 1: comment.rindex(')')]
-    # strip_string_literals replaces comments
-    comment = "#" + (literals[comment]).lower()
+    split = safe.split('\n', 1)
+    if len(split) > 1:
+        first_line, rest = split
+    else:
+        first_line, rest = split[0], ''
+
+    sharp_index = first_line.find('#')
+    if sharp_index <= 0:                  # no comment
+        if return_string_sans_tags:
+            return set(), string
+        else:
+            return set()
+
+    first_line, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
 
     tags = []
     for m in optional_regex.finditer(comment):
@@ -150,7 +165,12 @@ def parse_optional_tags(string):
             tags.append(cmd)
         else:
             tags.extend(m.group(3).split() or [""])
-    return set(tags)
+
+    if return_string_sans_tags:
+        # FIXME: Keep non-tag comments
+        return set(tags), first_line + rest%literals
+    else:
+        return set(tags)
 
 
 def unparse_optional_tags(tags):
@@ -189,20 +209,33 @@ optional_tag_columns = [88, 100, 120]
 standard_tag_columns = [64, 72, 80, 84]
 
 
-def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None):
-    if not (m := re.match(' *sage: [^#]*', line)):
+def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, force_rewrite=False):
+
+    if not (m := re.match('( *sage: *)(.*)', line)):
         raise ValueError(f'line must start with a sage: prompt, got: {line}')
-    if tags is not None or remove_tags:
-        raise NotImplementedError
-    if not add_tags:
+
+    current_tags, line_sans_tags = parse_optional_tags(line, return_string_sans_tags=True)
+
+    new_tags = set(current_tags)
+
+    if tags is not None:
+        new_tags = tags
+
+    if add_tags is not None:
+        new_tags.update(add_tags)
+
+    if remove_tags is not None:
+        new_tags.difference_update(remove_tags)
+
+    if not force_rewrite and new_tags == current_tags:
         return line
-    # FIXME: parse existing tags, merge with given tags; remove them from line, keeping non-tag comments
-    tags = add_tags
+
+    line = line_sans_tags.rstrip()
     for column in optional_tag_columns:
-        if len(line) < column - 2:
+        if len(line) <= column - 2:
             line += ' ' * (column - 2 - len(line))
             break
-    line += '  ' + unparse_optional_tags(tags)
+    line += '  ' + unparse_optional_tags(new_tags)
     return line
 
 

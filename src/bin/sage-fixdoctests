@@ -136,7 +136,7 @@ for block in doctests:
         continue   # but if something goes wrong we give up
     first_line_num = line_num = int(block[line + 5:comma])  # 1-based line number of the first line of the example
 
-    if m := re.search(r"referenced here was set only in doctest marked '([^;']*)", block):
+    if m := re.search(r"referenced here was set only in doctest marked '# optional - ([^;']*)", block):
         optional = m.group(1)
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=[optional])
@@ -172,6 +172,8 @@ for block in doctests:
         # FIXME: map module name to feature name
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=[optional])
+        if '- #' in src_in_lines[first_line_num - 1]:
+            breakpoint()
         if not re.search('#.*(why|explain)', src_in_lines[first_line_num - 1]):
             # When no explanation has been demanded,
             # we just mark the doctest with the feature
