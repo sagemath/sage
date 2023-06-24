@@ -928,7 +928,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             Defn: Defined on coordinates by sending (z : w) to
                     ((3*a)*z^2 + (3*a)*w^2 : z*w)
         """
-        # if ideal or valuation is specified, we scale according the norm defined by the ideal/valuation
+        # If ideal or valuation is specified, we scale according the norm
+        # defined by the ideal/valuation
         ideal = kwds.pop('ideal', None)
         if ideal is not None:
             from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
@@ -960,6 +961,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             min_val = min(valuations)
             self.scale_by(uniformizer**(-1 * min_val))
             return
+
         valuation = kwds.pop('valuation', None)
         if valuation is not None:
             from sage.rings.padics.padic_valuation import pAdicValuation_base
@@ -980,8 +982,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             return
 
         R = self.domain().base_ring()
-        K = self.base_ring()
-        N = self.codomain().ambient_space().dimension_relative() + 1
 
         # Only clear denominators from the coefficients in the ring of integers
         if R in NumberFields():
@@ -1006,6 +1006,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         GCD = gcd(self[0], self[1])
         index = 2
+
+        N = self.codomain().ambient_space().dimension_relative() + 1
 
         while GCD != 1 and index < N:
             GCD = gcd(GCD, self[index])
