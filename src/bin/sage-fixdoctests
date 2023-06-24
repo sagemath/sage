@@ -56,6 +56,8 @@ sep = "**********************************************************************\n"
 doctests = doc_out.split(sep)
 src_in_lines = src_in.splitlines()
 
+venv_explainer = f' (with venv={args.venv})' if args.venv else ''
+
 for block in doctests:
     if 'Failed example:' not in block:
         continue  # sanity checking, but shouldn't happen
@@ -123,6 +125,13 @@ for block in doctests:
             # simplify filenames shown in backtrace
             while m := re.search('"([-a-zA-Z0-9._/]*/site-packages)/sage/', got):
                 got = got[:m.start(1)] + '...' + got[m.end(1):]
+
+            last_frame = got.rfind('File "')
+            if last_frame >= 0 and got.rfind("NameError:") >= 0 and got[last_frame:].startswith('File "<doctest'):
+                # NameError from top level, so keep it brief
+                src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
+                                                                        add_tags=[f'NameError{venv_explainer}'])
+                continue
             got = got.splitlines()
         else:
             got = got.splitlines()
@@ -137,7 +146,8 @@ for block in doctests:
     expected = expected.splitlines()
 
     if args.keep_both:
-        test_lines = ([update_optional_tags(src_in_lines[first_line_num - 1], add_tags=['GOT'])]
+        test_lines = ([update_optional_tags(src_in_lines[first_line_num - 1],
+                                            add_tags=[f'GOT{venv_explainer}'])]
                       + src_in_lines[first_line_num : line_num])
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=['EXPECTED'])
