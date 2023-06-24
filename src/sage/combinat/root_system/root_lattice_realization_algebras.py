@@ -511,10 +511,10 @@ class Algebras(AlgebrasCategory):
             the `Y` s in affine type::
 
                 sage: K = QQ['q,q1,q2'].fraction_field()
-                sage: q,q1,q2=K.gens()
+                sage: q,q1,q2 = K.gens()
                 sage: L = RootSystem(["A",2,1]).ambient_space()
                 sage: L0 = L.classical()
-                sage: Lambda = L.fundamental_weights()
+                sage: Lambda = L.fundamental_weights()                                  # optional - sage.graphs
                 sage: alphacheck = L0.simple_coroots()
                 sage: KL = L.algebra(K)
                 sage: T = KL.demazure_lusztig_operators(q1, q2, convention="dominant")
@@ -522,28 +522,28 @@ class Algebras(AlgebrasCategory):
                 sage: alphacheck = Y.keys().alpha() # alpha of coroot lattice is alphacheck
                 sage: alphacheck
                 Finite family {0: alphacheck[0], 1: alphacheck[1], 2: alphacheck[2]}
-                sage: x = KL.monomial(Lambda[1]-Lambda[0]); x
+                sage: x = KL.monomial(Lambda[1] - Lambda[0]); x                         # optional - sage.graphs
                 B[e[0]]
 
             In fact it is not exactly an eigenvector, but the extra
             '\delta` term is to be interpreted as a `q` parameter::
 
-                sage: Y[alphacheck[0]](KL.one())
+                sage: Y[alphacheck[0]](KL.one())                                        # optional - sage.graphs
                 q2^2/q1^2*B[0]
-                sage: Y[alphacheck[1]](x)
+                sage: Y[alphacheck[1]](x)                                               # optional - sage.graphs
                 ((-q2^2)/(-q1^2))*B[e[0] - e['delta']]
-                sage: Y[alphacheck[2]](x)
+                sage: Y[alphacheck[2]](x)                                               # optional - sage.graphs
                 (q1/(-q2))*B[e[0]]
-                sage: KL.q_project(Y[alphacheck[1]](x),q)
+                sage: KL.q_project(Y[alphacheck[1]](x),q)                               # optional - sage.graphs
                 ((-q2^2)/(-q*q1^2))*B[(1, 0, 0)]
 
                 sage: KL.q_project(x, q)
                 B[(1, 0, 0)]
-                sage: KL.q_project(Y[alphacheck[0]](x),q)
+                sage: KL.q_project(Y[alphacheck[0]](x),q)                               # optional - sage.graphs
                 ((-q*q1)/q2)*B[(1, 0, 0)]
-                sage: KL.q_project(Y[alphacheck[1]](x),q)
+                sage: KL.q_project(Y[alphacheck[1]](x),q)                               # optional - sage.graphs
                 ((-q2^2)/(-q*q1^2))*B[(1, 0, 0)]
-                sage: KL.q_project(Y[alphacheck[2]](x),q)
+                sage: KL.q_project(Y[alphacheck[2]](x),q)                               # optional - sage.graphs
                 (q1/(-q2))*B[(1, 0, 0)]
 
             We now check systematically that the Demazure-Lusztig
@@ -613,21 +613,21 @@ class Algebras(AlgebrasCategory):
             These operators coincide with the usual Demazure-Lusztig
             operators::
 
-                sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((2,2)), 1, q, q1, q2)
+                sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((2,2)), 1, q, q1, q2)   # optional - sage.graphs
                 q1*B[(2, 2)]
                 sage: KL0.demazure_lusztig_operator_on_basis(L0((2,2)), 1, q1, q2)
                 q1*B[(2, 2)]
 
-                sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((3,0)), 1, q, q1, q2)
+                sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((3,0)), 1, q, q1, q2)   # optional - sage.graphs
                 (q1+q2)*B[(1, 2)] + (q1+q2)*B[(2, 1)] + (q1+q2)*B[(3, 0)] + q1*B[(0, 3)]
                 sage: KL0.demazure_lusztig_operator_on_basis(L0((3,0)), 1, q1, q2)
                 (q1+q2)*B[(1, 2)] + (q1+q2)*B[(2, 1)] + (q1+q2)*B[(3, 0)] + q1*B[(0, 3)]
 
             except that we now have an action of `T_0`, which introduces some `q` s::
 
-                sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((2,2)), 0, q, q1, q2)
+                sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((2,2)), 0, q, q1, q2)   # optional - sage.graphs
                 q1*B[(2, 2)]
-                sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((3,0)), 0, q, q1, q2)
+                sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((3,0)), 0, q, q1, q2)   # optional - sage.graphs
                 (-q^2*q1-q^2*q2)*B[(1, 2)] + (-q*q1-q*q2)*B[(2, 1)] + (-q^3*q2)*B[(0, 3)]
             """
             L = self.basis().keys()
@@ -663,33 +663,33 @@ class Algebras(AlgebrasCategory):
                 sage: KL = L.algebra(K)
                 sage: KL0 = KL.classical()
                 sage: L0 = KL0.basis().keys()
-                sage: T = KL.demazure_lusztig_operators_on_classical(q, q1, q2)
+                sage: T = KL.demazure_lusztig_operators_on_classical(q, q1, q2)         # optional - sage.graphs
 
                 sage: x = KL0.monomial(L0((3,0))); x
                 B[(3, 0)]
 
             For `T_1,\dots` we recover the usual Demazure-Lusztig operators::
 
-                sage: T[1](x)
+                sage: T[1](x)                                                           # optional - sage.graphs
                 (q1+q2)*B[(1, 2)] + (q1+q2)*B[(2, 1)] + (q1+q2)*B[(3, 0)] + q1*B[(0, 3)]
 
             For `T_0`, we can note that, in the projection, `\delta`
             is mapped to `q`::
 
-                sage: T[0](x)
+                sage: T[0](x)                                                           # optional - sage.graphs
                 (-q^2*q1-q^2*q2)*B[(1, 2)] + (-q*q1-q*q2)*B[(2, 1)] + (-q^3*q2)*B[(0, 3)]
 
             Note that there is no translation part, and in particular
             1 is an eigenvector for all `T_i`'s::
 
-                sage: T[0](KL0.one())
+                sage: T[0](KL0.one())                                                   # optional - sage.graphs
                 q1*B[(0, 0)]
-                sage: T[1](KL0.one())
+                sage: T[1](KL0.one())                                                   # optional - sage.graphs
                 q1*B[(0, 0)]
 
-                sage: Y = T.Y()
-                sage: alphacheck=Y.keys().simple_roots()
-                sage: Y[alphacheck[0]](KL0.one())
+                sage: Y = T.Y()                                                         # optional - sage.graphs
+                sage: alphacheck = Y.keys().simple_roots()                              # optional - sage.graphs
+                sage: Y[alphacheck[0]](KL0.one())                                       # optional - sage.graphs
                 ((-q2)/(q*q1))*B[(0, 0)]
 
             Matching with Ion Bogdan's hand calculations from 3/15/2013::
@@ -701,33 +701,33 @@ class Algebras(AlgebrasCategory):
                 sage: KL0 = KL.classical()
                 sage: L0 = KL0.basis().keys()
                 sage: omega = L0.fundamental_weights()
-                sage: T = KL.demazure_lusztig_operators_on_classical(q, u, -1/u, convention="dominant")
-                sage: Y = T.Y()
-                sage: alphacheck = Y.keys().simple_roots()
-
-                sage: Ydelta = Y[Y.keys().null_root()]
-                sage: Ydelta.word, Ydelta.signs, Ydelta.scalar
+                sage: T = KL.demazure_lusztig_operators_on_classical(q, u, -1/u,        # optional - sage.graphs
+                ....:                                                convention="dominant")
+                sage: Y = T.Y()                                                         # optional - sage.graphs
+                sage: alphacheck = Y.keys().simple_roots()                              # optional - sage.graphs
+                sage: Ydelta = Y[Y.keys().null_root()]                                  # optional - sage.graphs
+                sage: Ydelta.word, Ydelta.signs, Ydelta.scalar                          # optional - sage.graphs
                 ((), (), 1/q)
 
-                sage: Y1 = Y[alphacheck[1]]
-                sage: Y1.word, Y1.signs, Y1.scalar # This is T_0 T_1 (T_1 acts first, then T_0); Ion gets T_1 T_0
+                sage: Y1 = Y[alphacheck[1]]                                             # optional - sage.graphs
+                sage: Y1.word, Y1.signs, Y1.scalar # This is T_0 T_1 (T_1 acts first, then T_0); Ion gets T_1 T_0   # optional - sage.graphs
                 ((1, 0), (1, 1), 1)
 
-                sage: Y0 = Y[alphacheck[0]]
-                sage: Y0.word, Y0.signs, Y0.scalar # This is 1/q T_1^-1 T_0^-1
+                sage: Y0 = Y[alphacheck[0]]                                             # optional - sage.graphs
+                sage: Y0.word, Y0.signs, Y0.scalar # This is 1/q T_1^-1 T_0^-1          # optional - sage.graphs
                 ((0, 1), (-1, -1), 1/q)
 
             Note that the following computations use the "dominant" convention::
 
-                sage: T0 = T.Tw(0)
-                sage: T0(KL0.monomial(omega[1]))
+                sage: T0 = T.Tw(0)                                                      # optional - sage.graphs
+                sage: T0(KL0.monomial(omega[1]))                                        # optional - sage.graphs
                 q*u*B[-Lambda[1]] + ((u^2-1)/u)*B[Lambda[1]]
-                sage: T0(KL0.monomial(2*omega[1]))
+                sage: T0(KL0.monomial(2*omega[1]))                                      # optional - sage.graphs
                 ((q*u^2-q)/u)*B[0] + q^2*u*B[-2*Lambda[1]] + ((u^2-1)/u)*B[2*Lambda[1]]
 
-                sage: T0(KL0.monomial(-omega[1]))
+                sage: T0(KL0.monomial(-omega[1]))                                       # optional - sage.graphs
                 1/(q*u)*B[Lambda[1]]
-                sage: T0(KL0.monomial(-2*omega[1]))
+                sage: T0(KL0.monomial(-2*omega[1]))                                     # optional - sage.graphs
                 ((-u^2+1)/(q*u))*B[0] + 1/(q^2*u)*B[2*Lambda[1]]
 
             """
@@ -768,17 +768,17 @@ class Algebras(AlgebrasCategory):
                 sage: L = RootSystem(["A",1,1]).ambient_space()
                 sage: L0 = L.classical()
                 sage: KL = L.algebra(K)
-                sage: some_weights = L.fundamental_weights()
-                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")
-                sage: f(L0.zero())
+                sage: some_weights = L.fundamental_weights()                            # optional - sage.graphs
+                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")            # optional - sage.graphs
+                sage: f(L0.zero())                                                      # optional - sage.graphs
                 (q1+q2)*B[(0, 0)] + q1*B[(1, -1)]
 
                 sage: L = RootSystem(["A",3,1]).ambient_space()
                 sage: L0 = L.classical()
                 sage: KL = L.algebra(K)
                 sage: some_weights = L0.fundamental_weights()
-                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")
-                sage: f(L0.zero())       # not checked
+                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")            # optional - sage.graphs
+                sage: f(L0.zero())       # not checked                                  # optional - sage.graphs
                 (q1+q2)*B[(0, 0, 0, 0)] + q1^3/q2^2*B[(1, 0, 0, -1)]
 
             The following results have not been checked::
@@ -800,14 +800,14 @@ class Algebras(AlgebrasCategory):
                 sage: q2 = -1/u
                 sage: KL = L.algebra(K)
                 sage: KL0 = KL.classical()
-                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")
+                sage: f = KL.T0_check_on_basis(q1,q2, convention="dominant")            # optional - sage.graphs
                 sage: T = KL.twisted_demazure_lusztig_operators(q1,q2, convention="dominant")
 
             Direct calculation::
 
-                sage: T.Tw(0)(KL0.monomial(L0([0,0])))
+                sage: T.Tw(0)(KL0.monomial(L0([0,0])))                                  # optional - sage.graphs
                 ((u^2-1)/u)*B[(0, 0)] + u^3*B[(1, 1)]
-                sage: KL.T0_check_on_basis(q1,q2, convention="dominant")(L0([0,0]))
+                sage: KL.T0_check_on_basis(q1,q2, convention="dominant")(L0([0,0]))     # optional - sage.graphs
                 ((u^2-1)/u)*B[(0, 0)] + u^3*B[(1, 1)]
 
             Step by step calculation, comparing by hand with Mark Shimozono::
@@ -939,7 +939,7 @@ class Algebras(AlgebrasCategory):
                 denoted `q` is in fact ``q^a[0]`` in Sage's notations,
                 to avoid manipulating square roots::
 
-                    sage: KL.q_project(KL.monomial(L.null_root()),q)
+                    sage: KL.q_project(KL.monomial(L.null_root()),q)                    # optional - sage.graphs
                     q^2*B[(0, 0, 0)]
             """
             L0 = self.classical()
@@ -972,7 +972,7 @@ class Algebras(AlgebrasCategory):
                 (-q1-q2)*B[(3, 1, 1, 0)] + (-q2)*B[(3, 0, 2, 0)]
                 sage: KL.twisted_demazure_lusztig_operator_on_basis(Lambda[1]+2*Lambda[2], 3, q1, q2, convention="dominant")
                 q1*B[(3, 2, 0, 0)]
-                sage: KL.twisted_demazure_lusztig_operator_on_basis(Lambda[1]+2*Lambda[2], 0, q1, q2, convention="dominant")
+                sage: KL.twisted_demazure_lusztig_operator_on_basis(Lambda[1]+2*Lambda[2], 0, q1, q2, convention="dominant")  # optional - sage.graphs
                 ((q1*q2+q2^2)/q1)*B[(1, 2, 1, 1)] + ((q1*q2+q2^2)/q1)*B[(1, 2, 2, 0)] + q2^2/q1*B[(1, 2, 0, 2)]
                 + ((q1^2+2*q1*q2+q2^2)/q1)*B[(2, 1, 1, 1)] + ((q1^2+2*q1*q2+q2^2)/q1)*B[(2, 1, 2, 0)]
                 + ((q1*q2+q2^2)/q1)*B[(2, 1, 0, 2)] + ((q1^2+2*q1*q2+q2^2)/q1)*B[(2, 2, 1, 0)] + ((q1*q2+q2^2)/q1)*B[(2, 2, 0, 1)]
@@ -1032,7 +1032,7 @@ class Algebras(AlgebrasCategory):
                 (-q1-q2)*B[(0, 0)] + (-q2)*B[(-1, 1)]
                 sage: T.Ti_inverse_on_basis(alpha[1], 1)
                 ((q1+q2)/(q1*q2))*B[(0, 0)] + 1/q1*B[(-1, 1)] + ((q1+q2)/(q1*q2))*B[(1, -1)]
-                sage: T.Ti_on_basis(L0.zero(), 0)
+                sage: T.Ti_on_basis(L0.zero(), 0)                                       # optional - sage.graphs
                 (q1+q2)*B[(0, 0)] + q1*B[(1, -1)]
 
             The next computations were checked with Mark Shimozono for type `A_2^{(1)}`::
@@ -1105,10 +1105,10 @@ class Algebras(AlgebrasCategory):
                 sage: L0 = L.classical()
                 sage: T = KL.demazure_lusztig_operators(q1,q2, convention="dominant")
                 sage: def T0(*l0): return KL.q_project(T[0].on_basis()(L.embed_at_level(L0(l0), 1)), q)
-                sage: T0_check_on_basis = KL.T0_check_on_basis(q1, q2, convention="dominant")
+                sage: T0_check_on_basis = KL.T0_check_on_basis(q1, q2, convention="dominant")       # optional - sage.graphs
                 sage: def T0c(*l0): return T0_check_on_basis(L0(l0))
 
-                sage: T0(0,0,1)                                 # not double checked
+                sage: T0(0,0,1)                                 # not double checked    # optional - sage.graphs
                 ((-t+1)/q)*B[(1, 0, 0)] + 1/q^2*B[(2, 0, -1)]
                 sage: T0c(0,0,1)
                 (t^2-t)*B[(1, 0, 0)] + (t^2-t)*B[(1, 1, -1)] + t^2*B[(2, 0, -1)] + (t-1)*B[(0, 0, 1)]
