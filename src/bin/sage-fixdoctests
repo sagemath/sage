@@ -16,16 +16,26 @@ AUTHORS::
 """
 import os
 import re
+import shlex
 import subprocess
+
 from argparse import ArgumentParser, FileType
-from sage.misc.temporary_file import tmp_filename
+from pathlib import Path
+
 from sage.doctest.parsing import update_optional_tags
+from sage.env import SAGE_ROOT
+from sage.misc.temporary_file import tmp_filename
+
 
 parser = ArgumentParser(description="Given an input file with doctests, this creates a modified file that passes the doctests (modulo any raised exceptions). By default, the input file is modified. You can also name an output file.")
 parser.add_argument('-l', '--long',
                     dest='long', action="store_true", default=False)
-parser.add_argument("--venv", type=str, default='', help="directory name of a venv where 'sage -t' is to be run")
-parser.add_argument("--environment", type=str, default="sage.repl.ipython_kernel.all_jupyter", help="name of a module that provides the global environment for tests")
+parser.add_argument("--distribution", type=str, default='',
+                    help="distribution package to test, e.g., 'sagemath-graphs', 'sagemath-combinat[modules]'; sets defaults for --venv and --environment")
+parser.add_argument("--venv", type=str, default='',
+                    help="directory name of a venv where 'sage -t' is to be run")
+parser.add_argument("--environment", type=str, default='',
+                    help="name of a module that provides the global environment for tests; implies --keep-both and --full-tracebacks")
 parser.add_argument("--full-tracebacks", default=False, action="store_true",
                     help="include full tracebacks rather than '...'")
 parser.add_argument("--only-tags", default=False, action="store_true",
@@ -44,21 +54,77 @@ test_file = args.input
 src_in = test_file.read()
 test_file.close()
 
+def default_venv_environment_from_distribution():
+    if args.distribution:
+        # shortcuts / variants
+        args.distribution = args.distribution.replace('_', '-')
+        if not (args.distribution.startswith('sagemath-')
+                or args.distribution.startswith('sage-')):
+            args.distribution = f'sagemath-{args.distribution}'
+        # extras
+        m = re.fullmatch(r'([^[]*)(\[([^]]*)\])?', args.distribution)
+        plain_distribution, extras = m.group(1), m.group(3)
+        tox_env_name = 'sagepython-sagewheels-nopypi-norequirements'
+        if extras:
+            tox_env_name += '-' + extras.replace(',', '-')
+        default_venv = os.path.join(SAGE_ROOT, 'pkgs', plain_distribution, '.tox', tox_env_name)
+        default_environment = 'sage.all__' + plain_distribution.replace('-', '_')
+    else:
+        default_venv = ''
+        default_environment = "sage.repl.ipython_kernel.all_jupyter"
+    return default_venv, default_environment
+
+default_venv, default_environment = default_venv_environment_from_distribution()
+
+if not args.venv:
+    args.venv = default_venv
+if not args.environment:
+    args.environment = default_environment
+
+if args.environment:
+    args.keep_both = args.full_tracebacks = True
+
+venv_explainers = []
+
+if args.venv:
+    if m := re.search(f'pkgs/(sage[^/]*)/[.]tox/((sagepython|sagewheels|nopypi|norequirements)-*)*([^/]*)$',
+                      args.venv):
+        args.distribution, extras = m.group(1), m.group(4)
+        if extras:
+            args.distribution += '[' + extras.replace('-', ',') + ']'
+        default_venv_given_distribution, default_environment_given_distribution = default_venv_environment_from_distribution()
+
+        if (Path(args.venv).resolve() == Path(default_venv_given_distribution).resolve()
+                or args.environment == default_environment_given_distribution):
+            venv_explainers.append(f'--distribution {shlex.quote(args.distribution)}')
+            default_venv, default_environment = default_venv_given_distribution, default_environment_given_distribution
+
+if Path(args.venv).resolve() != Path(default_venv).resolve():
+    venv_explainers.append(f'--venv {shlex.quote(args.venv)}')
+if args.environment != default_environment:
+    venv_explainers.append(f'--environment {args.environment}')
+
+if venv_explainers:
+    venv_explainer = ' (with ' + ' '.join(venv_explainers) + ')'
+else:
+    venv_explainer = ''
+
 # put the output of the test into sage's temporary directory
 doc_file = tmp_filename()
-os.system('%s -t %s %s %s > %s' % (
-    f'{args.venv}/bin/sage' if args.venv else 'sage',
+cmdline = '%s -t %s %s %s > %s' % (
+    shlex.quote(f'{args.venv}/bin/sage') if args.venv else 'sage',
     '--long' if args.long else '',
     f'--environment {args.environment}' if args.environment else '',
-    test_file.name, doc_file))
+    test_file.name, doc_file)
+print(f'Running {cmdline}')
+os.system(cmdline)
+
 with open(doc_file, 'r') as doc:
     doc_out = doc.read()
 sep = "**********************************************************************\n"
 
 doctests = doc_out.split(sep)
 src_in_lines = src_in.splitlines()
-
-venv_explainer = f' (with venv={args.venv})' if args.venv else ''
 
 for block in doctests:
     # Extract the line, what was expected, and was got.
@@ -215,7 +281,6 @@ test_output.close()
 if args.output:
     print('The fixed doctests have been saved as {0}.'.format(test_output.name))
 else:
-    from sage.env import SAGE_ROOT
     relative = os.path.relpath(test_output.name, SAGE_ROOT)
     print(relative)
     if relative.startswith('..'):
