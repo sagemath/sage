@@ -28,21 +28,29 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
 from sage.combinat.subset import powerset
-from sage.matrix.matrix_integer_sparse import Matrix_integer_sparse
 from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 from sage.combinat.root_system.root_system import RootSystem
 from sage.sets.family import Family
-from sage.graphs.digraph import DiGraph
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.root_system.dynkin_diagram', 'DynkinDiagram_class')
 
 
-class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
-        metaclass=InheritComparisonClasscallMetaclass):
+try:
+    from sage.matrix.matrix_integer_sparse import Matrix_integer_sparse as Base
+except ImportError:
+    from sage.matrix.matrix_generic_sparse import Matrix_generic_sparse as Base
+
+
+class CartanMatrix(Base, CartanType_abstract,
+                   metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A (generalized) Cartan matrix.
 
@@ -274,7 +282,6 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
             dynkin_diagram = None
             subdivisions = None
 
-            from sage.combinat.root_system.dynkin_diagram import DynkinDiagram_class
             if isinstance(data, DynkinDiagram_class):
                 dynkin_diagram = data
                 cartan_type = data._cartan_type
