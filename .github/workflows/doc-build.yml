@@ -50,7 +50,7 @@ jobs:
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
           # Keep track of changes to built HTML
-          (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git init && (echo ".buildinfo"; echo ".inv") > .gitignore; git add -A && git commit --quiet -m "old")
+          (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage dev /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
 
       - name: Incremental build
         id: incremental
