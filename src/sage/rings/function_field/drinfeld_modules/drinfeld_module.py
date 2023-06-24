@@ -1280,7 +1280,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_isomorphic(psi)
             False
 
-        Two Drinfeld modules which are patterned-alike are also not
+        Two Drinfeld modules which are not patterned-alike are also not
         isomorphic::
 
             sage: phi = DrinfeldModule(A, [T, 1, 0, 1])
