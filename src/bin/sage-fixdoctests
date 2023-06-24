@@ -28,6 +28,8 @@ parser.add_argument("--venv", type=str, default='', help="directory name of a ve
 parser.add_argument("--environment", type=str, default="sage.repl.ipython_kernel.all_jupyter", help="name of a module that provides the global environment for tests")
 parser.add_argument("--full-tracebacks", default=False, action="store_true",
                     help="include full tracebacks rather than '...'")
+parser.add_argument("--only-tags", default=False, action="store_true",
+                    help="only add '# optional' tags where needed, ignore other failures")
 parser.add_argument("--keep-both", default=False, action="store_true",
                     help="do not replace test results; duplicate the test instead and mark both copies # optional")
 parser.add_argument("input", help="input filename",
@@ -59,15 +61,17 @@ src_in_lines = src_in.splitlines()
 venv_explainer = f' (with venv={args.venv})' if args.venv else ''
 
 for block in doctests:
-    if 'Failed example:' not in block:
-        continue  # sanity checking, but shouldn't happen
-
     # Extract the line, what was expected, and was got.
     line = block.find('line ')             # block should contain:  'line ##, in ...', where ## is an integer
     comma = block.find(', in ')            # we try to extract the line number which gives the test failure
     if line == -1 or comma == -1:
         continue   # but if something goes wrong we give up
     first_line_num = line_num = int(block[line + 5:comma])  # 1-based line number of the first line of the example
+
+    if m := re.search(r"referenced here was set only in doctest marked '([^;']*)", block):
+        optional = m.group(1)
+        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
+                                                                add_tags=[optional])
 
     if m2 := re.search('(Expected:|Expected nothing|Exception raised:)\n', block):
         m1 = re.search('Failed example:\n', block)
@@ -91,11 +95,6 @@ for block in doctests:
             block = '\n'.join(expected) + '\nGot:\n' + block[m2.end():]
         else:
             block = block[m2.end():]
-    elif (m := re.search(r"referenced here was set only in doctest marked '([^;']*)")):
-        optional = m.group(1)
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                add_tags=[optional])
-        continue
     else:
         continue
 
@@ -110,6 +109,9 @@ for block in doctests:
             # we just mark the doctest with the feature
             continue
         # Otherwise, continue and show the backtrace as 'GOT'
+
+    if args.only_tags:
+        continue
 
     if 'Traceback (most recent call last):' in block:
 
