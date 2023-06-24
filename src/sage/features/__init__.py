@@ -160,7 +160,7 @@ class Feature(TrivialUniqueRepresentation):
 
         try:
             from sage.misc.package import spkg_type
-        except ImportError:  # may be butchered in a downstream distribution
+        except ImportError:  # may have been surgically removed in a downstream distribution
             pass
         else:
             if spkg and (t := spkg_type(spkg)) not in (type, None):
