@@ -4,10 +4,10 @@ Reduction Theory
 from copy import deepcopy
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.all", "floor")
 from sage.misc.mrange import mrange
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
+lazy_import("sage.functions.all", "floor")
 
 
 def reduced_binary_form1(self):
@@ -34,22 +34,22 @@ def reduced_binary_form1(self):
     R = self.base_ring()
     interior_reduced_flag = False
     Q = deepcopy(self)
-    M = matrix(R, 2, 2, [1,0,0,1])
+    M = matrix(R, 2, 2, [1, 0, 0, 1])
 
     while not interior_reduced_flag:
         interior_reduced_flag = True
 
         # Arrange for a <= c
-        if Q[0,0] > Q[1,1]:
-            M_new = matrix(R,2,2,[0, -1, 1, 0])
+        if Q[0, 0] > Q[1, 1]:
+            M_new = matrix(R, 2, 2, [0, -1, 1, 0])
             Q = Q(M_new)
             M = M * M_new
             interior_reduced_flag = False
 
         # Arrange for |b| <= a
-        if abs(Q[0,1]) > Q[0,0]:
-            r = R(floor(round(Q[0,1]/(2*Q[0,0]))))
-            M_new = matrix(R,2,2,[1, -r, 0, 1])
+        if abs(Q[0, 1]) > Q[0, 0]:
+            r = R(floor(round(Q[0, 1] / (2 * Q[0, 0]))))
+            M_new = matrix(R, 2, 2, [1, -r, 0, 1])
             Q = Q(M_new)
             M = M * M_new
             interior_reduced_flag = False
@@ -96,35 +96,35 @@ def reduced_binary_form(self):
     Q = deepcopy(self)
     M = matrix(R, n, n)
     for i in range(n):
-        M[i,i] = 1
+        M[i, i] = 1
 
     while not interior_reduced_flag:
         interior_reduced_flag = True
 
         # Arrange for (weakly) increasing diagonal entries
         for i in range(n):
-            for j in range(i+1,n):
-                if Q[i,i] > Q[j,j]:
-                    M_new = matrix(R,n,n)
+            for j in range(i + 1, n):
+                if Q[i, i] > Q[j, j]:
+                    M_new = matrix(R, n, n)
                     for k in range(n):
-                        M_new[k,k] = 1
-                    M_new[i,j] = -1
-                    M_new[j,i] = 1
-                    M_new[i,i] = 0
-                    M_new[j,j] = 1
+                        M_new[k, k] = 1
+                    M_new[i, j] = -1
+                    M_new[j, i] = 1
+                    M_new[i, i] = 0
+                    M_new[j, j] = 1
 
                     Q = Q(M_new)
                     M = M * M_new
                     interior_reduced_flag = False
 
                 # Arrange for |b| <= a
-                if abs(Q[i,j]) > Q[i,i]:
-                    r = R(floor(round(Q[i,j]/(2*Q[i,i]))))
+                if abs(Q[i, j]) > Q[i, i]:
+                    r = R(floor(round(Q[i, j] / (2 * Q[i, i]))))
 
-                    M_new = matrix(R,n,n)
+                    M_new = matrix(R, n, n)
                     for k in range(n):
-                        M_new[k,k] = 1
-                    M_new[i,j] = -r
+                        M_new[k, k] = 1
+                    M_new[i, j] = -r
 
                     Q = Q(M_new)
                     M = M * M_new
@@ -232,10 +232,10 @@ def minkowski_reduction(self):
 
         # Loop through possible shorted vectors until
         done_flag = True
-        for j in range(n-1, -1, -1):
-            for a_first in mrange([3  for i in range(j)]):
-                y = [x-1 for x in a_first] + [1] + [0 for k in range(n-1-j)]
-                e_j = [0  for k in range(n)]
+        for j in range(n - 1, -1, -1):
+            for a_first in mrange([3 for i in range(j)]):
+                y = [x - 1 for x in a_first] + [1] + [0] * (n - 1 - j)
+                e_j = [0] * n
                 e_j[j] = 1
 
                 # Reduce if a shorter vector is found
@@ -244,12 +244,12 @@ def minkowski_reduction(self):
                     # Create the transformation matrix
                     M_new = matrix(R, n, n)
                     for k in range(n):
-                        M_new[k,k] = 1
+                        M_new[k, k] = 1
                     for k in range(n):
-                        M_new[k,j] = y[k]
+                        M_new[k, j] = y[k]
 
                     # Perform the reduction and restart the loop
-                    Q = QuadraticForm(M_new.transpose()*Q.matrix()*M_new)
+                    Q = QuadraticForm(M_new.transpose() * Q.matrix() * M_new)
                     M = M * M_new
                     done_flag = False
 
@@ -323,10 +323,10 @@ def minkowski_reduction_for_4vars__SP(self):
 
         # Loop through possible shorter vectors
         done_flag = True
-        for j in range(n-1, -1, -1):
-            for a_first in mrange([2  for i in range(j)]):
-                y = [x-1 for x in a_first] + [1] + [0 for k in range(n-1-j)]
-                e_j = [0  for k in range(n)]
+        for j in range(n - 1, -1, -1):
+            for a_first in mrange([2 for i in range(j)]):
+                y = [x - 1 for x in a_first] + [1] + [0] * (n - 1 - j)
+                e_j = [0] * n
                 e_j[j] = 1
 
                 # Reduce if a shorter vector is found
@@ -334,22 +334,22 @@ def minkowski_reduction_for_4vars__SP(self):
 
                     # Further n=4 computations
                     B_y_vec = Q.matrix() * vector(ZZ, y)
-                        # SP's B = our self.matrix()/2
-                        # SP's A = coeff matrix of his B
-                        # Here we compute the double of both and compare.
-                    B_sum = sum([abs(B_y_vec[i])  for i in range(4)  if i != j])
-                    A_sum = sum([abs(Q[i,j])  for i in range(4)  if i != j])
-                    B_max = max([abs(B_y_vec[i])  for i in range(4)  if i != j])
-                    A_max = max([abs(Q[i,j])  for i in range(4)  if i != j])
+                    # SP's B = our self.matrix()/2
+                    # SP's A = coeff matrix of his B
+                    # Here we compute the double of both and compare.
+                    B_sum = sum([abs(B_y_vec[i]) for i in range(4) if i != j])
+                    A_sum = sum([abs(Q[i, j]) for i in range(4) if i != j])
+                    B_max = max(abs(B_y_vec[i]) for i in range(4) if i != j)
+                    A_max = max(abs(Q[i, j]) for i in range(4) if i != j)
 
-                    if (B_sum < A_sum) or ((B_sum == A_sum) and (B_max < A_max)):
+                    if B_sum < A_sum or (B_sum == A_sum and B_max < A_max):
 
                         # Create the transformation matrix
                         M_new = matrix(R, n, n)
                         for k in range(n):
-                            M_new[k,k] = 1
+                            M_new[k, k] = 1
                         for k in range(n):
-                            M_new[k,j] = y[k]
+                            M_new[k, j] = y[k]
 
                         # Perform the reduction and restart the loop
                         Q = Q(M_new)
@@ -364,34 +364,34 @@ def minkowski_reduction_for_4vars__SP(self):
 
     # Step 2: Order A by certain criteria
     for i in range(4):
-        for j in range(i+1,4):
+        for j in range(i + 1, 4):
 
             # Condition (a)
-            if (Q[i,i] > Q[j,j]):
-                Q.swap_variables(i,j,in_place=True)
-                M_new = matrix(R,n,n)
-                M_new[i,j] = -1
-                M_new[j,i] = 1
+            if Q[i, i] > Q[j, j]:
+                Q.swap_variables(i, j, in_place=True)
+                M_new = matrix(R, n, n)
+                M_new[i, j] = -1
+                M_new[j, i] = 1
                 for r in range(4):
-                    if (r == i) or (r == j):
-                        M_new[r,r] = 0
+                    if r == i or r == j:
+                        M_new[r, r] = 0
                     else:
-                        M_new[r,r] = 1
+                        M_new[r, r] = 1
                 M = M * M_new
 
-            elif (Q[i,i] == Q[j,j]):
-                i_sum = sum([abs(Q[i,k])  for k in range(4)  if k != i])
-                j_sum = sum([abs(Q[j,k])  for k in range(4)  if k != j])
+            elif Q[i, i] == Q[j, j]:
+                i_sum = sum([abs(Q[i, k]) for k in range(4) if k != i])
+                j_sum = sum([abs(Q[j, k]) for k in range(4) if k != j])
 
                 # Condition (b)
-                if (i_sum > j_sum):
-                    Q.swap_variables(i,j,in_place=True)
-                    M_new = matrix(R,n,n)
-                    M_new[i,j] = -1
-                    M_new[j,i] = 1
+                if i_sum > j_sum:
+                    Q.swap_variables(i, j, in_place=True)
+                    M_new = matrix(R, n, n)
+                    M_new[i, j] = -1
+                    M_new[j, i] = 1
                     for r in range(4):
-                        if (r == i) or (r == j):
-                            M_new[r,r] = 0
+                        if r == i or r == j:
+                            M_new[r, r] = 0
                         else:
                             M_new[r, r] = 1
                     M = M * M_new
@@ -410,7 +410,7 @@ def minkowski_reduction_for_4vars__SP(self):
                             M_new[i, j] = -1
                             M_new[j, i] = 1
                             for r in range(4):
-                                if (r == i) or (r == j):
+                                if r == i or r == j:
                                     M_new[r, r] = 0
                                 else:
                                     M_new[r, r] = 1
