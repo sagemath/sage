@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.graphs sage.modules
 """
 Integrable Representations of Affine Lie Algebras
 """
