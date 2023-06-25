@@ -133,12 +133,12 @@ if MAXIMA_FAS:
     ecl_eval("(require 'maxima \"{}\")".format(MAXIMA_FAS))
 else:
     ecl_eval("(require 'maxima)")
-ecl_eval("(maxima::initialize-runtime-globals)")
 ecl_eval("(in-package :maxima)")
-ecl_eval("(setq $nolabels t))")
-ecl_eval("(defvar *MAXIMA-LANG-SUBDIR* NIL)")
 ecl_eval("(set-locale-subdir)")
 
+# This workaround has to happen before any call to (set-pathnames).
+# To be safe please do not call anything other than
+# (set-locale-subdir) before this block.
 try:
     ecl_eval("(set-pathnames)")
 except RuntimeError:
@@ -155,6 +155,8 @@ except RuntimeError:
     # Call `(set-pathnames)` again to complete its job.
     ecl_eval("(set-pathnames)")
 
+ecl_eval("(initialize-runtime-globals)")
+ecl_eval("(setq $nolabels t))")
 ecl_eval("(defun add-lineinfo (x) x)")
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
