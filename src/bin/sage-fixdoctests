@@ -172,8 +172,6 @@ for block in doctests:
         # FIXME: map module name to feature name
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=[optional])
-        if '- #' in src_in_lines[first_line_num - 1]:
-            breakpoint()
         if not re.search('#.*(why|explain)', src_in_lines[first_line_num - 1]):
             # When no explanation has been demanded,
             # we just mark the doctest with the feature
