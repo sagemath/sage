@@ -268,7 +268,7 @@ graft sage/probability                                  # uses gsl
 
 # only needed by interpreter
 graft sage/libs/mpc
-include src/sage/rings/complex_mpc.p*
+include sage/rings/complex_mpc.p*
 
 # because it needs real_mpfr
 include sage/numerical/gauss_legendre.p*
@@ -286,3 +286,11 @@ global-exclude *~
 prune .tox
 prune build
 prune dist
+
+
+# TODO:
+# include sage/geometry/linear_expression.py
+# include sage/geometry/hyperplane_arrangement/affine_subspace.py
+# include sage/geometry/hyperplane_arrangement/hyperplane.py
+# include sage/numerical/linear_functions.p*
+# include sage/numerical/linear_tensor*.p*
