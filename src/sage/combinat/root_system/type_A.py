@@ -22,7 +22,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: R = RootSystem(["A",3])
         sage: e = R.ambient_space(); e
         Ambient space of the Root system of type ['A', 3]
-        sage: TestSuite(e).run()
+        sage: TestSuite(e).run()                                                        # optional - sage.graphs
 
     By default, this ambient space uses the barycentric projection for plotting::
 
