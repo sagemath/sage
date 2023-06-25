@@ -115,26 +115,26 @@ class RootSpace(CombinatorialFreeModule):
 
             sage: R = RootSystem(['A',3]).root_space()
             sage: alpha = R.simple_roots()
-            sage: f = R.to_coroot_space_morphism()
-            sage: f(alpha[1])
+            sage: f = R.to_coroot_space_morphism()                                      # optional - sage.graphs
+            sage: f(alpha[1])                                                           # optional - sage.graphs
             alphacheck[1]
-            sage: f(alpha[1]+alpha[2])
+            sage: f(alpha[1] + alpha[2])                                                # optional - sage.graphs
             alphacheck[1] + alphacheck[2]
 
             sage: R = RootSystem(['A',3]).root_lattice()
             sage: alpha = R.simple_roots()
-            sage: f = R.to_coroot_space_morphism()
-            sage: f(alpha[1])
+            sage: f = R.to_coroot_space_morphism()                                      # optional - sage.graphs
+            sage: f(alpha[1])                                                           # optional - sage.graphs
             alphacheck[1]
-            sage: f(alpha[1]+alpha[2])
+            sage: f(alpha[1] + alpha[2])                                                # optional - sage.graphs
             alphacheck[1] + alphacheck[2]
 
             sage: S = RootSystem(['G',2]).root_space()
             sage: alpha = S.simple_roots()
-            sage: f = S.to_coroot_space_morphism()
-            sage: f(alpha[1])
+            sage: f = S.to_coroot_space_morphism()                                      # optional - sage.graphs
+            sage: f(alpha[1])                                                           # optional - sage.graphs
             alphacheck[1]
-            sage: f(alpha[1]+alpha[2])
+            sage: f(alpha[1] + alpha[2])                                                # optional - sage.graphs
             alphacheck[1] + 3*alphacheck[2]
         """
         R = self.base_ring()
@@ -194,7 +194,7 @@ class RootSpace(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: L = RootSystem(["A",3,1]).root_space()
-            sage: L._to_classical_on_basis(0)
+            sage: L._to_classical_on_basis(0)                                           # optional - sage.graphs
             -alpha[1] - alpha[2] - alpha[3]
             sage: L._to_classical_on_basis(1)
             alpha[1]
@@ -258,7 +258,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             [ 0 -1  2 -1]
             [ 0  0 -2  2]
 
-            sage: L.cartan_type().cartan_matrix()
+            sage: L.cartan_type().cartan_matrix()                                       # optional - sage.graphs
             [ 2 -1  0  0]
             [-1  2 -1  0]
             [ 0 -1  2 -1]
@@ -278,12 +278,12 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         EXAMPLES::
 
-            sage: R=RootSystem(['A',3,1]).root_space()
-            sage: B=R.basis()
-            sage: w=B[0]+B[3]
+            sage: R = RootSystem(['A',3,1]).root_space()
+            sage: B = R.basis()
+            sage: w = B[0] + B[3]
             sage: w.is_positive_root()
             True
-            sage: w=B[1]-B[2]
+            sage: w = B[1] - B[2]
             sage: w.is_positive_root()
             False
         """
@@ -304,20 +304,20 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
             sage: L = RootSystem(["B", 3]).root_space()
             sage: alpha = L.simple_roots()
-            sage: alpha[1].associated_coroot()
+            sage: alpha[1].associated_coroot()                                          # optional - sage.graphs
             alphacheck[1]
-            sage: alpha[1].associated_coroot().parent()
+            sage: alpha[1].associated_coroot().parent()                                 # optional - sage.graphs
             Coroot space over the Rational Field of the Root system of type ['B', 3]
 
-            sage: L.highest_root()
+            sage: L.highest_root()                                                      # optional - sage.graphs
             alpha[1] + 2*alpha[2] + 2*alpha[3]
-            sage: L.highest_root().associated_coroot()
+            sage: L.highest_root().associated_coroot()                                  # optional - sage.graphs
             alphacheck[1] + 2*alphacheck[2] + alphacheck[3]
 
             sage: alpha = RootSystem(["B", 3]).root_lattice().simple_roots()
-            sage: alpha[1].associated_coroot()
+            sage: alpha[1].associated_coroot()                                          # optional - sage.graphs
             alphacheck[1]
-            sage: alpha[1].associated_coroot().parent()
+            sage: alpha[1].associated_coroot().parent()                                 # optional - sage.graphs
             Coroot lattice of the Root system of type ['B', 3]
 
         """
@@ -328,7 +328,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
     def quantum_root(self):
         r"""
-        Returns True if ``self`` is a quantum root and False otherwise.
+        Return ``True`` if ``self`` is a quantum root and ``False`` otherwise.
 
         INPUT:
 
