@@ -169,10 +169,11 @@ for block in doctests:
     # Error testing.
     if m := re.search(r"ModuleNotFoundError: No module named '([^']*)'", block):
         optional = m.group(1)
+        asked_why = re.search('#.*(why|explain)', src_in_lines[first_line_num - 1])
         # FIXME: map module name to feature name
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=[optional])
-        if not re.search('#.*(why|explain)', src_in_lines[first_line_num - 1]):
+        if not asked_why:
             # When no explanation has been demanded,
             # we just mark the doctest with the feature
             continue
