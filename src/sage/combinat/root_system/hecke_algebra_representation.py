@@ -168,7 +168,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
             sage: H = WeylGroup(["A",3]).algebra(QQ).demazure_lusztig_operators(-1,1)
             sage: H.domain()
-            Algebra of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) over Rational Field
+            Algebra of Weyl Group of type ['A', 3] (as a matrix group
+             acting on the ambient space) over Rational Field
         """
         return self._domain
 
@@ -429,7 +430,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: x = KW.monomial(W.an_element()); x
             123
             sage: rho.Tw_inverse(word)(x)
-            1/q2^2*12321 + ((-q1-q2)/(q1*q2^2))*1231 + ((-q1-q2)/(q1*q2^2))*1232 + ((q1^2+2*q1*q2+q2^2)/(q1^2*q2^2))*123
+            1/q2^2*12321 + ((-q1-q2)/(q1*q2^2))*1231 + ((-q1-q2)/(q1*q2^2))*1232
+             + ((q1^2+2*q1*q2+q2^2)/(q1^2*q2^2))*123
             sage: rho.Tw(word)(_)
             123
         """
@@ -548,9 +550,12 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: x = KW.monomial(W.an_element()); x
             12
             sage: Y1(x)
-            ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*2121 + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1*q2^2))*121 + ((q1^2+q1*q2)/(-q2^2))*212 + ((-q1^2)/(-q2^2))*12
+            ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*2121
+             + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1*q2^2))*121
+             + ((q1^2+q1*q2)/(-q2^2))*212 + ((-q1^2)/(-q2^2))*12
             sage: Y2(x)
-            ((-q1^4-q1^3*q2-q1*q2^3-q2^4)/(-q1^3*q2))*2121 + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1^2*q2))*121 + (q2^3/(-q1^3))*12
+            ((-q1^4-q1^3*q2-q1*q2^3-q2^4)/(-q1^3*q2))*2121
+             + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1^2*q2))*121 + (q2^3/(-q1^3))*12
             sage: Y1(Y2(x))
             ((q1*q2+q2^2)/q1^2)*212 + ((-q2)/q1)*12
             sage: Y2(Y1(x))
@@ -750,9 +755,11 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: [E[w] for w in W]
             [2121 - 121 - 212 + 12 + 21 - 1 - 2 + ,
              -2121 + 212,
-             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121 + (q2/(-q1+q2))*212 - 12 + ((-q2)/(-q1+q2))*21 + 2,
+             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121
+                 + (q2/(-q1+q2))*212 - 12 + ((-q2)/(-q1+q2))*21 + 2,
              ((-q2^2)/(-q1^2+q1*q2-q2^2))*2121 - 121 + (q2^2/(-q1^2+q1*q2-q2^2))*212 + 21,
-             ((-q1^2-q2^2)/(q1^2-q1*q2+q2^2))*2121 + ((-q1^2-q2^2)/(-q1^2+q1*q2-q2^2))*121 + ((-q2^2)/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
+             ((-q1^2-q2^2)/(q1^2-q1*q2+q2^2))*2121 + ((-q1^2-q2^2)/(-q1^2+q1*q2-q2^2))*121
+                 + ((-q2^2)/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
              2121,
              (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12,
              -2121 + 121]
@@ -838,7 +845,8 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: E.keys()
             Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space)
             sage: E.domain()
-            Algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space) over Fraction Field of Multivariate Polynomial Ring in q1, q2 over Rational Field
+            Algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space)
+             over Fraction Field of Multivariate Polynomial Ring in q1, q2 over Rational Field
             sage: E._T == E._T_Y
             True
         """
@@ -863,7 +871,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: E.cartan_type()
             ['B', 3, 1]
 
-            sage: NonSymmetricMacdonaldPolynomials(["B", 2, 1]).cartan_type()
+            sage: NonSymmetricMacdonaldPolynomials(["B", 2, 1]).cartan_type()           # optional - sage.graphs
             ['B', 2, 1]
         """
         return self._T_Y.cartan_type()
@@ -880,7 +888,9 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: KW = W.algebra(K)
             sage: E = KW.demazure_lusztig_eigenvectors(q1, q2)
             sage: E.domain()
-            Algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space) over Multivariate Polynomial Ring in q1, q2 over Rational Field
+            Algebra of Weyl Group of type ['B', 3]
+             (as a matrix group acting on the ambient space)
+             over Multivariate Polynomial Ring in q1, q2 over Rational Field
         """
         return self._T.domain()
 
