@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.gap
+# sage.doctest: optional - sage.groups sage.modules
 """
 Weyl Groups
 
