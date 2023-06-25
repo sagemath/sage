@@ -31,7 +31,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     TESTS::
 
-        sage: TestSuite(e).run()
+        sage: TestSuite(e).run()                                                        # optional - sage.graphs
     """
 
     def dimension(self):

@@ -116,7 +116,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
 
         sage: fct = CartanType(['C',4,1]).as_folding(); fct
         ['C', 4, 1] as a folding of ['A', 7, 1]
-        sage: fct.scaling_factors()
+        sage: fct.scaling_factors()                                                     # optional - sage.graphs
         Finite family {0: 2, 1: 1, 2: 1, 3: 1, 4: 2}
         sage: fct.folding_orbit()
         Finite family {0: (0,), 1: (1, 7), 2: (2, 6), 3: (3, 5), 4: (4,)}
@@ -126,7 +126,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
 
         sage: fct = CartanType(['A',4,1]).as_folding(); fct
         ['A', 4, 1] as a folding of ['A', 4, 1]
-        sage: fct.scaling_factors()
+        sage: fct.scaling_factors()                                                     # optional - sage.graphs
         Finite family {0: 1, 1: 1, 2: 1, 3: 1, 4: 1}
         sage: fct.folding_orbit()
         Finite family {0: (0,), 1: (1,), 2: (2,), 3: (3,), 4: (4,)}
@@ -271,15 +271,15 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: fct = CartanType(['C', 4, 1]).as_folding()
-            sage: fct.scaling_factors()
+            sage: fct.scaling_factors()                                                 # optional - sage.graphs
             Finite family {0: 2, 1: 1, 2: 1, 3: 1, 4: 2}
             sage: fct = CartanType(['BC', 4, 2]).as_folding()
-            sage: fct.scaling_factors()
+            sage: fct.scaling_factors()                                                 # optional - sage.graphs
             Finite family {0: 1, 1: 1, 2: 1, 3: 1, 4: 2}
             sage: fct = CartanType(['BC', 4, 2]).dual().as_folding()
-            sage: fct.scaling_factors()
+            sage: fct.scaling_factors()                                                 # optional - sage.graphs
             Finite family {0: 2, 1: 1, 2: 1, 3: 1, 4: 1}
-            sage: CartanType(['BC', 4, 2]).relabel({0:4, 1:3, 2:2, 3:1, 4:0}).as_folding().scaling_factors()
+            sage: CartanType(['BC', 4, 2]).relabel({0:4, 1:3, 2:2, 3:1, 4:0}).as_folding().scaling_factors()            # optional - sage.graphs
             Finite family {0: 2, 1: 1, 2: 1, 3: 1, 4: 1}
         """
         if self._cartan_type.is_finite():

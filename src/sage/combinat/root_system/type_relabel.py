@@ -149,19 +149,19 @@ class CartanType(cartan_type.CartanType_decorator):
         Check for the original issues of :trac:`13724`::
 
             sage: A3 = CartanType("A3")
-            sage: A3.cartan_matrix()
+            sage: A3.cartan_matrix()                                                    # optional - sage.graphs
             [ 2 -1  0]
             [-1  2 -1]
             [ 0 -1  2]
             sage: A3r = A3.relabel({1:2,2:3,3:1})
-            sage: A3r.cartan_matrix()
+            sage: A3r.cartan_matrix()                                                   # optional - sage.graphs
             [ 2  0 -1]
             [ 0  2 -1]
             [-1 -1  2]
 
             sage: ct = CartanType(["D",4,3]).classical(); ct
             ['G', 2]
-            sage: ct.symmetrizer()
+            sage: ct.symmetrizer()                                                      # optional - sage.graphs
             Finite family {1: 1, 2: 3}
 
         Check the underlying issue of :trac:`24892`, that the root system
@@ -384,7 +384,7 @@ class CartanType(cartan_type.CartanType_decorator):
             Finite family {0: (0,), 1: (2,), 2: (1, 3, 4)}
             sage: CartanType(['G',2,1]).dual()._default_folded_cartan_type().folding_orbit()
             Finite family {0: (0,), 1: (1, 3, 4), 2: (2,)}
-            sage: CartanType(['C',3,1]).relabel({0:1, 1:0, 2:3, 3:2}).as_folding().scaling_factors()
+            sage: CartanType(['C',3,1]).relabel({0:1, 1:0, 2:3, 3:2}).as_folding().scaling_factors()                    # optional - sage.graphs
             Finite family {0: 1, 1: 2, 2: 2, 3: 1}
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
@@ -436,7 +436,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: cycle = {1:2, 2:3, 3:4, 4:1}
         sage: L = CartanType(["F",4]).relabel(cycle).root_system().ambient_space(); L
         Ambient space of the Root system of type ['F', 4] relabelled by {1: 2, 2: 3, 3: 4, 4: 1}
-        sage: TestSuite(L).run()
+        sage: TestSuite(L).run()                                                        # optional - sage.graphs
     """
 
     @lazy_attribute

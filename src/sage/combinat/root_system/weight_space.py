@@ -324,7 +324,7 @@ class WeightSpace(CombinatorialFreeModule):
         Its coefficients are given by the corresponding column of the
         Cartan matrix::
 
-            sage: L.cartan_type().cartan_matrix()[:,2]
+            sage: L.cartan_type().cartan_matrix()[:,2]                                  # optional - sage.graphs
             [ 0]
             [-1]
             [ 2]

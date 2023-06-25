@@ -379,7 +379,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: ct = sage.combinat.root_system.type_dual.CartanType(CartanType(['F',4]))
         sage: L = ct.root_system().ambient_space(); L
         Ambient space of the Root system of type ['F', 4]^*
-        sage: TestSuite(L).run(skip=["_test_elements","_test_pickling"])
+        sage: TestSuite(L).run(skip=["_test_elements","_test_pickling"])                # optional - sage.graphs
     """
 
     @lazy_attribute
@@ -472,7 +472,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
             sage: ct = sage.combinat.root_system.type_dual.CartanType(CartanType(['F',4]))
             sage: L = ct.root_system().ambient_space()
-            sage: L.fundamental_weights()
+            sage: L.fundamental_weights()                                               # optional - sage.graphs
             Finite family {1: (1, 1, 0, 0), 2: (2, 1, 1, 0), 3: (3, 1, 1, 1), 4: (2, 0, 0, 0)}
 
         Note that this ambient space is isomorphic, but not equal, to

@@ -166,8 +166,8 @@ class CartanType(cartan_type.CartanType_decorator):
             1   2
             A2 with node 1 marked
 
-            sage: CM = CartanMatrix([[2,-4],[-5,2]])
-            sage: CM.marked_nodes([1])
+            sage: CM = CartanMatrix([[2,-4],[-5,2]])                                    # optional - sage.graphs
+            sage: CM.marked_nodes([1])                                                  # optional - sage.graphs
             [ 2 -4]
             [-5  2] with node 1 marked
         """
@@ -425,7 +425,7 @@ class CartanType(cartan_type.CartanType_decorator):
             Finite family {0: (0,), 1: (2,), 2: (1, 3, 4)}
             sage: CartanType(['G',2,1]).dual()._default_folded_cartan_type().folding_orbit()
             Finite family {0: (0,), 1: (1, 3, 4), 2: (2,)}
-            sage: CartanType(['C',3,1]).relabel({0:1, 1:0, 2:3, 3:2}).as_folding().scaling_factors()
+            sage: CartanType(['C',3,1]).relabel({0:1, 1:0, 2:3, 3:2}).as_folding().scaling_factors()                    # optional - sage.graphs
             Finite family {0: 1, 1: 2, 2: 2, 3: 1}
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
@@ -461,7 +461,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         sage: L = CartanType(["F",4]).marked_nodes([1,3]).root_system().ambient_space(); L
         Ambient space of the Root system of type ['F', 4] with nodes (1, 3) marked
-        sage: TestSuite(L).run()
+        sage: TestSuite(L).run()                                                        # optional - sage.graphs
     """
     @lazy_attribute
     def _space(self):

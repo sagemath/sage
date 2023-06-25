@@ -37,7 +37,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         TESTS::
 
-            sage: TestSuite(e).run()
+            sage: TestSuite(e).run()                                                    # optional - sage.graphs
         """
         ambient_space.AmbientSpace.__init__(self, root_system, base_ring)
         v = ZZ(1)/ZZ(2)

@@ -256,18 +256,18 @@ class CartanType(SageObject, CartanType_abstract):
         EXAMPLES::
 
             sage: ct = CartanType("A2","B2")
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # optional - sage.graphs
             [ 2 -1| 0  0]
             [-1  2| 0  0]
             [-----+-----]
             [ 0  0| 2 -1]
             [ 0  0|-2  2]
-            sage: ct.cartan_matrix(subdivide=False)
+            sage: ct.cartan_matrix(subdivide=False)                                     # optional - sage.graphs
             [ 2 -1  0  0]
             [-1  2  0  0]
             [ 0  0  2 -1]
             [ 0  0 -2  2]
-            sage: ct.index_set() == ct.cartan_matrix().index_set()
+            sage: ct.index_set() == ct.cartan_matrix().index_set()                      # optional - sage.graphs
             True
         """
         from sage.combinat.root_system.cartan_matrix import CartanMatrix
