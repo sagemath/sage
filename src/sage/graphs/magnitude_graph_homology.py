@@ -29,8 +29,6 @@ So here generators[s,t,k,l] is a list of the degree k generators of such a chain
 Then differential[s,t,k,l] is a matrix giving the differential from generators[s,t,k,l] to generators[s,t,k-1,l].
 The homology of each subcomplex is calculated then the ranks are added together to give the required output.
 """
-from six.moves import range
-
 from sage.graphs.distances_all_pairs import distances_all_pairs
 from sage.homology.chain_complex import ChainComplex
 from sage.matrix.constructor import matrix
@@ -140,14 +138,15 @@ class MagnitudeHomology(SageObject):
              (6, 5, 6, 0, 6, 0, 1),
              (6, 5, 6, 5, 6, 0, 1)]
         """
-        generators = {(s, t, k, l): [] for s in self._v
-                      for t in self._v
+        generators = {(s, t, k, l): []
+                      for s in self._v for t in self._v
                       for k in range(self._km + 2) for l in range(self._lm + 1)}
 
         def add_generators(a, l, x):
+            # beware: recursive
             k = len(a) - 1
             if k <= self._km and l <= self._lm:
-                generators[(a[0], a[len(a) - 1], k, l)].append(a)
+                generators[(a[0], a[-1], k, l)].append(a)
                 for y in self._v:
                     if x != y:
                         add_generators(a + [y], l + self._d[x][y], y)
@@ -156,13 +155,8 @@ class MagnitudeHomology(SageObject):
             add_generators([x], 0, x)
 
         # number the generators, so as to produce differentials rapidly
-        for s in self._v:
-            for t in self._v:
-                for l in range(self._lm + 1):
-                    for k in range(self._km + 1):
-                        generators[(s, t, k, l)] = {tuple(a): i
-                                                    for i, a in enumerate(generators[(s, t, k, l)])}
-        return generators
+        return {index: {a: i for i, a in enumerate(gen_index)}
+                for index, gen_index in generators.items()}
 
     def differential(self, s, t, k, l):
         """
