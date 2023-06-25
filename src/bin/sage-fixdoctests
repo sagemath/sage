@@ -199,10 +199,16 @@ for block in doctests:
                 got = got[:m.start(1)] + '...' + got[m.end(1):]
 
             last_frame = got.rfind('File "')
-            if last_frame >= 0 and got.rfind("NameError:") >= 0 and got[last_frame:].startswith('File "<doctest'):
+            if (last_frame >= 0
+                    and (index_NameError := got.rfind("NameError:")) >= 0
+                    and got[last_frame:].startswith('File "<doctest')):
                 # NameError from top level, so keep it brief
+                if m := re.match("NameError: name '(.*)'", got[index_NameError:]):
+                    name = ": '" + m.group(1) + "'"
+                else:
+                    name = ""
                 src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                        add_tags=[f'NameError{venv_explainer}'])
+                                                                        add_tags=[f'NameError{name}{venv_explainer}'])
                 continue
             got = got.splitlines()
         else:
