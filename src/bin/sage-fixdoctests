@@ -42,17 +42,15 @@ parser.add_argument("--only-tags", default=False, action="store_true",
                     help="only add '# optional' tags where needed, ignore other failures")
 parser.add_argument("--keep-both", default=False, action="store_true",
                     help="do not replace test results; duplicate the test instead and mark both copies # optional")
-parser.add_argument("input", help="input filename",
-                    type=FileType('r'))
-parser.add_argument('output', nargs='?', help="output filename",
-                    type=FileType('w'))
+parser.add_argument("--overwrite", default=False, action="store_true",
+                    help="never interpret a second filename as OUTPUT; overwrite the source files")
+parser.add_argument("--no-overwrite", default=False, action="store_true",
+                    help="never interpret a second filename as OUTPUT; output goes to files named INPUT.fixed")
+parser.add_argument("filename", nargs='*', help="input filenames; or INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
+                    type=str)
 
 args = parser.parse_args()
 
-# set input and output files
-test_file = args.input
-src_in = test_file.read()
-test_file.close()
 
 runtest_default_environment = "sage.repl.ipython_kernel.all_jupyter"
 
@@ -111,30 +109,13 @@ if venv_explainers:
 else:
     venv_explainer = ''
 
-# put the output of the test into sage's temporary directory
-doc_file = tmp_filename()
-cmdline = '%s -t %s %s %s > %s' % (
-    shlex.quote(f'{args.venv}/bin/sage') if args.venv else 'sage',
-    '--long' if args.long else '',
-    f'--environment {args.environment}' if args.environment != runtest_default_environment else '',
-    test_file.name, doc_file)
-print(f'Running {cmdline}')
-os.system(cmdline)
 
-with open(doc_file, 'r') as doc:
-    doc_out = doc.read()
-sep = "**********************************************************************\n"
-
-doctests = doc_out.split(sep)
-src_in_lines = src_in.splitlines()
-
-for block in doctests:
+def process_block(block, src_in_lines):
     # Extract the line, what was expected, and was got.
-    line = block.find('line ')             # block should contain:  'line ##, in ...', where ## is an integer
-    comma = block.find(', in ')            # we try to extract the line number which gives the test failure
-    if line == -1 or comma == -1:
-        continue   # but if something goes wrong we give up
-    first_line_num = line_num = int(block[line + 5:comma])  # 1-based line number of the first line of the example
+    if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
+        return
+    filename = m.group(1)
+    first_line_num = line_num = int(m.group(2))  # 1-based line number of the first line of the example
 
     if m := re.search(r"referenced here was set only in doctest marked '# optional - ([^;']*)", block):
         optional = m.group(1)
@@ -164,7 +145,7 @@ for block in doctests:
         else:
             block = block[m2.end():]
     else:
-        continue
+        return
 
     # Error testing.
     if m := re.search(r"ModuleNotFoundError: No module named '([^']*)'", block):
@@ -176,11 +157,11 @@ for block in doctests:
         if not asked_why:
             # When no explanation has been demanded,
             # we just mark the doctest with the feature
-            continue
+            return
         # Otherwise, continue and show the backtrace as 'GOT'
 
     if args.only_tags:
-        continue
+        return
 
     if 'Traceback (most recent call last):' in block:
 
@@ -208,7 +189,7 @@ for block in doctests:
                     name = ""
                 src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                         add_tags=[f'NameError{name}{venv_explainer}'])
-                continue
+                return
             got = got.splitlines()
         else:
             got = got.splitlines()
@@ -239,7 +220,7 @@ for block in doctests:
     if not expected:
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
         src_in_lines[line_num - 1] += '\n' + '\n'.join('%s%s' % (' ' * indent, line.lstrip()) for line in got)
-        continue
+        return
 
     # Guess how much extra indenting ``got`` needs to match with the indentation
     # of src_in_lines - we match the indentation with the line in ``got`` which
@@ -258,7 +239,7 @@ for block in doctests:
         txt = "Did not manage to replace\n%s\n%s\n%s\nwith\n%s\n%s\n%s"
         warnings.warn(txt % ('>' * 40, '\n'.join(expected), '>' * 40,
                              '<' * 40, '\n'.join(got), '<' * 40))
-        continue
+        return
 
     # If we got something when we expected nothing then we delete the line from the
     # output, otherwise, add all of what we `got` onto the end of src_in_lines[line_num]
@@ -272,27 +253,51 @@ for block in doctests:
     for i in range(1, len(expected)):
         src_in_lines[line_num + i] = None
 
-# Overwrite the source (or output file specified on the command line)
-if args.output:
-    test_output = args.output
+
+# set input and output files
+if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
+    inputs, outputs = [args.filename[0]], [args.filename[1]]
+elif args.no_overwrite:
+    inputs, outputs = args.filename, [input + ".fixed" for input in args.filename]
 else:
-    test_output = open(test_file.name, 'w')
+    inputs = outputs = args.filename
 
-for line in src_in_lines:
-    if line is None:
-        continue
-    test_output.write(line)
-    test_output.write('\n')
+for input, output in zip(inputs, outputs):
+    with open(input, 'r') as test_file:
+        src_in = test_file.read()
 
-test_output.close()
+    # Run doctester, putting the output of the test into sage's temporary directory
+    doc_file = tmp_filename()
+    cmdline = '%s -t %s %s %s > %s' % (
+        shlex.quote(f'{args.venv}/bin/sage') if args.venv else 'sage',
+        '--long' if args.long else '',
+        f'--environment {args.environment}' if args.environment != runtest_default_environment else '',
+        test_file.name, doc_file)
+    print(f'Running "{cmdline}"')
+    os.system(cmdline)
 
-# Show summary of changes
-if args.output:
-    print('The fixed doctests have been saved as {0}.'.format(test_output.name))
-else:
-    relative = os.path.relpath(test_output.name, SAGE_ROOT)
-    print(relative)
-    if relative.startswith('..'):
-        print('Fixed source file is not part of Sage.')
+    with open(doc_file, 'r') as doc:
+        doc_out = doc.read()
+
+    sep = "**********************************************************************\n"
+    doctests = doc_out.split(sep)
+    src_in_lines = src_in.splitlines()
+
+    for block in doctests:
+        process_block(block, src_in_lines)
+
+    with open(output, 'w') as test_output:
+        for line in src_in_lines:
+            if line is None:
+                continue
+            test_output.write(line)
+            test_output.write('\n')
+
+    # Show summary of changes
+    if input != output:
+        print("The fixed doctests have been saved as '{0}'.".format(output))
     else:
-        subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
+        relative = os.path.relpath(output, SAGE_ROOT)
+        print(f"The input file '{output}' has been overwritten.")
+        if not relative.startswith('..'):
+            subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
