@@ -137,7 +137,7 @@ def spkg_type(name):
     EXAMPLES::
 
         sage: from sage.misc.package import spkg_type
-        sage: spkg_type('pip')
+        sage: spkg_type('pip')                                  # optional - sage_spkg
         'standard'
 
     OUTPUT:
@@ -148,6 +148,8 @@ def spkg_type(name):
     """
     spkg_type = None
     from sage.env import SAGE_PKGS
+    if not SAGE_PKGS:
+        return None
     try:
         f = open(os.path.join(SAGE_PKGS, name, "type"))
     except IOError:
