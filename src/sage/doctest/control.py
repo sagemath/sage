@@ -57,7 +57,6 @@ try:
 except ImportError:
     pass
 
-
 class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.
@@ -137,6 +136,7 @@ class DocTestDefaults(SageObject):
         # displaying user-defined optional tags and we don't want to see
         # the auto_optional_tags there.
         self.optional = set(['sage']) | auto_optional_tags
+        self.hide = ''
 
         # > 0: always run GC before every test
         # < 0: disable GC
@@ -401,6 +401,27 @@ class DocTestController(SageObject):
         if options.verbose:
             options.show_skipped = True
 
+        options.hidden_features = set()
+        if isinstance(options.hide, str):
+            if not len(options.hide):
+                options.hide = set([])
+            else:
+                s = options.hide.lower()
+                options.hide = set(s.split(','))
+                for h in options.hide:
+                    if not optionaltag_regex.search(h):
+                        raise ValueError('invalid optional tag {!r}'.format(h))
+            if 'all' in options.hide:
+                options.hide.discard('all')
+                from sage.features.all import all_features
+                feature_names = set([f.name for f in all_features() if not f.is_standard()])
+                options.hide = options.hide.union(feature_names)
+            if 'optional' in options.hide:
+                options.hide.discard('optional')
+                from sage.features.all import all_features
+                feature_names = set([f.name for f in all_features() if f.is_optional()])
+                options.hide = options.hide.union(feature_names)
+
         options.disabled_optional = set()
         if isinstance(options.optional, str):
             s = options.optional.lower()
@@ -417,6 +438,8 @@ class DocTestController(SageObject):
                     options.optional.discard('optional')
                     from sage.misc.package import list_packages
                     for pkg in list_packages('optional', local=True).values():
+                        if pkg.name in options.hide:
+                            continue
                         if pkg.is_installed() and pkg.installed_version == pkg.remote_version:
                             options.optional.add(pkg.name)
 
@@ -1330,6 +1353,49 @@ class DocTestController(SageObject):
             Features detected...
             0
 
+        We test the ``--hide`` option (:trac:`34185`)::
+
+            sage: from sage.doctest.control import test_hide
+            sage: filename = tmp_filename(ext='.py')
+            sage: with open(filename, 'w') as f:
+            ....:     f.write(test_hide)
+            ....:     f.close()
+            729
+            sage: DF = DocTestDefaults(hide='buckygen,all')
+            sage: DC = DocTestController(DF, [filename])
+            sage: DC.run()
+            Running doctests with ID ...
+            Using --optional=sage...
+            Features to be detected: ...
+            Doctesting 1 file.
+            sage -t ....py
+                [4 tests, ... s]
+            ----------------------------------------------------------------------
+            All tests passed!
+            ----------------------------------------------------------------------
+            Total time for all tests: ... seconds
+                cpu time: ... seconds
+                cumulative wall time: ... seconds
+            Features detected...
+            0
+
+            sage: DF = DocTestDefaults(hide='benzene,optional')
+            sage: DC = DocTestController(DF, [filename])
+            sage: DC.run()
+            Running doctests with ID ...
+            Using --optional=sage
+            Features to be detected: ...
+            Doctesting 1 file.
+            sage -t ....py
+                [4 tests, ... s]
+            ----------------------------------------------------------------------
+            All tests passed!
+            ----------------------------------------------------------------------
+            Total time for all tests: ... seconds
+                cpu time: ... seconds
+                cumulative wall time: ... seconds
+            Features detected...
+            0
         """
         opt = self.options
         L = (opt.gdb, opt.lldb, opt.valgrind, opt.massif, opt.cachegrind, opt.omega)
@@ -1370,6 +1436,21 @@ class DocTestController(SageObject):
 
             self.log("Using --optional=" + self._optional_tags_string())
             available_software._allow_external = self.options.optional is True or 'external' in self.options.optional
+
+            for h in self.options.hide:
+                try:
+                    i = available_software._indices[h]
+                except KeyError:
+                    pass
+                else:
+                    f = available_software._features[i]
+                    if f.is_present():
+                        f.hide()
+                        self.options.hidden_features.add(f)
+                        for g in f.joined_features():
+                            if g.name in self.options.optional:
+                                self.options.optional.discard(g.name)
+
             for o in self.options.disabled_optional:
                 try:
                     i = available_software._indices[o]
@@ -1379,11 +1460,16 @@ class DocTestController(SageObject):
                     available_software._seen[i] = -1
 
             self.log("Features to be detected: " + ','.join(available_software.detectable()))
+            if self.options.hidden_features:
+                self.log("Hidden features: " + ','.join([f.name for f in self.options.hidden_features]))
             self.add_files()
             self.expand_files_into_sources()
             self.filter_sources()
             self.sort_sources()
             self.run_doctests()
+
+            for f in self.options.hidden_features:
+                f.unhide()
 
             self.log("Features detected for doctesting: "
                      + ','.join(available_software.seen()))
@@ -1465,3 +1551,34 @@ def run_doctests(module, options=None):
         if not save_dtmode and IP is not None:
             IP.run_line_magic('colors', old_color)
             IP.config.TerminalInteractiveShell.colors = old_config_color
+
+
+###############################################################################
+# Declaration of doctest strings
+###############################################################################
+
+test_hide=r"""r{quotmark}
+{prompt}: next(graphs.fullerenes(20))
+Traceback (most recent call last):
+ ...
+FeatureNotPresentError: buckygen is not available.
+...
+{prompt}: next(graphs.fullerenes(20))   # optional buckygen
+Graph on 20 vertices
+
+{prompt}: len(list(graphs.fusenes(2)))
+Traceback (most recent call last):
+ ...
+FeatureNotPresentError: benzene is not available.
+...
+{prompt}: len(list(graphs.fusenes(2)))  # optional benzene
+1
+{prompt}: from sage.matrix.matrix_space import get_matrix_class
+{prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')
+Failed lazy import:
+sage.matrix.matrix_gfpn_dense is not available.
+...
+{prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe') # optional meataxe
+<class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+{quotmark}
+""".format(quotmark='"""', prompt='sage')  # using prompt to hide these lines from _test_enough_doctests

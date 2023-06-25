@@ -76,7 +76,8 @@ class sagemath_doc_html(StaticFile):
         StaticFile.__init__(self, 'sagemath_doc_html',
                             filename='html',
                             search_path=(SAGE_DOC,),
-                            spkg='sagemath_doc_html')
+                            spkg='sagemath_doc_html',
+                            type='standard')
 
 
 class sage__combinat(JoinFeature):
@@ -146,7 +147,7 @@ class sage__combinat(JoinFeature):
         # Hence, we test a Python module within the package.
         JoinFeature.__init__(self, 'sage.combinat',
                              [PythonModule('sage.combinat.tableau')],
-                             spkg='sagemath_combinat')
+                             spkg='sagemath_combinat', type="standard")
 
 
 class sage__geometry__polyhedron(PythonModule):
@@ -184,7 +185,7 @@ class sage__geometry__polyhedron(PythonModule):
             True
         """
         PythonModule.__init__(self, 'sage.geometry.polyhedron',
-                              spkg='sagemath_polyhedra')
+                              spkg='sagemath_polyhedra', type="standard")
 
 
 class sage__graphs(JoinFeature):
@@ -251,7 +252,7 @@ class sage__graphs(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.graphs',
                              [PythonModule('sage.graphs.graph')],
-                             spkg='sagemath_graphs')
+                             spkg='sagemath_graphs', type="standard")
 
 
 class sage__groups(JoinFeature):
@@ -283,7 +284,8 @@ class sage__groups(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.groups',
-                             [PythonModule('sage.groups.perm_gps.permgroup')])
+                             [PythonModule('sage.groups.perm_gps.permgroup')],
+                             spkg='sagemath_groups', type='standard')
 
 
 class sage__libs__flint(JoinFeature):
@@ -308,7 +310,7 @@ class sage__libs__flint(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.flint',
                              [PythonModule('sage.libs.flint.flint'),
                               PythonModule('sage.libs.arb.arith')],
-                             spkg='sagemath_flint')
+                             spkg='sagemath_flint', type='standard')
 
 
 class sage__libs__ntl(JoinFeature):
@@ -332,7 +334,7 @@ class sage__libs__ntl(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.ntl',
                              [PythonModule('sage.libs.ntl.convert')],
-                             spkg='sagemath_ntl')
+                             spkg='sagemath_ntl', type='standard')
 
 
 class sage__libs__pari(JoinFeature):
@@ -369,7 +371,7 @@ class sage__libs__pari(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.pari',
                              [PythonModule('sage.libs.pari.convert_sage')],
-                             spkg='sagemath_pari')
+                             spkg='sagemath_pari', type='standard')
 
 
 class sage__modular(JoinFeature):
@@ -392,7 +394,7 @@ class sage__modular(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.modular',
                              [PythonModule('sage.modular.modform.eisenstein_submodule')],
-                             spkg='sagemath_schemes')
+                             spkg='sagemath_schemes', type='standard')
 
 
 class sage__modules(JoinFeature):
@@ -430,7 +432,7 @@ class sage__modules(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.modules',
                              [PythonModule('sage.modules.free_module')],
-                             spkg='sagemath_modules')
+                             spkg='sagemath_modules', type='standard')
 
 
 class sage__numerical__mip(PythonModule):
@@ -475,7 +477,7 @@ class sage__plot(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.plot',
                              [PythonModule('sage.plot.plot')],
-                             spkg='sagemath_symbolics')
+                             spkg='sagemath_symbolics', type='standard')
 
 
 class sage__rings__finite_rings(JoinFeature):
@@ -498,7 +500,8 @@ class sage__rings__finite_rings(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.rings.finite_rings',
-                             [PythonModule('sage.rings.finite_rings.element_pari_ffelt')])
+                             [PythonModule('sage.rings.finite_rings.element_pari_ffelt')],
+                             type='standard')
 
 
 class sage__rings__function_field(JoinFeature):
@@ -541,7 +544,8 @@ class sage__rings__function_field(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.function_field',
                              [PythonModule('sage.rings.function_field.function_field_polymod'),
-                              sage__libs__singular()])
+                              sage__libs__singular()],
+                             type='standard')
 
 
 class sage__rings__number_field(JoinFeature):
@@ -601,7 +605,8 @@ class sage__rings__number_field(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.rings.number_field',
-                             [PythonModule('sage.rings.number_field.number_field_element')])
+                             [PythonModule('sage.rings.number_field.number_field_element')],
+                             type='standard')
 
 
 class sage__rings__padics(JoinFeature):
@@ -623,7 +628,8 @@ class sage__rings__padics(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.rings.padics',
-                             [PythonModule('sage.rings.padics.factory')])
+                             [PythonModule('sage.rings.padics.factory')],
+                             type='standard')
 
 
 class sage__rings__polynomial__pbori(JoinFeature):
@@ -646,7 +652,7 @@ class sage__rings__polynomial__pbori(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.polynomial.pbori',
                              [PythonModule('sage.rings.polynomial.pbori.pbori')],
-                             spkg='sagemath_brial')
+                             spkg='sagemath_brial', type='standard')
 
 
 class sage__rings__real_double(PythonModule):
