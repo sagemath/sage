@@ -465,10 +465,10 @@ def moving_average(v, n):
     different) meaning as defined above (the point is that the
     :meth:`simple_moving_average` on time series returns `n` values::
 
-        sage: a = stats.TimeSeries([1..10])
-        sage: stats.moving_average(a, 3)
+        sage: a = stats.TimeSeries([1..10])                                             # optional - numpy
+        sage: stats.moving_average(a, 3)                                                # optional - numpy
         [2.0000, 3.0000, 4.0000, 5.0000, 6.0000, 7.0000, 8.0000, 9.0000]
-        sage: stats.moving_average(list(a), 3)
+        sage: stats.moving_average(list(a), 3)                                          # optional - numpy
         [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
 
     """
