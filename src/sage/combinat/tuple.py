@@ -35,23 +35,23 @@ class Tuples(Parent, UniqueRepresentation):
 
         sage: S = [1,2]
         sage: Tuples(S,3).list()
-        [[1, 1, 1], [2, 1, 1], [1, 2, 1], [2, 2, 1], [1, 1, 2],
-         [2, 1, 2], [1, 2, 2], [2, 2, 2]]
+        [(1, 1, 1), (2, 1, 1), (1, 2, 1), (2, 2, 1), (1, 1, 2),
+         (2, 1, 2), (1, 2, 2), (2, 2, 2)]
         sage: mset = ["s","t","e","i","n"]
         sage: Tuples(mset,2).list()
-        [['s', 's'], ['t', 's'], ['e', 's'], ['i', 's'], ['n', 's'],
-         ['s', 't'], ['t', 't'], ['e', 't'], ['i', 't'], ['n', 't'],
-         ['s', 'e'], ['t', 'e'], ['e', 'e'], ['i', 'e'], ['n', 'e'],
-         ['s', 'i'], ['t', 'i'], ['e', 'i'], ['i', 'i'], ['n', 'i'],
-         ['s', 'n'], ['t', 'n'], ['e', 'n'], ['i', 'n'], ['n', 'n']]
+        [('s', 's'), ('t', 's'), ('e', 's'), ('i', 's'), ('n', 's'),
+         ('s', 't'), ('t', 't'), ('e', 't'), ('i', 't'), ('n', 't'),
+         ('s', 'e'), ('t', 'e'), ('e', 'e'), ('i', 'e'), ('n', 'e'),
+         ('s', 'i'), ('t', 'i'), ('e', 'i'), ('i', 'i'), ('n', 'i'),
+         ('s', 'n'), ('t', 'n'), ('e', 'n'), ('i', 'n'), ('n', 'n')]
 
     ::
 
         sage: K.<a> = GF(4, 'a')
         sage: mset = [x for x in K if x != 0]
         sage: Tuples(mset,2).list()
-        [[a, a], [a + 1, a], [1, a], [a, a + 1], [a + 1, a + 1], [1, a + 1],
-         [a, 1], [a + 1, 1], [1, 1]]
+        [(a, a), (a + 1, a), (1, a), (a, a + 1), (a + 1, a + 1), (1, a + 1),
+         (a, 1), (a + 1, 1), (1, 1)]
     """
     @staticmethod
     def __classcall_private__(cls, S, k):
@@ -94,22 +94,21 @@ class Tuples(Parent, UniqueRepresentation):
 
             sage: S = [1,2]
             sage: Tuples(S,3).list()
-            [[1, 1, 1], [2, 1, 1], [1, 2, 1], [2, 2, 1], [1, 1, 2],
-             [2, 1, 2], [1, 2, 2], [2, 2, 2]]
+            [(1, 1, 1), (2, 1, 1), (1, 2, 1), (2, 2, 1), (1, 1, 2),
+             (2, 1, 2), (1, 2, 2), (2, 2, 2)]
             sage: mset = ["s","t","e","i","n"]
             sage: Tuples(mset,2).list()
-            [['s', 's'], ['t', 's'], ['e', 's'], ['i', 's'], ['n', 's'],
-             ['s', 't'], ['t', 't'], ['e', 't'], ['i', 't'],
-             ['n', 't'], ['s', 'e'], ['t', 'e'], ['e', 'e'], ['i', 'e'],
-             ['n', 'e'], ['s', 'i'], ['t', 'i'], ['e', 'i'],
-             ['i', 'i'], ['n', 'i'], ['s', 'n'], ['t', 'n'], ['e', 'n'],
-             ['i', 'n'], ['n', 'n']]
-            sage: Tuples([1,1,2],3).list()
-            [[1, 1, 1], [2, 1, 1], [1, 2, 1], [2, 2, 1], [1, 1, 2],
-             [2, 1, 2], [1, 2, 2], [2, 2, 2]]
+            [('s', 's'), ('t', 's'), ('e', 's'), ('i', 's'), ('n', 's'),
+             ('s', 't'), ('t', 't'), ('e', 't'), ('i', 't'), ('n', 't'),
+             ('s', 'e'), ('t', 'e'), ('e', 'e'), ('i', 'e'), ('n', 'e'),
+             ('s', 'i'), ('t', 'i'), ('e', 'i'), ('i', 'i'), ('n', 'i'),
+             ('s', 'n'), ('t', 'n'), ('e', 'n'), ('i', 'n'), ('n', 'n')]
+            sage: Tuples((1,1,2),3).list()
+            [(1, 1, 1), (2, 1, 1), (1, 2, 1), (2, 2, 1), (1, 1, 2),
+             (2, 1, 2), (1, 2, 2), (2, 2, 2)]
         """
         for p in product(self._index_list, repeat=self.k):
-            yield [self.S[i] for i in reversed(p)]
+            yield tuple(self.S[i] for i in reversed(p))
 
     def cardinality(self):
         """
@@ -140,10 +139,10 @@ class UnorderedTuples(Parent, UniqueRepresentation):
 
         sage: S = [1,2]
         sage: UnorderedTuples(S,3).list()
-        [[1, 1, 1], [1, 1, 2], [1, 2, 2], [2, 2, 2]]
+        [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
         sage: UnorderedTuples(["a","b","c"],2).list()
-        [['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'b'], ['b', 'c'],
-         ['c', 'c']]
+        [('a', 'a'), ('a', 'b'), ('a', 'c'), ('b', 'b'), ('b', 'c'),
+         ('c', 'c')]
     """
     @staticmethod
     def __classcall_private__(cls, S, k):
@@ -186,15 +185,15 @@ class UnorderedTuples(Parent, UniqueRepresentation):
 
             sage: S = [1,2]
             sage: UnorderedTuples(S,3).list()
-            [[1, 1, 1], [1, 1, 2], [1, 2, 2], [2, 2, 2]]
+            [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
             sage: UnorderedTuples(["a","b","c"],2).list()
-            [['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'b'], ['b', 'c'],
-             ['c', 'c']]
+            [('a', 'a'), ('a', 'b'), ('a', 'c'), ('b', 'b'), ('b', 'c'),
+             ('c', 'c')]
             sage: UnorderedTuples([1,1,2],3).list()
-            [[1, 1, 1], [1, 1, 2], [1, 2, 2], [2, 2, 2]]
+            [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
         """
         for ans in combinations_with_replacement(self._index_list, self.k):
-            yield [self.S[i] for i in ans]
+            yield tuple(self.S[i] for i in ans)
 
     def cardinality(self):
         """
