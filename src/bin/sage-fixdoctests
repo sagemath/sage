@@ -23,7 +23,8 @@ import sys
 from argparse import ArgumentParser, FileType
 from pathlib import Path
 
-from sage.doctest.parsing import update_optional_tags
+from sage.doctest.control import skipfile
+from sage.doctest.parsing import parse_optional_tags, update_optional_tags
 from sage.env import SAGE_ROOT
 from sage.misc.temporary_file import tmp_filename
 
@@ -275,8 +276,13 @@ if status := os.waitstatus_to_exitcode(os.system(cmdline)):
     sys.exit(status)
 
 for input, output in zip(inputs, outputs):
-    with open(input, 'r') as test_file:
-        src_in = test_file.read()
+    if skipfile_result := skipfile(input, False):
+        if skipfile_result is True:
+            print(f"Skipping {input} because it is marked 'nodoctest'")
+            continue
+        file_optional_tags = parse_optional_tags('#' + skipfile_result)
+    else:
+        file_optional_tags = set()
 
     # Run the doctester, putting the output of the test into sage's temporary directory
     cmdline = f'{shlex.quote(executable)} -t {environment_args} {shlex.quote(input)} > {shlex.quote(doc_file)}'
@@ -288,7 +294,16 @@ for input, output in zip(inputs, outputs):
 
     sep = "**********************************************************************\n"
     doctests = doc_out.split(sep)
+
+    with open(input, 'r') as test_file:
+        src_in = test_file.read()
     src_in_lines = src_in.splitlines()
+
+    # First remove duplicate optional tags
+    if file_optional_tags:
+        for i, line in enumerate(src_in_lines):
+            if re.match('( *sage: *)(.*)#', line):
+                src_in_lines[i] = update_optional_tags(line, remove_tags=file_optional_tags)
 
     for block in doctests:
         process_block(block, src_in_lines)

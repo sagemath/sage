@@ -151,7 +151,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
         first_line, rest = split[0], ''
 
     sharp_index = first_line.find('#')
-    if sharp_index <= 0:                  # no comment
+    if sharp_index < 0:                  # no comment
         if return_string_sans_tags:
             return set(), string
         else:
@@ -223,8 +223,8 @@ def unparse_optional_tags(tags):
     return ''
 
 
-optional_tag_columns = [88, 100, 120]
-standard_tag_columns = [64, 72, 80, 84]
+optional_tag_columns = [48, 56, 64, 72, 80, 84]
+standard_tag_columns = [88, 100, 120, 160]
 
 
 def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, force_rewrite=False):
@@ -232,7 +232,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     if not (m := re.match('( *sage: *)(.*)', line)):
         raise ValueError(f'line must start with a sage: prompt, got: {line}')
 
-    current_tags, line_sans_tags = parse_optional_tags(line, return_string_sans_tags=True)
+    current_tags, line_sans_tags = parse_optional_tags(line.rstrip(), return_string_sans_tags=True)
 
     new_tags = set(current_tags)
 
@@ -248,12 +248,23 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     if not force_rewrite and new_tags == current_tags:
         return line
 
-    line = line_sans_tags.rstrip()
-    for column in optional_tag_columns:
-        if len(line) <= column - 2:
-            line += ' ' * (column - 2 - len(line))
-            break
-    line += '  ' + unparse_optional_tags(new_tags)
+    if not new_tags:
+        return line_sans_tags.rstrip()
+
+    tag_columns = optional_tag_columns if any(_tag_key(tag)[0] < 1 for tag in new_tags) else standard_tag_columns
+
+    if len(line) in tag_columns and line[-2:] == '  ':
+        # keep alignment
+        pass
+    else:
+        # realign
+        line = line_sans_tags.rstrip()
+        for column in tag_columns:
+            if len(line) <= column - 2:
+                line += ' ' * (column - 2 - len(line))
+                break
+        line += '  '
+    line += unparse_optional_tags(new_tags)
     return line
 
 
