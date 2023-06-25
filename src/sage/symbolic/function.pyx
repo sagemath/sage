@@ -489,8 +489,8 @@ cdef class Function(SageObject):
 
         Make sure we can pass mpmath arguments (:trac:`13608`)::
 
-            sage: import sage.libs.mpmath                                                         # optional - mpmath
-            sage: with sage.libs.mpmath.workprec(128): sin(sage.libs.mpmath.mpc('0.5', '1.2'))              # optional - mpmath
+            sage: from sage.libs.mpmath import workprec, mpc                            # optional - mpmath
+            sage: with workprec(128): sin(mpc('0.5', '1.2'))                            # optional - mpmath
             mpc(real='0.86807452059118713192871150787046523179886',
                 imag='1.3246769633571289324095313649562791720086')
 
@@ -775,8 +775,8 @@ cdef class Function(SageObject):
         implementation, using sage reals instead of mpmath ones. This
         might change when aliases for these functions are established::
 
-            sage: import sage.libs.mpmath                                                         # optional - mpmath
-            sage: with sage.libs.mpmath.workprec(128): arcsin(sage.libs.mpmath.mpf('0.5'))                  # optional - mpmath
+            sage: from sage.libs.mpmath import workprec, mpf                            # optional - mpmath
+            sage: with workprec(128): arcsin(mpf('0.5'))                                # optional - mpmath
             mpf('0.52359877559829887307710723054658381403157')
 
         TESTS:
@@ -785,7 +785,7 @@ cdef class Function(SageObject):
         not using mpmath, we have to create a custom function which
         will certainly never get created in mpmath. ::
 
-            sage: import sage.libs.mpmath                                                         # optional - mpmath
+            sage: from sage.libs.mpmath import workprec, mpf
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class NoMpmathFn(BuiltinFunction):
             ....:         def _eval_(self, arg):
@@ -794,16 +794,16 @@ cdef class Function(SageObject):
             ....:                 assert parent == RealField(prec)
             ....:                 return prec
             sage: noMpmathFn = NoMpmathFn("noMpmathFn")                                 # optional - mpmath
-            sage: with sage.libs.mpmath.workprec(64): noMpmathFn(sqrt(sage.libs.mpmath.mpf('2')))           # optional - mpmath
+            sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))                         # optional - mpmath
             64
-            sage: sage.libs.mpmath.noMpmathFn = lambda x: 123                                     # optional - mpmath
-            sage: with sage.libs.mpmath.workprec(64): noMpmathFn(sqrt(sage.libs.mpmath.mpf('2')))           # optional - mpmath
+            sage: sage.libs.mpmath.noMpmathFn = lambda x: 123                           # optional - mpmath
+            sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))                         # optional - mpmath
             123
-            sage: del sage.libs.mpmath.noMpmathFn                                                 # optional - mpmath
+            sage: del sage.libs.mpmath.noMpmathFn                                       # optional - mpmath
 
         """
         import sage.libs.mpmath
-        from sage.libs.mpmath.utils import sage.libs.mpmath_to_sage, sage_to_mpmath
+        from sage.libs.mpmath.utils import mpmath_to_sage, sage_to_mpmath
         prec = sage.libs.mpmath.mp.prec
         args = [mpmath_to_sage(x, prec)
                 if isinstance(x, (sage.libs.mpmath.mpf, sage.libs.mpmath.mpc)) else x
