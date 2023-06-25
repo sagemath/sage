@@ -817,10 +817,10 @@ class MPolynomialIdeal_singular_repr(
         from sage.libs.singular.function_factory import ff
 
         if algorithm == 'sy':
-            primdecSY =  ff.primdec__lib.primdecSY
+            primdecSY = ff.primdec__lib.primdecSY
             P = primdecSY(self)
         elif algorithm == 'gtz':
-            primdecGTZ =  ff.primdec__lib.primdecGTZ
+            primdecGTZ = ff.primdec__lib.primdecGTZ
             P = primdecGTZ(self)
 
         R = self.ring()
@@ -1117,7 +1117,7 @@ class MPolynomialIdeal_singular_repr(
         # the Singular routines are quite picky about their input.
         if is_groebner:
             if Q == P:
-                I =  MPolynomialIdeal(P, self.interreduced_basis()[::-1])
+                I = MPolynomialIdeal(P, self.interreduced_basis()[::-1])
             else:
                 I = self
                 I = MPolynomialIdeal(P, I.transformed_basis('fglm')[::-1]) # -> 'lex'
@@ -1463,7 +1463,7 @@ class MPolynomialIdeal_singular_repr(
 
         R = self.ring()
         S = self._groebner_basis_singular_raw(algorithm=algorithm, *args, **kwds)
-        S =  PolynomialSequence([R(S[i+1]) for i in range(len(S))], R, immutable=True)
+        S = PolynomialSequence([R(S[i+1]) for i in range(len(S))], R, immutable=True)
         return S
 
     @cached_method

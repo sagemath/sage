@@ -63,7 +63,7 @@ from .matrix cimport Matrix
 from . import matrix_dense
 from .matrix_integer_dense cimport _lift_crt
 from sage.structure.element cimport Matrix as baseMatrix
-from .misc import matrix_integer_dense_rational_reconstruction
+from .misc_flint import matrix_integer_dense_rational_reconstruction
 
 from sage.arith.misc import binomial, previous_prime
 from sage.rings.rational_field import QQ

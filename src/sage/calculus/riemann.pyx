@@ -233,7 +233,7 @@ cdef class Riemann_Map:
         self.tk = np.array(np.arange(N) * TWOPI / N + 0.001 / N,
                            dtype=FLOAT)
         self.tk2 = np.zeros(N + 1, dtype=FLOAT)
-        for i in xrange(N):
+        for i in range(N):
             self.tk2[i] = self.tk[i]
         self.tk2[N] = TWOPI
         self.B = len(fs) # number of boundaries of the figure
@@ -246,14 +246,14 @@ cdef class Riemann_Map:
             dtype=COMPLEX)
         # Find the points on the boundaries and their derivatives.
         if self.exterior:
-            for k in xrange(self.B):
-                for i in xrange(N):
+            for k in range(self.B):
+                for i in range(N):
                     fk = fs[k](self.tk[N-i-1])
                     cps[k, i] = complex(1/fk)
                     dps[k, i] = complex(1/fk**2*fprimes[k](self.tk[N-i-1]))
         else:
-            for k in xrange(self.B):
-                for i in xrange(N):
+            for k in range(self.B):
+                for i in range(N):
                     cps[k, i] = complex(fs[k](self.tk[i]))
                     dps[k, i] = complex(fprimes[k](self.tk[i]))
         if self.exterior:
@@ -327,7 +327,7 @@ cdef class Riemann_Map:
              (normalized_dp[t]/(cp-cp[t])).conjugate())
               for t in np.arange(NB)], dtype=np.complex128)
         np.seterr(divide=errdivide,invalid=errinvalid) # resets the error handling
-        for i in xrange(NB):
+        for i in range(NB):
             K[i, i] = 1
         # Nystrom Method for solving 2nd kind integrals
         phi = np.linalg.solve(K, g) / NB * TWOPI
@@ -339,22 +339,22 @@ cdef class Riemann_Map:
         # regions.
         if B != 1:
             theta_array = np.zeros([1, NB])
-            for i in xrange(NB):
+            for i in range(NB):
                 theta_array[0, i] = phase(-I * np.power(phi[i], 2) * dp[i])
             self.theta_array = np.concatenate(
                 [theta_array.reshape([B, N]), np.zeros([B, 1])], axis=1)
-            for k in xrange(B):
+            for k in range(B):
                 self.theta_array[k, N] = self.theta_array[k, 0] + TWOPI
         # Finding the theta correspondence using abs. Well behaved, but
         # doesn't work on multiply connected domains.
         else:
             phi2 = phi.reshape([self.B, N])
             theta_array = np.zeros([B, N + 1], dtype=np.float64)
-            for k in xrange(B):
+            for k in range(B):
                 phik = phi2[k]
                 saa = (np.dot(abs(phi), abs(phi))) * TWOPI / NB
                 theta_array[k, 0] = 0
-                for i in xrange(1, N):
+                for i in range(1, N):
                     theta_array[k, i] = (
                         theta_array[k, i - 1] +
                         ((TWOPI / NB * TWOPI *
@@ -368,7 +368,7 @@ cdef class Riemann_Map:
                     t0 = theta_array[k, tmax] + phase(phimax)
                 else:
                     t0 = theta_array[k, tmax] - phase(phimax)
-                for i in xrange(N):
+                for i in range(N):
                     theta_array[k, i] = theta_array[k, i] - t0
                 theta_array[k, N] = TWOPI + theta_array[k, 0]
             self.theta_array = theta_array
@@ -432,7 +432,7 @@ cdef class Riemann_Map:
         cdef int k, B
         if boundary < 0:
             temptk = self.tk
-            for i in xrange(self.B - 1):
+            for i in range(self.B - 1):
                 temptk = np.concatenate([temptk, self.tk])
             if absolute_value:
                 return np.column_stack(
@@ -504,7 +504,7 @@ cdef class Riemann_Map:
         """
         if boundary < 0:
             temptk = self.tk2
-            for i in xrange(self.B - 1):
+            for i in range(self.B - 1):
                 temptk = np.concatenate([temptk, self.tk2])
             return np.column_stack(
                 [temptk, self.theta_array.flatten()]).tolist()
@@ -532,8 +532,8 @@ cdef class Riemann_Map:
             [self.B, N + 1], dtype=np.complex128)
         cdef int k, i
         # Lots of setup for Simpson's method of integration.
-        for k in xrange(self.B):
-            for i in xrange(N // 3):
+        for k in range(self.B):
+            for i in range(N // 3):
                 p_vector[k, 3*i] = (2*coeff * dps[k, 3*i] *
                                     exp(I * theta_array[k, 3*i]))
                 p_vector[k, 3*i + 1] = (3*coeff * dps[k, 3*i + 1] *
@@ -636,8 +636,8 @@ cdef class Riemann_Map:
         self.p_vector_inverse = np.zeros([B, N], dtype=np.complex128)
         # Setup for trapezoid integration because integration points are
         # not equally spaced.
-        for k in xrange(B):
-            for i in xrange(N):
+        for k in range(B):
+            for i in range(N):
                 di = theta_array[k, (i + 1) % N] - theta_array[k, (i - 1) % N]
                 if di > PI:
                     di = di - TWOPI
@@ -645,12 +645,12 @@ cdef class Riemann_Map:
                     di = di + TWOPI
                 self.p_vector_inverse[k, i] = di / 2
         self.sinalpha = np.zeros([B, N], dtype=np.float64)
-        for k in xrange(B):
-            for i in xrange(N):
+        for k in range(B):
+            for i in range(N):
                 self.sinalpha[k, i] = sin(-theta_array[k, i])
         self.cosalpha = np.zeros([B, N], dtype=np.float64)
-        for k in xrange(B):
-            for i in xrange(N):
+        for k in range(B):
+            for i in range(N):
                 self.cosalpha[k, i] = cos(-theta_array[k, i])
 
     cpdef inverse_riemann_map(self, COMPLEX_T pt):
@@ -748,7 +748,7 @@ cdef class Riemann_Map:
         from sage.plot.all import list_plot
 
         plots = list(range(self.B))
-        for k in xrange(self.B):
+        for k in range(self.B):
             # This conditional should be eliminated when the thickness/pointsize
             # issue is resolved later. Same for the others in plot_spiderweb().
             if plotjoined:
@@ -814,13 +814,13 @@ cdef class Riemann_Map:
         cdef np.ndarray[COMPLEX_T, ndim=2] z_values = np.empty(
             [y_points, x_points], dtype=np.complex128)
         if self.exterior:
-            for i in xrange(x_points):
-                for j in xrange(y_points):
+            for i in range(x_points):
+                for j in range(y_points):
                     pt = 1/(xmin + 0.5*xstep + i*xstep + I*(ymin + 0.5*ystep + j*ystep))
                     z_values[j, i] = 1/(-np.dot(p_vector,1/(pre_q_vector - pt)))
         else:
-            for i in xrange(x_points):
-                for j in xrange(y_points):
+            for i in range(x_points):
+                for j in range(y_points):
                     pt = xmin + 0.5*xstep + i*xstep + I*(ymin + 0.5*ystep + j*ystep)
                     z_values[j, i] = -np.dot(p_vector,1/(pre_q_vector - pt))
         return z_values, xmin, xmax, ymin, ymax
@@ -949,9 +949,9 @@ cdef class Riemann_Map:
             s = spline(np.column_stack([self.theta_array[0], self.tk2]).tolist())
             tmax = self.theta_array[0, self.N]
             tmin = self.theta_array[0, 0]
-            for k in xrange(circles):
+            for k in range(circles):
                 temp = list(range(pts*2))
-                for i in xrange(2*pts):
+                for i in range(2*pts):
                     temp[i] = self.inverse_riemann_map(
                         (k + 1) / (circles + 1.0) * exp(I*i * TWOPI / (2*pts)))
                 if plotjoined:
@@ -961,14 +961,14 @@ cdef class Riemann_Map:
                     circle_list[k] = list_plot(comp_pt(temp, 1),
                         rgbcolor=rgbcolor, pointsize=thickness)
             line_list = list(range(spokes))
-            for k in xrange(spokes):
+            for k in range(spokes):
                 temp = list(range(pts))
                 angle = (k*1.0) / spokes * TWOPI
                 if angle >= tmax:
                     angle -= TWOPI
                 elif angle <= tmin:
                     angle += TWOPI
-                for i in xrange(pts - 1):
+                for i in range(pts - 1):
                     temp[i] = self.inverse_riemann_map(
                         (i * 1.0) / (pts * 1.0) * exp(I * angle) * linescale)
                 temp[pts - 1] = complex(
@@ -1238,8 +1238,8 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
         spoke_angles = srange(-PI,PI+TWOPI/spokes,TWOPI/spokes)
     else:
         spoke_angles = []
-    for i in xrange(imax-2): # the d arrays are 1 smaller on each side
-        for j in xrange(jmax-2):
+    for i in range(imax-2): # the d arrays are 1 smaller on each side
+        for j in range(jmax-2):
             z = z_values[i+1,j+1]
             mag = abs(z)
             arg = phase(z)
@@ -1309,9 +1309,9 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
         dtype=FLOAT, shape=(imax, jmax, 3))
 
     sig_on()
-    for i in xrange(imax):
+    for i in range(imax):
         row = z_values[i]
-        for j in xrange(jmax):
+        for j in range(jmax):
             z = row[j]
             mag = abs(z)
             arg = phase(z)

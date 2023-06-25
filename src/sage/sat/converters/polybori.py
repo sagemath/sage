@@ -473,7 +473,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         new_variables = []
         for j in range(0, nm, step):
-            m =  new_variables + monomial_list[j:j+step]
+            m = new_variables + monomial_list[j:j+step]
             if (j + step) < nm:
                 new_variables = [self.var(None)]
                 m += new_variables

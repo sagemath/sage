@@ -47,6 +47,7 @@ import errno
 import doctest
 import traceback
 import tempfile
+from collections import defaultdict
 from dis import findlinestarts
 from queue import Empty
 import gc
@@ -56,7 +57,7 @@ import sage.misc.randstate as randstate
 from sage.misc.misc import walltime
 from .util import Timer, RecordingDict, count_noun
 from .sources import DictAsObject
-from .parsing import OriginalSource, reduce_hex
+from .parsing import OriginalSource, reduce_hex, unparse_optional_tags
 from sage.structure.sage_object import SageObject
 from .parsing import SageOutputChecker, pre_hash, get_source
 from sage.repl.user_globals import set_globals
@@ -527,7 +528,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             self.msgfile = self._fakeout.real_stdout
         self.history = []
         self.references = []
-        self.setters = {}
+        self.setters = defaultdict(dict)
         self.running_global_digest = hashlib.md5()
         self.total_walltime_skips = 0
         self.total_performed_tests = 0
@@ -772,6 +773,9 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 if self.options.warn_long > 0 and example.walltime + check_duration > self.options.warn_long:
                     self.report_overtime(out, test, example, got,
                                          check_duration=check_duration)
+                elif example.warnings:
+                    for warning in example.warnings:
+                        out(self._failure_header(test, example, f'Warning: {warning}'))
                 elif not quiet:
                     self.report_success(out, test, example, got,
                                         check_duration=check_duration)
@@ -831,14 +835,15 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:                         optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: DTR.run(doctests[0], clear_globs=False)
             TestResults(failed=0, attempted=4)
         """
-        self.setters = {}
+        self.setters = defaultdict(dict)
         randstate.set_random_seed(self.options.random_seed)
         warnings.showwarning = showwarning_with_traceback
         self.running_doctest_digest = hashlib.md5()
@@ -1037,17 +1042,20 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os, hashlib
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: DTR.running_doctest_digest = hashlib.md5()
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = os.path.join(SAGE_SRC, 'sage', 'doctest', 'forker.py')
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: globs = RecordingDict(globals())
             sage: 'doctest_var' in globs
             False
             sage: doctests, extras = FDS.create_doctests(globs)
             sage: ex0 = doctests[0].examples[0]
             sage: flags = 32768 if sys.version_info.minor < 8 else 524288
-            sage: compiler = lambda ex: compile(ex.source, '<doctest sage.doctest.forker[0]>', 'single', flags, 1)
+            sage: def compiler(ex):
+            ....:     return compile(ex.source, '<doctest sage.doctest.forker[0]>',
+            ....:                    'single', flags, 1)
             sage: DTR.compile_and_execute(ex0, compiler, globs)
             1764
             sage: globs['doctest_var']
@@ -1060,7 +1068,9 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         Now we can execute some more doctests to see the dependencies. ::
 
             sage: ex1 = doctests[0].examples[1]
-            sage: compiler = lambda ex:compile(ex.source, '<doctest sage.doctest.forker[1]>', 'single', flags, 1)
+            sage: def compiler(ex):
+            ....:     return compile(ex.source, '<doctest sage.doctest.forker[1]>',
+            ....:                    'single', flags, 1)
             sage: DTR.compile_and_execute(ex1, compiler, globs)
             sage: sorted(list(globs.set))
             ['R', 'a']
@@ -1072,7 +1082,9 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         ::
 
             sage: ex2 = doctests[0].examples[2]
-            sage: compiler = lambda ex:compile(ex.source, '<doctest sage.doctest.forker[2]>', 'single', flags, 1)
+            sage: def compiler(ex):
+            ....:     return compile(ex.source, '<doctest sage.doctest.forker[2]>',
+            ....:                    'single', flags, 1)
             sage: DTR.compile_and_execute(ex2, compiler, globs)
             a + 42
             sage: list(globs.set)
@@ -1085,6 +1097,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         if isinstance(globs, RecordingDict):
             globs.start()
         example.sequence_number = len(self.history)
+        example.warnings = []
         self.history.append(example)
         timer = Timer().start()
         try:
@@ -1096,11 +1109,20 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             if isinstance(globs, RecordingDict):
                 example.predecessors = []
                 for name in globs.got:
-                    ref = self.setters.get(name)
-                    if ref is not None:
-                        example.predecessors.append(ref)
+                    setters_dict = self.setters.get(name)  # setter_optional_tags -> setter
+                    if setters_dict:
+                        for setter_optional_tags, setter in setters_dict.items():
+                            if setter_optional_tags.issubset(example.optional_tags):
+                                example.predecessors.append(setter)
+                        if not example.predecessors:
+                            f_setter_optional_tags = "; ".join("'"
+                                                               + unparse_optional_tags(setter_optional_tags)
+                                                               + "'"
+                                                               for setter_optional_tags in setters_dict)
+                            example.warnings.append(f"Variable '{name}' referenced here "
+                                                    f"was set only in doctest marked {f_setter_optional_tags}")
                 for name in globs.set:
-                    self.setters[name] = example
+                    self.setters[name][example.optional_tags] = example
             else:
                 example.predecessors = None
             self.update_digests(example)

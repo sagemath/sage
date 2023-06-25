@@ -251,16 +251,23 @@ doesn't hurt::
 
 Even though the doctester master process has exited, the child process
 is still alive, but it should be killed automatically
-after the `die_timeout` given above (10 seconds)::
+after the ``die_timeout`` given above (10 seconds)::
 
     sage: pid = int(open(F).read())    # long time
     sage: time.sleep(2)                # long time
     sage: os.kill(pid, signal.SIGQUIT) # long time; 2 seconds passed => still alive
     sage: time.sleep(8)                # long time
-    sage: os.kill(pid, signal.SIGQUIT) # long time; 10 seconds passed => dead
+    sage: os.kill(pid, signal.SIGQUIT) # long time; 10 seconds passed => dead  # random
     Traceback (most recent call last):
     ...
     ProcessLookupError: ...
+
+If the child process is dead and removed, the last output should be as above.
+However, the child process interrupted its parent process (see
+``"interrupt_diehard.rst"``), and became an orphan process. Depending on the
+system, an orphan process may eventually become a zombie process instead of
+being removed, and then the last output would just be a blank. Hence the ``#
+random`` tag.
 
 Test a doctest failing with ``abort()``::
 
