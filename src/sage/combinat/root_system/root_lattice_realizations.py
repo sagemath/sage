@@ -136,14 +136,14 @@ class RootLatticeRealizations(Category_over_base_ring):
     lattice::
 
         sage: R = RootSystem(["A", 3, 1])
-        sage: delta = R.root_lattice().null_root()
+        sage: delta = R.root_lattice().null_root()                                      # optional - sage.graphs
         sage: L = R.weight_lattice()
-        sage: L(delta)
+        sage: L(delta)                                                                  # optional - sage.graphs
         0
 
     TESTS::
 
-        sage: TestSuite(L).run()
+        sage: TestSuite(L).run()                                                        # optional - sage.graphs
     """
 
     @cached_method
@@ -517,10 +517,11 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RootSystem(['A', 2]).root_lattice().basic_imaginary_roots()
                 ()
                 sage: Q = RootSystem(['A', 2, 1]).root_lattice()
-                sage: Q.basic_imaginary_roots()
+                sage: Q.basic_imaginary_roots()                                         # optional - sage.graphs
                 (alpha[0] + alpha[1] + alpha[2],)
-                sage: delta = Q.basic_imaginary_roots()[0]
-                sage: all(delta.scalar(Q.simple_coroot(i)) <= 0 for i in Q.index_set())
+                sage: delta = Q.basic_imaginary_roots()[0]                              # optional - sage.graphs
+                sage: all(delta.scalar(Q.simple_coroot(i)) <= 0                         # optional - sage.graphs
+                ....:     for i in Q.index_set())
                 True
             """
             if self.cartan_type().is_finite():
@@ -553,15 +554,19 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             In simply laced cases, this is boring::
 
-                sage: RootSystem(["A",3, 1]).root_lattice().simple_roots_tilde()
+                sage: RootSystem(["A",3, 1]).root_lattice().simple_roots_tilde()        # optional - sage.graphs
                 Finite family {0: alpha[0], 1: alpha[1], 2: alpha[2], 3: alpha[3]}
 
             This was checked by hand::
 
-                sage: RootSystem(["C",2,1]).coroot_lattice().simple_roots_tilde()
-                Finite family {0: alphacheck[0] - alphacheck[2], 1: alphacheck[1], 2: alphacheck[2]}
-                sage: RootSystem(["B",2,1]).coroot_lattice().simple_roots_tilde()
-                Finite family {0: alphacheck[0] - alphacheck[1], 1: alphacheck[1], 2: alphacheck[2]}
+                sage: RootSystem(["C",2,1]).coroot_lattice().simple_roots_tilde()       # optional - sage.graphs
+                Finite family {0: alphacheck[0] - alphacheck[2],
+                               1: alphacheck[1],
+                               2: alphacheck[2]}
+                sage: RootSystem(["B",2,1]).coroot_lattice().simple_roots_tilde()       # optional - sage.graphs
+                Finite family {0: alphacheck[0] - alphacheck[1],
+                               1: alphacheck[1],
+                               2: alphacheck[2]}
 
             What about type BC?
             """
@@ -871,9 +876,9 @@ class RootLatticeRealizations(Category_over_base_ring):
                 ()
 
                 sage: L = RootSystem(['A',3,1]).root_lattice()
-                sage: PIR = L.positive_imaginary_roots(); PIR
+                sage: PIR = L.positive_imaginary_roots(); PIR                           # optional - sage.graphs
                 Positive imaginary roots of type ['A', 3, 1]
-                sage: [PIR.unrank(i) for i in range(5)]
+                sage: [PIR.unrank(i) for i in range(5)]                                 # optional - sage.graphs
                 [alpha[0] + alpha[1] + alpha[2] + alpha[3],
                  2*alpha[0] + 2*alpha[1] + 2*alpha[2] + 2*alpha[3],
                  3*alpha[0] + 3*alpha[1] + 3*alpha[2] + 3*alpha[3],
@@ -1358,11 +1363,11 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(['C',2,1]).root_lattice().null_root()
+                sage: RootSystem(['C',2,1]).root_lattice().null_root()                  # optional - sage.graphs
                 alpha[0] + 2*alpha[1] + alpha[2]
-                sage: RootSystem(['D',4,1]).root_lattice().null_root()
+                sage: RootSystem(['D',4,1]).root_lattice().null_root()                  # optional - sage.graphs
                 alpha[0] + alpha[1] + 2*alpha[2] + alpha[3] + alpha[4]
-                sage: RootSystem(['F',4,1]).root_lattice().null_root()
+                sage: RootSystem(['F',4,1]).root_lattice().null_root()                  # optional - sage.graphs
                 alpha[0] + 2*alpha[1] + 3*alpha[2] + 4*alpha[3] + 2*alpha[4]
             """
             if self.cartan_type().is_affine():
@@ -1384,12 +1389,12 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(['C',2,1]).root_lattice().null_coroot()
+                sage: RootSystem(['C',2,1]).root_lattice().null_coroot()                # optional - sage.graphs
                 alphacheck[0] + alphacheck[1] + alphacheck[2]
-                sage: RootSystem(['D',4,1]).root_lattice().null_coroot()
+                sage: RootSystem(['D',4,1]).root_lattice().null_coroot()                # optional - sage.graphs
                 alphacheck[0] + alphacheck[1] + 2*alphacheck[2]
                  + alphacheck[3] + alphacheck[4]
-                sage: RootSystem(['F',4,1]).root_lattice().null_coroot()
+                sage: RootSystem(['F',4,1]).root_lattice().null_coroot()                # optional - sage.graphs
                 alphacheck[0] + 2*alphacheck[1] + 3*alphacheck[2]
                  + 2*alphacheck[3] + alphacheck[4]
             """
@@ -1416,11 +1421,11 @@ class RootLatticeRealizations(Category_over_base_ring):
             In the root space, we retrieve the inverse of the Cartan matrix::
 
                 sage: L = RootSystem(["B",3]).root_space()
-                sage: L.fundamental_weights_from_simple_roots()
+                sage: L.fundamental_weights_from_simple_roots()                         # optional - sage.graphs
                 Finite family {1:     alpha[1] +   alpha[2] +     alpha[3],
                                2:     alpha[1] + 2*alpha[2] +   2*alpha[3],
                                3: 1/2*alpha[1] +   alpha[2] + 3/2*alpha[3]}
-                sage: ~L.cartan_type().cartan_matrix()
+                sage: ~L.cartan_type().cartan_matrix()                                  # optional - sage.graphs
                 [  1   1 1/2]
                 [  1   2   1]
                 [  1   2 3/2]
@@ -1429,20 +1434,20 @@ class RootLatticeRealizations(Category_over_base_ring):
             the fundamental weights::
 
                 sage: L = RootSystem(["B",3]).weight_lattice()
-                sage: L.fundamental_weights_from_simple_roots()
+                sage: L.fundamental_weights_from_simple_roots()                         # optional - sage.graphs
                 Finite family {1: Lambda[1], 2: Lambda[2], 3: Lambda[3]}
 
                 sage: L = RootSystem(["B",3]).ambient_space()
                 sage: L.fundamental_weights()
                 Finite family {1: (1, 0, 0), 2: (1, 1, 0), 3: (1/2, 1/2, 1/2)}
-                sage: L.fundamental_weights_from_simple_roots()
+                sage: L.fundamental_weights_from_simple_roots()                         # optional - sage.graphs
                 Finite family {1: (1, 0, 0), 2: (1, 1, 0), 3: (1/2, 1/2, 1/2)}
 
             However the fundamental weights do not belong to the root
             lattice::
 
                 sage: L = RootSystem(["B",3]).root_lattice()
-                sage: L.fundamental_weights_from_simple_roots()
+                sage: L.fundamental_weights_from_simple_roots()                         # optional - sage.graphs
                 Traceback (most recent call last):
                 ...
                 ValueError: The fundamental weights do not live in this realization
@@ -1453,13 +1458,13 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L = RootSystem(["A",3]).ambient_space()
                 sage: L.fundamental_weights()
                 Finite family {1: (1, 0, 0, 0), 2: (1, 1, 0, 0), 3: (1, 1, 1, 0)}
-                sage: L.fundamental_weights_from_simple_roots()
+                sage: L.fundamental_weights_from_simple_roots()                         # optional - sage.graphs
                 Finite family {1: (3/4, -1/4, -1/4, -1/4),
                                2: (1/2, 1/2, -1/2, -1/2),
                                3: (1/4, 1/4, 1/4, -3/4)}
 
                 sage: L = RootSystem(["A",3]).ambient_lattice()
-                sage: L.fundamental_weights_from_simple_roots()
+                sage: L.fundamental_weights_from_simple_roots()                         # optional - sage.graphs
                 Traceback (most recent call last):
                 ...
                 ValueError: The fundamental weights do not live in this realization
@@ -1927,19 +1932,19 @@ class RootLatticeRealizations(Category_over_base_ring):
             This is the opposite of the highest root in the untwisted case::
 
                 sage: L = RootSystem(["B",3,1]).root_space()
-                sage: L._classical_alpha_0()
+                sage: L._classical_alpha_0()                                            # optional - sage.graphs
                 -alpha[1] - 2*alpha[2] - 2*alpha[3]
-                sage: L._to_classical_on_basis(0)
+                sage: L._to_classical_on_basis(0)                                       # optional - sage.graphs
                 -alpha[1] - 2*alpha[2] - 2*alpha[3]
-                sage: L.classical().highest_root()
+                sage: L.classical().highest_root()                                      # optional - sage.graphs
                 alpha[1] + 2*alpha[2] + 2*alpha[3]
 
             But not in the other cases::
 
                 sage: L = RootSystem(CartanType(["B",3,1]).dual()).root_space()
-                sage: L._to_classical_on_basis(0)
+                sage: L._to_classical_on_basis(0)                                       # optional - sage.graphs
                 -alpha[1] - 2*alpha[2] - alpha[3]
-                sage: L.classical().highest_root()
+                sage: L.classical().highest_root()                                      # optional - sage.graphs
                 2*alpha[1] + 2*alpha[2] + alpha[3]
             """
             cartan_type = self.cartan_type()
@@ -3452,7 +3457,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: Q = RootSystem(['A', 3, 1]).weight_lattice(extended=True)
                 sage: Lambda = Q.fundamental_weights()
-                sage: L = Lambda[0] + Q.null_root()
+                sage: L = Lambda[0] + Q.null_root()                                     # optional - sage.graphs
                 sage: L.simple_reflection(0)                                            # optional - sage.graphs
                 -Lambda[0] + Lambda[1] + Lambda[3]
             """
@@ -3605,7 +3610,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             EXAMPLES::
 
                 sage: alpha = RootSystem(["A", 3]).root_space().simple_roots()
-                sage: alpha[1].associated_coroot()
+                sage: alpha[1].associated_coroot()                                      # optional - sage.graphs
                 alphacheck[1]
             """
 
@@ -3622,11 +3627,11 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: mu = weight_lattice.from_vector(vector([0,0,1,2]))
                 sage: coroot_lattice = R.coroot_lattice()
                 sage: alphavee = coroot_lattice.from_vector(vector([0,0,1,1]))
-                sage: mu.reflection(alphavee, use_coroot=True)
+                sage: mu.reflection(alphavee, use_coroot=True)                          # optional - sage.graphs
                 6*Lambda[2] - 5*Lambda[3] + 2*Lambda[4]
                 sage: root_lattice = R.root_lattice()
                 sage: beta = root_lattice.from_vector(vector([0,1,1,0]))
-                sage: mu.reflection(beta)
+                sage: mu.reflection(beta)                                               # optional - sage.graphs
                 Lambda[1] - Lambda[2] + 3*Lambda[4]
             """
             if use_coroot:
@@ -3749,22 +3754,22 @@ class RootLatticeRealizations(Category_over_base_ring):
                 Lambda[1] + Lambda[2] - Lambda[3]
                 sage: wl = RootSystem(['A',2,1]).weight_lattice(extended=True)
                 sage: mu = wl.from_vector(vector([1,-3,0]))
-                sage: mu.to_dominant_chamber(positive=False, reduced_word=True)
+                sage: mu.to_dominant_chamber(positive=False, reduced_word=True)         # optional - sage.graphs
                 (-Lambda[1] - Lambda[2] - delta, [0, 2])
 
                 sage: R = RootSystem(['A',1,1])
                 sage: rl = R.root_lattice()
                 sage: nu = rl.zero()
-                sage: nu.to_dominant_chamber()
+                sage: nu.to_dominant_chamber()                                          # optional - sage.graphs
                 0
-                sage: nu.to_dominant_chamber(positive=False)
+                sage: nu.to_dominant_chamber(positive=False)                            # optional - sage.graphs
                 0
                 sage: mu = rl.from_vector(vector([0,1]))
-                sage: mu.to_dominant_chamber()
+                sage: mu.to_dominant_chamber()                                          # optional - sage.graphs
                 Traceback (most recent call last):
                 ...
                 ValueError: alpha[1] is not in the orbit of the fundamental chamber
-                sage: mu.to_dominant_chamber(positive=False)
+                sage: mu.to_dominant_chamber(positive=False)                            # optional - sage.graphs
                 Traceback (most recent call last):
                 ...
                 ValueError: alpha[1] is not in the orbit of the negative of the fundamental chamber
@@ -4050,7 +4055,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             EXAMPLES::
 
                 sage: L = RootSystem(['A',2,1]).weight_lattice()
-                sage: L.rho().level()
+                sage: L.rho().level()                                                   # optional - sage.graphs
                 3
             """
             if not self.parent().cartan_type().is_affine():
@@ -4292,8 +4297,8 @@ class RootLatticeRealizations(Category_over_base_ring):
             EXAMPLES::
 
                 sage: wl = RootSystem(['A',2,1]).weight_lattice(extended=True)
-                sage: al = wl.null_root()
-                sage: al.weyl_stabilizer()
+                sage: al = wl.null_root()                                               # optional - sage.graphs
+                sage: al.weyl_stabilizer()                                              # optional - sage.graphs
                 [0, 1, 2]
                 sage: wl = RootSystem(['A',4]).weight_lattice()
                 sage: mu = wl.from_vector(vector([1,1,0,0]))

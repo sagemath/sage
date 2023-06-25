@@ -267,8 +267,8 @@ class AmbientSpace(CombinatorialFreeModule):
                            3: 1/2*e[0] + 1/2*e[1] + 1/2*e[2] + e['deltacheck']}
             sage: RootSystem(['B',3]).ambient_space().fundamental_weights()
             Finite family {1: (1, 0, 0), 2: (1, 1, 0), 3: (1/2, 1/2, 1/2)}
-            sage: B31wl = RootSystem(['B',3,1]).weight_lattice().
-            sage: B31wlfundamental_weights().map(attrcall("level"))                     # optional - sage.graphs
+            sage: B31wl = RootSystem(['B',3,1]).weight_lattice()
+            sage: B31wl.fundamental_weights().map(attrcall("level"))                    # optional - sage.graphs
             Finite family {0: 1, 1: 1, 2: 2, 3: 1}
 
        In type `BC` dual, the coefficient of '\delta^\vee' is the level
