@@ -23,11 +23,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import re
 import doctest
+import re
+
 from collections import defaultdict
-from sage.repl.preparse import preparse, strip_string_literals
 from functools import reduce
+
+from sage.misc.cachefunc import cached_function
+from sage.repl.preparse import preparse, strip_string_literals
 
 from .external import available_software
 
@@ -173,6 +176,22 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
         return set(tags)
 
 
+@cached_function
+def _standard_tags():
+    from sage.features.all import all_features
+    return frozenset(feature.name for feature in all_features()
+                     if feature._spkg_type() == 'standard')
+
+
+def _tag_key(tag):
+    if tag.startswith('sage.'):
+        return 2, tag
+    elif tag in _standard_tags():
+        return 1, tag
+    else:
+        return 0, tag
+
+
 def unparse_optional_tags(tags):
     r"""
     Return a comment string that sets ``tags``.
@@ -195,8 +214,7 @@ def unparse_optional_tags(tags):
     """
     tags = set(tags)
     special_tags = set(tag for tag in tags if special_optional_regex.fullmatch(tag))
-    optional_tags = sorted(tags - special_tags,
-                           key=lambda tag: (tag.startswith('sage.'), tag))
+    optional_tags = sorted(tags - special_tags, key=_tag_key)
     tags = sorted(special_tags)
     if optional_tags:
         tags.append('optional - ' + " ".join(optional_tags))
