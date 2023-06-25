@@ -1,1 +1,3 @@
-tox sagemath_repl
+tox sagemath_repl sagemath_modules
+
+# sagemath_modules - for testing the extra
