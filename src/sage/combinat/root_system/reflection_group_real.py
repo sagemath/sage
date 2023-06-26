@@ -47,7 +47,6 @@ AUTHORS:
 from sage.misc.cachefunc import cached_function, cached_method, cached_in_parent_method
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 from sage.rings.integer_ring import ZZ
-from sage.interfaces.gap3 import gap3
 from sage.combinat.root_system.reflection_group_complex import ComplexReflectionGroup, IrreducibleComplexReflectionGroup
 from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_element import RealReflectionGroupElement
@@ -124,6 +123,8 @@ def ReflectionGroup(*args,**kwds):
     """
     if not is_chevie_available():
         raise ImportError("the GAP3 package 'chevie' is needed to work with (complex) reflection groups")
+
+    from sage.interfaces.gap3 import gap3
     gap3.load_package("chevie")
 
     error_msg = "the input data (%s) is not valid for reflection groups"
