@@ -27,9 +27,21 @@ def reduced_binary_form1(self):
         [ 0 -1]
         [ 1  1]
         )
+
+    TESTS::
+
+        sage: QuadraticForm(ZZ, 2, [4,-7,6]).reduced_binary_form1()[0]               # optional - sage.symbolic
+        Quadratic form in 2 variables over Integer Ring with coefficients:
+        [ 3 -1 ]
+        [ * 4 ]
+
+        sage: QuadraticForm(ZZ, 3, [1,2,3,4,5,6]).reduced_binary_form1()             # optional - sage.symbolic
+        Traceback (most recent call last):
+        ...
+        TypeError: only available for binary forms
     """
     if self.dim() != 2:
-        raise TypeError("This must be a binary form for now...")
+        raise TypeError("only available for binary forms")
 
     R = self.base_ring()
     interior_reduced_flag = False
@@ -94,9 +106,7 @@ def reduced_binary_form(self):
     n = self.dim()
     interior_reduced_flag = False
     Q = deepcopy(self)
-    M = matrix(R, n, n)
-    for i in range(n):
-        M[i, i] = 1
+    M = matrix(R, n, n, 1)
 
     while not interior_reduced_flag:
         interior_reduced_flag = True
@@ -105,9 +115,7 @@ def reduced_binary_form(self):
         for i in range(n):
             for j in range(i + 1, n):
                 if Q[i, i] > Q[j, j]:
-                    M_new = matrix(R, n, n)
-                    for k in range(n):
-                        M_new[k, k] = 1
+                    M_new = matrix(R, n, n, 1)
                     M_new[i, j] = -1
                     M_new[j, i] = 1
                     M_new[i, i] = 0
@@ -121,9 +129,7 @@ def reduced_binary_form(self):
                 if abs(Q[i, j]) > Q[i, i]:
                     r = R(floor(round(Q[i, j] / (2 * Q[i, i]))))
 
-                    M_new = matrix(R, n, n)
-                    for k in range(n):
-                        M_new[k, k] = 1
+                    M_new = matrix(R, n, n, 1)
                     M_new[i, j] = -r
 
                     Q = Q(M_new)
@@ -136,6 +142,7 @@ def reduced_binary_form(self):
 def minkowski_reduction(self):
     r"""
     Find a Minkowski-reduced form equivalent to the given one.
+
     This means that
 
     .. MATH::
