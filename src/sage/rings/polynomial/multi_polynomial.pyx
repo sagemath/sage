@@ -2425,12 +2425,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<x,y> = PolynomialRing(CC)
-            sage: F = ((0.759099196558145 + 0.845425869641446*CC.0)*x^3
+            sage: R.<x,y> = PolynomialRing(CC)                                          # optional - sage.rings.real_mpfr
+            sage: F = ((0.759099196558145 + 0.845425869641446*CC.0)*x^3                 # optional - sage.rings.real_mpfr
             ....:      + (84.8317207268542 + 93.8840848648033*CC.0)*x^2*y
             ....:      + (3159.07040755858 + 3475.33037377779*CC.0)*x*y^2
             ....:      + (39202.5965389079 + 42882.5139724962*CC.0)*y^3)
-            sage: F.reduced_form(smallest_coeffs=False)  # tol 1e-11                    # optional - sage.modules
+            sage: F.reduced_form(smallest_coeffs=False)  # tol 1e-11                    # optional - sage.modules sage.rings.real_mpfr
             (
             (-0.759099196558145 - 0.845425869641446*I)*x^3
             + (-0.571709908900118 - 0.0418133346027929*I)*x^2*y

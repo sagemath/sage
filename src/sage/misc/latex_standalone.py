@@ -215,9 +215,9 @@ Adding a border in the options avoids cropping the vertices of a graph::
 The current latex representation of a transducer is a tikzpicture using
 the tikz library automata. The string can be used as input::
 
-    sage: s = latex(transducers.GrayCode())                # optional - sage.graphs
-    sage: t = TikzPicture(s, usetikzlibrary=['automata'])  # optional - sage.graphs
-    sage: _ = t.pdf(view=False)           # long time (2s) # optional - latex sage.graphs
+    sage: s = latex(transducers.GrayCode())                                             # optional - sage.graphs sage.modules
+    sage: t = TikzPicture(s, usetikzlibrary=['automata'])                               # optional - sage.graphs sage.modules
+    sage: _ = t.pdf(view=False)           # long time (2s)                        # optional - latex sage.graphs sage.modules
 
 AUTHORS:
 

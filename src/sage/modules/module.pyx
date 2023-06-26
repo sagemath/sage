@@ -27,7 +27,8 @@ A minimal example of a module::
     ....:     def _repr_(self):
     ....:         return repr(self.x)
 
-    sage: class MyModule(sage.modules.module.Module):
+    sage: from sage.modules.module import Module
+    sage: class MyModule(Module):
     ....:     Element = MyElement
     ....:     def _element_constructor_(self, x):
     ....:         if isinstance(x, MyElement): x = x.x
@@ -106,10 +107,10 @@ cdef class Module(Parent):
 
      We check that :trac:`8119` has been resolved::
 
-        sage: M = ZZ^3
-        sage: h = M.__hash__()
-        sage: M.rename('toto')
-        sage: h == M.__hash__()
+        sage: M = ZZ^3                                                                  # optional - sage.modules
+        sage: h = M.__hash__()                                                          # optional - sage.modules
+        sage: M.rename('toto')                                                          # optional - sage.modules
+        sage: h == M.__hash__()                                                         # optional - sage.modules
         True
 
     """
@@ -161,7 +162,7 @@ cdef class Module(Parent):
 
         Make sure :trac:`3638` is fixed::
 
-            sage: vector(ZZ,[1,2,11])==vector(Zmod(8),[1,2,3])
+            sage: vector(ZZ,[1,2,11]) == vector(Zmod(8),[1,2,3])                        # optional - sage.modules
             True
 
         AUTHORS:
@@ -212,8 +213,8 @@ cdef class Module(Parent):
 
         EXAMPLES::
 
-            sage: V = ZZ^7
-            sage: V.base_extend(QQ)
+            sage: V = ZZ^7                                                              # optional - sage.modules
+            sage: V.base_extend(QQ)                                                     # optional - sage.modules
             Vector space of dimension 7 over Rational Field
 
         TESTS::
@@ -278,8 +279,8 @@ def is_Module(x):
     EXAMPLES::
 
         sage: from sage.modules.module import is_Module
-        sage: M = FreeModule(RationalField(),30)
-        sage: is_Module(M)
+        sage: M = FreeModule(RationalField(),30)                                        # optional - sage.modules
+        sage: is_Module(M)                                                              # optional - sage.modules
         True
         sage: is_Module(10)
         False
@@ -298,13 +299,13 @@ def is_VectorSpace(x):
     EXAMPLES::
 
         sage: from sage.modules.module import is_Module, is_VectorSpace
-        sage: M = FreeModule(RationalField(),30)
-        sage: is_VectorSpace(M)
+        sage: M = FreeModule(RationalField(),30)                                        # optional - sage.modules
+        sage: is_VectorSpace(M)                                                         # optional - sage.modules
         True
-        sage: M = FreeModule(IntegerRing(),30)
-        sage: is_Module(M)
+        sage: M = FreeModule(IntegerRing(),30)                                          # optional - sage.modules
+        sage: is_Module(M)                                                              # optional - sage.modules
         True
-        sage: is_VectorSpace(M)
+        sage: is_VectorSpace(M)                                                         # optional - sage.modules
         False
 
     """

@@ -274,9 +274,9 @@ class AlgebraicScheme(scheme.Scheme):
         projective spaces. This is why this method returns ``False``
         for toric varieties::
 
-            sage: PP.<x,y,z,w> = toric_varieties.P(3)
-            sage: V = PP.subscheme(x^3 + y^3 + z^3 + w^3)
-            sage: V.is_projective()
+            sage: PP.<x,y,z,w> = toric_varieties.P(3)                                   # optional - sage.geometry.polyhedron
+            sage: V = PP.subscheme(x^3 + y^3 + z^3 + w^3)                               # optional - sage.geometry.polyhedron
+            sage: V.is_projective()                                                     # optional - sage.geometry.polyhedron
             False
         """
         return self.ambient_space().is_projective()
@@ -382,9 +382,9 @@ class AlgebraicScheme(scheme.Scheme):
                     defined by: x^2 + y^2 - 1
               To:   Affine Space of dimension 2 over Rational Field
               Defn: Defined on coordinates by sending (x, y) to (x, y)
-            sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()
-            sage: P1 = P1xP1.subscheme(x - y)                                           # optional - sage.libs.singular
-            sage: P1.embedding_morphism()                                               # optional - sage.libs.singular
+            sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()                             # optional - sage.geometry.polyhedron
+            sage: P1 = P1xP1.subscheme(x - y)                                           # optional - sage.geometry.polyhedron sage.libs.singular
+            sage: P1.embedding_morphism()                                               # optional - sage.geometry.polyhedron sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of 2-d CPR-Fano toric variety covered
                     by 4 affine patches defined by: x - y

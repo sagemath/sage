@@ -1442,11 +1442,11 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         12.5878862295484
         sage: n(pi^2 + e, digits=50)                                                    # optional - sage.symbolic
         12.587886229548403854194778471228813633070946500941
-        sage: a = CC(-5).n(prec=40)
-        sage: b = ComplexField(40)(-5)
-        sage: a == b
+        sage: a = CC(-5).n(prec=40)                                                     # optional - sage.rings.real_mpfr
+        sage: b = ComplexField(40)(-5)                                                  # optional - sage.rings.real_mpfr
+        sage: a == b                                                                    # optional - sage.rings.real_mpfr
         True
-        sage: parent(a) is parent(b)
+        sage: parent(a) is parent(b)                                                    # optional - sage.rings.real_mpfr
         True
         sage: numerical_approx(9)
         9.00000000000000
