@@ -152,7 +152,7 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: PowerSeriesRing(CC, 'q')
+            sage: PowerSeriesRing(CC, 'q')                                              # optional - sage.rings.real_mpfr
             Power Series Ring in q over Complex Field with 53 bits of precision
             sage: T = PowerSeriesRing(GF(3), 5, 't'); T                                 # optional - sage.rings.finite_rings
             Multivariate Power Series Ring in t0, t1, t2, t3, t4
