@@ -471,7 +471,7 @@ class logstr(str):
         return self
 
     def _latex_(self):
-        """
+        r"""
         EXAMPLES::
             sage: from sage.repl.interpreter import logstr
             sage: logstr("A")
