@@ -22,14 +22,14 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
     r"""
     Check if the input is a covering array with given strength.
 
-    - ``array`` -- The Covering Array to be tested.
+    - ``array`` -- the Covering Array to be tested.
 
-    - ``strength`` (integer) -- The parameter `t` of the covering array,
+    - ``strength`` (integer) -- the parameter `t` of the covering array,
       such that in any selection of `t` columns of the array, every `t`
       -tuple appears at least once. If set to None then all t > 0 are
       tested to and the maximal strength is used.
 
-    - ``levels`` -- The number of symbols that appear in ``array``.
+    - ``levels`` -- the number of symbols that appear in ``array``.
       If set to None, then each unique entry in ``array`` is counted.
 
     - ``verbose`` (boolean) -- whether to display some information about
@@ -42,98 +42,116 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_covering_array
-        sage: C = ((1, 1, 1, 0),
-        ....:      (1, 1, 0, 0),
-        ....:      (0, 0, 0))
+        sage: C = [[1, 1, 1, 0],
+        ....:      [1, 1, 0, 0],
+        ....:      [0, 0, 0]]
         sage: is_covering_array(C)
         Traceback (most recent call last):
         ...
         ValueError: Not all rows are the same length, row 2 is not the same length as row 0
 
-        sage: from sage.combinat.designs.designs_pyx import is_covering_array
-        sage: C = ((0, 1, 0),
-        ....:      (1, 1, 0),
-        ....:      (1, 0, 0))
+        sage: C = [[0, 1, 1],
+        ....:      [1, 1, 0],
+        ....:      [1, 0, 1],
+        ....:      [0, 0, 0,]]
+        sage: is_covering_array(C,strength=4)
+        Traceback (most recent call last):
+        ...
+        ValueError: Strength must be equal or less than number of columns
+
+        sage: C = [[0, 1, 1],
+        ....:      [1, 1, 1],
+        ....:      [1, 0, 1]]
         sage: is_covering_array(C,verbose=True)
-        A 3 by 3 Covering Array with strength 0 with entries from {0, 1}
+        A 3 by 3 Covering Array with strength 0 with entries from a symbol set of size 2
         True
 
-        sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        ....:      (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),
-        ....:      (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),
-        ....:      (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),
-        ....:      (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),
-        ....:      (1, 1, 1, 0, 1, 1, 0, 1, 2, 0))
+        sage: C = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ....:      [0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+        ....:      [0, 1, 1, 1, 0, 0, 0, 1, 1, 1],
+        ....:      [1, 0, 1, 1, 0, 1, 1, 0, 0, 1],
+        ....:      [1, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+        ....:      [1, 1, 1, 0, 1, 1, 0, 1, 2, 0]]
         sage: is_covering_array(C,levels=2)
         Traceback (most recent call last):
         ...
-        ValueError: array should contain integer symbols from 0 to 1
+        ValueError: Array should contain integer symbols from 0 to 1
 
-        sage: C = ((1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2),
-        ....:      (1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2),
-        ....:      (1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0),
-        ....:      (0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1),
-        ....:      (2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2),
-        ....:      (1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2),
-        ....:      (1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1),
-        ....:      (2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2),
-        ....:      (1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0),
-        ....:      (0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2),
-        ....:      (1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0),
-        ....:      (0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0),
-        ....:      (0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1),
-        ....:      (2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1),
-        ....:      (2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1),
-        ....:      (2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0),
-        ....:      (0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2),
-        ....:      (1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1),
-        ....:      (2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1),
-        ....:      (2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2),
-        ....:      (1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1),
-        ....:      (2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0),
-        ....:      (0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1),
-        ....:      (2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0),
-        ....:      (0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0),
-        ....:      (0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2),
-        ....:      (1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2),
-        ....:      (1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0),
-        ....:      (0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0),
-        ....:      (0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1),
-        ....:      (2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0),
-        ....:      (0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1),
-        ....:      (2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2),
-        ....:      (1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1),
-        ....:      (2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1),
-        ....:      (2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2),
-        ....:      (1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0),
-        ....:      (0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1),
-        ....:      (2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1),
-        ....:      (2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1),
-        ....:      (2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0),
-        ....:      (0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0),
-        ....:      (0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2),
-        ....:      (1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0),
-        ....:      (0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2),
-        ....:      (1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1),
-        ....:      (2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2),
-        ....:      (1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2),
-        ....:      (1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1),
-        ....:      (2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0),
-        ....:      (0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2),
-        ....:      (1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2),
-        ....:      (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+        sage: C = [[1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2],
+        ....:      [1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2],
+        ....:      [1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0],
+        ....:      [0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1],
+        ....:      [2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2],
+        ....:      [1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2],
+        ....:      [1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1],
+        ....:      [2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2],
+        ....:      [1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0],
+        ....:      [0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2],
+        ....:      [1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0],
+        ....:      [0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0],
+        ....:      [0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1],
+        ....:      [2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1],
+        ....:      [2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1],
+        ....:      [2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0],
+        ....:      [0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2],
+        ....:      [1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1],
+        ....:      [2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1],
+        ....:      [2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2],
+        ....:      [1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1],
+        ....:      [2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0],
+        ....:      [0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1],
+        ....:      [2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0],
+        ....:      [0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0],
+        ....:      [0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2],
+        ....:      [1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2],
+        ....:      [1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0],
+        ....:      [0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0],
+        ....:      [0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1],
+        ....:      [2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0],
+        ....:      [0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1],
+        ....:      [2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2],
+        ....:      [1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1],
+        ....:      [2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1],
+        ....:      [2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2],
+        ....:      [1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0],
+        ....:      [0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1],
+        ....:      [2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1],
+        ....:      [2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1],
+        ....:      [2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0],
+        ....:      [0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0],
+        ....:      [0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2],
+        ....:      [1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0],
+        ....:      [0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2],
+        ....:      [1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1],
+        ....:      [2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2],
+        ....:      [1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2],
+        ....:      [1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1],
+        ....:      [2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0],
+        ....:      [0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2],
+        ....:      [1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2],
+        ....:      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         sage: is_covering_array(C,parameters=True)
         (True, (53, 3, 13, 3))
 
+        sage: C = [[1, 0, 1, 1, 2, 0, 2, 2],
+        ....:      [2, 1, 0, 1, 1, 2, 0, 2],
+        ....:      [2, 2, 1, 0, 1, 1, 2, 0],
+        ....:      [0, 2, 2, 1, 0, 1, 1, 2],
+        ....:      [2, 0, 2, 2, 1, 0, 1, 1],
+        ....:      [1, 2, 0, 2, 2, 1, 0, 1],
+        ....:      [1, 1, 2, 0, 2, 2, 1, 0],
+        ....:      [0, 1, 1, 2, 0, 2, 2, 1]]
+        sage: is_covering_array(C,strength=2,parameters=True)
+        (False, (8, 0, 8, 3))
+
     """
     from itertools import product, combinations
-    from sage.rings.integer import Integer
 
     if levels is None:
-        symbol_set = {x for l in array for x in l}
-        levels = len(symbol_set)
+        symbol_list = list({x for l in array for x in l})
+        levels = len(symbol_list)
     else:
-        symbol_set = {num for num in range(levels)}
+        symbol_list = [num for num in range(levels)]
 
     number_rows = len(array)
     number_columns = len(array[0])
@@ -143,7 +161,7 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
         wstrength = 1
     else:
         if strength > number_columns:
-            raise ValueError("strength must be equal or less than number of columns")
+            raise ValueError("Strength must be equal or less than number of columns")
         wstrength = strength
 
     for row in array:
@@ -151,20 +169,20 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
             raise ValueError("Not all rows are the same length, row {} is not the same length as row 0".format(array.index(row)))
         else:
             for entry in row:
-                if type(entry) != Integer or entry < -1 or entry >= levels:
-                    raise ValueError("array should contain integer symbols from 0 to {}".format(levels-1))
+                if int(entry) != entry or entry < -1 or entry >= levels:
+                    raise ValueError("Array should contain integer symbols from 0 to {}".format(levels-1))
 
     finished = False
+    result = True
     # If no strength inputted, try increasing values for t until one
     # does not work. If strength is inputted end after one check
     while finished is False:
         # Iterate over every possible selections of t columns, and
         # count the t-tuples appearing in each selection
         for comb in combinations(range(number_columns), wstrength):
-            tuple_dictionary = {item: 0 for item in product(symbol_set, repeat=wstrength)}
+            tuple_dictionary = {item: 0 for item in product(symbol_list, repeat=wstrength)}
             for row in array:
                 tuple_dictionary[tuple([row[ti] for ti in comb])] += 1
-
             # Check if any t-tuple is not covered in current columns
             if 0 in tuple_dictionary.values():
                 if strength is None:
@@ -177,15 +195,15 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
                     finished = True
                     break
 
-        if strength is None and finished is False and wstrength < number_columns:
-            wstrength += 1
-        else:
-            result = True
-            finished = True
-            break
+        if finished is False:
+            if strength is None and wstrength < number_columns:
+                wstrength += 1
+            else:
+                finished = True
+                break
 
     if verbose:
-            print('A {} by {} Covering Array with strength {} with entries from {}'.format(number_rows,number_columns,wstrength,symbol_set))
+            print('A {} by {} Covering Array with strength {} with entries from a symbol set of size {}'.format(number_rows,number_columns,wstrength,levels))
 
     if parameters:
         return (result, (number_rows, wstrength, number_columns, levels))

@@ -34,6 +34,7 @@ This module defines the following functions:
     :meth:`TD_product` | Return the product of two transversal designs.
     :meth:`OA_find_disjoint_blocks` | Return `x` disjoint blocks contained in a given `OA(k,n)`.
     :meth:`OA_relabel` | Return a relabelled version of the OA.
+    :meth:`OA_standard_label` | Return a version of the OA relabelled to symbols `(0,\dots,n-1)`.
     :meth:`OA_from_quasi_difference_matrix` | Return an Orthogonal Array from a Quasi-Difference matrix
     :meth:`OA_from_Vmt` | Return an Orthogonal Array from a `V(m,t)`
     :meth:`OA_from_PBD` | Return an `OA(k,n)` from a PBD
@@ -1467,7 +1468,7 @@ def OA_find_disjoint_blocks(OA, k, n, x,
     independent_set = [OA[i] for i,v in b.items() if v]
     return independent_set
 
-def OA_relabel(OA,k,n,blocks=tuple(),matrix=None):
+def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
     r"""
     Return a relabelled version of the OA.
 
@@ -1496,6 +1497,11 @@ def OA_relabel(OA,k,n,blocks=tuple(),matrix=None):
 
       If set to ``None`` (default) no such relabelling is performed.
 
+    - ``symbol_list`` -- a list of the desired symbols for the
+      relabelled OA. If this is not ``None``, the same relabelling is
+      done on all blocks such that the index of an element in
+      symbol_list is its preimage in the relabelling map.
+
       .. NOTE::
 
           A ``None`` coordinate in one block remains a ``None``
@@ -1513,6 +1519,10 @@ def OA_relabel(OA,k,n,blocks=tuple(),matrix=None):
         sage: from sage.combinat.designs.orthogonal_arrays import is_transversal_design
         sage: is_transversal_design(TD,3,2)
         True
+
+        sage: OA = designs.orthogonal_arrays.build(3,2)
+        sage: OA_relabel(OA,3,2,symbol_list=['A','B'])
+        [['A', 'A', 'A'], ['A', 'B', 'B'], ['B', 'A', 'B'], ['B', 'B', 'A']]
 
     Making sure that ``[2,2,2,2]`` is a block of `OA(4,3)`. We do this
     by relabelling block ``[0,0,0,0]`` which belongs to the design::
@@ -1543,7 +1553,41 @@ def OA_relabel(OA,k,n,blocks=tuple(),matrix=None):
     if matrix:
         OA = [[matrix[i][j] if j is not None else None for i,j in enumerate(R)] for R in OA]
 
+    if symbol_list:
+        result=[]
+        the_map = lambda x: symbol_list[x]
+        for row in OA:
+            result.append(list(map(the_map,row)))
+        OA = result
     return OA
+
+def OA_standard_label(OA):
+    r"""
+    Return the inputted OA with entries relabelled as integers [0,...,n-1].
+
+    INPUT:
+
+    - ``OA`` -- a list of lists with symbols as entries that are not
+      necessarily integers.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.orthogonal_arrays import OA_standard_label
+        sage: C = [['a', 'a', 'a', 'b'],
+        ....:      ['a', 'a', 'b', 'a'],
+        ....:      ['a', 'b', 'a', 'a'],
+        ....:      ['b', 'a', 'a', 'a'],
+        ....:      ['b', 'b', 'b', 'b']]
+        sage: OA_standard_label(C)
+        [[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [1, 1, 1, 1]]
+
+    """
+    symbol_list = sorted({x for l in OA for x in l})
+    result = []
+    the_map = lambda x: symbol_list.index(x)
+    for row in OA:
+        result.append(list(map(the_map,row)))
+    return result
 
 def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
     r"""
