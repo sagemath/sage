@@ -474,6 +474,16 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
               e2*e3*e4 - e2*e3*e6 + e2*e4*e6 - e3*e4*e6, e0*e3 - e0*e6 + e3*e6,
               e0*e1*e2 - e0*e1*e6 + e0*e2*e6 - e1*e2*e6] over Rational Field
 
+        TESTS::
+
+            sage: H = hyperplane_arrangements.Catalan(3,QQ).cone()
+            sage: O = H.orlik_solomon_algebra(QQ)
+            sage: A = O.as_gca()
+            sage: H.poincare_polynomial()
+            20*x^3 + 29*x^2 + 10*x + 1
+            sage: [len(A.basis(i)) for i in range(5)]
+            [1, 10, 29, 20, 0]
+
         """
         from sage.algebras.commutative_dga import GradedCommutativeAlgebra
         gens = self.algebra_generators()
