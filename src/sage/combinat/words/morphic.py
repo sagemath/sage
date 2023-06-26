@@ -207,7 +207,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w.representation(5)
             [1, 0, 0, 0]
         """
-        letters_to_int =  {a:i for (i,a) in enumerate(self._alphabet)}
+        letters_to_int = {a:i for (i,a) in enumerate(self._alphabet)}
         position = letters_to_int[self._letter]
         M = self._morphism.incidence_matrix()
         vMk = vector([1]*len(self._alphabet))

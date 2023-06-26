@@ -420,6 +420,85 @@ class HyperplaneArrangementLibrary():
         A.characteristic_polynomial.set_cache(charpoly)
         return A
 
+    def IshB(self, n, K=QQ, names=None):
+        r"""
+        Return the type B Ish arrangement.
+
+        INPUT:
+
+        - ``n`` -- integer
+        - ``K`` -- field (default:``QQ``)
+        - ``names`` -- tuple of strings or ``None`` (default); the
+          variable names for the ambient space
+
+        OUTPUT:
+
+        The type `B` Ish arrangement, which is the set of `2n^2` hyperplanes
+
+        .. MATH::
+
+            \{ x_i \pm x_j = 0 : 1 \leq i < j \leq n \}
+            \cup
+            \{ x_i = a : 1 \leq i\leq n, \quad i - n \leq a \leq n - i + 1 \}.
+
+        EXAMPLES::
+
+            sage: a = hyperplane_arrangements.IshB(2)
+            sage: a
+            Arrangement of 8 hyperplanes of dimension 2 and rank 2
+            sage: a.hyperplanes()
+            (Hyperplane 0*t0 + t1 - 1,
+             Hyperplane 0*t0 + t1 + 0,
+             Hyperplane t0 - t1 + 0,
+             Hyperplane t0 + 0*t1 - 2,
+             Hyperplane t0 + 0*t1 - 1,
+             Hyperplane t0 + 0*t1 + 0,
+             Hyperplane t0 + 0*t1 + 1,
+             Hyperplane t0 + t1 + 0)
+            sage: a.cone().is_free()
+            True
+
+        .. PLOT::
+            :width: 500 px
+
+            a = hyperplane_arrangements.IshB(2)
+            sphinx_plot(a.plot())
+
+        ::
+
+            sage: a = hyperplane_arrangements.IshB(3); a
+            Arrangement of 18 hyperplanes of dimension 3 and rank 3
+            sage: a.characteristic_polynomial()
+            x^3 - 18*x^2 + 108*x - 216
+            sage: b = hyperplane_arrangements.Shi(['B', 3])
+            sage: b.characteristic_polynomial()
+            x^3 - 18*x^2 + 108*x - 216
+
+        TESTS::
+
+            sage: a.characteristic_polynomial.clear_cache()
+            sage: a.characteristic_polynomial()
+            x^3 - 18*x^2 + 108*x - 216
+
+        REFERENCES:
+
+        - [TT2023]_
+        """
+        H = make_parent(K, n, names)
+        x = H.gens()
+        hyperplanes = []
+        for i in range(n):
+            for j in range(i+1, n):
+                hyperplanes.append(x[i] - x[j])
+                hyperplanes.append(x[i] + x[j])
+            for a in range(i+1-n, n-i+1):
+                hyperplanes.append(x[i] - a)
+        A = H(*hyperplanes)
+        x = polygen(QQ, 'x')
+        charpoly = (x - 2*n) ** n
+        A.characteristic_polynomial.set_cache(charpoly)
+        return A
+
     def linial(self, n, K=QQ, names=None):
         r"""
         Return the linial hyperplane arrangement.

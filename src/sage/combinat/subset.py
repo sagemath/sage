@@ -39,7 +39,6 @@ from sage.structure.element import Element
 
 from sage.sets.set import Set, Set_object_enumerated
 from sage.arith.misc import binomial
-from sage.misc.misc import _stable_uniq as uniq
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from . import combination
@@ -1470,3 +1469,93 @@ class SubsetsSorted(Subsets_s):
             [(), (0,), (1,), (2,), (0, 1), (0, 2), (1, 2), (0, 1, 2)]
         """
         return self.element_class(sorted(set(x)))
+
+
+def powerset(X):
+    r"""
+    Iterator over the *list* of all subsets of the iterable ``X``, in no
+    particular order. Each list appears exactly once, up to order.
+
+    INPUT:
+
+    -  ``X`` - an iterable
+
+    OUTPUT: iterator of lists
+
+    EXAMPLES::
+
+        sage: list(powerset([1,2,3]))
+        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+        sage: [z for z in powerset([0,[1,2]])]
+        [[], [0], [[1, 2]], [0, [1, 2]]]
+
+    Iterating over the power set of an infinite set is also allowed::
+
+        sage: i = 0
+        sage: L = []
+        sage: for x in powerset(ZZ):
+        ....:     if i > 10:
+        ....:         break
+        ....:     else:
+        ....:         i += 1
+        ....:     L.append(x)
+        sage: print(" ".join(str(x) for x in L))
+        [] [0] [1] [0, 1] [-1] [0, -1] [1, -1] [0, 1, -1] [2] [0, 2] [1, 2]
+
+    You may also use subsets as an alias for powerset::
+
+        sage: subsets([1,2,3])
+        <generator object ...powerset at 0x...>
+        sage: list(subsets([1,2,3]))
+        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+
+        The reason we return lists instead of sets is that the elements of
+        sets must be hashable and many structures on which one wants the
+        powerset consist of non-hashable objects.
+
+    AUTHORS:
+
+    - William Stein
+
+    - Nils Bruin (2006-12-19): rewrite to work for not-necessarily
+      finite objects X.
+    """
+    yield []
+    pairs = []
+    power2 = 1
+    for x in X:
+        pairs.append((power2, x))
+        next_power2 = power2 << 1
+        for w in range(power2, next_power2):
+            yield [x for m, x in pairs if m & w]
+        power2 = next_power2
+
+
+subsets = powerset
+
+
+def uniq(L):
+    """
+    Iterate over the elements of ``L``, yielding every element at most
+    once: keep only the first occurrence of any item.
+
+    The items must be hashable.
+
+    INPUT:
+
+    - ``L`` -- iterable
+
+    EXAMPLES::
+
+        sage: L = [1, 1, 8, -5, 3, -5, 'a', 'x', 'a']
+        sage: it = uniq(L); it
+        <generator object uniq at ...>
+        sage: list(it)
+        [1, 8, -5, 3, 'a', 'x']
+    """
+    seen = set()
+    for x in L:
+        if x in seen:
+            continue
+        yield x
+        seen.add(x)

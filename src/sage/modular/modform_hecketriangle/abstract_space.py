@@ -82,11 +82,11 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.is_homogeneous()
             True
         """
-        #from space import canonical_parameters
-        #(group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
+        # from space import canonical_parameters
+        # (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
 
         super().__init__(group=group, base_ring=base_ring, red_hom=True, n=n)
-        #self.register_embedding(self.hom(lambda f: f.parent().graded_ring()(f), codomain=self.graded_ring()))
+        # self.register_embedding(self.hom(lambda f: f.parent().graded_ring()(f), codomain=self.graded_ring()))
 
         self._weight = k
         self._ep = ep
@@ -966,7 +966,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         J_qexp = self.J_inv().q_expansion(prec=order_inf - m, fix_d=fix_d, d_num_prec=d_num_prec)
 
         # The precision could be infinity, otherwise we could do this:
-        #assert(temp_reminder.prec() == 1)
+        # assert temp_reminder.prec() == 1
         temp_reminder = (1 / simple_qexp / q**(-m)).add_bigoh(1)
 
         fab_pol = q.parent()([])
@@ -1108,7 +1108,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         j_qexp = self.j_inv().q_expansion(prec=order_inf - m, fix_d=fix_d, d_num_prec=d_num_prec)
 
         # The precision could be infinity, otherwise we could do this:
-        #assert(temp_reminder.prec() == 1)
+        # assert temp_reminder.prec() == 1
         temp_reminder = (1 / simple_qexp / q**(-m)).add_bigoh(1)
 
         fab_pol = q.parent()([])
@@ -1120,8 +1120,8 @@ class FormsSpace_abstract(FormsRing_abstract):
             temp_reminder -= temp_coeff*j_qexp**temp_exp
             # The first term is zero only up to numerical errors,
             # so we manually have to remove it
-            if (not d.parent().is_exact()):
-                temp_reminder=temp_reminder.truncate_neg(-temp_exp+1)
+            if not d.parent().is_exact():
+                temp_reminder = temp_reminder.truncate_neg(-temp_exp+1)
 
         return fab_pol.polynomial()
 
