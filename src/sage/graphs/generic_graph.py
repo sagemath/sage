@@ -6900,9 +6900,9 @@ class GenericGraph(GenericGraph_pyx):
         In the undirected case, we can only ensure half of it::
 
             sage: g = graphs.RandomGNP(14, .3)  # reduced from 30 to 14, see #32169
-            sage: while not g.is_biconnected():
+            sage: while not g.is_biconnected():                                         # optional - sage.numerical.mip
             ....:     g = graphs.RandomGNP(14, .3)
-            sage: k = Integer(g.edge_connectivity()) // 2
+            sage: k = Integer(g.edge_connectivity()) // 2                               # optional - sage.numerical.mip
             sage: trees = g.edge_disjoint_spanning_trees(k)                             # optional - sage.numerical.mip
             sage: all(t.is_tree() for t in trees)                                       # optional - sage.numerical.mip
             True

@@ -217,7 +217,7 @@ class HypergraphGenerators():
 
             sage: h = hypergraphs.CompleteUniform(5, 2); h
             Incidence structure with 5 points and 10 blocks
-            sage: len(h.packing())
+            sage: len(h.packing())                                                      # optional - sage.numerical.mip
             2
         """
         from sage.combinat.designs.incidence_structures import IncidenceStructure

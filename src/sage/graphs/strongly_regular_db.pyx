@@ -1650,15 +1650,15 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_switch_OA_srg
         sage: t = is_switch_OA_srg(5,5,5,5); t
-        sage: t = is_switch_OA_srg(170, 78, 35, 36)
-        sage: t[0](*t[1:]).is_strongly_regular(parameters=True)
+        sage: t = is_switch_OA_srg(170, 78, 35, 36)                                     # optional - sage.schemes
+        sage: t[0](*t[1:]).is_strongly_regular(parameters=True)                         # optional - sage.schemes
         (170, 78, 35, 36)
-        sage: t = is_switch_OA_srg(290, 136,  63,  64)
-        sage: t[0](*t[1:]).is_strongly_regular(parameters=True)
+        sage: t = is_switch_OA_srg(290, 136,  63,  64)                                  # optional - sage.schemes
+        sage: t[0](*t[1:]).is_strongly_regular(parameters=True)                         # optional - sage.schemes
         (290, 136, 63, 64)
-        sage: is_switch_OA_srg(626, 300, 143, 144)
+        sage: is_switch_OA_srg(626, 300, 143, 144)                                      # optional - sage.schemes
         (<cyfunction is_switch_OA_srg.<locals>.switch_OA_srg at ..., 12, 25)
-        sage: is_switch_OA_srg(842, 406, 195, 196)
+        sage: is_switch_OA_srg(842, 406, 195, 196)                                      # optional - sage.schemes
         (<cyfunction is_switch_OA_srg.<locals>.switch_OA_srg at ..., 14, 29)
     """
     cdef int n_2_p_1 = v
@@ -1707,9 +1707,9 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
     TESTS::
 
         sage: from sage.graphs.strongly_regular_db import is_nowhere0_twoweight
-        sage: t = is_nowhere0_twoweight(1800, 728, 268, 312); t
+        sage: t = is_nowhere0_twoweight(1800, 728, 268, 312); t                         # optional - sage.libs.pari
         (<function Nowhere0WordsTwoWeightCodeGraph at ...>, 16)
-        sage: t = is_nowhere0_twoweight(5,5,5,5); t
+        sage: t = is_nowhere0_twoweight(5,5,5,5); t                                     # optional - sage.libs.pari
 
     """
     from sage.graphs.generators.classical_geometries import Nowhere0WordsTwoWeightCodeGraph
