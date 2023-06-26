@@ -72,7 +72,7 @@ class Benchmark:
         sage: B = Benchmark()
         sage: def python():
         ....:     t = cputime()
-        ....:     n = 2+2
+        ....:     2+2
         ....:     return cputime(t)
         sage: B.python = python
         sage: B.run(systems=['python'])
@@ -205,7 +205,7 @@ class Divpoly(Benchmark):
         n = self.__n
         t = cputime()
         E = EllipticCurve([1,2,3,4,5])
-        f = E.division_polynomial(n)
+        E.division_polynomial(n)
         return cputime(t)
 
     def magma(self):
@@ -222,7 +222,7 @@ class Divpoly(Benchmark):
         """
         n = self.__n
         t = magma.cputime()
-        m = magma('DivisionPolynomial(EllipticCurve([1,2,3,4,5]), %s)'%n)
+        magma('DivisionPolynomial(EllipticCurve([1,2,3,4,5]), %s)'%n)
         return magma.cputime(t)
 
 class PolySquare(Benchmark):
@@ -247,7 +247,7 @@ class PolySquare(Benchmark):
         n = self.__n
         f = R['x'](range(1,n+1))
         t = cputime()
-        g = f**2
+        f**2
         return cputime(t)
 
     def magma(self):
@@ -265,7 +265,7 @@ class PolySquare(Benchmark):
         R = magma(self.__R)
         f = magma('PolynomialRing(%s)![1..%s]'%(R.name(),self.__n))
         t = magma.cputime()
-        g = f*f
+        f*f
         return magma.cputime(t)
 
     def maple(self):
@@ -286,7 +286,7 @@ class PolySquare(Benchmark):
         n = self.__n
         f = maple(str(R['x'](range(1,n+1))))
         t = walltime()
-        g = f*f
+        f*f
         return False, walltime(t)
 
 class MPolynomialPower(Benchmark):
@@ -318,10 +318,10 @@ class MPolynomialPower(Benchmark):
         if self.allow_singular:
             z = singular(sum(R.gens()))
             t = walltime()
-            w = z**self.exp
+            z**self.exp
             return False, walltime(t)
         t = cputime()
-        w = z**self.exp
+        z**self.exp
         return cputime(t)
 
     def macaulay2(self):
@@ -339,7 +339,7 @@ class MPolynomialPower(Benchmark):
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = macaulay2(sum(R.gens()))
         t = walltime()
-        w = z**self.exp
+        z**self.exp
         return False, walltime(t)
 
     def maxima(self):
@@ -357,7 +357,7 @@ class MPolynomialPower(Benchmark):
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = maxima(str(sum(R.gens())))
         w = walltime()
-        f = (z**self.exp).expand()
+        (z**self.exp).expand()
         return False, walltime(w)
 
     def maple(self):
@@ -375,7 +375,7 @@ class MPolynomialPower(Benchmark):
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = maple(str(sum(R.gens())))
         w = walltime()
-        f = (z**self.exp).expand()
+        (z**self.exp).expand()
         return False, walltime(w)
 
     def mathematica(self):
@@ -393,7 +393,7 @@ class MPolynomialPower(Benchmark):
         R = PolynomialRing(self.base, self.nvars, 'x')
         z = mathematica(str(sum(R.gens())))
         w = walltime()
-        f = (z**self.exp).Expand()
+        (z**self.exp).Expand()
         return False, walltime(w)
 
 ## this doesn't really expand out -- pari has no function to do so,
@@ -402,7 +402,7 @@ class MPolynomialPower(Benchmark):
 ##         R = PolynomialRing(self.base, self.nvars)
 ##         z = gp(str(sum(R.gens())))
 ##         gp.eval('gettime')
-##         f = z**self.exp
+##         z**self.exp
 ##         return float(gp.eval('gettime/1000.0'))
 
     def magma(self):
@@ -422,7 +422,7 @@ class MPolynomialPower(Benchmark):
         for i in range(2,self.nvars+1):
             z += R.gen(i)
         t = magma.cputime()
-        w = z**magma(self.exp)
+        z**magma(self.exp)
         return magma.cputime(t)
 
 
@@ -456,7 +456,7 @@ class MPolynomialMult(Benchmark):
         z0 = maxima(str(sum(R.gens()[:k])))
         z1 = maxima(str(sum(R.gens()[k:])))
         w = walltime()
-        f = (z0*z1).expand()
+        (z0*z1).expand()
         return False, walltime(w)
 
     def maple(self):
@@ -476,7 +476,7 @@ class MPolynomialMult(Benchmark):
         z0 = maple(str(sum(R.gens()[:k])))
         z1 = maple(str(sum(R.gens()[k:])))
         w = walltime()
-        f = (z0*z1).expand()
+        (z0*z1).expand()
         return False, walltime(w)
 
     def mathematica(self):
@@ -496,7 +496,7 @@ class MPolynomialMult(Benchmark):
         z0 = mathematica(str(sum(R.gens()[:k])))
         z1 = mathematica(str(sum(R.gens()[k:])))
         w = walltime()
-        f = (z0*z1).Expand()
+        (z0*z1).Expand()
         return False, walltime(w)
 
 ##     def gp(self):
@@ -505,7 +505,7 @@ class MPolynomialMult(Benchmark):
 ##         z0 = gp(str(sum(R.gens()[:k])))
 ##         z1 = gp(str(sum(R.gens()[k:])))
 ##         gp.eval('gettime')
-##         f = z0*z1
+##         z0*z1
 ##         return float(gp.eval('gettime/1000.0'))
 
     def sage(self):
@@ -528,11 +528,11 @@ class MPolynomialMult(Benchmark):
             z0 = singular(z0)
             z1 = singular(z1)
             t = walltime()
-            w = z0*z1
+            z0*z1
             return False, walltime(t)
         else:
             t = cputime()
-            w = z0 * z1
+            z0 * z1
             return cputime(t)
 
     def macaulay2(self):
@@ -552,7 +552,7 @@ class MPolynomialMult(Benchmark):
         z0 = macaulay2(sum(R.gens()[:k]))
         z1 = macaulay2(sum(R.gens()[k:]))
         t = walltime()
-        w = z0*z1
+        z0*z1
         return False, walltime(t)
 
     def magma(self):
@@ -576,7 +576,7 @@ class MPolynomialMult(Benchmark):
         for i in range(k+1, self.nvars + 1):
             z1 += R.gen(i)
         t = magma.cputime()
-        w = z0 * z1
+        z0 * z1
         return magma.cputime(t)
 
 class MPolynomialMult2(Benchmark):
@@ -605,7 +605,7 @@ class MPolynomialMult2(Benchmark):
 ##         z0 = gp(str(z0))
 ##         z1 = gp(str(z1))
 ##         gp.eval('gettime')
-##         f = z0*z1
+##         z0*z1
 ##         return float(gp.eval('gettime/1000.0'))
 
     def maxima(self):
@@ -631,7 +631,7 @@ class MPolynomialMult2(Benchmark):
         z0 = maxima(str(z0))
         z1 = maxima(str(z1))
         w = walltime()
-        f = (z0*z1).expand()
+        (z0*z1).expand()
         return False, walltime(w)
 
     def macaulay2(self):
@@ -657,7 +657,7 @@ class MPolynomialMult2(Benchmark):
         z0 = macaulay2(z0)
         z1 = macaulay2(z1)
         t = walltime()
-        w = z0*z1
+        z0*z1
         return False, walltime(t)
 
     def maple(self):
@@ -683,7 +683,7 @@ class MPolynomialMult2(Benchmark):
         z0 = maple(str(z0))
         z1 = maple(str(z1))
         w = walltime()
-        f = (z0*z1).expand()
+        (z0*z1).expand()
         return False, walltime(w)
 
     def mathematica(self):
@@ -709,7 +709,7 @@ class MPolynomialMult2(Benchmark):
         z0 = mathematica(str(z0))
         z1 = mathematica(str(z1))
         w = walltime()
-        f = (z0*z1).Expand()
+        (z0*z1).Expand()
         return False, walltime(w)
 
     def sage(self):
@@ -736,11 +736,11 @@ class MPolynomialMult2(Benchmark):
             z0 = singular(z0)
             z1 = singular(z1)
             t = walltime()
-            w = z0*z1
+            z0*z1
             return False, walltime(t)
         else:
             t = cputime()
-            w = z0 * z1
+            z0 * z1
             return cputime(t)
 
     def magma(self):
@@ -764,7 +764,7 @@ class MPolynomialMult2(Benchmark):
         for i in range(k+1, self.nvars + 1):
             z1 += magma(i)*R.gen(i)
         t = magma.cputime()
-        w = z0 * z1
+        z0 * z1
         return magma.cputime(t)
 
 
@@ -797,7 +797,7 @@ class CharPolyTp(Benchmark):
         """
         m = self.matrix()
         t = cputime()
-        f = m.charpoly('x')
+        m.charpoly('x')
         return cputime(t)
 
     def gp(self):
@@ -814,7 +814,7 @@ class CharPolyTp(Benchmark):
         """
         m = gp(self.matrix())
         gp.eval('gettime')
-        f = m.charpoly('x')
+        m.charpoly('x')
         return float(gp.eval('gettime/1000.0'))
 
     def pari(self):
@@ -831,7 +831,7 @@ class CharPolyTp(Benchmark):
         """
         m = pari(self.matrix())
         t = cputime()
-        f = m.charpoly('x')
+        m.charpoly('x')
         return cputime(t)
 
     def magma(self):
@@ -848,7 +848,7 @@ class CharPolyTp(Benchmark):
         """
         m = magma(self.matrix())
         t = magma.cputime()
-        f = m.CharacteristicPolynomial()
+        m.CharacteristicPolynomial()
         return magma.cputime(t)
 
 
@@ -941,7 +941,7 @@ class SquareInts(Benchmark):
         """
         n = Integer(self.base)**self.__ndigits
         t = cputime()
-        m = n**2
+        n**2
         return cputime(t)
 
     def gp(self):
@@ -958,7 +958,7 @@ class SquareInts(Benchmark):
         """
         n = gp('%s^%s'%(self.base,self.__ndigits))
         gp.eval('gettime')
-        m = n**2
+        n**2
         return float(gp.eval('gettime/1000.0'))
 
     def maxima(self):
@@ -975,7 +975,7 @@ class SquareInts(Benchmark):
         """
         n = maxima('%s^%s'%(self.base,self.__ndigits))
         t = walltime()
-        m = n**2
+        n**2
         return False, walltime(t)
 
     def magma(self):
@@ -992,7 +992,7 @@ class SquareInts(Benchmark):
         """
         n = magma('%s^%s'%(self.base,self.__ndigits))
         t = magma.cputime()
-        m = n**2
+        n**2
         return magma.cputime(t)
 
     def python(self):
@@ -1009,7 +1009,7 @@ class SquareInts(Benchmark):
         """
         n = self.base**self.__ndigits
         t = cputime()
-        m = n**2
+        n**2
         return cputime(t)
 
     def maple(self):
@@ -1026,7 +1026,7 @@ class SquareInts(Benchmark):
         """
         n = maple('%s^%s'%(self.base,self.__ndigits))
         t = walltime()
-        m = n**2
+        n**2
         return False, walltime(t)
 
     def gap(self):
@@ -1043,7 +1043,7 @@ class SquareInts(Benchmark):
         """
         n = gap('%s^%s'%(self.base,self.__ndigits))
         t = walltime()
-        m = n**2
+        n**2
         return False, walltime(t)
 
     def mathematica(self):
@@ -1060,7 +1060,7 @@ class SquareInts(Benchmark):
         """
         n = mathematica('%s^%s'%(self.base,self.__ndigits))
         t = walltime()
-        m = n**2
+        n**2
         return False, walltime(t)
 
 
@@ -1086,7 +1086,7 @@ class MatrixSquare(Benchmark):
         n = self.__n
         f = MatrixSpace(R,n)(list(range(n*n)))
         t = cputime()
-        g = f**2
+        f**2
         return cputime(t)
 
     def magma(self):
@@ -1105,7 +1105,7 @@ class MatrixSquare(Benchmark):
         f = magma('MatrixAlgebra(%s, %s)![0..%s^2-1]'%(
             R.name(),self.__n, self.__n))
         t = magma.cputime()
-        g = f*f
+        f*f
         return magma.cputime(t)
 
     def gp(self):
@@ -1123,7 +1123,7 @@ class MatrixSquare(Benchmark):
         n = self.__n
         m = gp('matrix(%s,%s,m,n,%s*(m-1)+(n-1))'%(n,n,n))
         gp('gettime')
-        n = m*m
+        m*m
         return float(gp.eval('gettime/1000.0'))
 
     def gap(self):
@@ -1141,7 +1141,7 @@ class MatrixSquare(Benchmark):
         n = self.__n
         m = gap(str([list(range(n*k,n*(k+1))) for k in range(n)]))
         t = walltime()
-        j = m*m
+        m*m
         return False, walltime(t)
 
 
@@ -1163,7 +1163,7 @@ class Factorial(Benchmark):
 
         """
         t = cputime()
-        n = factorial(self.__n)
+        factorial(self.__n)
         return cputime(t)
 
     def magma(self):
@@ -1179,7 +1179,7 @@ class Factorial(Benchmark):
 
         """
         t = magma.cputime()
-        n = magma('&*[1..%s]'%self.__n)  # &* is way better than Factorial!!
+        magma('&*[1..%s]'%self.__n)  # &* is way better than Factorial!!
         return magma.cputime(t)
 
     def maple(self):
@@ -1196,7 +1196,7 @@ class Factorial(Benchmark):
         """
         n = maple(self.__n)
         t = walltime()
-        m = n.factorial()
+        n.factorial()
         return False, walltime(t)
 
     def gp(self):
@@ -1212,7 +1212,7 @@ class Factorial(Benchmark):
 
         """
         gp.eval('gettime')
-        n = gp('%s!'%self.__n)
+        gp('%s!'%self.__n)
         return float(gp.eval('gettime/1000.0'))
 
 class Fibonacci(Benchmark):
@@ -1233,7 +1233,7 @@ class Fibonacci(Benchmark):
 
         """
         t = cputime()
-        n = fibonacci(self.__n)
+        fibonacci(self.__n)
         return cputime(t)
 
     def magma(self):
@@ -1249,7 +1249,7 @@ class Fibonacci(Benchmark):
 
         """
         t = magma.cputime()
-        n = magma('Fibonacci(%s)'%self.__n)
+        magma('Fibonacci(%s)'%self.__n)
         return magma.cputime(t)
 
     def gap(self):
@@ -1266,7 +1266,7 @@ class Fibonacci(Benchmark):
         """
         n = gap(self.__n)
         t = walltime()
-        m = n.Fibonacci()
+        n.Fibonacci()
         return False, walltime(t)
 
     def mathematica(self):
@@ -1283,7 +1283,7 @@ class Fibonacci(Benchmark):
         """
         n = mathematica(self.__n)
         t = walltime()
-        m = n.Fibonacci()
+        n.Fibonacci()
         return False, walltime(t)
 
     def gp(self):
@@ -1299,7 +1299,7 @@ class Fibonacci(Benchmark):
 
         """
         gp.eval('gettime')
-        n = gp('fibonacci(%s)'%self.__n)
+        gp('fibonacci(%s)'%self.__n)
         return float(gp.eval('gettime/1000.0'))
 
 
@@ -1326,7 +1326,7 @@ class SEA(Benchmark):
         # pari library, but only for large primes, so for a better
         # test a prime > 2^30 should be used and not 5.  In fact
         # next_prime(2^100) works fine (<<1s).
-        n = E.change_ring(GF(self.__p)).cardinality_pari()
+        E.change_ring(GF(self.__p)).cardinality_pari()
         return False, walltime(t)
 
     def magma(self):
@@ -1343,7 +1343,7 @@ class SEA(Benchmark):
         """
         magma(0)
         t = magma.cputime()
-        m = magma('#EllipticCurve([GF(%s)|1,2,3,4,5])'%(self.__p))
+        magma('#EllipticCurve([GF(%s)|1,2,3,4,5])'%(self.__p))
         return magma.cputime(t)
 
 class MatrixKernel(Benchmark):
@@ -1368,7 +1368,7 @@ class MatrixKernel(Benchmark):
         n = self.__n
         f = MatrixSpace(R,n,2*n)(list(range(n*(2*n))))
         t = cputime()
-        g = f.kernel()
+        f.kernel()
         return cputime(t)
 
     def magma(self):
@@ -1387,7 +1387,7 @@ class MatrixKernel(Benchmark):
         f = magma('RMatrixSpace(%s, %s, %s)![0..(%s*2*%s)-1]'%(
             R.name(),self.__n, 2*self.__n, self.__n, self.__n))
         t = magma.cputime()
-        g = f.Kernel()
+        f.Kernel()
         return magma.cputime(t)
 
     def gp(self):
@@ -1405,7 +1405,7 @@ class MatrixKernel(Benchmark):
         n = self.__n
         m = gp('matrix(%s,%s,m,n,%s*(m-1)+(n-1))'%(n,2*n,n))
         gp('gettime')
-        n = m.matker()
+        m.matker()
         return float(gp.eval('gettime/1000.0'))
 
 class ComplexMultiply(Benchmark):
@@ -1429,7 +1429,7 @@ class ComplexMultiply(Benchmark):
         CC = ComplexField(self.__bits_prec)
         s = CC(2).sqrt() + (CC.gen()*2).sqrt()
         t = cputime()
-        v = [s*s for _ in range(self.__times)]
+        [s*s for _ in range(self.__times)]
         return cputime(t)
 
     def magma(self):
@@ -1453,7 +1453,7 @@ class ComplexMultiply(Benchmark):
         s = CC(2).Sqrt() + CC.gen(1).Sqrt()
         t = magma.cputime()
         magma.eval('s := %s;'%s.name())
-        v = magma('[s*s : i in [1..%s]]'%self.__times)
+        magma('[s*s : i in [1..%s]]'%self.__times)
         return magma.cputime(t)
 
     def gp(self):
@@ -1472,7 +1472,7 @@ class ComplexMultiply(Benchmark):
         gp.set_real_precision(n)
         gp.eval('s = sqrt(2) + sqrt(2*I);')
         gp.eval('gettime;')
-        v = gp('vector(%s,i,s*s)'%self.__times)
+        gp('vector(%s,i,s*s)'%self.__times)
         return float(gp.eval('gettime/1000.0'))
 
 class ModularSymbols1(Benchmark):
@@ -1494,7 +1494,7 @@ class ModularSymbols1(Benchmark):
 
         """
         t = cputime()
-        M = ModularSymbols(self.__N, self.__k)
+        ModularSymbols(self.__N, self.__k)
         return cputime(t)
 
     def magma(self):
@@ -1511,7 +1511,7 @@ class ModularSymbols1(Benchmark):
         """
         magma = Magma() # new instance since otherwise modsyms are cached, and cache can't be cleared
         t = magma.cputime()
-        M = magma('ModularSymbols(%s, %s)'%(self.__N, self.__k))
+        magma('ModularSymbols(%s, %s)'%(self.__N, self.__k))
         return magma.cputime(t)
 
 class ModularSymbolsDecomp1(Benchmark):
@@ -1536,7 +1536,7 @@ class ModularSymbolsDecomp1(Benchmark):
         """
         t = cputime()
         M = ModularSymbols(self.N, self.k, sign=self.sign, use_cache=False)
-        D = M.decomposition(self.bnd)
+        M.decomposition(self.bnd)
         return cputime(t)
 
     def magma(self):
@@ -1553,7 +1553,7 @@ class ModularSymbolsDecomp1(Benchmark):
         """
         m = Magma() # new instance since otherwise modsyms are cached, and cache can't be cleared
         t = m.cputime()
-        D = m.eval('Decomposition(ModularSymbols(%s, %s, %s),%s);'%(
+        m.eval('Decomposition(ModularSymbols(%s, %s, %s),%s);'%(
             self.N, self.k, self.sign, self.bnd))
         return m.cputime(t)
 
@@ -1578,7 +1578,7 @@ class EllipticCurveTraces(Benchmark):
         """
         E = EllipticCurve([1,2,3,4,5])
         t = cputime()
-        v = E.anlist(self.B, pari_ints=True)
+        E.anlist(self.B, pari_ints=True)
         return cputime(t)
 
     def magma(self):
@@ -1595,7 +1595,7 @@ class EllipticCurveTraces(Benchmark):
         """
         E = magma.EllipticCurve([1,2,3,4,5])
         t = magma.cputime()
-        v = E.TracesOfFrobenius(self.B)
+        E.TracesOfFrobenius(self.B)
         return magma.cputime(t)
 
 class EllipticCurvePointMul(Benchmark):
@@ -1618,7 +1618,7 @@ class EllipticCurvePointMul(Benchmark):
         E = EllipticCurve([0, 0, 1, -1, 0])
         P = E([0,0])
         t = cputime()
-        Q = self.n * P
+        self.n * P
         return cputime(t)
 
     def magma(self):
@@ -1636,7 +1636,7 @@ class EllipticCurvePointMul(Benchmark):
         E = magma.EllipticCurve('[0, 0, 1, -1, 0]')
         P = E('[0,0]')
         t = magma.cputime()
-        Q = magma(self.n) * P
+        magma(self.n) * P
         return magma.cputime(t)
 
     def gp(self):
@@ -1654,7 +1654,7 @@ class EllipticCurvePointMul(Benchmark):
         E = gp.ellinit('[0, 0, 1, -1, 0]')
         gp.eval('gettime')
         P = gp([0,0])
-        Q = E.ellmul(P, self.n)
+        E.ellmul(P, self.n)
         return float(gp.eval('gettime/1000.0'))
 
     def pari(self):
@@ -1672,7 +1672,7 @@ class EllipticCurvePointMul(Benchmark):
         E = pari('ellinit([0, 0, 1, -1, 0])')
         pari('gettime')
         P = pari([0,0])
-        Q = E.ellmul(P, self.n)
+        E.ellmul(P, self.n)
         return float(pari('gettime/1000.0'))
 
 class EllipticCurveMW(Benchmark):
@@ -1694,7 +1694,7 @@ class EllipticCurveMW(Benchmark):
         """
         E = EllipticCurve(self.ainvs)
         t = walltime()
-        G = E.gens()
+        E.gens()
         return False, walltime(t)
 
     def magma(self):
@@ -1711,7 +1711,7 @@ class EllipticCurveMW(Benchmark):
         """
         E = magma.EllipticCurve(str(self.ainvs))
         t = magma.cputime()
-        G = E.Generators()
+        E.Generators()
         return magma.cputime(t)
 
 class FiniteExtFieldMult(Benchmark):
@@ -1737,7 +1737,7 @@ class FiniteExtFieldMult(Benchmark):
         e = self.e
         f = self.f
         t = cputime()
-        v = [e*f for _ in range(self.__times)]
+        [e*f for _ in range(self.__times)]
         return cputime(t)
 
     def pari(self):
@@ -1755,7 +1755,7 @@ class FiniteExtFieldMult(Benchmark):
         e = self.e.__pari__()
         f = self.f.__pari__()
         t = cputime()
-        v = [e*f for _ in range(self.__times)]
+        [e*f for _ in range(self.__times)]
         return cputime(t)
 
     def magma(self):
@@ -1774,7 +1774,7 @@ class FiniteExtFieldMult(Benchmark):
         magma.eval('e := a^Floor(%s/3);'%(self.field.cardinality()))
         magma.eval('f := a^Floor(2*%s/3);'%(self.field.cardinality()))
         t = magma.cputime()
-        v = magma('[e*f : i in [1..%s]]'%self.__times)
+        magma('[e*f : i in [1..%s]]'%self.__times)
         return magma.cputime(t)
 
 
@@ -1801,7 +1801,7 @@ class FiniteExtFieldAdd(Benchmark):
         e = self.e
         f = self.f
         t = cputime()
-        v = [e+f for _ in range(self.__times)]
+        [e+f for _ in range(self.__times)]
         return cputime(t)
 
     def pari(self):
@@ -1819,7 +1819,7 @@ class FiniteExtFieldAdd(Benchmark):
         e = self.e.__pari__()
         f = self.f.__pari__()
         t = cputime()
-        v = [e+f for _ in range(self.__times)]
+        [e+f for _ in range(self.__times)]
         return cputime(t)
 
     def magma(self):
@@ -1838,7 +1838,7 @@ class FiniteExtFieldAdd(Benchmark):
         magma.eval('e := a^Floor(%s/3);'%(self.field.cardinality()))
         magma.eval('f := a^Floor(2*%s/3);'%(self.field.cardinality()))
         t = magma.cputime()
-        v = magma('[e+f : i in [1..%s]]'%self.__times)
+        magma('[e+f : i in [1..%s]]'%self.__times)
         return magma.cputime(t)
 
 
