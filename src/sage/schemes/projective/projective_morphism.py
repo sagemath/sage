@@ -999,9 +999,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         # Clear any denominators from the coefficients
         if R in NumberFields():
-            O = R.maximal_order()
-
-            if O is ZZ:
+            if R.maximal_order() is ZZ:
                 denom = lcm([self[i].denominator() for i in range(N)])
             else:
                 denom = R.ideal([c for poly in self for c in poly.coefficients()]).norm().denominator()
