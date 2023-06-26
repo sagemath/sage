@@ -4998,7 +4998,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.is_golod()
             False
             sage: Y.is_minimally_non_golod()
-            True
+            False
         """
         L = self.vertices()
         n = len(L)
