@@ -207,6 +207,8 @@ def minkowski_reduction(self):
         [0 0 0 1]
         )
 
+    TESTS::
+
         sage: Q = QuadraticForm(ZZ,5,[2,2,0,0,0,2,2,0,0,2,2,0,2,2,2])
         sage: Q.Gram_matrix()
         [2 1 0 0 0]
@@ -218,6 +220,12 @@ def minkowski_reduction(self):
         Traceback (most recent call last):
         ...
         NotImplementedError: this algorithm is only for dimensions less than 5
+
+        sage: Q = QuadraticForm(ZZ,2,[4,-11,6])
+        sage: Q.minkowski_reduction()
+        Traceback (most recent call last):
+        ...
+        TypeError: Minkowski reduction only works for positive definite forms
     """
     from sage.quadratic_forms.quadratic_form import QuadraticForm
     from sage.quadratic_forms.quadratic_form import matrix
@@ -229,9 +237,7 @@ def minkowski_reduction(self):
     R = self.base_ring()
     n = self.dim()
     Q = deepcopy(self)
-    M = matrix(R, n, n)
-    for i in range(n):
-        M[i, i] = 1
+    M = matrix(R, n, n, 1)
 
     # Begin the reduction
     done_flag = False
@@ -249,9 +255,7 @@ def minkowski_reduction(self):
                 if Q(y) < Q(e_j):
 
                     # Create the transformation matrix
-                    M_new = matrix(R, n, n)
-                    for k in range(n):
-                        M_new[k, k] = 1
+                    M_new = matrix(R, n, n, 1)
                     for k in range(n):
                         M_new[k, j] = y[k]
 
@@ -312,13 +316,19 @@ def minkowski_reduction_for_4vars__SP(self):
         [ 0  0  1  0]
         [ 0  0  0  1]
         )
+
+    TESTS::
+
+        sage: Q = QuadraticForm(ZZ, 2, [3,4,5])
+        sage: Q.minkowski_reduction_for_4vars__SP()
+        Traceback (most recent call last):
+        ...
+        TypeError: the given quadratic form has 2 != 4 variables
     """
     R = self.base_ring()
     n = self.dim()
     Q = deepcopy(self)
-    M = matrix(R, n, n)
-    for i in range(n):
-        M[i, i] = 1
+    M = matrix(R, n, n, 1)
 
     # Only allow 4-variable forms
     if n != 4:
@@ -352,9 +362,7 @@ def minkowski_reduction_for_4vars__SP(self):
                     if B_sum < A_sum or (B_sum == A_sum and B_max < A_max):
 
                         # Create the transformation matrix
-                        M_new = matrix(R, n, n)
-                        for k in range(n):
-                            M_new[k, k] = 1
+                        M_new = matrix(R, n, n, 1)
                         for k in range(n):
                             M_new[k, j] = y[k]
 
