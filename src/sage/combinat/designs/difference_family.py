@@ -2035,7 +2035,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set_over_polynomial_ring
-        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(81)
+        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(81)      # optional - sage.libs.pari
 
     If ``existence=True``, the function returns a boolean::
 
@@ -2816,7 +2816,7 @@ def complementary_difference_setsI(n, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import complementary_difference_setsI
-        sage: complementary_difference_setsI(19)
+        sage: complementary_difference_setsI(19)                                        # optional - sage.libs.pari
         (Finite Field of size 19,
          [1, 4, 5, 6, 7, 9, 11, 16, 17],
          [1, 4, 5, 6, 7, 9, 11, 16, 17])
@@ -2824,14 +2824,14 @@ def complementary_difference_setsI(n, check=True):
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
-        sage: G, A, B = complementary_difference_setsI(23, check=False)
-        sage: are_complementary_difference_sets(G, A, B)
+        sage: G, A, B = complementary_difference_setsI(23, check=False)                 # optional - sage.libs.pari
+        sage: are_complementary_difference_sets(G, A, B)                                # optional - sage.libs.pari
         True
         sage: complementary_difference_setsI(17)
         Traceback (most recent call last):
         ...
         ValueError: the parameter 17 is not valid
-        sage: complementary_difference_setsI(15)
+        sage: complementary_difference_setsI(15)                                        # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: the parameter 15 is not valid
@@ -2888,23 +2888,23 @@ def complementary_difference_setsII(n, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import complementary_difference_setsII
-        sage: complementary_difference_setsII(5)
+        sage: complementary_difference_setsII(5)                                        # optional - sage.libs.pari
         (Finite Field of size 5, [1, 2], [1, 3])
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
-        sage: G, A, B = complementary_difference_setsII(25, check=False)
-        sage: are_complementary_difference_sets(G, A, B)
+        sage: G, A, B = complementary_difference_setsII(25, check=False)                # optional - sage.libs.pari
+        sage: are_complementary_difference_sets(G, A, B)                                # optional - sage.libs.pari
         True
-        sage: G, A, B = complementary_difference_setsII(13, check=False)
-        sage: are_complementary_difference_sets(G, A, B)
+        sage: G, A, B = complementary_difference_setsII(13, check=False)                # optional - sage.libs.pari
+        sage: are_complementary_difference_sets(G, A, B)                                # optional - sage.libs.pari
         True
-        sage: complementary_difference_setsII(49)
+        sage: complementary_difference_setsII(49)                                       # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: the parameter 49 is not valid
-        sage: complementary_difference_setsII(15)
+        sage: complementary_difference_setsII(15)                                       # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: the parameter 15 is not valid
@@ -2967,23 +2967,23 @@ def complementary_difference_setsIII(n, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import complementary_difference_setsIII
-        sage: complementary_difference_setsIII(11)
+        sage: complementary_difference_setsIII(11)                                      # optional - sage.libs.pari
         (Ring of integers modulo 11, [1, 2, 5, 7, 8], [0, 1, 3, 8, 10])
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
-        sage: G, A, B = complementary_difference_setsIII(21, check=False)
-        sage: are_complementary_difference_sets(G, A, B)
+        sage: G, A, B = complementary_difference_setsIII(21, check=False)               # optional - sage.libs.pari
+        sage: are_complementary_difference_sets(G, A, B)                                # optional - sage.libs.pari
         True
-        sage: G, A, B = complementary_difference_setsIII(65, check=False)
-        sage: are_complementary_difference_sets(G, A, B)
+        sage: G, A, B = complementary_difference_setsIII(65, check=False)               # optional - sage.libs.pari
+        sage: are_complementary_difference_sets(G, A, B)                                # optional - sage.libs.pari
         True
         sage: complementary_difference_setsIII(10)
         Traceback (most recent call last):
         ...
         ValueError: the parameter 10 is not valid
-        sage: complementary_difference_setsIII(17)
+        sage: complementary_difference_setsIII(17)                                      # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: the parameter 17 is not valid
@@ -3047,12 +3047,12 @@ def complementary_difference_sets(n, existence=False, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import complementary_difference_sets
-        sage: complementary_difference_sets(15)
+        sage: complementary_difference_sets(15)                                         # optional - sage.libs.pari
         (Ring of integers modulo 15, [1, 2, 4, 6, 7, 10, 12], [0, 1, 2, 6, 9, 13, 14])
 
     If ``existence=True``, the function returns a boolean::
 
-        sage: complementary_difference_sets(15, existence=True)
+        sage: complementary_difference_sets(15, existence=True)                         # optional - sage.libs.pari
         True
         sage: complementary_difference_sets(16, existence=True)
         False
@@ -3060,17 +3060,17 @@ def complementary_difference_sets(n, existence=False, check=True):
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
-        sage: G, A, B = complementary_difference_sets(29)
-        sage: are_complementary_difference_sets(G, A, B)
+        sage: G, A, B = complementary_difference_sets(29)                               # optional - sage.libs.pari
+        sage: are_complementary_difference_sets(G, A, B)                                # optional - sage.libs.pari
         True
-        sage: G, A, B = complementary_difference_sets(65)
-        sage: are_complementary_difference_sets(G, A, B)
+        sage: G, A, B = complementary_difference_sets(65)                               # optional - sage.libs.pari
+        sage: are_complementary_difference_sets(G, A, B)                                # optional - sage.libs.pari
         True
         sage: complementary_difference_sets(10)
         Traceback (most recent call last):
         ...
         ValueError: the parameter n must be odd
-        sage: complementary_difference_sets(17)
+        sage: complementary_difference_sets(17)                                         # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         NotImplementedError: complementary difference sets of order 17 are not implemented yet
@@ -3151,10 +3151,10 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     EXAMPLES::
 
-        sage: G,D = designs.difference_family(73,4)
-        sage: G
+        sage: G,D = designs.difference_family(73,4)                                     # optional - sage.libs.pari
+        sage: G                                                                         # optional - sage.libs.pari
         Finite Field of size 73
-        sage: D
+        sage: D                                                                         # optional - sage.libs.pari
         [[0, 1, 5, 18],
          [0, 3, 15, 54],
          [0, 9, 45, 16],
@@ -3165,19 +3165,19 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         sage: print(designs.difference_family(73, 4, explain_construction=True))
         The database contains a (73,4)-evenly distributed set
 
-        sage: G,D = designs.difference_family(15,7,3)
-        sage: G
+        sage: G,D = designs.difference_family(15,7,3)                                   # optional - sage.libs.pari
+        sage: G                                                                         # optional - sage.libs.pari
         Ring of integers modulo 15
-        sage: D
+        sage: D                                                                         # optional - sage.libs.pari
         [[0, 1, 2, 4, 5, 8, 10]]
-        sage: print(designs.difference_family(15,7,3,explain_construction=True))
+        sage: print(designs.difference_family(15,7,3,explain_construction=True))        # optional - sage.libs.pari
         Singer difference set
 
-        sage: print(designs.difference_family(91,10,1,explain_construction=True))
+        sage: print(designs.difference_family(91,10,1,explain_construction=True))       # optional - sage.libs.pari
         Singer difference set
-        sage: print(designs.difference_family(64,28,12, explain_construction=True))
+        sage: print(designs.difference_family(64,28,12, explain_construction=True))     # optional - sage.libs.pari
         McFarland 1973 construction
-        sage: print(designs.difference_family(576, 276, 132, explain_construction=True))
+        sage: print(designs.difference_family(576, 276, 132, explain_construction=True))            # optional - sage.libs.pari
         Hadamard difference set product from N1=2 and N2=3
 
     For `k=6,7` we look at the set of small prime powers for which a
@@ -3192,7 +3192,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
         sage: from itertools import islice
         sage: l6 = {True:[], False: [], Unknown: []}
-        sage: for q in islice(prime_power_mod(1,30), int(60)):
+        sage: for q in islice(prime_power_mod(1,30), int(60)):                          # optional - sage.libs.pari
         ....:     l6[designs.difference_family(q,6,existence=True)].append(q)
         sage: l6[True]
         [31, 121, 151, 181, 211, ...,  3061, 3121, 3181]
@@ -3202,7 +3202,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         []
 
         sage: l7 = {True: [], False: [], Unknown: []}
-        sage: for q in islice(prime_power_mod(1,42), int(60)):
+        sage: for q in islice(prime_power_mod(1,42), int(60)):                          # optional - sage.libs.pari
         ....:     l7[designs.difference_family(q,7,existence=True)].append(q)
         sage: l7[True]
         [169, 337, 379, 421, 463, 547, 631, 673, 757, 841, 883, 967, ...,  4621, 4957, 5167]
@@ -3213,7 +3213,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     List available constructions::
 
-        sage: for v in range(2,100):
+        sage: for v in range(2,100):                                                    # optional - sage.libs.pari
         ....:     constructions = []
         ....:     for k in range(2,10):
         ....:         for l in range(1,10):
@@ -3290,7 +3290,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         sage: Q15 = [76231]
         sage: Q4 = [13, 73, 97, 109, 181, 229, 241, 277, 337, 409, 421, 457]
         sage: Q8 = [1009, 3137, 3697]
-        sage: for Q,k in [(Q4,4),(Q5,5),(Q8,8),(Q9,9),(Q15,15)]:
+        sage: for Q,k in [(Q4,4),(Q5,5),(Q8,8),(Q9,9),(Q15,15)]:                        # optional - sage.libs.pari
         ....:     for q in Q:
         ....:         assert designs.difference_family(q,k,1,existence=True) is True
         ....:         _ = designs.difference_family(q,k,1)
@@ -3299,7 +3299,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
         sage: sgp = lambda q,d: ((q**(d+1)-1)//(q-1), (q**d-1)//(q-1), (q**(d-1)-1)//(q-1))
 
-        sage: for q in range(2,10):
+        sage: for q in range(2,10):                                                     # optional - sage.libs.pari
         ....:     if is_prime_power(q):
         ....:         for d in [2,3,4]:
         ....:           v,k,l = sgp(q,d)
@@ -3308,13 +3308,13 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     Check twin primes difference sets::
 
-        sage: for p in [3,5,7,9,11]:
+        sage: for p in [3,5,7,9,11]:                                                    # optional - sage.libs.pari
         ....:     v = p*(p+2); k = (v-1)/2;  lmbda = (k-1)/2
         ....:     G,D = designs.difference_family(v,k,lmbda)
 
     Check Complementary difference sets::
 
-        sage: for v in [15, 33, 35, 39, 51]:
+        sage: for v in [15, 33, 35, 39, 51]:                                            # optional - sage.libs.pari
         ....:     G, D = designs.difference_family(v, (v-1)//2, (v-1)//2-1)
 
     Check the database::
@@ -3324,14 +3324,14 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         ....:     assert designs.difference_family(v,k,l,existence=True) is True
         ....:     df = designs.difference_family(v,k,l,check=True)
 
-        sage: for k in EDS:
+        sage: for k in EDS:                                                             # optional - sage.libs.pari
         ....:     for v in EDS[k]:
         ....:         assert designs.difference_family(v,k,1,existence=True) is True
         ....:         df = designs.difference_family(v,k,1,check=True)
 
     Check the known Hadamard parameters::
 
-        sage: for N in range(2,21):
+        sage: for N in range(2,21):                                                     # optional - sage.libs.pari
         ....:     v = 4*N^2; k = 2*N^2-N; l = N^2-N
         ....:     status = designs.difference_family(v,k,l,existence=True)
         ....:     print("{:2} {}".format(N,designs.difference_family(v,k,l,explain_construction=True) if status is True else status))
@@ -3370,7 +3370,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         sage: designs.difference_family(3, 2, 1, explain_construction=True)
         'Trivial difference family'
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                      # optional - sage.libs.pari
         ....:     v = randint(1, 30)
         ....:     k = randint(2, 30)
         ....:     l = randint(1, 30)

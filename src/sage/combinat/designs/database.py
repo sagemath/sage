@@ -2430,7 +2430,7 @@ def QDM_57_9_1_1_8():
 
         sage: from sage.combinat.designs.database import QDM_57_9_1_1_8
         sage: from sage.combinat.designs.designs_pyx import is_quasi_difference_matrix
-        sage: G,M = QDM_57_9_1_1_8()
+        sage: G,M = QDM_57_9_1_1_8()                                                    # optional - sage.schemes
         sage: is_quasi_difference_matrix(M,G,9,1,1,8)                                   # optional - sage.schemes
         True
     """
