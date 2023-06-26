@@ -456,7 +456,7 @@ to_hex = LazyImport('matplotlib.colors', 'to_hex')
 try:
     from sage.rings.real_mpfr import RR as Reals
 except ImportError:
-    from sage.real.real_double import RDF as Reals
+    from sage.rings.real_double import RDF as Reals
 
 def _weight_if_real(x):
     return x if x in Reals else 1
