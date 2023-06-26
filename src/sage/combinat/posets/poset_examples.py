@@ -2096,7 +2096,7 @@ def _random_stone_lattice(n):
     EXAMPLES::
 
         sage: g = sage.combinat.posets.poset_examples._random_stone_lattice(10)         # optional - sage.combinat sage.libs.flint
-        sage: LatticePoset(g).is_stone()                                                # optional - sage.combinat
+        sage: LatticePoset(g).is_stone()                                                # optional - sage.combinat sage.libs.flint
         True
 
     ALGORITHM:

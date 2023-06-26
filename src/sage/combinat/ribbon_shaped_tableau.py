@@ -271,7 +271,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         EXAMPLES::
 
             sage: S = StandardRibbonShapedTableaux()                                    # optional - sage.graphs
-            sage: TestSuite(S).run()                                                    # optional - sage.graphs sage.rings.finite_rings
+            sage: TestSuite(S).run()                                                    # optional - sage.graphs sage.modules sage.rings.finite_rings
         """
         if category is None:
             category = InfiniteEnumeratedSets()
@@ -294,7 +294,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         EXAMPLES::
 
             sage: it = StandardRibbonShapedTableaux().__iter__()                        # optional - sage.graphs
-            sage: [next(it) for x in range(10)]                                         # optional - sage.graphs
+            sage: [next(it) for x in range(10)]                                         # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[],
              [[1]],
              [[1, 2]],
@@ -377,15 +377,15 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         [[None, 2, 4], [1, 3]]
         sage: StandardRibbonShapedTableaux([2,2]).last()
         [[None, 1, 2], [3, 4]]
-        sage: StandardRibbonShapedTableaux([2,2]).cardinality()                         # optional - sage.graphs
+        sage: StandardRibbonShapedTableaux([2,2]).cardinality()                         # optional - sage.graphs sage.modules sage.rings.finite_rings
         5
-        sage: StandardRibbonShapedTableaux([2,2]).list()                                # optional - sage.graphs
+        sage: StandardRibbonShapedTableaux([2,2]).list()                                # optional - sage.graphs sage.modules sage.rings.finite_rings
         [[[None, 1, 3], [2, 4]],
          [[None, 1, 2], [3, 4]],
          [[None, 2, 3], [1, 4]],
          [[None, 2, 4], [1, 3]],
          [[None, 1, 4], [2, 3]]]
-        sage: StandardRibbonShapedTableaux([3,2,2]).cardinality()                       # optional - sage.graphs
+        sage: StandardRibbonShapedTableaux([3,2,2]).cardinality()                       # optional - sage.graphs sage.modules sage.rings.finite_rings
         155
     """
     @staticmethod
@@ -449,7 +449,7 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
 
         EXAMPLES::
 
-            sage: [t for t in StandardRibbonShapedTableaux([2,2])]                      # optional - sage.graphs
+            sage: [t for t in StandardRibbonShapedTableaux([2,2])]                      # optional - sage.graphs sage.rings.finite_rings
             [[[None, 1, 3], [2, 4]],
              [[None, 1, 2], [3, 4]],
              [[None, 2, 3], [1, 4]],

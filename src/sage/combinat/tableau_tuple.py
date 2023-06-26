@@ -3427,14 +3427,14 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
 
         EXAMPLES::
 
-            sage: RowStandardTableauTuples([[1],[1],[1]]).list()                        # optional - sage.graphs
+            sage: RowStandardTableauTuples([[1],[1],[1]]).list()                        # optional - sage.graphs sage.modules sage.rings.finite_rings
             [([[3]], [[2]], [[1]]),
              ([[2]], [[3]], [[1]]),
              ([[1]], [[3]], [[2]]),
              ([[1]], [[2]], [[3]]),
              ([[2]], [[1]], [[3]]),
              ([[3]], [[1]], [[2]])]
-            sage: RowStandardTableauTuples([[2,1],[2]]).list()                          # optional - sage.graphs
+            sage: RowStandardTableauTuples([[2,1],[2]]).list()                          # optional - sage.graphs sage.modules sage.rings.finite_rings
             [([[4, 5], [2]], [[1, 3]]),
              ([[4, 5], [3]], [[1, 2]]),
              ([[3, 5], [4]], [[1, 2]]),
@@ -3468,10 +3468,10 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
 
         TESTS::
 
-            sage: def check(mu):                                                        # optional - sage.graphs
+            sage: def check(mu):                                                        # optional - sage.graphs sage.modules sage.rings.finite_rings
             ....:     return (RowStandardTableauTuples(mu).cardinality()
             ....:             == len(RowStandardTableauTuples(mu).list()))
-            sage: all(check(mu) for mu in PartitionTuples(4,4))                         # optional - sage.graphs
+            sage: all(check(mu) for mu in PartitionTuples(4,4))                         # optional - sage.graphs sage.modules sage.rings.finite_rings
             True
         """
         mu = self.shape()

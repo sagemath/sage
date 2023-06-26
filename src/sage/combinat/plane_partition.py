@@ -1846,7 +1846,7 @@ class PlanePartitions_SPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
             sage: PP.to_poset()                                                         # optional - sage.graphs
             Finite poset containing 12 elements
-            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()    # optional - sage.graphs
+            sage: PP.to_poset().order_ideals_lattice().cardinality() == PP.cardinality()    # optional - sage.graphs sage.modules sage.rings.finite_rings
             True
         """
         a = self._box[0]
@@ -1921,7 +1921,7 @@ class PlanePartitions_SPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([2,2,1], symmetry='SPP'))                        # optional - sage.graphs
+            sage: list(PlanePartitions([2,2,1], symmetry='SPP'))                        # optional - sage.graphs sage.modules sage.rings.finite_rings
             [Plane partition [],
              Plane partition [[1, 1], [1, 1]],
              Plane partition [[1, 1], [1]],
@@ -1991,7 +1991,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         TESTS::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
-            sage: TestSuite(PP).run()                                                   # optional - sage.graphs
+            sage: TestSuite(PP).run()                                                   # optional - sage.graphs sage.modules sage.rings.finite_rings
             sage: PlanePartitions([4,3,2], symmetry='CSPP')
             Traceback (most recent call last):
             ...

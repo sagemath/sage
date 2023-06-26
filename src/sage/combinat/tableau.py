@@ -6833,7 +6833,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
             True
             sage: len([x for x in SemistandardTableaux(3) if x in SST])                 # optional - sage.modules
             1
-            sage: SST.cardinality()
+            sage: SST.cardinality()                                                     # optional - sage.modules
             1
         """
         if x not in SemistandardTableaux_shape(self.shape, self.max_entry):

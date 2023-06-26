@@ -2040,7 +2040,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
         EXAMPLES::
 
             sage: it = StandardSkewTableaux().__iter__()
-            sage: [next(it) for x in range(10)]                                         # optional - sage.graphs sage.rings.finite_rings
+            sage: [next(it) for x in range(10)]                                         # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[],
              [[1]],
              [[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]],
@@ -2063,7 +2063,7 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         EXAMPLES::
 
             sage: S = StandardSkewTableaux(3)
-            sage: TestSuite(S).run()                                                    # optional - sage.graphs
+            sage: TestSuite(S).run()                                                    # optional - sage.graphs sage.modules sage.rings.finite_rings
         """
         self.n = n
         StandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
@@ -2104,10 +2104,10 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux(2).list()                                        # optional - sage.graphs
+            sage: StandardSkewTableaux(2).list()                                        # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]]]
 
-            sage: StandardSkewTableaux(3).list()                                        # optional - sage.graphs
+            sage: StandardSkewTableaux(3).list()                                        # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[[1, 2, 3]],
              [[1, 2], [3]], [[1, 3], [2]],
              [[None, 2, 3], [1]], [[None, 1, 2], [3]], [[None, 1, 3], [2]],
@@ -2203,7 +2203,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()                      # optional - sage.graphs
+            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()                      # optional - sage.graphs sage.modules sage.rings.finite_rings
             [[[None, 2, 3], [None, 4], [1]],
              [[None, 1, 2], [None, 3], [4]],
              [[None, 1, 2], [None, 4], [3]],

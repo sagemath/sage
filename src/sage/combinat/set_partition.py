@@ -2080,7 +2080,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
             sage: S = SetPartitions(4, [2,2])
             sage: SA = SetPartitions()
-            sage: all(sp in SA for sp in S)                                             # optional - sage.graphs
+            sage: all(sp in SA for sp in S)                                             # optional - sage.graphs sage.modules sage.rings.finite_rings
             True
             sage: Set([Set([1,2]),Set([3,7])]) in SA                                    # optional - sage.graphs
             True
