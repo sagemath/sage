@@ -2065,7 +2065,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         L1 = []
         for t in UnorderedTuples(list(range(n + 1)), dim + 1):
             if all(t[i] < t[i + 1] for i in range(dim)):
-                L1.append(t)
+                L1.append(list(t))
         # create the dual brackets
         L2 = []
         signs = []
@@ -2371,7 +2371,7 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
             for ai in R:
                 P[i] = ai
                 for tup in S[i - 1]:
-                    if gcd([ai] + tup) == 1:
+                    if gcd((ai,) + tup) == 1:
                         for j in range(i):
                             P[j] = tup[j]
                         pts.append(self(P))
