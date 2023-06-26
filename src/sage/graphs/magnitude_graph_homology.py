@@ -21,13 +21,15 @@ EXAMPLES::
 The program just generates the chain groups and calculates the differentials
 then uses the ChainComplex package to calculate the homology.
 
-For a graph g the chain groups MC_{*,*}(g) break up in to subcomplexes
-MC_{*,l}^{s,t}(g) where l is the length of the chain and s and t are the initial
-and terminal vertices of the chain.
+For a graph g the chain groups ``MC_{*,*}(g)`` break up in to subcomplexes
+``MC_{*,l}^{s,t}(g)`` where ``l`` is the length of the chain and
+``s`` and ``t`` are the initial and terminal vertices of the chain.
 
-So here generators[s,t,k,l] is a list of the degree k generators of such a chain group.
-Then differential[s,t,k,l] is a matrix giving the differential from generators[s,t,k,l] to generators[s,t,k-1,l].
-The homology of each subcomplex is calculated then the ranks are added together to give the required output.
+So here ``generators[s,t,k,l]`` is a list of the degree k generators of such a chain group.
+Then ``differential[s,t,k,l]`` is a matrix giving the differential
+from ``generators[s,t,k,l]`` to ``generators[s,t,k-1,l]``.
+The homology of each subcomplex is calculated then the ranks
+are added together to give the required output.
 """
 from sage.graphs.distances_all_pairs import distances_all_pairs
 from sage.homology.chain_complex import ChainComplex
@@ -40,7 +42,7 @@ from sage.structure.sage_object import SageObject
 
 
 class MagnitudeHomology(SageObject):
-    """
+    r"""
     Compute the rational magnitude homology of the graph.
 
     INPUT:
