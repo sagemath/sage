@@ -453,6 +453,18 @@ lazy_import('sage.matrix.constructor', 'matrix')
 to_hex = LazyImport('matplotlib.colors', 'to_hex')
 
 
+try:
+    from sage.rings.real_mpfr import RR as Reals
+except ImportError:
+    from sage.real.real_double import RDF as Reals
+
+def _weight_if_real(x):
+    return x if x in Reals else 1
+
+def _weight_1(x):
+    return 1
+
+
 class GenericGraph(GenericGraph_pyx):
     """
     Base class for graphs and digraphs.
@@ -7664,13 +7676,9 @@ class GenericGraph(GenericGraph_pyx):
             value_only = False
 
         if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-
-            def weight(x):
-                return x if x in RR else 1
+            weight = _weight_if_real
         else:
-            def weight(x):
-                return 1
+            weight = _weight_1
 
         if g.is_directed():
             def good_edge(e):
@@ -10048,13 +10056,9 @@ class GenericGraph(GenericGraph_pyx):
 
         # Whether to use edge labels
         if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-
-            def capacity(x):
-                return x if x in RR else 1
+            capacity = _weight_if_real
         else:
-            def capacity(x):
-                return 1
+            capacity = _weight_1
 
         if g.is_directed():
             # This function return the balance of flow at X

@@ -416,7 +416,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
-from sage.graphs.generic_graph import GenericGraph
+from sage.graphs.generic_graph import GenericGraph, _weight_if_real, _weight_1
 from sage.graphs.digraph import DiGraph
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
@@ -2987,13 +2987,9 @@ class Graph(GenericGraph):
             f_bounds = bounds
 
         if self.weighted():
-            from sage.rings.real_mpfr import RR
-
-            def weight(x):
-                return x if x in RR else 1
+            weight = _weight_if_real
         else:
-            def weight(x):
-                return 1
+            weight = _weight_1
 
         for v in self:
             minimum, maximum = f_bounds(v)
@@ -3186,14 +3182,11 @@ class Graph(GenericGraph):
                              "Please convert it to a Graph if you really mean it.")
 
         if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-
             def weight(e):
                 l = self.edge_label(e)
-                return l if l in RR else 1
+                return _weight_if_real(l)
         else:
-            def weight(e):
-                return 1
+            weight = _weight_1
 
         from sage.numerical.mip import MixedIntegerLinearProgram
 
@@ -4200,13 +4193,7 @@ class Graph(GenericGraph):
            ...
            ValueError: algorithm must be set to either "Edmonds" or "LP"
         """
-        from sage.rings.real_mpfr import RR
-
-        def weight(x):
-            if x in RR:
-                return x
-            else:
-                return 1
+        weight = _weight_if_real
 
         W = {}
         L = {}
@@ -8403,9 +8390,8 @@ class Graph(GenericGraph):
         #
         # If the same edge is added several times their capacities add up.
 
-        from sage.rings.real_mpfr import RR
         for uu, vv, capacity in edges:
-            capacity = capacity if capacity in RR else 1
+            capacity = _weight_if_real(capacity)
 
             # Assume uu is in gU
             if uu in V:
