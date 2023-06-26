@@ -926,7 +926,19 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             Dynamical System of Projective Space of dimension 1 over
             Number Field in a with defining polynomial 3*x^2 + 1
             Defn: Defined on coordinates by sending (z : w) to
-                    ((3*a)*z^2 + (3*a)*w^2 : z*w)
+                    ((-3/2*a + 1/2)*z^2 + (-3/2*a + 1/2)*w^2 : (-3/2*a - 3/2)*z*w)
+
+        ::
+
+            sage: R.<a,b> = QQ[]
+            sage: P.<x,y,z> = ProjectiveSpace(FractionField(R), 2)
+            sage: H = End(P)
+            sage: f = H([a/b*(x*z + y^2)*x^2, a*b*(x*z + y^2)*y^2, a*(x*z + y^2)*z^2])
+            sage: f.normalize_coordinates(); f
+            Scheme endomorphism of Projective Space of dimension 2 over Fraction
+            Field of Multivariate Polynomial Ring in a, b over Rational Field
+            Defn: Defined on coordinates by sending (x : y : z) to
+                (x^2 : (b^2)*y^2 : b*z^2)
         """
         # If ideal or valuation is specified, we scale according the norm
         # defined by the ideal/valuation
@@ -981,18 +993,22 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             self.scale_by(uniformizer**(-1 * min_val))
             return
 
+        N = self.codomain().ambient_space().dimension_relative() + 1
+
         R = self.domain().base_ring()
 
-        # Only clear denominators from the coefficients in the ring of integers
+        # Clear any denominators from the coefficients
         if R in NumberFields():
             O = R.maximal_order()
 
             if O is ZZ:
-                denom = lcm([self[i].denominator() for i in range(len(list(self)))])
+                denom = lcm([self[i].denominator() for i in range(N)])
             else:
-                denom = R.ideal(list(self)).absolute_norm().denominator()
+                denom = R.ideal([c for poly in self for c in poly.coefficients()]).norm().denominator()
 
             self.scale_by(denom)
+        else:
+            self.scale_by(lcm([self[i].denominator() for i in range(N)]))
 
         # There are cases, such as the example above over GF(7),
         # where we want to compute GCDs, but NOT in the case
@@ -1006,8 +1022,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         GCD = gcd(self[0], self[1])
         index = 2
-
-        N = self.codomain().ambient_space().dimension_relative() + 1
 
         while GCD != 1 and index < N:
             GCD = gcd(GCD, self[index])
