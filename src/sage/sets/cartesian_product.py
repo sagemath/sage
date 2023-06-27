@@ -41,7 +41,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         (Finite Field of size 5, Standard permutations of 10)
         sage: G.cardinality()
         18144000
-        sage: G.random_element()
+        sage: G.random_element()    # random
         (1, [4, 7, 6, 5, 10, 1, 3, 2, 8, 9])
         sage: G.category()
         Join of Category of finite monoids
