@@ -109,31 +109,31 @@ from .schemes import Schemes
 # * with basis
 from .modules_with_basis import ModulesWithBasis
 FreeModules = ModulesWithBasis
-from .hecke_modules            import HeckeModules
-from .algebras_with_basis      import AlgebrasWithBasis
-from .coalgebras_with_basis    import CoalgebrasWithBasis
-from .bialgebras_with_basis    import BialgebrasWithBasis
+from .hecke_modules import HeckeModules
+from .algebras_with_basis import AlgebrasWithBasis
+from .coalgebras_with_basis import CoalgebrasWithBasis
+from .bialgebras_with_basis import BialgebrasWithBasis
 from .hopf_algebras_with_basis import HopfAlgebrasWithBasis
 
 # finite dimensional * with basis
-from .finite_dimensional_modules_with_basis       import FiniteDimensionalModulesWithBasis
-from .finite_dimensional_algebras_with_basis      import FiniteDimensionalAlgebrasWithBasis
-from .finite_dimensional_coalgebras_with_basis    import FiniteDimensionalCoalgebrasWithBasis
-from .finite_dimensional_bialgebras_with_basis    import FiniteDimensionalBialgebrasWithBasis
+from .finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
+from .finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+from .finite_dimensional_coalgebras_with_basis import FiniteDimensionalCoalgebrasWithBasis
+from .finite_dimensional_bialgebras_with_basis import FiniteDimensionalBialgebrasWithBasis
 from .finite_dimensional_hopf_algebras_with_basis import FiniteDimensionalHopfAlgebrasWithBasis
 
 # graded *
-from .graded_modules       import GradedModules
-from .graded_algebras      import GradedAlgebras
-from .graded_coalgebras    import GradedCoalgebras
-from .graded_bialgebras    import GradedBialgebras
+from .graded_modules import GradedModules
+from .graded_algebras import GradedAlgebras
+from .graded_coalgebras import GradedCoalgebras
+from .graded_bialgebras import GradedBialgebras
 from .graded_hopf_algebras import GradedHopfAlgebras
 
 # graded * with basis
-from .graded_modules_with_basis       import GradedModulesWithBasis
-from .graded_algebras_with_basis      import GradedAlgebrasWithBasis
-from .graded_coalgebras_with_basis    import GradedCoalgebrasWithBasis
-from .graded_bialgebras_with_basis    import GradedBialgebrasWithBasis
+from .graded_modules_with_basis import GradedModulesWithBasis
+from .graded_algebras_with_basis import GradedAlgebrasWithBasis
+from .graded_coalgebras_with_basis import GradedCoalgebrasWithBasis
+from .graded_bialgebras_with_basis import GradedBialgebrasWithBasis
 from .graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 
 # Coxeter groups

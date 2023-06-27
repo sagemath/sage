@@ -83,8 +83,8 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 from .all__sagemath_objects import *
 from .all__sagemath_environment import *
 
-from sage.doctest.all    import *
-from sage.repl.all       import *
+from sage.doctest.all import *
+from sage.repl.all import *
 from sage.misc.all__sagemath_repl import *
 
 # For doctesting. These are overwritten later

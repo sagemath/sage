@@ -10,19 +10,18 @@ import sage.structure.category_object    # imports sage.categories.category
 from .objects import Objects
 from .sets_cat import Sets, EmptySetError
 
-
 from .category import Category
 
 from .category_types import Elements
 
 from .cartesian_product import cartesian_product
 
-from .functor  import (ForgetfulFunctor,
+from .functor import (ForgetfulFunctor,
                       IdentityFunctor)
 
-from .homset   import (Hom, hom,
-                      End, end,
-                      Homset, HomsetWithBase)
+from .homset import (Hom, hom,
+                     End, end,
+                     Homset, HomsetWithBase)
 
 from .morphism import Morphism
 
