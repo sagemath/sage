@@ -161,6 +161,7 @@ def braid_from_piecewise(strands):
     B = BraidGroup(len(L))
     return B(braid)
 
+
 def discrim(pols):
     r"""
     Return the points in the discriminant of the product of the polynomials of a list or tuple ``pols``.
@@ -193,15 +194,15 @@ def discrim(pols):
     flist = tuple(pols)
     x, y = flist[0].parent().gens()
     field = flist[0].base_ring()
-    pol_ring = PolynomialRing(field,(x,))
+    pol_ring = PolynomialRing(field, (x,))
 
     @parallel
     def discrim_pairs(f, g):
-        if f == g:
+        if g is None:
             return pol_ring(f.discriminant(y))
         return pol_ring(f.resultant(g, y))
 
-    pairs = [(f, f) for f in flist] +  [(f, g) for f, g in Combinations(flist, 2)]
+    pairs = [(f, None) for f in flist] + [(f, g) for f, g in Combinations(flist, 2)]
     fdiscrim = discrim_pairs(pairs)
     rts = []
     poly = 1
@@ -269,6 +270,7 @@ def corrected_voronoi_diagram(points):
         if valid:
             break
     return V
+
 
 def voronoi_cells(V):
     r"""
@@ -339,40 +341,26 @@ def voronoi_cells(V):
         (A vertex at (11/4, 4), A vertex at (2000001/2000000, 500001/1000000), None))
         sage: edg[-1] in Ge
         True
-"""
+    """
     compact_regions = [_ for _ in V.regions().values() if _.is_compact()]
     non_compact_regions = [_ for _ in V.regions().values() if not _.is_compact()]
-    G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)], format = 'list_of_edges')
-    E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1) if u.is_compact()], format = 'list_of_edges')
+    G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)], format='list_of_edges')
+    E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1) if u.is_compact()], format='list_of_edges')
     p = next(E.vertex_iterator())
     EC0 = orient_circuit(E.eulerian_circuit())
     EC = [EC0[0][0]] + [e[1] for e in EC0]
-    Vreg1 = {}
-    Edges = []
-    crd = {}
-    reg_graphs = {}
+    DG = Graph()
     for i, reg in enumerate(compact_regions):
-        reg_graphs[i] = reg.graph()
-        Greg0 = orient_circuit(reg_graphs[i].eulerian_circuit())
+        Greg0 = orient_circuit(reg.graph().eulerian_circuit())
         Greg = (Greg0[0][0],) + tuple(e[1] for e in Greg0)
-        Vreg1[i] = (i, Greg)
-    for i, reg in enumerate(compact_regions):
-        for e in reg_graphs[i].edges(sort=True):
-            a, b = e[:2]
-            e1 = (b, a, None)
-            if e not in Edges:
-                Edges += [e, e1]
-                crd[e] = (Vreg1[i],)
-                crd[e1] = (Vreg1[i],)
-            else:
-                crd[e] += (Vreg1[i],)
-                crd[e1] += (Vreg1[i],)
-    EdgesDual = [_ for _ in Edges if len(crd[_]) == 2]
-    DG = Graph(len(compact_regions))
-    DG.relabel(Vreg1)
-    for e in EdgesDual:
-        DG.add_edge(crd[e] + (e,))
+        DG.add_vertex((i, Greg))
+    for e in G.edges(sort=True):
+        a, b = e[:2]
+        regs = [v for v in DG.vertices(sort=True) if a in v[1] and b in v[1]]
+        if len(regs) == 2:
+            DG.add_edge(regs[0], regs[1], e)
     return (G, E, p, EC, DG)
+
 
 def followstrand(f, factors, x0, x1, y0a, prec=53):
     r"""
@@ -505,6 +493,7 @@ def newton(f, x0, i0):
     """
     return x0 - f(x0) / f.derivative()(i0)
 
+
 def fieldI(F0):
     r"""
     Return the (either double or trivial) extension of a number field which contains ``I``.
@@ -524,7 +513,8 @@ def fieldI(F0):
         sage: a0 = p.roots(QQbar, multiplicities=False)[0]
         sage: F0.<a> = NumberField(p, embedding=a0)
         sage: fieldI(F0)
-        Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10 with b = 0.4863890359345430? + 1.000000000000000?*I
+        Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10
+        with b = 0.4863890359345430? + 1.000000000000000?*I
 
     Another example where ``F`` and ``F0`` coincide.
 
@@ -601,7 +591,6 @@ def roots_interval(pols, x0):
     flist = tuple(pols)
     f = prod(flist)
     F1 = f.base_ring()
-    I1 = F1(QQbar.gen())
     x, y = f.parent().gens()
     Ux = [F1[y](_.subs({x: F1(x0)})) for _ in flist]
     fx = F1[y](f.subs({x: F1(x0)}))
@@ -759,13 +748,12 @@ def braid_in_segment(glist, x0, x1, precision={}):
     """
     g = prod(glist)
     F1 = g.base_ring()
-    I1 = F1(QQbar.gen())
     x, y = g.parent().gens()
     X0 = F1(x0)
     X1 = F1(x1)
     intervals = {}
-    if precision == {}: # new
-        precision ={f: 53 for f in glist} # new
+    if precision == {}:  # new
+        precision = {f: 53 for f in glist}  # new
     y0s = []
     for f in glist:
         if f.variables() == (y,):
@@ -791,18 +779,18 @@ def braid_in_segment(glist, x0, x1, precision={}):
     finalstrands = []
     initialintervals = roots_interval_cached(glist, X0)
     finalintervals = roots_interval_cached(glist, X1)
-    I = QQbar.gen()
+    I1 = QQbar.gen()
     for cs in complexstrands:
-        ip = cs[0][1] + I * cs[0][2]
-        fp = cs[-1][1] + I * cs[-1][2]
+        ip = cs[0][1] + I1 * cs[0][2]
+        fp = cs[-1][1] + I1 * cs[-1][2]
         matched = 0
         for center, interval in initialintervals.items():
             if ip in interval:
                 initialstrands.append([(0, center.real(), center.imag()), (1, cs[0][1], cs[0][2])])
                 matched += 1
         if matched != 1:
-            precision = {f: precision[f] * 2 for f in glist} # new
-            return braid_in_segment(glist, x0, x1, precision=precision) # new
+            precision = {f: precision[f] * 2 for f in glist}  # new
+            return braid_in_segment(glist, x0, x1, precision=precision)  # new
 
         matched = 0
         for center, interval in finalintervals.items():
@@ -810,8 +798,8 @@ def braid_in_segment(glist, x0, x1, precision={}):
                 finalstrands.append([(0, cs[-1][1], cs[-1][2]), (1, center.real(), center.imag())])
                 matched += 1
         if matched != 1:
-            precision = {f: precision[f] * 2 for f in glist} # new
-            return braid_in_segment(glist, x0, x1, precision=precision) # new
+            precision = {f: precision[f] * 2 for f in glist}  # new
+            return braid_in_segment(glist, x0, x1, precision=precision)  # new
     initialbraid = braid_from_piecewise(initialstrands)
     finalbraid = braid_from_piecewise(finalstrands)
 
@@ -873,12 +861,15 @@ def orient_circuit(circuit, convex=False):
 
     """
     vectors = [v[1].vector() - v[0].vector() for v in circuit]
+    circuit_vertex = [circuit[0][0]] + [e[1] for e in circuit]
     if convex:
         pr = matrix([vectors[0], vectors[1]]).determinant()
         if pr > 0:
             return circuit
+            # return circuit_vertex
         elif pr < 0:
             return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
+            # return [_ for _ in reversed(circuit_vertex)]
     prec = 53
     while True:
         CIF = ComplexIntervalField(prec)
@@ -886,8 +877,10 @@ def orient_circuit(circuit, convex=False):
                          for i in range(len(vectors)))
         if totalangle < 0:
             return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
+            # return [_ for _ in reversed(circuit_vertex)]
         if totalangle > 0:
             return circuit
+            # return circuit_vertex
         prec *= 2
 
 
@@ -1047,10 +1040,10 @@ def geometric_basis(G, E, EC, p, dual_graph):
 
     if qi < ri:
         EC1 = [EC[j] for j in range(qi, ri)] + [_ for _ in reversed(cutpath)]
-        EC2 = cutpath + EC[ri + 1 : -1] + EC[ : qi + 1]
+        EC2 = cutpath + EC[ri + 1: -1] + EC[: qi + 1]
     else:
-        EC1 = EC[qi : ] + EC[1 : ri] + [_ for _ in reversed(cutpath)]
-        EC2 = cutpath + EC[ri + 1 : qi + 1]
+        EC1 = EC[qi:] + EC[1:ri] + [_ for _ in reversed(cutpath)]
+        EC2 = cutpath + EC[ri + 1:qi + 1]
 
     gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
     gb2 = geometric_basis(G2, E2, EC2, q, Gd2)
@@ -1069,6 +1062,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
             else:
                 i += 1
     return resul
+
 
 def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     r"""
@@ -1150,7 +1144,7 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
         d = g.degree(y)
         arrangement1 = tuple(f1.subs({x: x + y}) for f1 in arrangement1)
         glist = tuple(f1.subs({x: x + y}) for f1 in glist)
-    if d>0:
+    if d > 0:
         disc = discrim(glist)
     else:
         disc = []
@@ -1169,8 +1163,8 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
             for s in zip(p[:-1], p[1:]):
                 if (s[1], s[0]) not in segs:
                     segs.add((s[0], s[1]))
-        I = QQbar.gen()
-        segs = [(a[0] + I * a[1], b[0] + I * b[1]) for a, b in segs]
+        I1 = QQbar.gen()
+        segs = [(a[0] + I1 * a[1], b[0] + I1 * b[1]) for a, b in segs]
         vertices = list(set(flatten(segs)))
         tocacheverts = tuple([(glist, v) for v in vertices])
         populate_roots_interval_cache(tocacheverts)
@@ -1190,7 +1184,7 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
                 end_braid_computation = True
             except ChildProcessError:  # hack to deal with random fails first time
                 pass
-        B=BraidGroup(d)
+        B = BraidGroup(d)
         result = []
         for path in geombasis:
             braidpath = B.one()
@@ -1208,15 +1202,15 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
         h0 = h.subs({x: p1})
         h1 = F[y](h0)
         rt = h1.roots(QQbar, multiplicities=False)
-        roots_base += [(_,i) for _ in rt]
+        roots_base += [(_, i) for _ in rt]
     if not holdstrand:
         roots_base.sort()
-        strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
+        strands = {i + 1: par[1] + 1 for i, par in enumerate(roots_base)}
     computebm0 = computebm or len(disc) == 0
     if computebm0 and not holdstrand:
         return (result, strands)
     if computebm0 and holdstrand:
-        return (result,roots_base)
+        return (result, roots_base)
     if not computebm0 and not holdstrand:
         return strands
     if not computebm0 and holdstrand:
@@ -1287,9 +1281,11 @@ def conjugate_positive_form(braid):
         cortas.append(res0)
     return cortas
 
+
 @parallel
 def conjugate_positive_form_p(braid):
     return conjugate_positive_form(braid)
+
 
 def braid2rels(L):
     r"""
@@ -1347,9 +1343,11 @@ def braid2rels(L):
         U = [_.Tietze() for _ in gb.relations()]
     return U
 
+
 @parallel
 def braid2rels_p(L):
     return braid2rels(L)
+
 
 def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False, vertical=[]):
     r"""
@@ -1430,11 +1428,11 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
     for j, k in enumerate(vertical):
-        l = d + j + 1
+        l1 = d + j + 1
         br = bm[k - 1]
         for gen in F.gens():
             j0 = gen.Tietze()[0]
-            rl = (l,) + (gen * br).Tietze() + (-l, -j0)
+            rl = (l1,) + (gen * br).Tietze() + (-l1, -j0)
             rel_v.append(rl)
     rel = rel_h + rel_v
     if projective:
@@ -1563,6 +1561,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         d = bm[0].parent().strands()
     return fundamental_group_from_braid_mon(bm, degree=d, simplified=simplified, projective=projective, puiseux=puiseux)
 
+
 def braid_monodromy_arrangement(flist):
     r"""
     Compute the braid monodromy of a projection of the curve
@@ -1609,6 +1608,7 @@ def braid_monodromy_arrangement(flist):
     # if len(flist) == 1:
     #     return (braid_monodromy(f), {})
     return braid_monodromy(f, arrangement=flist, holdstrand=False)
+
 
 def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, braid_mon=None):
     r"""
@@ -1662,7 +1662,10 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         sage: (g, dic) == fundamental_group_arrangement(flist, braid_mon=BM) # optional - sirocco
         True
         sage: fundamental_group_arrangement(flist, simplified=False, braid_mon=BM) # optional - sirocco
-        (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2, x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1, x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1, 1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {1: (1,), 2: (2,), 3: (-4, -3, -2, -1)})
+        (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2,
+         x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1,
+         x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1,
+         1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {1: (1,), 2: (2,), 3: (-4, -3, -2, -1)})
         sage: fundamental_group_arrangement(flist, projective=True, braid_mon=BM) # optional - sirocco
         (Finitely presented group < x |  >, {1: (1,), 2: (-1, -1, -1)})
 
@@ -1673,7 +1676,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         hyperplane arrangements defined over a number subfield of ``QQbar`` after
         applying a generic line section.
     """
-    if len(flist)>0:
+    if len(flist) > 0:
         f = prod(flist)
         R = f.parent()
     else:
@@ -1722,6 +1725,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     g1 = FreeGroup(n) / rels
     return (g1, dic1)
 
+
 def strand_components(flist):
     r"""
     Compute only the assignment from strands to elements of ``flist``.
@@ -1746,6 +1750,6 @@ def strand_components(flist):
     f = prod(flist)
     if len(flist) == 1:
         d = f.degree()
-        dic ={j + 1 : 1 for j in range(d)}
+        dic = {j + 1: 1 for j in range(d)}
         return dic
     return braid_monodromy(f, arrangement=flist, computebm=False)
