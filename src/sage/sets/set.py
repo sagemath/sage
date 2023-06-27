@@ -227,11 +227,11 @@ class Set_base():
             Set-theoretic union of
              Set of elements of Rational Field and
              Set of elements of Integer Ring
-            sage: X = Set(QQ).union(Set(GF(3))); X                                      # optional - sage.rings.finite_rings
+            sage: X = Set(QQ).union(Set(GF(3))); X
             Set-theoretic union of
              Set of elements of Rational Field and
              {0, 1, 2}
-            sage: 2/3 in X                                                              # optional - sage.rings.finite_rings
+            sage: 2/3 in X
             True
             sage: GF(3)(2) in X                                                         # optional - sage.rings.finite_rings
             True
@@ -445,14 +445,14 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
     EXAMPLES::
 
-        sage: K = GF(19)                                                                # optional - sage.rings.finite_rings
-        sage: Set(K)                                                                    # optional - sage.rings.finite_rings
+        sage: K = GF(19)
+        sage: Set(K)
         {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
-        sage: S = Set(K)                                                                # optional - sage.rings.finite_rings
+        sage: S = Set(K)
 
-        sage: latex(S)                                                                  # optional - sage.rings.finite_rings
+        sage: latex(S)
         \left\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18\right\}
-        sage: TestSuite(S).run()                                                        # optional - sage.rings.finite_rings
+        sage: TestSuite(S).run()
 
         sage: latex(Set(ZZ))
         \Bold{Z}
@@ -622,12 +622,12 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         Finite fields better illustrate the difference between
         ``__contains__`` for objects and their underlying sets::
 
-            sage: X = Set(GF(7))                                                        # optional - sage.rings.finite_rings
-            sage: X                                                                     # optional - sage.rings.finite_rings
+            sage: X = Set(GF(7))
+            sage: X
             {0, 1, 2, 3, 4, 5, 6}
-            sage: 5/3 in X                                                              # optional - sage.rings.finite_rings
+            sage: 5/3 in X
             False
-            sage: 5/3 in GF(7)                                                          # optional - sage.rings.finite_rings
+            sage: 5/3 in GF(7)
             False
             sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)                         # optional - sage.rings.finite_rings
             [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6]
@@ -675,7 +675,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             +Infinity
             sage: Primes().cardinality()
             +Infinity
-            sage: Set(GF(5)).cardinality()                                              # optional - sage.rings.finite_rings
+            sage: Set(GF(5)).cardinality()
             5
             sage: Set(GF(5^2,'a')).cardinality()                                        # optional - sage.rings.finite_rings
             25
@@ -785,9 +785,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         EXAMPLES::
 
             sage: X = Set([1, 2, 3])
-            sage: list(X.subsets())                                                     # optional - sage.combinat
+            sage: list(X.subsets())
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
-            sage: list(X.subsets(2))                                                    # optional - sage.combinat
+            sage: list(X.subsets(2))
             [{1, 2}, {1, 3}, {2, 3}]
         """
         from sage.combinat.subset import Subsets
@@ -857,13 +857,13 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: S = Set(GF(19)); S                                                    # optional - sage.rings.finite_rings
+            sage: S = Set(GF(19)); S
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
-            sage: S.category()                                                          # optional - sage.rings.finite_rings
+            sage: S.category()
             Category of finite enumerated sets
-            sage: print(latex(S))                                                       # optional - sage.rings.finite_rings
+            sage: print(latex(S))
             \left\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18\right\}
-            sage: TestSuite(S).run()                                                    # optional - sage.rings.finite_rings
+            sage: TestSuite(S).run()
         """
         Set_object.__init__(self, X, category=FiniteEnumeratedSets().or_subcategory(category))
 
@@ -888,7 +888,7 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: Set(GF(19)).is_finite()                                               # optional - sage.rings.finite_rings
+            sage: Set(GF(19)).is_finite()
             True
         """
         return True
@@ -920,15 +920,15 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: S = Set(GF(19))                                                       # optional - sage.rings.finite_rings
-            sage: I = iter(S)                                                           # optional - sage.rings.finite_rings
-            sage: next(I)                                                               # optional - sage.rings.finite_rings
+            sage: S = Set(GF(19))
+            sage: I = iter(S)
+            sage: next(I)
             0
-            sage: next(I)                                                               # optional - sage.rings.finite_rings
+            sage: next(I)
             1
-            sage: next(I)                                                               # optional - sage.rings.finite_rings
+            sage: next(I)
             2
-            sage: next(I)                                                               # optional - sage.rings.finite_rings
+            sage: next(I)
             3
         """
         return iter(self.set())
@@ -939,8 +939,8 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: S = Set(GF(2))                                                        # optional - sage.rings.finite_rings
-            sage: latex(S)                                                              # optional - sage.rings.finite_rings
+            sage: S = Set(GF(2))
+            sage: latex(S)
             \left\{0, 1\right\}
         """
         return '\\left\\{' + ', '.join(latex(x) for x in self.set()) + '\\right\\}'
@@ -951,8 +951,8 @@ class Set_object_enumerated(Set_object):
 
         EXAMPLES::
 
-            sage: S = Set(GF(2))                                                        # optional - sage.rings.finite_rings
-            sage: S                                                                     # optional - sage.rings.finite_rings
+            sage: S = Set(GF(2))
+            sage: S
             {0, 1}
 
         TESTS::
@@ -1105,7 +1105,7 @@ class Set_object_enumerated(Set_object):
 
         TESTS::
 
-            sage: len([Z for Z in Y.subsets() if Z.issubset(X)])                        # optional - sage.combinat
+            sage: len([Z for Z in Y.subsets() if Z.issubset(X)])
             8
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1133,7 +1133,7 @@ class Set_object_enumerated(Set_object):
 
         TESTS::
 
-            sage: len([Z for Z in Y.subsets() if Z.issuperset(X)])                      # optional - sage.combinat
+            sage: len([Z for Z in Y.subsets() if Z.issuperset(X)])
             4
         """
         if not isinstance(other, Set_object_enumerated):
@@ -1323,7 +1323,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: Set(ZZ).union(Set(GF(5)))                                             # optional - sage.rings.finite_rings
+            sage: Set(ZZ).union(Set(GF(5)))
             Set-theoretic union of Set of elements of Integer Ring and {0, 1, 2, 3, 4}
         """
         return "Set-theoretic {} of {} and {}".format(self._op, self._X, self._Y)
@@ -1334,7 +1334,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: latex(Set(ZZ).union(Set(GF(5))))                                      # optional - sage.rings.finite_rings
+            sage: latex(Set(ZZ).union(Set(GF(5))))
             \Bold{Z} \cup \left\{0, 1, 2, 3, 4\right\}
         """
         return latex(self._X) + self._latex_op + latex(self._Y)
@@ -1348,9 +1348,9 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         The hash values of equal sets are in general not equal since it is not
         decidable whether two sets are equal::
 
-            sage: X = Set(GF(13)).intersection(Set(ZZ))                                 # optional - sage.rings.finite_rings
-            sage: Y = Set(ZZ).intersection(Set(GF(13)))                                 # optional - sage.rings.finite_rings
-            sage: hash(X) == hash(Y)                                                    # optional - sage.rings.finite_rings
+            sage: X = Set(GF(13)).intersection(Set(ZZ))
+            sage: Y = Set(ZZ).intersection(Set(GF(13)))
+            sage: hash(X) == hash(Y)
             False
 
         TESTS:
@@ -1496,8 +1496,8 @@ class Set_object_union(Set_object_binary):
             sage: X.cardinality()                                                       # optional - sage.rings.finite_rings
             5
 
-            sage: X = Set(GF(3)).union(Set(ZZ))                                         # optional - sage.rings.finite_rings
-            sage: X.cardinality()                                                       # optional - sage.rings.finite_rings
+            sage: X = Set(GF(3)).union(Set(ZZ))
+            sage: X.cardinality()
             +Infinity
         """
         return self._X.cardinality() + self._Y.cardinality()
@@ -1531,7 +1531,7 @@ class Set_object_intersection(Set_object_binary):
         EXAMPLES::
 
             sage: S = Set(QQ^2)                                                         # optional - sage.modules
-            sage: T = Set(ZZ)                                                           # optional - sage.modules
+            sage: T = Set(ZZ)
             sage: X = S.intersection(T); X                                              # optional - sage.modules
             Set-theoretic intersection of
              Set of elements of Vector space of dimension 2 over Rational Field and
