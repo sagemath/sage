@@ -35,7 +35,7 @@ from sage.rings.integer import Integer
 from sage.geometry.polyhedron.constructor import Polyhedron
 
 
-def QQ_points_of_bounded_height(dim, bound):
+def QQ_points_of_bounded_height(dim, bound, normalize=False):
     r"""
     Return an iterator of the points in ``self`` of absolute multiplicative
     height of at most ``bound`` in the rational field.
@@ -45,6 +45,9 @@ def QQ_points_of_bounded_height(dim, bound):
     - ``dim`` -- a positive integer
 
     - ``bound`` -- a real number
+
+    - ``normalize`` -- boolean (optional, default: ``False``); whether to
+      normalize the coordinates of returned points
 
     OUTPUT:
 
@@ -57,6 +60,12 @@ def QQ_points_of_bounded_height(dim, bound):
         [(-1 : 1), (0 : 1), (1 : 0), (1 : 1)]
         sage: len(list(QQ_points_of_bounded_height(1, 5)))
         40
+        sage: sorted(list(QQ_points_of_bounded_height(1, 2)))
+        [(-2 : 1), (-1 : 1), (-1/2 : 1), (0 : 1),
+         (1/2 : 1), (1 : 0), (1 : 1), (2 : 1)]
+        sage: sorted(list(QQ_points_of_bounded_height(1, 2, normalize=True)))
+        [(-2 : 1), (-1 : 1), (-1 : 2), (0 : 1),
+         (1 : 0), (1 : 1), (1 : 2), (2 : 1)]
 
     There are no points of negative height::
 
@@ -77,6 +86,9 @@ def QQ_points_of_bounded_height(dim, bound):
                 for u in unit_tuples:
                     point = PN([a*b for a, b in zip(u, p)] + [p[dim]])
                     if point not in points_of_bounded_height:
+                        if normalize:
+                            point.scale_by(lcm([point[i].denominator() for i in range(dim + 1)]))
+
                         points_of_bounded_height.add(point)
                         yield point
 
@@ -202,6 +214,20 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53, normalize=False):
          (-1 : 0 : 1), (1 : 0 : 1), (1 : 1 : 0), (-1 : 1 : 0), (-1 : -1 : 1),
          (-1 : 1 : 1), (1 : -1 : 1), (1 : 1 : 1)]
 
+    ::
+
+        sage: P.<z,w> = ProjectiveSpace(ZZ, 1)
+        sage: sorted(list(P.points_of_bounded_height(bound=2)))
+        []
+
+    ::
+
+        sage: R.<x> = QQ[]
+        sage: K.<a> = NumberField(3*x^2 + 1)
+        sage: O = K.maximal_order()
+        sage: P.<z,w> = ProjectiveSpace(O, 1)
+        sage: sorted(list(P.points_of_bounded_height(bound=2)))
+        []
     """
     if bound < 1:
         return iter([])
@@ -367,7 +393,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53, normalize=False):
                         if point not in points_in_class_a:
                             if normalize:
                                 if O is ZZ:
-                                    denom = lcm([point[i].denominator() for i in range(list(point))])
+                                    denom = lcm([point[i].denominator() for i in range(len(point))])
                                 else:
                                     denom = K.ideal(list(point)).absolute_norm().denominator()
                                 point.scale_by(denom)
