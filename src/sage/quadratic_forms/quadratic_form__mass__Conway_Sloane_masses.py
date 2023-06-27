@@ -204,9 +204,9 @@ def conway_species_list_at_odd_prime(self, p):
         d = tmp_Q.det()
 
         # Determine the species
-        if (n % 2 != 0):                            # Deal with odd dim'l forms
+        if n % 2 != 0:                          # Deal with odd dim'l forms
             species = n
-        elif (n % 4 == 2) and (p % 4 == 3):         # Deal with even dim'l forms
+        elif n % 4 == 2 and p % 4 == 3:         # Deal with even dim'l forms
             species = (-1) * legendre_symbol(d, p) * n
         else:
             species = legendre_symbol(d, p) * n
@@ -329,7 +329,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     # Deal with 'even' forms
     if self.parity() == "even":
         d = self.Gram_matrix().det()
-        if (d % 8 == 1) or (d % 8 == 7):
+        if d % 8 == 1 or d % 8 == 7:
             return 0
         else:
             return 4
@@ -337,7 +337,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     # Deal with 'odd' forms by diagonalizing, and then computing the octane.
     n = self.dim()
     u = self[0, 0]
-    tmp_diag_vec = [None for i in range(n)]
+    tmp_diag_vec = [None] * n
     tmp_diag_vec[0] = u       # This should be an odd integer!
     ind = 1                   # The next index to diagonalize
 
@@ -345,7 +345,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     while ind < n:
 
         # Check for a 1x1 block and diagonalize it
-        if ind == (n - 1) or self[ind, ind + 1] == 0:
+        if ind == n - 1 or self[ind, ind + 1] == 0:
             tmp_diag_vec[ind] = self[ind, ind]
             ind += 1
 
