@@ -225,6 +225,7 @@ class DocTestSource():
                 sigon = doctest.Example(sig_on_count_doc_doctest, "0\n", lineno=docstring.count("\n"))
                 sigon.sage_source = sig_on_count_doc_doctest
                 sigon.optional_tags = frozenset()
+                sigon.probed_tags = frozenset()
                 dt.examples.append(sigon)
             doctests.append(dt)
 
@@ -274,7 +275,8 @@ class DocTestSource():
         self._init()
         self.line_shift = 0
         self.parser = SageDocTestParser(self.options.optional,
-                                        self.options.long)
+                                        self.options.long,
+                                        probed_tags=self.options.probe)
         self.linking = False
         doctests = []
         in_docstring = False

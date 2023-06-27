@@ -137,6 +137,7 @@ class DocTestDefaults(SageObject):
         # the auto_optional_tags there.
         self.optional = set(['sage']) | auto_optional_tags
         self.hide = ''
+        self.probe = ''
 
         # > 0: always run GC before every test
         # < 0: disable GC
@@ -457,6 +458,23 @@ class DocTestController(SageObject):
 
                 options.optional |= auto_optional_tags
                 options.optional -= options.disabled_optional
+
+        if isinstance(options.probe, str):
+            if options.probe == 'none':
+                options.probe = ''
+            s = options.probe.lower()
+            if not s:
+                options.probe = set()
+            else:
+                options.probe = set(s.split(','))
+                if "all" in options.probe:
+                    # Special case to probe all features that are not present
+                    options.probe = True
+                else:
+                    # Check that all tags are valid
+                    for o in options.probe:
+                        if not optionaltag_regex.search(o):
+                            raise ValueError('invalid optional tag {!r}'.format(o))
 
         self.options = options
 
@@ -1462,6 +1480,9 @@ class DocTestController(SageObject):
             self.log("Features to be detected: " + ','.join(available_software.detectable()))
             if self.options.hidden_features:
                 self.log("Hidden features: " + ','.join([f.name for f in self.options.hidden_features]))
+            if self.options.probe:
+                self.log("Features to be probed: " + ('all' if self.options.probe is True
+                                                      else ','.join(self.options.probe)))
             self.add_files()
             self.expand_files_into_sources()
             self.filter_sources()

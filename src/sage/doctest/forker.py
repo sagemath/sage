@@ -59,7 +59,7 @@ from .util import Timer, RecordingDict, count_noun
 from .sources import DictAsObject
 from .parsing import OriginalSource, reduce_hex, unparse_optional_tags
 from sage.structure.sage_object import SageObject
-from .parsing import SageOutputChecker, pre_hash, get_source
+from .parsing import SageOutputChecker, pre_hash, get_source, unparse_optional_tags
 from sage.repl.user_globals import set_globals
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
@@ -719,10 +719,18 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
             outcome = FAILURE   # guilty until proved innocent or insane
 
+            probed_tags = getattr(example, 'probed_tags', False)
+
             # If the example executed without raising any exceptions,
             # verify its output.
             if exception is None:
                 if check(example.want, got, self.optionflags):
+                    if probed_tags:
+                        example.warnings.append(
+                            f"The annotation '{unparse_optional_tags(probed_tags)}' "
+                            f"may no longer be needed; these features are not present, "
+                            f"but we ran the doctest anyway as requested by --probing, "
+                            f"and it succeeded.")
                     outcome = SUCCESS
 
             # The example raised an exception: check if it was expected.
@@ -758,6 +766,12 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
                 # We expected an exception: see whether it matches.
                 elif check(example.exc_msg, exc_msg, self.optionflags):
+                    if probed_tags:
+                        example.warnings.append(
+                            f"The annotation '{unparse_optional_tags(example.probed_tags)}' "
+                            f"may no longer be needed; these features are not present, "
+                            f"but we ran the doctest anyway as requested by --probing, "
+                            f"and it succeeded (raised the expected exception).")
                     outcome = SUCCESS
 
                 # Another chance if they didn't care about the detail.
@@ -766,6 +780,12 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     m2 = re.match(r'(?:[^:]*\.)?([^:]*:)', exc_msg)
                     if m1 and m2 and check(m1.group(1), m2.group(1),
                                            self.optionflags):
+                        if probed_tags:
+                            example.warnings.append(
+                                f"The annotation '{unparse_optional_tags(example.probed_tags)}' "
+                                f"may no longer be needed; these features are not present, "
+                                f"but we ran the doctest anyway as requested by --probing, "
+                                f"and it succeeded (raised an exception as expected).")
                         outcome = SUCCESS
 
             check_duration = walltime(check_starttime)
@@ -782,6 +802,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 elif not quiet:
                     self.report_success(out, test, example, got,
                                         check_duration=check_duration)
+            elif probed_tags:
+                pass
             elif outcome is FAILURE:
                 if not quiet:
                     self.report_failure(out, test, example, got, test.globs)
