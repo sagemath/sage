@@ -576,7 +576,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 
         and simplicial sets::
 
-            sage: from sage.topology.simplicial_set_examples import RealProjectiveSpace
+            sage: from sage.topology.simplicial_set_examples import RealProjectiveSpace             # optional - sage.graphs
             sage: RP5 = RealProjectiveSpace(5)
             sage: x = RP5.cohomology_ring(GF(2)).basis()[1,0]
             sage: x**4

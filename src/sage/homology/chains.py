@@ -235,7 +235,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ)
-                sage: from sage.topology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube                    # optional - sage.graphs
                 sage: chain = C1(Cube([[1, 1], [0, 1]]))
                 sage: chain.to_complex()
                 Chain(1:(0, 0, 0, 1))
@@ -261,7 +261,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ)
-                sage: from sage.topology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube                    # optional - sage.graphs
                 sage: chain = C1(Cube([[1, 1], [0, 1]])) - 2 * C1(Cube([[0, 1], [0, 0]]))
                 sage: chain
                 -2*[0,1] x [0,0] + [1,1] x [0,1]
@@ -288,7 +288,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ)
-                sage: from sage.topology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube                    # optional - sage.graphs
                 sage: chain = C1(Cube([[1, 1], [0, 1]])) - C1(Cube([[0, 1], [0, 0]]))
                 sage: chain.is_cycle()
                 False
@@ -315,7 +315,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ)
-                sage: from sage.topology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube                    # optional - sage.graphs
                 sage: chain = C1(Cube([[1, 1], [0, 1]])) - C1(Cube([[0, 1], [0, 0]]))
                 sage: chain.is_boundary()
                 False
@@ -476,7 +476,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ, cochains=True)
-                sage: from sage.topology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube                    # optional - sage.graphs
                 sage: cochain = C1(Cube([[1, 1], [0, 1]]))
                 sage: cochain.to_complex()
                 Chain(1:(0, 0, 0, 1))
@@ -502,7 +502,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ, cochains=True)
-                sage: from sage.topology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube                    # optional - sage.graphs
                 sage: cochain = C1(Cube([[1, 1], [0, 1]])) - 2 * C1(Cube([[0, 1], [0, 0]]))
                 sage: cochain
                 -2*\chi_[0,1] x [0,0] + \chi_[1,1] x [0,1]
@@ -529,7 +529,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ, cochains=True)
-                sage: from sage.topology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube                    # optional - sage.graphs
                 sage: cochain = C1(Cube([[1, 1], [0, 1]])) - C1(Cube([[0, 1], [0, 0]]))
                 sage: cochain.is_cocycle()
                 True
@@ -556,7 +556,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ, cochains=True)
-                sage: from sage.topology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube                    # optional - sage.graphs
                 sage: cochain = C1(Cube([[1, 1], [0, 1]])) - C1(Cube([[0, 1], [0, 0]]))
                 sage: cochain.is_coboundary()
                 True
