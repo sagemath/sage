@@ -56,6 +56,9 @@ if __name__ == "__main__":
         help='run tests pretending that the software listed in FEATURES (separated by commas) is not installed; '
              'if "all" is listed, will also hide features corresponding to all optional or experimental packages; '
              'if "optional" is listed, will also hide features corresponding to optional packages.')
+    parser.add_argument("--probe", metavar="FEATURES", default="",
+        help='run tests that would not be run because one of the given FEATURES (separated by commas) is not installed; '
+             'report the tests that pass nevertheless')
     parser.add_argument("--randorder", type=int, metavar="SEED", help="randomize order of tests")
     parser.add_argument("--random-seed", dest="random_seed", type=int, metavar="SEED", help="random seed (integer) for fuzzing doctests",
                         default=os.environ.get("SAGE_DOCTEST_RANDOM_SEED"))

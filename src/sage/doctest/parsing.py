@@ -32,7 +32,7 @@ from functools import reduce
 from sage.misc.cachefunc import cached_function
 from sage.repl.preparse import preparse, strip_string_literals
 
-from .external import available_software
+from .external import available_software, external_software
 
 _RIFtol = None
 
@@ -559,13 +559,14 @@ class SageDocTestParser(doctest.DocTestParser):
     A version of the standard doctest parser which handles Sage's
     custom options and tolerances in floating point arithmetic.
     """
-    def __init__(self, optional_tags=(), long=False):
+    def __init__(self, optional_tags=(), long=False, *, probed_tags=()):
         r"""
         INPUT:
 
         - ``optional_tags`` -- a list or tuple of strings.
         - ``long`` -- boolean, whether to run doctests marked as taking a
           long time.
+        - ``probed_tags`` -- a list or tuple of strings.
 
         EXAMPLES::
 
@@ -594,6 +595,7 @@ class SageDocTestParser(doctest.DocTestParser):
                 self.optional_tags.remove('sage')
             else:
                 self.optional_only = True
+        self.probed_tags = probed_tags
 
     def __eq__(self, other):
         """
@@ -751,6 +753,7 @@ class SageDocTestParser(doctest.DocTestParser):
             if isinstance(item, doctest.Example):
                 optional_tags = parse_optional_tags(item.source)
                 item.optional_tags = frozenset(optional_tags)
+                item.probed_tags = set()
                 if optional_tags:
                     for tag in optional_tags:
                         self.optionals[tag] += 1
@@ -767,7 +770,14 @@ class SageDocTestParser(doctest.DocTestParser):
                     if self.optional_tags is not True:
                         extra = optional_tags - self.optional_tags  # set difference
                         if extra:
-                            if not available_software.issuperset(extra):
+                            for tag in extra:
+                                if tag not in available_software:
+                                    if (self.probed_tags is True or tag in self.probed_tags
+                                            and tag not in external_software):
+                                        item.probed_tags.add(tag)
+                                    else:
+                                        break
+                            if not item.probed_tags:
                                 continue
                 elif self.optional_only:
                     self.optionals['sage'] += 1
