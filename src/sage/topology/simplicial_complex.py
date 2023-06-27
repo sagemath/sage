@@ -4971,7 +4971,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if 0 in H:
             H.remove(0)
 
-        return all(i + j in H for i in H for j in H)
+        return not any(i + j in H for i in H for j in H)
 
     def is_minimally_non_golod(self):
         r"""
@@ -5000,7 +5000,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         def test(v):
             X = copy(self)
-            X.delete_vertex(v)
+            X.remove_face([v])
             return X.is_golod()
 
         return (not self.is_golod()) and all(test(v) for v in self.vertices())
