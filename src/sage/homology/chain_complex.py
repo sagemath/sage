@@ -84,7 +84,7 @@ def _latex_module(R, m):
         '\\Bold{Z}^{3}'
         sage: _latex_module(ZZ, 0)
         '0'
-        sage: _latex_module(GF(3), 1)                                                   # optional - sage.rings.finite_rings
+        sage: _latex_module(GF(3), 1)
         '\\Bold{F}_{3}^{1}'
     """
     if m == 0:
@@ -187,11 +187,11 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
         Chain complex with at most 2 nonzero terms over Integer Ring
 
         sage: m = matrix(ZZ, 2, 2, [0, 1, 0, 0])
-        sage: D = ChainComplex([m, m], base_ring=GF(2)); D                              # optional - sage.rings.finite_rings
+        sage: D = ChainComplex([m, m], base_ring=GF(2)); D
         Chain complex with at most 3 nonzero terms over Finite Field of size 2
-        sage: D == loads(dumps(D))                                                      # optional - sage.rings.finite_rings
+        sage: D == loads(dumps(D))
         True
-        sage: D.differential(0)==m, m.is_immutable(), D.differential(0).is_immutable()  # optional - sage.rings.finite_rings
+        sage: D.differential(0)==m, m.is_immutable(), D.differential(0).is_immutable()
         (True, False, True)
 
     Note that when a chain complex is defined in Sage, new
@@ -335,9 +335,9 @@ class Chain_class(ModuleElement):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},           # optional - sage.rings.finite_rings
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},
             ....:                  base_ring=GF(7))
-            sage: C.category()                                                          # optional - sage.rings.finite_rings
+            sage: C.category()
             Category of chain complexes over Finite Field of size 7
 
         TESTS::
@@ -770,7 +770,7 @@ class ChainComplex_class(Parent):
             [2]
             sage: C.rank(0)
             1
-            sage: C.rank(0, ring=GF(2))                                                 # optional - sage.rings.finite_rings
+            sage: C.rank(0, ring=GF(2))
             0
         """
         degree = self.grading_group()(degree)
@@ -1078,12 +1078,12 @@ class ChainComplex_class(Parent):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},           # optional - sage.rings.finite_rings
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},
             ....:                  base_ring=GF(2))
-            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),         # optional - sage.rings.finite_rings
+            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),
             ....:                   1: matrix(ZZ, 0, 2),
             ....:                   3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
-            sage: C == D                                                                # optional - sage.rings.finite_rings
+            sage: C == D
             True
         """
         if not isinstance(other, ChainComplex_class) or self.base_ring() != other.base_ring():
@@ -1107,16 +1107,16 @@ class ChainComplex_class(Parent):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},           # optional - sage.rings.finite_rings
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},
             ....:                  base_ring=GF(2))
-            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),         # optional - sage.rings.finite_rings
+            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),
             ....:                   1: matrix(ZZ, 0, 2),
             ....:                   3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
-            sage: C != D                                                                # optional - sage.rings.finite_rings
+            sage: C != D
             False
             sage: E = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},
             ....:                  base_ring=ZZ)
-            sage: C != E                                                                # optional - sage.rings.finite_rings
+            sage: C != E
             True
         """
         return not self == other
@@ -1142,7 +1142,7 @@ class ChainComplex_class(Parent):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))  # optional - sage.rings.finite_rings
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))
             sage: C._homology_chomp(None, GF(2), False, False)   # optional - CHomP             # optional - sage.rings.finite_rings
             doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
             See https://github.com/sagemath/sage/issues/33777 for details.
@@ -1252,7 +1252,7 @@ class ChainComplex_class(Parent):
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
             sage: C.homology()
             {0: Z x Z, 1: Z x C3}
-            sage: C.homology(deg=1, base_ring=GF(3))                                    # optional - sage.rings.finite_rings
+            sage: C.homology(deg=1, base_ring=GF(3))
             Vector space of dimension 2 over Finite Field of size 3
             sage: D = ChainComplex({0: identity_matrix(ZZ, 4), 4: identity_matrix(ZZ, 30)})
             sage: D.homology()
@@ -1460,8 +1460,8 @@ class ChainComplex_class(Parent):
             sage: C.betti()
             {0: 2, 1: 1}
 
-            sage: D = ChainComplex({0: matrix(GF(5), [[3, 1],[1, 2]])})                 # optional - sage.rings.finite_rings
-            sage: D.betti()                                                             # optional - sage.rings.finite_rings
+            sage: D = ChainComplex({0: matrix(GF(5), [[3, 1],[1, 2]])})
+            sage: D.betti()
             {0: 1, 1: 1}
         """
         if base_ring is None:

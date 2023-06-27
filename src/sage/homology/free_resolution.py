@@ -131,7 +131,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             sage: Q = R.quo(I)
             sage: Q.is_integral_domain()
             False
-            sage: xb, yb = Q.gens()
+            sage: xb, yb = Q.gens()                                                     # optional - sage.rings.function_field
             sage: FreeResolution(Q.ideal([xb]))  # has torsion
             Traceback (most recent call last):
             ...
