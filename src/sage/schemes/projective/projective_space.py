@@ -1009,9 +1009,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``precision`` - (default: 53) a positive integer
 
-        - ``normalize`` - boolean (optional, default: ``False``); whether
-          to normalize the coordinates of returned points
-
         OUTPUT:
 
         - an iterator of points of bounded height
@@ -1085,7 +1082,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: K.<v> = QuadraticField(2)
             sage: P.<x,y> = ProjectiveSpace(K, 1)
-            sage: sorted(list(P.points_of_bounded_height(bound=2, normalize=True)))
+            sage: sorted(list(P.points_of_bounded_height(bound=2)))
             [(-v - 2 : 1), (-v - 2 : 2), (-v - 1 : 1), (-2 : 1), (-2 : 4), (-v : 1),
              (-v : 2), (-1 : 1), (v - 2 : 1), (v - 2 : 2), (-v + 1 : 1), (0 : 1),
              (v - 1 : 1), (-v + 2 : 1), (-v + 2 : 2), (1 : 0), (1 : 1), (v : 1),
@@ -1108,26 +1105,29 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         R = self.base_ring()
 
-        # Check the base ring is the rational field, a number field, or a ring
-        # If it is the rational field, then `field_type` is False.
-        # If it is a number field, then `field_type` is True.
-        # If it is the ring of integers, then we perform the computation.
+        # Check the base ring is the rational field, a number field,
+        # or the ring of integers
+        is_ring_of_ints = False
+
         if is_RationalField(R):
             field_type = False
         elif R in NumberFields():
-            # True for the rational field as well, so check `is_RationalField` first
+            # True for the rational field as well, so check is_RationalField first
             field_type = True
         else:
-            
+            is_ring_of_ints = True
 
         bound = kwds.pop('bound')
         prec = kwds.pop('precision', 53)
-        normalize = kwds.pop('normalize', False)
 
         # Convert between absolute and relative height for calling Krumm's algorithm
         bound = bound**R.absolute_degree()
 
         dim = self.dimension_relative()
+
+        # TODO bug, no `signature` for `order`
+        if is_ring_of_ints:
+            return points_of_bounded_height(self, R, dim, bound, prec, normalize=True)
 
         if field_type:
             # For imaginary quadratic field
@@ -1140,9 +1140,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                 deg = R.degree()
 
             if deg == 2 and r == 0:
-                return IQ_points_of_bounded_height(self, R, dim, bound, normalize)
+                return IQ_points_of_bounded_height(self, R, dim, bound)
 
-            return points_of_bounded_height(self, R, dim, bound, prec, normalize)
+            return points_of_bounded_height(self, R, dim, bound, prec)
         else:
             return QQ_points_of_bounded_height(dim, bound)
 
