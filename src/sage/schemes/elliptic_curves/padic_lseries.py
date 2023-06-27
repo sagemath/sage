@@ -1450,7 +1450,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         # now compute phi
         phi = matrix.matrix([[0,-1/p],[1,E.ap(p)/p]])
-        lpv = vector([G  + (E.ap(p))*H  , - R(p) * H ])  # this is L_p
+        lpv = vector([G + (E.ap(p))*H  , - R(p) * H ])  # this is L_p
         eps = (1-phi)**(-2)
         resu = lpv*eps.transpose()
         return resu
@@ -1506,7 +1506,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
                 raise ValueError("Curves must be isomorphic.")
             usq = (e1.discriminant()/e2.discriminant()).nth_root(6)
             u = usq.sqrt()
-            s = (u   *  e2.a1() - e1.a1() )/ZZ(2)
+            s = (u *  e2.a1() - e1.a1() )/ZZ(2)
             r = (usq *  e2.a2() - e1.a2() + s**2 + e1.a1()*s)/ZZ(3)
             t = (u**3 * e2.a3() - e1.a3() - e1.a1()*r)/ZZ(2)
             return [u,r,s,t]
@@ -1519,7 +1519,6 @@ class pAdicLseriesSupersingular(pAdicLseries):
         A = matrix.matrix([[u,-r/u],[0,1/u]])
         frn = A * fr * A**(-1)
         return 1/p*frn
-
 
     def __phi_bpr(self, prec=0):
         r"""

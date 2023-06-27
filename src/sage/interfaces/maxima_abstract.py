@@ -746,12 +746,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         tmin = trange[0]
         tmax = trange[1]
-        cmd = "plot2d([parametric, %s, %s, [%s, %s, %s], [nticks, %s]]"%( \
-                   r[0], r[1], var, tmin, tmax, nticks)
+        cmd = "plot2d([parametric, %s, %s, [%s, %s, %s], [nticks, %s]]" % (
+            r[0], r[1], var, tmin, tmax, nticks)
         if options is None:
             cmd += ")"
         else:
-            cmd += ", %s)"%options
+            cmd += ", %s)" % options
         self(cmd)
 
     def plot3d(self, *args):
@@ -1032,7 +1032,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         else:
             cmd += ', %s)'%options
         self(cmd)
-
 
     def plot_multilist(self, pts_list, options=None):
         r"""

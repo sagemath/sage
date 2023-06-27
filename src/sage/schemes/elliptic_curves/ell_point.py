@@ -32,42 +32,42 @@ An example over `\QQ`::
 
 An example over a number field::
 
-    sage: K.<i> = QuadraticField(-1)
-    sage: E = EllipticCurve(K,[1,0,0,0,-1])
-    sage: P = E(0,i); P
+    sage: K.<i> = QuadraticField(-1)                                                    # optional - sage.rings.number_field
+    sage: E = EllipticCurve(K, [1,0,0,0,-1])                                            # optional - sage.rings.number_field
+    sage: P = E(0,i); P                                                                 # optional - sage.rings.number_field
     (0 : i : 1)
-    sage: P.order()
+    sage: P.order()                                                                     # optional - sage.rings.number_field
     +Infinity
-    sage: 101*P-100*P == P
+    sage: 101*P - 100*P == P                                                            # optional - sage.rings.number_field
     True
 
 An example over a finite field::
 
-    sage: K.<a> = GF((101,3))
-    sage: E = EllipticCurve(K,[1,0,0,0,-1])
-    sage: P = E(40*a^2 + 69*a + 84 , 58*a^2 + 73*a + 45)
-    sage: P.order()
+    sage: K.<a> = GF((101,3))                                                           # optional - sage.rings.finite_rings
+    sage: E = EllipticCurve(K, [1,0,0,0,-1])                                            # optional - sage.rings.finite_rings
+    sage: P = E(40*a^2 + 69*a + 84 , 58*a^2 + 73*a + 45)                                # optional - sage.rings.finite_rings
+    sage: P.order()                                                                     # optional - sage.rings.finite_rings
     1032210
-    sage: E.cardinality()
+    sage: E.cardinality()                                                               # optional - sage.rings.finite_rings
     1032210
 
 Arithmetic with a point over an extension of a finite field::
 
-    sage: k.<a> = GF((5,2))
-    sage: E = EllipticCurve(k,[1,0]); E
+    sage: k.<a> = GF((5,2))                                                             # optional - sage.rings.finite_rings
+    sage: E = EllipticCurve(k,[1,0]); E                                                 # optional - sage.rings.finite_rings
     Elliptic Curve defined by y^2 = x^3 + x over Finite Field in a of size 5^2
-    sage: P = E([a,2*a+4])
-    sage: 5*P
+    sage: P = E([a,2*a+4])                                                              # optional - sage.rings.finite_rings
+    sage: 5*P                                                                           # optional - sage.rings.finite_rings
     (2*a + 3 : 2*a : 1)
-    sage: P*5
+    sage: P*5                                                                           # optional - sage.rings.finite_rings
     (2*a + 3 : 2*a : 1)
-    sage: P + P + P + P + P
+    sage: P + P + P + P + P                                                             # optional - sage.rings.finite_rings
     (2*a + 3 : 2*a : 1)
 
 ::
 
     sage: F = Zmod(3)
-    sage: E = EllipticCurve(F,[1,0]);
+    sage: E = EllipticCurve(F, [1,0]);
     sage: P = E([2,1])
     sage: import sys
     sage: n = sys.maxsize
@@ -76,16 +76,17 @@ Arithmetic with a point over an extension of a finite field::
 
 Arithmetic over `\ZZ/N\ZZ` with composite `N` is supported.  When an
 operation tries to invert a non-invertible element, a
-ZeroDivisionError is raised and a factorization of the modulus appears
+:class:`ZeroDivisionError` is raised and a factorization of the modulus appears
 in the error message::
 
     sage: N = 1715761513
-    sage: E = EllipticCurve(Integers(N),[3,-13])
+    sage: E = EllipticCurve(Integers(N), [3,-13])
     sage: P = E(2,1)
     sage: LCM([2..60])*P
     Traceback (most recent call last):
     ...
-    ZeroDivisionError: Inverse of 26927 does not exist (characteristic = 1715761513 = 26927*63719)
+    ZeroDivisionError: Inverse of 26927 does not exist
+    (characteristic = 1715761513 = 26927*63719)
 
 AUTHORS:
 
@@ -162,7 +163,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         (0 : 0 : 1)
         sage: E(0,0)               # brackets are optional
         (0 : 0 : 1)
-        sage: E([GF(5)(0), 0])     # entries are coerced
+        sage: E([GF(5)(0), 0])     # entries are coerced                                # optional - sage.rings.finite_rings
         (0 : 0 : 1)
 
         sage: E(0.000, 0)
@@ -178,23 +179,24 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         sage: E = EllipticCurve([0,0,1,-1,0])
         sage: S = E(QQ); S
-        Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+        Abelian group of points on
+         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
 
-        sage: K.<i>=NumberField(x^2+1)
-        sage: E=EllipticCurve(K,[0,1,0,-160,308])
-        sage: P=E(26,-120)
-        sage: Q=E(2+12*i,-36+48*i)
-        sage: P.order() == Q.order() == 4  # long time (3s)
+        sage: K.<i> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
+        sage: E = EllipticCurve(K, [0,1,0,-160,308])                                    # optional - sage.rings.number_field
+        sage: P = E(26, -120)                                                           # optional - sage.rings.number_field
+        sage: Q = E(2+12*i, -36+48*i)                                                   # optional - sage.rings.number_field
+        sage: P.order() == Q.order() == 4  # long time (3s)                             # optional - sage.rings.number_field
         True
-        sage: 2*P==2*Q
+        sage: 2*P == 2*Q                                                                # optional - sage.rings.number_field
         False
 
     ::
 
-        sage: K.<t>=FractionField(PolynomialRing(QQ,'t'))
-        sage: E=EllipticCurve([0,0,0,0,t^2])
-        sage: P=E(0,t)
-        sage: P,2*P,3*P
+        sage: K.<t> = FractionField(PolynomialRing(QQ,'t'))
+        sage: E = EllipticCurve([0,0,0,0,t^2])
+        sage: P = E(0,t)
+        sage: P, 2*P, 3*P
         ((0 : t : 1), (0 : -t : 1), (0 : 1 : 0))
 
     TESTS::
@@ -218,17 +220,18 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
     Test that the refactoring from :trac:`14711` did preserve the behaviour
     of domain and codomain::
 
-        sage: E=EllipticCurve(QQ,[1,1])
-        sage: P=E(0,1)
+        sage: E = EllipticCurve(QQ,[1,1])
+        sage: P = E(0,1)
         sage: P.domain()
         Spectrum of Rational Field
-        sage: K.<a>=NumberField(x^2-3,'a')
-        sage: P=E.base_extend(K)(1,a)
-        sage: P.domain()
+        sage: K.<a> = NumberField(x^2 - 3, 'a')                                         # optional - sage.rings.number_field
+        sage: P = E.base_extend(K)(1,a)                                                 # optional - sage.rings.number_field
+        sage: P.domain()                                                                # optional - sage.rings.number_field
         Spectrum of Number Field in a with defining polynomial x^2 - 3
-        sage: P.codomain()
-        Elliptic Curve defined by y^2 = x^3 + x + 1 over Number Field in a with defining polynomial x^2 - 3
-        sage: P.codomain() == P.curve()
+        sage: P.codomain()                                                              # optional - sage.rings.number_field
+        Elliptic Curve defined by y^2 = x^3 + x + 1
+         over Number Field in a with defining polynomial x^2 - 3
+        sage: P.codomain() == P.curve()                                                 # optional - sage.rings.number_field
         True
     """
     def __init__(self, curve, v, check=True):
@@ -404,18 +407,18 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         Try the same over a finite field::
 
-            sage: E = EllipticCurve(GF(11), [0,0,0,3,0])
-            sage: O = E(0)
-            sage: P = E.point([1,2])
-            sage: O.__pari__()
+            sage: E = EllipticCurve(GF(11), [0,0,0,3,0])                                # optional - sage.rings.finite_rings
+            sage: O = E(0)                                                              # optional - sage.rings.finite_rings
+            sage: P = E.point([1,2])                                                    # optional - sage.rings.finite_rings
+            sage: O.__pari__()                                                          # optional - sage.rings.finite_rings
             [0]
-            sage: P.__pari__()
+            sage: P.__pari__()                                                          # optional - sage.rings.finite_rings
             [Mod(1, 11), Mod(2, 11)]
 
         We no longer need to explicitly call ``pari(O)`` and ``pari(P)``
         after :trac:`11868`::
 
-            sage: pari(E).elladd(O, P)
+            sage: pari(E).elladd(O, P)                                                  # optional - sage.rings.finite_rings
             [Mod(1, 11), Mod(2, 11)]
         """
         if self[2]:
@@ -431,16 +434,17 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         EXAMPLES::
 
-            sage: E=EllipticCurve(QQ,[1,1])
-            sage: P=E(0,1)
+            sage: E = EllipticCurve(QQ,[1,1])
+            sage: P = E(0,1)
             sage: P.scheme()
             Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
             sage: P.scheme() == P.curve()
             True
-            sage: K.<a>=NumberField(x^2-3,'a')
-            sage: P=E.base_extend(K)(1,a)
-            sage: P.scheme()
-            Elliptic Curve defined by y^2 = x^3 + x + 1 over Number Field in a with defining polynomial x^2 - 3
+            sage: K.<a> = NumberField(x^2 - 3,'a')                                      # optional - sage.rings.number_field
+            sage: P = E.base_extend(K)(1, a)                                            # optional - sage.rings.number_field
+            sage: P.scheme()                                                            # optional - sage.rings.number_field
+            Elliptic Curve defined by y^2 = x^3 + x + 1
+            over Number Field in a with defining polynomial x^2 - 3
         """
         # The following text is just not true: it applies to the class
         # EllipticCurvePoint, which appears to be never used, but does
@@ -459,7 +463,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         Return the order of this point on the elliptic curve.
 
         If the point is zero, returns 1, otherwise raise a
-        NotImplementedError.
+        :class:`NotImplementedError`.
 
         For curves over number fields and finite fields, see below.
 
@@ -469,13 +473,14 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         EXAMPLES::
 
-            sage: K.<t>=FractionField(PolynomialRing(QQ,'t'))
-            sage: E=EllipticCurve([0,0,0,-t^2,0])
-            sage: P=E(t,0)
+            sage: K.<t> = FractionField(PolynomialRing(QQ,'t'))
+            sage: E = EllipticCurve([0, 0, 0, -t^2, 0])
+            sage: P = E(t,0)
             sage: P.order()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Computation of order of a point not implemented over general fields.
+            NotImplementedError: Computation of order of a point not implemented
+            over general fields.
             sage: E(0).additive_order()
             1
             sage: E(0).order() == 1
@@ -523,8 +528,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         """
         return bool(self[2])
 
-
-
     def has_finite_order(self):
         """
         Return ``True`` if this point has finite additive order as an
@@ -535,16 +538,17 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         EXAMPLES::
 
-            sage: K.<t>=FractionField(PolynomialRing(QQ,'t'))
-            sage: E=EllipticCurve([0,0,0,-t^2,0])
+            sage: K.<t> = FractionField(PolynomialRing(QQ,'t'))
+            sage: E = EllipticCurve([0, 0, 0, -t^2, 0])
             sage: P = E(0)
             sage: P.has_finite_order()
             True
-            sage: P=E(t,0)
+            sage: P = E(t,0)
             sage: P.has_finite_order()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Computation of order of a point not implemented over general fields.
+            NotImplementedError: Computation of order of a point not implemented
+            over general fields.
             sage: (2*P).is_zero()
             True
         """
@@ -564,12 +568,12 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         EXAMPLES::
 
-            sage: K.<t>=FractionField(PolynomialRing(QQ,'t'))
-            sage: E=EllipticCurve([0,0,0,-t^2,0])
+            sage: K.<t> = FractionField(PolynomialRing(QQ,'t'))
+            sage: E = EllipticCurve([0, 0, 0, -t^2, 0])
             sage: P = E(0)
             sage: P.has_infinite_order()
             False
-            sage: P=E(t,0)
+            sage: P = E(t,0)
             sage: P.has_infinite_order()
             Traceback (most recent call last):
             ...
@@ -594,7 +598,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
             sage: E = EllipticCurve('389a')
             sage: P = E([-1,1])
-            sage: P.plot(pointsize=30, rgbcolor=(1,0,0))
+            sage: P.plot(pointsize=30, rgbcolor=(1,0,0))                                # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.point import point
@@ -628,7 +632,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         Checks that :trac:`15964` is fixed::
 
             sage: N = 1715761513
-            sage: E = EllipticCurve(Integers(N),[3,-13])
+            sage: E = EllipticCurve(Integers(N), [3,-13])
             sage: P = E(2,1)
             sage: LCM([2..60])*P
             Traceback (most recent call last):
@@ -637,7 +641,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             (characteristic = 1715761513 = 26927*63719)
 
             sage: N = 35
-            sage: E = EllipticCurve(Integers(N),[5,1])
+            sage: E = EllipticCurve(Integers(N), [5,1])
             sage: P = E(0,1)
             sage: 4*P
             Traceback (most recent call last):
@@ -731,8 +735,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
             sage: [type(c) for c in -EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
-            <... 'sage.rings.rational.Rational'>,
-            <... 'sage.rings.rational.Rational'>]
+             <... 'sage.rings.rational.Rational'>,
+             <... 'sage.rings.rational.Rational'>]
         """
         if self.is_zero():
             return self
@@ -743,7 +747,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
     def xy(self):
         """
         Return the `x` and `y` coordinates of this point, as a 2-tuple.
-        If this is the point at infinity a ZeroDivisionError is raised.
+        If this is the point at infinity, a :class:`ZeroDivisionError` is raised.
 
         EXAMPLES::
 
@@ -795,43 +799,43 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         A finite field example::
 
-            sage: E = EllipticCurve(GF(101),[23,34])
-            sage: E.cardinality().factor()
+            sage: E = EllipticCurve(GF(101), [23,34])                                   # optional - sage.rings.finite_rings
+            sage: E.cardinality().factor()                                              # optional - sage.rings.finite_rings
             2 * 53
-            sage: Set([T.order() for T in E.points()])
+            sage: Set([T.order() for T in E.points()])                                  # optional - sage.rings.finite_rings
             {1, 106, 2, 53}
-            sage: len([T for T in E.points() if T.is_divisible_by(2)])
+            sage: len([T for T in E.points() if T.is_divisible_by(2)])                  # optional - sage.rings.finite_rings
             53
-            sage: len([T for T in E.points() if T.is_divisible_by(3)])
+            sage: len([T for T in E.points() if T.is_divisible_by(3)])                  # optional - sage.rings.finite_rings
             106
 
         TESTS:
 
         This shows that the bug reported at :trac:`10076` is fixed::
 
-            sage: K = QuadraticField(8,'a')
-            sage: E = EllipticCurve([K(0),0,0,-1,0])
-            sage: P = E([-1,0])
-            sage: P.is_divisible_by(2)
+            sage: K = QuadraticField(8,'a')                                             # optional - sage.rings.number_field
+            sage: E = EllipticCurve([K(0),0,0,-1,0])                                    # optional - sage.rings.number_field
+            sage: P = E([-1,0])                                                         # optional - sage.rings.number_field
+            sage: P.is_divisible_by(2)                                                  # optional - sage.rings.number_field
             False
-            sage: P.division_points(2)
+            sage: P.division_points(2)                                                  # optional - sage.rings.number_field
             []
 
         Note that it is not sufficient to test that
         ``self.division_points(m,poly_only=True)`` has roots::
 
-            sage: P.division_points(2, poly_only=True).roots()
+            sage: P.division_points(2, poly_only=True).roots()                          # optional - sage.rings.number_field
             [(1/2*a - 1, 1), (-1/2*a - 1, 1)]
 
-            sage: tor = E.torsion_points(); len(tor)
+            sage: tor = E.torsion_points(); len(tor)                                    # optional - sage.rings.number_field
             8
-            sage: [T.order() for T in tor]
+            sage: [T.order() for T in tor]                                              # optional - sage.rings.number_field
             [2, 4, 4, 2, 1, 2, 4, 4]
-            sage: all(T.is_divisible_by(3) for T in tor)
+            sage: all(T.is_divisible_by(3) for T in tor)                                # optional - sage.rings.number_field
             True
-            sage: sorted(T for T in tor if T.is_divisible_by(2))
+            sage: sorted(T for T in tor if T.is_divisible_by(2))                        # optional - sage.rings.number_field
             [(0 : 1 : 0), (1 : 0 : 1)]
-            sage: sorted(Set([2*T for T in tor]))
+            sage: sorted(Set([2*T for T in tor]))                                       # optional - sage.rings.number_field
             [(0 : 1 : 0), (1 : 0 : 1)]
         """
         # Coerce the input m to an integer
@@ -885,7 +889,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
     def division_points(self, m, poly_only=False):
         r"""
-        Return a list of all points `Q` such that `mQ=P` where `P` = self.
+        Return a list of all points `Q` such that `mQ=P` where `P` = ``self``.
 
         Only points on the elliptic curve containing self and defined
         over the base field are included.
@@ -896,7 +900,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         - ``poly_only`` -- bool (default: False); if True return
           polynomial whose roots give all possible `x`-coordinates of
-          `m`-th roots of self.
+          `m`-th roots of ``self``.
 
         OUTPUT:
 
@@ -926,63 +930,64 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         We create a curve over a non-prime finite field with group of
         order `18`::
 
-            sage: k.<a> = GF((5,2))
-            sage: E = EllipticCurve(k, [1,2+a,3,4*a,2])
-            sage: P = E([3,3*a+4])
-            sage: factor(E.order())
+            sage: k.<a> = GF((5,2))                                                     # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(k, [1,2+a,3,4*a,2])                                 # optional - sage.rings.finite_rings
+            sage: P = E([3, 3*a+4])                                                     # optional - sage.rings.finite_rings
+            sage: factor(E.order())                                                     # optional - sage.rings.finite_rings
             2 * 3^2
-            sage: P.order()
+            sage: P.order()                                                             # optional - sage.rings.finite_rings
             9
 
         We find the `1`-division points as a consistency check -- there
         is just one, of course::
 
-            sage: P.division_points(1)
+            sage: P.division_points(1)                                                  # optional - sage.rings.finite_rings
             [(3 : 3*a + 4 : 1)]
 
         The point `P` has order coprime to 2 but divisible by 3, so::
 
-            sage: P.division_points(2)
+            sage: P.division_points(2)                                                  # optional - sage.rings.finite_rings
             [(2*a + 1 : 3*a + 4 : 1), (3*a + 1 : a : 1)]
 
         We check that each of the 2-division points works as claimed::
 
-            sage: [2*Q for Q in P.division_points(2)]
+            sage: [2*Q for Q in P.division_points(2)]                                   # optional - sage.rings.finite_rings
             [(3 : 3*a + 4 : 1), (3 : 3*a + 4 : 1)]
 
         Some other checks::
 
-            sage: P.division_points(3)
+            sage: P.division_points(3)                                                  # optional - sage.rings.finite_rings
             []
-            sage: P.division_points(4)
+            sage: P.division_points(4)                                                  # optional - sage.rings.finite_rings
             [(0 : 3*a + 2 : 1), (1 : 0 : 1)]
-            sage: P.division_points(5)
+            sage: P.division_points(5)                                                  # optional - sage.rings.finite_rings
             [(1 : 1 : 1)]
 
         An example over a number field (see :trac:`3383`)::
 
             sage: E = EllipticCurve('19a1')
-            sage: K.<t> = NumberField(x^9-3*x^8-4*x^7+16*x^6-3*x^5-21*x^4+5*x^3+7*x^2-7*x+1)
-            sage: EK = E.base_extend(K)
-            sage: E(0).division_points(3)
+            sage: K.<t> = NumberField(x^9 - 3*x^8 - 4*x^7 + 16*x^6 - 3*x^5              # optional - sage.rings.number_field
+            ....:                     - 21*x^4 + 5*x^3 + 7*x^2 - 7*x + 1)
+            sage: EK = E.base_extend(K)                                                 # optional - sage.rings.number_field
+            sage: E(0).division_points(3)                                               # optional - sage.rings.number_field
             [(0 : 1 : 0), (5 : -10 : 1), (5 : 9 : 1)]
-            sage: EK(0).division_points(3)
+            sage: EK(0).division_points(3)                                              # optional - sage.rings.number_field
             [(0 : 1 : 0), (5 : 9 : 1), (5 : -10 : 1)]
-            sage: E(0).division_points(9)
+            sage: E(0).division_points(9)                                               # optional - sage.rings.number_field
             [(0 : 1 : 0), (5 : -10 : 1), (5 : 9 : 1)]
-            sage: EK(0).division_points(9)
+            sage: EK(0).division_points(9)                                              # optional - sage.rings.number_field
             [(0 : 1 : 0), (5 : 9 : 1), (5 : -10 : 1), (-150/121*t^8 + 414/121*t^7 + 1481/242*t^6 - 2382/121*t^5 - 103/242*t^4 + 629/22*t^3 - 367/242*t^2 - 1307/121*t + 625/121 : 35/484*t^8 - 133/242*t^7 + 445/242*t^6 - 799/242*t^5 + 373/484*t^4 + 113/22*t^3 - 2355/484*t^2 - 753/242*t + 1165/484 : 1), (-150/121*t^8 + 414/121*t^7 + 1481/242*t^6 - 2382/121*t^5 - 103/242*t^4 + 629/22*t^3 - 367/242*t^2 - 1307/121*t + 625/121 : -35/484*t^8 + 133/242*t^7 - 445/242*t^6 + 799/242*t^5 - 373/484*t^4 - 113/22*t^3 + 2355/484*t^2 + 753/242*t - 1649/484 : 1), (-1383/484*t^8 + 970/121*t^7 + 3159/242*t^6 - 5211/121*t^5 + 37/484*t^4 + 654/11*t^3 - 909/484*t^2 - 4831/242*t + 6791/484 : 927/121*t^8 - 5209/242*t^7 - 8187/242*t^6 + 27975/242*t^5 - 1147/242*t^4 - 1729/11*t^3 + 1566/121*t^2 + 12873/242*t - 10871/242 : 1), (-1383/484*t^8 + 970/121*t^7 + 3159/242*t^6 - 5211/121*t^5 + 37/484*t^4 + 654/11*t^3 - 909/484*t^2 - 4831/242*t + 6791/484 : -927/121*t^8 + 5209/242*t^7 + 8187/242*t^6 - 27975/242*t^5 + 1147/242*t^4 + 1729/11*t^3 - 1566/121*t^2 - 12873/242*t + 10629/242 : 1), (-4793/484*t^8 + 6791/242*t^7 + 10727/242*t^6 - 18301/121*t^5 + 2347/484*t^4 + 2293/11*t^3 - 7311/484*t^2 - 17239/242*t + 26767/484 : 30847/484*t^8 - 21789/121*t^7 - 34605/121*t^6 + 117164/121*t^5 - 10633/484*t^4 - 29437/22*t^3 + 39725/484*t^2 + 55428/121*t - 176909/484 : 1), (-4793/484*t^8 + 6791/242*t^7 + 10727/242*t^6 - 18301/121*t^5 + 2347/484*t^4 + 2293/11*t^3 - 7311/484*t^2 - 17239/242*t + 26767/484 : -30847/484*t^8 + 21789/121*t^7 + 34605/121*t^6 - 117164/121*t^5 + 10633/484*t^4 + 29437/22*t^3 - 39725/484*t^2 - 55428/121*t + 176425/484 : 1)]
 
         TESTS:
 
         Check that :trac:`24844` is fixed::
 
-            sage: p = next_prime(1000000)
-            sage: E = EllipticCurve(GF(p), 123, 456)
-            sage: pts = E(0).division_points(3)
-            sage: P = pts[1]; P
+            sage: p = next_prime(1000000)                                               # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(p), 123, 456)                                    # optional - sage.rings.finite_rings
+            sage: pts = E(0).division_points(3)                                         # optional - sage.rings.finite_rings
+            sage: P = pts[1]; P                                                         # optional - sage.rings.finite_rings
             (389063 : 124244 : 1)
-            sage: P._order
+            sage: P._order                                                              # optional - sage.rings.finite_rings
             3
 
         When we successfully divide a point known to have infinite
@@ -993,7 +998,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P = E(-1,0)
             sage: P.order()
             +Infinity
-            sage: pts = P.division_points(3);   len(pts)
+            sage: pts = P.division_points(3);  len(pts)
             1
             sage: [(Q,Q._order) for Q in pts]
             [((0 : -1 : 1), +Infinity)]
@@ -1005,17 +1010,17 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
           sage: E = EllipticCurve([1, 0, 1, -19, 26])
           sage: [(Q,Q._order) for Q in E(0).division_points(12)]
           [((-5 : 2 : 1), 2),
-          ((-2 : -7 : 1), 6),
-          ((-2 : 8 : 1), 6),
-          ((0 : 1 : 0), 1),
-          ((1 : -4 : 1), 6),
-          ((1 : 2 : 1), 6),
-          ((7/4 : -11/8 : 1), 2),
-          ((3 : -2 : 1), 2),
-          ((4 : -7 : 1), 3),
-          ((4 : 2 : 1), 3),
-          ((13 : -52 : 1), 6),
-          ((13 : 38 : 1), 6)]
+           ((-2 : -7 : 1), 6),
+           ((-2 : 8 : 1), 6),
+           ((0 : 1 : 0), 1),
+           ((1 : -4 : 1), 6),
+           ((1 : 2 : 1), 6),
+           ((7/4 : -11/8 : 1), 2),
+           ((3 : -2 : 1), 2),
+           ((4 : -7 : 1), 3),
+           ((4 : 2 : 1), 3),
+           ((13 : -52 : 1), 6),
+           ((13 : 38 : 1), 6)]
           sage: P = E(4,-7)
           sage: P.order()
           3
@@ -1177,7 +1182,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
     def set_order(self, value, *, check=True):
         r"""
-        Set the value of self._order to value.
+        Set the value of ``self._order`` to ``value``.
 
         Use this when you know a priori the order of this point to avoid a
         potentially expensive order calculation.
@@ -1186,9 +1191,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         - ``value`` -- positive integer
 
-        OUTPUT:
-
-        ``None``
+        OUTPUT: ``None``
 
         EXAMPLES:
 
@@ -1196,10 +1199,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         ::
 
-            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
-            sage: G = E(5, 0)
-            sage: G.set_order(2)
-            sage: 2*G
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12           # optional - sage.rings.finite_rings
+            sage: G = E(5, 0)                                                           # optional - sage.rings.finite_rings
+            sage: G.set_order(2)                                                        # optional - sage.rings.finite_rings
+            sage: 2*G                                                                   # optional - sage.rings.finite_rings
             (0 : 1 : 0)
 
         We now give a more interesting case, the NIST-P521 curve. Its
@@ -1210,27 +1213,27 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
             sage: p = 2^521 - 1
             sage: prev_proof_state = proof.arithmetic()
-            sage: proof.arithmetic(False) # turn off primality checking
-            sage: F = GF(p)
+            sage: proof.arithmetic(False)  # turn off primality checking
+            sage: F = GF(p)                                                             # optional - sage.rings.finite_rings
             sage: A = p - 3
             sage: B = 1093849038073734274511112390766805569936207598951683748994586394495953116150735016013708737573759623248592132296706313309438452531591012912142327488478985984
             sage: q = 6864797660130609714981900799081393217269435300143305409394463459185543183397655394245057746333217197532963996371363321113864768612440380340372808892707005449
-            sage: E = EllipticCurve([F(A), F(B)])
-            sage: G = E.random_point()
-            sage: G.set_order(q)
-            sage: G.order() * G  # This takes practically no time.
+            sage: E = EllipticCurve([F(A), F(B)])                                       # optional - sage.rings.finite_rings
+            sage: G = E.random_point()                                                  # optional - sage.rings.finite_rings
+            sage: G.set_order(q)                                                        # optional - sage.rings.finite_rings
+            sage: G.order() * G  # This takes practically no time.                      # optional - sage.rings.finite_rings
             (0 : 1 : 0)
             sage: proof.arithmetic(prev_proof_state) # restore state
 
         It is an error to pass a `value` equal to `0`::
 
-            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
-            sage: G = E.random_point()
-            sage: G.set_order(0)
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12           # optional - sage.rings.finite_rings
+            sage: G = E.random_point()                                                  # optional - sage.rings.finite_rings
+            sage: G.set_order(0)                                                        # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Value 0 illegal for point order
-            sage: G.set_order(1000)
+            sage: G.set_order(1000)                                                     # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Value 1000 illegal: outside max Hasse bound
@@ -1239,26 +1242,26 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         order of this point. How unlikely is determined by the factorization of
         the actual order, and the actual group structure::
 
-            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
-            sage: G = E(5, 0)   # G has order 2
-            sage: G.set_order(11)
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12           # optional - sage.rings.finite_rings
+            sage: G = E(5, 0)   # G has order 2                                         # optional - sage.rings.finite_rings
+            sage: G.set_order(11)                                                       # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Value 11 illegal: 11 * (5 : 0 : 1) is not the identity
 
-        However, set_order can be fooled, though it's not likely in "real cases
+        However, ``set_order`` can be fooled, though it's not likely in "real cases
         of interest". For instance, the order can be set to a multiple the
         actual order::
 
-            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
-            sage: G = E(5, 0)   # G has order 2
-            sage: G.set_order(8)
-            sage: G.order()
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12           # optional - sage.rings.finite_rings
+            sage: G = E(5, 0)   # G has order 2                                         # optional - sage.rings.finite_rings
+            sage: G.set_order(8)                                                        # optional - sage.rings.finite_rings
+            sage: G.order()                                                             # optional - sage.rings.finite_rings
             8
 
         AUTHORS:
 
-         - Mariah Lenox (2011-02-16)
+        - Mariah Lenox (2011-02-16)
         """
         value = Integer(value)
 
@@ -1292,27 +1295,27 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         EXAMPLES::
 
-            sage: F.<a>=GF((2,5))
-            sage: E=EllipticCurve(F,[0,0,1,1,1])
-            sage: P = E(a^4 + 1, a^3)
-            sage: Q = E(a^4, a^4 + a^3)
-            sage: O = E(0)
-            sage: P._line_(P,-2*P) == 0
+            sage: F.<a> = GF((2,5))                                                     # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F,[0,0,1,1,1])                                      # optional - sage.rings.finite_rings
+            sage: P = E(a^4 + 1, a^3)                                                   # optional - sage.rings.finite_rings
+            sage: Q = E(a^4, a^4 + a^3)                                                 # optional - sage.rings.finite_rings
+            sage: O = E(0)                                                              # optional - sage.rings.finite_rings
+            sage: P._line_(P,-2*P) == 0                                                 # optional - sage.rings.finite_rings
             True
-            sage: P._line_(Q,-(P+Q)) == 0
+            sage: P._line_(Q,-(P+Q)) == 0                                               # optional - sage.rings.finite_rings
             True
-            sage: O._line_(O,Q) == F(1)
+            sage: O._line_(O,Q) == F(1)                                                 # optional - sage.rings.finite_rings
             True
-            sage: P._line_(O,Q) == a^4 - a^4 + 1
+            sage: P._line_(O,Q) == a^4 - a^4 + 1                                        # optional - sage.rings.finite_rings
             True
-            sage: P._line_(13*P,Q) == a^4
+            sage: P._line_(13*P,Q) == a^4                                               # optional - sage.rings.finite_rings
             True
-            sage: P._line_(P,Q) == a^4 + a^3 + a^2 + 1
+            sage: P._line_(P,Q) == a^4 + a^3 + a^2 + 1                                  # optional - sage.rings.finite_rings
             True
 
         See :trac:`7116`::
 
-            sage: P._line_ (Q,O)
+            sage: P._line_ (Q,O)                                                        # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Q must be nonzero.
@@ -1365,123 +1368,125 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         OUTPUT:
 
-        An element in the base field self.curve().base_field()
-        A ValueError is raised if `Q` is zero.
+        An element in the base field ``self.curve().base_field()``.
+        A :class:`ValueError` is raised if `Q` is zero.
 
         EXAMPLES::
 
-            sage: F.<a>=GF((2,5))
-            sage: E=EllipticCurve(F,[0,0,1,1,1])
-            sage: P = E(a^4 + 1, a^3)
-            sage: Fx.<b>=GF((2,(4*5)))
-            sage: Ex=EllipticCurve(Fx,[0,0,1,1,1])
-            sage: phi=Hom(F,Fx)(F.gen().minpoly().roots(Fx)[0][0])
-            sage: Px=Ex(phi(P.xy()[0]),phi(P.xy()[1]))
-            sage: Qx = Ex(b^19 + b^18 + b^16 + b^12 + b^10 + b^9 + b^8 + b^5 + b^3 + 1, b^18 + b^13 + b^10 + b^8 + b^5 + b^4 + b^3 + b)
-            sage: Px._miller_(Qx,41) == b^17 + b^13 + b^12 + b^9 + b^8 + b^6 + b^4 + 1
+            sage: F.<a> = GF((2,5))                                                     # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F, [0,0,1,1,1])                                     # optional - sage.rings.finite_rings
+            sage: P = E(a^4 + 1, a^3)                                                   # optional - sage.rings.finite_rings
+            sage: Fx.<b> = GF((2,(4*5)))                                                # optional - sage.rings.finite_rings
+            sage: Ex = EllipticCurve(Fx, [0,0,1,1,1])                                   # optional - sage.rings.finite_rings
+            sage: phi = Hom(F,Fx)(F.gen().minpoly().roots(Fx)[0][0])                    # optional - sage.rings.finite_rings
+            sage: Px = Ex(phi(P.xy()[0]), phi(P.xy()[1]))                               # optional - sage.rings.finite_rings
+            sage: Qx = Ex(b^19 + b^18 + b^16 + b^12 + b^10 + b^9 + b^8 + b^5 + b^3 + 1, # optional - sage.rings.finite_rings
+            ....:         b^18 + b^13 + b^10 + b^8 + b^5 + b^4 + b^3 + b)
+            sage: Px._miller_(Qx,41) == b^17 + b^13 + b^12 + b^9 + b^8 + b^6 + b^4 + 1  # optional - sage.rings.finite_rings
             True
-            sage: Qx._miller_(Px,41) == b^13 + b^10 + b^8 + b^7 + b^6 + b^5
+            sage: Qx._miller_(Px,41) == b^13 + b^10 + b^8 + b^7 + b^6 + b^5             # optional - sage.rings.finite_rings
             True
-            sage: P._miller_(E(0),41)
+            sage: P._miller_(E(0),41)                                                   # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Q must be nonzero.
 
         An example of even order::
 
-            sage: F.<a> = GF((19,4))
-            sage: E = EllipticCurve(F,[-1,0])
-            sage: P = E(15*a^3 + 17*a^2 + 14*a + 13,16*a^3 + 7*a^2 + a + 18)
-            sage: Q = E(10*a^3 + 16*a^2 + 4*a + 2, 6*a^3 + 4*a^2 + 3*a + 2)
-            sage: x=P.weil_pairing(Q,360)
-            sage: x^360 == F(1)
+            sage: F.<a> = GF((19,4))                                                    # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F, [-1,0])                                          # optional - sage.rings.finite_rings
+            sage: P = E(15*a^3 + 17*a^2 + 14*a + 13,16*a^3 + 7*a^2 + a + 18)            # optional - sage.rings.finite_rings
+            sage: Q = E(10*a^3 + 16*a^2 + 4*a + 2, 6*a^3 + 4*a^2 + 3*a + 2)             # optional - sage.rings.finite_rings
+            sage: x = P.weil_pairing(Q, 360)                                            # optional - sage.rings.finite_rings
+            sage: x^360 == F(1)                                                         # optional - sage.rings.finite_rings
             True
 
         You can use the _miller_ function on linearly dependent
         points, but with the risk of a dividing with zero::
 
-            sage: Px._miller_(2*Px,41)
+            sage: Px._miller_(2*Px, 41)                                                 # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero in finite field
 
         A small example of embedding degree 6::
 
-            sage: q = 401; F = GF(q); a = 146; b = 400; k = 6
-            sage: E = EllipticCurve([F(a), F(b)])
-            sage: R.<x> = F[]; K.<a> = GF(q^k, modulus=x^6 + 4*x^4 + 115*x^3 + 81*x^2 + 51*x + 3)
-            sage: EK = E.base_extend(K)
-            sage: P = E([F(338), F(227)])
-            sage: Q_x = 333*a^5 + 391*a^4 + 160*a^3 + 335*a^2 + 71*a + 93
-            sage: Q_y = 343*a^5 + 273*a^4 + 26*a^3 + 342*a^2 + 340*a + 210
-            sage: Q = EK([Q_x, Q_y])
-            sage: P._miller_(Q, 127)
+            sage: q = 401; F = GF(q); a = 146; b = 400; k = 6                           # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve([F(a), F(b)])                                       # optional - sage.rings.finite_rings
+            sage: R.<x> = F[]                                                           # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(q^k, modulus=x^6 + 4*x^4 + 115*x^3 + 81*x^2 + 51*x + 3)    # optional - sage.rings.finite_rings
+            sage: EK = E.base_extend(K)                                                 # optional - sage.rings.finite_rings
+            sage: P = E([F(338), F(227)])                                               # optional - sage.rings.finite_rings
+            sage: Q_x = 333*a^5 + 391*a^4 + 160*a^3 + 335*a^2 + 71*a + 93               # optional - sage.rings.finite_rings
+            sage: Q_y = 343*a^5 + 273*a^4 + 26*a^3 + 342*a^2 + 340*a + 210              # optional - sage.rings.finite_rings
+            sage: Q = EK([Q_x, Q_y])                                                    # optional - sage.rings.finite_rings
+            sage: P._miller_(Q, 127)                                                    # optional - sage.rings.finite_rings
             371*a^5 + 39*a^4 + 355*a^3 + 233*a^2 + 20*a + 275
 
         A series of small examples and small torsions.  We start with
         `n=1`, which is trivial: the function is the constant
         1::
 
-            sage: E = EllipticCurve([GF(7)(0), 2])
-            sage: P = E(5, 1); Q = E(0, 3); I = E(0)
-            sage: I._miller_(P, 1)
+            sage: E = EllipticCurve([GF(7)(0), 2])                                      # optional - sage.rings.finite_rings
+            sage: P = E(5, 1); Q = E(0, 3); I = E(0)                                    # optional - sage.rings.finite_rings
+            sage: I._miller_(P, 1)                                                      # optional - sage.rings.finite_rings
             1
-            sage: I._miller_(Q, 1)
+            sage: I._miller_(Q, 1)                                                      # optional - sage.rings.finite_rings
             1
 
         A two-torsion example. In this case `f_{n,P}(Q) = x_Q - x_P`::
 
-            sage: E = EllipticCurve([GF(7)(-1), 0])
-            sage: P = E(0,0); Q = E(1, 0);
-            sage: P._miller_(P, 2)
+            sage: E = EllipticCurve([GF(7)(-1), 0])                                     # optional - sage.rings.finite_rings
+            sage: P = E(0,0); Q = E(1, 0);                                              # optional - sage.rings.finite_rings
+            sage: P._miller_(P, 2)                                                      # optional - sage.rings.finite_rings
             0
-            sage: Q._miller_(Q, 2)
+            sage: Q._miller_(Q, 2)                                                      # optional - sage.rings.finite_rings
             0
-            sage: P._miller_(Q, 2)
+            sage: P._miller_(Q, 2)                                                      # optional - sage.rings.finite_rings
             1
-            sage: Q._miller_(P, 2)
+            sage: Q._miller_(P, 2)                                                      # optional - sage.rings.finite_rings
             6
 
         A three-torsion example::
 
-            sage: E = EllipticCurve([GF(7)(0), 2])
-            sage: P = E(5, 1); Q = E(0, 3);
-            sage: P._miller_(Q, 3)
+            sage: E = EllipticCurve([GF(7)(0), 2])                                      # optional - sage.rings.finite_rings
+            sage: P = E(5, 1); Q = E(0, 3);                                             # optional - sage.rings.finite_rings
+            sage: P._miller_(Q, 3)                                                      # optional - sage.rings.finite_rings
             4
 
         A 4-torsion example::
 
-            sage: E = EllipticCurve([GF(7)(-1), 0])
-            sage: P = E(5, 1); Q = E(4, 2)
-            sage: P._miller_(Q, 4)
+            sage: E = EllipticCurve([GF(7)(-1), 0])                                     # optional - sage.rings.finite_rings
+            sage: P = E(5, 1); Q = E(4, 2)                                              # optional - sage.rings.finite_rings
+            sage: P._miller_(Q, 4)                                                      # optional - sage.rings.finite_rings
             3
 
         A 5-torsion example::
 
-            sage: E = EllipticCurve([GF(7)(-1), 4])
-            sage: P = E(4, 1); Q = E(6, 5)
-            sage: P._miller_(Q, 5)
+            sage: E = EllipticCurve([GF(7)(-1), 4])                                     # optional - sage.rings.finite_rings
+            sage: P = E(4, 1); Q = E(6, 5)                                              # optional - sage.rings.finite_rings
+            sage: P._miller_(Q, 5)                                                      # optional - sage.rings.finite_rings
             1
 
         A 6-torsion example::
 
-            sage: E = EllipticCurve([GF(7)(3), 1])
-            sage: P = E(5, 1); Q = E(3, 3)
-            sage: P._miller_(Q, 6)
+            sage: E = EllipticCurve([GF(7)(3), 1])                                      # optional - sage.rings.finite_rings
+            sage: P = E(5, 1); Q = E(3, 3)                                              # optional - sage.rings.finite_rings
+            sage: P._miller_(Q, 6)                                                      # optional - sage.rings.finite_rings
             5
 
         An example which is part of an ate pairing calculation. The trace of
         the curve is negative, so it should exercise the `n<0` case in the
         code::
 
-            sage: p = 2017; A = 1; B = 30; r = 29; t = -70; k = 7;
-            sage: F = GF(p); R.<x> = F[]
-            sage: E = EllipticCurve([F(A), F(B)]); P = E(369, 716)
-            sage: K.<a> = GF(p^k, modulus=x^k+2); EK = E.base_extend(K)
-            sage: Qx = 1226*a^6 + 1778*a^5 + 660*a^4 + 1791*a^3 + 1750*a^2 + 867*a + 770
-            sage: Qy = 1764*a^6 + 198*a^5 + 1206*a^4 + 406*a^3 + 1200*a^2 + 273*a + 1712
-            sage: Q = EK(Qx, Qy)
-            sage: Q._miller_(P, t-1)
+            sage: p = 2017; A = 1; B = 30; r = 29; t = -70; k = 7
+            sage: F = GF(p); R.<x> = F[]                                                    # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve([F(A), F(B)]); P = E(369, 716)                          # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(p^k, modulus=x^k+2); EK = E.base_extend(K)                     # optional - sage.rings.finite_rings
+            sage: Qx = 1226*a^6 + 1778*a^5 + 660*a^4 + 1791*a^3 + 1750*a^2 + 867*a + 770    # optional - sage.rings.finite_rings
+            sage: Qy = 1764*a^6 + 198*a^5 + 1206*a^4 + 406*a^3 + 1200*a^2 + 273*a + 1712    # optional - sage.rings.finite_rings
+            sage: Q = EK(Qx, Qy)                                                            # optional - sage.rings.finite_rings
+            sage: Q._miller_(P, t - 1)                                                      # optional - sage.rings.finite_rings
             1311*a^6 + 1362*a^5 + 1177*a^4 + 807*a^3 + 1331*a^2 + 1530*a + 1931
 
         ALGORITHM:
@@ -1549,64 +1554,66 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         EXAMPLES::
 
-            sage: F.<a>=GF((2,5))
-            sage: E=EllipticCurve(F,[0,0,1,1,1])
-            sage: P = E(a^4 + 1, a^3)
-            sage: Fx.<b>=GF((2,4*5))
-            sage: Ex=EllipticCurve(Fx,[0,0,1,1,1])
-            sage: phi=Hom(F,Fx)(F.gen().minpoly().roots(Fx)[0][0])
-            sage: Px=Ex(phi(P.xy()[0]),phi(P.xy()[1]))
-            sage: O = Ex(0)
-            sage: Qx = Ex(b^19 + b^18 + b^16 + b^12 + b^10 + b^9 + b^8 + b^5 + b^3 + 1, b^18 + b^13 + b^10 + b^8 + b^5 + b^4 + b^3 + b)
-            sage: Px.weil_pairing(Qx,41) == b^19 + b^15 + b^9 + b^8 + b^6 + b^4 + b^3 + b^2 + 1
+            sage: F.<a> = GF((2,5))                                                     # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F, [0,0,1,1,1])                                     # optional - sage.rings.finite_rings
+            sage: P = E(a^4 + 1, a^3)                                                   # optional - sage.rings.finite_rings
+            sage: Fx.<b> = GF((2, 4*5))                                                 # optional - sage.rings.finite_rings
+            sage: Ex = EllipticCurve(Fx, [0,0,1,1,1])                                   # optional - sage.rings.finite_rings
+            sage: phi = Hom(F, Fx)(F.gen().minpoly().roots(Fx)[0][0])                   # optional - sage.rings.finite_rings
+            sage: Px = Ex(phi(P.xy()[0]), phi(P.xy()[1]))                               # optional - sage.rings.finite_rings
+            sage: O = Ex(0)                                                             # optional - sage.rings.finite_rings
+            sage: Qx = Ex(b^19 + b^18 + b^16 + b^12 + b^10 + b^9 + b^8 + b^5 + b^3 + 1,             # optional - sage.rings.finite_rings
+            ....:         b^18 + b^13 + b^10 + b^8 + b^5 + b^4 + b^3 + b)
+            sage: Px.weil_pairing(Qx, 41) == b^19 + b^15 + b^9 + b^8 + b^6 + b^4 + b^3 + b^2 + 1    # optional - sage.rings.finite_rings
             True
-            sage: Px.weil_pairing(17*Px,41) == Fx(1)
+            sage: Px.weil_pairing(17*Px, 41) == Fx(1)                                   # optional - sage.rings.finite_rings
             True
-            sage: Px.weil_pairing(O,41) == Fx(1)
+            sage: Px.weil_pairing(O, 41) == Fx(1)                                       # optional - sage.rings.finite_rings
             True
 
         An error is raised if either point is not `n`-torsion::
 
-            sage: Px.weil_pairing(O,40)
+            sage: Px.weil_pairing(O, 40)                                                # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: points must both be n-torsion
 
         A larger example (see :trac:`4964`)::
 
-            sage: P,Q = EllipticCurve(GF((19,4),'a'),[-1,0]).gens()
-            sage: P.order(), Q.order()
+            sage: P, Q = EllipticCurve(GF((19,4),'a'), [-1,0]).gens()                   # optional - sage.rings.finite_rings
+            sage: P.order(), Q.order()                                                  # optional - sage.rings.finite_rings
             (360, 360)
-            sage: z = P.weil_pairing(Q,360)
-            sage: z.multiplicative_order()
+            sage: z = P.weil_pairing(Q, 360)                                            # optional - sage.rings.finite_rings
+            sage: z.multiplicative_order()                                              # optional - sage.rings.finite_rings
             360
 
         An example over a number field::
 
-            sage: P,Q = EllipticCurve('11a1').change_ring(CyclotomicField(5)).torsion_subgroup().gens()
-            sage: P,Q = (P.element(), Q.element())
-            sage: (P.order(),Q.order())
+            sage: E = EllipticCurve('11a1').change_ring(CyclotomicField(5))             # optional - sage.rings.number_field
+            sage: P, Q = E.torsion_subgroup().gens()                                    # optional - sage.rings.number_field
+            sage: P, Q = (P.element(), Q.element())                                     # optional - sage.rings.number_field
+            sage: (P.order(), Q.order())                                                # optional - sage.rings.number_field
             (5, 5)
-            sage: P.weil_pairing(Q,5)
+            sage: P.weil_pairing(Q, 5)                                                  # optional - sage.rings.number_field
             zeta5^2
-            sage: Q.weil_pairing(P,5)
+            sage: Q.weil_pairing(P, 5)                                                  # optional - sage.rings.number_field
             zeta5^3
 
         TESTS:
 
         Check that the original Sage implementation still works::
 
-            sage: GF(65537^2).inject_variables()
+            sage: GF(65537^2).inject_variables()                                        # optional - sage.rings.finite_rings
             Defining z2
-            sage: E = EllipticCurve(GF(65537^2), [0,1])
-            sage: P = E(22, 28891)
-            sage: Q = E(-93, 40438*z2 + 31573)
-            sage: P.weil_pairing(Q, 7282, algorithm='sage')
+            sage: E = EllipticCurve(GF(65537^2), [0,1])                                 # optional - sage.rings.finite_rings
+            sage: P = E(22, 28891)                                                      # optional - sage.rings.finite_rings
+            sage: Q = E(-93, 40438*z2 + 31573)                                          # optional - sage.rings.finite_rings
+            sage: P.weil_pairing(Q, 7282, algorithm='sage')                             # optional - sage.rings.finite_rings
             19937*z2 + 65384
 
         Passing an unknown ``algorithm=`` argument should fail::
 
-            sage: P.weil_pairing(Q, 7282, algorithm='_invalid_')
+            sage: P.weil_pairing(Q, 7282, algorithm='_invalid_')                        # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm
@@ -1618,7 +1625,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         - For ``algorithm='sage'``:
           Implemented using Proposition 8 in [Mil2004]_.  The value 1 is
           returned for linearly dependent input points.  This condition
-          is caught via a DivisionByZeroError, since the use of a
+          is caught via a :class:`ZeroDivisionError`, since the use of a
           discrete logarithm test for linear dependence is much too slow
           for large `n`.
 
@@ -1718,87 +1725,89 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         OUTPUT:
 
-        An `n`'th root of unity in the base field self.curve().base_field()
+        An `n`'th root of unity in the base field ``self.curve().base_field()``
 
         EXAMPLES:
 
         A simple example, pairing a point with itself, and pairing a point with
         another rational point::
 
-            sage: p = 103; A = 1; B = 18; E = EllipticCurve(GF(p), [A, B])
-            sage: P = E(33, 91); n = P.order(); n
+            sage: p = 103; A = 1; B = 18; E = EllipticCurve(GF(p), [A, B])              # optional - sage.rings.finite_rings
+            sage: P = E(33, 91); n = P.order(); n                                       # optional - sage.rings.finite_rings
             19
-            sage: k = GF(n)(p).multiplicative_order(); k
+            sage: k = GF(n)(p).multiplicative_order(); k                                # optional - sage.rings.finite_rings
             6
-            sage: P.tate_pairing(P, n, k)
+            sage: P.tate_pairing(P, n, k)                                               # optional - sage.rings.finite_rings
             1
-            sage: Q = E(87, 51)
-            sage: P.tate_pairing(Q, n, k)
+            sage: Q = E(87, 51)                                                         # optional - sage.rings.finite_rings
+            sage: P.tate_pairing(Q, n, k)                                               # optional - sage.rings.finite_rings
             1
             sage: set_random_seed(35)
-            sage: P.tate_pairing(P,n,k)
+            sage: P.tate_pairing(P, n, k)                                               # optional - sage.rings.finite_rings
             1
 
-        We now let Q be a point on the same curve as above, but defined over
+        We now let `Q` be a point on the same curve as above, but defined over
         the pairing extension field, and we also demonstrate the bilinearity of
         the pairing::
 
-            sage: K.<a> = GF((p,k))
-            sage: EK = E.base_extend(K); P = EK(P)
-            sage: Qx = 69*a^5 + 96*a^4 + 22*a^3 + 86*a^2 + 6*a + 35
-            sage: Qy = 34*a^5 + 24*a^4 + 16*a^3 + 41*a^2 + 4*a + 40
-            sage: Q = EK(Qx, Qy);
+            sage: K.<a> = GF((p,k))                                                     # optional - sage.rings.finite_rings
+            sage: EK = E.base_extend(K); P = EK(P)                                      # optional - sage.rings.finite_rings
+            sage: Qx = 69*a^5 + 96*a^4 + 22*a^3 + 86*a^2 + 6*a + 35                     # optional - sage.rings.finite_rings
+            sage: Qy = 34*a^5 + 24*a^4 + 16*a^3 + 41*a^2 + 4*a + 40                     # optional - sage.rings.finite_rings
+            sage: Q = EK(Qx, Qy);                                                       # optional - sage.rings.finite_rings
 
         Multiply by cofactor so Q has order n::
 
-            sage: h = 551269674; Q = h*Q
-            sage: P = EK(P); P.tate_pairing(Q, n, k)
+            sage: h = 551269674; Q = h*Q                                                # optional - sage.rings.finite_rings
+            sage: P = EK(P); P.tate_pairing(Q, n, k)                                    # optional - sage.rings.finite_rings
             24*a^5 + 34*a^4 + 3*a^3 + 69*a^2 + 86*a + 45
-            sage: s = Integer(randrange(1,n))
-            sage: ans1 = (s*P).tate_pairing(Q, n, k)
-            sage: ans2 = P.tate_pairing(s*Q, n, k)
-            sage: ans3 = P.tate_pairing(Q, n, k)^s
-            sage: ans1 == ans2 == ans3
+            sage: s = Integer(randrange(1,n))                                           # optional - sage.rings.finite_rings
+            sage: ans1 = (s*P).tate_pairing(Q, n, k)                                    # optional - sage.rings.finite_rings
+            sage: ans2 = P.tate_pairing(s*Q, n, k)                                      # optional - sage.rings.finite_rings
+            sage: ans3 = P.tate_pairing(Q, n, k)^s                                      # optional - sage.rings.finite_rings
+            sage: ans1 == ans2 == ans3                                                  # optional - sage.rings.finite_rings
             True
-            sage: (ans1 != 1) and (ans1^n == 1)
+            sage: (ans1 != 1) and (ans1^n == 1)                                         # optional - sage.rings.finite_rings
             True
 
         Here is an example of using the Tate pairing to compute the Weil
         pairing (using the same data as above)::
 
-            sage: e = Integer((p^k-1)/n); e
+            sage: e = Integer((p^k-1)/n); e                                             # optional - sage.rings.finite_rings
             62844857712
-            sage: P.weil_pairing(Q, n)^e
+            sage: P.weil_pairing(Q, n)^e                                                # optional - sage.rings.finite_rings
             94*a^5 + 99*a^4 + 29*a^3 + 45*a^2 + 57*a + 34
-            sage: P.tate_pairing(Q, n, k) == P._miller_(Q, n)^e
+            sage: P.tate_pairing(Q, n, k) == P._miller_(Q, n)^e                         # optional - sage.rings.finite_rings
             True
-            sage: Q.tate_pairing(P, n, k) == Q._miller_(P, n)^e
+            sage: Q.tate_pairing(P, n, k) == Q._miller_(P, n)^e                         # optional - sage.rings.finite_rings
             True
-            sage: P.tate_pairing(Q, n, k)/Q.tate_pairing(P, n, k)
+            sage: P.tate_pairing(Q, n, k)/Q.tate_pairing(P, n, k)                       # optional - sage.rings.finite_rings
             94*a^5 + 99*a^4 + 29*a^3 + 45*a^2 + 57*a + 34
 
         An example where we have to pass the base field size (and we again have
         agreement with the Weil pairing)::
 
-            sage: F.<a>=GF((2,5))
-            sage: E=EllipticCurve(F,[0,0,1,1,1])
-            sage: P = E(a^4 + 1, a^3)
-            sage: Fx.<b>=GF((2,4*5))
-            sage: Ex=EllipticCurve(Fx,[0,0,1,1,1])
-            sage: phi=Hom(F,Fx)(F.gen().minpoly().roots(Fx)[0][0])
-            sage: Px=Ex(phi(P.xy()[0]),phi(P.xy()[1]))
-            sage: Qx = Ex(b^19+b^18+b^16+b^12+b^10+b^9+b^8+b^5+b^3+1, b^18+b^13+b^10+b^8+b^5+b^4+b^3+b)
-            sage: Px.tate_pairing(Qx, n=41, k=4)
+            sage: F.<a> = GF((2,5))                                                     # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F, [0,0,1,1,1])                                     # optional - sage.rings.finite_rings
+            sage: P = E(a^4 + 1, a^3)                                                   # optional - sage.rings.finite_rings
+            sage: Fx.<b> = GF((2,4*5))                                                  # optional - sage.rings.finite_rings
+            sage: Ex = EllipticCurve(Fx,[0,0,1,1,1])                                    # optional - sage.rings.finite_rings
+            sage: phi = Hom(F, Fx)(F.gen().minpoly().roots(Fx)[0][0])                   # optional - sage.rings.finite_rings
+            sage: Px = Ex(phi(P.xy()[0]), phi(P.xy()[1]))                               # optional - sage.rings.finite_rings
+            sage: Qx = Ex(b^19 + b^18 + b^16 + b^12 + b^10 + b^9 + b^8 + b^5 + b^3 + 1,     # optional - sage.rings.finite_rings
+            ....:         b^18 + b^13 + b^10 + b^8 + b^5 + b^4 + b^3 + b)
+            sage: Px.tate_pairing(Qx, n=41, k=4)                                        # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: Unexpected field degree: set keyword argument q equal to the size of the base field (big field is GF(q^4)).
-            sage: num = Px.tate_pairing(Qx, n=41, k=4, q=32); num
+            ValueError: Unexpected field degree: set keyword argument q equal to
+            the size of the base field (big field is GF(q^4)).
+            sage: num = Px.tate_pairing(Qx, n=41, k=4, q=32); num                       # optional - sage.rings.finite_rings
             b^19 + b^14 + b^13 + b^12 + b^6 + b^4 + b^3
-            sage: den = Qx.tate_pairing(Px, n=41, k=4, q=32); den
+            sage: den = Qx.tate_pairing(Px, n=41, k=4, q=32); den                       # optional - sage.rings.finite_rings
             b^19 + b^17 + b^16 + b^15 + b^14 + b^10 + b^6 + b^2 + 1
-            sage: e = Integer((32^4-1)/41); e
+            sage: e = Integer((32^4-1)/41); e                                           # optional - sage.rings.finite_rings
             25575
-            sage: Px.weil_pairing(Qx, 41)^e == num/den
+            sage: Px.weil_pairing(Qx, 41)^e == num/den                                  # optional - sage.rings.finite_rings
             True
 
         .. NOTE::
@@ -1807,7 +1816,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             exponentiation. It does not do anything fancy. In the case
             that there is an issue with `Q` being on one of the lines
             generated in the `r*P` calculation, `Q` is offset by a random
-            point `R` and P.tate_pairing(Q+R,n,k)/P.tate_pairing(R,n,k)
+            point `R` and ``P.tate_pairing(Q+R,n,k)/P.tate_pairing(R,n,k)``
             is returned.
 
         AUTHORS:
@@ -1848,7 +1857,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
     def ate_pairing(self, Q, n, k, t, q=None):
         r"""
-        Return ate pairing of `n`-torsion points `P=self` and `Q`.
+        Return ate pairing of `n`-torsion points `P` (``=self``) and `Q`.
 
         Also known as the `n`-th modified ate pairing. `P` is `GF(q)`-rational,
         and `Q` must be an element of `Ker(\pi-p)`, where `\pi` is the
@@ -1856,8 +1865,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         INPUT:
 
-        - ``P=self`` -- a point of order `n`, in `ker(\pi-1)`, where
-          `\pi` is the `q`-Frobenius map (e.g., `P` is `q-rational`).
+        - `P` (``=self``) -- a point of order `n`, in `ker(\pi-1)`, where
+          `\pi` is the `q`-Frobenius map (e.g., `P` is `q`-rational).
 
         - ``Q`` -- a point of order `n` in `ker(\pi-q)`
 
@@ -1880,63 +1889,63 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         An example with embedding degree 6::
 
             sage: p = 7549; A = 0; B = 1; n = 157; k = 6; t = 14
-            sage: F = GF(p); E = EllipticCurve(F, [A, B])
-            sage: R.<x> = F[]; K.<a> = GF((p,k), modulus=x^k+2)
-            sage: EK = E.base_extend(K)
-            sage: P = EK(3050, 5371); Q = EK(6908*a^4, 3231*a^3)
-            sage: P.ate_pairing(Q, n, k, t)
+            sage: F = GF(p); E = EllipticCurve(F, [A, B])                               # optional - sage.rings.finite_rings
+            sage: R.<x> = F[]; K.<a> = GF((p,k), modulus=x^k+2)                         # optional - sage.rings.finite_rings
+            sage: EK = E.base_extend(K)                                                 # optional - sage.rings.finite_rings
+            sage: P = EK(3050, 5371); Q = EK(6908*a^4, 3231*a^3)                        # optional - sage.rings.finite_rings
+            sage: P.ate_pairing(Q, n, k, t)                                             # optional - sage.rings.finite_rings
             6708*a^5 + 4230*a^4 + 4350*a^3 + 2064*a^2 + 4022*a + 6733
-            sage: s = Integer(randrange(1, n))
-            sage: (s*P).ate_pairing(Q, n, k, t) == P.ate_pairing(s*Q, n, k, t)
+            sage: s = Integer(randrange(1, n))                                          # optional - sage.rings.finite_rings
+            sage: (s*P).ate_pairing(Q, n, k, t) == P.ate_pairing(s*Q, n, k, t)          # optional - sage.rings.finite_rings
             True
-            sage: P.ate_pairing(s*Q, n, k, t) == P.ate_pairing(Q, n, k, t)^s
+            sage: P.ate_pairing(s*Q, n, k, t) == P.ate_pairing(Q, n, k, t)^s            # optional - sage.rings.finite_rings
             True
 
         Another example with embedding degree 7 and positive trace::
 
             sage: p = 2213; A = 1; B = 49; n = 1093; k = 7; t = 28
-            sage: F = GF(p); E = EllipticCurve(F, [A, B])
-            sage: R.<x> = F[]; K.<a> = GF((p,k), modulus=x^k+2)
-            sage: EK = E.base_extend(K)
-            sage: P = EK(1583, 1734)
-            sage: Qx = 1729*a^6+1767*a^5+245*a^4+980*a^3+1592*a^2+1883*a+722
-            sage: Qy = 1299*a^6+1877*a^5+1030*a^4+1513*a^3+1457*a^2+309*a+1636
-            sage: Q = EK(Qx, Qy)
-            sage: P.ate_pairing(Q, n, k, t)
+            sage: F = GF(p); E = EllipticCurve(F, [A, B])                               # optional - sage.rings.finite_rings
+            sage: R.<x> = F[]; K.<a> = GF((p,k), modulus=x^k+2)                         # optional - sage.rings.finite_rings
+            sage: EK = E.base_extend(K)                                                 # optional - sage.rings.finite_rings
+            sage: P = EK(1583, 1734)                                                    # optional - sage.rings.finite_rings
+            sage: Qx = 1729*a^6+1767*a^5+245*a^4+980*a^3+1592*a^2+1883*a+722            # optional - sage.rings.finite_rings
+            sage: Qy = 1299*a^6+1877*a^5+1030*a^4+1513*a^3+1457*a^2+309*a+1636          # optional - sage.rings.finite_rings
+            sage: Q = EK(Qx, Qy)                                                        # optional - sage.rings.finite_rings
+            sage: P.ate_pairing(Q, n, k, t)                                             # optional - sage.rings.finite_rings
             1665*a^6 + 1538*a^5 + 1979*a^4 + 239*a^3 + 2134*a^2 + 2151*a + 654
-            sage: s = Integer(randrange(1, n))
-            sage: (s*P).ate_pairing(Q, n, k, t) == P.ate_pairing(s*Q, n, k, t)
+            sage: s = Integer(randrange(1, n))                                          # optional - sage.rings.finite_rings
+            sage: (s*P).ate_pairing(Q, n, k, t) == P.ate_pairing(s*Q, n, k, t)          # optional - sage.rings.finite_rings
             True
-            sage: P.ate_pairing(s*Q, n, k, t) == P.ate_pairing(Q, n, k, t)^s
+            sage: P.ate_pairing(s*Q, n, k, t) == P.ate_pairing(Q, n, k, t)^s            # optional - sage.rings.finite_rings
             True
 
         Another example with embedding degree 7 and negative trace::
 
             sage: p = 2017; A = 1; B = 30; n = 29; k = 7; t = -70
-            sage: F = GF(p); E = EllipticCurve(F, [A, B])
-            sage: R.<x> = F[]; K.<a> = GF((p,k), modulus=x^k+2)
-            sage: EK = E.base_extend(K)
-            sage: P = EK(369, 716)
-            sage: Qx = 1226*a^6+1778*a^5+660*a^4+1791*a^3+1750*a^2+867*a+770
-            sage: Qy = 1764*a^6+198*a^5+1206*a^4+406*a^3+1200*a^2+273*a+1712
-            sage: Q = EK(Qx, Qy)
-            sage: P.ate_pairing(Q, n, k, t)
+            sage: F = GF(p); E = EllipticCurve(F, [A, B])                               # optional - sage.rings.finite_rings
+            sage: R.<x> = F[]; K.<a> = GF((p,k), modulus=x^k+2)                         # optional - sage.rings.finite_rings
+            sage: EK = E.base_extend(K)                                                 # optional - sage.rings.finite_rings
+            sage: P = EK(369, 716)                                                      # optional - sage.rings.finite_rings
+            sage: Qx = 1226*a^6+1778*a^5+660*a^4+1791*a^3+1750*a^2+867*a+770            # optional - sage.rings.finite_rings
+            sage: Qy = 1764*a^6+198*a^5+1206*a^4+406*a^3+1200*a^2+273*a+1712            # optional - sage.rings.finite_rings
+            sage: Q = EK(Qx, Qy)                                                        # optional - sage.rings.finite_rings
+            sage: P.ate_pairing(Q, n, k, t)                                             # optional - sage.rings.finite_rings
             1794*a^6 + 1161*a^5 + 576*a^4 + 488*a^3 + 1950*a^2 + 1905*a + 1315
-            sage: s = Integer(randrange(1, n))
-            sage: (s*P).ate_pairing(Q, n, k, t) == P.ate_pairing(s*Q, n, k, t)
+            sage: s = Integer(randrange(1, n))                                          # optional - sage.rings.finite_rings
+            sage: (s*P).ate_pairing(Q, n, k, t) == P.ate_pairing(s*Q, n, k, t)          # optional - sage.rings.finite_rings
             True
-            sage: P.ate_pairing(s*Q, n, k, t) == P.ate_pairing(Q, n, k, t)^s
+            sage: P.ate_pairing(s*Q, n, k, t) == P.ate_pairing(Q, n, k, t)^s            # optional - sage.rings.finite_rings
             True
 
         Using the same data, we show that the ate pairing is a power of the
         Tate pairing (see [HSV2006]_ end of section 3.1)::
 
-            sage: c = (k*p^(k-1)).mod(n); T = t - 1
-            sage: N = gcd(T^k - 1, p^k - 1)
-            sage: s = Integer(N/n)
-            sage: L = Integer((T^k - 1)/N)
-            sage: M = (L*s*c.inverse_mod(n)).mod(n)
-            sage: P.ate_pairing(Q, n, k, t) == Q.tate_pairing(P, n, k)^M
+            sage: c = (k*p^(k-1)).mod(n); T = t - 1                                     # optional - sage.rings.finite_rings
+            sage: N = gcd(T^k - 1, p^k - 1)                                             # optional - sage.rings.finite_rings
+            sage: s = Integer(N/n)                                                      # optional - sage.rings.finite_rings
+            sage: L = Integer((T^k - 1)/N)                                              # optional - sage.rings.finite_rings
+            sage: M = (L*s*c.inverse_mod(n)).mod(n)                                     # optional - sage.rings.finite_rings
+            sage: P.ate_pairing(Q, n, k, t) == Q.tate_pairing(P, n, k)^M                # optional - sage.rings.finite_rings
             True
 
         An example where we have to pass the base field size (and we again have
@@ -1944,44 +1953,47 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         `F`-rational, (it is the homomorphic image of an `F`-rational point) it
         is nonetheless in `ker(\pi-1)`, and so is a legitimate input::
 
-            sage: q = 2^5; F.<a>=GF(q)
-            sage: n = 41; k = 4; t = -8
-            sage: E=EllipticCurve(F,[0,0,1,1,1])
-            sage: P = E(a^4 + 1, a^3)
-            sage: Fx.<b>=GF(q^k)
-            sage: Ex=EllipticCurve(Fx,[0,0,1,1,1])
-            sage: phi=Hom(F,Fx)(F.gen().minpoly().roots(Fx)[0][0])
-            sage: Px=Ex(phi(P.xy()[0]),phi(P.xy()[1]))
-            sage: Qx = Ex(b^19+b^18+b^16+b^12+b^10+b^9+b^8+b^5+b^3+1, b^18+b^13+b^10+b^8+b^5+b^4+b^3+b)
-            sage: Qx = Ex(Qx[0]^q, Qx[1]^q) - Qx  # ensure Qx is in ker(pi - q)
-            sage: Px.ate_pairing(Qx, n, k, t)
+            sage: q = 2^5; F.<a> = GF(q)                                                # optional - sage.rings.finite_rings
+            sage: n = 41; k = 4; t = -8                                                 # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F,[0,0,1,1,1])                                      # optional - sage.rings.finite_rings
+            sage: P = E(a^4 + 1, a^3)                                                   # optional - sage.rings.finite_rings
+            sage: Fx.<b> = GF(q^k)                                                      # optional - sage.rings.finite_rings
+            sage: Ex = EllipticCurve(Fx, [0,0,1,1,1])                                   # optional - sage.rings.finite_rings
+            sage: phi = Hom(F, Fx)(F.gen().minpoly().roots(Fx)[0][0])                   # optional - sage.rings.finite_rings
+            sage: Px = Ex(phi(P.xy()[0]), phi(P.xy()[1]))                               # optional - sage.rings.finite_rings
+            sage: Qx = Ex(b^19+b^18+b^16+b^12+b^10+b^9+b^8+b^5+b^3+1,                   # optional - sage.rings.finite_rings
+            ....:         b^18+b^13+b^10+b^8+b^5+b^4+b^3+b)
+            sage: Qx = Ex(Qx[0]^q, Qx[1]^q) - Qx  # ensure Qx is in ker(pi - q)         # optional - sage.rings.finite_rings
+            sage: Px.ate_pairing(Qx, n, k, t)                                           # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: Unexpected field degree: set keyword argument q equal to the size of the base field (big field is GF(q^4)).
-            sage: Px.ate_pairing(Qx, n, k, t, q)
-            b^19 + b^18 + b^17 + b^16 + b^15 + b^14 + b^13 + b^12 + b^11 + b^9 + b^8 + b^5 + b^4 + b^2 + b + 1
+            ValueError: Unexpected field degree: set keyword argument q equal to
+            the size of the base field (big field is GF(q^4)).
+            sage: Px.ate_pairing(Qx, n, k, t, q)                                        # optional - sage.rings.finite_rings
+            b^19 + b^18 + b^17 + b^16 + b^15 + b^14 + b^13 + b^12
+            + b^11 + b^9 + b^8 + b^5 + b^4 + b^2 + b + 1
             sage: s = Integer(randrange(1, n))
-            sage: (s*Px).ate_pairing(Qx, n, k, t, q) == Px.ate_pairing(s*Qx, n, k, t, q)
+            sage: (s*Px).ate_pairing(Qx, n, k, t, q) == Px.ate_pairing(s*Qx, n, k, t, q)    # optional - sage.rings.finite_rings
             True
-            sage: Px.ate_pairing(s*Qx, n, k, t, q) == Px.ate_pairing(Qx, n, k, t, q)^s
+            sage: Px.ate_pairing(s*Qx, n, k, t, q) == Px.ate_pairing(Qx, n, k, t, q)^s      # optional - sage.rings.finite_rings
             True
-            sage: c = (k*q^(k-1)).mod(n); T = t - 1
-            sage: N = gcd(T^k - 1, q^k - 1)
-            sage: s = Integer(N/n)
-            sage: L = Integer((T^k - 1)/N)
-            sage: M = (L*s*c.inverse_mod(n)).mod(n)
-            sage: Px.ate_pairing(Qx, n, k, t, q) == Qx.tate_pairing(Px, n, k, q)^M
+            sage: c = (k*q^(k-1)).mod(n); T = t - 1                                         # optional - sage.rings.finite_rings
+            sage: N = gcd(T^k - 1, q^k - 1)                                                 # optional - sage.rings.finite_rings
+            sage: s = Integer(N/n)                                                          # optional - sage.rings.finite_rings
+            sage: L = Integer((T^k - 1)/N)                                                  # optional - sage.rings.finite_rings
+            sage: M = (L*s*c.inverse_mod(n)).mod(n)                                         # optional - sage.rings.finite_rings
+            sage: Px.ate_pairing(Qx, n, k, t, q) == Qx.tate_pairing(Px, n, k, q)^M          # optional - sage.rings.finite_rings
             True
 
         It is an error if `Q` is not in the kernel of `\pi - p`, where `\pi` is
         the Frobenius automorphism::
 
-            sage: p = 29; A = 1; B = 0; n = 5; k = 2; t = 10
-            sage: F = GF(p); R.<x> = F[]
-            sage: E = EllipticCurve(F, [A, B]);
-            sage: K.<a> = GF((p,k), modulus=x^k+2); EK = E.base_extend(K)
-            sage: P = EK(13, 8); Q = EK(13, 21)
-            sage: P.ate_pairing(Q, n, k, t)
+            sage: p = 29; A = 1; B = 0; n = 5; k = 2; t = 10                            # optional - sage.rings.finite_rings
+            sage: F = GF(p); R.<x> = F[]                                                # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F, [A, B]);                                         # optional - sage.rings.finite_rings
+            sage: K.<a> = GF((p,k), modulus=x^k+2); EK = E.base_extend(K)               # optional - sage.rings.finite_rings
+            sage: P = EK(13, 8); Q = EK(13, 21)                                         # optional - sage.rings.finite_rings
+            sage: P.ate_pairing(Q, n, k, t)                                             # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Point (13 : 21 : 1) not in Ker(pi - q)
@@ -1989,11 +2001,11 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         It is also an error if `P` is not in the kernel os `\pi - 1`::
 
             sage: p = 29; A = 1; B = 0; n = 5; k = 2; t = 10
-            sage: F = GF(p); R.<x> = F[]
-            sage: E = EllipticCurve(F, [A, B]);
-            sage: K.<a> = GF((p,k), modulus=x^k+2); EK = E.base_extend(K)
-            sage: P = EK(14, 10*a); Q = EK(13, 21)
-            sage: P.ate_pairing(Q, n, k, t)
+            sage: F = GF(p); R.<x> = F[]                                                # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F, [A, B]);                                         # optional - sage.rings.finite_rings
+            sage: K.<a> = GF((p,k), modulus=x^k+2); EK = E.base_extend(K)               # optional - sage.rings.finite_rings
+            sage: P = EK(14, 10*a); Q = EK(13, 21)                                      # optional - sage.rings.finite_rings
+            sage: P.ate_pairing(Q, n, k, t)                                             # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: This point (14 : 10*a : 1) is not in Ker(pi - 1)
@@ -2053,7 +2065,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     A point on an elliptic curve over a number field.
 
     Most of the functionality is derived from the parent class
-    ``EllipticCurvePoint_field``.  In addition we have support for
+    :class:`EllipticCurvePoint_field`.  In addition we have support for
     orders, heights, reduction modulo primes, and elliptic logarithms.
 
     EXAMPLES::
@@ -2063,7 +2075,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         (0 : 0 : 1)
         sage: E(0,0)               # brackets are optional
         (0 : 0 : 1)
-        sage: E([GF(5)(0), 0])     # entries are coerced
+        sage: E([GF(5)(0), 0])     # entries are coerced                                # optional - sage.rings.finite_rings
         (0 : 0 : 1)
 
         sage: E(0.000, 0)
@@ -2079,7 +2091,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         sage: E = EllipticCurve([0,0,1,-1,0])
         sage: S = E(QQ); S
-        Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+        Abelian group of points on
+        Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
 
     TESTS::
 
@@ -2220,7 +2233,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def is_on_identity_component(self, embedding=None):
         r"""
-        Returns True iff this point is on the identity component of
+        Return True iff this point is on the identity component of
         its curve with respect to a given (real or complex) embedding.
 
         INPUT:
@@ -2241,26 +2254,27 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         For `K=\QQ` there is no need to specify an embedding::
 
-            sage: E=EllipticCurve('5077a1')
+            sage: E = EllipticCurve('5077a1')
             sage: [E.lift_x(x).is_on_identity_component() for x in srange(-3,5)]
             [False, False, False, False, False, True, True, True]
 
         An example over a field with two real embeddings::
 
-            sage: L.<a> = QuadraticField(2)
-            sage: E=EllipticCurve(L,[0,1,0,a,a])
-            sage: P=E(-1,0)
-            sage: [P.is_on_identity_component(e) for e in L.embeddings(RR)]
+            sage: L.<a> = QuadraticField(2)                                             # optional - sage.rings.number_field
+            sage: E = EllipticCurve(L, [0,1,0,a,a])                                     # optional - sage.rings.number_field
+            sage: P = E(-1,0)                                                           # optional - sage.rings.number_field
+            sage: [P.is_on_identity_component(e) for e in L.embeddings(RR)]             # optional - sage.rings.number_field
             [False, True]
 
         We can check this as follows::
 
-            sage: [e(E.discriminant())>0 for e in L.embeddings(RR)]
+            sage: [e(E.discriminant()) > 0 for e in L.embeddings(RR)]                   # optional - sage.rings.number_field
             [True, False]
-            sage: e = L.embeddings(RR)[0]
-            sage: E1 = EllipticCurve(RR,[e(ai) for ai in E.ainvs()])
-            sage: e1,e2,e3 = E1.two_division_polynomial().roots(RR,multiplicities=False)
-            sage: e1 < e2 < e3 and e(P[0]) < e3
+            sage: e = L.embeddings(RR)[0]                                               # optional - sage.rings.number_field
+            sage: E1 = EllipticCurve(RR, [e(ai) for ai in E.ainvs()])                   # optional - sage.rings.number_field
+            sage: e1, e2, e3 = E1.two_division_polynomial().roots(RR,                   # optional - sage.rings.number_field
+            ....:                                                 multiplicities=False)
+            sage: e1 < e2 < e3 and e(P[0]) < e3                                         # optional - sage.rings.number_field
             True
         """
         if self.is_zero():       # trivial case
@@ -2331,21 +2345,21 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         ::
 
-            sage: K.<i> = NumberField(x^2+1)
-            sage: E = EllipticCurve(K,[0,1,0,-160,308])
-            sage: P = E(26,-120)
-            sage: E.discriminant().support()
+            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: E = EllipticCurve(K, [0,1,0,-160,308])                                # optional - sage.rings.number_field
+            sage: P = E(26, -120)                                                       # optional - sage.rings.number_field
+            sage: E.discriminant().support()                                            # optional - sage.rings.number_field
             [Fractional ideal (i + 1),
-            Fractional ideal (-i - 2),
-            Fractional ideal (2*i + 1),
-            Fractional ideal (3)]
-            sage: [E.tamagawa_exponent(p) for p in E.discriminant().support()]
+             Fractional ideal (-i - 2),
+             Fractional ideal (2*i + 1),
+             Fractional ideal (3)]
+            sage: [E.tamagawa_exponent(p) for p in E.discriminant().support()]          # optional - sage.rings.number_field
             [1, 4, 4, 4]
-            sage: P.has_good_reduction()
+            sage: P.has_good_reduction()                                                # optional - sage.rings.number_field
             False
-            sage: (2*P).has_good_reduction()
+            sage: (2*P).has_good_reduction()                                            # optional - sage.rings.number_field
             False
-            sage: (4*P).has_good_reduction()
+            sage: (4*P).has_good_reduction()                                            # optional - sage.rings.number_field
             True
 
         TESTS:
@@ -2353,14 +2367,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         An example showing that :trac:`8498` is fixed::
 
             sage: E = EllipticCurve('11a1')
-            sage: K.<t> = NumberField(x^2+47)
-            sage: EK = E.base_extend(K)
-            sage: T = EK(5,5)
-            sage: P = EK(-2, -1/2*t - 1/2)
-            sage: p = K.ideal(11)
-            sage: T.has_good_reduction(p)
+            sage: K.<t> = NumberField(x^2 + 47)                                         # optional - sage.rings.number_field
+            sage: EK = E.base_extend(K)                                                 # optional - sage.rings.number_field
+            sage: T = EK(5, 5)                                                          # optional - sage.rings.number_field
+            sage: P = EK(-2, -1/2*t - 1/2)                                              # optional - sage.rings.number_field
+            sage: p = K.ideal(11)                                                       # optional - sage.rings.number_field
+            sage: T.has_good_reduction(p)                                               # optional - sage.rings.number_field
             False
-            sage: P.has_good_reduction(p)
+            sage: P.has_good_reduction(p)                                               # optional - sage.rings.number_field
             True
         """
         if self.is_zero():       # trivial case
@@ -2441,22 +2455,22 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         ::
 
-            sage: F.<a> = NumberField(x^2+5)
-            sage: E = EllipticCurve(F,[1,2,3,4,0])
-            sage: Q = E(98,931)
-            sage: Q.reduction(a)
+            sage: F.<a> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
+            sage: E = EllipticCurve(F, [1,2,3,4,0])                                     # optional - sage.rings.number_field
+            sage: Q = E(98, 931)                                                        # optional - sage.rings.number_field
+            sage: Q.reduction(a)                                                        # optional - sage.rings.number_field
             (3 : 1 : 1)
-            sage: Q.reduction(11)
+            sage: Q.reduction(11)                                                       # optional - sage.rings.number_field
             (10 : 7 : 1)
 
         ::
 
-            sage: F.<a> = NumberField(x^3+x^2+1)
-            sage: E = EllipticCurve(F,[a,2])
-            sage: P = E(a,1)
-            sage: P.reduction(F.ideal(5))
+            sage: F.<a> = NumberField(x^3 + x^2 + 1)                                    # optional - sage.rings.number_field
+            sage: E = EllipticCurve(F, [a,2])                                           # optional - sage.rings.number_field
+            sage: P = E(a, 1)                                                           # optional - sage.rings.number_field
+            sage: P.reduction(F.ideal(5))                                               # optional - sage.rings.number_field
             (abar : 1 : 1)
-            sage: P.reduction(F.ideal(a^2-4*a-2))
+            sage: P.reduction(F.ideal(a^2 - 4*a - 2))                                   # optional - sage.rings.number_field
             (abar : 1 : 1)
         """
         P = self
@@ -2480,8 +2494,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
           return this normalised height multiplied by the degree of
           `K`.
 
-        - ``algorithm`` -- string: either 'pari' (default) or 'sage'.
-          If 'pari' and the base field is `\QQ`, use the PARI library
+        - ``algorithm`` -- string: either ``'pari'`` (default) or ``'sage'``.
+          If ``'pari'`` and the base field is `\QQ`, use the PARI library
           function; otherwise use the Sage implementation.
 
         OUTPUT:
@@ -2542,7 +2556,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         ::
 
             sage: E = EllipticCurve('4602a1'); E
-            Elliptic Curve defined by y^2 + x*y  = x^3 + x^2 - 37746035*x - 89296920339 over Rational Field
+            Elliptic Curve defined by y^2 + x*y  = x^3 + x^2 - 37746035*x - 89296920339
+            over Rational Field
             sage: x = 77985922458974949246858229195945103471590
             sage: y = 19575260230015313702261379022151675961965157108920263594545223
             sage: d = 2254020761884782243
@@ -2558,7 +2573,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             sage: E = EllipticCurve('389a1'); E
             Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
-            sage: [P,Q] = [E(-1,1),E(0,-1)]
+            sage: P, Q = E(-1,1), E(0,-1)
             sage: P.height(precision=100)
             0.68666708330558658572355210295
             sage: (3*Q).height(precision=100)/Q.height(precision=100)
@@ -2569,22 +2584,23 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         Canonical heights over number fields are implemented as well::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3-2)
-            sage: E = EllipticCurve([a, 4]); E
-            Elliptic Curve defined by y^2 = x^3 + a*x + 4 over Number Field in a with defining polynomial x^3 - 2
-            sage: P = E((0,2))
-            sage: P.height()
+            sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
+            sage: E = EllipticCurve([a, 4]); E                                          # optional - sage.rings.number_field
+            Elliptic Curve defined by y^2 = x^3 + a*x + 4
+             over Number Field in a with defining polynomial x^3 - 2
+            sage: P = E((0,2))                                                          # optional - sage.rings.number_field
+            sage: P.height()                                                            # optional - sage.rings.number_field
             0.810463096585925
-            sage: P.height(precision=100)
+            sage: P.height(precision=100)                                               # optional - sage.rings.number_field
             0.81046309658592536863991810577
-            sage: P.height(precision=200)
+            sage: P.height(precision=200)                                               # optional - sage.rings.number_field
             0.81046309658592536863991810576865158896130286417155832378086
-            sage: (2*P).height() / P.height()
+            sage: (2*P).height() / P.height()                                           # optional - sage.rings.number_field
             4.00000000000000
-            sage: (100*P).height() / P.height()
+            sage: (100*P).height() / P.height()                                         # optional - sage.rings.number_field
             10000.0000000000
 
-        Setting normalised=False multiplies the height by the degree of `K`::
+        Setting ``normalised=False`` multiplies the height by the degree of `K`::
 
             sage: E = EllipticCurve('37a')
             sage: P = E([0,0])
@@ -2592,12 +2608,12 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             0.0511114082399688
             sage: P.height(normalised=False)
             0.0511114082399688
-            sage: K.<z> = CyclotomicField(5)
-            sage: EK = E.change_ring(K)
-            sage: PK = EK([0,0])
-            sage: PK.height()
+            sage: K.<z> = CyclotomicField(5)                                            # optional - sage.rings.number_field
+            sage: EK = E.change_ring(K)                                                 # optional - sage.rings.number_field
+            sage: PK = EK([0,0])                                                        # optional - sage.rings.number_field
+            sage: PK.height()                                                           # optional - sage.rings.number_field
             0.0511114082399688
-            sage: PK.height(normalised=False)
+            sage: PK.height(normalised=False)                                           # optional - sage.rings.number_field
             0.204445632959875
 
         Some consistency checks::
@@ -2607,31 +2623,31 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.height()
             1.36857250535393
 
-            sage: EK = E.change_ring(QuadraticField(-3,'a'))
-            sage: PK = EK([-2,3,1])
-            sage: PK.height()
+            sage: EK = E.change_ring(QuadraticField(-3,'a'))                            # optional - sage.rings.number_field
+            sage: PK = EK([-2,3,1])                                                     # optional - sage.rings.number_field
+            sage: PK.height()                                                           # optional - sage.rings.number_field
             1.36857250535393
 
-            sage: K.<i> = NumberField(x^2+1)
-            sage: E = EllipticCurve(K, [0,0,4,6*i,0])
-            sage: Q = E.lift_x(-9/4); Q
+            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: E = EllipticCurve(K, [0,0,4,6*i,0])                                   # optional - sage.rings.number_field
+            sage: Q = E.lift_x(-9/4); Q                                                 # optional - sage.rings.number_field
             (-9/4 : -27/8*i : 1)
-            sage: Q.height()
+            sage: Q.height()                                                            # optional - sage.rings.number_field
             2.69518560017909
-            sage: (15*Q).height() / Q.height()
+            sage: (15*Q).height() / Q.height()                                          # optional - sage.rings.number_field
             225.000000000000
 
             sage: E = EllipticCurve('37a')
             sage: P = E([0,-1])
             sage: P.height()
             0.0511114082399688
-            sage: K.<a> = QuadraticField(-7)
-            sage: ED = E.quadratic_twist(-7)
-            sage: Q = E.isomorphism_to(ED.change_ring(K))(P); Q
+            sage: K.<a> = QuadraticField(-7)                                            # optional - sage.rings.number_field
+            sage: ED = E.quadratic_twist(-7)                                            # optional - sage.rings.number_field
+            sage: Q = E.isomorphism_to(ED.change_ring(K))(P); Q                         # optional - sage.rings.number_field
             (0 : -7/2*a - 1/2 : 1)
-            sage: Q.height()
+            sage: Q.height()                                                            # optional - sage.rings.number_field
             0.0511114082399688
-            sage: Q.height(precision=100)
+            sage: Q.height(precision=100)                                               # optional - sage.rings.number_field
             0.051111408239968840235886099757
 
         An example to show that the bug at :trac:`5252` is fixed::
@@ -2666,17 +2682,17 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         An example to show that the bug at :trac:`12509` is fixed (precision issues)::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2-x-1)
-            sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]
-            sage: E = EllipticCurve(v)
-            sage: P = E([72*a - 509/5,  -682/25*a - 434/25])
-            sage: P.height()
+            sage: K.<a> = NumberField(x^2 - x - 1)                                      # optional - sage.rings.number_field
+            sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]               # optional - sage.rings.number_field
+            sage: E = EllipticCurve(v)                                                  # optional - sage.rings.number_field
+            sage: P = E([72*a - 509/5,  -682/25*a - 434/25])                            # optional - sage.rings.number_field
+            sage: P.height()                                                            # optional - sage.rings.number_field
             1.38877711688727
-            sage: (2*P).height()/P.height()
+            sage: (2*P).height()/P.height()                                             # optional - sage.rings.number_field
             4.00000000000000
-            sage: (2*P).height(precision=100)/P.height(precision=100)
+            sage: (2*P).height(precision=100)/P.height(precision=100)                   # optional - sage.rings.number_field
             4.0000000000000000000000000000
-            sage: (2*P).height(precision=1000)/P.height(precision=1000)
+            sage: (2*P).height(precision=1000)/P.height(precision=1000)                 # optional - sage.rings.number_field
             4.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
         This shows that the bug reported at :trac:`13951` has been fixed::
@@ -2685,9 +2701,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P1 = E(2,5)
             sage: P1.height()
             1.06248137652528
-            sage: F = E.change_ring(QuadraticField(-3,'a'))
-            sage: P2 = F([2,5])
-            sage: P2.height()
+            sage: F = E.change_ring(QuadraticField(-3, 'a'))                            # optional - sage.rings.number_field
+            sage: P2 = F([2,5])                                                         # optional - sage.rings.number_field
+            sage: P2.height()                                                           # optional - sage.rings.number_field
             1.06248137652528
         """
         if self.has_finite_order():
@@ -2740,7 +2756,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
           archimedean contribution to the global height.
 
         - ``prec`` -- integer, or None (default). The precision of the
-          computation. If None, the precision is deduced from v.
+          computation. If None, the precision is deduced from `v`.
 
         - ``weighted`` -- boolean. If False (default), the height is
           normalised to be invariant under extension of `K`. If True,
@@ -2762,24 +2778,26 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         Examples 1, 2, and 3 from [Sil1988]_::
 
-            sage: K.<a> = QuadraticField(-2)
-            sage: E = EllipticCurve(K, [0,-1,1,0,0]); E
-            Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field in a with defining polynomial x^2 + 2 with a = 1.414213562373095?*I
-            sage: P = E.lift_x(2+a); P
+            sage: K.<a> = QuadraticField(-2)                                            # optional - sage.rings.number_field
+            sage: E = EllipticCurve(K, [0,-1,1,0,0]); E                                 # optional - sage.rings.number_field
+            Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field
+             in a with defining polynomial x^2 + 2 with a = 1.414213562373095?*I
+            sage: P = E.lift_x(2 + a); P                                                # optional - sage.rings.number_field
             (a + 2 : 2*a + 1 : 1)
-            sage: P.archimedean_local_height(K.places(prec=170)[0]) / 2
+            sage: P.archimedean_local_height(K.places(prec=170)[0]) / 2                 # optional - sage.rings.number_field
             0.45754773287523276736211210741423654346576029814695
 
-            sage: K.<i> = NumberField(x^2+1)
-            sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E
-            Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x over Number Field in i with defining polynomial x^2 + 1
-            sage: P = E((0,0))
-            sage: P.archimedean_local_height(K.places()[0]) / 2
+            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E                                # optional - sage.rings.number_field
+            Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x
+             over Number Field in i with defining polynomial x^2 + 1
+            sage: P = E((0,0))                                                          # optional - sage.rings.number_field
+            sage: P.archimedean_local_height(K.places()[0]) / 2                         # optional - sage.rings.number_field
             0.510184995162373
 
-            sage: Q = E.lift_x(-9/4); Q
+            sage: Q = E.lift_x(-9/4); Q                                                 # optional - sage.rings.number_field
             (-9/4 : -27/8*i : 1)
-            sage: Q.archimedean_local_height(K.places()[0]) / 2
+            sage: Q.archimedean_local_height(K.places()[0]) / 2                         # optional - sage.rings.number_field
             0.654445619529600
 
         An example over the rational numbers::
@@ -2792,10 +2810,10 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         Local heights of torsion points can be non-zero (unlike the
         global height)::
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0, 0, 0, K(1), 0])
-            sage: P = E(i, 0)
-            sage: P.archimedean_local_height()
+            sage: K.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
+            sage: E = EllipticCurve([0, 0, 0, K(1), 0])                                 # optional - sage.rings.number_field
+            sage: P = E(i, 0)                                                           # optional - sage.rings.number_field
+            sage: P.archimedean_local_height()                                          # optional - sage.rings.number_field
             0.346573590279973
 
         TESTS:
@@ -2803,33 +2821,34 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         See :trac:`12509`::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2-x-1)
-            sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]
-            sage: E = EllipticCurve(v)
-            sage: P = E([72*a - 509/5,  -682/25*a - 434/25])
-            sage: P.archimedean_local_height()
+            sage: K.<a> = NumberField(x^2 - x - 1)                                      # optional - sage.rings.number_field
+            sage: v = [0, a + 1, 1, 28665*a - 46382, 2797026*a - 4525688]               # optional - sage.rings.number_field
+            sage: E = EllipticCurve(v)                                                  # optional - sage.rings.number_field
+            sage: P = E([72*a - 509/5,  -682/25*a - 434/25])                            # optional - sage.rings.number_field
+            sage: P.archimedean_local_height()                                          # optional - sage.rings.number_field
             -0.220660795546828
 
         See :trac:`19276`::
 
-            sage: K.<a> = NumberField(x^2-x-104)
-            sage: E = EllipticCurve([1, a - 1, 1, -816765673272*a - 7931030674178, 1478955604013312315*a + 14361086227143654561])
-            sage: P = E(5393511/49*a + 52372721/49 , -33896210324/343*a - 329141996591/343 )
-            sage: P.height()
+            sage: K.<a> = NumberField(x^2 - x - 104)                                                                                # optional - sage.rings.number_field
+            sage: E = EllipticCurve([1, a - 1, 1, -816765673272*a - 7931030674178, 1478955604013312315*a + 14361086227143654561])   # optional - sage.rings.number_field
+            sage: P = E(5393511/49*a + 52372721/49 , -33896210324/343*a - 329141996591/343 )                                        # optional - sage.rings.number_field
+            sage: P.height()                                                                                                        # optional - sage.rings.number_field
             0.974232017827741
 
         See :trac:`29966`::
 
-            sage: K.<a> = NumberField(x^3 - x^2 - 6*x + 2)
-            sage: E = EllipticCurve([1, -a^2 + 2*a + 4, 0, -6056450500590472699700624*a^2 - 11239394326797569935861742*a + 4241549693833829432516231, 1904879037869682826729875958079326124520*a^2 + 3535022146945771697732350459284777382011*a - 1334055169621036218710397707677347972626])
-            sage: P = E([1033399668533*a^2 + 1917754693229*a - 723726883800 , 12536493059202326563*a^2 + 23264879148900575548*a - 8779756111574815918 , 1])
-            sage: P.height()
+            sage: K.<a> = NumberField(x^3 - x^2 - 6*x + 2)                                                                                                      # optional - sage.rings.number_field
+            sage: E = EllipticCurve([1, -a^2 + 2*a + 4, 0, -6056450500590472699700624*a^2 - 11239394326797569935861742*a + 4241549693833829432516231,           # optional - sage.rings.number_field
+            ....:                    1904879037869682826729875958079326124520*a^2 + 3535022146945771697732350459284777382011*a - 1334055169621036218710397707677347972626])
+            sage: P = E([1033399668533*a^2 + 1917754693229*a - 723726883800 , 12536493059202326563*a^2 + 23264879148900575548*a - 8779756111574815918 , 1])     # optional - sage.rings.number_field
+            sage: P.height()                                                                                                                                    # optional - sage.rings.number_field
             0.297318833424763
-            sage: (2*P).height() / P.height()
+            sage: (2*P).height() / P.height()                                                                                                                   # optional - sage.rings.number_field
             4.00000000000000
-            sage: P.height(200)
+            sage: P.height(200)                                                                                                                                 # optional - sage.rings.number_field
             0.29731883342476341806143743594519935578696537745294661858984
-            sage: (2*P).height(200) / P.height(200)
+            sage: (2*P).height(200) / P.height(200)                                                                                                             # optional - sage.rings.number_field
             4.0000000000000000000000000000000000000000000000000000000000
         """
         from sage.rings.number_field.number_field import refine_embedding
@@ -2987,26 +3006,27 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         Examples 2 and 3 from [Sil1988]_::
 
-            sage: K.<i> = NumberField(x^2+1)
-            sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E
-            Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x over Number Field in i with defining polynomial x^2 + 1
-            sage: P = E((0,0))
-            sage: P.non_archimedean_local_height(K.ideal(i+1))
+            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E                                # optional - sage.rings.number_field
+            Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x
+             over Number Field in i with defining polynomial x^2 + 1
+            sage: P = E((0,0))                                                          # optional - sage.rings.number_field
+            sage: P.non_archimedean_local_height(K.ideal(i+1))                          # optional - sage.rings.number_field
             -1/2*log(2)
-            sage: P.non_archimedean_local_height(K.ideal(3))
+            sage: P.non_archimedean_local_height(K.ideal(3))                            # optional - sage.rings.number_field
             0
-            sage: P.non_archimedean_local_height(K.ideal(1-2*i))
+            sage: P.non_archimedean_local_height(K.ideal(1-2*i))                        # optional - sage.rings.number_field
             0
 
-            sage: Q = E.lift_x(-9/4); Q
+            sage: Q = E.lift_x(-9/4); Q                                                 # optional - sage.rings.number_field
             (-9/4 : -27/8*i : 1)
-            sage: Q.non_archimedean_local_height(K.ideal(1+i))
+            sage: Q.non_archimedean_local_height(K.ideal(1+i))                          # optional - sage.rings.number_field
             2*log(2)
-            sage: Q.non_archimedean_local_height(K.ideal(3))
+            sage: Q.non_archimedean_local_height(K.ideal(3))                            # optional - sage.rings.number_field
             0
-            sage: Q.non_archimedean_local_height(K.ideal(1-2*i))
+            sage: Q.non_archimedean_local_height(K.ideal(1-2*i))                        # optional - sage.rings.number_field
             0
-            sage: Q.non_archimedean_local_height()
+            sage: Q.non_archimedean_local_height()                                      # optional - sage.rings.number_field
             2*log(2)
 
         An example over the rational numbers::
@@ -3019,30 +3039,30 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         Local heights of torsion points can be non-zero (unlike the
         global height)::
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0, 0, 0, K(1), 0])
-            sage: P = E(i, 0)
-            sage: P.non_archimedean_local_height()
+            sage: K.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
+            sage: E = EllipticCurve([0, 0, 0, K(1), 0])                                 # optional - sage.rings.number_field
+            sage: P = E(i, 0)                                                           # optional - sage.rings.number_field
+            sage: P.non_archimedean_local_height()                                      # optional - sage.rings.number_field
             -1/2*log(2)
 
         TESTS::
 
-            sage: Q.non_archimedean_local_height(prec=100)
+            sage: Q.non_archimedean_local_height(prec=100)                              # optional - sage.rings.number_field
             1.3862943611198906188344642429
-            sage: (3*Q).non_archimedean_local_height()
+            sage: (3*Q).non_archimedean_local_height()                                  # optional - sage.rings.number_field
             1/2*log(75923153929839865104)
 
-            sage: F.<a> = NumberField(x^4 + 2*x^3 + 19*x^2 + 18*x + 288)
-            sage: F.ring_of_integers().basis()
+            sage: F.<a> = NumberField(x^4 + 2*x^3 + 19*x^2 + 18*x + 288)                # optional - sage.rings.number_field
+            sage: F.ring_of_integers().basis()                                          # optional - sage.rings.number_field
             [1, 5/6*a^3 + 1/6*a, 1/6*a^3 + 1/6*a^2, a^3]
-            sage: F.class_number()
+            sage: F.class_number()                                                      # optional - sage.rings.number_field
             12
-            sage: E = EllipticCurve('37a').change_ring(F)
-            sage: P = E((-a^2/6 - a/6 - 1, a)); P
+            sage: E = EllipticCurve('37a').change_ring(F)                               # optional - sage.rings.number_field
+            sage: P = E((-a^2/6 - a/6 - 1, a)); P                                       # optional - sage.rings.number_field
             (-1/6*a^2 - 1/6*a - 1 : a : 1)
-            sage: P[0].is_integral()
+            sage: P[0].is_integral()                                                    # optional - sage.rings.number_field
             True
-            sage: P.non_archimedean_local_height()
+            sage: P.non_archimedean_local_height()                                      # optional - sage.rings.number_field
             0
 
         This shows that the bug reported at :trac:`13951` has been fixed::
@@ -3150,8 +3170,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         - ``precision``: a positive integer (default 100) setting the
           number of bits of precision for the computation
 
-        - ``algorithm``: either 'pari' (default for real embeddings)
-          to use PARI's :pari:`ellpointtoz`, or 'sage' for a native
+        - ``algorithm``: either ``'pari'`` (default for real embeddings)
+          to use PARI's :pari:`ellpointtoz`, or ``'sage'`` for a native
           implementation.  Ignored for complex embeddings.
 
         ALGORITHM:
@@ -3177,7 +3197,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             False
             sage: P.elliptic_logarithm (precision=96)
             0.4793482501902193161295330101 + 0.985868850775824102211203849...*I
-            sage: Q=E([3,5])
+            sage: Q = E([3,5])
             sage: Q.is_on_identity_component()
             True
             sage: Q.elliptic_logarithm (precision=96)
@@ -3202,7 +3222,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.elliptic_logarithm()  # 100 bits
             0.27656204014107061464076203097
 
-        The native algorithm 'sage' used to have trouble with
+        The native algorithm ``'sage'`` used to have trouble with
         precision in this example, but no longer::
 
             sage: P.elliptic_logarithm(algorithm='sage')  # 100 bits
@@ -3229,30 +3249,39 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         Examples over number fields::
 
-            sage: K.<a> = NumberField(x^3-2)
-            sage: embs = K.embeddings(CC)
-            sage: E = EllipticCurve([0,1,0,a,a])
-            sage: Ls = [E.period_lattice(e) for e in embs]
-            sage: [L.real_flag for L in Ls]
+            sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
+            sage: embs = K.embeddings(CC)                                               # optional - sage.rings.number_field
+            sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
+            sage: Ls = [E.period_lattice(e) for e in embs]                              # optional - sage.rings.number_field
+            sage: [L.real_flag for L in Ls]                                             # optional - sage.rings.number_field
             [0, 0, -1]
-            sage: P = E(-1,0)  # order 2
-            sage: [L.elliptic_logarithm(P) for L in Ls]
-            [-1.73964256006716 - 1.07861534489191*I, -0.363756518406398 - 1.50699412135253*I, 1.90726488608927]
+            sage: P = E(-1,0)  # order 2                                                # optional - sage.rings.number_field
+            sage: [L.elliptic_logarithm(P) for L in Ls]                                 # optional - sage.rings.number_field
+            [-1.73964256006716 - 1.07861534489191*I,
+             -0.363756518406398 - 1.50699412135253*I, 1.90726488608927]
 
-            sage: E = EllipticCurve([-a^2 - a - 1, a^2 + a])
-            sage: Ls = [E.period_lattice(e) for e in embs]
-            sage: pts = [E(2*a^2 - a - 1 , -2*a^2 - 2*a + 6 ), E(-2/3*a^2 - 1/3 , -4/3*a - 2/3 ), E(5/4*a^2 - 1/2*a , -a^2 - 1/4*a + 9/4 ), E(2*a^2 + 3*a + 4 , -7*a^2 - 10*a - 12 )]
-            sage: [[L.elliptic_logarithm(P) for P in pts] for L in Ls]
-            [[0.250819591818930 - 0.411963479992219*I, -0.290994550611374 - 1.37239400324105*I, -0.693473752205595 - 2.45028458830342*I, -0.151659609775291 - 1.48985406505459*I], [1.33444787667954 - 1.50889756650544*I, 0.792633734249234 - 0.548467043256610*I, 0.390154532655013 + 0.529423541805758*I, 0.931968675085317 - 0.431006981443071*I], [1.14758249500109 + 0.853389664016075*I, 2.59823462472518 + 0.853389664016075*I, 1.75372176444709, 0.303069634723001]]
+            sage: E = EllipticCurve([-a^2 - a - 1, a^2 + a])                            # optional - sage.rings.number_field
+            sage: Ls = [E.period_lattice(e) for e in embs]                              # optional - sage.rings.number_field
+            sage: pts = [E(2*a^2 - a - 1 , -2*a^2 - 2*a + 6 ),
+            ....:        E(-2/3*a^2 - 1/3 , -4/3*a - 2/3 ),
+            ....:        E(5/4*a^2 - 1/2*a , -a^2 - 1/4*a + 9/4 ),
+            ....:        E(2*a^2 + 3*a + 4 , -7*a^2 - 10*a - 12 )]
+            sage: [[L.elliptic_logarithm(P) for P in pts] for L in Ls]                  # optional - sage.rings.number_field
+            [[0.250819591818930 - 0.411963479992219*I, -0.290994550611374 - 1.37239400324105*I,
+              -0.693473752205595 - 2.45028458830342*I, -0.151659609775291 - 1.48985406505459*I],
+             [1.33444787667954 - 1.50889756650544*I, 0.792633734249234 - 0.548467043256610*I,
+              0.390154532655013 + 0.529423541805758*I, 0.931968675085317 - 0.431006981443071*I],
+             [1.14758249500109 + 0.853389664016075*I, 2.59823462472518 + 0.853389664016075*I,
+              1.75372176444709, 0.303069634723001]]
 
         ::
 
-            sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0,0,0,9*i-10,21-i])
-            sage: emb = K.embeddings(CC)[1]
-            sage: L = E.period_lattice(emb)
-            sage: P = E(2-i,4+2*i)
-            sage: L.elliptic_logarithm(P,prec=100)
+            sage: K.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
+            sage: E = EllipticCurve([0,0,0,9*i-10,21-i])                                # optional - sage.rings.number_field
+            sage: emb = K.embeddings(CC)[1]                                             # optional - sage.rings.number_field
+            sage: L = E.period_lattice(emb)                                             # optional - sage.rings.number_field
+            sage: P = E(2-i, 4+2*i)                                                     # optional - sage.rings.number_field
+            sage: L.elliptic_logarithm(P, prec=100)                                     # optional - sage.rings.number_field
             0.70448375537782208460499649302 - 0.79246725643650979858266018068*I
         """
         from sage.rings.number_field.number_field import refine_embedding
@@ -3370,31 +3399,32 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         EXAMPLES::
 
             sage: E = EllipticCurve([0,1,1,-2,0])
-            sage: E(0).padic_elliptic_logarithm(3)
+            sage: E(0).padic_elliptic_logarithm(3)                                      # optional - sage.rings.padics
             0
-            sage: P = E(0,0)
-            sage: P.padic_elliptic_logarithm(3)
+            sage: P = E(0, 0)                                                           # optional - sage.rings.padics
+            sage: P.padic_elliptic_logarithm(3)                                         # optional - sage.rings.padics
             2 + 2*3 + 3^3 + 2*3^7 + 3^8 + 3^9 + 3^11 + 3^15 + 2*3^17 + 3^18 + O(3^19)
-            sage: P.padic_elliptic_logarithm(3).lift()
+            sage: P.padic_elliptic_logarithm(3).lift()                                  # optional - sage.rings.padics
             660257522
-            sage: P = E(-11/9,28/27)
-            sage: [(2*P).padic_elliptic_logarithm(p)/P.padic_elliptic_logarithm(p) for p in prime_range(20)]  # long time (3s)
+            sage: P = E(-11/9, 28/27)                                                   # optional - sage.rings.padics
+            sage: [(2*P).padic_elliptic_logarithm(p)/P.padic_elliptic_logarithm(p) for p in prime_range(20)]  # long time (3s)  # optional - sage.rings.padics
             [2 + O(2^19), 2 + O(3^20), 2 + O(5^19), 2 + O(7^19), 2 + O(11^19), 2 + O(13^19), 2 + O(17^19), 2 + O(19^19)]
-            sage: [(3*P).padic_elliptic_logarithm(p)/P.padic_elliptic_logarithm(p) for p in prime_range(12)]  # long time (2s)
+            sage: [(3*P).padic_elliptic_logarithm(p)/P.padic_elliptic_logarithm(p) for p in prime_range(12)]  # long time (2s)  # optional - sage.rings.padics
             [1 + 2 + O(2^19), 3 + 3^20 + O(3^21), 3 + O(5^19), 3 + O(7^19), 3 + O(11^19)]
-            sage: [(5*P).padic_elliptic_logarithm(p)/P.padic_elliptic_logarithm(p) for p in prime_range(12)]  # long time (2s)
+            sage: [(5*P).padic_elliptic_logarithm(p)/P.padic_elliptic_logarithm(p) for p in prime_range(12)]  # long time (2s)  # optional - sage.rings.padics
             [1 + 2^2 + O(2^19), 2 + 3 + O(3^20), 5 + O(5^19), 5 + O(7^19), 5 + O(11^19)]
 
         An example which arose during reviewing :trac:`4741`::
 
             sage: E = EllipticCurve('794a1')
             sage: P = E(-1,2)
-            sage: P.padic_elliptic_logarithm(2) # default precision=20
+            sage: P.padic_elliptic_logarithm(2)  # default precision=20                 # optional - sage.rings.padics
             2^4 + 2^5 + 2^6 + 2^8 + 2^9 + 2^13 + 2^14 + 2^15 + O(2^16)
-            sage: P.padic_elliptic_logarithm(2, absprec=30)
+            sage: P.padic_elliptic_logarithm(2, absprec=30)                             # optional - sage.rings.padics
             2^4 + 2^5 + 2^6 + 2^8 + 2^9 + 2^13 + 2^14 + 2^15 + 2^22 + 2^23 + 2^24 + O(2^26)
-            sage: P.padic_elliptic_logarithm(2, absprec=40)
-            2^4 + 2^5 + 2^6 + 2^8 + 2^9 + 2^13 + 2^14 + 2^15 + 2^22 + 2^23 + 2^24 + 2^28 + 2^29 + 2^31 + 2^34 + O(2^35)
+            sage: P.padic_elliptic_logarithm(2, absprec=40)                             # optional - sage.rings.padics
+            2^4 + 2^5 + 2^6 + 2^8 + 2^9 + 2^13 + 2^14 + 2^15 + 2^22 + 2^23 + 2^24
+            + 2^28 + 2^29 + 2^31 + 2^34 + O(2^35)
         """
         if not p.is_prime():
             raise ValueError('p must be prime')
@@ -3481,9 +3511,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(17), [1,-1])
-            sage: P = E([13, 4])
-            sage: P._magma_init_(magma)                               # optional - magma
+            sage: E = EllipticCurve(GF(17), [1,-1])                                     # optional - sage.rings.finite_rings
+            sage: P = E([13, 4])                                                        # optional - sage.rings.finite_rings
+            sage: P._magma_init_(magma)                             # optional - magma  # optional - sage.rings.finite_rings
             'EllipticCurve([_sage_ref...|GF(17)!0,GF(17)!0,GF(17)!0,GF(17)!1,GF(17)!16])![13,4]'
         """
         E = self.curve()._magma_init_(magma)
@@ -3497,14 +3527,14 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         EXAMPLES::
 
-            sage: P = EllipticCurve(GF(65537), [2,2]).lift_x(6)
-            sage: P.order().factor()
+            sage: P = EllipticCurve(GF(65537), [2,2]).lift_x(6)                         # optional - sage.rings.finite_rings
+            sage: P.order().factor()                                                    # optional - sage.rings.finite_rings
             2^2 * 3 * 37^2
-            sage: getattr(74*P, '_order', None)
+            sage: getattr(74*P, '_order', None)                                         # optional - sage.rings.finite_rings
             222
-            sage: getattr(P*4070, '_order', None)
+            sage: getattr(P*4070, '_order', None)                                       # optional - sage.rings.finite_rings
             222
-            sage: getattr(506*P*37, '_order', None)
+            sage: getattr(506*P*37, '_order', None)                                     # optional - sage.rings.finite_rings
             222
         """
         k = ZZ(other)
@@ -3587,14 +3617,14 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         EXAMPLES::
 
-            sage: F = GF((3,6),'a')
-            sage: a = F.gen()
-            sage: E = EllipticCurve([0,1,1,a,a])
-            sage: E.cardinality()
+            sage: F = GF((3,6),'a')                                                     # optional - sage.rings.finite_rings
+            sage: a = F.gen()                                                           # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve([0,1,1,a,a])                                        # optional - sage.rings.finite_rings
+            sage: E.cardinality()                                                       # optional - sage.rings.finite_rings
             762
-            sage: P = E.gens()[0]
-            sage: Q = 400*P
-            sage: P.discrete_log(Q)
+            sage: P = E.gens()[0]                                                       # optional - sage.rings.finite_rings
+            sage: Q = 400*P                                                             # optional - sage.rings.finite_rings
+            sage: P.discrete_log(Q)                                                     # optional - sage.rings.finite_rings
             400
 
         TESTS:
@@ -3604,16 +3634,16 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: sz = randint(8,32)
             sage: e = randint(1,3)
             sage: p = random_prime(ceil(2**(sz/e)))
-            sage: E = EllipticCurve(j=GF((p,e),'a').random_element())
-            sage: P = E.random_point()
-            sage: Q = randrange(2**999) * P
-            sage: x = P.discrete_log(Q)
-            sage: x*P == Q
+            sage: E = EllipticCurve(j=GF((p,e),'a').random_element())                   # optional - sage.rings.finite_rings
+            sage: P = E.random_point()                                                  # optional - sage.rings.finite_rings
+            sage: Q = randrange(2**999) * P                                             # optional - sage.rings.finite_rings
+            sage: x = P.discrete_log(Q)                                                 # optional - sage.rings.finite_rings
+            sage: x*P == Q                                                              # optional - sage.rings.finite_rings
             True
 
         Doctest deprecation::
 
-            sage: P.discrete_log(Q, ord=P.order())
+            sage: P.discrete_log(Q, ord=P.order())                                      # optional - sage.rings.finite_rings
             doctest:warning
             ...
             DeprecationWarning: The "ord" argument to .discrete_log() is obsolete. ...
@@ -3652,8 +3682,8 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         INPUT:
 
-            - ``Q`` (point) -- another point on the same curve as ``self``.
-            - ``p`` (integer) --  a prime equals the order of the curve.
+        - ``Q`` (point) -- another point on the same curve as ``self``.
+        - ``p`` (integer) --  a prime equal to the order of the curve.
 
         OUTPUT:
 
@@ -3671,11 +3701,11 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
             sage: p=235322474717419
             sage: b=8856682
-            sage: E = EllipticCurve(GF(p), [0, b])
-            sage: P = E(200673830421813, 57025307876612)
-            sage: Q = E(40345734829479, 211738132651297)
-            sage: x = P.padic_elliptic_logarithm(Q, p)
-            sage: x * P == Q
+            sage: E = EllipticCurve(GF(p), [0, b])                                      # optional - sage.rings.finite_rings
+            sage: P = E(200673830421813, 57025307876612)                                # optional - sage.rings.finite_rings
+            sage: Q = E(40345734829479, 211738132651297)                                # optional - sage.rings.finite_rings
+            sage: x = P.padic_elliptic_logarithm(Q, p)                                  # optional - sage.rings.finite_rings sage.rings.padics
+            sage: x * P == Q                                                            # optional - sage.rings.finite_rings sage.rings.padics
             True
 
         TESTS:
@@ -3685,11 +3715,11 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: a = 49850651047495986645822557378918223
             sage: b = 21049438014429831351540675253466229
             sage: p = 54283205379427155782089046839411711
-            sage: E = EllipticCurve(GF(p),[a, b])
-            sage: P = E.random_point()
-            sage: Q = randrange(0, p-1) * P
-            sage: x = P.padic_elliptic_logarithm(Q, p)
-            sage: x*P == Q
+            sage: E = EllipticCurve(GF(p), [a, b])                                      # optional - sage.rings.finite_rings
+            sage: P = E.random_point()                                                  # optional - sage.rings.finite_rings
+            sage: Q = randrange(0, p-1) * P                                             # optional - sage.rings.finite_rings
+            sage: x = P.padic_elliptic_logarithm(Q, p)                                  # optional - sage.rings.finite_rings sage.rings.padics
+            sage: x*P == Q                                                              # optional - sage.rings.finite_rings sage.rings.padics
             True
         """
         E = self.curve()
@@ -3737,9 +3767,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(7), [1,3])
-            sage: P = E.points()[3]
-            sage: P.has_finite_order()
+            sage: E = EllipticCurve(GF(7), [1,3])                                       # optional - sage.rings.finite_rings
+            sage: P = E.points()[3]                                                     # optional - sage.rings.finite_rings
+            sage: P.has_finite_order()                                                  # optional - sage.rings.finite_rings
             True
         """
         return True
@@ -3756,67 +3786,68 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         EXAMPLES::
 
-            sage: k.<a> = GF((5,5))
-            sage: E = EllipticCurve(k,[2,4]); E
+            sage: k.<a> = GF((5,5))                                                     # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(k,[2,4]); E                                         # optional - sage.rings.finite_rings
             Elliptic Curve defined by y^2 = x^3 + 2*x + 4 over Finite Field in a of size 5^5
-            sage: P = E(3*a^4 + 3*a , 2*a + 1 )
-            sage: P.order()
+            sage: P = E(3*a^4 + 3*a, 2*a + 1)                                           # optional - sage.rings.finite_rings
+            sage: P.order()                                                             # optional - sage.rings.finite_rings
             3227
-            sage: Q = E(0,2)
-            sage: Q.order()
+            sage: Q = E(0,2)                                                            # optional - sage.rings.finite_rings
+            sage: Q.order()                                                             # optional - sage.rings.finite_rings
             7
-            sage: Q.additive_order()
+            sage: Q.additive_order()                                                    # optional - sage.rings.finite_rings
             7
 
         ::
 
-            sage: p=next_prime(2^150)
-            sage: E=EllipticCurve(GF(p),[1,1])
-            sage: P=E(831623307675610677632782670796608848711856078, 42295786042873366706573292533588638217232964)
-            sage: P.order()
+            sage: p = next_prime(2^150)
+            sage: E = EllipticCurve(GF(p), [1,1])                                       # optional - sage.rings.finite_rings
+            sage: P = E(831623307675610677632782670796608848711856078,                  # optional - sage.rings.finite_rings
+            ....:       42295786042873366706573292533588638217232964)
+            sage: P.order()                                                             # optional - sage.rings.finite_rings
             1427247692705959881058262545272474300628281448
-            sage: P.order() == E.cardinality()
+            sage: P.order() == E.cardinality()                                          # optional - sage.rings.finite_rings
             True
 
         The next example has `j(E)=0`::
 
             sage: p = 33554501
-            sage: F.<u> = GF((p,2))
-            sage: E = EllipticCurve(F,[0,1])
-            sage: E.j_invariant()
+            sage: F.<u> = GF((p,2))                                                     # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F, [0,1])                                           # optional - sage.rings.finite_rings
+            sage: E.j_invariant()                                                       # optional - sage.rings.finite_rings
             0
-            sage: P = E.random_point()
-            sage: P.order() # random
+            sage: P = E.random_point()                                                  # optional - sage.rings.finite_rings
+            sage: P.order() # random                                                    # optional - sage.rings.finite_rings
             16777251
 
         Similarly when `j(E)=1728`::
 
             sage: p = 33554473
-            sage: F.<u> = GF((p,2))
-            sage: E = EllipticCurve(F,[1,0])
-            sage: E.j_invariant()
+            sage: F.<u> = GF((p,2))                                                     # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F, [1,0])                                           # optional - sage.rings.finite_rings
+            sage: E.j_invariant()                                                       # optional - sage.rings.finite_rings
             1728
-            sage: P = E.random_point()
-            sage: P.order() # random
+            sage: P = E.random_point()                                                  # optional - sage.rings.finite_rings
+            sage: P.order() # random                                                    # optional - sage.rings.finite_rings
             46912611635760
 
         TESTS:
 
         Check that the order actually gets cached (:trac:`32786`)::
 
-            sage: E = EllipticCurve(GF(31337), [42,1])
-            sage: P = E.lift_x(1)
-            sage: hasattr(P, '_order')
+            sage: E = EllipticCurve(GF(31337), [42,1])                                  # optional - sage.rings.finite_rings
+            sage: P = E.lift_x(1)                                                       # optional - sage.rings.finite_rings
+            sage: hasattr(P, '_order')                                                  # optional - sage.rings.finite_rings
             False
-            sage: P.order()
+            sage: P.order()                                                             # optional - sage.rings.finite_rings
             15649
-            sage: P._order
+            sage: P._order                                                              # optional - sage.rings.finite_rings
             15649
 
         The curve order should also get cached as a side effect
         of computing a point order::
 
-            sage: E._order
+            sage: E._order                                                              # optional - sage.rings.finite_rings
             31298
         """
         try:

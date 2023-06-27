@@ -1183,7 +1183,6 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
     cdef BoostVecWeightedGraph g_boost_und
     cdef int N = g.num_verts()
     cdef vector[vector[double]] result
-    cdef int u_int, v_int
 
     if g.is_directed():
         boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
@@ -1340,7 +1339,6 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
     cdef BoostVecWeightedGraph g_boost_und
     cdef int N = g.num_verts()
     cdef vector[vector[double]] result
-    cdef int u_int, v_int
 
     if g.is_directed():
         boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
@@ -2330,13 +2328,13 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     import sys
     # These variables are automatically deleted when the function terminates.
     cdef double LB, LB_1, LB_2, UB
-    cdef v_index s, m, d, v, tmp
+    cdef v_index m, v, tmp
     cdef v_index i
     cdef vector[double] distances
     cdef vector[pair[double, v_index]] order_1, order_2
 
     # We select a vertex with low eccentricity using 2Dsweep
-    LB, s, m, d = diameter_lower_bound_2Dsweep(g_boost, rev_g_boost,
+    LB, _, m, _ = diameter_lower_bound_2Dsweep(g_boost, rev_g_boost,
                                                source, algorithm)
 
     # If the lower bound is a very large number, it means that the digraph is
@@ -2969,7 +2967,6 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
 
     # These variables are automatically deleted when the function terminates.
     cdef v_index vi, u, v
-    cdef dict int_to_v = dict(enumerate(g))
     cdef dict v_to_int = {vv: vi for vi, vv in enumerate(g)}
     cdef BoostVecWeightedDiGraphU g_boost_dir
     cdef BoostVecWeightedGraph g_boost_und

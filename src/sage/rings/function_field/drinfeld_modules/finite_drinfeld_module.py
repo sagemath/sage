@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Finite Drinfeld modules
 
@@ -109,7 +110,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
     The morphism that defines a Drinfeld module is injective (see
     [Gos1998]_, cor. 4.5.2). If the Drinfeld module is finite, one can
-    retrieve preimages:
+    retrieve preimages::
 
         sage: a = A.random_element()
         sage: phi.invert(phi(a)) == a
@@ -221,7 +222,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: chi = phi.frobenius_charpoly()
             sage: chi
-            X^2 + ((3*z3^2 + z3 + 4)*T + 4*z3^2 + 6*z3 + 3)*X + (5*z3^2 + 2*z3)*T^2 + (4*z3^2 + 3*z3)*T + 5*z3^2 + 2*z3
+            X^2 + ((3*z3^2 + z3 + 4)*T + 4*z3^2 + 6*z3 + 3)*X
+             + (5*z3^2 + 2*z3)*T^2 + (4*z3^2 + 3*z3)*T + 5*z3^2 + 2*z3
 
         ::
 

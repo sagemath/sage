@@ -272,7 +272,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
 
     INPUT:
 
-    - `p` -- the underlying prime number
+    - ``p`` -- the underlying prime number
 
     - ``prec`` -- the precision
 
@@ -616,7 +616,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
             6
 
         As a consequence, if we convert ``x`` and ``y`` separately, we
-        loose some precision::
+        lose some precision::
 
             sage: R2 = ZpLC(2, label='copy')
             sage: x2 = R2(x); y2 = R2(y)
@@ -706,7 +706,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
     INPUT:
 
-    - `p` -- the underlying prime number
+    - ``p`` -- the underlying prime number
 
     - ``prec`` -- the default precision
 
@@ -777,7 +777,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
     def is_secure(self):
         r"""
         Return ``False`` if this `p`-adic relaxed ring is not secure
-        (i.e. if indistinguishable elements at the working precision
+        (i.e., if indistinguishable elements at the working precision
         are considered as equal); ``True`` otherwise (in which case,
         an error is raised when equality cannot be decided).
 
@@ -1135,7 +1135,8 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
             sage: b = R.random_element(prec=15)
             sage: b  # random
-            2 + 3*5^2 + 5^3 + 3*5^4 + 5^5 + 3*5^6 + 3*5^8 + 3*5^9 + 4*5^10 + 5^11 + 4*5^12 + 5^13 + 2*5^14 + O(5^15)
+            2 + 3*5^2 + 5^3 + 3*5^4 + 5^5 + 3*5^6 + 3*5^8 + 3*5^9 + 4*5^10
+             + 5^11 + 4*5^12 + 5^13 + 2*5^14 + O(5^15)
             sage: b.precision_absolute()
             15
         """
@@ -1210,7 +1211,6 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
             False
         """
         return False
-
 
     def krull_dimension(self):
         r"""
@@ -1394,11 +1394,11 @@ class pAdicFloatingPointFieldGeneric(pAdicFieldGeneric, FloatingPointFieldGeneri
 class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
     def construction(self, forbid_frac_field=False):
         """
-        Return the functorial construction of self, namely,
-        completion of the rational numbers with respect a given prime.
+        Return the functorial construction of ``self``, namely,
+        completion of the rational numbers with respect to a given prime.
 
         Also preserves other information that makes this field unique
-        (e.g. precision, rounding, print mode).
+        (e.g., precision, rounding, print mode).
 
         INPUT:
 
@@ -1423,24 +1423,30 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
             sage: S = F(Z)
             sage: S._precision_cap()
             (31, 41)
+
+        The `secure` attribute for relaxed type is included in the functor::
+
+            sage: R = ZpER(5, secure=True)
+            sage: R.construction()
+            (Completion[5, prec=(20, 40, True)], Integer Ring)
         """
         from sage.categories.pushout import CompletionFunctor
         extras = {'print_mode':self._printer.dict(), 'type':self._prec_type(), 'names':self._names}
         if hasattr(self, '_label'):
             extras['label'] = self._label
         if self._prec_type() == "relaxed":
-            prec = (self._default_prec, self._halting_prec)
+            prec = (self._default_prec, self._halting_prec, self._secure)
         else:
             prec = self._precision_cap()
         return (CompletionFunctor(self.prime(), prec, extras), ZZ)
 
     def random_element(self, algorithm='default'):
         r"""
-        Return a random element of self, optionally using the
-        algorithm argument to decide how it generates the
+        Return a random element of ``self``, optionally using the
+        ``algorithm`` argument to decide how it generates the
         element. Algorithms currently implemented:
 
-        - default: Choose `a_i`, `i >= 0`, randomly between `0` and
+        - ``'default'``: Choose `a_i`, `i \geq 0`, randomly between `0` and
           `p-1` until a nonzero choice is made. Then continue choosing
           `a_i` randomly between `0` and `p-1` until we reach
           precision_cap, and return `\sum a_i p^i`.
@@ -1479,7 +1485,7 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
 class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
     def composite(self, subfield1, subfield2):
         r"""
-        Return the composite of two subfields of self, i.e., the
+        Return the composite of two subfields of ``self``, i.e., the
         largest subfield containing both
 
         INPUT:
@@ -1490,7 +1496,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
 
         OUTPUT:
 
-        - the composite of subfield1 and subfield2
+        the composite of ``subfield1`` and ``subfield2``
 
         EXAMPLES::
 
@@ -1504,7 +1510,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
 
     def subfields_of_degree(self, n):
         r"""
-        Return the number of subfields of self of degree `n`
+        Return the number of subfields of ``self`` of degree `n`
 
         INPUT:
 
@@ -1513,7 +1519,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
 
         OUTPUT:
 
-        - integer -- the number of subfields of degree ``n`` over self.base_ring()
+        integer -- the number of subfields of degree `n` over ``self.base_ring()``
 
         EXAMPLES::
 
@@ -1528,7 +1534,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
 
     def subfield(self, list):
         r"""
-        Return the subfield generated by the elements in list
+        Return the subfield generated by the elements in ``list``
 
         INPUT:
 
@@ -1537,7 +1543,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
 
         OUTPUT:
 
-        - the subfield of ``self`` generated by the elements of list
+        the subfield of ``self`` generated by the elements of ``list``
 
         EXAMPLES::
 
@@ -1555,7 +1561,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
         completion of the rational numbers with respect a given prime.
 
         Also preserves other information that makes this field unique
-        (e.g. precision, rounding, print mode).
+        (e.g., precision, rounding, print mode).
 
         INPUT:
 
@@ -1595,6 +1601,12 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
             sage: S = F(Z)
             sage: S._precision_cap()
             (31, 41)
+
+        The `secure` attribute for relaxed type is included in the functor::
+
+            sage: K = QpER(5, secure=True)
+            sage: K.construction(forbid_frac_field=True)
+            (Completion[5, prec=(20, 40, True)], Rational Field)
         """
         from sage.categories.pushout import FractionField, CompletionFunctor
         if forbid_frac_field:
@@ -1602,7 +1614,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
             if hasattr(self, '_label'):
                 extras['label'] = self._label
             if self._prec_type() == "relaxed":
-                prec = (self._default_prec, self._halting_prec)
+                prec = (self._default_prec, self._halting_prec, self._secure)
             else:
                 prec = self._precision_cap()
             return (CompletionFunctor(self.prime(), prec, extras), QQ)

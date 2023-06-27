@@ -109,8 +109,8 @@ class TensorField(ModuleElementWithMutability):
 
     .. MATH::
 
-        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \mbox{times}}
-        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \mbox{times}}
+        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \text{times}}
+        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \text{times}}
         \longrightarrow K,
 
     where `T_q^* M` is the dual vector space to `T_q M` and `K` is the
@@ -590,7 +590,7 @@ class TensorField(ModuleElementWithMutability):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
             return self._latex_name
 
@@ -3031,9 +3031,19 @@ class TensorField(ModuleElementWithMutability):
             resu._latex_name = res_latex
             return resu
 
-    def trace(self, pos1=0, pos2=1):
+    def trace(
+        self,
+        pos1=0,
+        pos2=1,
+        using: Optional[
+            Union[PseudoRiemannianMetric, SymplecticForm, PoissonTensorField]
+        ] = None,
+    ):
         r"""
         Trace (contraction) on two slots of the tensor field.
+
+        If a non-degenerate form is provided, the trace of a `(0,2)` tensor field
+        is computed by first raising the last index.
 
         INPUT:
 
@@ -3042,6 +3052,7 @@ class TensorField(ModuleElementWithMutability):
         - ``pos2`` -- (default: 1) position of the second index for the
           contraction, with the same convention as for ``pos1``. The variance
           type of ``pos2`` must be opposite to that of ``pos1``
+        - ``using`` -- (default: ``None``) a non-degenerate form
 
         OUTPUT:
 
@@ -3073,6 +3084,15 @@ class TensorField(ModuleElementWithMutability):
             on V: (u, v) ↦ 1/2*u - 1/2*v + 1
             sage: s == a.trace(0,1) # explicit mention of the positions
             True
+
+        The trace of a type-`(0,2)` tensor field using a metric::
+
+            sage: g = M.metric('g')
+            sage: g[0,0], g[0,1], g[1,1] = 1, 0, 1
+            sage: g.trace(using=g).display()
+            M → ℝ
+            on U: (x, y) ↦ 2
+            on W: (u, v) ↦ 2
 
         Instead of the explicit call to the method :meth:`trace`, one
         may use the index notation with Einstein convention (summation over
@@ -3140,6 +3160,13 @@ class TensorField(ModuleElementWithMutability):
             True
 
         """
+        if using is not None:
+            if self.tensor_type() != (0, 2):
+                raise ValueError(
+                    "trace with respect to a non-degenerate form is only defined for type-(0,2) tensor fields"
+                )
+            return self.up(using, 1).trace()
+
         # The indices at pos1 and pos2 must be of different types:
         k_con = self._tensor_type[0]
         l_cov = self._tensor_type[1]

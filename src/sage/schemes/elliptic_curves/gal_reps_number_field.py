@@ -119,7 +119,6 @@ class GaloisRepresentation(SageObject):
         else:
             return "Compatible family of Galois representations associated to the " + repr(self.E)
 
-
     def __eq__(self,other):
         r"""
         Compares two Galois representations.
@@ -157,7 +156,6 @@ class GaloisRepresentation(SageObject):
         """
         return self.E
 
-
     def non_surjective(self, A=100):
         r"""
         Return a list of primes `p` including all primes for which the mod-`p`
@@ -180,7 +178,7 @@ class GaloisRepresentation(SageObject):
             sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
             sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
             sage: rho = E.galois_representation()
-            sage: rho.non_surjective() # See Section 5.10 of [Ser1972].
+            sage: rho.non_surjective() # See Section 5.10 of [Ser1972].  # long time
             [3, 5, 29]
             sage: K = NumberField(x**2 + 3, 'a'); a = K.gen()
             sage: E = EllipticCurve([0, -1, 1, -10, -20]).change_ring(K) # X_0(11)
@@ -295,15 +293,18 @@ class GaloisRepresentation(SageObject):
             sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
             sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
             sage: rho = E.galois_representation()
-            sage: rho.isogeny_bound() # See Section 5.10 of [Ser1972].
+            sage: rho.isogeny_bound() # See Section 5.10 of [Ser1972].  # long time
             [3, 5]
             sage: K = NumberField(x**2 + 1, 'a')
-            sage: EllipticCurve_from_j(K(1728)).galois_representation().isogeny_bound() # CM over K
+            sage: E = EllipticCurve_from_j(K(1728))             # CM over K
+            sage: E.galois_representation().isogeny_bound()
             [0]
-            sage: EllipticCurve_from_j(K(0)).galois_representation().isogeny_bound() # CM NOT over K
+            sage: E = EllipticCurve_from_j(K(0))                # CM NOT over K
+            sage: E.galois_representation().isogeny_bound()     # long time
             [2, 3]
-            sage: E = EllipticCurve_from_j(K(2268945/128)) # c.f. [Sut2012]
-            sage: E.galois_representation().isogeny_bound() # No 7-isogeny, but...
+            sage: E = EllipticCurve_from_j(K(2268945/128))      # c.f. [Sut2012]
+            sage: rho = E.galois_representation()
+            sage: rho.isogeny_bound()  # No 7-isogeny, but...   # long time
             [7]
 
         For curves with rational CM, there are infinitely many primes
@@ -371,21 +372,21 @@ class GaloisRepresentation(SageObject):
             sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
             sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
             sage: rho = E.galois_representation()
-            sage: rho.isogeny_bound() # See Section 5.10 of [Ser1972].
-            [3, 5]
-            sage: rho.reducible_primes()
+            sage: rho.reducible_primes() # See Section 5.10 of [Ser1972].  # long time
             [3, 5]
 
             sage: K = NumberField(x**2 + 1, 'a')
-            sage: EllipticCurve_from_j(K(1728)).galois_representation().isogeny_bound() # CM over K
+            sage: E = EllipticCurve_from_j(K(1728))             # CM over K
+            sage: E.galois_representation().reducible_primes()
             [0]
-            sage: EllipticCurve_from_j(K(0)).galois_representation().reducible_primes() # CM but NOT over K
+            sage: E = EllipticCurve_from_j(K(0))                # CM but NOT over K
+            sage: E.galois_representation().reducible_primes()  # long time
             [2, 3]
-            sage: E = EllipticCurve_from_j(K(2268945/128)) # c.f. [Sut2012]
+            sage: E = EllipticCurve_from_j(K(2268945/128))      # c.f. [Sut2012]
             sage: rho = E.galois_representation()
-            sage: rho.isogeny_bound() # ... but there is no 7-isogeny ...
+            sage: rho.isogeny_bound()  # No 7-isogeny, but...   # long time
             [7]
-            sage: rho.reducible_primes()
+            sage: rho.reducible_primes()                        # long time
             []
 
         For curves with rational CM, there are infinitely many primes
@@ -427,7 +428,7 @@ def _non_surjective(E, patience=100):
 
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
-        sage: sage.schemes.elliptic_curves.gal_reps_number_field._non_surjective(E) # See Section 5.10 of [Ser1972].
+        sage: sage.schemes.elliptic_curves.gal_reps_number_field._non_surjective(E) # See Section 5.10 of [Ser1972].  # long time
         [3, 5, 29]
         sage: E = EllipticCurve_from_j(1728).change_ring(K) # CM
         sage: sage.schemes.elliptic_curves.gal_reps_number_field._non_surjective(E)
@@ -501,7 +502,7 @@ def Frobenius_filter(E, L, patience=100):
     EXAMPLES::
 
         sage: E = EllipticCurve('11a1') # has a 5-isogeny
-        sage: sage.schemes.elliptic_curves.gal_reps_number_field.Frobenius_filter(E,primes(40))
+        sage: sage.schemes.elliptic_curves.gal_reps_number_field.Frobenius_filter(E,primes(40))  # long time
         [5]
 
     Example to show that the output may contain primes where the
@@ -509,7 +510,7 @@ def Frobenius_filter(E, L, patience=100):
     essentially the unique such example by [Sut2012]_::
 
         sage: E = EllipticCurve_from_j(2268945/128)
-        sage: sage.schemes.elliptic_curves.gal_reps_number_field.Frobenius_filter(E, [7, 11])
+        sage: sage.schemes.elliptic_curves.gal_reps_number_field.Frobenius_filter(E, [7, 11])  # long time
         [7]
 
     This curve does possess a 7-isogeny modulo every prime of good
@@ -522,7 +523,7 @@ def Frobenius_filter(E, L, patience=100):
 
         sage: K.<i> = QuadraticField(-1)
         sage: E = EllipticCurve([1+i, -i, i, -399-240*i,  2627+2869*i])
-        sage: sage.schemes.elliptic_curves.gal_reps_number_field.Frobenius_filter(E, primes(20))
+        sage: sage.schemes.elliptic_curves.gal_reps_number_field.Frobenius_filter(E, primes(20))  # long time
         [2, 3]
 
     Here the curve really does possess isogenies of degrees 2 and 3::
@@ -707,7 +708,6 @@ def _exceptionals(E, L, patience=1000):
                 u = trace**2 / det
                 if u not in (1, 2, 4) and u**2 - 3 * u + 1 != 0:
                     D[l][2] = False
-
 
             if D[l] == [False, False, False]:
                 unexc.append(l)
@@ -902,7 +902,6 @@ def _semistable_reducible_primes(E, verbose=False):
         else:
             if verbose:
                 print("gx and gy both 0!")
-
 
         ## It is possible that our curve has CM. ##
 
@@ -1154,9 +1153,9 @@ def Billerey_P_l(E, l):
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_P_l
         sage: [Billerey_P_l(E,l) for l in primes(10)]
         [x^2 + 8143*x + 16777216,
-        x^2 + 451358*x + 282429536481,
-        x^4 - 664299076*x^3 + 205155493652343750*x^2 - 39595310449600219726562500*x + 3552713678800500929355621337890625,
-        x^4 - 207302404*x^3 - 377423798538689366394*x^2 - 39715249826471656586987520004*x + 36703368217294125441230211032033660188801]
+         x^2 + 451358*x + 282429536481,
+         x^4 - 664299076*x^3 + 205155493652343750*x^2 - 39595310449600219726562500*x + 3552713678800500929355621337890625,
+         x^4 - 207302404*x^3 - 377423798538689366394*x^2 - 39715249826471656586987520004*x + 36703368217294125441230211032033660188801]
     """
     K = E.base_field()
     qq = K.primes_above(l)
@@ -1190,11 +1189,11 @@ def Billerey_B_l(E,l,B=0):
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_B_l
         sage: [Billerey_B_l(E,l) for l in primes(15)]
         [1123077552537600,
-        227279663773903886745600,
-        0,
-        0,
-        269247154818492941287713746693964214802283882086400,
-        0]
+         227279663773903886745600,
+         0,
+         0,
+         269247154818492941287713746693964214802283882086400,
+         0]
     """
     d = E.base_field().absolute_degree()
     P = Billerey_P_l(E, l)
@@ -1506,20 +1505,20 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import reducible_primes_Billerey
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
-        sage: reducible_primes_Billerey(E)
+        sage: reducible_primes_Billerey(E)  # long time
         [3, 5]
         sage: K = NumberField(x**2 + 1, 'a')
         sage: E = EllipticCurve_from_j(K(1728)) # CM over K
-        sage: reducible_primes_Billerey(E)
+        sage: reducible_primes_Billerey(E)  # long time
         [0]
         sage: E = EllipticCurve_from_j(K(0)) # CM but NOT over K
-        sage: reducible_primes_Billerey(E)
+        sage: reducible_primes_Billerey(E)  # long time
         [2, 3]
 
     An example where a prime is not reducible but passes the test::
 
         sage: E = EllipticCurve_from_j(K(2268945/128)).global_minimal_model() # c.f. [Sut2012]
-        sage: reducible_primes_Billerey(E)
+        sage: reducible_primes_Billerey(E)  # long time
         [7]
 
     TESTS:
@@ -1530,8 +1529,8 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
         sage: j = 46969655/32768
         sage: E = EllipticCurve(j=K(j))
         sage: EK = E.change_ring(K)
-        sage: C = EK.isogeny_class(minimal_models=False)
-        sage: len(C)
+        sage: C = EK.isogeny_class(minimal_models=False)    # long time
+        sage: len(C)                                        # long time
         4
     """
     #verbose=True
@@ -1621,9 +1620,9 @@ def reducible_primes_naive(E, max_l=None, num_P=None, verbose=False):
         [2, 5, 197, 557, 653, 769]
         sage: reducible_primes_naive(E,num_P=20)
         [2, 5]
-        sage: reducible_primes_naive(E)
+        sage: reducible_primes_naive(E)  # long time
         [2, 5]
-        sage: [phi.degree() for phi in E.isogenies_prime_degree()]
+        sage: [phi.degree() for phi in E.isogenies_prime_degree()]  # long time
         [2, 2, 2, 5]
     """
     if max_l is None:

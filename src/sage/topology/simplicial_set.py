@@ -41,10 +41,9 @@ Some of the predefined simplicial sets::
 
     sage: simplicial_sets.Torus()
     Torus
-    sage: simplicial_sets.RealProjectiveSpace(7)
+    sage: simplicial_sets.RealProjectiveSpace(7)                                        # optional - sage.groups
     RP^7
-    sage: S5 = simplicial_sets.Sphere(5)
-    sage: S5
+    sage: S5 = simplicial_sets.Sphere(5); S5
     S^5
     sage: S5.nondegenerate_simplices()
     [v_0, sigma_5]
@@ -254,7 +253,6 @@ copy of the integers::
 
 import copy
 
-from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
@@ -263,9 +261,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
-from sage.homology.algebraic_topological_model import algebraic_topological_model_delta_complex
-from sage.homology.chain_complex import ChainComplex
-from sage.homology.chains import Chains, Cochains
 
 from .cell_complex import GenericCellComplex
 from .delta_complex import DeltaComplex
@@ -753,7 +748,7 @@ class AbstractSimplex_class(SageObject):
             return self
         underlying = self.nondegenerate()
         return AbstractSimplex(underlying.dimension(),
-                               degeneracies= list(args) + self.degeneracies(),
+                               degeneracies=list(args) + self.degeneracies(),
                                underlying=underlying)
 
     def __copy__(self):
@@ -821,14 +816,14 @@ class AbstractSimplex_class(SageObject):
         copies of simplicial sets::
 
             sage: from sage.topology.simplicial_set import SimplicialSet
-            sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
-            sage: dict(copy.copy(RP3._data)) == dict(RP3._data)
+            sage: RP3 = simplicial_sets.RealProjectiveSpace(3)                          # optional - sage.groups
+            sage: dict(copy.copy(RP3._data)) == dict(RP3._data)                         # optional - sage.groups
             True
-            sage: dict(copy.deepcopy(RP3._data)) == dict(RP3._data)
+            sage: dict(copy.deepcopy(RP3._data)) == dict(RP3._data)                     # optional - sage.groups
             False
-            sage: SimplicialSet(RP3) == RP3
+            sage: SimplicialSet(RP3) == RP3                                             # optional - sage.groups
             False
-            sage: copy.copy(RP3) == RP3
+            sage: copy.copy(RP3) == RP3                                                 # optional - sage.groups
             False
         """
         underlying = self.nondegenerate()
@@ -1155,11 +1150,11 @@ class SimplicialSet_arbitrary(Parent):
             sage: S2.faces(sigma.apply_degeneracies(0))
             [sigma_2, sigma_2, s_1 s_0 v_0, s_1 s_0 v_0]
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)
-            sage: f2 = BC3.n_cells(1)[1]; f2
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # optional - sage.groups
+            sage: f2 = BC3.n_cells(1)[1]; f2                                            # optional - sage.groups
             f^2
-            sage: BC3.faces(f2)
+            sage: BC3.faces(f2)                                                         # optional - sage.groups
             (1, 1)
 
         TESTS::
@@ -1360,11 +1355,11 @@ class SimplicialSet_arbitrary(Parent):
 
         Test an infinite example::
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)
-            sage: BC3.nondegenerate_simplices(2)
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # optional - sage.groups
+            sage: BC3.nondegenerate_simplices(2)                                        # optional - sage.groups
             [1, f, f^2, f * f, f * f^2, f^2 * f, f^2 * f^2]
-            sage: BC3.nondegenerate_simplices()
+            sage: BC3.nondegenerate_simplices()                                         # optional - sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: this simplicial set may be infinite, so specify max_dim
@@ -1415,20 +1410,20 @@ class SimplicialSet_arbitrary(Parent):
             sage: S1.cells()
             {0: [v], 1: [e]}
 
-            sage: S0.cells(S0.subsimplicial_set([v, w]))
+            sage: S0.cells(S0.subsimplicial_set([v, w]))                                # optional - sage.graphs
             {0: [*]}
 
             sage: X = SimplicialSet({e: (v,w)})
-            sage: X.cells(X.subsimplicial_set([v, w]))
+            sage: X.cells(X.subsimplicial_set([v, w]))                                  # optional - sage.graphs
             {0: [*], 1: [e]}
 
         Test an infinite example::
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)
-            sage: BC3.cells(max_dim=2)
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # optional - sage.groups
+            sage: BC3.cells(max_dim=2)                                                  # optional - sage.groups
             {0: [1], 1: [f, f^2], 2: [f * f, f * f^2, f^2 * f, f^2 * f^2]}
-            sage: BC3.cells()
+            sage: BC3.cells()                                                           # optional - sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: this simplicial set may be infinite, so specify max_dim
@@ -1474,9 +1469,9 @@ class SimplicialSet_arbitrary(Parent):
             [sigma_3]
             sage: simplicial_sets.Sphere(3).n_cells(2)
             []
-            sage: C2 = groups.misc.MultiplicativeAbelian([2])
-            sage: BC2 = C2.nerve()
-            sage: BC2.n_cells(3)
+            sage: C2 = groups.misc.MultiplicativeAbelian([2])                           # optional - sage.groups
+            sage: BC2 = C2.nerve()                                                      # optional - sage.groups
+            sage: BC2.n_cells(3)                                                        # optional - sage.groups
             [f * f * f]
         """
         cells = self.cells(subcomplex=subcomplex, max_dim=n)
@@ -1534,9 +1529,9 @@ class SimplicialSet_arbitrary(Parent):
 
         An example involving an infinite simplicial set::
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)
-            sage: BC3.all_n_simplices(2)
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # optional - sage.groups
+            sage: BC3.all_n_simplices(2)                                                # optional - sage.groups
             [f * f,
              f * f^2,
              f^2 * f,
@@ -1580,9 +1575,10 @@ class SimplicialSet_arbitrary(Parent):
             Simplicial set endomorphism of S^3
               Defn: Identity map
 
-            sage: BC3 = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([3]))
-            sage: one = BC3.identity()
-            sage: [(sigma, one(sigma)) for sigma in BC3.n_cells(2)]
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # optional - sage.groups
+            sage: one = BC3.identity()                                                  # optional - sage.groups
+            sage: [(sigma, one(sigma)) for sigma in BC3.n_cells(2)]                     # optional - sage.groups
             [(f * f, f * f),
              (f * f^2, f * f^2),
              (f^2 * f, f^2 * f),
@@ -1620,8 +1616,8 @@ class SimplicialSet_arbitrary(Parent):
               To:   S^0
               Defn: Constant map at v_0
 
-            sage: Sigma3 = groups.permutation.Symmetric(3)
-            sage: Sigma3.nerve().constant_map()
+            sage: Sigma3 = groups.permutation.Symmetric(3)                              # optional - sage.groups
+            sage: Sigma3.nerve().constant_map()                                         # optional - sage.groups
             Simplicial set morphism:
               From: Nerve of Symmetric group of order 3! as a permutation group
               To:   Point
@@ -1660,8 +1656,8 @@ class SimplicialSet_arbitrary(Parent):
         EXAMPLES::
 
             sage: Delta3 = simplicial_sets.Simplex(3)
-            sage: G = Delta3.graph()
-            sage: G.edges(sort=True)
+            sage: G = Delta3.graph()                                                    # optional - sage.graphs
+            sage: G.edges(sort=True)                                                    # optional - sage.graphs
             [((0,), (1,), (0, 1)),
              ((0,), (2,), (0, 2)),
              ((0,), (3,), (0, 3)),
@@ -1670,22 +1666,24 @@ class SimplicialSet_arbitrary(Parent):
              ((2,), (3,), (2, 3))]
 
             sage: T = simplicial_sets.Torus()
-            sage: T.graph()
+            sage: T.graph()                                                             # optional - sage.graphs
             Looped multi-graph on 1 vertex
-            sage: len(T.graph().edges(sort=False))
+            sage: len(T.graph().edges(sort=False))                                      # optional - sage.graphs
             3
 
             sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3)
-            sage: G = CP3.graph()
-            sage: len(G.vertices(sort=False))
+            sage: G = CP3.graph()                                                       # optional - sage.graphs
+            sage: len(G.vertices(sort=False))                                           # optional - sage.graphs
             1
-            sage: len(G.edges(sort=False))
+            sage: len(G.edges(sort=False))                                              # optional - sage.graphs
             0
 
-            sage: Sigma3 = groups.permutation.Symmetric(3)
-            sage: Sigma3.nerve().is_connected()
+            sage: Sigma3 = groups.permutation.Symmetric(3)                              # optional - sage.groups
+            sage: Sigma3.nerve().is_connected()                                         # optional - sage.graphs sage.groups
             True
         """
+        from sage.graphs.graph import Graph
+
         G = Graph(loops=True, multiedges=True)
         for e in self.n_cells(1):
             G.add_edge(self.face(e,0), self.face(e,1), e)
@@ -1701,14 +1699,14 @@ class SimplicialSet_arbitrary(Parent):
 
             sage: T = simplicial_sets.Torus()
             sage: K = simplicial_sets.KleinBottle()
-            sage: X = T.disjoint_union(K)
-            sage: T.is_connected()
+            sage: X = T.disjoint_union(K)                                               # optional - sage.graphs
+            sage: T.is_connected()                                                      # optional - sage.graphs
             True
-            sage: K.is_connected()
+            sage: K.is_connected()                                                      # optional - sage.graphs
             True
-            sage: X.is_connected()
+            sage: X.is_connected()                                                      # optional - sage.graphs
             False
-            sage: simplicial_sets.Sphere(0).is_connected()
+            sage: simplicial_sets.Sphere(0).is_connected()                              # optional - sage.graphs
             False
         """
         return self.graph().is_connected()
@@ -1742,8 +1740,7 @@ class SimplicialSet_arbitrary(Parent):
             sage: f = AbstractSimplex(1, name='f')
 
             sage: X = SimplicialSet({e: (v, w), f: (w, v)})
-            sage: Y = X.subsimplicial_set([e])
-            sage: Y
+            sage: Y = X.subsimplicial_set([e]); Y
             Simplicial set with 3 non-degenerate simplices
             sage: Y.nondegenerate_simplices()
             [v, w, e]
@@ -1759,13 +1756,12 @@ class SimplicialSet_arbitrary(Parent):
         A subsimplicial set knows about its ambient space and the
         inclusion map into it::
 
-            sage: RP4 = simplicial_sets.RealProjectiveSpace(4)
-            sage: M = RP4.n_skeleton(2)
-            sage: M
+            sage: RP4 = simplicial_sets.RealProjectiveSpace(4)                          # optional - sage.groups
+            sage: M = RP4.n_skeleton(2); M                                              # optional - sage.groups
             Simplicial set with 3 non-degenerate simplices
-            sage: M.ambient_space()
+            sage: M.ambient_space()                                                     # optional - sage.groups
             RP^4
-            sage: M.inclusion_map()
+            sage: M.inclusion_map()                                                     # optional - sage.groups
             Simplicial set morphism:
               From: Simplicial set with 3 non-degenerate simplices
               To:   RP^4
@@ -1773,11 +1769,12 @@ class SimplicialSet_arbitrary(Parent):
 
         An infinite ambient simplicial set::
 
-            sage: B = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
-            sage: BxB = B.product(B)
-            sage: BxB.n_cells(2)[5:]
+            sage: G = groups.misc.MultiplicativeAbelian([2])                            # optional - sage.groups
+            sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
+            sage: BxB = B.product(B)                                                    # optional - sage.groups
+            sage: BxB.n_cells(2)[5:]                                                    # optional - sage.groups
             [(s_0 f, s_1 f), (s_1 f, f * f), (s_1 f, s_0 f), (s_1 s_0 1, f * f)]
-            sage: BxB.subsimplicial_set(BxB.n_cells(2)[5:])
+            sage: BxB.subsimplicial_set(BxB.n_cells(2)[5:])                             # optional - sage.groups
             Simplicial set with 8 non-degenerate simplices
 
         TESTS:
@@ -1915,14 +1912,14 @@ class SimplicialSet_arbitrary(Parent):
             sage: simplicial_sets.Sphere(5).chain_complex()
             Chain complex with at most 3 nonzero terms over Integer Ring
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)
-            sage: BC3.chain_complex(range(4), base_ring=GF(3))
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # optional - sage.groups
+            sage: BC3.chain_complex(range(4), base_ring=GF(3))                          # optional - sage.groups sage.rings.finite_rings
             Chain complex with at most 4 nonzero terms over Finite Field of size 3
 
         TESTS::
 
-            sage: BC3.chain_complex()
+            sage: BC3.chain_complex()                                                   # optional - sage.groups sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NotImplementedError: this simplicial set may be infinite, so specify dimensions when computing its chain complex
@@ -1968,33 +1965,34 @@ class SimplicialSet_arbitrary(Parent):
 
         EXAMPLES::
 
-            sage: simplicial_sets.Sphere(5).homology()
+            sage: simplicial_sets.Sphere(5).homology()                                  # optional - sage.modules
             {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: Z}
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)
-            sage: BC3.homology(range(4), base_ring=GF(3))
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # optional - sage.groups
+            sage: BC3.homology(range(4), base_ring=GF(3))                               # optional - sage.groups sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 0 over Finite Field of size 3,
              1: Vector space of dimension 1 over Finite Field of size 3,
              2: Vector space of dimension 1 over Finite Field of size 3,
              3: Vector space of dimension 1 over Finite Field of size 3}
 
-            sage: BC2 = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
-            sage: BK = BC2.product(BC2)
-            sage: BK.homology(range(4))
+            sage: C2 = groups.misc.MultiplicativeAbelian([2])                           # optional - sage.groups
+            sage: BC2 = simplicial_sets.ClassifyingSpace(C2)                            # optional - sage.groups
+            sage: BK = BC2.product(BC2)                                                 # optional - sage.groups
+            sage: BK.homology(range(4))                                                 # optional - sage.groups sage.modules
             {0: 0, 1: C2 x C2, 2: C2, 3: C2 x C2 x C2}
 
         TESTS::
 
             sage: S3 = simplicial_sets.Sphere(3)
-            sage: S3.homology(0)
+            sage: S3.homology(0)                                                        # optional - sage.modules
             0
-            sage: S3.homology((0,))
+            sage: S3.homology((0,))                                                     # optional - sage.modules
             {0: 0}
-            sage: S3.homology(0, reduced=False)
+            sage: S3.homology(0, reduced=False)                                         # optional - sage.modules
             Z
 
-            sage: BC3.homology()
+            sage: BC3.homology()                                                        # optional - sage.groups sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: this simplicial set may be infinite, so specify dimensions when computing homology
@@ -2100,9 +2098,9 @@ class SimplicialSet_arbitrary(Parent):
             sage: simplicial_sets.Sphere(5).betti()
             {0: 1, 1: 0, 2: 0, 3: 0, 4: 0, 5: 1}
 
-            sage: C3 = groups.misc.MultiplicativeAbelian([3])
-            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)
-            sage: BC3.betti(range(4))
+            sage: C3 = groups.misc.MultiplicativeAbelian([3])                           # optional - sage.groups
+            sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                            # optional - sage.groups
+            sage: BC3.betti(range(4))                                                   # optional - sage.groups sage.modules
             {0: 1, 1: 0, 2: 0, 3: 0}
         """
         dict = {}
@@ -2142,17 +2140,20 @@ class SimplicialSet_arbitrary(Parent):
             sage: C = S3.n_chains(3, cochains=True)
             sage: list(C.basis())
             [\chi_sigma_3]
-            sage: Sigma3 = groups.permutation.Symmetric(3)
-            sage: BSigma3 = simplicial_sets.ClassifyingSpace(Sigma3)
-            sage: list(BSigma3.n_chains(1).basis())
+            sage: Sigma3 = groups.permutation.Symmetric(3)                              # optional - sage.groups
+            sage: BSigma3 = simplicial_sets.ClassifyingSpace(Sigma3)                    # optional - sage.groups
+            sage: list(BSigma3.n_chains(1).basis())                                     # optional - sage.groups
             [(1,2), (1,2,3), (1,3), (1,3,2), (2,3)]
-            sage: list(BSigma3.n_chains(1, cochains=True).basis())
+            sage: list(BSigma3.n_chains(1, cochains=True).basis())                      # optional - sage.groups
             [\chi_(1,2), \chi_(1,2,3), \chi_(1,3), \chi_(1,3,2), \chi_(2,3)]
         """
         if self.is_finite():
             return GenericCellComplex.n_chains(self, n=n,
                                                base_ring=base_ring,
                                                cochains=cochains)
+
+        from sage.homology.chains import Chains, Cochains
+
         n_cells = tuple(self.n_cells(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
@@ -2191,29 +2192,29 @@ class SimplicialSet_arbitrary(Parent):
             sage: e = AbstractSimplex(1, name='e')
             sage: f = AbstractSimplex(1, name='f')
             sage: X = SimplicialSet({e: (v, w), f: (v, w)})
-            sage: Y = X.quotient([f])
-            sage: Y.nondegenerate_simplices()
+            sage: Y = X.quotient([f])                                                   # optional - sage.graphs
+            sage: Y.nondegenerate_simplices()                                           # optional - sage.graphs
             [*, e]
-            sage: Y.homology(1)
+            sage: Y.homology(1)                                                         # optional - sage.graphs
             Z
 
             sage: E = SimplicialSet({e: (v, w)})
-            sage: Z = E.quotient([v, w])
-            sage: Z.nondegenerate_simplices()
+            sage: Z = E.quotient([v, w])                                                # optional - sage.graphs
+            sage: Z.nondegenerate_simplices()                                           # optional - sage.graphs
             [*, e]
-            sage: Z.homology(1)
+            sage: Z.homology(1)                                                         # optional - sage.graphs
             Z
 
-            sage: F = E.quotient([v])
-            sage: F.nondegenerate_simplices()
+            sage: F = E.quotient([v])                                                   # optional - sage.graphs
+            sage: F.nondegenerate_simplices()                                           # optional - sage.graphs
             [*, w, e]
-            sage: F.base_point()
+            sage: F.base_point()                                                        # optional - sage.graphs
             *
 
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
             sage: RP2 = RP5.n_skeleton(2)
-            sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2.homology(base_ring=GF(2))
+            sage: RP5_2 = RP5.quotient(RP2)                                             # optional - sage.graphs
+            sage: RP5_2.homology(base_ring=GF(2))                                       # optional - sage.graphs sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 0 over Finite Field of size 2,
@@ -2221,15 +2222,16 @@ class SimplicialSet_arbitrary(Parent):
              4: Vector space of dimension 1 over Finite Field of size 2,
              5: Vector space of dimension 1 over Finite Field of size 2}
 
-            sage: RP5_2.ambient()
+            sage: RP5_2.ambient()                                                       # optional - sage.graphs
             RP^5
-            sage: RP5_2.subcomplex()
+            sage: RP5_2.subcomplex()                                                    # optional - sage.graphs
             Simplicial set with 3 non-degenerate simplices
-            sage: RP5_2.quotient_map()
+            sage: RP5_2.quotient_map()                                                  # optional - sage.graphs
             Simplicial set morphism:
               From: RP^5
               To:   Quotient: (RP^5/Simplicial set with 3 non-degenerate simplices)
-              Defn: [1, f, f * f, f * f * f, f * f * f * f, f * f * f * f * f] --> [*, s_0 *, s_1 s_0 *, f * f * f, f * f * f * f, f * f * f * f * f]
+              Defn: [1, f, f * f, f * f * f, f * f * f * f, f * f * f * f * f]
+                    --> [*, s_0 *, s_1 s_0 *, f * f * f, f * f * f * f, f * f * f * f * f]
 
         Behavior of base points::
 
@@ -2239,7 +2241,7 @@ class SimplicialSet_arbitrary(Parent):
             sage: L = K.subsimplicial_set([K.n_cells(1)[-1]])
             sage: L.nondegenerate_simplices()
             [(2,), (3,), (2, 3)]
-            sage: K.quotient([K.n_cells(1)[-1]]).base_point()
+            sage: K.quotient([K.n_cells(1)[-1]]).base_point()                           # optional - sage.graphs
             *
 
             sage: K = K.set_base_point(K.n_cells(0)[0])
@@ -2248,15 +2250,14 @@ class SimplicialSet_arbitrary(Parent):
             sage: L = K.subsimplicial_set([K.n_cells(1)[-1]])
             sage: L.nondegenerate_simplices()
             [(2,), (3,), (2, 3)]
-            sage: K.quotient(L).base_point()
+            sage: K.quotient(L).base_point()                                            # optional - sage.graphs
             (0,)
 
         TESTS::
 
-            sage: pt = RP5.quotient(RP5.n_skeleton(5))
-            sage: pt
+            sage: pt = RP5.quotient(RP5.n_skeleton(5)); pt                              # optional - sage.graphs sage.groups
             Quotient: (RP^5/RP^5)
-            sage: len(pt.nondegenerate_simplices())
+            sage: len(pt.nondegenerate_simplices())                                     # optional - sage.graphs sage.groups
             1
         """
         from .simplicial_set_constructions import SubSimplicialSet
@@ -2302,37 +2303,37 @@ class SimplicialSet_arbitrary(Parent):
             sage: f = AbstractSimplex(1, name='f')
             sage: X = SimplicialSet({e: (v, v)})
             sage: Y = SimplicialSet({f: (v, w)})
-            sage: Z = X.disjoint_union(Y)
+            sage: Z = X.disjoint_union(Y)                                               # optional - sage.graphs
 
         Since ``X`` and ``Y`` have simplices in common, Sage uses a
         copy of ``Y`` when constructing the disjoint union. Note the
         name conflict in the list of simplices: ``v`` appears twice::
 
-            sage: Z = X.disjoint_union(Y)
-            sage: Z.nondegenerate_simplices()
+            sage: Z = X.disjoint_union(Y)                                               # optional - sage.graphs
+            sage: Z.nondegenerate_simplices()                                           # optional - sage.graphs
             [v, v, w, e, f]
 
         Factors and inclusion maps::
 
             sage: T = simplicial_sets.Torus()
             sage: S2 = simplicial_sets.Sphere(2)
-            sage: A = T.disjoint_union(S2)
-            sage: A.factors()
+            sage: A = T.disjoint_union(S2)                                              # optional - sage.graphs
+            sage: A.factors()                                                           # optional - sage.graphs
             (Torus, S^2)
-            sage: i = A.inclusion_map(0)
-            sage: i.domain()
+            sage: i = A.inclusion_map(0)                                                # optional - sage.graphs
+            sage: i.domain()                                                            # optional - sage.graphs
             Torus
-            sage: i.codomain()
+            sage: i.codomain()                                                          # optional - sage.graphs
             Disjoint union: (Torus u S^2)
 
         Empty factors are ignored::
 
             sage: from sage.topology.simplicial_set_examples import Empty
             sage: E = Empty()
-            sage: K = S2.disjoint_union(S2, E, E, S2)
-            sage: K == S2.disjoint_union(S2, S2)
+            sage: K = S2.disjoint_union(S2, E, E, S2)                                   # optional - sage.graphs
+            sage: K == S2.disjoint_union(S2, S2)                                        # optional - sage.graphs
             True
-            sage: K.factors()
+            sage: K.factors()                                                           # optional - sage.graphs
             (S^2, S^2, S^2)
         """
         from .simplicial_set_constructions import DisjointUnionOfSimplicialSets, \
@@ -2363,35 +2364,40 @@ class SimplicialSet_arbitrary(Parent):
             sage: Y = S2.unset_base_point()
             sage: Z = K.unset_base_point()
 
-            sage: S2.coproduct(K).is_pointed()
+            sage: S2.coproduct(K).is_pointed()                                          # optional - sage.graphs
             True
-            sage: S2.coproduct(K)
+            sage: S2.coproduct(K)                                                       # optional - sage.graphs
             Wedge: (S^2 v Klein bottle)
-            sage: D3.coproduct(Y, Z).is_pointed()
+            sage: D3.coproduct(Y, Z).is_pointed()                                       # optional - sage.graphs
             False
-            sage: D3.coproduct(Y, Z)
-            Disjoint union: (3-simplex u Simplicial set with 2 non-degenerate simplices u Simplicial set with 6 non-degenerate simplices)
+            sage: D3.coproduct(Y, Z)                                                    # optional - sage.graphs
+            Disjoint union: (3-simplex u Simplicial set with 2 non-degenerate simplices
+                             u Simplicial set with 6 non-degenerate simplices)
 
         The coproduct comes equipped with an inclusion map from each
         summand, as long as the summands are all finite::
 
-            sage: S2.coproduct(K).inclusion_map(0)
+            sage: S2.coproduct(K).inclusion_map(0)                                      # optional - sage.graphs
             Simplicial set morphism:
               From: S^2
               To:   Wedge: (S^2 v Klein bottle)
               Defn: [v_0, sigma_2] --> [*, sigma_2]
-            sage: D3.coproduct(Y, Z).inclusion_map(2)
+            sage: D3.coproduct(Y, Z).inclusion_map(2)                                   # optional - sage.graphs
             Simplicial set morphism:
               From: Simplicial set with 6 non-degenerate simplices
-              To:   Disjoint union: (3-simplex u Simplicial set with 2 non-degenerate simplices u Simplicial set with 6 non-degenerate simplices)
-              Defn: [Delta_{0,0}, Delta_{1,0}, Delta_{1,1}, Delta_{1,2}, Delta_{2,0}, Delta_{2,1}] --> [Delta_{0,0}, Delta_{1,0}, Delta_{1,1}, Delta_{1,2}, Delta_{2,0}, Delta_{2,1}]
+              To:   Disjoint union: (3-simplex
+                                     u Simplicial set with 2 non-degenerate simplices
+                                     u Simplicial set with 6 non-degenerate simplices)
+              Defn: [Delta_{0,0}, Delta_{1,0}, Delta_{1,1}, Delta_{1,2}, Delta_{2,0}, Delta_{2,1}]
+                    --> [Delta_{0,0}, Delta_{1,0}, Delta_{1,1}, Delta_{1,2}, Delta_{2,0}, Delta_{2,1}]
 
         TESTS::
 
-            sage: D3.coproduct(S2, Z)
+            sage: D3.coproduct(S2, Z)                                                   # optional - sage.graphs
             Traceback (most recent call last):
             ...
-            ValueError: some, but not all, of the simplicial sets are pointed, so the categorical coproduct is not defined: the category is ambiguous
+            ValueError: some, but not all, of the simplicial sets are pointed,
+            so the categorical coproduct is not defined: the category is ambiguous
         """
         if self.is_pointed() and all(X.is_pointed() for X in others):
             return self.wedge(*others)
@@ -2440,7 +2446,7 @@ class SimplicialSet_arbitrary(Parent):
 
             sage: S1 = simplicial_sets.Sphere(1)
             sage: T = S1.product(S1)
-            sage: T.homology(reduced=False)
+            sage: T.homology(reduced=False)                                             # optional - sage.modules
             {0: Z, 1: Z x Z, 2: Z}
 
         Since ``S1`` is pointed, so is ``T``::
@@ -2540,8 +2546,7 @@ class SimplicialSet_arbitrary(Parent):
 
             sage: K = simplicial_sets.Simplex(4)
             sage: L = K.n_skeleton(3)
-            sage: S4 = L.pushout(L.constant_map(), L.inclusion_map())
-            sage: S4
+            sage: S4 = L.pushout(L.constant_map(), L.inclusion_map()); S4               # optional - sage.graphs
             Pushout of maps:
               Simplicial set morphism:
                 From: Simplicial set with 30 non-degenerate simplices
@@ -2550,10 +2555,22 @@ class SimplicialSet_arbitrary(Parent):
               Simplicial set morphism:
                 From: Simplicial set with 30 non-degenerate simplices
                 To:   4-simplex
-                Defn: [(0,), (1,), (2,), (3,), (4,), (0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4), (0, 1, 2), (0, 1, 3), (0, 1, 4), (0, 2, 3), (0, 2, 4), (0, 3, 4), (1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (0, 1, 2, 3), (0, 1, 2, 4), (0, 1, 3, 4), (0, 2, 3, 4), (1, 2, 3, 4)] --> [(0,), (1,), (2,), (3,), (4,), (0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4), (0, 1, 2), (0, 1, 3), (0, 1, 4), (0, 2, 3), (0, 2, 4), (0, 3, 4), (1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (0, 1, 2, 3), (0, 1, 2, 4), (0, 1, 3, 4), (0, 2, 3, 4), (1, 2, 3, 4)]
-            sage: len(S4.nondegenerate_simplices())
+                Defn: [(0,), (1,), (2,), (3,), (4,),
+                       (0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4),
+                       (2, 3), (2, 4), (3, 4),
+                       (0, 1, 2), (0, 1, 3), (0, 1, 4), (0, 2, 3), (0, 2, 4),
+                       (0, 3, 4), (1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4),
+                       (0, 1, 2, 3), (0, 1, 2, 4), (0, 1, 3, 4), (0, 2, 3, 4),
+                       (1, 2, 3, 4)]
+                       --> [(0,), (1,), (2,), (3,), (4,),
+                            (0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4),
+                            (2, 3), (2, 4), (3, 4),
+                            (0, 1, 2), (0, 1, 3), (0, 1, 4), (0, 2, 3), (0, 2, 4), (0, 3, 4),
+                            (1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4),
+                            (0, 1, 2, 3), (0, 1, 2, 4), (0, 1, 3, 4), (0, 2, 3, 4), (1, 2, 3, 4)]
+            sage: len(S4.nondegenerate_simplices())                                     # optional - sage.graphs
             2
-            sage: S4.homology(4)
+            sage: S4.homology(4)                                                        # optional - sage.graphs sage.modules
             Z
 
         The associated maps::
@@ -2561,40 +2578,41 @@ class SimplicialSet_arbitrary(Parent):
             sage: S1 = simplicial_sets.Sphere(1)
             sage: T = S1.product(S1)
             sage: K = T.factor(0, as_subset=True)
-            sage: W = S1.wedge(T) # wedge, constructed as a pushout
-            sage: W.defining_map(1)
+            sage: W = S1.wedge(T)  # wedge, constructed as a pushout                    # optional - sage.graphs
+            sage: W.defining_map(1)                                                     # optional - sage.graphs
             Simplicial set morphism:
               From: Point
               To:   S^1 x S^1
               Defn: Constant map at (v_0, v_0)
-            sage: W.structure_map(0)
+            sage: W.structure_map(0)                                                    # optional - sage.graphs
             Simplicial set morphism:
               From: S^1
               To:   Wedge: (S^1 v S^1 x S^1)
               Defn: [v_0, sigma_1] --> [*, sigma_1]
 
-            sage: f = S1.Hom(T)({S1.n_cells(0)[0]:K.n_cells(0)[0], S1.n_cells(1)[0]:K.n_cells(1)[0]})
+            sage: f = S1.Hom(T)({S1.n_cells(0)[0]: K.n_cells(0)[0],                     # optional - sage.graphs sage.modules
+            ....:                S1.n_cells(1)[0]: K.n_cells(1)[0]})
 
         The maps `f: S^1 \to T` and `1: T \to T` induce a map `S^1 \vee T \to T`::
 
-            sage: g = W.universal_property(f, Hom(T,T).identity())
-            sage: g.domain() == W
+            sage: g = W.universal_property(f, Hom(T,T).identity())                      # optional - sage.graphs sage.modules
+            sage: g.domain() == W                                                       # optional - sage.graphs sage.modules
             True
-            sage: g.codomain() == T
+            sage: g.codomain() == T                                                     # optional - sage.graphs sage.modules
             True
 
         TESTS::
 
             sage: K = simplicial_sets.Simplex(5)
-            sage: K.pushout()
+            sage: K.pushout()                                                           # optional - sage.graphs
             Empty simplicial set
 
             sage: S0 = simplicial_sets.Sphere(0)
             sage: pt_map = S0.base_point_map()
-            sage: pt_map.domain().pushout(pt_map) == S0
+            sage: pt_map.domain().pushout(pt_map) == S0                                 # optional - sage.graphs
             True
 
-            sage: K.pushout(K.constant_map(), pt_map)
+            sage: K.pushout(K.constant_map(), pt_map)                                   # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: the domains of the maps must be equal
@@ -2681,14 +2699,15 @@ class SimplicialSet_arbitrary(Parent):
             sage: S1 = simplicial_sets.Sphere(1)
             sage: T = S1.product(S1)
             sage: K = T.factor(0, as_subset=True)
-            sage: f = S1.Hom(T)({S1.n_cells(0)[0]:K.n_cells(0)[0], S1.n_cells(1)[0]:K.n_cells(1)[0]})
-            sage: D = S1.cone()      # the cone C(S^1)
-            sage: g = D.map_from_base() # map from S^1 to C(S^1)
-            sage: P = T.product(D)
-            sage: h = P.universal_property(f, g)
-            sage: h.domain() == S1
+            sage: f = S1.Hom(T)({S1.n_cells(0)[0]: K.n_cells(0)[0],
+            ....:                S1.n_cells(1)[0]: K.n_cells(1)[0]})
+            sage: D = S1.cone()          # the cone C(S^1)                              # optional - sage.graphs
+            sage: g = D.map_from_base()  # map from S^1 to C(S^1)                       # optional - sage.graphs
+            sage: P = T.product(D)                                                      # optional - sage.graphs
+            sage: h = P.universal_property(f, g)                                        # optional - sage.graphs
+            sage: h.domain() == S1                                                      # optional - sage.graphs
             True
-            sage: h.codomain() == P
+            sage: h.codomain() == P                                                     # optional - sage.graphs
             True
 
         TESTS::
@@ -2739,25 +2758,25 @@ class SimplicialSet_arbitrary(Parent):
             sage: f = AbstractSimplex(1, name='f')
             sage: X = SimplicialSet({e: (v, v)}, base_point=v)
             sage: Y = SimplicialSet({f: (w, w)}, base_point=w)
-            sage: W = X.wedge(Y)
-            sage: W.nondegenerate_simplices()
+            sage: W = X.wedge(Y)                                                        # optional - sage.graphs
+            sage: W.nondegenerate_simplices()                                           # optional - sage.graphs
             [*, e, f]
-            sage: W.homology()
+            sage: W.homology()                                                          # optional - sage.graphs
             {0: 0, 1: Z x Z}
             sage: S2 = simplicial_sets.Sphere(2)
-            sage: X.wedge(S2).homology(reduced=False)
+            sage: X.wedge(S2).homology(reduced=False)                                   # optional - sage.graphs
             {0: Z, 1: Z, 2: Z}
-            sage: X.wedge(X).nondegenerate_simplices()
+            sage: X.wedge(X).nondegenerate_simplices()                                  # optional - sage.graphs
             [*, e, e]
 
             sage: S3 = simplicial_sets.Sphere(3)
-            sage: W = S2.wedge(S3, S2)
-            sage: W.inclusion_map(2)
+            sage: W = S2.wedge(S3, S2)                                                  # optional - sage.graphs
+            sage: W.inclusion_map(2)                                                    # optional - sage.graphs
             Simplicial set morphism:
               From: S^2
               To:   Wedge: (S^2 v S^3 v S^2)
               Defn: [v_0, sigma_2] --> [*, sigma_2]
-            sage: W.projection_map(1)
+            sage: W.projection_map(1)                                                   # optional - sage.graphs
             Simplicial set morphism:
               From: Wedge: (S^2 v S^3 v S^2)
               To:   Quotient: (Wedge: (S^2 v S^3 v S^2)/Simplicial set with 3 non-degenerate simplices)
@@ -2769,15 +2788,15 @@ class SimplicialSet_arbitrary(Parent):
 
             sage: S2.f_vector()
             [1, 0, 1]
-            sage: W.projection_map(2).codomain().f_vector()
+            sage: W.projection_map(2).codomain().f_vector()                             # optional - sage.graphs
             [1, 0, 1]
-            sage: (W.projection_map(2) * W.inclusion_map(2)).is_bijective()
+            sage: (W.projection_map(2) * W.inclusion_map(2)).is_bijective()             # optional - sage.graphs
             True
 
         TESTS::
 
             sage: Z = SimplicialSet({e: (v,w)})
-            sage: X.wedge(Z)
+            sage: X.wedge(Z)                                                            # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: the simplicial sets must be pointed
@@ -2812,18 +2831,18 @@ class SimplicialSet_arbitrary(Parent):
             sage: v = AbstractSimplex(0, name='v')
             sage: e = AbstractSimplex(1, name='e')
             sage: X = SimplicialSet({e: (v, v)})
-            sage: CX = X.cone()  # unreduced cone, since X not pointed
-            sage: CX.nondegenerate_simplices()
+            sage: CX = X.cone()  # unreduced cone, since X not pointed                  # optional - sage.graphs
+            sage: CX.nondegenerate_simplices()                                          # optional - sage.graphs
             [*, v, (v,*), e, (e,*)]
-            sage: CX.base_point()
+            sage: CX.base_point()                                                       # optional - sage.graphs
             *
 
         `X` as a subset of the cone, and also the map from `X`, in the
         unreduced case::
 
-            sage: CX.base_as_subset()
+            sage: CX.base_as_subset()                                                   # optional - sage.graphs
             Simplicial set with 2 non-degenerate simplices
-            sage: CX.map_from_base()
+            sage: CX.map_from_base()                                                    # optional - sage.graphs
             Simplicial set morphism:
             From: Simplicial set with 2 non-degenerate simplices
               To:   Cone of Simplicial set with 2 non-degenerate simplices
@@ -2832,10 +2851,10 @@ class SimplicialSet_arbitrary(Parent):
         In the reduced case, only the map from `X` is available::
 
             sage: X = X.set_base_point(v)
-            sage: CX = X.cone()  # reduced cone
-            sage: CX.nondegenerate_simplices()
+            sage: CX = X.cone()  # reduced cone                                         # optional - sage.graphs
+            sage: CX.nondegenerate_simplices()                                          # optional - sage.graphs
             [*, e, (e,*)]
-            sage: CX.map_from_base()
+            sage: CX.map_from_base()                                                    # optional - sage.graphs
             Simplicial set morphism:
               From: Simplicial set with 2 non-degenerate simplices
               To:   Reduced cone of Simplicial set with 2 non-degenerate simplices
@@ -2870,25 +2889,25 @@ class SimplicialSet_arbitrary(Parent):
 
         EXAMPLES::
 
-            sage: RP4 = simplicial_sets.RealProjectiveSpace(4)
-            sage: S1 = simplicial_sets.Sphere(1)
-            sage: SigmaRP4 = RP4.suspension()
-            sage: S1_smash_RP4 = S1.smash_product(RP4)
-            sage: SigmaRP4.homology() == S1_smash_RP4.homology()
+            sage: RP4 = simplicial_sets.RealProjectiveSpace(4)                          # optional - sage.groups
+            sage: S1 = simplicial_sets.Sphere(1)                                        # optional - sage.groups
+            sage: SigmaRP4 = RP4.suspension()                                           # optional - sage.graphs sage.groups
+            sage: S1_smash_RP4 = S1.smash_product(RP4)                                  # optional - sage.graphs sage.groups
+            sage: SigmaRP4.homology() == S1_smash_RP4.homology()                        # optional - sage.graphs sage.groups
             True
 
         The version of the suspension obtained by the smash product is
         typically less efficient than the reduced suspension produced
         here::
 
-            sage: SigmaRP4.f_vector()
+            sage: SigmaRP4.f_vector()                                                   # optional - sage.graphs sage.groups
             [1, 0, 1, 1, 1, 1]
-            sage: S1_smash_RP4.f_vector()
+            sage: S1_smash_RP4.f_vector()                                               # optional - sage.graphs sage.groups
             [1, 1, 4, 6, 8, 5]
 
         TESTS::
 
-            sage: RP4.suspension(-3)
+            sage: RP4.suspension(-3)                                                    # optional - sage.graphs sage.groups
             Traceback (most recent call last):
             ...
             ValueError: n must be non-negative
@@ -2945,22 +2964,22 @@ class SimplicialSet_arbitrary(Parent):
             sage: K = simplicial_sets.Simplex(2)
             sage: K.is_reduced()
             False
-            sage: X = K.reduce()
-            sage: X.is_reduced()
+            sage: X = K.reduce()                                                        # optional - sage.graphs
+            sage: X.is_reduced()                                                        # optional - sage.graphs
             True
 
         ``X`` is reduced, so calling ``reduce`` on it again
         returns ``X`` itself::
 
-            sage: X is X.reduce()
+            sage: X is X.reduce()                                                       # optional - sage.graphs
             True
-            sage: K is K.reduce()
+            sage: K is K.reduce()                                                       # optional - sage.graphs
             False
 
         Raise an error for disconnected simplicial sets::
 
             sage: S0 = simplicial_sets.Sphere(0)
-            sage: S0.reduce()
+            sage: S0.reduce()                                                           # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: this simplicial set is not connected
@@ -3218,7 +3237,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             sage: skip = ["_test_pickling", "_test_elements"]
             sage: TestSuite(S1).run(skip=skip)
             sage: TestSuite(simplicial_sets.Sphere(5)).run(skip=skip)
-            sage: TestSuite(simplicial_sets.RealProjectiveSpace(6)).run(skip=skip)
+            sage: TestSuite(simplicial_sets.RealProjectiveSpace(6)).run(skip=skip)      # optional - sage.groups
         """
         def face(sigma, i):
             """
@@ -3555,7 +3574,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: simplicial_sets.RealProjectiveSpace(4).euler_characteristic()
+            sage: simplicial_sets.RealProjectiveSpace(4).euler_characteristic()         # optional - sage.groups
             1
             sage: simplicial_sets.Sphere(6).euler_characteristic()
             2
@@ -3608,16 +3627,16 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             sage: degen = v.apply_degeneracies(1, 0) # s_1 s_0 applied to v
             sage: sigma = AbstractSimplex(3)
             sage: S3 = SimplicialSet({sigma: (degen, degen, degen, degen)}) # the 3-sphere
-            sage: S3.chain_complex().homology()
+            sage: S3.chain_complex().homology()                                         # optional - sage.modules
             {0: Z, 3: Z}
-            sage: S3.chain_complex(augmented=True).homology()
+            sage: S3.chain_complex(augmented=True).homology()                           # optional - sage.modules
             {-1: 0, 0: 0, 3: Z}
-            sage: S3.chain_complex(dimensions=range(3), base_ring=QQ).homology()
+            sage: S3.chain_complex(dimensions=range(3), base_ring=QQ).homology()        # optional - sage.modules
             {0: Vector space of dimension 1 over Rational Field}
 
-            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
-            sage: RP2 = RP5.n_skeleton(2)
-            sage: RP5.chain_complex(subcomplex=RP2).homology()
+            sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # optional - sage.groups
+            sage: RP2 = RP5.n_skeleton(2)                                               # optional - sage.groups
+            sage: RP5.chain_complex(subcomplex=RP2).homology()                          # optional - sage.groups sage.modules
             {0: Z, 3: C2, 4: 0, 5: Z}
 
         TESTS:
@@ -3626,14 +3645,17 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         simplicial sets, and compare homology calculations::
 
             sage: T = simplicial_complexes.Torus()
-            sage: T.homology() == SimplicialSet(T).homology()
+            sage: T.homology() == SimplicialSet(T).homology()                           # optional - sage.modules
             True
-            sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: RP2.homology() == SimplicialSet(RP2).homology()
+            sage: RP2 = delta_complexes.RealProjectivePlane()                           # optional - sage.groups sage.modules
+            sage: RP2.homology() == SimplicialSet(RP2).homology()                       # optional - sage.groups sage.modules
             True
-            sage: RP2.cohomology(base_ring=GF(2)) == SimplicialSet(RP2).cohomology(base_ring=GF(2))
+            sage: cohoRP2 = RP2.cohomology(base_ring=GF(2))                             # optional - sage.groups sage.modules sage.rings.finite_rings
+            sage: cohoRP2 == SimplicialSet(RP2).cohomology(base_ring=GF(2))             # optional - sage.groups sage.modules sage.rings.finite_rings
             True
         """
+        from sage.homology.chain_complex import ChainComplex
+
         if dimensions is None:
             if not self.cells(): # Empty
                 if cochain:
@@ -3769,19 +3791,21 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))
-            sage: M.homology()
+            sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                          # optional - sage.groups
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.groups sage.rings.finite_rings
+            sage: M.homology()                                                          # optional - sage.groups sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = simplicial_sets.Torus()
             sage: phi, M = T.algebraic_topological_model(QQ)
-            sage: M.homology()
+            sage: M.homology()                                                          # optional - sage.modules
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
         """
+        from sage.homology.algebraic_topological_model import algebraic_topological_model_delta_complex
+
         if base_ring is None:
             base_ring = QQ
         return algebraic_topological_model_delta_complex(self, base_ring)
@@ -4023,28 +4047,29 @@ def shrink_simplicial_complex(K):
 
         sage: from sage.topology.simplicial_set import shrink_simplicial_complex
         sage: K = simplicial_complexes.Simplex(3)
-        sage: X = shrink_simplicial_complex(K)
-        sage: X.f_vector()
+        sage: X = shrink_simplicial_complex(K)                                          # optional - sage.graphs
+        sage: X.f_vector()                                                              # optional - sage.graphs
         [1]
 
         sage: Y = simplicial_complexes.Sphere(2)
-        sage: S2 = shrink_simplicial_complex(Y)
-        sage: S2
-        Quotient: (Simplicial set with 14 non-degenerate simplices/Simplicial set with 13 non-degenerate simplices)
-        sage: S2.f_vector()
+        sage: S2 = shrink_simplicial_complex(Y); S2                                     # optional - sage.graphs
+        Quotient: (Simplicial set with
+                   14 non-degenerate simplices/Simplicial set with
+                                               13 non-degenerate simplices)
+        sage: S2.f_vector()                                                             # optional - sage.graphs
         [1, 0, 1]
-        sage: S2.homology()
+        sage: S2.homology()                                                             # optional - sage.graphs sage.modules
         {0: 0, 1: 0, 2: Z}
 
         sage: Z = simplicial_complexes.SurfaceOfGenus(3)
         sage: Z.f_vector()
         [1, 15, 57, 38]
-        sage: Z.homology()
+        sage: Z.homology()                                                              # optional - sage.modules
         {0: 0, 1: Z^6, 2: Z}
-        sage: M = shrink_simplicial_complex(Z)
-        sage: M.f_vector() # random
+        sage: M = shrink_simplicial_complex(Z)                                          # optional - sage.graphs
+        sage: M.f_vector()  # random                                                    # optional - sage.graphs
         [1, 32, 27]
-        sage: M.homology()
+        sage: M.homology()                                                              # optional - sage.graphs sage.modules
         {0: 0, 1: Z^6, 2: Z}
     """
     L = K._contractible_subcomplex()

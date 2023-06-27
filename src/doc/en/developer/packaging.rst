@@ -2,9 +2,9 @@
 
 .. _chapter-packaging:
 
-==========================
-Packaging Third-Party Code
-==========================
+===================================
+Packaging Third-Party Code for Sage
+===================================
 
 One of the mottoes of the Sage project is to not reinvent the wheel: If
 an algorithm is already implemented in a well-tested library then
@@ -14,7 +14,7 @@ The installation of packages is done through a bash script located in
 ``SAGE_ROOT/build/bin/sage-spkg``. This script is typically invoked by
 giving the command::
 
-    [user@localhost]$ sage -i <options> <package name>...
+    [alice@localhost sage]$ sage -i <options> <package name>...
 
 options can be:
 
@@ -140,7 +140,7 @@ and if it does not, then it is a ``dummy`` package.
 
 .. _section-directory-structure:
 
-Directory Structure
+Directory structure
 ===================
 
 Third-party packages in Sage consist of two parts:
@@ -546,7 +546,7 @@ possible.
 
 .. _section-spkg-check:
 
-Self-Tests
+Self-tests
 ----------
 
 The ``spkg-check.in`` file is an optional, but highly recommended,
@@ -622,13 +622,13 @@ For example:
     # gentoo uses 3.2.1
     sphinx >=3, <3.3
 
-The comments may include links to Trac tickets, as in the following example:
+The comments may include links to GitHub Issues/PRs, as in the following example:
 
 .. CODE-BLOCK:: bash
 
     $ cat build/pkgs/packaging/install-requires.txt
     packaging >=18.0
-    # Trac #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
+    # Issue #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
 
 The currently encoded version constraints are merely a starting point.
 Developers and downstream packagers are invited to refine the version
@@ -641,7 +641,7 @@ a complex topic; see :trac:`33520`.
 
 .. _section-spkg-SPKG-txt:
 
-The SPKG.rst File
+The SPKG.rst file
 -----------------
 
 The ``SPKG.rst`` file should follow this pattern:
@@ -757,7 +757,7 @@ should be declared in a separate file ``dependencies_optional``.
 In order to check that the dependencies of your package are likely
 correct, the following command should work without errors::
 
-    [user@localhost]$ make distclean && make base && make PACKAGE_NAME
+    [alice@localhost sage]$ make distclean && make base && make PACKAGE_NAME
 
 Finally, note that standard packages should only depend on standard
 packages and optional packages should only depend on standard or
@@ -808,7 +808,7 @@ word ``SAGE_DOCS``.
 
 .. _section-spkg-patching:
 
-Patching Sources
+Patching sources
 ----------------
 
 Actual changes to the source code must be via patches, which should be placed
@@ -957,7 +957,7 @@ We recommend the following workflow for maintaining a set of patches.
   commands.
 
 - When a new upstream version becomes available, merge (or import) it
-  into ``upstream``, then create a new branch and rebase in on top of
+  into ``upstream``, then create a new branch and rebase it on top of
   the updated upstream:
 
   .. CODE-BLOCK:: bash
@@ -971,7 +971,7 @@ We recommend the following workflow for maintaining a set of patches.
 
 .. _section-spkg-src:
 
-Modified Tarballs
+Modified tarballs
 -----------------
 
 The ``spkg-src`` file is optional and only to document how the upstream
@@ -986,7 +986,7 @@ to apply the same modifications to future versions.
 
 .. _section-spkg-versioning:
 
-Package Versioning
+Package versioning
 ------------------
 
 The ``package-version.txt`` file contains just the version. So if
@@ -1019,7 +1019,7 @@ account.
 
 .. _section-spkg-checksums:
 
-Checksums and Tarball Names
+Checksums and tarball names
 ---------------------------
 
 The ``checksums.ini`` file contains the filename pattern of the
@@ -1034,7 +1034,7 @@ upstream is ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, create a new file
 Sage internally replaces the ``VERSION`` substring with the content of
 ``package-version.txt``. To recompute the checksums, run::
 
-    [user@localhost]$ sage --package fix-checksum foo
+    [alice@localhost sage]$ sage --package fix-checksum foo
 
 which will modify the ``checksums.ini`` file with the correct
 checksums.
@@ -1048,11 +1048,11 @@ In addition to these fields in ``checksums.ini``, the optional field
 
 The Release Manager uses the information in ``upstream_url`` to
 download the upstream package archive and to make it available on the
-Sage mirrors when a new release is prepared.  On Trac tickets
-upgrading a package, the ticket description should no longer contain
+Sage mirrors when a new release is prepared.  On GitHub PRs
+upgrading a package, the PR description should no longer contain
 the upstream URL to avoid duplication of information.
 
-Note that, like the ``tarball`` field, the ``upstream_url`` is a
+Note that, like the ``tarball`` field, the ``tpstream_url`` is a
 template; the substring ``VERSION`` is substituted with the actual
 version.
 
@@ -1066,20 +1066,20 @@ For Python packages available from PyPI, you should use an
 A package that has the ``upstream_url`` information can be updated by
 simply typing::
 
-    [user@localhost]$ sage --package update numpy 3.14.59
+    [alice@localhost sage]$ sage --package update numpy 3.14.59
 
 which will automatically download the archive and update the
 information in ``build/pkgs/``.
 
 For Python packages available from PyPI, there is another shortcut::
 
-    [user@localhost]$ sage --package update-latest matplotlib
+    [alice@localhost sage]$ sage --package update-latest matplotlib
     Updating matplotlib: 3.3.0 -> 3.3.1
     Downloading tarball to ...matplotlib-3.3.1.tar.bz2
     [...............................................................]
 
 The ``upstream_url`` information serves yet another purpose.
-Developers who wish to test a package update from a Trac branch before
+Developers who wish to test a package update from a PR branch before
 the archive is available on a Sage mirror can do so by configuring
 their Sage tree using ``./configure
 --enable-download-from-upstream-url``.  Then Sage will fall back to
@@ -1095,7 +1095,7 @@ Utility script to create packages
 Assuming that you have downloaded
 ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use::
 
-    [user@localhost]$ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
+    [alice@localhost sage]$ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
 
 to create ``$SAGE_ROOT/build/pkgs/foo/package-version.txt``,
 ``checksums.ini``, and ``type`` in one step.
@@ -1106,7 +1106,7 @@ set the ``upstream_url`` field in ``checksums.ini`` described above.
 
 For Python packages available from PyPI, you can use::
 
-    [user@localhost]$ sage --package create scikit_spatial --pypi --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --type optional
 
 This automatically downloads the most recent version from PyPI and also
 obtains most of the necessary information by querying PyPI.
@@ -1117,11 +1117,11 @@ in the file ``install-requires.txt``.
 
 To create a pip package rather than a normal package, you can use::
 
-    [user@localhost]$ sage --package create scikit_spatial --pypi --source pip --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --source pip --type optional
 
 To create a wheel package rather than a normal package, you can use::
 
-    [user@localhost]$ sage --package create scikit_spatial --pypi --source wheel --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --source wheel --type optional
 
 
 .. _section-manual-build:
@@ -1137,29 +1137,29 @@ in the ``SAGE_ROOT/upstream/`` directory and run
 
 Now you can install the package using::
 
-    [user@localhost]$ sage -i package_name
+    [alice@localhost sage]$ sage -i package_name
 
 or::
 
-    [user@localhost]$ sage -f package_name
+    [alice@localhost sage]$ sage -f package_name
 
 to force a reinstallation. If your package contains a ``spkg-check``
 script (see :ref:`section-spkg-check`) it can be run with::
 
-    [user@localhost]$ sage -i -c package_name
+    [alice@localhost sage]$ sage -i -c package_name
 
 or::
 
-    [user@localhost]$ sage -f -c package_name
+    [alice@localhost sage]$ sage -f -c package_name
 
-If all went fine, open a ticket, put a link to the original tarball in
-the ticket and upload a branch with the code under
+If all went fine, open a PR, put a link to the original tarball in
+the PR and upload a branch with the code under
 ``SAGE_ROOT/build/pkgs``.
 
 
 .. _section-inclusion-procedure:
 
-Inclusion Procedure for New and Updated Packages
+Inclusion procedure for new and updated packages
 ================================================
 
 Packages that are not part of Sage will first become optional or
@@ -1168,22 +1168,22 @@ systems). After they have been in optional for some time without
 problems they can be proposed to be included as standard packages in
 Sage.
 
-To propose a package for optional/experimental inclusion please open a
-trac ticket with the respective ``Component:`` field set to either
-``packages:experimental`` or ``packages:optional``. The associated code
-requirements are described in the following sections.
+To propose a package for optional/experimental inclusion please open a GitHub
+PR added with labels ``c: packages: experimental`` or ``c: packages:
+optional``. The associated code requirements are described in the following
+sections.
 
-After the ticket was reviewed and included, optional packages stay in
+After the PR was reviewed and included, optional packages stay in
 that status for at least a year, after which they can be proposed to be
-included as standard packages in Sage. For this a trac ticket is opened
-with the ``Component:`` field set to ``packages:standard``. Then make
+included as standard packages in Sage. For this a GitHub PR is opened
+with the label ``c: packages: standard``. Then make
 a proposal in the Google Group ``sage-devel``.
 
 Upgrading packages to new upstream versions or with additional patches
-includes opening a ticket in the respective category too, as described
+includes opening a PR in the respective category too, as described
 above.
 
-License Information
+License information
 -------------------
 
 If you are patching a standard Sage spkg, then you should make sure that
@@ -1204,7 +1204,7 @@ be a good solution to make a custom tarball consisting of only the free
 parts; see :ref:`section-spkg-src` and the ``giac`` package as an example.
 
 
-Prerequisites for New Standard Packages
+Prerequisites for new standard packages
 ---------------------------------------
 
 For a package to become part of Sage's standard distribution, it
@@ -1245,6 +1245,6 @@ must meet the following requirements:
   this is not possible.
 
 - **Refereeing**. The code must be refereed, as discussed in
-  :ref:`chapter-sage-trac`.
+  :ref:`chapter-github`.
 
 

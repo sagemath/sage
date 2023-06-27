@@ -208,8 +208,8 @@ def padic_lseries(self, p, normalize=None, implementation='eclib',
         sage: L[3]
         O(11^0)
     """
-    p, normalize, implementation, precision = self._normalize_padic_lseries(p,\
-                             normalize, implementation, precision)
+    p, normalize, implementation, precision = self._normalize_padic_lseries(p,
+        normalize, implementation, precision)
 
     if implementation in ['sage', 'eclib', 'num']:
         if self.ap(p) % p != 0:
@@ -292,7 +292,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_regulator(5, max_prec)           # long time
         sage: for prec in range(1, max_prec):                 # long time
-        ....:     assert E.padic_regulator(5, prec) == full   # long time
+        ....:     assert E.padic_regulator(5, prec) == full
 
     A case where the generator belongs to the formal group already
     (:trac:`3632`)::
@@ -663,7 +663,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(1, max_prec):                 # long time
-        ....:     assert E.padic_height(5, prec)(P) == full   # long time
+        ....:     assert E.padic_height(5, prec)(P) == full
 
     A supersingular prime for a curve::
 
@@ -786,10 +786,8 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
                    "answer with precision at least prec, but we didn't."
         return K(answer)
 
-
     # (man... I love python's local function definitions...)
     return height
-
 
 
 def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
@@ -865,7 +863,7 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(2, max_prec):                 # long time
-        ....:     assert E.padic_height_via_multiply(5, prec)(P) == full   # long time
+        ....:     assert E.padic_height_via_multiply(5, prec)(P) == full
     """
     if check_hypotheses:
         if not p.is_prime():
@@ -933,7 +931,6 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
             assert answer.precision_absolute() >= prec, "we should have got an " \
                    "answer with precision at least prec, but we didn't."
         return K(answer)
-
 
     # (man... I love python's local function definitions...)
     return height
@@ -1047,7 +1044,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
         sage: E2 = E.padic_E2(5, max_N)                     # long time
         sage: max_sigma = E.padic_sigma(p, max_N, E2=E2)    # long time
         sage: for N in range(3, max_N):                     # long time
-        ....:    sigma = E.padic_sigma(p, N, E2=E2)         # long time
+        ....:    sigma = E.padic_sigma(p, N, E2=E2)
         ....:    assert sigma == max_sigma
     """
     if check_hypotheses:
@@ -1096,7 +1093,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     Rt = x.parent()
 
-    A  = (x + c) * f
+    A = (x + c) * f
     # do integral over QQ, to avoid divisions by p
     A = Rt(QQt(A).integral())
     A = (-X.a1()/2 - A) * f
@@ -1229,10 +1226,10 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
         sage: E = EllipticCurve([1, 2, 3, 4, 7])                            # long time
         sage: E2 = E.padic_E2(5, 50)                                        # long time
         sage: for N in range(2, 10):                                        # long time
-        ....:    for lamb in range(10):                                     # long time
-        ....:       correct = E.padic_sigma(5, N + 3*lamb, E2=E2)           # long time
-        ....:       compare = E.padic_sigma_truncated(5, N=N, lamb=lamb, E2=E2)    # long time
-        ....:       assert compare == correct                               # long time
+        ....:    for lamb in range(10):
+        ....:       correct = E.padic_sigma(5, N + 3*lamb, E2=E2)
+        ....:       compare = E.padic_sigma_truncated(5, N=N, lamb=lamb, E2=E2)
+        ....:       assert compare == correct
     """
     if check_hypotheses:
         p = __check_padic_hypotheses(self, p)
@@ -1284,7 +1281,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     Rt = x.parent()
 
-    A  = (x + c) * f
+    A = (x + c) * f
     # do integral over QQ, to avoid divisions by p
     A = Rt(QQt(A).integral())
     A = (-X.a1()/2 - A) * f

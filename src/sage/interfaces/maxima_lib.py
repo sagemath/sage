@@ -114,6 +114,7 @@ in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.structure.element import Expression
 from sage.symbolic.ring import SR
 
 from sage.libs.ecl import EclObject, ecl_eval
@@ -933,8 +934,15 @@ class MaximaLib(MaximaAbstract):
             e
             sage: limit(f,x = 5)
             7776/3125
-            sage: limit(f,x = 1.2)
+
+        Domain to real, a regression in 5.46.0, see https://sf.net/p/maxima/bugs/4138 ::
+
+            sage: maxima_calculus.eval("domain:real")
+            ...
+            sage: limit(f,x = 1.2).n()
             2.06961575467...
+            sage: maxima_calculus.eval("domain:complex");
+            ...
             sage: var('a')
             a
             sage: limit(x^a,x=0)
@@ -946,7 +954,7 @@ class MaximaLib(MaximaAbstract):
             for more details)
             Is a positive, negative or zero?
             sage: assume(a>0)
-            sage: limit(x^a,x=0)
+            sage: limit(x^a,x=0)  # random - not needed for maxima 5.46.0
             Traceback (most recent call last):
             ...
             ValueError: Computation failed ...
@@ -1615,9 +1623,8 @@ def sr_to_max(expr):
         # For that, we should change the API of the functions there
         # (we need to have access to op, not only to expr.operands()
         if isinstance(op, FDerivativeOperator):
-            from sage.symbolic.ring import is_SymbolicVariable
             args = expr.operands()
-            if (not all(is_SymbolicVariable(v) for v in args) or
+            if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
                 len(args) != len(set(args))):
                 # An evaluated derivative of the form f'(1) is not a
                 # symbolic variable, yet we would like to treat it

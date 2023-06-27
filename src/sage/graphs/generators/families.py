@@ -613,7 +613,7 @@ def BarbellGraph(n1, n2):
 
         sage: g = graphs.BarbellGraph(9, 4); g
         Barbell graph: Graph on 22 vertices
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
     An ``n1 >= 2``, ``n2 >= 0`` barbell graph has order ``2*n1 + n2``. It
     has the complete graph on ``n1`` vertices as a subgraph. It also has
@@ -709,7 +709,7 @@ def LollipopGraph(n1, n2):
 
         sage: g = graphs.LollipopGraph(13,4); g
         Lollipop graph: Graph on 17 vertices
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
     TESTS::
 
@@ -782,7 +782,7 @@ def TadpoleGraph(n1, n2):
 
         sage: g = graphs.TadpoleGraph(13, 4); g
         Tadpole graph: Graph on 17 vertices
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
     TESTS::
 
@@ -874,7 +874,7 @@ def DipoleGraph(n):
 
         sage: g = graphs.DipoleGraph(13); g
         Dipole graph: Multi-graph on 2 vertices
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
     TESTS::
 
@@ -932,7 +932,7 @@ def BubbleSortGraph(n):
 
         sage: g = graphs.BubbleSortGraph(4); g
         Bubble sort: Graph on 24 vertices
-        sage: g.plot() # long time
+        sage: g.plot()  # long time
         Graphics object consisting of 61 graphics primitives
 
     The bubble sort graph on `n = 1` symbol is the trivial graph `K_1`::
@@ -1076,12 +1076,12 @@ def CirculantGraph(n, adjacency):
     EXAMPLES: Compare plotting using the predefined layout and
     networkx::
 
-        sage: import networkx
-        sage: n = networkx.cycle_graph(23)
-        sage: spring23 = Graph(n)
+        sage: import networkx                                                           # optional - networkx
+        sage: n = networkx.cycle_graph(23)                                              # optional - networkx
+        sage: spring23 = Graph(n)                                                       # optional - networkx
         sage: posdict23 = graphs.CirculantGraph(23,2)
-        sage: spring23.show() # long time
-        sage: posdict23.show() # long time
+        sage: spring23.show()  # long time                                              # optional - networkx
+        sage: posdict23.show()  # long time
 
     We next view many cycle graphs as a Sage graphics array. First we
     use the ``CirculantGraph`` constructor, which fills in
@@ -1092,29 +1092,29 @@ def CirculantGraph(n, adjacency):
         sage: for i in range(9):
         ....:     k = graphs.CirculantGraph(i+4, i+1)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     Compare to plotting with the spring-layout algorithm::
 
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:     spr = networkx.cycle_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     Passing a 1 into adjacency should give the cycle.
 
@@ -1193,21 +1193,21 @@ def CubeGraph(n, embedding=1):
         ....:  k = graphs.CubeGraph(i+1)
         ....:  g.append(k)
         ...
-        sage: for i in range(2):
+        sage: for i in range(2):                                                        # optional - sage.plot
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)
-        sage: G.show(figsize=[6,4])  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show(figsize=[6,4])  # long time                                        # optional - sage.plot
 
     Use the plot options to display larger `n`-cubes::
 
         sage: g = graphs.CubeGraph(9, embedding=1)
-        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time  # optional - sage.plot
         sage: g = graphs.CubeGraph(9, embedding=2)
-        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time  # optional - sage.plot
 
     AUTHORS:
 
@@ -1442,20 +1442,20 @@ def FriendshipGraph(n):
         sage: for i in range(9):
         ....:     g = graphs.FriendshipGraph(i + 1)
         ....:     A.append(g)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for j in range(3):
         ....:         n.append(A[3*i + j].plot(vertex_size=20, vertex_labels=False))
         ....:     B.append(n)
-        sage: G = graphics_array(B)
-        sage: G.show()  # long time
+        sage: G = graphics_array(B)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     For `n = 1`, the friendship graph `F_1` is isomorphic to the cycle
     graph `C_3`, whose visual representation is a triangle. ::
 
         sage: G = graphs.FriendshipGraph(1); G
         Friendship graph: Graph on 3 vertices
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - sage.plot
         sage: G.is_isomorphic(graphs.CycleGraph(3))
         True
 
@@ -2392,7 +2392,7 @@ def NKStarGraph(n, k):
     EXAMPLES::
 
         sage: g = graphs.NKStarGraph(4,2)
-        sage: g.plot() # long time
+        sage: g.plot()  # long time
         Graphics object consisting of 31 graphics primitives
 
     REFERENCES:
@@ -2451,7 +2451,7 @@ def NStarGraph(n):
     EXAMPLES::
 
         sage: g = graphs.NStarGraph(4)
-        sage: g.plot() # long time
+        sage: g.plot()  # long time
         Graphics object consisting of 61 graphics primitives
 
     REFERENCES:
@@ -2812,7 +2812,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     ::
 
         sage: H = graphs.HanoiTowerGraph(3, 4, labels=False, positions=False)
-        sage: H.automorphism_group().is_isomorphic(SymmetricGroup(3))           # optional - sage.groups
+        sage: H.automorphism_group().is_isomorphic(SymmetricGroup(3))                   # optional - sage.groups
         True
         sage: H.chromatic_number()
         3
@@ -3297,14 +3297,14 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
         sage: G = graphs.HouseGraph()
         sage: G.get_pos() is not None
         True
-        sage: H = graphs.GeneralizedSierpinskiGraph(G, 2)
-        sage: H.get_pos() is not None
+        sage: H = graphs.GeneralizedSierpinskiGraph(G, 2)                               # optional - sage.symbolic
+        sage: H.get_pos() is not None                                                   # optional - sage.symbolic
         True
         sage: G = Graph([(0, 1)])
         sage: G.get_pos() is not None
         False
-        sage: H = graphs.GeneralizedSierpinskiGraph(G, 2)
-        sage: H.get_pos() is not None
+        sage: H = graphs.GeneralizedSierpinskiGraph(G, 2)                               # optional - sage.symbolic
+        sage: H.get_pos() is not None                                                   # optional - sage.symbolic
         False
 
     .. PLOT::
@@ -3398,41 +3398,41 @@ def WheelGraph(n):
         ....:  k = graphs.WheelGraph(i+3)
         ....:  g.append(k)
         ...
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     Next, using the spring-layout algorithm::
 
-        sage: import networkx
+        sage: import networkx                                                           # optional - networkx
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:  spr = networkx.wheel_graph(i+3)
         ....:  k = Graph(spr)
         ....:  g.append(k)
         ...
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     Compare the plotting::
 
-        sage: n = networkx.wheel_graph(23)
-        sage: spring23 = Graph(n)
+        sage: n = networkx.wheel_graph(23)                                              # optional - networkx
+        sage: spring23 = Graph(n)                                                       # optional - networkx
         sage: posdict23 = graphs.WheelGraph(23)
-        sage: spring23.show() # long time
-        sage: posdict23.show() # long time
+        sage: spring23.show()  # long time                                              # optional - networkx
+        sage: posdict23.show()  # long time
     """
     from sage.graphs.generators.basic import CycleGraph
     if n < 4:
@@ -3660,7 +3660,7 @@ def nauty_gentreeg(options="", debug=False):
 
         sage: gen = graphs.nauty_gentreeg("4", debug=True)
         sage: print(next(gen))
-        >A ...gentreeg Z=2:3 D=3 n=4
+        >A ...gentreeg ...
         sage: gen = graphs.nauty_gentreeg("4 -q", debug=True)
         sage: next(gen)
         ''
@@ -3687,7 +3687,7 @@ def nauty_gentreeg(options="", debug=False):
         sage: list(graphs.nauty_gentreeg("3 -x", debug=True))
         ['>E Usage: ...gentreeg [-D#] [-Z#:#] [-ulps] [-q] n [res/mod] ...
         sage: list(graphs.nauty_gentreeg("3", debug=True))
-        ['>A ...gentreeg Z=2:2 D=2 n=3\n', Graph on 3 vertices]
+        ['>A ...gentreeg ...\n', Graph on 3 vertices]
     """
     import shlex
     from sage.features.nauty import NautyExecutable
@@ -3736,8 +3736,8 @@ def RingedTree(k, vertex_labels=True):
     EXAMPLES::
 
         sage: G = graphs.RingedTree(5)
-        sage: P = G.plot(vertex_labels=False, vertex_size=10)
-        sage: P.show() # long time
+        sage: P = G.plot(vertex_labels=False, vertex_size=10)                           # optional - sage.plot
+        sage: P.show()  # long time                                                     # optional - sage.plot
         sage: G.vertices(sort=True)
         ['', '0', '00', '000', '0000', '0001', '001', '0010', '0011', '01',
          '010', '0100', '0101', '011', '0110', '0111', '1', '10', '100',
@@ -3814,13 +3814,13 @@ def MathonPseudocyclicMergingGraph(M, t):
 
         sage: from sage.graphs.generators.families import MathonPseudocyclicMergingGraph as mer
         sage: from sage.graphs.generators.smallgraphs import _EllipticLinesProjectivePlaneScheme as ES
-        sage: G = mer(ES(3), 0) # long time
+        sage: G = mer(ES(3), 0)  # long time
         sage: G.is_strongly_regular(parameters=True)    # long time
         (784, 243, 82, 72)
-        sage: G = mer(ES(3), 1) # long time
+        sage: G = mer(ES(3), 1)  # long time
         sage: G.is_strongly_regular(parameters=True)    # long time
         (784, 270, 98, 90)
-        sage: G = mer(ES(3), 2) # long time
+        sage: G = mer(ES(3), 2)  # long time
         sage: G.is_strongly_regular(parameters=True)    # long time
         (784, 297, 116, 110)
         sage: G = mer(ES(2), 2)
@@ -3914,12 +3914,12 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         sage: G3x3=graphs.MathonPseudocyclicStronglyRegularGraph(2,G=G,L=L)
         sage: G3x3.is_strongly_regular(parameters=True)
         (441, 220, 109, 110)
-        sage: G3x3.automorphism_group(algorithm="bliss").order() # optional - bliss
+        sage: G3x3.automorphism_group(algorithm="bliss").order()                # optional - bliss
         27
         sage: G9=graphs.MathonPseudocyclicStronglyRegularGraph(2)
         sage: G9.is_strongly_regular(parameters=True)
         (441, 220, 109, 110)
-        sage: G9.automorphism_group(algorithm="bliss").order() # optional - bliss
+        sage: G9.automorphism_group(algorithm="bliss").order()                  # optional - bliss
         9
 
     TESTS::
