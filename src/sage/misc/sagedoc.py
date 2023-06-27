@@ -41,6 +41,7 @@ Check that sphinx is not imported at Sage start-up::
 # ****************************************************************************
 import os
 import re
+import shutil
 import sys
 import pydoc
 from sage.misc.temporary_file import tmp_dir
@@ -589,6 +590,26 @@ def process_mathtt(s):
     return s
 
 
+def process_optional_annotations(s):
+
+    lines = s.split('\n')
+    columns = shutil.get_terminal_size().columns
+    extra_indent = 3    # extra indent used by IPython after title "Class docstring:" etc.
+    if not any(len(line) + 3 >= columns for line in lines):
+        # fast path
+        return s
+
+    from sage.doctest.external import available_software
+    from sage.doctest.parsing import parse_optional_tags, update_optional_tags
+
+    for i, line in enumerate(lines):
+        if re.match(' *sage: .*#', line):
+            tags = parse_optional_tags(line)
+            lines[i] = update_optional_tags(line, remove_tags=[tag for tag in tags
+                                                               if tag in available_software])
+    return '\n'.join(lines)
+
+
 def format(s, embedded=False):
     r"""noreplace
     Format Sage documentation ``s`` for viewing with IPython.
@@ -775,6 +796,10 @@ def format(s, embedded=False):
             s = process_mathtt(s)
         s = process_extlinks(s, embedded=embedded)
         s = detex(s, embedded=embedded)
+
+    if not embedded:
+        s = process_optional_annotations(s)
+
     return s
 
 
