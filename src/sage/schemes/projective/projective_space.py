@@ -992,6 +992,153 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         return AlgebraicScheme_subscheme_projective(self, X)
 
+    def points_of_bounded_height(self, **kwds):
+        r"""
+        Return an iterator of the points in ``self`` of absolute multiplicative
+        height of at most the given bound.
+
+        ALGORITHM:
+
+        This is an implementation of Algorithm 6 in [Krumm2016]_.
+
+        INPUT:
+
+        kwds:
+
+        - ``bound`` - a real number
+
+        - ``precision`` - (default: 53) a positive integer
+
+        - ``normalize`` - boolean (optional, default: ``False``); whether
+          to normalize the coordinates of returned points
+
+        OUTPUT:
+
+        - an iterator of points of bounded height
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: sorted(list(P.points_of_bounded_height(bound=2)))
+            [(-2 : 1), (-1 : 1), (-1/2 : 1), (0 : 1),
+             (1/2 : 1), (1 : 0), (1 : 1), (2 : 1)]
+
+        ::
+
+            sage: u = QQ['u'].0
+            sage: P.<x,y,z> = ProjectiveSpace(NumberField(u^2 - 2, 'v'), 2)             # optional - sage.rings.number_field
+            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
+            265
+
+        ::
+
+            sage: CF.<a> = CyclotomicField(3)                                           # optional - sage.rings.number_field
+            sage: R.<x> = CF[]                                                          # optional - sage.rings.number_field
+            sage: L.<l> = CF.extension(x^3 + 2)                                         # optional - sage.rings.number_field
+            sage: Q.<x,y> = ProjectiveSpace(L, 1)                                       # optional - sage.rings.number_field
+            sage: sorted(list(Q.points_of_bounded_height(bound=1)))                     # optional - sage.rings.number_field
+            [(0 : 1), (1 : 0), (a + 1 : 1), (a : 1),
+             (-1 : 1), (-a - 1 : 1), (-a : 1), (1 : 1)]
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: F.<a> = NumberField(x^4 - 8*x^2 + 3)                                  # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.number_field
+            sage: all(exp(p.global_height()) <= 1                                       # optional - sage.rings.number_field
+            ....:     for p in P.points_of_bounded_height(bound=1))
+            True
+
+        ::
+
+            sage: K.<a> = CyclotomicField(3)                                            # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
+            sage: len(list(P.points_of_bounded_height(bound=1)))                        # optional - sage.rings.number_field
+            57
+
+        ::
+
+            sage: u = QQ['u'].0
+            sage: K.<k> = NumberField(u^2 - 2)                                          # optional - sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
+            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
+            24
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<k> = NumberField(x^4 - 8*x^2 + 3)                                  # optional - sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
+            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
+            108
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<v> = NumberField(x^5 + x^3 + 1)                                    # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
+            sage: L = P.points_of_bounded_height(bound=1.2)                             # optional - sage.rings.number_field
+            sage: len(list(L))                                                          # optional - sage.rings.number_field
+            109
+
+        ::
+
+            sage: K.<v> = QuadraticField(2)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: sorted(list(P.points_of_bounded_height(bound=2)))
+            [(-v - 2 : 1), (-v - 2 : 2), (-v - 1 : 1), (-2 : 1), (-2 : 4), (-v : 1),
+             (-v : 2), (-1 : 1), (v - 2 : 1), (v - 2 : 2), (-v + 1 : 1), (0 : 1),
+             (v - 1 : 1), (-v + 2 : 1), (-v + 2 : 2), (1 : 0), (1 : 1), (v : 1),
+             (v : 2), (2 : 1), (2 : 4), (v + 1 : 1), (v + 2 : 1), (v + 2 : 2)]
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(3*x^2 + 1)
+            sage: P.<z,w> = ProjectiveSpace(K, 1)
+            sage: sorted(list(P.points_of_bounded_height(bound=1)))
+            [(-1 : 1), (-3/2*a - 1/2 : 1), (3/2*a - 1/2 : 1), (0 : 1),
+             (-3/2*a + 1/2 : 1), (3/2*a + 1/2 : 1), (1 : 0), (1 : 1)]
+        """
+        from sage.schemes.projective.proj_bdd_height import QQ_points_of_bounded_height, IQ_points_of_bounded_height, points_of_bounded_height
+
+        R = self.base_ring()
+
+        # whether the field is a number field or the rational field
+        if is_RationalField(R):
+            field_type = False
+        elif R in NumberFields():
+            # true for rational field as well, so check is_RationalField first
+            field_type = True
+        else:
+            raise NotImplementedError("self must be projective space over a number field")
+
+        bound = kwds.pop('bound')
+        prec = kwds.pop('precision', 53)
+        normalize = kwds.pop('normalize', False)
+
+        # Convert between absolute and relative height for calling Krumm's algorithm
+        bound = bound**R.absolute_degree()
+
+        dim = self.dimension_relative()
+
+        if field_type:
+            # for imaginary quadratic field
+            r1, r2 = R.signature()
+            r = r1 + r2 - 1
+
+            if R.is_relative():
+                deg = R.relative_degree()
+            else:
+                deg = R.degree()
+
+            if deg == 2 and r == 0:
+                return IQ_points_of_bounded_height(self, R, dim, bound, normalize)
+
+            return points_of_bounded_height(self, R, dim, bound, prec, normalize)
+        else:
+            return QQ_points_of_bounded_height(dim, bound)
+
     def affine_patch(self, i, AA=None):
         r"""
         Return the `i^{th}` affine patch of this projective space.
@@ -1866,149 +2013,6 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
                     (x : y : z)
         """
         return SchemeMorphism_polynomial_projective_space_field(*args, **kwds)
-
-    def points_of_bounded_height(self, **kwds):
-        r"""
-        Return an iterator of the points in ``self`` of absolute multiplicative
-        height of at most the given bound.
-
-        ALGORITHM:
-
-        This is an implementation of Algorithm 6 in [Krumm2016]_.
-
-        INPUT:
-
-        kwds:
-
-        - ``bound`` - a real number
-
-        - ``precision`` - (default: 53) a positive integer
-
-        OUTPUT:
-
-        - an iterator of points of bounded height
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: sorted(list(P.points_of_bounded_height(bound=2)))
-            [(-2 : 1), (-1 : 1), (-1/2 : 1), (0 : 1),
-             (1/2 : 1), (1 : 0), (1 : 1), (2 : 1)]
-
-        ::
-
-            sage: u = QQ['u'].0
-            sage: P.<x,y,z> = ProjectiveSpace(NumberField(u^2 - 2, 'v'), 2)             # optional - sage.rings.number_field
-            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
-            265
-
-        ::
-
-            sage: CF.<a> = CyclotomicField(3)                                           # optional - sage.rings.number_field
-            sage: R.<x> = CF[]                                                          # optional - sage.rings.number_field
-            sage: L.<l> = CF.extension(x^3 + 2)                                         # optional - sage.rings.number_field
-            sage: Q.<x,y> = ProjectiveSpace(L, 1)                                       # optional - sage.rings.number_field
-            sage: sorted(list(Q.points_of_bounded_height(bound=1)))                     # optional - sage.rings.number_field
-            [(0 : 1), (1 : 0), (a + 1 : 1), (a : 1),
-             (-1 : 1), (-a - 1 : 1), (-a : 1), (1 : 1)]
-
-        ::
-
-            sage: R.<x> = QQ[]
-            sage: F.<a> = NumberField(x^4 - 8*x^2 + 3)                                  # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.number_field
-            sage: all(exp(p.global_height()) <= 1                                       # optional - sage.rings.number_field
-            ....:     for p in P.points_of_bounded_height(bound=1))
-            True
-
-        ::
-
-            sage: K.<a> = CyclotomicField(3)                                            # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: len(list(P.points_of_bounded_height(bound=1)))                        # optional - sage.rings.number_field
-            57
-
-        ::
-
-            sage: u = QQ['u'].0
-            sage: K.<k> = NumberField(u^2 - 2)                                          # optional - sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
-            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
-            24
-
-        ::
-
-            sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^4 - 8*x^2 + 3)                                  # optional - sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
-            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
-            108
-
-        ::
-
-            sage: R.<x> = QQ[]
-            sage: K.<v> = NumberField(x^5 + x^3 + 1)                                    # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: L = P.points_of_bounded_height(bound=1.2)                             # optional - sage.rings.number_field
-            sage: len(list(L))                                                          # optional - sage.rings.number_field
-            109
-
-        ::
-
-            sage: K.<v> = QuadraticField(2)
-            sage: P.<x,y> = ProjectiveSpace(K, 1)
-            sage: sorted(list(P.points_of_bounded_height(bound=2)))
-            [(-v - 2 : 1), (-v - 2 : 2), (-v - 1 : 1), (-2 : 1), (-2 : 4), (-v : 1),
-             (-v : 2), (-1 : 1), (v - 2 : 1), (v - 2 : 2), (-v + 1 : 1), (0 : 1),
-             (v - 1 : 1), (-v + 2 : 1), (-v + 2 : 2), (1 : 0), (1 : 1), (v : 1),
-             (v : 2), (2 : 1), (2 : 4), (v + 1 : 1), (v + 2 : 1), (v + 2 : 2)]
-
-        ::
-
-            sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(3*x^2 + 1)
-            sage: P.<z,w> = ProjectiveSpace(K, 1)
-            sage: sorted(list(P.points_of_bounded_height(bound=1)))
-            [(-1 : 1), (-3/2*a - 1/2 : 1), (3/2*a - 1/2 : 1), (0 : 1),
-             (-3/2*a + 1/2 : 1), (3/2*a + 1/2 : 1), (1 : 0), (1 : 1)]
-        """
-        from sage.schemes.projective.proj_bdd_height import QQ_points_of_bounded_height, IQ_points_of_bounded_height, points_of_bounded_height
-
-        R = self.base_ring()
-
-        # whether the field is a number field or the rational field
-        if is_RationalField(R):
-            field_type = False
-        elif R in NumberFields():
-            # true for rational field as well, so check is_RationalField first
-            field_type = True
-        else:
-            raise NotImplementedError("self must be projective space over a number field")
-
-        bound = kwds.pop('bound')
-        prec = kwds.pop('precision', 53)
-
-        # Convert between absolute and relative height for calling Krumm's algorithm
-        bound = bound**R.absolute_degree()
-
-        dim = self.dimension_relative()
-
-        if field_type:
-            # for imaginary quadratic field
-            r1, r2 = R.signature()
-            r = r1 + r2 - 1
-
-            if R.is_relative():
-                deg = R.relative_degree()
-            else:
-                deg = R.degree()
-
-            if deg == 2 and r == 0:
-                return IQ_points_of_bounded_height(self, R, dim, bound)
-
-            return points_of_bounded_height(self, R, dim, bound, prec)
-        else:
-            return QQ_points_of_bounded_height(dim, bound)
 
     def subscheme_from_Chow_form(self, Ch, dim):
         r"""
