@@ -102,12 +102,12 @@ jobs:
           SAGE_NUM_THREADS: 2
         
       - name: Verify dependencies
-        if: always()
+        if: success() || failure()
         shell: bash -l {0}
         run: pip check
 
       - name: Test
-        if: always()
+        if: success() || failure()
         shell: bash -l {0}
         run: ./sage -t --all -p0
 
