@@ -176,7 +176,7 @@ def discrim(pols):
 
     OUTPUT:
 
-    A list with the values of the discriminant in `\QQbar`.
+    A tuple with the values of the discriminant in `\QQbar`.
 
     EXAMPLES::
 
@@ -184,12 +184,12 @@ def discrim(pols):
         sage: R.<x, y> = QQ[]
         sage: flist = (y^3 + x^3 - 1, 2 * x + y)
         sage: discrim(flist)
-        [1,
+        (1,
         -0.500000000000000? - 0.866025403784439?*I,
         -0.500000000000000? + 0.866025403784439?*I,
         -0.522757958574711?,
         0.2613789792873551? - 0.4527216721561923?*I,
-        0.2613789792873551? + 0.4527216721561923?*I]
+        0.2613789792873551? + 0.4527216721561923?*I)
     """
     flist = tuple(pols)
     x, y = flist[0].parent().gens()
@@ -204,12 +204,12 @@ def discrim(pols):
 
     pairs = [(f, None) for f in flist] + [(f, g) for f, g in Combinations(flist, 2)]
     fdiscrim = discrim_pairs(pairs)
-    rts = []
+    rts = ()
     poly = 1
     for u in fdiscrim:
         h0 = u[1].radical()
         h1 = h0 // h0.gcd(poly)
-        rts += h1.roots(QQbar, multiplicities=False)
+        rts += tuple(h1.roots(QQbar, multiplicities=False))
         poly = poly * h1
     return rts
 
@@ -272,6 +272,81 @@ def corrected_voronoi_diagram(points):
     return V
 
 
+def orient_circuit(circuit, convex=False):
+    r"""
+    Reverse a circuit if it goes clockwise; otherwise leave it unchanged.
+
+    INPUT:
+
+    - ``circuit`` --  a circuit in the graph of a Voronoi Diagram, given
+        by a list of edges
+
+    - ``convex`` -- a boolean function, if set to ``True`` a simpler computation is made
+
+    OUTPUT:
+
+    The same circuit if it goes counterclockwise, and its reversed otherwise, given as
+    the ordered list of vertices with identic extremities.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import orient_circuit
+        sage: points = [(-4, 0), (4, 0), (0, 4), (0, -4), (0, 0)]
+        sage: V = VoronoiDiagram(points)
+        sage: E = Graph()
+        sage: for reg  in V.regions().values():
+        ....:     if reg.rays() or reg.lines():
+        ....:         E  = E.union(reg.vertex_graph())
+        sage: E.vertices(sort=True)
+        [A vertex at (-2, -2),
+         A vertex at (-2, 2),
+         A vertex at (2, -2),
+         A vertex at (2, 2)]
+        sage: cir = E.eulerian_circuit()
+        sage: cir
+        [(A vertex at (-2, -2), A vertex at (2, -2), None),
+         (A vertex at (2, -2), A vertex at (2, 2), None),
+         (A vertex at (2, 2), A vertex at (-2, 2), None),
+         (A vertex at (-2, 2), A vertex at (-2, -2), None)]
+        sage: cir_oriented = orient_circuit(cir); cir_oriented
+        (A vertex at (-2, -2), A vertex at (2, -2), A vertex at (2, 2),
+         A vertex at (-2, 2), A vertex at (-2, -2))
+        sage: cirinv = list(reversed([(c[1],c[0],c[2]) for c in cir]))
+        sage: cirinv
+        [(A vertex at (-2, -2), A vertex at (-2, 2), None),
+         (A vertex at (-2, 2), A vertex at (2, 2), None),
+         (A vertex at (2, 2), A vertex at (2, -2), None),
+         (A vertex at (2, -2), A vertex at (-2, -2), None)]
+        sage: orient_circuit(cirinv) == cir_oriented
+        True
+        sage: cir_oriented == orient_circuit(cir, convex=True)
+        True
+    """
+    vectors = [v[1].vector() - v[0].vector() for v in circuit]
+    circuit_vertex = (circuit[0][0],) + tuple(e[1] for e in circuit)
+    circuit_vertex = tuple(circuit_vertex)
+    if convex:
+        pr = matrix([vectors[0], vectors[1]]).determinant()
+        if pr > 0:
+            # return circuit
+            return circuit_vertex
+        elif pr < 0:
+            # return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
+            return tuple(_ for _ in reversed(circuit_vertex))
+    prec = 53
+    while True:
+        CIF = ComplexIntervalField(prec)
+        totalangle = sum((CIF(*vectors[i]) / CIF(*vectors[i - 1])).argument()
+                         for i in range(len(vectors)))
+        if totalangle < 0:
+            # return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
+            return tuple(_ for _ in reversed(circuit_vertex))
+        if totalangle > 0:
+            # return circuit
+            return circuit_vertex
+        prec *= 2
+
+
 def voronoi_cells(V):
     r"""
     Compute the graph, the boundary graph, a base point, a positive orientation of the boundary graph,
@@ -311,7 +386,7 @@ def voronoi_cells(V):
         sage: Ev.index(p)
         7
         sage: EC
-        [A vertex at (9/2, -9/2),
+        (A vertex at (9/2, -9/2),
         A vertex at (9/2, 9/2),
         A vertex at (11/4, 4),
         A vertex at (-4, 4),
@@ -320,25 +395,25 @@ def voronoi_cells(V):
         A vertex at (-7/2, -7/2),
         A vertex at (1/2000000, -7/2),
         A vertex at (2000001/2000000, -24500001/7000000),
-        A vertex at (9/2, -9/2)]
+        A vertex at (9/2, -9/2))
         sage: len(DG.vertices(sort=True)), len(DG.edges(sort=True))
         (5, 7)
         sage: edg = DG.edges(sort=True)[0]; edg
         ((0,
-        (A vertex at (9/2, -9/2),
-        A vertex at (9/2, 9/2),
-        A vertex at (11/4, 4),
-        A vertex at (2000001/2000000, 500001/1000000),
-        A vertex at (2000001/2000000, -24500001/7000000),
-        A vertex at (9/2, -9/2))),
-        (1,
-        (A vertex at (-49000001/14000000, 1000001/2000000),
-        A vertex at (1000001/2000000, 1000001/2000000),
-        A vertex at (2000001/2000000, 500001/1000000),
-        A vertex at (11/4, 4),
-        A vertex at (-4, 4),
-        A vertex at (-49000001/14000000, 1000001/2000000))),
-        (A vertex at (11/4, 4), A vertex at (2000001/2000000, 500001/1000000), None))
+          (A vertex at (9/2, -9/2),
+           A vertex at (9/2, 9/2),
+           A vertex at (11/4, 4),
+           A vertex at (2000001/2000000, 500001/1000000),
+           A vertex at (2000001/2000000, -24500001/7000000),
+           A vertex at (9/2, -9/2))),
+         (1,
+          (A vertex at (-49000001/14000000, 1000001/2000000),
+           A vertex at (1000001/2000000, 1000001/2000000),
+           A vertex at (2000001/2000000, 500001/1000000),
+           A vertex at (11/4, 4),
+           A vertex at (-4, 4),
+           A vertex at (-49000001/14000000, 1000001/2000000))),
+         (A vertex at (2000001/2000000, 500001/1000000), A vertex at (11/4, 4), None))
         sage: edg[-1] in Ge
         True
     """
@@ -347,13 +422,13 @@ def voronoi_cells(V):
     G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)], format='list_of_edges')
     E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1) if u.is_compact()], format='list_of_edges')
     p = next(E.vertex_iterator())
-    EC0 = orient_circuit(E.eulerian_circuit())
-    EC = [EC0[0][0]] + [e[1] for e in EC0]
+    EC = orient_circuit(E.eulerian_circuit())
+    # EC = [EC0[0][0]] + [e[1] for e in EC0]
     DG = Graph()
     for i, reg in enumerate(compact_regions):
-        Greg0 = orient_circuit(reg.graph().eulerian_circuit())
-        Greg = (Greg0[0][0],) + tuple(e[1] for e in Greg0)
-        DG.add_vertex((i, Greg))
+        Greg0 = orient_circuit(reg.graph().eulerian_circuit(), convex=True)
+        # Greg = (Greg0[0][0],) + tuple(e[1] for e in Greg0)
+        DG.add_vertex((i, Greg0))
     for e in G.edges(sort=True):
         a, b = e[:2]
         regs = [v for v in DG.vertices(sort=True) if a in v[1] and b in v[1]]
@@ -806,84 +881,6 @@ def braid_in_segment(glist, x0, x1, precision={}):
     return initialbraid * centralbraid * finalbraid
 
 
-def orient_circuit(circuit, convex=False):
-    r"""
-    Reverse a circuit if it goes clockwise; otherwise leave it unchanged.
-
-    INPUT:
-
-    - ``circuit`` --  a circuit in the graph of a Voronoi Diagram, given
-        by a list of edges
-
-    - ``convex`` -- a boolean function, if set to ``True`` a simpler computation is made
-
-    OUTPUT:
-
-    The same circuit if it goes counterclockwise, and its reversed otherwise, given as
-    the ordered list of vertices with identic extremities
-
-    EXAMPLES::
-
-        sage: from sage.schemes.curves.zariski_vankampen import orient_circuit
-        sage: points = [(-4, 0), (4, 0), (0, 4), (0, -4), (0, 0)]
-        sage: V = VoronoiDiagram(points)
-        sage: E = Graph()
-        sage: for reg  in V.regions().values():
-        ....:     if reg.rays() or reg.lines():
-        ....:         E  = E.union(reg.vertex_graph())
-        sage: E.vertices(sort=True)
-        [A vertex at (-2, -2),
-         A vertex at (-2, 2),
-         A vertex at (2, -2),
-         A vertex at (2, 2)]
-        sage: cir = E.eulerian_circuit()
-        sage: cir
-        [(A vertex at (-2, -2), A vertex at (2, -2), None),
-         (A vertex at (2, -2), A vertex at (2, 2), None),
-         (A vertex at (2, 2), A vertex at (-2, 2), None),
-         (A vertex at (-2, 2), A vertex at (-2, -2), None)]
-        sage: orient_circuit(cir)
-        [(A vertex at (-2, -2), A vertex at (2, -2), None),
-         (A vertex at (2, -2), A vertex at (2, 2), None),
-         (A vertex at (2, 2), A vertex at (-2, 2), None),
-         (A vertex at (-2, 2), A vertex at (-2, -2), None)]
-        sage: cirinv = list(reversed([(c[1],c[0],c[2]) for c in cir]))
-        sage: cirinv
-        [(A vertex at (-2, -2), A vertex at (-2, 2), None),
-         (A vertex at (-2, 2), A vertex at (2, 2), None),
-         (A vertex at (2, 2), A vertex at (2, -2), None),
-         (A vertex at (2, -2), A vertex at (-2, -2), None)]
-        sage: orient_circuit(cirinv)
-        [(A vertex at (-2, -2), A vertex at (2, -2), None),
-         (A vertex at (2, -2), A vertex at (2, 2), None),
-         (A vertex at (2, 2), A vertex at (-2, 2), None),
-         (A vertex at (-2, 2), A vertex at (-2, -2), None)]
-
-    """
-    vectors = [v[1].vector() - v[0].vector() for v in circuit]
-    circuit_vertex = [circuit[0][0]] + [e[1] for e in circuit]
-    if convex:
-        pr = matrix([vectors[0], vectors[1]]).determinant()
-        if pr > 0:
-            return circuit
-            # return circuit_vertex
-        elif pr < 0:
-            return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
-            # return [_ for _ in reversed(circuit_vertex)]
-    prec = 53
-    while True:
-        CIF = ComplexIntervalField(prec)
-        totalangle = sum((CIF(*vectors[i]) / CIF(*vectors[i - 1])).argument()
-                         for i in range(len(vectors)))
-        if totalangle < 0:
-            return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
-            # return [_ for _ in reversed(circuit_vertex)]
-        if totalangle > 0:
-            return circuit
-            # return circuit_vertex
-        prec *= 2
-
-
 def geometric_basis(G, E, EC, p, dual_graph):
     r"""
     Return a geometric basis, based on a vertex.
@@ -966,7 +963,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
             EI = [v for v in E if v in Internal.connected_component_containing_vertex(ECi) and v != ECi]
             if len(EI) > 0:
                 q = ECi
-                connecting_path = EC[:i]
+                connecting_path = list(EC[:i])
                 break
         if EC[-i] in Internal:
             EI = [v for v in E if v in Internal.connected_component_containing_vertex(EC[-i]) and v != EC[-i]]
@@ -1040,10 +1037,10 @@ def geometric_basis(G, E, EC, p, dual_graph):
 
     if qi < ri:
         EC1 = [EC[j] for j in range(qi, ri)] + [_ for _ in reversed(cutpath)]
-        EC2 = cutpath + EC[ri + 1: -1] + EC[: qi + 1]
+        EC2 = cutpath + list(EC[ri + 1: -1] + EC[: qi + 1])
     else:
-        EC1 = EC[qi:] + EC[1:ri] + [_ for _ in reversed(cutpath)]
-        EC2 = cutpath + EC[ri + 1:qi + 1]
+        EC1 = list(EC[qi:] + EC[1:ri]) + [_ for _ in reversed(cutpath)]
+        EC2 = cutpath + list(EC[ri + 1:qi + 1])
 
     gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
     gb2 = geometric_basis(G2, E2, EC2, q, Gd2)
@@ -1163,8 +1160,8 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
             for s in zip(p[:-1], p[1:]):
                 if (s[1], s[0]) not in segs:
                     segs.add((s[0], s[1]))
-        I1 = QQbar.gen()
-        segs = [(a[0] + I1 * a[1], b[0] + I1 * b[1]) for a, b in segs]
+        I0 = QQbar.gen()
+        segs = [(a[0] + I0 * a[1], b[0] + I0 * b[1]) for a, b in segs]
         vertices = list(set(flatten(segs)))
         tocacheverts = tuple([(glist, v) for v in vertices])
         populate_roots_interval_cache(tocacheverts)
