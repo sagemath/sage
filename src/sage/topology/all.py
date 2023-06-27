@@ -6,6 +6,8 @@ from .delta_complex import DeltaComplex, delta_complexes
 
 from .cubical_complex import CubicalComplex, cubical_complexes
 
+from .moment_angle_complex import MomentAngleComplex
+
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.topology.filtered_simplicial_complex', 'FilteredSimplicialComplex')
 
