@@ -50,14 +50,14 @@ REFERENCES
 
 EXAMPLES::
 
-    sage: from sage.matroids import matroids_plot_helpers
-    sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],               # optional - sage.rings.finite_rings
+    sage: from sage.matroids import matroids_plot_helpers                               # optional - scipy
+    sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
     ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
     ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
     sage: pos_dict = {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
     ....:             4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.666666666666667),
     ....:             7: (3,3), 8: (4,0), 9: (-1,1), 10: (-2,-2)}
-    sage: M1._cached_info = {'plot_positions': pos_dict, 'plot_lineorders': None}       # optional - sage.rings.finite_rings
+    sage: M1._cached_info = {'plot_positions': pos_dict, 'plot_lineorders': None}
     sage: matroids_plot_helpers.geomrep(M1, sp=True)                                    # optional - sage.plot sage.rings.finite_rings
     Graphics object consisting of 22 graphics primitives
 
@@ -114,7 +114,7 @@ def it(M, B1, nB1, lps):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers as mph
+        sage: from sage.matroids import matroids_plot_helpers as mph                    # optional - scipy
         sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0],
         ....: [0, 1, 0, 1, 0, 1, 1,0],[0, 0, 1, 1, 1, 0, 1,0]])
         sage: N = M.simplify()
@@ -199,7 +199,7 @@ def trigrid(tripts):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
         sage: points = matroids_plot_helpers.trigrid([[2,1],[4,5],[5,2]])
         sage: points
         [[3.6666666666666665, 2.6666666666666665],
@@ -245,7 +245,7 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
         sage: from sage.matroids.advanced import setprint
         sage: ptsdict={'a':(0,0),'b':(1,2),'c':(2,0)}
         sage: ptsdict_1=matroids_plot_helpers.addnontripts(['a','b','c'],
@@ -322,7 +322,7 @@ def createline(ptsdict, ll, lineorders2=None):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
         sage: ptsdict = {'a':(1,3),'b':(2,1),'c':(4,5),'d':(5,2)}
         sage: x,y,x_i,y_i = matroids_plot_helpers.createline(ptsdict,
         ....: ['a','b','c','d'])
@@ -401,9 +401,9 @@ def slp(M1, pos_dict=None, B=None):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
         sage: from sage.matroids.advanced import setprint
-        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],           # optional - sage.rings.finite_rings
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
         ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
         sage: [M,L,P] = matroids_plot_helpers.slp(M1)                                   # optional - sage.rings.finite_rings
@@ -411,10 +411,10 @@ def slp(M1, pos_dict=None, B=None):
         True
         sage: setprint([L,P])                                                           # optional - sage.rings.finite_rings
         [{10, 8, 9}, {7}]
-        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],           # optional - sage.rings.finite_rings
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
         ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: posdict = {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),             # optional - sage.rings.finite_rings
+        sage: posdict = {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
         ....:            4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
         sage: [M,L,P] = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # optional - sage.rings.finite_rings
         sage: M.is_simple()                                                             # optional - sage.rings.finite_rings
@@ -486,8 +486,8 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
-        sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],                # optional - sage.rings.finite_rings
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
+        sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
         ....:                                 [0, 1, 0, 1, 0, 1, 1,0,0],
         ....:                                 [0, 0, 1, 1, 1, 0, 1,0,0]])
         sage: [M1,L,P] = matroids_plot_helpers.slp(M)                                   # optional - sage.rings.finite_rings
@@ -588,7 +588,7 @@ def line_hasorder(l, lodrs=None):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
         sage: matroids_plot_helpers.line_hasorder(['a','b','c','d'],
         ....: [['a','c','d','b'],['p','q','r']])
         (True, ['a', 'c', 'd', 'b'])
@@ -629,7 +629,7 @@ def lineorders_union(lineorders1, lineorders2):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
         sage: matroids_plot_helpers.lineorders_union([['a','b','c'],
         ....: ['p','q','r'],['i','j','k','l']],[['r','p','q']])
         [['a', 'b', 'c'], ['p', 'q', 'r'], ['i', 'j', 'k', 'l']]
@@ -668,11 +668,11 @@ def posdict_is_sane(M1, pos_dict):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
-        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],           # optional - sage.rings.finite_rings
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
         ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: pos_dict = {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),            # optional - sage.rings.finite_rings
+        sage: pos_dict = {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
         ....: 4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
         sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)                        # optional - sage.rings.finite_rings
         True
@@ -717,7 +717,7 @@ def tracklims(lims, x_i=[], y_i=[]):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
         sage: matroids_plot_helpers.tracklims([0,5,-1,7],[1,2,3,6,-1],
         ....: [-1,2,3,6])
         [-1, 6, -1, 7]
@@ -762,7 +762,7 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
 
     EXAMPLES::
 
-        sage: from sage.matroids import matroids_plot_helpers
+        sage: from sage.matroids import matroids_plot_helpers                           # optional - scipy
         sage: M = matroids.named_matroids.P7()
         sage: G = matroids_plot_helpers.geomrep(M)                                      # optional - sage.plot
         sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)                                  # optional - sage.plot
