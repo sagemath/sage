@@ -110,7 +110,11 @@ graft sage/functions
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*
 include sage/rings/finite_rings/finite_field_base.p*
-include sage/rings/finite_rings/finite_field_constructor.py
+include sage/rings/finite_rings/finite_field_constructor.p*
+include sage/rings/finite_rings/finite_field_prime_modn.p*
+include sage/rings/finite_rings/hom_finite_field.p*
+include sage/rings/finite_rings/hom_prime_finite_field.p*
+include sage/rings/finite_rings/homset.p*
 include sage/rings/fast_arith.*
 include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.p*
