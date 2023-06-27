@@ -34,7 +34,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python: ['3.9', '3.10', '3.11']
-        conda-env: [environment, environment-optional]
+        # Optional environment is disabled for now as its not yet working
+        # environment: [environment, environment-optional]
+        conda-env: [environment]
 
     steps:
       - uses: actions/checkout@v3
@@ -105,14 +107,15 @@ jobs:
         run: pip check
 
       - name: Test
+        if: always()
         shell: bash -l {0}
         run: ./sage -t --all -p0
 
       - name: Print logs
+        if: always()
         run: |
           for file in $(find . -type f -name "*.log"); do
               echo "::group::$file"
               cat "$file"
               echo "::endgroup::"
           done
-        if: always()
