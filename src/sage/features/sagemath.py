@@ -146,11 +146,13 @@ class sage__combinat(JoinFeature):
         # Some modules providing basic combinatorics are already included in sagemath-categories.
         # Hence, we test a Python module within the package.
         JoinFeature.__init__(self, 'sage.combinat',
-                             [PythonModule('sage.combinat.tableau')],
+                             [PythonModule('sage.combinat'),                        # namespace package
+                              PythonModule('sage.combinat.tableau'),                # representative
+                             ],
                              spkg='sagemath_combinat', type="standard")
 
 
-class sage__geometry__polyhedron(PythonModule):
+class sage__geometry__polyhedron(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.geometry.polyhedron`.
 
@@ -184,8 +186,13 @@ class sage__geometry__polyhedron(PythonModule):
             sage: isinstance(sage__geometry__polyhedron(), sage__geometry__polyhedron)
             True
         """
-        PythonModule.__init__(self, 'sage.geometry.polyhedron',
-                              spkg='sagemath_polyhedra', type="standard")
+        JoinFeature.__init__(self, 'sage.geometry.polyhedron',
+                             [PythonModule('sage.geometry'),                        # namespace package
+                              PythonModule('sage.geometry.polyhedron'),             # representative
+                              PythonModule('sage.schemes.toric'),                   # namespace package
+                              PythonModule('sage.schemes.toric.variety'),           # representative
+                             ],
+                             spkg='sagemath_polyhedra', type="standard")
 
 
 class sage__graphs(JoinFeature):
@@ -251,7 +258,20 @@ class sage__graphs(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.graphs',
-                             [PythonModule('sage.graphs.graph')],
+                             # These lists of modules are an (incomplete) duplication
+                             # of information in the distribution's MANIFEST.
+                             # But at least as long as the monolithic Sage library is
+                             # around, we need this information here for use by
+                             # sage-fixdoctests.
+                             [PythonModule('sage.graphs'),                          # namespace package
+                              PythonModule('sage.graphs.graph'),                    # representative
+                              PythonModule('sage.combinat.designs'),                # namespace package
+                              PythonModule('sage.combinat.designs.block_design'),   # representative
+                              PythonModule('sage.combinat.posets'),                 # namespace package
+                              PythonModule('sage.combinat.posets.posets'),          # representative
+                              PythonModule('sage.topology'),                        # namespace package
+                              PythonModule('sage.topology.simplicial_complex'),     # representative
+                             ],
                              spkg='sagemath_graphs', type="standard")
 
 
@@ -431,7 +451,18 @@ class sage__modules(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.modules',
-                             [PythonModule('sage.modules.free_module')],
+                             [PythonModule('sage.modules'),                         # namespace package
+                              PythonModule('sage.modules.free_module'),             # representative
+                              PythonModule('sage.matrix'),                          # namespace package
+                              PythonModule('sage.matrix.matrix2'),                  # representative
+                              PythonModule('sage.combinat.free_module'),
+                              PythonModule('sage.quadratic_forms'),                 # namespace package
+                              PythonModule('sage.quadratic_forms.quadratic_form'),  # representative
+                              PythonModule('sage.groups.affine_gps'),               # namespace package
+                              PythonModule('sage.groups.affine_gps.affine_group'),  # representative
+                              PythonModule('sage.groups.matrix_gps'),               # namespace package
+                              PythonModule('sage.groups.matrix_gps.named_group'),   # representative
+                             ],
                              spkg='sagemath_modules', type='standard')
 
 
