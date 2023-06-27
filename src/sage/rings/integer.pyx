@@ -4829,6 +4829,20 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: (-64).perfect_power()                                                 # optional - sage.libs.pari
             (-4, 3)
         """
+        cdef long n
+        # Fast PARI-free path
+        if mpz_fits_slong_p(self.value):
+            n = mpz_get_si(self.value)
+            if -8 < n < 4:
+                return self, one
+            if n >= 4:
+                if not (n & 1):
+                    if mpz_popcount(self.value) == 1:
+                        return smallInteger(2), mpz_sizeinbase(self.value, 2) - 1
+                if n < 1000:
+                    if _small_primes_table[n >> 1]:
+                        return self, one
+
         parians = self.__pari__().ispower()
         return Integer(parians[1]), Integer(parians[0])
 
@@ -5165,10 +5179,22 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.is_prime_power()                                                    # optional - sage.libs.pari
             True
         """
+        cdef long n
+
         if mpz_sgn(self.value) <= 0:
             return (self, zero) if get_data else False
 
         if mpz_fits_slong_p(self.value):
+            # Fast PARI-free path
+            n = mpz_get_si(self.value)
+            if not (n & 1):
+                if mpz_popcount(self.value) != 1:
+                    return (self, zero) if get_data else False
+                return (smallInteger(2), mpz_sizeinbase(self.value, 2) - 1) if get_data else True
+            if n < 1000:
+                if _small_primes_table[n >> 1]:
+                    return (self, one) if get_data else True
+
             global pari_is_prime_power
             if pari_is_prime_power is None:
                 try:
@@ -5178,7 +5204,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             if pari_is_prime_power is not None:
                 return pari_is_prime_power(self, get_data)
 
-        cdef long n
         if proof is None:
             from sage.structure.proof.proof import get_flag
             proof = get_flag(proof, "arithmetic")
