@@ -81,7 +81,7 @@ def QQ_points_of_bounded_height(dim, bound):
                         yield point
 
 
-def IQ_points_of_bounded_height(PN, K, dim, bound):
+def IQ_points_of_bounded_height(PN, K, dim, bound, normalize=False):
     r"""
     Return an iterator of the points in ``self`` of absolute multiplicative
     height of at most ``bound`` in the imaginary quadratic field ``K``.
@@ -95,6 +95,9 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
     - ``dim`` -- a positive interger
 
     - ``bound`` -- a real number
+
+    - ``normalize`` -- boolean (optional, default: ``False``); whether to
+      normalize the coordinates of returned points
 
     OUTPUT:
 
@@ -112,8 +115,6 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
     """
     if bound < 1:
         return iter([])
-
-    O = K.maximal_order()
 
     unit_tuples = list(itertools.product(K.roots_of_unity(), repeat=dim))
 
@@ -154,17 +155,15 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
                         point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
 
                         if point not in points_in_class_a:
-                            if O is ZZ:
-                                denom = lcm([point[i].denominator() for i in range(list(point))])
-                            else:
+                            if normalize:
                                 denom = K.ideal(list(point)).absolute_norm().denominator()
+                                point.scale_by(denom)
 
-                            point.scale_by(denom)
                             points_in_class_a.add(point)
                             yield point
 
 
-def points_of_bounded_height(PN, K, dim, bound, prec=53):
+def points_of_bounded_height(PN, K, dim, bound, prec=53, normalize=False):
     r"""
     Return an iterator of the points in ``K`` with dimension ``dim`` of
     absolute multiplicative height of at most ``bound``.
@@ -184,6 +183,9 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
     - ``bound`` -- a real number
 
     - ``prec`` -- (default: 53) a positive integer
+
+    - ``normalize`` -- boolean (optional, default: ``False``); whether to
+      normalize the coordinates of returned points
 
     OUTPUT:
 
@@ -363,11 +365,12 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
                         point = PN([i*j for i, j in zip(u, p)] + [p[dim]])
 
                         if point not in points_in_class_a:
-                            if O is ZZ:
-                                denom = lcm([point[i].denominator() for i in range(list(point))])
-                            else:
-                                denom = K.ideal(list(point)).absolute_norm().denominator()
+                            if normalize:
+                                if O is ZZ:
+                                    denom = lcm([point[i].denominator() for i in range(list(point))])
+                                else:
+                                    denom = K.ideal(list(point)).absolute_norm().denominator()
+                                point.scale_by(denom)
 
-                            point.scale_by(denom)
                             points_in_class_a.add(point)
                             yield point
