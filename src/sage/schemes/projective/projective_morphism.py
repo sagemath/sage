@@ -792,25 +792,24 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def normalize_coordinates(self, **kwds):
         """
-        Ensures that this morphism has integral coefficients, and,
-        if the coordinate ring has a GCD, then it ensures that the
+        Ensures that this morphism has integral coefficients.
+        If the coordinate ring has a GCD, then it ensures that the
         coefficients have no common factor.
 
-        Also, makes the leading coefficients of the first polynomial
+        It also makes the leading coefficients of the first polynomial
         positive (if positive has meaning in the coordinate ring).
         This is done in place.
 
-        When ``ideal`` or ``valuation`` is specified,
-        normalization occurs with respect to the absolute value
-        defined by the ``ideal`` or ``valuation``. That is, the
-        coefficients are scaled such that one coefficient has
-        absolute value 1 while the others have absolute value
-        less than or equal to 1. Only supported when the base
-        ring is a number field.
+        When ``ideal`` or ``valuation`` is specified, normalization occurs 
+        with respect to the absolute value defined by the ``ideal`` or
+        ``valuation``. That is, the coefficients are scaled such that
+        one coefficient has absolute value 1 while the others have
+        absolute value less than or equal to 1.
+        Only supported when the base ring is a number field.
 
         INPUT:
 
-        keywords:
+        kwds:
 
         - ``ideal`` -- (optional) a prime ideal of the base ring of this
           morphism.
@@ -926,7 +925,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             Dynamical System of Projective Space of dimension 1 over
             Number Field in a with defining polynomial 3*x^2 + 1
             Defn: Defined on coordinates by sending (z : w) to
-                    ((-3/2*a + 1/2)*z^2 + (-3/2*a + 1/2)*w^2 : (-3/2*a - 3/2)*z*w)
+                ((-3/2*a + 1/2)*z^2 + (-3/2*a + 1/2)*w^2 : (-3/2*a - 3/2)*z*w)
 
         ::
 
@@ -1027,7 +1026,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         if GCD != 1:
             self.scale_by(R(1) / GCD)
 
-        # scales by 1/gcd of the coefficients.
+        # Scale by 1/GCD of the coefficients.
         if R in _NumberFields:
             O = R.maximal_order()
         elif isinstance(R, FiniteField):
@@ -1042,8 +1041,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         if GCD != 1:
             self.scale_by(1 / GCD)
+
+        # If R is not p-adic, we make the first coordinate positive
         from sage.rings.padics.padic_base_generic import pAdicGeneric
-        # if R is not padic, we make the first coordinate positive
         if not isinstance(R, pAdicGeneric):
             if self[0].lc() < 0:
                 self.scale_by(-1)
