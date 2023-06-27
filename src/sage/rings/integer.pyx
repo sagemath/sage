@@ -4812,15 +4812,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: 144.perfect_power()                                                   # optional - sage.libs.pari
             (12, 2)
-            sage: 1.perfect_power()                                                     # optional - sage.libs.pari
+            sage: 1.perfect_power()
             (1, 1)
-            sage: 0.perfect_power()                                                     # optional - sage.libs.pari
+            sage: 0.perfect_power()
             (0, 1)
-            sage: (-1).perfect_power()                                                  # optional - sage.libs.pari
+            sage: (-1).perfect_power()
             (-1, 1)
             sage: (-8).perfect_power()                                                  # optional - sage.libs.pari
             (-2, 3)
-            sage: (-4).perfect_power()                                                  # optional - sage.libs.pari
+            sage: (-4).perfect_power()
             (-4, 1)
             sage: (101^29).perfect_power()                                              # optional - sage.libs.pari
             (101, 29)
@@ -4838,7 +4838,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             if n >= 4:
                 if not (n & 1):
                     if mpz_popcount(self.value) == 1:
-                        return smallInteger(2), mpz_sizeinbase(self.value, 2) - 1
+                        return smallInteger(2), smallInteger(mpz_sizeinbase(self.value, 2) - 1)
                 if n < 1000:
                     if _small_primes_table[n >> 1]:
                         return self, one
@@ -5190,7 +5190,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             if not (n & 1):
                 if mpz_popcount(self.value) != 1:
                     return (self, zero) if get_data else False
-                return (smallInteger(2), mpz_sizeinbase(self.value, 2) - 1) if get_data else True
+                return (smallInteger(2), smallInteger(mpz_sizeinbase(self.value, 2) - 1)) if get_data else True
             if n < 1000:
                 if _small_primes_table[n >> 1]:
                     return (self, one) if get_data else True
