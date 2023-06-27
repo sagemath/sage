@@ -159,6 +159,17 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
     first_line, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
 
+    if return_string_sans_tags:
+        # skip non-tag comments that precede the first tag comment
+        if m := optional_regex.search(comment):
+            sharp_index = comment[:m.start(0)].rfind('#')
+            if sharp_index >= 0:
+                first_line += comment[:sharp_index]
+                comment = comment[sharp_index:]
+        else:
+            # no non-tag comment
+            return set(), string
+
     tags = []
     for m in optional_regex.finditer(comment):
         cmd = m.group(1)
