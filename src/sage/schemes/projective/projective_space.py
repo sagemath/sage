@@ -1085,7 +1085,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: K.<v> = QuadraticField(2)
             sage: P.<x,y> = ProjectiveSpace(K, 1)
-            sage: sorted(list(P.points_of_bounded_height(bound=2)))
+            sage: sorted(list(P.points_of_bounded_height(bound=2, normalize=True)))
             [(-v - 2 : 1), (-v - 2 : 2), (-v - 1 : 1), (-2 : 1), (-2 : 4), (-v : 1),
              (-v : 2), (-1 : 1), (v - 2 : 1), (v - 2 : 2), (-v + 1 : 1), (0 : 1),
              (v - 1 : 1), (-v + 2 : 1), (-v + 2 : 2), (1 : 0), (1 : 1), (v : 1),
@@ -1100,18 +1100,25 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             [(-1 : 1), (-3/2*a - 1/2 : 1), (3/2*a - 1/2 : 1), (0 : 1),
              (-3/2*a + 1/2 : 1), (3/2*a + 1/2 : 1), (1 : 0), (1 : 1)]
         """
-        from sage.schemes.projective.proj_bdd_height import QQ_points_of_bounded_height, IQ_points_of_bounded_height, points_of_bounded_height
+        from sage.schemes.projective.proj_bdd_height import (
+            QQ_points_of_bounded_height,
+            IQ_points_of_bounded_height,
+            points_of_bounded_height
+        )
 
         R = self.base_ring()
 
-        # whether the field is a number field or the rational field
+        # Check the base ring is the rational field, a number field, or a ring
+        # If it is the rational field, then `field_type` is False.
+        # If it is a number field, then `field_type` is True.
+        # If it is the ring of integers, then we perform the computation.
         if is_RationalField(R):
             field_type = False
         elif R in NumberFields():
-            # true for rational field as well, so check is_RationalField first
+            # True for the rational field as well, so check `is_RationalField` first
             field_type = True
         else:
-            raise NotImplementedError("self must be projective space over a number field")
+            
 
         bound = kwds.pop('bound')
         prec = kwds.pop('precision', 53)
@@ -1123,7 +1130,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         dim = self.dimension_relative()
 
         if field_type:
-            # for imaginary quadratic field
+            # For imaginary quadratic field
             r1, r2 = R.signature()
             r = r1 + r2 - 1
 
