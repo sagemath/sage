@@ -915,7 +915,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + (2 + O(3^20))*y^2 : (3 + O(3^21))*x*y)
 
-        ::
+        Check that #35797 is fixed::
 
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(3*x^2 + 1)
