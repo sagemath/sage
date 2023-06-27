@@ -4968,12 +4968,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             True
         """
         H = set(a+b for (a, b) in self.bigraded_betti_numbers())
+        if 0 in H:
+            H.remove(0)
 
-        for i in H:
-            for j in H:
-                if i+j in H and i != 0 and j != 0:
-                    return False
-        return True
+        return all(i + j in H for i in H for j in H)
 
     def is_minimally_non_golod(self):
         r"""
@@ -5000,14 +4998,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.is_minimally_non_golod()
             False
         """
-        L = self.vertices()
-        n = len(L)
+        def test(v):
+            X = copy(self)
+            X.delete_vertex(v)
+            return X.is_golod()
 
-        for x in combinations(L, n-1):
-            if not self.generated_subcomplex(x).is_golod():
-                return False
-
-        return True
+        return (not self.is_golod()) and all(test(v) for v in self.vertices())
 
 # Miscellaneous utility functions.
 
