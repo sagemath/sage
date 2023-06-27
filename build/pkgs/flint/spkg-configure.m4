@@ -1,8 +1,8 @@
 SAGE_SPKG_CONFIGURE([flint], [
     SAGE_SPKG_DEPCHECK([mpfr ntl], [
         AC_CHECK_HEADER(flint/flint.h, [
-          dnl flint_parallel_binary_splitting appears in Flint 2.9.0, needed by arb 2.23
-          AC_SEARCH_LIBS([flint_parallel_binary_splitting], [flint], [
+          dnl gr_get_fexpr appears in Flint 3.0
+          AC_SEARCH_LIBS([gr_get_fexpr], [flint], [
             dnl check that NTL is linked in
             AC_SEARCH_LIBS([fmpz_poly_get_ZZX], [flint], [
 

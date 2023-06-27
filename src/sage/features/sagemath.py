@@ -777,7 +777,7 @@ class sage__rings__number_field(JoinFeature):
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.number_field`.
 
     Number fields are implemented in Sage using a complicated mixture of various libraries,
-    including :ref:`arb <spkg_arb>`, :ref:`FLINT <spkg_flint>`, :ref:`GAP <spkg_gap>`,
+    including :ref:`FLINT <spkg_flint>`, :ref:`GAP <spkg_gap>`,
     :ref:`MPFI <spkg_mpfi>`, :ref:`NTL <spkg_ntl>`, and :ref:`PARI <spkg_pari>`.
 
     EXAMPLES:
