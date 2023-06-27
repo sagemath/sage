@@ -974,8 +974,8 @@ class DocTestController(SageObject):
                             if not skipfile(os.path.join(root, file), self.options.optional):
                                 yield os.path.join(root, file)
                 else:
-                    # the user input this file explicitly, so we don't skip it
-                    yield path
+                    if not skipfile(path, self.options.optional):
+                        yield path
         self.sources = [FileDocTestSource(path, self.options) for path in expand()]
 
     def filter_sources(self):
