@@ -800,7 +800,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         positive (if positive has meaning in the coordinate ring).
         This is done in place.
 
-        When ``ideal`` or ``valuation`` is specified, normalization occurs 
+        When ``ideal`` or ``valuation`` is specified, normalization occurs
         with respect to the absolute value defined by the ``ideal`` or
         ``valuation``. That is, the coefficients are scaled such that
         one coefficient has absolute value 1 while the others have
