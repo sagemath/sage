@@ -25,10 +25,10 @@ EXAMPLES::
     Basis matrix:
     [ 1  0 -7]
     [ 0  1  7]
-    sage: C = VectorSpaces(FiniteField(7))                                              # optional - sage.libs.pari
-    sage: C                                                                             # optional - sage.libs.pari
+    sage: C = VectorSpaces(FiniteField(7))
+    sage: C
     Category of vector spaces over Finite Field of size 7
-    sage: C(W)                                                                          # optional - sage.libs.pari
+    sage: C(W)
     Vector space of degree 3 and dimension 2 over Finite Field of size 7
     Basis matrix:
     [1 0 0]
@@ -37,11 +37,11 @@ EXAMPLES::
 ::
 
     sage: M = ZZ^3
-    sage: C = VectorSpaces(FiniteField(7))                                              # optional - sage.libs.pari
-    sage: C(M)                                                                          # optional - sage.libs.pari
+    sage: C = VectorSpaces(FiniteField(7))
+    sage: C(M)
     Vector space of dimension 3 over Finite Field of size 7
-    sage: W = M.submodule([[1,2,7], [8,8,0]])                                           # optional - sage.libs.pari
-    sage: C(W)                                                                          # optional - sage.libs.pari
+    sage: W = M.submodule([[1,2,7], [8,8,0]])
+    sage: C(W)
     Vector space of degree 3 and dimension 2 over Finite Field of size 7
     Basis matrix:
     [1 0 0]
@@ -385,7 +385,7 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
         Vector space of dimension 10 over Rational Field
         sage: FreeModule(ZZ,10)
         Ambient free module of rank 10 over the principal ideal domain Integer Ring
-        sage: FreeModule(FiniteField(5),10)                                             # optional - sage.libs.pari
+        sage: FreeModule(FiniteField(5), 10)
         Vector space of dimension 10 over Finite Field of size 5
         sage: FreeModule(Integers(7),10)
         Vector space of dimension 10 over Ring of integers modulo 7
@@ -619,7 +619,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         Basis matrix:
         [ 1  0 -3]
 
-        sage: span([[1,2,3], [2,2,2], [1,2,5]], GF(2))                          # optional - sage.libs.pari
+        sage: span([[1,2,3], [2,2,2], [1,2,5]], GF(2))
         Vector space of degree 3 and dimension 1 over Finite Field of size 2
         Basis matrix:
         [1 0 1]
@@ -1109,15 +1109,15 @@ class Module_free_ambient(Module):
 
         EXAMPLES::
 
-            sage: V = GF(2)^2                                                   # optional - sage.libs.pari
-            sage: V.relations_matrix()                                          # optional - sage.libs.pari
+            sage: V = GF(2)^2
+            sage: V.relations_matrix()
             []
-            sage: W = V.subspace([[1, 0]])                                      # optional - sage.libs.pari
-            sage: W.relations_matrix()                                          # optional - sage.libs.pari
+            sage: W = V.subspace([[1, 0]])
+            sage: W.relations_matrix()
             []
 
-            sage: Q = V / W                                                     # optional - sage.libs.pari
-            sage: Q.relations_matrix()                                          # optional - sage.libs.pari
+            sage: Q = V / W
+            sage: Q.relations_matrix()
             [1 0]
 
             sage: S.<x,y,z> = PolynomialRing(QQ)
@@ -1197,13 +1197,13 @@ class Module_free_ambient(Module):
             False
             sage: V1 <= V2
             False
-            sage: R2.<x> = GF(5)[]                                                      # optional - sage.rings.finite_rings
-            sage: F3 = R2^3                                                             # optional - sage.rings.finite_rings
-            sage: V3 = F3.span([[x^5 - 1, 1 + x + x^2 + x^3 + x^4, 0]])                 # optional - sage.rings.finite_rings
-            sage: W3 = F3.span([[1,1,0], [0,4,0]])                                      # optional - sage.rings.finite_rings
-            sage: V3 <= W3                                                              # optional - sage.rings.finite_rings
+            sage: R2.<x> = GF(5)[]
+            sage: F3 = R2^3
+            sage: V3 = F3.span([[x^5 - 1, 1 + x + x^2 + x^3 + x^4, 0]])
+            sage: W3 = F3.span([[1,1,0], [0,4,0]])
+            sage: V3 <= W3
             True
-            sage: W3 <= V3                                                      # optional - sage.libs.pari
+            sage: W3 <= V3
             False
 
         We compare a one dimensional space to a two dimensional space::
@@ -1568,12 +1568,12 @@ class Module_free_ambient(Module):
 
         EXAMPLES::
 
-            sage: V = VectorSpace(GF(7), 3)                                             # optional - sage.libs.pari
-            sage: W = V.subspace([[2, 3, 4]]); W                                        # optional - sage.libs.pari
+            sage: V = VectorSpace(GF(7), 3)
+            sage: W = V.subspace([[2, 3, 4]]); W
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 5 2]
-            sage: W.span([[1, 1, 1]])                                                   # optional - sage.libs.pari
+            sage: W.span([[1, 1, 1]])
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 1 1]
@@ -1639,7 +1639,7 @@ class Module_free_ambient(Module):
 
             sage: V = FreeModule(RDF, 3)
             sage: W = V.submodule([V.gen(0)])
-            sage: W.span([V.gen(1)], base_ring=GF(7))                                   # optional - sage.libs.pari
+            sage: W.span([V.gen(1)], base_ring=GF(7))
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [0 1 0]
@@ -1896,13 +1896,13 @@ class FreeModule_generic(Module_free_ambient):
         sage: PolynomialRing(QQ,3,'x')^3
         Ambient free module of rank 3 over the integral domain Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
 
-        sage: FreeModule(GF(7), 3).category()                                           # optional - sage.libs.pari
+        sage: FreeModule(GF(7), 3).category()
         Category of enumerated finite dimensional vector spaces with basis over
          (finite enumerated fields and subquotients of monoids and quotients of semigroups)
         sage: V = QQ^4; V.category()
         Category of finite dimensional vector spaces with basis over
          (number fields and quotient fields and metric spaces)
-        sage: V = GF(5)**20; V.category()                                               # optional - sage.libs.pari
+        sage: V = GF(5)**20; V.category()
         Category of enumerated finite dimensional vector spaces with basis over
          (finite enumerated fields and subquotients of monoids and quotients of semigroups)
         sage: FreeModule(ZZ,3).category()
@@ -2383,8 +2383,8 @@ class FreeModule_generic(Module_free_ambient):
 
         TESTS::
 
-            sage: V = VectorSpace(GF(2, 'a'), 2)                                        # optional - sage.libs.pari
-            sage: V.list()                                                              # optional - sage.libs.pari
+            sage: V = VectorSpace(GF(2, 'a'), 2)
+            sage: V.list()
             [(0, 0), (1, 0), (0, 1), (1, 1)]
 
         Test ``iter(ZZ^n)`` and the like::
@@ -2537,19 +2537,19 @@ class FreeModule_generic(Module_free_ambient):
 
         ::
 
-            sage: M = FreeModule(GF(7), 3).span([[2,3,4], [1,1,1]]); M                  # optional - sage.libs.pari
+            sage: M = FreeModule(GF(7), 3).span([[2,3,4], [1,1,1]]); M
             Vector space of degree 3 and dimension 2 over Finite Field of size 7
             Basis matrix:
             [1 0 6]
             [0 1 2]
-            sage: M.basis_matrix()                                                      # optional - sage.libs.pari
+            sage: M.basis_matrix()
             [1 0 6]
             [0 1 2]
 
         ::
 
-            sage: M = FreeModule(GF(7), 3).span_of_basis([[2,3,4], [1,1,1]])            # optional - sage.libs.pari
-            sage: M.basis_matrix()                                                      # optional - sage.libs.pari
+            sage: M = FreeModule(GF(7), 3).span_of_basis([[2,3,4], [1,1,1]])
+            sage: M.basis_matrix()
             [2 3 4]
             [1 1 1]
 
@@ -2810,9 +2810,9 @@ class FreeModule_generic(Module_free_ambient):
 
         EXAMPLES::
 
-            sage: M = FreeModule(FiniteField(19), 100)                                  # optional - sage.libs.pari
-            sage: W = M.submodule([M.gen(50)])                                          # optional - sage.libs.pari
-            sage: W.dimension()                                                         # optional - sage.libs.pari
+            sage: M = FreeModule(FiniteField(19), 100)
+            sage: W = M.submodule([M.gen(50)])
+            sage: W.dimension()
             1
         """
         return self.rank()
@@ -2867,11 +2867,11 @@ class FreeModule_generic(Module_free_ambient):
 
         EXAMPLES::
 
-            sage: FreeModule(GF(3), 2).base_field()                             # optional - sage.libs.pari
+            sage: FreeModule(GF(3), 2).base_field()
             Finite Field of size 3
-            sage: FreeModule(ZZ, 2).base_field()                                # optional - sage.libs.pari
+            sage: FreeModule(ZZ, 2).base_field()
             Rational Field
-            sage: FreeModule(PolynomialRing(GF(7), 'x'), 2).base_field()        # optional - sage.libs.pari
+            sage: FreeModule(PolynomialRing(GF(7), 'x'), 2).base_field()
             Fraction Field of Univariate Polynomial Ring in x
              over Finite Field of size 7
         """
@@ -3532,10 +3532,10 @@ class FreeModule_generic(Module_free_ambient):
 
         Check that :trac:`17705` is fixed::
 
-            sage: V = GF(2)^2                                                   # optional - sage.libs.pari
-            sage: W = V.subspace([[1, 0]])                                      # optional - sage.libs.pari
-            sage: x = matrix(GF(2), [[1, 1], [0, 1]])                           # optional - sage.libs.pari
-            sage: W*x                                                           # optional - sage.libs.pari
+            sage: V = GF(2)^2
+            sage: W = V.subspace([[1, 0]])
+            sage: x = matrix(GF(2), [[1, 1], [0, 1]])
+            sage: W*x
             Vector space of degree 2 and dimension 1
              over Finite Field of size 2
             Basis matrix:
@@ -3552,15 +3552,15 @@ class FreeModule_generic(Module_free_ambient):
 
         EXAMPLES::
 
-            sage: V = GF(2)^2                                                   # optional - sage.libs.pari
-            sage: V.relations() == V.zero_submodule()                           # optional - sage.libs.pari
+            sage: V = GF(2)^2
+            sage: V.relations() == V.zero_submodule()
             True
-            sage: W = V.subspace([[1, 0]])                                      # optional - sage.libs.pari
-            sage: W.relations() == V.zero_submodule()                           # optional - sage.libs.pari
+            sage: W = V.subspace([[1, 0]])
+            sage: W.relations() == V.zero_submodule()
             True
 
-            sage: Q = V / W                                                     # optional - sage.libs.pari
-            sage: Q.relations() == W                                            # optional - sage.libs.pari
+            sage: Q = V / W
+            sage: Q.relations() == W
             True
         """
         return self.zero_submodule()
@@ -3579,7 +3579,7 @@ class FreeModule_generic_domain(FreeModule_generic):
             sage: FreeModule(ZZ, 2)
             Ambient free module of rank 2
              over the principal ideal domain Integer Ring
-            sage: FreeModule(PolynomialRing(GF(7), 'x'), 2)                     # optional - sage.libs.pari
+            sage: FreeModule(PolynomialRing(GF(7), 'x'), 2)
             Ambient free module of rank 2
              over the principal ideal domain Univariate Polynomial Ring in x
               over Finite Field of size 7
@@ -3676,7 +3676,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             sage: FreeModule(ZZ, 2)
             Ambient free module of rank 2
              over the principal ideal domain Integer Ring
-            sage: FreeModule(PolynomialRing(GF(7), 'x'), 2)                     # optional - sage.libs.pari
+            sage: FreeModule(PolynomialRing(GF(7), 'x'), 2)
             Ambient free module of rank 2
              over the principal ideal domain Univariate Polynomial Ring in x
               over Finite Field of size 7
@@ -4304,7 +4304,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
             sage: FreeModule(QQ, 2)
             Vector space of dimension 2 over Rational Field
-            sage: FreeModule(FiniteField(2), 7)                                         # optional - sage.libs.pari
+            sage: FreeModule(FiniteField(2), 7)
             Vector space of dimension 7 over Finite Field of size 2
 
         We test that objects of this type are initialised correctly;
@@ -4594,12 +4594,12 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         EXAMPLES::
 
-            sage: V = VectorSpace(GF(7), 3)                                             # optional - sage.libs.pari
-            sage: W = V.subspace([[2,3,4]]); W                                          # optional - sage.libs.pari
+            sage: V = VectorSpace(GF(7), 3)
+            sage: W = V.subspace([[2,3,4]]); W
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 5 2]
-            sage: W.span_of_basis([[2,2,2], [3,3,0]])                                   # optional - sage.libs.pari
+            sage: W.span_of_basis([[2,2,2], [3,3,0]])
             Vector space of degree 3 and dimension 2 over Finite Field of size 7
             User basis matrix:
             [2 2 2]
@@ -4608,7 +4608,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         The basis vectors must be linearly independent or a
         ``ValueError`` exception is raised::
 
-            sage: W.span_of_basis([[2,2,2], [3,3,3]])                                   # optional - sage.libs.pari
+            sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
             ...
             ValueError: The given basis vectors must be linearly independent.
@@ -4649,8 +4649,8 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         ambient `3`-dimensional space over the finite field of
         order `7`::
 
-            sage: V = VectorSpace(GF(7), 3)                                             # optional - sage.libs.pari
-            sage: W = V.subspace([[2,3,4]]); W                                          # optional - sage.libs.pari
+            sage: V = VectorSpace(GF(7), 3)
+            sage: W = V.subspace([[2,3,4]]); W
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 5 2]
@@ -4659,7 +4659,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         ``check=False``. This is just equivalent to computing
         the span of the element::
 
-            sage: W.subspace([[1,1,0]], check=False)                                    # optional - sage.libs.pari
+            sage: W.subspace([[1,1,0]], check=False)
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 1 0]
@@ -4667,7 +4667,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         With ``check=True`` (the default) the mistake is correctly
         detected and reported with an ``ArithmeticError`` exception::
 
-            sage: W.subspace([[1,1,0]], check=True)                                     # optional - sage.libs.pari
+            sage: W.subspace([[1,1,0]], check=True)
             Traceback (most recent call last):
             ...
             ArithmeticError: argument gens (= [[1, 1, 0]]) does not generate a submodule of self
@@ -4684,25 +4684,25 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         EXAMPLES::
 
-            sage: V = VectorSpace(GF(3), 5)                                             # optional - sage.libs.pari
-            sage: len(list(V.subspaces(0)))                                             # optional - sage.libs.pari
+            sage: V = VectorSpace(GF(3), 5)
+            sage: len(list(V.subspaces(0)))
             1
-            sage: len(list(V.subspaces(1)))                                             # optional - sage.libs.pari
+            sage: len(list(V.subspaces(1)))
             121
-            sage: len(list(V.subspaces(2)))                                             # optional - sage.libs.pari
+            sage: len(list(V.subspaces(2)))
             1210
-            sage: len(list(V.subspaces(3)))                                             # optional - sage.libs.pari
+            sage: len(list(V.subspaces(3)))
             1210
-            sage: len(list(V.subspaces(4)))                                             # optional - sage.libs.pari
+            sage: len(list(V.subspaces(4)))
             121
-            sage: len(list(V.subspaces(5)))                                             # optional - sage.libs.pari
+            sage: len(list(V.subspaces(5)))
             1
 
         ::
 
-            sage: V = VectorSpace(GF(3), 5)                                             # optional - sage.libs.pari
-            sage: V = V.subspace([V([1,1,0,0,0]), V([0,0,1,1,0])])                      # optional - sage.libs.pari
-            sage: list(V.subspaces(1))                                                  # optional - sage.libs.pari
+            sage: V = VectorSpace(GF(3), 5)
+            sage: V = V.subspace([V([1,1,0,0,0]), V([0,0,1,1,0])])
+            sage: list(V.subspaces(1))
             [Vector space of degree 5 and dimension 1 over Finite Field of size 3
             Basis matrix:
             [1 1 0 0 0],
@@ -4733,8 +4733,8 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         ::
 
-            sage: V = VectorSpace(GF(7), 3)                                             # optional - sage.libs.pari
-            sage: W = V.subspace_with_basis([[2,2,2], [1,2,3]]); W                      # optional - sage.libs.pari
+            sage: V = VectorSpace(GF(7), 3)
+            sage: W = V.subspace_with_basis([[2,2,2], [1,2,3]]); W
             Vector space of degree 3 and dimension 2 over Finite Field of size 7
             User basis matrix:
             [2 2 2]
@@ -4744,7 +4744,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         ::
 
-            sage: W1 = W.subspace_with_basis([[3,4,5]]); W1                             # optional - sage.libs.pari
+            sage: W1 = W.subspace_with_basis([[3,4,5]]); W1
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             User basis matrix:
             [3 4 5]
@@ -4754,14 +4754,14 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         ::
 
-            sage: W2 = W.subspace([[3,4,5]]); W2                                        # optional - sage.libs.pari
+            sage: W2 = W.subspace([[3,4,5]]); W2
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 6 4]
 
         Nonetheless the two subspaces are equal (as mathematical objects)::
 
-            sage: W1 == W2                                                              # optional - sage.libs.pari
+            sage: W1 == W2
             True
         """
         return self.submodule_with_basis(gens, check=check, already_echelonized=already_echelonized)
@@ -4809,13 +4809,13 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         we can get complements which are only isomorphic to a vector
         space decomposition complement. ::
 
-            sage: F2 = GF(2, 'x')                                                       # optional - sage.rings.finite_rings
-            sage: V = F2^6                                                              # optional - sage.rings.finite_rings
-            sage: W = V.span([[1,1,0,0,0,0]]); W                                        # optional - sage.rings.finite_rings
+            sage: F2 = GF(2, 'x')
+            sage: V = F2^6
+            sage: W = V.span([[1,1,0,0,0,0]]); W
             Vector space of degree 6 and dimension 1 over Finite Field of size 2
             Basis matrix:
             [1 1 0 0 0 0]
-            sage: W.complement()                                                        # optional - sage.libs.pari
+            sage: W.complement()
             Vector space of degree 6 and dimension 5 over Finite Field of size 2
             Basis matrix:
             [1 1 0 0 0 0]
@@ -4823,7 +4823,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             [0 0 0 1 0 0]
             [0 0 0 0 1 0]
             [0 0 0 0 0 1]
-            sage: W.intersection(W.complement())                                        # optional - sage.libs.pari
+            sage: W.intersection(W.complement())
             Vector space of degree 6 and dimension 1 over Finite Field of size 2
             Basis matrix:
             [1 1 0 0 0 0]
@@ -4985,23 +4985,23 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         linearly independent vectors and add in two linear combinations
         to make a linearly dependent set of five vectors. ::
 
-            sage: F = FiniteField(17)                                                   # optional - sage.libs.pari
-            sage: v1 = vector(F, [1, 2, 3, 4, 5])                                       # optional - sage.libs.pari
-            sage: v2 = vector(F, [2, 4, 8, 16, 15])                                     # optional - sage.libs.pari
-            sage: v3 = vector(F, [1, 0, 0, 0, 1])                                       # optional - sage.libs.pari
-            sage: (F^5).linear_dependence([v1, v2, v3]) == []                           # optional - sage.libs.pari
+            sage: F = FiniteField(17)
+            sage: v1 = vector(F, [1, 2, 3, 4, 5])
+            sage: v2 = vector(F, [2, 4, 8, 16, 15])
+            sage: v3 = vector(F, [1, 0, 0, 0, 1])
+            sage: (F^5).linear_dependence([v1, v2, v3]) == []
             True
-            sage: L = [v1, v2, v3, 2*v1+v2, 3*v2+6*v3]                                  # optional - sage.libs.pari
-            sage: (F^5).linear_dependence(L)                                            # optional - sage.libs.pari
+            sage: L = [v1, v2, v3, 2*v1+v2, 3*v2+6*v3]
+            sage: (F^5).linear_dependence(L)
             [
             (1, 0, 16, 8, 3),
             (0, 1, 2, 0, 11)
             ]
-            sage: v1 + 16*v3 + 8*(2*v1+v2) + 3*(3*v2+6*v3)                              # optional - sage.libs.pari
+            sage: v1 + 16*v3 + 8*(2*v1+v2) + 3*(3*v2+6*v3)
             (0, 0, 0, 0, 0)
-            sage: v2 + 2*v3 + 11*(3*v2+6*v3)                                            # optional - sage.libs.pari
+            sage: v2 + 2*v3 + 11*(3*v2+6*v3)
             (0, 0, 0, 0, 0)
-            sage: (F^5).linear_dependence(L, zeros='right')                             # optional - sage.libs.pari
+            sage: (F^5).linear_dependence(L, zeros='right')
             [
             (15, 16, 0, 1, 0),
             (0, 14, 11, 0, 1)
@@ -5146,7 +5146,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         An example in characteristic 5::
 
-            sage: A = GF(5)^2; B = A.span([[1,3]]); A / B                               # optional - sage.libs.pari
+            sage: A = GF(5)^2; B = A.span([[1,3]]); A / B
             Vector space quotient V/W of dimension 1 over Finite Field of size 5 where
             V: Vector space of dimension 2 over Finite Field of size 5
             W: Vector space of degree 2 and dimension 1 over Finite Field of size 5
@@ -5236,14 +5236,14 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         EXAMPLES::
 
-            sage: V = GF(19)^3                                                  # optional - sage.libs.pari
-            sage: W = V.span_of_basis([[1,2,3], [1,0,1]])                       # optional - sage.libs.pari
-            sage: U, pi, lift = V.quotient_abstract(W)                          # optional - sage.libs.pari
-            sage: pi(V.2)                                                       # optional - sage.libs.pari
+            sage: V = GF(19)^3
+            sage: W = V.span_of_basis([[1,2,3], [1,0,1]])
+            sage: U, pi, lift = V.quotient_abstract(W)
+            sage: pi(V.2)
             (18)
-            sage: pi(V.0)                                                       # optional - sage.libs.pari
+            sage: pi(V.0)
             (1)
-            sage: pi(V.0 + V.2)                                                 # optional - sage.libs.pari
+            sage: pi(V.0 + V.2)
             (0)
 
         Another example involving a quotient of one subspace by another::
@@ -5598,8 +5598,8 @@ class FreeModule_ambient(FreeModule_generic):
 
         ::
 
-            sage: A = GF(5)^20                                                  # optional - sage.libs.pari
-            sage: latex(A)                              # indirect doctest      # optional - sage.libs.pari
+            sage: A = GF(5)^20
+            sage: latex(A)
             \Bold{F}_{5}^{20}
 
         ::
@@ -5700,12 +5700,12 @@ class FreeModule_ambient(FreeModule_generic):
 
             sage: A = ZZ^3; A.change_ring(QQ)
             Vector space of dimension 3 over Rational Field
-            sage: A = ZZ^3; A.change_ring(GF(5))                                # optional - sage.libs.pari
+            sage: A = ZZ^3; A.change_ring(GF(5))
             Vector space of dimension 3 over Finite Field of size 5
 
         For ambient modules any change of rings is defined::
 
-            sage: A = GF(5)**3; A.change_ring(QQ)                               # optional - sage.libs.pari
+            sage: A = GF(5)**3; A.change_ring(QQ)
             Vector space of dimension 3 over Rational Field
 
         TESTS:
@@ -5993,7 +5993,7 @@ class FreeModule_ambient_domain(FreeModule_generic_domain, FreeModule_ambient):
 
     EXAMPLES::
 
-        sage: FreeModule(PolynomialRing(GF(5), 'x'), 3)                         # optional - sage.libs.pari
+        sage: FreeModule(PolynomialRing(GF(5), 'x'), 3)
         Ambient free module of rank 3 over the principal ideal domain
         Univariate Polynomial Ring in x over Finite Field of size 5
     """
@@ -6004,8 +6004,8 @@ class FreeModule_ambient_domain(FreeModule_generic_domain, FreeModule_ambient):
 
         TESTS::
 
-            sage: A = FreeModule(PolynomialRing(GF(5),'x'), 3)                  # optional - sage.libs.pari
-            sage: TestSuite(A).run()                                            # optional - sage.libs.pari
+            sage: A = FreeModule(PolynomialRing(GF(5),'x'), 3)
+            sage: TestSuite(A).run()
         """
         FreeModule_ambient.__init__(self, base_ring, rank, sparse, coordinate_ring, category=category)
 
@@ -6936,15 +6936,15 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         EXAMPLES::
 
-            sage: V = GF(2)^2                                                   # optional - sage.libs.pari
-            sage: W = V.subspace([[1, 0]])                                      # optional - sage.libs.pari
-            sage: W.relations() == V.zero_submodule()                           # optional - sage.libs.pari
+            sage: V = GF(2)^2
+            sage: W = V.subspace([[1, 0]])
+            sage: W.relations() == V.zero_submodule()
             True
 
-            sage: Q = V / W                                                     # optional - sage.libs.pari
-            sage: Q.relations() == W                                            # optional - sage.libs.pari
+            sage: Q = V / W
+            sage: Q.relations() == W
             True
-            sage: Q.zero_submodule().relations() == W                           # optional - sage.libs.pari
+            sage: Q.zero_submodule().relations() == W
             True
         """
         return self.__ambient_module.relations()
@@ -7345,7 +7345,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
             sage: V = QQ^3
             sage: W = V.subspace([[2, 1/2, 1]])
-            sage: W.change_ring(GF(7))                                                  # optional - sage.libs.pari
+            sage: W.change_ring(GF(7))
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [1 2 4]
@@ -8141,8 +8141,8 @@ def element_class(R, is_sparse):
 
     EXAMPLES::
 
-        sage: FF = FiniteField(2)                                                       # optional - sage.libs.pari
-        sage: P = PolynomialRing(FF,'x')                                                # optional - sage.libs.pari
+        sage: FF = FiniteField(2)
+        sage: P = PolynomialRing(FF,'x')
         sage: sage.modules.free_module.element_class(QQ, is_sparse=True)
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
         sage: sage.modules.free_module.element_class(QQ, is_sparse=False)
@@ -8151,15 +8151,15 @@ def element_class(R, is_sparse):
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
         sage: sage.modules.free_module.element_class(ZZ, is_sparse=False)
         <class 'sage.modules.vector_integer_dense.Vector_integer_dense'>
-        sage: sage.modules.free_module.element_class(FF, is_sparse=True)                # optional - sage.libs.pari
+        sage: sage.modules.free_module.element_class(FF, is_sparse=True)
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
         sage: sage.modules.free_module.element_class(FF, is_sparse=False)               # optional - sage.libs.pari
         <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
-        sage: sage.modules.free_module.element_class(GF(7), is_sparse=False)            # optional - sage.libs.pari
+        sage: sage.modules.free_module.element_class(GF(7), is_sparse=False)
         <class 'sage.modules.vector_modn_dense.Vector_modn_dense'>
-        sage: sage.modules.free_module.element_class(P, is_sparse=True)                 # optional - sage.libs.pari
+        sage: sage.modules.free_module.element_class(P, is_sparse=True)
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
-        sage: sage.modules.free_module.element_class(P, is_sparse=False)                # optional - sage.libs.pari
+        sage: sage.modules.free_module.element_class(P, is_sparse=False)
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
     """
     import sage.rings.integer_ring

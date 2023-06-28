@@ -45,9 +45,9 @@ We make a large zero vector::
 
 We multiply a vector by a matrix::
 
-    sage: a = (GF(97)^5)(range(5))                                                      # optional - sage.libs.pari
-    sage: m = matrix(GF(97), 5, range(25))                                              # optional - sage.libs.pari
-    sage: a*m                                                                           # optional - sage.libs.pari
+    sage: a = (GF(97)^5)(range(5))
+    sage: m = matrix(GF(97), 5, range(25))
+    sage: a*m
     (53, 63, 73, 83, 93)
 
 TESTS::
@@ -74,21 +74,21 @@ TESTS::
     sage: ~v[0]                                                                         # optional - sage.libs.pari
     1482786336
 
-    sage: w = vector(GF(11), [-1,0,0,0])                                                # optional - sage.libs.pari
-    sage: w.set_immutable()                                                             # optional - sage.libs.pari
-    sage: isinstance(hash(w), int)                                                      # optional - sage.libs.pari
+    sage: w = vector(GF(11), [-1,0,0,0])
+    sage: w.set_immutable()
+    sage: isinstance(hash(w), int)
     True
 
 Test that :trac:`28042` is fixed::
 
     sage: p = 193379
-    sage: K = GF(p)                                                                     # optional - sage.libs.pari
-    sage: a = K(1)                                                                      # optional - sage.libs.pari
-    sage: b = K(191495)                                                                 # optional - sage.libs.pari
-    sage: c = K(109320)                                                                 # optional - sage.libs.pari
-    sage: d = K(167667)                                                                 # optional - sage.libs.pari
-    sage: e = 103937                                                                    # optional - sage.libs.pari
-    sage: a*c + b*d - e                                                                 # optional - sage.libs.pari
+    sage: K = GF(p)                                                                     # optional - sage.rings.finite_rings
+    sage: a = K(1)                                                                      # optional - sage.rings.finite_rings
+    sage: b = K(191495)                                                                 # optional - sage.rings.finite_rings
+    sage: c = K(109320)                                                                 # optional - sage.rings.finite_rings
+    sage: d = K(167667)                                                                 # optional - sage.rings.finite_rings
+    sage: e = 103937
+    sage: a*c + b*d - e                                                                 # optional - sage.rings.finite_rings
     102041
     sage: vector([a,b]) * vector([c,d]) - e                                             # optional - sage.libs.pari
     102041
@@ -197,15 +197,15 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: v = vector(GF(5), [0,0,0,0])                                          # optional - sage.libs.pari
-            sage: v == 0                                                                # optional - sage.libs.pari
+            sage: v = vector(GF(5), [0,0,0,0])
+            sage: v == 0
             True
-            sage: v == 1                                                                # optional - sage.libs.pari
+            sage: v == 1
             False
-            sage: v == v                                                                # optional - sage.libs.pari
+            sage: v == v
             True
-            sage: w = vector(GF(11), [-1,0,0,0])                                        # optional - sage.libs.pari
-            sage: w == w                                                                # optional - sage.libs.pari
+            sage: w = vector(GF(11), [-1,0,0,0])
+            sage: w == w
             True
         """
         cdef Py_ssize_t i

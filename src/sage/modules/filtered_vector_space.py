@@ -826,8 +826,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: F = FilteredVectorSpace(3, base_ring=RDF)
             sage: F._repr_vector_space(1234)
             'RDF^1234'
-            sage: F3 = FilteredVectorSpace(3, base_ring=GF(3))                          # optional - sage.libs.pari
-            sage: F3._repr_vector_space(1234)                                           # optional - sage.libs.pari
+            sage: F3 = FilteredVectorSpace(3, base_ring=GF(3))
+            sage: F3._repr_vector_space(1234)
             'GF(3)^1234'
             sage: F3 = FilteredVectorSpace(3, base_ring=AA)                             # optional - sage.rings.number_field
             sage: F3._repr_vector_space(1234)                                           # optional - sage.rings.number_field
@@ -884,7 +884,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             QQ^1 in QQ^2
             sage: FilteredVectorSpace(rays, {0:[3]})
             QQ^1 >= 0 in QQ^2
-            sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=GF(3))  # optional - sage.libs.pari
+            sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=GF(3))
             GF(3)^2 >= GF(3)^1 >= GF(3)^1 >= 0
             sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=AA)     # optional - sage.rings.number_field
             Vector space of dimension 2 over Algebraic Real Field
@@ -930,7 +930,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: S1._filt[0].is_isomorphic(S2._filt[0])  # known bug                   # optional - sage.geometry.polyhedron sage.schemes
             True
 
-            sage: FilteredVectorSpace(2, base_ring=QQ) == FilteredVectorSpace(2, base_ring=GF(5))   # optional - sage.libs.pari
+            sage: FilteredVectorSpace(2, base_ring=QQ) == FilteredVectorSpace(2, base_ring=GF(5))
             False
         """
         if type(self) != type(other):
