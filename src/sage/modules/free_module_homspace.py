@@ -53,7 +53,7 @@ See :trac:`5886`::
 
 See :trac:`13321`::
 
-    sage: (GF(7)^2).hom([[20, 0], [0, 21]], ZZ^2)                                       # optional - sage.rings.finite_rings
+    sage: (GF(7)^2).hom([[20, 0], [0, 21]], ZZ^2)
     Traceback (most recent call last):
     ...
     TypeError: nontrivial morphisms require a coercion map from the base ring

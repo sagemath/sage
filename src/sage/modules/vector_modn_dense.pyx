@@ -45,9 +45,9 @@ We make a large zero vector::
 
 We multiply a vector by a matrix::
 
-    sage: a = (GF(97)^5)(range(5))                                                      # optional - sage.rings.finite_rings
-    sage: m = matrix(GF(97), 5, range(25))                                              # optional - sage.rings.finite_rings
-    sage: a*m                                                                           # optional - sage.rings.finite_rings
+    sage: a = (GF(97)^5)(range(5))
+    sage: m = matrix(GF(97), 5, range(25))
+    sage: a*m
     (53, 63, 73, 83, 93)
 
 TESTS::
@@ -74,9 +74,9 @@ TESTS::
     sage: ~v[0]                                                                         # optional - sage.rings.finite_rings
     1482786336
 
-    sage: w = vector(GF(11), [-1,0,0,0])                                                # optional - sage.rings.finite_rings
-    sage: w.set_immutable()                                                             # optional - sage.rings.finite_rings
-    sage: isinstance(hash(w), int)                                                      # optional - sage.rings.finite_rings
+    sage: w = vector(GF(11), [-1,0,0,0])
+    sage: w.set_immutable()
+    sage: isinstance(hash(w), int)
     True
 
 Test that :trac:`28042` is fixed::
@@ -87,7 +87,7 @@ Test that :trac:`28042` is fixed::
     sage: b = K(191495)                                                                 # optional - sage.rings.finite_rings
     sage: c = K(109320)                                                                 # optional - sage.rings.finite_rings
     sage: d = K(167667)                                                                 # optional - sage.rings.finite_rings
-    sage: e = 103937                                                                    # optional - sage.rings.finite_rings
+    sage: e = 103937
     sage: a*c + b*d - e                                                                 # optional - sage.rings.finite_rings
     102041
     sage: vector([a,b]) * vector([c,d]) - e                                             # optional - sage.rings.finite_rings
@@ -197,15 +197,15 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: v = vector(GF(5), [0,0,0,0])                                          # optional - sage.rings.finite_rings
-            sage: v == 0                                                                # optional - sage.rings.finite_rings
+            sage: v = vector(GF(5), [0,0,0,0])
+            sage: v == 0
             True
-            sage: v == 1                                                                # optional - sage.rings.finite_rings
+            sage: v == 1
             False
-            sage: v == v                                                                # optional - sage.rings.finite_rings
+            sage: v == v
             True
-            sage: w = vector(GF(11), [-1,0,0,0])                                        # optional - sage.rings.finite_rings
-            sage: w == w                                                                # optional - sage.rings.finite_rings
+            sage: w = vector(GF(11), [-1,0,0,0])
+            sage: w == w
             True
         """
         cdef Py_ssize_t i
