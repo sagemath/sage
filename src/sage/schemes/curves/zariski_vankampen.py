@@ -1142,14 +1142,15 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     else:
         disc = []
     if len(disc) == 0:
-        computebm = False
+        computebm0 = False
         result = []
         p0 = (0, 0)
     else:
+        computebm0 = computebm
         V = corrected_voronoi_diagram(tuple(disc))
         G, E, p, EC, DG = voronoi_cells(V)
         p0 = (p[0], p[1])
-    if computebm:
+    if computebm0:
         geombasis = geometric_basis(G, E, EC, p, DG)
         segs = set()
         for p in geombasis:
@@ -1199,7 +1200,7 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     if not holdstrand:
         roots_base.sort()
         strands = {i + 1: par[1] + 1 for i, par in enumerate(roots_base)}
-    computebm0 = computebm or len(disc) == 0
+    computebm0 = computebm0 or len(disc) == 0
     if computebm0 and not holdstrand:
         return (result, strands)
     if computebm0 and holdstrand:
@@ -1392,8 +1393,9 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         sage: g = fundamental_group_from_braid_mon(bm, vertical=[1]); g
         Finitely presented group < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1, x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
     """
-    vertical.sort()
-    v = len(vertical)
+    vertical0 = [_ for _ in vertical]
+    vertical0.sort()
+    v = len(vertical0)
     if bm == []:
         d = degree
     else:
@@ -1402,7 +1404,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         return None
     F = FreeGroup(d)
     Fv = FreeGroup(d+v)
-    bmh = [br for j, br in enumerate(bm) if j + 1 not in vertical]
+    bmh = [br for j, br in enumerate(bm) if j + 1 not in vertical0]
 
     @parallel
     def relation(x, b):
@@ -1411,8 +1413,9 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     if not puiseux:
         relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
         rel_h = [r[1] for r in relations_h]
+        simplified0 = simplified
     else:
-        simplified = False
+        simplified0 = False
         conjugate_desc = conjugate_positive_form_p(bmh)
         trenzas_desc = [b1[-1] for b1 in conjugate_desc]
         trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
@@ -1420,7 +1423,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         rel_h = [r[1] for r in relations_h]
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
-    for j, k in enumerate(vertical):
+    for j, k in enumerate(vertical0):
         l1 = d + j + 1
         br = bm[k - 1]
         for gen in F.gens():
@@ -1431,7 +1434,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     if projective:
         rel.append(prod(Fv.gens()).Tietze())
     G = Fv / rel
-    if simplified:
+    if simplified0:
         return G.simplified()
     return G
 
