@@ -679,8 +679,8 @@ cdef class randstate:
         seed the generator itself.  However, we put the call in
         to make the coverage tester happy. ::
 
-            sage: current_randstate().set_seed_ntl(False)                               # optional - sage.libs.ntl
-            sage: ntl.ZZ_random(10^40)                                                  # optional - sage.libs.ntl
+            sage: current_randstate().set_seed_ntl(False)
+            sage: ntl.ZZ_random(10^40)
             1495283511775355459459209288047895196007
         """
         global _ntl_seed_randstate
@@ -699,10 +699,10 @@ cdef class randstate:
         EXAMPLES::
 
             sage: set_random_seed(99900000999)
-            sage: current_randstate().set_seed_gap()                                    # optional - sage.libs.gap
-            sage: gap.Random(1, 10^50)                                                  # optional - sage.libs.gap
+            sage: current_randstate().set_seed_gap()
+            sage: gap.Random(1, 10^50)
             1496738263332555434474532297768680634540939580077
-            sage: gap(35).SCRRandomString()                                             # optional - sage.libs.gap
+            sage: gap(35).SCRRandomString()
             [ 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1,
               1, 0, 0, 1, 1, 1, 1, 1, 0, 1 ]
         """
@@ -737,8 +737,8 @@ cdef class randstate:
         EXAMPLES::
 
             sage: set_random_seed(987654321)
-            sage: current_randstate().set_seed_gp()                                     # optional - sage.libs.pari
-            sage: gp.random()                                                           # optional - sage.libs.pari
+            sage: current_randstate().set_seed_gp()
+            sage: gp.random()
             23289294
         """
         if gp is None:
@@ -784,8 +784,8 @@ cdef class randstate:
         EXAMPLES::
 
             sage: set_random_seed(5551212)
-            sage: current_randstate().set_seed_pari()                                   # optional - sage.libs.pari
-            sage: pari.getrand().type()                                                 # optional - sage.libs.pari
+            sage: current_randstate().set_seed_pari()
+            sage: pari.getrand().type()
             't_INT'
         """
         global _pari_seed_randstate

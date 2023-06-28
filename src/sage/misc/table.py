@@ -286,15 +286,15 @@ class table(SageObject):
 
         EXAMPLES::
 
-            sage: rows = [['a', 'b', 'c'], [1,plot(sin(x)),3], [4,5,identity_matrix(2)]]                                # optional - sage.matrix sage.plot
-            sage: T = table(rows, header_row=True)                                                                      # optional - sage.matrix sage.plot
-            sage: T2 = table(rows, header_row=True)                                                                     # optional - sage.matrix sage.plot
-            sage: T is T2                                                                                               # optional - sage.matrix sage.plot
+            sage: rows = [['a', 'b', 'c'], [1,plot(sin(x)),3], [4,5,identity_matrix(2)]]                                # optional - sage.modules sage.plot
+            sage: T = table(rows, header_row=True)                                                                      # optional - sage.modules sage.plot
+            sage: T2 = table(rows, header_row=True)                                                                     # optional - sage.modules sage.plot
+            sage: T is T2                                                                                               # optional - sage.modules sage.plot
             False
-            sage: T == T2                                                                                               # optional - sage.matrix sage.plot
+            sage: T == T2                                                                                               # optional - sage.modules sage.plot
             True
-            sage: T2.options(frame=True)                                                                                # optional - sage.matrix sage.plot
-            sage: T == T2                                                                                               # optional - sage.matrix sage.plot
+            sage: T2.options(frame=True)                                                                                # optional - sage.modules sage.plot
+            sage: T == T2                                                                                               # optional - sage.modules sage.plot
             False
         """
         return (self._rows == other._rows and self.options() == other.options())
@@ -561,8 +561,9 @@ class table(SageObject):
         EXAMPLES::
 
             sage: from sage.misc.table import table
-            sage: a = [[r'$\sin(x)$', '$x$', 'text'], [1,34342,3], [identity_matrix(2),5,6]]                            # optional - sage.matrix
-            sage: latex(table(a)) # indirect doctest                                                                    # optional - sage.matrix
+            sage: a = [[r'$\sin(x)$', '$x$', 'text'],                                   # optional - sage.modules
+            ....:      [1, 34342, 3], [identity_matrix(2), 5, 6]]
+            sage: latex(table(a)) # indirect doctest                                    # optional - sage.modules
             \begin{tabular}{lll}
             $\sin(x)$ & $x$ & text \\
             $1$ & $34342$ & $3$ \\
@@ -571,7 +572,7 @@ class table(SageObject):
             0 & 1
             \end{array}\right)$ & $5$ & $6$ \\
             \end{tabular}
-            sage: latex(table(a, frame=True, align='center'))                                                           # optional - sage.matrix
+            sage: latex(table(a, frame=True, align='center'))                           # optional - sage.modules
             \begin{tabular}{|c|c|c|} \hline
             $\sin(x)$ & $x$ & text \\ \hline
             $1$ & $34342$ & $3$ \\ \hline
@@ -640,10 +641,11 @@ class table(SageObject):
 
         EXAMPLES::
 
-            sage: T = table([[r'$\sin(x)$', '$x$', 'text'], [1,34342,3], [identity_matrix(2),5,6]])                     # optional - sage.matrix
-            sage: T._html_()                                                                                            # optional - sage.matrix
+            sage: T = table([[r'$\sin(x)$', '$x$', 'text'],                             # optional - sage.modules
+            ....:            [1, 34342, 3], [identity_matrix(2), 5, 6]])
+            sage: T._html_()                                                            # optional - sage.modules
             '<div.../div>'
-            sage: print(T._html_())                                                                                     # optional - sage.matrix
+            sage: print(T._html_())                                                     # optional - sage.modules
             <div class="notruncate">
             <table  class="table_form">
             <tbody>

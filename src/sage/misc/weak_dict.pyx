@@ -1193,8 +1193,8 @@ cdef class CachedWeakValueDictionary(WeakValueDictionary):
 
             sage: L = [(p, GF(p)) for p in prime_range(10)]                                                             # optional - sage.libs.pari
             sage: from sage.misc.weak_dict import CachedWeakValueDictionary
-            sage: D = CachedWeakValueDictionary()                                                                       # optional - sage.libs.pari
-            sage: len(D)                                                                                                # optional - sage.libs.pari
+            sage: D = CachedWeakValueDictionary()
+            sage: len(D)
             0
             sage: D = CachedWeakValueDictionary(L)                                                                      # optional - sage.libs.pari
             sage: len(D) == len(L)                                                                                      # optional - sage.libs.pari
