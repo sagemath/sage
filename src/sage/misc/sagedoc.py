@@ -591,13 +591,10 @@ def process_mathtt(s):
 
 
 def process_optional_annotations(s):
-
+    r"""
+    Remove ``# optional`` annotations for present features from docstring ``s``.
+    """
     lines = s.split('\n')
-    columns = shutil.get_terminal_size().columns
-    extra_indent = 3    # extra indent used by IPython after title "Class docstring:" etc.
-    if not any(len(line) + 3 >= columns for line in lines):
-        # fast path
-        return s
 
     from sage.doctest.external import available_software
     from sage.doctest.parsing import parse_optional_tags, update_optional_tags
