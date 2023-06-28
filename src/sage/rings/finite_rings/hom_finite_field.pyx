@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 """
 Finite field morphisms
 
@@ -13,8 +14,8 @@ EXAMPLES::
 
 Construction of an embedding::
 
-    sage: k.<t> = GF(3^7)                                                               # optional - sage.rings.finite_rings
-    sage: K.<T> = GF(3^21)                                                              # optional - sage.rings.finite_rings
+    sage: k.<t> = GF(3^7)
+    sage: K.<T> = GF(3^21)
     sage: f = FiniteFieldHomomorphism_generic(Hom(k, K)); f
     Ring morphism:
       From: Finite Field in t of size 3^7
@@ -44,8 +45,8 @@ map which is the inverse of `f` on the image of `f`::
 
 There is no embedding of `GF(5^6)` into `GF(5^11)`::
 
-    sage: k.<t> = GF(5^6)                                                               # optional - sage.rings.finite_rings
-    sage: K.<T> = GF(5^11)                                                              # optional - sage.rings.finite_rings
+    sage: k.<t> = GF(5^6)
+    sage: K.<T> = GF(5^11)
     sage: FiniteFieldHomomorphism_generic(Hom(k, K))
     Traceback (most recent call last):
     ...
@@ -54,7 +55,7 @@ There is no embedding of `GF(5^6)` into `GF(5^11)`::
 
 Construction of Frobenius endomorphisms::
 
-    sage: k.<t> = GF(7^14)                                                              # optional - sage.rings.finite_rings
+    sage: k.<t> = GF(7^14)
     sage: Frob = k.frobenius_endomorphism(); Frob
     Frobenius endomorphism t |--> t^7 on Finite Field in t of size 7^14
     sage: Frob(t)
@@ -125,8 +126,8 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
         TESTS::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^21)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section()
             sage: g(f(t^3+t^2+1))
@@ -153,8 +154,8 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
         EXAMPLES::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^21)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section()
             sage: g._repr_()
@@ -170,8 +171,8 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
         EXAMPLES::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^21)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section()
             sage: g._latex_()
@@ -188,8 +189,8 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
     TESTS::
 
         sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-        sage: k.<t> = GF(3^7)                                                           # optional - sage.rings.finite_rings
-        sage: K.<T> = GF(3^21)                                                          # optional - sage.rings.finite_rings
+        sage: k.<t> = GF(3^7)
+        sage: K.<T> = GF(3^21)
         sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
         sage: TestSuite(f).run()
 
@@ -199,16 +200,16 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         TESTS::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^21)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K)); f
             Ring morphism:
               From: Finite Field in t of size 3^7
               To:   Finite Field in T of size 3^21
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
 
-            sage: k.<t> = GF(3^6)                                                       # optional - sage.rings.finite_rings
-            sage: K.<t> = GF(3^9)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^6)
+            sage: K.<t> = GF(3^9)
             sage: FiniteFieldHomomorphism_generic(Hom(k, K))
             Traceback (most recent call last):
             ...
@@ -249,8 +250,8 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         TESTS::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^21)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = copy(f)
             sage: g.section()(g(t)) == f.section()(f(t))
@@ -282,8 +283,8 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         EXAMPLES::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^21)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: f._latex_()
             '\\Bold{F}_{3^{7}} \\hookrightarrow \\Bold{F}_{3^{21}}'
@@ -295,8 +296,8 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         TESTS::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^3)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^9)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^3)
+            sage: K.<T> = GF(3^9)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: f(t)
             2*T^6 + 2*T^4 + T^2 + T
@@ -323,8 +324,8 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         EXAMPLES::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^3)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^9)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^3)
+            sage: K.<T> = GF(3^9)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: f.is_injective()
             True
@@ -340,8 +341,8 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         EXAMPLES::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^3)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^9)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^3)
+            sage: K.<T> = GF(3^9)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: f.is_surjective()
             False
@@ -364,8 +365,8 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         EXAMPLES::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)                                                       # optional - sage.rings.finite_rings
-            sage: K.<T> = GF(3^21)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section(); g
             Section of Ring morphism:
@@ -395,7 +396,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(3^7)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(3^7)
             sage: K.<T>, f = k.extension(3, map=True)
             sage: b = f(t^2); b
             2*T^20 + 2*T^19 + T^18 + T^15 + 2*T^14 + 2*T^13 + 2*T^12 + T^8 + 2*T^6 + T^5 + 2*T^4 + T^3 + 2*T^2 + T
@@ -417,7 +418,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
         TESTS::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: embed = Frob.fixed_field()[1]
             sage: hash(embed)  # random
@@ -431,7 +432,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
         TESTS::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: embed = Frob.fixed_field()[1]
             sage: embed.__reduce__()  # indirect doctest
@@ -459,7 +460,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
         TESTS::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: embed = Frob.fixed_field()[1]
             sage: f = loads(dumps(embed))
@@ -481,7 +482,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     TESTS::
 
-        sage: k.<a> = GF(7^11)                                                          # optional - sage.rings.finite_rings
+        sage: k.<a> = GF(7^11)
         sage: Frob = k.frobenius_endomorphism(5)
         sage: TestSuite(Frob).run()
 
@@ -506,7 +507,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         TESTS::
 
             sage: from sage.rings.finite_rings.hom_finite_field import FrobeniusEndomorphism_finite_field
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: FrobeniusEndomorphism_finite_field(k)
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^3
             sage: FrobeniusEndomorphism_finite_field(k, 2)
@@ -543,7 +544,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^3
 
@@ -567,7 +568,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^3
 
@@ -590,7 +591,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: Frob._latex_()
             't \\mapsto t^{5}'
@@ -612,7 +613,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         TESTS::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: Frob(t)
             2*t^2 + 4*t + 4
@@ -631,7 +632,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^12)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^12)
             sage: Frob = k.frobenius_endomorphism()
             sage: Frob.order()
             12
@@ -654,7 +655,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^12)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^12)
             sage: Frob = k.frobenius_endomorphism()
             sage: Frob.power()
             1
@@ -672,7 +673,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^12)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^12)
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^12
             sage: Frob^2
@@ -694,7 +695,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(7^11)                                                      # optional - sage.rings.finite_rings
+            sage: k.<a> = GF(7^11)
             sage: f = k.frobenius_endomorphism(5)
             sage: (f.inverse() * f).is_identity()
             True
@@ -707,7 +708,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^12)                                                      # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^12)
             sage: f = k.frobenius_endomorphism(); f
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^12
             sage: g = k.frobenius_endomorphism(2); g
@@ -745,7 +746,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^6)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^6)
             sage: f = k.frobenius_endomorphism(2)
             sage: kfixed, embed = f.fixed_field()
             sage: kfixed
@@ -778,7 +779,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: Frob.is_injective()
             True
@@ -793,7 +794,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: Frob.is_surjective()
             True
@@ -807,7 +808,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: Frob.is_identity()
             False
@@ -822,7 +823,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: hash(Frob)  # random
             383183030479672104
@@ -835,7 +836,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
         TESTS::
 
-            sage: k.<t> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism(2)
             sage: Frob
             Frobenius endomorphism t |--> t^(5^2) on Finite Field in t of size 5^3
