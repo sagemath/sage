@@ -1344,3 +1344,49 @@ utilized most efficiently)::
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 2067 files using 2 threads.
     ...
+
+.. _section-doctesting-venv:
+
+Options for testing in virtual environments
+-------------------------------------------
+
+The distribution packages of the modularized Sage library can be tested in virtual environments.
+Sage has infrastructure to create such virtual environments using ``tox``, which is explained
+in detail in :ref:`section-modularized-doctesting`.  Our examples in this section
+refer to this setting, but it applies the same to any user-created virtual environments.
+
+The virtual environments, set up in directories such as
+``pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi-norequirements``
+contain installations of built (non-editable) wheels.
+
+To test all modules of Sage that are installed in a virtual environment,
+use the option ``--installed`` (instead of ``--all``)::
+
+    [mkoeppe@sage sage]$ pkgs/sagemath-standard/.tox/sagepython-sagewheels-.../sage -tp4 --installed
+
+This tests against the doctests as they appear in the installed copies of the files
+(in ``site-packages/sage/...``).
+Note that these installed copies should never be edited, as they can
+be overwritten without warning.
+
+When testing a modularized distribution package other than sagemath-standard,
+the top-level module :mod:`sage.all` is not available.  Use the option ``--environment``
+to select an appropriate top-level module::
+
+    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories --installed
+
+To test the installed modules against the doctests as they appear in the source
+tree (``src/sage/...``)::
+
+    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories src/sage/structure
+
+Note that testing all doctests as they appear in the source tree does not make sense
+because many of the source files may not be installed in the virtual environment.
+Use the option ``--only-lib`` to skip the source files of all Python/Cython modules
+that are not installed in the virtual environment.
+
+    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories --only-lib src/sage/schemes
+
+This option can also be combined with ``--all``:
+
+    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories --only-lib --all

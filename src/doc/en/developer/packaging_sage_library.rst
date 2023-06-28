@@ -536,6 +536,8 @@ Not shown in the diagram are build dependencies and optional dependencies for te
   the Sage doctester (:mod:`sage.doctest`), and some related modules from :mod:`sage.misc`.
 
 
+.. _section-modularized-doctesting:
+
 Testing distribution packages
 =============================
 
