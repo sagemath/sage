@@ -2,8 +2,7 @@ SAGE_SPKG_CONFIGURE([bliss], [
     m4_pushdef([SAGE_BLISS_MINVER],[0.77])
     m4_pushdef([SAGE_BLISS_MAJOR],[0])
     m4_pushdef([SAGE_BLISS_MINOR],[77])
-    SAGE_SPKG_DEPCHECK([cmake], [
-          AC_CHECK_HEADER([bliss/bliss_C.h], [
+    AC_CHECK_HEADER([bliss/bliss_C.h], [
            AC_SEARCH_LIBS([bliss_new], [bliss], [
              AC_MSG_CHECKING([checking bliss version directly])
              AC_RUN_IFELSE([AC_LANG_PROGRAM([
@@ -20,8 +19,7 @@ SAGE_SPKG_CONFIGURE([bliss], [
                      []) dnl cross-compilation - noop
            ],
               [sage_spkg_install_bliss=yes])
-          ], [sage_spkg_install_bliss=yes])
-    ])
+    ], [sage_spkg_install_bliss=yes])
     m4_popdef([SAGE_BLISS_MINVER])
     m4_popdef([SAGE_BLISS_MAJOR])
     m4_popdef([SAGE_BLISS_MINOR])
