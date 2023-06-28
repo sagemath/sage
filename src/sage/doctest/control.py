@@ -20,6 +20,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import importlib
 import random
 import os
 import sys
@@ -35,7 +36,7 @@ from sage.env import DOT_SAGE, SAGE_LIB, SAGE_SRC, SAGE_VENV, SAGE_EXTCODE
 from sage.misc.temporary_file import tmp_dir
 from cysignals.signals import AlarmInterrupt, init_cysignals
 
-from .sources import FileDocTestSource, DictAsObject
+from .sources import FileDocTestSource, DictAsObject, get_basename
 from .forker import DocTestDispatcher
 from .reporting import DocTestReporter
 from .util import Timer, count_noun, dict_difference
@@ -114,6 +115,7 @@ class DocTestDefaults(SageObject):
         self.initial = False
         self.exitfirst = False
         self.force_lib = False
+        self.only_lib = False
         self.abspath = True         # sage-runtests default is False
         self.verbose = False
         self.debug = False
@@ -214,17 +216,21 @@ def skipdir(dirname):
         return True
     return False
 
-def skipfile(filename, tested_optional_tags=False):
+def skipfile(filename, tested_optional_tags=False, *, only_lib=False, log=None):
     """
-    Return True if and only if the file ``filename`` should not be
-    doctested.
+    Return ``True`` if and only if the file ``filename`` should not be doctested.
 
     INPUT:
 
-    - ``filename`` - name of a file
+    - ``filename`` -- name of a file
 
-    - ``tested_optional_tags`` - a list or tuple or set of optional tags to test,
+    - ``tested_optional_tags`` -- a list or tuple or set of optional tags to test,
       or ``False`` (no optional test) or ``True`` (all optional tests)
+
+    - ``only_lib`` -- (boolean, default ``False``) whether to skip Python/Cython files
+      that are not installed as modules
+
+    - ``log`` -- function to call with log messages, or ``None``
 
     If ``filename`` contains a line of the form ``"# sage.doctest:
     optional - xyz")``, then this will return ``False`` if "xyz" is in
@@ -263,25 +269,46 @@ def skipfile(filename, tested_optional_tags=False):
         base, ext = os.path.splitext(filename)
     # .rst.txt appear in the installed documentation in subdirectories named "_sources"
     if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
+        if log:
+            log(f"Skipping '{filename}' because it is does one have one of the recognized file name extensions")
         return True
-    # These files are created by the jupyter-sphinx extension for internal use and should not be tested
     if "jupyter_execute" in filename:
+        if log:
+            log(f"Skipping '{filename}' because it is created by the jupyter-sphinx extension for internal use and should not be tested")
         return True
+    if only_lib and ext in ('.py', '.pyx', '.pxd'):
+        module_name = get_basename(filename)
+        try:
+            if not importlib.util.find_spec(module_name):  # tries to import the containing package
+                if log:
+                    log(f"Skipping '{filename}' because module {module_name} is not present in the venv")
+                return True
+        except ModuleNotFoundError as e:
+            if log:
+                log(f"Skipping '{filename}' because module {e.name} cannot be imported")
+            return True
     with open(filename) as F:
         line_count = 0
         for line in F:
             if nodoctest_regex.match(line):
+                if log:
+                    log(f"Skipping '{filename}' because it is marked 'nodoctest'")
                 return True
             if tested_optional_tags is not True:
                 # Adapted from code in SageDocTestParser.parse
                 m = optionalfiledirective_regex.match(line)
                 if m:
+                    file_tag_string = m.group(2)
                     if tested_optional_tags is False:
-                        return m.group(2)
-                    optional_tags = parse_optional_tags('#' + m.group(2))
+                        if log:
+                            log(f"Skipping '{filename}' because it is marked '# {file_tag_string}'")
+                        return file_tag_string
+                    optional_tags = parse_optional_tags('#' + file_tag_string)
                     extra = optional_tags - set(tested_optional_tags)
                     if extra:
-                        return m.group(2)
+                        if log:
+                            log(f"Skipping '{filename}' because it is marked '# {file_tag_string}'")
+                        return file_tag_string
             line_count += 1
             if line_count >= 10:
                 break
@@ -911,7 +938,8 @@ class DocTestController(SageObject):
                         and (filename.endswith(".py") or
                              filename.endswith(".pyx") or
                              filename.endswith(".rst"))
-                        and not skipfile(opj(SAGE_ROOT, filename), self.options.optional)):
+                        and not skipfile(opj(SAGE_ROOT, filename), self.options.optional,
+                                         only_lib=self.options.only_lib)):
                     self.files.append(os.path.relpath(opj(SAGE_ROOT, filename)))
 
     def expand_files_into_sources(self):
@@ -971,11 +999,13 @@ class DocTestController(SageObject):
                             if dir[0] == "." or skipdir(os.path.join(root,dir)):
                                 dirs.remove(dir)
                         for file in files:
-                            if not skipfile(os.path.join(root, file), self.options.optional):
+                            if not skipfile(os.path.join(root, file), self.options.optional,
+                                            only_lib=self.options.only_lib):
                                 yield os.path.join(root, file)
                 else:
-                    # the user input this file explicitly, so we don't skip it
-                    yield path
+                    if not skipfile(path, self.options.optional,
+                                    only_lib=self.options.only_lib, log=self.log):  # log when directly specified filenames are skipped
+                        yield path
         self.sources = [FileDocTestSource(path, self.options) for path in expand()]
 
     def filter_sources(self):
