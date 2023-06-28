@@ -53,15 +53,15 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
 
             sage: from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
             sage: k = GF(3)
-            sage: K.<T> = GF(3^4)
+            sage: K.<T> = GF(3^4)                                                       # optional - sage.rings.finite_rings
             sage: f = FiniteFieldHomomorphism_prime(Hom(k, K)); f
             Ring morphism:
               From: Finite Field of size 3
               To:   Finite Field in T of size 3^4
               Defn: 1 |--> 1
 
-            sage: k.<t> = GF(3^2)
-            sage: K.<T> = GF(3^4)
+            sage: k.<t> = GF(3^2)                                                       # optional - sage.rings.finite_rings
+            sage: K.<T> = GF(3^4)                                                       # optional - sage.rings.finite_rings
             sage: f = FiniteFieldHomomorphism_prime(Hom(k, K)); f
             Traceback (most recent call last):
             ...
@@ -81,7 +81,7 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
 
             sage: from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
             sage: k = GF(3)
-            sage: K.<t> = GF(3^5)
+            sage: K.<t> = GF(3^5)                                                       # optional - sage.rings.finite_rings
             sage: f = FiniteFieldHomomorphism_prime(Hom(k, K))
             sage: a = f(4); a
             1
