@@ -792,16 +792,19 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = optional_tags - self.optional_tags  # set difference
+                        extra = set(tag
+                                    for tag in optional_tags
+                                    if (tag not in self.optional_tags
+                                        and tag not in available_software))
                         if extra:
-                            for tag in extra:
-                                if tag not in available_software:
-                                    if (self.probed_tags is True or tag in self.probed_tags
-                                            and tag not in external_software):
-                                        item.probed_tags.add(tag)
-                                    else:
-                                        break
-                            if not item.probed_tags:
+                            if any(tag in external_software for tag in extra):
+                                # never probe "external" software
+                                continue
+                            if self.probed_tags is True:
+                                item.probed_tags = extra
+                            elif all(tag in self.probed_tags for tag in extra):
+                                item.probed_tags = extra
+                            else:
                                 continue
                 elif self.optional_only:
                     self.optionals['sage'] += 1

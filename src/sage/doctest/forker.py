@@ -799,6 +799,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 if self.options.warn_long > 0 and example.walltime + check_duration > self.options.warn_long:
                     self.report_overtime(out, test, example, got,
                                          check_duration=check_duration)
+                elif example.warnings:
+                    pass
                 elif not quiet:
                     self.report_success(out, test, example, got,
                                         check_duration=check_duration)
