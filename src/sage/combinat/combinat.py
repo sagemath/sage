@@ -17,6 +17,8 @@ docstrings.
 
 -  Euler numbers, :func:`euler_number` (Maxima)
 
+-  Euler polynomials, :func:`euler_polynomial`
+
 -  Eulerian numbers, :func:`eulerian_number`
 
 -  Eulerian polynomial, :func:`eulerian_polynomial`
@@ -578,6 +580,76 @@ def euler_number(n, algorithm='flint') -> Integer:
         return sage.libs.flint.arith.euler_number(n)
     else:
         raise ValueError("algorithm must be 'flint' or 'maxima'")
+
+
+def euler_polynomial(x, n, algorithm='flint'):
+    r"""
+    Compute the value of the ``n``-th Euler polynomial at ``x``.
+
+    INPUT:
+
+    - ``x`` -- value at which to evaluate Euler polynomial.
+
+    - ``n`` -- nonnegative integer
+
+    - ``algorithm`` -- ``"flint"`` (default) or ``"formula"``
+
+    OUTPUT:
+
+    The ``n``-th Euler polynomial evaluated at ``x``
+
+
+    The generating function for the Euler polynomials is
+
+    .. MATH::
+
+       \frac{t e^{xt}}{e^t-1}= \sum_{n=0}^\infty B_n(x) \frac{t^n}{n!}.
+
+    The Euler polynomials can be written in terms of the Bernoulli polynomials
+    by
+
+    .. MATH::
+
+       E_n(x) = \frac{2}{n+1}\left(B_{n+1}(x)-2^{n+1}B_{n+1}(x/2) \right)
+
+    EXAMPLES::
+
+        sage: from sage.combinat.combinat import euler_polynomial
+        sage: y=QQ['y'].gen()
+        sage: euler_polynomial(y, 0)
+        1
+        sage: euler_polynomial(y, 5)
+        y^5 - 5/2*y^4 + 5/2*y^2 - 1/2
+        sage: euler_number(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: n (=-1) must be a nonnegative integer
+
+    TESTS::
+
+        sage: all(euler_number(k) == 2^k * euler_polynomial(1/2, k)
+        ....:    for k in range(10))
+        True
+        sage: all(euler_polynomial(y, n, algorithm='formula') == euler_polynomial(y,n)
+        ....:   for n in range(10))
+        True
+
+    REFERENCES:
+
+    - :wikipedia:`Bernoulli_polynomials`
+    """
+    n = ZZ(n)
+    if n < 0:
+        raise ValueError("n (=%s) must be a nonnegative integer" % n)
+    if algorithm == 'flint':
+        import sage.libs.flint.arith
+        return sage.libs.flint.arith.euler_polynomial(n)(x)
+    elif algorithm == 'formula':
+        bp = bernoulli_polynomial(x, n + 1)
+        bp2 = bernoulli_polynomial(x/2, n+1)
+        return 2 * (bp - 2**(n+1) * bp2) / (n+1)
+    else:
+        raise ValueError("algorithm must be 'flint' or 'formula'")
 
 
 @cached_function(key=lambda n, k, a: (n, k))

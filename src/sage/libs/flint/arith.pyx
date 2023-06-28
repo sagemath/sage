@@ -21,6 +21,9 @@ from .fmpq cimport *
 
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
+from sage.rings.polynomial.polynomial_rational_flint cimport Polynomial_rational_flint
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 
 
 def bell_number(unsigned long n):
@@ -115,6 +118,20 @@ def euler_number(unsigned long n):
 
     return ans
 
+def euler_polynomial(unsigned long n):
+    """
+    Return the ``n``-th Euler polynomial.
+
+    EXAMPLES::
+
+        sage: from sage.libs.flint.arith import euler_polynomial
+        sage: euler_polynomial(4)
+        x^4 - 2*x^3 + x
+    """
+    cdef Polynomial_rational_flint poly
+    poly = PolynomialRing(QQ, "x")()
+    arith_euler_polynomial(poly.__poly, n)
+    return poly
 
 def stirling_number_1(long n, long k):
     """
