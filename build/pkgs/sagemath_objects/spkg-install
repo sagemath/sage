@@ -24,7 +24,10 @@ python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist 
 wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
 ls -l "$wheel"
 
-if [ "$SAGE_CHECK" != no ]; then
-    export TOX_PARALLEL_NO_SPINNER=1
+export TOX_PARALLEL_NO_SPINNER=1
+
+if [ "$SAGE_CHECK" = no ]; then
+    (set -x; tox -r -p auto -v --installpkg $wheel --notest)
+else
     (set -x; tox -r -p auto -v --installpkg $wheel) && (ls -l $(pwd)/.tox/sagepython-sagewheels-nopypi-norequirements*/log/*-command*.log; :)
 fi
