@@ -405,9 +405,9 @@ cdef class ModuleAction(Action):
             sage: A._repr_name_()
             'scalar multiplication'
 
-            sage: GF5 = GF(5)                                                           # optional - sage.rings.finite_rings
-            sage: GF5t = GF5[['t']]                                                     # optional - sage.rings.finite_rings
-            sage: RightModuleAction(GF5, GF5t)                                          # optional - sage.rings.finite_rings
+            sage: GF5 = GF(5)
+            sage: GF5t = GF5[['t']]
+            sage: RightModuleAction(GF5, GF5t)
             Right scalar multiplication by Finite Field of size 5
              on Power Series Ring in t over Finite Field of size 5
 
@@ -490,18 +490,18 @@ cdef class ModuleAction(Action):
             sage: A(x, 2)
             1/2*x
 
-            sage: GF5x = GF(5)['x']                                                     # optional - sage.rings.finite_rings
-            sage: A = ~RightModuleAction(ZZ, GF5x); A                                   # optional - sage.rings.finite_rings
+            sage: GF5x = GF(5)['x']
+            sage: A = ~RightModuleAction(ZZ, GF5x); A
             Right inverse action by Finite Field of size 5
             on Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
-            sage: A(x, 2)                                                               # optional - sage.rings.finite_rings
+            sage: A(x, 2)
             3*x
 
-            sage: GF5xy = GF5x['y']                                                     # optional - sage.rings.finite_rings
-            sage: A = ~RightModuleAction(ZZ, GF5xy); A                                  # optional - sage.rings.finite_rings
+            sage: GF5xy = GF5x['y']
+            sage: A = ~RightModuleAction(ZZ, GF5xy); A
             Right inverse action by Finite Field of size 5
             on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
@@ -755,13 +755,13 @@ cdef class IntegerMulAction(IntegerAction):
         random errors (see :trac:`18157`). ::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: GF101 = GF(101)                                                       # optional - sage.rings.finite_rings
-            sage: act = IntegerMulAction(ZZ, GF101)                                     # optional - sage.rings.finite_rings
-            sage: act(3, 9)                                                             # optional - sage.rings.finite_rings
+            sage: GF101 = GF(101)
+            sage: act = IntegerMulAction(ZZ, GF101)
+            sage: act(3, 9)
             27
-            sage: act(3^689, 9)                                                         # optional - sage.rings.finite_rings
+            sage: act(3^689, 9)
             42
-            sage: 3^689 * mod(9, 101)                                                   # optional - sage.rings.finite_rings
+            sage: 3^689 * mod(9, 101)
             42
 
         TESTS:
@@ -812,8 +812,8 @@ cdef class IntegerMulAction(IntegerAction):
         random errors (see :trac:`18157`). ::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: GF5 = GF(5)                                                           # optional - sage.rings.finite_rings
-            sage: IntegerMulAction(ZZ, GF5)                                             # optional - sage.rings.finite_rings
+            sage: GF5 = GF(5)
+            sage: IntegerMulAction(ZZ, GF5)
             Left Integer Multiplication by Integer Ring
             on Finite Field of size 5
         """
@@ -888,13 +888,13 @@ cdef class IntegerPowAction(IntegerAction):
         ``GF(101)``::
 
             sage: from sage.structure.coerce_actions import IntegerPowAction
-            sage: GF101 = GF(101)                                                       # optional - sage.rings.finite_rings
-            sage: act = IntegerPowAction(ZZ, GF101)                                     # optional - sage.rings.finite_rings
-            sage: act(3, 100)                                                           # optional - sage.rings.finite_rings
+            sage: GF101 = GF(101)
+            sage: act = IntegerPowAction(ZZ, GF101)
+            sage: act(3, 100)
             1
-            sage: act(3, -1)                                                            # optional - sage.rings.finite_rings
+            sage: act(3, -1)
             34
-            sage: act(3, 1000000000000000000000000000000000000000000001)                # optional - sage.rings.finite_rings
+            sage: act(3, 1000000000000000000000000000000000000000000001)
             3
         """
         cdef Element e = <Element>a

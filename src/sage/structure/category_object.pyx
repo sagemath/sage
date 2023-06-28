@@ -500,10 +500,10 @@ cdef class CategoryObject(SageObject):
         wants to print elements of the quotient of such an "unnamed"
         ring, an error resulted. That was fixed in :trac:`11068`::
 
-            sage: MS = MatrixSpace(GF(5), 2, 2)                                         # optional - sage.rings.finite_rings sage.modules
-            sage: I = MS * [MS.0*MS.1, MS.2 + MS.3] * MS                                # optional - sage.rings.finite_rings sage.modules
-            sage: Q.<a,b,c,d> = MS.quo(I)                                               # optional - sage.rings.finite_rings sage.modules
-            sage: a     #indirect doctest                                               # optional - sage.rings.finite_rings sage.modules
+            sage: MS = MatrixSpace(GF(5), 2, 2)                                         # optional - sage.modules
+            sage: I = MS * [MS.0*MS.1, MS.2 + MS.3] * MS                                # optional - sage.modules
+            sage: Q.<a,b,c,d> = MS.quo(I)                                               # optional - sage.modules
+            sage: a     #indirect doctest                                               # optional - sage.modules
             [1 0]
             [0 0]
 

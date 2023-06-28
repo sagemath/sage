@@ -727,7 +727,7 @@ class Factorization(SageObject):
         We create a polynomial over the real double field and factor it::
 
             sage: x = polygen(RDF, 'x')
-            sage: F = factor(-2*x^2 - 1); F
+            sage: F = factor(-2*x^2 - 1); F                                             # optional - numpy
             (-2.0) * (x^2 + 0.5000000000000001)
 
         Note that the unit part of the factorization is `-2.0`::

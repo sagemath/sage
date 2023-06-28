@@ -240,12 +240,12 @@ cdef class ParentWithGens(ParentWithBase):
             6
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: f = R.hom([5], GF(7))                                                 # optional - sage.rings.finite_rings
+            sage: f = R.hom([5], GF(7))
             Traceback (most recent call last):
             ...
             ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
-            sage: R.<x> = PolynomialRing(GF(7))                                         # optional - sage.rings.finite_rings
+            sage: R.<x> = PolynomialRing(GF(7))
             sage: f = R.hom([3], GF(49, 'a'))                                           # optional - sage.rings.finite_rings
             sage: f                                                                     # optional - sage.rings.finite_rings
             Ring morphism:
@@ -261,10 +261,10 @@ cdef class ParentWithGens(ParentWithBase):
 
         ::
 
-            sage: f = ZZ.hom(GF(5))                                                     # optional - sage.rings.finite_rings
-            sage: f(7)                                                                  # optional - sage.rings.finite_rings
+            sage: f = ZZ.hom(GF(5))
+            sage: f(7)
             2
-            sage: f                                                                     # optional - sage.rings.finite_rings
+            sage: f
             Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -280,8 +280,8 @@ cdef class ParentWithGens(ParentWithBase):
 
         You can specify a map on the base ring::
 
-            sage: k = GF(2)                                                             # optional - sage.rings.finite_rings
-            sage: R.<a> = k[]                                                           # optional - sage.rings.finite_rings
+            sage: k = GF(2)
+            sage: R.<a> = k[]
             sage: l.<a> = k.extension(a^3 + a^2 + 1)                                    # optional - sage.rings.finite_rings
             sage: R.<b> = l[]                                                           # optional - sage.rings.finite_rings
             sage: m.<b> = l.extension(b^2 + b + a)                                      # optional - sage.rings.finite_rings
