@@ -1451,6 +1451,16 @@ In places where the doctester issues a doctest dataflow warning
 (``Variable ... referenced here was set only in doctest marked '# optional - FEATURE'``),
 the doctest fixer automatically adds the missing ``# optional`` annotations.
 
+Sometimes code changes can make existing ``# optional - FEATURE`` annotations unnecessary.
+In an installation or virtual environment where FEATURE is not available,
+you can invoke the doctest fixer with the option ``--probe FEATURE``.
+Then it will run examples marked ``# optional - FEATURE`` silently, and if the example
+turns out to work anyway, the annotation is automatically removed.
+
+To have the doctest fixer take care of the ``# optional`` annotations,
+but not change the expected results of examples, use the option ``--only-tags``.
+This mode is suitable for unattended runs on many files.
+
 
 Use in virtual environments
 ---------------------------
