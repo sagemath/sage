@@ -526,8 +526,8 @@ def vanLintSchrijverGraph():
 
     EXAMPLES::
 
-         sage: G = graphs.vanLintSchrijverGraph()                                       # optional - sage.modules sage.rings.finite_rings
-         sage: G.is_distance_regular(True)                                              # optional - sage.modules sage.rings.finite_rings
+         sage: G = graphs.vanLintSchrijverGraph()                                       # optional - sage.modules
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules
          ([6, 5, 5, 4, None], [None, 1, 1, 2, 6])
 
     REFERENCES:
@@ -652,8 +652,8 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
     EXAMPLES::
 
-        sage: G = graphs.BilinearFormsGraph(3, 3, 2)                                    # optional - sage.modules sage.rings.finite_rings
-        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
+        sage: G = graphs.BilinearFormsGraph(3, 3, 2)                                    # optional - sage.modules
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules
         ([49, 36, 16, None], [None, 1, 6, 28])
         sage: G = graphs.BilinearFormsGraph(3,3,3)  # not tested (20 s)                 # optional - sage.modules sage.rings.finite_rings
         sage: G.order()  # not tested (due to above)                                    # optional - sage.modules sage.rings.finite_rings
@@ -669,15 +669,15 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
     TESTS::
 
-        sage: G = graphs.BilinearFormsGraph(2,3,2)                                      # optional - sage.modules sage.rings.finite_rings
-        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
+        sage: G = graphs.BilinearFormsGraph(2,3,2)                                      # optional - sage.modules
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules
         ([21, 12, None], [None, 1, 6])
-        sage: H = graphs.BilinearFormsGraph(3,2,2)                                      # optional - sage.modules sage.rings.finite_rings
-        sage: H.is_isomorphic(G)                                                        # optional - sage.modules sage.rings.finite_rings
+        sage: H = graphs.BilinearFormsGraph(3,2,2)                                      # optional - sage.modules
+        sage: H.is_isomorphic(G)                                                        # optional - sage.modules
         True
-        sage: G = graphs.BilinearFormsGraph(5, 1, 3)                                    # optional - sage.modules sage.rings.finite_rings
-        sage: K = graphs.CompleteGraph(G.order())                                       # optional - sage.modules sage.rings.finite_rings
-        sage: K.is_isomorphic(G)                                                        # optional - sage.modules sage.rings.finite_rings
+        sage: G = graphs.BilinearFormsGraph(5, 1, 3)                                    # optional - sage.modules
+        sage: K = graphs.CompleteGraph(G.order())                                       # optional - sage.modules
+        sage: K.is_isomorphic(G)                                                        # optional - sage.modules
         True
     """
     from itertools import product as cartprod
@@ -759,8 +759,8 @@ def AlternatingFormsGraph(const int n, const int q):
          32768
          sage: G.is_distance_regular(True)  # not tested (33 min)                       # optional - sage.modules sage.rings.finite_rings
          ([651, 560, 256, None], [None, 1, 20, 336])
-         sage: G = graphs.AlternatingFormsGraph(4, 3)                                   # optional - sage.modules sage.rings.finite_rings
-         sage: G.is_distance_regular(True)                                              # optional - sage.modules sage.rings.finite_rings
+         sage: G = graphs.AlternatingFormsGraph(4, 3)                                   # optional - sage.modules
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules
          ([260, 162, None], [None, 1, 90])
     """
     # n x n zero-diagonal skew-symmetric matrix
@@ -1132,10 +1132,10 @@ def DoubleGrassmannGraph(const int q, const int e):
 
     EXAMPLES::
 
-        sage: G = graphs.DoubleGrassmannGraph(2,1)                                      # optional - sage.modules sage.rings.finite_rings
-        sage: G.diameter()                                                              # optional - sage.modules sage.rings.finite_rings
+        sage: G = graphs.DoubleGrassmannGraph(2,1)                                      # optional - sage.modules
+        sage: G.diameter()                                                              # optional - sage.modules
         3
-        sage: G.is_distance_regular(True)                                               # optional - sage.modules sage.rings.finite_rings
+        sage: G.is_distance_regular(True)                                               # optional - sage.modules
         ([3, 2, 2, None], [None, 1, 1, 3])
 
 
@@ -1145,10 +1145,10 @@ def DoubleGrassmannGraph(const int q, const int e):
 
     TESTS::
 
-         sage: G = graphs.DoubleGrassmannGraph(5,1)                                     # optional - sage.modules sage.rings.finite_rings
-         sage: G.order()                                                                # optional - sage.modules sage.rings.finite_rings
+         sage: G = graphs.DoubleGrassmannGraph(5,1)                                     # optional - sage.modules
+         sage: G.order()                                                                # optional - sage.modules
          62
-         sage: G.is_distance_regular(True)                                              # optional - sage.modules sage.rings.finite_rings
+         sage: G.is_distance_regular(True)                                              # optional - sage.modules
          ([6, 5, 5, None], [None, 1, 1, 6])
          sage: G = graphs.DoubleGrassmannGraph(3, 2)  # long time                       # optional - sage.modules sage.rings.finite_rings
          sage: G.order()  # long time                                                   # optional - sage.modules sage.rings.finite_rings
@@ -2407,7 +2407,7 @@ def is_near_polygon(array):
         ....: is_near_polygon, near_polygon_graph)
         sage: is_near_polygon([7, 6, 6, 4, 4, 1, 1, 3, 3, 7])                           # optional - sage.combinat sage.libs.pari
         (4, (2, 2))
-        sage: near_polygon_graph(4, (2, 2))                                             # optional - sage.rings.finite_rings
+        sage: near_polygon_graph(4, (2, 2))
         Double Grassmann graph (5, 2, 2): Graph on 310 vertices
         sage: near_polygon_graph(*is_near_polygon([3, 2, 2, 1, 1, 3]))                  # optional - sage.combinat sage.rings.finite_rings
         Generalised hexagon of order (1, 2): Graph on 14 vertices

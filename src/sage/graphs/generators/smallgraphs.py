@@ -1361,7 +1361,7 @@ def BrouwerHaemersGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.BrouwerHaemersGraph(); g                                       # optional - sage.modules sage.rings.finite_rings
+        sage: g = graphs.BrouwerHaemersGraph(); g                                       # optional - sage.modules
         Brouwer-Haemers: Graph on 81 vertices
 
     It is indeed strongly regular with parameters `(81,20,1,6)`::

@@ -3933,7 +3933,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
 
     TESTS::
 
-        sage: graphs.MathonPseudocyclicStronglyRegularGraph(5)                          # optional - sage.modules sage.rings.finite_rings
+        sage: graphs.MathonPseudocyclicStronglyRegularGraph(5)                          # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: 21  must be a sum of two squares!...
@@ -4141,15 +4141,15 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
         (16, 5, 0, 2)
         sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)  # optional - sage.modules sage.rings.finite_rings
         (378, 116, 34, 36)
-        sage: graphs.MuzychukS6Graph(3,2)                                               # optional - sage.modules sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3,2)                                               # optional - sage.modules
         Traceback (most recent call last):
         ...
         AssertionError: n must be even or d must be odd
-        sage: graphs.MuzychukS6Graph(6,2)                                               # optional - sage.modules sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(6,2)                                               # optional - sage.modules
         Traceback (most recent call last):
         ...
         AssertionError: n must be a prime power
-        sage: graphs.MuzychukS6Graph(3,1)                                               # optional - sage.modules sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3,1)                                               # optional - sage.modules
         Traceback (most recent call last):
         ...
         AssertionError: d must be at least 2
