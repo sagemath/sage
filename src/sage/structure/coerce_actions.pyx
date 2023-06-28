@@ -405,7 +405,8 @@ cdef class ModuleAction(Action):
             sage: GF5 = GF(5)
             sage: GF5t = GF5[['t']]
             sage: RightModuleAction(GF5, GF5t)
-            Right scalar multiplication by Finite Field of size 5 on Power Series Ring in t over Finite Field of size 5
+            Right scalar multiplication by Finite Field of size 5
+             on Power Series Ring in t over Finite Field of size 5
 
         """
         return "scalar multiplication"
@@ -488,7 +489,8 @@ cdef class ModuleAction(Action):
 
             sage: GF5x = GF(5)['x']
             sage: A = ~RightModuleAction(ZZ, GF5x); A
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in x over Finite Field of size 5
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -497,7 +499,8 @@ cdef class ModuleAction(Action):
 
             sage: GF5xy = GF5x['y']
             sage: A = ~RightModuleAction(ZZ, GF5xy); A
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -807,7 +810,8 @@ cdef class IntegerMulAction(IntegerAction):
             sage: from sage.structure.coerce_actions import IntegerMulAction
             sage: GF5 = GF(5)
             sage: IntegerMulAction(ZZ, GF5)
-            Left Integer Multiplication by Integer Ring on Finite Field of size 5
+            Left Integer Multiplication by Integer Ring
+            on Finite Field of size 5
         """
         return "Integer Multiplication"
 

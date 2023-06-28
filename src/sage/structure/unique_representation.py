@@ -100,9 +100,9 @@ identity. This is often desired, but can imply subtle problems. For example,
 since ``C(1)`` already is in the cache, and since the unit elements in
 different finite fields are all equal to the integer one, we find::
 
-    sage: GF(5)(1) == 1 == GF(3)(1)                                                     # optional - sage.rings.finite_rings
+    sage: GF(5)(1) == 1 == GF(3)(1)
     True
-    sage: C(1) is C(GF(3)(1)) is C(GF(5)(1))                                            # optional - sage.rings.finite_rings
+    sage: C(1) is C(GF(3)(1)) is C(GF(5)(1))
     True
 
 But ``C(2)`` is not in the cache, and the number two is not equal in different
@@ -436,8 +436,8 @@ instances of quite different classes::
 
     sage: isinstance(GF, sage.structure.factory.UniqueFactory)
     True
-    sage: K5 = GF(5)                                                                                # optional - sage.rings.finite_rings
-    sage: type(K5)                                                                                  # optional - sage.rings.finite_rings
+    sage: K5 = GF(5)
+    sage: type(K5)
     <class 'sage.rings.finite_rings.finite_field_prime_modn.FiniteField_prime_modn_with_category'>
     sage: K25 = GF(25, 'x')                                                                         # optional - sage.rings.finite_rings
     sage: type(K25)                                                                                 # optional - sage.rings.finite_rings
@@ -1218,12 +1218,12 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
 
     This nice behaviour is not available when one just uses a factory::
 
-        sage: isinstance(GF(7), GF)                                                     # optional - sage.rings.finite_rings
+        sage: isinstance(GF(7), GF)
         Traceback (most recent call last):
         ...
         TypeError: isinstance() arg 2 must be a type...
 
-        sage: isinstance(GF, sage.structure.factory.UniqueFactory)                      # optional - sage.rings.finite_rings
+        sage: isinstance(GF, sage.structure.factory.UniqueFactory)
         True
 
     In addition, :class:`~sage.structure.factory.UniqueFactory` only provides

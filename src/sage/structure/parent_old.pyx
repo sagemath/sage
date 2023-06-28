@@ -46,10 +46,10 @@ cdef class Parent(parent.Parent):
 
     TESTS::
 
-        sage: V = VectorSpace(GF(2,'a'), 2)                                             # optional - sage.modules sage.rings.finite_rings
-        sage: V.list()                                                                  # optional - sage.modules sage.rings.finite_rings
+        sage: V = VectorSpace(GF(2,'a'), 2)                                             # optional - sage.modules
+        sage: V.list()                                                                  # optional - sage.modules
         [(0, 0), (1, 0), (0, 1), (1, 1)]
-        sage: MatrixSpace(GF(3), 1, 1).list()                                           # optional - sage.modules sage.rings.finite_rings
+        sage: MatrixSpace(GF(3), 1, 1).list()                                           # optional - sage.modules
         [[0], [1], [2]]
         sage: DirichletGroup(3).list()                                                  # optional - sage.groups
         [Dirichlet character modulo 3 of conductor 1 mapping 2 |--> 1,

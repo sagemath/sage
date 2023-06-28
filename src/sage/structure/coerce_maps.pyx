@@ -267,13 +267,13 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: f = NamedConvertMap(GF(5), QQ, '_integer_'); f                        # optional - sage.rings.finite_rings
+            sage: f = NamedConvertMap(GF(5), QQ, '_integer_'); f
             Conversion via _integer_ method map:
               From: Finite Field of size 5
               To:   Rational Field
-            sage: f(19)                                                                 # optional - sage.rings.finite_rings
+            sage: f(19)
             4
-            sage: f(19).parent()                                                        # optional - sage.rings.finite_rings
+            sage: f(19).parent()
             Rational Field
         """
         cdef Parent C = self._codomain

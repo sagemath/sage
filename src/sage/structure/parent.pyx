@@ -590,8 +590,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: k = GF(5)                                                             # optional - sage.rings.finite_rings
-            sage: k._set_element_constructor()                                          # optional - sage.rings.finite_rings
+            sage: k = GF(5)
+            sage: k._set_element_constructor()
         """
         try:
             _element_constructor_ = self._element_constructor_
@@ -1135,7 +1135,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Check that :trac:`13824` is fixed::
 
-            sage: 4/3 in GF(3)                                                          # optional - sage.rings.finite_rings
+            sage: 4/3 in GF(3)
             False
             sage: 15/50 in GF(25, 'a')                                                  # optional - sage.rings.finite_rings
             False
@@ -1200,8 +1200,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         We make an exception for zero::
 
-            sage: V = GF(7)^7                                                           # optional - sage.modules sage.rings.finite_rings
-            sage: V.coerce(0)                                                           # optional - sage.modules sage.rings.finite_rings
+            sage: V = GF(7)^7                                                           # optional - sage.modules
+            sage: V.coerce(0)                                                           # optional - sage.modules
             (0, 0, 0, 0, 0, 0, 0)
         """
         cdef R = parent(x)
@@ -1239,7 +1239,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: VectorSpace(GF(7), 3)[:10]                                            # optional - sage.rings.finite_rings
+            sage: VectorSpace(GF(7), 3)[:10]
             [(0, 0, 0),
              (1, 0, 0),
              (2, 0, 0),
@@ -1376,13 +1376,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             6
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: f = R.hom([5], GF(7))                                                 # optional - sage.rings.finite_rings
+            sage: f = R.hom([5], GF(7))
             Traceback (most recent call last):
             ...
             ValueError: relations do not all (canonically) map to 0
             under map determined by images of generators
 
-            sage: R.<x> = PolynomialRing(GF(7))                                         # optional - sage.rings.finite_rings
+            sage: R.<x> = PolynomialRing(GF(7))
             sage: f = R.hom([3], GF(49,'a'))                                            # optional - sage.rings.finite_rings
             sage: f                                                                     # optional - sage.rings.finite_rings
             Ring morphism:
@@ -1396,10 +1396,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Natural morphism::
 
-            sage: f = ZZ.hom(GF(5))                                                     # optional - sage.rings.finite_rings
-            sage: f(7)                                                                  # optional - sage.rings.finite_rings
+            sage: f = ZZ.hom(GF(5))
+            sage: f(7)
             2
-            sage: f                                                                     # optional - sage.rings.finite_rings
+            sage: f
             Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -1936,7 +1936,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in x over Rational Field
-            sage: GF(11)._generic_convert_map(GF(7))                                    # optional - sage.rings.finite_rings
+            sage: GF(11)._generic_convert_map(GF(7))
             Conversion map:
               From: Finite Field of size 7
               To:   Finite Field of size 11
@@ -2184,8 +2184,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         The following was fixed in :trac:`4740`::
 
-            sage: F = GF(13)                                                            # optional - sage.rings.finite_rings
-            sage: F._internal_coerce_map_from(F) is F._internal_coerce_map_from(F)      # optional - sage.rings.finite_rings
+            sage: F = GF(13)
+            sage: F._internal_coerce_map_from(F) is F._internal_coerce_map_from(F)
             True
         """
         if not good_as_coerce_domain(S):
@@ -2929,7 +2929,7 @@ cdef class Set_generic(Parent):
 
             sage: bool(Set(QQ))
             True
-            sage: bool(Set(GF(3)))                                                      # optional - sage.rings.finite_rings
+            sage: bool(Set(GF(3)))
             True
         """
         return not (self.is_finite() and len(self) == 0)

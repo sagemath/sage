@@ -2793,8 +2793,8 @@ cdef class RingElement(ModuleElement):
 
         ::
 
-            sage: R.<x> = GF(7)[]                                                       # optional - sage.rings.finite_rings
-            sage: divmod(x^2, x - 1)                                                    # optional - sage.rings.finite_rings
+            sage: R.<x> = GF(7)[]
+            sage: divmod(x^2, x - 1)
             (x + 1, 1)
 
         ::
@@ -3026,10 +3026,10 @@ cdef class CommutativeRingElement(RingElement):
 
         :trac:`5347` has been fixed::
 
-            sage: K = GF(7)                                                             # optional - sage.rings.finite_rings
-            sage: K(3).divides(1)                                                       # optional - sage.rings.finite_rings
+            sage: K = GF(7)
+            sage: K(3).divides(1)
             True
-            sage: K(3).divides(K(1))                                                    # optional - sage.rings.finite_rings
+            sage: K(3).divides(K(1))
             True
 
         ::
@@ -4403,12 +4403,12 @@ def coercion_traceback(dump=True):
         sage: 1 + 1/5
         6/5
         sage: coercion_traceback()  # Should be empty, as all went well.
-        sage: 1/5 + GF(5).gen()                                                         # optional - sage.rings.finite_rings
+        sage: 1/5 + GF(5).gen()
         Traceback (most recent call last):
         ...
         TypeError: unsupported operand parent(s) for +:
         'Rational Field' and 'Finite Field of size 5'
-        sage: coercion_traceback()                                                      # optional - sage.rings.finite_rings
+        sage: coercion_traceback()
         Traceback (most recent call last):
         ...
         TypeError: no common canonical parent for objects with parents:

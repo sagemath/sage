@@ -313,8 +313,8 @@ cdef class UniqueFactory(SageObject):
         """
         EXAMPLES::
 
-            sage: A = FiniteField(127)                                                  # optional - sage.rings.finite_rings
-            sage: A is loads(dumps(A)) # indirect doctest                               # optional - sage.rings.finite_rings
+            sage: A = FiniteField(127)
+            sage: A is loads(dumps(A)) # indirect doctest
             True
             sage: B = FiniteField(3^3,'b')                                              # optional - sage.rings.finite_rings
             sage: B is loads(dumps(B))                                                  # optional - sage.rings.finite_rings
@@ -468,7 +468,7 @@ cdef class UniqueFactory(SageObject):
             sage: from sage.structure.test_factory import test_factory
             sage: test_factory.create_key_and_extra_args(1, 2, key=5)
             ((1, 2), {})
-            sage: GF.create_key_and_extra_args(3)                                       # optional - sage.rings.finite_rings
+            sage: GF.create_key_and_extra_args(3)
             ((3, ('x',), None, 'modn', 3, 1, True, None, None, None, True, False), {})
         """
         return self.create_key(*args, **kwds), {}
