@@ -57,7 +57,7 @@ import sage.misc.randstate as randstate
 from sage.misc.misc import walltime
 from .util import Timer, RecordingDict, count_noun
 from .sources import DictAsObject
-from .parsing import OriginalSource, reduce_hex, unparse_optional_tags
+from .parsing import OriginalSource, reduce_hex
 from sage.structure.sage_object import SageObject
 from .parsing import SageOutputChecker, pre_hash, get_source, unparse_optional_tags
 from sage.repl.user_globals import set_globals
@@ -1135,10 +1135,12 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 for name in globs.got:
                     setters_dict = self.setters.get(name)  # setter_optional_tags -> setter
                     if setters_dict:
+                        was_set = False
                         for setter_optional_tags, setter in setters_dict.items():
-                            if setter_optional_tags.issubset(example.optional_tags):
+                            if setter_optional_tags.issubset(example.optional_tags):  # was set in a less constrained doctest
+                                was_set = True
                                 example.predecessors.append(setter)
-                        if not example.predecessors:
+                        if not was_set:
                             f_setter_optional_tags = "; ".join("'"
                                                                + unparse_optional_tags(setter_optional_tags)
                                                                + "'"
