@@ -458,10 +458,16 @@ class sage__modules(JoinFeature):
                               PythonModule('sage.combinat.free_module'),
                               PythonModule('sage.quadratic_forms'),                 # namespace package
                               PythonModule('sage.quadratic_forms.quadratic_form'),  # representative
+                              PythonModule('sage.groups.additive_abelian'),         # namespace package
+                              PythonModule('sage.groups.additive_abelian.qmodnz'),  # representative
                               PythonModule('sage.groups.affine_gps'),               # namespace package
                               PythonModule('sage.groups.affine_gps.affine_group'),  # representative
                               PythonModule('sage.groups.matrix_gps'),               # namespace package
                               PythonModule('sage.groups.matrix_gps.named_group'),   # representative
+                              PythonModule('sage.homology'),                        # namespace package
+                              PythonModule('sage.homology.chain_complex'),          # representative
+                              PythonModule('sage.matroids'),                        # namespace package
+                              PythonModule('sage.matroids.matroid'),                # representative
                              ],
                              spkg='sagemath_modules', type='standard')
 
@@ -717,7 +723,7 @@ class sage__rings__real_double(PythonModule):
         PythonModule.__init__(self, 'sage.rings.real_double')
 
 
-class sage__rings__real_mpfr(PythonModule):
+class sage__rings__real_mpfr(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_mpfr`.
 
@@ -735,8 +741,11 @@ class sage__rings__real_mpfr(PythonModule):
             sage: isinstance(sage__rings__real_mpfr(), sage__rings__real_mpfr)
             True
         """
-        PythonModule.__init__(self, 'sage.rings.real_mpfr',
-                              spkg='sagemath_modules')
+        JoinFeature.__init__(self, 'sage.rings.real_mpfr',
+                             [PythonModule('sage.rings.real_mpfr'),
+                              PythonModule('sage.rings.complex_mpfr'),
+                             ],
+                             spkg='sagemath_modules')
 
 
 class sage__sat(JoinFeature):
