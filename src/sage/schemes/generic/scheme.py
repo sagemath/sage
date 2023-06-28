@@ -229,7 +229,7 @@ class Scheme(Parent):
             sage: A(NumberField(x^2 + 1, 'a'))                                          # optional - sage.rings.number_field
             Set of rational points of Affine Space of dimension 2
              over Number Field in a with defining polynomial x^2 + 1
-            sage: A(GF(7))                                                              # optional - sage.rings.finite_rings
+            sage: A(GF(7))
             Traceback (most recent call last):
             ...
             ValueError: There must be a natural map S --> R, but
@@ -288,14 +288,14 @@ class Scheme(Parent):
             Set of rational points of Projective Space of dimension 3 over Integer Ring
             sage: P.point_homset(QQ)
             Set of rational points of Projective Space of dimension 3 over Rational Field
-            sage: P.point_homset(GF(11))                                                # optional - sage.rings.finite_rings
+            sage: P.point_homset(GF(11))
             Set of rational points of Projective Space of dimension 3 over
              Finite Field of size 11
 
         TESTS::
 
             sage: P = ProjectiveSpace(QQ, 3)
-            sage: P.point_homset(GF(11))                                                # optional - sage.rings.finite_rings
+            sage: P.point_homset(GF(11))
             Traceback (most recent call last):
             ...
             ValueError: There must be a natural map S --> R, but
@@ -388,7 +388,7 @@ class Scheme(Parent):
             Affine Space of dimension 3 over Integer Ring
             sage: A/QQ
             Affine Space of dimension 3 over Rational Field
-            sage: A/GF(7)                                                               # optional - sage.rings.finite_rings
+            sage: A/GF(7)
             Affine Space of dimension 3 over Finite Field of size 7
         """
         return self.base_extend(Y)
@@ -674,7 +674,7 @@ class Scheme(Parent):
 
         EXAMPLES::
 
-            sage: P.<x> = PolynomialRing(GF(3))                                         # optional - sage.rings.finite_rings
+            sage: P.<x> = PolynomialRing(GF(3))
             sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # optional - sage.rings.finite_rings
             sage: C.count_points(4)                                                     # optional - sage.rings.finite_rings
             [6, 12, 18, 96]
@@ -736,7 +736,7 @@ class Scheme(Parent):
 
         EXAMPLES::
 
-            sage: P.<x> = PolynomialRing(GF(3))                                         # optional - sage.rings.finite_rings
+            sage: P.<x> = PolynomialRing(GF(3))
             sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # optional - sage.rings.finite_rings sage.schemes
             sage: R.<t> = PowerSeriesRing(Integers())
             sage: C.zeta_series(4, t)                                                   # optional - sage.rings.finite_rings sage.schemes

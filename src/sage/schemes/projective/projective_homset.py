@@ -130,7 +130,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         ::
 
-            sage: P1 = ProjectiveSpace(GF(2), 1)                                        # optional - sage.rings.finite_rings
+            sage: P1 = ProjectiveSpace(GF(2), 1)
             sage: F.<a> = GF(4, 'a')                                                    # optional - sage.rings.finite_rings
             sage: P1(F).points()                                                        # optional - sage.libs.singular sage.rings.finite_rings
             [(0 : 1), (1 : 0), (1 : 1), (a : 1), (a + 1 : 1)]

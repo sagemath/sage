@@ -660,16 +660,16 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: Q = P(1, 3, 1)                                                        # optional - sage.rings.finite_rings
-            sage: Q.dehomogenize(0)                                                     # optional - sage.libs.singular sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: Q = P(1, 3, 1)
+            sage: Q.dehomogenize(0)                                                     # optional - sage.libs.singular
             (3, 1)
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: Q = P(1, 3, 0)                                                        # optional - sage.rings.finite_rings
-            sage: Q.dehomogenize(2)                                                     # optional - sage.libs.singular sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: Q = P(1, 3, 0)
+            sage: Q.dehomogenize(2)                                                     # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
@@ -701,14 +701,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: Q = P.point([4, 4, 1/30])
-            sage: Q.global_height()
+            sage: Q.global_height()                                                     # optional - sage.symbolic
             4.78749174278205
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: Q = P([4, 1, 30])
-            sage: Q.global_height()
+            sage: Q.global_height()                                                     # optional - sage.symbolic
             3.40119738166216
 
         ::
@@ -737,7 +737,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         TESTS::
 
             sage: P = ProjectiveSpace(QQ, 2)
-            sage: P(1/1, 2/3, 5/8).global_height()
+            sage: P(1/1, 2/3, 5/8).global_height()                                      # optional - sage.symbolic
             3.17805383034795
 
             sage: x = polygen(QQ, 'x')
@@ -1017,9 +1017,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(3), 2)                                 # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(3), 2)
             sage: F = DynamicalSystem([x^2 - 2*y^2, y^2, z^2])                          # optional - sage.rings.finite_rings sage.schemes
-            sage: Q = P(1, 1, 1)                                                        # optional - sage.rings.finite_rings
+            sage: Q = P(1, 1, 1)
             sage: Q.is_preperiodic(F, return_period=True)                               # optional - sage.rings.finite_rings sage.schemes
             (1, 1)
 
@@ -1103,9 +1103,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         ::
 
-            sage: P = ProjectiveSpace(1, GF(7))                                                     # optional - sage.rings.finite_rings
-            sage: Q = P([2, 1])                                                                     # optional - sage.rings.finite_rings
-            sage: Q[0].parent()                                                                     # optional - sage.rings.finite_rings
+            sage: P = ProjectiveSpace(1, GF(7))
+            sage: Q = P([2, 1])
+            sage: Q[0].parent()
             Finite Field of size 7
 
         ::
@@ -1195,10 +1195,10 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: Q = P.point([GF(5)(1), GF(5)(3), GF(5)(0)], False); Q                 # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: Q = P.point([GF(5)(1), GF(5)(3), GF(5)(0)], False); Q
             (1 : 3 : 0)
-            sage: Q.normalize_coordinates(); Q                                          # optional - sage.rings.finite_rings
+            sage: Q.normalize_coordinates(); Q
             (2 : 1 : 0)
 
         ::
@@ -1387,21 +1387,21 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                             # optional - sage.rings.finite_rings
-            sage: hash(P(2, 1, 2))                                                                  # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: hash(P(2, 1, 2))
             41
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)                                             # optional - sage.rings.finite_rings
-            sage: X = P.subscheme(x^2 - y^2)                                                        # optional - sage.rings.finite_rings
-            sage: hash(X(1, 1, 2))                                                                  # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: X = P.subscheme(x^2 - y^2)
+            sage: hash(X(1, 1, 2))
             81
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(GF(13), 1)                                              # optional - sage.rings.finite_rings
-            sage: hash(P(3, 4))                                                                     # optional - sage.rings.finite_rings
+            sage: P.<x,y> = ProjectiveSpace(GF(13), 1)
+            sage: hash(P(3, 4))
             17
 
         ::

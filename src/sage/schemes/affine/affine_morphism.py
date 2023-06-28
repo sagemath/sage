@@ -651,9 +651,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: A.<x> = AffineSpace(GF(5), 1)                                         # optional - sage.rings.finite_rings
-            sage: H = End(A)                                                            # optional - sage.rings.finite_rings
-            sage: f = H([x^2])                                                          # optional - sage.rings.finite_rings
+            sage: A.<x> = AffineSpace(GF(5), 1)
+            sage: H = End(A)
+            sage: f = H([x^2])
             sage: type(f.as_dynamical_system())                                         # optional - sage.rings.finite_rings sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine_finite_field'>
 
@@ -697,7 +697,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: H = Hom(A, A)
             sage: f = H([1/1331*x^2 + 4000])
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             15.4877354584971
 
         ::
@@ -715,7 +715,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x> = AffineSpace(ZZ, 1)
             sage: H = Hom(A, A)
             sage: f = H([7*x^2 + 1513])
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             7.32184971378836
 
         ::
@@ -724,7 +724,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: B.<y,z> = AffineSpace(QQ, 2)
             sage: H = Hom(A, B)
             sage: f = H([1/3*x^2 + 10, 7*x^3])
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             3.40119738166216
 
         ::
@@ -733,7 +733,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<z> = AffineSpace(QQ, 1)
             sage: H = Hom(P, A)
             sage: f = H([1/1331*x^2 + 4000*y])
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             15.4877354584971
         """
         return self.homogenize(0).global_height(prec=prec)
@@ -1329,18 +1329,18 @@ class SchemeMorphism_polynomial_affine_space_finite_field(SchemeMorphism_polynom
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = AffineSpace(GF(7), 3)                                     # optional - sage.rings.finite_rings
-            sage: H = Hom(P, P)                                                         # optional - sage.rings.finite_rings
-            sage: f = H([x^2 + y^2,y ^2, z^2 + y*z])                                    # optional - sage.rings.finite_rings
-            sage: f._fast_eval([1, 1, 1])                                               # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = AffineSpace(GF(7), 3)
+            sage: H = Hom(P, P)
+            sage: f = H([x^2 + y^2,y ^2, z^2 + y*z])
+            sage: f._fast_eval([1, 1, 1])
             [2, 1, 2]
 
         ::
 
-            sage: P.<x,y,z> = AffineSpace(GF(19), 3)                                    # optional - sage.rings.finite_rings
-            sage: H = Hom(P, P)                                                         # optional - sage.rings.finite_rings
-            sage: f = H([x/(y+1), y, (z^2 + y^2)/(x^2 + 1)])                            # optional - sage.rings.finite_rings
-            sage: f._fast_eval([2, 1, 3])                                               # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = AffineSpace(GF(19), 3)
+            sage: H = Hom(P, P)
+            sage: f = H([x/(y+1), y, (z^2 + y^2)/(x^2 + 1)])
+            sage: f._fast_eval([2, 1, 3])
             [1, 1, 2]
         """
         R = self.domain().ambient_space().coordinate_ring()

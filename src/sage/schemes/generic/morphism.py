@@ -1375,7 +1375,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
             sage: H = Hom(P, P)
             sage: f = H([3*x^2, y^2])
-            sage: f.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
+            sage: f.change_ring(GF(3))
             Scheme endomorphism of Projective Space of dimension 1 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y) to (0 : y^2)
 
@@ -1384,7 +1384,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = Hom(P, P)
             sage: f = H([5/2*x^3 + 3*x*y^2 - y^3, 3*z^3 + y*x^2, x^3 - z^3])
-            sage: f.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
+            sage: f.change_ring(GF(3))
             Scheme endomorphism of Projective Space of dimension 2 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^3 - y^3 : x^2*y : x^3 - z^3)
@@ -1395,7 +1395,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: X = P.subscheme([5*x^2 - y^2])
             sage: H = Hom(X, X)
             sage: f = H([x, y])
-            sage: f.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
+            sage: f.change_ring(GF(3))
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 1
             over Finite Field of size 3 defined by: -x^2 - y^2
               Defn: Defined on coordinates by sending (x : y) to (x : y)
@@ -1767,8 +1767,8 @@ class SchemeMorphism_polynomial_id(SchemeMorphism_id, SchemeMorphism_polynomial)
 
         TESTS::
 
-            sage: A = AffineSpace(2, GF(3))                                             # optional - sage.rings.finite_rings
-            sage: A.identity_morphism().defining_polynomials()                          # optional - sage.rings.finite_rings
+            sage: A = AffineSpace(2, GF(3))
+            sage: A.identity_morphism().defining_polynomials()
             (x0, x1)
         """
         super().__init__(X)
@@ -1972,7 +1972,7 @@ class SchemeMorphism_point(SchemeMorphism):
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: X = P.subscheme(x^2 - y^2)
-            sage: X(23,23,1).change_ring(GF(13))                                        # optional - sage.rings.finite_rings
+            sage: X(23,23,1).change_ring(GF(13))
             (10 : 10 : 1)
 
         ::

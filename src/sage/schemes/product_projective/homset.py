@@ -134,8 +134,8 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
 
         ::
 
-            sage: P.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], GF(3))                # optional - sage.rings.finite_rings
-            sage: P(P.base_ring()).points()                                             # optional - sage.rings.finite_rings
+            sage: P.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], GF(3))
+            sage: P(P.base_ring()).points()
             [(0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 0), (0 : 0 : 1 , 1 : 1), (0 : 0 : 1 , 2 : 1),
              (0 : 1 : 0 , 0 : 1), (0 : 1 : 0 , 1 : 0), (0 : 1 : 0 , 1 : 1), (0 : 1 : 0 , 2 : 1),
              (0 : 1 : 1 , 0 : 1), (0 : 1 : 1 , 1 : 0), (0 : 1 : 1 , 1 : 1), (0 : 1 : 1 , 2 : 1),

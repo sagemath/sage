@@ -70,15 +70,15 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         ::
 
-            sage: T = ProductProjectiveSpaces([2, 2, 2], GF(5), 'x')                    # optional - sage.rings.finite_rings
-            sage: T.point([1, 2, 3, 4, 5, 6, 7, 8, 9])                                  # optional - sage.rings.finite_rings
+            sage: T = ProductProjectiveSpaces([2, 2, 2], GF(5), 'x')
+            sage: T.point([1, 2, 3, 4, 5, 6, 7, 8, 9])
             (2 : 4 : 1 , 4 : 0 : 1 , 3 : 2 : 1)
 
         ::
 
-            sage: T.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(5))                  # optional - sage.rings.finite_rings
-            sage: X = T.subscheme([x - y, z - 2*w])                                     # optional - sage.rings.finite_rings
-            sage: X([1, 1, 2, 1])                                                       # optional - sage.rings.finite_rings
+            sage: T.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(5))
+            sage: X = T.subscheme([x - y, z - 2*w])
+            sage: X([1, 1, 2, 1])
             (1 : 1 , 2 : 1)
         """
         polys = copy(polys)
@@ -117,13 +117,13 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            sage: T = ProductProjectiveSpaces([2, 2, 2], GF(5), 'x')                    # optional - sage.rings.finite_rings
-            sage: P = T([1, 0, 1, 1, 0, 0, 0, 0, 1])                                    # optional - sage.rings.finite_rings
-            sage: P[1]                                                                  # optional - sage.rings.finite_rings
+            sage: T = ProductProjectiveSpaces([2, 2, 2], GF(5), 'x')
+            sage: P = T([1, 0, 1, 1, 0, 0, 0, 0, 1])
+            sage: P[1]
             (1 : 0 : 0)
-            sage: P[1].codomain()                                                       # optional - sage.rings.finite_rings
+            sage: P[1].codomain()
             Projective Space of dimension 2 over Finite Field of size 5
-            sage: P[1][0]                                                               # optional - sage.rings.finite_rings
+            sage: P[1][0]
             1
         """
         return self._points[i]
@@ -174,26 +174,26 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')                    # optional - sage.rings.finite_rings
-            sage: P = T([3, 2, 3, 4, 1, 0])                                             # optional - sage.rings.finite_rings
-            sage: Q = T([1, 2, 3, 4, 3, 1])                                             # optional - sage.rings.finite_rings
-            sage: P > Q                                                                 # optional - sage.rings.finite_rings
+            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
+            sage: P = T([3, 2, 3, 4, 1, 0])
+            sage: Q = T([1, 2, 3, 4, 3, 1])
+            sage: P > Q
             True
 
         ::
 
-            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')                    # optional - sage.rings.finite_rings
-            sage: P = T([1, 2, 3, 4, 1, 0])                                             # optional - sage.rings.finite_rings
-            sage: Q = T([1, 2, 3, 4, 3, 0])                                             # optional - sage.rings.finite_rings
-            sage: P == Q                                                                # optional - sage.rings.finite_rings
+            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
+            sage: P = T([1, 2, 3, 4, 1, 0])
+            sage: Q = T([1, 2, 3, 4, 3, 0])
+            sage: P == Q
             True
 
         ::
 
-            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')                    # optional - sage.rings.finite_rings
-            sage: P = T([1, 2, 3, 4, 1, 0])                                             # optional - sage.rings.finite_rings
-            sage: Q = T([1, 2, 3, 4, 3, 1])                                             # optional - sage.rings.finite_rings
-            sage: P < Q                                                                 # optional - sage.rings.finite_rings
+            sage: T = ProductProjectiveSpaces([1, 1, 1], GF(5), 'x')
+            sage: P = T([1, 2, 3, 4, 1, 0])
+            sage: Q = T([1, 2, 3, 4, 3, 1])
+            sage: P < Q
             True
         """
         #needed for Digraph
@@ -282,10 +282,10 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         ::
 
-            sage: PP = ProductProjectiveSpaces(GF(7), [1, 1, 1])                        # optional - sage.rings.finite_rings
-            sage: hash(PP([4, 1, 5, 4, 6, 1])) == hash((4, 1, 5, 4, 6, 1))              # optional - sage.rings.finite_rings
+            sage: PP = ProductProjectiveSpaces(GF(7), [1, 1, 1])
+            sage: hash(PP([4, 1, 5, 4, 6, 1])) == hash((4, 1, 5, 4, 6, 1))
             False
-            sage: hash(PP([4, 1, 5, 4, 6, 1])) == hash((4, 1, 3, 1, 6, 1))              # optional - sage.rings.finite_rings
+            sage: hash(PP([4, 1, 5, 4, 6, 1])) == hash((4, 1, 3, 1, 6, 1))
             True
         """
         R = self.codomain().base_ring()
@@ -411,7 +411,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
             sage: T.<x,y,z,u,v,w> = ProductProjectiveSpaces([1, 1, 1], ZZ)
             sage: P = T.point([5, 3, 15, 4, 2, 6])
-            sage: P.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
+            sage: P.change_ring(GF(3))
             (1 : 0 , 0 : 1 , 1 : 0)
         """
         check = kwds.get('check', True)

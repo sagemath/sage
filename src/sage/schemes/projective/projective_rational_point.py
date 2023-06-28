@@ -246,9 +246,9 @@ def enum_projective_finite_field(X):
     EXAMPLES::
 
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-        sage: F = GF(53)                                                                # optional - sage.rings.finite_rings
-        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)                                         # optional - sage.rings.finite_rings
-        sage: len(enum_projective_finite_field(P(F)))                                   # optional - sage.rings.finite_rings
+        sage: F = GF(53)
+        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)
+        sage: len(enum_projective_finite_field(P(F)))
         2863
         sage: 53^2 + 53 + 1
         2863
@@ -256,7 +256,7 @@ def enum_projective_finite_field(X):
     ::
 
         sage: F = GF(9, 'a')                                                            # optional - sage.rings.finite_rings
-        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)                                          # optional - sage.rings.finite_rings
+        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)
         sage: C = Curve(X^3 - Y^3 + Z^2*Y)                                              # optional - sage.rings.finite_rings sage.schemes
         sage: enum_projective_finite_field(C(F))                                        # optional - sage.rings.finite_rings sage.schemes
         [(0 : 0 : 1), (0 : 1 : 1), (0 : 2 : 1), (1 : 1 : 0), (a + 1 : 2*a : 1),
@@ -265,9 +265,9 @@ def enum_projective_finite_field(X):
 
     ::
 
-        sage: F = GF(5)                                                                 # optional - sage.rings.finite_rings
-        sage: P2F.<X,Y,Z> = ProjectiveSpace(2, F)                                       # optional - sage.rings.finite_rings
-        sage: enum_projective_finite_field(P2F)                                         # optional - sage.rings.finite_rings
+        sage: F = GF(5)
+        sage: P2F.<X,Y,Z> = ProjectiveSpace(2, F)
+        sage: enum_projective_finite_field(P2F)
         [(0 : 0 : 1), (0 : 1 : 0), (0 : 1 : 1), (0 : 2 : 1), (0 : 3 : 1), (0 : 4 : 1),
          (1 : 0 : 0), (1 : 0 : 1), (1 : 1 : 0), (1 : 1 : 1), (1 : 2 : 1), (1 : 3 : 1),
          (1 : 4 : 1), (2 : 0 : 1), (2 : 1 : 0), (2 : 1 : 1), (2 : 2 : 1), (2 : 3 : 1),

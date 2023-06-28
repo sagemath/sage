@@ -25,8 +25,8 @@ Affine, over `\QQ`::
 Affine over a finite field::
 
     sage: from sage.schemes.affine.affine_rational_point import enum_affine_finite_field
-    sage: A.<w,x,y,z> = AffineSpace(4, GF(2))                                           # optional - sage.rings.finite_rings
-    sage: enum_affine_finite_field(A(GF(2)))                                            # optional - sage.rings.finite_rings
+    sage: A.<w,x,y,z> = AffineSpace(4, GF(2))
+    sage: enum_affine_finite_field(A(GF(2)))
     [(0, 0, 0, 0), (0, 0, 0, 1), (0, 0, 1, 0), (0, 0, 1, 1), (0, 1, 0, 0),
      (0, 1, 0, 1), (0, 1, 1, 0), (0, 1, 1, 1), (1, 0, 0, 0), (1, 0, 0, 1),
      (1, 0, 1, 0), (1, 0, 1, 1), (1, 1, 0, 0), (1, 1, 0, 1), (1, 1, 1, 0),
@@ -250,13 +250,13 @@ def enum_affine_finite_field(X):
     EXAMPLES::
 
         sage: from sage.schemes.affine.affine_rational_point import enum_affine_finite_field
-        sage: F = GF(7)                                                                 # optional - sage.rings.finite_rings
-        sage: A.<w,x,y,z> = AffineSpace(4, F)                                           # optional - sage.rings.finite_rings
-        sage: C = A.subscheme([w^2 + x + 4, y*z*x - 6, z*y + w*x])                      # optional - sage.rings.finite_rings
-        sage: enum_affine_finite_field(C(F))                                            # optional - sage.rings.finite_rings
+        sage: F = GF(7)
+        sage: A.<w,x,y,z> = AffineSpace(4, F)
+        sage: C = A.subscheme([w^2 + x + 4, y*z*x - 6, z*y + w*x])
+        sage: enum_affine_finite_field(C(F))
         []
-        sage: C = A.subscheme([w^2 + x + 4, y*z*x - 6])                                 # optional - sage.rings.finite_rings
-        sage: enum_affine_finite_field(C(F))                                            # optional - sage.rings.finite_rings
+        sage: C = A.subscheme([w^2 + x + 4, y*z*x - 6])
+        sage: enum_affine_finite_field(C(F))
         [(0, 3, 1, 2), (0, 3, 2, 1), (0, 3, 3, 3), (0, 3, 4, 4), (0, 3, 5, 6),
          (0, 3, 6, 5), (1, 2, 1, 3), (1, 2, 2, 5), (1, 2, 3, 1), (1, 2, 4, 6),
          (1, 2, 5, 2), (1, 2, 6, 4), (2, 6, 1, 1), (2, 6, 2, 4), (2, 6, 3, 5),
@@ -269,9 +269,9 @@ def enum_affine_finite_field(X):
 
     ::
 
-        sage: A.<x,y,z> = AffineSpace(3, GF(3))                                         # optional - sage.rings.finite_rings
-        sage: S = A.subscheme(x + y)                                                    # optional - sage.rings.finite_rings
-        sage: enum_affine_finite_field(S)                                               # optional - sage.rings.finite_rings
+        sage: A.<x,y,z> = AffineSpace(3, GF(3))
+        sage: S = A.subscheme(x + y)
+        sage: enum_affine_finite_field(S)
         [(0, 0, 0), (0, 0, 1), (0, 0, 2), (1, 2, 0), (1, 2, 1), (1, 2, 2),
          (2, 1, 0), (2, 1, 1), (2, 1, 2)]
 

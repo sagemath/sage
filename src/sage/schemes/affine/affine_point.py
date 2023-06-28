@@ -357,13 +357,13 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(17), 2)                                      # optional - sage.rings.finite_rings
-            sage: X = A.subscheme([y^2 - x^3 + 2*x^2 - x])                              # optional - sage.rings.finite_rings
-            sage: Y = A.subscheme([y - 2*x + 2])                                        # optional - sage.rings.finite_rings
-            sage: Q1 = Y([1,0])                                                         # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(17), 2)
+            sage: X = A.subscheme([y^2 - x^3 + 2*x^2 - x])
+            sage: Y = A.subscheme([y - 2*x + 2])
+            sage: Q1 = Y([1,0])
             sage: Q1.intersection_multiplicity(X)                                       # optional - sage.rings.finite_rings
             2
-            sage: Q2 = X([4,6])                                                         # optional - sage.rings.finite_rings
+            sage: Q2 = X([4,6])
             sage: Q2.intersection_multiplicity(Y)                                       # optional - sage.rings.finite_rings
             1
 
@@ -417,21 +417,21 @@ class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = AffineSpace(GF(5), 3)                                     # optional - sage.rings.finite_rings
-            sage: hash(P(2, 1, 2))                                                      # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = AffineSpace(GF(5), 3)
+            sage: hash(P(2, 1, 2))
             57
 
         ::
 
-            sage: P.<x,y,z> = AffineSpace(GF(7), 3)                                     # optional - sage.rings.finite_rings
-            sage: X = P.subscheme(x^2 - y^2)                                            # optional - sage.rings.finite_rings
-            sage: hash(X(1, 1, 2))                                                      # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = AffineSpace(GF(7), 3)
+            sage: X = P.subscheme(x^2 - y^2)
+            sage: hash(X(1, 1, 2))
             106
 
         ::
 
-            sage: P.<x,y> = AffineSpace(GF(13), 2)                                      # optional - sage.rings.finite_rings
-            sage: hash(P(3, 4))                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y> = AffineSpace(GF(13), 2)
+            sage: hash(P(3, 4))
             55
 
         ::

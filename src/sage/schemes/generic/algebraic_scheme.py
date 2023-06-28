@@ -314,9 +314,9 @@ class AlgebraicScheme(scheme.Scheme):
 
         EXAMPLES::
 
-            sage: A.<x, y> = AffineSpace(2, GF(5))                                      # optional - sage.rings.finite_rings
-            sage: S = A.subscheme([])                                                   # optional - sage.rings.finite_rings
-            sage: S.ambient_space()                                                     # optional - sage.rings.finite_rings
+            sage: A.<x, y> = AffineSpace(2, GF(5))
+            sage: S = A.subscheme([])
+            sage: S.ambient_space()
             Affine Space of dimension 2 over Finite Field of size 5
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
@@ -423,17 +423,17 @@ class AlgebraicScheme(scheme.Scheme):
 
         A couple more examples::
 
-            sage: patch1 = P1xP1.affine_patch(1); patch1
+            sage: patch1 = P1xP1.affine_patch(1); patch1                                # optional - sage.geometry.polyhedron
             2-d affine toric variety
-            sage: patch1.embedding_morphism()
+            sage: patch1.embedding_morphism()                                           # optional - sage.geometry.polyhedron sage.libs.singular
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d CPR-Fano toric variety covered by 4 affine patches
               Defn: Defined on coordinates by sending [y : u] to [1 : y : u : 1]
-            sage: subpatch = P1.affine_patch(1); subpatch                               # optional - sage.libs.singular
+            sage: subpatch = P1.affine_patch(1); subpatch                               # optional - sage.geometry.polyhedron sage.libs.singular
             Closed subscheme of 2-d affine toric variety defined by:
               -y + 1
-            sage: subpatch.embedding_morphism()                                         # optional - sage.libs.singular
+            sage: subpatch.embedding_morphism()                                         # optional - sage.geometry.polyhedron sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of 2-d affine toric variety defined by: -y + 1
               To:   Closed subscheme of 2-d CPR-Fano toric variety covered
@@ -498,9 +498,9 @@ class AlgebraicScheme(scheme.Scheme):
 
         EXAMPLES::
 
-            sage: A.<x, y> = AffineSpace(2, GF(5))                                      # optional - sage.rings.finite_rings
-            sage: S = A.subscheme([])                                                   # optional - sage.rings.finite_rings
-            sage: S.ngens()                                                             # optional - sage.rings.finite_rings
+            sage: A.<x, y> = AffineSpace(2, GF(5))
+            sage: S = A.subscheme([])
+            sage: S.ngens()
             2
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: S = P.subscheme([x - y, x - z])
@@ -538,18 +538,18 @@ class AlgebraicScheme(scheme.Scheme):
 
         EXAMPLES::
 
-            sage: P1.<x,y> = toric_varieties.P1()
-            sage: type(P1.Hom(P1))
+            sage: P1.<x,y> = toric_varieties.P1()                                       # optional - sage.geometry.polyhedron
+            sage: type(P1.Hom(P1))                                                      # optional - sage.geometry.polyhedron
             <class 'sage.schemes.toric.homset.SchemeHomset_toric_variety_with_category'>
-            sage: X = P1.subscheme(x - y)
-            sage: type(X.Hom(X))
+            sage: X = P1.subscheme(x - y)                                               # optional - sage.geometry.polyhedron
+            sage: type(X.Hom(X))                                                        # optional - sage.geometry.polyhedron
             <class 'sage.schemes.toric.homset.SchemeHomset_toric_variety_with_category'>
 
         ::
 
-            sage: P1xP1 = toric_varieties.P1xP1()
-            sage: P1 = toric_varieties.P1()
-            sage: P1xP1._homset(P1xP1, P1)
+            sage: P1xP1 = toric_varieties.P1xP1()                                       # optional - sage.geometry.polyhedron
+            sage: P1 = toric_varieties.P1()                                             # optional - sage.geometry.polyhedron
+            sage: P1xP1._homset(P1xP1, P1)                                              # optional - sage.geometry.polyhedron
             Set of morphisms
               From: 2-d CPR-Fano toric variety covered by 4 affine patches
               To:   1-d CPR-Fano toric variety covered by 2 affine patches
@@ -770,17 +770,17 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             ...
             TypeError: number of arguments does not match number of variables in parent
 
-            sage: A.<x, y> = AffineSpace(2, GF(7))                                      # optional - sage.rings.finite_rings
-            sage: S = A.subscheme([x^2 - y])                                            # optional - sage.rings.finite_rings
-            sage: T = A.subscheme([x - y])                                              # optional - sage.rings.finite_rings
-            sage: U = T.complement(S)                                                   # optional - sage.rings.finite_rings
-            sage: U._check_satisfies_equations([2, 4])                                  # optional - sage.rings.finite_rings
+            sage: A.<x, y> = AffineSpace(2, GF(7))
+            sage: S = A.subscheme([x^2 - y])
+            sage: T = A.subscheme([x - y])
+            sage: U = T.complement(S)
+            sage: U._check_satisfies_equations([2, 4])
             True
-            sage: U.point([2,4])                                                        # optional - sage.rings.finite_rings
+            sage: U.point([2,4])
             (2, 4)
-            sage: U._check_satisfies_equations(_)                                       # optional - sage.rings.finite_rings
+            sage: U._check_satisfies_equations(_)
             True
-            sage: U._check_satisfies_equations([1, 1])                                  # optional - sage.rings.finite_rings
+            sage: U._check_satisfies_equations([1, 1])
             Traceback (most recent call last):
             ...
             TypeError: Coordinates [1, 1] do not define a point on Quasi-affine
@@ -789,7 +789,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
               x^2 - y
             and Y is defined by:
               x - y
-            sage: U._check_satisfies_equations([1, 0])                                  # optional - sage.rings.finite_rings
+            sage: U._check_satisfies_equations([1, 0])
             Traceback (most recent call last):
             ...
             TypeError: Coordinates [1, 0] do not define a point on Quasi-affine
@@ -837,11 +837,11 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
         EXAMPLES::
 
-            sage: A.<x, y> = AffineSpace(2, GF(7))                                      # optional - sage.rings.finite_rings
-            sage: S = A.subscheme([x^2 - y])                                            # optional - sage.rings.finite_rings
-            sage: T = A.subscheme([x - y])                                              # optional - sage.rings.finite_rings
-            sage: U = T.complement(S)                                                   # optional - sage.rings.finite_rings
-            sage: U.rational_points()                                                   # optional - sage.rings.finite_rings
+            sage: A.<x, y> = AffineSpace(2, GF(7))
+            sage: S = A.subscheme([x^2 - y])
+            sage: T = A.subscheme([x - y])
+            sage: U = T.complement(S)
+            sage: U.rational_points()
             [(2, 4), (3, 2), (4, 2), (5, 4), (6, 1)]
             sage: U.rational_points(F=GF(7^2, 'b'))                                     # optional - sage.rings.finite_rings
             [(2, 4), (3, 2), (4, 2), (5, 4), (6, 1), (b, b + 4), (b + 1, 3*b + 5),
@@ -990,13 +990,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         EXAMPLES::
 
-            sage: P.<x, y, z> = ProjectiveSpace(2, GF(11))                              # optional - sage.rings.finite_rings
-            sage: S = P.subscheme([x^2 - y*z])                                          # optional - sage.rings.finite_rings
+            sage: P.<x, y, z> = ProjectiveSpace(2, GF(11))
+            sage: S = P.subscheme([x^2 - y*z])
             sage: S.base_extend(GF(11^2, 'b'))                                          # optional - sage.rings.finite_rings
             Closed subscheme of Projective Space of dimension 2
              over Finite Field in b of size 11^2
              defined by: x^2 - y*z
-            sage: S.base_extend(ZZ)                                                     # optional - sage.rings.finite_rings
+            sage: S.base_extend(ZZ)
             Traceback (most recent call last):
             ...
             ValueError: no natural map from the base ring (=Finite Field of size 11)
@@ -1032,17 +1032,17 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         EXAMPLES::
 
-            sage: P.<x, y, z> = ProjectiveSpace(2, GF(11))                                                  # optional - sage.rings.finite_rings
-            sage: S = P.subscheme([x^2 - y*z]); S                                                           # optional - sage.libs.singular sage.rings.finite_rings
+            sage: P.<x, y, z> = ProjectiveSpace(2, GF(11))
+            sage: S = P.subscheme([x^2 - y*z]); S                                       # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z
-            sage: S._latex_()                                                                               # optional - sage.libs.singular sage.rings.finite_rings
+            sage: S._latex_()                                                           # optional - sage.libs.singular
             '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z'
-            sage: S = P.subscheme([x^2 - y*z, x^5]); S                                                      # optional - sage.libs.singular sage.rings.finite_rings
+            sage: S = P.subscheme([x^2 - y*z, x^5]); S                                  # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z,
               x^5
-            sage: S._latex_()                                                                               # optional - sage.libs.singular sage.rings.finite_rings
+            sage: S._latex_()                                                           # optional - sage.libs.singular
             '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z, x^{5}'
         """
         polynomials = ', '.join(latex(f) for f in self.defining_polynomials())
@@ -1057,17 +1057,17 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         EXAMPLES::
 
-            sage: P.<x, y, z> = ProjectiveSpace(2, GF(11))                                                  # optional - sage.rings.finite_rings
-            sage: S = P.subscheme([x^2 - y*z]); S                                                           # optional - sage.libs.singular sage.rings.finite_rings
+            sage: P.<x, y, z> = ProjectiveSpace(2, GF(11))
+            sage: S = P.subscheme([x^2 - y*z]); S                                       # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z
-            sage: S._repr_()                                                                                # optional - sage.libs.singular sage.rings.finite_rings
+            sage: S._repr_()                                                            # optional - sage.libs.singular
             'Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:\n  x^2 - y*z'
-            sage: S = P.subscheme([x^2 - y*z, x^5]); S                                                      # optional - sage.libs.singular sage.rings.finite_rings
+            sage: S = P.subscheme([x^2 - y*z, x^5]); S                                  # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z,
               x^5
-            sage: S._repr_()                                                                                # optional - sage.libs.singular sage.rings.finite_rings
+            sage: S._repr_()                                                            # optional - sage.libs.singular
             'Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:\n  x^2 - y*z,\n  x^5'
         """
         polynomials = ',\n  '.join(str(f) for f in self.defining_polynomials())
@@ -1286,8 +1286,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         ::
 
-            sage: A.<x,y,z,w> = AffineSpace(GF(17), 4)                                  # optional - sage.rings.finite_rings
-            sage: X = A.subscheme([                                                     # optional - sage.rings.finite_rings
+            sage: A.<x,y,z,w> = AffineSpace(GF(17), 4)
+            sage: X = A.subscheme([
             ....:         x*y*z^2 - x*y*z*w - z*w^2 + w^3,
             ....:         x^3*y*z*w - x*y^3*z - x^2*y*z*w - x^2*w^3 + y^2*w^2 + x*w^3
             ....:     ])
@@ -1788,8 +1788,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         The class of hyperelliptic curves does not (yet) support
         desingularization of the places at infinity into two points::
 
-            sage: FF = FiniteField(7)                                                   # optional - sage.rings.finite_rings
-            sage: P.<x> = PolynomialRing(FiniteField(7))                                # optional - sage.rings.finite_rings
+            sage: FF = FiniteField(7)
+            sage: P.<x> = PolynomialRing(FiniteField(7))
             sage: C = HyperellipticCurve(x^8 + x + 1)                                   # optional - sage.rings.finite_rings sage.schemes
             sage: C.rational_points()                                                   # optional - sage.rings.finite_rings sage.schemes
             [(0 : 1 : 0), (0 : 1 : 1), (0 : 6 : 1), (2 : 0 : 1),

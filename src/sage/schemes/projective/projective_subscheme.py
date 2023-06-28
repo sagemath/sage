@@ -309,9 +309,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         TESTS::
 
-            sage: F = GF(3)                                                             # optional - sage.rings.finite_rings
-            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.finite_rings
-            sage: S._best_affine_patch([0,1,2])                                         # optional - sage.rings.finite_rings
+            sage: F = GF(3)
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)
+            sage: S._best_affine_patch([0,1,2])
             2
         """
         point = list(point)
@@ -950,9 +950,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         An example over a finite field::
 
-            sage: R = PolynomialRing(GF(61), 'a,b,c')                                   # optional - sage.rings.finite_rings
-            sage: P.<a, b, c> = ProjectiveSpace(2, R.base_ring())                       # optional - sage.rings.finite_rings
-            sage: X = P.subscheme(R.ideal(a*a + 2*b*b + 3*c*c))                         # optional - sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(61), 'a,b,c')
+            sage: P.<a, b, c> = ProjectiveSpace(2, R.base_ring())
+            sage: X = P.subscheme(R.ideal(a*a + 2*b*b + 3*c*c))
             sage: X.dual()                                                              # optional - sage.libs.singular sage.rings.finite_rings
             Closed subscheme of Projective Space of dimension 2 over
              Finite Field of size 61 defined by:
@@ -1025,8 +1025,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: X.degree()                                                            # optional - sage.libs.singular
             7
 
-            sage: P.<x,y,z,w> = ProjectiveSpace(GF(13), 3)                              # optional - sage.rings.finite_rings
-            sage: X = P.subscheme([y^3 - w^3, x + 7*z])                                 # optional - sage.rings.finite_rings
+            sage: P.<x,y,z,w> = ProjectiveSpace(GF(13), 3)
+            sage: X = P.subscheme([y^3 - w^3, x + 7*z])
             sage: X.degree()                                                            # optional - sage.libs.singular sage.rings.finite_rings
             3
 
@@ -1055,13 +1055,13 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
             sage: C = Curve([x^4 - z^2*y^2], P)                                         # optional - sage.rings.finite_rings
             sage: D = Curve([y^4*z - x^5 - x^3*z^2], P)                                 # optional - sage.rings.finite_rings
-            sage: Q1 = P([0,1,0])                                                       # optional - sage.rings.finite_rings
+            sage: Q1 = P([0,1,0])
             sage: C.intersection_multiplicity(D, Q1)                                    # optional - sage.libs.singular sage.rings.finite_rings
             4
-            sage: Q2 = P([0,0,1])                                                       # optional - sage.rings.finite_rings
+            sage: Q2 = P([0,0,1])
             sage: C.intersection_multiplicity(D, Q2)                                    # optional - sage.libs.singular sage.rings.finite_rings
             6
 
@@ -1145,9 +1145,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         ::
 
-            sage: P.<x,y,z,w> = ProjectiveSpace(GF(29), 3)                              # optional - sage.rings.finite_rings
+            sage: P.<x,y,z,w> = ProjectiveSpace(GF(29), 3)
             sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)                         # optional - sage.rings.finite_rings
-            sage: Q = P([3,0,0,1])                                                      # optional - sage.rings.finite_rings
+            sage: Q = P([3,0,0,1])
             sage: C.multiplicity(Q)                                                     # optional - sage.libs.singular sage.rings.finite_rings
             8
         """
@@ -1294,8 +1294,8 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
-            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(17), 3)                          # optional - sage.rings.finite_rings
-            sage: X = P.subscheme([x3 + x1, x2 - x0, x2 - x3])                          # optional - sage.rings.finite_rings
+            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(17), 3)
+            sage: X = P.subscheme([x3 + x1, x2 - x0, x2 - x3])
             sage: X.Chow_form()                                                         # optional - sage.libs.singular sage.rings.finite_rings
             t0 - t1 + t2 + t3
 

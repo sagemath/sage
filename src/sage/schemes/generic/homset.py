@@ -633,16 +633,16 @@ class SchemeHomset_points(SchemeHomset_generic):
         EXAMPLES::
 
             sage: A2 = AffineSpace(ZZ, 2)
-            sage: F = GF(3)                                                             # optional - sage.rings.finite_rings
-            sage: F_points = A2(F);  type(F_points)                                     # optional - sage.rings.finite_rings
+            sage: F = GF(3)
+            sage: F_points = A2(F);  type(F_points)
             <class 'sage.schemes.affine.affine_homset.SchemeHomset_points_affine_with_category'>
-            sage: F_points([2,5])                                                       # optional - sage.rings.finite_rings
+            sage: F_points([2,5])
             (2, 2)
 
-            sage: P2 = ProjectiveSpace(GF(3), 2)                                        # optional - sage.rings.finite_rings
+            sage: P2 = ProjectiveSpace(GF(3), 2)
             sage: F.<a> = GF(9, 'a')                                                    # optional - sage.rings.finite_rings
-            sage: F_points = P2(F)                                                      # optional - sage.rings.finite_rings
-            sage: type(F_points)                                                        # optional - sage.rings.finite_rings
+            sage: F_points = P2(F)
+            sage: type(F_points)
             <class 'sage.schemes.projective.projective_homset.SchemeHomset_points_projective_field_with_category'>
             sage: F_points([4,2*a])                                                     # optional - sage.rings.finite_rings
             (1 : 2*a : 1)

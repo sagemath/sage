@@ -208,8 +208,8 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         EXAMPLES: The bug reported at #11526 is fixed::
 
             sage: A2 = AffineSpace(ZZ, 2)
-            sage: F = GF(3)                                                             # optional - sage.rings.finite_rings
-            sage: A2(F).points()                                                        # optional - sage.rings.finite_rings
+            sage: F = GF(3)
+            sage: A2(F).points()
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
 
         ::

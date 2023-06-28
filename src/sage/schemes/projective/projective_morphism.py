@@ -569,8 +569,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
             sage: f = H([x^3 - 2*x^2*y, 5*x*y^2])
-            sage: g = f.change_ring(GF(7))                                              # optional - sage.rings.finite_rings
-            sage: f != g                                                                # optional - sage.rings.finite_rings
+            sage: g = f.change_ring(GF(7))
+            sage: f != g
             True
 
         ::
@@ -704,9 +704,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(GF(5), 1)                                   # optional - sage.rings.finite_rings
-            sage: H = End(P)                                                            # optional - sage.rings.finite_rings
-            sage: f = H([x^2, y^2])                                                     # optional - sage.rings.finite_rings
+            sage: P.<x,y> = ProjectiveSpace(GF(5), 1)
+            sage: H = End(P)
+            sage: f = H([x^2, y^2])
             sage: type(f.as_dynamical_system())                                         # optional - sage.rings.finite_rings sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective_finite_field'>
 
@@ -767,10 +767,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)                                 # optional - sage.rings.finite_rings
-            sage: X = P.subscheme(x^2 - y^2)                                            # optional - sage.rings.finite_rings
-            sage: H = Hom(X, X)                                                         # optional - sage.rings.finite_rings
-            sage: f = H([x^2, y^2, z^2])                                                # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: X = P.subscheme(x^2 - y^2)
+            sage: H = Hom(X, X)
+            sage: f = H([x^2, y^2, z^2])
             sage: f.scale_by(x - y); f                                                  # optional - sage.rings.finite_rings
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 2
              over Finite Field of size 7 defined by: x^2 - y^2
@@ -832,10 +832,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)                                 # optional - sage.rings.finite_rings
-            sage: X = P.subscheme(x^2 - y^2)                                            # optional - sage.rings.finite_rings
-            sage: H = Hom(X, X)                                                         # optional - sage.rings.finite_rings
-            sage: f = H([x^3 + x*y^2, x*y^2, x*z^2])                                    # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: X = P.subscheme(x^2 - y^2)
+            sage: H = Hom(X, X)
+            sage: f = H([x^3 + x*y^2, x*y^2, x*z^2])
             sage: f.normalize_coordinates(); f                                          # optional - sage.rings.finite_rings
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 2
              over Finite Field of size 7 defined by: x^2 - y^2
@@ -1231,10 +1231,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: R.<t> = PolynomialRing(GF(5))                                         # optional - sage.rings.finite_rings
-            sage: P.<x,y,z> = ProjectiveSpace(R, 2)                                     # optional - sage.rings.finite_rings
-            sage: H = Hom(P, P)                                                         # optional - sage.rings.finite_rings
-            sage: f = H([x*z - t*y^2, x^2 - y^2, t*z^2])                                # optional - sage.rings.finite_rings
+            sage: R.<t> = PolynomialRing(GF(5))
+            sage: P.<x,y,z> = ProjectiveSpace(R, 2)
+            sage: H = Hom(P, P)
+            sage: f = H([x*z - t*y^2, x^2 - y^2, t*z^2])
             sage: f.is_morphism()                                                       # optional - sage.libs.singular sage.rings.finite_rings
             True
 
@@ -1281,7 +1281,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
             sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             20.8348429892146
 
         ::
@@ -1289,7 +1289,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
             sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
-            sage: f.global_height(prec=11)
+            sage: f.global_height(prec=11)                                              # optional - sage.symbolic
             20.8
 
         ::
@@ -1297,7 +1297,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: H = Hom(P, P)
             sage: f = H([4*x^2 + 100*y^2, 210*x*y, 10000*z^2]);
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             8.51719319141624
 
         ::
@@ -1326,25 +1326,25 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: A.<z,w> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, A)
             sage: f = H([1/1331*x^2 + 4000*y*z, y^2])
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             15.4877354584971
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([1/25*x^2 + 25/3*x*y + y^2, 1*y^2])
-            sage: exp(f.global_height())
+            sage: exp(f.global_height())                                                # optional - sage.symbolic
             625.000000000000
 
         Scaling should not change the result::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([1/25*x^2 + 25/3*x*y + y^2, 1*y^2])
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             6.43775164973640
             sage: c = 10000
             sage: f.scale_by(c)
-            sage: f.global_height()
+            sage: f.global_height()                                                     # optional - sage.symbolic
             6.43775164973640
         """
         K = self.domain().base_ring()
@@ -2049,7 +2049,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         ::
 
-            sage: K.<v> = GF(5)                                                                     # optional - sage.rings.finite_rings
+            sage: K.<v> = GF(5)
             sage: L = K.algebraic_closure()                                                         # optional - sage.rings.finite_rings
             sage: P.<x,y> = ProjectiveSpace(L, 1)                                                   # optional - sage.rings.finite_rings
             sage: H = End(P)                                                                        # optional - sage.rings.finite_rings
@@ -2217,10 +2217,10 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)                                 # optional - sage.rings.finite_rings
-            sage: H = Hom(P, P)                                                         # optional - sage.rings.finite_rings
-            sage: f = H([x^2 + y^2, y^2, z^2 + y*z])                                    # optional - sage.rings.finite_rings
-            sage: f._fast_eval([1,1,1])                                                 # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: H = Hom(P, P)
+            sage: f = H([x^2 + y^2, y^2, z^2 + y*z])
+            sage: f._fast_eval([1,1,1])
             [2, 1, 2]
         """
         if self._is_prime_finite_field:
@@ -2688,7 +2688,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         EXAMPLES::
 
-            sage: k = GF(11)                                                                        # optional - sage.rings.finite_rings
+            sage: k = GF(11)
             sage: E = EllipticCurve(k, [1,1])                                                       # optional - sage.rings.finite_rings
             sage: Q = E(6, 5)                                                                       # optional - sage.rings.finite_rings
             sage: phi = E.scalar_multiplication(2)                                                  # optional - sage.rings.finite_rings
@@ -2732,7 +2732,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         EXAMPLES::
 
-            sage: k = GF(11)                                                                        # optional - sage.rings.finite_rings
+            sage: k = GF(11)
             sage: E = EllipticCurve(k, [1,1])                                                       # optional - sage.rings.finite_rings
             sage: Q = E(6, 5)                                                                       # optional - sage.rings.finite_rings
             sage: phi = E.scalar_multiplication(2)                                                  # optional - sage.rings.finite_rings

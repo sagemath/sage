@@ -27,11 +27,11 @@ Product Projective, over `\QQ`::
 
 Product projective over finite field::
 
-    sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1, 1], GF(7))                         # optional - sage.rings.finite_rings
-    sage: X = P1.subscheme([2*x + 3*y])                                                 # optional - sage.rings.finite_rings
+    sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1, 1], GF(7))
+    sage: X = P1.subscheme([2*x + 3*y])
     sage: from sage.schemes.product_projective.rational_point import \
             enum_product_projective_finite_field
-    sage: enum_product_projective_finite_field(X)                                       # optional - sage.rings.finite_rings
+    sage: enum_product_projective_finite_field(X)
     [(2 : 1 , 0 : 1), (2 : 1 , 1 : 0), (2 : 1 , 1 : 1),
      (2 : 1 , 2 : 1), (2 : 1 , 3 : 1), (2 : 1 , 4 : 1),
      (2 : 1 , 5 : 1), (2 : 1 , 6 : 1)]
@@ -263,10 +263,10 @@ def enum_product_projective_finite_field(X):
 
     EXAMPLES::
 
-        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(3))                     # optional - sage.rings.finite_rings
+        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(3))
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_finite_field
-        sage: enum_product_projective_finite_field(PP)                                  # optional - sage.rings.finite_rings
+        sage: enum_product_projective_finite_field(PP)
         [(0 : 1 , 0 : 1), (0 : 1 , 1 : 0), (0 : 1 , 1 : 1),
          (0 : 1 , 2 : 1), (1 : 0 , 0 : 1), (1 : 0 , 1 : 0),
          (1 : 0 , 1 : 1), (1 : 0 , 2 : 1), (1 : 1 , 0 : 1),
@@ -276,11 +276,11 @@ def enum_product_projective_finite_field(X):
 
     ::
 
-        sage: PP.<x0,x1,x2,x3> = ProductProjectiveSpaces([1, 1], GF(17))                # optional - sage.rings.finite_rings
-        sage: X = PP.subscheme([x0^2 + 2*x1^2])                                         # optional - sage.rings.finite_rings
+        sage: PP.<x0,x1,x2,x3> = ProductProjectiveSpaces([1, 1], GF(17))
+        sage: X = PP.subscheme([x0^2 + 2*x1^2])
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_finite_field
-        sage: len(enum_product_projective_finite_field(X))                              # optional - sage.rings.finite_rings
+        sage: len(enum_product_projective_finite_field(X))
         36
     """
     if is_Scheme(X):

@@ -432,12 +432,12 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         ::
 
-            sage: PP.<x,y,z,w,u> = ProductProjectiveSpaces(GF(11), [1,2])               # optional - sage.rings.finite_rings
-            sage: X = PP.subscheme([x^7*u - y^7*z, u^6*x^2 - w^3*z^3*x*y - w^6*y^2])    # optional - sage.rings.finite_rings
-            sage: Q1 = PP([1,0,10,1,0])                                                 # optional - sage.rings.finite_rings
+            sage: PP.<x,y,z,w,u> = ProductProjectiveSpaces(GF(11), [1,2])
+            sage: X = PP.subscheme([x^7*u - y^7*z, u^6*x^2 - w^3*z^3*x*y - w^6*y^2])
+            sage: Q1 = PP([1,0,10,1,0])
             sage: X.multiplicity(Q1)                                                    # optional - sage.libs.singular sage.rings.finite_rings
             1
-            sage: Q2 = PP([1,0,1,0,0])                                                  # optional - sage.rings.finite_rings
+            sage: Q2 = PP([1,0,1,0,0])
             sage: X.multiplicity(Q2)                                                    # optional - sage.libs.singular sage.rings.finite_rings
             4
         """

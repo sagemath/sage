@@ -73,7 +73,7 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
 
     Use the divide operator for base extension::
 
-        sage: AffineSpace(5, names='x')/GF(17)                                          # optional - sage.rings.finite_rings
+        sage: AffineSpace(5, names='x')/GF(17)
         Affine Space of dimension 5 over Finite Field of size 17
 
     The default base ring is `\ZZ`::
@@ -83,10 +83,10 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
 
     There is also an affine space associated to each polynomial ring::
 
-        sage: R = GF(7)['x, y, z']                                                      # optional - sage.rings.finite_rings
-        sage: A = AffineSpace(R); A                                                     # optional - sage.rings.finite_rings
+        sage: R = GF(7)['x, y, z']
+        sage: A = AffineSpace(R); A
         Affine Space of dimension 3 over Finite Field of size 7
-        sage: A.coordinate_ring() is R                                                  # optional - sage.rings.finite_rings
+        sage: A.coordinate_ring() is R
         True
 
     TESTS::
@@ -203,15 +203,15 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         EXAMPLES::
 
-            sage: FF = FiniteField(3)                                                   # optional - sage.rings.finite_rings
-            sage: AA = AffineSpace(FF, 0)                                               # optional - sage.rings.finite_rings
-            sage: [ x for x in AA ]                                                     # optional - sage.rings.finite_rings
+            sage: FF = FiniteField(3)
+            sage: AA = AffineSpace(FF, 0)
+            sage: [ x for x in AA ]
             [()]
-            sage: AA = AffineSpace(FF, 1, 'Z')                                          # optional - sage.rings.finite_rings
-            sage: [ x for x in AA ]                                                     # optional - sage.rings.finite_rings
+            sage: AA = AffineSpace(FF, 1, 'Z')
+            sage: [ x for x in AA ]
             [(0), (1), (2)]
-            sage: AA.<z,w> = AffineSpace(FF, 2)                                         # optional - sage.rings.finite_rings
-            sage: [ x for x in AA ]                                                     # optional - sage.rings.finite_rings
+            sage: AA.<z,w> = AffineSpace(FF, 2)
+            sage: [ x for x in AA ]
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
 
         AUTHOR:
@@ -247,13 +247,13 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         EXAMPLES::
 
-            sage: A = AffineSpace(1, GF(3))                                             # optional - sage.rings.finite_rings
-            sage: A.rational_points()                                                   # optional - sage.rings.finite_rings
+            sage: A = AffineSpace(1, GF(3))
+            sage: A.rational_points()
             [(0), (1), (2)]
             sage: A.rational_points(GF(3^2, 'b'))                                       # optional - sage.rings.finite_rings
             [(0), (b), (b + 1), (2*b + 1), (2), (2*b), (2*b + 2), (b + 2), (1)]
 
-            sage: AffineSpace(2, ZZ).rational_points(GF(2))                             # optional - sage.rings.finite_rings
+            sage: AffineSpace(2, ZZ).rational_points(GF(2))
             [(0, 0), (0, 1), (1, 0), (1, 1)]
 
         TESTS::
@@ -262,7 +262,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             Traceback (most recent call last):
             ...
             TypeError: base ring (= Rational Field) must be a finite field
-            sage: AffineSpace(1, GF(3)).rational_points(ZZ)                             # optional - sage.rings.finite_rings
+            sage: AffineSpace(1, GF(3)).rational_points(ZZ)
             Traceback (most recent call last):
             ...
             TypeError: second argument (= Integer Ring) must be a finite field
@@ -630,7 +630,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.<x,y,z> = AffineSpace(3, ZZ)
             sage: AQ = A.change_ring(QQ); AQ
             Affine Space of dimension 3 over Rational Field
-            sage: AQ.change_ring(GF(5))                                                 # optional - sage.rings.finite_rings
+            sage: AQ.change_ring(GF(5))
             Affine Space of dimension 3 over Finite Field of size 5
 
         ::
@@ -983,9 +983,9 @@ class AffineSpace_field(AffineSpace_generic):
 
         TESTS::
 
-            sage: P2.<x,y,z> = AffineSpace(3, GF(3))                                    # optional - sage.rings.finite_rings
-            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)                      # optional - sage.rings.finite_rings
-            sage: P2._point(point_homset, [1, 2, 3])                                    # optional - sage.rings.finite_rings
+            sage: P2.<x,y,z> = AffineSpace(3, GF(3))
+            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)
+            sage: P2._point(point_homset, [1, 2, 3])
             (1, 2, 0)
         """
         return SchemeMorphism_point_affine_field(*args, **kwds)
@@ -998,8 +998,8 @@ class AffineSpace_field(AffineSpace_generic):
 
         TESTS::
 
-            sage: P2.<x,y,z> = AffineSpace(3, GF(3))                                    # optional - sage.rings.finite_rings
-            sage: P2._morphism(P2.Hom(P2), [x, y, z])                                   # optional - sage.rings.finite_rings
+            sage: P2.<x,y,z> = AffineSpace(3, GF(3))
+            sage: P2._morphism(P2.Hom(P2), [x, y, z])
             Scheme endomorphism of Affine Space of dimension 3 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x, y, z) to
                     (x, y, z)
@@ -1236,9 +1236,9 @@ class AffineSpace_finite_field(AffineSpace_field):
 
         TESTS::
 
-            sage: P2.<x,y,z> = AffineSpace(3, GF(3))                                    # optional - sage.rings.finite_rings
-            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)                      # optional - sage.rings.finite_rings
-            sage: P2._point(point_homset, [1, 2, 3])                                    # optional - sage.rings.finite_rings
+            sage: P2.<x,y,z> = AffineSpace(3, GF(3))
+            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)
+            sage: P2._point(point_homset, [1, 2, 3])
             (1, 2, 0)
         """
         return SchemeMorphism_point_affine_finite_field(*args, **kwds)
@@ -1251,8 +1251,8 @@ class AffineSpace_finite_field(AffineSpace_field):
 
         TESTS::
 
-            sage: P2.<x,y,z> = AffineSpace(3, GF(3))                                    # optional - sage.rings.finite_rings
-            sage: P2._morphism(P2.Hom(P2), [x, y, z])                                   # optional - sage.rings.finite_rings
+            sage: P2.<x,y,z> = AffineSpace(3, GF(3))
+            sage: P2._morphism(P2.Hom(P2), [x, y, z])
             Scheme endomorphism of Affine Space of dimension 3 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x, y, z) to
                     (x, y, z)
