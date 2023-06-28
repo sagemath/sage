@@ -987,12 +987,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: E.<x,y> = ExteriorAlgebra(QQ)                                     # optional - sage.combinat sage.modules
                 sage: E.cardinality()                                                   # optional - sage.combinat sage.modules
                 +Infinity
-                sage: E.<x,y> = ExteriorAlgebra(GF(3))                                  # optional - sage.combinat sage.rings.finite_rings sage.modules
-                sage: E.cardinality()                                                   # optional - sage.combinat sage.rings.finite_rings sage.modules
+                sage: E.<x,y> = ExteriorAlgebra(GF(3))                                  # optional - sage.combinat sage.modules
+                sage: E.cardinality()                                                   # optional - sage.combinat sage.modules
                 81
 
-                sage: s = SymmetricFunctions(GF(2)).s()                                 # optional - sage.combinat sage.rings.finite_rings sage.modules
-                sage: s.cardinality()                                                   # optional - sage.combinat sage.rings.finite_rings sage.modules
+                sage: s = SymmetricFunctions(GF(2)).s()                                 # optional - sage.combinat sage.modules
+                sage: s.cardinality()                                                   # optional - sage.combinat sage.modules
                 +Infinity
             """
             from sage.rings.infinity import Infinity

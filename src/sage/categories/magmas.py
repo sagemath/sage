@@ -665,7 +665,7 @@ class Magmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])                # optional - sage.rings.finite_rings
+                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])
                         sage: c = C([2,-1,2,2]); c                                      # optional - sage.rings.finite_rings
                         (2, -1, 2.00000000000000, 2)
                         sage: ~c                                                        # optional - sage.rings.finite_rings
@@ -674,7 +674,7 @@ class Magmas(Category_singleton):
                     This fails as soon as one of the entries is not
                     invertible::
 
-                        sage: ~C([0,2,2,2])                                             # optional - sage.rings.finite_rings
+                        sage: ~C([0,2,2,2])
                         Traceback (most recent call last):
                         ...
                         ZeroDivisionError: rational division by zero

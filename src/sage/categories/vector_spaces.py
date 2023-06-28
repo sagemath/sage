@@ -162,9 +162,9 @@ class VectorSpaces(Category_module):
 
             EXAMPLES::
 
-                sage: M = FreeModule(FiniteField(19), 100)                              # optional - sage.modules sage.rings.finite_rings
-                sage: W = M.submodule([M.gen(50)])                                      # optional - sage.modules sage.rings.finite_rings
-                sage: W.dimension()                                                     # optional - sage.modules sage.rings.finite_rings
+                sage: M = FreeModule(FiniteField(19), 100)                              # optional - sage.modules
+                sage: W = M.submodule([M.gen(50)])                                      # optional - sage.modules
+                sage: W.dimension()                                                     # optional - sage.modules
                 1
 
                 sage: M = FiniteRankFreeModule(QQ, 3)                                   # optional - sage.modules

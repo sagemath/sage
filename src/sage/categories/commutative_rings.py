@@ -227,7 +227,7 @@ class CommutativeRings(CategoryWithAxiom):
 
         EXAMPLES::
 
-            sage: cartesian_product([Zmod(34),                                          # optional - sage.rings.finite_rings
+            sage: cartesian_product([Zmod(34),
             ....:                    GF(5)]) in Rings().Commutative().Finite()
             True
         """
@@ -303,14 +303,14 @@ class CommutativeRings(CategoryWithAxiom):
                     sage: R.<X> = PolynomialRing(K, 'X')                                # optional - sage.rings.finite_rings
                     sage: a.minimal_polynomial('X')                                     # optional - sage.rings.finite_rings
                     X^3 + 2*X + 1
-                    sage: cyc3 = Zmod(26).cyclotomic_cosets(3, cosets=[1]); cyc3        # optional - sage.rings.finite_rings
+                    sage: cyc3 = Zmod(26).cyclotomic_cosets(3, cosets=[1]); cyc3
                     [[1, 3, 9]]
                     sage: prod(X - a**i for i in cyc3[0])                               # optional - sage.rings.finite_rings
                     X^3 + 2*X + 1
 
                     sage: (a**7).minimal_polynomial('X')                                # optional - sage.rings.finite_rings
                     X^3 + X^2 + 2*X + 1
-                    sage: cyc7 = Zmod(26).cyclotomic_cosets(3, cosets=[7]); cyc7        # optional - sage.rings.finite_rings
+                    sage: cyc7 = Zmod(26).cyclotomic_cosets(3, cosets=[7]); cyc7
                     [[7, 11, 21]]
                     sage: prod(X - a**i for i in cyc7[0])                               # optional - sage.rings.finite_rings
                     X^3 + X^2 + 2*X + 1
@@ -321,14 +321,14 @@ class CommutativeRings(CategoryWithAxiom):
                 :mod:`~sage.combinat.designs.difference_family`). This is
                 illustrated on the following examples::
 
-                    sage: K = GF(5)                                                     # optional - sage.rings.finite_rings
+                    sage: K = GF(5)
                     sage: a = K.multiplicative_generator()                              # optional - sage.rings.finite_rings
                     sage: H = K.cyclotomic_cosets(a**2, cosets=[1, 2]); H               # optional - sage.rings.finite_rings
                     [[1, 4], [2, 3]]
                     sage: sorted(x - y for D in H for x in D for y in D if x != y)      # optional - sage.rings.finite_rings
                     [1, 2, 3, 4]
 
-                    sage: K = GF(37)                                                    # optional - sage.rings.finite_rings
+                    sage: K = GF(37)
                     sage: a = K.multiplicative_generator()                              # optional - sage.rings.finite_rings
                     sage: H = K.cyclotomic_cosets(a**4, cosets=[1]); H                  # optional - sage.rings.finite_rings
                     [[1, 7, 9, 10, 12, 16, 26, 33, 34]]
@@ -338,9 +338,9 @@ class CommutativeRings(CategoryWithAxiom):
                 The method ``cyclotomic_cosets`` works on any finite commutative
                 ring::
 
-                    sage: R = cartesian_product([GF(7), Zmod(14)])                      # optional - sage.rings.finite_rings
-                    sage: a = R((3,5))                                                  # optional - sage.rings.finite_rings
-                    sage: R.cyclotomic_cosets((3,5), [(1,1)])                           # optional - sage.rings.finite_rings
+                    sage: R = cartesian_product([GF(7), Zmod(14)])
+                    sage: a = R((3,5))
+                    sage: R.cyclotomic_cosets((3,5), [(1,1)])
                     [[(1, 1), (2, 11), (3, 5), (4, 9), (5, 3), (6, 13)]]
                 """
                 q = self(q)
@@ -380,7 +380,7 @@ class CommutativeRings(CategoryWithAxiom):
 
                 sage: CommutativeRings().Commutative().CartesianProducts().extra_super_categories()
                 [Category of commutative rings]
-                sage: cartesian_product([ZZ, Zmod(34),                                  # optional - sage.rings.finite_rings
+                sage: cartesian_product([ZZ, Zmod(34),
                 ....:                    QQ, GF(5)]) in CommutativeRings()
                 True
             """
