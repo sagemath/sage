@@ -6,8 +6,8 @@ This is the set of all field homomorphisms between two finite fields.
 EXAMPLES::
 
     sage: R.<t> = ZZ[]
-    sage: E.<a> = GF(25, modulus = t^2 - 2)
-    sage: F.<b> = GF(625)
+    sage: E.<a> = GF(25, modulus = t^2 - 2)                                             # optional - sage.rings.finite_rings
+    sage: F.<b> = GF(625)                                                               # optional - sage.rings.finite_rings
     sage: H = Hom(E, F)
     sage: f = H([4*b^3 + 4*b^2 + 4*b]); f
     Ring morphism:
@@ -27,10 +27,10 @@ We can also create endomorphisms::
 
     sage: End(E)
     Automorphism group of Finite Field in a of size 5^2
-    sage: End(GF(7))[0]
+    sage: End(GF(7))[0]                                                                 # optional - sage.rings.finite_rings
     Ring endomorphism of Finite Field of size 7
       Defn: 1 |--> 1
-    sage: H = Hom(GF(7), GF(49, 'c'))
+    sage: H = Hom(GF(7), GF(49, 'c'))                                                   # optional - sage.rings.finite_rings
     sage: H[0](2)
     2
 """
@@ -59,8 +59,8 @@ class FiniteFieldHomset(RingHomset_generic):
         EXAMPLES::
 
             sage: R.<t> = ZZ[]
-            sage: E.<a> = GF(25, modulus = t^2 - 2)
-            sage: F.<b> = GF(625)
+            sage: E.<a> = GF(25, modulus = t^2 - 2)                                     # optional - sage.rings.finite_rings
+            sage: F.<b> = GF(625)                                                       # optional - sage.rings.finite_rings
             sage: End(E)
             Automorphism group of Finite Field in a of size 5^2
             sage: list(Hom(E, F))
@@ -74,17 +74,17 @@ class FiniteFieldHomset(RingHomset_generic):
               Defn: a |--> b^3 + b^2 + b]
             sage: [phi(2*a)^2 for phi in Hom(E, F)]
             [3, 3]
-            sage: End(GF(7))[0]
+            sage: End(GF(7))[0]                                                         # optional - sage.rings.finite_rings
             Ring endomorphism of Finite Field of size 7
               Defn: 1 |--> 1
-            sage: H = Hom(GF(7), GF(49, 'c'))
+            sage: H = Hom(GF(7), GF(49, 'c'))                                           # optional - sage.rings.finite_rings
             sage: H[0](2)
             2
-            sage: Hom(GF(49, 'c'), GF(7)).list()
+            sage: Hom(GF(49, 'c'), GF(7)).list()                                        # optional - sage.rings.finite_rings
             []
-            sage: Hom(GF(49, 'c'), GF(81, 'd')).list()
+            sage: Hom(GF(49, 'c'), GF(81, 'd')).list()                                  # optional - sage.rings.finite_rings
             []
-            sage: H = Hom(GF(9, 'a'), GF(81, 'b'))
+            sage: H = Hom(GF(9, 'a'), GF(81, 'b'))                                      # optional - sage.rings.finite_rings
             sage: H == loads(dumps(H))
             True
         """
@@ -116,8 +116,8 @@ class FiniteFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(25)
-            sage: l.<b> = GF(625)
+            sage: k.<a> = GF(25)                                                        # optional - sage.rings.finite_rings
+            sage: l.<b> = GF(625)                                                       # optional - sage.rings.finite_rings
             sage: H = Hom(k, l)
             sage: G = loads(dumps(H))
             sage: H is G
@@ -142,11 +142,11 @@ class FiniteFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: Hom(GF(4, 'a'), GF(16, 'b'))._repr_()
+            sage: Hom(GF(4, 'a'), GF(16, 'b'))._repr_()                                 # optional - sage.rings.finite_rings
             'Set of field embeddings from Finite Field in a of size 2^2 to Finite Field in b of size 2^4'
-            sage: Hom(GF(4, 'a'), GF(4, 'c'))._repr_()
+            sage: Hom(GF(4, 'a'), GF(4, 'c'))._repr_()                                  # optional - sage.rings.finite_rings
             'Set of field embeddings from Finite Field in a of size 2^2 to Finite Field in c of size 2^2'
-            sage: Hom(GF(4, 'a'), GF(4, 'a'))._repr_()
+            sage: Hom(GF(4, 'a'), GF(4, 'a'))._repr_()                                  # optional - sage.rings.finite_rings
             'Automorphism group of Finite Field in a of size 2^2'
         """
         D = self.domain()
@@ -162,11 +162,11 @@ class FiniteFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: Hom(GF(4, 'a'), GF(16, 'b')).is_aut()
+            sage: Hom(GF(4, 'a'), GF(16, 'b')).is_aut()                                 # optional - sage.rings.finite_rings
             False
-            sage: Hom(GF(4, 'a'), GF(4, 'c')).is_aut()
+            sage: Hom(GF(4, 'a'), GF(4, 'c')).is_aut()                                  # optional - sage.rings.finite_rings
             False
-            sage: Hom(GF(4, 'a'), GF(4, 'a')).is_aut()
+            sage: Hom(GF(4, 'a'), GF(4, 'a')).is_aut()                                  # optional - sage.rings.finite_rings
             True
         """
         return self.domain() == self.codomain()
@@ -177,12 +177,12 @@ class FiniteFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(125)
+            sage: K.<a> = GF(125)                                                       # optional - sage.rings.finite_rings
             sage: End(K)
             Automorphism group of Finite Field in a of size 5^3
             sage: End(K).order()
             3
-            sage: L.<b> = GF(25)
+            sage: L.<b> = GF(25)                                                        # optional - sage.rings.finite_rings
             sage: Hom(L, K).order() == Hom(K, L).order() == 0
             True
         """
@@ -200,7 +200,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(25)
+            sage: K.<a> = GF(25)                                                        # optional - sage.rings.finite_rings
             sage: len(End(K))
             2
         """
@@ -212,7 +212,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(25)
+            sage: K.<a> = GF(25)                                                        # optional - sage.rings.finite_rings
             sage: End(K)
             Automorphism group of Finite Field in a of size 5^2
             sage: list(End(K))
@@ -220,7 +220,7 @@ class FiniteFieldHomset(RingHomset_generic):
               Defn: a |--> 4*a + 1,
              Ring endomorphism of Finite Field in a of size 5^2
               Defn: a |--> a]
-            sage: L.<z> = GF(7^6)
+            sage: L.<z> = GF(7^6)                                                       # optional - sage.rings.finite_rings
             sage: [g for g in End(L) if (g^3)(z) == z]
             [Ring endomorphism of Finite Field in z of size 7^6
               Defn: z |--> z,
@@ -231,8 +231,8 @@ class FiniteFieldHomset(RingHomset_generic):
 
         Between isomorphic fields with different moduli::
 
-            sage: k1 = GF(1009)
-            sage: k2 = GF(1009, modulus="primitive")
+            sage: k1 = GF(1009)                                                         # optional - sage.rings.finite_rings
+            sage: k2 = GF(1009, modulus="primitive")                                    # optional - sage.rings.finite_rings
             sage: Hom(k1, k2).list()
             [
             Ring morphism:
@@ -248,8 +248,8 @@ class FiniteFieldHomset(RingHomset_generic):
               Defn: 11 |--> 11
             ]
 
-            sage: k1.<a> = GF(1009^2, modulus="first_lexicographic")
-            sage: k2.<b> = GF(1009^2, modulus="conway")
+            sage: k1.<a> = GF(1009^2, modulus="first_lexicographic")                    # optional - sage.rings.finite_rings
+            sage: k2.<b> = GF(1009^2, modulus="conway")                                 # optional - sage.rings.finite_rings
             sage: Hom(k1, k2).list()
             [
             Ring morphism:
@@ -266,7 +266,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         Check that :trac:`11390` is fixed::
 
-            sage: K = GF(1<<16,'a'); L = GF(1<<32,'b')
+            sage: K = GF(1<<16,'a'); L = GF(1<<32,'b')                                  # optional - sage.rings.finite_rings
             sage: K.Hom(L)[0]
             Ring morphism:
               From: Finite Field in a of size 2^16
@@ -294,7 +294,7 @@ class FiniteFieldHomset(RingHomset_generic):
         """
         EXAMPLES::
 
-            sage: H = Hom(GF(32, 'a'), GF(1024, 'b'))
+            sage: H = Hom(GF(32, 'a'), GF(1024, 'b'))                                   # optional - sage.rings.finite_rings
             sage: H[1]
             Ring morphism:
               From: Finite Field in a of size 2^5
@@ -320,7 +320,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: K.<z> = GF(1024)
+            sage: K.<z> = GF(1024)                                                      # optional - sage.rings.finite_rings
             sage: g = End(K)[3]
             sage: End(K).index(g) == 3
             True
@@ -333,13 +333,13 @@ class FiniteFieldHomset(RingHomset_generic):
 
         TESTS::
 
-            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()
+            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()                          # optional - sage.rings.finite_rings
             Ring morphism:
               From: Finite Field in a of size 3^3
               To:   Finite Field in b of size 3^6
               Defn: a |--> 2*b^5 + 2*b^4
 
-            sage: Hom(GF(3^3, 'a'), GF(3^2, 'c')).an_element()
+            sage: Hom(GF(3^3, 'a'), GF(3^2, 'c')).an_element()                          # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             EmptySetError: no homomorphisms from Finite Field in a of size 3^3 to Finite Field in c of size 3^2
