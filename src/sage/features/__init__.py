@@ -405,7 +405,7 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.gap import GapPackage
             sage: Polycyclic = GapPackage("polycyclic", spkg="gap_packages")
             sage: Polycyclic.hide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))
+            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # optional - sage.libs.gap
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_polycyclic is not available.
@@ -413,7 +413,7 @@ class Feature(TrivialUniqueRepresentation):
             Use method `unhide` to make it available again.
 
             sage: Polycyclic.unhide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))
+            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # optional - sage.libs.gap
             Pcp-group with orders [ 0, 3, 4 ]
         """
         self._hidden = False
