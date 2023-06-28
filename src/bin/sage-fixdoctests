@@ -299,12 +299,13 @@ executable = f'{args.venv}/bin/sage' if args.venv else 'sage'
 environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
 probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
 doc_file = tmp_filename()
-input = os.path.join(SAGE_ROOT, 'src', 'sage', 'version.py')
-cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{shlex.quote(input)} > {shlex.quote(doc_file)}'
-print(f'Running "{cmdline}"')
-if status := os.waitstatus_to_exitcode(os.system(cmdline)):
-    print(f'Doctester exited with error status {status}')
-    sys.exit(status)
+if args.venv or environment_args:
+   input = os.path.join(SAGE_ROOT, 'src', 'sage', 'version.py')
+   cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{shlex.quote(input)} > {shlex.quote(doc_file)}'
+   print(f'Running "{cmdline}"')
+   if status := os.waitstatus_to_exitcode(os.system(cmdline)):
+       print(f'Doctester exited with error status {status}')
+       sys.exit(status)
 
 for input, output in zip(inputs, outputs):
     if skipfile_result := skipfile(input, False):
