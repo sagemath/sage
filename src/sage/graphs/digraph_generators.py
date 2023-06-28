@@ -431,11 +431,11 @@ class DiGraphGenerators():
 
         Wrong parameter::
 
-            sage: digraphs.Paley(6)                                                     # optional - sage.rings.finite_rings
+            sage: digraphs.Paley(6)
             Traceback (most recent call last):
             ...
             ValueError: parameter q must be a prime power
-            sage: digraphs.Paley(5)                                                     # optional - sage.rings.finite_rings
+            sage: digraphs.Paley(5)
             Traceback (most recent call last):
             ...
             ValueError: parameter q must be congruent to 3 mod 4

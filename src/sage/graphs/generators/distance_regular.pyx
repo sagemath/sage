@@ -2704,7 +2704,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
     TESTS::
 
-        sage: graphs.distance_regular_graph([3, 2, 2, 1, 1, 1, 1, 2, 2, 3],
+        sage: graphs.distance_regular_graph([3, 2, 2, 1, 1, 1, 1, 2, 2, 3],             # optional - sage.combinat
         ....: existence=True)
         True
         sage: graphs.distance_regular_graph([3, 2, 2, 1, 2, 1, 1, 2, 2, 3],
@@ -2712,14 +2712,14 @@ def distance_regular_graph(list arr, existence=False, check=True):
         False
         sage: graphs.distance_regular_graph([18, 16, 16, 1, 1, 9])  # optional - internet gap_packages
         Generalised hexagon of order (2, 8): Graph on 819 vertices
-        sage: graphs.distance_regular_graph([14, 12, 10, 8, 6, 4, 2,
+        sage: graphs.distance_regular_graph([14, 12, 10, 8, 6, 4, 2,                    # optional - sage.combinat
         ....: 1, 2, 3, 4, 5, 6, 7])
         Hamming Graph with parameters 7,3: Graph on 2187 vertices
-        sage: graphs.distance_regular_graph([66, 45, 28, 1, 6, 30])
+        sage: graphs.distance_regular_graph([66, 45, 28, 1, 6, 30])                     # optional - sage.combinat
         Graph on 1024 vertices
-        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])
+        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])                          # optional - sage.combinat
         Generalised octagon of order (1, 5): Graph on 312 vertices
-        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
+        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)         # optional - sage.combinat
         Graph on 325 vertices
     """
     from sage.misc.unknown import Unknown

@@ -1023,7 +1023,7 @@ def spectral_radius(G, prec=1e-10):
 
         sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(2,4),(3,4)])
         sage: e_min, e_max = spectral_radius(G, 1e-14)
-        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))
+        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))  # optional - sage.modules
         sage: e_min < e < e_max
         True
 
@@ -1037,7 +1037,7 @@ def spectral_radius(G, prec=1e-10):
         sage: G.add_edge(200,0)
         sage: G.add_edge(1,0)
         sage: e_min, e_max = spectral_radius(G, 0.00001)
-        sage: p = G.adjacency_matrix(sparse=True).charpoly()
+        sage: p = G.adjacency_matrix(sparse=True).charpoly()                            # optional - sage.modules
         sage: p
         x^201 - x^199 - 1
         sage: r = p.roots(AA, multiplicities=False)[0]
@@ -1060,7 +1060,7 @@ def spectral_radius(G, prec=1e-10):
         sage: G.add_edges([(0,0),(0,0),(0,1),(1,0)])
         sage: spectral_radius(G, 1e-14)  # abs tol 1e-14
         (2.414213562373094, 2.414213562373095)
-        sage: max(G.adjacency_matrix().eigenvalues(AA))
+        sage: max(G.adjacency_matrix().eigenvalues(AA))                                 # optional - sage.modules
         2.414213562373095?
 
     Some bipartite graphs::
@@ -1091,7 +1091,7 @@ def spectral_radius(G, prec=1e-10):
         ...
         ValueError: precision (=1.00000000000000e-20) is too small
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                      # optional - sage.modules
         ....:     G = digraphs.RandomDirectedGNM(10,35)
         ....:     if not G.is_strongly_connected():
         ....:         continue

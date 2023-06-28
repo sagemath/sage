@@ -640,7 +640,7 @@ def BarbellGraph(n1, n2):
         sage: g = graphs.BarbellGraph(n1, n2)
         sage: g.num_verts() == 2 * n1 + n2
         True
-        sage: g.num_edges() == 2 * binomial(n1, 2) + n2 + 1
+        sage: g.num_edges() == 2 * binomial(n1, 2) + n2 + 1                             # optional - sage.symbolic
         True
         sage: g.is_connected()
         True
@@ -717,7 +717,7 @@ def LollipopGraph(n1, n2):
         sage: g = graphs.LollipopGraph(n1, n2)
         sage: g.num_verts() == n1 + n2
         True
-        sage: g.num_edges() == binomial(n1, 2) + n2
+        sage: g.num_edges() == binomial(n1, 2) + n2                                     # optional - sage.symbolic
         True
         sage: g.is_connected()
         True
@@ -2552,11 +2552,11 @@ def PaleyGraph(q):
 
     Wrong parameter::
 
-        sage: graphs.PaleyGraph(6)                                                      # optional - sage.rings.finite_rings
+        sage: graphs.PaleyGraph(6)
         Traceback (most recent call last):
         ...
         ValueError: parameter q must be a prime power
-        sage: graphs.PaleyGraph(3)                                                      # optional - sage.rings.finite_rings
+        sage: graphs.PaleyGraph(3)
         Traceback (most recent call last):
         ...
         ValueError: parameter q must be congruent to 1 mod 4
@@ -4129,7 +4129,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
         sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)         # optional - sage.modules sage.rings.finite_rings
         (378, 116, 34, 36)
-        sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,                # optional - sage.modules sage.rings.finite_rings
+        sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,                # optional - sage.modules
         ....:        (1,(1,2)):0, (0,(0,2)):0, (3,(0,3)):0, (3,(1,3)):1}
         sage: graphs.MuzychukS6Graph(2, 2,                                              # optional - sage.modules sage.rings.finite_rings
         ....:                        Phi=phi).is_strongly_regular(parameters=True)

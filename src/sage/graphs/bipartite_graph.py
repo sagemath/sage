@@ -2130,11 +2130,11 @@ class BipartiteGraph(Graph):
 
             sage: G = graphs.CycleGraph(4)
             sage: B = BipartiteGraph([(u,v,2) for u,v in G.edges(sort=True, labels=0)])
-            sage: sorted(B.matching(use_edge_labels=True))
+            sage: sorted(B.matching(use_edge_labels=True))                              # optional - networkx
             [(0, 3, 2), (1, 2, 2)]
             sage: B.matching(use_edge_labels=True, value_only=True)                     # optional - networkx
             4
-            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')
+            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')            # optional - networkx
             4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='LP')
             4
@@ -2152,7 +2152,7 @@ class BipartiteGraph(Graph):
             sage: B.matching(use_edge_labels=False, value_only=True,                    # optional - networkx
             ....:            algorithm='Eppstein')
             2
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Edmonds')
+            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Edmonds')           # optional - networkx
             2
             sage: B.matching(use_edge_labels=False, value_only=True, algorithm='LP')
             2
@@ -2163,23 +2163,23 @@ class BipartiteGraph(Graph):
             sage: for e in G.edges(sort=True):
             ....:     G.set_edge_label(e[0], e[1], int(e[0]) + int(e[1]))
             sage: G.allow_multiple_edges(True)
-            sage: G.matching(use_edge_labels=True, value_only=True)
+            sage: G.matching(use_edge_labels=True, value_only=True)                     # optional - networkx
             444
 
         Empty bipartite graph and bipartite graphs without edges::
 
             sage: B = BipartiteGraph()
             sage: algorithms = ["Hopcroft-Karp", "Eppstein", "Edmonds", "LP"]
-            sage: not any(B.matching(algorithm=algo) for algo in algorithms)
+            sage: not any(B.matching(algorithm=algo) for algo in algorithms)            # optional - networkx
             True
-            sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)
+            sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)      # optional - networkx
             True
             sage: B.add_vertex(1, left=True)
             sage: B.add_vertex(2, left=True)
             sage: B.add_vertex(3, right=True)
-            sage: not any(B.matching(algorithm=algo) for algo in algorithms)
+            sage: not any(B.matching(algorithm=algo) for algo in algorithms)            # optional - networkx
             True
-            sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)
+            sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)      # optional - networkx
             True
         """
         if algorithm is None:

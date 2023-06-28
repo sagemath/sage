@@ -1457,8 +1457,8 @@ class DiGraph(GenericGraph):
 
         EXAMPLES::
 
-            sage: G = posets.PentagonPoset().hasse_diagram()                            # optional - sage.matrix
-            sage: G.degree_polynomial()                                                 # optional - sage.matrix
+            sage: G = posets.PentagonPoset().hasse_diagram()                            # optional - sage.modules
+            sage: G.degree_polynomial()                                                 # optional - sage.modules
             x^2 + 3*x*y + y^2
 
             sage: G = posets.BooleanLattice(4).hasse_diagram()

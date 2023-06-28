@@ -356,7 +356,7 @@ def show_graphs(graph_list, **kwds):
     options, all of which are available from :func:`to_graphics_array`::
 
         sage: glist = []
-        sage: for _ in range(10):
+        sage: for _ in range(10):                                                       # optional - networkx
         ....:     glist.append(graphs.RandomLobster(41, .3, .4))
         sage: graphs_list.show_graphs(glist, layout='spring', vertex_size=20)           # optional - sage.plot
     """

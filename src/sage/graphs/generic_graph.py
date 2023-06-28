@@ -10185,7 +10185,7 @@ class GenericGraph(GenericGraph_pyx):
 
         Isolated zero-cost flow cycles are also removed::
 
-            sage: g = digraphs.DeBruijn(2, 3)
+            sage: g = digraphs.DeBruijn(2, 3)                                           # optional - sage.combinat
             sage: flow = {('000', '001'): 1, ('010', '101'): 1, ('101', '010'): 1}
             sage: flow_graph = g._build_flow_graph(flow, True)
             sage: flow_graph.edges(sort=True)
@@ -13924,7 +13924,7 @@ class GenericGraph(GenericGraph_pyx):
              sage: T3 = digraphs.TransitiveTournament(3)
              sage: T5.subgraph_search_count(T3)                                         # optional - sage.modules
              10
-             sage: binomial(5,3)
+             sage: binomial(5,3)                                                        # optional - sage.symbolic
              10
              sage: T3.is_isomorphic(T5.subgraph(vertices=[0, 1, 2]))                    # optional - sage.modules
              True
@@ -16207,7 +16207,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: m = random.randint(0, n*(n-1)/2)
             sage: g = digraphs.RandomDirectedGNM(n,m)
             sage: c1 = g.centrality_closeness(algorithm='BFS')
-            sage: c2 = g.centrality_closeness(algorithm='NetworkX')
+            sage: c2 = g.centrality_closeness(algorithm='NetworkX')                     # optional - networkx
             sage: c3 = g.centrality_closeness(algorithm='Dijkstra_Boost')
             sage: c4 = g.centrality_closeness(algorithm='Floyd-Warshall-Cython')
             sage: c5 = g.centrality_closeness(algorithm='Floyd-Warshall-Python')
@@ -16369,7 +16369,7 @@ class GenericGraph(GenericGraph_pyx):
         have::
 
             sage: G = graphs.CompleteGraph(15)
-            sage: G.triangles_count() == binomial(15, 3)
+            sage: G.triangles_count() == binomial(15, 3)                                # optional - sage.symbolic
             True
 
         The 2-dimensional DeBruijn graph of 2 symbols has 2 directed `C_3`::
@@ -16381,17 +16381,17 @@ class GenericGraph(GenericGraph_pyx):
         The directed `n`-cycle is trivially triangle free for `n > 3`::
 
             sage: G = digraphs.Circuit(10)
-            sage: G.triangles_count()
+            sage: G.triangles_count()                                                   # optional - sage.modules
             0
 
         TESTS:
 
         Comparison of algorithms::
 
-            sage: G = graphs.RandomBarabasiAlbert(50,2)
+            sage: G = graphs.RandomBarabasiAlbert(50,2)                                 # optional - networkx
             sage: results = []
             sage: results.append(G.triangles_count(algorithm='matrix'))
-            sage: results.append(G.triangles_count(algorithm='iter'))
+            sage: results.append(G.triangles_count(algorithm='iter'))                   # optional - sage.modules
             sage: results.append(G.triangles_count(algorithm='sparse_copy'))
             sage: results.append(G.triangles_count(algorithm='dense_copy'))
             sage: any(x != results[0] for x in results)
@@ -17847,7 +17847,7 @@ class GenericGraph(GenericGraph_pyx):
             15
             sage: G.wiener_index(algorithm='Johnson_Boost')
             15
-            sage: G.wiener_index(algorithm='Dijkstra_NetworkX')
+            sage: G.wiener_index(algorithm='Dijkstra_NetworkX')                         # optional - networkx
             15
 
         Wiener index of complete (di)graphs::
@@ -22975,7 +22975,7 @@ class GenericGraph(GenericGraph_pyx):
             (4, ((2,3), (0,1)))
             (24, ((2,3), (1,2), (0,1)))
             sage: C = graphs.CubeGraph(4)
-            sage: G = C.automorphism_group()
+            sage: G = C.automorphism_group()                                            # optional - sage.groups
             sage: M = G.character_table() # random order of rows, thus abs() below
             sage: QQ(M.determinant()).abs()
             712483534798848
@@ -22985,7 +22985,7 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: D = graphs.DodecahedralGraph()
-            sage: G = D.automorphism_group()
+            sage: G = D.automorphism_group()                                            # optional - sage.groups
             sage: A5 = AlternatingGroup(5)
             sage: Z2 = CyclicPermutationGroup(2)
             sage: H = A5.direct_product(Z2)[0] #see documentation for direct_product to explain the [0]
@@ -22998,49 +22998,49 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_edge(('a', 'b'))
             sage: G.add_edge(('a', 'b'))
             sage: G.add_edge(('a', 'b'))
-            sage: G.automorphism_group()
+            sage: G.automorphism_group()                                                # optional - sage.groups
             Permutation Group with generators [('a','b')]
 
         Digraphs::
 
             sage: D = DiGraph( { 0:[1], 1:[2], 2:[3], 3:[4], 4:[0] } )
-            sage: D.automorphism_group()
+            sage: D.automorphism_group()                                                # optional - sage.groups
             Permutation Group with generators [(0,1,2,3,4)]
 
         Edge labeled graphs::
 
             sage: G = Graph(sparse=True)
             sage: G.add_edges( [(0,1,'a'),(1,2,'b'),(2,3,'c'),(3,4,'b'),(4,0,'a')] )
-            sage: G.automorphism_group(edge_labels=True)
+            sage: G.automorphism_group(edge_labels=True)                                # optional - sage.groups
             Permutation Group with generators [(1,4)(2,3)]
 
             sage: G.automorphism_group(edge_labels=True, algorithm="bliss") # optional - bliss
             Permutation Group with generators [(1,4)(2,3)]
 
-            sage: G.automorphism_group(edge_labels=True, algorithm="sage")
+            sage: G.automorphism_group(edge_labels=True, algorithm="sage")              # optional - sage.groups
             Permutation Group with generators [(1,4)(2,3)]
 
         ::
 
             sage: G = Graph({0 : {1 : 7}})
-            sage: G.automorphism_group(edge_labels=True)
+            sage: G.automorphism_group(edge_labels=True)                                # optional - sage.groups
             Permutation Group with generators [(0,1)]
 
             sage: foo = Graph(sparse=True)
             sage: bar = Graph(sparse=True)
             sage: foo.add_edges([(0,1,1),(1,2,2), (2,3,3)])
             sage: bar.add_edges([(0,1,1),(1,2,2), (2,3,3)])
-            sage: foo.automorphism_group(edge_labels=True)
+            sage: foo.automorphism_group(edge_labels=True)                              # optional - sage.groups
             Permutation Group with generators [()]
-            sage: foo.automorphism_group()
+            sage: foo.automorphism_group()                                              # optional - sage.groups
             Permutation Group with generators [(0,3)(1,2)]
-            sage: bar.automorphism_group(edge_labels=True)
+            sage: bar.automorphism_group(edge_labels=True)                              # optional - sage.groups
             Permutation Group with generators [()]
 
         You can also ask for just the order of the group::
 
             sage: G = graphs.PetersenGraph()
-            sage: G.automorphism_group(return_group=False, order=True)
+            sage: G.automorphism_group(return_group=False, order=True)                  # optional - sage.groups
             120
 
         Or, just the orbits (note that each graph here is vertex transitive)
@@ -23048,14 +23048,14 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: G = graphs.PetersenGraph()
-            sage: G.automorphism_group(return_group=False, orbits=True, algorithm='sage')
+            sage: G.automorphism_group(return_group=False, orbits=True, algorithm='sage')           # optional - sage.groups
             [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
-            sage: orb = G.automorphism_group(partition=[[0],list(range(1,10))],
+            sage: orb = G.automorphism_group(partition=[[0],list(range(1,10))],         # optional - sage.groups
             ....:                            return_group=False, orbits=True, algorithm='sage')
             sage: sorted([sorted(o) for o in orb], key=len)
             [[0], [1, 4, 5], [2, 3, 6, 7, 8, 9]]
             sage: C = graphs.CubeGraph(3)
-            sage: orb = C.automorphism_group(orbits=True, return_group=False, algorithm='sage')
+            sage: orb = C.automorphism_group(orbits=True, return_group=False, algorithm='sage')     # optional - sage.groups
             sage: [sorted(o) for o in orb]
             [['000', '001', '010', '011', '100', '101', '110', '111']]
 
@@ -23063,7 +23063,7 @@ class GenericGraph(GenericGraph_pyx):
         group of the graph - bliss::
 
             sage: G = graphs.HallJankoGraph()                   # optional - bliss
-            sage: A1 = G.automorphism_group()                   # optional - bliss
+            sage: A1 = G.automorphism_group()   # optional - bliss sage.groups
             sage: A2 = G.automorphism_group(algorithm='bliss')  # optional - bliss
             sage: A1.is_isomorphic(A2)                          # optional - bliss
             True
@@ -23074,14 +23074,14 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g=graphs.CubeGraph(3)
             sage: g.relabel()
-            sage: g.automorphism_group(partition=[[0,1,2],[3,4,5]],algorithm='sage')
+            sage: g.automorphism_group(partition=[[0,1,2],[3,4,5]],algorithm='sage')    # optional - sage.groups
             Traceback (most recent call last):
             ...
             KeyError: ...
 
         Labeled automorphism group::
 
-            sage: d = digraphs.DeBruijn(3,2)
+            sage: d = digraphs.DeBruijn(3,2)                                            # optional - sage.combinat
             sage: A = d.automorphism_group(algorithm='sage')
             sage: A_target = PermutationGroup(["('02','10','21')('00','11','22')('01','12','20')",
             ....:                              "('02','01')('10','20')('21','12')('22','11')"])
@@ -23097,14 +23097,14 @@ class GenericGraph(GenericGraph_pyx):
         The labeling is correct::
 
             sage: g = graphs.PetersenGraph()
-            sage: ag = g.automorphism_group()
+            sage: ag = g.automorphism_group()                                           # optional - sage.groups
             sage: all(len(ag.orbit(e, action="OnPairs")) == 30
             ....:       for e in g.edge_iterator(labels=False))
             True
 
         Empty group, correct domain::
 
-            sage: ag = Graph({'a':['a'], 'b':[]}).automorphism_group()
+            sage: ag = Graph({'a':['a'], 'b':[]}).automorphism_group()                  # optional - sage.groups
             sage: ag
             Permutation Group with generators [()]
             sage: sorted(ag.domain())
@@ -23114,7 +23114,7 @@ class GenericGraph(GenericGraph_pyx):
         (:trac:`15656`)::
 
             sage: G1 = Graph(':H`ECw@HGXGAGUG`e')
-            sage: G = G1.automorphism_group()
+            sage: G = G1.automorphism_group()                                           # optional - sage.groups
             sage: G.subgroups()
             [Subgroup generated by [()] of (Permutation Group with generators [(0,7)(1,4)(2,3)(6,8)]),
              Subgroup generated by [(0,7)(1,4)(2,3)(6,8)] of (Permutation Group with generators [(0,7)(1,4)(2,3)(6,8)])]
@@ -23122,10 +23122,10 @@ class GenericGraph(GenericGraph_pyx):
         We check that the representations of the groups returned with ``'sage'``
         and ``'bliss'`` are the same (:trac:`27571`)::
 
-            sage: G = graphs.PaleyGraph(9)
-            sage: a1 = G.automorphism_group(algorithm='sage')
+            sage: G = graphs.PaleyGraph(9)                                              # optional - sage.libs.pari
+            sage: a1 = G.automorphism_group(algorithm='sage')                           # optional - sage.groups
             sage: V = sorted(G, reverse=True)
-            sage: a2 = G.automorphism_group(algorithm='sage', partition=[V])
+            sage: a2 = G.automorphism_group(algorithm='sage', partition=[V])            # optional - sage.groups
             sage: a1.is_isomorphic(a2)
             True
             sage: str(a1) == str(a2)

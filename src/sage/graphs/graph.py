@@ -4308,9 +4308,9 @@ class Graph(GenericGraph):
         Odd length cycles and odd cliques of order at least 3 are
         factor-critical graphs::
 
-            sage: [graphs.CycleGraph(2*i + 1).is_factor_critical() for i in range(5)]
+            sage: [graphs.CycleGraph(2*i + 1).is_factor_critical() for i in range(5)]   # optional - networkx
             [True, True, True, True, True]
-            sage: [graphs.CompleteGraph(2*i + 1).is_factor_critical() for i in range(5)]
+            sage: [graphs.CompleteGraph(2*i + 1).is_factor_critical() for i in range(5)]            # optional - networkx
             [True, True, True, True, True]
 
         More generally, every Hamiltonian graph with an odd number of vertices
@@ -4321,12 +4321,12 @@ class Graph(GenericGraph):
             sage: G.add_edge(14, 0)
             sage: G.is_hamiltonian()
             True
-            sage: G.is_factor_critical()
+            sage: G.is_factor_critical()                                                # optional - networkx
             True
 
         Friendship graphs are non-Hamiltonian factor-critical graphs::
 
-            sage: [graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5)]
+            sage: [graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5)]             # optional - networkx
             [True, True, True, True]
 
         Bipartite graphs are not factor-critical::
@@ -4344,7 +4344,7 @@ class Graph(GenericGraph):
         One can specify a matching::
 
             sage: F = graphs.FriendshipGraph(4)
-            sage: M = F.matching()
+            sage: M = F.matching()                                                      # optional - networkx
             sage: F.is_factor_critical(matching=M)
             True
             sage: F.is_factor_critical(matching=Graph(M))
@@ -4357,7 +4357,7 @@ class Graph(GenericGraph):
             sage: G = graphs.RandomGNP(15, .3)
             sage: while not G.is_biconnected():
             ....:     G = graphs.RandomGNP(15, .3)
-            sage: M = G.matching()
+            sage: M = G.matching()                                                      # optional - networkx
             sage: G.is_factor_critical(matching=M[:-1])
             Traceback (most recent call last):
             ...

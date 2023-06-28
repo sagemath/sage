@@ -68,13 +68,13 @@ def is_paley(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_paley
-        sage: t = is_paley(13,6,2,3); t                                                 # optional - sage.rings.finite_rings
+        sage: t = is_paley(13,6,2,3); t
         (..., 13)
         sage: g = t[0](*t[1:]); g                                                       # optional - sage.rings.finite_rings
         Paley graph with parameter 13: Graph on 13 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.rings.finite_rings
         (13, 6, 2, 3)
-        sage: t = is_paley(5,5,5,5); t                                                  # optional - sage.rings.finite_rings
+        sage: t = is_paley(5,5,5,5); t
     """
     if (v % 4 == 1 and is_prime_power(v) and
             k == (v - 1)//2 and
@@ -363,7 +363,7 @@ def is_affine_polar(int v, int k, int l, int mu):
         sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.rings.finite_rings
         (81, 32, 13, 12)
 
-        sage: t = is_affine_polar(5,5,5,5); t                                           # optional - sage.rings.finite_rings
+        sage: t = is_affine_polar(5,5,5,5); t
     """
     # Using notations from https://www.win.tue.nl/~aeb/graphs/VO.html
     #
@@ -411,7 +411,7 @@ def is_orthogonal_polar(int v, int k, int l, int mu):
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import is_orthogonal_polar
-        sage: t = is_orthogonal_polar(85, 20, 3, 5); t                                  # optional - sage.rings.finite_rings
+        sage: t = is_orthogonal_polar(85, 20, 3, 5); t
         (<function OrthogonalPolarGraph at ...>, 5, 4, '')
         sage: g = t[0](*t[1:]); g                                                       # optional - sage.rings.finite_rings
         Orthogonal Polar Graph O(5, 4): Graph on 85 vertices
@@ -424,9 +424,9 @@ def is_orthogonal_polar(int v, int k, int l, int mu):
 
     All of ``O(2m+1,q)``, ``O^+(2m,q)`` and ``O^-(2m,q)`` appear::
 
-        sage: is_orthogonal_polar(85, 20, 3, 5)                                         # optional - sage.rings.finite_rings
+        sage: is_orthogonal_polar(85, 20, 3, 5)
         (<function OrthogonalPolarGraph at ...>, 5, 4, '')
-        sage: is_orthogonal_polar(119,54,21,27)                                         # optional - sage.rings.finite_rings
+        sage: is_orthogonal_polar(119,54,21,27)
         (<function OrthogonalPolarGraph at ...>, 8, 2, '-')
         sage: is_orthogonal_polar(130,48,20,16)                                         # optional - sage.rings.finite_rings
         (<function OrthogonalPolarGraph at ...>, 6, 3, '+')
@@ -1491,11 +1491,11 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         descendant of complement(Johnson graph with parameters 8,2) at {0, 1}: Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # optional - sage.rings.finite_rings
         (27, 10, 1, 5)
-        sage: t = is_twograph_descendant_of_srg(5,5,5,5); t                             # optional - sage.rings.finite_rings
+        sage: t = is_twograph_descendant_of_srg(5,5,5,5); t
 
     TESTS::
 
-        sage: graphs.strongly_regular_graph(279, 150, 85, 75, existence=True)
+        sage: graphs.strongly_regular_graph(279, 150, 85, 75, existence=True)           # optional - sage.combinat
         True
         sage: graphs.strongly_regular_graph(279, 150, 85, 75).is_strongly_regular(parameters=True) # optional - gap_packages internet
         (279, 150, 85, 75)
@@ -2833,9 +2833,9 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     A set of parameters unknown to be realizable in Andries Brouwer's database::
 
-        sage: graphs.strongly_regular_graph(324,95,22,30,existence=True)
+        sage: graphs.strongly_regular_graph(324,95,22,30,existence=True)                # optional - sage.combinat
         Unknown
-        sage: graphs.strongly_regular_graph(324,95,22,30)
+        sage: graphs.strongly_regular_graph(324,95,22,30)                               # optional - sage.combinat
         Traceback (most recent call last):
         ...
         RuntimeError: Andries Brouwer's database reports that no
@@ -2844,9 +2844,9 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     A large unknown set of parameters (not in Andries Brouwer's database)::
 
-        sage: graphs.strongly_regular_graph(1394,175,0,25,existence=True)
+        sage: graphs.strongly_regular_graph(1394,175,0,25,existence=True)               # optional - sage.combinat
         Unknown
-        sage: graphs.strongly_regular_graph(1394,175,0,25)
+        sage: graphs.strongly_regular_graph(1394,175,0,25)                              # optional - sage.combinat
         Traceback (most recent call last):
         ...
         RuntimeError: Sage cannot figure out if a (1394, 175, 0, 25)-strongly
@@ -2861,11 +2861,11 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     Check that :trac:`26513` is fixed::
 
-        sage: graphs.strongly_regular_graph(539, 288, 162, 144)
+        sage: graphs.strongly_regular_graph(539, 288, 162, 144)                         # optional - sage.combinat
         descendant of (540, 264, 138, 120)-strongly regular graph at ... 539 vertices
-        sage: graphs.strongly_regular_graph(539, 250, 105, 125)
+        sage: graphs.strongly_regular_graph(539, 250, 105, 125)                         # optional - sage.combinat
         descendant of (540, 275, 130, 150)-strongly regular graph at ... 539 vertices
-        sage: graphs.strongly_regular_graph(209, 100, 45, 50)
+        sage: graphs.strongly_regular_graph(209, 100, 45, 50)                           # optional - sage.libs.pari
         descendant of complement(merging of S_7 on Circulant(6,[1,4])s) at ... 209 vertices
 
 
@@ -3110,15 +3110,15 @@ def _build_small_srg_database():
     Make sure that all two-weight codes yield the strongly regular graphs we
     expect::
 
-        sage: graphs.strongly_regular_graph(81, 50, 31, 30)
+        sage: graphs.strongly_regular_graph(81, 50, 31, 30)                             # optional - sage.libs.pari
         complement(two-intersection set in PG(4,3)): Graph on 81 vertices
         sage: graphs.strongly_regular_graph(243, 220, 199, 200) # long time             # optional - sage.rings.finite_rings
         two-weight code: [55, 5] linear code over GF(3): Graph on 243 vertices
-        sage: graphs.strongly_regular_graph(256, 153, 92, 90)
+        sage: graphs.strongly_regular_graph(256, 153, 92, 90)                           # optional - sage.combinat
         complement(two-intersection set in PG(4,4)): Graph on 256 vertices
-        sage: graphs.strongly_regular_graph(256, 170, 114, 110)
+        sage: graphs.strongly_regular_graph(256, 170, 114, 110)                         # optional - sage.combinat
         complement(two-intersection set in PG(8,2)): Graph on 256 vertices
-        sage: graphs.strongly_regular_graph(256, 187, 138, 132)
+        sage: graphs.strongly_regular_graph(256, 187, 138, 132)                         # optional - sage.combinat
         complement(two-intersection set in PG(8,2)): Graph on 256 vertices
         sage: graphs.strongly_regular_graph(512, 73, 12, 10)    # not tested (too long), optional - sage.rings.finite_rings
         two-weight code: [219, 9] linear code over GF(2): Graph on 512 vertices
