@@ -816,8 +816,8 @@ class AdditiveMagmas(Category_singleton):
 
                 Check that :trac:`18275` is fixed::
 
-                    sage: C = GF(5).cartesian_product(GF(5))                            # optional - sage.rings.finite_rings
-                    sage: C.one() - C.one()                                             # optional - sage.rings.finite_rings
+                    sage: C = GF(5).cartesian_product(GF(5))
+                    sage: C.one() - C.one()
                     (0, 0)
                 """
                 return left + (-right)
@@ -917,15 +917,15 @@ class AdditiveMagmas(Category_singleton):
 
                         EXAMPLES::
 
-                           sage: x = cartesian_product((GF(7)(2), 17)); x               # optional - sage.rings.finite_rings
+                           sage: x = cartesian_product((GF(7)(2), 17)); x
                            (2, 17)
-                           sage: -x                                                     # optional - sage.rings.finite_rings
+                           sage: -x
                            (5, -17)
 
                         TESTS::
 
                            sage: C = AdditiveMagmas().AdditiveUnital().AdditiveInverse().CartesianProducts()
-                           sage: x.parent() in C                                        # optional - sage.rings.finite_rings
+                           sage: x.parent() in C
                            True
                         """
                         return self.parent()._cartesian_product_of_elements(

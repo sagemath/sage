@@ -11,11 +11,11 @@ EXAMPLES:
 
 In the following, the :class:`Hom` object is indeed cached::
 
-    sage: K = GF(17)                                                                    # optional - sage.rings.finite_rings
-    sage: H = Hom(ZZ, K)                                                                # optional - sage.rings.finite_rings
-    sage: H                                                                             # optional - sage.rings.finite_rings
+    sage: K = GF(17)
+    sage: H = Hom(ZZ, K)
+    sage: H
     Set of Homomorphisms from Integer Ring to Finite Field of size 17
-    sage: H is Hom(ZZ, K)                                                               # optional - sage.rings.finite_rings
+    sage: H is Hom(ZZ, K)
     True
 
 Nonetheless, garbage collection occurs when the original references are
@@ -26,9 +26,9 @@ overwritten::
     ....:     H = Hom(ZZ, K)
     sage: import gc
     sage: _ = gc.collect()
-    sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF  # optional - sage.rings.finite_rings
-    sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]                        # optional - sage.rings.finite_rings
-    sage: len(L)                                                                        # optional - sage.rings.finite_rings
+    sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
+    sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
+    sage: len(L)
     1
     sage: L                                                                             # optional - sage.rings.finite_rings
     [Finite Field of size 199]
@@ -138,8 +138,8 @@ def Hom(X, Y, category=None, check=True):
         sage: import gc
         sage: gc.collect()       # random
         624
-        sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF  # optional - sage.rings.finite_rings
-        sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]                    # optional - sage.rings.finite_rings
+        sage: from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn as FF
+        sage: L = [x for x in gc.get_objects() if isinstance(x, FF)]
         sage: len(L), L[0]                                                              # optional - sage.rings.finite_rings
         (1, Finite Field of size 997)
 
@@ -195,10 +195,10 @@ def Hom(X, Y, category=None, check=True):
 
     Homset are unique parents::
 
-        sage: k = GF(5)                                                                 # optional - sage.rings.finite_rings
-        sage: H1 = Hom(k, k)                                                            # optional - sage.rings.finite_rings
-        sage: H2 = Hom(k, k)                                                            # optional - sage.rings.finite_rings
-        sage: H1 is H2                                                                  # optional - sage.rings.finite_rings
+        sage: k = GF(5)
+        sage: H1 = Hom(k, k)
+        sage: H2 = Hom(k, k)
+        sage: H1 is H2
         True
 
     Moreover, if no category is provided, then the result is identical
@@ -1139,8 +1139,8 @@ class Homset(Set_generic):
             Coercion morphism:
               From: Univariate Polynomial Ring in t over Integer Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: H = Hom(QQ['t'], GF(3)['t'])                                          # optional - sage.rings.finite_rings
-            sage: H.natural_map()                                                       # optional - sage.rings.finite_rings
+            sage: H = Hom(QQ['t'], GF(3)['t'])
+            sage: H.natural_map()
             Traceback (most recent call last):
             ...
             TypeError: natural coercion morphism

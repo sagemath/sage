@@ -34,7 +34,7 @@ class FiniteFields(CategoryWithAxiom):
 
     Some examples of membership testing and coercion::
 
-        sage: FiniteField(17) in K                                                      # optional - sage.rings.finite_rings
+        sage: FiniteField(17) in K
         True
         sage: RationalField() in K
         False

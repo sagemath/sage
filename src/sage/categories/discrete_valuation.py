@@ -20,7 +20,7 @@ class DiscreteValuationRings(Category_singleton):
 
     EXAMPLES::
 
-        sage: GF(7)[['x']] in DiscreteValuationRings()                                  # optional - sage.rings.finite_rings
+        sage: GF(7)[['x']] in DiscreteValuationRings()
         True
         sage: TestSuite(DiscreteValuationRings()).run()
     """
@@ -70,27 +70,27 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: R.<t> = PowerSeriesRing(GF(5))                                    # optional - sage.rings.finite_rings
-                sage: M = matrix(4, 4, [(t^(i+j)).add_bigoh(10)                         # optional - sage.rings.finite_rings
+                sage: R.<t> = PowerSeriesRing(GF(5))
+                sage: M = matrix(4, 4, [(t^(i+j)).add_bigoh(10)
                 ....:                   for i in range(4) for j in range(4)])
-                sage: M                                                                 # optional - sage.rings.finite_rings
+                sage: M
                 [  1 + O(t^10)   t + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
                 [  t + O(t^10) t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
                 [t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10)]
                 [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
-                sage: M.charpoly()   # indirect doctest                                 # optional - sage.rings.finite_rings
+                sage: M.charpoly()   # indirect doctest
                 x^4 + (4 + 4*t^2 + 4*t^4 + 4*t^6 + O(t^10))*x^3
 
             Note that this function uses a Hessenberg-like algorithm
             that performs divisions. Hence, truncations may show up
             even if the input matrix is exact::
 
-                sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])     # optional - sage.rings.finite_rings
-                sage: M                                                                 # optional - sage.rings.finite_rings
+                sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])
+                sage: M
                 [    1     t   t^2]
                 [1 + t   t^2   t^3]
                 [  t^2   t^3   t^4]
-                sage: M.charpoly()                                                      # optional - sage.rings.finite_rings
+                sage: M.charpoly()
                 x^3 + (4 + 4*t^2 + 4*t^4 + O(t^25))*x^2 + (4*t + O(t^24))*x
 
             Another example over the p-adics::
@@ -125,10 +125,10 @@ class DiscreteValuationRings(Category_singleton):
 
             TESTS::
 
-                sage: R.<q> = GF(5)[[]]                                                 # optional - sage.rings.finite_rings
-                sage: (q^3).euclidean_degree()                                          # optional - sage.rings.finite_rings
+                sage: R.<q> = GF(5)[[]]
+                sage: (q^3).euclidean_degree()
                 3
-                sage: R(0).euclidean_degree()                                           # optional - sage.rings.finite_rings
+                sage: R(0).euclidean_degree()
                 Traceback (most recent call last):
                 ...
                 ValueError: Euclidean degree of the zero element not defined
@@ -145,12 +145,12 @@ class DiscreteValuationRings(Category_singleton):
 
             TESTS::
 
-                sage: R.<q> = GF(5)[[]]                                                 # optional - sage.rings.finite_rings
-                sage: (q^2 + q).quo_rem(q)                                              # optional - sage.rings.finite_rings
+                sage: R.<q> = GF(5)[[]]
+                sage: (q^2 + q).quo_rem(q)
                 (1 + q, 0)
-                sage: (q + 1).quo_rem(q^2)                                              # optional - sage.rings.finite_rings
+                sage: (q + 1).quo_rem(q^2)
                 (0, 1 + q)
-                sage: q.quo_rem(0)                                                      # optional - sage.rings.finite_rings
+                sage: q.quo_rem(0)
                 Traceback (most recent call last):
                 ...
                 ZeroDivisionError: Euclidean division by the zero element not defined
@@ -261,17 +261,17 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: R.<t> = PowerSeriesRing(GF(5))                                    # optional - sage.rings.finite_rings
-                sage: K = R.fraction_field()                                            # optional - sage.rings.finite_rings
-                sage: H = matrix(K, 4, 4, [(t^(i+j)).add_bigoh(10)                      # optional - sage.rings.finite_rings
+                sage: R.<t> = PowerSeriesRing(GF(5))
+                sage: K = R.fraction_field()
+                sage: H = matrix(K, 4, 4, [(t^(i+j)).add_bigoh(10)
                 ....:                      for i in range(4) for j in range(4)])
-                sage: H                                                                 # optional - sage.rings.finite_rings
+                sage: H
                 [  1 + O(t^10)   t + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
                 [  t + O(t^10) t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
                 [t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10)]
                 [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
-                sage: H.hessenbergize()                                                 # optional - sage.rings.finite_rings
-                sage: H                                                                 # optional - sage.rings.finite_rings
+                sage: H.hessenbergize()
+                sage: H
                 [              1 + O(t^10)   t + t^3 + t^5 + O(t^10)             t^2 + O(t^10)             t^3 + O(t^10)]
                 [              t + O(t^10) t^2 + t^4 + t^6 + O(t^10)             t^3 + O(t^10)             t^4 + O(t^10)]
                 [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]

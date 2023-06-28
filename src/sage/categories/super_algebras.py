@@ -89,8 +89,8 @@ class SuperAlgebras(SuperModulesCategory):
             a signed tensor product (:trac:`31266`)::
 
                 sage: a = SteenrodAlgebra(3).an_element()                               # optional - sage.combinat sage.modules
-                sage: M = CombinatorialFreeModule(GF(3), ['s', 't', 'u'])               # optional - sage.combinat sage.modules sage.rings.finite_rings
-                sage: s = M.basis()['s']                                                # optional - sage.combinat sage.modules sage.rings.finite_rings
+                sage: M = CombinatorialFreeModule(GF(3), ['s', 't', 'u'])               # optional - sage.combinat sage.modules
+                sage: s = M.basis()['s']                                                # optional - sage.combinat sage.modules
                 sage: tensor([a, s])                                                    # optional - sage.combinat sage.modules sage.rings.finite_rings
                 2*Q_1 Q_3 P(2,1) # B['s']
             """

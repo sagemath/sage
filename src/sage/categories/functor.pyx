@@ -117,7 +117,7 @@ cdef class Functor(SageObject):
         Functor from Category of rings to Category of fields
         sage: F(ZZ)
         Rational Field
-        sage: F(GF(2))                                                                  # optional - sage.rings.finite_rings
+        sage: F(GF(2))
         Finite Field of size 2
 
     Functors are not only about the objects of a category, but also about
@@ -175,7 +175,7 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
             sage: F(ZZ)
             Rational Field
-            sage: F(GF(2))                                                              # optional - sage.rings.finite_rings
+            sage: F(GF(2))
             Finite Field of size 2
 
         """
@@ -339,13 +339,13 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
             sage: F(ZZ)
             Rational Field
-            sage: F(GF(2))                                                              # optional - sage.rings.finite_rings
+            sage: F(GF(2))
             Finite Field of size 2
 
         Two subclasses::
 
             sage: F1 = ForgetfulFunctor(FiniteFields(), Fields())
-            sage: F1(GF(5))  # indirect doctest                                         # optional - sage.rings.finite_rings
+            sage: F1(GF(5))  # indirect doctest
             Finite Field of size 5
             sage: F1(ZZ)
             Traceback (most recent call last):
@@ -469,7 +469,7 @@ class ForgetfulFunctor_generic(Functor):
         The forgetful functor
          from Category of finite enumerated fields
            to Category of fields
-        sage: F(GF(3))                                                                  # optional - sage.rings.finite_rings
+        sage: F(GF(3))
         Finite Field of size 3
 
     """

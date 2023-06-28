@@ -153,11 +153,11 @@ class Category_over_base(CategoryWithParameters):
 
     EXAMPLES::
 
-        sage: Algebras(GF(2)).element_class is Algebras(GF(3)).element_class            # optional - sage.rings.finite_rings
+        sage: Algebras(GF(2)).element_class is Algebras(GF(3)).element_class
         True
 
-        sage: C = GF(2).category()                                                      # optional - sage.rings.finite_rings
-        sage: Algebras(GF(2)).parent_class is Algebras(C).parent_class                  # optional - sage.rings.finite_rings
+        sage: C = GF(2).category()
+        sage: Algebras(GF(2)).parent_class is Algebras(C).parent_class
         True
 
         sage: C = ZZ.category()
@@ -278,7 +278,7 @@ class Category_over_base(CategoryWithParameters):
             'algebras over Rational Field'
             sage: Algebras(Fields())._repr_object_names()
             'algebras over fields'
-            sage: Algebras(GF(2).category())._repr_object_names()                       # optional - sage.rings.finite_rings
+            sage: Algebras(GF(2).category())._repr_object_names()
             'algebras over (finite enumerated fields and subquotients of monoids and quotients of semigroups)'
         """
         base = self.__base
@@ -338,9 +338,9 @@ class Category_over_base_ring(Category_over_base):
 
         EXAMPLES::
 
-            sage: C = Algebras(GF(2)); C                                                # optional - sage.rings.finite_rings
+            sage: C = Algebras(GF(2)); C
             Category of algebras over Finite Field of size 2
-            sage: TestSuite(C).run()                                                    # optional - sage.rings.finite_rings
+            sage: TestSuite(C).run()
         """
         from sage.categories.rings import Rings
         if not (base in Rings() or
@@ -355,8 +355,8 @@ class Category_over_base_ring(Category_over_base):
 
         EXAMPLES::
 
-            sage: C = Algebras(GF(2))                                                   # optional - sage.rings.finite_rings
-            sage: C.base_ring()                                                         # optional - sage.rings.finite_rings
+            sage: C = Algebras(GF(2))
+            sage: C.base_ring()
             Finite Field of size 2
         """
         return self.base()
@@ -430,7 +430,7 @@ class Category_over_base_ring(Category_over_base):
             True
             sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))       # base ring in different categories           # optional - sage.rings.real_mpfr
             False
-            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3))) # base ring in the same category              # optional - sage.rings.finite_rings
+            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3))) # base ring in the same category
             False
 
         Note; we need both previous tests since the distinction is
@@ -439,7 +439,7 @@ class Category_over_base_ring(Category_over_base):
             sage: issubclass(Algebras(QQ).parent_class,                                 # optional - sage.modules
             ....:            VectorSpaces(CC).parent_class)
             False
-            sage: issubclass(Algebras(GF(2)).parent_class,                              # optional - sage.modules sage.rings.finite_rings
+            sage: issubclass(Algebras(GF(2)).parent_class,                              # optional - sage.modules
             ....:            VectorSpaces(GF(3)).parent_class)
             True
 

@@ -26,7 +26,7 @@ We create a couple of categories::
     Category of G-sets for Multiplicative Abelian group isomorphic to C2 x C4 x C9
     sage: Semigroups()
     Category of semigroups
-    sage: VectorSpaces(FiniteField(11))                                                 # optional - sage.rings.finite_rings
+    sage: VectorSpaces(FiniteField(11))
     Category of vector spaces over Finite Field of size 11
     sage: Ideals(IntegerRing())
     Category of ring ideals in Integer Ring
@@ -327,7 +327,7 @@ class Category(UniqueRepresentation, SageObject):
     On the other hand, identical hierarchies of classes are,
     preferably, built only once (e.g. for categories over a base ring)::
 
-        sage: Algebras(GF(5)).parent_class is Algebras(GF(7)).parent_class              # optional - sage.rings.finite_rings
+        sage: Algebras(GF(5)).parent_class is Algebras(GF(7)).parent_class
         True
         sage: F = FractionField(ZZ['t'])
         sage: Coalgebras(F).parent_class is Coalgebras(FractionField(F['x'])).parent_class
@@ -932,8 +932,8 @@ class Category(UniqueRepresentation, SageObject):
 
         TESTS::
 
-            sage: C = HopfAlgebrasWithBasis(GF(7))                                      # optional - sage.rings.finite_rings
-            sage: C._set_of_super_categories == set(C._all_super_categories_proper)     # optional - sage.rings.finite_rings
+            sage: C = HopfAlgebrasWithBasis(GF(7))
+            sage: C._set_of_super_categories == set(C._all_super_categories_proper)
             True
         """
         return frozenset(self._all_super_categories_proper)
@@ -1673,7 +1673,7 @@ class Category(UniqueRepresentation, SageObject):
         the category of algebras over a finite field versus algebras
         over a non-field::
 
-            sage: Algebras(GF(7)).parent_class is Algebras(GF(5)).parent_class          # optional - sage.rings.finite_rings
+            sage: Algebras(GF(7)).parent_class is Algebras(GF(5)).parent_class
             True
             sage: Algebras(QQ).parent_class is Algebras(ZZ).parent_class
             False
@@ -1718,7 +1718,7 @@ class Category(UniqueRepresentation, SageObject):
         category of algebras over a field versus algebras over a
         non-field::
 
-            sage: Algebras(GF(5)).element_class is Algebras(GF(3)).element_class        # optional - sage.rings.finite_rings
+            sage: Algebras(GF(5)).element_class is Algebras(GF(3)).element_class
             True
             sage: Algebras(QQ).element_class is Algebras(ZZ).element_class
             False
@@ -1792,7 +1792,7 @@ class Category(UniqueRepresentation, SageObject):
 
         ::
 
-            sage: M3 = VectorSpaces(FiniteField(3))                                     # optional - sage.rings.finite_rings sage.modules
+            sage: M3 = VectorSpaces(FiniteField(3))                                     # optional - sage.modules
             sage: M9 = VectorSpaces(FiniteField(9, 'a'))                                # optional - sage.rings.finite_rings sage.modules
             sage: M3.is_subcategory(M9)                                                 # optional - sage.rings.finite_rings sage.modules
             False
@@ -1805,16 +1805,16 @@ class Category(UniqueRepresentation, SageObject):
 
         ::
 
-            sage: V3 = VectorSpaces(FiniteField(3))                                     # optional - sage.rings.finite_rings
+            sage: V3 = VectorSpaces(FiniteField(3))
             sage: POSet = PartiallyOrderedSets()
-            sage: PoV3 = Category.join((V3, POSet))                                     # optional - sage.rings.finite_rings
-            sage: A3 = AlgebrasWithBasis(FiniteField(3))                                # optional - sage.rings.finite_rings
-            sage: PoA3 = Category.join((A3, POSet))                                     # optional - sage.rings.finite_rings
-            sage: PoA3.is_subcategory(PoV3)                                             # optional - sage.rings.finite_rings
+            sage: PoV3 = Category.join((V3, POSet))
+            sage: A3 = AlgebrasWithBasis(FiniteField(3))
+            sage: PoA3 = Category.join((A3, POSet))
+            sage: PoA3.is_subcategory(PoV3)
             True
-            sage: PoV3.is_subcategory(PoV3)                                             # optional - sage.rings.finite_rings
+            sage: PoV3.is_subcategory(PoV3)
             True
-            sage: PoV3.is_subcategory(PoA3)                                             # optional - sage.rings.finite_rings
+            sage: PoV3.is_subcategory(PoA3)
             False
         """
         if c is self:
@@ -2699,15 +2699,15 @@ class CategoryWithParameters(Category):
 
     EXAMPLES::
 
-        sage: C1 = Algebras(GF(5))                                                      # optional - sage.rings.finite_rings
-        sage: C2 = Algebras(GF(3))                                                      # optional - sage.rings.finite_rings
+        sage: C1 = Algebras(GF(5))
+        sage: C2 = Algebras(GF(3))
         sage: C3 = Algebras(ZZ)
         sage: from sage.categories.category import CategoryWithParameters
-        sage: isinstance(C1, CategoryWithParameters)                                    # optional - sage.rings.finite_rings
+        sage: isinstance(C1, CategoryWithParameters)
         True
-        sage: C1.parent_class is C2.parent_class                                        # optional - sage.rings.finite_rings
+        sage: C1.parent_class is C2.parent_class
         True
-        sage: C1.parent_class is C3.parent_class                                        # optional - sage.rings.finite_rings
+        sage: C1.parent_class is C3.parent_class
         False
 
     .. automethod:: Category._make_named_class
@@ -2760,9 +2760,9 @@ class CategoryWithParameters(Category):
         On the other hand, modules over a field have more methods than
         modules over a ring::
 
-            sage: Modules(GF(3)).parent_class is Modules(ZZ).parent_class               # optional - sage.rings.finite_rings
+            sage: Modules(GF(3)).parent_class is Modules(ZZ).parent_class
             False
-            sage: Modules(GF(3)).element_class is Modules(ZZ).element_class             # optional - sage.rings.finite_rings
+            sage: Modules(GF(3)).element_class is Modules(ZZ).element_class
             False
 
         For a more subtle example, one could possibly share the classes for
@@ -2773,7 +2773,7 @@ class CategoryWithParameters(Category):
 
         This is because those two fields do not have the exact same category::
 
-            sage: GF(3).category()                                                      # optional - sage.rings.finite_rings
+            sage: GF(3).category()
             Join of Category of finite enumerated fields
              and Category of subquotients of monoids
              and Category of quotients of semigroups
@@ -2794,10 +2794,10 @@ class CategoryWithParameters(Category):
 
         Some other cases where one could potentially share those classes::
 
-            sage: MF = Modules(GF(3), dispatch=False)                                   # optional - sage.rings.finite_rings
-            sage: MF.parent_class is Modules(ZZ).parent_class                           # optional - sage.rings.finite_rings
+            sage: MF = Modules(GF(3), dispatch=False)
+            sage: MF.parent_class is Modules(ZZ).parent_class
             False
-            sage: MF.element_class is Modules(ZZ).element_class                         # optional - sage.rings.finite_rings
+            sage: MF.element_class is Modules(ZZ).element_class
             False
 
         TESTS::

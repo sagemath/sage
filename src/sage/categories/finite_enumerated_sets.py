@@ -59,7 +59,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
         EXAMPLES::
 
-            sage: FiniteEnumeratedSets()(GF(3))                                         # optional - sage.rings.finite_rings
+            sage: FiniteEnumeratedSets()(GF(3))
             Finite Field of size 3
             sage: Partitions(3)                                                         # optional - sage.combinat
             Partitions of the integer 3
@@ -86,9 +86,9 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: len(GF(5))                                                        # optional - sage.rings.finite_rings
+                sage: len(GF(5))
                 5
-                sage: len(MatrixSpace(GF(2), 3, 3))                                     # optional - sage.rings.finite_rings sage.modules
+                sage: len(MatrixSpace(GF(2), 3, 3))                                     # optional - sage.modules
                 512
             """
             return int(self.cardinality())
@@ -636,13 +636,13 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([GF(2), GF(11), GF(7)])                 # optional - sage.rings.finite_rings
-                    sage: C.rank(C((1,2,5)))                                            # optional - sage.rings.finite_rings
+                    sage: C = cartesian_product([GF(2), GF(11), GF(7)])
+                    sage: C.rank(C((1,2,5)))
                     96
-                    sage: C.rank(C((0,0,0)))                                            # optional - sage.rings.finite_rings
+                    sage: C.rank(C((0,0,0)))
                     0
 
-                    sage: for c in C: print(C.rank(c))                                  # optional - sage.rings.finite_rings
+                    sage: for c in C: print(C.rank(c))
                     0
                     1
                     2
@@ -692,18 +692,18 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([GF(3), GF(11), GF(7), GF(5)])          # optional - sage.rings.finite_rings
-                    sage: c = C.unrank(123); c                                          # optional - sage.rings.finite_rings
+                    sage: C = cartesian_product([GF(3), GF(11), GF(7), GF(5)])
+                    sage: c = C.unrank(123); c
                     (0, 3, 3, 3)
-                    sage: C.rank(c)                                                     # optional - sage.rings.finite_rings
+                    sage: C.rank(c)
                     123
 
-                    sage: c = C.unrank(857); c                                          # optional - sage.rings.finite_rings
+                    sage: c = C.unrank(857); c
                     (2, 2, 3, 2)
-                    sage: C.rank(c)                                                     # optional - sage.rings.finite_rings
+                    sage: C.rank(c)
                     857
 
-                    sage: C.unrank(2500)                                                # optional - sage.rings.finite_rings
+                    sage: C.unrank(2500)
                     Traceback (most recent call last):
                     ...
                     IndexError: index i (=2) is greater than the cardinality

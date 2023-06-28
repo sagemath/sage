@@ -521,7 +521,7 @@ class Modules(Category_module):
                 [Category of finite sets]
                 sage: Modules(ZZ).FiniteDimensional().extra_super_categories()
                 []
-                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())    # optional - sage.rings.finite_rings
+                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())
                 True
                 sage: Modules(ZZ).FiniteDimensional().is_subcategory(Sets().Finite())
                 False
@@ -571,7 +571,7 @@ class Modules(Category_module):
                 [Category of finite sets]
                 sage: Modules(ZZ).FiniteDimensional().extra_super_categories()
                 []
-                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())    # optional - sage.rings.finite_rings
+                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())
                 True
                 sage: Modules(ZZ).FiniteDimensional().is_subcategory(Sets().Finite())
                 False

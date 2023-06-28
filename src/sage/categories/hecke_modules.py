@@ -46,7 +46,7 @@ class HeckeModules(Category_module):
 
         sage: HeckeModules(IntegerRing())
         Category of Hecke modules over Integer Ring
-        sage: HeckeModules(FiniteField(5))                                              # optional - sage.rings.finite_rings
+        sage: HeckeModules(FiniteField(5))
         Category of Hecke modules over Finite Field of size 5
 
     The base ring doesn't have to be a principal ideal domain::

@@ -1565,7 +1565,7 @@ class Sets(Category_singleton):
                 sage: A = C.example(); A.rename("A")                                    # optional - sage.combinat sage.modules
                 sage: A.cartesian_product(A, A)                                         # optional - sage.combinat sage.modules
                 A (+) A (+) A
-                sage: ZZ.cartesian_product(GF(2), FiniteEnumeratedSet([1,2,3]))         # optional - sage.rings.finite_rings
+                sage: ZZ.cartesian_product(GF(2), FiniteEnumeratedSet([1,2,3]))
                 The Cartesian product of (Integer Ring,
                                           Finite Field of size 2, {1, 2, 3})
 
@@ -1667,17 +1667,17 @@ class Sets(Category_singleton):
             here we build the algebra of the additive group `GF_3`::
 
                 sage: from sage.categories.additive_groups import AdditiveGroups
-                sage: S = GF(7)                                                         # optional - sage.rings.finite_rings
-                sage: A = S.algebra(QQ, category=AdditiveGroups()); A                   # optional - sage.rings.finite_rings sage.modules
+                sage: S = GF(7)
+                sage: A = S.algebra(QQ, category=AdditiveGroups()); A                   # optional - sage.modules
                 Algebra of Finite Field of size 7 over Rational Field
-                sage: A.category()                                                      # optional - sage.rings.finite_rings sage.modules
+                sage: A.category()                                                      # optional - sage.modules
                 Category of finite dimensional additive group algebras
                          over Rational Field
 
-                sage: a = A(S(1))                                                       # optional - sage.rings.finite_rings sage.modules
-                sage: a                                                                 # optional - sage.rings.finite_rings sage.modules
+                sage: a = A(S(1))                                                       # optional - sage.modules
+                sage: a                                                                 # optional - sage.modules
                 1
-                sage: 1 + a * a * a                                                     # optional - sage.rings.finite_rings sage.modules
+                sage: 1 + a * a * a                                                     # optional - sage.modules
                 0 + 3
 
             Note that the ``category`` keyword needs to be fed with
@@ -1837,11 +1837,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
             EXAMPLES::
 
-                sage: f = ZZ.hom(GF(3)); f                                              # optional - sage.rings.finite_rings
+                sage: f = ZZ.hom(GF(3)); f
                 Natural morphism:
                   From: Integer Ring
                   To:   Finite Field of size 3
-                sage: f.is_injective()                                                  # optional - sage.rings.finite_rings
+                sage: f.is_injective()
                 False
             """
             if self.domain().cardinality() <= 1:
@@ -2259,8 +2259,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: C.__iter__.__module__
                     'sage.categories.sets_cat'
 
-                    sage: F22 = GF(2).cartesian_product(GF(2))                          # optional - sage.rings.finite_rings
-                    sage: list(F22)                                                     # optional - sage.rings.finite_rings
+                    sage: F22 = GF(2).cartesian_product(GF(2))
+                    sage: list(F22)
                     [(0, 0), (0, 1), (1, 0), (1, 1)]
 
                     sage: C = cartesian_product([Permutations(10)]*4)                   # optional - sage.combinat
@@ -2279,8 +2279,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 When all factors (except possibly the first factor) are known to be finite, it
                 uses the lexicographic order::
 
-                    sage: it = iter(cartesian_product([ZZ, GF(2)]))                     # optional - sage.rings.finite_rings
-                    sage: [next(it) for _ in range(10)]                                 # optional - sage.rings.finite_rings
+                    sage: it = iter(cartesian_product([ZZ, GF(2)]))
+                    sage: [next(it) for _ in range(10)]
                     [(0, 0), (0, 1),
                      (1, 0), (1, 1),
                      (-1, 0), (-1, 1),
@@ -2300,8 +2300,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 An example with the first factor finite, the second infinite::
 
-                    sage: it = iter(cartesian_product([GF(2), ZZ]))                     # optional - sage.rings.finite_rings
-                    sage: [next(it) for _ in range(11)]                                 # optional - sage.rings.finite_rings
+                    sage: it = iter(cartesian_product([GF(2), ZZ]))
+                    sage: [next(it) for _ in range(11)]
                     [(0, 0),
                      (1, 0), (0, 1),
                      (1, 1), (0, -1),
@@ -2427,9 +2427,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: C.cardinality()
                     +Infinity
 
-                    sage: cartesian_product([GF(5), Permutations(10)]).cardinality()    # optional - sage.rings.finite_rings sage.combinat
+                    sage: cartesian_product([GF(5), Permutations(10)]).cardinality()    # optional - sage.combinat
                     18144000
-                    sage: cartesian_product([GF(71)]*20).cardinality() == 71**20        # optional - sage.rings.finite_rings
+                    sage: cartesian_product([GF(71)]*20).cardinality() == 71**20
                     True
                 """
                 f = self.cartesian_factors()

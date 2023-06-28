@@ -110,7 +110,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Let's work instead over a field of characteristic `2`::
 
                 sage: A = KleinFourGroup().algebra(GF(2))                               # optional - sage.groups sage.rings.finite_rings sage.modules
-                sage: A in Algebras(GF(2)).Semisimple()                                 # optional - sage.groups sage.rings.finite_rings sage.modules
+                sage: A in Algebras(GF(2)).Semisimple()                                 # optional - sage.groups sage.modules
                 False
                 sage: A.radical_basis()                                                 # optional - sage.groups sage.rings.finite_rings sage.modules
                 (() + (1,2)(3,4), (3,4) + (1,2)(3,4), (1,2) + (1,2)(3,4))
@@ -994,19 +994,19 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             2. Some idempotents summing to 1 but not orthogonal::
 
-                sage: R.<x> = PolynomialRing(GF(2))                                     # optional - sage.rings.finite_rings
+                sage: R.<x> = PolynomialRing(GF(2))
                 sage: A = PQAlgebra(GF(2), x)                                           # optional - sage.rings.finite_rings
-                sage: a = A.one()                                                       # optional - sage.rings.finite_rings
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,))     # optional - sage.rings.finite_rings
+                sage: a = A.one()
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,))
                 True
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, a, a))            # optional - sage.rings.finite_rings
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, a, a))
                 False
 
             3. Some orthogonal idempotents not summing to the identity::
 
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,a))    # optional - sage.rings.finite_rings
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a,a))
                 False
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(())       # optional - sage.rings.finite_rings
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(())
                 False
             """
             return (self.sum(l) == self.one()

@@ -107,12 +107,12 @@ class ConstructionFunctor(Functor):
         sage: P.<x,y> = ZZ[]
         sage: F = P.construction()[0]; F
         MPoly[x,y]
-        sage: A.<a,b> = GF(5)[]                                                         # optional - sage.rings.finite_rings
-        sage: f = A.hom([a + b, a - b], A)                                              # optional - sage.rings.finite_rings
-        sage: F(A)                                                                      # optional - sage.rings.finite_rings
+        sage: A.<a,b> = GF(5)[]
+        sage: f = A.hom([a + b, a - b], A)
+        sage: F(A)
         Multivariate Polynomial Ring in x, y
          over Multivariate Polynomial Ring in a, b over Finite Field of size 5
-        sage: F(f)                                                                      # optional - sage.rings.finite_rings
+        sage: F(f)
         Ring endomorphism of Multivariate Polynomial Ring in x, y
          over Multivariate Polynomial Ring in a, b over Finite Field of size 5
           Defn: Induced from base ring by
@@ -120,7 +120,7 @@ class ConstructionFunctor(Functor):
                  over Finite Field of size 5
                   Defn: a |--> a + b
                         b |--> a - b
-        sage: F(f)(F(A)(x)*a)                                                           # optional - sage.rings.finite_rings
+        sage: F(f)(F(A)(x)*a)
         (a + b)*x
 
     """
@@ -812,32 +812,32 @@ class PolynomialFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: P = ZZ['t'].construction()[0]
-        sage: P(GF(3))                                                                  # optional - sage.rings.finite_rings
+        sage: P(GF(3))
         Univariate Polynomial Ring in t over Finite Field of size 3
-        sage: P == loads(dumps(P))                                                      # optional - sage.rings.finite_rings
+        sage: P == loads(dumps(P))
         True
-        sage: R.<x,y> = GF(5)[]                                                         # optional - sage.rings.finite_rings
-        sage: f = R.hom([x + 2*y, 3*x - y], R)                                          # optional - sage.rings.finite_rings
-        sage: P(f)((x+y) * P(R).0)                                                      # optional - sage.rings.finite_rings
+        sage: R.<x,y> = GF(5)[]
+        sage: f = R.hom([x + 2*y, 3*x - y], R)
+        sage: P(f)((x+y) * P(R).0)
         (-x + y)*t
 
     By :trac:`9944`, the construction functor distinguishes sparse and
     dense polynomial rings. Before, the following example failed::
 
-        sage: R.<x> = PolynomialRing(GF(5), sparse=True)                                # optional - sage.rings.finite_rings
-        sage: F, B = R.construction()                                                   # optional - sage.rings.finite_rings
-        sage: F(B) is R                                                                 # optional - sage.rings.finite_rings
+        sage: R.<x> = PolynomialRing(GF(5), sparse=True)
+        sage: F, B = R.construction()
+        sage: F(B) is R
         True
         sage: S.<x> = PolynomialRing(ZZ)
-        sage: R.has_coerce_map_from(S)                                                  # optional - sage.rings.finite_rings
+        sage: R.has_coerce_map_from(S)
         False
-        sage: S.has_coerce_map_from(R)                                                  # optional - sage.rings.finite_rings
+        sage: S.has_coerce_map_from(R)
         False
-        sage: S.0 + R.0                                                                 # optional - sage.rings.finite_rings
+        sage: S.0 + R.0
         2*x
-        sage: (S.0 + R.0).parent()                                                      # optional - sage.rings.finite_rings
+        sage: (S.0 + R.0).parent()
         Univariate Polynomial Ring in x over Finite Field of size 5
-        sage: (S.0 + R.0).parent().is_sparse()                                          # optional - sage.rings.finite_rings
+        sage: (S.0 + R.0).parent().is_sparse()
         False
 
     """
@@ -849,7 +849,7 @@ class PolynomialFunctor(ConstructionFunctor):
 
             sage: from sage.categories.pushout import PolynomialFunctor
             sage: P = PolynomialFunctor('x')
-            sage: P(GF(3))                                                              # optional - sage.rings.finite_rings
+            sage: P(GF(3))
             Univariate Polynomial Ring in x over Finite Field of size 3
 
         There is an optional parameter ``multi_variate``, but
@@ -876,7 +876,7 @@ class PolynomialFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P = ZZ['x'].construction()[0]
-            sage: P(GF(3))      # indirect doctest                                      # optional - sage.rings.finite_rings
+            sage: P(GF(3))      # indirect doctest
             Univariate Polynomial Ring in x over Finite Field of size 3
 
         """
@@ -893,7 +893,7 @@ class PolynomialFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P = ZZ['x'].construction()[0]
-            sage: P(ZZ.hom(GF(3)))  # indirect doctest                                  # optional - sage.rings.finite_rings
+            sage: P(ZZ.hom(GF(3)))  # indirect doctest
             Ring morphism:
               From: Univariate Polynomial Ring in x over Integer Ring
               To:   Univariate Polynomial Ring in x over Finite Field of size 3
@@ -1003,19 +1003,19 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         sage: P.<x,y> = ZZ[]
         sage: F = P.construction()[0]; F
         MPoly[x,y]
-        sage: A.<a,b> = GF(5)[]                                                         # optional - sage.rings.finite_rings
-        sage: F(A)                                                                      # optional - sage.rings.finite_rings
+        sage: A.<a,b> = GF(5)[]
+        sage: F(A)
         Multivariate Polynomial Ring in x, y
          over Multivariate Polynomial Ring in a, b over Finite Field of size 5
-        sage: f = A.hom([a+b, a-b], A)                                                  # optional - sage.rings.finite_rings
-        sage: F(f)                                                                      # optional - sage.rings.finite_rings
+        sage: f = A.hom([a+b, a-b], A)
+        sage: F(f)
         Ring endomorphism of Multivariate Polynomial Ring in x, y
          over Multivariate Polynomial Ring in a, b over Finite Field of size 5
           Defn: Induced from base ring by
                 Ring endomorphism of Multivariate Polynomial Ring in a, b over Finite Field of size 5
                   Defn: a |--> a + b
                         b |--> a - b
-        sage: F(f)(F(A)(x)*a)                                                           # optional - sage.rings.finite_rings
+        sage: F(f)(F(A)(x)*a)
         (a + b)*x
 
     """
@@ -1170,8 +1170,8 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             'Multivariate Polynomial Ring in x, y, z over Integer Ring' and
             'Multivariate Polynomial Ring in y, s over Rational Field'
             sage: R = PolynomialRing(ZZ, 'x', 50)
-            sage: S = PolynomialRing(GF(5), 'x', 20)                                    # optional - sage.rings.finite_rings
-            sage: R.gen(0) + S.gen(0)                                                   # optional - sage.rings.finite_rings
+            sage: S = PolynomialRing(GF(5), 'x', 20)
+            sage: R.gen(0) + S.gen(0)
             2*x0
         """
         if len(self.vars) <= 1:
@@ -1855,9 +1855,9 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             sage: F2 = LaurentPolynomialFunctor('t', multi_variate=True)
             sage: F1.merge(F2)
             LaurentPolynomialFunctor
-            sage: F1.merge(F2)(LaurentPolynomialRing(GF(2), 'a'))                       # optional - sage.rings.finite_rings
+            sage: F1.merge(F2)(LaurentPolynomialRing(GF(2), 'a'))
             Multivariate Laurent Polynomial Ring in a, t over Finite Field of size 2
-            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))                       # optional - sage.rings.finite_rings
+            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))
             Univariate Laurent Polynomial Ring in t over
              Univariate Laurent Polynomial Ring in a over Finite Field of size 2
 
@@ -2268,17 +2268,17 @@ class SubspaceFunctor(ConstructionFunctor):
         """
         TESTS::
 
-            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]              # optional - sage.modules sage.rings.finite_rings
+            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]              # optional - sage.modules
             sage: F2 = (ZZ^3).span([(1,2,3),(4,5,6)]).construction()[0]                 # optional - sage.modules
             sage: F3 = (QQ^3).span([(1,2,3),(4,5,6)]).construction()[0]                 # optional - sage.modules
             sage: F4 = (ZZ^3).span([(1,0,-1),(0,1,2)]).construction()[0]                # optional - sage.modules
-            sage: F1 == loads(dumps(F1))                                                # optional - sage.modules sage.rings.finite_rings
+            sage: F1 == loads(dumps(F1))                                                # optional - sage.modules
             True
 
         The ``span`` method automatically transforms the given basis into
         echelon form. The bases look like that::
 
-            sage: F1.basis                                                              # optional - sage.modules sage.rings.finite_rings
+            sage: F1.basis                                                              # optional - sage.modules
             [
             (1, 0, 4),
             (0, 1, 2)
@@ -2340,8 +2340,8 @@ class SubspaceFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]              # optional - sage.modules sage.rings.finite_rings
-            sage: F1 != loads(dumps(F1))                                                # optional - sage.modules sage.rings.finite_rings
+            sage: F1 = (GF(5)^3).span([(1,2,3),(4,5,6)]).construction()[0]              # optional - sage.modules
+            sage: F1 != loads(dumps(F1))                                                # optional - sage.modules
             False
         """
         return not (self == other)
@@ -2354,16 +2354,16 @@ class SubspaceFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: M = GF(5)^3                                                           # optional - sage.modules sage.rings.finite_rings
-            sage: S1 = M.submodule([(1,2,3),(4,5,6)])                                   # optional - sage.modules sage.rings.finite_rings
-            sage: S2 = M.submodule([(2,2,3)])                                           # optional - sage.modules sage.rings.finite_rings
-            sage: F1 = S1.construction()[0]                                             # optional - sage.modules sage.rings.finite_rings
-            sage: F2 = S2.construction()[0]                                             # optional - sage.modules sage.rings.finite_rings
-            sage: F1.merge(F2)                                                          # optional - sage.modules sage.rings.finite_rings
+            sage: M = GF(5)^3                                                           # optional - sage.modules
+            sage: S1 = M.submodule([(1,2,3),(4,5,6)])                                   # optional - sage.modules
+            sage: S2 = M.submodule([(2,2,3)])                                           # optional - sage.modules
+            sage: F1 = S1.construction()[0]                                             # optional - sage.modules
+            sage: F2 = S2.construction()[0]                                             # optional - sage.modules
+            sage: F1.merge(F2)                                                          # optional - sage.modules
             SubspaceFunctor
-            sage: F1.merge(F2)(GF(5)^3) == S1 + S2                                      # optional - sage.modules sage.rings.finite_rings
+            sage: F1.merge(F2)(GF(5)^3) == S1 + S2                                      # optional - sage.modules
             True
-            sage: F1.merge(F2)(GF(5)['t']^3)                                            # optional - sage.modules sage.rings.finite_rings
+            sage: F1.merge(F2)(GF(5)['t']^3)                                            # optional - sage.modules
             Free module of degree 3 and rank 3
              over Univariate Polynomial Ring in t over Finite Field of size 5
             User basis matrix:
@@ -2425,7 +2425,7 @@ class FractionField(ConstructionFunctor):
         Category of integral domains
         sage: F.codomain()
         Category of fields
-        sage: F(GF(5)) is GF(5)                                                         # optional - sage.rings.finite_rings
+        sage: F(GF(5)) is GF(5)
         True
         sage: F(ZZ['t'])
         Fraction Field of Univariate Polynomial Ring in t over Integer Ring
@@ -2466,7 +2466,7 @@ class FractionField(ConstructionFunctor):
         TESTS::
 
             sage: F = QQ.construction()[0]
-            sage: F(GF(5)['t'])      # indirect doctest                                 # optional - sage.rings.finite_rings
+            sage: F(GF(5)['t'])      # indirect doctest
             Fraction Field of Univariate Polynomial Ring in t
              over Finite Field of size 5
         """
@@ -2499,7 +2499,7 @@ class CompletionFunctor(ConstructionFunctor):
         sage: Px
         Power Series Ring in x over Integer Ring
         sage: F3 = Px.construction()[0]
-        sage: F3(GF(3)['x'])                                                            # optional - sage.rings.finite_rings
+        sage: F3(GF(3)['x'])
         Power Series Ring in x over Finite Field of size 3
 
     TESTS::
@@ -2840,14 +2840,14 @@ class QuotientFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: P.<x,y> = ZZ[]
-        sage: Q = P.quo([x^2 + y^2] * P)                                                # optional - sage.rings.finite_rings
-        sage: F = Q.construction()[0]                                                   # optional - sage.rings.finite_rings
-        sage: F(QQ['x','y'])                                                            # optional - sage.rings.finite_rings
+        sage: Q = P.quo([x^2 + y^2] * P)
+        sage: F = Q.construction()[0]
+        sage: F(QQ['x','y'])
         Quotient of Multivariate Polynomial Ring in x, y over Rational Field
          by the ideal (x^2 + y^2)
-        sage: F(QQ['x','y']) == QQ['x','y'].quo([x^2 + y^2] * QQ['x','y'])              # optional - sage.rings.finite_rings
+        sage: F(QQ['x','y']) == QQ['x','y'].quo([x^2 + y^2] * QQ['x','y'])
         True
-        sage: F(QQ['x','y','z'])                                                        # optional - sage.rings.finite_rings
+        sage: F(QQ['x','y','z'])
         Traceback (most recent call last):
         ...
         CoercionException: Cannot apply this quotient functor to
@@ -2896,10 +2896,10 @@ class QuotientFunctor(ConstructionFunctor):
             Univariate Quotient Polynomial Ring in s
              over Rational Field with modulus t^2 + 5
             sage: F = QuotientFunctor([5] * ZZ, as_field=True)
-            sage: F(ZZ)                                                                 # optional - sage.rings.finite_rings
+            sage: F(ZZ)
             Finite Field of size 5
             sage: F = QuotientFunctor([5] * ZZ)
-            sage: F(ZZ)                                                                 # optional - sage.rings.finite_rings
+            sage: F(ZZ)
             Ring of integers modulo 5
 
         """
@@ -2926,10 +2926,10 @@ class QuotientFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P.<x,y> = ZZ[]
-            sage: Q = P.quo([2 + x^2, 3*x + y^2])                                       # optional - sage.rings.finite_rings
-            sage: F = Q.construction()[0]; F                                            # optional - sage.rings.finite_rings
+            sage: Q = P.quo([2 + x^2, 3*x + y^2])
+            sage: F = Q.construction()[0]; F
             QuotientFunctor
-            sage: F(QQ['x','y'])     # indirect doctest                                 # optional - sage.rings.finite_rings
+            sage: F(QQ['x','y'])     # indirect doctest
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field
              by the ideal (x^2 + 2, y^2 + 3*x)
 
@@ -3034,7 +3034,7 @@ class QuotientFunctor(ConstructionFunctor):
 
         The following was fixed in :trac:`8800`::
 
-            sage: pushout(GF(5), Integers(5))                                           # optional - sage.rings.finite_rings
+            sage: pushout(GF(5), Integers(5))
             Finite Field of size 5
 
         """

@@ -102,12 +102,12 @@ class Rings(CategoryWithAxiom):
             characteristic can not be injective::
 
                 sage: R.<x> = ZZ[]
-                sage: f = R.hom([GF(3)(1)]); f                                          # optional - sage.rings.finite_rings
+                sage: f = R.hom([GF(3)(1)]); f
                 Ring morphism:
                   From: Univariate Polynomial Ring in x over Integer Ring
                   To:   Finite Field of size 3
                   Defn: x |--> 1
-                sage: f.is_injective()                                                  # optional - sage.rings.finite_rings
+                sage: f.is_injective()
                 False
 
             A morphism whose domain is an order in a number field is injective if
@@ -230,8 +230,8 @@ class Rings(CategoryWithAxiom):
             If this morphism is not injective, it does not extend to the fraction
             field and an error is raised::
 
-                sage: f = GF(5).coerce_map_from(ZZ)                                     # optional - sage.rings.finite_rings
-                sage: f.extend_to_fraction_field()                                      # optional - sage.rings.finite_rings
+                sage: f = GF(5).coerce_map_from(ZZ)
+                sage: f.extend_to_fraction_field()
                 Traceback (most recent call last):
                 ...
                 ValueError: the morphism is not injective
@@ -336,8 +336,8 @@ class Rings(CategoryWithAxiom):
                 sage: R.<x> = ZZ[]
                 sage: R.quo(1).is_zero()
                 True
-                sage: R.<x> = GF(101)[]                                                 # optional - sage.rings.finite_rings
-                sage: R.quo(77).is_zero()                                               # optional - sage.rings.finite_rings
+                sage: R.<x> = GF(101)[]
+                sage: R.quo(77).is_zero()
                 True
                 sage: R.quo(x^2 + 1).is_zero()                                          # optional - sage.rings.finite_rings
                 False
@@ -566,7 +566,7 @@ class Rings(CategoryWithAxiom):
 
                 sage: QQ.characteristic()
                 0
-                sage: GF(19).characteristic()                                           # optional - sage.rings.finite_rings
+                sage: GF(19).characteristic()
                 19
                 sage: Integers(8).characteristic()
                 8
@@ -1013,11 +1013,11 @@ class Rings(CategoryWithAxiom):
                 Univariate Polynomial Ring in x over Integer Ring
                 sage: QQ['x']
                 Univariate Polynomial Ring in x over Rational Field
-                sage: GF(17)['abc']                                                     # optional - sage.rings.finite_rings
+                sage: GF(17)['abc']
                 Univariate Polynomial Ring in abc over Finite Field of size 17
-                sage: GF(17)['a,b,c']                                                   # optional - sage.rings.finite_rings
+                sage: GF(17)['a,b,c']
                 Multivariate Polynomial Ring in a, b, c over Finite Field of size 17
-                sage: GF(17)['a']['b']                                                  # optional - sage.rings.finite_rings
+                sage: GF(17)['a']['b']
                 Univariate Polynomial Ring in b over
                  Univariate Polynomial Ring in a over Finite Field of size 17
 

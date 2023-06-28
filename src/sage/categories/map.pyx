@@ -1185,7 +1185,7 @@ cdef class Map(Element):
                       Native morphism:
                       From: Rational Field
                       To:   Real Double Field
-            sage: mor.extend_codomain(GF(7))                                            # optional - sage.rings.finite_rings
+            sage: mor.extend_codomain(GF(7))
             Traceback (most recent call last):
             ...
             TypeError: No coercion from Rational Field to Finite Field of size 7
@@ -2057,9 +2057,9 @@ cdef class FormalCompositeMap(Map):
         of :class:`sage.rings.polynomial.polynomial_element.Polynomial`
         before (see comment there)::
 
-            sage: k = GF(47)                                                            # optional - sage.rings.finite_rings
-            sage: R.<x> = PolynomialRing(k)                                             # optional - sage.rings.finite_rings
-            sage: R.coerce_map_from(ZZ).section()                                       # optional - sage.rings.finite_rings
+            sage: k = GF(47)
+            sage: R.<x> = PolynomialRing(k)
+            sage: R.coerce_map_from(ZZ).section()
             Composite map:
               From: Univariate Polynomial Ring in x over Finite Field of size 47
               To:   Integer Ring
@@ -2070,9 +2070,9 @@ cdef class FormalCompositeMap(Map):
                       Lifting map:
                       From: Finite Field of size 47
                       To:   Integer Ring
-            sage: ZZ(R(45))                 # indirect doctest                          # optional - sage.rings.finite_rings
+            sage: ZZ(R(45))                 # indirect doctest
             45
-            sage: ZZ(3*x + 45)              # indirect doctest                          # optional - sage.rings.finite_rings
+            sage: ZZ(3*x + 45)              # indirect doctest
             Traceback (most recent call last):
             ...
             TypeError: not a constant polynomial

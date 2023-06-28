@@ -22,8 +22,8 @@ class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
 
     EXAMPLES::
 
-        sage: M = CommutativeAlgebras(GF(19))                                           # optional - sage.rings.finite_rings
-        sage: M                                                                         # optional - sage.rings.finite_rings
+        sage: M = CommutativeAlgebras(GF(19))
+        sage: M
         Category of commutative algebras over Finite Field of size 19
         sage: CommutativeAlgebras(QQ).super_categories()
         [Category of algebras over Rational Field, Category of commutative rings]

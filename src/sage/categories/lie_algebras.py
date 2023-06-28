@@ -189,14 +189,14 @@ class LieAlgebras(Category_over_base_ring):
                 [Category of finite sets]
                 sage: LieAlgebras(ZZ).FiniteDimensional().extra_super_categories()
                 []
-                sage: C = LieAlgebras(GF(5)).FiniteDimensional()                        # optional - sage.rings.finite_rings
-                sage: C.is_subcategory(Sets().Finite())                                 # optional - sage.rings.finite_rings
+                sage: C = LieAlgebras(GF(5)).FiniteDimensional()
+                sage: C.is_subcategory(Sets().Finite())
                 True
                 sage: C = LieAlgebras(ZZ).FiniteDimensional()
                 sage: C.is_subcategory(Sets().Finite())
                 False
-                sage: C = LieAlgebras(GF(5)).WithBasis().FiniteDimensional()            # optional - sage.rings.finite_rings
-                sage: C.is_subcategory(Sets().Finite())                                 # optional - sage.rings.finite_rings
+                sage: C = LieAlgebras(GF(5)).WithBasis().FiniteDimensional()
+                sage: C.is_subcategory(Sets().Finite())
                 True
             """
             if self.base_ring() in Sets().Finite():
