@@ -1532,7 +1532,7 @@ def sage_getargspec(obj):
         sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)
         FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # optional - sage.rings.polynomial.pbori
         sage: sage_getargspec(BooleanMonomialMonoid.gen)
         FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -1632,7 +1632,7 @@ def sage_getargspec(obj):
 
     Test that :trac:`17009` is fixed::
 
-        sage: sage_getargspec(gap)
+        sage: sage_getargspec(gap)                                                      # optional - sage.libs.gap
         FullArgSpec(args=['self', 'x', 'name'], varargs=None, varkw=None,
                     defaults=(None,), kwonlyargs=[], kwonlydefaults=None, annotations={})
 

@@ -64,8 +64,8 @@ def base_ring(x):
 
     EXAMPLES::
 
-        sage: R = PolynomialRing(GF(7), 'x')                                            # optional - sage.rings.finite_rings
-        sage: base_ring(R)                                                              # optional - sage.rings.finite_rings
+        sage: R = PolynomialRing(GF(7), 'x')
+        sage: base_ring(R)
         Finite Field of size 7
     """
     return x.base_ring()
@@ -77,17 +77,17 @@ def base_field(x):
 
     EXAMPLES::
 
-        sage: R = PolynomialRing(GF(7), 'x')                                            # optional - sage.rings.finite_rings
-        sage: base_ring(R)                                                              # optional - sage.rings.finite_rings
+        sage: R = PolynomialRing(GF(7), 'x')
+        sage: base_ring(R)
         Finite Field of size 7
-        sage: base_field(R)                                                             # optional - sage.rings.finite_rings
+        sage: base_field(R)
         Finite Field of size 7
 
     This catches base rings which are fields as well, but does
     not implement a ``base_field`` method for objects which do
     not have one::
 
-        sage: R.base_field()                                                            # optional - sage.rings.finite_rings
+        sage: R.base_field()
         Traceback (most recent call last):
         ...
         AttributeError: 'PolynomialRing_dense_mod_p_with_category' object has no attribute 'base_field'
@@ -356,7 +356,7 @@ def gen(x):
         Univariate Polynomial Ring in x over Rational Field
         sage: gen(R)
         x
-        sage: gen(GF(7))                                                                # optional - sage.rings.finite_rings
+        sage: gen(GF(7))
         1
         sage: A = AbelianGroup(1, [23])                                                 # optional - sage.groups
         sage: gen(A)                                                                    # optional - sage.groups
@@ -1124,7 +1124,7 @@ def log(*args, **kwds):
 
         sage: F = GF(13); g = F.multiplicative_generator(); g                           # optional - sage.rings.finite_rings
         2
-        sage: a = F(8)                                                                  # optional - sage.rings.finite_rings
+        sage: a = F(8)
         sage: log(a, g); g^log(a, g)                                                    # optional - sage.rings.finite_rings
         3
         8
@@ -1161,7 +1161,7 @@ def log(*args, **kwds):
         3
         sage: log(3, -1)                                                                # optional - sage.symbolic
         -I*log(3)/pi
-        sage: log(int(8), 2)
+        sage: log(int(8), 2)                                                            # optional - sage.symbolic
         3
         sage: log(8, int(2))
         3
@@ -1646,8 +1646,8 @@ def order(x):
         sage: C = CyclicPermutationGroup(10)                                            # optional - sage.groups
         sage: order(C)                                                                  # optional - sage.groups
         10
-        sage: F = GF(7)                                                                 # optional - sage.rings.finite_rings
-        sage: order(F)                                                                  # optional - sage.rings.finite_rings
+        sage: F = GF(7)
+        sage: order(F)
         7
     """
     return x.order()
