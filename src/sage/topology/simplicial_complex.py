@@ -4969,9 +4969,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         H = set(a+b for (a, b) in self.bigraded_betti_numbers())
         if 0 in H:
-            H.remove(0)
+            HL = list(H.difference([0]))
+        else:
+            HL = list(H)
 
-        return not any(i + j in H for i in H for j in H)
+        return not any(i + j in H for ii, i in enumerate(HL) for j in HL[ii:])
 
     def is_minimally_non_golod(self):
         r"""
