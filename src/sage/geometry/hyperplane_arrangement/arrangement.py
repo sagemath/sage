@@ -358,6 +358,7 @@ from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class HyperplaneArrangementElement(Element):
     """
     A hyperplane arrangement.
@@ -368,6 +369,7 @@ class HyperplaneArrangementElement(Element):
         :class:`HyperplaneArrangementElement` instances directly,
         always use the parent.
     """
+
     def __init__(self, parent, hyperplanes, check=True, backend=None):
         """
         Construct a hyperplane arrangement.
@@ -907,16 +909,16 @@ class HyperplaneArrangementElement(Element):
                W = Vector space of dimension 2 over Rational Field]
         """
         if element_label == "int":
-            def update(mapping, val, I):
+            def update(mapping, val, I0):
                 mapping[val] = len(mapping)
         elif element_label == "subset":
             from sage.sets.set import Set
 
-            def update(mapping, val, I):
+            def update(mapping, val, I0):
                 mapping[val] = Set(val)
         elif element_label == "subspace":
-            def update(mapping, val, I):
-                mapping[val] = I
+            def update(mapping, val, I0):
+                mapping[val] = I0
         else:
             raise ValueError("invalid element label type")
 
@@ -939,13 +941,13 @@ class HyperplaneArrangementElement(Element):
             for label, T in cur_level:
                 edges = []
                 for i, H in enumerate(hyperplanes):
-                    I = H.intersection(T)
-                    if I is not None and I != T:
+                    I0 = H.intersection(T)
+                    if I0 is not None and I0 != T:
                         try:
-                            target = new_level[I]
+                            target = new_level[I0]
                         except KeyError:
                             target = set(label)
-                            new_level[I] = target
+                            new_level[I0] = target
                         target.add(i)
                         edges.append(target)
                 hasse[label] = edges
@@ -2021,7 +2023,7 @@ class HyperplaneArrangementElement(Element):
 
         for hyperplane in self:
             ieq = vector(R, hyperplane.dense_coefficient_list())
-            pos_half = Polyhedron(ieqs=[ ieq], base_ring=R, backend=be)
+            pos_half = Polyhedron(ieqs=[ieq], base_ring=R, backend=be)
             neg_half = Polyhedron(ieqs=[-ieq], base_ring=R, backend=be)
             if not regions:
                 # See comment above.
@@ -2059,8 +2061,8 @@ class HyperplaneArrangementElement(Element):
                     else:
                         # In this case, at least one of the vertices is not on the hyperplane.
                         # So we check if any ray or line pokes the hyperplane.
-                        if (    any(ieq[1:]*r[:]*direction < 0 for r in region.rays()) or
-                                any(ieq[1:]*l[:] != 0 for l in region_lines)):
+                        if (any(ieq[1:]*r[:]*direction < 0 for r in region.rays()) or
+                                any(ieq[1:]*ll[:] != 0 for ll in region_lines)):
                             splits = True
 
                 if splits:
@@ -2350,7 +2352,7 @@ class HyperplaneArrangementElement(Element):
             zero_half = Polyhedron(eqns=[ieq], base_ring=R, backend=be)
             # ``zero_half`` is the hyperplane ``hyperplane`` itself
             # (viewed as a polyhedron).
-            pos_half = Polyhedron(ieqs=[ ieq], base_ring=R, backend=be)
+            pos_half = Polyhedron(ieqs=[ieq], base_ring=R, backend=be)
             neg_half = Polyhedron(ieqs=[-ieq], base_ring=R, backend=be)
             subdivided = []
             for signs, face in faces:
@@ -2378,8 +2380,8 @@ class HyperplaneArrangementElement(Element):
                     # inequalities are always equalities on it). Check for
                     # this:
                     zero_part_point = zero_part.representative_point()
-                    for l, testhype in enumerate(hypes[:k]):
-                        if signs[l] != 0:
+                    for ll, testhype in enumerate(hypes[:k]):
+                        if signs[ll] != 0:
                             h = testhype.dense_coefficient_list()
                             testval = R.sum(h[i+1] * gi for i, gi in enumerate(zero_part_point)) + h[0]
                             if testval == 0:
@@ -2514,9 +2516,9 @@ class HyperplaneArrangementElement(Element):
         if not normalize:
             return face
         # Look for ``I`` in ``self.closed_faces()``:
-        for I in self.closed_faces():
-            if I[0] == tuple(signs):
-                return I[1]
+        for I0 in self.closed_faces():
+            if I0[0] == tuple(signs):
+                return I0[1]
 
     def face_semigroup_algebra(self, field=None, names='e'):
         r"""
@@ -2626,8 +2628,8 @@ class HyperplaneArrangementElement(Element):
             matrix_j = []
             for i, si in enumerate(Fs):
                 row_i = [zero] * N
-                sk = [sil if sil != 0 else sj[l]
-                      for l, sil in enumerate(si)]
+                sk = [sil if sil != 0 else sj[ll]
+                      for ll, sil in enumerate(si)]
                 k = Fdict[tuple(sk)]
                 row_i[k] = one
                 matrix_j += row_i
@@ -3154,7 +3156,7 @@ class HyperplaneArrangementElement(Element):
         """
         if base_ring is None:
             base_ring = self.base_ring()
-        return self.matroid().orlik_solomon_algebra(base_ring, ordering,**kwds)
+        return self.matroid().orlik_solomon_algebra(base_ring, ordering, **kwds)
 
     def orlik_terao_algebra(self, base_ring=None, ordering=None, **kwds):
         """
@@ -3466,13 +3468,13 @@ class HyperplaneArrangementElement(Element):
             ....:     else:
             ....:         assert exponents(B) == exponents(Bp)
         """
-        alg = algorithm # prevent possible changes to a global variable
+        alg = algorithm  # prevent possible changes to a global variable
         if alg == "singular":
             # import sage.libs.singular.function_factory
             # syz = sage.libs.singular.function_factory.ff.syz
             f = self.defining_polynomial()
-            I = f + f.jacobian_ideal()
-            IS = I._singular_()
+            I0 = f + f.jacobian_ideal()
+            IS = I0._singular_()
             ISS = IS.syz()
             MSTD = ISS.mstd()
             basis = MSTD[2]._sage_().transpose().submatrix(0, 1)
@@ -3481,7 +3483,7 @@ class HyperplaneArrangementElement(Element):
                 # Check using Saito's criterion
                 if det / f in f.parent().base_ring() and not det.is_zero():
                     return basis.rows()
-            except ValueError: # Non-square matrix or det = 0
+            except ValueError:  # Non-square matrix or det = 0
                 pass
             # Check if it is free
             if not self.is_free(algorithm=alg):
@@ -3492,7 +3494,7 @@ class HyperplaneArrangementElement(Element):
         if alg == "BC":
             C = self.derivation_module_free_chain()
             if C is not None:
-                if not C: # C is an empty list
+                if not C:  # C is an empty list
                     S = self.parent().ambient_space().symmetric_space()
                     return matrix.identity(S, self.dimension()).rows()
                 from sage.misc.misc_c import prod
@@ -3570,7 +3572,6 @@ class HyperplaneArrangementElement(Element):
             raise TypeError('The arrangement is not central')
         n0 = self.dimension()
         r = self.n_hyperplanes()
-        A = self.parent()
         if not proj:
             H, perm0 = self.cone(permutation=True)
             H1, perm1 = H.hyperplane_section()
@@ -3681,7 +3682,7 @@ class HyperplaneArrangementElement(Element):
         n = self.dimension()
         r = len(self)
         affine = n == 2 and not proj
-        projective = n==3 and self.is_central() and proj
+        projective = n == 3 and self.is_central() and proj
         if (n == 1 and not proj) or (n == 2 and proj and self.is_central()):
             r1 = r - proj
             G = FreeGroup(r1) / []
@@ -3709,7 +3710,7 @@ class HyperplaneArrangementElement(Element):
                 L.append(p)
         G, dic = fundamental_group_arrangement(L, puiseux=True, projective=projective and not infinity)
         if infinity:
-            p = Permutation([r] + [j for j in range(1, r)] )
+            p = Permutation([r] + [j for j in range(1, r)])
             dic = {j: dic[p(j)] for j in range(1, r + 1)}
         return (G, dic)
 
@@ -3787,6 +3788,7 @@ class HyperplaneArrangementElement(Element):
             P = Permutation(list(P) + [self.n_hyperplanes() + 1])
         dic = {j: dic[P(j)] for j in dic.keys()}
         return (H2, dic)
+
 
 class HyperplaneArrangements(Parent, UniqueRepresentation):
     """
