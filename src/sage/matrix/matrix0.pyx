@@ -4633,8 +4633,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: m = matrix(GF(7), 5, range(25))                               # optional - sage.libs.pari
-            sage: m.rank()                                                      # optional - sage.libs.pari
+            sage: m = matrix(GF(7), 5, range(25))
+            sage: m.rank()
             2
 
         Rank is not implemented over the integers modulo a composite yet.::
@@ -4650,10 +4650,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         We should be able to compute the rank of a matrix whose
         entries are polynomials over a finite field (:trac:`5014`)::
 
-            sage: P.<x> = PolynomialRing(GF(17))                                # optional - sage.libs.pari
-            sage: m = matrix(P, [[ 6*x^2 + 8*x + 12, 10*x^2 + 4*x + 11],        # optional - sage.libs.pari
+            sage: P.<x> = PolynomialRing(GF(17))
+            sage: m = matrix(P, [[ 6*x^2 + 8*x + 12, 10*x^2 + 4*x + 11],
             ....:                [8*x^2 + 12*x + 15,  8*x^2 + 9*x + 16]])
-            sage: m.rank()                                                      # optional - sage.libs.pari
+            sage: m.rank()
             2
         """
         x = self.fetch('rank')
@@ -4885,10 +4885,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Over finite fields::
 
-            sage: A = matrix(GF(59), 3, [10,56,39,53,56,33,58,24,55])           # optional - sage.libs.pari
-            sage: A.multiplicative_order()                                      # optional - sage.libs.pari
+            sage: A = matrix(GF(59), 3, [10,56,39,53,56,33,58,24,55])
+            sage: A.multiplicative_order()                                              # optional - sage.rings.finite_rings
             580
-            sage: (A^580).is_one()                                              # optional - sage.libs.pari
+            sage: (A^580).is_one()
             True
 
             sage: B = matrix(GF(10007^3, 'b'), 0)                               # optional - sage.libs.pari
@@ -5394,27 +5394,27 @@ cdef class Matrix(sage.structure.element.Matrix):
         EXAMPLE of matrix times matrix over different base rings::
 
             sage: a = matrix(ZZ, 2, 2, range(4))
-            sage: b = matrix(GF(7), 2, 2, range(4))                                     # optional - sage.libs.pari
+            sage: b = matrix(GF(7), 2, 2, range(4))
             sage: c = matrix(QQ, 2, 2, range(4))
-            sage: d = a * b; d                                                          # optional - sage.libs.pari
+            sage: d = a * b; d
             [2 3]
             [6 4]
-            sage: parent(d)                                                             # optional - sage.libs.pari
+            sage: parent(d)
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
-            sage: parent(b * a)                                                         # optional - sage.libs.pari
+            sage: parent(b * a)
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
             sage: d = a * c; d
             [ 2  3]
             [ 6 11]
             sage: parent(d)
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: d = b + c                                                             # optional - sage.libs.pari
+            sage: d = b + c
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +:
              'Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7' and
              'Full MatrixSpace of 2 by 2 dense matrices over Rational Field'
-            sage: d = b + c.change_ring(GF(7)); d                                       # optional - sage.libs.pari
+            sage: d = b + c.change_ring(GF(7)); d
             [0 2]
             [4 6]
 
@@ -5422,16 +5422,16 @@ cdef class Matrix(sage.structure.element.Matrix):
         other is dense (in such mixed cases, the result is always dense)::
 
             sage: a = matrix(ZZ, 2, 2, range(4), sparse=True)
-            sage: b = matrix(GF(7), 2, 2, range(4), sparse=False)                       # optional - sage.libs.pari
-            sage: c = a * b; c                                                          # optional - sage.libs.pari
+            sage: b = matrix(GF(7), 2, 2, range(4), sparse=False)
+            sage: c = a * b; c
             [2 3]
             [6 4]
-            sage: parent(c)                                                             # optional - sage.libs.pari
+            sage: parent(c)
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
-            sage: c = b * a; c                                                          # optional - sage.libs.pari
+            sage: c = b * a; c
             [2 3]
             [6 4]
-            sage: parent(c)                                                             # optional - sage.libs.pari
+            sage: parent(c)
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
 
         EXAMPLE of matrix multiplication over a noncommutative base ring::
@@ -5640,10 +5640,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: m = matrix(Zmod(2^100),2,[2,1,3,3])
             sage: type(m)
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-            sage: (~m)*m
+            sage: (~m)*m                                                                # optional - sage.libs.pari
             [1 0]
             [0 1]
-            sage: ~m
+            sage: ~m                                                                    # optional - sage.libs.pari
             [                              1  422550200076076467165567735125]
             [1267650600228229401496703205375  422550200076076467165567735126]
 

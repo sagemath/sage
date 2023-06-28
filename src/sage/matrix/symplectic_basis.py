@@ -188,11 +188,12 @@ def symplectic_basis_over_field(M):
 
     An example over a finite field::
 
-        sage: E = matrix(GF(7), 8, 8, [0, -1/2, -2, 1/2, 2, 0, -2, 1, 1/2, 0, -1, -3, 0, 2, 5/2,    # optional - sage.libs.pari
-        ....:                          -3, 2, 1, 0, 3/2, -1, 0, -1, -2, -1/2, 3, -3/2, 0, 1, 3/2,
-        ....:                          -1/2, -1/2, -2, 0, 1, -1, 0, 0, 1, -1, 0, -2, 0, -3/2, 0,
-        ....:                          0, 1/2, -2, 2, -5/2, 1, 1/2, -1, -1/2, 0, -1, -1, 3, 2,
-        ....:                          1/2, 1, 2, 1, 0]); E
+        sage: E = matrix(GF(7), 8, 8,
+        ....:            [0, -1/2, -2, 1/2, 2, 0, -2, 1, 1/2, 0, -1, -3, 0, 2, 5/2,
+        ....:             -3, 2, 1, 0, 3/2, -1, 0, -1, -2, -1/2, 3, -3/2, 0, 1, 3/2,
+        ....:             -1/2, -1/2, -2, 0, 1, -1, 0, 0, 1, -1, 0, -2, 0, -3/2, 0,
+        ....:             0, 1/2, -2, 2, -5/2, 1, 1/2, -1, -1/2, 0, -1, -1, 3, 2,
+        ....:             1/2, 1, 2, 1, 0]); E
         [0 3 5 4 2 0 5 1]
         [4 0 6 4 0 2 6 4]
         [2 1 0 5 6 0 6 5]
@@ -201,7 +202,7 @@ def symplectic_basis_over_field(M):
         [0 5 0 2 0 0 4 5]
         [2 1 1 4 6 3 0 6]
         [6 3 2 4 1 2 1 0]
-        sage: F, C = symplectic_basis_over_field(E); F                                              # optional - sage.libs.pari
+        sage: F, C = symplectic_basis_over_field(E); F
         [0 0 0 0 1 0 0 0]
         [0 0 0 0 0 1 0 0]
         [0 0 0 0 0 0 1 0]
@@ -210,15 +211,16 @@ def symplectic_basis_over_field(M):
         [0 6 0 0 0 0 0 0]
         [0 0 6 0 0 0 0 0]
         [0 0 0 6 0 0 0 0]
-        sage: F == C * E * C.transpose()                                                            # optional - sage.libs.pari
+        sage: F == C * E * C.transpose()
         True
 
     The tricky case of characteristic 2::
 
-        sage: E = matrix(GF(2), 8, 8, [0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,  # optional - sage.libs.pari
-        ....:                          0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0,
-        ....:                          1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1,
-        ....:                          0, 1, 0, 0]); E
+        sage: E = matrix(GF(2), 8, 8,
+        ....:            [0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+        ....:            0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0,
+        ....:            1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1,
+        ....:            0, 1, 0, 0]); E
         [0 0 1 1 0 1 0 1]
         [0 0 0 0 0 0 0 0]
         [1 0 0 0 0 0 1 1]
@@ -227,7 +229,7 @@ def symplectic_basis_over_field(M):
         [1 0 0 0 1 0 1 1]
         [0 0 1 0 1 1 0 0]
         [1 0 1 1 0 1 0 0]
-        sage: F, C = symplectic_basis_over_field(E); F                                              # optional - sage.libs.pari
+        sage: F, C = symplectic_basis_over_field(E); F
         [0 0 0 1 0 0 0 0]
         [0 0 0 0 1 0 0 0]
         [0 0 0 0 0 1 0 0]
@@ -236,7 +238,7 @@ def symplectic_basis_over_field(M):
         [0 0 1 0 0 0 0 0]
         [0 0 0 0 0 0 0 0]
         [0 0 0 0 0 0 0 0]
-        sage: F == C * E * C.transpose()                                                            # optional - sage.libs.pari
+        sage: F == C * E * C.transpose()
         True
 
     An inexact example::

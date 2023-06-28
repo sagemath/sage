@@ -759,10 +759,10 @@ cdef class MatrixArgs:
 
         ::
 
-            sage: ma = MatrixArgs(GF(2), 2, 3, L)                               # optional - sage.libs.pari
-            sage: ma.dict(convert=False)                                        # optional - sage.libs.pari
+            sage: ma = MatrixArgs(GF(2), 2, 3, L)
+            sage: ma.dict(convert=False)
             {(0, 1): 1, (0, 2): 2, (1, 0): 3, (1, 1): 4, (1, 2): 5}
-            sage: ma.dict()                                                     # optional - sage.libs.pari
+            sage: ma.dict()
             {(0, 1): 1, (1, 0): 1, (1, 2): 1}
         """
         self.finalize()
@@ -1324,12 +1324,12 @@ cpdef MatrixArgs MatrixArgs_init(space, entries):
     EXAMPLES::
 
         sage: from sage.matrix.args import MatrixArgs_init
-        sage: S = MatrixSpace(GF(2), 2, 4)                                      # optional - sage.libs.pari
-        sage: ma = MatrixArgs_init(S, {(1, 3): 7})                              # optional - sage.libs.pari
-        sage: M = ma.matrix(); M                                                # optional - sage.libs.pari
+        sage: S = MatrixSpace(GF(2), 2, 4)
+        sage: ma = MatrixArgs_init(S, {(1, 3): 7})
+        sage: M = ma.matrix(); M
         [0 0 0 0]
         [0 0 0 1]
-        sage: parent(M) is S                                                    # optional - sage.libs.pari
+        sage: parent(M) is S
         True
     """
     cdef MatrixArgs ret

@@ -55,7 +55,7 @@ def berlekamp_massey(a):
         sage: from sage.matrix.berlekamp_massey import berlekamp_massey
         sage: berlekamp_massey([1,2,1,2,1,2])
         x^2 - 1
-        sage: berlekamp_massey([GF(7)(1), 19, 1, 19])                                   # optional - sage.libs.pari
+        sage: berlekamp_massey([GF(7)(1), 19, 1, 19])
         x^2 + 6
         sage: berlekamp_massey([2,2,1,2,1,191,393,132])
         x^4 - 36727/11711*x^3 + 34213/5019*x^2 + 7024942/35133*x - 335813/1673
