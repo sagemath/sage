@@ -170,11 +170,11 @@ class SpecFunctor(Functor, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.schemes.generic.spec import SpecFunctor
-            sage: F = SpecFunctor(GF(7))                                                # optional - sage.rings.finite_rings
-            sage: A.<x, y> = GF(7)[]                                                    # optional - sage.rings.finite_rings
-            sage: B.<t> = GF(7)[]                                                       # optional - sage.rings.finite_rings
-            sage: f = A.hom((t^2, t^3))                                                 # optional - sage.rings.finite_rings
-            sage: Spec(f) # indirect doctest                                            # optional - sage.rings.finite_rings
+            sage: F = SpecFunctor(GF(7))
+            sage: A.<x, y> = GF(7)[]
+            sage: B.<t> = GF(7)[]
+            sage: f = A.hom((t^2, t^3))
+            sage: Spec(f)
             Affine Scheme morphism:
               From: Spectrum of Univariate Polynomial Ring in t over Finite Field of size 7
               To:   Spectrum of Multivariate Polynomial Ring in x, y over Finite Field of size 7
