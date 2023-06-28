@@ -869,9 +869,7 @@ Run optional doctests
 
 You can run tests that require optional packages by using the
 ``--optional`` flag.  Obviously, you need to have installed the
-necessary optional packages in order for these tests to succeed.  See
-http://www.sagemath.org/packages/optional/ in order to download
-optional packages.
+necessary optional packages in order for these tests to succeed.
 
 By default, Sage only runs doctests that are not marked with the ``optional`` tag.  This is equivalent to running ::
 
@@ -1383,10 +1381,94 @@ tree (``src/sage/...``)::
 Note that testing all doctests as they appear in the source tree does not make sense
 because many of the source files may not be installed in the virtual environment.
 Use the option ``--only-lib`` to skip the source files of all Python/Cython modules
-that are not installed in the virtual environment.
+that are not installed in the virtual environment::
 
     [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories --only-lib src/sage/schemes
 
-This option can also be combined with ``--all``:
+This option can also be combined with ``--all``::
 
     [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories --only-lib --all
+
+
+.. _section-fixdoctests:
+
+The doctest fixer
+=================
+
+Sage provides a development tool that assists with updating doctests.
+
+
+Updating doctest outputs
+------------------------
+
+By default, ``./sage --fixdoctests`` runs the doctester and replaces the expected outputs
+of all examples by the actual outputs from the current version of Sage::
+
+    [mkoeppe@sage sage]$ ./sage --fixdoctests \
+                                --overwrite src/sage/geometry/cone.py
+
+As this command edits the source file, it may be a good practice to first use ``git commit``
+to save any changes made in the file.
+
+After running the doctest fixer, it is a good idea to use ``git diff`` to check
+all edits that the automated tool made.
+
+An alternative to this workflow is to use the option ``--keep-both``. When expected and
+actual output of an example differ, it duplicates the example, marking the two copies
+``# optional - EXPECTED`` and ``# optional - GOT``. (Thus, when re-running the doctester,
+neither of the two copies is run; this makes ``./sage --fixdoctests`` idempotent.)
+
+When exceptions are expected by an example, it is standard practice to abbreviate
+the tracebacks using ``...``.  The doctest fixer uses this abbreviation automatically
+when formatting the actual output. To disable it so that the details of the exception
+can be inspected, use the option ``--full-tracebacks``. This is particularly useful
+in combination with ``--keep-both``::
+
+    [mkoeppe@sage sage]$ ./sage --fixdoctests --keep-both --full-tracebacks \
+                                --overwrite src/sage/geometry/cone.py
+
+To make sure that all doctests are updated, you may have to use the option ``--long``::
+
+    [mkoeppe@sage sage]$ ./sage --fixdoctests --long \
+                                --overwrite src/sage/geometry/cone.py
+
+If you are not comfortable with allowing this tool to edit your source files, you can use
+the option ``--no-overwrite``, which will create a new file with the extension ``.fixed``
+instead of overwriting the source file::
+
+    [mkoeppe@sage sage]$ ./sage --fixdoctests \
+                                --no-overwrite src/sage/geometry/cone.py
+
+
+Managing ``# optional`` tags
+----------------------------
+
+When a file uses a ``# sage.doctest: optional - FEATURE`` directive, the
+doctest fixer automatically removes these tags from ``# optional - FEATURE``
+annotations on individual doctests.
+
+In places where the doctester issues a doctest dataflow warning
+(``Variable ... referenced here was set only in doctest marked '# optional - FEATURE'``),
+the doctest fixer automatically adds the missing ``# optional`` annotations.
+
+
+Use in virtual environments
+---------------------------
+
+The doctest fixer can also run tests using the Sage doctester installed in
+a virtual environment::
+
+    [mkoeppe@sage sage]$ ./sage --fixdoctests \
+                                --distribution sagemath-categories \
+                                src/sage/geometry/schemes/generic/*.py
+
+This command, using ``--distribution``, is equivalent to a command
+that uses the more specific options ``--venv`` and ``--environment``::
+
+    [mkoeppe@sage sage]$ ./sage --fixdoctests \
+                                --venv pkgs/sagemath-categories/.tox/sagepython-... \
+                                --environment sage.all__sagemath_categories
+                                src/sage/geometry/schemes/generic/*.py
+
+Either way, the options ``--keep-both``, ``--full-tracebacks``, and
+``--only-lib`` are implied.
