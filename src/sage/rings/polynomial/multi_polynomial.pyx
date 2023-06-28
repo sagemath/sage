@@ -310,13 +310,13 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials implemented via Singular::
 
-            sage: R.<x, y> = PolynomialRing(FiniteField(5))                             # optional - sage.rings.finite_rings
-            sage: f = x^3*y^5 + x^7*y                                                   # optional - sage.rings.finite_rings
+            sage: R.<x, y> = PolynomialRing(FiniteField(5))
+            sage: f = x^3*y^5 + x^7*y
             sage: type(f)                                                               # optional - sage.rings.finite_rings
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: f.derivative(x)                                                       # optional - sage.rings.finite_rings
             2*x^6*y - 2*x^2*y^5
-            sage: f.derivative(y)                                                       # optional - sage.rings.finite_rings
+            sage: f.derivative(y)
             x^7
 
         Generic multivariate polynomials::
@@ -384,11 +384,11 @@ cdef class MPolynomial(CommutativePolynomial):
             z^5 + x*w*k*z + w^5 + 17*x*w^3 + x^3 + 3*x*w + 5
             sage: f.polynomial(k)
             x*w*z*k + w^5 + z^5 + 17*x*w^3 + x^3 + 3*x*w + 5
-            sage: R.<x,y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
-            sage: f = x^2 + x + y                                                       # optional - sage.rings.finite_rings
-            sage: f.polynomial(x)                                                       # optional - sage.rings.finite_rings
+            sage: R.<x,y> = GF(5)[]
+            sage: f = x^2 + x + y
+            sage: f.polynomial(x)
             x^2 + x + y
-            sage: f.polynomial(y)                                                       # optional - sage.rings.finite_rings
+            sage: f.polynomial(y)
             y + x^2 + x
         """
         cdef int ind
@@ -686,9 +686,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
         In particular, this can be surprising in positive characteristic::
 
-            sage: R.<x,y> = GF(2)[]                                                     # optional - sage.rings.finite_rings
-            sage: f = x + 1                                                             # optional - sage.rings.finite_rings
-            sage: f.homogenize(x)                                                       # optional - sage.rings.finite_rings
+            sage: R.<x,y> = GF(2)[]
+            sage: f = x + 1
+            sage: f.homogenize(x)
             0
 
         TESTS::
@@ -843,13 +843,13 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: f = x^3 + 3/5*y + 1
-            sage: f.change_ring(GF(7))                                                  # optional - sage.rings.finite_rings
+            sage: f.change_ring(GF(7))
             x^3 + 2*y + 1
 
         ::
 
             sage: R.<x,y> = GF(9,'a')[]                                                 # optional - sage.rings.finite_rings
-            sage: (x+2*y).change_ring(GF(3))                                            # optional - sage.rings.finite_rings
+            sage: (x+2*y).change_ring(GF(3))
             x - y
 
         ::
@@ -1070,8 +1070,8 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R.<x,y,z> = GF(101)['e,i'][]                                          # optional - sage.rings.finite_rings
-            sage: f = R('e*i') * x + y^2                                                # optional - sage.rings.finite_rings
+            sage: R.<x,y,z> = GF(101)['e,i'][]
+            sage: f = R('e*i') * x + y^2
             sage: f._giac_init_()                                                       # optional - sage.rings.finite_rings
             '((1)*1)*sageVARy^2+((1)*sageVARe*sageVARi)*sageVARx'
             sage: giac(f)                                                               # optional - sage.rings.finite_rings
@@ -1302,7 +1302,7 @@ cdef class MPolynomial(CommutativePolynomial):
             (-s^3 - s^2 + 1)*X + Y
             sage: g.parent()                                                            # optional - sage.rings.finite_rings
             Multivariate Polynomial Ring in X, Y over Finite Field in s of size 3^4
-            sage: h = lambda x: x.trace()                                               # optional - sage.rings.finite_rings
+            sage: h = lambda x: x.trace()
             sage: g = f.map_coefficients(h); g                                          # optional - sage.rings.finite_rings
             X - Y
             sage: g.parent()                                                            # optional - sage.rings.finite_rings
@@ -1413,7 +1413,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: L.<x, y> = ZZ[]
             sage: g = x + y
             sage: R.<x, y> = GF(25, 'a')[]                                              # optional - sage.rings.finite_rings
-            sage: h = x + y                                                             # optional - sage.rings.finite_rings
+            sage: h = x + y
             sage: f.sylvester_matrix(g, 'x')                                            # optional - sage.modules
             [1 y]
             [1 y]
@@ -1698,8 +1698,8 @@ cdef class MPolynomial(CommutativePolynomial):
 
         an example when the coefficients live in a finite field::
 
-            sage: F = FiniteField(11)                                                   # optional - sage.rings.finite_rings
-            sage: R.<x,y,z,w> = PolynomialRing(F, 4)                                    # optional - sage.rings.finite_rings
+            sage: F = FiniteField(11)
+            sage: R.<x,y,z,w> = PolynomialRing(F, 4)
             sage: z.macaulay_resultant([x^3, 5*y, w])                                   # optional - sage.rings.finite_rings sage.modules
             4
 
@@ -1780,18 +1780,18 @@ cdef class MPolynomial(CommutativePolynomial):
         Check that the denominator is an element over the base whenever the base
         has no denominator function. This closes :trac:`9063`::
 
-            sage: R.<a,b,c> = GF(5)[]                                                   # optional - sage.rings.finite_rings
-            sage: x = R(0)                                                              # optional - sage.rings.finite_rings
-            sage: x.denominator()                                                       # optional - sage.rings.finite_rings
+            sage: R.<a,b,c> = GF(5)[]
+            sage: x = R(0)
+            sage: x.denominator()
             1
-            sage: type(x.denominator())                                                 # optional - sage.rings.finite_rings
+            sage: type(x.denominator())
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
-            sage: type(a.denominator())                                                 # optional - sage.rings.finite_rings
+            sage: type(a.denominator())
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: from sage.rings.polynomial.multi_polynomial_element import MPolynomial
-            sage: isinstance(a / b, MPolynomial)                                        # optional - sage.rings.finite_rings
+            sage: isinstance(a / b, MPolynomial)
             False
-            sage: isinstance(a.numerator() / a.denominator(), MPolynomial)              # optional - sage.rings.finite_rings
+            sage: isinstance(a.numerator() / a.denominator(), MPolynomial)
             True
         """
         if self.degree() == -1:
@@ -1849,10 +1849,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: K.<x,y,z> = GF(3)['x, y, z']                                          # optional - sage.rings.finite_rings
-            sage: f = 2*x*z + 2*z^2 + 2*y + 1; f                                        # optional - sage.rings.finite_rings
+            sage: K.<x,y,z> = GF(3)['x, y, z']
+            sage: f = 2*x*z + 2*z^2 + 2*y + 1; f
             -x*z - z^2 - y + 1
-            sage: f.numerator()                                                         # optional - sage.rings.finite_rings
+            sage: f.numerator()
             -x*z - z^2 - y + 1
 
         We check that the computation the numerator and denominator
@@ -1949,38 +1949,38 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = GF(7)[]                                                   # optional - sage.rings.finite_rings
-            sage: p = x^3 + y + x*z^2                                                   # optional - sage.rings.finite_rings
-            sage: p.weighted_degree({z:0, x:1, y:2})                                    # optional - sage.rings.finite_rings
+            sage: R.<x,y,z> = GF(7)[]
+            sage: p = x^3 + y + x*z^2
+            sage: p.weighted_degree({z:0, x:1, y:2})
             3
-            sage: p.weighted_degree(1, 2, 0)                                            # optional - sage.rings.finite_rings
+            sage: p.weighted_degree(1, 2, 0)
             3
-            sage: p.weighted_degree((1, 4, 2))                                          # optional - sage.rings.finite_rings
+            sage: p.weighted_degree((1, 4, 2))
             5
-            sage: p.weighted_degree((1, 4, 1))                                          # optional - sage.rings.finite_rings
+            sage: p.weighted_degree((1, 4, 1))
             4
-            sage: p.weighted_degree(2**64, 2**50, 2**128)                               # optional - sage.rings.finite_rings
+            sage: p.weighted_degree(2**64, 2**50, 2**128)
             680564733841876926945195958937245974528
-            sage: q = R.random_element(100, 20) #random                                 # optional - sage.rings.finite_rings
-            sage: q.weighted_degree(1, 1, 1) == q.total_degree()                        # optional - sage.rings.finite_rings
+            sage: q = R.random_element(100, 20)
+            sage: q.weighted_degree(1, 1, 1) == q.total_degree()
             True
 
         You may also work with negative weights
 
         ::
 
-            sage: p.weighted_degree(-1, -2, -1)                                         # optional - sage.rings.finite_rings
+            sage: p.weighted_degree(-1, -2, -1)
             -2
 
         Note that only integer weights are allowed
 
         ::
 
-            sage: p.weighted_degree(x, 1, 1)                                            # optional - sage.rings.finite_rings
+            sage: p.weighted_degree(x, 1, 1)
             Traceback (most recent call last):
             ...
             TypeError: unable to convert non-constant polynomial x to Integer Ring
-            sage: p.weighted_degree(2/1, 1, 1)                                          # optional - sage.rings.finite_rings
+            sage: p.weighted_degree(2/1, 1, 1)
             6
 
         The :meth:`weighted_degree` coincides with the :meth:`degree` of a weighted

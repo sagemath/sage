@@ -223,7 +223,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     EXAMPLES::
 
-        sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)                                  # optional - sage.rings.finite_rings
+        sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
         sage: I = sage.rings.ideal.Katsura(P)                                           # optional - sage.rings.finite_rings
 
     If a list of tuples is provided, those form the parts::
@@ -260,12 +260,12 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     We test that the ring is inferred correctly::
 
-        sage: P.<x,y,z> = GF(2)[]                                                       # optional - sage.rings.finite_rings
+        sage: P.<x,y,z> = GF(2)[]
         sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-        sage: PolynomialSequence([1,x,y]).ring()                                        # optional - sage.rings.finite_rings
+        sage: PolynomialSequence([1,x,y]).ring()
         Multivariate Polynomial Ring in x, y, z over Finite Field of size 2
 
-        sage: PolynomialSequence([[1,x,y], [0]]).ring()                                 # optional - sage.rings.finite_rings
+        sage: PolynomialSequence([[1,x,y], [0]]).ring()
         Multivariate Polynomial Ring in x, y, z over Finite Field of size 2
 
     TESTS:
@@ -274,10 +274,10 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     characteristic 2 (see :trac:`19452`)::
 
         sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-        sage: F = GF(2)                                                                 # optional - sage.rings.finite_rings
-        sage: L.<t> = PowerSeriesRing(F,'t')                                            # optional - sage.rings.finite_rings
-        sage: R.<x,y> = PolynomialRing(L,'x,y')                                         # optional - sage.rings.finite_rings
-        sage: PolynomialSequence([0], R)                                                # optional - sage.rings.finite_rings
+        sage: F = GF(2)
+        sage: L.<t> = PowerSeriesRing(F,'t')
+        sage: R.<x,y> = PolynomialRing(L,'x,y')
+        sage: PolynomialSequence([0], R)
         [0]
 
     A PolynomialSequence can be created from an iterator (see :trac:`25989`)::
@@ -392,7 +392,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)                              # optional - sage.rings.finite_rings
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
             sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
 
             sage: Sequence([I.gens()], I.ring()) # indirect doctest                     # optional - sage.rings.finite_rings
@@ -646,8 +646,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
         ::
 
-            sage: R.<x,y> = PolynomialRing(GF(7))                                       # optional - sage.rings.finite_rings
-            sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])                         # optional - sage.rings.finite_rings
+            sage: R.<x,y> = PolynomialRing(GF(7))
+            sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
             sage: I = S.algebraic_dependence(); I                                       # optional - sage.rings.finite_rings
             Ideal (2 - 3*T2 - T0^2 + 3*T2^2 - T0^2*T2 + T2^3 + 2*T0^4 - 2*T0^2*T2^2
                    + T2^4 - T0^4*T1 + T0^4*T2 - 2*T0^6 + 2*T0^4*T2^2 + T0^8)
@@ -713,7 +713,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)                              # optional - sage.rings.finite_rings
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
             sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
             sage: I.gens()                                                              # optional - sage.rings.finite_rings
             [a + 2*b + 2*c + 2*d - 1,
@@ -799,7 +799,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d> = PolynomialRing(GF(127))                                 # optional - sage.rings.finite_rings
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
             sage: F = Sequence(I); F                                                    # optional - sage.rings.finite_rings
             [a + 2*b + 2*c + 2*d - 1,
@@ -843,7 +843,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d> = PolynomialRing(GF(127))                                 # optional - sage.rings.finite_rings
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
             sage: F = Sequence(I); F # indirect doctest                                 # optional - sage.rings.finite_rings
             [a + 2*b + 2*c + 2*d - 1,
@@ -871,7 +871,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d> = PolynomialRing(GF(127))                                 # optional - sage.rings.finite_rings
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
             sage: F = Sequence(I)                                                       # optional - sage.rings.finite_rings
             sage: F + [a^127 + a]                                                       # optional - sage.rings.finite_rings
@@ -1016,8 +1016,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(127))                                   # optional - sage.rings.finite_rings
-            sage: F = Sequence([x*y + z, y + z + 1])                                    # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(127))
+            sage: F = Sequence([x*y + z, y + z + 1])
             sage: F._groebner_strategy()                                                # optional - sage.rings.finite_rings
             Groebner Strategy for ideal generated by 2 elements over
             Multivariate Polynomial Ring in x, y, z over Finite Field of size 127
@@ -1031,12 +1031,12 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(7))                                     # optional - sage.rings.finite_rings
-            sage: F = Sequence([x*y + x, x])                                            # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(7))
+            sage: F = Sequence([x*y + x, x])
             sage: F.maximal_degree()                                                    # optional - sage.rings.finite_rings
             2
-            sage: P.<x,y,z> = PolynomialRing(GF(7))                                     # optional - sage.rings.finite_rings
-            sage: F = Sequence([], universe=P)                                          # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(7))
+            sage: F = Sequence([], universe=P)
             sage: F.maximal_degree()                                                    # optional - sage.rings.finite_rings
             -1
 
@@ -1050,15 +1050,15 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         TESTS::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(127))                                   # optional - sage.rings.finite_rings
-            sage: F = Sequence([x*y + z, y + z + 1])                                    # optional - sage.rings.finite_rings
-            sage: loads(dumps(F)) == F # indirect doctest                               # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(127))
+            sage: F = Sequence([x*y + z, y + z + 1])
+            sage: loads(dumps(F)) == F
             True
 
         We check that :trac:`26354` is fixed::
 
-            sage: f = P.hom([y,z,x])                                                    # optional - sage.rings.finite_rings
-            sage: hash(f) == hash(loads(dumps(f)))                                      # optional - sage.rings.finite_rings
+            sage: f = P.hom([y,z,x])
+            sage: hash(f) == hash(loads(dumps(f)))
             True
 
         """
@@ -1177,7 +1177,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)                 # optional - sage.rings.finite_rings
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
             sage: I = sage.rings.ideal.Cyclic(R, 4)                                     # optional - sage.rings.finite_rings
             sage: I.basis.is_groebner()                                                 # optional - sage.rings.finite_rings
             False
@@ -1383,8 +1383,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(2))                                     # optional - sage.rings.finite_rings
-            sage: F = Sequence([x*y + z, y + z + 1])                                    # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(2))
+            sage: F = Sequence([x*y + z, y + z + 1])
             sage: F._groebner_strategy()                                                # optional - sage.rings.finite_rings
             Groebner Strategy for ideal generated by 2 elements over
             Multivariate Polynomial Ring in x, y, z over Finite Field of size 2

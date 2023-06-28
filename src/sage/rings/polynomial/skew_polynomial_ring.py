@@ -187,7 +187,7 @@ def _lagrange_polynomial(R, eval_pts, values):
     corresponding values do not match::
 
         sage: eval_pts = [t, 2*t]                                                       # optional - sage.rings.finite_rings
-        sage: values = [1, 3]                                                           # optional - sage.rings.finite_rings
+        sage: values = [1, 3]
         sage: _lagrange_polynomial(S, eval_pts, values)                                 # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
@@ -432,12 +432,12 @@ class SectionSkewPolynomialCenterInjection(Section):
             sage: iota = S.convert_map_from(Z)                                          # optional - sage.rings.finite_rings
             sage: sigma = iota.section()                                                # optional - sage.rings.finite_rings
 
-            sage: s = loads(dumps(sigma))                                               # optional - sage.rings.finite_rings
+            sage: s = loads(dumps(sigma))
             sage: s == sigma                                                            # optional - sage.rings.finite_rings
             True
             sage: s != sigma                                                            # optional - sage.rings.finite_rings
             False
-            sage: s is sigma                                                            # optional - sage.rings.finite_rings
+            sage: s is sigma
             False
         """
         if op == op_EQ:

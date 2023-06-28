@@ -57,7 +57,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: R.ideal([x, y])
             Ideal (x, y) of Multivariate Laurent Polynomial Ring in x, y
             over Integer Ring
-            sage: R.<x0,x1> = LaurentPolynomialRing(GF(3), 2)                           # optional - sage.rings.finite_rings
+            sage: R.<x0,x1> = LaurentPolynomialRing(GF(3), 2)
             sage: R.ideal([x0^2, x1^-3])                                                # optional - sage.rings.finite_rings
             Ideal (x0^2, x1^-3) of Multivariate Laurent Polynomial Ring in x0, x1
             over Finite Field of size 3

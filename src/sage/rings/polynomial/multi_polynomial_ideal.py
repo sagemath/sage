@@ -2862,9 +2862,9 @@ class MPolynomialIdeal_singular_repr(
 
         It is possible to request a computation using the Singular library::
 
-            sage: I.hilbert_polynomial(algorithm='singular') == I.hilbert_polynomial()  # optional - sage.libs.flint sage.libs.singular
+            sage: I.hilbert_polynomial(algorithm='singular') == I.hilbert_polynomial()  # optional - sage.libs.flint
             True
-            sage: J.hilbert_polynomial(algorithm='singular') == J.hilbert_polynomial()  # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_polynomial(algorithm='singular') == J.hilbert_polynomial()  # optional - sage.libs.flint
             True
 
         Here is a bigger examples::
@@ -2883,7 +2883,7 @@ class MPolynomialIdeal_singular_repr(
         with Singular. We don't test it here, as it has a side-effect on
         other tests that is not understood yet (see :trac:`26300`)::
 
-            sage: Minors.hilbert_polynomial(algorithm='singular')    # not tested       # optional - sage.libs.singular
+            sage: Minors.hilbert_polynomial(algorithm='singular')       # not tested
             Traceback (most recent call last):
             ...
             RuntimeError: error in Singular function call 'hilbPoly':
@@ -2906,7 +2906,7 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3, x*y^2, y^4, x^2*y*z, y^3*z, x^2*z^2, x*y*z^2, x*z^3])
-            sage: I.hilbert_polynomial(algorithm='singular')                            # optional - sage.libs.singular
+            sage: I.hilbert_polynomial(algorithm='singular')
             3
             sage: I.hilbert_polynomial()                                                # optional - sage.libs.flint
             3
@@ -3004,15 +3004,15 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS::
 
-            sage: I.hilbert_series() == I.hilbert_series(algorithm='singular')          # optional - sage.libs.flint sage.libs.singular
+            sage: I.hilbert_series() == I.hilbert_series(algorithm='singular')          # optional - sage.libs.flint
             True
-            sage: J.hilbert_series() == J.hilbert_series(algorithm='singular')          # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_series() == J.hilbert_series(algorithm='singular')          # optional - sage.libs.flint
             True
-            sage: J.hilbert_series(grading=(10,3)) == J.hilbert_series(grading=(10,3), algorithm='singular')            # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_series(grading=(10,3)) == J.hilbert_series(grading=(10,3), algorithm='singular')            # optional - sage.libs.flint
             True
-            sage: K.hilbert_series(grading=(1,2)) == K.hilbert_series(grading=(1,2), algorithm='singular')              # optional - sage.libs.flint sage.libs.singular
+            sage: K.hilbert_series(grading=(1,2)) == K.hilbert_series(grading=(1,2), algorithm='singular')              # optional - sage.libs.flint
             True
-            sage: K.hilbert_series(grading=(2,1)) == K.hilbert_series(grading=(2,1), algorithm='singular')              # optional - sage.libs.flint sage.libs.singular
+            sage: K.hilbert_series(grading=(2,1)) == K.hilbert_series(grading=(2,1), algorithm='singular')              # optional - sage.libs.flint
             True
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
@@ -3095,11 +3095,11 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS::
 
-            sage: I.hilbert_numerator() == I.hilbert_numerator(algorithm='singular')                                    # optional - sage.libs.flint sage.libs.singular
+            sage: I.hilbert_numerator() == I.hilbert_numerator(algorithm='singular')    # optional - sage.libs.flint
             True
-            sage: J.hilbert_numerator() == J.hilbert_numerator(algorithm='singular')                                    # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_numerator() == J.hilbert_numerator(algorithm='singular')    # optional - sage.libs.flint
             True
-            sage: J.hilbert_numerator(grading=(10,3)) == J.hilbert_numerator(grading=(10,3), algorithm='singular')      # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_numerator(grading=(10,3)) == J.hilbert_numerator(grading=(10,3), algorithm='singular')      # optional - sage.libs.flint
             True
 
         Check that this method works over QQbar (:trac:`25351`)::

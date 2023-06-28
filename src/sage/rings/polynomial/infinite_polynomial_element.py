@@ -299,16 +299,16 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         EXAMPLES::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(7))                               # optional - sage.rings.finite_rings
-            sage: p = x[2]*y[1] + 3*y[0]                                                # optional - sage.rings.finite_rings
-            sage: p                                                                     # optional - sage.rings.finite_rings
+            sage: X.<x,y> = InfinitePolynomialRing(GF(7))
+            sage: p = x[2]*y[1] + 3*y[0]
+            sage: p
             x_2*y_1 + 3*y_0
-            sage: p.polynomial()                                                        # optional - sage.rings.finite_rings
+            sage: p.polynomial()
             x_2*y_1 + 3*y_0
-            sage: p.polynomial().parent()                                               # optional - sage.rings.finite_rings
+            sage: p.polynomial().parent()
             Multivariate Polynomial Ring in x_2, x_1, x_0, y_2, y_1, y_0
              over Finite Field of size 7
-            sage: p.parent()                                                            # optional - sage.rings.finite_rings
+            sage: p.parent()
             Infinite polynomial ring in x, y over Finite Field of size 7
 
         """
@@ -1480,10 +1480,10 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
         An example in which a previous version had failed::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='sparse')                   # optional - sage.rings.finite_rings
-            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')                                                                      # optional - sage.rings.finite_rings
-            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')                                                                      # optional - sage.rings.finite_rings
-            sage: p < q # indirect doctest                                                                              # optional - sage.rings.finite_rings
+            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='sparse')
+            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')
+            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')
+            sage: p < q
             False
 
         """
@@ -1583,10 +1583,10 @@ class InfinitePolynomial_dense(InfinitePolynomial):
 
         An example in which a previous version had failed::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='dense')                    # optional - sage.rings.finite_rings
-            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')                                                                      # optional - sage.rings.finite_rings
-            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')                                                                      # optional - sage.rings.finite_rings
-            sage: p < q                                                                                                 # optional - sage.rings.finite_rings
+            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='dense')
+            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')
+            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')
+            sage: p < q
             False
 
         """

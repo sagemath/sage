@@ -1651,10 +1651,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127), 10, names='x',                            # optional - sage.rings.finite_rings
+            sage: P = PolynomialRing(GF(127), 10, names='x',
             ....:                    order='lex(3),deglex(5),lex(2)')
-            sage: T = P.term_order()                                                    # optional - sage.rings.finite_rings
-            sage: T.singular_str()                                                      # optional - sage.rings.finite_rings
+            sage: T = P.term_order()
+            sage: T.singular_str()
             '(lp(3),Dp(5),lp(2))'
             sage: P._singular_()                                                        # optional - sage.rings.finite_rings
             polynomial ring, over a field, global ordering
@@ -1779,20 +1779,20 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127), 10, names='x',                            # optional - sage.rings.finite_rings
+            sage: P = PolynomialRing(GF(127), 10, names='x',
             ....:                    order='lex(3),deglex(5),lex(2)')
-            sage: T = P.term_order()                                                    # optional - sage.rings.finite_rings
-            sage: T.singular_moreblocks()                                               # optional - sage.rings.finite_rings
+            sage: T = P.term_order()
+            sage: T.singular_moreblocks()
             0
-            sage: P = PolynomialRing(GF(127), 10, names='x',                            # optional - sage.rings.finite_rings
+            sage: P = PolynomialRing(GF(127), 10, names='x',
             ....:                    order='lex(3),degneglex(5),lex(2)')
-            sage: T = P.term_order()                                                    # optional - sage.rings.finite_rings
-            sage: T.singular_moreblocks()                                               # optional - sage.rings.finite_rings
+            sage: T = P.term_order()
+            sage: T.singular_moreblocks()
             1
-            sage: P = PolynomialRing(GF(127), 10, names='x',                            # optional - sage.rings.finite_rings
+            sage: P = PolynomialRing(GF(127), 10, names='x',
             ....:                    order='degneglex(5),degneglex(5)')
-            sage: T = P.term_order()                                                    # optional - sage.rings.finite_rings
-            sage: T.singular_moreblocks()                                               # optional - sage.rings.finite_rings
+            sage: T = P.term_order()
+            sage: T.singular_moreblocks()
             2
 
         TESTS:
@@ -1822,10 +1822,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127), 8, names='x',                             # optional - sage.rings.finite_rings
+            sage: P = PolynomialRing(GF(127), 8, names='x',
             ....:                    order='degrevlex(3),lex(5)')
-            sage: T = P.term_order()                                                    # optional - sage.rings.finite_rings
-            sage: T.macaulay2_str()                                                     # optional - sage.rings.finite_rings
+            sage: T = P.term_order()
+            sage: T.macaulay2_str()
             '{GRevLex => 3,Lex => 5}'
             sage: P._macaulay2_().options()['MonomialOrder']  # optional - macaulay2    # optional - sage.rings.finite_rings
             {MonomialSize => 16  }
@@ -1843,7 +1843,7 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127), 10, names='x', order='degrevlex')         # optional - sage.rings.finite_rings
+            sage: P = PolynomialRing(GF(127), 10, names='x', order='degrevlex')
             sage: magma(P)                                    # optional - magma        # optional - sage.rings.finite_rings
             Polynomial ring of rank 10 over GF(127)
             Order: Graded Reverse Lexicographical
@@ -1851,8 +1851,8 @@ class TermOrder(SageObject):
 
         ::
 
-            sage: T = P.term_order()                                                    # optional - sage.rings.finite_rings
-            sage: T.magma_str()                                                         # optional - sage.rings.finite_rings
+            sage: T = P.term_order()
+            sage: T.magma_str()
             '"grevlex"'
         """
         return self._magma_str
