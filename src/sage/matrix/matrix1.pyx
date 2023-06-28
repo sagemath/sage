@@ -5,8 +5,8 @@ For design documentation see :mod:`sage.matrix.docs`.
 
 TESTS::
 
-    sage: A = Matrix(GF(5), 3, 3, srange(9))                                            # optional - sage.rings.finite_rings
-    sage: TestSuite(A).run()                                                            # optional - sage.rings.finite_rings
+    sage: A = Matrix(GF(5), 3, 3, srange(9))
+    sage: TestSuite(A).run()
 """
 
 #*****************************************************************************
@@ -626,9 +626,9 @@ cdef class Matrix(Matrix0):
             sage: sage_input(matrix(QQ, 3, 3, [5..13])/7, verify=True)
             # Verified
             matrix(QQ, [[5/7, 6/7, 1], [8/7, 9/7, 10/7], [11/7, 12/7, 13/7]])
-            sage: M = MatrixSpace(GF(5), 50, 50, sparse=True).random_element(density=0.002)         # optional - sage.rings.finite_rings
-            sage: input = sage_input(M, verify=True)                                                # optional - sage.rings.finite_rings
-            sage: sage_eval(input) == M                                                             # optional - sage.rings.finite_rings
+            sage: M = MatrixSpace(GF(5), 50, 50, sparse=True).random_element(density=0.002)
+            sage: input = sage_input(M, verify=True)
+            sage: sage_eval(input) == M
             True
             sage: from sage.misc.sage_input import SageInputBuilder
             sage: matrix(RDF, [[3, 1], [4, 1]])._sage_input_(SageInputBuilder(), False)
@@ -2461,7 +2461,7 @@ cdef class Matrix(Matrix0):
 
         Specify a different base ring for the output::
 
-            sage: M.zero_pattern_matrix(GF(2)).base_ring()                              # optional - sage.rings.finite_rings
+            sage: M.zero_pattern_matrix(GF(2)).base_ring()
             Finite Field of size 2
 
         Examples for different base rings for ``self``::

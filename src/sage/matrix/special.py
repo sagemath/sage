@@ -462,7 +462,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
         sage: K.<a> = FiniteField(3^2)                                                  # optional - sage.rings.finite_rings
         sage: A = random_matrix(K, 2, 5, implementation='generic')                      # optional - sage.rings.finite_rings
-        sage: type(A)                                                                   # optional - sage.rings.finite_rings
+        sage: type(A)
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
         sage: A.base_ring() is K                                                        # optional - sage.rings.finite_rings
         True
@@ -552,7 +552,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         True
         sage: all(x in ZZ for x in (A - (-1)*identity_matrix(5)).rref().list())
         True
-        sage: A.jordan_form()
+        sage: A.jordan_form()                                                           # optional - sage.combinat
         [ 2| 0| 0| 0| 0]
         [--+--+--+--+--]
         [ 0| 3| 0| 0| 0]
@@ -740,11 +740,11 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     Format 4: ring, size and list of entries. ::
 
-        sage: A = diagonal_matrix(FiniteField(3), 3, [2, 16]); A                        # optional - sage.rings.finite_rings
+        sage: A = diagonal_matrix(FiniteField(3), 3, [2, 16]); A
         [2 0 0]
         [0 1 0]
         [0 0 0]
-        sage: A.parent()                                                                # optional - sage.rings.finite_rings
+        sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Finite Field of size 3
 
     NumPy arrays may be used as input. ::
@@ -1514,17 +1514,17 @@ def circulant(v, sparse=None):
         [4 8 1 2 3]
         [3 4 8 1 2]
         [2 3 4 8 1]
-        sage: m = matrix.circulant(vector(GF(3),[0,1,-1],sparse=True)); m               # optional - sage.rings.finite_rings
+        sage: m = matrix.circulant(vector(GF(3),[0,1,-1],sparse=True)); m
         [0 1 2]
         [2 0 1]
         [1 2 0]
-        sage: m.is_sparse()                                                             # optional - sage.rings.finite_rings
+        sage: m.is_sparse()
         True
 
     TESTS::
 
-        sage: m = matrix.circulant(vector(GF(3),[0,1,-1],sparse=False))                 # optional - sage.rings.finite_rings
-        sage: m.is_sparse()                                                             # optional - sage.rings.finite_rings
+        sage: m = matrix.circulant(vector(GF(3),[0,1,-1],sparse=False))
+        sage: m.is_sparse()
         False
         sage: matrix.circulant([0,1,-1]).is_sparse()
         False
@@ -2447,17 +2447,17 @@ def random_rref_matrix(parent, num_pivots):
 
     Matrices can be generated over other exact rings. ::
 
-        sage: B = random_matrix(FiniteField(7), 4, 4,                       # random    # optional - sage.rings.finite_rings
+        sage: B = random_matrix(FiniteField(7), 4, 4,
         ....:                   algorithm='echelon_form', num_pivots=3); B
         [1 0 0 0]
         [0 1 0 6]
         [0 0 1 4]
         [0 0 0 0]
-        sage: B.rank() == 3                                                             # optional - sage.rings.finite_rings
+        sage: B.rank() == 3
         True
-        sage: B.base_ring()                                                             # optional - sage.rings.finite_rings
+        sage: B.base_ring()
         Finite Field of size 7
-        sage: B == B.rref()                                                             # optional - sage.rings.finite_rings
+        sage: B == B.rref()
         True
 
     TESTS:

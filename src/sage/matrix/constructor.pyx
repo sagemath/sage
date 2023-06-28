@@ -185,10 +185,10 @@ def matrix(*args, **kwds):
         sage: m = matrix(v); m; m.parent()
         [  1  10 100]
         Full MatrixSpace of 1 by 3 dense matrices over Integer Ring
-        sage: m = matrix(GF(7), v); m; m.parent()                                       # optional - sage.rings.finite_rings
+        sage: m = matrix(GF(7), v); m; m.parent()
         [1 3 2]
         Full MatrixSpace of 1 by 3 dense matrices over Finite Field of size 7
-        sage: m = matrix(GF(7), 3, 1, v); m; m.parent()                                 # optional - sage.rings.finite_rings
+        sage: m = matrix(GF(7), 3, 1, v); m; m.parent()
         [1]
         [3]
         [2]
@@ -546,7 +546,7 @@ def matrix(*args, **kwds):
          over Univariate Polynomial Ring in x over Integer Ring
         sage: matrix(ZZ, 10, 10, range(100)).parent()
         Full MatrixSpace of 10 by 10 dense matrices over Integer Ring
-        sage: m = matrix(GF(7), [[1/3,2/3,1/2], [3/4,4/5,7]]); m; m.parent()            # optional - sage.rings.finite_rings
+        sage: m = matrix(GF(7), [[1/3,2/3,1/2], [3/4,4/5,7]]); m; m.parent()
         [5 3 4]
         [6 5 0]
         Full MatrixSpace of 2 by 3 dense matrices over Finite Field of size 7
