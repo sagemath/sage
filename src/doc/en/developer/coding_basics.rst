@@ -1215,8 +1215,8 @@ framework. Here is a comprehensive list:
        then that file will be skipped unless
        the ``--optional=keyword`` flag is passed to ``sage -t``.
 
-       This does not apply to files which are explicitly given
-       as command line arguments: those are always tested.
+       When a file is skipped that was explicitly given as a command line argument,
+       a warning is displayed.
 
        If you add such a line to a file, you are strongly encouraged
        to add a note to the module-level documentation, saying that
