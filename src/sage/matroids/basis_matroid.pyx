@@ -55,9 +55,9 @@ AUTHORS:
 
 TESTS::
 
-    sage: F = matroids.named_matroids.Fano()                                            # optional - sage.rings.finite_rings
-    sage: M = Matroid(bases=F.bases())                                                  # optional - sage.rings.finite_rings
-    sage: TestSuite(M).run()                                                            # optional - sage.rings.finite_rings
+    sage: F = matroids.named_matroids.Fano()
+    sage: M = Matroid(bases=F.bases())
+    sage: TestSuite(M).run()
 
 Methods
 =======
@@ -110,11 +110,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     Create a BasisMatroid instance out of any other matroid::
 
         sage: from sage.matroids.advanced import *
-        sage: F = matroids.named_matroids.Fano()                                        # optional - sage.rings.finite_rings
-        sage: M = BasisMatroid(F)                                                       # optional - sage.rings.finite_rings
-        sage: F.groundset() == M.groundset()                                            # optional - sage.rings.finite_rings
+        sage: F = matroids.named_matroids.Fano()
+        sage: M = BasisMatroid(F)
+        sage: F.groundset() == M.groundset()
         True
-        sage: len(set(F.bases()).difference(M.bases()))                                 # optional - sage.rings.finite_rings
+        sage: len(set(F.bases()).difference(M.bases()))
         0
 
     It is possible to provide either bases or nonbases::
@@ -150,11 +150,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: F = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M = BasisMatroid(F)                                                   # optional - sage.rings.finite_rings
-            sage: F.groundset() == M.groundset()                                        # optional - sage.rings.finite_rings
+            sage: F = matroids.named_matroids.Fano()
+            sage: M = BasisMatroid(F)
+            sage: F.groundset() == M.groundset()
             True
-            sage: len(set(F.bases()).difference(M.bases()))                             # optional - sage.rings.finite_rings
+            sage: len(set(F.bases()).difference(M.bases()))
             0
         """
         cdef SetSystem NB
@@ -254,8 +254,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: repr(M)  # indirect doctest                                           # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())
+            sage: repr(M)  # indirect doctest
             'Matroid of rank 3 on 7 elements with 28 bases'
 
         """
@@ -429,12 +429,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.N2().bases())               # optional - sage.rings.finite_rings
-            sage: M.truncation()                                                        # optional - sage.rings.finite_rings
+            sage: M = Matroid(bases=matroids.named_matroids.N2().bases())
+            sage: M.truncation()
             Matroid of rank 5 on 12 elements with 702 bases
-            sage: M.f_vector()                                                          # optional - sage.rings.finite_rings
+            sage: M.f_vector()
             [1, 12, 66, 190, 258, 99, 1]
-            sage: M.truncation().f_vector()                                             # optional - sage.rings.finite_rings
+            sage: M.truncation().f_vector()
             [1, 12, 66, 190, 258, 1]
 
         """
@@ -511,10 +511,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: M                                                                     # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())
+            sage: M
             Matroid of rank 3 on 7 elements with 28 bases
-            sage: M._with_coloop('x')                                                   # optional - sage.rings.finite_rings
+            sage: M._with_coloop('x')
             Matroid of rank 4 on 8 elements with 28 bases
 
         """
@@ -548,11 +548,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: sorted(M.groundset())                                                 # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())
+            sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-            sage: N = M.relabel({'g':'x'})                                              # optional - sage.rings.finite_rings
-            sage: sorted(N.groundset())                                                 # optional - sage.rings.finite_rings
+            sage: N = M.relabel({'g':'x'})
+            sage: sorted(N.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'x']
 
         """
@@ -572,10 +572,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())             # optional - sage.rings.finite_rings
-            sage: M                                                                     # optional - sage.rings.finite_rings
+            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())
+            sage: M
             Matroid of rank 3 on 7 elements with 28 bases
-            sage: M.bases_count()                                                       # optional - sage.rings.finite_rings
+            sage: M.bases_count()
             28
         """
         if self._bcount is None:
@@ -594,10 +594,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())             # optional - sage.rings.finite_rings
-            sage: M                                                                     # optional - sage.rings.finite_rings
+            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())
+            sage: M
             Matroid of rank 3 on 7 elements with 28 bases
-            sage: len(M.bases())                                                        # optional - sage.rings.finite_rings
+            sage: len(M.bases())
             28
         """
         cdef long r, n
@@ -630,10 +630,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())             # optional - sage.rings.finite_rings
-            sage: M                                                                     # optional - sage.rings.finite_rings
+            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())
+            sage: M
             Matroid of rank 3 on 7 elements with 28 bases
-            sage: len(M.nonbases())                                                     # optional - sage.rings.finite_rings
+            sage: len(M.nonbases())
             7
         """
         if self._nonbases is not None:
@@ -674,9 +674,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: M._bases_invariant() == N._bases_invariant()                          # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())
+            sage: M._bases_invariant() == N._bases_invariant()
             True
         """
         if self._bases_invariant_var is not None:
@@ -733,9 +733,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: N = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.rings.finite_rings
-            sage: M._bases_invariant2() == N._bases_invariant2()                        # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())
+            sage: N = BasisMatroid(matroids.named_matroids.NonFano())
+            sage: M._bases_invariant2() == N._bases_invariant2()
             False
         """
         if self._bases_invariant2_var is None:
@@ -844,8 +844,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.N1())                        # optional - sage.rings.finite_rings
-            sage: sorted([e for e in M.groundset() if M.is_distinguished(e)])           # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.N1())
+            sage: sorted([e for e in M.groundset() if M.is_distinguished(e)])
             ['c', 'g', 'h', 'j']
 
         """
@@ -886,12 +886,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.rings.finite_rings
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: m = {e:e for e in M.groundset()}                                      # optional - sage.rings.finite_rings
-            sage: M._is_relaxation(N, m)                                                # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.NonFano())
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())
+            sage: m = {e:e for e in M.groundset()}
+            sage: M._is_relaxation(N, m)
             True
-            sage: N._is_relaxation(M, m)                                                # optional - sage.rings.finite_rings
+            sage: N._is_relaxation(M, m)
             False
         """
         cdef long i, j
@@ -941,12 +941,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.rings.finite_rings
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: m = {e:e for e in M.groundset()}                                      # optional - sage.rings.finite_rings
-            sage: M._is_relaxation(N, m)                                                # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.NonFano())
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())
+            sage: m = {e:e for e in M.groundset()}
+            sage: M._is_relaxation(N, m)
             True
-            sage: M._is_isomorphism(N, m)                                               # optional - sage.rings.finite_rings
+            sage: M._is_isomorphism(N, m)
             False
         """
         if not isinstance(other, BasisMatroid):
@@ -979,9 +979,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: morphism = M._isomorphism(N)                                          # optional - sage.graphs
             sage: M._is_isomorphism(N, morphism)                                        # optional - sage.graphs
             True
-            sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.rings.finite_rings
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: M._isomorphism(N) is not None                                         # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.NonFano())
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())
+            sage: M._isomorphism(N) is not None
             False
         """
         if not isinstance(other, BasisMatroid):
@@ -1055,11 +1055,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.rings.finite_rings
-            sage: N = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: M._is_isomorphic(N)                                                   # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.NonFano())
+            sage: N = BasisMatroid(matroids.named_matroids.Fano())
+            sage: M._is_isomorphic(N)
             False
-            sage: M._is_isomorphic(N, certificate=True)                                 # optional - sage.rings.finite_rings
+            sage: M._is_isomorphic(N, certificate=True)
             (False, None)
         """
         if certificate:
@@ -1127,12 +1127,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: N = BasisMatroid(matroids.named_matroids.Fano().dual()).dual()        # optional - sage.rings.finite_rings
-            sage: O = BasisMatroid(matroids.named_matroids.NonFano())                   # optional - sage.rings.finite_rings
-            sage: hash(M) == hash(N)                                                    # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())
+            sage: N = BasisMatroid(matroids.named_matroids.Fano().dual()).dual()
+            sage: O = BasisMatroid(matroids.named_matroids.NonFano())
+            sage: hash(M) == hash(N)
             True
-            sage: hash(M) == hash(O)                                                    # optional - sage.rings.finite_rings
+            sage: hash(M) == hash(O)
             False
         """
         return hash((self.groundset(), self.bases_count(), self._weak_invariant()))

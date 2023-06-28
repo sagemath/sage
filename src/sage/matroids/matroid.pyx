@@ -1134,7 +1134,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Vamos()
-            sage: M._has_minor(matroids.Whirl(3))                                       # optional - sage.rings.finite_rings
+            sage: M._has_minor(matroids.Whirl(3))
             False
             sage: M._has_minor(matroids.Uniform(2, 4))
             True
@@ -1362,12 +1362,12 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.rank()                                                              # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.rank()
             3
-            sage: M.rank(['a', 'b', 'f'])                                               # optional - sage.rings.finite_rings
+            sage: M.rank(['a', 'b', 'f'])
             2
-            sage: M.rank(['a', 'b', 'x'])                                               # optional - sage.rings.finite_rings
+            sage: M.rank(['a', 'b', 'x'])
             Traceback (most recent call last):
             ...
             ValueError: ['a', 'b', 'x'] is not a subset of the groundset
@@ -1673,12 +1673,12 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.corank()                                                            # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.corank()
             4
-            sage: M.corank('cdeg')                                                      # optional - sage.rings.finite_rings
+            sage: M.corank('cdeg')
             3
-            sage: M.rank(['a', 'b', 'x'])                                               # optional - sage.rings.finite_rings
+            sage: M.rank(['a', 'b', 'x'])
             Traceback (most recent call last):
             ...
             ValueError: ['a', 'b', 'x'] is not a subset of the groundset
@@ -1915,10 +1915,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.loops()                                                             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.loops()
             frozenset()
-            sage: (M / ['a', 'b']).loops()                                              # optional - sage.rings.finite_rings
+            sage: (M / ['a', 'b']).loops()
             frozenset({'f'})
         """
         return self._closure(set())
@@ -2139,10 +2139,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().dual()                             # optional - sage.rings.finite_rings
-            sage: M.coloops()                                                           # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano().dual()
+            sage: M.coloops()
             frozenset()
-            sage: (M \ ['a', 'b']).coloops()                                            # optional - sage.rings.finite_rings
+            sage: (M \ ['a', 'b']).coloops()
             frozenset({'f'})
         """
         return self._coclosure(set())
@@ -2385,8 +2385,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted([sorted(C) for C in M.circuits()])                             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted([sorted(C) for C in M.circuits()])
             [['a', 'b', 'c', 'g'], ['a', 'b', 'd', 'e'], ['a', 'b', 'f'],
             ['a', 'c', 'd', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['a', 'e', 'f', 'g'], ['b', 'c', 'd'], ['b', 'c', 'e', 'f'],
@@ -2417,8 +2417,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted([sorted(C) for C in M.nonspanning_circuits()])                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted([sorted(C) for C in M.nonspanning_circuits()])
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
             ['d', 'e', 'f']]
@@ -2443,8 +2443,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted([sorted(C) for C in M.cocircuits()])                           # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted([sorted(C) for C in M.cocircuits()])
             [['a', 'b', 'c', 'g'], ['a', 'b', 'd', 'e'], ['a', 'c', 'd', 'f'],
             ['a', 'e', 'f', 'g'], ['b', 'c', 'e', 'f'], ['b', 'd', 'f', 'g'],
             ['c', 'd', 'e', 'g']]
@@ -2472,8 +2472,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().dual()                             # optional - sage.rings.finite_rings
-            sage: sorted([sorted(C) for C in M.noncospanning_cocircuits()])             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano().dual()
+            sage: sorted([sorted(C) for C in M.noncospanning_cocircuits()])
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
             ['d', 'e', 'f']]
@@ -2498,17 +2498,17 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: CC = M.circuit_closures()                                             # optional - sage.rings.finite_rings
-            sage: len(CC[2])                                                            # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: CC = M.circuit_closures()
+            sage: len(CC[2])
             7
-            sage: len(CC[3])                                                            # optional - sage.rings.finite_rings
+            sage: len(CC[3])
             1
-            sage: len(CC[1])                                                            # optional - sage.rings.finite_rings
+            sage: len(CC[1])
             Traceback (most recent call last):
             ...
             KeyError: 1
-            sage: [sorted(X) for X in CC[3]]                                            # optional - sage.rings.finite_rings
+            sage: [sorted(X) for X in CC[3]]
             [['a', 'b', 'c', 'd', 'e', 'f', 'g']]
         """
         CC = [set([]) for r in range(self.rank() + 1)]
@@ -2535,11 +2535,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: CC = M.nonspanning_circuit_closures()                                 # optional - sage.rings.finite_rings
-            sage: len(CC[2])                                                            # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: CC = M.nonspanning_circuit_closures()
+            sage: len(CC[2])
             7
-            sage: len(CC[3])                                                            # optional - sage.rings.finite_rings
+            sage: len(CC[3])
             Traceback (most recent call last):
             ...
             KeyError: 3
@@ -2738,9 +2738,9 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: F = M._flags(1)                                                       # optional - sage.rings.finite_rings
-            sage: sorted(M._extend_flags(F)) == sorted(M._flags(2))                     # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: F = M._flags(1)
+            sage: sorted(M._extend_flags(F)) == sorted(M._flags(2))
             True
         """
         newflags = []
@@ -2778,8 +2778,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted([M._flags(1)])                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted([M._flags(1)])
             [[[frozenset({'a'}), {'a'}, frozenset({'b', 'c', 'd', 'e', 'f', 'g'})],
               [frozenset({'b'}), {'b'}, frozenset({'c', 'd', 'e', 'f', 'g'})],
               [frozenset({'c'}), {'c'}, frozenset({'d', 'e', 'f', 'g'})],
@@ -2816,8 +2816,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted([sorted(F) for F in M.flats(2)])                               # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted([sorted(F) for F in M.flats(2)])
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
             ['d', 'e', 'f']]
@@ -2859,7 +2859,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
             sage: M.lattice_of_flats()                                                  # optional - sage.rings.finite_rings
             Finite lattice containing 16 elements
         """
@@ -3126,12 +3126,12 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.Whirl(4)                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.Whirl(4)
             sage: P = M.matroid_polytope(); P                                           # optional - sage.geometry.polyhedron sage.rings.finite_rings
             A 7-dimensional polyhedron in ZZ^8 defined as the convex hull
             of 46 vertices
 
-            sage: M = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.NonFano()
             sage: M.matroid_polytope()                                                  # optional - sage.geometry.polyhedron sage.rings.finite_rings
             A 6-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 29 vertices
@@ -3169,12 +3169,12 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.Whirl(4)                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.Whirl(4)
             sage: M.independence_matroid_polytope()                                     # optional - sage.geometry.polyhedron sage.rings.finite_rings
             A 8-dimensional polyhedron in ZZ^8 defined as the convex hull
             of 135 vertices
 
-            sage: M = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.NonFano()
             sage: M.independence_matroid_polytope()                                     # optional - sage.geometry.polyhedron sage.rings.finite_rings
             A 7-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 58 vertices
@@ -3228,11 +3228,11 @@ cdef class Matroid(SageObject):
             TypeError: can only test for isomorphism between matroids.
 
 
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
-            sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
-            sage: M1.is_isomorphic(M2)                                                  # optional - sage.rings.finite_rings
+            sage: M1 = matroids.named_matroids.Fano()
+            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1.is_isomorphic(M2)
             False
-            sage: M1.is_isomorphic(M2, certificate=True)                                # optional - sage.rings.finite_rings
+            sage: M1.is_isomorphic(M2, certificate=True)
             (False, None)
         """
         if not isinstance(other, Matroid):
@@ -3268,9 +3268,9 @@ cdef class Matroid(SageObject):
             sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
 
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
-            sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
-            sage: M1._is_isomorphic(M2)                                                 # optional - sage.rings.finite_rings
+            sage: M1 = matroids.named_matroids.Fano()
+            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1._is_isomorphic(M2)
             False
 
         """
@@ -3310,9 +3310,9 @@ cdef class Matroid(SageObject):
             ...
             TypeError: can only give isomorphism between matroids.
 
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
-            sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
-            sage: M1.isomorphism(M2) is not None                                        # optional - sage.rings.finite_rings
+            sage: M1 = matroids.named_matroids.Fano()
+            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1.isomorphism(M2) is not None
             False
         """
         if not isinstance(other, Matroid):
@@ -3340,9 +3340,9 @@ cdef class Matroid(SageObject):
             sage: morphism = M1.isomorphism(M2)                                         # optional - sage.graphs
             sage: M1.is_isomorphism(M2, morphism)                                       # optional - sage.graphs
             True
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
-            sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
-            sage: M1.isomorphism(M2) is not None                                        # optional - sage.rings.finite_rings
+            sage: M1 = matroids.named_matroids.Fano()
+            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1.isomorphism(M2) is not None
             False
         """
         if self is other:
@@ -3386,37 +3386,37 @@ cdef class Matroid(SageObject):
         yields ``False``, even if the matroids are equal::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano(); M                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano(); M
             Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            sage: M1 = BasisMatroid(M)                                                  # optional - sage.rings.finite_rings
-            sage: M2 = Matroid(groundset='abcdefg', reduced_matrix=[                    # optional - sage.rings.finite_rings
+            sage: M1 = BasisMatroid(M)
+            sage: M2 = Matroid(groundset='abcdefg', reduced_matrix=[
             ....:      [0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1]], field=GF(2))
-            sage: M.equals(M1)                                                          # optional - sage.rings.finite_rings
+            sage: M.equals(M1)
             True
-            sage: M.equals(M2)                                                          # optional - sage.rings.finite_rings
+            sage: M.equals(M2)
             True
-            sage: M == M1                                                               # optional - sage.rings.finite_rings
+            sage: M == M1
             False
-            sage: M == M2                                                               # optional - sage.rings.finite_rings
+            sage: M == M2
             True
 
         :class:`LinearMatroid <sage.matroids.linear_matroid.LinearMatroid>`
         instances ``M`` and ``N`` satisfy ``M == N`` if the representations
         are equivalent up to row operations and column scaling::
 
-            sage: M1 = LinearMatroid(groundset='abcd', matrix=Matrix(GF(7),             # optional - sage.rings.finite_rings
+            sage: M1 = LinearMatroid(groundset='abcd', matrix=Matrix(GF(7),
             ....:                               [[1, 0, 1, 1], [0, 1, 1, 2]]))
-            sage: M2 = LinearMatroid(groundset='abcd', matrix=Matrix(GF(7),             # optional - sage.rings.finite_rings
+            sage: M2 = LinearMatroid(groundset='abcd', matrix=Matrix(GF(7),
             ....:                               [[1, 0, 1, 1], [0, 1, 1, 3]]))
-            sage: M3 = LinearMatroid(groundset='abcd', matrix=Matrix(GF(7),             # optional - sage.rings.finite_rings
+            sage: M3 = LinearMatroid(groundset='abcd', matrix=Matrix(GF(7),
             ....:                               [[2, 6, 1, 0], [6, 1, 0, 1]]))
-            sage: M1.equals(M2)                                                         # optional - sage.rings.finite_rings
+            sage: M1.equals(M2)
             True
-            sage: M1.equals(M3)                                                         # optional - sage.rings.finite_rings
+            sage: M1.equals(M3)
             True
-            sage: M1 == M2                                                              # optional - sage.rings.finite_rings
+            sage: M1 == M2
             False
-            sage: M1 == M3                                                              # optional - sage.rings.finite_rings
+            sage: M1 == M3
             True
         """
         if self is other:
@@ -3463,16 +3463,16 @@ cdef class Matroid(SageObject):
             sage: N.is_isomorphism(M, {e:e for e in M.groundset()})
             False
 
-            sage: M = matroids.named_matroids.Fano() \ ['g']                            # optional - sage.rings.finite_rings
-            sage: N = matroids.Wheel(3)                                                 # optional - sage.rings.finite_rings
-            sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}                # optional - sage.rings.finite_rings
-            sage: M.is_isomorphism(N, morphism)                                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano() \ ['g']
+            sage: N = matroids.Wheel(3)
+            sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
+            sage: M.is_isomorphism(N, morphism)
             True
 
         A morphism can be specified as a dictionary (above), a permutation,
         a function, and many other types of maps::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
             sage: P = PermutationGroup([[('a', 'b', 'c'),                               # optional - sage.rings.finite_rings
             ....:                        ('d', 'e', 'f'), ('g')]]).gen()
             sage: M.is_isomorphism(M, P)                                                # optional - sage.rings.finite_rings
@@ -3572,10 +3572,10 @@ cdef class Matroid(SageObject):
             sage: N._is_isomorphism(M, {e:e for e in M.groundset()})
             False
 
-            sage: M = matroids.named_matroids.Fano() \ ['g']                            # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano() \ ['g']
             sage: N = matroids.Wheel(3)
             sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
-            sage: M._is_isomorphism(N, morphism)                                        # optional - sage.rings.finite_rings
+            sage: M._is_isomorphism(N, morphism)
             True
         """
         from . import basis_exchange_matroid
@@ -3639,19 +3639,19 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M1 = Matroid(groundset='abcd', matrix=Matrix(GF(7),                   # optional - sage.rings.finite_rings
+            sage: M1 = Matroid(groundset='abcd', matrix=Matrix(GF(7),
             ....:                               [[1, 0, 1, 1], [0, 1, 1, 2]]))
-            sage: M2 = Matroid(groundset='abcd', matrix=Matrix(GF(7),                   # optional - sage.rings.finite_rings
+            sage: M2 = Matroid(groundset='abcd', matrix=Matrix(GF(7),
             ....:                               [[1, 0, 1, 1], [0, 1, 1, 3]]))
-            sage: M3 = Matroid(groundset='abcd', matrix=Matrix(GF(7),                   # optional - sage.rings.finite_rings
+            sage: M3 = Matroid(groundset='abcd', matrix=Matrix(GF(7),
             ....:                               [[2, 6, 1, 0], [6, 1, 0, 1]]))
-            sage: M1.equals(M2)                                                         # optional - sage.rings.finite_rings
+            sage: M1.equals(M2)
             True
-            sage: M1.equals(M3)                                                         # optional - sage.rings.finite_rings
+            sage: M1.equals(M3)
             True
-            sage: M1 != M2  # indirect doctest                                          # optional - sage.rings.finite_rings
+            sage: M1 != M2  # indirect doctest
             True
-            sage: M1 == M3  # indirect doctest                                          # optional - sage.rings.finite_rings
+            sage: M1 == M3  # indirect doctest
             True
         """
         if op not in [Py_EQ, Py_NE]:
@@ -3713,10 +3713,10 @@ cdef class Matroid(SageObject):
         The sets of contractions and deletions need not be independent,
         respectively coindependent::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.rank('abf')                                                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.rank('abf')
             2
-            sage: M.minor(contractions='abf')                                           # optional - sage.rings.finite_rings
+            sage: M.minor(contractions='abf')
             Binary matroid of rank 1 on 4 elements, type (1, 0)
 
         However, they need to be subsets of the groundset, and disjoint::
@@ -3819,12 +3819,12 @@ cdef class Matroid(SageObject):
 
         ::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted(M.groundset())                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-            sage: M.contract(['a', 'c'])                                                # optional - sage.rings.finite_rings
+            sage: M.contract(['a', 'c'])
             Binary matroid of rank 1 on 5 elements, type (1, 0)
-            sage: M.contract(['a']) == M / ['a']                                        # optional - sage.rings.finite_rings
+            sage: M.contract(['a']) == M / ['a']
             True
 
         One can use a single element, rather than a set::
@@ -3837,8 +3837,8 @@ cdef class Matroid(SageObject):
 
         Note that one can iterate over strings::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M / 'abc'                                                             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M / 'abc'
             Binary matroid of rank 0 on 4 elements, type (0, 0)
 
         The following is therefore ambiguous. Sage will contract the single
@@ -3896,12 +3896,12 @@ cdef class Matroid(SageObject):
 
         ::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted(M.groundset())                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-            sage: M.delete(['a', 'c'])                                                  # optional - sage.rings.finite_rings
+            sage: M.delete(['a', 'c'])
             Binary matroid of rank 3 on 5 elements, type (1, 6)
-            sage: M.delete(['a']) == M \ ['a']                                          # optional - sage.rings.finite_rings
+            sage: M.delete(['a']) == M \ ['a']
             True
 
         One can use a single element, rather than a set::
@@ -3914,8 +3914,8 @@ cdef class Matroid(SageObject):
 
         Note that one can iterate over strings::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M \ 'abc'                                                             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M \ 'abc'
             Binary matroid of rank 3 on 4 elements, type (0, 5)
 
         The following is therefore ambiguous. Sage will delete the single
@@ -3994,9 +3994,9 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: N = M.truncation()                                                    # optional - sage.rings.finite_rings
-            sage: N.is_isomorphic(matroids.Uniform(2, 7))                               # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: N = M.truncation()
+            sage: N.is_isomorphic(matroids.Uniform(2, 7))
             True
         """
         if self.full_rank() == 0:
@@ -4033,16 +4033,16 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.Whirl(3)                                                 # optional - sage.rings.finite_rings
-            sage: matroids.named_matroids.Fano().has_minor(M)                           # optional - sage.rings.finite_rings
+            sage: M = matroids.Whirl(3)
+            sage: matroids.named_matroids.Fano().has_minor(M)
             False
-            sage: matroids.named_matroids.NonFano().has_minor(M)                        # optional - sage.rings.finite_rings
+            sage: matroids.named_matroids.NonFano().has_minor(M)
             True
-            sage: matroids.named_matroids.NonFano().has_minor(M, certificate=True)      # optional - sage.rings.finite_rings
+            sage: matroids.named_matroids.NonFano().has_minor(M, certificate=True)
             (True, (frozenset(), frozenset({'g'}),
                 {0: 'b', 1: 'c', 2: 'a', 3: 'd', 4: 'e', 5: 'f'}))
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.has_minor(M, True)                                                  # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.has_minor(M, True)
             (True,
              (frozenset(),
               frozenset(),
@@ -4083,21 +4083,21 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: M.has_line_minor(4)                                                   # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: M.has_line_minor(4)
             True
-            sage: M.has_line_minor(5)                                                   # optional - sage.rings.finite_rings
+            sage: M.has_line_minor(5)
             False
-            sage: M.has_line_minor(k=4, hyperlines=[['a', 'b', 'c']])                   # optional - sage.rings.finite_rings
+            sage: M.has_line_minor(k=4, hyperlines=[['a', 'b', 'c']])
             False
-            sage: M.has_line_minor(k=4, hyperlines=[['a', 'b', 'c'],                    # optional - sage.rings.finite_rings
+            sage: M.has_line_minor(k=4, hyperlines=[['a', 'b', 'c'],
             ....:                                   ['a', 'b', 'd' ]])
             True
-            sage: M.has_line_minor(4, certificate=True)                                 # optional - sage.rings.finite_rings
+            sage: M.has_line_minor(4, certificate=True)
             (True, frozenset({'a', 'b', 'd'}))
-            sage: M.has_line_minor(5, certificate=True)                                 # optional - sage.rings.finite_rings
+            sage: M.has_line_minor(5, certificate=True)
             (False, None)
-            sage: M.has_line_minor(k=4, hyperlines=[['a', 'b', 'c'],                    # optional - sage.rings.finite_rings
+            sage: M.has_line_minor(k=4, hyperlines=[['a', 'b', 'c'],
             ....:                                   ['a', 'b', 'd' ]], certificate=True)
             (True, frozenset({'a', 'b', 'd'}))
 
@@ -4231,9 +4231,9 @@ cdef class Matroid(SageObject):
 
         Putting an element in parallel with another::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: N = M.extension('z', ['c'])                                           # optional - sage.rings.finite_rings
-            sage: N.rank('cz')                                                          # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: N = M.extension('z', ['c'])
+            sage: N.rank('cz')
             1
         """
         r = self.full_rank() - 1
@@ -4304,9 +4304,9 @@ cdef class Matroid(SageObject):
 
         Put an element in series with another::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: N = M.coextension('z', ['c'])                                         # optional - sage.rings.finite_rings
-            sage: N.corank('cz')                                                        # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: N = M.coextension('z', ['c'])
+            sage: N.corank('cz')
             1
         """
         return self.dual().extension(element, subsets).dual()
@@ -4367,15 +4367,15 @@ cdef class Matroid(SageObject):
         lines through `\{c, g\}` and `\{a, e\}` also is on the line through
         `\{b, f\}`::
 
-            sage: M = matroids.named_matroids.S8()                                      # optional - sage.rings.finite_rings
-            sage: N = M \ 'h'                                                           # optional - sage.rings.finite_rings
-            sage: frozenset('bf') in N.modular_cut(['cg', 'ae'])                        # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.S8()
+            sage: N = M \ 'h'
+            sage: frozenset('bf') in N.modular_cut(['cg', 'ae'])
             True
 
         The modular cut of the full groundset is equal to just the groundset::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.modular_cut([M.groundset()]).difference(                            # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.modular_cut([M.groundset()]).difference(
             ....:                               [frozenset(M.groundset())])
             set()
         """
@@ -4446,12 +4446,12 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: len(list(M.linear_subclasses()))                                      # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: len(list(M.linear_subclasses()))
             16
-            sage: len(list(M.linear_subclasses(line_length=3)))                         # optional - sage.rings.finite_rings
+            sage: len(list(M.linear_subclasses(line_length=3)))
             8
-            sage: len(list(M.linear_subclasses(subsets=[{'a', 'b'}])))                  # optional - sage.rings.finite_rings
+            sage: len(list(M.linear_subclasses(subsets=[{'a', 'b'}])))
             5
 
         The following matroid has an extension by element `e` such that
@@ -4515,14 +4515,14 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.P8()                                      # optional - sage.rings.finite_rings
-            sage: len(list(M.extensions()))                                             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.P8()
+            sage: len(list(M.extensions()))
             1705
-            sage: len(list(M.extensions(line_length=4)))                                # optional - sage.rings.finite_rings
+            sage: len(list(M.extensions(line_length=4)))
             41
-            sage: sorted(M.groundset())                                                 # optional - sage.rings.finite_rings
+            sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-            sage: len(list(M.extensions(subsets=[{'a', 'b'}], line_length=4)))          # optional - sage.rings.finite_rings
+            sage: len(list(M.extensions(subsets=[{'a', 'b'}], line_length=4)))
             5
 
         """
@@ -4583,14 +4583,14 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.P8()                                      # optional - sage.rings.finite_rings
-            sage: len(list(M.coextensions()))                                           # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.P8()
+            sage: len(list(M.coextensions()))
             1705
-            sage: len(list(M.coextensions(coline_length=4)))                            # optional - sage.rings.finite_rings
+            sage: len(list(M.coextensions(coline_length=4)))
             41
-            sage: sorted(M.groundset())                                                 # optional - sage.rings.finite_rings
+            sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-            sage: len(list(M.coextensions(subsets=[{'a', 'b'}], coline_length=4)))      # optional - sage.rings.finite_rings
+            sage: len(list(M.coextensions(subsets=[{'a', 'b'}], coline_length=4)))
             5
 
         """
@@ -4624,8 +4624,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().contract('a')                      # optional - sage.rings.finite_rings
-            sage: M.size() - M.simplify().size()                                        # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano().contract('a')
+            sage: M.size() - M.simplify().size()
             3
 
         """
@@ -4663,8 +4663,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().dual().delete('a')                 # optional - sage.rings.finite_rings
-            sage: M.cosimplify().size()                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano().dual().delete('a')
+            sage: M.cosimplify().size()
             3
 
         """
@@ -4698,11 +4698,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.is_simple()                                                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.is_simple()
             True
-            sage: N = M / 'a'                                                           # optional - sage.rings.finite_rings
-            sage: N.is_simple()                                                         # optional - sage.rings.finite_rings
+            sage: N = M / 'a'
+            sage: N.is_simple()
             False
         """
         if self._closure(frozenset()):
@@ -4734,11 +4734,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().dual()                             # optional - sage.rings.finite_rings
-            sage: M.is_cosimple()                                                       # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano().dual()
+            sage: M.is_cosimple()
             True
-            sage: N = M \ 'a'                                                           # optional - sage.rings.finite_rings
-            sage: N.is_cosimple()                                                       # optional - sage.rings.finite_rings
+            sage: N = M \ 'a'
+            sage: N.is_cosimple()
             False
         """
         if self._coclosure(frozenset()):
@@ -5081,13 +5081,13 @@ cdef class Matroid(SageObject):
             False
             sage: matroids.named_matroids.BetsyRoss().is_kconnected(3)                  # optional - sage.graphs
             True
-            sage: matroids.AG(5,2).is_kconnected(4)                                     # optional - sage.rings.finite_rings
+            sage: matroids.AG(5,2).is_kconnected(4)
             True
-            sage: M = matroids.named_matroids.R6()                                      # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.R6()
             sage: M.is_kconnected(3)                                                    # optional - sage.rings.finite_rings
             False
-            sage: B, X = M.is_kconnected(3,True)                                        # optional - sage.rings.finite_rings
-            sage: M.connectivity(X)<3                                                   # optional - sage.rings.finite_rings
+            sage: B, X = M.is_kconnected(3,True)
+            sage: M.connectivity(X)<3
             True
         """
         # base case
@@ -5225,11 +5225,11 @@ cdef class Matroid(SageObject):
             False
             sage: matroids.named_matroids.BetsyRoss().is_3connected()                   # optional - sage.graphs
             True
-            sage: M = matroids.named_matroids.R6()                                      # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.R6()
             sage: M.is_3connected()                                                     # optional - sage.rings.finite_rings
             False
-            sage: B, X = M.is_3connected(True)                                          # optional - sage.rings.finite_rings
-            sage: M.connectivity(X)                                                     # optional - sage.rings.finite_rings
+            sage: B, X = M.is_3connected(True)
+            sage: M.connectivity(X)
             1
         """
         if algorithm is None:
@@ -5281,14 +5281,14 @@ cdef class Matroid(SageObject):
             (False, True)
             sage: matroids.Uniform(4, 8).is_4connected()
             True
-            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],           # optional - sage.rings.finite_rings
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
             ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
             sage: M.is_4connected() == M.is_4connected(algorithm="shifting")            # optional - sage.rings.finite_rings
             True
-            sage: M.is_4connected() == M.is_4connected(algorithm="intersection")        # optional - sage.rings.finite_rings
+            sage: M.is_4connected() == M.is_4connected(algorithm="intersection")
             True
         """
         if algorithm is None or algorithm == "intersection":
@@ -5332,11 +5332,11 @@ cdef class Matroid(SageObject):
             False
             sage: matroids.named_matroids.BetsyRoss()._is_3connected_CE()
             True
-            sage: M = matroids.named_matroids.R6()                                      # optional - sage.rings.finite_rings
-            sage: M._is_3connected_CE()                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.R6()
+            sage: M._is_3connected_CE()
             False
-            sage: B, X = M._is_3connected_CE(True)                                      # optional - sage.rings.finite_rings
-            sage: M.connectivity(X)                                                     # optional - sage.rings.finite_rings
+            sage: B, X = M._is_3connected_CE(True)
+            sage: M.connectivity(X)
             1
         """
         cdef set E, G, H, S, T
@@ -5460,7 +5460,7 @@ cdef class Matroid(SageObject):
             False
             sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()         # optional - sage.graphs
             True
-            sage: M = matroids.named_matroids.R6()                                      # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.R6()
             sage: M._is_3connected_shifting()                                           # optional - sage.graphs sage.rings.finite_rings
             False
             sage: B, X = M._is_3connected_shifting(True)                                # optional - sage.graphs sage.rings.finite_rings
@@ -5530,7 +5530,7 @@ cdef class Matroid(SageObject):
             (False, True)
             sage: matroids.Uniform(4, 8)._is_4connected_shifting()                      # optional - sage.graphs
             True
-            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],           # optional - sage.rings.finite_rings
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
             ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
@@ -5636,19 +5636,19 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],           # optional - sage.rings.finite_rings
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
             ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
-            sage: M._shifting_all(M.basis(),                                            # optional - sage.rings.finite_rings
+            sage: M._shifting_all(M.basis(),
             ....:                 set([0,1]), set([0,1]), set([]), set([]), 3)
             (False, None)
-            sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],                 # optional - sage.rings.finite_rings
+            sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],
             ....:                                          [1,1,1,1,0],
             ....:                                          [0,1,1,1,0],
             ....:                                          [0,0,0,1,1]])
-            sage: M._shifting_all(M.basis(),                                            # optional - sage.rings.finite_rings
+            sage: M._shifting_all(M.basis(),
             ....:                 set([0,1]), set([5,8]), set([]), set([]), 3)[0]
             True
 
@@ -5698,19 +5698,19 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],           # optional - sage.rings.finite_rings
+            sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
             ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
-            sage: M._shifting(M.basis(),                                                # optional - sage.rings.finite_rings
+            sage: M._shifting(M.basis(),
             ....:             set([0,1]), set([0,1]), set([]), set([]), 3)
             (False, None)
-            sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],                 # optional - sage.rings.finite_rings
+            sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],
             ....:                                          [1,1,1,1,0],
             ....:                                          [0,1,1,1,0],
             ....:                                          [0,0,0,1,1]])
-            sage: M._shifting(M.basis(),                                                # optional - sage.rings.finite_rings
+            sage: M._shifting(M.basis(),
             ....:             set([0,1]), set([5,8]), set([]), set([4]), 3)[0]
             True
         """
@@ -5794,7 +5794,7 @@ cdef class Matroid(SageObject):
             False
             sage: matroids.named_matroids.BetsyRoss()._is_3connected_BC()               # optional - sage.graphs
             True
-            sage: M = matroids.named_matroids.R6()                                      # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.R6()
             sage: M._is_3connected_BC()                                                 # optional - sage.rings.finite_rings
             False
         """
@@ -5840,8 +5840,8 @@ cdef class Matroid(SageObject):
             sage: M._is_3connected_BC_recursion(B,
             ....:   [M.fundamental_cocircuit(B, e) for e in B])
             True
-            sage: M = matroids.named_matroids.R6()                                      # optional - sage.rings.finite_rings
-            sage: B = M.basis()                                                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.R6()
+            sage: B = M.basis()
             sage: M._is_3connected_BC_recursion(B,                                      # optional - sage.rings.finite_rings
             ....:   [M.fundamental_cocircuit(B, e) for e in B])
             False
@@ -5934,13 +5934,13 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: N = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M = N._local_binary_matroid()                                         # optional - sage.rings.finite_rings
-            sage: N.is_isomorphism(M, {e:e for e in N.groundset()})                     # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.Fano()
+            sage: M = N._local_binary_matroid()
+            sage: N.is_isomorphism(M, {e:e for e in N.groundset()})
             True
-            sage: N = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: M = N._local_binary_matroid()                                         # optional - sage.rings.finite_rings
-            sage: N.is_isomorphism(M, {e:e for e in N.groundset()})                     # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.NonFano()
+            sage: M = N._local_binary_matroid()
+            sage: N.is_isomorphism(M, {e:e for e in N.groundset()})
             False
         """
         if basis is None:
@@ -5992,11 +5992,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.binary_matroid()                                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.binary_matroid()
             Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            sage: N = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: N.binary_matroid() is None                                            # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.NonFano()
+            sage: N.binary_matroid() is None
             True
 
         """
@@ -6044,11 +6044,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: N = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: N.is_binary()                                                         # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.Fano()
+            sage: N.is_binary()
             True
-            sage: N = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: N.is_binary()                                                         # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.NonFano()
+            sage: N.is_binary()
             False
 
         """
@@ -6085,11 +6085,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: N = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.Fano()
             sage: M = N._local_ternary_matroid()                                        # optional - sage.rings.finite_rings
             sage: N.is_isomorphism(M, {e:e for e in N.groundset()})                     # optional - sage.rings.finite_rings
             False
-            sage: N = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.NonFano()
             sage: M = N._local_ternary_matroid()                                        # optional - sage.rings.finite_rings
             sage: N.is_isomorphism(M, {e:e for e in N.groundset()})                     # optional - sage.rings.finite_rings
             True
@@ -6179,11 +6179,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
             sage: M.ternary_matroid() is None                                           # optional - sage.rings.finite_rings
             True
-            sage: N = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: N.ternary_matroid()                                                   # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.NonFano()
+            sage: N.ternary_matroid()
             NonFano: Ternary matroid of rank 3 on 7 elements, type 0-
 
         """
@@ -6231,11 +6231,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: N = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.Fano()
             sage: N.is_ternary()                                                        # optional - sage.rings.finite_rings
             False
-            sage: N = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: N.is_ternary()                                                        # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.NonFano()
+            sage: N.is_ternary()
             True
 
         """
@@ -6299,12 +6299,12 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Uniform(2,4)
             sage: [M._is_circuit_chordal(C) for C in M.circuits()]
             [False, False, False, False]
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M._is_circuit_chordal(frozenset(['b','c','d']))                       # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M._is_circuit_chordal(frozenset(['b','c','d']))
             False
-            sage: M._is_circuit_chordal(frozenset(['b','c','d']), certificate=True)     # optional - sage.rings.finite_rings
+            sage: M._is_circuit_chordal(frozenset(['b','c','d']), certificate=True)
             (False, None)
-            sage: M._is_circuit_chordal(frozenset(['a','b','d','e']))                   # optional - sage.rings.finite_rings
+            sage: M._is_circuit_chordal(frozenset(['a','b','d','e']))
             True
         """
         cdef set X
@@ -6348,20 +6348,20 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.is_circuit_chordal(['b','c','d'])                                   # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.is_circuit_chordal(['b','c','d'])
             False
-            sage: M.is_circuit_chordal(['b','c','d'], certificate=True)                 # optional - sage.rings.finite_rings
+            sage: M.is_circuit_chordal(['b','c','d'], certificate=True)
             (False, None)
-            sage: M.is_circuit_chordal(['a','b','d','e'])                               # optional - sage.rings.finite_rings
+            sage: M.is_circuit_chordal(['a','b','d','e'])
             True
-            sage: X = M.is_circuit_chordal(frozenset(['a','b','d','e']),                # optional - sage.rings.finite_rings
+            sage: X = M.is_circuit_chordal(frozenset(['a','b','d','e']),
             ....:                          certificate=True)[1]
-            sage: X  # random                                                           # optional - sage.rings.finite_rings
+            sage: X  # random
             ('c', frozenset({'b', 'c', 'd'}), frozenset({'a', 'c', 'e'}))
-            sage: M.is_circuit(X[1]) and M.is_circuit(X[2])                             # optional - sage.rings.finite_rings
+            sage: M.is_circuit(X[1]) and M.is_circuit(X[2])
             True
-            sage: X[1].intersection(X[2]) == frozenset([X[0]])                          # optional - sage.rings.finite_rings
+            sage: X[1].intersection(X[2]) == frozenset([X[0]])
             True
         """
         if not self.is_circuit(C):
@@ -6400,15 +6400,15 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Uniform(2,4)
             sage: [M.is_chordal(i) for i in range(4, 8)]
             [True, True, True, True]
-            sage: M = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: [M.is_chordal(i) for i in range(4, 8)]                                # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.NonFano()
+            sage: [M.is_chordal(i) for i in range(4, 8)]
             [False, True, True, True]
-            sage: M = matroids.named_matroids.N2()                                      # optional - sage.rings.finite_rings
-            sage: [M.is_chordal(i) for i in range(4, 10)]                               # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N2()
+            sage: [M.is_chordal(i) for i in range(4, 10)]
             [False, False, False, False, True, True]
-            sage: M.is_chordal(4, 5)                                                    # optional - sage.rings.finite_rings
+            sage: M.is_chordal(4, 5)
             False
-            sage: M.is_chordal(4, 5, certificate=True)                                  # optional - sage.rings.finite_rings
+            sage: M.is_chordal(4, 5, certificate=True)
             (False, frozenset({'a', 'b', 'e', 'f', 'g'}))
         """
         cdef frozenset C
@@ -6436,11 +6436,11 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Uniform(2,4)
             sage: M.chordality()
             4
-            sage: M = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: M.chordality()                                                        # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.NonFano()
+            sage: M.chordality()
             5
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.chordality()                                                        # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.chordality()
             4
         """
         cdef frozenset C
@@ -6482,14 +6482,14 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: X = M.max_weight_independent()                                        # optional - sage.rings.finite_rings
-            sage: M.is_basis(X)                                                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: X = M.max_weight_independent()
+            sage: M.is_basis(X)
             True
 
             sage: wt = {'a': 1, 'b': 2, 'c': 2, 'd': 1/2, 'e': 1,
             ....:       'f': 2, 'g': 2}
-            sage: setprint(M.max_weight_independent(weights=wt))                        # optional - sage.rings.finite_rings
+            sage: setprint(M.max_weight_independent(weights=wt))
             {'b', 'f', 'g'}
             sage: def wt(x):
             ....:   return x
@@ -6569,16 +6569,16 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: X = M.max_weight_coindependent()                                      # optional - sage.rings.finite_rings
-            sage: M.is_cobasis(X)                                                       # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: X = M.max_weight_coindependent()
+            sage: M.is_cobasis(X)
             True
 
             sage: wt = {'a': 1, 'b': 2, 'c': 2, 'd': 1/2, 'e': 1, 'f': 2, 'g': 2}
-            sage: setprint(M.max_weight_coindependent(weights=wt))                      # optional - sage.rings.finite_rings
+            sage: setprint(M.max_weight_coindependent(weights=wt))
             {'b', 'c', 'f', 'g'}
             sage: wt = {'a': 1, 'b': -10, 'c': 2, 'd': 1/2, 'e': 1, 'f': 2, 'g': 2}
-            sage: setprint(M.max_weight_coindependent(weights=wt))                      # optional - sage.rings.finite_rings
+            sage: setprint(M.max_weight_coindependent(weights=wt))
             Traceback (most recent call last):
             ...
             ValueError: nonnegative weights were expected.
@@ -6664,8 +6664,8 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.is_max_weight_independent_generic()                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.is_max_weight_independent_generic()
             False
 
             sage: def wt(x):
@@ -6814,8 +6814,8 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.is_max_weight_coindependent_generic()                               # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.is_max_weight_coindependent_generic()
             False
 
             sage: def wt(x):
@@ -6962,18 +6962,18 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()                                     # optional - sage.rings.finite_rings
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()                # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.T12()
+            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
             sage: w = {'a':30, 'b':10, 'c':11, 'd':20, 'e':70, 'f':21, 'g':90,
             ....:      'h':12, 'i':80, 'j':13, 'k':40, 'l':21}
-            sage: Y = M.intersection(N, w)                                              # optional - sage.rings.finite_rings
-            sage: sorted(Y)                                                             # optional - sage.rings.finite_rings
+            sage: Y = M.intersection(N, w)
+            sage: sorted(Y)
             ['a', 'd', 'e', 'g', 'i', 'k']
-            sage: sum([w[y] for y in Y])                                                # optional - sage.rings.finite_rings
+            sage: sum([w[y] for y in Y])
             330
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
             sage: N = matroids.Uniform(4, 7)
-            sage: M.intersection(N)                                                     # optional - sage.rings.finite_rings
+            sage: M.intersection(N)
             Traceback (most recent call last):
             ...
             ValueError: matroid intersection requires equal groundsets.
@@ -7021,14 +7021,14 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()                                     # optional - sage.rings.finite_rings
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()                # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.T12()
+            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
             sage: w = {'a':30, 'b':10, 'c':11, 'd':20, 'e':70, 'f':21, 'g':90,
             ....:      'h':12, 'i':80, 'j':13, 'k':40, 'l':21}
-            sage: Y = M._intersection(N, w)                                             # optional - sage.rings.finite_rings
-            sage: sorted(Y)                                                             # optional - sage.rings.finite_rings
+            sage: Y = M._intersection(N, w)
+            sage: sorted(Y)
             ['a', 'd', 'e', 'g', 'i', 'k']
-            sage: sum([w[y] for y in Y])                                                # optional - sage.rings.finite_rings
+            sage: sum([w[y] for y in Y])
             330
         """
         Y = set()
@@ -7067,14 +7067,14 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()                                     # optional - sage.rings.finite_rings
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()                # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.T12()
+            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
             sage: w = {'a':30, 'b':10, 'c':11, 'd':20, 'e':70, 'f':21, 'g':90,
             ....:      'h':12, 'i':80, 'j':13, 'k':40, 'l':21}
-            sage: Y = M.intersection(N, w)                                              # optional - sage.rings.finite_rings
-            sage: sorted(Y)                                                             # optional - sage.rings.finite_rings
+            sage: Y = M.intersection(N, w)
+            sage: sorted(Y)
             ['a', 'd', 'e', 'g', 'i', 'k']
-            sage: M._intersection_augmentation(N, w, Y)[0]                              # optional - sage.rings.finite_rings
+            sage: M._intersection_augmentation(N, w, Y)[0]
             False
         """
         X = self.groundset() - Y
@@ -7148,13 +7148,13 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()                                     # optional - sage.rings.finite_rings
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()                # optional - sage.rings.finite_rings
-            sage: len(M.intersection_unweighted(N))                                     # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.T12()
+            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: len(M.intersection_unweighted(N))
             6
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: N = matroids.Uniform(4, 7)                                            # optional - sage.rings.finite_rings
-            sage: M.intersection_unweighted(N)                                          # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: N = matroids.Uniform(4, 7)
+            sage: M.intersection_unweighted(N)
             Traceback (most recent call last):
             ...
             ValueError: matroid intersection requires equal groundsets.
@@ -7189,9 +7189,9 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()                                     # optional - sage.rings.finite_rings
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()                # optional - sage.rings.finite_rings
-            sage: len(M._intersection_unweighted(N))                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.T12()
+            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: len(M._intersection_unweighted(N))
             6
         """
         Y = set()
@@ -7223,15 +7223,15 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()                                     # optional - sage.rings.finite_rings
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()                # optional - sage.rings.finite_rings
-            sage: Y = M.intersection(N)                                                 # optional - sage.rings.finite_rings
-            sage: M._intersection_augmentation_unweighted(N, Y)[0]                      # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.T12()
+            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: Y = M.intersection(N)
+            sage: M._intersection_augmentation_unweighted(N, Y)[0]
             False
-            sage: Y = M._intersection_augmentation_unweighted(N,set())                  # optional - sage.rings.finite_rings
-            sage: Y[0]                                                                  # optional - sage.rings.finite_rings
+            sage: Y = M._intersection_augmentation_unweighted(N,set())
+            sage: Y[0]
             True
-            sage: len(Y[1])>0                                                           # optional - sage.rings.finite_rings
+            sage: len(Y[1])>0
             True
         """
         E = self.groundset()
@@ -7429,10 +7429,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted(M._internal({'a', 'b', 'c'}))                                  # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted(M._internal({'a', 'b', 'c'}))
             ['a', 'b', 'c']
-            sage: sorted(M._internal({'e', 'f', 'g'}))                                  # optional - sage.rings.finite_rings
+            sage: sorted(M._internal({'e', 'f', 'g'}))
             []
         """
         N = self.groundset() - B
@@ -7468,10 +7468,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted(M._external({'a', 'b', 'c'}))                                  # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted(M._external({'a', 'b', 'c'}))
             []
-            sage: sorted(M._external({'e', 'f', 'g'}))                                  # optional - sage.rings.finite_rings
+            sage: sorted(M._external({'e', 'f', 'g'}))
             ['a', 'b', 'c', 'd']
 
         """
@@ -7521,10 +7521,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.tutte_polynomial()                                                  # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.tutte_polynomial()
             y^4 + x^3 + 3*y^3 + 4*x^2 + 7*x*y + 6*y^2 + 3*x + 3*y
-            sage: M.tutte_polynomial(1, 1) == M.bases_count()                           # optional - sage.rings.finite_rings
+            sage: M.tutte_polynomial(1, 1) == M.bases_count()
             True
 
         ALGORITHM:
@@ -7569,7 +7569,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
             sage: setprint(M.flat_cover())                                              # optional - sage.rings.finite_rings
             [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
              {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'},
@@ -7637,8 +7637,8 @@ cdef class Matroid(SageObject):
 
         We construct a more interesting example using the Fano matroid::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: A = M.chow_ring(QQ); A                                                # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: A = M.chow_ring(QQ); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
              type (3, 0) over Rational Field
 
@@ -7725,7 +7725,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
             sage: G = M.plot()                                                          # optional - sage.rings.finite_rings sage.plot
             sage: type(G)                                                               # optional - sage.rings.finite_rings sage.plot
             <class 'sage.plot.graphics.Graphics'>
@@ -7782,10 +7782,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.TernaryDowling3()                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.TernaryDowling3()
             sage: M.show(B=['a','b','c'])                                               # optional - sage.rings.finite_rings  sage.plot
             sage: M.show(B=['a','b','c'], lineorders=[['f','e','i']])                   # optional - sage.rings.finite_rings  sage.plot
-            sage: pos = {'a':(0,0), 'b': (0,1), 'c':(1,0), 'd':(1,1),                   # optional - sage.rings.finite_rings  sage.plot
+            sage: pos = {'a':(0,0), 'b': (0,1), 'c':(1,0), 'd':(1,1),                   # optional - sage.plot
             ....:        'e':(1,-1), 'f':(-1,1), 'g':(-1,-1),'h':(2,0), 'i':(0,2)}
             sage: M.show(pos_method=1, pos_dict=pos, lims=[-3,3,-3,3])                  # optional - sage.rings.finite_rings  sage.plot
         """
@@ -7889,7 +7889,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
             sage: B = M.bergman_complex(); B                                            # optional - sage.rings.finite_rings
             Simplicial complex with 14 vertices and 21 facets
 
@@ -7928,7 +7928,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
             sage: A = M.augmented_bergman_complex(); A                                  # optional - sage.graphs sage.rings.finite_rings
             Simplicial complex with 22 vertices and 91 facets
 
@@ -8019,8 +8019,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: N = M.union(matroids.named_matroids.NonFano()); N                     # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: N = M.union(matroids.named_matroids.NonFano()); N
             Matroid of rank 6 on 7 elements as matroid union of
             Binary matroid of rank 3 on 7 elements, type (3, 0)
             Ternary matroid of rank 3 on 7 elements, type 0-
@@ -8062,7 +8062,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Pappus()
-            sage: N = matroids.named_matroids.Fano().direct_sum(M); N                   # optional - sage.rings.finite_rings
+            sage: N = matroids.named_matroids.Fano().direct_sum(M); N
             Matroid of rank 6 on 16 elements as matroid sum of
             Binary matroid of rank 3 on 7 elements, type (3, 0)
             Matroid of rank 3 on 9 elements with circuit-closures
@@ -8070,9 +8070,9 @@ cdef class Matroid(SageObject):
                  {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
                  {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
              3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
-            sage: len(N.independent_sets())                                             # optional - sage.rings.finite_rings
+            sage: len(N.independent_sets())
             6897
-            sage: len(N.bases())                                                        # optional - sage.rings.finite_rings
+            sage: len(N.bases())
             2100
         """
         from . import union_matroid
