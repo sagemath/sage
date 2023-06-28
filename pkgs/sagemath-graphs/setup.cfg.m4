@@ -31,9 +31,10 @@ combinat    = SPKG_INSTALL_REQUIRES_sagemath_combinat
 databases   = # FIXME
 editor      = SPKG_INSTALL_REQUIRES_phitigra
 mip         = SPKG_INSTALL_REQUIRES_sagemath_polyhedra
+modules     = SPKG_INSTALL_REQUIRES_sagemath_modules
 plot        = SPKG_INSTALL_REQUIRES_sagemath_plot
 polyhedra   = SPKG_INSTALL_REQUIRES_sagemath_polyhedra
 repl        = SPKG_INSTALL_REQUIRES_sagemath_repl
 sat         = SPKG_INSTALL_REQUIRES_sagemath_combinat
 
-standard    = sagemath-graphs[combinat,databases,mip,plot,polyhedra,repl]
+standard    = sagemath-graphs[combinat,databases,mip,modules,plot,polyhedra,repl]
