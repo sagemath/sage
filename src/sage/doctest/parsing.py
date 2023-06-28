@@ -140,8 +140,17 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
     UTF-8 works::
 
-         sage: parse_optional_tags("'ěščřžýáíéďĎ'")
-         set()
+        sage: parse_optional_tags("'ěščřžýáíéďĎ'")
+        set()
+
+    With ``return_string_sans_tags=True``::
+
+        sage: parse_optional_tags("sage: print(1)  # very important 1  # optional - foo",  # optional - EXPECTED
+        ....:                     return_string_sans_tags=True)
+        sage: parse_optional_tags("sage: print(1)  # very important 1  # optional - foo",  # optional - GOT
+        ....:                     return_string_sans_tags=True)
+        ({'foo'}, 'sage: print(1)  # very important 1  ')
+
     """
     safe, literals, state = strip_string_literals(string)
     split = safe.split('\n', 1)
@@ -162,7 +171,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     if return_string_sans_tags:
         # skip non-tag comments that precede the first tag comment
         if m := optional_regex.search(comment):
-            sharp_index = comment[:m.start(0)].rfind('#')
+            sharp_index = comment[:m.start(0) + 1].rfind('#')
             if sharp_index >= 0:
                 first_line += comment[:sharp_index]
                 comment = comment[sharp_index:]
@@ -173,12 +182,16 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     tags = []
     for m in optional_regex.finditer(comment):
         cmd = m.group(1)
-        if cmd == 'known bug':
+        if cmd and cmd.lower() == 'known bug':
             tags.append('bug')  # so that such tests will be run by sage -t ... -only-optional=bug
         elif cmd:
-            tags.append(cmd)
+            tags.append(cmd.lower())
         else:
-            tags.extend(m.group(3).split() or [""])
+            words = m.group(3).split()
+            if words:
+                tags.extend([s.lower() for s in words])
+            else:
+                tags.append("")
 
     if return_string_sans_tags:
         # FIXME: Keep non-tag comments
