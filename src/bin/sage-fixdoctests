@@ -136,7 +136,7 @@ def module_feature(module_name):
     return longest_prefix_feature
 
 
-def process_block(block, src_in_lines):
+def process_block(block, src_in_lines, file_optional_tags):
     # Extract the line, what was expected, and was got.
     if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
         return
@@ -183,7 +183,7 @@ def process_block(block, src_in_lines):
         module = m.group(1)
         asked_why = re.search('#.*(why|explain)', src_in_lines[first_line_num - 1])
         optional = module_feature(module)
-        if optional:
+        if optional and optional.name not in file_optional_tags:
             src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                     add_tags=[optional.name])
             if not asked_why:
@@ -337,7 +337,7 @@ for input, output in zip(inputs, outputs):
                 src_in_lines[i] = update_optional_tags(line, remove_tags=file_optional_tags)
 
     for block in doctests:
-        process_block(block, src_in_lines)
+        process_block(block, src_in_lines, file_optional_tags)
 
     with open(output, 'w') as test_output:
         for line in src_in_lines:
