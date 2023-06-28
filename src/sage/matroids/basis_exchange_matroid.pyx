@@ -1715,7 +1715,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.N1()
-            sage: binomial(M.size(), M.full_rank())-M.bases_count()
+            sage: binomial(M.size(), M.full_rank())-M.bases_count()                     # optional - sage.symbolic
             68
             sage: len([B for B in M.nonbases()])
             68

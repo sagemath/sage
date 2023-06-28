@@ -2751,7 +2751,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
-            sage: M._is_4connected_shifting()                                           # optional - sage.graphs sage.rings.finite_rings
+            sage: M._is_4connected_shifting()                                           # optional - sage.graphs
             True
         """
         if self.rank()>self.size()-self.rank():
