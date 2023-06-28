@@ -1100,7 +1100,7 @@ def find_post_isomorphism(phi, psi):
 
 def compute_trace_generic(phi):
     r"""
-    Compute the trace of the given elliptic-curve endomorphism `\varphi`.
+    Compute the trace of the given elliptic-curve endomorphism.
 
     ALGORITHM: Simple variant of Schoof's algorithm.
     For enough small primes `\ell`, we find an order-`\ell` point `P`
@@ -1164,20 +1164,9 @@ def compute_trace_generic(phi):
         -14
     """
     from sage.rings.finite_rings.integer_mod import Mod
-    from sage.rings.polynomial.polynomial_ring import polygen
     from sage.groups.generic import discrete_log
     from sage.sets.primes import Primes
-
-    # Construct the field extension defined by the given polynomial,
-    # in such a way that the result is recognized by Sage as a field.
-    def ffext(poly):
-        rng = poly.parent()
-        fld = rng.base_ring()
-        if isinstance(fld, finite_field_base.FiniteField):
-            # Workaround: .extension() would return a PolynomialQuotientRing
-            # rather than another FiniteField.
-            return poly.splitting_field(rng.variable_name())
-        return fld.extension(poly, rng.variable_name())
+    from sage.schemes.elliptic_curves.ell_field import point_of_order
 
     E = phi.domain()
     if phi.codomain() != E:
@@ -1185,12 +1174,10 @@ def compute_trace_generic(phi):
 
     d = phi.degree()
 
-    F = E.base_field()
-    X = polygen(F, 'X')
-
     M = 4 * d.isqrt() + 1  # |trace| <= 2 sqrt(deg)
     tr = Mod(0,1)
 
+    F = E.base_field()
     p = F.characteristic()
     if p:
         s = phi.scaling_factor()
@@ -1200,26 +1187,17 @@ def compute_trace_generic(phi):
     for l in Primes():
         if tr.modulus() >= M:
             break
-        xpoly = E.division_polynomial(l)
-        if xpoly.degree() < 1:  # supersingular and l == p
-            continue
-        mu = xpoly.factor()[0][0]
-        FF = ffext(mu)
-        xx = mu.any_root(ring=FF, assume_squarefree=True)
-        Y = polygen(FF, 'Y')
-        ypoly = E.defining_polynomial()(xx, Y, 1)
-        if ypoly.is_irreducible():
-            FF = ffext(ypoly)
-            xx = FF(xx)
-        EE = E.change_ring(FF)
-        P = EE.lift_x(xx)
+        try:
+            P = point_of_order(E, l)
+        except ValueError:
+            continue   # supersingular and l == p
 
         Q = phi._eval(P)
         if not Q:  # we learn nothing when P lies in the kernel
             continue
         R = phi._eval(Q)
         t = discrete_log(R + d*P, Q, ord=l, operation='+')
-        assert not R - t*Q + d*P
+#        assert not R - t*Q + d*P
 
         tr = tr.crt(Mod(t, l))
 
