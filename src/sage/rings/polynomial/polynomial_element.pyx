@@ -176,7 +176,7 @@ cpdef is_Polynomial(f):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.structure.element.Polynomial) instead")
+    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead")
 
     return isinstance(f, Polynomial)
 

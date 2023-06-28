@@ -21,7 +21,7 @@ from sage.misc.misc_c import prod
 
 def is_MPolynomial(x):
     from sage.misc.superseded import deprecation
-    deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.structure.element.MPolynomial) instead")
+    deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial) instead")
 
     return isinstance(x, MPolynomial)
 
