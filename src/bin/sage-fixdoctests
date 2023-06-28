@@ -295,63 +295,72 @@ else:
     inputs = outputs = args.filename
 
 # Test the doctester, putting the output of the test into sage's temporary directory
-executable = f'{args.venv}/bin/sage' if args.venv else 'sage'
+executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
 environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
 probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
+lib_args = f'--only-lib ' if args.venv else ''
 doc_file = tmp_filename()
 if args.venv or environment_args:
-   input = os.path.join(SAGE_ROOT, 'src', 'sage', 'version.py')
-   cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{shlex.quote(input)} > {shlex.quote(doc_file)}'
+   input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
+   cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
    print(f'Running "{cmdline}"')
-   if status := os.waitstatus_to_exitcode(os.system(cmdline)):
+   if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
        print(f'Doctester exited with error status {status}')
        sys.exit(status)
 
 for input, output in zip(inputs, outputs):
-    if skipfile_result := skipfile(input, False):
+    if skipfile_result := skipfile(input, True, log=print):
         if skipfile_result is True:
-            print(f"Skipping {input} because it is marked 'nodoctest'")
             continue
         file_optional_tags = parse_optional_tags('#' + skipfile_result)
     else:
         file_optional_tags = set()
 
     # Run the doctester, putting the output of the test into sage's temporary directory
-    cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{shlex.quote(input)} > {shlex.quote(doc_file)}'
+    cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
     print(f'Running "{cmdline}"')
-    os.system(cmdline)
+    os.system(f'{cmdline} > {shlex.quote(doc_file)}')
 
     with open(doc_file, 'r') as doc:
         doc_out = doc.read()
 
-    sep = "**********************************************************************\n"
-    doctests = doc_out.split(sep)
-
-    with open(input, 'r') as test_file:
-        src_in = test_file.read()
-    src_in_lines = src_in.splitlines()
-
-    # First remove duplicate optional tags
-    if file_optional_tags:
-        for i, line in enumerate(src_in_lines):
-            if re.match('( *sage: *)(.*)#', line):
-                src_in_lines[i] = update_optional_tags(line, remove_tags=file_optional_tags)
-
-    for block in doctests:
-        process_block(block, src_in_lines, file_optional_tags)
-
-    with open(output, 'w') as test_output:
-        for line in src_in_lines:
-            if line is None:
-                continue
-            test_output.write(line)
-            test_output.write('\n')
-
-    # Show summary of changes
-    if input != output:
-        print("The fixed doctests have been saved as '{0}'.".format(output))
+    # echo control messages
+    for m in re.finditer('^Skipping .*', doc_out, re.MULTILINE):
+        print('sage-runtest: ' + m.group(0))
+        break
     else:
-        relative = os.path.relpath(output, SAGE_ROOT)
-        print(f"The input file '{output}' has been overwritten.")
-        if not relative.startswith('..'):
-            subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
+        sep = "**********************************************************************\n"
+        doctests = doc_out.split(sep)
+
+        with open(input, 'r') as test_file:
+            src_in = test_file.read()
+        src_in_lines = src_in.splitlines()
+        shallow_copy_of_src_in_lines = list(src_in_lines)
+
+        # First remove duplicate optional tags
+        if file_optional_tags:
+            for i, line in enumerate(src_in_lines):
+                if re.match('( *sage: *)(.*)#', line):
+                    src_in_lines[i] = update_optional_tags(line, remove_tags=file_optional_tags)
+
+        for block in doctests:
+            process_block(block, src_in_lines, file_optional_tags)
+
+        if src_in_lines != shallow_copy_of_src_in_lines:
+            with open(output, 'w') as test_output:
+                for line in src_in_lines:
+                    if line is None:
+                        continue
+                    test_output.write(line)
+                    test_output.write('\n')
+
+            # Show summary of changes
+            if input != output:
+                print("The fixed doctests have been saved as '{0}'.".format(output))
+            else:
+                relative = os.path.relpath(output, SAGE_ROOT)
+                print(f"The input file '{output}' has been overwritten.")
+                if not relative.startswith('..'):
+                    subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
+        else:
+            print(f"No fixes made in '{input}'")
