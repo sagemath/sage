@@ -66,7 +66,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.sets.set import Set
 
-roots_interval_cache = {}
+roots_interval_cache = dict()
 
 
 def braid_from_piecewise(strands):
@@ -332,7 +332,7 @@ def orient_circuit(circuit, convex=False):
             return circuit_vertex
         elif pr < 0:
             # return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
-            return tuple(_ for _ in reversed(circuit_vertex))
+            return tuple(reversed(circuit_vertex))
     prec = 53
     while True:
         CIF = ComplexIntervalField(prec)
@@ -340,7 +340,7 @@ def orient_circuit(circuit, convex=False):
                          for i in range(len(vectors)))
         if totalangle < 0:
             # return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
-            return tuple(_ for _ in reversed(circuit_vertex))
+            return tuple(reversed(circuit_vertex))
         if totalangle > 0:
             # return circuit
             return circuit_vertex
@@ -619,14 +619,14 @@ def fieldI(F0):
 
 
 @parallel
-def roots_interval(pols, x0):
+def roots_interval(f, x0):
     """
     Find disjoint intervals that isolate the roots of a polynomial for a fixed
     value of the first variable.
 
     INPUT:
 
-    - ``pols`` -- a list or a tuple of bivariate squarefree polynomials
+    - ``f`` -- a bivariate squarefree polynomial
     - ``x0`` -- a Gauss rational number corresponding to the first coordinate
 
     The intervals are taken as big as possible to be able to detect when two
@@ -643,8 +643,8 @@ def roots_interval(pols, x0):
         sage: R.<x, y> = QQ[]
         sage: K = fieldI(QQ)
         sage: f = y^3 - x^2
-        sage: flist = (f.change_ring(K), )
-        sage: ri = roots_interval(flist, 1)
+        sage: f = f.change_ring(K)
+        sage: ri = roots_interval(f, 1)
         sage: ri
         {-138907099/160396102*I - 1/2: -1.? - 1.?*I,
          138907099/160396102*I - 1/2: -1.? + 1.?*I,
@@ -663,15 +663,10 @@ def roots_interval(pols, x0):
           -0.933012701892219 + 1.29903810567666*I,
           -0.0669872981077806 + 0.433012701892219*I)]
     """
-    flist = tuple(pols)
-    f = prod(flist)
     F1 = f.base_ring()
     x, y = f.parent().gens()
-    Ux = [F1[y](_.subs({x: F1(x0)})) for _ in flist]
     fx = F1[y](f.subs({x: F1(x0)}))
-    roots = []
-    for pol in Ux:
-        roots += pol.roots(QQbar, multiplicities=False)
+    roots = fx.roots(QQbar, multiplicities=False)
     result = {}
     for i, r in enumerate(roots):
         prec = 53
@@ -696,7 +691,7 @@ def roots_interval(pols, x0):
     return result
 
 
-def roots_interval_cached(flist, x0):
+def roots_interval_cached(f, x0):
     r"""
     Cached version of :func:`roots_interval`.
 
@@ -707,22 +702,22 @@ def roots_interval_cached(flist, x0):
         sage: K = fieldI(QQ)
         sage: f = y^3 - x^2
         sage: f = f.change_ring(K)
-        sage: ((f, ), 1) in roots_interval_cache
+        sage: (f, 1) in roots_interval_cache
         False
-        sage: ri = roots_interval_cached((f, ), 1)
+        sage: ri = roots_interval_cached(f, 1)
         sage: ri
         {-138907099/160396102*I - 1/2: -1.? - 1.?*I,
          138907099/160396102*I - 1/2: -1.? + 1.?*I,
          1: 1.? + 0.?*I}
-        sage: ((f, ), 1) in roots_interval_cache
+        sage: (f, 1) in roots_interval_cache
         True
     """
     global roots_interval_cache
     try:
-        return roots_interval_cache[(flist, x0)]
+        return roots_interval_cache[(f, x0)]
     except KeyError:
-        result = roots_interval(flist, x0)
-        roots_interval_cache[(flist, x0)] = result
+        result = roots_interval(f, x0)
+        roots_interval_cache[(f, x0)] = result
         return result
 
 
@@ -733,7 +728,7 @@ def populate_roots_interval_cache(inputs):
 
     INPUT:
 
-    - ``inputs`` -- a list of tuples ``(flist, x0)``
+    - ``inputs`` -- a list of tuples ``(f, x0)``
 
     EXAMPLES::
 
@@ -742,12 +737,12 @@ def populate_roots_interval_cache(inputs):
         sage: K=fieldI(QQ)
         sage: f = y^5 - x^2
         sage: f = f.change_ring(K)
-        sage: ((f, ), 3) in roots_interval_cache
+        sage: (f, 3) in roots_interval_cache
         False
-        sage: populate_roots_interval_cache([((f, ), 3)])
-        sage: ((f, ), 3) in roots_interval_cache
+        sage: populate_roots_interval_cache([(f, 3)])
+        sage: (f, 3) in roots_interval_cache
         True
-        sage: roots_interval_cache[((f,), 3)]
+        sage: roots_interval_cache[(f, 3)]
         {-1.255469441943070? - 0.9121519421827974?*I: -2.? - 1.?*I,
          -1.255469441943070? + 0.9121519421827974?*I: -2.? + 1.?*I,
          0.4795466549853897? - 1.475892845355996?*I: 1.? - 2.?*I,
@@ -769,7 +764,7 @@ def populate_roots_interval_cache(inputs):
 
 
 @parallel
-def braid_in_segment(glist, x0, x1, precision={}):
+def braid_in_segment(glist, x0, x1, precision=dict()):
     """
     Return the braid formed by the `y` roots of ``f`` when `x` moves
     from ``x0`` to ``x1``.
@@ -821,14 +816,15 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: B  # optional - sirocco
         s5*s3^-1
     """
+    precision1 = {_: precision[_] for _ in precision.keys()}
     g = prod(glist)
     F1 = g.base_ring()
     x, y = g.parent().gens()
     X0 = F1(x0)
     X1 = F1(x1)
     intervals = {}
-    if precision == {}:  # new
-        precision = {f: 53 for f in glist}  # new
+    if not precision1:  # new
+        precision1 = {f: 53 for f in glist}  # new
     y0s = []
     for f in glist:
         if f.variables() == (y,):
@@ -838,22 +834,22 @@ def braid_in_segment(glist, x0, x1, precision={}):
         y0sf = f0.roots(QQbar, multiplicities=False)
         y0s += list(y0sf)
         while True:
-            CIFp = ComplexIntervalField(precision[f])
+            CIFp = ComplexIntervalField(precision1[f])
             intervals[f] = [r.interval(CIFp) for r in y0sf]
             if not any(a.overlaps(b) for a, b in itertools.combinations(intervals[f], 2)):
                 break
-            precision[f] *= 2
+            precision1[f] *= 2
     strands = []
     for f in glist:
         for i in intervals[f]:
-            aux = followstrand(f, [p for p in glist if p != f], x0, x1, i.center(), precision[f])
+            aux = followstrand(f, [p for p in glist if p != f], x0, x1, i.center(), precision1[f])
             strands.append(aux)
     complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b] for b in strands]
     centralbraid = braid_from_piecewise(complexstrands)
     initialstrands = []
     finalstrands = []
-    initialintervals = roots_interval_cached(glist, X0)
-    finalintervals = roots_interval_cached(glist, X1)
+    initialintervals = roots_interval_cached(g, X0)
+    finalintervals = roots_interval_cached(g, X1)
     I1 = QQbar.gen()
     for cs in complexstrands:
         ip = cs[0][1] + I1 * cs[0][2]
@@ -864,8 +860,8 @@ def braid_in_segment(glist, x0, x1, precision={}):
                 initialstrands.append([(0, center.real(), center.imag()), (1, cs[0][1], cs[0][2])])
                 matched += 1
         if matched != 1:
-            precision = {f: precision[f] * 2 for f in glist}  # new
-            return braid_in_segment(glist, x0, x1, precision=precision)  # new
+            precision1 = {f: precision1[f] * 2 for f in glist}  # new
+            return braid_in_segment(glist, x0, x1, precision=precision1)  # new
 
         matched = 0
         for center, interval in finalintervals.items():
@@ -873,8 +869,8 @@ def braid_in_segment(glist, x0, x1, precision={}):
                 finalstrands.append([(0, cs[-1][1], cs[-1][2]), (1, center.real(), center.imag())])
                 matched += 1
         if matched != 1:
-            precision = {f: precision[f] * 2 for f in glist}  # new
-            return braid_in_segment(glist, x0, x1, precision=precision)  # new
+            precision1 = {f: precision1[f] * 2 for f in glist}  # new
+            return braid_in_segment(glist, x0, x1, precision=precision1)  # new
     initialbraid = braid_from_piecewise(initialstrands)
     finalbraid = braid_from_piecewise(finalstrands)
 
@@ -1163,7 +1159,7 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
         I0 = QQbar.gen()
         segs = [(a[0] + I0 * a[1], b[0] + I0 * b[1]) for a, b in segs]
         vertices = list(set(flatten(segs)))
-        tocacheverts = tuple([(glist, v) for v in vertices])
+        tocacheverts = tuple([(g, v) for v in vertices])
         populate_roots_interval_cache(tocacheverts)
         end_braid_computation = False
         while not end_braid_computation:
