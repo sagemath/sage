@@ -763,7 +763,7 @@ cdef class CoercionModel:
             5/2
             sage: cm.exception_stack()
             []
-            sage: 1/2 + GF(3)(2)                                                        # optional - sage.rings.finite_rings
+            sage: 1/2 + GF(3)(2)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +:
@@ -772,9 +772,9 @@ cdef class CoercionModel:
         Now see what the actual problem was::
 
             sage: import traceback
-            sage: cm.exception_stack()                                                  # optional - sage.rings.finite_rings
+            sage: cm.exception_stack()
             ['Traceback (most recent call last):...', 'Traceback (most recent call last):...']
-            sage: print(cm.exception_stack()[-1])                                       # optional - sage.rings.finite_rings
+            sage: print(cm.exception_stack()[-1])
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents:
@@ -784,7 +784,7 @@ cdef class CoercionModel:
 
         ::
 
-            sage: coercion_traceback()                                                  # optional - sage.rings.finite_rings
+            sage: coercion_traceback()
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents:
@@ -935,17 +935,17 @@ cdef class CoercionModel:
         EXAMPLES::
 
             sage: cm = sage.structure.element.get_coercion_model()
-            sage: GF7 = GF(7)                                                           # optional - sage.rings.finite_rings
-            sage: steps, res = cm.analyse(GF7, ZZ)                                      # optional - sage.rings.finite_rings
-            sage: steps                                                                 # optional - sage.rings.finite_rings
+            sage: GF7 = GF(7)
+            sage: steps, res = cm.analyse(GF7, ZZ)
+            sage: steps
             ['Coercion on right operand via', Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 7, 'Arithmetic performed after coercions.']
-            sage: res                                                                   # optional - sage.rings.finite_rings
+            sage: res
             Finite Field of size 7
-            sage: f = steps[1]; type(f)                                                 # optional - sage.rings.finite_rings
+            sage: f = steps[1]; type(f)
             <class 'sage.rings.finite_rings.integer_mod.Integer_to_IntegerMod'>
-            sage: f(100)                                                                # optional - sage.rings.finite_rings
+            sage: f(100)
             2
         """
         self._exceptions_cleared = False
@@ -1102,8 +1102,8 @@ cdef class CoercionModel:
             sage: ZZx = ZZ['x']
             sage: cm.division_parent(ZZx)
             Fraction Field of Univariate Polynomial Ring in x over Integer Ring
-            sage: K = GF(41)                                                            # optional - sage.rings.finite_rings
-            sage: cm.division_parent(K)                                                 # optional - sage.rings.finite_rings
+            sage: K = GF(41)
+            sage: cm.division_parent(K)
             Finite Field of size 41
             sage: Zmod100 = Integers(100)
             sage: cm.division_parent(Zmod100)
@@ -1318,7 +1318,7 @@ cdef class CoercionModel:
 
             sage: canonical_coercion(vector([1, 2, 3]), 0)                              # optional - sage.modules
             ((1, 2, 3), (0, 0, 0))
-            sage: canonical_coercion(GF(5)(0), float(0))                                # optional - sage.rings.finite_rings
+            sage: canonical_coercion(GF(5)(0), float(0))
             (0, 0)
         """
         xp = parent(x)
@@ -1459,8 +1459,8 @@ cdef class CoercionModel:
               From: Rational Field
               To:   Univariate Polynomial Ring in x over Rational Field
 
-            sage: K = GF(7)                                                             # optional - sage.rings.finite_rings
-            sage: cm.coercion_maps(QQ, K) is None                                       # optional - sage.rings.finite_rings
+            sage: K = GF(7)
+            sage: cm.coercion_maps(QQ, K) is None
             True
 
         Note that to break symmetry, if there is a coercion map in both
@@ -1496,19 +1496,19 @@ cdef class CoercionModel:
         garbage collection after being involved in binary operations::
 
             sage: import gc
-            sage: T = type(GF(2))                                                       # optional - sage.rings.finite_rings
+            sage: T = type(GF(2))
             sage: gc.collect() #random
             852
-            sage: N0 = len(list(o for o in gc.get_objects() if type(o) is T))           # optional - sage.rings.finite_rings
+            sage: N0 = len(list(o for o in gc.get_objects() if type(o) is T))
             sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]                    # optional - sage.rings.finite_rings
-            sage: N1 = len(list(o for o in gc.get_objects() if type(o) is T))           # optional - sage.rings.finite_rings
+            sage: N1 = len(list(o for o in gc.get_objects() if type(o) is T))
             sage: N1 > N0                                                               # optional - sage.rings.finite_rings
             True
             sage: del L                                                                 # optional - sage.rings.finite_rings
             sage: gc.collect() #random
             3939
-            sage: N2 = len(list(o for o in gc.get_objects() if type(o) is T))           # optional - sage.rings.finite_rings
-            sage: N2 - N0                                                               # optional - sage.rings.finite_rings
+            sage: N2 = len(list(o for o in gc.get_objects() if type(o) is T))
+            sage: N2 - N0
             0
 
         """
@@ -1861,14 +1861,14 @@ cdef class CoercionModel:
 
         Check that :trac:`17740` is fixed::
 
-            sage: R = GF(5)['x']                                                        # optional - sage.rings.finite_rings
-            sage: cm.discover_action(R, ZZ, operator.truediv)                           # optional - sage.rings.finite_rings
+            sage: R = GF(5)['x']
+            sage: cm.discover_action(R, ZZ, operator.truediv)
             Right inverse action by Finite Field of size 5
              on Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
-            sage: cm.bin_op(R.gen(), 7, operator.truediv).parent()                      # optional - sage.rings.finite_rings
+            sage: cm.bin_op(R.gen(), 7, operator.truediv).parent()
             Univariate Polynomial Ring in x over Finite Field of size 5
 
         Check that :trac:`18221` is fixed::
@@ -1969,12 +1969,12 @@ cdef class CoercionModel:
 
         If there is no coercion, we only support ``==`` and ``!=``::
 
-            sage: x = QQ.one(); y = GF(2).one()                                         # optional - sage.rings.finite_rings
-            sage: richcmp(x, y, op_EQ)                                                  # optional - sage.rings.finite_rings
+            sage: x = QQ.one(); y = GF(2).one()
+            sage: richcmp(x, y, op_EQ)
             False
-            sage: richcmp(x, y, op_NE)                                                  # optional - sage.rings.finite_rings
+            sage: richcmp(x, y, op_NE)
             True
-            sage: richcmp(x, y, op_GT)                                                  # optional - sage.rings.finite_rings
+            sage: richcmp(x, y, op_GT)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for >:

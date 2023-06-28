@@ -201,9 +201,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     This example illustrates how every element of a list is taken into account
     when constructing a sequence.::
 
-        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v                                      # optional - sage.rings.finite_rings
+        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v
         [1, 2, 1, 3]
-        sage: v.universe()                                                              # optional - sage.rings.finite_rings
+        sage: v.universe()
         Finite Field of size 5
 
     TESTS::
@@ -397,9 +397,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     ::
 
-        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v                                      # optional - sage.rings.finite_rings
+        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v
         [1, 2, 1, 3]
-        sage: v.universe()                                                              # optional - sage.rings.finite_rings
+        sage: v.universe()
         Finite Field of size 5
 
     """
