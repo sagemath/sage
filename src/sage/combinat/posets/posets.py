@@ -1618,7 +1618,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             [1, 2, 3, 4, 6, 12]
             sage: L.cardinality()
             5
-            sage: L.list()                                                              # optional - sage.modules sage.rings.finite_rings
+            sage: L.list()                                                              # optional - sage.modules
             [[1, 2, 3, 4, 6, 12],
              [1, 2, 4, 3, 6, 12],
              [1, 3, 2, 4, 6, 12],
@@ -1632,9 +1632,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         With ``facade=True``, the elements of ``L`` are plain lists instead::
 
-            sage: L = P.linear_extensions(facade=True)                                  # optional - sage.modules sage.rings.finite_rings
-            sage: l = L.an_element()                                                    # optional - sage.modules sage.rings.finite_rings
-            sage: type(l)                                                               # optional - sage.modules sage.rings.finite_rings
+            sage: L = P.linear_extensions(facade=True)                                  # optional - sage.modules
+            sage: l = L.an_element()                                                    # optional - sage.modules
+            sage: type(l)                                                               # optional - sage.modules
             <class 'list'>
 
         .. WARNING::
@@ -1642,13 +1642,13 @@ class FinitePoset(UniqueRepresentation, Parent):
             In Sage <= 4.8, this function used to return a plain list
             of lists. To recover the previous functionality, please use::
 
-                sage: L = list(P.linear_extensions(facade=True)); L                     # optional - sage.modules sage.rings.finite_rings
+                sage: L = list(P.linear_extensions(facade=True)); L                     # optional - sage.modules
                 [[1, 2, 3, 4, 6, 12],
                  [1, 2, 4, 3, 6, 12],
                  [1, 3, 2, 4, 6, 12],
                  [1, 3, 2, 6, 4, 12],
                  [1, 2, 3, 6, 4, 12]]
-                sage: type(L[0])                                                        # optional - sage.modules sage.rings.finite_rings
+                sage: type(L[0])                                                        # optional - sage.modules
                 <class 'list'>
 
         .. SEEALSO:: :meth:`linear_extension`, :meth:`is_linear_extension`
@@ -1656,7 +1656,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         TESTS::
 
             sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })
-            sage: list(D.linear_extensions())                                           # optional - sage.modules sage.rings.finite_rings
+            sage: list(D.linear_extensions())                                           # optional - sage.modules
             [[0, 1, 2, 3, 4], [0, 2, 1, 3, 4], [0, 2, 1, 4, 3], [0, 2, 4, 1, 3], [0, 1, 2, 4, 3]]
         """
         return self._lin_ext_type(self, facade=facade)
@@ -1680,11 +1680,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.ChainPoset(5)
-            sage: P.spectrum(2)                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: P.spectrum(2)                                                         # optional - sage.modules
             [0, 0, 1, 0, 0]
 
             sage: P = posets.BooleanLattice(3)
-            sage: P.spectrum(5)                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: P.spectrum(5)                                                         # optional - sage.modules
             [0, 0, 0, 4, 12, 16, 16, 0]
 
             sage: P = posets.YoungDiagramPoset(Partition([3,2,1]))                      # optional - sage.combinat sage.modules
@@ -1692,7 +1692,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             [0, 8, 6, 2, 0, 0]
 
             sage: P = posets.AntichainPoset(4)
-            sage: P.spectrum(3)                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: P.spectrum(3)                                                         # optional - sage.modules
             [6, 6, 6, 6]
 
         TESTS::
@@ -1828,7 +1828,7 @@ class FinitePoset(UniqueRepresentation, Parent):
              [1, 2, 4, 3, 6, 12],
              [1, 3, 2, 4, 6, 12],
              [1, 3, 2, 6, 4, 12]]
-            sage: list(P.linear_extensions())                                           # optional - sage.modules sage.rings.finite_rings
+            sage: list(P.linear_extensions())                                           # optional - sage.modules
             [[1, 2, 3, 4, 6, 12],
              [1, 2, 4, 3, 6, 12],
              [1, 3, 2, 4, 6, 12],
@@ -3565,9 +3565,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         that we get back the poset from them::
 
             sage: P = Poset([[1,4], [3], [4,5,3], [6], [], [6], []])
-            sage: P.dimension()
+            sage: P.dimension()                                                         # optional - networkx
             3
-            sage: dim, L = P.dimension(certificate=True)
+            sage: dim, L = P.dimension(certificate=True)                                # optional - sage.numerical.mip
             sage: L  # random -- architecture-dependent
             [[0, 2, 4, 5, 1, 3, 6], [2, 5, 0, 1, 3, 4, 6], [0, 1, 2, 3, 5, 6, 4]]
             sage: Poset( (L[0], lambda x, y: all(l.index(x) < l.index(y) for l in L)) ) == P
@@ -3579,7 +3579,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: G = graphs.CompleteGraph(4)
             sage: P = Poset(DiGraph({(u,v):[u,v] for u,v,_ in G.edges(sort=True)}))
-            sage: P.dimension()
+            sage: P.dimension()                                                         # optional - networkx
             3
 
             sage: G = graphs.CompleteBipartiteGraph(3,3)
@@ -4809,7 +4809,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.BooleanLattice(4)
-            sage: P.width()
+            sage: P.width()                                                             # optional - networkx
             6
 
             sage: w, max_achain = P.width(certificate=True)
@@ -4818,7 +4818,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Poset().width()
+            sage: Poset().width()                                                       # optional - networkx
             0
             sage: Poset().width(certificate=True)
             (0, [])
@@ -4863,9 +4863,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: p = posets.BooleanLattice(4)
-            sage: p.width()
+            sage: p.width()                                                             # optional - networkx
             6
-            sage: p.dilworth_decomposition()  # random
+            sage: p.dilworth_decomposition()  # random                                  # optional - networkx
             [[7, 6, 4], [11, 3], [12, 8, 0], [13, 9, 1], [14, 10, 2], [15, 5]]
 
 
@@ -4876,7 +4876,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         TESTS::
 
             sage: p = posets.IntegerCompositions(5)
-            sage: d = p.dilworth_decomposition()
+            sage: d = p.dilworth_decomposition()                                        # optional - networkx
             sage: for chain in d:
             ....:    for i in range(len(chain)-1):
             ....:        assert p.is_greater_than(chain[i],chain[i+1])
@@ -7704,13 +7704,13 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.AntichainPoset(3)
-            sage: P.order_polynomial()                                                  # optional - sage.modules sage.rings.finite_rings
+            sage: P.order_polynomial()                                                  # optional - sage.modules
             q^3
 
             sage: P = posets.ChainPoset(3)
-            sage: f = P.order_polynomial(); f                                           # optional - sage.modules sage.rings.finite_rings
+            sage: f = P.order_polynomial(); f                                           # optional - sage.modules
             1/6*q^3 + 1/2*q^2 + 1/3*q
-            sage: [f(i) for i in range(4)]                                              # optional - sage.modules sage.rings.finite_rings
+            sage: [f(i) for i in range(4)]                                              # optional - sage.modules
             [0, 1, 4, 10]
 
         .. SEEALSO:: :meth:`order_polytope`
@@ -8037,7 +8037,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             True
 
             sage: P = Poset({0:[3,4,5],1:[5],2:[5]})
-            sage: P.is_sperner()
+            sage: P.is_sperner()                                                        # optional - networkx
             False
 
         TESTS::

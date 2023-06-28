@@ -279,7 +279,7 @@ class LinearExtensionOfPoset(ClonableArray,
             sage: X = [0,1,2,3,4,5,6]
             sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
             sage: P = Poset((X,Y), cover_relations=True, facade=False)
-            sage: for l in P.linear_extensions():                                       # optional - sage.modules sage.rings.finite_rings
+            sage: for l in P.linear_extensions():                                       # optional - sage.modules
             ....:     if l.is_supergreedy():
             ....:         print(l)
             [1, 4, 3, 0, 5, 6, 2]
@@ -336,7 +336,7 @@ class LinearExtensionOfPoset(ClonableArray,
             [1, 2, 3, 4]
             sage: l.tau(1)
             [2, 1, 3, 4]
-            sage: for p in L:                                                           # optional - sage.modules sage.rings.finite_rings
+            sage: for p in L:                                                           # optional - sage.modules
             ....:     for i in range(1,4):
             ....:         print("{} {} {}".format(i, p, p.tau(i)))
             1 [1, 2, 3, 4] [2, 1, 3, 4]
@@ -494,7 +494,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
          Finite poset containing 4 elements with distinguished linear extension
         sage: L.cardinality()
         5
-        sage: L.list()                                                                  # optional - sage.modules sage.rings.finite_rings
+        sage: L.list()                                                                  # optional - sage.modules
         [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         sage: L.an_element()
         [1, 2, 3, 4]
@@ -534,14 +534,14 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: P = Poset((divisors(15), attrcall("divides")))
             sage: L = P.linear_extensions()
-            sage: TestSuite(L).run()                                                    # optional - sage.modules sage.rings.finite_rings
+            sage: TestSuite(L).run()                                                    # optional - sage.modules
 
             sage: P = Poset((divisors(15), attrcall("divides")), facade=True)
             sage: L = P.linear_extensions()
-            sage: TestSuite(L).run()                                                    # optional - sage.modules sage.rings.finite_rings
+            sage: TestSuite(L).run()                                                    # optional - sage.modules
 
             sage: L = P.linear_extensions(facade=True)
-            sage: TestSuite(L).run(skip="_test_an_element")                             # optional - sage.modules sage.rings.finite_rings
+            sage: TestSuite(L).run(skip="_test_an_element")                             # optional - sage.modules
         """
         self._poset = poset
         self._is_facade = facade
@@ -669,7 +669,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: rels = [[1,3],[1,4],[2,3]]
             sage: P = Poset((elms, rels), linear_extension=True)
             sage: L = P.linear_extensions()
-            sage: list(L)                                                               # optional - sage.modules sage.rings.finite_rings
+            sage: list(L)                                                               # optional - sage.modules
             [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         """
         from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator

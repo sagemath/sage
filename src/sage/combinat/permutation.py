@@ -1863,7 +1863,7 @@ class Permutation(CombinatorialElement):
         The number of `2`-noninversions of a permutation `p \in S_n`
         is `\binom{n}{2}` minus its number of inversions::
 
-            sage: b = binomial(5, 2)
+            sage: b = binomial(5, 2)                                                    # optional - sage.symbolic
             sage: all( x.number_of_noninversions(2) == b - x.number_of_inversions()
             ....:      for x in Permutations(5) )
             True
@@ -4231,7 +4231,7 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: p = Permutation([2, 1, 4, 5, 3]); q = Permutation([2, 5, 4, 1, 3])
-            sage: p.right_permutohedron_interval(q)  # indirect doctest                 # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: p.right_permutohedron_interval(q)  # indirect doctest                 # optional - sage.graphs sage.modules
             [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
         """
@@ -4258,27 +4258,27 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: p = Permutation([2, 1, 4, 5, 3]); q = Permutation([2, 5, 4, 1, 3])
-            sage: p.right_permutohedron_interval(q)                                     # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: p.right_permutohedron_interval(q)                                     # optional - sage.graphs sage.modules
             [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
 
         TESTS::
 
-            sage: Permutation([]).right_permutohedron_interval(Permutation([]))                             # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([]).right_permutohedron_interval(Permutation([]))         # optional - sage.graphs sage.modules
             [[]]
-            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))               # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))       # optional - sage.graphs sage.modules
             [[3, 1, 2]]
-            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))         # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))                     # optional - sage.graphs sage.modules
             [[3, 1, 4, 2], [3, 4, 1, 2], [3, 4, 2, 1], [1, 3, 4, 2],
              [1, 3, 2, 4], [3, 2, 4, 1], [3, 2, 1, 4], [3, 1, 2, 4]]
-            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))   # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))               # optional - sage.graphs sage.modules
             [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
-            sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))   # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))               # optional - sage.graphs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: [2, 5, 4, 1, 3] must be lower or equal than [2, 1, 4, 5, 3] for the right permutohedron order
-            sage: Permutation([2, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))      # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([2, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))                  # optional - sage.graphs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: len([2, 4, 1, 3]) and len([2, 1, 4, 5, 3]) must be equal
@@ -5346,21 +5346,21 @@ class Permutation(CombinatorialElement):
 
             sage: Permutation([]).shifted_shuffle(Permutation([]))                      # optional - sage.graphs
             [[]]
-            sage: Permutation([1, 2, 3]).shifted_shuffle(Permutation([1]))              # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([1, 2, 3]).shifted_shuffle(Permutation([1]))              # optional - sage.graphs sage.modules
             [[4, 1, 2, 3], [1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3]]
-            sage: Permutation([1, 2]).shifted_shuffle(Permutation([2, 1]))              # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([1, 2]).shifted_shuffle(Permutation([2, 1]))              # optional - sage.graphs sage.modules
             [[4, 1, 3, 2], [4, 3, 1, 2], [1, 4, 3, 2],
              [1, 4, 2, 3], [1, 2, 4, 3], [4, 1, 2, 3]]
-            sage: Permutation([1]).shifted_shuffle([1])                                 # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutation([1]).shifted_shuffle([1])                                 # optional - sage.graphs sage.modules
             [[2, 1], [1, 2]]
             sage: p = Permutation([3, 1, 5, 4, 2])
-            sage: len(p.shifted_shuffle(Permutation([2, 1, 4, 3])))                     # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: len(p.shifted_shuffle(Permutation([2, 1, 4, 3])))                     # optional - sage.graphs sage.modules
             126
 
         The shifted shuffle product is associative. We can test this on an
         admittedly toy example::
 
-            sage: all( all( all( sorted(flatten([abs.shifted_shuffle(c)                 # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: all( all( all( sorted(flatten([abs.shifted_shuffle(c)                 # optional - sage.graphs sage.modules
             ....:                                for abs in a.shifted_shuffle(b)]))
             ....:                == sorted(flatten([a.shifted_shuffle(bcs)
             ....:                                   for bcs in b.shifted_shuffle(c)]))
@@ -5503,7 +5503,7 @@ class Permutations(UniqueRepresentation, Parent):
 
         sage: p = Permutations(descents=([1], 4)); p
         Standard permutations of 4 with descents [1]
-        sage: p.list()                                                                  # optional - sage.graphs sage.modules sage.rings.finite_rings
+        sage: p.list()                                                                  # optional - sage.graphs sage.modules
         [[2, 4, 1, 3], [3, 4, 1, 2], [1, 4, 2, 3], [1, 3, 2, 4], [2, 3, 1, 4]]
 
     ::
@@ -5526,21 +5526,21 @@ class Permutations(UniqueRepresentation, Parent):
 
         sage: p = Permutations(recoils_finer=[2,1]); p
         Standard permutations whose recoils composition is finer than [2, 1]
-        sage: p.list()                                                                  # optional - sage.graphs sage.modules sage.rings.finite_rings
+        sage: p.list()                                                                  # optional - sage.graphs sage.modules
         [[3, 1, 2], [1, 2, 3], [1, 3, 2]]
 
     ::
 
         sage: p = Permutations(recoils_fatter=[2,1]); p
         Standard permutations whose recoils composition is fatter than [2, 1]
-        sage: p.list()                                                                  # optional - sage.graphs sage.modules sage.rings.finite_rings
+        sage: p.list()                                                                  # optional - sage.graphs sage.modules
         [[3, 1, 2], [3, 2, 1], [1, 3, 2]]
 
     ::
 
         sage: p = Permutations(recoils=[2,1]); p
         Standard permutations whose recoils composition is [2, 1]
-        sage: p.list()                                                                  # optional - sage.graphs sage.modules sage.rings.finite_rings
+        sage: p.list()                                                                  # optional - sage.graphs sage.modules
         [[3, 1, 2], [1, 3, 2]]
 
     ::
@@ -5916,14 +5916,14 @@ class Permutations_mset(Permutations):
          [2, 2, 1, 1, 2],
          [2, 2, 1, 2, 1],
          [2, 2, 2, 1, 1]]
-        sage: MS = MatrixSpace(GF(2), 2, 2)                                             # optional - sage.modules sage.rings.finite_rings
-        sage: A = MS([1,0,1,1])                                                         # optional - sage.modules sage.rings.finite_rings
-        sage: rows = A.rows()                                                           # optional - sage.modules sage.rings.finite_rings
-        sage: rows[0].set_immutable()                                                   # optional - sage.modules sage.rings.finite_rings
-        sage: rows[1].set_immutable()                                                   # optional - sage.modules sage.rings.finite_rings
-        sage: P = Permutations_mset(rows); P                                            # optional - sage.modules sage.rings.finite_rings
+        sage: MS = MatrixSpace(GF(2), 2, 2)                                             # optional - sage.modules
+        sage: A = MS([1,0,1,1])                                                         # optional - sage.modules
+        sage: rows = A.rows()                                                           # optional - sage.modules
+        sage: rows[0].set_immutable()                                                   # optional - sage.modules
+        sage: rows[1].set_immutable()                                                   # optional - sage.modules
+        sage: P = Permutations_mset(rows); P                                            # optional - sage.modules
         Permutations of the multi-set [(1, 0), (1, 1)]
-        sage: sorted(P)                                                                 # optional - sage.modules sage.rings.finite_rings
+        sage: sorted(P)                                                                 # optional - sage.modules
         [[(1, 0), (1, 1)], [(1, 1), (1, 0)]]
     """
     @staticmethod
@@ -7889,7 +7889,7 @@ def bistochastic_as_sum_of_permutations(M, check=True):
         ...
         ValueError: The matrix is not bistochastic
 
-        sage: bistochastic_as_sum_of_permutations(Matrix(GF(7), 2, [2,1,1,2]))          # optional - sage.graphs sage.modules sage.rings.finite_rings
+        sage: bistochastic_as_sum_of_permutations(Matrix(GF(7), 2, [2,1,1,2]))          # optional - sage.graphs sage.modules
         Traceback (most recent call last):
         ...
         ValueError: The base ring of the matrix must have a coercion map to RR
@@ -8026,7 +8026,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
         TESTS::
 
             sage: P = Permutations(descents=([1,0,2], 5))
-            sage: TestSuite(P).run()                                                    # optional - sage.graphs sage.rings.finite_rings
+            sage: TestSuite(P).run()                                                    # optional - sage.graphs
         """
         StandardPermutations_n_abstract.__init__(self, n)
         self._d = d
@@ -8064,7 +8064,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
 
             sage: def P(D, n):
             ....:     return Permutations(descents=(D, n + 1))
-            sage: all(P(D, n).cardinality() == len(P(D, n).list())                      # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: all(P(D, n).cardinality() == len(P(D, n).list())                      # optional - sage.graphs sage.modules
             ....:     for n in range(5) for D in subsets(range(n)))
             True
 
@@ -8129,7 +8129,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
 
         EXAMPLES::
 
-            sage: Permutations(descents=([2,0],5)).list()                               # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutations(descents=([2,0],5)).list()                               # optional - sage.graphs sage.modules
             [[5, 2, 4, 1, 3],
              [5, 3, 4, 1, 2],
              [4, 3, 5, 1, 2],
@@ -8158,7 +8158,7 @@ def descents_composition_list(dc):
     EXAMPLES::
 
         sage: import sage.combinat.permutation as permutation
-        sage: permutation.descents_composition_list([1,2,2])                            # optional - sage.graphs sage.modules sage.rings.finite_rings
+        sage: permutation.descents_composition_list([1,2,2])                            # optional - sage.graphs sage.modules
         [[5, 2, 4, 1, 3],
          [5, 3, 4, 1, 2],
          [4, 3, 5, 1, 2],
@@ -8251,7 +8251,7 @@ class StandardPermutations_recoilsfiner(Permutations):
         TESTS::
 
             sage: P = Permutations(recoils_finer=[2,2])
-            sage: TestSuite(P).run()                                                    # optional - sage.graphs sage.rings.finite_rings
+            sage: TestSuite(P).run()                                                    # optional - sage.graphs
         """
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
@@ -8272,7 +8272,7 @@ class StandardPermutations_recoilsfiner(Permutations):
 
         EXAMPLES::
 
-            sage: Permutations(recoils_finer=[2,2]).list()                              # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutations(recoils_finer=[2,2]).list()                              # optional - sage.graphs sage.modules
             [[3, 1, 4, 2],
              [3, 4, 1, 2],
              [1, 3, 4, 2],
@@ -8319,7 +8319,7 @@ class StandardPermutations_recoilsfatter(Permutations):
         TESTS::
 
             sage: P = Permutations(recoils_fatter=[2,2])
-            sage: TestSuite(P).run()                                                    # optional - sage.graphs sage.rings.finite_rings
+            sage: TestSuite(P).run()                                                    # optional - sage.graphs
         """
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
@@ -8340,7 +8340,7 @@ class StandardPermutations_recoilsfatter(Permutations):
 
         EXAMPLES::
 
-            sage: Permutations(recoils_fatter=[2,2]).list()                             # optional - sage.graphs sage.modules sage.rings.finite_rings
+            sage: Permutations(recoils_fatter=[2,2]).list()                             # optional - sage.graphs sage.modules
             [[4, 3, 2, 1],
              [3, 2, 1, 4],
              [3, 2, 4, 1],
@@ -8394,7 +8394,7 @@ class StandardPermutations_recoils(Permutations):
         TESTS::
 
             sage: P = Permutations(recoils=[2,2])
-            sage: TestSuite(P).run()                                                    # optional - sage.graphs sage.rings.finite_rings
+            sage: TestSuite(P).run()                                                    # optional - sage.graphs
         """
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
@@ -8415,7 +8415,7 @@ class StandardPermutations_recoils(Permutations):
 
         EXAMPLES::
 
-            sage: Permutations(recoils=[2,2]).list()                                    # optional - sage.graphs sage.rings.finite_rings
+            sage: Permutations(recoils=[2,2]).list()                                    # optional - sage.graphs
             [[3, 1, 4, 2], [3, 4, 1, 2], [1, 3, 4, 2], [1, 3, 2, 4], [3, 1, 2, 4]]
         """
         recoils = self.recoils

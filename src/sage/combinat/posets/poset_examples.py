@@ -1033,7 +1033,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: A = posets.StandardExample(3); A
             Finite poset containing 6 elements
-            sage: A.dimension()
+            sage: A.dimension()                                                         # optional - networkx
             3
 
         REFERENCES:
@@ -1381,7 +1381,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         Fibonacci numbers as the number of antichains of a poset::
 
-            sage: [len(posets.UpDownPoset(n).antichains().list()) for n in range(6)]    # optional - sage.combinat sage.rings.finite_rings
+            sage: [len(posets.UpDownPoset(n).antichains().list()) for n in range(6)]    # optional - sage.combinat
             [1, 2, 3, 5, 8, 13]
 
         TESTS::

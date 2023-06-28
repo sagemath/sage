@@ -1310,7 +1310,7 @@ class HasseDiagram(DiGraph):
 
             sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
             sage: H = P._hasse_diagram
-            sage: M = H._leq_matrix_boolean; M                                          # optional - sage.modules sage.rings.finite_rings
+            sage: M = H._leq_matrix_boolean; M                                          # optional - sage.modules
             [1 1 1 1 1 1 1 1]
             [0 1 0 1 0 0 0 1]
             [0 0 1 1 1 0 1 1]
@@ -1319,7 +1319,7 @@ class HasseDiagram(DiGraph):
             [0 0 0 0 0 1 1 1]
             [0 0 0 0 0 0 1 1]
             [0 0 0 0 0 0 0 1]
-            sage: M.base_ring()                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: M.base_ring()                                                         # optional - sage.modules
             Finite Field of size 2
         """
         n = self.order()
@@ -1393,8 +1393,8 @@ class HasseDiagram(DiGraph):
 
             sage: P = posets.DiamondPoset(6)
             sage: H = P._hasse_diagram
-            sage: M = H.lequal_matrix(boolean=True)                                     # optional - sage.modules sage.rings.finite_rings
-            sage: M.base_ring()                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: M = H.lequal_matrix(boolean=True)                                     # optional - sage.modules
+            sage: M.base_ring()                                                         # optional - sage.modules
             Finite Field of size 2
 
         TESTS::

@@ -656,7 +656,7 @@ def from_rank(r, n, k):
         ....:     for i in range(k):
         ....:         comb[i] = (n - 1) - comb[i]
         ....:     return tuple(comb)
-        sage: all(from_rank(r, n, k) == from_rank_comb_largest(r, n, k)
+        sage: all(from_rank(r, n, k) == from_rank_comb_largest(r, n, k)                 # optional - sage.symbolic
         ....:     for n in range(10) for k in range(n+1) for r in range(binomial(n,k)))
         True
     """
