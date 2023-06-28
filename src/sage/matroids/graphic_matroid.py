@@ -40,7 +40,7 @@ Below are some examples of constructing a graphic matroid.
     sage: edgelist = [(0, 1, 'a'), (0, 2, 'b'), (1, 2, 'c')]
     sage: G = Graph(edgelist)
     sage: M1 = Matroid(G)
-    sage: M2 = Matroid(graph=edgelist)                                                  # optional - sage.graphs
+    sage: M2 = Matroid(graph=edgelist)
     sage: M3 = Matroid(graphs.CycleGraph(3))
     sage: M1 == M3
     False
@@ -542,7 +542,7 @@ class GraphicMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.CompleteGraphic(5)                                       # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(5)
             sage: M._minor(deletions=frozenset([0,1,2]))
             Graphic matroid of rank 4 on 7 elements
             sage: M._minor(contractions=frozenset([0,1,2]))
@@ -599,7 +599,7 @@ class GraphicMatroid(Matroid):
 
         ::
 
-            sage: M = matroids.CompleteGraphic(6)                                       # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(6)
             sage: N = Matroid(range(8), graphs.WheelGraph(5))
             sage: M._has_minor(N)
             True
@@ -615,7 +615,7 @@ class GraphicMatroid(Matroid):
         If the matroids are not 3-connected, then the default matroid algorithms
         are used::
 
-            sage: M = matroids.CompleteGraphic(6)                                       # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(6)
             sage: N = Matroid(graphs.CycleGraph(4))
             sage: M.has_minor(N)
             True
@@ -1176,7 +1176,7 @@ class GraphicMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.CompleteGraphic(4); M                                    # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(4); M
             M(K4): Graphic matroid of rank 3 on 6 elements
             sage: M.is_valid()
             True
@@ -1361,7 +1361,7 @@ class GraphicMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(4)
             sage: M1 = M.graphic_extension(0,1,'a'); M1
             Graphic matroid of rank 3 on 7 elements
             sage: list(M1.graph().edge_iterator())
@@ -1931,7 +1931,7 @@ class GraphicMatroid(Matroid):
 
         TESTS::
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(4)
             sage: M.one_sum(u=1, v=2, X=[0,1])
             Traceback (most recent call last):
             ...
@@ -2013,7 +2013,7 @@ class GraphicMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.CompleteGraphic(5); M                                    # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(5); M
             M(K5): Graphic matroid of rank 4 on 10 elements
             sage: N = M.regular_matroid(); N
             Regular matroid of rank 4 on 10 elements with 125 bases
