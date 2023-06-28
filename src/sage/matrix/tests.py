@@ -11,7 +11,7 @@ We test various degenerate cases of kernel computation::
     Vector space of degree 1 and dimension 1 over Rational Field
     Basis matrix:
     [1]
-    sage: matrix(GF(7), 1, 0).kernel()                                          # optional - sage.libs.pari
+    sage: matrix(GF(7), 1, 0).kernel()
     Vector space of degree 1 and dimension 1 over Finite Field of size 7
     Basis matrix:
     [1]
@@ -28,7 +28,7 @@ We test various degenerate cases of kernel computation::
     Vector space of degree 0 and dimension 0 over Rational Field
     Basis matrix:
     []
-    sage: matrix(GF(7), 0, 1).kernel()                                          # optional - sage.libs.pari
+    sage: matrix(GF(7), 0, 1).kernel()
     Vector space of degree 0 and dimension 0 over Finite Field of size 7
     Basis matrix:
     []
