@@ -152,7 +152,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R.<abc> = PolynomialRing(QQ, sparse=True); R
         Sparse Univariate Polynomial Ring in abc over Rational Field
 
-        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); R                      # optional - sage.rings.finite_rings
+        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); R
         Univariate Polynomial Ring in w over
          Univariate Polynomial Ring in k over Finite Field of size 7
 
@@ -287,7 +287,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: PolynomialRing(QQ, 2, 'alpha0')
         Multivariate Polynomial Ring in alpha00, alpha01 over Rational Field
 
-        sage: PolynomialRing(GF(7), 'y', 5)                                             # optional - sage.rings.finite_rings
+        sage: PolynomialRing(GF(7), 'y', 5)
         Multivariate Polynomial Ring in y0, y1, y2, y3, y4 over Finite Field of size 7
 
         sage: PolynomialRing(QQ, 'y', 3, sparse=True)
@@ -434,9 +434,9 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     The generic implementation is different in some cases::
 
-        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)    # optional - sage.rings.finite_rings
+        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
-        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)                                                                           # optional - sage.rings.finite_rings
+        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
 
         sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)  # optional - sage.libs.singular
@@ -459,7 +459,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: unknown implementation 'Foo' for dense polynomial rings over Integer Ring
-        sage: R.<x0> = PolynomialRing(GF(2), implementation='GF2X', sparse=True)                                                                    # optional - sage.rings.finite_rings
+        sage: R.<x0> = PolynomialRing(GF(2), implementation='GF2X', sparse=True)
         Traceback (most recent call last):
         ...
         ValueError: unknown implementation 'GF2X' for sparse polynomial rings over Finite Field of size 2
@@ -571,7 +571,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     We run the testsuite for various polynomial rings, skipping tests that currently fail::
 
-        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); TestSuite(R).run(); R                                                              # optional - sage.rings.finite_rings
+        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); TestSuite(R).run(); R
         Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
         sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
@@ -594,9 +594,9 @@ def PolynomialRing(base_ring, *args, **kwds):
         Multivariate Polynomial Ring in x over Rational Field
         sage: Q0 = PolynomialRing(QQ,"x",0); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
         Multivariate Polynomial Ring in no variables over Rational Field
-        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)    # optional - sage.rings.finite_rings
+        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
-        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)                                                                           # optional - sage.rings.finite_rings
+        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
         sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>

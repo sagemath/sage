@@ -27,9 +27,9 @@ EXAMPLES:
 We construct the Frobenius morphism on `\GF{5}[x,y,z]` over
 `\GF{5}`::
 
-    sage: R.<x,y,z> = GF(5)[]                                                           # optional - sage.rings.finite_rings
-    sage: frob = R.hom([x^5, y^5, z^5])                                                 # optional - sage.rings.finite_rings
-    sage: frob(x^2 + 2*y - z^4)                                                         # optional - sage.rings.finite_rings
+    sage: R.<x,y,z> = GF(5)[]
+    sage: frob = R.hom([x^5, y^5, z^5])
+    sage: frob(x^2 + 2*y - z^4)
     -z^20 + x^10 + 2*y^5
     sage: frob((x + 2*y)^3)                                                             # optional - sage.rings.finite_rings
     x^15 + x^10*y^5 + 2*x^5*y^10 - 2*y^15
@@ -46,7 +46,7 @@ two variables::
 
 TESTS::
 
-    sage: PolynomialRing(GF(5), 3, 'xyz').objgens()                                     # optional - sage.rings.finite_rings
+    sage: PolynomialRing(GF(5), 3, 'xyz').objgens()
     (Multivariate Polynomial Ring in x, y, z over Finite Field of size 5,
     (x, y, z))
 """
@@ -204,7 +204,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
             sage: R.<x,y> = QQ[]
             sage: S.<x,y> = ZZ[]
-            sage: T.<x,y> = GF(7)[]                                                     # optional - sage.rings.finite_rings
+            sage: T.<x,y> = GF(7)[]
 
         We convert from integer polynomials to rational polynomials,
         and back::
@@ -220,9 +220,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         ::
 
-            sage: f = R(T.0^2 - 4*T.1^3); f                                             # optional - sage.rings.finite_rings
+            sage: f = R(T.0^2 - 4*T.1^3); f
             3*y^3 + x^2
-            sage: parent(f)                                                             # optional - sage.rings.finite_rings
+            sage: parent(f)
             Multivariate Polynomial Ring in x, y over Rational Field
 
         We dump and load the polynomial ring S::
@@ -242,9 +242,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         variable names::
 
             sage: R.<x,y> = PolynomialRing(QQ,2)
-            sage: S.<a,b> = PolynomialRing(GF(7),2)                                     # optional - sage.rings.finite_rings
+            sage: S.<a,b> = PolynomialRing(GF(7),2)
             sage: f = x^2 + 2/3*y^3
-            sage: S(f)                                                                  # optional - sage.rings.finite_rings
+            sage: S(f)
             3*b^3 + a^2
 
         Conversion from symbolic variables::
@@ -280,12 +280,12 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         ::
 
-            sage: R = GF(5)['x,y,z']                                                    # optional - sage.rings.finite_rings
+            sage: R = GF(5)['x,y,z']
             sage: S = ZZ['y']
-            sage: R(7*S.0)                                                              # optional - sage.rings.finite_rings
+            sage: R(7*S.0)
             2*y
             sage: T = ZZ['x,z']
-            sage: R(2*T.0 + 6*T.1 + T.0*T.1^2)                                          # optional - sage.rings.finite_rings
+            sage: R(2*T.0 + 6*T.1 + T.0*T.1^2)
             x*z^2 + 2*x + z
 
         ::

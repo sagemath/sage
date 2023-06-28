@@ -175,7 +175,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
             sage: R.<x> = LaurentPolynomialRing(QQ)
             sage: a = x^2 + 3*x^3 + 5*x^-1
-            sage: a.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
+            sage: a.change_ring(GF(3))
             2*x^-1 + x^2
 
         Check that :trac:`22277` is fixed::
@@ -329,7 +329,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         ::
 
-            sage: S.<s> = LaurentPolynomialRing(GF(5))                                  # optional - sage.rings.finite_rings sage.rings.padics
+            sage: S.<s> = LaurentPolynomialRing(GF(5))                                  # optional - sage.rings.padics
             sage: T.<t> = PolynomialRing(pAdicRing(5))                                  # optional - sage.rings.finite_rings sage.rings.padics
             sage: S(t)                                                                  # optional - sage.rings.finite_rings sage.rings.padics
             s
@@ -385,7 +385,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: Pxy = PolynomialRing(QQ, "x,y")
             sage: Paxb = PolynomialRing(QQ, "a,x,b")
             sage: Qx = PolynomialRing(ZZ, "x")
-            sage: Rx = PolynomialRing(GF(2), "x")                                       # optional - sage.rings.finite_rings
+            sage: Rx = PolynomialRing(GF(2), "x")
             sage: p1 = Lx.gen()
             sage: p2 = Lx.zero()
             sage: p3 = Lx.one()
@@ -395,7 +395,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
             sage: Pxes = [(Px, Px.gen()), (Qx, Qx.gen()),
             ....:         (Pxy, Pxy.gen(0)), (Paxb, Paxb.gen(1))]
-            sage: Pxes += [(Rx, Rx.gen())]                                              # optional - sage.rings.finite_rings
+            sage: Pxes += [(Rx, Rx.gen())]
             sage: for P, x in Pxes:
             ....:     assert P(p1) == x and parent(P(p1)) is P
             ....:     assert P(p2) == P.zero() and parent(P(p2)) is P
@@ -825,7 +825,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         Since :trac:`24072` the symbolic ring does not accept positive
         characteristic::
 
-            sage: R.<w> = LaurentPolynomialRing(GF(7))                                  # optional - sage.rings.finite_rings
+            sage: R.<w> = LaurentPolynomialRing(GF(7))
             sage: SR(2*w^3 + 1)                                                         # optional - sage.rings.finite_rings sage.symbolic
             Traceback (most recent call last):
             ...
@@ -1046,10 +1046,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         EXAMPLES::
 
-            sage: R.<x> = LaurentPolynomialRing(GF(2))                                  # optional - sage.rings.finite_rings
-            sage: f = 1/x^3 + x + x^2 + 3*x^4                                           # optional - sage.rings.finite_rings
-            sage: g = 1 - x + x^2 - x^4                                                 # optional - sage.rings.finite_rings
-            sage: f*g                                                                   # optional - sage.rings.finite_rings
+            sage: R.<x> = LaurentPolynomialRing(GF(2))
+            sage: f = 1/x^3 + x + x^2 + 3*x^4
+            sage: g = 1 - x + x^2 - x^4
+            sage: f*g
             x^-3 + x^-2 + x^-1 + x^8
         """
         cdef LaurentPolynomial_univariate right = <LaurentPolynomial_univariate>right_r

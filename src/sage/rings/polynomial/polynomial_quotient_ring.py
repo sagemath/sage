@@ -402,7 +402,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         Check that :trac:`26161` has been resolved::
 
-            sage: R.<x> = GF(2)[]                                                       # optional - sage.rings.finite_rings
+            sage: R.<x> = GF(2)[]
             sage: S = R.quo(x)                                                          # optional - sage.rings.finite_rings
             sage: S in FiniteFields()                                                   # optional - sage.rings.finite_rings
             True
@@ -561,7 +561,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         TESTS::
 
-            sage: P5.<x> = GF(5)[]                                                      # optional - sage.rings.finite_rings
+            sage: P5.<x> = GF(5)[]
             sage: Q = P5.quo([(x^2+1)^2])                                               # optional - sage.rings.finite_rings
             sage: P.<x> = ZZ[]
             sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])                                       # optional - sage.libs.pari
@@ -784,7 +784,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: F, R = Q.construction()                                               # optional - sage.libs.pari
             sage: F(R) == Q                                                             # optional - sage.libs.pari
             True
-            sage: P.<t> = GF(3)[]                                                       # optional - sage.rings.finite_rings
+            sage: P.<t> = GF(3)[]
             sage: Q = P.quo([2 + t^2])                                                  # optional - sage.rings.finite_rings
             sage: F, R = Q.construction()                                               # optional - sage.rings.finite_rings
             sage: F(R) == Q                                                             # optional - sage.rings.finite_rings
@@ -906,7 +906,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: P.<v> = GF(2)[]                                                       # optional - sage.rings.finite_rings
+            sage: P.<v> = GF(2)[]
             sage: P.quotient(v^2 - v).is_finite()                                       # optional - sage.rings.finite_rings
             True
         """
@@ -923,7 +923,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         r"""
         EXAMPLES::
 
-            sage: R.<x> = GF(3)[]                                                       # optional - sage.rings.finite_rings
+            sage: R.<x> = GF(3)[]
             sage: Q = R.quo(x^3 - x^2 - x - 1)                                          # optional - sage.rings.finite_rings
             sage: list(Q)                                                               # optional - sage.rings.finite_rings
             [0,
@@ -974,7 +974,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(GF(3))                                         # optional - sage.rings.finite_rings
+            sage: R.<x> = PolynomialRing(GF(3))
             sage: S = R.quotient(x^2005 + 1)                                            # optional - sage.rings.finite_rings
             sage: S.degree()                                                            # optional - sage.rings.finite_rings
             2005
@@ -1185,7 +1185,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(GF(3))                                         # optional - sage.rings.finite_rings
+            sage: R.<x> = PolynomialRing(GF(3))
             sage: S = R.quotient(x^2 - 2)                                               # optional - sage.rings.finite_rings
             sage: S.modulus()                                                           # optional - sage.rings.finite_rings
             x^2 + 1
@@ -1904,8 +1904,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         TESTS::
 
-            sage: K = GF(2)                                                             # optional - sage.rings.finite_rings
-            sage: R.<x> = K[]                                                           # optional - sage.rings.finite_rings
+            sage: K = GF(2)
+            sage: R.<x> = K[]
             sage: L.<x> = K.extension(x^2 + x + 1)                                      # optional - sage.rings.finite_rings
             sage: R.<y> = L[]                                                           # optional - sage.rings.finite_rings
             sage: M.<y> = L.extension(y^2 + y + x)                                      # optional - sage.rings.finite_rings

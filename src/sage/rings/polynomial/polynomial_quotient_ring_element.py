@@ -8,8 +8,8 @@ EXAMPLES: We create a quotient of a univariate polynomial ring over
 ::
 
     sage: R.<x> = ZZ[]
-    sage: S.<a> = R.quotient(x^3 + 3*x - 1)                                             # optional - sage.libs.pari
-    sage: 2 * a^3                                                                       # optional - sage.libs.pari
+    sage: S.<a> = R.quotient(x^3 + 3*x - 1)
+    sage: 2 * a^3
     -6*a + 2
 
 Next we make a univariate polynomial ring over
@@ -17,24 +17,24 @@ Next we make a univariate polynomial ring over
 
 ::
 
-    sage: S1.<y> = S[]                                                                  # optional - sage.libs.pari
+    sage: S1.<y> = S[]
 
 And, we quotient out that by `y^2 + a`.
 
 ::
 
-    sage: T.<z> = S1.quotient(y^2 + a)                                                  # optional - sage.libs.pari
+    sage: T.<z> = S1.quotient(y^2 + a)
 
 In the quotient `z^2` is `-a`.
 
 ::
 
-    sage: z^2                                                                           # optional - sage.libs.pari
+    sage: z^2
     -a
 
 And since `a^3 = -3x + 1`, we have::
 
-    sage: z^6                                                                           # optional - sage.libs.pari
+    sage: z^6
     3*a - 1
 
 ::

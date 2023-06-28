@@ -1191,9 +1191,9 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         Check that :trac:`22936` is fixed::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: R.<y> = S[]                                                           # optional - sage.rings.finite_rings
-            sage: p = x^2 + y + x*y^2                                                   # optional - sage.rings.finite_rings
+            sage: S.<x> = PowerSeriesRing(GF(5))
+            sage: R.<y> = S[]
+            sage: p = x^2 + y + x*y^2
             sage: p.newton_polygon()                                                    # optional - sage.rings.finite_rings
             Finite Newton polygon with 3 vertices: (0, 2), (1, 0), (2, 1)
 
@@ -1294,10 +1294,10 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: R.<y> = S[]                                                           # optional - sage.rings.finite_rings
-            sage: p = x^2 + y + x*y^2                                                   # optional - sage.rings.finite_rings
-            sage: p._factor_of_degree(1)                                                # optional - sage.rings.finite_rings
+            sage: S.<x> = PowerSeriesRing(GF(5))
+            sage: R.<y> = S[]
+            sage: p = x^2 + y + x*y^2
+            sage: p._factor_of_degree(1)
             (1 + O(x^20))*y + x^2 + x^5 + 2*x^8 + 4*x^14 + 2*x^17 + 2*x^20 + O(x^22)
 
         AUTHOR:
@@ -1429,9 +1429,9 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: R.<y> = S[]                                                           # optional - sage.rings.finite_rings
-            sage: p = x^2 + y + x*y^2                                                   # optional - sage.rings.finite_rings
+            sage: S.<x> = PowerSeriesRing(GF(5))
+            sage: R.<y> = S[]
+            sage: p = x^2 + y + x*y^2
             sage: p.slope_factorization()                                               # optional - sage.rings.finite_rings
             (x)
             * ((x + O(x^22))*y + 1 + 4*x^3 + 4*x^6 + 3*x^9 + x^15 + 3*x^18 + O(x^21))

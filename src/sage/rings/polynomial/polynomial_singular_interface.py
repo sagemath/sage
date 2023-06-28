@@ -13,8 +13,8 @@ TESTS::
     sage: R = PolynomialRing(GF(2**8,'a'), 10, 'x', order='invlex')                     # optional - sage.rings.finite_rings
     sage: R == loads(dumps(R))                                                          # optional - sage.rings.finite_rings
     True
-    sage: P.<a,b> = PolynomialRing(GF(7), 2)                                            # optional - sage.rings.finite_rings
-    sage: f = (a^3 + 2*b^2*a)^7; f                                                      # optional - sage.rings.finite_rings
+    sage: P.<a,b> = PolynomialRing(GF(7), 2)
+    sage: f = (a^3 + 2*b^2*a)^7; f
     a^21 + 2*a^7*b^14
 
 """
@@ -253,7 +253,7 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(GF(127), 'x')                                      # optional - sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(127), 'x')
             sage: singular(R)                                                           # optional - sage.libs.singular sage.rings.finite_rings
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
@@ -310,8 +310,8 @@ class PolynomialRing_singular_repr:
 
             sage: k.<a> = FiniteField(25)                                               # optional - sage.rings.finite_rings
             sage: R = k['x']                                                            # optional - sage.rings.finite_rings
-            sage: K = R.fraction_field()                                                # optional - sage.rings.finite_rings
-            sage: S = K['y']                                                            # optional - sage.rings.finite_rings
+            sage: K = R.fraction_field()
+            sage: S = K['y']
             sage: singular(S)                                                           # optional - sage.libs.singular sage.rings.finite_rings
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/5(x)
@@ -474,8 +474,8 @@ def _singular_func(self, singular=singular):
 
     EXAMPLES::
 
-        sage: P.<a,b> = PolynomialRing(GF(7), 2)                                        # optional - sage.rings.finite_rings
-        sage: f = (a^3 + 2*b^2*a)^7; f                                                  # optional - sage.rings.finite_rings
+        sage: P.<a,b> = PolynomialRing(GF(7), 2)
+        sage: f = (a^3 + 2*b^2*a)^7; f
         a^21 + 2*a^7*b^14
         sage: h = f._singular_(); h                                                     # optional - sage.rings.finite_rings
         a^21+2*a^7*b^14
@@ -484,9 +484,9 @@ def _singular_func(self, singular=singular):
         sage: P(h^20) == f^20                                                           # optional - sage.rings.finite_rings
         True
 
-        sage: R.<x> = PolynomialRing(GF(7))                                             # optional - sage.rings.finite_rings
-        sage: f = (x^3 + 2*x^2*x)^7                                                     # optional - sage.rings.finite_rings
-        sage: f                                                                         # optional - sage.rings.finite_rings
+        sage: R.<x> = PolynomialRing(GF(7))
+        sage: f = (x^3 + 2*x^2*x)^7
+        sage: f
         3*x^21
         sage: h = f._singular_(); h                                                     # optional - sage.rings.finite_rings
         3*x^21

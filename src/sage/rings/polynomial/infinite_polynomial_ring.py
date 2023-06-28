@@ -810,8 +810,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<x,y> = InfinitePolynomialRing(GF(5))                               # optional - sage.rings.finite_rings
-            sage: R.construction()                                                      # optional - sage.rings.finite_rings
+            sage: R.<x,y> = InfinitePolynomialRing(GF(5))
+            sage: R.construction()
             [InfPoly{[x,y], "lex", "dense"}, Finite Field of size 5]
 
         """
@@ -1109,10 +1109,10 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         TESTS::
 
-            sage: R = InfinitePolynomialRing(GF(2))                                     # optional - sage.rings.finite_rings
-            sage: R                                                                     # optional - sage.rings.finite_rings
+            sage: R = InfinitePolynomialRing(GF(2))
+            sage: R
             Infinite polynomial ring in x over Finite Field of size 2
-            sage: R.is_noetherian()                                                     # optional - sage.rings.finite_rings
+            sage: R.is_noetherian()
             False
 
             sage: R.<x> = InfinitePolynomialRing(QQ)
@@ -1136,10 +1136,10 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         TESTS::
 
-            sage: R = InfinitePolynomialRing(GF(2))                                     # optional - sage.rings.finite_rings
-            sage: R                                                                     # optional - sage.rings.finite_rings
+            sage: R = InfinitePolynomialRing(GF(2))
+            sage: R
             Infinite polynomial ring in x over Finite Field of size 2
-            sage: R.is_field()                                                          # optional - sage.rings.finite_rings
+            sage: R.is_field()
             False
 
         :trac:`9443`::
@@ -1230,8 +1230,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             x_1
             sage: X.gen() is X.gen(0)
             True
-            sage: XX = InfinitePolynomialRing(GF(5))                                    # optional - sage.rings.finite_rings
-            sage: XX.gen(0) is XX.gen()                                                 # optional - sage.rings.finite_rings
+            sage: XX = InfinitePolynomialRing(GF(5))
+            sage: XX.gen(0) is XX.gen()
             True
         """
         if i is not None and i > len(self._names):
@@ -1349,8 +1349,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<x> = InfinitePolynomialRing(GF(2))                                 # optional - sage.rings.finite_rings
-            sage: R.order()                                                             # optional - sage.rings.finite_rings
+            sage: R.<x> = InfinitePolynomialRing(GF(2))
+            sage: R.order()
             +Infinity
         """
         from sage.rings.infinity import Infinity
@@ -1363,7 +1363,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<x> = InfinitePolynomialRing(GF(2))                                 # optional - sage.rings.finite_rings
+            sage: R.<x> = InfinitePolynomialRing(GF(2))
             sage: R.key_basis()                                                         # optional - sage.rings.finite_rings
             Key polynomial basis over Finite Field of size 2
         """
@@ -1572,8 +1572,8 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
 
         EXAMPLES::
 
-            sage: R.<x,y> = InfinitePolynomialRing(GF(5))                               # optional - sage.rings.finite_rings
-            sage: R.construction()                                                      # optional - sage.rings.finite_rings
+            sage: R.<x,y> = InfinitePolynomialRing(GF(5))
+            sage: R.construction()
             [InfPoly{[x,y], "lex", "dense"}, Finite Field of size 5]
         """
         return [InfinitePolynomialFunctor(self._names, self._order, 'dense'), self._base]
