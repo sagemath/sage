@@ -433,7 +433,7 @@ def Matroid(groundset=None, data=None, **kwds):
             ....:                    [0, 1, 0, 1, 0, 1],
             ....:                    [0, 0, 1, 0, 1, 1]])
             sage: M = Matroid(matrix=A)
-            sage: M.is_isomorphic(matroids.CompleteGraphic(4))                          # optional - sage.graphs sage.rings.finite_rings
+            sage: M.is_isomorphic(matroids.CompleteGraphic(4))                          # optional - sage.graphs
             True
 
         Various shortcuts are possible::
@@ -490,7 +490,7 @@ def Matroid(groundset=None, data=None, **kwds):
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(4, 'x'))
             Quaternary matroid of rank 3 on 6 elements
-            sage: Matroid([0, 1, 2, 3, 4, 5],                                           # optional - sage.rings.finite_rings
+            sage: Matroid([0, 1, 2, 3, 4, 5],
             ....:         matrix=[[1, 1, 0], [1, 0, 1], [0, 1, 1]],
             ....:         field=GF(2), regular=True)
             Regular matroid of rank 3 on 6 elements with 16 bases
@@ -625,21 +625,21 @@ def Matroid(groundset=None, data=None, **kwds):
     increase speed, this check can be skipped::
 
         sage: M = matroids.named_matroids.Fano()
-        sage: N = Matroid(M, regular=True)                                              # optional - sage.rings.finite_rings
+        sage: N = Matroid(M, regular=True)
         Traceback (most recent call last):
         ...
         ValueError: input is not a valid regular matroid
-        sage: N = Matroid(M, regular=True, check=False); N                              # optional - sage.rings.finite_rings
+        sage: N = Matroid(M, regular=True, check=False); N
         Regular matroid of rank 3 on 7 elements with 32 bases
 
-        sage: N.is_valid()                                                              # optional - sage.rings.finite_rings
+        sage: N.is_valid()
         False
 
     Sometimes the output is regular, but represents a different matroid
     from the one you intended::
 
         sage: M = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]))
-        sage: N = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]),                  # optional - sage.rings.finite_rings
+        sage: N = Matroid(Matrix(GF(3), [[1, 0, 1, 1], [0, 1, 1, 2]]),
         ....:             regular=True)
         sage: N.is_valid()
         True

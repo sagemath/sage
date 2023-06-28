@@ -2860,7 +2860,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Fano()
-            sage: M.lattice_of_flats()                                                  # optional - sage.rings.finite_rings
+            sage: M.lattice_of_flats()
             Finite lattice containing 16 elements
         """
         from sage.combinat.posets.lattices import LatticePoset
@@ -5084,7 +5084,7 @@ cdef class Matroid(SageObject):
             sage: matroids.AG(5,2).is_kconnected(4)
             True
             sage: M = matroids.named_matroids.R6()
-            sage: M.is_kconnected(3)                                                    # optional - sage.rings.finite_rings
+            sage: M.is_kconnected(3)
             False
             sage: B, X = M.is_kconnected(3,True)
             sage: M.connectivity(X)<3
@@ -5226,7 +5226,7 @@ cdef class Matroid(SageObject):
             sage: matroids.named_matroids.BetsyRoss().is_3connected()                   # optional - sage.graphs
             True
             sage: M = matroids.named_matroids.R6()
-            sage: M.is_3connected()                                                     # optional - sage.rings.finite_rings
+            sage: M.is_3connected()
             False
             sage: B, X = M.is_3connected(True)
             sage: M.connectivity(X)
@@ -5286,7 +5286,7 @@ cdef class Matroid(SageObject):
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
-            sage: M.is_4connected() == M.is_4connected(algorithm="shifting")            # optional - sage.rings.finite_rings
+            sage: M.is_4connected() == M.is_4connected(algorithm="shifting")
             True
             sage: M.is_4connected() == M.is_4connected(algorithm="intersection")
             True
@@ -5461,10 +5461,10 @@ cdef class Matroid(SageObject):
             sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()         # optional - sage.graphs
             True
             sage: M = matroids.named_matroids.R6()
-            sage: M._is_3connected_shifting()                                           # optional - sage.graphs sage.rings.finite_rings
+            sage: M._is_3connected_shifting()                                           # optional - sage.graphs
             False
-            sage: B, X = M._is_3connected_shifting(True)                                # optional - sage.graphs sage.rings.finite_rings
-            sage: M.connectivity(X)                                                     # optional - sage.graphs sage.rings.finite_rings
+            sage: B, X = M._is_3connected_shifting(True)                                # optional - sage.graphs
+            sage: M.connectivity(X)                                                     # optional - sage.graphs
             1
         """
         if not self.is_connected():
@@ -5535,7 +5535,7 @@ cdef class Matroid(SageObject):
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
-            sage: M._is_4connected_shifting()                                           # optional - sage.graphs sage.rings.finite_rings
+            sage: M._is_4connected_shifting()                                           # optional - sage.graphs
             True
         """
         if self.rank()>self.size()-self.rank():
@@ -5795,7 +5795,7 @@ cdef class Matroid(SageObject):
             sage: matroids.named_matroids.BetsyRoss()._is_3connected_BC()               # optional - sage.graphs
             True
             sage: M = matroids.named_matroids.R6()
-            sage: M._is_3connected_BC()                                                 # optional - sage.rings.finite_rings
+            sage: M._is_3connected_BC()
             False
         """
         # The 5 stages of the algorithm
@@ -5842,7 +5842,7 @@ cdef class Matroid(SageObject):
             True
             sage: M = matroids.named_matroids.R6()
             sage: B = M.basis()
-            sage: M._is_3connected_BC_recursion(B,                                      # optional - sage.rings.finite_rings
+            sage: M._is_3connected_BC_recursion(B,
             ....:   [M.fundamental_cocircuit(B, e) for e in B])
             False
 
@@ -6086,12 +6086,12 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: N = matroids.named_matroids.Fano()
-            sage: M = N._local_ternary_matroid()                                        # optional - sage.rings.finite_rings
-            sage: N.is_isomorphism(M, {e:e for e in N.groundset()})                     # optional - sage.rings.finite_rings
+            sage: M = N._local_ternary_matroid()
+            sage: N.is_isomorphism(M, {e:e for e in N.groundset()})
             False
             sage: N = matroids.named_matroids.NonFano()
-            sage: M = N._local_ternary_matroid()                                        # optional - sage.rings.finite_rings
-            sage: N.is_isomorphism(M, {e:e for e in N.groundset()})                     # optional - sage.rings.finite_rings
+            sage: M = N._local_ternary_matroid()
+            sage: N.is_isomorphism(M, {e:e for e in N.groundset()})
             True
         """
         from sage.graphs.graph import Graph
@@ -6180,7 +6180,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Fano()
-            sage: M.ternary_matroid() is None                                           # optional - sage.rings.finite_rings
+            sage: M.ternary_matroid() is None
             True
             sage: N = matroids.named_matroids.NonFano()
             sage: N.ternary_matroid()
@@ -6232,7 +6232,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: N = matroids.named_matroids.Fano()
-            sage: N.is_ternary()                                                        # optional - sage.rings.finite_rings
+            sage: N.is_ternary()
             False
             sage: N = matroids.named_matroids.NonFano()
             sage: N.is_ternary()
@@ -7890,7 +7890,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Fano()
-            sage: B = M.bergman_complex(); B                                            # optional - sage.rings.finite_rings
+            sage: B = M.bergman_complex(); B
             Simplicial complex with 14 vertices and 21 facets
 
         .. SEEALSO::
@@ -7929,7 +7929,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Fano()
-            sage: A = M.augmented_bergman_complex(); A                                  # optional - sage.graphs sage.rings.finite_rings
+            sage: A = M.augmented_bergman_complex(); A                                  # optional - sage.graphs
             Simplicial complex with 22 vertices and 91 facets
 
             sage: M = matroids.Uniform(2,3)
