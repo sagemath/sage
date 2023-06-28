@@ -39,7 +39,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .matrix cimport Matrix
 from .args cimport MatrixArgs_init
 cimport sage.structure.element
 

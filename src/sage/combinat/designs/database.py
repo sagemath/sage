@@ -1658,8 +1658,8 @@ def OA_10_469():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_10_469
-        sage: OA = OA_10_469()
-        sage: is_orthogonal_array(OA,10,469,2)
+        sage: OA = OA_10_469()                  # long time
+        sage: is_orthogonal_array(OA,10,469,2)  # long time
         True
 
     The design is available from the general constructor::
@@ -5008,13 +5008,13 @@ LIST_OF_EDS = "\n".join("    - `k = {}`: {}".format(
                         for k in sorted(EDS))
 
 __doc__ = __doc__.format(
-    LIST_OF_OA_CONSTRUCTIONS = LIST_OF_OA_CONSTRUCTIONS,
-    LIST_OF_MOLS_CONSTRUCTIONS = LIST_OF_MOLS_CONSTRUCTIONS,
-    LIST_OF_VMT_VECTORS = LIST_OF_VMT_VECTORS,
-    LIST_OF_BIBD = LIST_OF_BIBD,
-    LIST_OF_DF = LIST_OF_DF,
-    LIST_OF_DM = LIST_OF_DM,
-    LIST_OF_QDM = LIST_OF_QDM,
-    LIST_OF_EDS = LIST_OF_EDS)
+    LIST_OF_OA_CONSTRUCTIONS=LIST_OF_OA_CONSTRUCTIONS,
+    LIST_OF_MOLS_CONSTRUCTIONS=LIST_OF_MOLS_CONSTRUCTIONS,
+    LIST_OF_VMT_VECTORS=LIST_OF_VMT_VECTORS,
+    LIST_OF_BIBD=LIST_OF_BIBD,
+    LIST_OF_DF=LIST_OF_DF,
+    LIST_OF_DM=LIST_OF_DM,
+    LIST_OF_QDM=LIST_OF_QDM,
+    LIST_OF_EDS=LIST_OF_EDS)
 del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD
 del PolynomialRing, ZZ, a,

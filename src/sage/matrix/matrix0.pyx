@@ -30,13 +30,11 @@ import sage.misc.latex
 import sage.rings.integer
 
 from sage.arith.power cimport generic_power
-from sage.misc.verbose import verbose, get_verbose
 from sage.structure.sequence import Sequence
 from sage.structure.parent cimport Parent
 
 cimport sage.structure.element
-from sage.structure.element cimport ModuleElement, Element, RingElement, Vector
-from sage.structure.mutability cimport Mutability
+from sage.structure.element cimport Element, Vector
 from sage.misc.misc_c cimport normalize_index
 
 from sage.categories.fields import Fields

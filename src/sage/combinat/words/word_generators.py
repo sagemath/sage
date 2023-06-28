@@ -139,7 +139,7 @@ class LowerChristoffelWord(FiniteWord_list):
         word: 01
     """
 
-    def __init__(self, p, q, alphabet=(0,1), algorithm='cf'):
+    def __init__(self, p, q, alphabet=(0, 1), algorithm='cf'):
         r"""
         INPUT:
 
@@ -184,7 +184,7 @@ class LowerChristoffelWord(FiniteWord_list):
         if len(set(alphabet)) != 2:
             raise ValueError("alphabet must contain exactly two distinct elements")
         # Compute gcd of p, q; raise TypeError if not 1.
-        if gcd(p,q) != 1:
+        if gcd(p, q) != 1:
             raise ValueError("%s and %s are not relatively prime" % (p, q))
         # Compute the Christoffel word
         if algorithm == 'linear':
@@ -194,7 +194,7 @@ class LowerChristoffelWord(FiniteWord_list):
                 w = [alphabet[0]]
             else:
                 for i in range(p + q):
-                    v = (u+p) % (p+q)
+                    v = (u + p) % (p + q)
                     new_letter = alphabet[0] if u < v else alphabet[1]
                     w.append(new_letter)
                     u = v
@@ -208,7 +208,7 @@ class LowerChristoffelWord(FiniteWord_list):
                 cf = QQ((p, q)).continued_fraction_list()
                 u = [alphabet[0]]
                 v = [alphabet[1]]
-                #do not consider the first zero if p < q
+                # do not consider the first zero if p < q
                 start = 1 if p < q else 0
                 for i in range(start, len(cf)-1):
                     if i % 2 == 0:
@@ -1048,7 +1048,7 @@ class WordGenerator():
         if a not in ZZ or a <= 0 or b not in ZZ or b <= 0 or a == b:
             msg = 'the alphabet (=%s) must consist of two distinct positive integers' % (alphabet,)
             raise ValueError(msg)
-        return InfiniteWords(alphabet)(self._KolakoskiWord_iterator(a, b), datatype = 'iter')
+        return InfiniteWords(alphabet)(self._KolakoskiWord_iterator(a, b), datatype='iter')
 
     def _KolakoskiWord_iterator(self, a=1, b=2):
         r"""
@@ -1276,9 +1276,9 @@ class WordGenerator():
         """
         if not isinstance(directive_word, Word_class):
             raise TypeError("directive_word is not a word, so it cannot be used to build an episturmian word")
-        epistandard = directive_word.parent()(\
-                self._StandardEpisturmianWord_LetterIterator(directive_word),
-                datatype='iter')
+        epistandard = directive_word.parent()(
+            self._StandardEpisturmianWord_LetterIterator(directive_word),
+            datatype='iter')
         return epistandard
 
     def _StandardEpisturmianWord_LetterIterator(self, directive_word):

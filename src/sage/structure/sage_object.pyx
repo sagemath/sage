@@ -845,6 +845,7 @@ cdef class SageObject:
         This example illustrates caching, which happens automatically
         since K is a Python object::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: magma(K) is magma(K)        # optional - magma
             True

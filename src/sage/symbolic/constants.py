@@ -74,7 +74,7 @@ EXAMPLES: Decimal expansions of constants
 
 We can obtain floating point approximations to each of these
 constants by coercing into the real field with given precision. For
-example, to 200 decimal places we have the following::
+example, to 200 binary places we have the following::
 
     sage: R = RealField(200); R
     Real Field with 200 bits of precision
@@ -227,7 +227,10 @@ constants_name_table[repr(infinity)] = infinity
 constants_name_table[repr(unsigned_infinity)] = unsigned_infinity
 constants_name_table[repr(minus_infinity)] = minus_infinity
 
-from sage.symbolic.expression import register_symbol, I
+from sage.symbolic.expression import register_symbol, init_pynac_I
+
+I = init_pynac_I()
+
 register_symbol(infinity, {'maxima':'inf'}, 0)
 register_symbol(minus_infinity, {'maxima':'minf'}, 0)
 register_symbol(unsigned_infinity, {'maxima':'infinity'}, 0)

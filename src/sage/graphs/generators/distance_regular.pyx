@@ -35,15 +35,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.coding import codes_catalog as codes
-from sage.graphs.graph import Graph
-from sage.libs.gap.libgap import libgap
-from sage.modules.free_module import VectorSpace
-from sage.modules.free_module_element import vector
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.matrix.constructor import Matrix
 import itertools
+
 from cysignals.signals cimport sig_check
+
+from sage.graphs.graph import Graph
+from sage.misc.lazy_import import LazyImport
 from sage.graphs.generators.smallgraphs import (FosterGraph, BiggsSmithGraph,
                                                 CoxeterGraph, LivingstoneGraph,
                                                 WellsGraph, GossetGraph,
@@ -52,6 +49,13 @@ from sage.graphs.generators.smallgraphs import (FosterGraph, BiggsSmithGraph,
                                                 HigmanSimsGraph)
 from sage.graphs.generators.platonic_solids import DodecahedralGraph
 from sage.graphs.strongly_regular_db import strongly_regular_graph
+
+codes = LazyImport('sage.coding', 'codes_catalog', as_name='codes')
+libgap = LazyImport('sage.libs.gap.libgap', 'libgap')
+Matrix = LazyImport('sage.matrix.constructor', 'Matrix')
+VectorSpace = LazyImport('sage.modules.free_module', 'VectorSpace')
+vector = LazyImport('sage.modules.free_module_element', 'vector')
+GF = LazyImport('sage.rings.finite_rings.finite_field_constructor', 'GF')
 
 
 def cocliques_HoffmannSingleton():
@@ -1277,7 +1281,6 @@ def graph_from_GQ_spread(const int s, const int t):
 
     (GQ, S) = designs.generalised_quadrangle_with_spread(s, t, check=False)
 
-    k = len(GQ.blocks()[0])
     edges = []
     for b in GQ.blocks():
         if b in S:  # skip blocks in spread
@@ -1286,8 +1289,7 @@ def graph_from_GQ_spread(const int s, const int t):
             sig_check()
             edges.append((p1, p2))
 
-    G = Graph(edges, format="list_of_edges")
-    return G
+    return Graph(edges, format="list_of_edges")
 
 
 def GeneralisedDodecagonGraph(const int s, const int t):
@@ -1763,8 +1765,6 @@ def _line_graph_generalised_polygon(H):
             sig_check()
             vToLines[p].append(l)
 
-    k = len(vToLines[lines[0][0]])
-
     edges = []
     for v in vToLines:
         lines = vToLines[v]
@@ -1772,8 +1772,7 @@ def _line_graph_generalised_polygon(H):
             sig_check()
             edges.append((l1, l2))
 
-    G = Graph(edges, format="list_of_edges")
-    return G
+    return Graph(edges, format="list_of_edges")
 
 
 def _intersection_array_from_graph(G):
@@ -2310,7 +2309,7 @@ def pseudo_partition_graph(int m, int a):
     EXAMPLES::
 
         sage: from sage.graphs.generators.distance_regular import *
-        sage: pseudo_partition_graph(6, 1)
+        sage: pseudo_partition_graph(6, 1)  # long time
         Folded Johnson graph with parameters 12,6: Graph on 462 vertices
 
     Not all graphs built with this function are pseudo partition graphs as

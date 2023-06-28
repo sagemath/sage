@@ -34,7 +34,6 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cimport cython
 from memory_allocator cimport MemoryAllocator
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
 from sage.misc.decorators import rename_keyword
@@ -570,11 +569,12 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
     :func:`filter_kruskal_iterator` are the same::
 
         sage: from sage.graphs.spanning_tree import kruskal_iterator
-        sage: G = graphs.RandomBarabasiAlbert(50, 2)
-        sage: for u, v in G.edge_iterator(labels=False):
+        sage: G = graphs.RandomBarabasiAlbert(50, 2)                                    # optional - networkx
+        sage: for u, v in G.edge_iterator(labels=False):                                # optional - networkx
         ....:     G.set_edge_label(u, v, randint(1, 10))
-        sage: G.weighted(True)
-        sage: sum(e[2] for e in kruskal_iterator(G)) == sum(e[2] for e in filter_kruskal_iterator(G, threshold=20))
+        sage: G.weighted(True)                                                          # optional - networkx
+        sage: sum(e[2] for e in kruskal_iterator(G)) == sum(e[2]                        # optional - networkx
+        ....:     for e in filter_kruskal_iterator(G, threshold=20))
         True
 
     TESTS:
@@ -976,7 +976,7 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
         sage: pos = G.get_pos()
         sage: T = G.random_spanning_tree(True)
         sage: T.set_pos(pos)
-        sage: T.show(vertex_labels=False)
+        sage: T.show(vertex_labels=False)                                               # optional - sage.plot
 
     We can also use edge weights to change the probability of returning a
     spanning tree::
@@ -1000,11 +1000,11 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
 
     Check that the spanning tree returned when using weights is a tree::
 
-        sage: G = graphs.RandomBarabasiAlbert(50, 2)
-        sage: for u, v in G.edge_iterator(labels=False):
+        sage: G = graphs.RandomBarabasiAlbert(50, 2)                                    # optional - networkx
+        sage: for u, v in G.edge_iterator(labels=False):                                # optional - networkx
         ....:     G.set_edge_label(u, v, randint(1, 10))
-        sage: T = G.random_spanning_tree(by_weight=True, output_as_graph=True)
-        sage: T.is_tree()
+        sage: T = G.random_spanning_tree(by_weight=True, output_as_graph=True)          # optional - networkx
+        sage: T.is_tree()                                                               # optional - networkx
         True
 
     TESTS::
@@ -1088,12 +1088,12 @@ def spanning_trees(g, labels=False):
         sage: G = Graph([(1,2),(1,2),(1,3),(1,3),(2,3),(1,4)], multiedges=True)
         sage: len(list(G.spanning_trees()))
         8
-        sage: G.spanning_trees_count()
+        sage: G.spanning_trees_count()                                                  # optional - sage.modules
         8
         sage: G = Graph([(1,2),(2,3),(3,1),(3,4),(4,5),(4,5),(4,6)], multiedges=True)
         sage: len(list(G.spanning_trees()))
         6
-        sage: G.spanning_trees_count()
+        sage: G.spanning_trees_count()                                                  # optional - sage.modules
         6
 
     .. SEEALSO::

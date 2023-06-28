@@ -76,6 +76,8 @@ Below are listed all methods and classes defined in this file.
     :meth:`~sage.combinat.permutation.Permutation.reduced_words_iterator` | An iterator for the reduced words of the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.reduced_word_lexmin` | Returns a lexicographically minimal reduced word of a permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.fixed_points` | Returns a list of the fixed points of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.is_derangement` | Returns ``True`` if the permutation ``self`` is a derangement, and ``False`` otherwise.
+    :meth:`~sage.combinat.permutation.Permutation.is_simple` | Returns ``True`` if the permutation ``self`` is simple, and ``False`` otherwise.
     :meth:`~sage.combinat.permutation.Permutation.number_of_fixed_points` | Returns the number of fixed points of the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.recoils` | Returns the list of the positions of the recoils of the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.number_of_recoils` | Returns the number of recoils of the permutation ``self``.
@@ -470,7 +472,7 @@ class Permutation(CombinatorialElement):
         elif isinstance(l, tuple) or \
              (isinstance(l, list) and l and
              all(isinstance(x, tuple) for x in l)):
-            if l and (isinstance(l[0], (int,Integer)) or len(l[0]) > 0):
+            if l and (isinstance(l[0], (int, Integer)) or len(l[0]) > 0):
                 if isinstance(l[0], tuple):
                     n = max(max(x) for x in l)
                     return from_cycles(n, [list(x) for x in l])
@@ -875,7 +877,7 @@ class Permutation(CombinatorialElement):
         t = []
         w = list(self)
         for i in reversed(shape):
-            t = [ w[:i] ] + t
+            t = [w[:i]] + t
             w = w[i:]
         return tableau.Tableau(t)
 
@@ -974,7 +976,7 @@ class Permutation(CombinatorialElement):
             cycle = [cycleFirst]
             l[i], next = False, l[i]
             while next != cycleFirst:
-                cycle.append( next )
+                cycle.append(next)
                 l[next - 1], next  = False, l[next - 1]
             # Add the cycle to the list of cycles
             if singletons or len(cycle) > 1:
@@ -998,8 +1000,8 @@ class Permutation(CombinatorialElement):
         cycles = []
         toConsider = -1
 
-        #Create the list [1,2,...,len(p)]
-        l = [ i+1 for i in range(len(p))]
+        # Create the list [1,2,...,len(p)]
+        l = [i + 1 for i in range(len(p))]
         cycle = []
 
         #Go through until we've considered every number between
@@ -1018,7 +1020,7 @@ class Permutation(CombinatorialElement):
                 #Start with the first element in the list
                 toConsider = l[0]
                 l.remove(toConsider)
-                cycle = [ toConsider ]
+                cycle = [toConsider]
                 cycleFirst = toConsider
 
             #Figure out where the element under consideration
@@ -1030,8 +1032,8 @@ class Permutation(CombinatorialElement):
             if next == cycleFirst:
                 toConsider = -1
             else:
-                cycle.append( next )
-                l.remove( next )
+                cycle.append(next)
+                l.remove(next)
                 toConsider = next
 
         # When we're finished, add the last cycle
@@ -1065,7 +1067,7 @@ class Permutation(CombinatorialElement):
 
         if not singletons:
             #remove the fixed points
-            L = set( i+1 for i,pi in enumerate(p) if pi != i+1 )
+            L = set(i+1 for i,pi in enumerate(p) if pi != i+1)
         else:
             L = set(range(1,len(p)+1))
 
@@ -1400,10 +1402,9 @@ class Permutation(CombinatorialElement):
             ...
             TypeError: i (= 10) must be between 1 and 7
         """
-        if isinstance(i,(int,Integer)) and 1 <= i <= len(self):
-            return self[i-1]
-        else:
-            raise TypeError("i (= %s) must be between %s and %s" % (i,1,len(self)))
+        if isinstance(i, (int, Integer)) and 1 <= i <= len(self):
+            return self[i - 1]
+        raise TypeError("i (= %s) must be between 1 and %s" % (i, len(self)))
 
     ########
     # Rank #
@@ -1471,26 +1472,25 @@ class Permutation(CombinatorialElement):
         l = len(p)
         # lightning fast if the length is less than 3
         # (is it really useful?)
-        if l<4:
-            if l==0:
+        if l < 4:
+            if l == 0:
                 return []
-            if l==1:
+            if l == 1:
                 return [0]
-            if l==2:
-                return [p[0]-1,0]
-            if l==3:
-                if p[0]==1:
-                    return [0,p[1]-2,0]
-                if p[0]==2:
-                    if p[1]==1:
-                        return [1,0,0]
-                    return [2,0,0]
-                return [p[1],1,0]
+            if l == 2:
+                return [p[0] - 1, 0]
+            if l == 3:
+                if p[0] == 1:
+                    return [0, p[1] - 2, 0]
+                if p[0] == 2:
+                    if p[1] == 1:
+                        return [1, 0, 0]
+                    return [2, 0, 0]
+                return [p[1], 1, 0]
         # choose the best one
-        if l<411:
+        if l < 411:
             return self._to_inversion_vector_small()
-        else:
-            return self._to_inversion_vector_divide_and_conquer()
+        return self._to_inversion_vector_divide_and_conquer()
 
     def _to_inversion_vector_orig(self):
         r"""
@@ -1594,21 +1594,21 @@ class Permutation(CombinatorialElement):
 
         def base_case(L):
             s = sorted(L)
-            d = dict((j,i) for (i,j) in enumerate(s))
+            d = dict((j, i) for i, j in enumerate(s))
             iv = [0]*len(L)
             checked = [1]*len(L)
             for pi in reversed(L):
                 dpi = d[pi]
                 checked[dpi] = 0
                 iv[dpi] = sum(checked[dpi:])
-            return iv,s
+            return iv, s
 
         def sort_and_countv(L):
-            if len(L)<250:
+            if len(L) < 250:
                 return base_case(L)
-            l = len(L)//2
-            return merge_and_countv( sort_and_countv(L[:l]),
-                                     sort_and_countv(L[l:]) )
+            l = len(L) // 2
+            return merge_and_countv(sort_and_countv(L[:l]),
+                                    sort_and_countv(L[l:]))
 
         return sort_and_countv(self._list)[0]
 
@@ -1738,7 +1738,7 @@ class Permutation(CombinatorialElement):
             if representation == "cycles":
                 d.show(**args)
             else:
-                d.show(layout = "circular", **args)
+                d.show(layout="circular", **args)
 
         elif representation == "braid":
             from sage.plot.line import line
@@ -1754,12 +1754,12 @@ class Permutation(CombinatorialElement):
 
             p = self[:]
 
-            L = line([r(1,1)])
+            L = line([r(1, 1)])
             for i in range(len(p)):
-                L += line([r(i,1.0), r(p[i]-1,0)])
-                L += text(str(i), r(i,1.05)) + text(str(i), r(p[i]-1,-.05))
+                L += line([r(i, 1.0), r(p[i]-1, 0)])
+                L += text(str(i), r(i, 1.05)) + text(str(i), r(p[i]-1, -.05))
 
-            return L.show(axes = False, **args)
+            return L.show(axes=False, **args)
 
         else:
             raise ValueError("The value of 'representation' must be equal to "+
@@ -1926,8 +1926,8 @@ class Permutation(CombinatorialElement):
             [3, 1, 5, 2, 4]
         """
         w = list(range(len(self)))
-        for i,j in enumerate(self):
-            w[j-1] = i+1
+        for i, j in enumerate(self):
+            w[j - 1] = i + 1
         return Permutations()(w)
 
     __invert__ = inverse
@@ -3006,7 +3006,7 @@ class Permutation(CombinatorialElement):
 
         rw = []
         for i in range(len(cocode)):
-            piece = [j+1 for j in range(i-cocode[i],i)]
+            piece = [j + 1 for j in range(i-cocode[i], i)]
             piece.reverse()
             rw += piece
 
@@ -3078,7 +3078,7 @@ class Permutation(CombinatorialElement):
 
     def is_derangement(self) -> bool:
         r"""
-        Return if ``self`` is a derangement.
+        Return whether ``self`` is a derangement.
 
         A permutation `\sigma` is a derangement if `\sigma` has no
         fixed points.
@@ -3093,6 +3093,74 @@ class Permutation(CombinatorialElement):
             True
         """
         return not self.fixed_points()
+
+    def is_simple(self) -> bool:
+        """
+        Return whether ``self`` is simple.
+
+        A permutation is simple if it does not send any proper sub-interval
+        to a sub-interval.
+
+        For instance, ``[6,1,3,5,2,4]`` is not simple because it maps the
+        interval ``[3,4,5,6]`` to ``[2,3,4,5]``, whereas ``[2,6,3,5,1,4]`` is
+        simple.
+
+        See :oeis:`A111111`
+
+        EXAMPLES::
+
+            sage: g = Permutation([4,2,3,1])
+            sage: g.is_simple()
+            False
+
+            sage: g = Permutation([6,1,3,5,2,4])
+            sage: g.is_simple()
+            False
+
+            sage: g = Permutation([2,6,3,5,1,4])
+            sage: g.is_simple()
+            True
+
+            sage: [len([pi for pi in Permutations(n) if pi.is_simple()])
+            ....:  for n in range(6)]
+            [1, 1, 2, 0, 2, 6]
+        """
+        n = len(self)
+        if n <= 2:
+            return True
+
+        # testing intervals starting at position 0
+        left = right = self._list[0]
+        end = 1
+        while end < n - 1:
+            elt = self._list[end]
+            if elt < left:
+                left = elt
+            elif elt > right:
+                right = elt
+            if right - left == end:
+                return False
+            elif right - left == n - 1:
+                break
+            end += 1
+
+        # testing intervals starting at later positions
+        for start in range(1, n - 1):
+            left = right = self._list[start]
+            end = start + 1
+            while end < n:
+                elt = self._list[end]
+                if elt < left:
+                    left = elt
+                elif elt > right:
+                    right = elt
+                if right - left == end - start:
+                    return False
+                elif right - left > n - 1 - start:
+                    break
+                end += 1
+
+        return True
 
     ############
     # Recoils  #
@@ -3753,16 +3821,16 @@ class Permutation(CombinatorialElement):
         p = self
         n = len(p)
 
-        for i in range(n-1):
-            for j in range(i+1,n):
+        for i in range(n - 1):
+            for j in range(i + 1, n):
                 if p[i] > p[j]:
                     ok = True
-                    for k in range(i+1, j):
+                    for k in range(i + 1, j):
                         if p[i] > p[k] and p[k] > p[j]:
                             ok = False
                             break
                     if ok:
-                        yield [i,j]
+                        yield [i, j]
 
     def bruhat_succ(self) -> list:
         r"""
@@ -4740,7 +4808,7 @@ class Permutation(CombinatorialElement):
                 return LBT(None)
             mn = compare(perm)
             k = perm.index(mn)
-            return LBT([rec(perm[:k]), rec(perm[k + 1:])], label = mn)
+            return LBT([rec(perm[:k]), rec(perm[k + 1:])], label=mn)
         return rec(self)
 
     @combinatorial_map(name="Increasing tree")
@@ -4815,7 +4883,7 @@ class Permutation(CombinatorialElement):
             res = res.binary_search_insert(i)
         return res
 
-    @combinatorial_map(name = "Binary search tree (left to right)")
+    @combinatorial_map(name="Binary search tree (left to right)")
     def binary_search_tree_shape(self, left_to_right=True):
         r"""
         Return the shape of the binary search tree of the permutation
@@ -5195,7 +5263,7 @@ class Permutation(CombinatorialElement):
     # Binary operations #
     #####################
 
-    def shifted_concatenation(self, other, side = "right"):
+    def shifted_concatenation(self, other, side="right"):
         r"""
         Return the right (or left) shifted concatenation of ``self``
         with a permutation ``other``. These operations are also known
@@ -7213,7 +7281,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             ['A', 0]
         """
         from sage.combinat.root_system.cartan_type import CartanType
-        return CartanType(['A', max(self.n - 1,0)])
+        return CartanType(['A', max(self.n - 1, 0)])
 
     def simple_reflection(self, i):
         r"""
@@ -7401,8 +7469,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 [4, 2, 1, 3]
             """
             w = list(range(len(self)))
-            for i,j in enumerate(self):
-                w[j-1] = i+1
+            for i, j in enumerate(self):
+                w[j - 1] = i + 1
             return self.__class__(self.parent(), w)
 
         __invert__ = inverse
@@ -7546,8 +7614,8 @@ def from_inversion_vector(iv, parent=None):
     """
     p = iv[:]
     open_spots = list(range(len(iv)))
-    for i,ivi in enumerate(iv):
-        p[open_spots.pop(ivi)] = i+1
+    for i, ivi in enumerate(iv):
+        p[open_spots.pop(ivi)] = i + 1
 
     if parent is None:
         parent = Permutations()
@@ -7719,7 +7787,7 @@ def from_reduced_word(rw, parent=None):
     return parent(p)
 
 
-def bistochastic_as_sum_of_permutations(M, check = True):
+def bistochastic_as_sum_of_permutations(M, check=True):
     r"""
     Return the positive sum of permutations corresponding to
     the bistochastic matrix ``M``.
@@ -7819,7 +7887,7 @@ def bistochastic_as_sum_of_permutations(M, check = True):
     if not all(x >= 0 for x in M.list()):
         raise ValueError("The matrix should have nonnegative entries")
 
-    if check and not M.is_bistochastic(normalized = False):
+    if check and not M.is_bistochastic(normalized=False):
         raise ValueError("The matrix is not bistochastic")
 
     if not RR.has_coerce_map_from(M.base_ring()):

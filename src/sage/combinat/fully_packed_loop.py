@@ -881,9 +881,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         squares = set((i,j) for i in range(n) for j in range(n))
 
         colors = _make_color_list(2*n,
-                colors = link_options.pop('colors', None),
-                color_map = link_options.pop('color_map', None),
-                randomize = link_options.pop('color_randomize', False))
+                colors=link_options.pop('colors', None),
+                color_map=link_options.pop('color_map', None),
+                randomize=link_options.pop('color_randomize', False))
 
         G = Graphics()
         for i in range(2*n):
@@ -910,9 +910,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         if loop:
             colors = _make_color_list(len(loops),
-                    colors = loop_options.pop('colors', None),
-                    color_map = loop_options.pop('color_map', None),
-                    randomize = loop_options.pop('color_randomize', False))
+                    colors=loop_options.pop('colors', None),
+                    color_map=loop_options.pop('color_map', None),
+                    randomize=loop_options.pop('color_randomize', False))
 
             fill = loop_options.pop('fill')
 

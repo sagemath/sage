@@ -79,19 +79,19 @@ AUTHORS:
 from cpython cimport *
 from cysignals.signals cimport sig_check
 
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.lazy_string import lazy_string
+from sage.misc.randstate cimport current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element import is_Vector
 from sage.structure.element cimport have_same_parent
-from sage.misc.verbose import verbose, get_verbose
+from sage.misc.verbose import verbose
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
-from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ, is_RationalField
 import sage.rings.abc
 from sage.arith.numerical_approx cimport digits_to_bits
@@ -1119,6 +1119,7 @@ cdef class Matrix(Matrix1):
 
         Notice the base ring of the results in the next two examples.  ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: D = matrix(ZZ['x'],2,[1+x^2,2,3,4-x])
             sage: E = matrix(QQ,2,[1,2,3,4])
             sage: F = D.elementwise_product(E)
@@ -4912,11 +4913,10 @@ cdef class Matrix(Matrix1):
         """
         K = self.fetch('right_kernel')
         if K is not None:
-            verbose("retrieving cached right kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
         R = self.base_ring()
-        tm = verbose("computing a right kernel for %sx%s matrix over %s" % (self.nrows(), self.ncols(), R),level=1)
+        tm = verbose(lazy_string("computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1)
 
         # Sanitize basis format
         #   'computed' is OK in right_kernel_matrix(), but not here
@@ -4938,7 +4938,7 @@ cdef class Matrix(Matrix1):
         else:
             K = ambient.submodule_with_basis(M.rows(), already_echelonized=False, check=False)
 
-        verbose("done computing a right kernel for %sx%s matrix over %s" % (self.nrows(), self.ncols(), R),level=1, t=tm)
+        verbose(lazy_string("done computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1, t=tm)
         self.cache('right_kernel', K)
         return K
 
@@ -5088,7 +5088,6 @@ cdef class Matrix(Matrix1):
         """
         K = self.fetch('left_kernel')
         if K is not None:
-            verbose("retrieving cached left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
         tm = verbose("computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
@@ -5228,13 +5227,15 @@ cdef class Matrix(Matrix1):
 
         An example over a bigger ring::
 
-            sage: L.<w> = NumberField(x^2 - x + 2)
-            sage: OL = L.ring_of_integers()
-            sage: A = matrix(L, 2, [1, w/2])
-            sage: A.integer_kernel(OL)
-            Free module of degree 2 and rank 1 over Maximal Order in Number Field in w with defining polynomial x^2 - x + 2
-            Echelon basis matrix:
-            [    -1 -w + 1]
+            sage: x = polygen(ZZ, 'x')
+            sage: L.<w> = NumberField(x^2 - x + 2)                                      # optional - sage.rings.number_field
+            sage: OL = L.ring_of_integers()                                             # optional - sage.rings.number_field
+            sage: A = matrix(L, 2, [1, w/2])                                            # optional - sage.rings.number_field
+            sage: A.integer_kernel(OL)                                                  # optional - sage.rings.number_field
+            Free module of degree 2 and rank 1 over
+             Maximal Order in Number Field in w with defining polynomial x^2 - x + 2
+             Echelon basis matrix:
+             [    -1 -w + 1]
 
         """
         try:
@@ -7463,10 +7464,11 @@ cdef class Matrix(Matrix1):
             [ 0  4  8 12]
             [ 0  0  0  0]
 
-            sage: L.<w> = NumberField(x^2 - x + 2)
-            sage: OL = L.ring_of_integers()
-            sage: m = matrix(OL, 2, 2, [1,2,3,4+w])
-            sage: m.echelon_form()
+            sage: x = polygen(ZZ, 'x')
+            sage: L.<w> = NumberField(x^2 - x + 2)                                      # optional - sage.rings.number_field
+            sage: OL = L.ring_of_integers()                                             # optional - sage.rings.number_field
+            sage: m = matrix(OL, 2, 2, [1,2,3,4+w])                                     # optional - sage.rings.number_field
+            sage: m.echelon_form()                                                      # optional - sage.rings.number_field
             [    1     2]
             [    0 w - 2]
             sage: E, T = m.echelon_form(transformation=True); E,T
@@ -7951,11 +7953,11 @@ cdef class Matrix(Matrix1):
             [ 1.00 0.000  10.0]
             [0.000  1.00  1.00]
         """
-        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
         cdef Py_ssize_t start_row, c, r, nr, nc, i, best_r
         if self.fetch('in_echelon_form'):
             return self.fetch('pivots')
 
+        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
         self.check_mutability()
         cdef Matrix A
 
@@ -10366,7 +10368,6 @@ cdef class Matrix(Matrix1):
             [2 3]
             [0 1]
         """
-        from sage.modules.free_module_element import zero_vector
         from sage.matrix.constructor import zero_matrix, matrix
         from sage.misc.functional import sqrt
 
@@ -12388,8 +12389,8 @@ cdef class Matrix(Matrix1):
             ...
             TypeError: polynomial variable must be a string or polynomial ring generator, not sin(x)
 
-            sage: t = polygen(GF(7), 't')
-            sage: A.cyclic_subspace(v, var=t)
+            sage: t = polygen(GF(7), 't')                                               # optional - sage.rings.finite_rings
+            sage: A.cyclic_subspace(v, var=t)                                           # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: polynomial generator must be over the same ring as the matrix entries
@@ -13504,9 +13505,9 @@ cdef class Matrix(Matrix1):
 
         A Hermitian matrix. ::
 
-            sage: x = var('x')
-            sage: C.<I> = NumberField(x^2 + 1)
-            sage: A = matrix(C, [[        23,  17*I + 3,  24*I + 25,     21*I],
+            sage: x = polygen(ZZ)
+            sage: C.<I> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: A = matrix(C, [[        23,  17*I + 3,  24*I + 25,     21*I],         # optional - sage.rings.number_field
             ....:                [ -17*I + 3,        38, -69*I + 89, 7*I + 15],
             ....:                [-24*I + 25, 69*I + 89,        976, 24*I + 6],
             ....:                [     -21*I, -7*I + 15,  -24*I + 6,       28]])
@@ -14734,8 +14735,9 @@ cdef class Matrix(Matrix1):
         confirmed by the positive determinants of its leading
         principal submatrices::
 
-            sage: C.<I> = NumberField(x^2 + 1, embedding=CC(0,1))
-            sage: A = matrix(C, [[        23,  17*I + 3,  24*I + 25,     21*I],
+            sage: x = polygen(ZZ, 'x')
+            sage: C.<I> = NumberField(x^2 + 1, embedding=CC(0,1))                       # optional - sage.rings.number_field
+            sage: A = matrix(C, [[        23,  17*I + 3,  24*I + 25,     21*I],         # optional - sage.rings.number_field
             ....:                [ -17*I + 3,        38, -69*I + 89, 7*I + 15],
             ....:                [-24*I + 25, 69*I + 89,        976, 24*I + 6],
             ....:                [     -21*I, -7*I + 15,  -24*I + 6,       28]])
@@ -15004,9 +15006,10 @@ cdef class Matrix(Matrix1):
 
         A matrix over a not-totally-real number field::
 
-            sage: K.<j> = NumberField(x^2+5)
-            sage: M = matrix(K, [[1+j,1], [0,2*j]])
-            sage: M.conjugate()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<j> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
+            sage: M = matrix(K, [[1+j,1], [0,2*j]])                                     # optional - sage.rings.number_field
+            sage: M.conjugate()                                                         # optional - sage.rings.number_field
             [-j + 1      1]
             [     0   -2*j]
 
@@ -15427,9 +15430,10 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Check that sparse matrices are handled correctly (:trac:`28935`)::
+        Sparse matrices are handled correctly (:trac:`28935`), but may
+        require a patched version of maxima (:trac:`32898`) for now::
 
-            sage: matrix.diagonal([0], sparse=True).exp()
+            sage: matrix.diagonal([0], sparse=True).exp()  # not tested, requires patched maxima
             [1]
             sage: matrix.zero(CBF, 2, sparse=True).exp()
             [1.000000000000000                 0]
@@ -15458,9 +15462,10 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: OE.<w> = EquationOrder(x^2 - x + 2)
-            sage: m = Matrix([ [1, w],[w,7]])
-            sage: m.elementary_divisors()
+            sage: x = polygen(ZZ, 'x')
+            sage: OE.<w> = EquationOrder(x^2 - x + 2)                                   # optional - sage.rings.number_field
+            sage: m = Matrix([[1, w], [w, 7]])                                          # optional - sage.rings.number_field
+            sage: m.elementary_divisors()                                               # optional - sage.rings.number_field
             [1, -w + 9]
 
         .. SEEALSO::
@@ -15549,10 +15554,11 @@ cdef class Matrix(Matrix1):
         An example over the ring of integers of a number field (of class
         number 1)::
 
-            sage: OE.<w> = EquationOrder(x^2 - x + 2)
-            sage: m = Matrix([ [1, w],[w,7]])
-            sage: d, u, v = m.smith_form()
-            sage: (d, u, v)
+            sage: x = polygen(ZZ, 'x')
+            sage: OE.<w> = EquationOrder(x^2 - x + 2)                                   # optional - sage.rings.number_field
+            sage: m = Matrix([[1, w], [w, 7]])                                          # optional - sage.rings.number_field
+            sage: d, u, v = m.smith_form()                                              # optional - sage.rings.number_field
+            sage: (d, u, v)                                                             # optional - sage.rings.number_field
             (
             [     1      0]  [ 1  0]  [ 1 -w]
             [     0 -w + 9], [-w  1], [ 0  1]
@@ -15902,8 +15908,9 @@ cdef class Matrix(Matrix1):
         column pivot.
         EXAMPLES::
 
-            sage: L.<a> = NumberField(x^3 - 2)
-            sage: OL = L.ring_of_integers()
+            sage: x = polygen(ZZ, 'x')
+            sage: L.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
+            sage: OL = L.ring_of_integers()                                             # optional - sage.rings.number_field
 
         We check some degenerate cases::
 
@@ -17033,6 +17040,7 @@ cdef class Matrix(Matrix1):
             sage: K = Cone([(1,0),(-1,0),(0,1),(0,-1)])
             sage: K.is_full_space()
             True
+            sage: x = polygen(ZZ, 'x')
             sage: L = matrix(QQ[x], [[x,0],[0,1]])
             sage: L.is_positive_operator_on(K)
             True
@@ -17714,9 +17722,10 @@ def _smith_diag(d, transformation=True):
     EXAMPLES::
 
         sage: from sage.matrix.matrix2 import _smith_diag
-        sage: OE = EquationOrder(x^2 - x + 2, 'w')
-        sage: A = matrix(OE, 2, [2,0,0,3])
-        sage: D,U,V = _smith_diag(A); D,U,V
+        sage: x = polygen(ZZ, 'x')
+        sage: OE = EquationOrder(x^2 - x + 2, 'w')                                      # optional - sage.rings.number_field
+        sage: A = matrix(OE, 2, [2, 0, 0, 3])                                           # optional - sage.rings.number_field
+        sage: D,U,V = _smith_diag(A); D,U,V                                             # optional - sage.rings.number_field
         (
         [1 0]  [2 1]  [ 1 -3]
         [0 6], [3 2], [-1  4]
@@ -17790,10 +17799,12 @@ def _generic_clear_column(m):
 
     EXAMPLES::
 
-        sage: L.<w> = NumberField(x^2 - x + 2)
-        sage: OL = L.ring_of_integers(); w = OL(w)
-        sage: m = matrix(OL, 8, 4, [2*w - 2, 2*w + 1, -2, w, 2, -2,-2*w - 2, -2*w + 2, -w + 2, 2*w + 1, -w + 2, -w - 2, -2*w, 2*w, -w+ 2, w - 1, -2*w + 2, 2*w + 2, 2*w - 1, -w, 2*w + 2, -w + 2, 2, 2*w -1, w - 4, -2*w - 2, 2*w - 1, 0, 6, 7, 2*w + 1, 14])
-        sage: s,t = m.echelon_form(transformation=True); t*m == s # indirect doctest
+        sage: x = polygen(ZZ, 'x')
+        sage: L.<w> = NumberField(x^2 - x + 2)                                          # optional - sage.rings.number_field
+        sage: OL = L.ring_of_integers(); w = OL(w)                                      # optional - sage.rings.number_field
+        sage: m = matrix(OL, 8, 4, [2*w - 2, 2*w + 1, -2, w, 2, -2, -2*w - 2, -2*w + 2, -w + 2, 2*w + 1, -w + 2, -w - 2, -2*w,              # optional - sage.rings.number_field
+        ....:     2*w, -w+ 2, w - 1, -2*w + 2, 2*w + 2, 2*w - 1, -w, 2*w + 2, -w + 2, 2, 2*w -1, w - 4, -2*w - 2, 2*w - 1, 0, 6, 7, 2*w + 1, 14])
+        sage: s,t = m.echelon_form(transformation=True); t*m == s # indirect doctest    # optional - sage.rings.number_field
         True
         sage: s[0]
         (w, 0, 0, 0)
@@ -17897,9 +17908,10 @@ def _smith_onestep(m):
     EXAMPLES::
 
         sage: from sage.matrix.matrix2 import _smith_onestep
-        sage: OE.<w> = EquationOrder(x^2 - x + 2)
-        sage: m = matrix(OE, 3,3,[1,0,7,2,w, w+17, 13+8*w, 0, 6])
-        sage: a,b,c = _smith_onestep(m); b
+        sage: x = polygen(ZZ, 'x')
+        sage: OE.<w> = EquationOrder(x^2 - x + 2)                                       # optional - sage.rings.number_field
+        sage: m = matrix(OE, 3, 3, [1, 0, 7, 2, w, w+17, 13+8*w, 0, 6])                 # optional - sage.rings.number_field
+        sage: a,b,c = _smith_onestep(m); b                                              # optional - sage.rings.number_field
         [         1          0          0]
         [         0          w      w + 3]
         [         0          0 -56*w - 85]

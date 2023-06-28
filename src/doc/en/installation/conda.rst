@@ -143,6 +143,7 @@ Here we assume that you are using a git checkout.
       $ ./configure --with-python=$CONDA_PREFIX/bin/python             \
                     --prefix=$CONDA_PREFIX                             \
                     $(for pkg in $(./sage -package list :standard:     \
+                                     --exclude rpy2                    \
                                      --has-file spkg-configure.m4      \
                                      --has-file distros/conda.txt); do \
                           echo --with-system-$pkg=force;               \

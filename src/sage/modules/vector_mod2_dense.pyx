@@ -43,10 +43,9 @@ TESTS::
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
-from .free_module_element import vector
 
 from sage.libs.m4ri cimport *
 
