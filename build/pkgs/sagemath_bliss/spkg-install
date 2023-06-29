@@ -14,16 +14,27 @@ cd src
 export PIP_NO_INDEX=true
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
+# First build the sdist, then build the wheel from the sdist.
+# https://pypa-build.readthedocs.io/en/latest/#python--m-build
+DIST_DIR="$(mktemp -d)"
+python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
+
 if [ "$SAGE_EDITABLE" = yes ]; then
     # SAGE_ROOT/src/setup.py installs everything, nothing to do...
-    if [ "$SAGE_WHEELS" = yes ]; then
-        # ... except we build the wheel if requested
-        sdh_setup_bdist_wheel && sdh_store_wheel .
-    fi
+    wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
 else
     if [ "$SAGE_WHEELS" = yes ]; then
         # Modularized install via wheels
-        sdh_pip_install .
-    # else nothing to do in legacy direct installation.
+        wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel . && echo $wheel)
+    else
+        # Legacy direct installation
+        wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
     fi
+fi
+
+ls -l "$wheel"
+
+if [ "$SAGE_CHECK" != no ]; then
+    export TOX_PARALLEL_NO_SPINNER=1
+    (set -x; tox -r -p auto -v --installpkg $wheel) && (ls -l $(pwd)/.tox/sagepython-sagewheels-nopypi-norequirements*/log/*-command*.log; :)
 fi
