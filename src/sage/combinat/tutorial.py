@@ -1048,7 +1048,7 @@ of square brackets)::
 the function ``sum`` receives the iterator directly, and can
 short-circuit the construction of the intermediate list. If there are a
 large number of elements, this avoids allocating a large quantity of
-memory to fill a list which will be immediately destroyed [2]_.
+memory to fill a list which will be immediately destroyed.
 
 Most functions that take a list of elements as input will also accept
 an iterator (or an iterable) instead. To begin with, one can obtain the
@@ -1805,7 +1805,7 @@ with no edges; below it, its unique child, the graph with one edge;
 then the graphs with two edges, and so on. The set of children of a
 graph `G` can be constructed by *augmentation*, adding an edge in all
 the possible ways to `G`, and then selecting, from among those graphs,
-the ones that are still canonical [3]_. Recursively, one obtains all
+the ones that are still canonical [2]_. Recursively, one obtains all
 the canonical graphs.
 
 .. figure:: ../../media/prefix-tree-graphs-4.png
@@ -1848,12 +1848,6 @@ REFERENCES:
    clean up.
 
 .. [2]
-   Technical detail: ``range`` returns an iterator on
-   `\{0,\dots,8\}` while ``range`` returns the corresponding
-   list. Starting in ``Python`` 3.0, ``range`` will behave like ``range``, and
-   ``range`` will no longer be needed.
-
-.. [3]
    In practice, an efficient implementation would exploit the symmetries
    of `G`, i.e., its automorphism group, to reduce the number of
    children to explore, and to reduce the cost of each test of
