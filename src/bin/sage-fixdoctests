@@ -45,7 +45,7 @@ parser.add_argument("--full-tracebacks", default=False, action="store_true",
                     help="include full tracebacks rather than '...'")
 parser.add_argument("--only-tags", default=False, action="store_true",
                     help="only add '# optional' tags where needed, ignore other failures")
-parser.add_argument("--probe", metavar="FEATURES", type=str, default='all',
+parser.add_argument("--probe", metavar="FEATURES", type=str, default='',
                     help="check whether '# optional - FEATURES' tags are still needed, remove these")
 parser.add_argument("--keep-both", default=False, action="store_true",
                     help="do not replace test results; duplicate the test instead and mark both copies # optional")
