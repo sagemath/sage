@@ -337,11 +337,11 @@ for input, output in zip(inputs, outputs):
         src_in_lines = src_in.splitlines()
         shallow_copy_of_src_in_lines = list(src_in_lines)
 
-        # First remove duplicate optional tags
-        if file_optional_tags:
-            for i, line in enumerate(src_in_lines):
-                if re.match('( *sage: *)(.*)#', line):
-                    src_in_lines[i] = update_optional_tags(line, remove_tags=file_optional_tags)
+        # First remove duplicate optional tags and rewrite all '# optional' that should be '# needs'
+        for i, line in enumerate(src_in_lines):
+            if re.match('( *sage: *)(.*)#', line):
+                src_in_lines[i] = update_optional_tags(line, remove_tags=file_optional_tags,
+                                                       force_rewrite='standard')
 
         for block in doctests:
             process_block(block, src_in_lines, file_optional_tags)
