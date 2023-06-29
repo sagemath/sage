@@ -304,7 +304,10 @@ def skipfile(filename, tested_optional_tags=False, *, only_lib=False, log=None):
                             log(f"Skipping '{filename}' because it is marked '# {file_tag_string}'")
                         return file_tag_string
                     optional_tags = parse_optional_tags('#' + file_tag_string)
-                    extra = optional_tags - set(tested_optional_tags)
+                    extra = set(tag
+                                for tag in optional_tags
+                                if (tag not in tested_optional_tags
+                                    and tag not in available_software))
                     if extra:
                         if log:
                             log(f"Skipping '{filename}' because it is marked '# {file_tag_string}'")
