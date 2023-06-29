@@ -16,7 +16,7 @@ This file implements:
 - plotting, printing -- :meth:`IndexedSequence.plot`,
   :meth:`IndexedSequence.plot_histogram`, :meth:`_repr_`, :meth:`__str__`
 
-- dft --  computes the discrete Fourier transform for the following cases:
+- :meth:`dft` --  computes the discrete Fourier transform for the following cases:
 
   * a sequence (over `\QQ` or :class:`CyclotomicField`) indexed by ``range(N)``
     or `\ZZ / N \ZZ`
@@ -26,21 +26,21 @@ This file implements:
   * a sequence (as above) indexed by a complete set of representatives of
     the conjugacy classes of a finite matrix group
 
-- idft --  computes the discrete Fourier transform for the following cases:
+- :meth:`idft` --  computes the discrete Fourier transform for the following cases:
 
   * a sequence (over `\QQ` or CyclotomicField) indexed by ``range(N)`` or
     `\ZZ / N \ZZ`
 
-- dct, dst  (for discrete Fourier/Cosine/Sine transform)
+- :meth:`dct`, :meth:`dst`  (for discrete Fourier/Cosine/Sine transform)
 
 - convolution (in :meth:`IndexedSequence.convolution` and
   :meth:`IndexedSequence.convolution_periodic`)
 
-- fft, ifft -- (fast Fourier transforms) wrapping GSL's
+- :meth:`fft`, :meth:`ifft` -- (fast Fourier transforms) wrapping GSL's
   ``gsl_fft_complex_forward()``, ``gsl_fft_complex_inverse()``,
   using William Stein's :func:`FastFourierTransform`
 
-- dwt, idwt -- (fast wavelet transforms) wrapping GSL's ``gsl_dwt_forward()``,
+- :meth:`dwt`, :meth:`idwt` -- (fast wavelet transforms) wrapping GSL's ``gsl_dwt_forward()``,
   ``gsl_dwt_backward()`` using Joshua Kantor's :func:`WaveletTransform` class.
   Allows for wavelets of type:
 
@@ -293,6 +293,7 @@ class IndexedSequence(SageObject):
             sage: s.dft()                                                               # optional - sage.rings.number_field
             Indexed sequence: [6, 0, 0, 0, 0, 0]
              indexed by [0, 1, 2, 3, 4, 5]
+
             sage: G = SymmetricGroup(3)                                                                 # optional - sage.groups
             sage: J = G.conjugacy_classes_representatives()                                             # optional - sage.groups
             sage: s = IndexedSequence([1,2,3], J)  # 1,2,3 are the values of a class fcn on G           # optional - sage.groups
@@ -319,6 +320,7 @@ class IndexedSequence(SageObject):
                                -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I,
                                -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
              indexed by Cyclic group of order 6 as a permutation group
+
             sage: p = 7; J = list(range(p)); A = [kronecker_symbol(j,p) for j in J]     # optional - sage.rings.number_field
             sage: s = IndexedSequence(A, J)                                             # optional - sage.rings.number_field
             sage: Fs = s.dft()                                                          # optional - sage.rings.number_field
@@ -402,17 +404,22 @@ class IndexedSequence(SageObject):
 
             sage: J = list(range(5))
             sage: A = [exp(-2*pi*i*I/5) for i in J]                                     # optional - sage.symbolic
-            sage: s = IndexedSequence(A,J)                                              # optional - sage.symbolic
+            sage: s = IndexedSequence(A, J)                                             # optional - sage.symbolic
             sage: s.dct()                                                               # optional - sage.symbolic
             Indexed sequence: [0, 1/16*(sqrt(5) + I*sqrt(-2*sqrt(5) + 10) + ...
             indexed by [0, 1, 2, 3, 4]
         """
-        from sage.symbolic.constants import pi
         F = self.base_ring()      # elements must be coercible into RR
+        try:
+            pi = F.pi()
+        except AttributeError:
+            from sage.symbolic.constants import pi
+            pi = F(pi)
+
         J = self.index_object()   # must be = range(N)
         N = len(J)
         S = self.list()
-        PI = 2 * F(pi) / N
+        PI = 2 * pi / N
         FT = [sum([S[i] * cos(PI * i * j) for i in J]) for j in J]
         return IndexedSequence(FT, J)
 
@@ -423,16 +430,21 @@ class IndexedSequence(SageObject):
         EXAMPLES::
 
             sage: J = list(range(5))
-            sage: I = CC.0; pi = CC.pi()                                                # optional - sage.symbolic
-            sage: A = [exp(-2*pi*i*I/5) for i in J]                                     # optional - sage.symbolic
-            sage: s = IndexedSequence(A,J)                                              # optional - sage.symbolic
+            sage: I = CC.0; pi = CC.pi()
+            sage: A = [exp(-2*pi*i*I/5) for i in J]
+            sage: s = IndexedSequence(A, J)
 
-            sage: s.dst()        # discrete sine                                        # optional - sage.symbolic
+            sage: s.dst()        # discrete sine
             Indexed sequence: [0.000000000000000, 1.11022302462516e-16 - 2.50000000000000*I, ...]
             indexed by [0, 1, 2, 3, 4]
         """
-        from sage.symbolic.constants import pi
         F = self.base_ring()      # elements must be coercible into RR
+        try:
+            pi = F.pi()
+        except AttributeError:
+            from sage.symbolic.constants import pi
+            pi = F(pi)
+
         J = self.index_object()   # must be = range(N)
         N = len(J)
         S = self.list()
