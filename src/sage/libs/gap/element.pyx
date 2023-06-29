@@ -217,13 +217,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
         sage: libgap(1)   # indirect doctest
         1
     """
-    cdef Obj result
-    try:
-        GAP_Enter()
-        result = INTOBJ_INT(<int>sage_int)
-        return result
-    finally:
-        GAP_Leave()
+    return GAP_NewObjIntFromInt(<int>sage_int)
 
 
 cdef Obj make_gap_string(sage_string) except NULL:
@@ -1502,7 +1496,7 @@ cdef class GapElement_Integer(GapElement):
         if ring is None:
             ring = ZZ
         if self.is_C_int():
-            return ring(INT_INTOBJ(self.value))
+            return ring(GAP_ValueInt(self.value))
         else:
             # TODO: waste of time!
             # gap integers are stored as a mp_limb_t and we have a much more direct
