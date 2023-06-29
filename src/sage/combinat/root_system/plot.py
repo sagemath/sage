@@ -927,7 +927,7 @@ class PlotOptions():
 
         # Bounding box
         from sage.rings.real_mpfr import RR
-        from sage.geometry.polyhedron.all import Polyhedron
+        from sage.geometry.polyhedron.constructor import Polyhedron
         from itertools import product
         if bounding_box in RR:
             bounding_box = [[-bounding_box,bounding_box]] * self.dimension
@@ -1394,7 +1394,7 @@ class PlotOptions():
         """
         if color is None:
             return self.empty()
-        from sage.geometry.polyhedron.all import Polyhedron
+        from sage.geometry.polyhedron.constructor import Polyhedron
         # TODO: we currently convert lines into rays, which simplify a
         # bit the calculation of the intersection. But it would be
         # nice to benefit from the new ``lines`` option of Polyhedra
