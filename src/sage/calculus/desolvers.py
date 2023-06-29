@@ -296,7 +296,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
     Clairaut equation: general and singular solutions::
 
         sage: desolve(diff(y,x)^2+x*diff(y,x)-y==0,y,contrib_ode=True,show_method=True)
-        [[y(x) == _C^2 + _C*x, y(x) == -1/4*x^2], 'clairault']
+        [[y(x) == _C^2 + _C*x, y(x) == -1/4*x^2], 'clairau...']
 
     For equations involving more variables we specify an independent variable::
 
@@ -1285,7 +1285,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
         sage: x,y = var('x,y')
         sage: desolve_rk4(x*y*(2-y),y,ics=[0,1],end_points=1,step=0.5)
-        [[0, 1], [0.5, 1.12419127424558], [1.0, 1.461590162288825]]
+        [[0, 1], [0.5, 1.12419127424558], [1.0, 1.46159016228882...]]
 
     Variant 1 for input - we can pass ODE in the form used by
     desolve function In this example we integrate backwards, since
@@ -1293,7 +1293,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
         sage: y = function('y')(x)
         sage: desolve_rk4(diff(y,x)+y*(y-1) == x-2,y,ics=[1,1],step=0.5, end_points=0)
-        [[0.0, 8.904257108962112], [0.5, 1.909327945361535], [1, 1]]
+        [[0.0, 8.904257108962112], [0.5, 1.90932794536153...], [1, 1]]
 
     Here we show how to plot simple pictures. For more advanced
     applications use list_plot instead. To see the resulting picture
