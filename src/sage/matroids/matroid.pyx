@@ -216,7 +216,7 @@ in which the partition is specified as a list of lists::
     sage: M = PartitionMatroid([[1, 2], [3, 4, 5], [6, 7]])
     sage: M.full_rank()
     3
-    sage: M.tutte_polynomial(var('x'), var('y'))                                        # optional - sage.symbolic
+    sage: M.tutte_polynomial(var('x'), var('y'))                                        # needs sage.symbolic
     x^2*y^2 + 2*x*y^3 + y^4 + x^3 + 3*x^2*y + 3*x*y^2 + y^3
 
 .. NOTE::
@@ -395,7 +395,7 @@ cdef class Matroid(SageObject):
         sage: M = PartitionMatroid([[1, 2], [3, 4, 5], [6, 7]])
         sage: M.full_rank()
         3
-        sage: M.tutte_polynomial(var('x'), var('y'))                                    # optional - sage.symbolic
+        sage: M.tutte_polynomial(var('x'), var('y'))                                    # needs sage.symbolic
         x^2*y^2 + 2*x*y^3 + y^4 + x^3 + 3*x^2*y + 3*x*y^2 + y^3
 
     .. NOTE::
@@ -2845,8 +2845,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q6()                                      # optional - sage.rings.finite_rings
-            sage: sorted([sorted(F) for F in M.coflats(2)])                             # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Q6()                                      # needs sage.rings.finite_rings
+            sage: sorted([sorted(F) for F in M.coflats(2)])                             # needs sage.rings.finite_rings
             [['a', 'b'], ['a', 'c'], ['a', 'd', 'f'], ['a', 'e'], ['b', 'c'],
             ['b', 'd'], ['b', 'e'], ['b', 'f'], ['c', 'd'], ['c', 'e', 'f'],
             ['d', 'e']]
@@ -2974,17 +2974,17 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
-            sage: SimplicialComplex(M.no_broken_circuits_sets())                        # optional - sage.graphs
+            sage: SimplicialComplex(M.no_broken_circuits_sets())                        # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5)}
-            sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))             # optional - sage.graphs
+            sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))             # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
 
         ::
 
             sage: M = Matroid(circuits=[[1,2,3], [1,4,5], [2,3,4,5]])
-            sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))             # optional - sage.graphs
+            sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))             # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (2, 3, 5), (2, 4, 5), (3, 4, 5)}
 
@@ -3072,14 +3072,14 @@ cdef class Matroid(SageObject):
              with circuit-closures
              {3: {{0, 1, 2, 3}}}
 
-            sage: G = SymmetricGroup(3);                                                # optional - sage.groups
-            sage: OSG = M.orlik_solomon_algebra(QQ, invariant=G)                        # optional - sage.groups
+            sage: G = SymmetricGroup(3);                                                # needs sage.groups
+            sage: OSG = M.orlik_solomon_algebra(QQ, invariant=G)                        # needs sage.groups
 
-            sage: G = SymmetricGroup(4)                                                 # optional - sage.groups
+            sage: G = SymmetricGroup(4)                                                 # needs sage.groups
             sage: action = lambda g,x: g(x+1)-1
-            sage: OSG1 = M.orlik_solomon_algebra(QQ, invariant=(G,action))              # optional - sage.groups
-            sage: OSG2 = M.orlik_solomon_algebra(QQ, invariant=(action,G))              # optional - sage.groups
-            sage: OSG1 is OSG2                                                          # optional - sage.groups
+            sage: OSG1 = M.orlik_solomon_algebra(QQ, invariant=(G,action))              # needs sage.groups
+            sage: OSG2 = M.orlik_solomon_algebra(QQ, invariant=(action,G))              # needs sage.groups
+            sage: OSG1 is OSG2                                                          # needs sage.groups
             True
 
         """
@@ -3127,12 +3127,12 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.Whirl(4)
-            sage: P = M.matroid_polytope(); P                                           # optional - sage.geometry.polyhedron sage.rings.finite_rings
+            sage: P = M.matroid_polytope(); P                                           # needs sage.geometry.polyhedron sage.rings.finite_rings
             A 7-dimensional polyhedron in ZZ^8 defined as the convex hull
             of 46 vertices
 
             sage: M = matroids.named_matroids.NonFano()
-            sage: M.matroid_polytope()                                                  # optional - sage.geometry.polyhedron sage.rings.finite_rings
+            sage: M.matroid_polytope()                                                  # needs sage.geometry.polyhedron sage.rings.finite_rings
             A 6-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 29 vertices
 
@@ -3170,12 +3170,12 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.Whirl(4)
-            sage: M.independence_matroid_polytope()                                     # optional - sage.geometry.polyhedron sage.rings.finite_rings
+            sage: M.independence_matroid_polytope()                                     # needs sage.geometry.polyhedron sage.rings.finite_rings
             A 8-dimensional polyhedron in ZZ^8 defined as the convex hull
             of 135 vertices
 
             sage: M = matroids.named_matroids.NonFano()
-            sage: M.independence_matroid_polytope()                                     # optional - sage.geometry.polyhedron sage.rings.finite_rings
+            sage: M.independence_matroid_polytope()                                     # needs sage.geometry.polyhedron sage.rings.finite_rings
             A 7-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 58 vertices
 
@@ -3216,13 +3216,13 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: M1.is_isomorphic(M2)                                                  # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: M1.is_isomorphic(M2)                                                  # needs sage.graphs
             True
-            sage: M1.is_isomorphic(M2, certificate=True)                                # optional - sage.graphs
+            sage: M1.is_isomorphic(M2, certificate=True)                                # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
-            sage: G3 = graphs.CompleteGraph(4)                                          # optional - sage.graphs
-            sage: M1.is_isomorphic(G3)                                                  # optional - sage.graphs
+            sage: G3 = graphs.CompleteGraph(4)                                          # needs sage.graphs
+            sage: M1.is_isomorphic(G3)                                                  # needs sage.graphs
             Traceback (most recent call last):
             ...
             TypeError: can only test for isomorphism between matroids.
@@ -3262,10 +3262,10 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: M1._is_isomorphic(M2)                                                 # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # needs sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.graphs
+            sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
 
             sage: M1 = matroids.named_matroids.Fano()
@@ -3300,12 +3300,12 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: morphism = M1.isomorphism(M2)                                         # optional - sage.graphs
-            sage: M1.is_isomorphism(M2, morphism)                                       # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: morphism = M1.isomorphism(M2)                                         # needs sage.graphs
+            sage: M1.is_isomorphism(M2, morphism)                                       # needs sage.graphs
             True
-            sage: G3 = graphs.CompleteGraph(4)                                          # optional - sage.graphs
-            sage: M1.isomorphism(G3)                                                    # optional - sage.graphs
+            sage: G3 = graphs.CompleteGraph(4)                                          # needs sage.graphs
+            sage: M1.isomorphism(G3)                                                    # needs sage.graphs
             Traceback (most recent call last):
             ...
             TypeError: can only give isomorphism between matroids.
@@ -3336,9 +3336,9 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: morphism = M1.isomorphism(M2)                                         # optional - sage.graphs
-            sage: M1.is_isomorphism(M2, morphism)                                       # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: morphism = M1.isomorphism(M2)                                         # needs sage.graphs
+            sage: M1.is_isomorphism(M2, morphism)                                       # needs sage.graphs
             True
             sage: M1 = matroids.named_matroids.Fano()
             sage: M2 = matroids.named_matroids.NonFano()
@@ -3473,9 +3473,9 @@ cdef class Matroid(SageObject):
         a function, and many other types of maps::
 
             sage: M = matroids.named_matroids.Fano()
-            sage: P = PermutationGroup([[('a', 'b', 'c'),                               # optional - sage.rings.finite_rings
+            sage: P = PermutationGroup([[('a', 'b', 'c'),                               # needs sage.rings.finite_rings
             ....:                        ('d', 'e', 'f'), ('g')]]).gen()
-            sage: M.is_isomorphism(M, P)                                                # optional - sage.rings.finite_rings
+            sage: M.is_isomorphism(M, P)                                                # needs sage.rings.finite_rings
             True
 
             sage: M = matroids.named_matroids.Pappus()
@@ -3490,41 +3490,46 @@ cdef class Matroid(SageObject):
 
         There is extensive checking for inappropriate input::
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
-            sage: M.is_isomorphism(graphs.CompleteGraph(4), lambda x: x)                # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: M = matroids.CompleteGraphic(4)
+            sage: M.is_isomorphism(graphs.CompleteGraph(4), lambda x: x)
             Traceback (most recent call last):
             ...
             TypeError: can only test for isomorphism between matroids.
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
-            sage: sorted(M.groundset())                                                 # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: M = matroids.CompleteGraphic(4)
+            sage: sorted(M.groundset())
             [0, 1, 2, 3, 4, 5]
-            sage: M.is_isomorphism(M, {0: 1, 1: 2, 2: 3})                               # optional - sage.graphs
+            sage: M.is_isomorphism(M, {0: 1, 1: 2, 2: 3})
             Traceback (most recent call last):
             ...
             ValueError: domain of morphism does not contain groundset of this
             matroid.
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
-            sage: sorted(M.groundset())                                                 # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: M = matroids.CompleteGraphic(4)
+            sage: sorted(M.groundset())
             [0, 1, 2, 3, 4, 5]
-            sage: M.is_isomorphism(M, {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1})             # optional - sage.graphs
+            sage: M.is_isomorphism(M, {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1})
             Traceback (most recent call last):
             ...
             ValueError: range of morphism does not contain groundset of other
             matroid.
 
-            sage: M = matroids.CompleteGraphic(3)                                       # optional - sage.graphs
-            sage: N = Matroid(bases=['ab', 'ac', 'bc'])                                 # optional - sage.graphs
-            sage: f = [0, 1, 2]                                                         # optional - sage.graphs
-            sage: g = {'a': 0, 'b': 1, 'c': 2}                                          # optional - sage.graphs
-            sage: N.is_isomorphism(M, f)                                                # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: M = matroids.CompleteGraphic(3)
+            sage: N = Matroid(bases=['ab', 'ac', 'bc'])
+            sage: f = [0, 1, 2]
+            sage: g = {'a': 0, 'b': 1, 'c': 2}
+            sage: N.is_isomorphism(M, f)
             Traceback (most recent call last):
             ...
             ValueError: the morphism argument does not seem to be an
             isomorphism.
 
-            sage: N.is_isomorphism(M, g)                                                # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: N.is_isomorphism(M, g)
             True
         """
         from copy import copy
@@ -3829,10 +3834,10 @@ cdef class Matroid(SageObject):
 
         One can use a single element, rather than a set::
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
-            sage: M.contract(1) == M.contract([1])                                      # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
+            sage: M.contract(1) == M.contract([1])                                      # needs sage.graphs
             True
-            sage: M / 1                                                                 # optional - sage.graphs
+            sage: M / 1                                                                 # needs sage.graphs
             Graphic matroid of rank 2 on 5 elements
 
         Note that one can iterate over strings::
@@ -3857,8 +3862,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
-            sage: M.contract(1) == M.__truediv__(1)                                     # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
+            sage: M.contract(1) == M.__truediv__(1)                                     # needs sage.graphs
             True
         """
         return self.contract(X)
@@ -3906,10 +3911,10 @@ cdef class Matroid(SageObject):
 
         One can use a single element, rather than a set::
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
-            sage: M.delete(1) == M.delete([1])                                          # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
+            sage: M.delete(1) == M.delete([1])                                          # needs sage.graphs
             True
-            sage: M \ 1                                                                 # optional - sage.graphs
+            sage: M \ 1                                                                 # needs sage.graphs
             Graphic matroid of rank 3 on 5 elements
 
         Note that one can iterate over strings::
@@ -3934,8 +3939,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
-            sage: M.delete(1) == M \ 1  # indirect doctest                              # optional - sage.graphs
+            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
+            sage: M.delete(1) == M \ 1  # indirect doctest                              # needs sage.graphs
             True
         """
         return self.delete(X)
@@ -5079,7 +5084,7 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N.is_kconnected(3)
             False
-            sage: matroids.named_matroids.BetsyRoss().is_kconnected(3)                  # optional - sage.graphs
+            sage: matroids.named_matroids.BetsyRoss().is_kconnected(3)                  # needs sage.graphs
             True
             sage: matroids.AG(5,2).is_kconnected(4)
             True
@@ -5223,7 +5228,7 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N.is_3connected()
             False
-            sage: matroids.named_matroids.BetsyRoss().is_3connected()                   # optional - sage.graphs
+            sage: matroids.named_matroids.BetsyRoss().is_3connected()                   # needs sage.graphs
             True
             sage: M = matroids.named_matroids.R6()
             sage: M.is_3connected()
@@ -5446,25 +5451,25 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: matroids.Uniform(2, 3)._is_3connected_shifting()                      # optional - sage.graphs
+            sage: matroids.Uniform(2, 3)._is_3connected_shifting()                      # needs sage.graphs
             True
             sage: M = Matroid(ring=QQ, matrix=[[1, 0, 0, 1, 1, 0],
             ....:                              [0, 1, 0, 1, 2, 0],
             ....:                              [0, 0, 1, 0, 0, 1]])
-            sage: M._is_3connected_shifting()                                           # optional - sage.graphs
+            sage: M._is_3connected_shifting()                                           # needs sage.graphs
             False
             sage: N = Matroid(circuit_closures={2: ['abc', 'cdef'],
             ....:                               3: ['abcdef']},
             ....:             groundset='abcdef')
-            sage: N._is_3connected_shifting()                                           # optional - sage.graphs
+            sage: N._is_3connected_shifting()                                           # needs sage.graphs
             False
-            sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()         # optional - sage.graphs
+            sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()         # needs sage.graphs
             True
             sage: M = matroids.named_matroids.R6()
-            sage: M._is_3connected_shifting()                                           # optional - sage.graphs
+            sage: M._is_3connected_shifting()                                           # needs sage.graphs
             False
-            sage: B, X = M._is_3connected_shifting(True)                                # optional - sage.graphs
-            sage: M.connectivity(X)                                                     # optional - sage.graphs
+            sage: B, X = M._is_3connected_shifting(True)                                # needs sage.graphs
+            sage: M.connectivity(X)                                                     # needs sage.graphs
             1
         """
         if not self.is_connected():
@@ -5525,17 +5530,17 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.Uniform(2, 6)
-            sage: B, X = M._is_4connected_shifting(True)                                # optional - sage.graphs
-            sage: (B, M.connectivity(X)<=3)                                             # optional - sage.graphs
+            sage: B, X = M._is_4connected_shifting(True)                                # needs sage.graphs
+            sage: (B, M.connectivity(X)<=3)                                             # needs sage.graphs
             (False, True)
-            sage: matroids.Uniform(4, 8)._is_4connected_shifting()                      # optional - sage.graphs
+            sage: matroids.Uniform(4, 8)._is_4connected_shifting()                      # needs sage.graphs
             True
             sage: M = Matroid(field=GF(2), matrix=[[1,0,0,1,0,1,1,0,0,1,1,1],
             ....:                                  [0,1,0,1,0,1,0,1,0,0,0,1],
             ....:                                  [0,0,1,1,0,0,1,1,0,1,0,1],
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
-            sage: M._is_4connected_shifting()                                           # optional - sage.graphs
+            sage: M._is_4connected_shifting()                                           # needs sage.graphs
             True
         """
         if self.rank()>self.size()-self.rank():
@@ -5792,7 +5797,7 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N._is_3connected_BC()
             False
-            sage: matroids.named_matroids.BetsyRoss()._is_3connected_BC()               # optional - sage.graphs
+            sage: matroids.named_matroids.BetsyRoss()._is_3connected_BC()               # needs sage.graphs
             True
             sage: M = matroids.named_matroids.R6()
             sage: M._is_3connected_BC()
@@ -6252,20 +6257,20 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: PR = RootSystem(['A',4]).root_lattice().positive_roots()              # optional - sage.combinat
-            sage: m = matrix([x.to_vector() for x in PR]).transpose()                   # optional - sage.combinat
-            sage: M = Matroid(m)                                                        # optional - sage.combinat
-            sage: M.is_k_closed(3)                                                      # optional - sage.combinat
+            sage: PR = RootSystem(['A',4]).root_lattice().positive_roots()              # needs sage.combinat
+            sage: m = matrix([x.to_vector() for x in PR]).transpose()                   # needs sage.combinat
+            sage: M = Matroid(m)                                                        # needs sage.combinat
+            sage: M.is_k_closed(3)                                                      # needs sage.combinat
             True
-            sage: M.is_k_closed(4)                                                      # optional - sage.combinat
+            sage: M.is_k_closed(4)                                                      # needs sage.combinat
             True
 
-            sage: PR = RootSystem(['D',4]).root_lattice().positive_roots()              # optional - sage.combinat
-            sage: m = matrix([x.to_vector() for x in PR]).transpose()                   # optional - sage.combinat
-            sage: M = Matroid(m)                                                        # optional - sage.combinat
-            sage: M.is_k_closed(3)                                                      # optional - sage.combinat
+            sage: PR = RootSystem(['D',4]).root_lattice().positive_roots()              # needs sage.combinat
+            sage: m = matrix([x.to_vector() for x in PR]).transpose()                   # needs sage.combinat
+            sage: M = Matroid(m)                                                        # needs sage.combinat
+            sage: M.is_k_closed(3)                                                      # needs sage.combinat
             False
-            sage: M.is_k_closed(4)                                                      # optional - sage.combinat
+            sage: M.is_k_closed(4)                                                      # needs sage.combinat
             True
         """
         G = self.groundset()
@@ -7570,7 +7575,7 @@ cdef class Matroid(SageObject):
 
             sage: from sage.matroids.advanced import setprint
             sage: M = matroids.named_matroids.Fano()
-            sage: setprint(M.flat_cover())                                              # optional - sage.rings.finite_rings
+            sage: setprint(M.flat_cover())                                              # needs sage.rings.finite_rings
             [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
              {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'},
              {'d', 'e', 'f'}]
@@ -7629,10 +7634,10 @@ cdef class Matroid(SageObject):
             sage: A = M.chow_ring(); A
             Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements
              with 5 bases over Integer Ring
-            sage: A.gens()                                                              # optional - sage.libs.singular
+            sage: A.gens()                                                              # needs sage.libs.singular
             (A23, A23, A23)
-            sage: A23 = A.gen(0)                                                        # optional - sage.libs.singular
-            sage: A23*A23                                                               # optional - sage.libs.singular
+            sage: A23 = A.gen(0)                                                        # needs sage.libs.singular
+            sage: A23*A23                                                               # needs sage.libs.singular
             0
 
         We construct a more interesting example using the Fano matroid::
@@ -7644,13 +7649,14 @@ cdef class Matroid(SageObject):
 
         Next we get the non-trivial generators and do some computations::
 
-            sage: G = A.gens()[6:]                                                      # optional - sage.libs.singular sage.rings.finite_rings
-            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G                      # optional - sage.libs.singular sage.rings.finite_rings
-            sage: Ag * Ag                                                               # optional - sage.libs.singular sage.rings.finite_rings
+            sage: # needs sage.libs.singular
+            sage: G = A.gens()[6:]                                                      # needs sage.rings.finite_rings
+            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G                      # needs sage.rings.finite_rings
+            sage: Ag * Ag                                                               # needs sage.rings.finite_rings
             2*Adef^2
-            sage: Ag * Abeg                                                             # optional - sage.libs.singular sage.rings.finite_rings
+            sage: Ag * Abeg                                                             # needs sage.rings.finite_rings
             -Adef^2
-            sage: matrix([[x * y for x in G] for y in G])                               # optional - sage.libs.singular sage.rings.finite_rings
+            sage: matrix([[x * y for x in G] for y in G])                               # needs sage.rings.finite_rings
             [2*Adef^2        0        0  -Adef^2        0  -Adef^2  -Adef^2        0]
             [       0   Adef^2        0        0        0        0        0        0]
             [       0        0   Adef^2        0        0        0        0        0]
@@ -7726,10 +7732,10 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Fano()
-            sage: G = M.plot()                                                          # optional - sage.rings.finite_rings sage.plot
-            sage: type(G)                                                               # optional - sage.rings.finite_rings sage.plot
+            sage: G = M.plot()                                                          # needs sage.plot sage.rings.finite_rings
+            sage: type(G)                                                               # needs sage.plot sage.rings.finite_rings
             <class 'sage.plot.graphics.Graphics'>
-            sage: G.show()                                                              # optional - sage.rings.finite_rings sage.plot
+            sage: G.show()                                                              # needs sage.plot sage.rings.finite_rings
 
         """
         from . import matroids_plot_helpers
@@ -7783,11 +7789,11 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.TernaryDowling3()
-            sage: M.show(B=['a','b','c'])                                               # optional - sage.rings.finite_rings  sage.plot
-            sage: M.show(B=['a','b','c'], lineorders=[['f','e','i']])                   # optional - sage.rings.finite_rings  sage.plot
-            sage: pos = {'a':(0,0), 'b': (0,1), 'c':(1,0), 'd':(1,1),                   # optional - sage.plot
+            sage: M.show(B=['a','b','c'])                                               # needs sage.plot sage.rings.finite_rings
+            sage: M.show(B=['a','b','c'], lineorders=[['f','e','i']])                   # needs sage.plot sage.rings.finite_rings
+            sage: pos = {'a':(0,0), 'b': (0,1), 'c':(1,0), 'd':(1,1),                   # needs sage.plot
             ....:        'e':(1,-1), 'f':(-1,1), 'g':(-1,-1),'h':(2,0), 'i':(0,2)}
-            sage: M.show(pos_method=1, pos_dict=pos, lims=[-3,3,-3,3])                  # optional - sage.rings.finite_rings  sage.plot
+            sage: M.show(pos_method=1, pos_dict=pos, lims=[-3,3,-3,3])                  # needs sage.plot sage.rings.finite_rings
         """
         if self.rank() > 3:
             raise NotImplementedError
@@ -7826,15 +7832,15 @@ cdef class Matroid(SageObject):
             sage: t="fghij"
             sage: x=1.61
             sage: y=1/1.61
-            sage: for i in range(5):                                                    # optional - sage.symbolic
+            sage: for i in range(5):                                                    # needs sage.symbolic
             ....:         pos[s[i]]=(RR(x*sin(2*pi*i/5)), RR(x*cos(2*pi*i/5)))
             ....:         pos[t[i]]=(RR(y*sin(2*pi*(i+1/2)/5)), RR(y*cos(2*pi*(i+1/2)/5)))
             ....:
             sage: pos['k']=(0,0)
-            sage: M._fix_positions(pos_dict=pos)                                        # optional - sage.symbolic
-            sage: M._cached_info['lineorders'] is None                                  # optional - sage.symbolic
+            sage: M._fix_positions(pos_dict=pos)                                        # needs sage.symbolic
+            sage: M._cached_info['lineorders'] is None                                  # needs sage.symbolic
             True
-            sage: M._cached_info['plot_positions']['k']                                 # optional - sage.symbolic
+            sage: M._cached_info['plot_positions']['k']                                 # needs sage.symbolic
             (0, 0)
         """
         if self.rank() > 3:
@@ -7865,10 +7871,10 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
-            sage: M.broken_circuit_complex()                                            # optional - sage.graphs
+            sage: M.broken_circuit_complex()                                            # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5)}
-            sage: M.broken_circuit_complex([5,4,3,2,1])                                 # optional - sage.graphs
+            sage: M.broken_circuit_complex([5,4,3,2,1])                                 # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
         """
@@ -7929,11 +7935,11 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Fano()
-            sage: A = M.augmented_bergman_complex(); A                                  # optional - sage.graphs
+            sage: A = M.augmented_bergman_complex(); A                                  # needs sage.graphs
             Simplicial complex with 22 vertices and 91 facets
 
             sage: M = matroids.Uniform(2,3)
-            sage: A = M.augmented_bergman_complex(); A                                  # optional - sage.graphs
+            sage: A = M.augmented_bergman_complex(); A                                  # needs sage.graphs
             Simplicial complex with 7 vertices and 9 facets
 
         Both the independent set complex of the matroid and the usual
@@ -7942,9 +7948,9 @@ cdef class Matroid(SageObject):
         to the independent set complex and ``R`` when they belong to the
         (cone of) the Bergman complex. The cone point is ``'R[]'``::
 
-            sage: sorted(A.faces()[0])                                                  # optional - sage.graphs
+            sage: sorted(A.faces()[0])                                                  # needs sage.graphs
             [('L0',), ('L1',), ('L2',), ('R[0]',), ('R[1]',), ('R[2]',), ('R[]',)]
-            sage: sorted(map(sorted, A.faces()[1]))                                     # optional - sage.graphs
+            sage: sorted(map(sorted, A.faces()[1]))                                     # needs sage.graphs
             [['L0', 'L1'],
              ['L0', 'L2'],
              ['L0', 'R[0]'],

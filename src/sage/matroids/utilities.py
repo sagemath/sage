@@ -78,10 +78,10 @@ def setprint(X):
     An exception was made for subclasses of SageObject::
 
         sage: from sage.matroids.advanced import setprint
-        sage: G = graphs.PetersenGraph()                                                # optional - sage.graphs
-        sage: list(G)                                                                   # optional - sage.graphs
+        sage: G = graphs.PetersenGraph()                                                # needs sage.graphs
+        sage: list(G)                                                                   # needs sage.graphs
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        sage: setprint(G)                                                               # optional - sage.graphs
+        sage: setprint(G)                                                               # needs sage.graphs
         Petersen graph: Graph on 10 vertices
     """
     print(setprint_s(X, toplevel=True))
@@ -265,7 +265,7 @@ def make_regular_matroid_from_matroid(matroid):
     EXAMPLES::
 
         sage: from sage.matroids.utilities import make_regular_matroid_from_matroid
-        sage: make_regular_matroid_from_matroid(                                        # optional - sage.graphs
+        sage: make_regular_matroid_from_matroid(                                        # needs sage.graphs
         ....:               matroids.CompleteGraphic(6)).is_isomorphic(
         ....:                                     matroids.CompleteGraphic(6))
         True
@@ -377,9 +377,9 @@ def spanning_forest(M):
     EXAMPLES::
 
         sage: from sage.matroids.utilities import spanning_forest
-        sage: len(spanning_forest(matrix([[1,1,1],[1,1,1],[1,1,1]])))                   # optional - sage.graphs
+        sage: len(spanning_forest(matrix([[1,1,1],[1,1,1],[1,1,1]])))                   # needs sage.graphs
         5
-        sage: len(spanning_forest(matrix([[0,0,1],[0,1,0],[0,1,0]])))                   # optional - sage.graphs
+        sage: len(spanning_forest(matrix([[0,0,1],[0,1,0],[0,1,0]])))                   # needs sage.graphs
         3
     """
     from sage.graphs.graph import Graph
@@ -421,8 +421,8 @@ def spanning_stars(M):
     EXAMPLES::
 
         sage: from sage.matroids.utilities import spanning_stars
-        sage: edges = spanning_stars(matrix([[1,1,1],[1,1,1],[1,1,1]]))                 # optional - sage.graphs
-        sage: Graph([(x+3, y) for x,y in edges]).is_connected()                         # optional - sage.graphs
+        sage: edges = spanning_stars(matrix([[1,1,1],[1,1,1],[1,1,1]]))                 # needs sage.graphs
+        sage: Graph([(x+3, y) for x,y in edges]).is_connected()                         # needs sage.graphs
         True
     """
     from sage.graphs.graph import Graph
@@ -536,25 +536,25 @@ def lift_cross_ratios(A, lift_map=None):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import lift_cross_ratios, lift_map, LinearMatroid
-        sage: R = GF(7)                                                                 # optional - sage.graphs
-        sage: to_sixth_root_of_unity = lift_map('sru')                                  # optional - sage.graphs sage.rings.number_field
-        sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])          # optional - sage.graphs
-        sage: A                                                                         # optional - sage.graphs
+        sage: R = GF(7)                                                                 # needs sage.graphs
+        sage: to_sixth_root_of_unity = lift_map('sru')                                  # needs sage.graphs sage.rings.number_field
+        sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])          # needs sage.graphs
+        sage: A                                                                         # needs sage.graphs
         [1 0 6 1 2]
         [6 1 0 0 1]
         [0 6 3 6 0]
-        sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)                          # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
-        sage: Z                                                                         # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
+        sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)                          # needs sage.graphs sage.rings.finite_rings sage.rings.number_field
+        sage: Z                                                                         # needs sage.graphs sage.rings.finite_rings sage.rings.number_field
         [ 1  0  1  1  1]
         [ 1  1  0  0  z]
         [ 0 -1  z  1  0]
-        sage: M = LinearMatroid(reduced_matrix=A)                                       # optional - sage.graphs
-        sage: sorted(M.cross_ratios())                                                  # optional - sage.graphs
+        sage: M = LinearMatroid(reduced_matrix=A)                                       # needs sage.graphs
+        sage: sorted(M.cross_ratios())                                                  # needs sage.graphs
         [3, 5]
-        sage: N = LinearMatroid(reduced_matrix=Z)                                       # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
-        sage: sorted(N.cross_ratios())                                                  # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
+        sage: N = LinearMatroid(reduced_matrix=Z)                                       # needs sage.graphs sage.rings.finite_rings sage.rings.number_field
+        sage: sorted(N.cross_ratios())                                                  # needs sage.graphs sage.rings.finite_rings sage.rings.number_field
         [-z + 1, z]
-        sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
+        sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # needs sage.graphs sage.rings.finite_rings sage.rings.number_field
         True
 
     """
@@ -696,8 +696,8 @@ def lift_map(target):
     EXAMPLES::
 
         sage: from sage.matroids.utilities import lift_map
-        sage: lm = lift_map('gm')                                                       # optional - sage.rings.finite_rings sage.rings.number_field
-        sage: for x in lm:                                                              # optional - sage.rings.finite_rings sage.rings.number_field
+        sage: lm = lift_map('gm')                                                       # needs sage.rings.finite_rings sage.rings.number_field
+        sage: for x in lm:                                                              # needs sage.rings.finite_rings sage.rings.number_field
         ....:     if (x == 1) is not (lm[x] == 1):
         ....:         print('not a proper lift map')
         ....:     for y in lm:
@@ -763,13 +763,13 @@ def split_vertex(G, u, v=None, edges=None):
     EXAMPLES::
 
         sage: from sage.matroids.utilities import split_vertex
-        sage: G = graphs.BullGraph()                                                    # optional - sage.graphs
-        sage: split_vertex(G, u=1, v=55, edges=[(1, 3)])                                # optional - sage.graphs
+        sage: G = graphs.BullGraph()                                                    # needs sage.graphs
+        sage: split_vertex(G, u=1, v=55, edges=[(1, 3)])                                # needs sage.graphs
         Traceback (most recent call last):
         ...
         ValueError: the edges are not all incident with u
-        sage: split_vertex(G, u=1, v=55, edges=[(1, 3, None)])                          # optional - sage.graphs
-        sage: list(G.edges(sort=True))                                                  # optional - sage.graphs
+        sage: split_vertex(G, u=1, v=55, edges=[(1, 3, None)])                          # needs sage.graphs
+        sage: list(G.edges(sort=True))                                                  # needs sage.graphs
         [(0, 1, None), (0, 2, None), (1, 2, None), (2, 4, None), (3, 55, None)]
     """
     if v is None:
