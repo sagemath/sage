@@ -270,7 +270,7 @@ def skipfile(filename, tested_optional_tags=False, *, only_lib=False, log=None):
     # .rst.txt appear in the installed documentation in subdirectories named "_sources"
     if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
         if log:
-            log(f"Skipping '{filename}' because it is does one have one of the recognized file name extensions")
+            log(f"Skipping '{filename}' because it does not have one of the recognized file name extensions")
         return True
     if "jupyter_execute" in filename:
         if log:
