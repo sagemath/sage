@@ -430,12 +430,12 @@ cdef class Matrix(Matrix1):
             try:
                 return self.transpose().solve_right(B, check=check)
             except ValueError as e:
-                raise ValueError(str(e).replace('row', 'column'))
+                raise e.__class__(str(e).replace('row', 'column'))
         else:
             try:
                 return self.transpose().solve_right(B.transpose(), check=check).transpose()
             except ValueError as e:
-                raise ValueError(str(e).replace('row', 'column'))
+                raise e.__class__(str(e).replace('row', 'column'))
 
     def solve_right(self, B, check=True):
         r"""

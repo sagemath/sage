@@ -1598,7 +1598,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         sage: ic=epsilon
         sage: t=srange(0,2/epsilon,1)
         sage: sol=desolve_odeint(f,ic,t,y,rtol=1e-9,atol=1e-10,compute_jac=True)
-        sage: p=points(zip(t,sol))
+        sage: p=points(zip(t,sol[:,0]))
         sage: p.show()
 
     Another stiff system with some optional parameters with no
@@ -1637,7 +1637,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
                 J = fast_float(J, dvar, ivar)
 
                 def Dfun(y, t):
-                    return [J(y, t)]
+                    return [J(y.item(), t)]
 
         # n-dimensional systems:
         else:
