@@ -22,17 +22,6 @@ cdef extern from "gap/system.h" nogil:
     ctypedef void* Obj
 
 
-cdef extern from "gap/ariths.h" nogil:
-    Obj SUM(Obj, Obj)
-    Obj DIFF(Obj, Obj)
-    Obj PROD(Obj, Obj)
-    Obj QUO(Obj, Obj)
-    Obj POW(Obj, Obj)
-    Obj MOD(Obj, Obj)
-    bint EQ(Obj opL, Obj opR)
-    bint LT(Obj opL, Obj opR)
-
-
 cdef extern from "gap/calls.h" nogil:
     bint IS_FUNC(Obj)
     Obj CALL_0ARGS(Obj f)              # 0 arguments
@@ -71,6 +60,16 @@ cdef extern from "gap/libgap-api.h" nogil:
     void GAP_MarkBag(Obj bag)
     void GAP_CollectBags(UInt full)
 
+    Obj GAP_SUM(Obj, Obj)
+    Obj GAP_DIFF(Obj, Obj)
+    Obj GAP_PROD(Obj, Obj)
+    Obj GAP_QUO(Obj, Obj)
+    Obj GAP_POW(Obj, Obj)
+    Obj GAP_MOD(Obj, Obj)
+    bint GAP_EQ(Obj opL, Obj opR)
+    bint GAP_LT(Obj opL, Obj opR)
+    bint GAP_IN(Obj opL, Obj opR)
+
     cdef Obj GAP_True
     cdef Obj GAP_False
 
@@ -89,11 +88,16 @@ cdef extern from "gap/libgap-api.h" nogil:
     bint GAP_IsRecord(Obj obj)
     Obj GAP_NewPrecord(Int capacity)
 
+    bint GAP_IsString(Obj obj)
+    UInt GAP_LenString(Obj string)
+    char* GAP_CSTR_STRING(Obj list)
+    Obj GAP_MakeStringWithLen(const char* buf, UInt len)
+
+    Int GAP_ValueOfChar(Obj obj)
+
 
 cdef extern from "gap/lists.h" nogil:
     Obj ELM_LIST(Obj lst, int pos)
-    Obj ELM0_LIST(Obj lst, int pos)
-    void ASS_LIST(Obj lst, int pos, Obj elt)
 
 
 cdef extern from "gap/listfunc.h" nogil:
@@ -117,7 +121,6 @@ cdef extern from "gap/objects.h" nogil:
         T_BOOL
         T_CHAR
         T_FUNCTION
-        T_PLIST
         T_COMOBJ
         T_POSOBJ
 
@@ -147,8 +150,6 @@ cdef extern from "gap/records.h" nogil:
 
 
 cdef extern from "gap/stringobj.h" nogil:
-    char* CSTR_STRING(Obj list)
     bint IS_STRING(Obj obj)
     bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
-    Obj MakeStringWithLen(const char* buf, size_t len)
