@@ -226,9 +226,9 @@ def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense 
     mpz_init(tmp)
 
     if reverse:
-        rng = xrange(H.nrows()-1, -1, -1)
+        rng = range(H.nrows()-1, -1, -1)
     else:
-        rng = xrange(H.nrows())
+        rng = range(H.nrows())
 
     for i in rng:
         x = <QuaternionAlgebraElement_rational_field> QuaternionAlgebraElement_rational_field.__new__(QuaternionAlgebraElement_rational_field)
