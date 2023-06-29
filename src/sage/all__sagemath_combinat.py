@@ -1,12 +1,12 @@
+try:  # extra
+    from sage.all__sagemath_modules import *
+except ImportError:
+    pass
+
 from .all__sagemath_categories import *
 
 try:  # extra
     from sage.all__sagemath_graphs import *
-except ImportError:
-    pass
-
-try:  # extra
-    from sage.all__sagemath_modules import *
 except ImportError:
     pass
 

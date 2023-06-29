@@ -791,16 +791,16 @@ class WordGenerator():
             ....:   yield 0
             ....:   yield 2
             ....:   while True: yield 1
-            sage: F = words.CharacteristicSturmianWord(cf()); F
+            sage: F = words.CharacteristicSturmianWord(cf()); F                         # optional - sage.rings.real_mpfr
             word: 0100101001001010010100100101001001010010...
             sage: Fib = words.FibonacciWord(); Fib
             word: 0100101001001010010100100101001001010010...
-            sage: F[:10000] == Fib[:10000]
+            sage: F[:10000] == Fib[:10000]                                              # optional - sage.rings.real_mpfr
             True
 
         The alphabet may be specified::
 
-            sage: words.CharacteristicSturmianWord(cf(), 'rs')
+            sage: words.CharacteristicSturmianWord(cf(), 'rs')                          # optional - sage.rings.real_mpfr
             word: rsrrsrsrrsrrsrsrrsrsrrsrrsrsrrsrrsrsrrsr...
 
         The characteristic sturmian word of slope `(\sqrt{3}-1)/2`::

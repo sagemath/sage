@@ -20,6 +20,12 @@ def all_features():
         sage: from sage.features.all import all_features
         sage: sorted(all_features(), key=lambda f: f.name)  # random
         [...Feature('sage.combinat')...]
+
+    TESTS::
+
+        sage: from sage.features import _spkg_type_warnings
+        sage: for a in _spkg_type_warnings:
+        ....:     print(a)
     """
     import pkgutil
     import importlib

@@ -1477,7 +1477,7 @@ that uses the more specific options ``--venv`` and ``--environment``::
 
     [mkoeppe@sage sage]$ ./sage --fixdoctests \
                                 --venv pkgs/sagemath-categories/.tox/sagepython-... \
-                                --environment sage.all__sagemath_categories
+                                --environment sage.all__sagemath_categories \
                                 src/sage/geometry/schemes/generic/*.py
 
 Either way, the options ``--keep-both``, ``--full-tracebacks``, and

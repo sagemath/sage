@@ -233,7 +233,7 @@ class Set_base():
              {0, 1, 2}
             sage: 2/3 in X
             True
-            sage: GF(3)(2) in X                                                         # optional - sage.rings.finite_rings
+            sage: GF(3)(2) in X
             True
             sage: GF(5)(2) in X                                                         # optional - sage.rings.finite_rings
             False
@@ -610,7 +610,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: X = Set(ZZ)
             sage: 5 in X
             True
-            sage: GF(7)(3) in X                                                         # optional - sage.rings.finite_rings
+            sage: GF(7)(3) in X
             True
             sage: 2/1 in X
             True
