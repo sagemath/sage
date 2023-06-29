@@ -331,6 +331,7 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
         sage: sage.groups.perm_gps.partn_ref.refinement_matrices.random_tests()  # long time (up to 30s on sage.math, 2011)
         All passed: ... random tests on ... matrices.
     """
+    from sage.misc.timing import walltime
     from sage.misc.prandom import random, randint
     from sage.combinat.permutation import Permutations
     from sage.matrix.constructor import random_matrix, matrix

@@ -47,7 +47,7 @@ from cpython.object cimport PyObject_RichCompare
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
 from sage.structure.element import is_Matrix
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
 from sage.data_structures.bitset_base cimport *

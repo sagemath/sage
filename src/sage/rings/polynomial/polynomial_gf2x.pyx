@@ -143,7 +143,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
         if g.parent() is not self.parent() or h.parent() is not self.parent():
             raise TypeError("Parents of the first three parameters must match.")
 
-        from sage.misc.misc import cputime
+        from sage.misc.timing import cputime
         from sage.misc.verbose import verbose
         from sage.arith.misc import integer_ceil as ceil
         from sage.matrix.constructor import Matrix
