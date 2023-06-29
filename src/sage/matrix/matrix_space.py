@@ -618,7 +618,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
            - ``linbox-float`` - for integer mod rings up to `2^8 = 256`
 
            - ``linbox-double`` - for integer mod rings up to
-           `floor(2^26*sqrt(2) + 1/2) = 94906266`
+             `floor(2^26*sqrt(2) + 1/2) = 94906266`
 
            - ``numpy`` - for real and complex floating point numbers
 
