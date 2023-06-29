@@ -150,7 +150,7 @@ cpdef is_Polynomial(f):
         sage: R.<x> = ZZ[]
         sage: is_Polynomial(x^3 + x + 1)
         doctest:...: DeprecationWarning: the function is_Polynomial is deprecated;
-        use isinstance(x, sage.structure.element.Polynomial) instead
+        use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead
         See https://github.com/sagemath/sage/issues/32709 for details.
         True
         sage: S.<y> = R[]
@@ -176,7 +176,7 @@ cpdef is_Polynomial(f):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.structure.element.Polynomial) instead")
+    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead")
 
     return isinstance(f, Polynomial)
 
