@@ -26,9 +26,6 @@ AUTHORS:
 
     Implement various construction methods for CAs
 
-Functions
----------
-
 """
 
 # **********************************************************************
