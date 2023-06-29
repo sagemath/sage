@@ -211,7 +211,7 @@ class ode_solver():
     - ``a`` (1 by default),
     - ``a_dydt`` (0 by default) and
     - ``s_i`` (as ``scaling_abs`` which should be a tuple and is 1 in all
-    components by default).
+      components by default).
 
     If you specify one of ``a`` or ``a_dydt``
     you must specify the other.  You may specify ``a`` and ``a_dydt``
