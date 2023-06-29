@@ -2,6 +2,8 @@ global-include all__sagemath_bliss.py
 
 include VERSION.txt
 
+graft sage/graphs/bliss_cpp
+
 global-exclude *.c
 global-exclude *.cpp
 

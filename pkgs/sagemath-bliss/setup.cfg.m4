@@ -29,3 +29,7 @@ classifiers =
 python_requires = >=3.8, <3.12
 install_requires =
     SPKG_INSTALL_REQUIRES_cysignals
+
+[options.extras_require]
+test        =
+    SPKG_INSTALL_REQUIRES_sagemath_repl
