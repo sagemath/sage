@@ -35,7 +35,7 @@ class Singular(Executable):
             True
         """
         Executable.__init__(self, "singular", SINGULAR_BIN,
-                            spkg='singular')
+                            spkg='singular', type='standard')
 
 
 class sage__libs__singular(JoinFeature):

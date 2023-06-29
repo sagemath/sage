@@ -1089,7 +1089,7 @@ def lazy_import(module, names, as_=None, *,
     An example of an import relying on a feature::
 
         sage: from sage.features import PythonModule
-        sage: lazy_import('ppl', 'equation', feature=PythonModule('ppl', spkg='pplpy'))
+        sage: lazy_import('ppl', 'equation', feature=PythonModule('ppl', spkg='pplpy', type='standard'))
         sage: equation
         <built-in function equation>
         sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz

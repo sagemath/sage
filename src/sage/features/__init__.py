@@ -124,6 +124,8 @@ class Feature(TrivialUniqueRepresentation):
 
     - ``url`` -- a URL for the upstream package providing the feature
 
+    - ``type`` -- (string) one of ``'standard'``, ``'optional'`` (default), ``'experimental'``
+
     Overwrite :meth:`_is_present` to add feature checks.
 
     EXAMPLES::
@@ -137,7 +139,7 @@ class Feature(TrivialUniqueRepresentation):
         sage: GapPackage("grape") is GapPackage("grape")
         True
     """
-    def __init__(self, name, spkg=None, url=None, description=None):
+    def __init__(self, name, spkg=None, url=None, description=None, type='optional'):
         r"""
         TESTS::
 
@@ -154,6 +156,19 @@ class Feature(TrivialUniqueRepresentation):
         self._cache_is_present = None
         self._cache_resolution = None
         self._hidden = False
+        self._type = type
+
+        try:
+            from sage.misc.package import spkg_type
+        except ImportError:  # may have been surgically removed in a downstream distribution
+            pass
+        else:
+            if spkg and (t := spkg_type(spkg)) not in (type, None):
+                from warnings import warn
+                warn(f'Feature {name} is declared {type}, '
+                     f'but it is provided by {spkg}, '
+                     f'which is declared {t} in SAGE_ROOT/build/pkgs',
+                     stacklevel=3)
 
     def is_present(self):
         r"""
@@ -246,7 +261,10 @@ class Feature(TrivialUniqueRepresentation):
 
     def _spkg_type(self):
         r"""
-        Return the type of the SPKG corresponding to this feature.
+        Return the type of this feature.
+
+        For features provided by an SPKG in the Sage distribution,
+        this should match the SPKG type, or a warning will be issued.
 
         EXAMPLES::
 
@@ -257,13 +275,8 @@ class Feature(TrivialUniqueRepresentation):
         OUTPUT:
 
         The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
-        If no SPKG corresponds to this feature ``None`` is returned.
         """
-        from sage.misc.package import _spkg_type
-        spkg = self.spkg
-        if not spkg:
-            spkg = self.name
-        return _spkg_type(spkg)
+        return self._type
 
     def resolution(self):
         r"""
@@ -857,7 +870,7 @@ class CythonFeature(Feature):
         ....:
         ....: assert fabs(-1) == 1
         ....: '''
-        sage: fabs = CythonFeature("fabs", test_code=fabs_test_code, spkg="gcc", url="https://gnu.org")
+        sage: fabs = CythonFeature("fabs", test_code=fabs_test_code, spkg="gcc", url="https://gnu.org", type="standard")
         sage: fabs.is_present()
         FeatureTestResult('fabs', True)
 

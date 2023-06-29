@@ -124,7 +124,8 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     stable_releases = [v for v in info['releases'] if 'a' not in v and 'b' not in v]
     return max(stable_releases)
 
-def _spkg_type(name):
+
+def spkg_type(name):
     r"""
     Return the type of the Sage package with the given name.
 
@@ -135,17 +136,20 @@ def _spkg_type(name):
 
     EXAMPLES::
 
-        sage: from sage.misc.package import _spkg_type
-        sage: _spkg_type('pip')
+        sage: from sage.misc.package import spkg_type
+        sage: spkg_type('pip')                                  # optional - sage_spkg
         'standard'
 
     OUTPUT:
 
     The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
-    If no ``SPKG`` exists with the given name ``None`` is returned.
+    If no ``SPKG`` exists with the given name (or the directory ``SAGE_PKGS`` is
+    not avaialble), ``None`` is returned.
     """
     spkg_type = None
     from sage.env import SAGE_PKGS
+    if not SAGE_PKGS:
+        return None
     try:
         f = open(os.path.join(SAGE_PKGS, name, "type"))
     except IOError:
@@ -342,7 +346,7 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     for p in lp:
 
-        typ = _spkg_type(p)
+        typ = spkg_type(p)
         if not typ:
             continue
 
