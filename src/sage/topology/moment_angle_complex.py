@@ -54,16 +54,19 @@ EXAMPLES::
 from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.structure.sage_object import SageObject
-from .simplicial_complex import SimplicialComplex
+from .simplicial_complex import SimplicialComplex, copy
 from .simplicial_complex_examples import Sphere, Simplex
 from itertools import combinations
 
 #TODO's:
-# - Documentation(examples and tests)
-# - latex, represenation
-# - perhaps make _components a dictionary, indexed by \sigma?
+# - Documentation (examples and tests) - wait for a bit more complete implementation
+# - latex?
 # - compute up to homotopy?
 # - and a lot more ...
+# - make possible for creating an instance from a list, tuple or a Simplex
+#   (similar behaviour for a SimplicialComplex)
+# - should union behave different in the construct()?
+# - add literature to bibliography?
 
 class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
     """
@@ -106,28 +109,27 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         if not isinstance(simplicial_complex, SimplicialComplex):
             raise ValueError("simplicial_complex must be a simplicial complex")
 
-        self._simplicial_complex = simplicial_complex
+        self._simplicial_complex = copy(simplicial_complex)
         self._moment_angle_complex = None
 
-        vertices = simplicial_complex.vertices()
-        k = len(vertices)
-        self._components = []
-        self._symbolic_components = []
+        vertices = self._simplicial_complex.vertices()
+        self._components = {}
+        self._symbolic_components = {}
 
-        for face in simplicial_complex.faces().values():
-            for subcomplex in face:
-                Y = []
-                Ys = []
-                for j in vertices:
-                    if j in subcomplex:
-                        Y.append(Simplex(2))
-                        Ys.append("D^2")
-                    else:
-                        Y.append(Sphere(1))
-                        Ys.append("S^1")
+        # it suffices to perform union only over facets
+        for facet in self._simplicial_complex.maximal_faces():
+            Y = []
+            Ys = []
+            for j in vertices:
+                if j in facet:
+                    Y.append(Simplex(2))
+                    Ys.append("D^2")
+                else:
+                    Y.append(Sphere(1))
+                    Ys.append("S^1")
 
-                self._components.append(Y)
-                self._symbolic_components.append(Ys)
+            self._components[facet] = Y
+            self._symbolic_components[facet] = Ys
 
         self._constructed = False
         if construct:
@@ -159,6 +161,15 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         """
         return not self.__eq__(other)
 
+    def _repr_(self):
+        """
+        Print representation.
+
+        EXAMPLES::
+
+        """
+        return "Moment angle complex over a " + self._simplicial_complex._repr_().lower()
+
     def construct(self):
         """
         Construct the moment-angle complex as a simplicial complex.
@@ -170,7 +181,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
             return
 
         self._moment_angle_complex = SimplicialComplex()
-        for component in self._components:
+        for component in self._components.values():
             x = component[0]
             for j in range(1, len(component)-1):
                 x = x.product(component[j])
