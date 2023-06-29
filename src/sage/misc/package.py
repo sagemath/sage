@@ -124,6 +124,38 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     stable_releases = [v for v in info['releases'] if 'a' not in v and 'b' not in v]
     return max(stable_releases)
 
+def _spkg_type(name):
+    r"""
+    Return the type of the Sage package with the given name.
+
+    INPUT:
+
+    - ``name`` -- string giving the subdirectory name of the package under
+      ``SAGE_PKGS``
+
+    EXAMPLES::
+
+        sage: from sage.misc.package import _spkg_type
+        sage: _spkg_type('pip')
+        'standard'
+
+    OUTPUT:
+
+    The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
+    If no ``SPKG`` exists with the given name ``None`` is returned.
+    """
+    spkg_type = None
+    from sage.env import SAGE_PKGS
+    try:
+        f = open(os.path.join(SAGE_PKGS, name, "type"))
+    except IOError:
+        # Probably an empty directory => ignore
+        return None
+
+    with f:
+        spkg_type = f.read().strip()
+    return spkg_type
+
 
 def pip_installed_packages(normalization=None):
     r"""
@@ -310,14 +342,9 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     for p in lp:
 
-        try:
-            f = open(os.path.join(SAGE_PKGS, p, "type"))
-        except IOError:
-            # Probably an empty directory => ignore
+        typ = _spkg_type(p)
+        if not typ:
             continue
-
-        with f:
-            typ = f.read().strip()
 
         if os.path.isfile(os.path.join(SAGE_PKGS, p, "requirements.txt")):
             src = 'pip'
