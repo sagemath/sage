@@ -186,8 +186,6 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
         cmd = m.group(1)
         if cmd and cmd.lower() == 'known bug':
             tags.append('bug')  # so that such tests will be run by sage -t ... -only-optional=bug
-        elif m.group(1) is not None:
-            tags.extend(m.group(2).split() or [""])
         elif cmd:
             tags.append(cmd.lower())
         else:
