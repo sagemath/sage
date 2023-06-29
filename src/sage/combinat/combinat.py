@@ -620,7 +620,7 @@ def euler_polynomial(x, n, algorithm='flint'):
         1
         sage: euler_polynomial(y, 5)
         y^5 - 5/2*y^4 + 5/2*y^2 - 1/2
-        sage: euler_number(-1)
+        sage: euler_polynomial(y, -1)
         Traceback (most recent call last):
         ...
         ValueError: n (=-1) must be a nonnegative integer
@@ -633,6 +633,10 @@ def euler_polynomial(x, n, algorithm='flint'):
         sage: all(euler_polynomial(y, n, algorithm='formula') == euler_polynomial(y,n)
         ....:   for n in range(10))
         True
+        sage: euler_polynomial(y, 4, algorithm='magic')
+        Traceback (most recent call last):
+        ...
+        ValueError: algorithm must be 'flint' or 'formula'
 
     REFERENCES:
 
