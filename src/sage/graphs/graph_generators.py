@@ -1283,8 +1283,9 @@ class GraphGenerators():
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)       # optional - sage.modules
             [['Dlg', 'Ds_']]
             sage: (g[0][1].laplacian_matrix(normalized=True).charpoly()                 # optional - sage.modules sage.symbolic
-            ....:   ==g[0][1].laplacian_matrix(normalized=True).charpoly()
+            ....:   == g[0][1].laplacian_matrix(normalized=True).charpoly())
             True
+
         """
         from sage.graphs.graph_generators import graphs as graph_gen
         if graphs is None:

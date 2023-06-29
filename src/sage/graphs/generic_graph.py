@@ -2015,7 +2015,7 @@ class GenericGraph(GenericGraph_pyx):
             [0 1 0 1 0]
             [0 0 1 0 1]
             [0 0 0 1 0]
-            sage: M[2, 2] = 1
+            sage: M[2, 2] = 1                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: matrix is immutable; please change a copy instead
@@ -5092,8 +5092,8 @@ class GenericGraph(GenericGraph_pyx):
 
         Finally checking the cycles are a free set::
 
-            sage: basis_as_vectors = [cycle_to_vector(_) for _ in basis]                # optional - sage.modules sage.rings.finite_rings
-            sage: edge_space.span(basis_as_vectors).rank() == len(basis)                # optional - sage.modules sage.rings.finite_rings
+            sage: basis_as_vectors = [cycle_to_vector(_) for _ in basis]                # optional - networkx sage.modules sage.rings.finite_rings
+            sage: edge_space.span(basis_as_vectors).rank() == len(basis)                # optional - networkx sage.modules sage.rings.finite_rings
             True
 
         For undirected graphs with multiple edges::
@@ -6912,7 +6912,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = graphs.RandomGNP(12, .7)
             sage: k = Integer(g.edge_connectivity()) // 2
             sage: trees = g.edge_disjoint_spanning_trees(k, algorithm="MILP")           # optional - sage.numerical.mip
-            sage: all(t.is_tree() for t in trees)
+            sage: all(t.is_tree() for t in trees)                                       # optional - sage.numerical.mip
             True
             sage: all(g.order() == t.size() + 1 for t in trees)                         # optional - sage.numerical.mip
             True
@@ -16212,10 +16212,10 @@ class GenericGraph(GenericGraph_pyx):
             sage: c4 = g.centrality_closeness(algorithm='Floyd-Warshall-Cython')
             sage: c5 = g.centrality_closeness(algorithm='Floyd-Warshall-Python')
             sage: c6 = g.centrality_closeness(algorithm='Johnson_Boost')
-            sage: len(c1)==len(c2)==len(c3)==len(c4)==len(c5)==len(c6)
+            sage: len(c1)==len(c2)==len(c3)==len(c4)==len(c5)==len(c6)                  # optional - networkx
             True
-            sage: c = [c1,c2,c3,c4,c5,c6]
-            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.out_degree(v)) < 1e-12
+            sage: c = [c1,c2,c3,c4,c5,c6]                                               # optional - networkx
+            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.out_degree(v)) < 1e-12    # optional - networkx
             ....:      for ci, cj in itertools.combinations(c, 2) )
             True
 
@@ -16235,7 +16235,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: len(c1)==len(c2)==len(c3)==len(c4)                                                # optional - networkx
             True
             sage: c = [c1,c2,c3,c4]                                                                 # optional - networkx
-            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12
+            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12        # optional - networkx
             ....:      for ci, cj in itertools.combinations(c, 2) )
             True
 
@@ -23052,11 +23052,11 @@ class GenericGraph(GenericGraph_pyx):
             [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
             sage: orb = G.automorphism_group(partition=[[0],list(range(1,10))],         # optional - sage.groups
             ....:                            return_group=False, orbits=True, algorithm='sage')
-            sage: sorted([sorted(o) for o in orb], key=len)
+            sage: sorted([sorted(o) for o in orb], key=len)                             # optional - sage.groups
             [[0], [1, 4, 5], [2, 3, 6, 7, 8, 9]]
             sage: C = graphs.CubeGraph(3)
             sage: orb = C.automorphism_group(orbits=True, return_group=False, algorithm='sage')     # optional - sage.groups
-            sage: [sorted(o) for o in orb]
+            sage: [sorted(o) for o in orb]                                              # optional - sage.groups
             [['000', '001', '010', '011', '100', '101', '110', '111']]
 
         One can also use the faster algorithm for computing the automorphism
@@ -23065,7 +23065,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.HallJankoGraph()                   # optional - bliss
             sage: A1 = G.automorphism_group()   # optional - bliss sage.groups
             sage: A2 = G.automorphism_group(algorithm='bliss')  # optional - bliss
-            sage: A1.is_isomorphic(A2)                          # optional - bliss
+            sage: A1.is_isomorphic(A2)          # optional - bliss sage.groups
             True
 
         TESTS:
@@ -23082,32 +23082,32 @@ class GenericGraph(GenericGraph_pyx):
         Labeled automorphism group::
 
             sage: d = digraphs.DeBruijn(3,2)                                            # optional - sage.combinat
-            sage: A = d.automorphism_group(algorithm='sage')
+            sage: A = d.automorphism_group(algorithm='sage')                            # optional - sage.combinat
             sage: A_target = PermutationGroup(["('02','10','21')('00','11','22')('01','12','20')",
             ....:                              "('02','01')('10','20')('21','12')('22','11')"])
-            sage: A.is_isomorphic(A_target)
+            sage: A.is_isomorphic(A_target)                                             # optional - sage.combinat
             True
-            sage: d.allow_multiple_edges(True)
-            sage: d.add_edge(('00', '00', '0'))
-            sage: A = d.automorphism_group(algorithm='sage')
+            sage: d.allow_multiple_edges(True)                                          # optional - sage.combinat
+            sage: d.add_edge(('00', '00', '0'))                                         # optional - sage.combinat
+            sage: A = d.automorphism_group(algorithm='sage')                            # optional - sage.combinat
             sage: A_target = PermutationGroup(["('01','02')('10','20')('11','22')('12','21')"])
-            sage: A.is_isomorphic(A_target)
+            sage: A.is_isomorphic(A_target)                                             # optional - sage.combinat
             True
 
         The labeling is correct::
 
             sage: g = graphs.PetersenGraph()
             sage: ag = g.automorphism_group()                                           # optional - sage.groups
-            sage: all(len(ag.orbit(e, action="OnPairs")) == 30
+            sage: all(len(ag.orbit(e, action="OnPairs")) == 30                          # optional - sage.groups
             ....:       for e in g.edge_iterator(labels=False))
             True
 
         Empty group, correct domain::
 
             sage: ag = Graph({'a':['a'], 'b':[]}).automorphism_group()                  # optional - sage.groups
-            sage: ag
+            sage: ag                                                                    # optional - sage.groups
             Permutation Group with generators [()]
-            sage: sorted(ag.domain())
+            sage: sorted(ag.domain())                                                   # optional - sage.groups
             ['a', 'b']
 
         We can check that the subgroups are labelled correctly
@@ -23126,15 +23126,15 @@ class GenericGraph(GenericGraph_pyx):
             sage: a1 = G.automorphism_group(algorithm='sage')                           # optional - sage.groups
             sage: V = sorted(G, reverse=True)
             sage: a2 = G.automorphism_group(algorithm='sage', partition=[V])            # optional - sage.groups
-            sage: a1.is_isomorphic(a2)
+            sage: a1.is_isomorphic(a2)                                                  # optional - sage.groups
             True
-            sage: str(a1) == str(a2)
+            sage: str(a1) == str(a2)                                                    # optional - sage.groups
             False
             sage: b1 = G.automorphism_group(algorithm='bliss')  # optional - bliss
-            sage: str(a1) == str(b1)                            # optional - bliss
+            sage: str(a1) == str(b1)            # optional - bliss sage.groups
             True
             sage: b2 = G.automorphism_group(algorithm='bliss', partition=[V])  # optional - bliss
-            sage: str(a2) == str(b2)                                           # optional - bliss
+            sage: str(a2) == str(b2)            # optional - bliss sage.groups
             True
         """
         from sage.features.bliss import Bliss

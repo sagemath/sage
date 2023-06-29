@@ -4177,9 +4177,9 @@ class Graph(GenericGraph):
             ....: , (1,2,3), (1,3,3), (2,3,3)]
             sage: g = Graph(edge_list, loops=True, multiedges=True)
             sage: m = g.matching(use_edge_labels=True)                                  # optional - sage.networkx
-            sage: type(m)
+            sage: type(m)                                                               # optional - sage.networkx
             <class 'sage.graphs.views.EdgesView'>
-            sage: sorted(m)
+            sage: sorted(m)                                                             # optional - sage.networkx
             [(0, 3, 3), (1, 2, 6)]
 
         TESTS:
@@ -4345,9 +4345,9 @@ class Graph(GenericGraph):
 
             sage: F = graphs.FriendshipGraph(4)
             sage: M = F.matching()                                                      # optional - networkx
-            sage: F.is_factor_critical(matching=M)
+            sage: F.is_factor_critical(matching=M)                                      # optional - networkx
             True
-            sage: F.is_factor_critical(matching=Graph(M))
+            sage: F.is_factor_critical(matching=Graph(M))                               # optional - networkx
             True
 
         TESTS:
@@ -4358,7 +4358,7 @@ class Graph(GenericGraph):
             sage: while not G.is_biconnected():
             ....:     G = graphs.RandomGNP(15, .3)
             sage: M = G.matching()                                                      # optional - networkx
-            sage: G.is_factor_critical(matching=M[:-1])
+            sage: G.is_factor_critical(matching=M[:-1])                                 # optional - networkx
             Traceback (most recent call last):
             ...
             ValueError: the input is not a near perfect matching of the graph
