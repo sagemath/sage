@@ -88,11 +88,15 @@ from sage.categories.map cimport Map
 
 
 RealNumber_classes = ()
-try:
-    from sage.rings.real_mpfr import RealNumber
-    RealNumber_classes += (RealNumber,)
-except ImportError:
-    pass
+
+def _register_real_number_class(cls):
+    r"""
+    Register ``cls``.
+
+    This is called by ``sage.rings.real_mpfr``, to avoid a cyclic import.
+    """
+    global RealNumber_classes
+    RealNumber_classes += (cls,)
 
 
 RealDouble_classes = (float,)

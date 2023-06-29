@@ -6051,6 +6051,11 @@ def create_RealField(*args, **kwds):
     return cr(*args, **kwds)
 
 
+# Hook into Rational
+from sage.rings.rational import _register_real_number_class
+_register_real_number_class(RealNumber)
+
+
 # Support Python's numbers abstract base class
 import numbers
 numbers.Real.register(RealNumber)
