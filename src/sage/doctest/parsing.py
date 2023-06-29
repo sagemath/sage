@@ -209,13 +209,15 @@ def _standard_tags():
                      if feature._spkg_type() == 'standard')
 
 
-def _tag_key(tag):
+def _tag_group(tag):
     if tag.startswith('sage.'):
-        return 2, tag
+        return 'sage'
     elif tag in _standard_tags():
-        return 1, tag
+        return 'standard'
+    elif not special_optional_regex.fullmatch(tag):
+        return 'optional'
     else:
-        return 0, tag
+        return 'special'
 
 
 def unparse_optional_tags(tags):
@@ -233,17 +235,22 @@ def unparse_optional_tags(tags):
         ''
         sage: unparse_optional_tags({'magma'})
         '# optional - magma'
-        sage: unparse_optional_tags(['zipp', 'sage.rings.number_field', 'foo'])
-        '# optional - foo zipp sage.rings.number_field'
+        sage: unparse_optional_tags(['fictional_optional', 'sage.rings.number_field',
+        ....:                        'scipy', 'bliss'])
+        '# optional - bliss fictional_optional, needs scipy sage.rings.number_field'
         sage: unparse_optional_tags(['long time', 'not tested', 'p4cka9e'])
         '# long time, not tested, optional - p4cka9e'
     """
-    tags = set(tags)
-    special_tags = set(tag for tag in tags if special_optional_regex.fullmatch(tag))
-    optional_tags = sorted(tags - special_tags, key=_tag_key)
-    tags = sorted(special_tags)
-    if optional_tags:
-        tags.append('optional - ' + " ".join(optional_tags))
+    group = defaultdict(set)
+    for tag in tags:
+        group[_tag_group(tag)].add(tag)
+    tags = sorted(group.pop('special', []))
+    if 'optional' in group:
+        tags.append('optional - ' + " ".join(sorted(group.pop('optional'))))
+    if 'standard' in group or 'sage' in group:
+        tags.append('needs ' + " ".join(sorted(group.pop('standard', []))
+                                        + sorted(group.pop('sage', []))))
+    assert not group
     if tags:
         return '# ' + ', '.join(tags)
     return ''
@@ -277,7 +284,8 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     if not new_tags:
         return line_sans_tags.rstrip()
 
-    tag_columns = optional_tag_columns if any(_tag_key(tag)[0] < 1 for tag in new_tags) else standard_tag_columns
+    tag_columns = optional_tag_columns if any(_tag_group(tag) in ['optional', 'special']
+                                              for tag in new_tags) else standard_tag_columns
 
     if len(line) in tag_columns and line[-2:] == '  ':
         # keep alignment
