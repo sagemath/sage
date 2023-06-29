@@ -83,7 +83,7 @@ def RIFtol(*args):
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
 
 special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
-optional_regex = re.compile(fr'({special_optional_regex})|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))', re.IGNORECASE)
+optional_regex = re.compile(fr'({special_optional_regex})|[^ a-z]\s*(optional|needs)\s*[:-]*((?:\s|\w|[.])*)', re.IGNORECASE)
 special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
 
 
@@ -123,6 +123,8 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
         sage: sorted(list(parse_optional_tags("sage: #optional -- foo bar, baz")))
         ['bar', 'foo']
         sage: parse_optional_tags("sage: #optional -- foo.bar, baz")
+        {'foo.bar'}
+        sage: parse_optional_tags("sage: #needs foo.bar, baz")
         {'foo.bar'}
         sage: sorted(list(parse_optional_tags("    sage: factor(10^(10^10) + 1) # LoNg TiME, NoT TeSTED; OptioNAL -- P4cka9e")))
         ['long time', 'not tested', 'p4cka9e']
@@ -184,6 +186,8 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
         cmd = m.group(1)
         if cmd and cmd.lower() == 'known bug':
             tags.append('bug')  # so that such tests will be run by sage -t ... -only-optional=bug
+        elif m.group(1) is not None:
+            tags.extend(m.group(2).split() or [""])
         elif cmd:
             tags.append(cmd.lower())
         else:
@@ -665,7 +669,7 @@ class SageDocTestParser(doctest.DocTestParser):
 
         - A list consisting of strings and :class:`doctest.Example`
           instances.  There will be at least one string between
-          successive examples (exactly one unless or long or optional
+          successive examples (exactly one unless long or optional
           tests are removed), and it will begin and end with a string.
 
         EXAMPLES::
@@ -714,7 +718,7 @@ class SageDocTestParser(doctest.DocTestParser):
         of the current line should be joined to the next line.  This
         feature allows for breaking large integers over multiple lines
         but is not standard for Python doctesting.  It's not
-        guaranteed to persist, but works in Sage 5.5::
+        guaranteed to persist::
 
             sage: n = 1234\
             ....:     5678
@@ -729,6 +733,23 @@ class SageDocTestParser(doctest.DocTestParser):
             4321
             sage: print(m)
             87654321
+
+        Optional tags at the start of an example block persist to the end of
+        the block (delimited by a blank line)::
+
+            sage: # needs sage.rings.number_field, long time
+            sage: QQbar(I)^10000
+            1
+            sage: QQbar(I)^10000  # not tested
+            I
+
+            sage: # needs sage.rings.finite_rings
+            sage: GF(7)
+            Finite Field of size 7
+            sage: GF(10)
+            Traceback (most recent call last):
+            ...
+            ValueError: the order of a finite field must be a prime power
 
         Test that :trac:`26575` is resolved::
 
@@ -773,9 +794,14 @@ class SageDocTestParser(doctest.DocTestParser):
         string = find_sage_continuation.sub(r"\1...", string)
         res = doctest.DocTestParser.parse(self, string, *args)
         filtered = []
+        persistent_optional_tags = []
         for item in res:
             if isinstance(item, doctest.Example):
                 optional_tags = parse_optional_tags(item.source)
+                if item.source.startswith("sage: ") and item.source[6:].lstrip().startswith('#'):
+                    persistent_optional_tags = optional_tags
+                    continue
+                optional_tags.update(persistent_optional_tags)
                 item.optional_tags = frozenset(optional_tags)
                 item.probed_tags = set()
                 if optional_tags:
@@ -809,6 +835,7 @@ class SageDocTestParser(doctest.DocTestParser):
                 elif self.optional_only:
                     self.optionals['sage'] += 1
                     continue
+
                 if replace_ellipsis:
                     item.want = item.want.replace(ellipsis_tag, "...")
                     if item.exc_msg is not None:
@@ -819,6 +846,9 @@ class SageDocTestParser(doctest.DocTestParser):
                     if item.sage_source.lstrip().startswith('#'):
                         continue
                     item.source = preparse(item.sage_source)
+            else:
+                if item == '\n':
+                    persistent_optional_tags = []
             filtered.append(item)
         return filtered
 
