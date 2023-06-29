@@ -359,7 +359,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             1,2,3/4,5
             sage: Tableaux.options._reset()
         """
-        return self.parent().options._dispatch(self,'_repr_','display')
+        return self.parent().options._dispatch(self, '_repr_', 'display')
 
     def _repr_list(self):
         """
@@ -392,6 +392,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: print(t._repr_diagram())
               4  5
               1  2  3
+            sage: Tableaux.options.convention='russian'
+            sage: print(t._repr_diagram())
+               5    3
+             4    2
+                1
             sage: Tableaux.options._reset()
 
         TESTS:
@@ -410,15 +415,34 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         str_tab = [[str(data) for data in row] for row in self]
         col_widths = [2]*len(str_tab[0])
         for row in str_tab:
-            for i,e in enumerate(row):
+            for i, e in enumerate(row):
                 col_widths[i] = max(col_widths[i], len(e))
+
+        if self.parent().options('convention') == "Russian":
+            col_width = max(col_widths) + 1
+            max_height = max(a + len(val) for a, val in enumerate(str_tab))
+            str_list = []
+            for i in range(max_height):
+                st = ' ' * ((max_height - i - 1) * col_width)
+                for a in range(i + 1):
+                    b = i - a
+                    if len(str_tab[b:]) > 0 and len(str_tab[b][a:]) > 0:
+                        st += str_tab[b][a].rjust(col_width, ' ').ljust(col_width * 2 - 1, ' ')
+                    else:
+                        st += ' ' * (col_width * 2 - 1)
+                str_list.append(st)
+            import re
+            mm = min(len(re.search('^ +', sline)[0]) for sline in str_list) - 1
+            str_list = [sline[mm:] for sline in str_list]
+            str_list.reverse()
+            return '\n'.join(str_list)
 
         if self.parent().options('convention') == "French":
             str_tab = reversed(str_tab)
 
         return "\n".join(" "
-                         + " ".join("{:>{width}}".format(e,width=col_widths[i])
-                                    for i,e in enumerate(row))
+                         + " ".join("{:>{width}}".format(e, width=col_widths[i])
+                                    for i, e in enumerate(row))
                          for row in str_tab)
 
     def _repr_compact(self):
@@ -437,7 +461,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         return '/'.join(','.join('%s' % r for r in row) for row in self)
 
     def _ascii_art_(self):
-        """
+        r"""
         TESTS::
 
             sage: ascii_art(list(StandardTableaux(3)))
@@ -463,9 +487,23 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [                              3 ]
             [              2       3       2 ]
             [   1  2  3,   1  3,   1  2,   1 ]
+            sage: Tableaux.options(convention="russian", ascii_art="table")
+            sage: ascii_art(list(StandardTableaux(3)))
+            [       / \                             / \      ]
+            [      / 3 /                           \ 3 \     ]
+            [     / \ /     / \ / \     / \ / \     \ / \    ]
+            [    / 2 /     \ 2 X 3 /   \ 3 X 2 /     \ 2 \   ]
+            [   / \ /       \ / \ /     \ / \ /       \ / \  ]
+            [  \ 1 /         \ 1 /       \ 1 /         \ 1 / ]
+            [   \ /     ,     \ /   ,     \ /   ,       \ /  ]
+            sage: Tableaux.options(ascii_art="repr")
+            sage: ascii_art(list(StandardTableaux(3)))
+            [      3                           3             ]
+            [    2       2    3     3    2        2          ]
+            [  1      ,     1    ,     1    ,        1       ]
             sage: Tableaux.options._reset()
         """
-        ascii = self.parent().options._dispatch(self,'_ascii_art_','ascii_art')
+        ascii = self.parent().options._dispatch(self, '_ascii_art_', 'ascii_art')
         from sage.typeset.ascii_art import AsciiArt
         return AsciiArt(ascii.splitlines())
 
@@ -482,8 +520,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             │ 5 │
             └───┘
             sage: unicode_art(Tableau([]))
-            ┌┐
-            └┘
+            <BLANKLINE>
         """
         from sage.typeset.unicode_art import UnicodeArt
         return UnicodeArt(self._ascii_art_table(use_unicode=True).splitlines())
@@ -491,7 +528,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     _ascii_art_repr = _repr_diagram
 
     def _ascii_art_table(self, use_unicode=False):
-        """
+        r"""
         TESTS:
 
         We check that :trac:`16487` is fixed::
@@ -510,9 +547,21 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             +---+---+---+
             | 1 | 2 | 3 |
             +---+---+---+
+            sage: Tableaux.options.convention="russian"
+            sage: print(t._ascii_art_table())
+                / \ / \
+               / 5 X 3 /
+              / \ / \ /
+             \ 4 X 2 /
+              \ / \ /
+               \ 1 /
+                \ /
             sage: t = Tableau([]); print(t._ascii_art_table())
-            ++
-            ++
+            <BLANKLINE>
+
+            sage: Tableaux.options.convention="french"
+            sage: print(t._ascii_art_table())
+            <BLANKLINE>
             sage: Tableaux.options._reset()
 
             sage: t = Tableau([[1,2,3,10,15],[12,15,17]])
@@ -546,6 +595,22 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             +----+----+----+---+
             |  1 |  2 | 15 | 7 |
             +----+----+----+---+
+            sage: Tableaux.options.convention="russian"
+            sage: ascii_art(t)
+               / \   / \   / \   / \
+              /   \ /   \ /   \ /   \
+             \  9  X 10  X  6  X  7  /
+              \   / \   / \   / \   /
+               \ /   \ /   \ /   \ /
+                \  8  X  5  X 15  /
+                 \   / \   / \   /
+                  \ /   \ /   \ /
+                   \ 12  X  2  /
+                    \   / \   /
+                     \ /   \ /
+                      \  1  /
+                       \   /
+                        \ /
             sage: Tableaux.options._reset()
 
         Unicode version::
@@ -573,14 +638,31 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             ├────┼────┼────┬───┐
             │ 1  │ 2  │ 15 │ 7 │
             └────┴────┴────┴───┘
+            sage: Tableaux.options.convention="russian"
+            sage: print(t._ascii_art_table(use_unicode=True))
+               ╱ ╲   ╱ ╲         ╱ ╲
+              ╱   ╲ ╱   ╲       ╱   ╲
+             ╲  9  ╳ 10  ╲     ╱  7  ╱
+              ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
+               ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
+                ╲  8  ╳  5  ╳ 15  ╱
+                 ╲   ╱ ╲   ╱ ╲   ╱
+                  ╲ ╱   ╲ ╱   ╲ ╱
+                   ╲ 12  ╳  2  ╱
+                    ╲   ╱ ╲   ╱
+                     ╲ ╱   ╲ ╱
+                      ╲  1  ╱
+                       ╲   ╱
+                        ╲ ╱
             sage: Tableaux.options._reset()
         """
         from sage.combinat.output import ascii_art_table
+        self.parent().options('convention')
         return ascii_art_table(self, use_unicode=use_unicode,
                                convention=self.parent().options('convention'))
 
     def _ascii_art_compact(self):
-        """
+        r"""
         TESTS:
 
         We check that :trac:`16487` is fixed::
@@ -593,6 +675,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: print(t._ascii_art_compact())
             |4|5|
             |1|2|3|
+            sage: Tableaux.options.convention="russian"
+            sage: print(t._ascii_art_compact())
+              /5X3/
+             \4X2/
+              \1/
             sage: Tableaux.options._reset()
 
             sage: t = Tableau([[1,2,3,10,15],[12,15,17]])
@@ -607,6 +694,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self:
             return "."
 
+        if self.parent().options('convention') == "Russian":
+            from sage.combinat.output import ascii_art_table_russian
+            return ascii_art_table_russian(self, compact=True)
         if self.parent().options('convention') == "English":
             T = self
         else:
@@ -616,12 +706,12 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         str_tab = [[str(_) for _ in row] for row in T]
         col_widths = [1]*len(self[0])
         for row in str_tab:
-            for i,e in enumerate(row):
+            for i, e in enumerate(row):
                 col_widths[i] = max(col_widths[i], len(e))
 
         return "\n".join("|"
                          + "|".join("{:^{width}}".format(e, width=col_widths[i])
-                                    for i,e in enumerate(row))
+                                    for i, e in enumerate(row))
                          + "|" for row in str_tab)
 
     def _latex_(self):
@@ -648,11 +738,21 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             \lr{1}&\lr{1}&\lr{2}\\\cline{1-3}
             \end{array}$}
             }
+            sage: Tableaux.options.convention="russian"
+            sage: latex(t)    # indirect doctest
+            {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{3}c}\cline{1-1}
+            \lr{\rotatebox{-45}{3}}\\\cline{1-2}
+            \lr{\rotatebox{-45}{2}}&\lr{\rotatebox{-45}{3}}\\\cline{1-3}
+            \lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{2}}\\\cline{1-3}
+            \end{array}$}}
+            }
+
             sage: Tableaux.options._reset()
         """
-        return self.parent().options._dispatch(self,'_latex_', 'latex')
+        return self.parent().options._dispatch(self, '_latex_', 'latex')
 
-    _latex_list=_repr_list
+    _latex_list = _repr_list
 
     def _latex_diagram(self):
         r"""
@@ -693,11 +793,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             ValueError: the shape of the tableau must contain the partition
         """
         from sage.combinat.partition import _Partitions
-        #if t is a list, convert it to a partition first
+        # if t is a list, convert it to a partition first
         if isinstance(t, list):
             t = _Partitions(t)
 
-        #Check to make sure that tableau shape contains t
+        # Check to make sure that tableau shape contains t
         if not self.shape().contains(t):
             raise ValueError("the shape of the tableau must contain the partition")
 
@@ -736,9 +836,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             IndexError: the cell (3,3) is not contained in [[1, 2, 3], [4, 5]]
         """
         try:
-            i,j = cell
+            i, j = cell
         except ValueError:
-            i,j = cell[0]
+            i, j = cell[0]
 
         try:
             return self[i][j]
@@ -749,7 +849,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         Return the level of ``self``, which is always 1.
 
-        This function exists mainly for compatibility with :class:`TableauTuple`.
+        This function exists mainly for compatibility with
+        :class:`TableauTuple`.
 
         EXAMPLES::
 
@@ -761,8 +862,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     def components(self):
         """
         This function returns a list containing itself. It exists mainly for
-        compatibility with :class:`TableauTuple` as it allows constructions like the
-        example below.
+        compatibility with :class:`TableauTuple` as it allows constructions
+        like the example below.
 
         EXAMPLES::
 
@@ -811,7 +912,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self.shape().corners()
 
-    @combinatorial_map(order=2,name='conjugate')
+    @combinatorial_map(order=2, name='conjugate')
     def conjugate(self):
         """
         Return the conjugate of ``self``.
@@ -852,6 +953,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
               5
               3  4
               1  2  3
+            sage: Tableaux.options.convention="russian"
+            sage: T.pp()
+             5    4    3
+                3    2
+                   1
             sage: Tableaux.options._reset()
         """
         print(self._repr_diagram())
@@ -870,7 +976,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             Tableaux.options.convention="english"
             sphinx_plot(t.plot())
 
-        Whereas if French notation is set, the first row of the tableau is on
+        If French notation is set, the first row of the tableau is on
         the bottom:
 
         .. PLOT::
@@ -878,6 +984,16 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             t = Tableau([[1,2,3,4],[2,3],[5]])
             Tableaux.options.convention="french"
+            sphinx_plot(t.plot())
+            Tableaux.options.convention="english"
+
+        If Russian notation is set, we tilt the French notation by 45 degrees:
+
+        .. PLOT::
+            :width: 200 px
+
+            t = Tableau([[1,2,3,4],[2,3],[5]])
+            Tableaux.options.convention="russian"
             sphinx_plot(t.plot())
             Tableaux.options.convention="english"
 
@@ -917,24 +1033,55 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             m = -1
 
         p = self.shape()
-
-        G = line([(0,0),(p[0],0)], axes=False, figsize=1.5)
-        for i in range(len(p)):
-            G += line([(0,m*(-i-1)), (p[i],m*(-i-1))])
-
         r = p.conjugate()
-        G += line([(0,0),(0,m*-r[0])])
+
+        # Increases the height
+        if self.parent().options('convention') == "Russian":
+            pp = p  # h
+            rr = r
+            h = [-i-1 for i in range(len(p))]
+            v = [i+1 for i in range(len(r))]
+
+        else:
+            pp = [0] * len(p)
+            rr = [0] * len(r)
+            h = [0] * len(p)
+            v = [0] * len(r)
+
+        G = line([(0, 0), (p[0], pp[0])], axes=False, figsize=1.5)
+        for i in range(len(p)):
+            G += line([(h[i], m*(-i-1)), (h[i]+p[i], pp[i]+m*(-i-1))])
+
+        G += line([(0, 0), (-rr[0], m*-r[0])])
         for i in range(len(r)):
-            G += line([(i+1,0),(i+1,m*-r[i])])
+            G += line([(i+1, v[i]), (i+1-rr[i], v[i]+m*-r[i])])
 
         if descents:
             t = StandardTableau(self)
             for i in t.standard_descents():
                 c = t.cells_containing(i)[0]
-                G += polygon([(c[1],m*c[0]), (c[1]+1,m*c[0]), (c[1]+1,m*(-c[0]-1)), (c[1],m*(-c[0]-1))], rgbcolor=(1,0,1))
+                if self.parent().options('convention') == "Russian":
+                    G += polygon([(c[1]+1-v[c[0]], m*(-c[1]-c[0])),
+                                  (c[1]+2-v[c[0]], m*(-c[1]-c[0]-1)),
+                                  (c[1]+1-v[c[0]], m*(-c[1]-c[0]-2)),
+                                  (c[1]-v[c[0]], m*(-c[1]-c[0]-1))
+                                  ],
+                                 rgbcolor=(1, 0, 1)
+                                 )
+                else:
+                    G += polygon([(c[1], m*-c[0]),
+                                  (c[1]+1, m*-c[0]),
+                                  (c[1]+1, m*(-c[0]-1)),
+                                  (c[1], m*(-c[0]-1))
+                                  ],
+                                 rgbcolor=(1, 0, 1))
 
-        for c in self.cells():
-            G += text(str(self.entry(c)), (c[1]+0.5,m*(-c[0]-0.5)))
+        if self.parent().options('convention') == "Russian":
+            for c in self.cells():
+                G += text(str(self.entry(c)), (c[1]+1-v[c[0]], m*(-c[1]-c[0]-1)))
+        else:
+            for c in self.cells():
+                G += text(str(self.entry(c)), (c[1]+0.5, m*(-c[0]-0.5)))
 
         return G
 
@@ -1008,10 +1155,10 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [(1, 0), (1, 1)]
         """
         descents = []
-        for i in range(1,len(self)):
+        for i in range(1, len(self)):
             for j in range(len(self[i])):
                 if self[i][j] > self[i-1][j]:
-                    descents.append((i,j))
+                    descents.append((i, j))
         return descents
 
     def major_index(self):
@@ -1042,7 +1189,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         descents = self.descents()
         p = self.shape()
-        return len(descents) + sum([ p.leg_length(*d) for d in descents ])
+        return len(descents) + sum([p.leg_length(*d) for d in descents])
 
     def inversions(self):
         """
@@ -1075,13 +1222,13 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 # find the d that satisfy condition 1
                 for k in range(j+1, len(row)):
                     if entry > row[k]:
-                        inversions.append( ((i,j),(i,k)) )
+                        inversions.append(((i, j), (i, k)))
                 # find the d that satisfy condition 2
                 if i == 0:
                     continue
                 for k in range(j):
                     if entry > previous_row[k]:
-                        inversions.append( ((i,j),(i-1,k)) )
+                        inversions.append(((i, j), (i-1, k)))
             previous_row = row
         return inversions
 
@@ -1160,19 +1307,19 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 raise ValueError("the entries must be non-negative integers")
         from sage.matrix.matrix_space import MatrixSpace
         if max_entry is None:
-            max_entry=max([max(c) for c in self])
+            max_entry = max([max(c) for c in self])
         MS = MatrixSpace(ZZ, len(self[0]), max_entry)
         Tconj = self.conjugate()
-        l = len(Tconj)
-        d = {(l-i-1,elem-1): 1 for i, row in enumerate(Tconj) for elem in row}
+        conj_len = len(Tconj)
+        d = {(conj_len-i-1, elem-1): 1 for i, row in enumerate(Tconj) for elem in row}
         partial_sum_matrix = MS(d)
         from copy import copy
         sign_matrix = copy(MS.zero())
         for j in range(max_entry):
-            sign_matrix[0,j] = partial_sum_matrix[0,j]
-        for i in range(1,l):
+            sign_matrix[0, j] = partial_sum_matrix[0, j]
+        for i in range(1, conj_len):
             for j in range(max_entry):
-                sign_matrix[i,j] = partial_sum_matrix[i,j] - partial_sum_matrix[i-1,j]
+                sign_matrix[i, j] = partial_sum_matrix[i, j] - partial_sum_matrix[i-1, j]
         return sign_matrix
 
     def schuetzenberger_involution(self, n=None, check=True):
@@ -1239,7 +1386,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             return SemistandardTableau(list(t))
         return t
 
-    @combinatorial_map(order=2,name='evacuation')
+    @combinatorial_map(order=2, name='evacuation')
     def evacuation(self, n=None, check=True):
         r"""
         Return the evacuation of the tableau ``self``.
@@ -1286,7 +1433,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: s.parent()
             Standard tableaux
         """
-        return self.schuetzenberger_involution(n,check)
+        return self.schuetzenberger_involution(n, check)
 
     @combinatorial_map(name="standardization")
     def standardization(self, check=True):
@@ -1502,7 +1649,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: t.entry( (1,1) )
             4
         """
-        i,j = cell
+        i, j = cell
         return self[i][j]
 
     def weight(self):
@@ -1574,7 +1721,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: Tableau([[5, 3], [2, 4]]).is_row_strict()
             False
         """
-        return all(row[i]<row[i+1] for row in self for i in range(len(row)-1))
+        return all(row[i] < row[i+1] for row in self for i in range(len(row)-1))
 
     def is_row_increasing(self, weak=False):
         r"""
@@ -1746,7 +1893,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
     def vertical_flip(self):
         """
-        Return the tableau obtained by vertically flipping the tableau ``self``.
+        Return the tableau obtained by vertically flipping the tableau
+        ``self``.
 
         This only works for rectangular tableaux.
 
@@ -1774,7 +1922,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self.is_rectangular():
             raise TypeError("the tableau must be rectangular to use rotate_180()")
 
-        return Tableau([ [l for l in reversed(row)] for row in reversed(self) ])
+        return Tableau([[rline for rline in reversed(row)] for row in reversed(self)])
 
     def cells(self):
         """
@@ -1790,7 +1938,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         s = []
         for i, row in enumerate(self):
-            s += [ (i,j) for j in range(len(row)) ]
+            s += [(i, j) for j in range(len(row))]
         return s
 
     def cells_containing(self, i):
@@ -1827,9 +1975,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         cell_list = []
         for r in range(len(self)-1, -1, -1):
             rth_row = self[r]
-            for c,val in enumerate(rth_row):
+            for c, val in enumerate(rth_row):
                 if val == i:
-                    cell_list.append((r,c))
+                    cell_list.append((r, c))
         return cell_list
 
     def leq(self, secondtab):
@@ -1915,10 +2063,10 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         w = self.weight()
         s = self.cells()
 
-        for l in range(1,len(w)+1):
-            new_s = [(i,j) for i,j in s if self[i][j] == l]
+        for l in range(1, len(w)+1):
+            new_s = [(i, j) for i, j in s if self[i][j] == l]
 
-            #If there are no elements that meet the condition
+            # If there are no elements that meet the condition
             if new_s == []:
                 res.append(0)
                 continue
@@ -1941,8 +2089,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             False
         """
         shapes = self.to_chain()
-        kshapes = [ la.k_conjugate(k) for la in shapes ]
-        return all( kshapes[i+1].contains(kshapes[i]) for i in range(len(shapes)-1) )
+        kshapes = [la.k_conjugate(k) for la in shapes]
+        return all(kshapes[i+1].contains(kshapes[i]) for i in range(len(shapes)-1))
 
     def restrict(self, n):
         """
@@ -1997,14 +2145,14 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: _.category()
             Category of elements of Semistandard tableaux
         """
-        res = [ [y for y in row if y <= n] for row in self ]
+        res = [[y for y in row if y <= n] for row in self]
         res = [row for row in res if row]
         # attempt to return a tableau of the same type
         try:
-            return self.parent()( res )
+            return self.parent()(res)
         except Exception:
             try:
-                return self.parent().Element( res )
+                return self.parent().Element(res)
             except Exception:
                 return Tableau(res)
 
@@ -2168,7 +2316,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         new_t = self.to_list()
         for row in new_t:
             i = 0
-            #try to insert to_insert into row
+            # try to insert to_insert into row
             while i < len(row):
                 if to_insert < row[i]:
                     t = to_insert
@@ -2177,15 +2325,15 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                     break
                 i += 1
 
-            #if we haven't already inserted to_insert
-            #append it to the end of row
+            # if we haven't already inserted to_insert
+            # append it to the end of row
             if i == len(row):
                 row.append(to_insert)
                 if isinstance(self, SemistandardTableau):
                     return SemistandardTableau(new_t)
                 return Tableau(new_t)
-        #if we got here, we are at the end of the tableau
-        #add to_insert as the last row
+        # if we got here, we are at the end of the tableau
+        # add to_insert as the last row
         new_t.append([to_insert])
         if isinstance(self, SemistandardTableau):
             return SemistandardTableau(new_t)
@@ -2298,7 +2446,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             w = [i for i in reversed(w)]
         res = self
         for i in w:
-            res = res.schensted_insert(i,left=left)
+            res = res.schensted_insert(i, left=left)
         return res
 
     def reverse_bump(self, loc):
@@ -2496,33 +2644,33 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         new_st = self.to_list()
         spotl, spotc = c
-        while [spotl, spotc] != [0,0]:
-            #once moving box is in first column, just move letters up
-            #(French notation!)
+        while [spotl, spotc] != [0, 0]:
+            # once moving box is in first column, just move letters up
+            # (French notation!)
             if spotc == 0:
                 new_st[spotl][spotc] = new_st[spotl-1][spotc]
                 spotl -= 1
                 continue
-            #once moving box is in first row, just move letters up
+            # once moving box is in first row, just move letters up
             elif spotl == 0:
                 new_st[spotl][spotc] = new_st[spotl][spotc-1]
                 spotc -= 1
                 continue
             else:
-                #If we get to this stage, we need to compare
+                # If we get to this stage, we need to compare
                 below = new_st[spotl-1][spotc]
                 left = new_st[spotl][spotc-1]
                 if below >= left:
-                    #Swap with the cell below
+                    # Swap with the cell below
                     new_st[spotl][spotc] = new_st[spotl-1][spotc]
                     spotl -= 1
                     continue
                 else:
-                    #Swap with the cell to the left
+                    # Swap with the cell to the left
                     new_st[spotl][spotc] = new_st[spotl][spotc-1]
                     spotc -= 1
                     continue
-        #set box in position (0,0) to 0
+        # set box in position (0,0) to 0
         new_st[0][0] = 0
         return Tableau(new_st)
 
@@ -2549,14 +2697,14 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [[1, 2, 2, 2, 2, 3], [2, 4, 4, 6, 6], [4, 5, 7, 11], [5, 8]]
         """
         new_st = self.to_list()
-        #new_st is a deep copy of self, so as not to mess around with self.
+        # new_st is a deep copy of self, so as not to mess around with self.
         new_st_shape = [len(x) for x in self]
         spotl, spotc = c
-        #spotl and spotc are the coordinates of the wandering hole.
-        #All comments and variable names below refer to French notation.
+        # spotl and spotc are the coordinates of the wandering hole.
+        # All comments and variable names below refer to French notation.
         while True:
-            #"right_neighbor" and "upper_neighbor" refer to neighbors of the
-            #hole.
+            # "right_neighbor" and "upper_neighbor" refer to neighbors of the
+            # hole.
             go_right = None
             if len(new_st_shape) > spotl + 1 and new_st_shape[spotl + 1] >= spotc + 1:
                 upper_neighbor = new_st[spotl + 1][spotc]
@@ -2663,7 +2811,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 return self
             s = self.shape()[0]
             l = self.weight()[0]
-            word = [i-1 for row in reversed(self) for i in row if i>1]
+            word = [i-1 for row in reversed(self) for i in row if i > 1]
             t = Tableau([])
             t = t.insert_word(word)
             t = t.to_list()
@@ -2823,8 +2971,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         gens = [list(range(1, k + 1))]
         for row in self:
             for j in range(len(row) - 1):
-                gens.append( (row[j], row[j + 1]) )
-        return PermutationGroup( gens )
+                gens.append((row[j], row[j + 1]))
+        return PermutationGroup(gens)
 
     def column_stabilizer(self):
         """
@@ -2885,7 +3033,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         heights = [1]*(cor[0][1])
         for i in range(1, ncor):
-            heights += [ cor[i][0] ]*(cor[i][1]-cor[i-1][1])
+            heights += [cor[i][0]]*(cor[i][1]-cor[i-1][1])
 
         return heights
 
@@ -3045,13 +3193,13 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 if r == len(tab) and c == 0:
                     tab.append([m])
                 else:
-                    raise IndexError('%s is not an addable cell of the tableau' % ((r,c),))
+                    raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
             else:
                 tab_r = tab[r]
                 if c == len(tab_r):
                     tab_r.append(m)
                 else:
-                    raise IndexError('%s is not an addable cell of the tableau' % ((r,c),))
+                    raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
 
         # attempt to return a tableau of the same type as self
         if tab in self.parent():
@@ -3086,8 +3234,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if h == 0:
             return self
         else:
-            #Remove the top row and insert it back in
-            return Tableau(self[1:]).insert_word(self[0],left=True)
+            # Remove the top row and insert it back in
+            return Tableau(self[1:]).insert_word(self[0], left=True)
 
     def catabolism_sequence(self):
         """
@@ -3165,7 +3313,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         w1 = list(sum((row for row in reversed(self[m:])), ()))
 
         w2 = []
-        for i,row in enumerate(reversed(self[:m])):
+        for i, row in enumerate(reversed(self[:m])):
             w2 += row[part[-1 - i]:]
 
         return Tableau([]).insert_word(w2 + w1)
@@ -3205,8 +3353,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         a = self[0][0]
 
-        part = [ min(part1[i], len(self[i])) for i in range(min(len(part1),len(self)))]
-        tt_part = Tableau([ [a+i]*part[i] for i in range(len(part)) ])
+        part = [min(part1[i], len(self[i])) for i in range(min(len(part1), len(self)))]
+        tt_part = Tableau([[a+i]*part[i] for i in range(len(part))])
         t_part = Tableau([[self[i][j] for j in range(part[i])] for i in range(len(part))])
 
         if t_part == tt_part:
@@ -3299,8 +3447,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         weight = self.weight()
         perm = permutation.from_reduced_word(range(1, len(weight)+1))
         l = part.add_horizontal_border_strip(i)
-        ltab = [ from_chain( chain + [next] ) for next in l ]
-        return [ x.symmetric_group_action_on_values(perm) for x in ltab ]
+        ltab = [from_chain(chain + [next]) for next in l]
+        return [x.symmetric_group_action_on_values(perm) for x in ltab]
 
     ##################################
     # actions on tableaux from words #
@@ -3430,9 +3578,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: Tableau([[1,2,3],[4,5],[6]]).atom()
             [3, 2, 1]
         """
-        ll = [ t.socle() for t in self.catabolism_sequence() ]
+        ll = [t.socle() for t in self.catabolism_sequence()]
         lres = ll[:]
-        for i in range(1,len(ll)):
+        for i in range(1, len(ll)):
             lres[i] = ll[i] - ll[i-1]
         return lres
 
@@ -3566,7 +3714,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                         update.append(col_b[:-1])
                     else:
                         update.append(col_b)
-                key[i].insert(0,key_val)
+                key[i].insert(0, key_val)
                 right_cols = update
         return Tableau(key).conjugate()
 
@@ -3626,7 +3774,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         key[0] = list(cols_list[0])
 
         from bisect import bisect_right
-        for i, col_a in enumerate(cols_list[1:],1):
+        for i, col_a in enumerate(cols_list[1:], 1):
             left_cols = cols_list[:i]
             for elem in reversed(col_a):
                 key_val = elem
@@ -3636,7 +3784,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                     key_val = col_b[j]
                     update.insert(0, col_b[:j])
                 left_cols = update
-                key[i].insert(0,key_val)
+                key[i].insert(0, key_val)
         return Tableau(key).conjugate()
 
     #################
@@ -3738,7 +3886,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 for t in S:
                     if s[0][0]+1 == t[0][0] and s[1] == t[1] and (
                             (s[1] >= 1 and self[s[0][0]+1][s[1]-1] <= self[s[0][0]][s[1]])
-                            or (s[1] < 1 and self[s[0][0]+1][s[1]] != s[0][0]+2) ):
+                            or (s[1] < 1 and self[s[0][0]+1][s[1]] != s[0][0]+2)):
                         f += 1
         return f
 
@@ -3767,7 +3915,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: 6 does not appear in tableau
         """
-        for r,row in enumerate(self):
+        for r, row in enumerate(self):
             try:
                 return row.index(k) - r + multicharge[0]
             except ValueError:
@@ -3852,8 +4000,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             4-residue sequence (0,1,3,0) with multicharge (0)
         """
         res = [0] * self.size()
-        for r,row in enumerate(self):
-            for c,entry in enumerate(row):
+        for r, row in enumerate(self):
+            for c, entry in enumerate(row):
                 res[entry-1] = multicharge[0] - r + c
         from sage.combinat.tableau_residues import ResidueSequence
         return ResidueSequence(e, multicharge, res, check=False)
@@ -3891,7 +4039,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if n == 0:
             return 0
 
-        deg = self.shape()._initial_degree(e,multicharge)
+        deg = self.shape()._initial_degree(e, multicharge)
         res = self.shape().initial_tableau().residue_sequence(e, multicharge)
         for r in self.reduced_row_word():
             if res[r] == res[r+1]:
@@ -4679,15 +4827,15 @@ class StandardTableau(SemistandardTableau):
             sage: [x for x in t.up()]
             [[[1, 2, 3]], [[1, 2], [3]]]
         """
-        #Get a list of all places where we can add a cell
-        #to the shape of self
+        # Get a list of all places where we can add a cell
+        # to the shape of self
 
         outside_corners = self.shape().outside_corners()
 
         n = self.size()
 
-        #Go through and add n+1 to the end of each
-        #of the rows
+        # Go through and add n+1 to the end of each
+        # of the rows
         for row, _ in outside_corners:
             new_t = [list(_) for _ in self]
             if row != len(self):
@@ -4910,7 +5058,7 @@ def from_chain(chain):
     for i in reversed(range(2, len(chain) + 1)):
         for j in range(len(chain[i - 1])):
             for k in range(chain[i - 1][j]):
-                res[j][k] = i -1
+                res[j][k] = i - 1
     T = Tableaux_all()
     return T.element_class(T, res)
 
@@ -4955,7 +5103,7 @@ def from_shape_and_word(shape, w, convention="French"):
     if convention == "French":
         shape = reversed(shape)
     for l in shape:
-        res.append( tuple(w[j:j+l]) )
+        res.append(tuple(w[j:j+l]))
         j += l
     if convention == "French":
         res.reverse()
@@ -5221,7 +5369,7 @@ class IncreasingTableau(Tableau):
             ans = ans.K_bender_knuth(i)
         return ans
 
-    @combinatorial_map(order=2,name='K-evacuation')
+    @combinatorial_map(order=2, name='K-evacuation')
     def K_evacuation(self, ceiling=None):
         """
         Return the K-evacuation involution from [TY2009]_ to ``self``.
@@ -5499,7 +5647,11 @@ class Tableaux(UniqueRepresentation, Parent):
                    case_sensitive=False)
         convention = dict(default="English",
                         description='Sets the convention used for displaying tableaux and partitions',
-                        values=dict(English='use the English convention',French='use the French convention'),
+                        values=dict(
+                            English='use the English convention',
+                            French='use the French convention',
+                            Russian='use the Russian convention',
+                        ),
                         case_sensitive=False)
         notation = dict(alt_name="convention")
 
@@ -5630,7 +5782,7 @@ class Tableaux_size(Tableaux):
         super().__init__(category=Sets())
         self.size = n
 
-    def __contains__(self,x):
+    def __contains__(self, x):
         """
         TESTS::
 
@@ -5670,13 +5822,13 @@ class Tableaux_size(Tableaux):
             sage: T.an_element()
             []
         """
-        if self.size==0:
+        if self.size == 0:
             return self.element_class(self, [])
 
-        if self.size==1:
+        if self.size == 1:
             return self.element_class(self, [[1]])
 
-        return self.element_class(self, [[1]*(self.size-1),[1]])
+        return self.element_class(self, [[1]*(self.size-1), [1]])
 
 
 ##########################
@@ -5879,27 +6031,27 @@ class SemistandardTableaux(Tableaux):
             # The first arg could be either a size or a shape
             if isinstance(args[0], (int, Integer)):
                 if size is not None:
-                    raise ValueError( "size was specified more than once" )
+                    raise ValueError("size was specified more than once")
                 else:
                     size = args[0]
             else:
                 if shape is not None:
-                    raise ValueError( "the shape was specified more than once" )
+                    raise ValueError("the shape was specified more than once")
                 shape = args[0]  # we check it's a partition later
 
         if len(args) == 2:
             # The second non-keyword argument is the weight
             if mu is not None:
-                raise ValueError( "the weight was specified more than once" )
+                raise ValueError("the weight was specified more than once")
             else:
                 mu = args[1]
 
         # Consistency checks
         if size is not None:
             if not isinstance(size, (int, Integer)):
-                raise ValueError( "size must be an integer" )
+                raise ValueError("size must be an integer")
             elif size < 0:
-                raise ValueError( "size must be non-negative" )
+                raise ValueError("size must be non-negative")
 
         if shape is not None:
             from sage.combinat.skew_partition import SkewPartitions
@@ -5911,40 +6063,40 @@ class SemistandardTableaux(Tableaux):
                 from sage.combinat.skew_tableau import SemistandardSkewTableaux
                 return SemistandardSkewTableaux(shape, mu)
             else:
-                raise ValueError( "shape must be a (skew) partition" )
+                raise ValueError("shape must be a (skew) partition")
 
         if mu is not None:
             if mu not in Compositions() and mu not in _Partitions:
-                raise ValueError( "mu must be a composition" )
+                raise ValueError("mu must be a composition")
             mu = Composition(mu)
 
         is_inf = max_entry is PlusInfinity()
 
         if max_entry is not None:
             if not is_inf and not isinstance(max_entry, (int, Integer)):
-                raise ValueError( "max_entry must be an integer or PlusInfinity" )
+                raise ValueError("max_entry must be an integer or PlusInfinity")
             elif max_entry <= 0:
-                raise ValueError( "max_entry must be positive" )
+                raise ValueError("max_entry must be positive")
 
         if (mu is not None) and (max_entry is not None):
             if max_entry != len(mu):
-                raise ValueError( "the maximum entry must match the weight" )
+                raise ValueError("the maximum entry must match the weight")
 
         if (size is not None) and (shape is not None):
             if sum(shape) != size:
                 # This could return an empty class instead of an error
-                raise ValueError( "size and shape are different sizes" )
+                raise ValueError("size and shape are different sizes")
 
         if (size is not None) and (mu is not None):
             if sum(mu) != size:
                 # This could return an empty class instead of an error
-                raise ValueError( "size and eval are different sizes" )
+                raise ValueError("size and eval are different sizes")
 
         # Dispatch appropriately
         if (shape is not None) and (mu is not None):
             if sum(shape) != sum(mu):
                 # This could return an empty class instead of an error
-                raise ValueError( "shape and eval are different sizes" )
+                raise ValueError("shape and eval are different sizes")
             else:
                 return SemistandardTableaux_shape_weight(shape, mu)
 
@@ -6049,26 +6201,26 @@ class SemistandardTableaux(Tableaux):
             ...
             ValueError: infinite set
         """
-        if isinstance(r,(int,Integer)):
+        if isinstance(r, (int, Integer)):
             return self.unrank(r)
-        elif isinstance(r,slice):
-            start=0 if r.start is None else r.start
-            stop=r.stop
+        elif isinstance(r, slice):
+            start = 0 if r.start is None else r.start
+            stop = r.stop
             if stop is None and not self.is_finite():
-                raise ValueError( 'infinite set' )
+                raise ValueError('infinite set')
         else:
-            raise ValueError( 'r must be an integer or a slice' )
-        count=0
-        tabs=[]
+            raise ValueError('r must be an integer or a slice')
+        count = 0
+        tabs = []
         for t in self:
-            if count==stop:
+            if count == stop:
                 break
-            if count>=start:
+            if count >= start:
                 tabs.append(t)
-            count+=1
+            count += 1
 
         # this is to cope with empty slices endpoints like [:6] or [:}
-        if count==stop or stop is None:
+        if count == stop or stop is None:
             return tabs
         raise IndexError('value out of range')
 
@@ -6483,14 +6635,14 @@ class SemistandardTableaux_size(SemistandardTableaux):
             pos += 1
             tot += weights[pos]
         # we now have pos elements over the diagonal and n - 2 * pos on it
-        m = diagonal_matrix( list(IntegerVectors(self.size - 2 * pos,
-                                                 self.max_entry).random_element()) )
+        m = diagonal_matrix(list(IntegerVectors(self.size - 2 * pos,
+                                                 self.max_entry).random_element()))
         above_diagonal = list(IntegerVectors(pos, kchoose2m1 + 1).random_element())
         index = 0
         for i in range(self.max_entry - 1):
             for j in range(i + 1, self.max_entry):
-                m[i,j] = above_diagonal[index]
-                m[j,i] = above_diagonal[index]
+                m[i, j] = above_diagonal[index]
+                m[j, i] = above_diagonal[index]
                 index += 1
         return RSK(m)[0]
 
@@ -6696,9 +6848,9 @@ class SemistandardTableaux_shape(SemistandardTableaux):
 
         """
         from sage.misc.prandom import randint
-        with_sentinels = [max(i,j) for i,j in zip([0]+list(self.shape), [k+1 for k in self.shape]+[0])]
+        with_sentinels = [max(i, j) for i, j in zip([0]+list(self.shape), [k+1 for k in self.shape]+[0])]
         t = [[self.max_entry+1]*i for i in with_sentinels]
-        for i,l in enumerate(self.shape):
+        for i, l in enumerate(self.shape):
             for j in range(l):
                 content = j - i
                 t[i][j] = randint(1 - content, self.max_entry)
@@ -6721,7 +6873,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
                         row += 1
                     x = t[row][col + 1]
                     y = t[row + 1][col]
-        return SemistandardTableau([l[:c] for l,c in zip(t, self.shape)])
+        return SemistandardTableau([l[:c] for l, c in zip(t, self.shape)])
 
     def cardinality(self, algorithm='hook'):
         r"""
@@ -6772,7 +6924,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             conj = self.shape.conjugate()
             num = Integer(1)
             den = Integer(1)
-            for i,l in enumerate(self.shape):
+            for i, l in enumerate(self.shape):
                 for j in range(l):
                     num *= self.max_entry + j - i
                     den *= l + conj[j] - i - j - 1
@@ -7108,8 +7260,8 @@ class RowStandardTableaux(Tableaux):
             return RowStandardTableaux_shape(_Partitions(n))
 
         elif n in SkewPartitions():
-            #from sage.combinat.skew_tableau import RowStandardSkewTableaux
-            #return RowStandardSkewTableaux(n)
+            # from sage.combinat.skew_tableau import RowStandardSkewTableaux
+            # return RowStandardSkewTableaux(n)
             raise NotImplementedError("row standard skew tableaux not yet implemented")
 
         if not isinstance(n, (int, Integer)) or n < 0:
@@ -7143,9 +7295,9 @@ class RowStandardTableaux(Tableaux):
         if isinstance(x, RowStandardTableau):
             return True
         elif Tableaux.__contains__(self, x):
-            flatx = sorted(sum((list(row) for row in x),[]))
-            return ( flatx == list(range(1,len(flatx)+1))
-                     and all(row[i] < row[i+1] for row in x for i in range(len(row)-1)) )
+            flatx = sorted(sum((list(row) for row in x), []))
+            return (flatx == list(range(1, len(flatx)+1))
+                     and all(row[i] < row[i+1] for row in x for i in range(len(row)-1)))
         return False
 
 
@@ -7281,7 +7433,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         elif self._size == 1:
             return self.element_class(self, [[1]])
         else:
-            return self.element_class(self, [range(1,self._size + 1)])
+            return self.element_class(self, [range(1, self._size + 1)])
 
 
 class RowStandardTableaux_shape(RowStandardTableaux):
@@ -7363,9 +7515,9 @@ class RowStandardTableaux_shape(RowStandardTableaux):
         relations = []
         m = 1
         for row in self.shape:
-            relations += [(m+i,m+i+1) for i in range(row-1)]
+            relations += [(m+i, m+i+1) for i in range(row-1)]
             m += row
-        P = Poset((range(1,self.shape.size()+1), relations))
+        P = Poset((range(1, self.shape.size()+1), relations))
         L = P.linear_extensions()
         # now run through the linear extensions and return the corresponding tableau
         for lin in L:
@@ -7544,10 +7696,10 @@ class StandardTableaux(SemistandardTableaux):
             return True
         elif Tableaux.__contains__(self, x):
             flatx = sorted(sum((list(row) for row in x), []))
-            return flatx == list(range(1,len(flatx)+1)) and (len(x)==0 or
-                     (all(row[i]<row[i+1] for row in x for i in range(len(row)-1)) and
-                       all(x[r][c]<x[r+1][c] for r in range(len(x)-1)
-                                              for c in range(len(x[r+1])) )
+            return flatx == list(range(1, len(flatx)+1)) and (len(x) == 0 or
+                     (all(row[i] < row[i+1] for row in x for i in range(len(row)-1)) and
+                       all(x[r][c] < x[r+1][c] for r in range(len(x)-1)
+                                              for c in range(len(x[r+1])))
                      ))
         return False
 
@@ -7787,7 +7939,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
         matching = PerfectMatchings(set(range(1, self.size + 1))
                                     - set(fixed_point_positions)).random_element()
         permutation_cycle_rep = ([(fixed_point,) for fixed_point in fixed_point_positions]
-                                 + [(a,b) for a,b in matching])
+                                 + [(a, b) for a, b in matching])
         return from_cycles(self.size, permutation_cycle_rep).robinson_schensted()[0]
 
 
@@ -7919,7 +8071,7 @@ class StandardTableaux_shape(StandardTableaux):
         """
 
         pi = self.shape
-        #Set the initial tableau by filling it in going down the columns
+        # Set the initial tableau by filling it in going down the columns
         tableau = [[None]*n for n in pi]
         size = sum(pi)
         row = 0
@@ -7927,9 +8079,9 @@ class StandardTableaux_shape(StandardTableaux):
         for i in range(size):
             tableau[row][col] = i+1
 
-            #If we can move down, then do it;
-            #otherwise, move to the next column over
-            if ( row + 1 < len(pi) and col < pi[row+1]):
+            # If we can move down, then do it;
+            # otherwise, move to the next column over
+            if (row + 1 < len(pi) and col < pi[row+1]):
                 row += 1
             else:
                 row = 0
@@ -7939,59 +8091,59 @@ class StandardTableaux_shape(StandardTableaux):
 
         # iterate until we reach the last tableau which is
         # filled with the row indices.
-        last_tableau = sum([[row]*l for (row,l) in enumerate(pi)], [])
+        last_tableau = sum([[row]*l for (row, l) in enumerate(pi)], [])
 
-        #Convert the tableau to "vector format"
-        #tableau_vector[i] is the row that number i
-        #is in
+        # Convert the tableau to "vector format"
+        # tableau_vector[i] is the row that number i
+        # is in
         tableau_vector = [None]*size
         for row in range(len(pi)):
             for col in range(pi[row]):
                 tableau_vector[tableau[row][col]-1] = row
 
-        while tableau_vector!=last_tableau:
-            #Locate the smallest integer j such that j is not
-            #in the lowest corner of the subtableau T_j formed by
-            #1,...,j.  This happens to be first j such that
-            #tableau_vector[j]<tableau_vector[j-1].
-            #l will correspond to the shape of T_j
+        while tableau_vector != last_tableau:
+            # Locate the smallest integer j such that j is not
+            # in the lowest corner of the subtableau T_j formed by
+            # 1,...,j.  This happens to be first j such that
+            # ntableau_vector[j]<tableau_vector[j-1].
+            # l will correspond to the shape of T_j
             l = [0]*size
             l[0] = 1
             j = 0
-            for i in range(1,size):
+            for i in range(1, size):
                 l[tableau_vector[i]] += 1
-                if ( tableau_vector[i] < tableau_vector[i-1] ):
+                if (tableau_vector[i] < tableau_vector[i-1]):
                     j = i
                     break
 
-            #Find the last nonzero row of l and store it in k
+            # Find the last nonzero row of l and store it in k
             i = size - 1
-            while ( l[i] == 0 ):
+            while l[i] == 0:
                 i -= 1
             k = i
 
-            #Find a new row for the letter j (next lowest corner)
-            t = l[ 1 + tableau_vector[j] ]
+            # Find a new row for the letter j (next lowest corner)
+            t = l[1 + tableau_vector[j]]
             i = k
-            while ( l[i] != t ):
+            while l[i] != t:
                 i -= 1
 
-            #Move the letter j to row i
+            # Move the letter j to row i
             tableau_vector[j] = i
             l[i] -= 1
 
-            #Fill in the columns of T_j using 1,...,j-1 in increasing order
+            # Fill in the columns of T_j using 1,...,j-1 in increasing order
             m = 0
-            while ( m < j ):
+            while m < j:
                 r = 0
-                while ( l[r] != 0 ):
+                while l[r] != 0:
                     tableau_vector[m] = r
                     l[r] -= 1
                     m += 1
                     r += 1
 
-            #Convert the tableau vector back to the regular tableau
-            #format
+            # Convert the tableau vector back to the regular tableau
+            # format
             row_count = [0] * len(pi)
             tableau = [[None] * n for n in pi]
 
@@ -8053,7 +8205,7 @@ class StandardTableaux_shape(StandardTableaux):
         cells = []
         for i in range(len(p)):
             for j in range(p[i]):
-                cells.append((i,j))
+                cells.append((i, j))
 
         m = sum(p)
         while m > 0:
@@ -8170,7 +8322,7 @@ def symmetric_group_action_on_values(word, perm):
         l = r + 1
         places_r, places_l = unmatched_places(w, l, r)
 
-        #Now change the number of l's and r's in the new word
+        # Now change the number of l's and r's in the new word
         nbl = len(places_l)
         nbr = len(places_r)
         ma = max(nbl, nbr)
@@ -8440,8 +8592,8 @@ class IncreasingTableaux(Tableaux):
             elif shape in SkewPartitions():
                 raise NotImplementedError("skew increasing tableaux are not"
                                           " currently implemented")
-                #from sage.combinat.skew_tableau import IncreasingSkewTableaux
-                #return IncreasingSkewTableaux(shape, wt)
+                # from sage.combinat.skew_tableau import IncreasingSkewTableaux
+                # return IncreasingSkewTableaux(shape, wt)
             else:
                 raise ValueError("shape must be a (skew) partition")
 
@@ -8585,9 +8737,9 @@ class IncreasingTableaux(Tableaux):
             ...
             ValueError: infinite set
         """
-        if isinstance(r, (int,Integer)):
+        if isinstance(r, (int, Integer)):
             return self.unrank(r)
-        elif isinstance(r,slice):
+        elif isinstance(r, slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():
@@ -9271,10 +9423,10 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
                     list_of_inc_tabs.append(self.element_class(self, active_tab))
                 continue
             growth_spots = []
-            for (r,c) in unfilled_spots:
-                if (r-1,c) not in active_tab.cells() or active_tab[r-1][c] != 0:
-                    if (r,c-1) not in active_tab.cells() or active_tab[r][c-1] != 0:
-                        growth_spots.append((r,c))
+            for (r, c) in unfilled_spots:
+                if (r-1, c) not in active_tab.cells() or active_tab[r-1][c] != 0:
+                    if (r, c-1) not in active_tab.cells() or active_tab[r][c-1] != 0:
+                        growth_spots.append((r, c))
             growth_choices = list(powerset(growth_spots))
             top_value = max(active_tab.entries())
             try:
@@ -9283,9 +9435,9 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
                 continue
             for growth_choice in growth_choices[1:]:
                 new_tab = [[0] * k for k in self.shape]
-                for (r,c) in active_tab.cells():
+                for (r, c) in active_tab.cells():
                     new_tab[r][c] = active_tab[r][c]
-                for (r,c) in growth_choice:
+                for (r, c) in growth_choice:
                     new_tab[r][c] = growth_num
                 list_of_partial_inc_tabs.append(Tableau(new_tab))
         for inctab in list_of_inc_tabs:

@@ -621,7 +621,8 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{2534}{+}  % uh
     \DeclareUnicodeCharacter{253C}{+}  % vh
     \DeclareUnicodeCharacter{2571}{/}  % upper right to lower left
-    \DeclareUnicodeCharacter{2571}{\setminus} % upper left to lower right
+    \DeclareUnicodeCharacter{2572}{\ensuremath{\setminus}} % upper left to lower right
+    \DeclareUnicodeCharacter{2573}{X} % diagonal cross
 
     \DeclareUnicodeCharacter{25CF}{\ensuremath{\bullet}}  % medium black circle
     \DeclareUnicodeCharacter{26AC}{\ensuremath{\circ}}  % medium small white circle
