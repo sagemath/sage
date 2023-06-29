@@ -284,6 +284,12 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     if not new_tags:
         return line_sans_tags.rstrip()
 
+    if (force_rewrite == 'standard'
+            and new_tags == current_tags
+            and not any(_tag_group(tag) in ['standard', 'sage']
+                        for tag in new_tags)):
+        return line
+
     tag_columns = optional_tag_columns if any(_tag_group(tag) in ['optional', 'special']
                                               for tag in new_tags) else standard_tag_columns
 
