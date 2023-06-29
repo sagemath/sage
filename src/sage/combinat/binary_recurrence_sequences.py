@@ -19,12 +19,12 @@ EXAMPLES::
     sage: R.pthpowers(2, 10**10)        # long time (7 seconds) -- in fact these are all squares, c.f. [BMS06]
     [0, 1, 2, 12]
 
-    sage: S = BinaryRecurrenceSequence(8,1) #a Lucas sequence
+    sage: S = BinaryRecurrenceSequence(8,1)  #a Lucas sequence
     sage: S.period(73)
     148
     sage: S(5) % 73 == S(5 +148) %73
     True
-    sage: S.pthpowers(3,10**10)    # long time (3 seconds) -- provably finds the indices of all 3rd powers less than 10^10
+    sage: S.pthpowers(3, 10**10)    # long time (3 seconds) -- provably finds the indices of all 3rd powers less than 10^10
     [0, 1, 2]
 
     sage: T = BinaryRecurrenceSequence(2,0,1,2)
@@ -34,10 +34,11 @@ EXAMPLES::
     True
     sage: T.is_geometric()
     True
-    sage: T.pthpowers(7,10**30)
+    sage: T.pthpowers(7, 10**30)                                                        # optional - sage.symbolic
     Traceback (most recent call last):
     ...
-    ValueError: the degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers
+    ValueError: the degenerate binary recurrence sequence is geometric or quasigeometric
+    and has many pth powers
 
 
 AUTHORS:
@@ -544,17 +545,18 @@ class BinaryRecurrenceSequence(SageObject):
             True
             sage: T.is_geometric()
             True
-            sage: T.pthpowers(7,10**30)
+            sage: T.pthpowers(7, 10**30)                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
-            ValueError: the degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers
+            ValueError: the degenerate binary recurrence sequence is geometric or
+            quasigeometric and has many pth powers
 
             sage: L = BinaryRecurrenceSequence(4,0,2,2)
             sage: [L(i).factor() for i in range(10)]
             [2, 2, 2^3, 2^5, 2^7, 2^9, 2^11, 2^13, 2^15, 2^17]
             sage: L.is_quasigeometric()
             True
-            sage: L.pthpowers(2,10**30)
+            sage: L.pthpowers(2, 10**30)                                                # optional - sage.symbolic
             []
 
         .. NOTE::
@@ -1051,7 +1053,8 @@ def _estimated_time(M2, M1, length, p):
 
     EXAMPLES::
 
-        sage: sage.combinat.binary_recurrence_sequences._estimated_time(2**4*3**2*5*7*11*13*17, 2**4*3**2*5*7*11*13, 20, 7)
+        sage: from sage.combinat.binary_recurrence_sequences import _estimated_time
+        sage: _estimated_time(2**4*3**2*5*7*11*13*17, 2**4*3**2*5*7*11*13, 20, 7)       # optional - sage.symbolic
         106.211159309421
 
     """
@@ -1087,7 +1090,7 @@ def _find_cong1(p, R, ell):
     EXAMPLES::
 
         sage: R = BinaryRecurrenceSequence(1,1)
-        sage: sage.combinat.binary_recurrence_sequences._find_cong1(7, R, 29)
+        sage: sage.combinat.binary_recurrence_sequences._find_cong1(7, R, 29)           # optional - sage.rings.finite_rings
         ([0, 1, 2, 12, 13], 14)
     """
     F = GF(ell)
@@ -1137,9 +1140,9 @@ def _is_p_power(a, p):
 
     EXAMPLES::
 
-        sage: sage.combinat.binary_recurrence_sequences._is_p_power(2**7,7)
+        sage: sage.combinat.binary_recurrence_sequences._is_p_power(2**7, 7)            # optional - sage.symbolic
         True
-        sage: sage.combinat.binary_recurrence_sequences._is_p_power(2**7*3**2,7)
+        sage: sage.combinat.binary_recurrence_sequences._is_p_power(2**7*3**2, 7)       # optional - sage.symbolic
         False
     """
     return int(a**(1/p))**p == a

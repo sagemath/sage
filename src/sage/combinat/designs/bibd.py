@@ -88,7 +88,7 @@ def biplane(n, existence=False):
 
     EXAMPLES::
 
-        sage: designs.biplane(4)
+        sage: designs.biplane(4)                                                        # optional - sage.rings.finite_rings
         (16,6,2)-Balanced Incomplete Block Design
         sage: designs.biplane(7, existence=True)
         True
@@ -1316,14 +1316,14 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
 
         sage: from sage.combinat.designs.bibd import BIBD_from_arc_in_desarguesian_projective_plane
         sage: from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
-        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(232,8)
-        sage: BalancedIncompleteBlockDesign(232,D)
+        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(232,8)                 # optional - sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: BalancedIncompleteBlockDesign(232,D)                                      # optional - sage.libs.gap sage.modules sage.rings.finite_rings
         (232,8,1)-Balanced Incomplete Block Design
 
     A `(120,8,1)`-BIBD::
 
-        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(120,8)
-        sage: BalancedIncompleteBlockDesign(120,D)
+        sage: D = BIBD_from_arc_in_desarguesian_projective_plane(120,8)                 # optional - sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: BalancedIncompleteBlockDesign(120,D)                                      # optional - sage.libs.gap sage.modules sage.rings.finite_rings
         (120,8,1)-Balanced Incomplete Block Design
 
     Other parameters::

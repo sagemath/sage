@@ -205,7 +205,7 @@ def WeakTableaux(k, shape , weight, representation="core"):
       for the 'bounded' representation, the shape is inputted as a `k`-bounded partition;
       for skew tableaux, the shape is inputted as a tuple of the outer and inner shape
     - ``weight`` -- the weight of the weak `k`-tableaux as a list or tuple
-    - ``representation`` -- 'core', 'bounded', or 'factorized_permutation' (default: 'core')
+    - ``representation`` -- ``'core'``, ``'bounded'``, or ``'factorized_permutation'`` (default: ``'core'``)
 
     EXAMPLES::
 
