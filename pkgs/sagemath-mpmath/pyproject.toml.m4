@@ -19,12 +19,12 @@ destination = "sage/libs/mpmath/_vendor/"
 requirements = "vendor.txt"
 namespace = "sage.libs.mpmath._vendor"
 
-protected-files = ["vendor.txt", "all__sagemath_mpmath.py"]
+protected-files = ["vendor.txt", "__init__.py"]
 patches-dir = "vendoring_patches"
 
 [tool.vendoring.transformations]
 substitute = [
-  {match='sage[.]all', replace='sage.all__sagemath_categories'},
+  {match='sage[.]all', replace='sage.libs.mpmath.hooks'},
   {match="'MPMATH_NOSAGE' not in os.environ and", replace='True or'},
   {match='from mpmath', replace='from sage.libs.mpmath._vendor.mpmath'},
 ]

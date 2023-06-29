@@ -1,5 +1,3 @@
-import sage.libs.mpmath
-
 from .all__sagemath_categories import *
 
 try:  # extra
