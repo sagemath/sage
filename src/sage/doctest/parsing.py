@@ -149,13 +149,13 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
         sage: parse_optional_tags("sage: print(1)  # very important 1  # optional - foo",
         ....:                     return_string_sans_tags=True)
-        ({'foo'}, 'sage: print(1)  # very important 1  \n', False)
+        ({'foo'}, 'sage: print(1)  # very important 1  ', False)
         sage: parse_optional_tags("sage: print(    # very important too  # optional - foo\n....:     2)",
         ....:                     return_string_sans_tags=True)
         ({'foo'}, 'sage: print(    # very important too  \n....:     2)', False)
         sage: parse_optional_tags("sage: #this is persistent #needs scipy",
         ....:                     return_string_sans_tags=True)
-        ({'scipy'}, 'sage: #this is persistent \n', True)
+        ({'scipy'}, 'sage: #this is persistent ', True)
         sage: parse_optional_tags("sage: #this is not #needs scipy\n....: import scipy",
         ....:                     return_string_sans_tags=True)
         ({'scipy'}, 'sage: #this is not \n....: import scipy', False)
@@ -166,7 +166,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     if len(split) > 1:
         first_line, rest = split
     else:
-        first_line, rest = split[0], ''
+        first_line, rest = split[0], None
 
     sharp_index = first_line.find('#')
     if sharp_index < 0:                  # no comment
@@ -204,7 +204,8 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
     if return_string_sans_tags:
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) annotation
-        return set(tags), first_line + '\n' + rest%literals, is_persistent
+        return set(tags), (first_line + '\n' + rest%literals if rest is not None
+                           else first_line), is_persistent
     else:
         return set(tags)
 
