@@ -2146,31 +2146,26 @@ class TamariIntervalPoset(Element,
 
             if poset.le(n, m):
                 # there is already a link n->m, so we go to the next n
-                for pos in add_relations(poset, n - 1, m):
-                    yield pos
+                yield from add_relations(poset, n - 1, m)
             elif poset.le(m, n):
                 # there is an inverse link m->n, we know we won't be able
                 # to create a link i->m with i<=n, so we go to the next m
-                for pos in add_relations(poset, m, m + 1):
-                    yield pos
+                yield from add_relations(poset, m, m + 1)
             else:
                 # there is no link n->m
                 # first option : we don't create the link and go to the next m
                 # (since the lack of a link n->m forbids any links i->m
                 # with i<n)
-                for pos in add_relations(poset, m, m + 1):
-                    yield pos
+                yield from add_relations(poset, m, m + 1)
                 # second option : we create the link
                 # (this is allowed because links i->m already exist for all
                 # n<i<m, or else we wouldn't be here)
                 poset = TamariIntervalPoset(poset.size(), poset._cover_relations + ((n, m),))
                 yield poset
                 # and then, we go to the next n
-                for pos in add_relations(poset, n - 1, m):
-                    yield pos
+                yield from add_relations(poset, n - 1, m)
 
-        for inter in add_relations(self, 1, 2):
-            yield inter
+        yield from add_relations(self, 1, 2)
 
     def interval_cardinality(self) -> Integer:
         r"""
@@ -3042,7 +3037,13 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         """
         if isinstance(element, TamariIntervalPoset):
             return element.final_forest()
-        if element in DyckWords():
+
+        try:
+            DW = DyckWords()
+        except ImportError:
+            DW = ()
+
+        if element in DW:
             binary_tree = element.to_binary_tree_tamari()
         elif element in BinaryTrees() or element in LabelledBinaryTrees():
             binary_tree = element
@@ -3149,7 +3150,13 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         """
         if isinstance(element, TamariIntervalPoset):
             return element.initial_forest()
-        if element in DyckWords():
+
+        try:
+            DW = DyckWords()
+        except ImportError:
+            DW = ()
+
+        if element in DW:
             binary_tree = element.to_binary_tree_tamari()
         elif element in BinaryTrees() or element in LabelledBinaryTrees():
             binary_tree = element

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hasse diagrams of posets
 
@@ -17,19 +16,21 @@ Hasse diagrams of posets
 # ****************************************************************************
 from __future__ import annotations
 
-from sage.graphs.digraph import DiGraph
-from sage.matrix.constructor import matrix
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
-from sage.arith.misc import binomial
-from sage.misc.rest_index_of_methods import gen_rest_table_index
-from sage.combinat.posets.hasse_cython import (moebius_matrix_fast,
-                                               coxeter_matrix_fast,
-                                               IncreasingChains)
-
 from collections import deque
+
+from sage.arith.misc import binomial
+from sage.combinat.posets.hasse_cython import IncreasingChains
+from sage.graphs.digraph import DiGraph
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.misc.rest_index_of_methods import gen_rest_table_index
+from sage.rings.integer_ring import ZZ
+
+lazy_import('sage.combinat.posets.hasse_cython_flint',
+            ['moebius_matrix_fast', 'coxeter_matrix_fast'])
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
 
 
 class LatticeError(ValueError):
@@ -126,7 +127,7 @@ class HasseDiagram(DiGraph):
             sage: list(H.linear_extensions())
             [[0, 1, 2, 3], [0, 2, 1, 3]]
         """
-        from sage.combinat.combinat_cython import linear_extension_iterator
+        from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
         return linear_extension_iterator(self)
 
     def greedy_linear_extensions_iterator(self):
@@ -889,8 +890,7 @@ class HasseDiagram(DiGraph):
             sage: list(H.upper_covers_iterator(7))
             []
         """
-        for x in self.neighbor_out_iterator(element):
-            yield x
+        yield from self.neighbor_out_iterator(element)
 
     def lower_covers_iterator(self, element):
         r"""
@@ -905,8 +905,7 @@ class HasseDiagram(DiGraph):
             sage: list(H.lower_covers_iterator(4))
             [1, 2]
         """
-        for x in self.neighbor_in_iterator(element):
-            yield x
+        yield from self.neighbor_in_iterator(element)
 
     def cardinality(self):
         r"""

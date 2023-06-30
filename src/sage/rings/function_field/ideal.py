@@ -93,7 +93,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.latex import latex
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
@@ -1015,7 +1015,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
             sage: TestSuite(M).run()                                                                                    # optional - sage.rings.finite_rings
         """
         self.Element = R._ideal_class
-        Parent.__init__(self, category = Monoids())
+        Parent.__init__(self, category=Monoids())
 
         self.__R = R
         self._populate_coercion_lists_()

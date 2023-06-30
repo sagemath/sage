@@ -45,8 +45,8 @@ is ``Objects()``, the elements are not guaranteed to have any
 special parent.  This is what should happen, e.g., with finite field
 elements of different characteristics::
 
-    sage: v = Sequence([GF(3)(1), GF(7)(1)])
-    sage: v.universe()
+    sage: v = Sequence([GF(3)(1), GF(7)(1)])                                            # optional - sage.rings.finite_rings
+    sage: v.universe()                                                                  # optional - sage.rings.finite_rings
     Category of objects
 
 You can make a list immutable with ``v.freeze()``.  Assignment is
@@ -201,9 +201,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     This example illustrates how every element of a list is taken into account
     when constructing a sequence.::
 
-        sage: v = Sequence([1,7,6,GF(5)(3)]); v
+        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v                                      # optional - sage.rings.finite_rings
         [1, 2, 1, 3]
-        sage: v.universe()
+        sage: v.universe()                                                              # optional - sage.rings.finite_rings
         Finite Field of size 5
 
     TESTS::
@@ -397,9 +397,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     ::
 
-        sage: v = Sequence([1,7,6,GF(5)(3)]); v
+        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v                                      # optional - sage.rings.finite_rings
         [1, 2, 1, 3]
-        sage: v.universe()
+        sage: v.universe()                                                              # optional - sage.rings.finite_rings
         Finite Field of size 5
 
     """
@@ -674,11 +674,11 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         r"""
         TESTS::
 
-            sage: t= Sequence([sqrt(x), exp(x), x^(x-1)], universe=SR); t
+            sage: t= Sequence([sqrt(x), exp(x), x^(x-1)], universe=SR); t               # optional - sage.symbolic
             [sqrt(x), e^x, x^(x - 1)]
-            sage: t._latex_()
+            sage: t._latex_()                                                           # optional - sage.symbolic
             '\\left[\\sqrt{x}, e^{x}, x^{x - 1}\\right]'
-            sage: latex(t)
+            sage: latex(t)                                                              # optional - sage.symbolic
             \left[\sqrt{x}, e^{x}, x^{x - 1}\right]
         """
         from sage.misc.latex import list_function as list_latex_function
@@ -710,9 +710,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         EXAMPLES::
 
-            sage: Sequence([1,2/3,-2/5]).universe()
+            sage: Sequence([1, 2/3, -2/5]).universe()
             Rational Field
-            sage: Sequence([1,2/3,'-2/5']).universe()
+            sage: Sequence([1, 2/3, '-2/5']).universe()
             Category of objects
         """
         return self.__universe
@@ -738,7 +738,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         EXAMPLES::
 
-            sage: v = Sequence([1,2,3,4/5])
+            sage: v = Sequence([1, 2, 3, 4/5])
             sage: v[0] = 5
             sage: v
             [5, 2, 3, 4/5]
@@ -759,7 +759,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         EXAMPLES::
 
-            sage: v = Sequence([1,2,3,4/5])
+            sage: v = Sequence([1, 2, 3, 4/5])
             sage: v[0] = 5
             sage: v
             [5, 2, 3, 4/5]
@@ -778,7 +778,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         """
         EXAMPLES::
 
-            sage: a = Sequence([1,2/3,-2/5])
+            sage: a = Sequence([1, 2/3, -2/5])
             sage: a.is_mutable()
             True
             sage: a[0] = 100

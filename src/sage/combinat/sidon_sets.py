@@ -16,7 +16,7 @@ from sage.misc.cachefunc import cached_function
 from sage.rings.integer import Integer
 
 
-def sidon_sets(N, g = 1):
+def sidon_sets(N, g=1):
     r"""
     Return the set of all Sidon-`g` sets that have elements less than or equal
     to `N`.

@@ -51,8 +51,9 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
     These are matrices with integer entries mod ``n`` represented as
     floating-point numbers in a 64-bit word for use with LinBox routines.
-    This allows for ``n`` up to `2^{23}`.  The analogous
-    ``Matrix_modn_dense_float`` class is used for smaller moduli.
+    This allows for ``n`` up to `2^{23}`. By default, the analogous
+    ``Matrix_modn_dense_float`` class is used for smaller moduli, specifically
+    for ``n`` up to `2^{8}`.
 
     Routines here are for the most basic access, see the
     ``matrix_modn_dense_template.pxi`` file for higher-level routines.

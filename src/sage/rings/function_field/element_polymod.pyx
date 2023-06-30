@@ -3,18 +3,17 @@ r"""
 Elements of function fields: extension
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp
-from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport FieldElement
 
 from sage.rings.function_field.element cimport FunctionFieldElement
 
@@ -299,7 +298,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         # reduce to the separable case
         poly = self._parent._polynomial
         if not poly.gcd(poly.derivative()).is_one():
-            L, from_L, to_L = self._parent.separable_model(('t', 'w'))
+            _, from_L, to_L = self._parent.separable_model(('t', 'w'))
             return from_L(to_L(self).nth_root(n))
 
         constant_base_field = self._parent.constant_base_field()
@@ -348,7 +347,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         # reduce to the separable case
         poly = self._parent._polynomial
         if not poly.gcd(poly.derivative()).is_one():
-            L, from_L, to_L = self._parent.separable_model(('t', 'w'))
+            _, _, to_L = self._parent.separable_model(('t', 'w'))
             return to_L(self).is_nth_power(n)
 
         constant_base_field = self._parent.constant_base_field()

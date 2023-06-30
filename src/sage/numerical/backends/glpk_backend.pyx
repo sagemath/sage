@@ -1012,10 +1012,14 @@ cdef class GLPKBackend(GenericBackend):
         (`get_col_dual` etc.) or tableau data (`get_row_stat` etc.),
         one needs to switch to "simplex_only" before solving.
 
-        GLPK also has an exact rational simplex solver.  The only
-        access to data is via double-precision floats, however. It
-        reconstructs rationals from doubles and also provides results
-        as doubles.
+        GLPK also has an exact rational simplex solver.  The only access
+        to data is via double-precision floats, which means that
+        rationals in the input data may be rounded before the exact
+        solver sees them. Thus, it is unreasonable to expect that
+        arbitrary LPs with rational coefficients are solved exactly.
+        Once the LP has been read into the backend, it reconstructs
+        rationals from doubles and does solve exactly over the rationals,
+        but results are returned as as doubles.
 
         EXAMPLES::
 

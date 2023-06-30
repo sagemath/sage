@@ -31,22 +31,17 @@ for :class:`KnotInfo` and :class:`KnotInfoSeries`, which can be seen in the open
 lines of the examples, are unnecessary.
 
 Be aware that there are a couple of conventions used differently on KnotInfo as
-in Sage, especially concerning the selection of the symmetry version of the link.
+in Sage.
 
-In this context you should note that the PD notation is recorded counter
-clockwise in KnotInfo (see note in :meth:`KnotInfoBase.link`). In our transition
-to Sage objects this is translated (by default) in order to avoid confusion about
-exchanged mirror versions.
+For different conventions regarding normalization of the polynomial invariants see
+the according documentation of :meth:`KnotInfoBase.homfly_polynomial`,
+:meth:`KnotInfoBase.jones_polynomial` and :meth:`KnotInfoBase.alexander_polynomial`.
 
 Also, note that the braid notation is used according to Sage, even thought in
 the source where it is taken from, the braid generators are assumed to have a
 negative crossing which would be opposite to the convention in Sage (see definition
 3 of
 :arxiv:`Gittings, T., "Minimum Braids: A Complete Invariant of Knots and Links" <math/0401051>`).
-
-For different conventions regarding normalization of the polynomial invariants see
-the according documentation of :meth:`KnotInfoBase.homfly_polynomial`,
-:meth:`KnotInfoBase.jones_polynomial` and :meth:`KnotInfoBase.alexander_polynomial`.
 
 Furthermore, note that not all columns available in the database are visible on the web
 pages (see also the related note under :meth:`KnotInfoBase.khovanov_polynomial`).
@@ -1824,14 +1819,6 @@ class KnotInfoBase(Enum):
             coincides with the crossing number as a topological
             invariant.
 
-            But attention: The convention on how the edges are
-            listed are opposite to each other
-
-            - KnotInfo: counter clockwise
-            - Sage:     clockwise
-
-            Therefore, we take the mirror version of the ``pd_notation``!
-
             Furthermore, note that the mirror version may depend
             on the used KnotInfo-notation. For instance, regarding to
             the knot ``5_1`` the Gauss- and the DT-notation refer to
@@ -1905,7 +1892,7 @@ class KnotInfoBase(Enum):
 
             sage: K4_1 = KnotInfo.K4_1
             sage: K4_1.link().pd_code()
-            [[4, 1, 5, 2], [8, 5, 1, 6], [6, 4, 7, 3], [2, 8, 3, 7]]
+            [[4, 2, 5, 1], [8, 6, 1, 5], [6, 3, 7, 4], [2, 7, 3, 8]]
             sage: K4_1.pd_notation()
             [[4, 2, 5, 1], [8, 6, 1, 5], [6, 3, 7, 4], [2, 7, 3, 8]]
 
@@ -1931,8 +1918,7 @@ class KnotInfoBase(Enum):
             from sage.knots.link import Link
 
         if use_item == self.items.pd_notation:
-            pd_code = [[a[0], a[3], a[2], a[1]] for a in self.pd_notation()] # take mirror version, see note above
-            return Link(pd_code)
+            return Link(self.pd_notation())
         elif use_item == self.items.braid_notation:
             return Link(self.braid())
         elif use_item == self.items.name and snappy:
@@ -2329,7 +2315,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             if K.crossing_number() != cross_nr:
                 continue
             if not is_knot or cross_nr > 10:
-                if K.is_alternating() !=  is_alt:
+                if K.is_alternating() != is_alt:
                     continue
             if is_knot or oriented:
                 res.append(K)
@@ -2489,7 +2475,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         is_knot  = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   =  self._is_alternating
+        is_alt   = self._is_alternating
         n_unori  = self._name_unoriented
 
         alt = 'a'

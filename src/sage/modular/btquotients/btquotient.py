@@ -412,7 +412,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         sage: T = BruhatTitsTree(4)
         Traceback (most recent call last):
         ...
-        ValueError: Input (4) must be prime
+        ValueError: input (4) must be prime
 
     AUTHORS:
 
@@ -428,8 +428,8 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
             sage: T = BruhatTitsTree(17)
             sage: TestSuite(T).run()
         """
-        if not(ZZ(p).is_prime()):
-            raise ValueError('Input (%s) must be prime' % p)
+        if not ZZ(p).is_prime():
+            raise ValueError(f'input ({p}) must be prime')
         self._p = ZZ(p)
         self._Mat_22 = MatrixSpace(ZZ, 2, 2)
         self._mat_p001 = self._Mat_22([self._p, 0, 0, 1])
@@ -2283,7 +2283,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             self._II = M([0, a, 1, 0])
             z = 0
             self._JJ = 0
-            while(self._JJ == 0):
+            while self._JJ == 0:
                 c = a * z * z + b
                 if c.is_square():
                     x = c.sqrt()

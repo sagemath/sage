@@ -20,6 +20,10 @@ cd src/
 # Use newer version of config.guess and config.sub (see Trac #19734)
 cp "$SAGE_ROOT"/config/config.* .
 
+# Patch out bad 'multiple targets' rule
+# https://github.com/sagemath/sage/pull/35619#issuecomment-1567351409
+sed -i.bak 's/^maxima_singlepage.html //' doc/info/Makefile.in
+
 # Note that maxima configure checks for git and, if it finds it, uses
 # versions information from the repo. See #15529. We disable this with
 # git_found=false

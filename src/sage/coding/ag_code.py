@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings sage.schemes
 """
 AG codes
 
@@ -538,7 +539,8 @@ class DifferentialAGCode(AGCode):
             sage: Q, = C.places_at_infinity()
             sage: pls.remove(Q)
             sage: code = codes.DifferentialAGCode(pls, 3*Q)
-            sage: matrix([[w.residue(p) for p in pls] for w in code.basis_differentials()])
+            sage: matrix([[w.residue(p) for p in pls]
+            ....:         for w in code.basis_differentials()])
             [    1     0     0     0     0 a + 1 a + 1     1]
             [    0     1     0     0     0 a + 1     a     0]
             [    0     0     1     0     0     a     1     a]

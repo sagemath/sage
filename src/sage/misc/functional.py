@@ -874,9 +874,10 @@ def is_integrally_closed(x):
         doctest:...DeprecationWarning: use X.is_integrally_closed()
         See https://github.com/sagemath/sage/issues/32347 for details.
         True
-        sage: K.<a> = NumberField(x^2 + 189*x + 394)
-        sage: R = K.order(2*a)
-        sage: is_integrally_closed(R)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 + 189*x + 394)                                    # optional - sage.rings.number_field
+        sage: R = K.order(2*a)                                                          # optional - sage.rings.number_field
+        sage: is_integrally_closed(R)                                                   # optional - sage.rings.number_field
         False
     """
     deprecation(32347, "use X.is_integrally_closed()")
@@ -1336,9 +1337,9 @@ def norm(x):
         sage: M = matrix(ZZ, [[1,2,4,3], [-1,0,3,-10]])
         sage: norm(M)  # abs tol 1e-14
         10.690331129154467
-        sage: norm(CDF(z))
+        sage: norm(CDF(z))                                                              # optional - sage.modules
         5.0
-        sage: norm(CC(z))
+        sage: norm(CC(z))                                                               # optional - sage.modules
         5.00000000000000
 
     The norm of complex numbers::
@@ -1666,7 +1667,8 @@ def regulator(x):
 
     EXAMPLES::
 
-        sage: regulator(NumberField(x^2-2, 'a'))
+        sage: x = polygen(ZZ, 'x')
+        sage: regulator(NumberField(x^2 - 2, 'a'))                                      # optional - sage.rings.number_field
         0.881373587019543
         sage: regulator(EllipticCurve('11a'))
         1.00000000000000
@@ -1913,25 +1915,25 @@ def sqrt(x, *args, **kwds):
 
     EXAMPLES::
 
-        sage: sqrt(-1)
+        sage: sqrt(-1)                                                                  # optional - sage.symbolic
         I
-        sage: sqrt(2)
+        sage: sqrt(2)                                                                   # optional - sage.symbolic
         sqrt(2)
-        sage: sqrt(2)^2
+        sage: sqrt(2)^2                                                                 # optional - sage.symbolic
         2
         sage: sqrt(4)
         2
-        sage: sqrt(4,all=True)
+        sage: sqrt(4, all=True)
         [2, -2]
-        sage: sqrt(x^2)
+        sage: sqrt(x^2)                                                                 # optional - sage.symbolic
         sqrt(x^2)
 
     For a non-symbolic square root, there are a few options.
     The best is to numerically approximate afterward::
 
-        sage: sqrt(2).n()
+        sage: sqrt(2).n()                                                               # optional - sage.symbolic
         1.41421356237310
-        sage: sqrt(2).n(prec=100)
+        sage: sqrt(2).n(prec=100)                                                       # optional - sage.symbolic
         1.4142135623730950488016887242
 
     Or one can input a numerical type::
@@ -1946,9 +1948,9 @@ def sqrt(x, *args, **kwds):
     To prevent automatic evaluation, one can use the ``hold`` parameter
     after coercing to the symbolic ring::
 
-        sage: sqrt(SR(4),hold=True)
+        sage: sqrt(SR(4), hold=True)                                                    # optional - sage.symbolic
         sqrt(4)
-        sage: sqrt(4,hold=True)
+        sage: sqrt(4, hold=True)
         Traceback (most recent call last):
         ...
         TypeError: ..._do_sqrt() got an unexpected keyword argument 'hold'

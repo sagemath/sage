@@ -60,7 +60,6 @@ AUTHORS:
 - Robert Marik (10-2009) - Some bugfixes and enhancements
 
 - Miguel Marco (06-2014) - Tides desolvers
-
 """
 
 ##########################################################################
@@ -76,7 +75,6 @@ import shutil
 import os
 
 from sage.interfaces.maxima import Maxima
-from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import N
 from sage.rings.real_mpfr import RealField
 from sage.structure.element import Expression
@@ -85,6 +83,7 @@ from .functional import diff
 
 
 maxima = Maxima()
+
 
 def fricas_desolve(de, dvar, ics, ivar):
     r"""
@@ -118,9 +117,10 @@ def fricas_desolve(de, dvar, ics, ivar):
     if isinstance(y, dict):
         basis = y["basis"]
         particular = y["particular"]
-        return particular + sum(SR.var("_C"+str(i))*v for i, v in enumerate(basis))
-    else:
-        return y
+        return particular + sum(SR.var("_C" + str(i)) * v
+                                for i, v in enumerate(basis))
+    return y
+
 
 def fricas_desolve_system(des, dvars, ics, ivar):
     r"""
@@ -163,8 +163,8 @@ def fricas_desolve_system(des, dvars, ics, ivar):
     y = fricas(des).solve(ops, ivar).sage()
     basis = y["basis"]
     particular = y["particular"]
-    pars = [SR.var("_C"+str(i)) for i in range(len(basis))]
-    solv = particular + sum(p*v for p, v in zip(pars, basis))
+    pars = [SR.var("_C" + str(i)) for i in range(len(basis))]
+    solv = particular + sum(p * v for p, v in zip(pars, basis))
 
     if ics is None:
         sols = solv
@@ -175,6 +175,7 @@ def fricas_desolve_system(des, dvars, ics, ivar):
         sols = [sol.subs(pars_values[0]) for sol in solv]
 
     return [dvar == sol for dvar, sol in zip(dvars, sols)]
+
 
 def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
             algorithm="maxima"):
@@ -570,24 +571,24 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
 
     de00 = de._maxima_()
     P = de00.parent()
-    dvar_str=P(dvar.operator()).str()
-    ivar_str=P(ivar).str()
+    dvar_str = P(dvar.operator()).str()
+    ivar_str = P(ivar).str()
     de00 = de00.str()
 
     def sanitize_var(exprs):
-        return exprs.replace("'"+dvar_str+"("+ivar_str+")",dvar_str)
+        return exprs.replace("'" + dvar_str + "(" + ivar_str + ")", dvar_str)
     de0 = sanitize_var(de00)
-    ode_solver="ode2"
-    cmd="(TEMP:%s(%s,%s,%s), if TEMP=false then TEMP else substitute(%s=%s(%s),TEMP))"%(ode_solver,de0,dvar_str,ivar_str,dvar_str,dvar_str,ivar_str)
+    ode_solver = "ode2"
+    cmd = "(TEMP:%s(%s,%s,%s), if TEMP=false then TEMP else substitute(%s=%s(%s),TEMP))" % (ode_solver, de0, dvar_str, ivar_str, dvar_str, dvar_str, ivar_str)
     # we produce string like this
     # ode2('diff(y,x,2)+2*'diff(y,x,1)+y-cos(x),y(x),x)
     soln = P(cmd)
 
     if str(soln).strip() == 'false':
         if contrib_ode:
-            ode_solver="contrib_ode"
+            ode_solver = "contrib_ode"
             P("load('contrib_ode)")
-            cmd="(TEMP:%s(%s,%s,%s), if TEMP=false then TEMP else substitute(%s=%s(%s),TEMP))"%(ode_solver,de0,dvar_str,ivar_str,dvar_str,dvar_str,ivar_str)
+            cmd = "(TEMP:%s(%s,%s,%s), if TEMP=false then TEMP else substitute(%s=%s(%s),TEMP))" % (ode_solver, de0, dvar_str, ivar_str, dvar_str, dvar_str, ivar_str)
             # we produce string like this
             # (TEMP:contrib_ode(x*('diff(y,x,1))^2-(x*y+1)*'diff(y,x,1)+y,y,x), if TEMP=false then TEMP else substitute(y=y(x),TEMP))
             soln = P(cmd)
@@ -597,23 +598,23 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
             raise NotImplementedError("Maxima was unable to solve this ODE. Consider to set option contrib_ode to True.")
 
     if show_method:
-        maxima_method=P("method")
+        maxima_method = P("method")
 
     if ics is not None:
         if not (isinstance(soln.sage(), Expression) and soln.sage().is_relational()):
             if not show_method:
-                maxima_method=P("method")
-            raise NotImplementedError("Unable to use initial condition for this equation (%s)."%(str(maxima_method).strip()))
+                maxima_method = P("method")
+            raise NotImplementedError("Unable to use initial condition for this equation (%s)." % (str(maxima_method).strip()))
         if len(ics) == 2:
-            tempic=(ivar==ics[0])._maxima_().str()
-            tempic=tempic+","+(dvar==ics[1])._maxima_().str()
-            cmd="(TEMP:ic1(%s(%s,%s,%s),%s),substitute(%s=%s(%s),TEMP))"%(ode_solver,de00,dvar_str,ivar_str,tempic,dvar_str,dvar_str,ivar_str)
-            cmd=sanitize_var(cmd)
+            tempic = (ivar == ics[0])._maxima_().str()
+            tempic = tempic + "," + (dvar == ics[1])._maxima_().str()
+            cmd = "(TEMP:ic1(%s(%s,%s,%s),%s),substitute(%s=%s(%s),TEMP))" % (ode_solver, de00, dvar_str, ivar_str, tempic, dvar_str, dvar_str, ivar_str)
+            cmd = sanitize_var(cmd)
             # we produce string like this
             # (TEMP:ic2(ode2('diff(y,x,2)+2*'diff(y,x,1)+y-cos(x),y,x),x=0,y=3,'diff(y,x)=1),substitute(y=y(x),TEMP))
-            soln=P(cmd)
+            soln = P(cmd)
         if len(ics) == 3:
-            #fixed ic2 command from Maxima - we have to ensure that %k1, %k2 do not depend on variables, should be removed when fixed in Maxima
+            # fixed ic2 command from Maxima - we have to ensure that %k1, %k2 do not depend on variables, should be removed when fixed in Maxima
             P("ic2_sage(soln,xa,ya,dya):=block([programmode:true,backsubst:true,singsolve:true,temp,%k2,%k1,TEMP_k], \
                 noteqn(xa), noteqn(ya), noteqn(dya), boundtest('%k1,%k1), boundtest('%k2,%k2), \
                 temp: lhs(soln) - rhs(soln), \
@@ -621,30 +622,30 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
                 if not freeof(lhs(ya),TEMP_k) or not freeof(lhs(xa),TEMP_k) then return (false), \
                 temp: maplist(lambda([zz], subst(zz,soln)), TEMP_k), \
                 if length(temp)=1 then return(first(temp)) else return(temp))")
-            tempic=P(ivar==ics[0]).str()
-            tempic=tempic+","+P(dvar==ics[1]).str()
-            tempic=tempic+",'diff("+dvar_str+","+ivar_str+")="+P(ics[2]).str()
-            cmd="(TEMP:ic2_sage(%s(%s,%s,%s),%s),substitute(%s=%s(%s),TEMP))"%(ode_solver,de00,dvar_str,ivar_str,tempic,dvar_str,dvar_str,ivar_str)
-            cmd=sanitize_var(cmd)
+            tempic = P(ivar == ics[0]).str()
+            tempic += "," + P(dvar == ics[1]).str()
+            tempic += ",'diff(" + dvar_str + "," + ivar_str + ")=" + P(ics[2]).str()
+            cmd = "(TEMP:ic2_sage(%s(%s,%s,%s),%s),substitute(%s=%s(%s),TEMP))" % (ode_solver, de00, dvar_str, ivar_str, tempic, dvar_str, dvar_str, ivar_str)
+            cmd = sanitize_var(cmd)
             # we produce string like this
             # (TEMP:ic2(ode2('diff(y,x,2)+2*'diff(y,x,1)+y-cos(x),y,x),x=0,y=3,'diff(y,x)=1),substitute(y=y(x),TEMP))
-            soln=P(cmd)
+            soln = P(cmd)
             if str(soln).strip() == 'false':
                 raise NotImplementedError("Maxima was unable to solve this IVP. Remove the initial condition to get the general solution.")
         if len(ics) == 4:
-            #fixed bc2 command from Maxima - we have to ensure that %k1, %k2 do not depend on variables, should be removed when fixed in Maxima
+            # fixed bc2 command from Maxima - we have to ensure that %k1, %k2 do not depend on variables, should be removed when fixed in Maxima
             P("bc2_sage(soln,xa,ya,xb,yb):=block([programmode:true,backsubst:true,singsolve:true,temp,%k1,%k2,TEMP_k], \
                 noteqn(xa), noteqn(ya), noteqn(xb), noteqn(yb), boundtest('%k1,%k1), boundtest('%k2,%k2), \
                 TEMP_k:solve([subst([xa,ya],soln), subst([xb,yb],soln)], [%k1,%k2]), \
                 if not freeof(lhs(ya),TEMP_k) or not freeof(lhs(xa),TEMP_k) then return (false), \
                 temp: maplist(lambda([zz], subst(zz,soln)),TEMP_k), \
                 if length(temp)=1 then return(first(temp)) else return(temp))")
-            cmd="bc2_sage(%s(%s,%s,%s),%s,%s=%s,%s,%s=%s)"%(ode_solver,de00,dvar_str,ivar_str,P(ivar==ics[0]).str(),dvar_str,P(ics[1]).str(),P(ivar==ics[2]).str(),dvar_str,P(ics[3]).str())
-            cmd="(TEMP:%s,substitute(%s=%s(%s),TEMP))"%(cmd,dvar_str,dvar_str,ivar_str)
-            cmd=sanitize_var(cmd)
+            cmd = "bc2_sage(%s(%s,%s,%s),%s,%s=%s,%s,%s=%s)" % (ode_solver, de00, dvar_str, ivar_str, P(ivar == ics[0]).str(), dvar_str, P(ics[1]).str(), P(ivar == ics[2]).str(), dvar_str, P(ics[3]).str())
+            cmd = "(TEMP:%s,substitute(%s=%s(%s),TEMP))" % (cmd, dvar_str, dvar_str, ivar_str)
+            cmd = sanitize_var(cmd)
             # we produce string like this
             # (TEMP:bc2(ode2('diff(y,x,2)+2*'diff(y,x,1)+y-cos(x),y,x),x=0,y=3,x=%pi/2,y=2),substitute(y=y(x),TEMP))
-            soln=P(cmd)
+            soln = P(cmd)
             if str(soln).strip() == 'false':
                 raise NotImplementedError("Maxima was unable to solve this BVP. Remove the initial condition to get the general solution.")
 
@@ -654,52 +655,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
         # This probably will not happen for solutions obtained via ode2, anyway.
         soln = soln.rhs()
     if show_method:
-        return [soln,maxima_method.str()]
-    else:
-        return soln
-
-
-#def desolve_laplace2(de,vars,ics=None):
-##     """
-##     Solves an ODE using laplace transforms via maxima. Initial conditions
-##     are optional.
-
-##     INPUT:
-##         de    -- a lambda expression representing the ODE
-##                  (eg, de = "diff(f(x),x,2)=diff(f(x),x)+sin(x)")
-##         vars  -- a list of strings representing the variables
-##                  (eg, vars = ["x","f"], if x is the independent
-##                   variable and f is the dependent variable)
-##         ics   -- a list of numbers representing initial conditions,
-##                  with symbols allowed which are represented by strings
-##                  (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
-
-##     EXAMPLES::
-
-##         sage: from sage.calculus.desolvers import desolve_laplace
-##         sage: x = var('x')
-##         sage: f = function('f')(x)
-##         sage: de = lambda y: diff(y,x,x) - 2*diff(y,x) + y
-##         sage: desolve_laplace(de(f(x)),[f,x])
-##          #x*%e^x*(?%at('diff('f(x),x,1),x=0))-'f(0)*x*%e^x+'f(0)*%e^x
-##         sage: desolve_laplace(de(f(x)),[f,x],[0,1,2])  # IC option does not work
-##          #x*%e^x*(?%at('diff('f(x),x,1),x=0))-'f(0)*x*%e^x+'f(0)*%e^x
-
-##     AUTHOR: David Joyner (1st version 1-2006, 8-2007)
-##     """
-#    ######## this method seems reasonable but doesn't work for some reason
-#    name0 = vars[0]._repr_()[0:(len(vars[0]._repr_())-2-len(str(vars[1])))]
-#    name1 = str(vars[1])
-#    #maxima("de:"+de+";")
-#    if ics is not None:
-#        ic0 = maxima("ic:"+str(vars[1])+"="+str(ics[0]))
-#        d = len(ics)
-#        for i in range(d-1):
-#            maxima(vars[0](vars[1])).diff(vars[1],i).atvalue(ic0,ics[i+1])
-#    de0 = de._maxima_()
-#    #cmd = "desolve("+de+","+vars[1]+"("+vars[0]+"));"
-#    #return maxima.eval(cmd)
-#    return de0.desolve(vars[0]).rhs()
+        return [soln, maxima_method.str()]
+    return soln
 
 
 def desolve_laplace(de, dvar, ics=None, ivar=None):
@@ -783,18 +740,18 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
 
     - Robert Marik (10-2009)
     """
-    #This is the original code from David Joyner (inputs and outputs strings)
-    #maxima("de:"+de._repr_()+"=0;")
-    #if ics is not None:
-    #    d = len(ics)
-    #    for i in range(0,d-1):
-    #        ic = "atvalue(diff("+vars[1]+"("+vars[0]+"),"+str(vars[0])+","+str(i)+"),"+str(vars[0])+"="+str(ics[0])+","+str(ics[1+i])+")"
-    #        maxima(ic)
+    # This is the original code from David Joyner (inputs and outputs strings)
+    # maxima("de:"+de._repr_()+"=0;")
+    # if ics is not None:
+    #     d = len(ics)
+    #     for i in range(0,d-1):
+    #         ic = "atvalue(diff("+vars[1]+"("+vars[0]+"),"+str(vars[0])+","+str(i)+"),"+str(vars[0])+"="+str(ics[0])+","+str(ics[1+i])+")"
+    #         maxima(ic)
     #
-    #cmd = "desolve("+de._repr_()+","+vars[1]+"("+vars[0]+"));"
-    #return maxima(cmd).rhs()._maxima_init_()
+    # cmd = "desolve("+de._repr_()+","+vars[1]+"("+vars[0]+"));"
+    # return maxima(cmd).rhs()._maxima_init_()
 
-    ## verbatim copy from desolve - begin
+    # verbatim copy from desolve - begin
     if isinstance(de, Expression) and de.is_relational():
         de = de.lhs() - de.rhs()
     if isinstance(dvar, Expression) and dvar.is_symbol():
@@ -808,25 +765,27 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
         if len(ivars) != 1:
             raise ValueError("Unable to determine independent variable, please specify.")
         ivar = ivars[0]
-    ## verbatim copy from desolve - end
+    # verbatim copy from desolve - end
 
     dvar_str = str(dvar)
 
-    def sanitize_var(exprs):  # 'y(x) -> y(x)
-        return exprs.replace("'"+dvar_str,dvar_str)
-    de0=de._maxima_()
+    def sanitize_var(exprs):
+        # 'y(x) -> y(x)
+        return exprs.replace("'" + dvar_str, dvar_str)
+
+    de0 = de._maxima_()
     P = de0.parent()
     i = dvar_str.find('(')
-    dvar_str = dvar_str[:i+1] + '_SAGE_VAR_' + dvar_str[i+1:]
-    cmd = sanitize_var("desolve("+de0.str()+","+dvar_str+")")
-    soln=P(cmd).rhs()
+    dvar_str = dvar_str[:i + 1] + '_SAGE_VAR_' + dvar_str[i + 1:]
+    cmd = sanitize_var("desolve(" + de0.str() + "," + dvar_str + ")")
+    soln = P(cmd).rhs()
     if str(soln).strip() == 'false':
         raise NotImplementedError("Maxima was unable to solve this ODE.")
-    soln=soln.sage()
+    soln = soln.sage()
     if ics is not None:
         d = len(ics)
-        for i in range(0,d-1):
-            soln=eval('soln.substitute(diff(dvar,ivar,i)('+str(ivar)+'=ics[0])==ics[i+1])')
+        for i in range(d - 1):
+            soln = eval('soln.substitute(diff(dvar,ivar,i)(' + str(ivar) + '=ics[0])==ics[i+1])')
     return soln
 
 
@@ -976,7 +935,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
     if ics is not None:
         ivar_ic = ics[0]
         for dvar, ic in zip(dvars, ics[1:]):
-            dvar.atvalue(ivar==ivar_ic, ic)
+            dvar.atvalue(ivar == ivar_ic, ic)
     soln = dvars[0].parent().desolve(des, dvars)
     if str(soln).strip() == 'false':
         raise NotImplementedError("Maxima was unable to solve this system.")
@@ -986,11 +945,11 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
     if ics is not None:
         ivar_ic = ics[0]
         for dvar, ic in zip(dvars, ics[:1]):
-            dvar.atvalue(ivar==ivar_ic, dvar)
+            dvar.atvalue(ivar == ivar_ic, dvar)
     return soln
 
 
-def eulers_method(f,x0,y0,h,x1,algorithm="table"):
+def eulers_method(f, x0, y0, h, x1, algorithm="table"):
     r"""
     This implements Euler's method for finding numerically the
     solution of the 1st order ODE `y' = f(x,y)`, `y(a)=c`. The ``x``
@@ -1062,23 +1021,23 @@ def eulers_method(f,x0,y0,h,x1,algorithm="table"):
 
     - David Joyner
     """
-    if algorithm=="table":
-        print("%10s %20s %25s"%("x","y","h*f(x,y)"))
-    n=int((1.0)*(x1-x0)/h)
+    if algorithm == "table":
+        print("%10s %20s %25s" % ("x", "y", "h*f(x,y)"))
+    n = int((1.0) * (x1 - x0) / h)
     x00 = x0
     y00 = y0
-    soln = [[x00,y00]]
-    for i in range(n+1):
-        if algorithm=="table":
-            print("%10r %20r %20r"%(x00,y00,h*f(x00,y00)))
-        y00 = y00+h*f(x00,y00)
-        x00=x00+h
-        soln.append([x00,y00])
-    if algorithm!="table":
+    soln = [[x00, y00]]
+    for i in range(n + 1):
+        if algorithm == "table":
+            print("%10r %20r %20r" % (x00, y00, h * f(x00, y00)))
+        y00 = y00 + h * f(x00, y00)
+        x00 = x00 + h
+        soln.append([x00, y00])
+    if algorithm != "table":
         return soln
 
 
-def eulers_method_2x2(f,g, t0, x0, y0, h, t1,algorithm="table"):
+def eulers_method_2x2(f, g, t0, x0, y0, h, t1, algorithm="table"):
     r"""
     This implements Euler's method for finding numerically the
     solution of the 1st order system of two ODEs
@@ -1162,25 +1121,26 @@ def eulers_method_2x2(f,g, t0, x0, y0, h, t1,algorithm="table"):
 
     - David Joyner
     """
-    if algorithm=="table":
-        print("%10s %20s %25s %20s %20s"%("t", "x","h*f(t,x,y)","y", "h*g(t,x,y)"))
-    n = int((1.0)*(t1-t0)/h)
+    if algorithm == "table":
+        print("%10s %20s %25s %20s %20s" % ("t", "x", "h*f(t,x,y)", "y", "h*g(t,x,y)"))
+    n = int((1.0) * (t1 - t0) / h)
     t00 = t0
     x00 = x0
     y00 = y0
     soln = [[t00, x00, y00]]
-    for i in range(n+1):
-        if algorithm=="table":
-            print("%10r %20r %25r %20r %20r"%(t00,x00,h*f(t00,x00,y00),y00,h*g(t00,x00,y00)))
-        x01 = x00 + h*f(t00,x00,y00)
-        y00 = y00 + h*g(t00,x00,y00)
+    for i in range(n + 1):
+        if algorithm == "table":
+            print("%10r %20r %25r %20r %20r" % (t00, x00, h * f(t00, x00, y00), y00, h * g(t00, x00, y00)))
+        x01 = x00 + h * f(t00, x00, y00)
+        y00 = y00 + h * g(t00, x00, y00)
         x00 = x01
         t00 = t00 + h
-        soln.append([t00,x00,y00])
-    if algorithm!="table":
+        soln.append([t00, x00, y00])
+    if algorithm != "table":
         return soln
 
-def eulers_method_2x2_plot(f,g, t0, x0, y0, h, t1):
+
+def eulers_method_2x2_plot(f, g, t0, x0, y0, h, t1):
     r"""
     Plot solution of ODE.
 
@@ -1207,7 +1167,7 @@ def eulers_method_2x2_plot(f,g, t0, x0, y0, h, t1):
     """
     from sage.plot.line import line
 
-    n = int((1.0)*(t1-t0)/h)
+    n = int((1.0) * (t1 - t0) / h)
     t00 = t0
     x00 = x0
     y00 = y0
@@ -1223,7 +1183,7 @@ def eulers_method_2x2_plot(f,g, t0, x0, y0, h, t1):
     return [Q1, Q2]
 
 
-def desolve_rk4_determine_bounds(ics,end_points=None):
+def desolve_rk4_determine_bounds(ics, end_points=None):
     """
     Used to determine bounds for numerical integration.
 
@@ -1365,26 +1325,26 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
             raise ValueError("Unable to determine independent variable, please specify.")
         ivar = ivars[0]
 
-    step=abs(step)
+    step = abs(step)
 
     def desolve_rk4_inner(de, dvar):
-        de0=de._maxima_()
+        de0 = de._maxima_()
         maxima("load('dynamics)")
-        lower_bound,upper_bound=desolve_rk4_determine_bounds(ics,end_points)
-        sol_1, sol_2 = [],[]
-        if lower_bound<ics[0]:
-            cmd="rk(%s,%s,%s,[%s,%s,%s,%s])\
-            "%(de0.str(),'_SAGE_VAR_'+str(dvar),str(ics[1]),'_SAGE_VAR_'+str(ivar),str(ics[0]),lower_bound,-step)
-            sol_1=maxima(cmd).sage()
+        lower_bound, upper_bound = desolve_rk4_determine_bounds(ics, end_points)
+        sol_1, sol_2 = [], []
+        if lower_bound < ics[0]:
+            cmd = "rk(%s,%s,%s,[%s,%s,%s,%s])\
+            " % (de0.str(), '_SAGE_VAR_' + str(dvar), str(ics[1]), '_SAGE_VAR_' + str(ivar), str(ics[0]), lower_bound, -step)
+            sol_1 = maxima(cmd).sage()
             sol_1.pop(0)
             sol_1.reverse()
-        if upper_bound>ics[0]:
-            cmd="rk(%s,%s,%s,[%s,%s,%s,%s])\
-            "%(de0.str(),'_SAGE_VAR_'+str(dvar),str(ics[1]),'_SAGE_VAR_'+str(ivar),str(ics[0]),upper_bound,step)
-            sol_2=maxima(cmd).sage()
+        if upper_bound > ics[0]:
+            cmd = "rk(%s,%s,%s,[%s,%s,%s,%s])\
+            " % (de0.str(), '_SAGE_VAR_' + str(dvar), str(ics[1]), '_SAGE_VAR_' + str(ivar), str(ics[0]), upper_bound, step)
+            sol_2 = maxima(cmd).sage()
             sol_2.pop(0)
-        sol=sol_1
-        sol.extend([[ics[0],ics[1]]])
+        sol = sol_1
+        sol.extend([[ics[0], ics[1]]])
         sol.extend(sol_2)
 
         if output == 'list':
@@ -1408,7 +1368,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
                     YMAX = t
                 if t < YMIN:
                     YMIN = t
-            return plot_slope_field(de, (ivar,XMIN,XMAX), (dvar,YMIN,YMAX))+R
+            return plot_slope_field(de, (ivar, XMIN, XMAX), (dvar, YMIN, YMAX)) + R
 
     if not (isinstance(dvar, Expression) and dvar.is_symbol()):
         from sage.symbolic.ring import SR
@@ -1417,13 +1377,14 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
         if isinstance(de, Expression) and de.is_relational():
             de = de.lhs() - de.rhs()
         # consider to add warning if the solution is not unique
-        de=solve(de,diff(dvar,ivar),solution_dict=True)
+        de = solve(de, diff(dvar, ivar), solution_dict=True)
         if len(de) != 1:
             raise NotImplementedError("Sorry, cannot find explicit formula for right-hand side of the ODE.")
         with SR.temp_var() as dummy_dvar:
-            return desolve_rk4_inner(de[0][diff(dvar,ivar)].subs({dvar:dummy_dvar}), dummy_dvar)
+            return desolve_rk4_inner(de[0][diff(dvar, ivar)].subs({dvar: dummy_dvar}), dummy_dvar)
     else:
         return desolve_rk4_inner(de, dvar)
+
 
 def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1):
     r"""
@@ -1505,34 +1466,35 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
     desstr = "[" + ",".join(dess) + "]"
     varss = [varsi._maxima_().str() for varsi in vars]
     varstr = "[" + ",".join(varss) + "]"
-    x0=ics[0]
-    icss = [ics[i]._maxima_().str() for i in range(1,len(ics))]
+    x0 = ics[0]
+    icss = [ics[i]._maxima_().str() for i in range(1, len(ics))]
     icstr = "[" + ",".join(icss) + "]"
-    step=abs(step)
+    step = abs(step)
 
     maxima("load('dynamics)")
-    lower_bound,upper_bound=desolve_rk4_determine_bounds(ics,end_points)
-    sol_1, sol_2 = [],[]
-    if lower_bound<ics[0]:
-        cmd="rk(%s,%s,%s,[%s,%s,%s,%s])\
-        "%(desstr,varstr,icstr,'_SAGE_VAR_'+str(ivar),str(x0),lower_bound,-step)
-        sol_1=maxima(cmd).sage()
+    lower_bound, upper_bound = desolve_rk4_determine_bounds(ics, end_points)
+    sol_1, sol_2 = [], []
+    if lower_bound < ics[0]:
+        cmd = "rk(%s,%s,%s,[%s,%s,%s,%s])\
+        " % (desstr, varstr, icstr, '_SAGE_VAR_' + str(ivar), str(x0), lower_bound, -step)
+        sol_1 = maxima(cmd).sage()
         sol_1.pop(0)
         sol_1.reverse()
-    if upper_bound>ics[0]:
-        cmd="rk(%s,%s,%s,[%s,%s,%s,%s])\
-        "%(desstr,varstr,icstr,'_SAGE_VAR_'+str(ivar),str(x0),upper_bound,step)
-        sol_2=maxima(cmd).sage()
+    if upper_bound > ics[0]:
+        cmd = "rk(%s,%s,%s,[%s,%s,%s,%s])\
+        " % (desstr, varstr, icstr, '_SAGE_VAR_' + str(ivar), str(x0), upper_bound, step)
+        sol_2 = maxima(cmd).sage()
         sol_2.pop(0)
-    sol=sol_1
+    sol = sol_1
     sol.append(ics)
     sol.extend(sol_2)
 
     return sol
 
-def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
-, rtol=None, atol=None, tcrit=None, h0=0.0, hmax=0.0, hmin=0.0, ixpr=0
-, mxstep=0, mxhnil=0, mxordn=12, mxords=5, printmessg=0):
+
+def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=(),
+                   rtol=None, atol=None, tcrit=None, h0=0.0, hmax=0.0, hmin=0.0, ixpr=0,
+                   mxstep=0, mxhnil=0, mxordn=12, mxords=5, printmessg=0):
     r"""
     Solve numerically a system of first-order ordinary differential equations
     using ``odeint`` from scipy.integrate module.
@@ -1702,10 +1664,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
                     v.append(t)
                     return [[element(*v) for element in row] for row in J]
 
-        sol=odeint(func, ics, times, args=args, Dfun=Dfun, rtol=rtol, atol=atol,
-            tcrit=tcrit, h0=h0, hmax=hmax, hmin=hmin, ixpr=ixpr, mxstep=mxstep,
-            mxhnil=mxhnil, mxordn=mxordn, mxords=mxords, printmessg=printmessg)
-        return sol
+        return odeint(func, ics, times, args=args, Dfun=Dfun, rtol=rtol, atol=atol,
+                      tcrit=tcrit, h0=h0, hmax=hmax, hmin=hmin, ixpr=ixpr, mxstep=mxstep,
+                      mxhnil=mxhnil, mxordn=mxordn, mxords=mxords, printmessg=printmessg)
 
     if isinstance(dvars, Expression) and dvars.is_symbol():
         dvars = [dvars]
@@ -1717,7 +1678,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         all_vars = set().union(*[de.variables() for de in des])
         ivars = all_vars - set(dvars)
 
-        if len(ivars)==1:
+        if len(ivars) == 1:
             return desolve_odeint_inner(next(iter(ivars)))
         elif not ivars:
             from sage.symbolic.ring import SR
@@ -1727,7 +1688,8 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
             raise ValueError("Unable to determine independent variable, please specify.")
     return desolve_odeint_inner(ivar)
 
-def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16):
+
+def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
     r"""
     Solve numerically a system of first order differential equations using the
     taylor series integrator implemented in mintides.
@@ -1798,27 +1760,27 @@ def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16)
     from sage.misc.temporary_file import tmp_dir
     tempdir = tmp_dir()
     intfile = os.path.join(tempdir, 'integrator.c')
-    drfile = os.path.join(tempdir ,'driver.c')
+    drfile = os.path.join(tempdir, 'driver.c')
     fileoutput = os.path.join(tempdir, 'output')
     runmefile = os.path.join(tempdir, 'runme')
-    genfiles_mintides(intfile, drfile, f, [N(_) for _ in ics], N(initial), N(final), N(delta), N(tolrel),
-                     N(tolabs), fileoutput)
+    genfiles_mintides(intfile, drfile, f, [N(_) for _ in ics],
+                      N(initial), N(final), N(delta), N(tolrel),
+                      N(tolabs), fileoutput)
     subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
-                          os.path.join('$SAGE_LOCAL','lib','libTIDES.a') + ' $LDFLAGS '
-                          + os.path.join('-L$SAGE_LOCAL','lib ') +' -lm  -O2 ' +
-                          os.path.join('-I$SAGE_LOCAL','include '),
-                          shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    outfile = open(fileoutput)
-    res = outfile.readlines()
-    outfile.close()
+                          os.path.join('$SAGE_LOCAL', 'lib', 'libTIDES.a') + ' $LDFLAGS '
+                          + os.path.join('-L$SAGE_LOCAL', 'lib ') + ' -lm  -O2 ' +
+                          os.path.join('-I$SAGE_LOCAL', 'include '),
+                          shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with open(fileoutput) as outfile:
+        res = outfile.readlines()
     for i in range(len(res)):
         res[i] = [RealField()(_) for _ in res[i].split(' ') if len(_) > 2]
     shutil.rmtree(tempdir)
     return res
 
 
-def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16, digits=50):
+def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16, digits=50):
     r"""
     Solve numerically a system of first order differential equations using the
     taylor series integrator in arbitrary precision implemented in tides.
@@ -1902,17 +1864,17 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
     fileoutput = os.path.join(tempdir, 'output')
     runmefile = os.path.join(tempdir, 'runme')
     genfiles_mpfr(intfile, drfile, f, ics, initial, final, delta, [], [],
-                      digits, tolrel, tolabs, fileoutput)
+                  digits, tolrel, tolabs, fileoutput)
     subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
-                          os.path.join('$SAGE_LOCAL','lib','libTIDES.a') + ' $LDFLAGS '
-                          + os.path.join('-L$SAGE_LOCAL','lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
-                          os.path.join('-I$SAGE_LOCAL','include ') ,
-                          shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    outfile = open(fileoutput)
-    res = outfile.readlines()
-    outfile.close()
+                          os.path.join('$SAGE_LOCAL', 'lib', 'libTIDES.a') + ' $LDFLAGS '
+                          + os.path.join('-L$SAGE_LOCAL', 'lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
+                          os.path.join('-I$SAGE_LOCAL', 'include '),
+                          shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with open(fileoutput) as outfile:
+        res = outfile.readlines()
     for i in range(len(res)):
-        res[i] = [RealField(ceil(digits*log(10,2)))(_) for _ in res[i].split(' ') if len(_) > 2]
+        res[i] = [RealField(ceil(digits * log(10, 2)))(piece)
+                  for piece in res[i].split(' ') if len(piece) > 2]
     shutil.rmtree(tempdir)
     return res

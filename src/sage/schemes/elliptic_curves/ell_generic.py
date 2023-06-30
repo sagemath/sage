@@ -278,6 +278,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         Check that :trac:`12524` is solved::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<phi> = NumberField(x^2 - x - 1)                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0, 0, phi, 27*phi - 43, -80*phi + 128])            # optional - sage.rings.number_field
             sage: E._latex_()                                                           # optional - sage.rings.number_field
@@ -711,6 +712,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         r"""
         Return one or all points with given `x`-coordinate.
 
+        This method is deterministic: It returns the same data each
+        time when called again with the same `x`.
+
         INPUT:
 
         - ``x`` -- an element of the base ring of the curve, or of an extension.
@@ -745,11 +749,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve('37a'); E
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: E.lift_x(1)
-            (1 : 0 : 1)
+            (1 : -1 : 1)
             sage: E.lift_x(2)
-            (2 : 2 : 1)
+            (2 : -3 : 1)
             sage: E.lift_x(1/4, all=True)
-            [(1/4 : -3/8 : 1), (1/4 : -5/8 : 1)]
+            [(1/4 : -5/8 : 1), (1/4 : -3/8 : 1)]
 
         There are no rational points with `x`-coordinate 3::
 
@@ -765,7 +769,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         the base ring to the parent of `x`::
 
             sage: P = E.lift_x(3, extend=True); P                                       # optional - sage.rings.number_field
-            (3 : y : 1)
+            (3 : -y - 1 : 1)
             sage: P.curve()                                                             # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 + y = x^3 + (-1)*x
             over Number Field in y with defining polynomial y^2 + y - 24
@@ -773,15 +777,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         Or we can extend scalars.  There are two such points in `E(\RR)`::
 
             sage: E.change_ring(RR).lift_x(3, all=True)
-            [(3.00000000000000 : 4.42442890089805 : 1.00000000000000),
-             (3.00000000000000 : -5.42442890089805 : 1.00000000000000)]
+            [(3.00000000000000 : -5.42442890089805 : 1.00000000000000),
+             (3.00000000000000 : 4.42442890089805 : 1.00000000000000)]
 
         And of course it always works in `E(\CC)`::
 
             sage: E.change_ring(RR).lift_x(.5, all=True)
             []
             sage: E.change_ring(CC).lift_x(.5)
-            (0.500000000000000 : -0.500000000000000 + 0.353553390593274*I : 1.00000000000000)
+            (0.500000000000000 : -0.500000000000000 - 0.353553390593274*I : 1.00000000000000)
 
         In this example we start with a curve defined over `\QQ`
         which has no rational points with `x=0`, but using
@@ -791,7 +795,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve([0,0,0,0,2]); E
             Elliptic Curve defined by y^2 = x^3 + 2 over Rational Field
             sage: P = E.lift_x(0, extend=True); P                                       # optional - sage.rings.number_field
-            (0 : y : 1)
+            (0 : -y : 1)
             sage: P.curve()                                                             # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 = x^3 + 2
             over Number Field in y with defining polynomial y^2 - 2
@@ -801,7 +805,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve('37a').change_ring(GF(17)); E                       # optional - sage.rings.finite_rings
             Elliptic Curve defined by y^2 + y = x^3 + 16*x over Finite Field of size 17
             sage: E.lift_x(7)                                                           # optional - sage.rings.finite_rings
-            (7 : 11 : 1)
+            (7 : 5 : 1)
             sage: E.lift_x(3)                                                           # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -820,14 +824,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve('37a')
             sage: P = E.lift_x(pAdicField(17, 5)(6)); P                                 # optional - sage.rings.padics
-            (6 + O(17^5) : 2 + 16*17 + 16*17^2 + 16*17^3 + 16*17^4 + O(17^5) : 1 + O(17^5))
+            (6 + O(17^5) : 14 + O(17^5) : 1 + O(17^5))
             sage: P.curve()                                                             # optional - sage.rings.padics
             Elliptic Curve defined by
             y^2 + (1+O(17^5))*y = x^3 + (16+16*17+16*17^2+16*17^3+16*17^4+O(17^5))*x
             over 17-adic Field with capped relative precision 5
             sage: K.<t> = PowerSeriesRing(QQ, 't', 5)
             sage: P = E.lift_x(1 + t); P
-            (1 + t : 2*t - t^2 + 5*t^3 - 21*t^4 + O(t^5) : 1)
+            (1 + t : -1 - 2*t + t^2 - 5*t^3 + 21*t^4 + O(t^5) : 1)
             sage: K.<a> = GF(16)                                                        # optional - sage.rings.finite_rings
             sage: P = E.change_ring(K).lift_x(a^3); P                                   # optional - sage.rings.finite_rings
             (a^3 : a^3 + a : 1)
@@ -840,7 +844,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Elliptic Curve defined by y^2 = x^3 + 2 over Rational Field
             sage: x = polygen(QQ)
             sage: P = E.lift_x(x, extend=True); P
-            (x : y : 1)
+            (x : -y : 1)
 
         This point is a generic point on E::
 
@@ -850,9 +854,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             over Fraction Field of Univariate Polynomial Ring in x over Rational Field
             with modulus y^2 - x^3 - 2
             sage: -P
-            (x : -y : 1)
+            (x : y : 1)
             sage: 2*P
-            ((1/4*x^4 - 4*x)/(x^3 + 2) : ((1/8*x^6 + 5*x^3 - 4)/(x^6 + 4*x^3 + 4))*y : 1)
+            ((1/4*x^4 - 4*x)/(x^3 + 2) : ((-1/8*x^6 - 5*x^3 + 4)/(x^6 + 4*x^3 + 4))*y : 1)
 
         Check that :trac:`30297` is fixed::
 
@@ -873,6 +877,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             []
             sage: E.lift_x(7, all=True)                                                     # optional - sage.rings.finite_rings
             [(7 : 3 : 1), (7 : 14 : 1)]
+
+        Check determinism::
+
+            sage: F.<t> = GF((101,3))
+            sage: {(t+1).sqrt() for _ in range(1000)}   # both square roots can occur
+            {29*t^2 + 56*t + 26, 72*t^2 + 45*t + 75}
+            sage: E = EllipticCurve(F, [1,1])
+            sage: {E.lift_x(t+1) for _ in range(1000)}  # but .lift_x() uses a fixed one
+            {(t + 1 : 39*t^2 + 14*t + 12 : 1)}
         """
         K = self.base_ring()
         L = x.parent()
@@ -909,6 +922,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             if D.is_square():  # avoid automatic creation of sqrts
                 ys = [(-b+d)/2 for d in D.sqrt(all=True)]
 
+        ys.sort()  # ensure deterministic behavior
+
         # Return the point(s) if any:
 
         if ys:
@@ -939,6 +954,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ys = [y1]
         else:
             ys = [y1, y2]
+        ys.sort()  # ensure deterministic behavior
         one = M.one()
         if all:
             return [EM.point([x, y, one], check=False) for y in ys]
@@ -1692,7 +1708,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: xlist = pol.roots(multiplicities=False); xlist
             [9, 2, -1/3, -5]
             sage: [E.lift_x(x, all=True) for x in xlist]
-            [[(9 : 23 : 1), (9 : -33 : 1)], [(2 : 2 : 1), (2 : -5 : 1)], [], []]
+            [[(9 : -33 : 1), (9 : 23 : 1)], [(2 : -5 : 1), (2 : 2 : 1)], [], []]
 
         .. NOTE::
 
@@ -2541,6 +2557,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         We can also handle injections to different base rings::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 7)                                          # optional - sage.rings.number_field
             sage: E.isomorphism_to(E.change_ring(K))                                    # optional - sage.rings.number_field
             Elliptic-curve morphism:
@@ -2583,6 +2600,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         We can also find automorphisms defined over extension fields::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 3)  # adjoin roots of unity                 # optional - sage.rings.number_field
             sage: E.automorphisms(K)                                                    # optional - sage.rings.number_field
             [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3
@@ -3328,6 +3346,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve('11a1')
             sage: E._p_primary_torsion_basis(5)
             [[(5 : -6 : 1), 1]]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<t> = NumberField(x^4 + x^3 + 11*x^2 + 41*x + 101)                  # optional - sage.rings.number_field
             sage: EK = E.base_extend(K)                                                 # optional - sage.rings.number_field
             sage: EK._p_primary_torsion_basis(5)  # long time (2s on sage.math, 2011)   # optional - sage.rings.number_field

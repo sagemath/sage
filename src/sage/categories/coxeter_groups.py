@@ -1327,7 +1327,10 @@ class CoxeterGroups(Category_singleton):
             one = self.one()
             for si in s:
                 tester.assertEqual(si**2, one)
-            cox_mat = self.coxeter_matrix()
+            try:
+                cox_mat = self.coxeter_matrix()
+            except ImportError:
+                return
             I = cox_mat.index_set()
             for ii, i in enumerate(I):
                 for j in I[ii + 1:]:

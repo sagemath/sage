@@ -817,10 +817,10 @@ class MPolynomialIdeal_singular_repr(
         from sage.libs.singular.function_factory import ff
 
         if algorithm == 'sy':
-            primdecSY =  ff.primdec__lib.primdecSY
+            primdecSY = ff.primdec__lib.primdecSY
             P = primdecSY(self)
         elif algorithm == 'gtz':
-            primdecGTZ =  ff.primdec__lib.primdecGTZ
+            primdecGTZ = ff.primdec__lib.primdecGTZ
             P = primdecGTZ(self)
 
         R = self.ring()
@@ -1117,7 +1117,7 @@ class MPolynomialIdeal_singular_repr(
         # the Singular routines are quite picky about their input.
         if is_groebner:
             if Q == P:
-                I =  MPolynomialIdeal(P, self.interreduced_basis()[::-1])
+                I = MPolynomialIdeal(P, self.interreduced_basis()[::-1])
             else:
                 I = self
                 I = MPolynomialIdeal(P, I.transformed_basis('fglm')[::-1]) # -> 'lex'
@@ -1463,7 +1463,7 @@ class MPolynomialIdeal_singular_repr(
 
         R = self.ring()
         S = self._groebner_basis_singular_raw(algorithm=algorithm, *args, **kwds)
-        S =  PolynomialSequence([R(S[i+1]) for i in range(len(S))], R, immutable=True)
+        S = PolynomialSequence([R(S[i+1]) for i in range(len(S))], R, immutable=True)
         return S
 
     @cached_method
@@ -3052,7 +3052,7 @@ class MPolynomialIdeal_singular_repr(
 
     @require_field
     @handle_AA_and_QQbar
-    def hilbert_numerator(self, grading = None, algorithm = 'sage'):
+    def hilbert_numerator(self, grading=None, algorithm='sage'):
         r"""
         Return the Hilbert numerator of this ideal.
 
@@ -3419,7 +3419,7 @@ class MPolynomialIdeal_macaulay2_repr:
         return R(k)
 
 class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
-    def __init__(self, ring, gens, coerce=True, side = "left"):
+    def __init__(self, ring, gens, coerce=True, side="left"):
         r"""
         Creates a non-commutative polynomial ideal.
 
@@ -3464,7 +3464,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
             raise ValueError("Only left and two-sided ideals are allowed.")
         Ideal_nc.__init__(self, ring, gens, coerce=coerce, side=side)
 
-    def __call_singular(self, cmd, arg = None):
+    def __call_singular(self, cmd, arg=None):
         """
         Internal function for calling a Singular function.
 
@@ -5418,7 +5418,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         We pick a point on ``E``::
 
             sage: p = E.lift_x(1); p                                                    # optional - sage.rings.number_field
-            (1 : 2 : 1)
+            (1 : -6 : 1)
 
             sage: I = E.defining_ideal(); I                                             # optional - sage.rings.number_field
             Ideal (-x^3 - 2*x^2*z + x*y*z + y^2*z - 4*x*z^2 + 3*y*z^2 - 5*z^3)

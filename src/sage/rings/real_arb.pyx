@@ -217,12 +217,11 @@ from sage.libs.mpfi cimport *
 from sage.libs.mpfr cimport *
 from sage.libs.mpfr cimport MPFR_RNDN, MPFR_RNDU, MPFR_RNDD, MPFR_RNDZ
 
-from sage.structure.element cimport Element, ModuleElement, RingElement
+from sage.structure.element cimport Element, RingElement
 from sage.rings.ring cimport Field
 import sage.rings.abc
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.real_mpfr cimport RealField_class, RealField, RealNumber
 from sage.arith.long cimport is_small_python_int
 
@@ -339,7 +338,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
     ::
 
-        sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, 'x')
+        sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, 'x')                         # optional - sage.symbolic
         x + [0.914213562373095 +/- ...e-16]
 
     TESTS::
@@ -1657,7 +1656,6 @@ cdef class RealBall(RingElement):
             0.250000000000000
         """
         cdef RealNumber left, mid, right
-        cdef long prec = field.precision()
         cdef int sl, sr
         if (field.rnd == MPFR_RNDN or
                 field.rnd == MPFR_RNDZ and arb_contains_zero(self.value)):
@@ -2429,22 +2427,21 @@ cdef class RealBall(RingElement):
             False
         """
         cdef RealBall lt, rt
-        cdef arb_t difference
 
         lt = left
         rt = right
 
         if op == Py_EQ:
             return arb_eq(lt.value, rt.value)
-        elif op == Py_NE:
+        if op == Py_NE:
             return arb_ne(lt.value, rt.value)
-        elif op == Py_GT:
+        if op == Py_GT:
             return arb_gt(lt.value, rt.value)
-        elif op == Py_LT:
+        if op == Py_LT:
             return arb_lt(lt.value, rt.value)
-        elif op == Py_GE:
+        if op == Py_GE:
             return arb_ge(lt.value, rt.value)
-        elif op == Py_LE:
+        if op == Py_LE:
             return arb_le(lt.value, rt.value)
 
     def min(self, *others):

@@ -242,6 +242,7 @@ Classes and methods
 from __future__ import annotations
 from typing import Iterator
 import itertools
+import operator
 
 from sage.arith.misc import factorial, multinomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -256,16 +257,10 @@ from sage.combinat.composition import Composition
 from sage.combinat.permutation_cython import (left_action_product, right_action_product,
                                               left_action_same_n, right_action_same_n,
                                               map_to_list, next_perm)
-from sage.combinat.rsk import RSK, RSK_inverse
 from sage.combinat.tools import transitive_ideal
-from sage.graphs.digraph import DiGraph
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.libs.gap.libgap import libgap
-from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.decorators import rename_keyword
-from sage.misc.prandom import sample
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -274,7 +269,18 @@ from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.element import Element, get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
-import operator
+
+lazy_import('sage.combinat.rsk', ['RSK', 'RSK_inverse'])
+lazy_import('sage.combinat.tableau', 'Tableau')
+lazy_import('sage.combinat.words.finite_word', 'evaluation_dict')
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.groups.cactus_group', 'CactusGroup')
+lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
+lazy_import('sage.libs.gap.libgap', 'libgap')
+lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
+lazy_import('sage.misc.prandom', 'sample')
+
 
 class Permutation(CombinatorialElement):
     r"""
@@ -441,7 +447,6 @@ class Permutation(CombinatorialElement):
             sage: P.parent()
             Standard permutations
         """
-        import sage.combinat.tableau as tableau
         if isinstance(l, Permutation):
             return l
         elif isinstance(l, PermutationGroupElement):
@@ -461,11 +466,11 @@ class Permutation(CombinatorialElement):
 
         #if l is a pair of standard tableaux or a pair of lists
         elif isinstance(l, (tuple, list)) and len(l) == 2 and \
-            all(isinstance(x, tableau.Tableau) for x in l):
+            all(isinstance(x, Tableau) for x in l):
             return RSK_inverse(*l, output='permutation')
         elif isinstance(l, (tuple, list)) and len(l) == 2 and \
             all(isinstance(x, list) for x in l):
-            P,Q = [tableau.Tableau(_) for _ in l]
+            P,Q = [Tableau(_) for _ in l]
             return RSK_inverse(P, Q, 'permutation')
         # if it's a tuple or nonempty list of tuples, also assume cycle
         # notation
@@ -870,7 +875,6 @@ class Permutation(CombinatorialElement):
             sage: Permutation([3,4,1,2,5]).to_tableau_by_shape([3,2]).reading_word_permutation()
             [3, 4, 1, 2, 5]
         """
-        import sage.combinat.tableau as tableau
         if sum(shape) != len(self):
             raise ValueError("the size of the partition must be the size of self")
 
@@ -879,7 +883,7 @@ class Permutation(CombinatorialElement):
         for i in reversed(shape):
             t = [w[:i]] + t
             w = w[i:]
-        return tableau.Tableau(t)
+        return Tableau(t)
 
     def to_cycles(self, singletons=True, use_min=True):
         """
@@ -1738,7 +1742,7 @@ class Permutation(CombinatorialElement):
             if representation == "cycles":
                 d.show(**args)
             else:
-                d.show(layout = "circular", **args)
+                d.show(layout="circular", **args)
 
         elif representation == "braid":
             from sage.plot.line import line
@@ -1759,7 +1763,7 @@ class Permutation(CombinatorialElement):
                 L += line([r(i, 1.0), r(p[i]-1, 0)])
                 L += text(str(i), r(i, 1.05)) + text(str(i), r(p[i]-1, -.05))
 
-            return L.show(axes = False, **args)
+            return L.show(axes=False, **args)
 
         else:
             raise ValueError("The value of 'representation' must be equal to "+
@@ -4808,7 +4812,7 @@ class Permutation(CombinatorialElement):
                 return LBT(None)
             mn = compare(perm)
             k = perm.index(mn)
-            return LBT([rec(perm[:k]), rec(perm[k + 1:])], label = mn)
+            return LBT([rec(perm[:k]), rec(perm[k + 1:])], label=mn)
         return rec(self)
 
     @combinatorial_map(name="Increasing tree")
@@ -4883,7 +4887,7 @@ class Permutation(CombinatorialElement):
             res = res.binary_search_insert(i)
         return res
 
-    @combinatorial_map(name = "Binary search tree (left to right)")
+    @combinatorial_map(name="Binary search tree (left to right)")
     def binary_search_tree_shape(self, left_to_right=True):
         r"""
         Return the shape of the binary search tree of the permutation
@@ -5263,7 +5267,7 @@ class Permutation(CombinatorialElement):
     # Binary operations #
     #####################
 
-    def shifted_concatenation(self, other, side = "right"):
+    def shifted_concatenation(self, other, side="right"):
         r"""
         Return the right (or left) shifted concatenation of ``self``
         with a permutation ``other``. These operations are also known
@@ -6924,7 +6928,6 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             return self._from_permutation_group_element
         if isinstance(G, StandardPermutations_n) and G.n <= self.n:
             return True
-        from sage.groups.cactus_group import CactusGroup
         if isinstance(G, CactusGroup) and G.n() <= self.n:
             return self._from_cactus_group_element
         return super()._coerce_map_from_(G)
@@ -7787,7 +7790,7 @@ def from_reduced_word(rw, parent=None):
     return parent(p)
 
 
-def bistochastic_as_sum_of_permutations(M, check = True):
+def bistochastic_as_sum_of_permutations(M, check=True):
     r"""
     Return the positive sum of permutations corresponding to
     the bistochastic matrix ``M``.
@@ -7887,7 +7890,7 @@ def bistochastic_as_sum_of_permutations(M, check = True):
     if not all(x >= 0 for x in M.list()):
         raise ValueError("The matrix should have nonnegative entries")
 
-    if check and not M.is_bistochastic(normalized = False):
+    if check and not M.is_bistochastic(normalized=False):
         raise ValueError("The matrix is not bistochastic")
 
     if not RR.has_coerce_map_from(M.base_ring()):
@@ -8682,8 +8685,6 @@ def permutohedron_lequal(p1, p2, side="right"):
 ############
 # Patterns #
 ############
-from sage.combinat.words.finite_word import evaluation_dict
-
 
 def to_standard(p, key=None):
     r"""

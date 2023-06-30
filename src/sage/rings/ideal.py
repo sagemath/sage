@@ -509,6 +509,7 @@ class Ideal_generic(MonoidElement):
 
         TESTS::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: A = K.ideal(a)
             sage: taus = K.embeddings(K)
@@ -1689,7 +1690,7 @@ class Ideal_pid(Ideal_principal):
             raise ValueError("The ideal (%s) is not prime"%self)
         from sage.rings.integer_ring import ZZ
         if self.ring() is ZZ:
-            return ZZ.residue_field(self, check = False)
+            return ZZ.residue_field(self, check=False)
         raise NotImplementedError("residue_field() is only implemented for ZZ and rings of integers of number fields.")
 
 class Ideal_fractional(Ideal_generic):
@@ -1705,6 +1706,7 @@ class Ideal_fractional(Ideal_generic):
         EXAMPLES::
 
             sage: from sage.rings.ideal import Ideal_fractional
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: Ideal_fractional(K, [a]) # indirect doctest                           # optional - sage.rings.number_field
             Fractional ideal (a) of Number Field in a with defining polynomial x^2 + 1

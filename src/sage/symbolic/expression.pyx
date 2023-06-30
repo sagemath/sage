@@ -3082,14 +3082,11 @@ cdef class Expression(Expression_abc):
                     if op.is_numeric():
                         yield op
                     else:
-                        for opp in numelems_gen(op):
-                            yield opp
+                        yield from numelems_gen(op)
         # stop at the first inexact number in the subexpression tree of self,
         # and if there is no such element, then self is exact
-        for nelem in numelems_gen(self):
-            if not nelem.pyobject().base_ring().is_exact():
-                return False
-        return True
+        return all(nelem.pyobject().base_ring().is_exact()
+                   for nelem in numelems_gen(self))
 
     cpdef bint is_infinity(self):
         """
@@ -8325,7 +8322,7 @@ cdef class Expression(Expression_abc):
             else:
                 return new_Expression_from_pyobject(self._parent, y)
         zero = self._parent.zero()
-        return zero.add(*(pol[i]*self**i for i in xrange(pol.degree() + 1)))
+        return zero.add(*(pol[i]*self**i for i in range(pol.degree() + 1)))
 
     def collect_common_factors(self):
         """
@@ -12473,7 +12470,7 @@ cdef class Expression(Expression_abc):
             ex = self
         sympy_ex = ex._sympy_()
         solutions = diophantine(sympy_ex)
-        if isinstance(solutions, (set)):
+        if isinstance(solutions, set):
             solutions = list(solutions)
 
         if len(solutions) == 0:
@@ -12484,7 +12481,7 @@ cdef class Expression(Expression_abc):
             solutions = [tuple(SR(s) for s in sol) for sol in solutions]
         if x is None:
             wanted_vars = ex.variables()
-            var_idx = list(xrange(len(ex.variables())))
+            var_idx = list(range(len(ex.variables())))
         else:
             if isinstance(x, (list, tuple)):
                 wanted_vars = x
