@@ -90,10 +90,8 @@ else
     # We trap SIGINT such that SIGINT interrupts the main process being
     # run, not the logging.
 
-
-
     ( exec 2>&1; eval "$cmd" ) | \
-        ( trap '' SIGINT; if [ -n "$$(GITHUB_ACTIONS)" ]; then echo "::group::${logname}"; fi; tee -a "$logfile" | $SED; if [ -n "$$(GITHUB_ACTIONS)" ]; then echo "::endgroup::"; fi )
+        ( trap '' SIGINT; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::group::${logname}"; fi; tee -a "$logfile" | $SED; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::endgroup::"; fi )
 
     pipestatus=(${PIPESTATUS[*]})
 
