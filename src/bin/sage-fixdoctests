@@ -25,7 +25,7 @@ from argparse import ArgumentParser, FileType
 from pathlib import Path
 
 from sage.doctest.control import skipfile
-from sage.doctest.parsing import parse_optional_tags, update_optional_tags
+from sage.doctest.parsing import parse_optional_tags, unparse_optional_tags, update_optional_tags
 from sage.env import SAGE_ROOT
 from sage.features import PythonModule
 from sage.features.all import all_features
@@ -145,6 +145,9 @@ def process_block(block, src_in_lines, file_optional_tags):
 
     if m := re.search(r"referenced here was set only in doctest marked '# (optional|needs)[-: ]*([^;']*)", block):
         optional = m.group(2).split()
+        if src_in_lines[first_line_num - 1].strip() in ['"""', "'''"]:
+            # This happens due to a virtual doctest in src/sage/repl/user_globals.py
+            return
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=optional)
 
@@ -309,12 +312,8 @@ if args.venv or environment_args:
        sys.exit(status)
 
 for input, output in zip(inputs, outputs):
-    if skipfile_result := skipfile(input, True, log=print):
-        if skipfile_result is True:
-            continue
-        file_optional_tags = parse_optional_tags('#' + skipfile_result)
-    else:
-        file_optional_tags = set()
+    if (skipfile_result := skipfile(input, True, log=print)) is True:
+        continue
 
     # Run the doctester, putting the output of the test into sage's temporary directory
     cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
@@ -326,7 +325,7 @@ for input, output in zip(inputs, outputs):
 
     # echo control messages
     for m in re.finditer('^Skipping .*', doc_out, re.MULTILINE):
-        print('sage-runtest: ' + m.group(0))
+        print('sage-runtests: ' + m.group(0))
         break
     else:
         sep = "**********************************************************************\n"
@@ -338,21 +337,31 @@ for input, output in zip(inputs, outputs):
         shallow_copy_of_src_in_lines = list(src_in_lines)
 
         # First remove duplicate optional tags and rewrite all '# optional' that should be '# needs'
+        file_optional_tags = set()
         persistent_optional_tags = set()
         for i, line in enumerate(src_in_lines):
-            if re.match('( *sage: *)(.*)#', line):
-                tags, line_sans_tags, is_persistent = parse_optional_tags(line, return_string_sans_tags=True)
+            if m := re.match(' *sage: *(.*)#', line):
+                tags, line_sans_tags, is_persistent = parse_optional_tags('#' + line, return_string_sans_tags=True)
                 if is_persistent:
                     persistent_optional_tags = tags - file_optional_tags
                     if persistent_optional_tags:
                         line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
-                    if re.fullmatch('( *sage: *)', line):
-                        # persistent (block scoped) annotation was removed, so remove the whole line
+                    if not line.rstrip():
+                        # persistent (block-scoped or file-scoped) annotation was removed, so remove the whole line
                         line = None
                 else:
                     line = update_optional_tags(line, remove_tags=file_optional_tags.union(persistent_optional_tags),
                                                 force_rewrite='standard')
                 src_in_lines[i] = line
+            elif m := re.match('([#.]* *sage[.]doctest:[ #]*)([^(]*)(.*)', line):
+                # file-scoped annotation
+                prefix = m.group(1)
+                file_optional_tags.update(parse_optional_tags('#' + m.group(2)))
+                suffix = m.group(3)
+                line = unparse_optional_tags(file_optional_tags)
+                if line:
+                    line = line[2:]  # strip '# '
+                src_in_lines[i] = prefix + line + suffix
             elif line.strip() in ['', '"""', "'''"]:    # Blank line or end of docstring
                 persistent_optional_tags = set()
 
