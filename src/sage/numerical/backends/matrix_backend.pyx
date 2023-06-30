@@ -18,6 +18,7 @@ other classes implementing solvers.
 #*****************************************************************************
 
 from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import Vector
 from .generic_backend cimport GenericBackend
 
 cdef class MatrixBackend(GenericBackend):
@@ -47,24 +48,26 @@ cdef class MatrixBackend(GenericBackend):
             sage: p = get_solver(solver = "Matrix")                 
 
         """
+        
+        #Sage Matrix and Vector instead of Python lists
+        self.objective_function = Vector(QQ, [])
+        self.G_matrix = Matrix(QQ, [])
 
-        self.objective_function = [] #c_matrix in the example for cvxopt
-        self.G_matrix = []
         self.prob_name = ''
         self.obj_constant_term = 0
         self.is_maximize = 1
 
-        self.row_lower_bound = []
-        self.row_upper_bound = []
-        self.col_lower_bound = []
-        self.col_upper_bound = []
+        self.row_lower_bound = Vector(QQ, [])
+        self.row_upper_bound = Vector(QQ, [])
+        self.col_lower_bound = Vector(QQ, [])
+        self.col_upper_bound = Vector(QQ, [])
 
-        self.row_name_var = []
-        self.col_name_var = []
+        self.row_name_var = Vector(QQ, [])
+        self.col_name_var = Vector(QQ, [])
 
-        self.is_continuous = []
-        self.is_binary = []
-        self.is_integer = []
+        self.is_continuous = Vector(QQ, [])
+        self.is_binary = Vector(QQ, [])
+        self.is_integer = Vector(QQ, [])
 
         if maximization:
             self.set_sense(+1)
@@ -142,14 +145,14 @@ cdef class MatrixBackend(GenericBackend):
         """
         if obj is None:
             obj = 0.0
-        self.G_matrix.append([0 for i in range(self.nrows())])
-        self.col_lower_bound.append(lower_bound)
-        self.col_upper_bound.append(upper_bound)
-        self.objective_function.append(obj)
-        self.col_name_var.append(name)
-        self.is_binary.append(binary)
-        self.is_continuous.append(continuous)
-        self.is_integer.append(integer)
+        self.G_matrix.augment(Vector([0 for i in range(self.nrows())]))
+        self.col_lower_bound.augment(lower_bound)
+        self.col_upper_bound.augment(upper_bound)
+        self.objective_function.augment(obj)
+        self.col_name_var.augment(name)
+        self.is_binary.augment(binary)
+        self.is_continuous.augment(continuous)
+        self.is_integer.augment(integer)
         return len(self.objective_function) - 1
 
     cpdef set_variable_type(self, int variable, int vtype):
@@ -309,17 +312,17 @@ cdef class MatrixBackend(GenericBackend):
         """
         column = []
         for _ in indices:
-            column.append(0.0)
+            column.augment(Vector([0.0]))
 
         for idx, ind in enumerate(indices):
             column[ind] = coeffs[idx]
 
-        self.G_matrix.append(column)
+        self.G_matrix.augment(column)
 
-        self.col_lower_bound.append(None)
-        self.col_upper_bound.append(None)
-        self.objective_function.append(0)
-        self.col_name_var.append(None)
+        self.col_lower_bound.augment(None)
+        self.col_upper_bound.augment(None)
+        self.objective_function.augment(0)
+        self.col_name_var.augment(None)
 
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
         """
@@ -357,13 +360,13 @@ cdef class MatrixBackend(GenericBackend):
             while c[0] > len(self.G_matrix) - 1:
                 self.add_variable()
         for i in range(len(self.G_matrix)):
-            self.G_matrix[i].append(0.0)
+            self.G_matrix[i].augment(Vector([0.0]))
         for c in coefficients:
             self.G_matrix[c[0]][-1] = c[1]
 
-        self.row_lower_bound.append(lower_bound)
-        self.row_upper_bound.append(upper_bound)
-        self.row_name_var.append(name)
+        self.row_lower_bound.augment(lower_bound)
+        self.row_upper_bound.augment(upper_bound)
+        self.row_name_var.augment(name)
 
 
 
