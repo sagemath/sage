@@ -716,6 +716,7 @@ class SageDocTestParser(doctest.DocTestParser):
             else:
                 self.optional_only = True
         self.probed_tags = probed_tags
+        self.file_optional_tags = file_optional_tags
 
     def __eq__(self, other):
         """
@@ -886,7 +887,7 @@ class SageDocTestParser(doctest.DocTestParser):
         string = find_sage_continuation.sub(r"\1...", string)
         res = doctest.DocTestParser.parse(self, string, *args)
         filtered = []
-        persistent_optional_tags = []
+        persistent_optional_tags = self.file_optional_tags
         for item in res:
             if isinstance(item, doctest.Example):
                 optional_tags, source_sans_tags, is_persistent = parse_optional_tags(item.source, return_string_sans_tags=True)
@@ -940,7 +941,7 @@ class SageDocTestParser(doctest.DocTestParser):
                     item.source = preparse(item.sage_source)
             else:
                 if item == '\n':
-                    persistent_optional_tags = []
+                    persistent_optional_tags = self.file_optional_tags
             filtered.append(item)
         return filtered
 

@@ -536,7 +536,7 @@ class FileDocTestSource(DocTestSource):
         if isinstance(file_tag_string, str):
             file_optional_tags = parse_optional_tags('#' + file_tag_string)
         else:
-            file_optional_tags = ()
+            file_optional_tags = set()
 
         self.path = path
         DocTestSource.__init__(self, options, file_optional_tags=file_optional_tags)
