@@ -118,7 +118,7 @@ class DocTestSource():
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
       instance or equivalent.
     """
-    def __init__(self, options):
+    def __init__(self, options, *, file_optional_tags=()):
         """
         Initialization.
 
@@ -133,6 +133,7 @@ class DocTestSource():
             sage: TestSuite(FDS).run()
         """
         self.options = options
+        self.file_optional_tags = file_optional_tags
 
     def __eq__(self, other):
         """
@@ -276,7 +277,8 @@ class DocTestSource():
         self.line_shift = 0
         self.parser = SageDocTestParser(self.options.optional,
                                         self.options.long,
-                                        probed_tags=self.options.probe)
+                                        probed_tags=self.options.probe,
+                                        file_optional_tags=self.file_optional_tags)
         self.linking = False
         doctests = []
         in_docstring = False
@@ -526,8 +528,18 @@ class FileDocTestSource(DocTestSource):
             sage: FDS.options.randorder
             0
         """
+        from .external import available_software
+        from .control import skipfile
+        from .parsing import parse_optional_tags
+        # FIXME: skipfile should be refactored
+        file_tag_string = skipfile(path, False, only_lib=options.only_lib)
+        if isinstance(file_tag_string, str):
+            file_optional_tags = parse_optional_tags('#' + file_tag_string)
+        else:
+            file_optional_tags = ()
+
         self.path = path
-        DocTestSource.__init__(self, options)
+        DocTestSource.__init__(self, options, file_optional_tags=file_optional_tags)
         if path.endswith('.rst.txt'):
             ext = '.rst.txt'
         else:
