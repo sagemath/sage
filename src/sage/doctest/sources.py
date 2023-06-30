@@ -231,7 +231,7 @@ class DocTestSource():
 
     @lazy_attribute
     def file_optional_tags(self):
-        """
+        r"""
         Return the set of tags that should apply to all doctests in this source.
 
         This default implementation just returns the empty set.
