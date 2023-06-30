@@ -231,9 +231,9 @@ class DivisorGroup_generic(FormalSums):
 
         Divisor groups are unique::
 
-            sage: A.<x, y> = AffineSpace(2, CC)
-            sage: C = Curve(y^2 - x^9 - x)
-            sage: DivisorGroup(C, ZZ).base_extend(QQ) is DivisorGroup(C, QQ)
+            sage: A.<x, y> = AffineSpace(2, CC)                                         # optional - sage.rings.real_mpfr
+            sage: C = Curve(y^2 - x^9 - x)                                              # optional - sage.rings.real_mpfr
+            sage: DivisorGroup(C, ZZ).base_extend(QQ) is DivisorGroup(C, QQ)            # optional - sage.rings.real_mpfr
             True
         """
         if self.base_ring().has_coerce_map_from(R):

@@ -2016,7 +2016,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P = ProjectiveSpace(QQ, 4, 'z')
             sage: R.<x0,x1,x2,x3,x4> = PolynomialRing(QQ)
             sage: H = x1^2 + x2^2 + 5*x3*x4
-            sage: P.subscheme_from_Chow_form(H, 3)                                      # needs sage.libs.gap
+            sage: P.subscheme_from_Chow_form(H, 3)
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
               -5*z0*z1 + z2^2 + z3^2
 
@@ -2025,7 +2025,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P = ProjectiveSpace(QQ, 3, 'z')
             sage: R.<x0,x1,x2,x3,x4,x5> = PolynomialRing(QQ)
             sage: H = x1 - x2 - x3 + x5 + 2*x0
-            sage: P.subscheme_from_Chow_form(H, 1)                                      # needs sage.libs.gap
+            sage: P.subscheme_from_Chow_form(H, 1)
             Closed subscheme of Projective Space of dimension 3 over Rational Field
             defined by:
               -z1 + z3,
@@ -2039,7 +2039,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: X = P.subscheme([x3^2 + x1*x2, x2 - x0])
             sage: Ch = X.Chow_form(); Ch                                                # needs sage.rings.finite_rings
             t0^2 - 2*t0*t3 + t3^2 - t2*t4 - t4*t5
-            sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y                              # needs sage.libs.gap sage.rings.finite_rings
+            sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y                              # needs sage.rings.finite_rings
             Closed subscheme of Projective Space of dimension 3
              over Finite Field of size 7 defined by:
               x1*x2 + x3^2,
@@ -2050,8 +2050,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
               -2*x0*x3 + 2*x2*x3,
               2*x0*x3 - 2*x2*x3,
               x0^2 - 2*x0*x2 + x2^2
-            sage: I = Y.defining_ideal()                                                # needs sage.libs.gap sage.rings.finite_rings
-            sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]                # needs sage.libs.gap sage.rings.finite_rings
+            sage: I = Y.defining_ideal()                                                # needs sage.rings.finite_rings
+            sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]                # needs sage.rings.finite_rings
             Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring
              in x0, x1, x2, x3 over Finite Field of size 7
         """
