@@ -81,15 +81,15 @@ def default_venv_environment_from_distribution():
         default_environment = runtest_default_environment
     return default_venv, default_environment
 
-if args.environment:
-    args.keep_both = args.full_tracebacks = True
-
 default_venv, default_environment = default_venv_environment_from_distribution()
 
 if not args.venv:
     args.venv = default_venv
 if not args.environment:
     args.environment = default_environment
+
+if args.distribution or args.venv != default_venv or args.environment != default_environment:
+    args.keep_both = args.full_tracebacks = True
 
 venv_explainers = []
 
