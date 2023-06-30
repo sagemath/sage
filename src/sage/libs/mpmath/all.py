@@ -8,7 +8,7 @@ from . import utils as _utils
 from sage.libs.mpmath._vendor.mpmath.libmp import *
 
 # Main namespace
-from sage.libs.mpmath import *
+from sage.libs.mpmath._vendor.mpmath import *
 
 # Utilities
 from .utils import call, mpmath_to_sage, sage_to_mpmath
