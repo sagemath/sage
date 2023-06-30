@@ -341,11 +341,10 @@ for input, output in zip(inputs, outputs):
         persistent_optional_tags = set()
         for i, line in enumerate(src_in_lines):
             if m := re.match(' *sage: *(.*)#', line):
-                tags, line_sans_tags, is_persistent = parse_optional_tags('#' + line, return_string_sans_tags=True)
+                tags, line_sans_tags, is_persistent = parse_optional_tags(line, return_string_sans_tags=True)
                 if is_persistent:
                     persistent_optional_tags = tags - file_optional_tags
-                    if persistent_optional_tags:
-                        line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
+                    line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
                     if not line.rstrip():
                         # persistent (block-scoped or file-scoped) annotation was removed, so remove the whole line
                         line = None
