@@ -1,1 +1,1 @@
-sci-mathematics/fricas[sbcl]
+sci-mathematics/fricas
