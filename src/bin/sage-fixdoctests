@@ -143,13 +143,13 @@ def process_block(block, src_in_lines, file_optional_tags):
     filename = m.group(1)
     first_line_num = line_num = int(m.group(2))  # 1-based line number of the first line of the example
 
-    if m := re.search(r"referenced here was set only in doctest marked '# optional - ([^;']*)", block):
-        optional = m.group(1).split()
+    if m := re.search(r"referenced here was set only in doctest marked '# (optional|needs)[-: ]*([^;']*)", block):
+        optional = m.group(2).split()
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=optional)
 
-    if m := re.search(r"annotation '# optional - ([^;']*)' may no longer be needed", block):
-        optional = m.group(1)
+    if m := re.search(r"annotation '# (optional|needs)[-: ]([^;']*)' may no longer be needed", block):
+        optional = m.group(2)
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 remove_tags=[optional])
 
