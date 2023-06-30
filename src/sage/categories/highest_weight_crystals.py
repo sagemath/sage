@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs, sage.combinat
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Highest Weight Crystals
 """
