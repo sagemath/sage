@@ -59,7 +59,7 @@ jobs:
           ./bootstrap && make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Build (fallback to non-incremental)
@@ -70,7 +70,7 @@ jobs:
           make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Build docs
@@ -83,7 +83,7 @@ jobs:
           make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make doc-html
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Copy docs
