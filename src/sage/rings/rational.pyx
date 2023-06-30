@@ -3383,9 +3383,10 @@ cdef class Rational(sage.structure.element.FieldElement):
             -3
         """
         if mode is None:
-            from sage.misc.superseded import deprecation
-            deprecation(35473,
-                "the default rounding for rationals, currently `away`, will be changed to `even`.")
+            if self.denominator() == 2:
+                from sage.misc.superseded import deprecation
+                deprecation(35473,
+                    "the default rounding for rationals, currently `away`, will be changed to `even`.")
             mode = "away"
         if not (mode in ['toward', 'away', 'up', 'down', 'even', 'odd']):
             raise ValueError("rounding mode must be one of 'toward', 'away', 'up', 'down', 'even', or 'odd'")
