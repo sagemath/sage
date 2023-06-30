@@ -87,7 +87,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import QQ, is_RationalField
+from sage.rings.fraction_field import FractionField
 
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
@@ -1096,8 +1097,24 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: sorted(list(P.points_of_bounded_height(bound=1)))
             [(-1 : 1), (-3/2*a - 1/2 : 1), (3/2*a - 1/2 : 1), (0 : 1),
              (-3/2*a + 1/2 : 1), (3/2*a + 1/2 : 1), (1 : 0), (1 : 1)]
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(3*x^2 + 1)
+            sage: O = K.maximal_order()
+            sage: P.<z,w> = ProjectiveSpace(O, 1)
+            sage: len(sorted(list(P.points_of_bounded_height(bound=2))))
+            44
+
+        ::
+
+            sage: P.<z,w> = ProjectiveSpace(ZZ, 1) # TODO this is not implemented yet
+            sage: sorted(list(P.points_of_bounded_height(bound=2)))
+            []
         """
         from sage.schemes.projective.proj_bdd_height import (
+            ZZ_points_of_bounded_height,
             QQ_points_of_bounded_height,
             IQ_points_of_bounded_height,
             points_of_bounded_height
@@ -1125,12 +1142,31 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         dim = self.dimension_relative()
 
-        # TODO bug, no `signature` for `order`
+        # When R is the ring of integers
         if is_ring_of_ints:
-            return points_of_bounded_height(self, R, dim, bound, prec, normalize=True)
+            fraction_field = FractionField(R)
 
+            # Field of fraction is the rational field
+            if fraction_field == QQ:
+                return ZZ_points_of_bounded_height(dim, bound)
+
+            # Field of fraction is a number field
+            r1, r2 = fraction_field.signature()
+            r = r1 + r2 - 1
+
+            if fraction_field.is_relative():
+                deg = fraction_field.relative_degree()
+            else:
+                deg = fraction_field.degree()
+
+            if deg == 2 and r == 0:
+                return IQ_points_of_bounded_height(self, fraction_field, dim, bound, normalize=True)
+
+            return points_of_bounded_height(self, fraction_field, dim, bound, prec, normalize=True)
+
+        # When R is a field
         if field_type:
-            # For imaginary quadratic field
+            # For checking whether R is imaginary quadratic field
             r1, r2 = R.signature()
             r = r1 + r2 - 1
 
