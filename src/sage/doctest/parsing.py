@@ -88,7 +88,7 @@ special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
 
 
 def parse_optional_tags(string, *, return_string_sans_tags=False):
-    """
+    r"""
     Return a set consisting of the optional tags from the following
     set that occur in a comment on the first line of the input string.
 
