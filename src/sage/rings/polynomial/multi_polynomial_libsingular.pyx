@@ -234,6 +234,14 @@ from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.categories.number_fields import NumberFields
 
+from sage.categories.action import Action
+from sage.matrix.matrix_space import MatrixSpace
+from sage.groups.matrix_gps.finitely_generated import MatrixGroup
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.matrix.constructor import matrix as MatrixConstructor
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from _operator import matmul
+
 from sage.structure.element import coerce_binop
 
 from sage.structure.parent cimport Parent
@@ -2110,6 +2118,11 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if sage_res._parent is not res_parent:
             sage_res = res_parent(sage_res)
         return sage_res
+    
+    def _get_action_(self, G):
+        if isinstance(G, (MatrixSpace, MatrixGroup)) and self.base_ring().has_coerce_map_from(G.base_ring()):
+            return MatrixPolynomialAction(G, self)
+        return super()
 
     def __hash__(self):
         """
@@ -5833,3 +5846,14 @@ cdef inline MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, p
 
 cdef poly *MPolynomial_libsingular_get_element(object self):
     return (<MPolynomial_libsingular>self)._poly
+
+class MatrixPolynomialAction(Action):
+    def __init__(self, MS, PR):
+        self._poly_vars = PR.gens()
+        self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
+        super().__init__(MS, PR, op=matmul)
+
+    def _act_(self, mat, poly):
+        vars_to_sub = MatrixConstructor(poly.base_ring(), mat) * self._vars_vector
+        substitution_dict = {v: s for v, s in zip(self._poly_vars, vars_to_sub)}
+        return poly.subs(substitution_dict)
