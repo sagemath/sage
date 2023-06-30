@@ -60,11 +60,13 @@ jobs:
           # (This keeps mtimes of unchanged files unchanged and mtimes of changed files newer than unchanged files.)
           # Finally we reset the index to "old". (This keeps all mtimes unchanged.)
           # The changed files now show up as uncommitted changes.
+          # The final "git add -N" makes sure that files that were added in "new" do not show
+          # as untracked files, which would be removed by "git clean -fx".
           git worktree add --detach worktree-image
           rm -rf /sage/.git && mv worktree-image/.git /sage/
           rm -rf worktree-image && ln -s /sage worktree-image
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
-          (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
+          (cd worktree-image && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset --quiet old && git add -N . && git status)
 
       - name: Incremental build, test changed files (sage -t --new)
         id: incremental
