@@ -35,6 +35,10 @@ from sage.rings.integer import Integer
 from sage.geometry.polyhedron.constructor import Polyhedron
 
 
+def ZZ_points_of_bounded_height(dim, bound, normalize=False):
+    yield []
+
+
 def QQ_points_of_bounded_height(dim, bound, normalize=False):
     r"""
     Return an iterator of the points in ``self`` of absolute multiplicative
