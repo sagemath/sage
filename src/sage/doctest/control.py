@@ -216,7 +216,8 @@ def skipdir(dirname):
         return True
     return False
 
-def skipfile(filename, tested_optional_tags=False, *, only_lib=False, log=None):
+def skipfile(filename, tested_optional_tags=False, *,
+             only_lib=False, log=None, detect_available_software=False):
     """
     Return ``True`` if and only if the file ``filename`` should not be doctested.
 
@@ -231,6 +232,8 @@ def skipfile(filename, tested_optional_tags=False, *, only_lib=False, log=None):
       that are not installed as modules
 
     - ``log`` -- function to call with log messages, or ``None``
+
+    - ``detect_available_software`` -- whether it is allowed to use feature tests
 
     If ``filename`` contains a line of the form ``"# sage.doctest:
     optional - xyz")``, then this will return ``False`` if "xyz" is in
@@ -287,6 +290,12 @@ def skipfile(filename, tested_optional_tags=False, *, only_lib=False, log=None):
             if log:
                 log(f"Skipping '{filename}' because module {e.name} cannot be imported")
             return True
+
+    if detect_available_software:
+        detectable_tags = frozenset(available_software.detectable())
+    else:
+        detectable_tags = frozenset(available_software.seen())
+
     with open(filename) as F:
         line_count = 0
         for line in F:
@@ -307,6 +316,7 @@ def skipfile(filename, tested_optional_tags=False, *, only_lib=False, log=None):
                     extra = set(tag
                                 for tag in optional_tags
                                 if (tag not in tested_optional_tags
+                                    and tag in detectable_tags
                                     and tag not in available_software))
                     if extra:
                         if log:

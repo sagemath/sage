@@ -646,7 +646,7 @@ class SageDocTestParser(doctest.DocTestParser):
     A version of the standard doctest parser which handles Sage's
     custom options and tolerances in floating point arithmetic.
     """
-    def __init__(self, optional_tags=(), long=False, *, probed_tags=()):
+    def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
         r"""
         INPUT:
 
@@ -654,6 +654,7 @@ class SageDocTestParser(doctest.DocTestParser):
         - ``long`` -- boolean, whether to run doctests marked as taking a
           long time.
         - ``probed_tags`` -- a list or tuple of strings.
+        - ``file_optional_tags`` -- a list or tuple of strings.
 
         EXAMPLES::
 
