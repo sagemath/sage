@@ -140,7 +140,7 @@ class LrsNash(Executable):
 class Lrslib(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of the executables
-    which comes as a part of ``lrslib``.
+    :class:`lrs <Lrs>` and :class:`lrsnash <LrsNash>` provided by the :ref:`lrslib <spkg_lrslib>` package.
 
     EXAMPLES::
 

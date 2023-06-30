@@ -1938,9 +1938,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: b._coefficients()
             [0, 1]
         """
-        # In terms of the generator...
-        cdef Rational const = <Rational>Rational.__new__(Rational)
-        cdef Rational lin = <Rational>Rational.__new__(Rational)
         if not self:
             return []
         ad, bd = self.parts()
@@ -2432,8 +2429,6 @@ cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
             sage: (3/2*K.one())._coefficients()
             [3/2]
         """
-        # In terms of the generator... Rational const = <Rational>Rational.__new__(Rational)
-        cdef Rational lin = <Rational>Rational.__new__(Rational)
         if not self:
             return []
         cdef tuple parts = self.parts()
@@ -2855,9 +2850,6 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             sage: aa._coefficients()
             [0, 1/3]
         """
-        # In terms of the generator...
-        cdef Rational const = <Rational>Rational.__new__(Rational)
-        cdef Rational lin = <Rational>Rational.__new__(Rational)
         if not self:
             return []
         ad, bd = self.parts()

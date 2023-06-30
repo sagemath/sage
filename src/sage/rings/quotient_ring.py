@@ -434,6 +434,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         (0, d)
     """
     Element = quotient_ring_element.QuotientRingElement
+
     def __init__(self, R, I, names, category=None):
         """
         Create the quotient ring of `R` by the twosided ideal `I`.

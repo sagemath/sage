@@ -7,14 +7,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.algebras.free_algebra import FreeAlgebra
 from sage.misc.cachefunc import cached_method
@@ -79,12 +79,12 @@ class FormsRing_abstract(Parent):
             False
         """
 
-        #from graded_ring import canonical_parameters
-        #(group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
+        # from graded_ring import canonical_parameters
+        # (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
 
-        #if (not group.is_arithmetic() and base_ring.characteristic()>0):
+        # if (not group.is_arithmetic() and base_ring.characteristic()>0):
         #    raise NotImplementedError
-        #if (base_ring.characteristic().divides(2*group.n()*(group.n()-2))):
+        # if (base_ring.characteristic().divides(2*group.n()*(group.n()-2))):
         #    raise NotImplementedError
 
         if (base_ring.characteristic() > 0):
@@ -1903,7 +1903,7 @@ class FormsRing_abstract(Parent):
         if n == infinity:
             raise NotImplementedError("In the case n=infinity, the Eisenstein series is not unique and more parameters are required.")
 
-        if (k is None):
+        if k is None:
             try:
                 if not self.is_homogeneous():
                     raise TypeError(None)
@@ -1911,10 +1911,10 @@ class FormsRing_abstract(Parent):
                 if k < 0:
                     raise TypeError(None)
                 k = 2*ZZ(k/2)
-                #if self.ep() != ZZ(-1)**ZZ(k/2):
+                # if self.ep() != ZZ(-1)**ZZ(k/2):
                 #    raise TypeError
             except TypeError:
-                k = ZZ(0)
+                k = ZZ.zero()
 
         try:
             if k < 0:

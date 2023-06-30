@@ -594,7 +594,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             if not self.cartan_type().is_finite():
                 from sage.sets.disjoint_union_enumerated_sets \
                                 import DisjointUnionEnumeratedSets
-                D =  DisjointUnionEnumeratedSets([self.positive_roots(),
+                D = DisjointUnionEnumeratedSets([self.positive_roots(),
                                                   self.negative_roots()])
                 D.rename("All roots of type {}".format(self.cartan_type()))
                 return D
@@ -1509,7 +1509,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: s
                 simple reflections
             """
-            res =  self.alpha().zip(self.reflection, self.alphacheck())
+            res = self.alpha().zip(self.reflection, self.alphacheck())
             # Should we use rename to set a nice name for this family?
             res.rename("simple reflections")
             return res
