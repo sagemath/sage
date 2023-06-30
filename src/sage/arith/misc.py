@@ -25,10 +25,10 @@ from sage.misc.misc_c import prod
 from sage.structure.element import parent
 from sage.structure.coerce import py_scalar_to_element
 
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer, GCD_list
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
+from sage.rings.rational_field import QQ
 from sage.rings.abc import RealField, ComplexField
 
 from sage.rings.fast_arith import arith_int, arith_llong, prime_range
