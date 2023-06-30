@@ -76,7 +76,7 @@ jobs:
           ./bootstrap && make build && ./sage -t --new -p2
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Build and test modularized distributions
@@ -84,7 +84,7 @@ jobs:
         run: make V=0 tox && make pypi-wheels
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Set up node to install pyright
@@ -123,7 +123,7 @@ jobs:
           make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Pytest
