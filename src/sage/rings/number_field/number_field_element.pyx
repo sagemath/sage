@@ -1305,8 +1305,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: p = x**5 - 3
             sage: K.<a> = NumberField(p)
             sage: [K(k/3).round() for k in range(-3,4)]
-            doctest...: DeprecationWarning: the default rounding for rationals, currently `away`, will be changed to `even`.
-            See https://github.com/sagemath/sage/issues/35473 for details.
             [-1, -1, 0, 0, 0, 1, 1]
             sage: a.round()
             Traceback (most recent call last):
