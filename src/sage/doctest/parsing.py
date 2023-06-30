@@ -212,12 +212,44 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
 @cached_function
 def _standard_tags():
+    r"""
+    Return the set of the names of all standard features.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.parsing import _standard_tags
+        sage: sorted(_standard_tags())
+        [..., 'numpy', ..., 'sage.rings.finite_rings', ...]
+    """
     from sage.features.all import all_features
     return frozenset(feature.name for feature in all_features()
                      if feature._spkg_type() == 'standard')
 
 
 def _tag_group(tag):
+    r"""
+    Classify a doctest tag as belonging to one of 4 groups.
+
+    INPUT:
+
+    - ``tag`` -- string
+
+    OUTPUT:
+
+    a string; one of ``'special'``, ``'optional'``, ``'standard'``, ``'sage'``
+
+    EXAMPLES::
+
+        sage: from sage.doctest.parsing import _tag_group
+        sage: _tag_group('scipy')
+        'standard'
+        sage: _tag_group('sage.numerical.mip')
+        'sage'
+        sage: _tag_group('bliss')
+        'optional'
+        sage: _tag_group('not tested')
+        'special'
+    """
     if tag.startswith('sage.'):
         return 'sage'
     elif tag in _standard_tags():
