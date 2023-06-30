@@ -1459,7 +1459,13 @@ turns out to work anyway, the annotation is automatically removed.
 
 To have the doctest fixer take care of the ``# optional`` annotations,
 but not change the expected results of examples, use the option ``--only-tags``.
-This mode is suitable for unattended runs on many files.
+This mode is suitable for mostly unattended runs on many files.
+
+.. warning::
+
+   While the doctest fixer guarantees to preserve any comments that
+   appear before ``# optional``, any comments that may be mixed with
+   the feature annotations will be lost.
 
 
 Use in virtual environments
