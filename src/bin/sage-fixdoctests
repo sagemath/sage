@@ -356,11 +356,14 @@ for input, output in zip(inputs, outputs):
             elif m := re.match('([#.]* *sage[.]doctest:[ #]*)([^(]*)(.*)', line):
                 # file-scoped annotation
                 prefix = m.group(1)
-                file_optional_tags.update(parse_optional_tags('#' + m.group(2)))
+                tags = parse_optional_tags('#' + m.group(2))
                 suffix = m.group(3)
-                line = unparse_optional_tags(file_optional_tags)
+                file_optional_tags.update(tags)
+                line = unparse_optional_tags(tags)
                 if line:
                     line = line[2:]  # strip '# '
+                if suffix:
+                    suffix = ' ' + suffix
                 src_in_lines[i] = prefix + line + suffix
             elif line.strip() in ['', '"""', "'''"]:    # Blank line or end of docstring
                 persistent_optional_tags = set()
