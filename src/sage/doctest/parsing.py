@@ -86,6 +86,10 @@ special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested
 optional_regex = re.compile(fr'({special_optional_regex})|[^ a-z]\s*(optional|needs)\s*[:-]*((?:\s|\w|[.])*)', re.IGNORECASE)
 special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
 
+nodoctest_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
+optionaltag_regex = re.compile(r'^(\w|[.])+$')
+optionalfiledirective_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)')
+
 
 def parse_optional_tags(string, *, return_string_sans_tags=False):
     r"""
@@ -210,6 +214,49 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
         return set(tags)
 
 
+def parse_file_optional_tags(lines):
+    r"""
+    Scan the first few lines for file-level doctest directives.
+
+    INPUT:
+
+    - ``lines`` -- iterable of pairs ``(lineno, line)``.
+
+    OUTPUT:
+
+    a set of strings (tags)
+
+    EXAMPLES::
+
+        sage: from sage.doctest.parsing import parse_file_optional_tags
+        sage: filename = tmp_filename(ext=".pyx")
+        sage: with open(filename, "r") as f:
+        ....:     parse_file_optional_tags(enumerate(f))
+        set()
+        sage: with open(filename, "w") as f:
+        ....:     _ = f.write("# nodoctest")
+        sage: with open(filename, "r") as f:
+        ....:     parse_file_optional_tags(enumerate(f))
+        {'not tested'}
+        sage: with open(filename, "w") as f:
+        ....:     _ = f.write("# sage.doctest: "    # broken in two source lines to avoid the pattern
+        ....:                 "optional - xyz")     # of relint (multiline_doctest_comment)
+        sage: with open(filename, "r") as f:
+        ....:     parse_file_optional_tags(enumerate(f))
+        {'xyz'}
+    """
+    tags = set()
+    for line_count, line in lines:
+        if nodoctest_regex.match(line):
+            tags.add('not tested')
+        if m := optionalfiledirective_regex.match(line):
+            file_tag_string = m.group(2)
+            tags.update(parse_optional_tags('#' + file_tag_string))
+        if line_count >= 10:
+            break
+    return tags
+
+
 @cached_function
 def _standard_tags():
     r"""
@@ -260,13 +307,15 @@ def _tag_group(tag):
         return 'special'
 
 
-def unparse_optional_tags(tags):
+def unparse_optional_tags(tags, prefix='# '):
     r"""
     Return a comment string that sets ``tags``.
 
     INPUT:
 
     - ``tags`` -- iterable of tags, as output by :func:`parse_optional_tags`
+
+    - ``prefix`` -- to be put before a nonempty string
 
     EXAMPLES::
 
@@ -278,8 +327,8 @@ def unparse_optional_tags(tags):
         sage: unparse_optional_tags(['fictional_optional', 'sage.rings.number_field',
         ....:                        'scipy', 'bliss'])
         '# optional - bliss fictional_optional, needs scipy sage.rings.number_field'
-        sage: unparse_optional_tags(['long time', 'not tested', 'p4cka9e'])
-        '# long time, not tested, optional - p4cka9e'
+        sage: unparse_optional_tags(['long time', 'not tested', 'p4cka9e'], prefix='')
+        'long time, not tested, optional - p4cka9e'
     """
     group = defaultdict(set)
     for tag in tags:
@@ -292,7 +341,7 @@ def unparse_optional_tags(tags):
                                         + sorted(group.pop('sage', []))))
     assert not group
     if tags:
-        return '# ' + ', '.join(tags)
+        return prefix + ', '.join(tags)
     return ''
 
 
@@ -716,7 +765,7 @@ class SageDocTestParser(doctest.DocTestParser):
             else:
                 self.optional_only = True
         self.probed_tags = probed_tags
-        self.file_optional_tags = file_optional_tags
+        self.file_optional_tags = set(file_optional_tags)
 
     def __eq__(self, other):
         """

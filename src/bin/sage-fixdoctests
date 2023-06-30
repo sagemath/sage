@@ -359,9 +359,7 @@ for input, output in zip(inputs, outputs):
                 tags = parse_optional_tags('#' + m.group(2))
                 suffix = m.group(3)
                 file_optional_tags.update(tags)
-                line = unparse_optional_tags(tags)
-                if line:
-                    line = line[2:]  # strip '# '
+                line = unparse_optional_tags(tags, prefix='')
                 if suffix:
                     suffix = ' ' + suffix
                 src_in_lines[i] = prefix + line + suffix
