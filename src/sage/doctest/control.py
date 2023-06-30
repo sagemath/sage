@@ -41,11 +41,9 @@ from .forker import DocTestDispatcher
 from .reporting import DocTestReporter
 from .util import Timer, count_noun, dict_difference
 from .external import available_software
-from .parsing import parse_optional_tags
+from .parsing import parse_optional_tags, parse_file_optional_tags, unparse_optional_tags, \
+     nodoctest_regex, optionaltag_regex, optionalfiledirective_regex
 
-nodoctest_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
-optionaltag_regex = re.compile(r'^(\w|[.])+$')
-optionalfiledirective_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)')
 
 # Optional tags which are always automatically added
 
@@ -217,7 +215,7 @@ def skipdir(dirname):
     return False
 
 def skipfile(filename, tested_optional_tags=False, *,
-             only_lib=False, log=None, detect_available_software=False):
+             only_lib=False, log=None):
     """
     Return ``True`` if and only if the file ``filename`` should not be doctested.
 
@@ -232,8 +230,6 @@ def skipfile(filename, tested_optional_tags=False, *,
       that are not installed as modules
 
     - ``log`` -- function to call with log messages, or ``None``
-
-    - ``detect_available_software`` -- whether it is allowed to use feature tests
 
     If ``filename`` contains a line of the form ``"# sage.doctest:
     optional - xyz")``, then this will return ``False`` if "xyz" is in
@@ -291,40 +287,29 @@ def skipfile(filename, tested_optional_tags=False, *,
                 log(f"Skipping '{filename}' because module {e.name} cannot be imported")
             return True
 
-    if detect_available_software:
-        detectable_tags = frozenset(available_software.detectable())
-    else:
-        detectable_tags = frozenset(available_software.seen())
-
     with open(filename) as F:
-        line_count = 0
-        for line in F:
-            if nodoctest_regex.match(line):
-                if log:
-                    log(f"Skipping '{filename}' because it is marked 'nodoctest'")
-                return True
-            if tested_optional_tags is not True:
-                # Adapted from code in SageDocTestParser.parse
-                m = optionalfiledirective_regex.match(line)
-                if m:
-                    file_tag_string = m.group(2)
-                    if tested_optional_tags is False:
-                        if log:
-                            log(f"Skipping '{filename}' because it is marked '# {file_tag_string}'")
-                        return file_tag_string
-                    optional_tags = parse_optional_tags('#' + file_tag_string)
-                    extra = set(tag
-                                for tag in optional_tags
-                                if (tag not in tested_optional_tags
-                                    and tag in detectable_tags
-                                    and tag not in available_software))
-                    if extra:
-                        if log:
-                            log(f"Skipping '{filename}' because it is marked '# {file_tag_string}'")
-                        return file_tag_string
-            line_count += 1
-            if line_count >= 10:
-                break
+        file_optional_tags = parse_file_optional_tags(enumerate(F))
+
+    if 'not tested' in file_optional_tags:
+        if log:
+            log(f"Skipping '{filename}' because it is marked 'nodoctest'")
+        return True
+
+    if tested_optional_tags is False:
+        if file_optional_tags:
+            file_tag_string = unparse_optional_tags(file_optional_tags, prefix='')
+            if log:
+                log(f"Skipping '{filename}' because it is marked '# {file_tag_string}'")
+            return file_tag_string
+
+    elif tested_optional_tags is not True:
+        extra = file_optional_tags - set(tested_optional_tags)
+        if extra:
+            file_tag_string = unparse_optional_tags(file_optional_tags, prefix='')
+            if log:
+                log(f"Skipping '{filename}' because it is marked '{file_tag_string}'")
+            return file_tag_string
+
     return False
 
 

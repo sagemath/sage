@@ -118,7 +118,7 @@ class DocTestSource():
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
       instance or equivalent.
     """
-    def __init__(self, options, *, file_optional_tags=()):
+    def __init__(self, options):
         """
         Initialization.
 
@@ -133,7 +133,6 @@ class DocTestSource():
             sage: TestSuite(FDS).run()
         """
         self.options = options
-        self.file_optional_tags = file_optional_tags
 
     def __eq__(self, other):
         """
@@ -230,6 +229,26 @@ class DocTestSource():
                 dt.examples.append(sigon)
             doctests.append(dt)
 
+    @lazy_attribute
+    def file_optional_tags(self):
+        """
+        Return the set of tags that should apply to all doctests in this source.
+
+        This default implementation just returns the empty set.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults
+            sage: from sage.doctest.sources import StringDocTestSource, PythonSource
+            sage: from sage.structure.dynamic_class import dynamic_class
+            sage: s = "'''\n    sage: 2 + 2\n    4\n'''"
+            sage: PythonStringSource = dynamic_class('PythonStringSource', (StringDocTestSource, PythonSource))
+            sage: PSS = PythonStringSource('<runtime>', s, DocTestDefaults(), 'runtime')
+            sage: PSS.file_optional_tags
+            set()
+        """
+        return set()
+
     def _create_doctests(self, namespace, tab_okay=None):
         """
         Creates a list of doctests defined in this source.
@@ -265,7 +284,7 @@ class DocTestSource():
             sage: FDS.qualified_name = NestedName('sage.doctest.sources')
             sage: doctests, extras = FDS._create_doctests({})
             sage: len(doctests)
-            41
+            43
             sage: extras['tab']
             False
             sage: extras['line_number']
@@ -528,18 +547,8 @@ class FileDocTestSource(DocTestSource):
             sage: FDS.options.randorder
             0
         """
-        from .external import available_software
-        from .control import skipfile
-        from .parsing import parse_optional_tags
-        # FIXME: skipfile should be refactored
-        file_tag_string = skipfile(path, False, only_lib=options.only_lib)
-        if isinstance(file_tag_string, str):
-            file_optional_tags = parse_optional_tags('#' + file_tag_string)
-        else:
-            file_optional_tags = set()
-
         self.path = path
-        DocTestSource.__init__(self, options, file_optional_tags=file_optional_tags)
+        DocTestSource.__init__(self, options)
         if path.endswith('.rst.txt'):
             ext = '.rst.txt'
         else:
@@ -700,6 +709,25 @@ class FileDocTestSource(DocTestSource):
         return (self.options.force_lib
                 or is_package_or_sage_namespace_package_dir(os.path.dirname(self.path)))
 
+    @lazy_attribute
+    def file_optional_tags(self):
+        """
+        Return the set of tags that should apply to all doctests in this source.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults
+            sage: from sage.doctest.sources import FileDocTestSource
+            sage: from sage.env import SAGE_SRC
+            sage: import os
+            sage: filename = os.path.join(SAGE_SRC, 'sage', 'repl', 'user_globals.py')
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
+            sage: FDS.file_optional_tags
+            {'sage.modules'}
+        """
+        from .parsing import parse_file_optional_tags
+        return parse_file_optional_tags(self)
+
     def create_doctests(self, namespace):
         r"""
         Return a list of doctests for this file.
@@ -724,16 +752,16 @@ class FileDocTestSource(DocTestSource):
             sage: FDS = FileDocTestSource(filename,DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: len(doctests)
-            41
+            43
             sage: extras['tab']
             False
 
         We give a self referential example::
 
-            sage: doctests[18].name
+            sage: doctests[20].name
             'sage.doctest.sources.FileDocTestSource.create_doctests'
-            sage: doctests[18].examples[10].source
-            'doctests[Integer(18)].examples[Integer(10)].source\n'
+            sage: doctests[20].examples[10].source
+            'doctests[Integer(20)].examples[Integer(10)].source\n'
 
         TESTS:
 
@@ -742,11 +770,12 @@ class FileDocTestSource(DocTestSource):
 
             sage: import sys
             sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: gp.get_precision() == 38                                                                              # optional - sage.libs.pari
+            sage: gp.get_precision() == 38                                              # needs sage.libs.pari
             False # 32-bit
             True  # 64-bit
-            sage: ex = doctests[18].examples[13]
-            sage: (bitness == '64' and ex.want == 'True  \n') or (bitness == '32' and ex.want == 'False \n')            # optional - sage.libs.pari
+            sage: ex = doctests[20].examples[13]
+            sage: ((bitness == '64' and ex.want == 'True  \n')                          # needs sage.libs.pari
+            ....:  or (bitness == '32' and ex.want == 'False \n'))
             True
 
         We check that lines starting with a # aren't doctested::
