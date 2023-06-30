@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 User-interface globals
 
@@ -17,9 +18,9 @@ EXAMPLES:
 This is how a typical user interface initializes the globals::
 
     sage: ui_globals = globals()  # or wherever the user interface stores its globals
-    sage: from sage import all_cmdline
+    sage: from sage import all__sagemath_modules
     sage: from sage.repl.user_globals import initialize_globals
-    sage: _ = initialize_globals(all_cmdline, ui_globals)
+    sage: _ = initialize_globals(all__sagemath_modules, ui_globals)
 
 Now everything which was imported in ``all_cmdline`` is available as a
 global::
@@ -92,7 +93,7 @@ def get_globals():
     EXAMPLES::
 
         sage: from sage.repl.user_globals import get_globals, initialize_globals
-        sage: initialize_globals(sage.all)
+        sage: initialize_globals(sage.all__sagemath_modules)
         sage: get_globals()["Matrix"]
         <cyfunction matrix at ...>
     """
@@ -137,7 +138,7 @@ def initialize_globals(all, g=None):
 
         sage: my_globs = {"foo": "bar"}
         sage: from sage.repl.user_globals import initialize_globals
-        sage: initialize_globals(sage.all, my_globs)
+        sage: initialize_globals(sage.all__sagemath_modules, my_globs)
         sage: my_globs["foo"]
         'bar'
         sage: my_globs["Matrix"]
@@ -147,7 +148,7 @@ def initialize_globals(all, g=None):
     changing the dictionary::
 
         sage: del my_globs["Matrix"]
-        sage: initialize_globals(sage.all)
+        sage: initialize_globals(sage.all__sagemath_modules)
         sage: my_globs["Matrix"]
         <cyfunction matrix at ...>
     """
@@ -162,8 +163,9 @@ def initialize_globals(all, g=None):
 
 def get_global(name):
     """
-    Return the value of global variable ``name``. Raise ``NameError``
-    if there is no such global variable.
+    Return the value of global variable ``name``.
+
+    Raise :class:`NameError` if there is no such global variable.
 
     INPUT:
 
