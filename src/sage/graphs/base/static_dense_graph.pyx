@@ -785,8 +785,8 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
       This parameter can be set to ``False`` for simple (di)graphs only.
 
     - ``exactly_k`` -- boolean (default: ``False``); ``True`` if we only
-      return graphs of order ``k``, ``False`` if we return graphs of order
-      at most ``k``.
+      return graphs of order `k`, ``False`` if we return graphs of order
+      at most `k`.
 
     EXAMPLES::
 
