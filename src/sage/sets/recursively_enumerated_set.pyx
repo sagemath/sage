@@ -394,9 +394,10 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     A recursive set given by a graded relation::
 
-        sage: f = lambda a: [a+1, a+I]
-        sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-        sage: C
+        sage: # optional - sage.symbolic
+        sage: def f(a):
+        ....:     return [a + 1, a + I]
+        sage: C = RecursivelyEnumeratedSet([0], f, structure='graded'); C
         A recursively enumerated set with a graded structure (breadth first search)
         sage: it = iter(C)
         sage: [next(it) for _ in range(7)]
@@ -1125,7 +1126,9 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         Gaussian integers::
 
-            sage: f = lambda a: [a+1, a+I]
+            sage: # optional - sage.symbolic
+            sage: def f(a):
+            ....:     return [a + 1, a + I]
             sage: S = RecursivelyEnumeratedSet([0], f, structure='symmetric')
             sage: it = S.graded_component_iterator()
             sage: [sorted(next(it)) for _ in range(7)]
@@ -1142,6 +1145,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         Note that interrupting the computation (``KeyboardInterrupt`` for
         instance) breaks the iterator::
 
+            sage: # optional - sage.symbolic
             sage: def f(a):
             ....:     sleep(0.05r)
             ....:     return [a-1,a+1]
@@ -1411,7 +1415,9 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         EXAMPLES::
 
-            sage: f = lambda a: [a+1, a+I]
+            sage: # optional - sage.symbolic
+            sage: def f(a):
+            ....:     return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
             sage: for i in range(5): sorted(C.graded_component(i))
             [0]
@@ -1424,6 +1430,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         We make sure that :trac:`21312` is fixed::
 
+            sage: # optional - sage.symbolic
             sage: def f(a):
             ....:    sleep(0.1r)
             ....:    return [a+1, a+I]
