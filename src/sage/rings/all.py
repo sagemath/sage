@@ -78,8 +78,6 @@ from .real_mpfi import (RealIntervalField,
 from .complex_interval_field import ComplexIntervalField
 from .complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
 
-from .complex_mpc import MPComplexField
-
 lazy_import("sage.rings.imaginary_unit", "I")
 
 # Tate algebras

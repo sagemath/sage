@@ -17,3 +17,5 @@ Complexes = ComplexField
 from .complex_double import ComplexDoubleField, ComplexDoubleElement, CDF
 
 from .cc import CC
+
+from .complex_mpc import MPComplexField
