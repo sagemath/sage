@@ -378,8 +378,8 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         ....:     print('|' + ruler)
         ....:     for line in lines:
         ....:         print('|' + line)
-        sage: print_with_ruler([
-        ....:     update_optional_tags('    sage: something()  # optional - latte_int',
+        sage: print_with_ruler([  # the tags are obscured in the source file to avoid relint warnings
+        ....:     update_optional_tags('    sage: something()  # opt' 'ional - latte_int',
         ....:                          remove_tags=['latte_int', 'wasnt_even_there']),
         ....:     update_optional_tags('    sage: nothing_to_be_seen_here()',
         ....:                          tags=['scipy', 'long time']),
@@ -387,9 +387,9 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         ....:                          add_tags=['scipy', 'long time']),
         ....:     update_optional_tags('    sage: nothing_to_be_seen_here(honestly=True, very=True)',
         ....:                          add_tags=['scipy', 'long time']),
-        ....:     update_optional_tags('    sage: no_there_is_absolutely_nothing_to_be_seen_here_i_am_serious()#optional:bliss',
+        ....:     update_optional_tags('    sage: no_there_is_absolutely_nothing_to_be_seen_here_i_am_serious()#opt' 'ional:bliss',
         ....:                          add_tags=['scipy', 'long time']),
-        ....:     update_optional_tags('    sage: ntbsh()  # abbrv for above#optional:bliss',
+        ....:     update_optional_tags('    sage: ntbsh()  # abbrv for above#opt' 'ional:bliss',
         ....:                          add_tags={'scipy': None, 'long time': '30s on the highest setting'}),
         ....:     update_optional_tags('    sage: no_there_is_absolutely_nothing_to_be_seen_here_i_am_serious()  # really, you can trust me here',
         ....:                          add_tags=['scipy']),
@@ -409,18 +409,18 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     this alignment is kept even if we would normally realign farther to the left.
 
         sage: print_with_ruler([
-        ....:     update_optional_tags('    sage: unforced()       # optional - latte_int'),
-        ....:     update_optional_tags('    sage: unforced()  # optional - latte_int',
+        ....:     update_optional_tags('    sage: unforced()       # opt' 'ional - latte_int'),
+        ....:     update_optional_tags('    sage: unforced()  # opt' 'ional - latte_int',
         ....:                          add_tags=['latte_int']),
-        ....:     update_optional_tags('    sage: forced()#optional- latte_int',
+        ....:     update_optional_tags('    sage: forced()#opt' 'ional- latte_int',
         ....:                          force_rewrite=True),
-        ....:     update_optional_tags('    sage: forced()  # optional - scipy',
+        ....:     update_optional_tags('    sage: forced()  # opt' 'ional - scipy',
         ....:                          force_rewrite='standard'),
-        ....:     update_optional_tags('    sage: aligned_with_below()                                  # optional - 4ti2',
+        ....:     update_optional_tags('    sage: aligned_with_below()                                  # opt' 'ional - 4ti2',
         ....:                          force_rewrite=True),
-        ....:     update_optional_tags('    sage: aligned_with_above()                                  # optional - 4ti2',
+        ....:     update_optional_tags('    sage: aligned_with_above()                                  # opt' 'ional - 4ti2',
         ....:                          force_rewrite=True),
-        ....:     update_optional_tags('    sage: also_already_aligned()                                                                                        # needs scipy',
+        ....:     update_optional_tags('    sage: also_already_aligned()                                                                                        # ne' 'eds scipy',
         ....:                          force_rewrite='standard'),
         ....: ])
         |                                                V       V       V       V       V   V   v           v                   v                                       v
@@ -435,7 +435,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     Rewriting a persistent (block-scoped) annotation::
 
         sage: print_with_ruler([
-        ....:     update_optional_tags('    sage:    #optional:magma sage.symbolic',
+        ....:     update_optional_tags('    sage:    #opt' 'ional:magma sage.symbolic',
         ....:                          force_rewrite=True),
         ....: ])
         |                                                V       V       V       V       V   V   v           v                   v                                       v
