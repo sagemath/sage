@@ -291,7 +291,7 @@ class FriCAS(ExtraTabCompletion, Expect):
         """
         from sage.features.fricas import FriCAS
         FriCAS().require()
-        options =" -nosman" + options
+        options ="-nosman" + options
         import shlex
         command = '{} {}'.format(shlex.quote(FriCAS().absolute_filename()), options)
 

@@ -54,7 +54,7 @@ class FriCAS(Executable):
             return FeatureTestResult(self, False,
                     reason="Call `{command}` failed with exit code {e.returncode}".format(command=" ".join(command), e=e))
 
-        expected = b"Checking"
+        expected = b"FriCAS"
         if lines.find(expected) == -1:
             return FeatureTestResult(self, False,
                     reason="Call `{command}` did not produce output which contains `{expected}`".format(command=" ".join(command), expected=expected))
