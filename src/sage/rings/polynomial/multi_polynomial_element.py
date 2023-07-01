@@ -2196,9 +2196,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         EXAMPLES::
 
-            sage: R.<x,y> = CC[]
-            sage: f = y*x^2 + x + 1
-            sage: f.quo_rem(x)                                                          # optional - sage.libs.singular
+            sage: R.<x,y> = CC[]                                                        # optional - sage.rings.real_mpfr
+            sage: f = y*x^2 + x + 1                                                     # optional - sage.rings.real_mpfr
+            sage: f.quo_rem(x)                                                          # optional - sage.libs.singular sage.rings.real_mpfr
             (x*y + 1.00000000000000, 1.00000000000000)
 
             sage: R = QQ['a','b']['x','y','z']
@@ -2477,7 +2477,8 @@ def degree_lowest_rational_function(r, x):
 
     ::
 
-        sage: r = f/g; r                                                                # optional - sage.rings.finite_rings
+        sage: # optional - sage.rings.finite_rings
+        sage: r = f/g; r
         (-2*b*c^2 - 1)/(2*a*b^3*c^6 + a*c)
         sage: degree_lowest_rational_function(r, a)
         -1
