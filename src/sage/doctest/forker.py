@@ -726,7 +726,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                         example.warnings.append(
                             f"The annotation '{unparse_optional_tags(probed_tags)}' "
                             f"may no longer be needed; these features are not present, "
-                            f"but we ran the doctest anyway as requested by --probing, "
+                            f"but we ran the doctest anyway as requested by --probe, "
                             f"and it succeeded.")
                     outcome = SUCCESS
 
@@ -767,7 +767,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                         example.warnings.append(
                             f"The annotation '{unparse_optional_tags(example.probed_tags)}' "
                             f"may no longer be needed; these features are not present, "
-                            f"but we ran the doctest anyway as requested by --probing, "
+                            f"but we ran the doctest anyway as requested by --probe, "
                             f"and it succeeded (raised the expected exception).")
                     outcome = SUCCESS
 
@@ -781,7 +781,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                             example.warnings.append(
                                 f"The annotation '{unparse_optional_tags(example.probed_tags)}' "
                                 f"may no longer be needed; these features are not present, "
-                                f"but we ran the doctest anyway as requested by --probing, "
+                                f"but we ran the doctest anyway as requested by --probe, "
                                 f"and it succeeded (raised an exception as expected).")
                         outcome = SUCCESS
 
