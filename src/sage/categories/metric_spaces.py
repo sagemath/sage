@@ -178,15 +178,15 @@ class MetricSpaces(MetricSpacesCategory):
 
             TESTS::
 
-                sage: RR.dist(-1, pi)                                                   # optional - sage.symbolic
+                sage: RR.dist(-1, pi)                                                   # optional - sage.rings.real_mpfr sage.symbolic
                 4.14159265358979
                 sage: RDF.dist(1, -1/2)
                 1.5
                 sage: CC.dist(3, 2)                                                     # optional - sage.rings.real_mpfr
                 1.00000000000000
-                sage: CC.dist(-1, I)                                                    # optional - sage.rings.real_mpfr
+                sage: CC.dist(-1, I)                                                    # optional - sage.rings.real_mpfr sage.symbolic
                 1.41421356237310
-                sage: CDF.dist(-1, I)                                                   # optional - sage.rings.real_mpfr
+                sage: CDF.dist(-1, I)                                                   # optional - sage.rings.real_mpfr sage.symbolic
                 1.4142135623730951
             """
             return (self(a) - self(b)).abs()
@@ -198,7 +198,7 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
-                sage: CC(I).abs()                                                       # optional - sage.rings.real_mpfr
+                sage: CC(I).abs()                                                       # optional - sage.rings.real_mpfr sage.symbolic
                 1.00000000000000
             """
             P = self.parent()
