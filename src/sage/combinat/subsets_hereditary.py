@@ -57,13 +57,14 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
     Sets whose elements all have the same remainder mod 2::
 
         sage: from sage.combinat.subsets_hereditary import subsets_with_hereditary_property
-        sage: f = lambda x: (not x) or all(xx%2 == x[0]%2 for xx in x)
-        sage: list(subsets_with_hereditary_property(f,range(4)))
+        sage: def f(x):
+        ....:     return (not x) or all(xx % 2 == x[0] % 2 for xx in x)
+        sage: list(subsets_with_hereditary_property(f, range(4)))
         [[], [0], [1], [2], [3], [0, 2], [1, 3]]
 
     Same, on two threads::
 
-        sage: sorted(subsets_with_hereditary_property(f,range(4),ncpus=2))
+        sage: sorted(subsets_with_hereditary_property(f, range(4), ncpus=2))
         [[], [0], [0, 2], [1], [1, 3], [2], [3]]
 
     One can use this function to compute the independent sets of a graph. We
@@ -71,33 +72,35 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
     have size 2. We can thus set ``max_obstruction_size=2``, which reduces the
     number of calls to `f` from 91 to 56::
 
-        sage: num_calls=0
-        sage: g = graphs.PetersenGraph()
+        sage: num_calls = 0
+        sage: g = graphs.PetersenGraph()                                                # optional - sage.graphs
         sage: def is_independent_set(S):
         ....:     global num_calls
-        ....:     num_calls+=1
-        ....:     return g.subgraph(S).size()==0
-        sage: l1=list(subsets_with_hereditary_property(is_independent_set, g.vertices(sort=False)))
-        sage: num_calls
+        ....:     num_calls += 1
+        ....:     return g.subgraph(S).size() == 0
+        sage: l1 = list(subsets_with_hereditary_property(is_independent_set,            # optional - sage.graphs
+        ....:                                            g.vertices(sort=False)))
+        sage: num_calls                                                                 # optional - sage.graphs
         91
-        sage: num_calls=0
-        sage: l2=list(subsets_with_hereditary_property(is_independent_set, g.vertices(sort=False), max_obstruction_size=2))
-        sage: num_calls
+        sage: num_calls = 0
+        sage: l2 = list(subsets_with_hereditary_property(is_independent_set,            # optional - sage.graphs
+        ....:                                            g.vertices(sort=False),
+        ....:                                            max_obstruction_size=2))
+        sage: num_calls                                                                 # optional - sage.graphs
         56
-        sage: l1==l2
+        sage: l1 == l2                                                                  # optional - sage.graphs
         True
 
     TESTS::
 
-        sage: list(subsets_with_hereditary_property(lambda x:False,range(4)))
+        sage: list(subsets_with_hereditary_property(lambda x: False, range(4)))
         []
-        sage: list(subsets_with_hereditary_property(lambda x:len(x)<1,range(4)))
+        sage: list(subsets_with_hereditary_property(lambda x: len(x)<1, range(4)))
         [[]]
-        sage: list(subsets_with_hereditary_property(lambda x:True,range(2)))
+        sage: list(subsets_with_hereditary_property(lambda x: True, range(2)))
         [[], [0], [1], [0, 1]]
     """
     from sage.data_structures.bitset import Bitset
-    from sage.parallel.decorate import parallel
     # About the implementation:
     #
     # 1) We work on X={0,...,n-1} but remember X to return correctly
@@ -155,6 +158,7 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
         return
 
     if ncpus != 1:
+        from sage.parallel.decorate import parallel
         explore_neighbors_paral = parallel(ncpus=ncpus)(explore_neighbors)
 
     # All sets of size 0, then size 1, then ...

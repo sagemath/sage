@@ -3,14 +3,19 @@ r"""
 Ideals of function fields: extension
 """
 
-#*****************************************************************************
-#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+# ****************************************************************************
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2017-2021 Kwankyu Lee
+#                     2018      Frédéric Chapoton
+#                     2019      Brent Baccala
+#                     2021      Jonathan Kliem
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import itertools
 from sage.rings.infinity import infinity

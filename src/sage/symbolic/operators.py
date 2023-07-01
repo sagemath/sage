@@ -64,12 +64,13 @@ arithmetic_operators = {add_vararg: '+',
                         operator.floordiv: '//',
                         operator.pow: '^'}
 
-relation_operators = {operator.eq:'==',
-                      operator.lt:'<',
-                      operator.gt:'>',
-                      operator.ne:'!=',
-                      operator.le:'<=',
-                      operator.ge:'>='}
+relation_operators = {operator.eq: '==',
+                      operator.lt: '<',
+                      operator.gt: '>',
+                      operator.ne: '!=',
+                      operator.le: '<=',
+                      operator.ge: '>='}
+
 
 class FDerivativeOperator():
     r"""
@@ -200,6 +201,7 @@ class FDerivativeOperator():
         """
         return self._parameter_set
 
+
 class DerivativeOperator():
     """
     Derivative operator.
@@ -261,5 +263,6 @@ class DerivativeOperator():
         if not isinstance(args, tuple):
             args = (args,)
         return self.DerivativeOperatorWithParameters(args)
+
 
 D = DerivativeOperator()
