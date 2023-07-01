@@ -8,9 +8,15 @@ AUTHORS:
 This module implements the basic structure of moment-angle complexes.
 Given a simplicial complex `K`, with a set of vertices
 `V = \{v_1, v_2, \dotso, v_n\}`, a moment-angle complex over `K` is a
-topological space `Z`, which is a disjoint union of `X_{\sigma}`, where
+topological space `Z`, which is a union of `X_{\sigma}`, where
 `\sigma \in K`, and `X_{\sigma} = Y_{v_1} \times Y_{v_2} \times \dotso \times Y_{v_n}`
-and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere otherwise.
+and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere otherwise
+
+.. NOTE::
+
+    The mentioned union is not a disjoint union of topological spaces. The unit disks
+    and the unit spheres are considered subsets of `\mathbb{C}`, so the union is just
+    a normal union of subsets of `\mathbb{C}^n`.
 
 .. MATH::
    :nowrap:
@@ -52,7 +58,9 @@ EXAMPLES::
 # ****************************************************************************
 
 from sage.homology.homology_group import HomologyGroup
+from sage.matrix.constructor import identity_matrix
 from sage.rings.integer_ring import ZZ
+from sage.rings.complex_field import ComplexField
 from sage.structure.sage_object import SageObject
 from .simplicial_complex import SimplicialComplex, copy
 from .simplicial_complex_examples import Sphere, Simplex
@@ -63,10 +71,18 @@ from itertools import combinations
 # - latex?
 # - compute up to homotopy?
 # - and a lot more ...
-# - make possible for creating an instance from a list, tuple or a Simplex
-#   (similar behaviour for a SimplicialComplex)
-# - should union behave different in the construct()?
+# - should union behave different in the construct()? -- yes, working on it
 # - add literature to bibliography?
+# - should we replace disks and spheres in construct() with cubical complexes?
+
+# this is likely to become useles when disjoint_union is fixed
+def union(s1, s2, is_mutable=True):
+    facets = []
+    for f in s1._facets:
+        facets.append(tuple([str(v) for v in f]))
+    for f in s2._facets:
+        facets.append(tuple([str(v) for v in f]))
+    return SimplicialComplex(facets, is_mutable=is_mutable)
 
 class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
     """
@@ -107,29 +123,24 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         """
         if not isinstance(simplicial_complex, SimplicialComplex):
-            raise ValueError("simplicial_complex must be a simplicial complex")
+            simplicial_complex = SimplicialComplex(simplicial_complex, is_mutable=True)
 
         self._simplicial_complex = copy(simplicial_complex)
         self._moment_angle_complex = None
 
         vertices = self._simplicial_complex.vertices()
         self._components = {}
-        self._symbolic_components = {}
 
         # it suffices to perform union only over facets
         for facet in self._simplicial_complex.maximal_faces():
             Y = []
-            Ys = []
             for j in vertices:
                 if j in facet:
                     Y.append(Simplex(2))
-                    Ys.append("D^2")
                 else:
                     Y.append(Sphere(1))
-                    Ys.append("S^1")
 
             self._components[facet] = Y
-            self._symbolic_components[facet] = Ys
 
         self._constructed = False
         if construct:
@@ -180,13 +191,30 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         if self._constructed:
             return
 
+        n = len(self._simplicial_complex.vertices())
+        # we construct the origin in C^n
+        ones = identity_matrix(n)
+        D = []
+        S = []
+
+        for i in range(n):
+            t1 = tuple(ones[i])
+            t2 = tuple(ones[i]*complex(0, 1))
+            t3 = tuple(-ones[i])
+            t4 = tuple(ones[i]*complex(0, -1))
+            D.append(SimplicialComplex([[t1, t2, t3, t4]]))
+            S.append(SimplicialComplex([[t1, t2], [t2, t3], [t3, t4], [t4, t1]]))
+
         self._moment_angle_complex = SimplicialComplex()
         for component in self._components.values():
-            x = component[0]
-            for j in range(1, len(component)-1):
-                x = x.product(component[j])
+            x = D[0] if component[0] == Simplex(2) else S[0]
+            print(x)
+            for j in range(1, len(component)):
+                y = D[j] if component[j] == Simplex(2) else S[j]
+                print(y)
+                x = x.product(y, rename_vertices=False)
 
-            self._moment_angle_complex = self._moment_angle_complex.disjoint_union(x)
+            self._moment_angle_complex = union(self._moment_angle_complex, x)
 
         self._constructed = True
 
