@@ -489,7 +489,7 @@ cdef class Function(SageObject):
 
         Make sure we can pass mpmath arguments (:trac:`13608`)::
 
-            sage: from sage.libs.mpmath import workprec, mpc                            # optional - mpmath
+            sage: from sage.libs.mpmath.all import workprec, mpc                        # optional - mpmath
             sage: with workprec(128): sin(mpc('0.5', '1.2'))                            # optional - mpmath
             mpc(real='0.86807452059118713192871150787046523179886',
                 imag='1.3246769633571289324095313649562791720086')
@@ -775,7 +775,7 @@ cdef class Function(SageObject):
         implementation, using sage reals instead of mpmath ones. This
         might change when aliases for these functions are established::
 
-            sage: from sage.libs.mpmath import workprec, mpf                            # optional - mpmath
+            sage: from sage.libs.mpmath.all import workprec, mpf                        # optional - mpmath
             sage: with workprec(128): arcsin(mpf('0.5'))                                # optional - mpmath
             mpf('0.52359877559829887307710723054658381403157')
 
@@ -785,7 +785,7 @@ cdef class Function(SageObject):
         not using mpmath, we have to create a custom function which
         will certainly never get created in mpmath. ::
 
-            sage: from sage.libs.mpmath import workprec, mpf
+            sage: from sage.libs.mpmath.all import workprec, mpf
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class NoMpmathFn(BuiltinFunction):
             ....:         def _eval_(self, arg):
@@ -796,20 +796,19 @@ cdef class Function(SageObject):
             sage: noMpmathFn = NoMpmathFn("noMpmathFn")                                 # optional - mpmath
             sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))                         # optional - mpmath
             64
-            sage: sage.libs.mpmath.noMpmathFn = lambda x: 123                           # optional - mpmath
+            sage: sage.libs.mpmath.all.noMpmathFn = lambda x: 123                       # optional - mpmath
             sage: with workprec(64): noMpmathFn(sqrt(mpf('2')))                         # optional - mpmath
             123
-            sage: del sage.libs.mpmath.noMpmathFn                                       # optional - mpmath
+            sage: del sage.libs.mpmath.all.noMpmathFn                                   # optional - mpmath
 
         """
-        import sage.libs.mpmath
+        from sage.libs.mpmath.all import mp, mpf, mpc
         from sage.libs.mpmath.utils import mpmath_to_sage, sage_to_mpmath
-        prec = sage.libs.mpmath.mp.prec
-        args = [mpmath_to_sage(x, prec)
-                if isinstance(x, (sage.libs.mpmath.mpf, sage.libs.mpmath.mpc)) else x
+        args = [mpmath_to_sage(x, mp.prec)
+                if isinstance(x, (mpf, mpc)) else x
                 for x in args]
         res = self(*args)
-        res = sage_to_mpmath(res, prec)
+        res = sage_to_mpmath(res, mp.prec)
         return res
 
 
@@ -951,10 +950,10 @@ cdef class BuiltinFunction(Function):
             (1.5430806348152437-0j)
             sage: assert type(_) is complex
 
-            sage: import sage.libs.mpmath                                                         # optional - mpmath
-            sage: cos(sage.libs.mpmath.mpf('1.321412'))                                           # optional - mpmath
+            sage: import sage.libs.mpmath.all                                           # optional - mpmath
+            sage: cos(sage.libs.mpmath.all.mpf('1.321412'))                             # optional - mpmath
             mpf('0.24680737898640387')
-            sage: cos(sage.libs.mpmath.mpc(1,1))                                                  # optional - mpmath
+            sage: cos(sage.libs.mpmath.all.mpc(1,1))                                    # optional - mpmath
             mpc(real='0.83373002513114902', imag='-0.98889770576286506')
 
             sage: import numpy                                                          # optional - numpy
@@ -987,7 +986,7 @@ cdef class BuiltinFunction(Function):
                 import numpy as module
                 custom = self._eval_numpy_
             elif any(is_mpmath_type(type(arg)) for arg in args):
-                import sage.libs.mpmath as module
+                import sage.libs.mpmath.all as module
                 custom = self._eval_mpmath_
             elif all(isinstance(arg, float) for arg in args):
                 # We do not include the factorial here as
