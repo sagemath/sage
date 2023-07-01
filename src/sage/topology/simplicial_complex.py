@@ -4967,13 +4967,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.is_golod()
             True
         """
-        H = set(a+b for (a, b) in self.bigraded_betti_numbers())
+        H = list(a+b for (a, b) in self.bigraded_betti_numbers())
         if 0 in H:
-            HL = list(H.difference([0]))
-        else:
-            HL = list(H)
+            H.remove(0)
 
-        return not any(i + j in H for ii, i in enumerate(HL) for j in HL[ii:])
+        return not any(i+j in H for ii, i in enumerate(H) for j in H[ii:])
 
     def is_minimally_non_golod(self):
         r"""
