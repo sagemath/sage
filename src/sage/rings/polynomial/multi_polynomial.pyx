@@ -20,7 +20,7 @@ from sage.misc.misc_c import prod
 
 def is_MPolynomial(x):
     from sage.misc.superseded import deprecation
-    deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.structure.element.MPolynomial) instead")
+    deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial) instead")
 
     return isinstance(x, MPolynomial)
 
@@ -2848,12 +2848,12 @@ def _is_M_convex_(points):
             if p2 == p1:
                 continue
             delta = list(x2 - x1 for x1, x2 in zip(p1, p2))
-            for i in xrange(dim):
+            for i in range(dim):
                 if p2[i] > p1[i]:
                     # modify list_p1 to represent point p1 + e_i - e_j for various i, j
                     list_p1[i] += 1  # add e_i
                     # check exchange condition is satisfied by some index j
-                    for j in xrange(dim):
+                    for j in range(dim):
                         if p2[j] < p1[j]:
                             list_p1[j] -= 1  # subtract e_j
                             exch = tuple(list_p1)  # p1 + e_i - e_j

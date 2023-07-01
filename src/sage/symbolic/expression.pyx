@@ -10623,22 +10623,26 @@ cdef class Expression(Expression_abc):
         else:
             return self
 
-    def simplify(self, algorithm='maxima'):
+    def simplify(self, algorithm='maxima', **kwds):
         """
         Return a simplified version of this symbolic expression.
 
-        .. NOTE::
-
-           When using ``algorithm='maxima'``, this just sends the expression to Maxima
-           and converts it back to Sage. When ``algorithm='sympy'``,
-           sympy's simplify method is used.
-
         INPUT:
 
-        - ``self`` -- an expression with held operations
-        - ``algorithm`` - (default: ``'maxima'``)  one of
-            - ``'maxima'`` - use Maxima (the default)
-            - ``'sympy'`` - use SymPy
+        - ``algorithm`` -- one of :
+
+            - ``maxima`` : (default) sends the expression to
+              ``maxima`` and converts it back to Sage
+
+            - ``sympy`` : converts the expression to ``sympy``,
+              simplifies it (passing any optional keyword(s)), and
+              converts the result to Sage
+
+            - ``giac`` : converts the expression to ``giac``,
+              simplifies it, and converts the result to Sage
+
+            - ``fricas`` : converts the expression to ``fricas``,
+              simplifies it, and converts the result to Sage
 
         .. SEEALSO::
 
@@ -10655,11 +10659,21 @@ cdef class Expression(Expression_abc):
             sage: f.simplify()
             x^(-a + 1)*sin(2)
 
-        ::
+        Some simplifications are quite algorithm-specific::
 
-            sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
-            sage: expr.simplify(algorithm='sympy')
-            1/5*sqrt(5) - 1/5
+            sage: x, t = var("x, t")
+            sage: ex = cos(t).exponentialize()
+            sage: ex = ex.subs((sin(t).exponentialize()==x).solve(t)[0])
+            sage: ex
+            1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
+            sage: ex.simplify()
+            1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
+            sage: ex.simplify(algorithm="sympy")
+            I*(x^2 + sqrt(x^2 - 1)*x - 1)/(x + sqrt(x^2 - 1))
+            sage: ex.simplify(algorithm="giac")
+            I*sqrt(x^2 - 1)
+            sage: ex.simplify(algorithm="fricas")  # optional - fricas
+            (I*x^2 + I*sqrt(x^2 - 1)*x - I)/(x + sqrt(x^2 - 1))
 
         TESTS:
 
@@ -10675,16 +10689,16 @@ cdef class Expression(Expression_abc):
             sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
             sage: expr.simplify(algorithm='sympy')
             1/5*sqrt(5) - 1/5
-
-
         """
-        if algorithm == 'maxima':
+        if algorithm == "maxima":
             return self._parent(self._maxima_())
-        elif algorithm == 'sympy':
-            return self._sympy_().simplify()._sage_()
-        else:
-            raise NotImplementedError(
-                    "unknown algorithm: '{}'".format(algorithm))
+        if algorithm == "sympy":
+            return self._sympy_().simplify(**kwds)._sage_()
+        if algorithm == "giac":
+            return self._giac_().simplify()._sage_()
+        if algorithm == "fricas":
+            return self._fricas_().simplify()._sage_()
+        raise ValueError(f"algorithm {algorithm} unknown to simplify")
 
     def simplify_full(self):
         """

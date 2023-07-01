@@ -447,6 +447,88 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         """
         return len(m)
 
+    def as_gca(self):
+        r"""
+        Return the graded commutative algebra corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: H = hyperplane_arrangements.braid(3)
+            sage: O = H.orlik_solomon_algebra(QQ)
+            sage: O.as_gca()
+            Graded Commutative Algebra with generators ('e0', 'e1', 'e2') in degrees (1, 1, 1)
+             with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field
+
+        ::
+
+            sage: N = matroids.named_matroids.Fano()
+            sage: O = N.orlik_solomon_algebra(QQ)
+            sage: O.as_gca()
+            Graded Commutative Algebra with generators ('e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6')
+             in degrees (1, 1, 1, 1, 1, 1, 1) with relations
+             [e1*e2 - e1*e3 + e2*e3, e0*e1*e3 - e0*e1*e4 + e0*e3*e4 - e1*e3*e4,
+              e0*e2 - e0*e4 + e2*e4, e3*e4 - e3*e5 + e4*e5,
+              e1*e2*e4 - e1*e2*e5 + e1*e4*e5 - e2*e4*e5,
+              e0*e2*e3 - e0*e2*e5 + e0*e3*e5 - e2*e3*e5, e0*e1 - e0*e5 + e1*e5,
+              e2*e5 - e2*e6 + e5*e6, e1*e3*e5 - e1*e3*e6 + e1*e5*e6 - e3*e5*e6,
+              e0*e4*e5 - e0*e4*e6 + e0*e5*e6 - e4*e5*e6, e1*e4 - e1*e6 + e4*e6,
+              e2*e3*e4 - e2*e3*e6 + e2*e4*e6 - e3*e4*e6, e0*e3 - e0*e6 + e3*e6,
+              e0*e1*e2 - e0*e1*e6 + e0*e2*e6 - e1*e2*e6] over Rational Field
+
+        TESTS::
+
+            sage: H = hyperplane_arrangements.Catalan(3,QQ).cone()
+            sage: O = H.orlik_solomon_algebra(QQ)
+            sage: A = O.as_gca()
+            sage: H.poincare_polynomial()
+            20*x^3 + 29*x^2 + 10*x + 1
+            sage: [len(A.basis(i)) for i in range(5)]
+            [1, 10, 29, 20, 0]
+
+        """
+        from sage.algebras.commutative_dga import GradedCommutativeAlgebra
+        gens = self.algebra_generators()
+        gkeys = gens.keys()
+        names = ['e{}'.format(i) for i in range(len(gens))]
+        A = GradedCommutativeAlgebra(self.base_ring(), names)
+        rels = []
+        for bc in self._broken_circuits.items():
+            bclist = [bc[1]] + list(bc[0])
+            indices = [gkeys.index(el) for el in bclist]
+            indices.sort()
+            rel = A.zero()
+            sign = -(-1)**len(indices)
+            for i in indices:
+                mon = A.one()
+                for j in indices:
+                    if j != i:
+                        mon *= A.gen(j)
+                rel += sign *mon
+                sign = -sign
+            rels.append(rel)
+        I = A.ideal(rels)
+        return A.quotient(I)
+
+    def as_cdga(self):
+        r"""
+        Return the commutative differential graded algebra corresponding to ``self``
+        with the trivial differential.
+
+        EXAMPLES::
+
+            sage: H = hyperplane_arrangements.braid(3)
+            sage: O = H.orlik_solomon_algebra(QQ)
+            sage: O.as_cdga()
+            Commutative Differential Graded Algebra with generators ('e0', 'e1', 'e2')
+             in degrees (1, 1, 1) with relations [e0*e1 - e0*e2 + e1*e2] over Rational Field
+             with differential:
+               e0 --> 0
+               e1 --> 0
+               e2 --> 0
+        """
+        return self.as_gca().cdg_algebra({})
+
+
 class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
     r"""
     The invariant algebra of the Orlik-Solomon algebra from the

@@ -375,9 +375,9 @@ cdef Obj gap_eval(str gap_string) except? NULL:
             raise GAPError("can only evaluate a single statement")
 
         # Get the result of the first statement
-        result = ELM0_LIST(result, 1) # 1-indexed!
+        result = GAP_ElmList(result, 1) # 1-indexed!
 
-        if ELM0_LIST(result, 1) != GAP_True:
+        if GAP_ElmList(result, 1) != GAP_True:
             # An otherwise unhandled error occurred in GAP (such as a
             # syntax error).  Try running the error handler manually
             # to capture the error output, if any.
@@ -389,7 +389,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # 0 is returned without setting a Python exception, so we should treat
         # this like returning None)
 
-        return ELM0_LIST(result, 2)
+        return GAP_ElmList(result, 2)
     finally:
         GAP_Leave()
         sig_off()
@@ -417,7 +417,7 @@ cdef str extract_libgap_errout():
 
     # Grab a pointer to the C string underlying the GAP string libgap_errout
     # then copy it to a Python str (char_to_str contains an implicit strcpy)
-    msg = CSTR_STRING(r)
+    msg = GAP_CSTR_STRING(r)
     if msg != NULL:
         msg_py = char_to_str(msg)
         msg_py = msg_py.replace('For debugging hints type ?Recovery from '

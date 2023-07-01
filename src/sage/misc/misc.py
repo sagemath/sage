@@ -42,7 +42,7 @@ lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
             deprecation=29892)
 
 lazy_import("sage.misc.timing", ["cputime", "GlobalCputime", "walltime"],
-            deprecation=99999)
+            deprecation=35816)
 
 lazy_import("sage.misc.globals", ["get_main_globals", "inject_variable"],
             deprecation=99999)
@@ -280,9 +280,6 @@ try:
 except KeyError:
     pass
 
-#################################################################
-# timing
-#################################################################
 
 def exactly_one_is_true(iterable):
     r"""

@@ -20,6 +20,9 @@ sys.excepthook = excepthook
 from sage_setup.setenv import setenv
 setenv()
 
+os.environ['CCACHE_BASEDIR'] = sys.prefix
+os.environ['CCACHE_NOHASHDIR'] = '1'
+
 import sage.env
 sage.env.default_required_modules = sage.env.default_optional_modules = ()
 print(f'##################### {sage.env.SAGE_SRC=}')

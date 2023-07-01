@@ -2,14 +2,28 @@ r"""
 Function Fields: rational
 """
 
-#*****************************************************************************
-#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+# *****************************************************************************
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2010      Robert Bradshaw <robertwb@math.washington.edu>
+#                     2011-2018 Julian Rüth <julian.rueth@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2011      Syed Ahmad Lavasani
+#                     2013-2014 Simon King
+#                     2017      Dean Bisogno
+#                     2017      Alyson Deines
+#                     2017-2019 David Roe
+#                     2017-2022 Kwankyu Lee
+#                     2018      Marc Mezzarobba
+#                     2018      Wilfried Luebbe
+#                     2019      Brent Baccala
+#                     2022      Frédéric Chapoton
+#                     2022      Gonzalo Tornaría
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method

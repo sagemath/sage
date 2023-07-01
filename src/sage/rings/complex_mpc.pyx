@@ -2188,7 +2188,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         tt= RealNumber(R)
 
         cdef list zlist = [z]
-        for i in xrange(1,n):
+        for i in range(1,n):
             z = self._new()
             mpfr_mul_ui(tt.value, t.value, i, rrnd)
             mpfr_add(tt.value, tt.value, a.value, rrnd)

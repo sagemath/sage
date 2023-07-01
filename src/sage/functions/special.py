@@ -464,10 +464,9 @@ class EllipticE(BuiltinFunction):
         sage: z = var("z")                                                              # optional - sage.symbolic
         sage: elliptic_e(z, 1)                                                          # optional - sage.symbolic
         elliptic_e(z, 1)
-        sage: # this is still wrong: must be abs(sin(z)) + 2*round(z/pi)
-        sage: elliptic_e(z, 1).simplify()                                               # optional - sage.symbolic
-        2*round(z/pi) + sin(z)
-        sage: elliptic_e(z, 0)                                                          # optional - sage.symbolic
+        sage: elliptic_e(z, 1).simplify() # not tested - gives wrong answer with maxima < 5.47  # optional - sage.symbolic
+        2*round(z/pi) - sin(pi*round(z/pi) - z)
+        sage: elliptic_e(z, 0)                                                                  # optional - sage.symbolic
         z
         sage: elliptic_e(0.5, 0.1)  # abs tol 2e-15
         0.498011394498832

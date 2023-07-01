@@ -141,7 +141,6 @@ cdef class SageObject:
         if hasattr(self, '__custom_name'):
             del self.__custom_name
 
-
     def __repr__(self):
         """
         Default method for string representation.
@@ -191,11 +190,7 @@ cdef class SageObject:
             reprfunc = self._repr_
         except AttributeError:
             return super().__repr__()
-        result = reprfunc()
-        if isinstance(result, str):
-            return result
-        # Allow _repr_ to return unicode on Python 2
-        return result.encode('utf-8')
+        return reprfunc()
 
     def _ascii_art_(self):
         r"""

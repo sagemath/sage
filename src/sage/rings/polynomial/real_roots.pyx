@@ -876,7 +876,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
                 indicator = '='
             if bitsize(err) > 17:
                 shift = bitsize(err) - 15
-                for i in xrange(len(ribp)):
+                for i in range(len(ribp)):
                     ribp[i] = ribp[i] >> shift
                 max_err = max_err >> shift
                 err = -((-err) >> shift)
@@ -945,7 +945,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
             <IBP: ((0, 3, 12, 28) + [0 .. 1)) * 2^5>
         """
         p = self.coeffs.__copy__()
-        for i in xrange(len(p)):
+        for i in range(len(p)):
             p[i] = p[i] >> bits
         return interval_bernstein_polynomial_integer(p, self.lower, self.upper, self.lsign, self.usign, -((-self.error) >> bits), self.scale_log2 + bits, self.level, self.slope_err)
 
@@ -2043,7 +2043,7 @@ def precompute_degree_reduction_cache(n):
         # polynomial, and be fairly certain (absolutely certain?) that
         # the error in the reduced polynomial will be no better
         # than this product.
-        expected_err = max([sum([abs(x) for x in bd.row(k)]) for k in xrange(next+1)])
+        expected_err = max([sum([abs(x) for x in bd.row(k)]) for k in range(next+1)])
 
         # bdd = bd.denominator()
         # bdi = MatrixSpace(ZZ, next+1, samps, sparse=False)(bd * bdd)
@@ -2212,7 +2212,7 @@ def cl_maximum_root_first_lambda(cl):
     negCounter = 0
     pos = []
     neg = []
-    for j in xrange(n-1, -2, -1):
+    for j in range(n-1, -2, -1):
         if j < 0:
             coeff = 1
         else:
@@ -2236,7 +2236,7 @@ def cl_maximum_root_first_lambda(cl):
         return RIF.upper_field().zero()
 
     max_ub_log = RIF('-infinity')
-    for j in xrange(len(neg)):
+    for j in range(len(neg)):
         cur_ub_log = (-neg[j][0] / pos[j][0]).log() / (pos[j][1] - neg[j][1])
         max_ub_log = max_ub_log.union(cur_ub_log)
 
@@ -2288,7 +2288,7 @@ def cl_maximum_root_local_max(cl):
     max_pos_uses = 0
     max_ub_log = RIF('-infinity')
 
-    for j in xrange(n-1, -1, -1):
+    for j in range(n-1, -1, -1):
         if cl[j] < 0:
             max_pos_uses = max_pos_uses+1
             cur_ub_log = (-cl[j] / (max_pos_coeff >> max_pos_uses)).log() / (max_pos_exp - j)
@@ -2367,7 +2367,7 @@ def root_bounds(p):
     ub = cl_maximum_root(cl)
 
     neg_cl = copy(cl)
-    for j in xrange(n-1, -1, -2):
+    for j in range(n-1, -1, -2):
         neg_cl[j] = -neg_cl[j]
 
     lb = -cl_maximum_root(neg_cl)

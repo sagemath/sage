@@ -385,7 +385,7 @@ class _Coordinates():
             ....: [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
             ....: [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422]])
             sage: import scipy.interpolate
-            sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r)
+            sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r).ev
             sage: spherical_plot3d(f,(0,2*pi),(0,pi))
             Graphics3d Object
 

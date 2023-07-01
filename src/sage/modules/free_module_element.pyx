@@ -4070,10 +4070,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: t = var('t')                                                          # needs sage.symbolic
             sage: r = vector([t,t^2,sin(t)])                                            # needs sage.symbolic
             sage: vec, answers = r.nintegral(t,0,1)                                     # needs sage.symbolic
-            sage: vec                                                                   # needs sage.symbolic
+            sage: vec  # abs tol 1e-15                                                  # needs sage.symbolic
             (0.5, 0.3333333333333334, 0.4596976941318602)
             sage: type(vec)                                                             # needs sage.symbolic
             <class 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
@@ -4082,6 +4083,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
              (0.3333333333333..., 3.70074341541719...e-15, 21, 0),
              (0.45969769413186..., 5.10366964392284...e-15, 21, 0)]
 
+            sage: # needs sage.symbolic
             sage: r = vector([t,0,1], sparse=True)                                      # needs sage.symbolic
             sage: r.nintegral(t, 0, 1)                                                  # needs sage.symbolic
             ((0.5, 0.0, 1.0),

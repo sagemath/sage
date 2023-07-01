@@ -1064,6 +1064,7 @@ def random_tests(num=50, n_max=50, k_max=6, nwords_max=200, perms_per_code=10, d
         sage: sage.groups.perm_gps.partn_ref.refinement_binary.random_tests()  # long time (up to 5s on sage.math, 2012)
         All passed: ... random tests on ... codes.
     """
+    from sage.misc.timing import walltime
     from sage.misc.prandom import random, randint
     from sage.combinat.permutation import Permutations
     from sage.matrix.constructor import random_matrix, matrix

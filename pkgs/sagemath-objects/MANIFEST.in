@@ -91,8 +91,8 @@ include sage/libs/gmpxx.pxd
 
 
 ## Needed for doctesting; we keep sagemath-repl pure Python
-include sage/misc/misc.*              # walltime, cputime used in sage.doctest
-include sage/misc/timing.p*
+include sage/misc/misc.*                # some_tuples used in sage.misc.sage_unittest
+include sage/misc/timing.p*             # walltime, cputime used in sage.doctest
 include sage/misc/globals.p*
 include sage/misc/sage_timeit*.p*
 include sage/misc/session.p*

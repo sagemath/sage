@@ -3769,7 +3769,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 else:
                     L.extend( L_prime )
         if return_diag:
-            return [d[i] for i in xrange(self._nrows)]
+            return [d[i] for i in range(self._nrows)]
         else:
             return True
 
@@ -4695,7 +4695,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         X = set(self.pivots())
         np = []
-        for j in xrange(self.ncols()):
+        for j in range(self.ncols()):
             if j not in X:
                 np.append(j)
         np = tuple(np)
@@ -5083,7 +5083,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
         cdef Py_ssize_t i
         return sum([v[i] * self.row(i, from_list=True)
-                    for i in xrange(self._nrows)], M(0))
+                    for i in range(self._nrows)], M(0))
 
     cdef _matrix_times_vector_(self, Vector v):
         """
@@ -5117,7 +5117,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
         cdef Py_ssize_t i
         return sum([self.column(i, from_list=True) * v[i]
-                    for i in xrange(self._ncols)], M(0))
+                    for i in range(self._ncols)], M(0))
 
     def iterates(self, v, n, rows=True):
         r"""

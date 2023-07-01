@@ -305,9 +305,6 @@ class Function_Bessel_J(BuiltinFunction):
         sage: f = bessel_J(2, x)                                                        # optional - sage.symbolic
         sage: f.integrate(x)                                                            # optional - sage.symbolic
         1/24*x^3*hypergeometric((3/2,), (5/2, 3), -1/4*x^2)
-        sage: m = maxima(bessel_J(2, x))                                                # optional - sage.symbolic
-        sage: m.integrate(x)                                                            # optional - sage.symbolic
-        (hypergeometric([3/2],[5/2,3],-_SAGE_VAR_x^2/4)*_SAGE_VAR_x^3)/24
 
     Visualization (set plot_points to a higher value to get more detail)::
 
@@ -1126,11 +1123,11 @@ def Bessel(*args, **kwds):
     Conversion to other systems::
 
         sage: x,y = var('x,y')                                                          # optional - sage.symbolic
-        sage: f = maxima(Bessel(typ='K')(x,y))                                          # optional - sage.symbolic
-        sage: f.derivative('_SAGE_VAR_x')                                               # optional - sage.symbolic
-        (%pi*csc(%pi*_SAGE_VAR_x) *('diff(bessel_i(-_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1) -'diff(bessel_i(_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1))) /2 -%pi*bessel_k(_SAGE_VAR_x,_SAGE_VAR_y)*cot(%pi*_SAGE_VAR_x)
-        sage: f.derivative('_SAGE_VAR_y')                                               # optional - sage.symbolic
-        -(bessel_k(_SAGE_VAR_x+1,_SAGE_VAR_y)+bessel_k(_SAGE_VAR_x-1, _SAGE_VAR_y))/2
+        sage: f = Bessel(typ='K')(x,y)                                                  # optional - sage.symbolic
+        sage: expected = f.derivative(y)                                                # optional - sage.symbolic
+        sage: actual = maxima(f).derivative('_SAGE_VAR_y').sage()                       # optional - sage.symbolic
+        sage: bool(actual == expected)                                                  # optional - sage.symbolic
+        True
 
     Compute the particular solution to Bessel's Differential Equation that
     satisfies `y(1) = 1` and `y'(1) = 1`, then verify the initial conditions

@@ -308,7 +308,7 @@ def GF2X_BuildIrred_list(n):
     cdef GF2X_c f
     GF2 = FiniteField(2)
     GF2X_BuildIrred(f, int(n))
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
 def GF2X_BuildSparseIrred_list(n):
     """
@@ -328,7 +328,7 @@ def GF2X_BuildSparseIrred_list(n):
     cdef GF2X_c f
     GF2 = FiniteField(2)
     GF2X_BuildSparseIrred(f, int(n))
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
 def GF2X_BuildRandomIrred_list(n):
     """
@@ -350,4 +350,4 @@ def GF2X_BuildRandomIrred_list(n):
     current_randstate().set_seed_ntl(False)
     GF2X_BuildSparseIrred(tmp, int(n))
     GF2X_BuildRandomIrred(f, tmp)
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]

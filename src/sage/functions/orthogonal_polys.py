@@ -984,9 +984,9 @@ class Func_chebyshev_U(ChebyshevFunction):
             2*x
             sage: chebyshev_U(x, x)._sympy_()                                           # optional - sympy sage.symbolic
             chebyshevu(x, x)
-            sage: maxima(chebyshev_U(2, x, hold=True))                                  # optional - sage.symbolic
-            3*((-(8*(1-_SAGE_VAR_x))/3)+(4*(1-_SAGE_VAR_x)^2)/3+1)
-            sage: maxima(chebyshev_U(n, x, hold=True))                                  # optional - sage.symbolic
+            sage: maxima(chebyshev_U(2,x, hold=True))                                   # optional - sage.symbolic
+            3*(...-...(8*(1-_SAGE_VAR_x))/3)+(4*(1-_SAGE_VAR_x)^2)/3+1)
+            sage: maxima(chebyshev_U(n,x, hold=True))                                   # optional - sage.symbolic
             chebyshev_u(_SAGE_VAR_n,_SAGE_VAR_x)
         """
         ChebyshevFunction.__init__(self, 'chebyshev_U', nargs=2,

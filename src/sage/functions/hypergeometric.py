@@ -19,8 +19,11 @@ Examples from :trac:`9908`::
     sage: sum(((2*I)^x/(x^3 + 1)*(1/4)^x), x, 0, oo)                                    # optional - sage.symbolic
     hypergeometric((1, 1, -1/2*I*sqrt(3) - 1/2, 1/2*I*sqrt(3) - 1/2),...
     (2, -1/2*I*sqrt(3) + 1/2, 1/2*I*sqrt(3) + 1/2), 1/2*I)
-    sage: sum((-1)^x/((2*x + 1)*factorial(2*x + 1)), x, 0, oo)                          # optional - sage.symbolic
+    sage: res = sum((-1)^x/((2*x + 1)*factorial(2*x + 1)), x, 0, oo)                    # optional - sage.symbolic
+    sage: res  # not tested - depends on maxima version                                 # optional - sage.symbolic
     hypergeometric((1/2,), (3/2, 3/2), -1/4)
+    sage: res in [hypergeometric((1/2,), (3/2, 3/2), -1/4), sin_integral(1)]            # optional - sage.symbolic
+    True
 
 Simplification (note that ``simplify_full`` does not yet call
 ``simplify_hypergeometric``)::
