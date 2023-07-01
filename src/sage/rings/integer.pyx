@@ -5387,7 +5387,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             True
         """
         cdef Integer n = self if self >= 0 else -self
-        return n.__pari__().isprime()
+        return self.is_prime(proof=True)
 
     def is_pseudoprime(self):
         r"""
