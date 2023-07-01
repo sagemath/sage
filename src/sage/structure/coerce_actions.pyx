@@ -686,8 +686,8 @@ cdef class IntegerAction(Action):
         Check that this action can be pickled (:trac:`29031`)::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: act = IntegerMulAction(ZZ, CDF)
-            sage: loads(dumps(act)) is not None
+            sage: act = IntegerMulAction(ZZ, CDF)                                       # optional - sage.rings.complex_double
+            sage: loads(dumps(act)) is not None                                         # optional - sage.rings.complex_double
             True
         """
         # All base classes must take the signature
@@ -699,8 +699,8 @@ cdef class IntegerAction(Action):
         EXAMPLES::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: act = IntegerMulAction(ZZ, CDF)
-            sage: ~act
+            sage: act = IntegerMulAction(ZZ, CDF)                                       # optional - sage.rings.complex_double
+            sage: ~act                                                                  # optional - sage.rings.complex_double
             Traceback (most recent call last):
             ...
             TypeError: actions by ZZ cannot be inverted

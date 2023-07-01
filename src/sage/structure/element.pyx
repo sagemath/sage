@@ -2006,7 +2006,7 @@ cdef class Element(SageObject):
             (-7/11)^(e^x + tan(x))
             sage: float(1.2)**(1/2)
             1.0954451150103321
-            sage: complex(1,2)**(1/2)
+            sage: complex(1,2)**(1/2)                                                   # optional - sage.rings.complex_double
             (1.272019649514069+0.786151377757423...j)
 
         TESTS::
