@@ -338,7 +338,7 @@ for input, output in zip(inputs, outputs):
 
         # First remove duplicate optional tags and rewrite all '# optional' that should be '# needs'
         file_optional_tags = {}
-        persistent_optional_tags = set()
+        persistent_optional_tags = {}
         for i, line in enumerate(src_in_lines):
             if m := re.match(' *sage: *(.*)#', line):
                 tags, line_sans_tags, is_persistent = parse_optional_tags(line, return_string_sans_tags=True)
