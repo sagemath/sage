@@ -13,16 +13,10 @@ AUTHOR:
 - Yann Laigle-Chapuy (2010-01) initial implementation
 - Lorenz Panny (2023-01): :meth:`minpoly_mod`
 """
-
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer_ring cimport IntegerRing_class
-
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX
 from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
-from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
-from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.convert cimport ZZ_to_mpz
 
 # We need to define this stuff before including the templating stuff
@@ -45,7 +39,6 @@ include "sage/libs/ntl/ntl_ZZ_pEX_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
-from sage.libs.pari.all import pari
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 
 cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):

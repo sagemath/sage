@@ -9,22 +9,19 @@ AUTHORS:
   derivative to use Henrici's algorithms [Hor1972]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element cimport FieldElement, parent
 from sage.structure.richcmp cimport richcmp
-# from sage.rings.polynomial.flatten import SpecializationMorphism
 
-from . import integer_ring
-from .integer_ring import ZZ
 from .rational_field import QQ
 
 import sage.misc.latex as latex

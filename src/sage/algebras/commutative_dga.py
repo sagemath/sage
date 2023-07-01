@@ -560,7 +560,7 @@ class Differential(UniqueRepresentation, Morphism,
         H_basis = (sum(c * b for (c, b) in zip(coeffs, B))
                    for coeffs in H_basis_raw)
         # Put brackets around classes.
-        H_basis_brackets = [CohomologyClass(b) for b in H_basis]
+        H_basis_brackets = [CohomologyClass(b, A) for b in H_basis]
         return CombinatorialFreeModule(A.base_ring(),
                                        H_basis_brackets,
                                        sorting_key=sorting_keys,
@@ -854,7 +854,7 @@ class Differential_multigraded(Differential):
         H_basis = (sum(c * b for (c, b) in zip(coeffs, B))
                    for coeffs in H_basis_raw)
         # Put brackets around classes.
-        H_basis_brackets = [CohomologyClass(b) for b in H_basis]
+        H_basis_brackets = [CohomologyClass(b, A) for b in H_basis]
         return CombinatorialFreeModule(A.base_ring(),
                                        H_basis_brackets,
                                        sorting_key=sorting_keys,
@@ -3883,10 +3883,54 @@ class CohomologyClass(SageObject, CachedRepresentation):
         sage: CohomologyClass(3)
         [3]
         sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees = (2,2,3,3))
-        sage: CohomologyClass(x^2+2*y*z)
+        sage: CohomologyClass(x^2+2*y*z, A)
         [2*y*z + x^2]
+
+    TESTS:
+
+    In order for the cache to not confuse objects with the same representation,
+    we can pass the parent of the representative as a parameter::
+
+        sage: A.<e1,e2,e3,e4,e5,e6> = GradedCommutativeAlgebra(QQ)
+        sage: B1 = A.cdg_algebra({e5:e1*e2,e6:e3*e4})
+        sage: B2 = A.cdg_algebra({e5:e1*e2,e6:e1*e2+e3*e4})
+        sage: B1.minimal_model()
+        Commutative Differential Graded Algebra morphism:
+          From: Commutative Differential Graded Algebra with generators ('x1_0', 'x1_1', 'x1_2', 'x1_3', 'y1_0', 'y1_1') in degrees (1, 1, 1, 1, 1, 1) over Rational Field with differential:
+           x1_0 --> 0
+           x1_1 --> 0
+           x1_2 --> 0
+           x1_3 --> 0
+           y1_0 --> x1_0*x1_1
+           y1_1 --> x1_2*x1_3
+          To:   Commutative Differential Graded Algebra with generators ('e1', 'e2', 'e3', 'e4', 'e5', 'e6') in degrees (1, 1, 1, 1, 1, 1) over Rational Field with differential:
+           e1 --> 0
+           e2 --> 0
+           e3 --> 0
+           e4 --> 0
+           e5 --> e1*e2
+           e6 --> e3*e4
+          Defn: (x1_0, x1_1, x1_2, x1_3, y1_0, y1_1) --> (e1, e2, e3, e4, e5, e6)
+        sage: B2.minimal_model()
+        Commutative Differential Graded Algebra morphism:
+          From: Commutative Differential Graded Algebra with generators ('x1_0', 'x1_1', 'x1_2', 'x1_3', 'y1_0', 'y1_1') in degrees (1, 1, 1, 1, 1, 1) over Rational Field with differential:
+           x1_0 --> 0
+           x1_1 --> 0
+           x1_2 --> 0
+           x1_3 --> 0
+           y1_0 --> x1_0*x1_1
+           y1_1 --> x1_2*x1_3
+          To:   Commutative Differential Graded Algebra with generators ('e1', 'e2', 'e3', 'e4', 'e5', 'e6') in degrees (1, 1, 1, 1, 1, 1) over Rational Field with differential:
+           e1 --> 0
+           e2 --> 0
+           e3 --> 0
+           e4 --> 0
+           e5 --> e1*e2
+           e6 --> e1*e2 + e3*e4
+          Defn: (x1_0, x1_1, x1_2, x1_3, y1_0, y1_1) --> (e1, e2, e3, e4, e5, -e5 + e6)
+
     """
-    def __init__(self, x):
+    def __init__(self, x, cdga=None):
         """
         EXAMPLES::
 
@@ -3895,6 +3939,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
             [x - 2]
         """
         self._x = x
+        self._cdga = cdga
 
     def __hash__(self):
         r"""

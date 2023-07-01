@@ -30,17 +30,17 @@ AUTHORS:
 - Burcin Erocal (2008-11) initial implementation
 - Martin Albrecht (2009-01) another initial implementation
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009-2010 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2009 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.libs.ntl.ntl_lzz_pX import ntl_zz_pX
-from sage.structure.factorization import Factorization
+from sage.structure.factorization import Factorization  # removing breaks build
 from sage.structure.element cimport parent
 from sage.structure.element import coerce_binop
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint

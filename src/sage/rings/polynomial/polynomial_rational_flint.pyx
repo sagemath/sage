@@ -22,7 +22,7 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cysignals.memory cimport check_allocarray, check_malloc, sig_free
+from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
 from cpython.int cimport PyInt_AS_LONG
@@ -53,7 +53,7 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 
 from sage.structure.parent cimport Parent
-from sage.structure.element cimport Element, ModuleElement, RingElement
+from sage.structure.element cimport Element
 from sage.structure.element import coerce_binop
 
 from sage.misc.cachefunc import cached_method
@@ -491,7 +491,6 @@ cdef class Polynomial_rational_flint(Polynomial):
         """
         cdef Polynomial_rational_flint f
         cdef Rational r
-        cdef mpz_t tmpz
         cdef fmpz_t tmpfz
         cdef fmpq_t tmpfq
         cdef RealBall arb_a, arb_z

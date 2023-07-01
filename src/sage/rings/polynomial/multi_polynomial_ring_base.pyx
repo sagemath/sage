@@ -2,7 +2,6 @@ r"""
 Base class for multivariate polynomial rings
 """
 import itertools
-import warnings
 from collections.abc import Iterable
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
@@ -27,10 +26,8 @@ from sage.combinat.integer_vector import IntegerVectors
 
 from sage.rings.integer_ring import ZZ
 
-from .polydict import PolyDict
 from . import (multi_polynomial_ideal,
-               polynomial_ring,
-               multi_polynomial_element)
+               polynomial_ring)
 from .term_order import TermOrder
 from .polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)
@@ -1321,9 +1318,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: R.<x,y> = QQ[]
             sage: R.some_elements()
             [x, y, x + y, x^2 + x*y, 0, 1]
-
         """
-        R = self.base_ring()
         L = list(self.gens())
         if L:
             L.append(L[0] + L[-1])
@@ -1704,7 +1699,6 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         mons_idx = {str(mon): idx for idx, mon in enumerate(mons)}
         mons_num = len(mons)
         mons_to_keep = []
-        newflist = []
         # strip coefficients of the input polynomials:
         flist = [[f.exponents(), f.coefficients()] for f in flist]
         numer_matrix = zero_matrix(self.base_ring(), mons_num, sparse=sparse)

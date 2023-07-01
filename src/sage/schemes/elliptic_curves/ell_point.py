@@ -182,6 +182,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         Abelian group of points on
          Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
         sage: E = EllipticCurve(K, [0,1,0,-160,308])                                    # optional - sage.rings.number_field
         sage: P = E(26, -120)                                                           # optional - sage.rings.number_field
@@ -440,6 +441,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
             sage: P.scheme() == P.curve()
             True
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 3,'a')                                      # optional - sage.rings.number_field
             sage: P = E.base_extend(K)(1, a)                                            # optional - sage.rings.number_field
             sage: P.scheme()                                                            # optional - sage.rings.number_field
@@ -2345,6 +2347,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [0,1,0,-160,308])                                # optional - sage.rings.number_field
             sage: P = E(26, -120)                                                       # optional - sage.rings.number_field
@@ -2455,6 +2458,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: F.<a> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(F, [1,2,3,4,0])                                     # optional - sage.rings.number_field
             sage: Q = E(98, 931)                                                        # optional - sage.rings.number_field
@@ -2631,7 +2635,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [0,0,4,6*i,0])                                   # optional - sage.rings.number_field
             sage: Q = E.lift_x(-9/4); Q                                                 # optional - sage.rings.number_field
-            (-9/4 : -27/8*i : 1)
+            (-9/4 : 27/8*i - 4 : 1)
             sage: Q.height()                                                            # optional - sage.rings.number_field
             2.69518560017909
             sage: (15*Q).height() / Q.height()                                          # optional - sage.rings.number_field
@@ -2783,10 +2787,11 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field
              in a with defining polynomial x^2 + 2 with a = 1.414213562373095?*I
             sage: P = E.lift_x(2 + a); P                                                # optional - sage.rings.number_field
-            (a + 2 : 2*a + 1 : 1)
+            (a + 2 : -2*a - 2 : 1)
             sage: P.archimedean_local_height(K.places(prec=170)[0]) / 2                 # optional - sage.rings.number_field
             0.45754773287523276736211210741423654346576029814695
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E                                # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x
@@ -2796,7 +2801,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             0.510184995162373
 
             sage: Q = E.lift_x(-9/4); Q                                                 # optional - sage.rings.number_field
-            (-9/4 : -27/8*i : 1)
+            (-9/4 : 27/8*i - 4 : 1)
             sage: Q.archimedean_local_height(K.places()[0]) / 2                         # optional - sage.rings.number_field
             0.654445619529600
 
@@ -3006,6 +3011,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         Examples 2 and 3 from [Sil1988]_::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E                                # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x
@@ -3019,7 +3025,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             0
 
             sage: Q = E.lift_x(-9/4); Q                                                 # optional - sage.rings.number_field
-            (-9/4 : -27/8*i : 1)
+            (-9/4 : 27/8*i - 4 : 1)
             sage: Q.non_archimedean_local_height(K.ideal(1+i))                          # optional - sage.rings.number_field
             2*log(2)
             sage: Q.non_archimedean_local_height(K.ideal(3))                            # optional - sage.rings.number_field
@@ -3249,6 +3255,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         Examples over number fields::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: embs = K.embeddings(CC)                                               # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field

@@ -78,13 +78,11 @@ from libc.math cimport log2, ceil
 
 from sage.libs.gmp.all cimport *
 
-import operator
-
 cdef bint use_32bit_type(int_fast64_t modulus):
     return modulus <= INTEGER_MOD_INT32_LIMIT
 
 from sage.arith.long cimport (
-    integer_check_long, integer_check_long_py, is_small_python_int, ERR_OVERFLOW)
+    integer_check_long, integer_check_long_py, is_small_python_int)
 
 import sage.rings.rational as rational
 from sage.libs.pari.all import pari, PariError
@@ -100,7 +98,7 @@ from sage.structure.richcmp cimport rich_to_bool_sgn, rich_to_bool
 import sage.structure.element
 cimport sage.structure.element
 coerce_binop = sage.structure.element.coerce_binop
-from sage.structure.element cimport RingElement, ModuleElement, Element
+from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 
@@ -149,7 +147,6 @@ def Mod(n, m, parent=None):
         return n
 
     # m is non-zero, so return n mod m
-    cdef IntegerMod_abstract x
     if parent is None:
         from .integer_mod_ring import IntegerModRing
         parent = IntegerModRing(m)
@@ -1526,7 +1523,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     return K(p**(pval // n) * mod(upart, p**(k-pval)).nth_root(n, algorithm=algorithm).lift())
             from sage.rings.padics.factory import ZpFM
             R = ZpFM(p,k)
-            self_orig = self
             if p == 2:
                 sign = [1]
                 if self % 4 == 3:
@@ -4035,9 +4031,6 @@ cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
     cdef int p_mod_16 = p % 16
     cdef double bits = log2(float(p))
     cdef long r, m
-
-    cdef Integer resZ
-
 
     if p_mod_16 % 2 == 0:  # p == 2
         return a

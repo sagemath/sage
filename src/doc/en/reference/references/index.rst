@@ -2021,6 +2021,11 @@ REFERENCES:
 .. [DeVi1984] \M.-P. Delest, and G. Viennot, *Algebraic Languages and
               Polyominoes Enumeration.* Theoret. Comput. Sci. 34, 169-206, 1984.
 
+.. [DJP2014] Luca De Feo, David Jao and Jérôme Plût: Towards quantum-resistant
+             cryptosystems from supersingular elliptic curve isogenies. Journal
+             of Mathematical Cryptology, vol. 8, no. 3, 2014, pp. 209-247.
+             https://eprint.iacr.org/2011/506.pdf
+
 .. [DFMS1996] Philipppe Di Francesco, Pierre Mathieu, and David Sénéchal.
               *Conformal Field Theory*. Graduate Texts in Contemporary
               Physics, Springer, 1996.
@@ -3032,6 +3037,9 @@ REFERENCES:
 .. [Har1977] \R. Hartshorne. Algebraic Geometry. Springer-Verlag, New York, 1977.
 
 .. [Har1994] Frank Harary. *Graph Theory*. Reading, MA: Addison-Wesley, 1994.
+
+.. [Har2009] Harvey, David. *Efficient computation of p-adic heights*.
+             LMS J. Comput. Math. **11** (2008), 40–59.
 
 .. [Harako2020] Shuichi Harako. *The second homology group of the commutative
                 case of Kontsevich's symplectic derivation Lie algebra*.
@@ -4732,17 +4740,21 @@ REFERENCES:
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35
               (2001) 551-564.
 
+.. [MST2006] Barry Mazur, William Stein, John Tate.
+             *Computation of p-adic heights and log convergence*.
+             Doc. Math. 2006, Extra Vol., 577-614.
+
 .. [MSZ2013] Michael Maschler, Solan Eilon, and Zamir Shmuel. *Game
              Theory*. Cambridge: Cambridge University Press,
              (2013). ISBN 9781107005488.
 
-.. [MT1991] Mazur, B., & Tate, J. (1991). The `p`-adic sigma
-            function. Duke Mathematical Journal, 62(3), 663-688.
+.. [MT1991] Mazur, B., & Tate, J. (1991). *The `p`-adic sigma
+            function*. Duke Mathematical Journal, **62** (3), 663-688.
 
-.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum, On `p`-adic
-             analogues of the conjectures of Birch and
-             Swinnerton-Dyer, Inventiones Mathematicae 84, (1986),
-             1-48.
+.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum,
+             *On `p`-adic analogues of the conjectures of Birch and
+             Swinnerton-Dyer*,
+             Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
@@ -6107,6 +6119,10 @@ REFERENCES:
 
 .. [TOPCOM] \J. Rambau, TOPCOM
             <http://www.rambau.wm.uni-bayreuth.de/TOPCOM/>.
+
+.. [TT2023] Tan Nhat Tran and Shuhei Tsujie.
+            *A type B analog of Ish arrangement*.
+            Preprint, :arxiv:`2304.12022`. (2023)
 
 .. [TTWL2009] Trebst, Troyer, Wang and Ludwig, A short introduction to
               Fibonacci anyon models, :arxiv:`0902.3275`.

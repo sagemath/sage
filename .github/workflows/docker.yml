@@ -23,6 +23,7 @@ on:
            "ubuntu-jammy",
            "ubuntu-kinetic",
            "ubuntu-lunar",
+           "ubuntu-mantic",
            "debian-buster",
            "debian-bullseye",
            "debian-bookworm",
@@ -34,6 +35,7 @@ on:
            "linuxmint-20.3",
            "linuxmint-21",
            "linuxmint-21.1",
+           "linuxmint-21.2",
            "fedora-29-python3.8",
            "fedora-30-python3.8",
            "fedora-31",
@@ -44,19 +46,21 @@ on:
            "fedora-36",
            "fedora-37",
            "fedora-38",
+           "fedora-39",
            "centos-7-devtoolset-gcc_11",
            "centos-stream-8-python3.9",
            "centos-stream-9-python3.9",
-           "gentoo-python3.9",
            "gentoo-python3.10",
            "gentoo-python3.11",
            "archlinux-latest",
            "opensuse-15.3-gcc_11-python3.9",
            "opensuse-15.4-gcc_11-python3.10",
+           "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "conda-forge",
            "ubuntu-bionic-gcc_8-i386",
            "debian-buster-i386",
+           "debian-bullseye-i386",
            ]
       tox_packages_factors:
         description: 'Stringified JSON object listing tox packages factors'
@@ -71,7 +75,7 @@ on:
         default: ""
       max_parallel:
         type: number
-        default: 24
+        default: 30
       free_disk_space:
         default: false
         type: boolean
@@ -101,7 +105,7 @@ on:
         default: "$BUILD_TAG"
         type: string
       #
-      # For use in upstream CIs
+      # For use in upstream CIs. sage_trac_* are now ignored and will be removed later.
       #
       upstream_artifact:
         required: false
@@ -159,21 +163,6 @@ jobs:
           sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono)') || echo "(error ignored)"
           df -h
         if: inputs.free_disk_space
-      - name: Check out git-trac-command
-        uses: actions/checkout@v3
-        with:
-          repository: sagemath/git-trac-command
-          path: git-trac-command
-        if: inputs.sage_trac_git != ''
-      - name: Check out SageMath from trac.sagemath.org
-        shell: bash {0}
-        # Random sleep and retry to limit the load on trac.sagemath.org
-        run: |
-          git config --global user.email "ci-sage@example.com"
-          git config --global user.name "ci-sage workflow"
-          if [ ! -d .git ]; then git init; fi; git remote add trac ${{ inputs.sage_trac_git }} && x=1 && while [ $x -le 5 ]; do x=$(( $x + 1 )); sleep $(( $RANDOM % 60 + 1 )); if git-trac-command/git-trac fetch ${{ inputs.sage_trac_ticket }}; then git merge FETCH_HEAD || echo "(ignored)"; exit 0; fi; sleep 40; done; exit 1
-        if: inputs.sage_trac_git != ''
-
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
         with:

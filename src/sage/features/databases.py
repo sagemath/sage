@@ -26,8 +26,8 @@ from sage.env import (
 
 class DatabaseConwayPolynomials(StaticFile):
     r"""
-    A :class:`~sage.features.Feature` which describes the presence of Frank Luebeck's
-    database of Conway polynomials.
+    A :class:`~sage.features.Feature` which describes the presence of :ref:`Frank Luebeck's
+    database of Conway polynomials <spkg_conway_polynomials>`.
 
     EXAMPLES::
 
@@ -60,8 +60,8 @@ CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
 
 class DatabaseCremona(StaticFile):
     r"""
-    A :class:`~sage.features.Feature` which describes the presence of John Cremona's
-    database of elliptic curves.
+    A :class:`~sage.features.Feature` which describes the presence of :ref:`John Cremona's
+    database of elliptic curves <spkg_database_cremona_ellcurve>`.
 
     INPUT:
 
@@ -73,7 +73,7 @@ class DatabaseCremona(StaticFile):
         sage: from sage.features.databases import DatabaseCremona
         sage: DatabaseCremona('cremona_mini').is_present()
         FeatureTestResult('database_cremona_mini_ellcurve', True)
-        sage: DatabaseCremona().is_present()  # optional - database_cremona_ellcurve
+        sage: DatabaseCremona().is_present()                                    # optional - database_cremona_ellcurve
         FeatureTestResult('database_cremona_ellcurve', True)
     """
     def __init__(self, name="cremona", spkg="database_cremona_ellcurve"):
@@ -94,7 +94,8 @@ class DatabaseCremona(StaticFile):
 
 class DatabaseJones(StaticFile):
     r"""
-    A :class:`~sage.features.Feature` which describes the presence of John Jones's tables of number fields.
+    A :class:`~sage.features.Feature` which describes the presence of
+    :ref:`John Jones's tables of number fields <spkg_database_jones_numfield>`.
 
     EXAMPLES::
 
@@ -118,11 +119,12 @@ class DatabaseJones(StaticFile):
 
 class DatabaseKnotInfo(PythonModule):
     r"""
-    A :class:`~sage.features.Feature` which describes the presence of the databases at the
+    A :class:`~sage.features.Feature` which describes the presence of the
+    :ref:`package providing the KnotInfo and LinkInfo databases <spkg_database_knotinfo>`.
+
+    The homes of these databases are the
     web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
     `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
-
-
 
     EXAMPLES::
 
@@ -140,9 +142,13 @@ class DatabaseKnotInfo(PythonModule):
         """
         PythonModule.__init__(self, 'database_knotinfo', spkg='database_knotinfo')
 
+
 class DatabaseCubicHecke(PythonModule):
     r"""
-    A :class:`~sage.features.Feature` which describes the presence of the databases at the
+    A :class:`~sage.features.Feature` which describes the presence of the
+    :ref:`Cubic Hecke algebra database package <spkg_database_cubic_hecke>`.
+
+    The home of this database is the
     web-page `Cubic Hecke algebra on 4 strands <http://www.lamfa.u-picardie.fr/marin/representationH4-en.html>`__
     of Ivan Marin.
 
@@ -162,10 +168,12 @@ class DatabaseCubicHecke(PythonModule):
         """
         PythonModule.__init__(self, 'database_cubic_hecke', spkg='database_cubic_hecke')
 
+
 class DatabaseReflexivePolytopes(StaticFile):
     r"""
-    A :class:`~sage.features.Feature` which describes the presence of the PALP database
-    of reflexive lattice polytopes.
+    A :class:`~sage.features.Feature` which describes the presence of the
+    :ref:`PALP databases of reflexive three-dimensional <spkg_polytopes_db>`
+    and :ref:`four-dimensional lattice polytopes <spkg_polytopes_db_4d>`.
 
     EXAMPLES::
 

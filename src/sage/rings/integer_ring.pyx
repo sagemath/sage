@@ -63,13 +63,11 @@ from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.richcmp cimport rich_to_bool
-from sage.structure.sequence import Sequence
 
 from sage.misc.misc_c import prod
 from sage.misc.randstate cimport randstate, current_randstate, SAGE_RAND_MAX
 
 cimport sage.rings.integer as integer
-cimport sage.rings.rational as rational
 
 from . import ring
 
@@ -415,7 +413,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             return self
 
         if isinstance(x, NumberFieldElement_base):
-            K, from_K = parent(x).subfield(x)
+            K, _ = parent(x).subfield(x)
             return K.order(K.gen())
 
         return PrincipalIdealDomain.__getitem__(self, x)
@@ -924,6 +922,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: ZZ.extension(x^2 - 5, 'a')                                            # optional - sage.rings.number_field
             Order in Number Field in a with defining polynomial x^2 - 5
             sage: ZZ.extension([x^2 + 1, x^2 + 2], 'a,b')                               # optional - sage.rings.number_field
@@ -1652,7 +1651,7 @@ def crt_basis(X, xgcd=None):
     for i in range(len(X)):
         p = X[i]
         others = P // p
-        g, s, t = p.xgcd(others)
+        g, _, t = p.xgcd(others)
         if g != ONE:
             raise ArithmeticError("the elements of the list X must be coprime in pairs")
         Y.append(t * others)

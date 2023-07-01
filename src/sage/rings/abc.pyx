@@ -56,6 +56,32 @@ class NumberField_cyclotomic(Field):
     pass
 
 
+class UniversalCyclotomicField(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.universal_cyclotomic_field.UniversalCyclotomicField`.
+
+    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
+    instantiated.
+
+    EXAMPLES::
+
+        sage: import sage.rings.abc
+        sage: K = UniversalCyclotomicField()                                            # optional - sage.rings.number_field
+        sage: isinstance(K, sage.rings.abc.UniversalCyclotomicField)                    # optional - sage.rings.number_field
+        True
+
+    By design, there is a unique direct subclass::
+
+        sage: sage.rings.abc.UniversalCyclotomicField.__subclasses__()                  # optional - sage.rings.number_field
+        [<class 'sage.rings.universal_cyclotomic_field.UniversalCyclotomicField'>]
+
+        sage: len(sage.rings.abc.NumberField_cyclotomic.__subclasses__()) <= 1
+        True
+    """
+
+    pass
+
+
 class AlgebraicField_common(Field):
     r"""
     Abstract base class for :class:`~sage.rings.qqbar.AlgebraicField_common`.
@@ -376,6 +402,7 @@ class Order:
     EXAMPLES::
 
         sage: import sage.rings.abc
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 1); O = K.order(2*a)                            # optional - sage.rings.number_field
         sage: isinstance(O, sage.rings.abc.Order)                                       # optional - sage.rings.number_field
         True

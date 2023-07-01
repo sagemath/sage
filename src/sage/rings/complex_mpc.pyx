@@ -69,7 +69,7 @@ from sage.libs.mpfr cimport *
 from sage.libs.mpc cimport *
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.libs.pari.all import pari
@@ -816,7 +816,6 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         # This should not be called except when the number is being created.
         # Complex Numbers are supposed to be immutable.
-        cdef RealNumber x
         cdef mpc_rnd_t rnd
         rnd =(<MPComplexField_class>self._parent).__rnd
         if y is None:
@@ -2338,12 +2337,11 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: u.agm(v, algorithm="optimal")
             -0.410522769709397 + 4.60061063922097*I
         """
-        if algorithm=="pari":
+        if algorithm == "pari":
             t = self._parent(right).__pari__()
             return self._parent(self.__pari__().agm(t))
 
         cdef MPComplexNumber a, b, d, s, res
-        cdef mpfr_t sn,dn
         cdef mp_exp_t rel_prec
         cdef bint optimal = algorithm == "optimal"
 
@@ -2578,5 +2576,5 @@ cdef class CCtoMPC(Map):
 
 
 # Support Python's numbers abstract base class
-import numbers
+# import numbers
 from sage.rings.complex_mpc import MPComplexNumber
