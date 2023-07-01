@@ -1554,11 +1554,8 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
         OA = [[matrix[i][j] if j is not None else None for i,j in enumerate(R)] for R in OA]
 
     if symbol_list:
-        result=[]
-        the_map = lambda x: symbol_list[x]
-        for row in OA:
-            result.append(list(map(the_map,row)))
-        OA = result
+        mapping = {index : symbol for index, symbol in enumerate(symbol_list)}
+        OA = [[mapping.get(element) for element in row] for row in OA]
     return OA
 
 def OA_standard_label(OA):
@@ -1583,11 +1580,8 @@ def OA_standard_label(OA):
 
     """
     symbol_list = sorted({x for l in OA for x in l})
-    result = []
-    the_map = lambda x: symbol_list.index(x)
-    for row in OA:
-        result.append(list(map(the_map,row)))
-    return result
+    mapping = {symbol : index for index, symbol in enumerate(symbol_list)}
+    return [[mapping.get(element) for element in row] for row in OA]
 
 def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
     r"""
