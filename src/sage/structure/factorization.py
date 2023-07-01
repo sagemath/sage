@@ -733,7 +733,7 @@ class Factorization(SageObject):
 
         Note that the unit part of the factorization is `-2.0`::
 
-            sage: F.unit()
+            sage: F.unit()                                                              # needs numpy
             -2.0
 
             sage: F = factor(-2006); F
