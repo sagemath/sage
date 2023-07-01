@@ -303,7 +303,8 @@ def skipfile(filename, tested_optional_tags=False, *,
             return file_tag_string
 
     elif tested_optional_tags is not True:
-        extra = file_optional_tags - set(tested_optional_tags)
+        extra = set(tag for tag in file_optional_tags
+                    if tag not in tested_optional_tags)
         if extra:
             file_tag_string = unparse_optional_tags(file_optional_tags, prefix='')
             if log:
