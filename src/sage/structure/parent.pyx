@@ -1239,7 +1239,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: VectorSpace(GF(7), 3)[:10]
+            sage: VectorSpace(GF(7), 3)[:10]                                            # optional - sage.modules
             [(0, 0, 0),
              (1, 0, 0),
              (2, 0, 0),
