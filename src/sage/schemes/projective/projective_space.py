@@ -658,7 +658,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: R = GF(5)
             sage: P = ProjectiveSpace(R, 2, names='x')
             sage: pt = [R(3), R(3), R(0)]
-            sage: P._linear_system_as_kernel(3, pt, 2)
+            sage: P._linear_system_as_kernel(3, pt, 2)                                  # needs sage.modules
             Traceback (most recent call last):
             ...
             TypeError: at least one component of pt=[3, 3, 0] must be equal to 1
@@ -2016,7 +2016,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P = ProjectiveSpace(QQ, 4, 'z')
             sage: R.<x0,x1,x2,x3,x4> = PolynomialRing(QQ)
             sage: H = x1^2 + x2^2 + 5*x3*x4
-            sage: P.subscheme_from_Chow_form(H, 3)
+            sage: P.subscheme_from_Chow_form(H, 3)                                      # needs sage.modules
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
               -5*z0*z1 + z2^2 + z3^2
 
@@ -2025,7 +2025,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P = ProjectiveSpace(QQ, 3, 'z')
             sage: R.<x0,x1,x2,x3,x4,x5> = PolynomialRing(QQ)
             sage: H = x1 - x2 - x3 + x5 + 2*x0
-            sage: P.subscheme_from_Chow_form(H, 1)
+            sage: P.subscheme_from_Chow_form(H, 1)                                      # needs sage.modules
             Closed subscheme of Projective Space of dimension 3 over Rational Field
             defined by:
               -z1 + z3,

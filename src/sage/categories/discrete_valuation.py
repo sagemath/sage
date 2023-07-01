@@ -70,6 +70,7 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: R.<t> = PowerSeriesRing(GF(5))
                 sage: M = matrix(4, 4, [(t^(i+j)).add_bigoh(10)
                 ....:                   for i in range(4) for j in range(4)])
@@ -85,6 +86,7 @@ class DiscreteValuationRings(Category_singleton):
             that performs divisions. Hence, truncations may show up
             even if the input matrix is exact::
 
+                sage: # needs sage.modules
                 sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])
                 sage: M
                 [    1     t   t^2]
@@ -95,13 +97,14 @@ class DiscreteValuationRings(Category_singleton):
 
             Another example over the p-adics::
 
-                sage: R = Zp(5, print_mode="digits", prec=5)                            # needs sage.rings.padics
-                sage: M = matrix(R, 3, 3, range(9))                                     # needs sage.rings.padics
-                sage: M                                                                 # needs sage.rings.padics
+                sage: # needs sage.modules sage.rings.padics
+                sage: R = Zp(5, print_mode="digits", prec=5)
+                sage: M = matrix(R, 3, 3, range(9))
+                sage: M
                 [        0  ...00001  ...00002]
                 [ ...00003  ...00004 ...000010]
                 [ ...00011  ...00012  ...00013]
-                sage: M.charpoly()                                                      # needs sage.rings.padics
+                sage: M.charpoly()
                 ...00001*x^3 + ...44423*x^2 + ...44412*x + ...00000
             """
             return M._charpoly_hessenberg(var)
@@ -114,8 +117,9 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: x = Zp(5)(50)                                                     # needs sage.rings.padics
-                sage: x.valuation()                                                     # needs sage.rings.padics
+                sage: # needs sage.rings.padics
+                sage: x = Zp(5)(50)
+                sage: x.valuation()
                 2
             """
 
@@ -166,16 +170,18 @@ class DiscreteValuationRings(Category_singleton):
 
         def is_unit(self):
             """
-            Return True if self is invertible.
+            Return ``True`` if ``self`` is invertible.
 
             EXAMPLES::
 
-                sage: x = Zp(5)(50)                                                     # needs sage.rings.padics
-                sage: x.is_unit()                                                       # needs sage.rings.padics
+                sage: # needs sage.rings.padics
+                sage: x = Zp(5)(50)
+                sage: x.is_unit()
                 False
 
-                sage: x = Zp(7)(50)                                                     # needs sage.rings.padics
-                sage: x.is_unit()                                                       # needs sage.rings.padics
+                sage: # needs sage.rings.padics
+                sage: x = Zp(7)(50)
+                sage: x.is_unit()
                 True
             """
             return self.valuation() == 0
@@ -261,6 +267,7 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: R.<t> = PowerSeriesRing(GF(5))
                 sage: K = R.fraction_field()
                 sage: H = matrix(K, 4, 4, [(t^(i+j)).add_bigoh(10)
@@ -279,14 +286,13 @@ class DiscreteValuationFields(Category_singleton):
 
             Another example over the p-adics::
 
-                sage: K = Qp(5, print_mode="digits", prec=5)                            # needs sage.rings.padics
-                sage: H = matrix(K, 3, 3, range(9))                                     # needs sage.rings.padics
-                sage: H                                                                 # needs sage.rings.padics
+                sage: # needs sage.modules sage.rings.padics
+                sage: K = Qp(5, print_mode="digits", prec=5)
+                sage: H = matrix(K, 3, 3, range(9)); H
                 [        0  ...00001  ...00002]
                 [ ...00003  ...00004 ...000010]
                 [ ...00011  ...00012  ...00013]
-                sage: H.hessenbergize()                                                 # needs sage.rings.padics
-                sage: H                                                                 # needs sage.rings.padics
+                sage: H.hessenbergize(); H
                 [        0  ...00010  ...00002]
                 [ ...00003  ...00024 ...000010]
                 [ ...00000  ...44440  ...44443]
@@ -302,7 +308,8 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: x = Qp(5)(50)                                                     # needs sage.rings.padics
-                sage: x.valuation()                                                     # needs sage.rings.padics
+                sage: # needs sage.rings.padics
+                sage: x = Qp(5)(50)
+                sage: x.valuation()
                 2
             """
