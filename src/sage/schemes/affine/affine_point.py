@@ -157,8 +157,8 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         ::
 
             sage: A.<x,y,z> = AffineSpace(CC, 3)                                        # optional - sage.rings.real_mpfr
-            sage: pt = A([1, 2, -i])                                                    # optional - sage.rings.real_mpfr
-            sage: hash(pt) == hash(tuple(pt))                                           # optional - sage.rings.real_mpfr
+            sage: pt = A([1, 2, -i])                                                    # optional - sage.rings.real_mpfr sage.symbolic
+            sage: hash(pt) == hash(tuple(pt))                                           # optional - sage.rings.real_mpfr sage.symbolic
             True
 
         """

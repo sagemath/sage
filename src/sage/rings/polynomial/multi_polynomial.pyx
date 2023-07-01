@@ -1038,9 +1038,9 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: k.<b> = GF(25); R.<x,y> = k[]                                         # needs sage.rings.finite_rings
             sage: f = y*x^2*b + x*(b+1) + 1                                             # needs sage.rings.finite_rings
             sage: magma = Magma()                       # so var names same below       # needs sage.rings.finite_rings
-            sage: magma(f)                      # optional - magma, needs sage.rings.finite_rings
+            sage: magma(f)                      # optional - magma                      # needs sage.rings.finite_rings
             b*x^2*y + b^22*x + 1
-            sage: f._magma_init_(magma)         # optional - magma, needs sage.rings.finite_rings
+            sage: f._magma_init_(magma)         # optional - magma                      # needs sage.rings.finite_rings
             '_sage_[...]!((_sage_[...]!(_sage_[...]))*_sage_[...]^2*_sage_[...]+(_sage_[...]!(_sage_[...] + 1))*_sage_[...]+(_sage_[...]!(1))*1)'
 
         A more complicated nested example::

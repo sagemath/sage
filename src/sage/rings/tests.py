@@ -411,9 +411,9 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
         a -2*a - 1
         2*a - 30164
 
-        sage: sage.rings.tests.test_random_arith(trials=10)
+        sage: sage.rings.tests.test_random_arith(trials=10)                             # optional - sage.rings.finite_rings
         survived 0 tests...
-        sage: sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
+        sage: sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?), optional - sage.rings.finite_rings
         survived 0 tests...
     """
     i = 0

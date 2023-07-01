@@ -397,6 +397,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     A recursive set given by a graded relation::
 
+        sage: # optional - sage.symbolic
         sage: def f(a):
         ....:     return [a + 1, a + I]
         sage: C = RecursivelyEnumeratedSet([0], f, structure='graded'); C
@@ -1152,6 +1153,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         Gaussian integers::
 
+            sage: # optional - sage.symbolic
             sage: def f(a):
             ....:     return [a + 1, a + I]
             sage: S = RecursivelyEnumeratedSet([0], f, structure='symmetric')
@@ -1170,6 +1172,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         Note that interrupting the computation (``KeyboardInterrupt`` for
         instance) breaks the iterator::
 
+            sage: # optional - sage.symbolic
             sage: def f(a):
             ....:     sleep(0.05r)
             ....:     return [a - 1, a + 1]
@@ -1444,6 +1447,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         EXAMPLES::
 
+            sage: # optional - sage.symbolic
             sage: def f(a):
             ....:     return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
@@ -1458,6 +1462,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         We make sure that :trac:`21312` is fixed::
 
+            sage: # optional - sage.symbolic
             sage: def f(a):
             ....:    sleep(0.1r)
             ....:    return [a + 1, a + I]

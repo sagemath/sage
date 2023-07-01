@@ -143,6 +143,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         ::
 
+            sage: # needs sage.symbolic
             sage: A = matrix(CDF, [[        2,   4 + 2*I,   6 - 4*I],
             ....:                  [ -2*I + 4,        11, 10 - 12*I],
             ....:                  [  4*I + 6, 10 + 12*I,        37]])

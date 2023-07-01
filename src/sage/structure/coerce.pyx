@@ -112,7 +112,7 @@ cpdef py_scalar_parent(py_type):
         Integer Ring
         sage: py_scalar_parent(float)
         Real Double Field
-        sage: py_scalar_parent(complex)
+        sage: py_scalar_parent(complex)                                                 # optional - sage.rings.complex_double
         Complex Double Field
         sage: py_scalar_parent(bool)
         Integer Ring
@@ -130,14 +130,8 @@ cpdef py_scalar_parent(py_type):
         Integer Ring
         sage: py_scalar_parent(numpy.uint64)                                            # optional - numpy
         Integer Ring
-
-        sage: py_scalar_parent(float)
-        Real Double Field
         sage: py_scalar_parent(numpy.double)                                            # optional - numpy
         Real Double Field
-
-        sage: py_scalar_parent(complex)
-        Complex Double Field
 
         sage: import gmpy2
         sage: py_scalar_parent(gmpy2.mpz)
@@ -146,7 +140,7 @@ cpdef py_scalar_parent(py_type):
         Rational Field
         sage: py_scalar_parent(gmpy2.mpfr)
         Real Double Field
-        sage: py_scalar_parent(gmpy2.mpc)
+        sage: py_scalar_parent(gmpy2.mpc)                                               # optional - sage.rings.complex_double
         Complex Double Field
     """
     if issubclass(py_type, int):
@@ -208,8 +202,8 @@ cpdef py_scalar_to_element(x):
         sage: x = py_scalar_to_element(float(42))
         sage: x, parent(x)
         (42.0, Real Double Field)
-        sage: x = py_scalar_to_element(complex(42))
-        sage: x, parent(x)
+        sage: x = py_scalar_to_element(complex(42))                                     # optional - sage.rings.complex_double
+        sage: x, parent(x)                                                              # optional - sage.rings.complex_double
         (42.0, Complex Double Field)
         sage: py_scalar_to_element('hello')
         'hello'
@@ -236,8 +230,8 @@ cpdef py_scalar_to_element(x):
         sage: x = py_scalar_to_element(gmpy2.mpfr(42.57))
         sage: x, parent(x)
         (42.57, Real Double Field)
-        sage: x = py_scalar_to_element(gmpy2.mpc(int(42), int(42)))
-        sage: x, parent(x)
+        sage: x = py_scalar_to_element(gmpy2.mpc(int(42), int(42)))                     # optional - sage.rings.complex_double
+        sage: x, parent(x)                                                              # optional - sage.rings.complex_double
         (42.0 + 42.0*I, Complex Double Field)
 
     Test compatibility with :func:`py_scalar_parent`::
@@ -365,7 +359,7 @@ def parent_is_numerical(P):
 
         sage: from sage.structure.coerce import parent_is_numerical
         sage: import gmpy2
-        sage: [parent_is_numerical(R) for R in [QQ, int, complex, gmpy2.mpc]]
+        sage: [parent_is_numerical(R) for R in [QQ, int, complex, gmpy2.mpc]]           # optional - sage.rings.complex_double
         [True, True, True, True]
         sage: [parent_is_numerical(R) for R in [RR, CC]]                                # optional - sage.rings.real_mpfr
         [True, True]

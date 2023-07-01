@@ -146,7 +146,7 @@ def R6():
         True
         sage: M.is_connected()
         True
-        sage: M.is_3connected()
+        sage: M.is_3connected()                                                         # needs sage.graphs
         False
     """
     A = Matrix(GF(3), [
@@ -178,7 +178,7 @@ def Fano():
         sage: setprint(sorted(M.nonspanning_circuits()))
         [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'}, {'b', 'c', 'd'},
          {'b', 'e', 'g'}, {'c', 'f', 'g'}, {'d', 'e', 'f'}]
-        sage: M.delete(M.groundset_list()[randrange(0,
+        sage: M.delete(M.groundset_list()[randrange(0,                                  # needs sage.graphs
         ....:                  7)]).is_isomorphic(matroids.CompleteGraphic(4))
         True
     """
@@ -209,9 +209,9 @@ def NonFano():
         sage: setprint(M.nonbases())
         [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'}, {'b', 'c', 'd'},
          {'b', 'e', 'g'}, {'c', 'f', 'g'}]
-        sage: M.delete('f').is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.delete('f').is_isomorphic(matroids.CompleteGraphic(4))                  # needs sage.graphs
         True
-        sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))                  # needs sage.graphs
         False
     """
     A = Matrix(GF(3), [
@@ -238,7 +238,7 @@ def O7():
 
         sage: M = matroids.named_matroids.O7(); M
         O7: Ternary matroid of rank 3 on 7 elements, type 0+
-        sage: M.delete('e').is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.delete('e').is_isomorphic(matroids.CompleteGraphic(4))                  # needs sage.graphs
         True
         sage: M.tutte_polynomial()
         y^4 + x^3 + x*y^2 + 3*y^3 + 4*x^2 + 5*x*y + 5*y^2 + 4*x + 4*y
@@ -269,7 +269,7 @@ def P7():
         P7: Ternary matroid of rank 3 on 7 elements, type 1+
         sage: M.f_vector()
         [1, 7, 11, 1]
-        sage: M.has_minor(matroids.CompleteGraphic(4))
+        sage: M.has_minor(matroids.CompleteGraphic(4))                                  # needs sage.graphs
         False
         sage: M.is_valid()
         True
@@ -597,7 +597,7 @@ def J():
         [{'a', 'b', 'f'}, {'a', 'c', 'g'}, {'a', 'd', 'h'}]
         sage: M.is_isomorphic(M.dual())
         True
-        sage: M.has_minor(matroids.CompleteGraphic(4))
+        sage: M.has_minor(matroids.CompleteGraphic(4))                                  # needs sage.graphs
         False
         sage: M.is_valid()
         True
@@ -873,7 +873,7 @@ def Whirl(n):
         sage: M.is_isomorphic(matroids.Wheel(5))
         False
         sage: M = matroids.Whirl(3)
-        sage: M.is_isomorphic(matroids.CompleteGraphic(4))
+        sage: M.is_isomorphic(matroids.CompleteGraphic(4))                              # needs sage.graphs
         False
 
     .. TODO::
