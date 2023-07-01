@@ -1,817 +1,817 @@
 {
     "sage.all__sagemath_categories": {
-        "walltime": 1.6927719116210938e-05
+        "walltime": 1.5735626220703125e-05
     },
     "sage.all__sagemath_environment": {
-        "walltime": 1.7881393432617188e-05
+        "walltime": 1.5020370483398438e-05
     },
     "sage.all__sagemath_objects": {
-        "walltime": 1.8835067749023438e-05
+        "walltime": 1.4781951904296875e-05
     },
     "sage.all__sagemath_repl": {
-        "walltime": 1.8835067749023438e-05
+        "walltime": 1.5735626220703125e-05
     },
     "sage.arith.all": {
-        "walltime": 1.811981201171875e-05
+        "walltime": 1.5735626220703125e-05
     },
     "sage.arith.all__sagemath_objects": {
-        "walltime": 1.9311904907226562e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.arith.constants": {
-        "walltime": 1.7881393432617188e-05
+        "walltime": 1.5020370483398438e-05
     },
     "sage.arith.functions": {
         "failed": true,
-        "walltime": 0.4887659549713135
+        "walltime": 0.4521927833557129
     },
     "sage.arith.misc": {
         "failed": true,
-        "walltime": 28.640613317489624
+        "walltime": 20.923070907592773
     },
     "sage.arith.multi_modular": {
-        "walltime": 2.193450927734375e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.arith.power": {
-        "walltime": 0.034317970275878906
+        "walltime": 0.028953075408935547
     },
     "sage.arith.rational_reconstruction": {
-        "walltime": 2.9087066650390625e-05
+        "walltime": 1.6689300537109375e-05
     },
     "sage.arith.srange": {
         "failed": true,
-        "walltime": 0.5255990028381348
+        "walltime": 0.4844961166381836
     },
     "sage.calculus.all__sagemath_categories": {
-        "walltime": 2.002716064453125e-05
+        "walltime": 1.5020370483398438e-05
     },
     "sage.categories.action": {
-        "walltime": 0.8276419639587402
+        "walltime": 0.7307929992675781
     },
     "sage.categories.additive_groups": {
-        "walltime": 0.01693892478942871
+        "walltime": 0.016160964965820312
     },
     "sage.categories.additive_magmas": {
-        "walltime": 0.15753579139709473
+        "walltime": 0.14566707611083984
     },
     "sage.categories.additive_monoids": {
-        "walltime": 0.042024850845336914
+        "walltime": 0.03943800926208496
     },
     "sage.categories.additive_semigroups": {
-        "walltime": 0.046683311462402344
+        "walltime": 0.0422520637512207
     },
     "sage.categories.affine_weyl_groups": {
-        "walltime": 0.03660011291503906
+        "walltime": 0.03151512145996094
     },
     "sage.categories.algebra_ideals": {
-        "walltime": 0.06086897850036621
+        "walltime": 0.05498790740966797
     },
     "sage.categories.algebra_modules": {
-        "walltime": 0.05548381805419922
+        "walltime": 0.05137991905212402
     },
     "sage.categories.algebras": {
         "failed": true,
-        "walltime": 0.1336669921875
+        "walltime": 0.12045097351074219
     },
     "sage.categories.algebras_with_basis": {
-        "walltime": 0.08795905113220215
+        "walltime": 0.0789799690246582
     },
     "sage.categories.all": {
-        "walltime": 0.001322031021118164
+        "walltime": 0.0009160041809082031
     },
     "sage.categories.all__sagemath_objects": {
-        "walltime": 2.3126602172851562e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.categories.aperiodic_semigroups": {
-        "walltime": 0.010762929916381836
+        "walltime": 0.009418010711669922
     },
     "sage.categories.associative_algebras": {
-        "walltime": 0.03013896942138672
+        "walltime": 0.024864912033081055
     },
     "sage.categories.basic": {
-        "walltime": 0.0015330314636230469
+        "walltime": 0.0011708736419677734
     },
     "sage.categories.bialgebras_with_basis": {
-        "walltime": 0.04642987251281738
+        "walltime": 0.04448509216308594
     },
     "sage.categories.bimodules": {
-        "walltime": 0.035722970962524414
+        "walltime": 0.03378605842590332
     },
     "sage.categories.cartesian_product": {
-        "walltime": 0.08730220794677734
+        "walltime": 0.07649111747741699
     },
     "sage.categories.category": {
-        "walltime": 0.5441579818725586
+        "walltime": 0.5116400718688965
     },
     "sage.categories.category_cy_helper": {
-        "walltime": 0.06173992156982422
+        "walltime": 0.05019736289978027
     },
     "sage.categories.category_singleton": {
-        "walltime": 0.0560603141784668
+        "walltime": 0.06559991836547852
     },
     "sage.categories.category_types": {
-        "walltime": 0.19319987297058105
+        "walltime": 0.17365503311157227
     },
     "sage.categories.category_with_axiom": {
         "failed": true,
-        "walltime": 0.44588208198547363
+        "walltime": 0.39997076988220215
     },
     "sage.categories.chain_complexes": {
-        "walltime": 0.042417049407958984
+        "walltime": 0.034027814865112305
     },
     "sage.categories.coalgebras_with_basis": {
-        "walltime": 0.04860186576843262
+        "walltime": 0.04352402687072754
     },
     "sage.categories.coercion_methods": {
-        "walltime": 0.025845050811767578
+        "walltime": 0.0202791690826416
     },
     "sage.categories.commutative_additive_groups": {
-        "walltime": 0.09217000007629395
+        "walltime": 0.0886540412902832
     },
     "sage.categories.commutative_additive_monoids": {
-        "walltime": 0.019240856170654297
+        "walltime": 0.018826961517333984
     },
     "sage.categories.commutative_additive_semigroups": {
-        "walltime": 0.025992870330810547
+        "walltime": 0.021040916442871094
     },
     "sage.categories.commutative_algebra_ideals": {
-        "walltime": 0.08247685432434082
+        "walltime": 0.07733011245727539
     },
     "sage.categories.commutative_algebras": {
-        "walltime": 0.08344793319702148
+        "walltime": 0.07851314544677734
     },
     "sage.categories.commutative_ring_ideals": {
-        "walltime": 0.03821682929992676
+        "walltime": 0.03563427925109863
     },
     "sage.categories.commutative_rings": {
-        "walltime": 0.09935617446899414
+        "walltime": 0.08818292617797852
     },
     "sage.categories.complete_discrete_valuation": {
-        "walltime": 0.06931519508361816
+        "walltime": 0.07013297080993652
     },
     "sage.categories.complex_reflection_groups": {
-        "walltime": 0.021619081497192383
+        "walltime": 0.021420717239379883
     },
     "sage.categories.covariant_functorial_construction": {
         "failed": true,
-        "walltime": 0.16297483444213867
+        "walltime": 0.1471107006072998
     },
     "sage.categories.coxeter_groups": {
         "failed": true,
-        "walltime": 0.22011804580688477
+        "walltime": 0.20049309730529785
     },
     "sage.categories.cw_complexes": {
-        "walltime": 0.05155611038208008
+        "walltime": 0.04825401306152344
     },
     "sage.categories.discrete_valuation": {
-        "walltime": 0.25657176971435547
+        "walltime": 0.24071192741394043
     },
     "sage.categories.distributive_magmas_and_additive_magmas": {
-        "walltime": 0.03267407417297363
+        "walltime": 0.029292821884155273
     },
     "sage.categories.division_rings": {
-        "walltime": 0.028506994247436523
+        "walltime": 0.028228044509887695
     },
     "sage.categories.domains": {
-        "walltime": 0.028661012649536133
+        "walltime": 0.025402069091796875
     },
     "sage.categories.dual": {
-        "walltime": 0.012352943420410156
+        "walltime": 0.012767791748046875
     },
     "sage.categories.enumerated_sets": {
-        "walltime": 0.18662714958190918
+        "walltime": 0.16959595680236816
     },
     "sage.categories.euclidean_domains": {
-        "walltime": 0.09410619735717773
+        "walltime": 0.08706116676330566
     },
     "sage.categories.examples.all": {
-        "walltime": 2.8133392333984375e-05
+        "walltime": 2.4080276489257812e-05
     },
     "sage.categories.examples.commutative_additive_monoids": {
-        "walltime": 0.040596961975097656
+        "walltime": 0.0363309383392334
     },
     "sage.categories.examples.commutative_additive_semigroups": {
-        "walltime": 0.04593610763549805
+        "walltime": 0.04101824760437012
     },
     "sage.categories.examples.coxeter_groups": {
-        "walltime": 0.0013730525970458984
+        "walltime": 0.0013201236724853516
     },
     "sage.categories.examples.cw_complexes": {
-        "walltime": 0.0507359504699707
+        "walltime": 0.045297861099243164
     },
     "sage.categories.examples.facade_sets": {
-        "walltime": 0.06121706962585449
+        "walltime": 0.05806612968444824
     },
     "sage.categories.examples.filtered_algebras_with_basis": {
         "failed": true,
-        "walltime": 0.05554509162902832
+        "walltime": 0.049300193786621094
     },
     "sage.categories.examples.finite_enumerated_sets": {
-        "walltime": 0.06683015823364258
+        "walltime": 0.0587918758392334
     },
     "sage.categories.examples.finite_monoids": {
-        "walltime": 0.06688714027404785
+        "walltime": 0.06003093719482422
     },
     "sage.categories.examples.finite_semigroups": {
-        "walltime": 0.0734250545501709
+        "walltime": 0.0653688907623291
     },
     "sage.categories.examples.finite_weyl_groups": {
-        "walltime": 0.05706429481506348
+        "walltime": 0.055017948150634766
     },
     "sage.categories.examples.graphs": {
-        "walltime": 0.038971900939941406
+        "walltime": 0.038305044174194336
     },
     "sage.categories.examples.infinite_enumerated_sets": {
-        "walltime": 0.12819671630859375
+        "walltime": 0.09800410270690918
     },
     "sage.categories.examples.magmas": {
-        "walltime": 0.0381619930267334
+        "walltime": 0.03314995765686035
     },
     "sage.categories.examples.manifolds": {
-        "walltime": 0.06313228607177734
+        "walltime": 0.03713083267211914
     },
     "sage.categories.examples.monoids": {
-        "walltime": 0.06336092948913574
+        "walltime": 0.04011416435241699
     },
     "sage.categories.examples.posets": {
-        "walltime": 0.08403706550598145
+        "walltime": 0.05521702766418457
     },
     "sage.categories.examples.semigroups": {
-        "walltime": 0.24150705337524414
+        "walltime": 0.21795296669006348
     },
     "sage.categories.examples.semigroups_cython": {
-        "walltime": 0.20600223541259766
+        "walltime": 0.18775510787963867
     },
     "sage.categories.examples.sets_with_grading": {
-        "walltime": 0.07488512992858887
+        "walltime": 0.06847500801086426
     },
     "sage.categories.facade_sets": {
-        "walltime": 0.051657915115356445
+        "walltime": 0.04830527305603027
     },
     "sage.categories.fields": {
         "failed": true,
-        "walltime": 0.6440320014953613
+        "walltime": 0.571882963180542
     },
     "sage.categories.filtered_algebras": {
         "failed": true,
-        "walltime": 0.04213666915893555
+        "walltime": 0.03711986541748047
     },
     "sage.categories.filtered_algebras_with_basis": {
         "failed": true,
-        "walltime": 0.11605501174926758
+        "walltime": 0.10053205490112305
     },
     "sage.categories.filtered_hopf_algebras_with_basis": {
-        "walltime": 0.11533188819885254
+        "walltime": 0.11120367050170898
     },
     "sage.categories.filtered_modules": {
-        "walltime": 0.06671786308288574
+        "walltime": 0.05816078186035156
     },
     "sage.categories.filtered_modules_with_basis": {
         "failed": true,
-        "walltime": 0.11729788780212402
+        "walltime": 0.10183286666870117
     },
     "sage.categories.finite_complex_reflection_groups": {
-        "walltime": 0.054982900619506836
+        "walltime": 0.040305137634277344
     },
     "sage.categories.finite_dimensional_algebras_with_basis": {
         "failed": true,
-        "walltime": 0.18897104263305664
+        "walltime": 0.1506350040435791
     },
     "sage.categories.finite_dimensional_bialgebras_with_basis": {
-        "walltime": 0.05632519721984863
+        "walltime": 0.04103589057922363
     },
     "sage.categories.finite_dimensional_coalgebras_with_basis": {
-        "walltime": 0.02690911293029785
+        "walltime": 0.023165225982666016
     },
     "sage.categories.finite_dimensional_graded_lie_algebras_with_basis": {
-        "walltime": 0.10625100135803223
+        "walltime": 0.07682514190673828
     },
     "sage.categories.finite_dimensional_hopf_algebras_with_basis": {
-        "walltime": 0.07265710830688477
+        "walltime": 0.059638023376464844
     },
     "sage.categories.finite_dimensional_lie_algebras_with_basis": {
-        "walltime": 0.05408310890197754
+        "walltime": 0.04697132110595703
     },
     "sage.categories.finite_dimensional_modules_with_basis": {
         "failed": true,
-        "walltime": 0.07961392402648926
+        "walltime": 0.06738996505737305
     },
     "sage.categories.finite_dimensional_nilpotent_lie_algebras_with_basis": {
-        "walltime": 0.04456615447998047
+        "walltime": 0.03430986404418945
     },
     "sage.categories.finite_dimensional_semisimple_algebras_with_basis": {
-        "walltime": 0.05582594871520996
+        "walltime": 0.04922294616699219
     },
     "sage.categories.finite_enumerated_sets": {
-        "walltime": 0.17957615852355957
+        "walltime": 0.14664483070373535
     },
     "sage.categories.finite_fields": {
-        "walltime": 0.045799970626831055
+        "walltime": 0.041133880615234375
     },
     "sage.categories.finite_lattice_posets": {
-        "walltime": 0.023273944854736328
+        "walltime": 0.02101898193359375
     },
     "sage.categories.finite_monoids": {
-        "walltime": 0.0545659065246582
+        "walltime": 0.029493093490600586
     },
     "sage.categories.finite_semigroups": {
-        "walltime": 0.05201983451843262
+        "walltime": 0.02992987632751465
     },
     "sage.categories.finite_sets": {
-        "walltime": 0.07407999038696289
+        "walltime": 0.049437761306762695
     },
     "sage.categories.finite_weyl_groups": {
-        "walltime": 0.05375409126281738
+        "walltime": 0.034690141677856445
     },
     "sage.categories.finitely_generated_lambda_bracket_algebras": {
-        "walltime": 0.01974797248840332
+        "walltime": 0.01361393928527832
     },
     "sage.categories.finitely_generated_lie_conformal_algebras": {
-        "walltime": 0.005357027053833008
+        "walltime": 0.004387855529785156
     },
     "sage.categories.finitely_generated_magmas": {
-        "walltime": 0.025374889373779297
+        "walltime": 0.01985001564025879
     },
     "sage.categories.finitely_generated_semigroups": {
-        "walltime": 0.046919822692871094
+        "walltime": 0.04356884956359863
     },
     "sage.categories.function_fields": {
-        "walltime": 0.07233929634094238
+        "walltime": 0.0728912353515625
     },
     "sage.categories.functor": {
-        "walltime": 0.3746061325073242
+        "walltime": 0.34699010848999023
     },
     "sage.categories.g_sets": {
-        "walltime": 0.0041887760162353516
+        "walltime": 0.00543522834777832
     },
     "sage.categories.gcd_domains": {
-        "walltime": 0.02321624755859375
+        "walltime": 0.019540071487426758
     },
     "sage.categories.generalized_coxeter_groups": {
-        "walltime": 0.036544084548950195
+        "walltime": 0.03185701370239258
     },
     "sage.categories.graded_algebras": {
-        "walltime": 0.07390308380126953
+        "walltime": 0.06943678855895996
     },
     "sage.categories.graded_algebras_with_basis": {
-        "walltime": 0.09667181968688965
+        "walltime": 0.08493685722351074
     },
     "sage.categories.graded_bialgebras": {
-        "walltime": 0.05577588081359863
+        "walltime": 0.04552817344665527
     },
     "sage.categories.graded_bialgebras_with_basis": {
-        "walltime": 0.10296821594238281
+        "walltime": 0.09319090843200684
     },
     "sage.categories.graded_coalgebras": {
-        "walltime": 0.045228004455566406
+        "walltime": 0.042630910873413086
     },
     "sage.categories.graded_coalgebras_with_basis": {
-        "walltime": 0.05410313606262207
+        "walltime": 0.04961681365966797
     },
     "sage.categories.graded_hopf_algebras": {
-        "walltime": 0.06129002571105957
+        "walltime": 0.05964183807373047
     },
     "sage.categories.graded_hopf_algebras_with_basis": {
-        "walltime": 0.1742839813232422
+        "walltime": 0.15295696258544922
     },
     "sage.categories.graded_lie_algebras": {
-        "walltime": 0.05069279670715332
+        "walltime": 0.0471498966217041
     },
     "sage.categories.graded_lie_algebras_with_basis": {
-        "walltime": 0.04064202308654785
+        "walltime": 0.037853240966796875
     },
     "sage.categories.graded_lie_conformal_algebras": {
-        "walltime": 0.02993011474609375
+        "walltime": 0.028403043746948242
     },
     "sage.categories.graded_modules": {
-        "walltime": 0.08615803718566895
+        "walltime": 0.0655817985534668
     },
     "sage.categories.graded_modules_with_basis": {
-        "walltime": 0.06369209289550781
+        "walltime": 0.046720027923583984
     },
     "sage.categories.graphs": {
-        "walltime": 0.036242008209228516
+        "walltime": 0.028667926788330078
     },
     "sage.categories.group_algebras": {
-        "walltime": 0.09615373611450195
+        "walltime": 0.06852507591247559
     },
     "sage.categories.groups": {
-        "walltime": 0.03814196586608887
+        "walltime": 0.03586101531982422
     },
     "sage.categories.h_trivial_semigroups": {
-        "walltime": 0.025335073471069336
+        "walltime": 0.021290063858032227
     },
     "sage.categories.hecke_modules": {
-        "walltime": 0.08884382247924805
+        "walltime": 0.06333494186401367
     },
     "sage.categories.homset": {
-        "walltime": 0.5317819118499756
+        "walltime": 0.5076711177825928
     },
     "sage.categories.homsets": {
-        "walltime": 0.1307840347290039
+        "walltime": 0.11212682723999023
     },
     "sage.categories.hopf_algebras": {
-        "walltime": 0.08190608024597168
+        "walltime": 0.06217503547668457
     },
     "sage.categories.hopf_algebras_with_basis": {
-        "walltime": 0.05159926414489746
+        "walltime": 0.03617978096008301
     },
     "sage.categories.infinite_enumerated_sets": {
-        "walltime": 0.03715395927429199
+        "walltime": 0.02456188201904297
     },
     "sage.categories.integral_domains": {
-        "walltime": 0.05380678176879883
+        "walltime": 0.04911684989929199
     },
     "sage.categories.isomorphic_objects": {
-        "walltime": 0.023582935333251953
+        "walltime": 0.021454811096191406
     },
     "sage.categories.j_trivial_semigroups": {
-        "walltime": 0.015738725662231445
+        "walltime": 0.016726016998291016
     },
     "sage.categories.kac_moody_algebras": {
-        "walltime": 0.01824784278869629
+        "walltime": 0.017131805419921875
     },
     "sage.categories.l_trivial_semigroups": {
-        "walltime": 0.02028489112854004
+        "walltime": 0.018934965133666992
     },
     "sage.categories.lambda_bracket_algebras": {
-        "walltime": 0.030188798904418945
+        "walltime": 0.026220083236694336
     },
     "sage.categories.lambda_bracket_algebras_with_basis": {
-        "walltime": 0.004080295562744141
+        "walltime": 0.004183769226074219
     },
     "sage.categories.lattice_posets": {
-        "walltime": 0.018007993698120117
+        "walltime": 0.015375852584838867
     },
     "sage.categories.left_modules": {
-        "walltime": 0.01775503158569336
+        "walltime": 0.01740717887878418
     },
     "sage.categories.lie_algebras": {
-        "walltime": 0.08846902847290039
+        "walltime": 0.07951998710632324
     },
     "sage.categories.lie_algebras_with_basis": {
-        "walltime": 0.00939488410949707
+        "walltime": 0.00593113899230957
     },
     "sage.categories.lie_conformal_algebras": {
-        "walltime": 0.029724836349487305
+        "walltime": 0.02599024772644043
     },
     "sage.categories.lie_conformal_algebras_with_basis": {
-        "walltime": 0.008141040802001953
+        "walltime": 0.005388021469116211
     },
     "sage.categories.lie_groups": {
-        "walltime": 0.02771306037902832
+        "walltime": 0.028540849685668945
     },
     "sage.categories.magmas": {
         "failed": true,
-        "walltime": 0.20012307167053223
+        "walltime": 0.1814579963684082
     },
     "sage.categories.magmas_and_additive_magmas": {
-        "walltime": 0.03104114532470703
+        "walltime": 0.02628803253173828
     },
     "sage.categories.magmatic_algebras": {
-        "walltime": 0.04566621780395508
+        "walltime": 0.04646706581115723
     },
     "sage.categories.manifolds": {
         "failed": true,
-        "walltime": 0.06905198097229004
+        "walltime": 0.06434416770935059
     },
     "sage.categories.map": {
         "failed": true,
-        "walltime": 0.7142348289489746
+        "walltime": 0.6383659839630127
     },
     "sage.categories.matrix_algebras": {
-        "walltime": 0.036827802658081055
+        "walltime": 0.028181076049804688
     },
     "sage.categories.metric_spaces": {
-        "walltime": 0.08827018737792969
+        "walltime": 0.08369994163513184
     },
     "sage.categories.modular_abelian_varieties": {
-        "walltime": 0.0276641845703125
+        "walltime": 0.025473833084106445
     },
     "sage.categories.modules": {
-        "walltime": 0.20624494552612305
+        "walltime": 0.18825697898864746
     },
     "sage.categories.modules_with_basis": {
-        "walltime": 0.11768293380737305
+        "walltime": 0.10933613777160645
     },
     "sage.categories.monoid_algebras": {
-        "walltime": 0.0674288272857666
+        "walltime": 0.0592961311340332
     },
     "sage.categories.monoids": {
-        "walltime": 0.12196207046508789
+        "walltime": 0.11736011505126953
     },
     "sage.categories.morphism": {
-        "walltime": 0.23200726509094238
+        "walltime": 0.21477580070495605
     },
     "sage.categories.number_fields": {
-        "walltime": 0.06612229347229004
+        "walltime": 0.06481122970581055
     },
     "sage.categories.objects": {
-        "walltime": 0.025679826736450195
+        "walltime": 0.023768186569213867
     },
     "sage.categories.partially_ordered_monoids": {
-        "walltime": 0.018049001693725586
+        "walltime": 0.01587200164794922
     },
     "sage.categories.permutation_groups": {
-        "walltime": 0.018062114715576172
+        "walltime": 0.01904296875
     },
     "sage.categories.pointed_sets": {
-        "walltime": 0.0157470703125
+        "walltime": 0.013612747192382812
     },
     "sage.categories.polyhedra": {
-        "walltime": 0.018458127975463867
+        "walltime": 0.020003795623779297
     },
     "sage.categories.poor_man_map": {
-        "walltime": 0.05049014091491699
+        "walltime": 0.04206371307373047
     },
     "sage.categories.primer": {
         "failed": true,
-        "walltime": 0.202650785446167
+        "walltime": 0.19022202491760254
     },
     "sage.categories.principal_ideal_domains": {
-        "walltime": 0.11802482604980469
+        "walltime": 0.10039401054382324
     },
     "sage.categories.pushout": {
         "failed": true,
-        "walltime": 1.3808069229125977
+        "walltime": 1.216413974761963
     },
     "sage.categories.quantum_group_representations": {
-        "walltime": 0.05888986587524414
+        "walltime": 0.05582427978515625
     },
     "sage.categories.quotient_fields": {
         "failed": true,
-        "walltime": 0.2081589698791504
+        "walltime": 0.19389629364013672
     },
     "sage.categories.quotients": {
-        "walltime": 0.018870830535888672
+        "walltime": 0.015411853790283203
     },
     "sage.categories.r_trivial_semigroups": {
-        "walltime": 0.01790308952331543
+        "walltime": 0.017811059951782227
     },
     "sage.categories.realizations": {
-        "walltime": 0.18209218978881836
+        "walltime": 0.16762185096740723
     },
     "sage.categories.right_modules": {
-        "walltime": 0.016836881637573242
+        "walltime": 0.016923904418945312
     },
     "sage.categories.ring_ideals": {
-        "walltime": 0.04021596908569336
+        "walltime": 0.0364229679107666
     },
     "sage.categories.rings": {
         "failed": true,
-        "walltime": 0.3799278736114502
+        "walltime": 0.34085988998413086
     },
     "sage.categories.rngs": {
-        "walltime": 0.02179408073425293
+        "walltime": 0.020931005477905273
     },
     "sage.categories.schemes": {
-        "walltime": 0.044979095458984375
+        "walltime": 0.03834795951843262
     },
     "sage.categories.semigroups": {
-        "walltime": 0.1535189151763916
+        "walltime": 0.14217615127563477
     },
     "sage.categories.semirings": {
-        "walltime": 0.022814273834228516
+        "walltime": 0.021259784698486328
     },
     "sage.categories.semisimple_algebras": {
-        "walltime": 0.038340091705322266
+        "walltime": 0.03352808952331543
     },
     "sage.categories.sets_cat": {
         "failed": true,
-        "walltime": 0.9940319061279297
+        "walltime": 0.8615818023681641
     },
     "sage.categories.sets_with_grading": {
-        "walltime": 0.06430792808532715
+        "walltime": 0.0585479736328125
     },
     "sage.categories.sets_with_partial_maps": {
-        "walltime": 0.013428926467895508
+        "walltime": 0.013592720031738281
     },
     "sage.categories.shephard_groups": {
-        "walltime": 0.03626298904418945
+        "walltime": 0.03101491928100586
     },
     "sage.categories.signed_tensor": {
-        "walltime": 0.1052858829498291
+        "walltime": 0.09535789489746094
     },
     "sage.categories.simplicial_complexes": {
-        "walltime": 0.02519989013671875
+        "walltime": 0.02714991569519043
     },
     "sage.categories.simplicial_sets": {
-        "walltime": 0.03543806076049805
+        "walltime": 0.02856135368347168
     },
     "sage.categories.subobjects": {
-        "walltime": 0.017509937286376953
+        "walltime": 0.016061067581176758
     },
     "sage.categories.subquotients": {
-        "walltime": 0.0012559890747070312
+        "walltime": 0.000888824462890625
     },
     "sage.categories.super_algebras": {
-        "walltime": 0.06369805335998535
+        "walltime": 0.058135986328125
     },
     "sage.categories.super_algebras_with_basis": {
         "failed": true,
-        "walltime": 0.09450912475585938
+        "walltime": 0.08595800399780273
     },
     "sage.categories.super_hopf_algebras_with_basis": {
-        "walltime": 0.09687399864196777
+        "walltime": 0.09118318557739258
     },
     "sage.categories.super_lie_conformal_algebras": {
-        "walltime": 0.02799701690673828
+        "walltime": 0.023633241653442383
     },
     "sage.categories.super_modules": {
-        "walltime": 0.14976000785827637
+        "walltime": 0.1306321620941162
     },
     "sage.categories.super_modules_with_basis": {
-        "walltime": 0.039891958236694336
+        "walltime": 0.03311491012573242
     },
     "sage.categories.supercommutative_algebras": {
-        "walltime": 0.050330162048339844
+        "walltime": 0.04721379280090332
     },
     "sage.categories.tensor": {
-        "walltime": 0.038828134536743164
+        "walltime": 0.03537392616271973
     },
     "sage.categories.topological_spaces": {
-        "walltime": 0.04141592979431152
+        "walltime": 0.039727210998535156
     },
     "sage.categories.triangular_kac_moody_algebras": {
-        "walltime": 0.04481911659240723
+        "walltime": 0.03777194023132324
     },
     "sage.categories.tutorial": {
-        "walltime": 0.016748905181884766
+        "walltime": 0.017051219940185547
     },
     "sage.categories.unique_factorization_domains": {
-        "walltime": 0.14296913146972656
+        "walltime": 0.1262209415435791
     },
     "sage.categories.unital_algebras": {
-        "walltime": 0.10699105262756348
+        "walltime": 0.09755492210388184
     },
     "sage.categories.vector_spaces": {
-        "walltime": 0.07403302192687988
+        "walltime": 0.06830692291259766
     },
     "sage.categories.with_realizations": {
-        "walltime": 0.09328532218933105
+        "walltime": 0.0890359878540039
     },
     "sage.combinat.all__sagemath_categories": {
-        "walltime": 3.504753112792969e-05
+        "walltime": 2.3126602172851562e-05
     },
     "sage.combinat.backtrack": {
-        "walltime": 0.12684297561645508
+        "walltime": 0.12299895286560059
     },
     "sage.combinat.combinat": {
         "failed": true,
-        "walltime": 0.34108805656433105
+        "walltime": 0.2722432613372803
     },
     "sage.combinat.combinat_cython": {
-        "walltime": 0.03384995460510254
+        "walltime": 0.02919292449951172
     },
     "sage.combinat.combination": {
-        "walltime": 0.11454892158508301
+        "walltime": 0.09055304527282715
     },
     "sage.combinat.combinatorial_map": {
-        "walltime": 0.09257888793945312
+        "walltime": 0.07920980453491211
     },
     "sage.combinat.composition": {
-        "walltime": 0.3432190418243408
+        "walltime": 0.28717708587646484
     },
     "sage.combinat.dlx": {
-        "walltime": 0.04308891296386719
+        "walltime": 0.03870224952697754
     },
     "sage.combinat.integer_lists": {
-        "walltime": 3.1948089599609375e-05
+        "walltime": 1.4066696166992188e-05
     },
     "sage.combinat.integer_lists.base": {
         "failed": true,
-        "walltime": 0.09784722328186035
+        "walltime": 0.08646106719970703
     },
     "sage.combinat.integer_lists.invlex": {
-        "walltime": 0.3361930847167969
+        "walltime": 0.26740598678588867
     },
     "sage.combinat.integer_lists.lists": {
-        "walltime": 0.0716390609741211
+        "walltime": 0.06287002563476562
     },
     "sage.combinat.integer_lists.nn": {
-        "walltime": 0.030536890029907227
+        "walltime": 0.023782730102539062
     },
     "sage.combinat.integer_vector": {
-        "walltime": 1.060135841369629
+        "walltime": 0.8618099689483643
     },
     "sage.combinat.matrices.all__sagemath_categories": {
-        "walltime": 3.504753112792969e-05
+        "walltime": 1.5020370483398438e-05
     },
     "sage.combinat.matrices.dancing_links": {
-        "walltime": 8.21898603439331
+        "walltime": 6.347416162490845
     },
     "sage.combinat.matrices.dlxcpp": {
-        "walltime": 0.16468501091003418
+        "walltime": 0.14272689819335938
     },
     "sage.combinat.permutation": {
-        "walltime": 3.66880202293396
+        "walltime": 2.9200661182403564
     },
     "sage.combinat.permutation_cython": {
-        "walltime": 3.409385681152344e-05
+        "walltime": 1.5020370483398438e-05
     },
     "sage.combinat.ranker": {
-        "walltime": 0.19995903968811035
+        "walltime": 0.1749591827392578
     },
     "sage.combinat.subset": {
-        "walltime": 0.6121680736541748
+        "walltime": 0.49770593643188477
     },
     "sage.combinat.subsets_hereditary": {
-        "walltime": 0.08286190032958984
+        "walltime": 0.07404112815856934
     },
     "sage.combinat.subsets_pairwise": {
-        "walltime": 0.06174206733703613
+        "walltime": 0.04368925094604492
     },
     "sage.combinat.tools": {
-        "walltime": 0.014827728271484375
+        "walltime": 0.013250112533569336
     },
     "sage.combinat.tuple": {
-        "walltime": 0.04727888107299805
+        "walltime": 0.0380558967590332
     },
     "sage.cpython": {
-        "walltime": 3.0040740966796875e-05
+        "walltime": 1.5020370483398438e-05
     },
     "sage.cpython._py2_random": {
-        "walltime": 0.014059066772460938
+        "walltime": 0.01569509506225586
     },
     "sage.cpython.all": {
-        "walltime": 2.5033950805664062e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.cpython.atexit": {
-        "walltime": 0.01855611801147461
+        "walltime": 0.015764951705932617
     },
     "sage.cpython.builtin_types": {
-        "walltime": 2.3126602172851562e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.cpython.cython_metaclass": {
-        "walltime": 0.0007169246673583984
+        "walltime": 0.0010001659393310547
     },
     "sage.cpython.debug": {
-        "walltime": 2.149993896484375
+        "walltime": 1.9566168785095215
     },
     "sage.cpython.dict_del_by_value": {
-        "walltime": 2.09808349609375e-05
+        "walltime": 1.4066696166992188e-05
     },
     "sage.cpython.getattr": {
         "failed": true,
-        "walltime": 0.07078099250793457
+        "walltime": 0.0574040412902832
     },
     "sage.cpython.python_debug": {
-        "walltime": 2.6941299438476562e-05
+        "walltime": 1.3828277587890625e-05
     },
     "sage.cpython.string": {
-        "walltime": 0.0011899471282958984
+        "walltime": 0.0009367465972900391
     },
     "sage.cpython.type": {
-        "walltime": 2.7894973754882812e-05
+        "walltime": 1.9788742065429688e-05
     },
     "sage.cpython.wrapperdescr": {
-        "walltime": 0.03281116485595703
+        "walltime": 0.026655912399291992
     },
     "sage.data_structures.all": {
-        "walltime": 3.5762786865234375e-05
+        "walltime": 2.09808349609375e-05
     },
     "sage.data_structures.all__sagemath_categories": {
-        "walltime": 2.7894973754882812e-05
+        "walltime": 1.9073486328125e-05
     },
     "sage.data_structures.binary_matrix": {
-        "walltime": 0.00843191146850586
+        "walltime": 0.00813603401184082
     },
     "sage.data_structures.binary_search": {
-        "walltime": 2.2172927856445312e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.data_structures.bitset": {
-        "walltime": 0.26378893852233887
+        "walltime": 0.1678471565246582
     },
     "sage.data_structures.bitset_base": {
-        "walltime": 0.04015088081359863
+        "walltime": 0.03371691703796387
     },
     "sage.data_structures.blas_dict": {
-        "walltime": 0.2559690475463867
+        "walltime": 0.42927122116088867
     },
     "sage.data_structures.list_of_pairs": {
-        "walltime": 0.34595298767089844
+        "walltime": 0.21587586402893066
     },
     "sage.data_structures.mutable_poset": {
-        "walltime": 0.27580904960632324
+        "walltime": 0.20328211784362793
     },
     "sage.data_structures.sparse_bitset": {
-        "walltime": 0.0012128353118896484
+        "walltime": 0.0008802413940429688
     },
     "sage.doctest": {
-        "walltime": 2.193450927734375e-05
+        "walltime": 2.0265579223632812e-05
     },
     "sage.doctest.all": {
-        "walltime": 2.8133392333984375e-05
+        "walltime": 2.193450927734375e-05
     },
     "sage.doctest.control": {
         "failed": true,
         "walltime": 1000000.0
     },
     "sage.doctest.external": {
-        "walltime": 0.08941531181335449
+        "walltime": 0.07433795928955078
     },
     "sage.doctest.fixtures": {
         "failed": true,
-        "walltime": 0.04511213302612305
+        "walltime": 0.03588724136352539
     },
     "sage.doctest.forker": {
         "failed": true,
@@ -819,1480 +819,1480 @@
     },
     "sage.doctest.parsing": {
         "failed": true,
-        "walltime": 0.625434160232544
+        "walltime": 0.523298978805542
     },
     "sage.doctest.reporting": {
-        "walltime": 0.18563389778137207
+        "walltime": 0.13886213302612305
     },
     "sage.doctest.sources": {
-        "walltime": 0.4995241165161133
+        "walltime": 0.4167790412902832
     },
     "sage.doctest.test": {
-        "walltime": 2.082711935043335
+        "walltime": 1.6621429920196533
     },
     "sage.doctest.util": {
-        "walltime": 0.605032205581665
+        "walltime": 0.583773136138916
     },
     "sage.env": {
-        "walltime": 0.027158021926879883
+        "walltime": 0.01996898651123047
     },
     "sage.ext.all__sagemath_categories": {
-        "walltime": 3.5762786865234375e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.ext.all__sagemath_objects": {
-        "walltime": 3.600120544433594e-05
+        "walltime": 1.5020370483398438e-05
     },
     "sage.ext.cplusplus": {
-        "walltime": 3.814697265625e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.ext.fast_callable": {
         "failed": true,
-        "walltime": 0.6077029705047607
+        "walltime": 0.5474262237548828
     },
     "sage.ext.fast_eval": {
-        "walltime": 0.009632110595703125
+        "walltime": 0.00870203971862793
     },
     "sage.ext.interpreters.all__sagemath_categories": {
-        "walltime": 3.695487976074219e-05
+        "walltime": 2.2172927856445312e-05
     },
     "sage.ext.interpreters.wrapper_el": {
-        "walltime": 2.8848648071289062e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.ext.interpreters.wrapper_py": {
-        "walltime": 2.9087066650390625e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.ext.mod_int": {
-        "walltime": 0.0015511512756347656
+        "walltime": 0.0010251998901367188
     },
     "sage.ext.stdsage": {
-        "walltime": 0.004374980926513672
+        "walltime": 0.002259969711303711
     },
     "sage.features": {
-        "walltime": 0.8360300064086914
+        "walltime": 0.5390348434448242
     },
     "sage.features.all": {
-        "walltime": 0.03399181365966797
+        "walltime": 0.01668095588684082
     },
     "sage.features.bliss": {
-        "walltime": 0.016530990600585938
+        "walltime": 0.014060020446777344
     },
     "sage.features.cddlib": {
-        "walltime": 0.013701200485229492
+        "walltime": 0.01068115234375
     },
     "sage.features.csdp": {
-        "walltime": 0.015558958053588867
+        "walltime": 0.010143041610717773
     },
     "sage.features.cython": {
-        "walltime": 0.012398242950439453
+        "walltime": 0.02518916130065918
     },
     "sage.features.databases": {
         "failed": true,
-        "walltime": 0.3831918239593506
+        "walltime": 0.2504568099975586
     },
     "sage.features.dvipng": {
-        "walltime": 0.0142669677734375
+        "walltime": 0.011296987533569336
     },
     "sage.features.ffmpeg": {
-        "walltime": 0.012215137481689453
+        "walltime": 0.01061701774597168
     },
     "sage.features.four_ti_2": {
-        "walltime": 0.013326883316040039
+        "walltime": 0.013319015502929688
     },
     "sage.features.gap": {
-        "walltime": 0.015567779541015625
+        "walltime": 0.014447927474975586
     },
     "sage.features.gfan": {
-        "walltime": 0.010690927505493164
+        "walltime": 0.008852005004882812
     },
     "sage.features.graph_generators": {
-        "walltime": 0.028532981872558594
+        "walltime": 0.01622605323791504
     },
     "sage.features.graphviz": {
-        "walltime": 0.03595471382141113
+        "walltime": 0.02781081199645996
     },
     "sage.features.igraph": {
-        "walltime": 0.013015031814575195
+        "walltime": 0.009639739990234375
     },
     "sage.features.imagemagick": {
-        "walltime": 0.14623498916625977
+        "walltime": 0.11071896553039551
     },
     "sage.features.interfaces": {
-        "walltime": 1.539674997329712
+        "walltime": 0.9932019710540771
     },
     "sage.features.internet": {
-        "walltime": 0.01817607879638672
+        "walltime": 0.01116800308227539
     },
     "sage.features.join_feature": {
-        "walltime": 0.04379701614379883
+        "walltime": 0.025322914123535156
     },
     "sage.features.kenzo": {
-        "walltime": 0.017405986785888672
+        "walltime": 0.01157999038696289
     },
     "sage.features.latex": {
-        "walltime": 0.7641129493713379
+        "walltime": 0.517805814743042
     },
     "sage.features.latte": {
-        "walltime": 0.019231081008911133
+        "walltime": 0.011628150939941406
     },
     "sage.features.lrs": {
-        "walltime": 0.019386768341064453
+        "walltime": 0.014702081680297852
     },
     "sage.features.mcqd": {
-        "walltime": 0.013167142868041992
+        "walltime": 0.0073888301849365234
     },
     "sage.features.meataxe": {
-        "walltime": 0.014446735382080078
+        "walltime": 0.00732111930847168
     },
     "sage.features.mip_backends": {
-        "walltime": 0.02420783042907715
+        "walltime": 0.013186931610107422
     },
     "sage.features.msolve": {
-        "walltime": 0.015192747116088867
+        "walltime": 0.024791955947875977
     },
     "sage.features.nauty": {
-        "walltime": 0.022134065628051758
+        "walltime": 0.011709213256835938
     },
     "sage.features.normaliz": {
-        "walltime": 0.013072967529296875
+        "walltime": 0.00908803939819336
     },
     "sage.features.palp": {
-        "walltime": 0.012935876846313477
+        "walltime": 0.009363889694213867
     },
     "sage.features.pandoc": {
-        "walltime": 0.014335155487060547
+        "walltime": 0.010540008544921875
     },
     "sage.features.pdf2svg": {
-        "walltime": 0.014490842819213867
+        "walltime": 0.009712934494018555
     },
     "sage.features.phitigra": {
-        "walltime": 0.013087987899780273
+        "walltime": 0.009909868240356445
     },
     "sage.features.pkg_systems": {
-        "walltime": 2.546299934387207
+        "walltime": 1.7764251232147217
     },
     "sage.features.polymake": {
-        "walltime": 0.012497186660766602
+        "walltime": 0.008071184158325195
     },
     "sage.features.poppler": {
-        "walltime": 0.013803958892822266
+        "walltime": 0.009548664093017578
     },
     "sage.features.rubiks": {
-        "walltime": 0.03491401672363281
+        "walltime": 0.024419069290161133
     },
     "sage.features.sagemath": {
-        "walltime": 0.1617751121520996
+        "walltime": 0.1199491024017334
     },
     "sage.features.singular": {
-        "walltime": 0.021108150482177734
+        "walltime": 0.01270604133605957
     },
     "sage.features.sphinx": {
-        "walltime": 0.012913942337036133
+        "walltime": 0.008831977844238281
     },
     "sage.features.standard": {
-        "walltime": 0.001744985580444336
+        "walltime": 0.0009870529174804688
     },
     "sage.features.tdlib": {
-        "walltime": 0.012471199035644531
+        "walltime": 0.00846719741821289
     },
     "sage.functions.airy": {
         "failed": true,
-        "walltime": 0.0676889419555664
+        "walltime": 0.048270225524902344
     },
     "sage.functions.all": {
-        "walltime": 3.504753112792969e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.functions.bessel": {
         "failed": true,
-        "walltime": 0.1272430419921875
+        "walltime": 0.08727192878723145
     },
     "sage.functions.error": {
         "failed": true,
-        "walltime": 0.0603032112121582
+        "walltime": 0.042417049407958984
     },
     "sage.functions.exp_integral": {
         "failed": true,
-        "walltime": 0.10358405113220215
+        "walltime": 0.06458210945129395
     },
     "sage.functions.gamma": {
         "failed": true,
-        "walltime": 0.11097216606140137
+        "walltime": 0.07180190086364746
     },
     "sage.functions.generalized": {
         "failed": true,
-        "walltime": 0.05315089225769043
+        "walltime": 0.032067060470581055
     },
     "sage.functions.hyperbolic": {
         "failed": true,
-        "walltime": 0.058843135833740234
+        "walltime": 0.043762922286987305
     },
     "sage.functions.hypergeometric": {
         "failed": true,
-        "walltime": 0.05391097068786621
+        "walltime": 0.038976192474365234
     },
     "sage.functions.jacobi": {
         "failed": true,
-        "walltime": 0.06284213066101074
+        "walltime": 0.04540109634399414
     },
     "sage.functions.log": {
         "failed": true,
-        "walltime": 0.10634589195251465
+        "walltime": 0.07730603218078613
     },
     "sage.functions.min_max": {
         "failed": true,
-        "walltime": 0.027131080627441406
+        "walltime": 0.01839590072631836
     },
     "sage.functions.orthogonal_polys": {
         "failed": true,
-        "walltime": 0.28949928283691406
+        "walltime": 0.20185399055480957
     },
     "sage.functions.other": {
         "failed": true,
-        "walltime": 0.17522692680358887
+        "walltime": 0.12289190292358398
     },
     "sage.functions.prime_pi": {
         "failed": true,
-        "walltime": 0.03224492073059082
+        "walltime": 0.02305889129638672
     },
     "sage.functions.special": {
         "failed": true,
-        "walltime": 0.07771801948547363
+        "walltime": 0.055052995681762695
     },
     "sage.functions.spike_function": {
         "failed": true,
-        "walltime": 0.04125809669494629
+        "walltime": 0.028435945510864258
     },
     "sage.functions.transcendental": {
         "failed": true,
-        "walltime": 0.07654190063476562
+        "walltime": 0.05388307571411133
     },
     "sage.functions.trig": {
         "failed": true,
-        "walltime": 0.07217884063720703
+        "walltime": 0.04911994934082031
     },
     "sage.functions.wigner": {
         "failed": true,
-        "walltime": 0.18512177467346191
+        "walltime": 0.13323116302490234
     },
     "sage.geometry.abc": {
-        "walltime": 0.333514928817749
+        "walltime": 0.15652775764465332
     },
     "sage.geometry.all__sagemath_categories": {
-        "walltime": 3.504753112792969e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.groups.all__sagemath_categories": {
-        "walltime": 2.8133392333984375e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.groups.all__sagemath_objects": {
-        "walltime": 2.384185791015625e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.groups.generic": {
-        "walltime": 0.12777090072631836
+        "walltime": 0.09272408485412598
     },
     "sage.groups.group": {
-        "walltime": 0.06022500991821289
+        "walltime": 0.03784990310668945
     },
     "sage.groups.groups_catalog": {
-        "walltime": 0.0013217926025390625
+        "walltime": 0.0010519027709960938
     },
     "sage.groups.old": {
-        "walltime": 0.04837989807128906
+        "walltime": 0.03504586219787598
     },
     "sage.groups.perm_gps.all__sagemath_categories": {
-        "walltime": 2.6941299438476562e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.groups.perm_gps.partn_ref.all": {
-        "walltime": 2.9802322387695312e-05
+        "walltime": 2.4080276489257812e-05
     },
     "sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label": {
-        "walltime": 0.4288151264190674
+        "walltime": 0.17847013473510742
     },
     "sage.groups.perm_gps.partn_ref.canonical_augmentation": {
-        "walltime": 1.1313598155975342
+        "walltime": 0.6870560646057129
     },
     "sage.groups.perm_gps.partn_ref.data_structures": {
-        "walltime": 0.03553009033203125
+        "walltime": 0.02669215202331543
     },
     "sage.groups.perm_gps.partn_ref.double_coset": {
-        "walltime": 2.8133392333984375e-05
+        "walltime": 1.4781951904296875e-05
     },
     "sage.groups.perm_gps.partn_ref.refinement_lists": {
-        "walltime": 1.0465588569641113
+        "walltime": 0.6370260715484619
     },
     "sage.groups.perm_gps.partn_ref.refinement_python": {
-        "walltime": 1.0656020641326904
+        "walltime": 0.640265941619873
     },
     "sage.groups.perm_gps.partn_ref.refinement_sets": {
-        "walltime": 1.1231720447540283
+        "walltime": 0.6761548519134521
     },
     "sage.interfaces.abc": {
-        "walltime": 0.017106056213378906
+        "walltime": 0.011823177337646484
     },
     "sage.interfaces.all": {
-        "walltime": 2.8848648071289062e-05
+        "walltime": 1.4781951904296875e-05
     },
     "sage.interfaces.all__sagemath_categories": {
-        "walltime": 5.626678466796875e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.interfaces.cleaner": {
-        "walltime": 0.0017631053924560547
+        "walltime": 0.0012962818145751953
     },
     "sage.interfaces.process": {
-        "walltime": 2.4394450187683105
+        "walltime": 2.3284060955047607
     },
     "sage.interfaces.quit": {
-        "walltime": 0.01645207405090332
+        "walltime": 0.010028839111328125
     },
     "sage.interfaces.sage0": {
         "failed": true,
-        "walltime": 3.650603771209717
+        "walltime": 2.43186092376709
     },
     "sage.interfaces.tab_completion": {
-        "walltime": 0.06487584114074707
+        "walltime": 0.0445399284362793
     },
     "sage.libs.all__sagemath_objects": {
-        "walltime": 2.5987625122070312e-05
+        "walltime": 2.3126602172851562e-05
     },
     "sage.libs.gmp": {
-        "walltime": 3.719329833984375e-05
+        "walltime": 1.4781951904296875e-05
     },
     "sage.libs.gmp.all": {
-        "walltime": 3.981590270996094e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.libs.gmp.binop": {
-        "walltime": 0.00144195556640625
+        "walltime": 0.0009438991546630859
     },
     "sage.libs.gmp.misc": {
-        "walltime": 2.9802322387695312e-05
+        "walltime": 1.5735626220703125e-05
     },
     "sage.libs.gmp.mpf": {
-        "walltime": 2.8133392333984375e-05
+        "walltime": 2.5033950805664062e-05
     },
     "sage.libs.gmp.mpn": {
-        "walltime": 3.314018249511719e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.libs.gmp.mpq": {
-        "walltime": 3.218650817871094e-05
+        "walltime": 1.5735626220703125e-05
     },
     "sage.libs.gmp.mpz": {
-        "walltime": 3.600120544433594e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.libs.gmp.pylong": {
-        "walltime": 0.005271196365356445
+        "walltime": 0.0040531158447265625
     },
     "sage.libs.gmp.random": {
-        "walltime": 2.8848648071289062e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.libs.gmp.randomize": {
-        "walltime": 0.0012590885162353516
+        "walltime": 0.0011489391326904297
     },
     "sage.libs.gmp.types": {
-        "walltime": 3.0994415283203125e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.libs.gmpxx": {
-        "walltime": 2.5987625122070312e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.misc.abstract_method": {
-        "walltime": 0.033247947692871094
+        "walltime": 0.022353172302246094
     },
     "sage.misc.all__sagemath_categories": {
-        "walltime": 2.6226043701171875e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.misc.all__sagemath_environment": {
-        "walltime": 3.409385681152344e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.misc.all__sagemath_objects": {
-        "walltime": 3.409385681152344e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.misc.all__sagemath_repl": {
-        "walltime": 0.0012810230255126953
+        "walltime": 0.0008950233459472656
     },
     "sage.misc.allocator": {
-        "walltime": 2.4080276489257812e-05
+        "walltime": 1.52587890625e-05
     },
     "sage.misc.banner": {
-        "walltime": 0.031241893768310547
+        "walltime": 0.022001028060913086
     },
     "sage.misc.binary_tree": {
-        "walltime": 0.8506028652191162
+        "walltime": 0.5247998237609863
     },
     "sage.misc.bindable_class": {
-        "walltime": 0.06061196327209473
+        "walltime": 0.038513898849487305
     },
     "sage.misc.c3_controlled": {
-        "walltime": 0.2904796600341797
+        "walltime": 0.1797809600830078
     },
     "sage.misc.cachefunc": {
         "failed": true,
-        "walltime": 2.8695149421691895
+        "walltime": 2.3783528804779053
     },
     "sage.misc.call": {
-        "walltime": 0.03136086463928223
+        "walltime": 0.021131038665771484
     },
     "sage.misc.callable_dict": {
-        "walltime": 0.0322878360748291
+        "walltime": 0.017422199249267578
     },
     "sage.misc.classcall_metaclass": {
-        "walltime": 2.5033950805664062e-05
+        "walltime": 1.7881393432617188e-05
     },
     "sage.misc.constant_function": {
-        "walltime": 0.03909587860107422
+        "walltime": 0.030909061431884766
     },
     "sage.misc.converting_dict": {
-        "walltime": 0.13039207458496094
+        "walltime": 0.09828400611877441
     },
     "sage.misc.decorators": {
-        "walltime": 0.1480250358581543
+        "walltime": 0.1094961166381836
     },
     "sage.misc.defaults": {
-        "walltime": 0.03346896171569824
+        "walltime": 0.022336959838867188
     },
     "sage.misc.derivative": {
-        "walltime": 0.09330606460571289
+        "walltime": 0.0668480396270752
     },
     "sage.misc.dev_tools": {
         "failed": true,
-        "walltime": 0.1314408779144287
+        "walltime": 0.09558796882629395
     },
     "sage.misc.edit_module": {
-        "walltime": 0.028495311737060547
+        "walltime": 0.023422956466674805
     },
     "sage.misc.explain_pickle": {
         "failed": true,
-        "walltime": 0.32691287994384766
+        "walltime": 0.23232674598693848
     },
     "sage.misc.fast_methods": {
-        "walltime": 0.11219930648803711
+        "walltime": 0.08380007743835449
     },
     "sage.misc.flatten": {
-        "walltime": 0.02687692642211914
+        "walltime": 0.014501094818115234
     },
     "sage.misc.fpickle": {
-        "walltime": 0.03220391273498535
+        "walltime": 0.02003192901611328
     },
     "sage.misc.function_mangling": {
-        "walltime": 0.0362551212310791
+        "walltime": 0.024403095245361328
     },
     "sage.misc.functional": {
         "failed": true,
-        "walltime": 0.39881086349487305
+        "walltime": 0.31890201568603516
     },
     "sage.misc.globals": {
-        "walltime": 0.04656624794006348
+        "walltime": 0.031981706619262695
     },
     "sage.misc.html": {
         "failed": true,
-        "walltime": 0.10116815567016602
+        "walltime": 0.0722041130065918
     },
     "sage.misc.inherit_comparison": {
-        "walltime": 0.009723901748657227
+        "walltime": 0.008069038391113281
     },
     "sage.misc.inline_fortran": {
-        "walltime": 0.0885310173034668
+        "walltime": 0.06858181953430176
     },
     "sage.misc.instancedoc": {
-        "walltime": 0.04568624496459961
+        "walltime": 0.03298187255859375
     },
     "sage.misc.latex": {
         "failed": true,
-        "walltime": 4.132412910461426
+        "walltime": 2.7155749797821045
     },
     "sage.misc.latex_macros": {
         "failed": true,
-        "walltime": 0.023942947387695312
+        "walltime": 0.015556812286376953
     },
     "sage.misc.latex_standalone": {
-        "walltime": 0.1114349365234375
+        "walltime": 0.07732295989990234
     },
     "sage.misc.lazy_attribute": {
-        "walltime": 0.07674908638000488
+        "walltime": 0.0499269962310791
     },
     "sage.misc.lazy_format": {
-        "walltime": 0.029023170471191406
+        "walltime": 0.022996902465820312
     },
     "sage.misc.lazy_import": {
         "failed": true,
-        "walltime": 3.073667287826538
+        "walltime": 1.932298183441162
     },
     "sage.misc.lazy_import_cache": {
-        "walltime": 0.01653575897216797
+        "walltime": 0.009994983673095703
     },
     "sage.misc.lazy_list": {
-        "walltime": 0.3508760929107666
+        "walltime": 0.2562739849090576
     },
     "sage.misc.lazy_string": {
-        "walltime": 2.5033950805664062e-05
+        "walltime": 2.002716064453125e-05
     },
     "sage.misc.map_threaded": {
-        "walltime": 0.0027849674224853516
+        "walltime": 0.001983165740966797
     },
     "sage.misc.mathml": {
-        "walltime": 0.0020279884338378906
+        "walltime": 0.0014109611511230469
     },
     "sage.misc.method_decorator": {
-        "walltime": 0.10433316230773926
+        "walltime": 0.06220889091491699
     },
     "sage.misc.misc": {
         "failed": true,
-        "walltime": 0.11571907997131348
+        "walltime": 0.06265926361083984
     },
     "sage.misc.misc_c": {
-        "walltime": 0.5414268970489502
+        "walltime": 0.32903099060058594
     },
     "sage.misc.mrange": {
-        "walltime": 0.164870023727417
+        "walltime": 0.09873008728027344
     },
     "sage.misc.multireplace": {
-        "walltime": 0.016031980514526367
+        "walltime": 0.009586811065673828
     },
     "sage.misc.namespace_package": {
-        "walltime": 0.017199993133544922
+        "walltime": 0.011342048645019531
     },
     "sage.misc.nested_class": {
-        "walltime": 0.0787038803100586
+        "walltime": 0.04456520080566406
     },
     "sage.misc.object_multiplexer": {
-        "walltime": 0.025372028350830078
+        "walltime": 0.015865087509155273
     },
     "sage.misc.package": {
-        "walltime": 0.05524873733520508
+        "walltime": 0.031430959701538086
     },
     "sage.misc.package_dir": {
         "failed": true,
-        "walltime": 0.05482602119445801
+        "walltime": 0.031238079071044922
     },
     "sage.misc.pager": {
-        "walltime": 0.002040863037109375
+        "walltime": 0.0009589195251464844
     },
     "sage.misc.parser": {
-        "walltime": 0.16810202598571777
+        "walltime": 0.10059785842895508
     },
     "sage.misc.persist": {
-        "walltime": 0.15219783782958984
+        "walltime": 0.09296679496765137
     },
     "sage.misc.prandom": {
-        "walltime": 1.293410062789917
+        "walltime": 0.8101801872253418
     },
     "sage.misc.profiler": {
-        "walltime": 0.0044002532958984375
+        "walltime": 0.0023910999298095703
     },
     "sage.misc.random_testing": {
-        "walltime": 0.02692413330078125
+        "walltime": 0.017578840255737305
     },
     "sage.misc.randstate": {
-        "walltime": 3.409385681152344e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.misc.repr": {
-        "walltime": 0.17946600914001465
+        "walltime": 0.0476679801940918
     },
     "sage.misc.reset": {
         "failed": true,
-        "walltime": 0.033988237380981445
+        "walltime": 0.02319192886352539
     },
     "sage.misc.rest_index_of_methods": {
-        "walltime": 0.06676793098449707
+        "walltime": 0.012346029281616211
     },
     "sage.misc.sage_eval": {
         "failed": true,
-        "walltime": 0.08503508567810059
+        "walltime": 0.05520796775817871
     },
     "sage.misc.sage_input": {
         "failed": true,
-        "walltime": 0.6642401218414307
+        "walltime": 0.4126582145690918
     },
     "sage.misc.sage_ostools": {
-        "walltime": 0.06052589416503906
+        "walltime": 0.041249990463256836
     },
     "sage.misc.sage_timeit": {
         "failed": true,
-        "walltime": 0.8891057968139648
+        "walltime": 0.5922901630401611
     },
     "sage.misc.sage_timeit_class": {
-        "walltime": 0.03714585304260254
+        "walltime": 0.0231320858001709
     },
     "sage.misc.sage_unittest": {
-        "walltime": 0.5917582511901855
+        "walltime": 0.37665796279907227
     },
     "sage.misc.sagedoc": {
         "failed": true,
-        "walltime": 6.090442180633545
+        "walltime": 3.9520630836486816
     },
     "sage.misc.sageinspect": {
         "failed": true,
-        "walltime": 1.1766929626464844
+        "walltime": 0.7709870338439941
     },
     "sage.misc.search": {
-        "walltime": 3.409385681152344e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.misc.session": {
         "failed": true,
-        "walltime": 0.07778191566467285
+        "walltime": 0.05595111846923828
     },
     "sage.misc.superseded": {
         "failed": true,
-        "walltime": 0.8111321926116943
+        "walltime": 0.5419390201568604
     },
     "sage.misc.table": {
-        "walltime": 0.0489809513092041
+        "walltime": 0.03436112403869629
     },
     "sage.misc.temporary_file": {
-        "walltime": 0.09396100044250488
+        "walltime": 0.05599379539489746
     },
     "sage.misc.test_nested_class": {
-        "walltime": 0.06631708145141602
+        "walltime": 0.041337013244628906
     },
     "sage.misc.timing": {
-        "walltime": 0.06475281715393066
+        "walltime": 0.03929877281188965
     },
     "sage.misc.trace": {
         "failed": true,
-        "walltime": 93.66945004463196
+        "walltime": 92.82177495956421
     },
     "sage.misc.unknown": {
-        "walltime": 0.030472993850708008
+        "walltime": 0.021149873733520508
     },
     "sage.misc.verbose": {
-        "walltime": 0.03116917610168457
+        "walltime": 0.02038407325744629
     },
     "sage.misc.viewer": {
-        "walltime": 0.05141091346740723
+        "walltime": 0.0337679386138916
     },
     "sage.misc.weak_dict": {
-        "walltime": 0.8877129554748535
+        "walltime": 0.5749828815460205
     },
     "sage.modules.all__sagemath_objects": {
-        "walltime": 2.7894973754882812e-05
+        "walltime": 1.5735626220703125e-05
     },
     "sage.modules.module": {
-        "walltime": 0.08333802223205566
+        "walltime": 0.05685567855834961
     },
     "sage.parallel.all": {
-        "walltime": 3.2901763916015625e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.parallel.decorate": {
         "failed": true,
-        "walltime": 0.8792738914489746
+        "walltime": 0.6768090724945068
     },
     "sage.parallel.map_reduce": {
         "failed": true,
-        "walltime": 15.932461977005005
+        "walltime": 11.629570722579956
     },
     "sage.parallel.multiprocessing_sage": {
         "failed": true,
-        "walltime": 0.07799482345581055
+        "walltime": 0.057639122009277344
     },
     "sage.parallel.ncpus": {
-        "walltime": 0.01046299934387207
+        "walltime": 0.006587982177734375
     },
     "sage.parallel.parallelism": {
-        "walltime": 0.04586291313171387
+        "walltime": 0.03896498680114746
     },
     "sage.parallel.reference": {
-        "walltime": 0.015893936157226562
+        "walltime": 0.011166095733642578
     },
     "sage.parallel.use_fork": {
         "failed": true,
-        "walltime": 0.2548542022705078
+        "walltime": 0.15322589874267578
     },
     "sage.repl": {
-        "walltime": 3.0040740966796875e-05
+        "walltime": 1.5020370483398438e-05
     },
     "sage.repl.all": {
-        "walltime": 3.790855407714844e-05
+        "walltime": 1.52587890625e-05
     },
     "sage.repl.attach": {
-        "walltime": 2.7904021739959717
+        "walltime": 2.567775011062622
     },
     "sage.repl.configuration": {
-        "walltime": 2.2525131702423096
+        "walltime": 1.3883860111236572
     },
     "sage.repl.display": {
-        "walltime": 0.0001010894775390625
+        "walltime": 1.2874603271484375e-05
     },
     "sage.repl.display.fancy_repr": {
-        "walltime": 0.02587890625
+        "walltime": 0.017626047134399414
     },
     "sage.repl.display.formatter": {
-        "walltime": 0.49990415573120117
+        "walltime": 0.33225512504577637
     },
     "sage.repl.display.jsmol_iframe": {
-        "walltime": 0.035624027252197266
+        "walltime": 0.02344799041748047
     },
     "sage.repl.display.pretty_print": {
-        "walltime": 0.02523183822631836
+        "walltime": 0.016820907592773438
     },
     "sage.repl.display.util": {
-        "walltime": 0.015340089797973633
+        "walltime": 0.009433984756469727
     },
     "sage.repl.inputhook": {
-        "walltime": 0.4030909538269043
+        "walltime": 0.2815690040588379
     },
     "sage.repl.interface_magic": {
-        "walltime": 0.40597987174987793
+        "walltime": 0.29773497581481934
     },
     "sage.repl.interpreter": {
         "failed": true,
-        "walltime": 0.7234411239624023
+        "walltime": 0.5459210872650146
     },
     "sage.repl.ipython_extension": {
         "failed": true,
-        "walltime": 2.261255979537964
+        "walltime": 1.9291210174560547
     },
     "sage.repl.ipython_kernel": {
-        "walltime": 3.528594970703125e-05
+        "walltime": 1.5735626220703125e-05
     },
     "sage.repl.ipython_kernel.__main__": {
-        "walltime": 2.5987625122070312e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.repl.ipython_kernel.all_jupyter": {
-        "walltime": 0.0014481544494628906
+        "walltime": 0.0009188652038574219
     },
     "sage.repl.ipython_kernel.install": {
         "failed": true,
-        "walltime": 0.18557214736938477
+        "walltime": 0.14962482452392578
     },
     "sage.repl.ipython_kernel.interact": {
-        "walltime": 0.4549589157104492
+        "walltime": 0.34418392181396484
     },
     "sage.repl.ipython_kernel.kernel": {
-        "walltime": 0.45751500129699707
+        "walltime": 0.3436930179595947
     },
     "sage.repl.ipython_kernel.widgets": {
-        "walltime": 0.4635748863220215
+        "walltime": 0.3536548614501953
     },
     "sage.repl.ipython_kernel.widgets_sagenb": {
         "failed": true,
-        "walltime": 0.3281431198120117
+        "walltime": 0.25253772735595703
     },
     "sage.repl.ipython_tests": {
         "failed": true,
-        "walltime": 0.6223430633544922
+        "walltime": 0.4566030502319336
     },
     "sage.repl.load": {
         "failed": true,
-        "walltime": 0.03891611099243164
+        "walltime": 0.031311750411987305
     },
     "sage.repl.preparse": {
         "failed": true,
-        "walltime": 0.4527747631072998
+        "walltime": 0.31757092475891113
     },
     "sage.repl.prompts": {
-        "walltime": 0.0012309551239013672
+        "walltime": 0.0009069442749023438
     },
     "sage.repl.rich_output": {
-        "walltime": 2.5033950805664062e-05
+        "walltime": 1.52587890625e-05
     },
     "sage.repl.rich_output.backend_base": {
         "failed": true,
-        "walltime": 0.07802391052246094
+        "walltime": 0.05719399452209473
     },
     "sage.repl.rich_output.backend_doctest": {
-        "walltime": 0.039720773696899414
+        "walltime": 0.028725147247314453
     },
     "sage.repl.rich_output.backend_emacs": {
-        "walltime": 0.01834893226623535
+        "walltime": 0.012337207794189453
     },
     "sage.repl.rich_output.backend_ipython": {
-        "walltime": 0.42883920669555664
+        "walltime": 0.3043200969696045
     },
     "sage.repl.rich_output.buffer": {
-        "walltime": 0.04195117950439453
+        "walltime": 0.02542591094970703
     },
     "sage.repl.rich_output.display_manager": {
-        "walltime": 0.07941389083862305
+        "walltime": 0.051226139068603516
     },
     "sage.repl.rich_output.output_basic": {
-        "walltime": 0.041372060775756836
+        "walltime": 0.030265092849731445
     },
     "sage.repl.rich_output.output_browser": {
-        "walltime": 0.014327764511108398
+        "walltime": 0.011297941207885742
     },
     "sage.repl.rich_output.output_catalog": {
-        "walltime": 0.0012102127075195312
+        "walltime": 0.0011112689971923828
     },
     "sage.repl.rich_output.output_graphics": {
-        "walltime": 0.04206681251525879
+        "walltime": 0.029983043670654297
     },
     "sage.repl.rich_output.output_graphics3d": {
-        "walltime": 0.0463407039642334
+        "walltime": 0.032624244689941406
     },
     "sage.repl.rich_output.output_video": {
-        "walltime": 0.03175711631774902
+        "walltime": 0.022848844528198242
     },
     "sage.repl.rich_output.preferences": {
-        "walltime": 0.10438871383666992
+        "walltime": 0.042597055435180664
     },
     "sage.repl.rich_output.pretty_print": {
-        "walltime": 0.07184100151062012
+        "walltime": 0.02120184898376465
     },
     "sage.repl.rich_output.test_backend": {
-        "walltime": 0.0440058708190918
+        "walltime": 0.025407791137695312
     },
     "sage.rings.abc": {
         "failed": true,
-        "walltime": 0.0958552360534668
+        "walltime": 0.05551886558532715
     },
     "sage.rings.all__sagemath_categories": {
-        "walltime": 4.673004150390625e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.rings.all__sagemath_objects": {
-        "walltime": 4.410743713378906e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.rings.big_oh": {
-        "walltime": 0.142441987991333
+        "walltime": 0.08436822891235352
     },
     "sage.rings.continued_fraction": {
         "failed": true,
-        "walltime": 0.26240110397338867
+        "walltime": 0.1583690643310547
     },
     "sage.rings.continued_fraction_gosper": {
-        "walltime": 0.051262855529785156
+        "walltime": 0.029197216033935547
     },
     "sage.rings.factorint": {
         "failed": true,
-        "walltime": 0.03999900817871094
+        "walltime": 0.026261329650878906
     },
     "sage.rings.fast_arith": {
-        "walltime": 4.887580871582031e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.rings.finite_rings.all__sagemath_categories": {
-        "walltime": 4.1961669921875e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.rings.finite_rings.element_base": {
-        "walltime": 4.6253204345703125e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.rings.finite_rings.finite_field_base": {
-        "walltime": 3.814697265625e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.rings.finite_rings.finite_field_prime_modn": {
-        "walltime": 0.1182699203491211
+        "walltime": 0.07174897193908691
     },
     "sage.rings.finite_rings.hom_finite_field": {
-        "walltime": 3.0040740966796875e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.rings.finite_rings.hom_prime_finite_field": {
-        "walltime": 0.25226688385009766
+        "walltime": 0.19743084907531738
     },
     "sage.rings.finite_rings.integer_mod": {
-        "walltime": 0.7849071025848389
+        "walltime": 0.5205118656158447
     },
     "sage.rings.finite_rings.integer_mod_ring": {
-        "walltime": 0.7903971672058105
+        "walltime": 0.4938528537750244
     },
     "sage.rings.finite_rings.stdint": {
-        "walltime": 0.0014111995697021484
+        "walltime": 0.0008342266082763672
     },
     "sage.rings.fraction_field": {
         "failed": true,
-        "walltime": 44.84133219718933
+        "walltime": 20.155887126922607
     },
     "sage.rings.fraction_field_element": {
         "failed": true,
-        "walltime": 0.6294140815734863
+        "walltime": 0.42929625511169434
     },
     "sage.rings.function_field.all": {
-        "walltime": 3.886222839355469e-05
+        "walltime": 2.3126602172851562e-05
     },
     "sage.rings.function_field.all__sagemath_categories": {
-        "walltime": 2.7179718017578125e-05
+        "walltime": 1.6689300537109375e-05
     },
     "sage.rings.function_field.constructor": {
-        "walltime": 0.11671781539916992
+        "walltime": 0.07158303260803223
     },
     "sage.rings.function_field.element": {
-        "walltime": 3.695487976074219e-05
+        "walltime": 0.10450315475463867
     },
     "sage.rings.function_field.element_rational": {
-        "walltime": 0.15734386444091797
+        "walltime": 0.1139681339263916
     },
     "sage.rings.function_field.extensions": {
-        "walltime": 0.0587921142578125
+        "walltime": 0.04569506645202637
     },
     "sage.rings.function_field.function_field": {
-        "walltime": 0.9901571273803711
+        "walltime": 0.6960799694061279
     },
     "sage.rings.function_field.function_field_rational": {
-        "walltime": 0.17615795135498047
+        "walltime": 0.13234519958496094
     },
     "sage.rings.function_field.ideal": {
-        "walltime": 0.14847898483276367
+        "walltime": 0.11263704299926758
     },
     "sage.rings.function_field.ideal_rational": {
-        "walltime": 0.16690397262573242
+        "walltime": 0.1279749870300293
     },
     "sage.rings.function_field.maps": {
-        "walltime": 0.15796875953674316
+        "walltime": 0.1227259635925293
     },
     "sage.rings.function_field.order": {
-        "walltime": 0.1294078826904297
+        "walltime": 0.1008901596069336
     },
     "sage.rings.function_field.order_rational": {
-        "walltime": 0.16963791847229004
+        "walltime": 0.12249493598937988
     },
     "sage.rings.function_field.place": {
-        "walltime": 0.015893936157226562
+        "walltime": 0.01184701919555664
     },
     "sage.rings.homset": {
-        "walltime": 0.11258697509765625
+        "walltime": 0.06714797019958496
     },
     "sage.rings.ideal": {
-        "walltime": 0.38489770889282227
+        "walltime": 0.2631852626800537
     },
     "sage.rings.ideal_monoid": {
-        "walltime": 0.08968305587768555
+        "walltime": 0.05575108528137207
     },
     "sage.rings.infinity": {
         "failed": true,
-        "walltime": 0.2603871822357178
+        "walltime": 0.18099403381347656
     },
     "sage.rings.integer": {
         "failed": true,
-        "walltime": 2.5077478885650635
+        "walltime": 1.6788840293884277
     },
     "sage.rings.integer_fake": {
-        "walltime": 0.001241922378540039
+        "walltime": 0.0008881092071533203
     },
     "sage.rings.integer_ring": {
-        "walltime": 0.45598793029785156
+        "walltime": 0.24474287033081055
     },
     "sage.rings.laurent_series_ring": {
-        "walltime": 0.5064918994903564
+        "walltime": 0.32820987701416016
     },
     "sage.rings.laurent_series_ring_element": {
         "failed": true,
-        "walltime": 0.7282037734985352
+        "walltime": 0.44297075271606445
     },
     "sage.rings.localization": {
         "failed": true,
-        "walltime": 0.4511067867279053
+        "walltime": 0.2586979866027832
     },
     "sage.rings.morphism": {
         "failed": true,
-        "walltime": 0.6780099868774414
+        "walltime": 0.39490389823913574
     },
     "sage.rings.multi_power_series_ring": {
-        "walltime": 0.6412122249603271
+        "walltime": 0.36460375785827637
     },
     "sage.rings.multi_power_series_ring_element": {
         "failed": true,
-        "walltime": 0.9556679725646973
+        "walltime": 0.5220518112182617
     },
     "sage.rings.number_field.all__sagemath_categories": {
-        "walltime": 3.1948089599609375e-05
+        "walltime": 1.52587890625e-05
     },
     "sage.rings.number_field.number_field_base": {
-        "walltime": 4.673004150390625e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.rings.number_field.number_field_element_base": {
-        "walltime": 0.03494119644165039
+        "walltime": 0.02336883544921875
     },
     "sage.rings.padics.all__sagemath_categories": {
-        "walltime": 4.601478576660156e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.rings.padics.local_generic_element": {
-        "walltime": 4.887580871582031e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.rings.padics.misc": {
-        "walltime": 0.038657188415527344
+        "walltime": 0.020763874053955078
     },
     "sage.rings.padics.precision_error": {
-        "walltime": 0.0019032955169677734
+        "walltime": 0.0008831024169921875
     },
     "sage.rings.polynomial.all__sagemath_categories": {
-        "walltime": 3.2901763916015625e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.rings.polynomial.commutative_polynomial": {
-        "walltime": 0.08688616752624512
+        "walltime": 0.04417705535888672
     },
     "sage.rings.polynomial.cyclotomic": {
         "failed": true,
-        "walltime": 1.267547845840454
+        "walltime": 0.6737608909606934
     },
     "sage.rings.polynomial.flatten": {
         "failed": true,
-        "walltime": 0.5805678367614746
+        "walltime": 0.3221092224121094
     },
     "sage.rings.polynomial.ideal": {
-        "walltime": 0.10435986518859863
+        "walltime": 0.05459403991699219
     },
     "sage.rings.polynomial.infinite_polynomial_element": {
         "failed": true,
-        "walltime": 2.79236102104187
+        "walltime": 1.6159868240356445
     },
     "sage.rings.polynomial.infinite_polynomial_ring": {
-        "walltime": 1.0630440711975098
+        "walltime": 0.6186511516571045
     },
     "sage.rings.polynomial.laurent_polynomial": {
         "failed": true,
-        "walltime": 0.7347397804260254
+        "walltime": 0.4459109306335449
     },
     "sage.rings.polynomial.laurent_polynomial_ring": {
-        "walltime": 0.44495606422424316
+        "walltime": 0.2672877311706543
     },
     "sage.rings.polynomial.multi_polynomial": {
         "failed": true,
-        "walltime": 1.4313616752624512
+        "walltime": 0.8062219619750977
     },
     "sage.rings.polynomial.multi_polynomial_element": {
         "failed": true,
-        "walltime": 0.634941816329956
+        "walltime": 0.37232112884521484
     },
     "sage.rings.polynomial.multi_polynomial_ring": {
         "failed": true,
-        "walltime": 0.49390101432800293
+        "walltime": 0.3003101348876953
     },
     "sage.rings.polynomial.multi_polynomial_ring_base": {
         "failed": true,
-        "walltime": 2.974821090698242
+        "walltime": 1.3951630592346191
     },
     "sage.rings.polynomial.multi_polynomial_sequence": {
         "failed": true,
-        "walltime": 0.438507080078125
+        "walltime": 0.23406410217285156
     },
     "sage.rings.polynomial.polydict": {
         "failed": true,
-        "walltime": 0.6148800849914551
+        "walltime": 0.3610248565673828
     },
     "sage.rings.polynomial.polynomial_compiled": {
-        "walltime": 0.005687236785888672
+        "walltime": 0.0033571720123291016
     },
     "sage.rings.polynomial.polynomial_element": {
         "failed": true,
-        "walltime": 8.94235897064209
+        "walltime": 4.7796759605407715
     },
     "sage.rings.polynomial.polynomial_element_generic": {
         "failed": true,
-        "walltime": 0.6276538372039795
+        "walltime": 0.37477970123291016
     },
     "sage.rings.polynomial.polynomial_fateman": {
-        "walltime": 0.003846883773803711
+        "walltime": 0.002821683883666992
     },
     "sage.rings.polynomial.polynomial_quotient_ring": {
-        "walltime": 0.6241850852966309
+        "walltime": 0.35684704780578613
     },
     "sage.rings.polynomial.polynomial_ring": {
         "failed": true,
-        "walltime": 2.166649103164673
+        "walltime": 1.2486369609832764
     },
     "sage.rings.polynomial.polynomial_ring_constructor": {
         "failed": true,
-        "walltime": 2.1879260540008545
+        "walltime": 1.2754621505737305
     },
     "sage.rings.polynomial.polynomial_ring_homomorphism": {
-        "walltime": 5.507469177246094e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.rings.polynomial.polynomial_singular_interface": {
-        "walltime": 0.2951090335845947
+        "walltime": 0.1961960792541504
     },
     "sage.rings.polynomial.symmetric_reduction": {
-        "walltime": 3.600120544433594e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.rings.polynomial.term_order": {
-        "walltime": 0.33832788467407227
+        "walltime": 0.18267607688903809
     },
     "sage.rings.polynomial.toy_buchberger": {
-        "walltime": 0.09420514106750488
+        "walltime": 0.05720186233520508
     },
     "sage.rings.polynomial.toy_d_basis": {
         "failed": true,
-        "walltime": 0.26790404319763184
+        "walltime": 0.1397569179534912
     },
     "sage.rings.polynomial.toy_variety": {
-        "walltime": 0.1047816276550293
+        "walltime": 0.058094024658203125
     },
     "sage.rings.power_series_mpoly": {
-        "walltime": 0.08156991004943848
+        "walltime": 0.05389881134033203
     },
     "sage.rings.power_series_poly": {
         "failed": true,
-        "walltime": 0.7422101497650146
+        "walltime": 0.43358302116394043
     },
     "sage.rings.power_series_ring": {
         "failed": true,
-        "walltime": 0.818962812423706
+        "walltime": 0.4770979881286621
     },
     "sage.rings.power_series_ring_element": {
         "failed": true,
-        "walltime": 2.6413521766662598
+        "walltime": 1.3954753875732422
     },
     "sage.rings.puiseux_series_ring": {
-        "walltime": 0.5833992958068848
+        "walltime": 0.316478967666626
     },
     "sage.rings.puiseux_series_ring_element": {
-        "walltime": 0.6404778957366943
+        "walltime": 0.3203158378601074
     },
     "sage.rings.quotient_ring": {
         "failed": true,
-        "walltime": 0.4261610507965088
+        "walltime": 0.22030210494995117
     },
     "sage.rings.quotient_ring_element": {
-        "walltime": 0.18210291862487793
+        "walltime": 0.09849691390991211
     },
     "sage.rings.rational": {
         "failed": true,
-        "walltime": 0.785984992980957
+        "walltime": 0.3898141384124756
     },
     "sage.rings.rational_field": {
         "failed": true,
-        "walltime": 0.825920820236206
+        "walltime": 0.4079768657684326
     },
     "sage.rings.real_double": {
         "failed": true,
-        "walltime": 0.471386194229126
+        "walltime": 0.23587775230407715
     },
     "sage.rings.real_lazy": {
-        "walltime": 5.91278076171875e-05
+        "walltime": 1.5735626220703125e-05
     },
     "sage.rings.ring": {
         "failed": true,
-        "walltime": 0.7247998714447021
+        "walltime": 0.3652651309967041
     },
     "sage.rings.semirings.all": {
-        "walltime": 3.3855438232421875e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.rings.semirings.non_negative_integer_semiring": {
-        "walltime": 0.07317709922790527
+        "walltime": 0.03684210777282715
     },
     "sage.rings.semirings.tropical_semiring": {
-        "walltime": 0.15902400016784668
+        "walltime": 0.08078408241271973
     },
     "sage.rings.sum_of_squares": {
-        "walltime": 1.0087900161743164
+        "walltime": 0.5228111743927002
     },
     "sage.rings.tests": {
-        "walltime": 0.48552393913269043
+        "failed": true,
+        "walltime": 0.39449501037597656
     },
     "sage.schemes.affine.affine_homset": {
         "failed": true,
-        "walltime": 0.1823890209197998
+        "walltime": 0.09679794311523438
     },
     "sage.schemes.affine.affine_morphism": {
         "failed": true,
-        "walltime": 1.7527730464935303
+        "walltime": 0.8638057708740234
     },
     "sage.schemes.affine.affine_point": {
-        "walltime": 0.3408360481262207
+        "walltime": 0.1887681484222412
     },
     "sage.schemes.affine.affine_rational_point": {
-        "walltime": 3.350649833679199
+        "walltime": 1.4901771545410156
     },
     "sage.schemes.affine.affine_space": {
-        "walltime": 0.6297919750213623
+        "walltime": 0.28937602043151855
     },
     "sage.schemes.affine.affine_subscheme": {
-        "walltime": 0.185715913772583
+        "walltime": 0.08483695983886719
     },
     "sage.schemes.all__sagemath_categories": {
-        "walltime": 4.220008850097656e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.schemes.generic.algebraic_scheme": {
         "failed": true,
-        "walltime": 0.6186051368713379
+        "walltime": 0.32045507431030273
     },
     "sage.schemes.generic.all": {
-        "walltime": 4.7206878662109375e-05
+        "walltime": 1.6927719116210938e-05
     },
     "sage.schemes.generic.ambient_space": {
-        "walltime": 0.2234041690826416
+        "walltime": 0.11986899375915527
     },
     "sage.schemes.generic.divisor_group": {
-        "walltime": 0.11055207252502441
+        "walltime": 0.05562281608581543
     },
     "sage.schemes.generic.glue": {
-        "walltime": 0.0036559104919433594
+        "walltime": 0.0013740062713623047
     },
     "sage.schemes.generic.homset": {
-        "walltime": 0.400266170501709
+        "walltime": 0.19903802871704102
     },
     "sage.schemes.generic.morphism": {
         "failed": true,
-        "walltime": 3.0528929233551025
+        "walltime": 1.2891819477081299
     },
     "sage.schemes.generic.point": {
-        "walltime": 0.13347768783569336
+        "walltime": 0.06328606605529785
     },
     "sage.schemes.generic.scheme": {
         "failed": true,
-        "walltime": 0.49103307723999023
+        "walltime": 0.24924921989440918
     },
     "sage.schemes.generic.spec": {
-        "walltime": 0.15395498275756836
+        "walltime": 0.07949018478393555
     },
     "sage.schemes.product_projective.all": {
-        "walltime": 6.914138793945312e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.schemes.product_projective.homset": {
-        "failed": true,
-        "walltime": 0.3527700901031494
+        "walltime": 0.08408212661743164
     },
     "sage.schemes.product_projective.morphism": {
-        "walltime": 0.46668195724487305
+        "walltime": 0.2146320343017578
     },
     "sage.schemes.product_projective.point": {
-        "walltime": 0.7021322250366211
+        "walltime": 0.30809497833251953
     },
     "sage.schemes.product_projective.rational_point": {
-        "walltime": 18.930649042129517
+        "walltime": 6.779237985610962
     },
     "sage.schemes.product_projective.space": {
-        "walltime": 1.121690034866333
+        "walltime": 0.4548189640045166
     },
     "sage.schemes.product_projective.subscheme": {
-        "walltime": 0.3971879482269287
+        "walltime": 0.1716001033782959
     },
     "sage.schemes.projective.proj_bdd_height": {
-        "walltime": 0.15659165382385254
+        "walltime": 0.06742691993713379
     },
     "sage.schemes.projective.projective_homset": {
         "failed": true,
-        "walltime": 0.43673086166381836
+        "walltime": 0.177764892578125
     },
     "sage.schemes.projective.projective_morphism": {
         "failed": true,
-        "walltime": 7.313877820968628
+        "walltime": 2.9987950325012207
     },
     "sage.schemes.projective.projective_point": {
         "failed": true,
-        "walltime": 0.8301842212677002
+        "walltime": 0.33982300758361816
     },
     "sage.schemes.projective.projective_rational_point": {
-        "walltime": 6.3605451583862305
+        "walltime": 2.4998040199279785
     },
     "sage.schemes.projective.projective_space": {
-        "walltime": 1.213676929473877
+        "walltime": 0.5649151802062988
     },
     "sage.schemes.projective.projective_subscheme": {
-        "walltime": 10.186073064804077
+        "walltime": 3.7884740829467773
     },
     "sage.sets.all": {
-        "walltime": 3.409385681152344e-05
+        "walltime": 1.4781951904296875e-05
     },
     "sage.sets.all__sagemath_categories": {
-        "walltime": 4.982948303222656e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.sets.all__sagemath_objects": {
-        "walltime": 8.487701416015625e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.sets.cartesian_product": {
-        "walltime": 0.41728687286376953
+        "walltime": 0.1711127758026123
     },
     "sage.sets.condition_set": {
-        "walltime": 0.3369107246398926
+        "walltime": 0.14192605018615723
     },
     "sage.sets.disjoint_set": {
         "failed": true,
-        "walltime": 0.25022315979003906
+        "walltime": 0.09750604629516602
     },
     "sage.sets.disjoint_union_enumerated_sets": {
-        "walltime": 0.12755298614501953
+        "walltime": 0.04802680015563965
     },
     "sage.sets.family": {
-        "walltime": 0.4732508659362793
+        "walltime": 0.198134183883667
     },
     "sage.sets.finite_enumerated_set": {
-        "walltime": 0.17032694816589355
+        "walltime": 0.06409072875976562
     },
     "sage.sets.finite_set_map_cy": {
-        "walltime": 0.21239185333251953
+        "walltime": 0.09086108207702637
     },
     "sage.sets.finite_set_maps": {
-        "walltime": 0.5982012748718262
+        "walltime": 0.2452089786529541
     },
     "sage.sets.image_set": {
-        "walltime": 0.12987422943115234
+        "walltime": 0.058171987533569336
     },
     "sage.sets.integer_range": {
         "failed": true,
-        "walltime": 2.5223498344421387
+        "walltime": 0.8814001083374023
     },
     "sage.sets.non_negative_integers": {
         "failed": true,
-        "walltime": 0.13029098510742188
+        "walltime": 0.05744194984436035
     },
     "sage.sets.positive_integers": {
-        "walltime": 0.20815110206604004
+        "walltime": 0.07035589218139648
     },
     "sage.sets.primes": {
-        "walltime": 0.18322300910949707
+        "walltime": 0.050099849700927734
     },
     "sage.sets.pythonclass": {
-        "walltime": 4.57763671875e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.sets.recursively_enumerated_set": {
         "failed": true,
-        "walltime": 2.455573081970215
+        "walltime": 2.273055076599121
     },
     "sage.sets.set": {
         "failed": true,
-        "walltime": 0.9632561206817627
+        "walltime": 0.31145596504211426
     },
     "sage.sets.set_from_iterator": {
-        "walltime": 2.949479103088379
+        "walltime": 0.9542300701141357
     },
     "sage.sets.totally_ordered_finite_set": {
-        "walltime": 0.1462409496307373
+        "walltime": 0.05405783653259277
     },
     "sage.structure": {
-        "walltime": 5.602836608886719e-05
+        "walltime": 1.5974044799804688e-05
     },
     "sage.structure.all": {
-        "walltime": 4.673004150390625e-05
+        "walltime": 1.4781951904296875e-05
     },
     "sage.structure.category_object": {
-        "walltime": 0.7975718975067139
+        "walltime": 0.28387904167175293
     },
     "sage.structure.coerce": {
         "failed": true,
-        "walltime": 1.7680587768554688
+        "walltime": 0.6092097759246826
     },
     "sage.structure.coerce_actions": {
-        "walltime": 5.91278076171875e-05
+        "walltime": 0.24616289138793945
     },
     "sage.structure.coerce_dict": {
         "failed": true,
-        "walltime": 0.9647989273071289
+        "walltime": 0.3811371326446533
     },
     "sage.structure.coerce_exceptions": {
-        "walltime": 0.0028450489044189453
+        "walltime": 0.0009298324584960938
     },
     "sage.structure.coerce_maps": {
-        "walltime": 0.3023087978363037
+        "walltime": 0.09165501594543457
     },
     "sage.structure.debug_options": {
-        "walltime": 0.021456003189086914
+        "walltime": 0.008135080337524414
     },
     "sage.structure.dynamic_class": {
-        "walltime": 0.4791529178619385
+        "walltime": 0.15882301330566406
     },
     "sage.structure.element": {
         "failed": true,
-        "walltime": 1.4814021587371826
+        "walltime": 0.5477190017700195
     },
     "sage.structure.element_wrapper": {
-        "walltime": 0.2677922248840332
+        "walltime": 0.10756397247314453
     },
     "sage.structure.factorization": {
         "failed": true,
-        "walltime": 0.4216780662536621
+        "walltime": 0.15962481498718262
     },
     "sage.structure.factorization_integer": {
-        "walltime": 0.04758191108703613
+        "walltime": 0.020680904388427734
     },
     "sage.structure.factory": {
-        "walltime": 0.17548513412475586
+        "walltime": 0.06684207916259766
     },
     "sage.structure.gens_py": {
-        "walltime": 0.003162860870361328
+        "walltime": 0.0009369850158691406
     },
     "sage.structure.global_options": {
-        "walltime": 0.2093958854675293
+        "walltime": 0.09746003150939941
     },
     "sage.structure.graphics_file": {
-        "walltime": 0.04494619369506836
+        "walltime": 0.014812946319580078
     },
     "sage.structure.indexed_generators": {
-        "walltime": 0.08333802223205566
+        "walltime": 0.036386728286743164
     },
     "sage.structure.list_clone": {
-        "walltime": 0.6981489658355713
+        "walltime": 0.24252700805664062
     },
     "sage.structure.list_clone_demo": {
-        "walltime": 0.29500317573547363
+        "walltime": 0.17251086235046387
     },
     "sage.structure.list_clone_timings": {
-        "walltime": 0.2382209300994873
+        "walltime": 0.15214323997497559
     },
     "sage.structure.list_clone_timings_cy": {
-        "walltime": 0.2585561275482178
+        "walltime": 0.14731192588806152
     },
     "sage.structure.mutability": {
-        "walltime": 0.0030651092529296875
+        "walltime": 0.06047201156616211
     },
     "sage.structure.nonexact": {
-        "walltime": 0.13520312309265137
+        "walltime": 0.039276123046875
     },
     "sage.structure.parent": {
         "failed": true,
-        "walltime": 1.0344901084899902
+        "walltime": 0.3866250514984131
     },
     "sage.structure.parent_base": {
-        "walltime": 5.91278076171875e-05
+        "walltime": 1.71661376953125e-05
     },
     "sage.structure.parent_gens": {
-        "walltime": 0.40494322776794434
+        "walltime": 0.09368586540222168
     },
     "sage.structure.parent_old": {
         "failed": true,
-        "walltime": 0.08358883857727051
+        "walltime": 0.030742168426513672
     },
     "sage.structure.proof": {
-        "walltime": 6.604194641113281e-05
+        "walltime": 1.621246337890625e-05
     },
     "sage.structure.proof.all": {
-        "walltime": 0.04789304733276367
+        "walltime": 0.01788616180419922
     },
     "sage.structure.proof.proof": {
-        "walltime": 0.0738687515258789
+        "walltime": 0.02498602867126465
     },
     "sage.structure.richcmp": {
-        "walltime": 0.0790867805480957
+        "walltime": 0.025528907775878906
     },
     "sage.structure.sage_object": {
         "failed": true,
-        "walltime": 1.1345570087432861
+        "walltime": 0.4264678955078125
     },
     "sage.structure.sage_object_test": {
-        "walltime": 0.0029687881469726562
+        "walltime": 0.0009517669677734375
     },
     "sage.structure.sequence": {
-        "walltime": 0.3126518726348877
+        "walltime": 0.10818696022033691
     },
     "sage.structure.set_factories": {
-        "walltime": 0.31169724464416504
+        "walltime": 0.10769987106323242
     },
     "sage.structure.set_factories_example": {
-        "walltime": 0.3294649124145508
+        "walltime": 0.11980891227722168
     },
     "sage.structure.support_view": {
-        "walltime": 0.07092714309692383
+        "walltime": 0.02734994888305664
     },
     "sage.structure.test_factory": {
-        "walltime": 0.03384089469909668
+        "walltime": 0.01404881477355957
     },
     "sage.structure.unique_representation": {
-        "walltime": 0.2651650905609131
+        "walltime": 0.09125494956970215
     },
     "sage.symbolic.all__sagemath_categories": {
-        "walltime": 6.4849853515625e-05
+        "walltime": 2.574920654296875e-05
     },
     "sage.symbolic.function": {
         "failed": true,
-        "walltime": 0.21306967735290527
+        "walltime": 0.07736396789550781
     },
     "sage.symbolic.symbols": {
-        "walltime": 0.018077850341796875
+        "walltime": 0.006577730178833008
     },
     "sage.typeset.all": {
-        "walltime": 4.100799560546875e-05
+        "walltime": 2.2172927856445312e-05
     },
     "sage.typeset.ascii_art": {
-        "walltime": 0.7320528030395508
+        "walltime": 0.2714810371398926
     },
     "sage.typeset.character_art": {
-        "walltime": 0.24891185760498047
+        "walltime": 0.08275485038757324
     },
     "sage.typeset.character_art_factory": {
-        "walltime": 0.1367807388305664
+        "walltime": 0.047856807708740234
     },
     "sage.typeset.symbols": {
-        "walltime": 0.0998682975769043
+        "walltime": 0.030506372451782227
     },
     "sage.typeset.unicode_art": {
-        "walltime": 0.03523111343383789
+        "walltime": 0.015504121780395508
     },
     "sage.typeset.unicode_characters": {
-        "walltime": 0.03366279602050781
+        "walltime": 0.011430978775024414
     },
     "sage.version": {
-        "walltime": 0.00012731552124023438
+        "walltime": 1.5974044799804688e-05
     }
 }
