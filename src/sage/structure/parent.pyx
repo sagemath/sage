@@ -780,7 +780,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS::
 
-            sage: loads(dumps(CDF['x'])) == CDF['x']
+            sage: loads(dumps(CDF['x'])) == CDF['x']    # needs sage.rings.complex_double
             True
         """
         CategoryObject.__setstate__(self, d)
@@ -2014,7 +2014,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         By :trac:`14711`, coerce maps should be copied for usage outside
         of the coercion system::
 
-            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], int))
+            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], int))                          # optional - sage.rings.complex_double
             Composite map:
               From: Set of Python objects of class 'int'
               To:   Complex Double Field
@@ -2026,7 +2026,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                       From: Integer Ring
                       To:   Complex Double Field
 
-            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], QQ))
+            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], QQ))                           # optional - sage.rings.complex_double
             Composite map:
               From: Rational Field
               To:   Complex Double Field
@@ -2038,7 +2038,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                       From: Real Field with 53 bits of precision
                       To:   Complex Double Field
 
-            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], CC))
+            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], CC))                           # optional - sage.rings.complex_double
             Generic map:
               From: Complex Field with 53 bits of precision
               To:   Complex Double Field
@@ -2597,18 +2597,18 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         ::
 
-            sage: R.<x> = CDF[]
-            sage: coercion_model.get_action(R, ZZ, operator.pow)
+            sage: R.<x> = CDF[]                                                         # optional - sage.rings.complex_double
+            sage: coercion_model.get_action(R, ZZ, operator.pow)                        # optional - sage.rings.complex_double
             Right Integer Powering by Integer Ring
              on Univariate Polynomial Ring in x over Complex Double Field
-            sage: print(coercion_model.get_action(ZZ, R, operator.pow))
+            sage: print(coercion_model.get_action(ZZ, R, operator.pow))                 # optional - sage.rings.complex_double
             None
-            sage: coercion_model.get_action(R, int, operator.pow)
+            sage: coercion_model.get_action(R, int, operator.pow)                       # optional - sage.rings.complex_double
             Right Integer Powering by Set of Python objects of class 'int'
              on Univariate Polynomial Ring in x over Complex Double Field
-            sage: print(coercion_model.get_action(int, R, operator.pow))
+            sage: print(coercion_model.get_action(int, R, operator.pow))                # optional - sage.rings.complex_double
             None
-            sage: coercion_model.get_action(R, IntegerModRing(7), operator.pow)
+            sage: coercion_model.get_action(R, IntegerModRing(7), operator.pow)         # optional - sage.rings.complex_double
             Right Integer Powering by Ring of integers modulo 7
              on Univariate Polynomial Ring in x over Complex Double Field
 
@@ -2710,7 +2710,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: CDF.an_element()
+            sage: CDF.an_element()                                                      # optional - sage.rings.complex_double
             1.0*I
             sage: ZZ[['t']].an_element()
             t
