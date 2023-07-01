@@ -6834,7 +6834,7 @@ class StandardPermutations_n_abstract(Permutations):
             (2,4)(3,5)
             sage: Permutations(6)(SymmetricGroup(6)(x))                                 # needs sage.groups
             [1, 4, 5, 2, 3, 6]
-            sage: Permutations(6)(x)            # optional - bug, needs sage.groups
+            sage: Permutations(6)(x)            # known bug                             # needs sage.groups
             [1, 4, 5, 2, 3, 6]
         """
         if len(x) < self.n:
