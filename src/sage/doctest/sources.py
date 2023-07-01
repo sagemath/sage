@@ -723,7 +723,7 @@ class FileDocTestSource(DocTestSource):
             sage: filename = os.path.join(SAGE_SRC, 'sage', 'repl', 'user_globals.py')
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: FDS.file_optional_tags
-            {'sage.modules'}
+            {'sage.modules': None}
         """
         from .parsing import parse_file_optional_tags
         return parse_file_optional_tags(self)

@@ -23,6 +23,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import collections.abc
 import doctest
 import re
 
@@ -93,17 +94,20 @@ optionalfiledirective_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctes
 
 def parse_optional_tags(string, *, return_string_sans_tags=False):
     r"""
-    Return a set consisting of the optional tags from the following
+    Return a dictionary whose keys are optional tags from the following
     set that occur in a comment on the first line of the input string.
 
-    - 'long time'
-    - 'not implemented'
-    - 'not tested'
-    - 'known bug'
-    - 'py2'
-    - 'arb216'
-    - 'arb218'
-    - 'optional: PKG_NAME' -- the set will just contain 'PKG_NAME'
+    - ``'long time'``
+    - ``'not implemented'``
+    - ``'not tested'``
+    - ``'known bug'``
+    - ``'py2'``
+    - ``'arb216'``
+    - ``'arb218'``
+    - ``'optional - PKG_NAME...'`` -- the dictionary will just have the key ``'PKG_NAME'``
+
+    The values, if non-``None``, are strings with optional explanations
+    for a tag, which may appear in parentheses after the tag in ``string``.
 
     INPUT:
 
@@ -117,52 +121,52 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
         sage: from sage.doctest.parsing import parse_optional_tags
         sage: parse_optional_tags("sage: magma('2 + 2')# optional: magma")
-        {'magma'}
+        {'magma': None}
         sage: parse_optional_tags("sage: #optional -- mypkg")
-        {'mypkg'}
+        {'mypkg': None}
         sage: parse_optional_tags("sage: print(1)  # parentheses are optional here")
-        set()
+        {}
         sage: parse_optional_tags("sage: print(1)  # optional")
-        {''}
+        {}
         sage: sorted(list(parse_optional_tags("sage: #optional -- foo bar, baz")))
         ['bar', 'foo']
         sage: parse_optional_tags("sage: #optional -- foo.bar, baz")
-        {'foo.bar'}
+        {'foo.bar': None}
         sage: parse_optional_tags("sage: #needs foo.bar, baz")
-        {'foo.bar'}
+        {'foo.bar': None}
         sage: sorted(list(parse_optional_tags("    sage: factor(10^(10^10) + 1) # LoNg TiME, NoT TeSTED; OptioNAL -- P4cka9e")))
         ['long time', 'not tested', 'p4cka9e']
         sage: parse_optional_tags("    sage: raise RuntimeError # known bug")
-        {'bug'}
+        {'bug': None}
         sage: sorted(list(parse_optional_tags("    sage: determine_meaning_of_life() # long time, not implemented")))
         ['long time', 'not implemented']
 
     We don't parse inside strings::
 
         sage: parse_optional_tags("    sage: print('  # long time')")
-        set()
+        {}
         sage: parse_optional_tags("    sage: print('  # long time')  # not tested")
-        {'not tested'}
+        {'not tested': None}
 
     UTF-8 works::
 
         sage: parse_optional_tags("'ěščřžýáíéďĎ'")
-        set()
+        {}
 
     With ``return_string_sans_tags=True``::
 
         sage: parse_optional_tags("sage: print(1)  # very important 1  # optional - foo",
         ....:                     return_string_sans_tags=True)
-        ({'foo'}, 'sage: print(1)  # very important 1  ', False)
+        ({'foo': None}, 'sage: print(1)  # very important 1  ', False)
         sage: parse_optional_tags("sage: print(    # very important too  # optional - foo\n....:     2)",
         ....:                     return_string_sans_tags=True)
-        ({'foo'}, 'sage: print(    # very important too  \n....:     2)', False)
+        ({'foo': None}, 'sage: print(    # very important too  \n....:     2)', False)
         sage: parse_optional_tags("sage: #this is persistent #needs scipy",
         ....:                     return_string_sans_tags=True)
-        ({'scipy'}, 'sage: #this is persistent ', True)
+        ({'scipy': None}, 'sage: #this is persistent ', True)
         sage: parse_optional_tags("sage: #this is not #needs scipy\n....: import scipy",
         ....:                     return_string_sans_tags=True)
-        ({'scipy'}, 'sage: #this is not \n....: import scipy', False)
+        ({'scipy': None}, 'sage: #this is not \n....: import scipy', False)
 
     """
     safe, literals, state = strip_string_literals(string)
@@ -175,9 +179,9 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     sharp_index = first_line.find('#')
     if sharp_index < 0:                  # no comment
         if return_string_sans_tags:
-            return set(), string, False
+            return {}, string, False
         else:
-            return set()
+            return {}
 
     first_line_sans_comments, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
 
@@ -190,28 +194,26 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
                 comment = comment[sharp_index:]
         else:
             # no tag comment
-            return set(), string, False
+            return {}, string, False
 
-    tags = []
+    tags = {}
     for m in optional_regex.finditer(comment):
         cmd = m.group(1)
         if cmd and cmd.lower() == 'known bug':
-            tags.append('bug')  # so that such tests will be run by sage -t ... -only-optional=bug
+            tags['bug'] = None  # so that such tests will be run by sage -t ... -only-optional=bug
         elif cmd:
-            tags.append(cmd.lower())
+            tags[cmd.lower()] = None
         else:
             words = m.group(3).split()
             if words:
-                tags.extend([s.lower() for s in words])
-            else:
-                tags.append("")
+                tags.update({s.lower(): None for s in words})
 
     if return_string_sans_tags:
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) annotation
-        return set(tags), (first_line + '\n' + rest%literals if rest is not None
-                           else first_line), is_persistent
+        return tags, (first_line + '\n' + rest%literals if rest is not None
+                      else first_line), is_persistent
     else:
-        return set(tags)
+        return tags
 
 
 def parse_file_optional_tags(lines):
@@ -224,7 +226,7 @@ def parse_file_optional_tags(lines):
 
     OUTPUT:
 
-    a set of strings (tags)
+    a dictionary whose keys are strings (tags); see :func:`parse_optional_tags`
 
     EXAMPLES::
 
@@ -232,23 +234,23 @@ def parse_file_optional_tags(lines):
         sage: filename = tmp_filename(ext=".pyx")
         sage: with open(filename, "r") as f:
         ....:     parse_file_optional_tags(enumerate(f))
-        set()
+        {}
         sage: with open(filename, "w") as f:
         ....:     _ = f.write("# nodoctest")
         sage: with open(filename, "r") as f:
         ....:     parse_file_optional_tags(enumerate(f))
-        {'not tested'}
+        {'not tested': None}
         sage: with open(filename, "w") as f:
         ....:     _ = f.write("# sage.doctest: "    # broken in two source lines to avoid the pattern
         ....:                 "optional - xyz")     # of relint (multiline_doctest_comment)
         sage: with open(filename, "r") as f:
         ....:     parse_file_optional_tags(enumerate(f))
-        {'xyz'}
+        {'xyz': None}
     """
-    tags = set()
+    tags = {}
     for line_count, line in lines:
         if nodoctest_regex.match(line):
-            tags.add('not tested')
+            tags['not tested'] = None
         if m := optionalfiledirective_regex.match(line):
             file_tag_string = m.group(2)
             tags.update(parse_optional_tags('#' + file_tag_string))
@@ -313,26 +315,33 @@ def unparse_optional_tags(tags, prefix='# '):
 
     INPUT:
 
-    - ``tags`` -- iterable of tags, as output by :func:`parse_optional_tags`
+    - ``tags`` -- dict or iterable of tags, as output by :func:`parse_optional_tags`
 
     - ``prefix`` -- to be put before a nonempty string
 
     EXAMPLES::
 
         sage: from sage.doctest.parsing import unparse_optional_tags
-        sage: unparse_optional_tags(set())
+        sage: unparse_optional_tags({})
         ''
-        sage: unparse_optional_tags({'magma'})
+        sage: unparse_optional_tags({'magma': None})
         '# optional - magma'
-        sage: unparse_optional_tags(['fictional_optional', 'sage.rings.number_field',
-        ....:                        'scipy', 'bliss'])
-        '# optional - bliss fictional_optional, needs scipy sage.rings.number_field'
+        sage: unparse_optional_tags({'fictional_optional': None,
+        ....:                        'sage.rings.number_field': None,
+        ....:                        'scipy': 'just because',
+        ....:                        'bliss': None})
+        '# optional - bliss fictional_optional, needs scipy (just because) sage.rings.number_field'
         sage: unparse_optional_tags(['long time', 'not tested', 'p4cka9e'], prefix='')
         'long time, not tested, optional - p4cka9e'
     """
     group = defaultdict(set)
-    for tag in tags:
-        group[_tag_group(tag)].add(tag)
+    if isinstance(tags, collections.abc.Mapping):
+        for tag, explanation in tags.items():
+            group[_tag_group(tag)].add(f'{tag} ({explanation})' if explanation else tag)
+    else:
+        for tag in tags:
+            group[_tag_group(tag)].add(tag)
+
     tags = sorted(group.pop('special', []))
     if 'optional' in group:
         tags.append('optional - ' + " ".join(sorted(group.pop('optional'))))
@@ -391,16 +400,20 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
 
     current_tags, line_sans_tags, is_persistent = parse_optional_tags(line.rstrip(), return_string_sans_tags=True)
 
-    new_tags = set(current_tags)
+    new_tags = dict(current_tags)
 
     if tags is not None:
         new_tags = tags
 
     if add_tags is not None:
-        new_tags.update(add_tags)
+        if isinstance(add_tags, collections.abc.Mapping):
+            new_tags.update(add_tags)
+        else:
+            new_tags.update({tag: None for tag in add_tags})
 
     if remove_tags is not None:
-        new_tags.difference_update(remove_tags)
+        for tag in remove_tags:
+            new_tags.pop(tag, None)
 
     if not force_rewrite and new_tags == current_tags:
         return line
@@ -735,7 +748,7 @@ class SageDocTestParser(doctest.DocTestParser):
         - ``long`` -- boolean, whether to run doctests marked as taking a
           long time.
         - ``probed_tags`` -- a list or tuple of strings.
-        - ``file_optional_tags`` -- a list or tuple of strings.
+        - ``file_optional_tags`` -- an iterable of strings.
 
         EXAMPLES::
 
@@ -940,6 +953,7 @@ class SageDocTestParser(doctest.DocTestParser):
         for item in res:
             if isinstance(item, doctest.Example):
                 optional_tags, source_sans_tags, is_persistent = parse_optional_tags(item.source, return_string_sans_tags=True)
+                optional_tags = set(optional_tags)
                 if is_persistent:
                     persistent_optional_tags = optional_tags
                     continue

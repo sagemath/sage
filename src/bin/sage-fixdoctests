@@ -337,20 +337,25 @@ for input, output in zip(inputs, outputs):
         shallow_copy_of_src_in_lines = list(src_in_lines)
 
         # First remove duplicate optional tags and rewrite all '# optional' that should be '# needs'
-        file_optional_tags = set()
+        file_optional_tags = {}
         persistent_optional_tags = set()
         for i, line in enumerate(src_in_lines):
             if m := re.match(' *sage: *(.*)#', line):
                 tags, line_sans_tags, is_persistent = parse_optional_tags(line, return_string_sans_tags=True)
                 if is_persistent:
-                    persistent_optional_tags = tags - file_optional_tags
+                    persistent_optional_tags = {tag: explanation
+                                                for tag, explanation in tags.items()
+                                                if explanation or tag not in file_optional_tags}
                     line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
                     if not line.rstrip():
                         # persistent (block-scoped or file-scoped) annotation was removed, so remove the whole line
                         line = None
                 else:
-                    line = update_optional_tags(line, remove_tags=file_optional_tags.union(persistent_optional_tags),
-                                                force_rewrite='standard')
+                    tags = {tag: explanation
+                            for tag, explanation in tags.items()
+                            if explanation or (tag not in file_optional_tags
+                                               and tag not in persistent_optional_tags)}
+                    line = update_optional_tags(line, tags=tags, force_rewrite='standard')
                 src_in_lines[i] = line
             elif m := re.match('([#.]* *sage[.]doctest:[ #]*)([^(]*)(.*)', line):
                 # file-scoped annotation
@@ -363,7 +368,7 @@ for input, output in zip(inputs, outputs):
                     suffix = ' ' + suffix
                 src_in_lines[i] = prefix + line + suffix
             elif line.strip() in ['', '"""', "'''"]:    # Blank line or end of docstring
-                persistent_optional_tags = set()
+                persistent_optional_tags = {}
 
         for block in doctests:
             process_block(block, src_in_lines, file_optional_tags)
