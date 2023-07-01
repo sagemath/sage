@@ -337,9 +337,13 @@ def unparse_optional_tags(tags, prefix='# '):
     group = defaultdict(set)
     if isinstance(tags, collections.abc.Mapping):
         for tag, explanation in tags.items():
+            if tag == 'bug':
+                tag = 'known bug'
             group[_tag_group(tag)].add(f'{tag} ({explanation})' if explanation else tag)
     else:
         for tag in tags:
+            if tag == 'bug':
+                tag = 'known bug'
             group[_tag_group(tag)].add(tag)
 
     tags = sorted(group.pop('special', []))
@@ -364,46 +368,90 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
 
     EXAMPLES::
 
-        sage: from sage.doctest.parsing import update_optional_tags
-        sage: update_optional_tags('    sage: nothing_to_be_seen_here()')
-        '    sage: nothing_to_be_seen_here()'
-        sage: update_optional_tags('    sage: nothing_to_be_seen_here()',
-        ....:                      tags=['scipy', 'bliss', 'long time'])
-        '    sage: nothing_to_be_seen_here()             # long time, optional - bliss, needs scipy'
-        sage: update_optional_tags('    sage: ntbsh()  # abbrv for above#optional:bliss',
-        ....:                      add_tags=['scipy', 'long time'])
-        '    sage: ntbsh()  # abbrv for above            # long time, optional - bliss, needs scipy'
-        sage: update_optional_tags('    sage: something()  # optional - latte_int',
-        ....:                      remove_tags=['latte_int', 'wasnt_even_there'])
-        '    sage: something()'
-        sage: update_optional_tags('    sage: something()  # optional - latte_int',
-        ....:                      add_tags=['latte_int'])
-        '    sage: something()  # optional - latte_int'
-        sage: update_optional_tags('    sage: something()#optional- latte_int',
-        ....:                      force_rewrite=True)
-        '    sage: something()                           # optional - latte_int'
+        sage: from sage.doctest.parsing import update_optional_tags, optional_tag_columns, standard_tag_columns
+        sage: ruler = ''
+        sage: for column in optional_tag_columns:
+        ....:     ruler += ' ' * (column - len(ruler)) + 'V'
+        sage: for column in standard_tag_columns:
+        ....:     ruler += ' ' * (column - len(ruler)) + 'v'
+        sage: def print_with_ruler(lines):
+        ....:     print('|' + ruler)
+        ....:     for line in lines:
+        ....:         print('|' + line)
+        sage: print_with_ruler([
+        ....:     update_optional_tags('    sage: something()  # optional - latte_int',
+        ....:                          remove_tags=['latte_int', 'wasnt_even_there']),
+        ....:     update_optional_tags('    sage: nothing_to_be_seen_here()',
+        ....:                          tags=['scipy', 'long time']),
+        ....:     update_optional_tags('    sage: nothing_to_be_seen_here(honestly=True)',
+        ....:                          add_tags=['scipy', 'long time']),
+        ....:     update_optional_tags('    sage: nothing_to_be_seen_here(honestly=True, very=True)',
+        ....:                          add_tags=['scipy', 'long time']),
+        ....:     update_optional_tags('    sage: no_there_is_absolutely_nothing_to_be_seen_here_i_am_serious()#optional:bliss',
+        ....:                          add_tags=['scipy', 'long time']),
+        ....:     update_optional_tags('    sage: ntbsh()  # abbrv for above#optional:bliss',
+        ....:                          add_tags={'scipy': None, 'long time': '30s on the highest setting'}),
+        ....:     update_optional_tags('    sage: no_there_is_absolutely_nothing_to_be_seen_here_i_am_serious()  # really, you can trust me here',
+        ....:                          add_tags=['scipy']),
+        ....: ])
+        |                                                V       V       V       V       V   V   v           v                   v                                       v
+        |    sage: something()
+        |    sage: nothing_to_be_seen_here()             # long time                             # needs scipy
+        |    sage: nothing_to_be_seen_here(honestly=True)        # long time                     # needs scipy
+        |    sage: nothing_to_be_seen_here(honestly=True, very=True)     # long time             # needs scipy
+        |    sage: no_there_is_absolutely_nothing_to_be_seen_here_i_am_serious()         # long time, optional - bliss, needs scipy
+        |    sage: ntbsh()  # abbrv for above            # long time (30s on the highest setting), optional - bliss, needs scipy
+        |    sage: no_there_is_absolutely_nothing_to_be_seen_here_i_am_serious()  # really, you can trust me here                # needs scipy
 
-    Forcing a rewrite whenever standard tags are involved::
+    When no tags are changed, by default, the unchanged input is returned.
+    We can force a rewrite; unconditionally or whenever standard tags are involved.
+    But even when forced, if comments are already aligned at one of the standard alignment columns,
+    this alignment is kept even if we would normally realign farther to the left.
 
-        sage: update_optional_tags('    sage: something_else()  # optional - scipy',
-        ....:                      force_rewrite='standard')
-        '    sage: something_else()                                                              # needs scipy'
+        sage: print_with_ruler([
+        ....:     update_optional_tags('    sage: unforced()       # optional - latte_int'),
+        ....:     update_optional_tags('    sage: unforced()  # optional - latte_int',
+        ....:                          add_tags=['latte_int']),
+        ....:     update_optional_tags('    sage: forced()#optional- latte_int',
+        ....:                          force_rewrite=True),
+        ....:     update_optional_tags('    sage: forced()  # optional - scipy',
+        ....:                          force_rewrite='standard'),
+        ....:     update_optional_tags('    sage: aligned_with_below()                                  # optional - 4ti2',
+        ....:                          force_rewrite=True),
+        ....:     update_optional_tags('    sage: aligned_with_above()                                  # optional - 4ti2',
+        ....:                          force_rewrite=True),
+        ....:     update_optional_tags('    sage: also_already_aligned()                                                                                        # needs scipy',
+        ....:                          force_rewrite='standard'),
+        ....: ])
+        |                                                V       V       V       V       V   V   v           v                   v                                       v
+        |    sage: unforced()       # optional - latte_int
+        |    sage: unforced()  # optional - latte_int
+        |    sage: forced()                              # optional - latte_int
+        |    sage: forced()                                                                      # needs scipy
+        |    sage: aligned_with_below()                                  # optional - 4ti2
+        |    sage: aligned_with_above()                                  # optional - 4ti2
+        |    sage: also_already_aligned()                                                                                        # needs scipy
 
     Rewriting a persistent (block-scoped) annotation::
 
-        sage: update_optional_tags('    sage:    #optional:magma',
-        ....:                      force_rewrite=True)
-        '    sage: # optional - magma'
+        sage: print_with_ruler([
+        ....:     update_optional_tags('    sage:    #optional:magma sage.symbolic',
+        ....:                          force_rewrite=True),
+        ....: ])
+        |                                                V       V       V       V       V   V   v           v                   v                                       v
+        |    sage: # optional - magma, needs sage.symbolic
     """
     if not (m := re.match('( *sage: *)(.*)', line)):
         raise ValueError(f'line must start with a sage: prompt, got: {line}')
 
     current_tags, line_sans_tags, is_persistent = parse_optional_tags(line.rstrip(), return_string_sans_tags=True)
 
-    new_tags = dict(current_tags)
-
-    if tags is not None:
-        new_tags = tags
+    if isinstance(tags, collections.abc.Mapping):
+        new_tags = dict(tags)
+    elif tags is not None:
+        new_tags = {tag: None for tag in tags}
+    else:
+        new_tags = dict(current_tags)
 
     if add_tags is not None:
         if isinstance(add_tags, collections.abc.Mapping):
@@ -430,11 +478,15 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     if is_persistent:
         line = line_sans_tags.rstrip() + ' '
     else:
-        tag_columns = optional_tag_columns if any(_tag_group(tag) in ['optional', 'special']
-                                                  for tag in new_tags) else standard_tag_columns
+        group = defaultdict(set)
+        for tag in new_tags:
+            group[_tag_group(tag)].add(tag)
+        tag_columns = (optional_tag_columns if group['optional'] or group['special']
+                       else standard_tag_columns)
 
-        if len(line) in tag_columns and line[-2:] == '  ':
+        if len(line_sans_tags) in tag_columns and line_sans_tags[-2:] == '  ':
             # keep alignment
+            line = line_sans_tags
             pass
         else:
             # realign
@@ -444,6 +496,22 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
                     line += ' ' * (column - 2 - len(line))
                     break
             line += '  '
+
+            if (group['optional'] or group['special']) and (group['standard'] or group['sage']):
+                # Try if two-column mode works better
+                first_part = unparse_optional_tags({tag: explanation
+                                                    for tag, explanation in new_tags.items()
+                                                    if (tag in group['optional']
+                                                        or tag in group['special'])})
+                column = standard_tag_columns[0]
+                if len(line + first_part) + 8 <= column:
+                    line += first_part
+                    line += ' ' * (column - len(line))
+                    line += unparse_optional_tags({tag: explanation
+                                                   for tag, explanation in new_tags.items()
+                                                   if not (tag in group['optional']
+                                                           or tag in group['special'])})
+                    return line.rstrip()
 
     line += unparse_optional_tags(new_tags)
     return line
