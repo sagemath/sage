@@ -61,20 +61,20 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
     EXAMPLES::
 
-        sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),              # optional - sage.rings.finite_rings
+        sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
         ....:                                      Matrix([[0,1], [0,0]])])
-        sage: A(17)                                                                     # optional - sage.rings.finite_rings
+        sage: A(17)
         2*e0
-        sage: A([1,1])                                                                  # optional - sage.rings.finite_rings
+        sage: A([1,1])
         e0 + e1
     """
     def __init__(self, A, elt=None, check=True):
         """
         TESTS::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
             ....:                                      Matrix([[0,1], [0,0]])])
-            sage: A(QQ(4))                                                              # optional - sage.rings.finite_rings
+            sage: A(QQ(4))
             Traceback (most recent call last):
             ...
             TypeError: elt should be a vector, a matrix, or an element of the base field
@@ -290,9 +290,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
             ....:                                      Matrix([[0,1], [0,0]])])
-            sage: A(1)                                                                  # optional - sage.rings.finite_rings
+            sage: A(1)
             e0
         """
         s = " "
@@ -327,9 +327,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
             ....:                                      Matrix([[0,1], [0,0]])])
-            sage: latex(A(1))  # indirect doctest                                       # optional - sage.rings.finite_rings
+            sage: latex(A(1))  # indirect doctest
             \left(\begin{array}{rr}
             1 & 0 \\
             0 & 1
@@ -369,13 +369,13 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
             ....:                                      Matrix([[0,1], [0,0]])])
-            sage: A(2) == 2                                                             # optional - sage.rings.finite_rings
+            sage: A(2) == 2
             True
-            sage: A(2) == 3                                                             # optional - sage.rings.finite_rings
+            sage: A(2) == 3
             False
-            sage: A(2) == GF(5)(2)                                                      # optional - sage.rings.finite_rings
+            sage: A(2) == GF(5)(2)                                                      # needs sage.rings.finite_rings
             False
 
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
@@ -389,13 +389,13 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         the algebra corresponds to the standard monomials of the relation ideal, when
         the algebra is considered as a quotient of a path algebra. ::
 
-            sage: A(1) > 0                                                              # optional - sage.rings.finite_rings
+            sage: A(1) > 0
             True
-            sage: A(1) < 0                                                              # optional - sage.rings.finite_rings
+            sage: A(1) < 0
             False
-            sage: A(1) >= 0                                                             # optional - sage.rings.finite_rings
+            sage: A(1) >= 0
             True
-            sage: A(1) <= 0                                                             # optional - sage.rings.finite_rings
+            sage: A(1) <= 0
             False
         """
         return richcmp(self._vector, <FiniteDimensionalAlgebraElement>right._vector, op)
@@ -404,9 +404,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
             ....:                                      Matrix([[0,1], [0,0]])])
-            sage: A.basis()[0] + A.basis()[1]                                           # optional - sage.rings.finite_rings
+            sage: A.basis()[0] + A.basis()[1]
             e0 + e1
         """
         return self._parent.element_class(self._parent, self._vector + <FiniteDimensionalAlgebraElement>other._vector)
@@ -415,9 +415,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),          # optional - sage.rings.finite_rings
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
             ....:                                      Matrix([[0,1], [0,0]])])
-            sage: A.basis()[0] - A.basis()[1]                                           # optional - sage.rings.finite_rings
+            sage: A.basis()[0] - A.basis()[1]
             e0 + 2*e1
         """
         return self._parent.element_class(self._parent, self._vector - <FiniteDimensionalAlgebraElement>other._vector)
@@ -642,12 +642,12 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B(0).minimal_polynomial()                                             # optional - sage.libs.pari
+            sage: B(0).minimal_polynomial()                                             # needs sage.libs.pari
             x
             sage: b = B.random_element()
-            sage: f = b.minimal_polynomial(); f  # random                               # optional - sage.libs.pari
+            sage: f = b.minimal_polynomial(); f  # random                               # needs sage.libs.pari
             x^3 + 1/2*x^2 - 7/16*x + 1/16
-            sage: f(b) == 0                                                             # optional - sage.libs.pari
+            sage: f(b) == 0                                                             # needs sage.libs.pari
             True
         """
         A = self.parent()
@@ -673,12 +673,12 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B(0).characteristic_polynomial()                                      # optional - sage.libs.pari
+            sage: B(0).characteristic_polynomial()                                      # needs sage.libs.pari
             x^3
             sage: b = B.random_element()
-            sage: f = b.characteristic_polynomial(); f  # random                        # optional - sage.libs.pari
+            sage: f = b.characteristic_polynomial(); f  # random                        # needs sage.libs.pari
             x^3 - 8*x^2 + 16*x
-            sage: f(b) == 0                                                             # optional - sage.libs.pari
+            sage: f(b) == 0                                                             # needs sage.libs.pari
             True
         """
         return self.matrix().characteristic_polynomial()
