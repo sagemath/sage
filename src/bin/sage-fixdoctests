@@ -41,7 +41,7 @@ parser.add_argument("--venv", type=str, default='',
                     help="directory name of a venv where 'sage -t' is to be run")
 parser.add_argument("--environment", type=str, default='',
                     help="name of a module that provides the global environment for tests; implies --keep-both and --full-tracebacks")
-parser.add_argument("--no-test", type=str, default='',
+parser.add_argument("--no-test", default=False, action="store_true",
                     help="do not run the doctester, only rewrite '# optional/needs' tags; implies --only-tags")
 parser.add_argument("--full-tracebacks", default=False, action="store_true",
                     help="include full tracebacks rather than '...'")
