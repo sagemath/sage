@@ -3230,26 +3230,26 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         INPUT:
 
         - ``f``   -- A function in ``tau`` (or an object for which
-                     evaluation at ``self.acton(tau)`` makes sense.
+          evaluation at ``self.acton(tau)`` makes sense.
 
         - ``tau`` -- Where to evaluate the result.
-                     This should be a valid argument for :meth:`acton`.
+          This should be a valid argument for :meth:`acton`.
 
-                     If ``tau`` is a point of ``HyperbolicPlane()`` then
-                     its coordinates in the upper half plane model are used.
+          If ``tau`` is a point of ``HyperbolicPlane()`` then
+          its coordinates in the upper half plane model are used.
 
-                     Default: ``None`` in which case ``f`` has to be
-                     a rational function / polynomial in one variable and
-                     the generator of the polynomial ring is used for ``tau``.
-                     That way ``slash`` acts on rational functions / polynomials.
+          Default: ``None`` in which case ``f`` has to be
+          a rational function / polynomial in one variable and
+          the generator of the polynomial ring is used for ``tau``.
+          That way ``slash`` acts on rational functions / polynomials.
 
         - ``k``   -- An even integer.
 
-                     Default: ``None`` in which case ``f`` either
-                     has to be a rational function / polynomial in one
-                     variable (then -degree is used).
-                     Or ``f`` needs to have a ``weight`` attribute which
-                     is then used.
+          Default: ``None`` in which case ``f`` either
+          has to be a rational function / polynomial in one
+          variable (then -degree is used).
+          Or ``f`` needs to have a ``weight`` attribute which
+          is then used.
 
         EXAMPLES::
 
@@ -3336,4 +3336,5 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                to Hyperbolic plane in the Klein Disk Model
                in Category of hyperbolic models of Hyperbolic plane
         """
+        from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
         return HyperbolicPlane().UHP().get_isometry(self._matrix).to_model(model)
