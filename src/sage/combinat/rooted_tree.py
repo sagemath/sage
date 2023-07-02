@@ -522,10 +522,10 @@ class RootedTrees_all(DisjointUnionEnumeratedSets, RootedTrees):
         """
         TESTS::
 
-            sage: sum(x**len(t) for t in
-            ....:     set(RootedTree(t) for t in OrderedTrees(6)))
+            sage: sum(x**len(t)                                                         # optional - sage.symbolic
+            ....:     for t in set(RootedTree(t) for t in OrderedTrees(6)))
             x^5 + x^4 + 3*x^3 + 6*x^2 + 9*x
-            sage: sum(x**len(t) for t in RootedTrees(6))
+            sage: sum(x**len(t) for t in RootedTrees(6))                                # optional - sage.symbolic
             x^5 + x^4 + 3*x^3 + 6*x^2 + 9*x
 
             sage: TestSuite(RootedTrees()).run() # long time
@@ -625,14 +625,14 @@ class RootedTrees_size(RootedTrees):
     TESTS::
 
         sage: from sage.combinat.rooted_tree import RootedTrees_size
-        sage: for i in range(1, 6): TestSuite(RootedTrees_size(i)).run()
+        sage: for i in range(1, 6): TestSuite(RootedTrees_size(i)).run()                # optional - sage.combinat
     """
 
     def __init__(self, n):
         """
         TESTS::
 
-            sage: for i in range(1, 6):
+            sage: for i in range(1, 6):                                                 # optional - sage.combinat
             ....:     TestSuite(RootedTrees(i)).run()
         """
         super().__init__(category=FiniteEnumeratedSets())
@@ -663,7 +663,7 @@ class RootedTrees_size(RootedTrees):
         """
         TESTS::
 
-            sage: RootedTrees(4).an_element()  # indirect doctest
+            sage: RootedTrees(4).an_element()  # indirect doctest                       # optional - sage.combinat
             [[[[]]]]
         """
         return self.first()
@@ -681,11 +681,11 @@ class RootedTrees_size(RootedTrees):
             sage: from sage.combinat.rooted_tree import *
             sage: RootedTrees(1).list()
             [[]]
-            sage: RootedTrees(2).list()
+            sage: RootedTrees(2).list()                                                 # optional - sage.combinat
             [[[]]]
-            sage: RootedTrees(3).list()
+            sage: RootedTrees(3).list()                                                 # optional - sage.combinat
             [[[[]]], [[], []]]
-            sage: RootedTrees(4).list()
+            sage: RootedTrees(4).list()                                                 # optional - sage.combinat
             [[[[[]]]], [[[], []]], [[], [[]]], [[], [], []]]
         """
         if self._n == 1:
@@ -757,7 +757,7 @@ class RootedTrees_size(RootedTrees):
             sage: S = RootedTrees(3)
             sage: S.element_class
             <class 'sage.combinat.rooted_tree.RootedTrees_all_with_category.element_class'>
-            sage: S.first().__class__ == RootedTrees().first().__class__
+            sage: S.first().__class__ == RootedTrees().first().__class__                # optional - sage.combinat
             True
         """
         return self._parent_for.element_class

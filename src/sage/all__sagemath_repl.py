@@ -44,7 +44,7 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
     message='pkg_resources is deprecated as an API|'
             'Deprecated call to `pkg_resources.declare_namespace(.*)`',
-    module='pkg_resources')
+    module='pkg_resources|setuptools.sandbox')
 warnings.filterwarnings('ignore', category=DeprecationWarning,
     message='msvccompiler is deprecated and slated to be removed',
     module='distutils.msvccompiler')

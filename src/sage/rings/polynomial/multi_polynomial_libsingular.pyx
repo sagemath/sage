@@ -2728,7 +2728,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if std_grading:
             result = 0
             while p:
-                result = max(result, sum([p_GetExp(p,i,r) for i in xrange(1,r.N+1)]))
+                result = max(result, sum([p_GetExp(p,i,r) for i in range(1,r.N+1)]))
                 p = pNext(p)
             return result
         return singular_polynomial_deg(p, NULL, r)

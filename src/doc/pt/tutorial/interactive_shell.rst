@@ -372,34 +372,6 @@ pode usar quaisquer comandos e recursos do IPython. Você pode ler a
 `Documentação completa do IPython
 <http://ipython.scipy.org/moin/Documentation>`_ (em inglês).
 
-- Você pode usar ``%bg`` para executar um comando no background, e
-  então usar ``jobs`` para acessar os resultados, da seguinte forma.
-  (Os comentários ``not tested`` estão aqui porque a sintaxe ``%bg``
-  não funciona bem com o sistema de testes automáticos do Sage. Se
-  você digitar esses comandos, eles devem funcionar. Isso é obviamente
-  mais útil com comandos que demoram para serem completados.)
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  Note que os comandos executados no background não usam o
-  pre-processador (preparser) do Sage -- veja :ref:`section-mathannoy`
-  para mais informações. Uma forma (estranha talvez) de contornar esse
-  problema seria executar ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  É mais seguro e simples, todavia, usar ``%bg`` apenas em comandos
-  que não requerem o pre-processador (preparser).
-
 - Você pode usar ``%edit`` (ou ``%ed`` ou ``ed``) para abrir um
   editor, se você desejar digitar algum código mais complexo. Antes de
   iniciar o Sage, certifique-se de que a variável de ambiente
