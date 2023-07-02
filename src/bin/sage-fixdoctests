@@ -155,9 +155,9 @@ def process_block(block, src_in_lines, file_optional_tags):
                                                                 add_tags=optional)
 
     if m := re.search(r"annotation '# (optional|needs)[-: ]([^;']*)' may no longer be needed", block):
-        optional = m.group(2)
+        optional = m.group(2).split()
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                remove_tags=[optional])
+                                                                remove_tags=optional)
 
     if m2 := re.search('(Expected:|Expected nothing|Exception raised:)\n', block):
         m1 = re.search('Failed example:\n', block)
