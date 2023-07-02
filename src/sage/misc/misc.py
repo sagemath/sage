@@ -38,9 +38,11 @@ Check the fix from :trac:`8323`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import contextlib
 import functools
 import os
 import pdb
+import sys
 import warnings
 
 from .lazy_string import lazy_string
@@ -1167,3 +1169,34 @@ def run_once(func):
             return result
     wrapper.has_run = False
     return wrapper
+
+
+@contextlib.contextmanager
+def increase_recursion_limit(increment):
+    r"""
+    Context manager to temporarily change the Python maximum recursion depth.
+
+    INPUT:
+
+    - `increment`: increment to add to the current limit
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import increase_recursion_limit
+        sage: def rec(n): None if n == 0 else rec(n-1)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+        sage: with increase_recursion_limit(10000): rec(10000)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+    """
+    old_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(old_limit + increment)
+    try:
+        yield
+    finally:
+        sys.setrecursionlimit(old_limit)
