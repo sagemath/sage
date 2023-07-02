@@ -572,7 +572,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         X = self._parent.variable_name()
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         first = True
-        for n in xrange(m):
+        for n in range(m):
             x = v[n]
             e = n + valuation
             x = str(x)
@@ -633,7 +633,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         X = self._parent.latex_variable_names()[0]
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         first = True
-        for n in xrange(m):
+        for n in range(m):
             x = v[n]
             e = n + valuation
             x = latex(x)

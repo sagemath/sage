@@ -98,7 +98,7 @@ lazy_import('sage.libs.braiding',
             ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits'],
-            feature=PythonModule('sage.libs.braiding', spkg='libbraiding'))
+            feature=PythonModule('sage.libs.braiding', spkg='libbraiding', type='standard'))
 
 
 class Braid(FiniteTypeArtinGroupElement):

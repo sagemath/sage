@@ -73,14 +73,14 @@ s+='\n     This class does not manage the ``gen`` inside in any way. It is just\
 s+='\n     You almost certainly want to use one of the derived class\n     :class:`Pygen`  instead.\n     """\n\n'
 Mi.write(s)
 
-for i in mostkeywords+moremethods:
+for i in mostkeywords + moremethods:
     p = Popen(["cas_help", i], stdout=PIPE, stderr=PIPE, universal_newlines=True)
     doc = p.communicate()[0]
 
     doc = doc.replace("\n", "\n        ")  # Indent doc
-    s =  "     def "+i+"(self,*args):\n"
-    s += "        r'''From Giac's documentation:\n        "+doc+"\n        '''\n"
-    s += "        return GiacMethods['"+i+"'](self,*args)\n\n"
+    s = "     def " + i + "(self,*args):\n"
+    s += "        r'''From Giac's documentation:\n        " + doc + "\n        '''\n"
+    s += "        return GiacMethods['" + i + "'](self,*args)\n\n"
     Mi.write(s)
 
 Mi.close()

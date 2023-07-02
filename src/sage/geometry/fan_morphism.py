@@ -677,6 +677,7 @@ class FanMorphism(FreeModuleMorphism):
         domain_fan = self._domain_fan
         lattice_dim = self.domain().dimension()
         if verbose:
+            from sage.misc.timing import walltime
             start = walltime()
             print("Placing ray images", end=" ")
         # Figure out where 1-dimensional cones (i.e. rays) are mapped.
