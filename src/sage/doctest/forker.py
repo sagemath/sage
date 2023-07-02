@@ -725,7 +725,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             # verify its output.
             if exception is None:
                 if check(example.want, got, self.optionflags):
-                    if probed_tags:
+                    if probed_tags and probed_tags is not True:
                         example.warnings.append(
                             f"The annotation '{unparse_optional_tags(probed_tags)}' "
                             f"may no longer be needed; these features are not present, "
@@ -766,7 +766,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
                 # We expected an exception: see whether it matches.
                 elif check(example.exc_msg, exc_msg, self.optionflags):
-                    if probed_tags:
+                    if probed_tags and probed_tags is not True:
                         example.warnings.append(
                             f"The annotation '{unparse_optional_tags(example.probed_tags)}' "
                             f"may no longer be needed; these features are not present, "
@@ -780,7 +780,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     m2 = re.match(r'(?:[^:]*\.)?([^:]*:)', exc_msg)
                     if m1 and m2 and check(m1.group(1), m2.group(1),
                                            self.optionflags):
-                        if probed_tags:
+                        if probed_tags and probed_tags is not True:
                             example.warnings.append(
                                 f"The annotation '{unparse_optional_tags(example.probed_tags)}' "
                                 f"may no longer be needed; these features are not present, "
@@ -1146,12 +1146,18 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                                 was_set = True
                                 example.predecessors.append(setter)
                         if not was_set:
-                            f_setter_optional_tags = "; ".join("'"
-                                                               + unparse_optional_tags(setter_optional_tags)
-                                                               + "'"
-                                                               for setter_optional_tags in setters_dict)
-                            example.warnings.append(f"Variable '{name}' referenced here "
-                                                    f"was set only in doctest marked {f_setter_optional_tags}")
+                            if example.probed_tags:
+                                # Probing confusion.
+                                # Do not issue the "was set only in doctest marked" warning;
+                                # and also do not issue the "may no longer be needed" notice
+                                example.probed_tags = True
+                            else:
+                                f_setter_optional_tags = "; ".join("'"
+                                                                   + unparse_optional_tags(setter_optional_tags)
+                                                                   + "'"
+                                                                   for setter_optional_tags in setters_dict)
+                                example.warnings.append(f"Variable '{name}' referenced here "
+                                                        f"was set only in doctest marked {f_setter_optional_tags}")
                 for name in globs.set:
                     self.setters[name][example.optional_tags] = example
             else:
