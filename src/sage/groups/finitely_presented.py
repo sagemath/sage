@@ -128,7 +128,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import GCD as gcd
+#from sage.arith.misc import GCD as gcd
 from sage.categories.morphism import SetMorphism
 from sage.functions.generalized import sign
 from sage.groups.free_group import FreeGroupElement
@@ -143,6 +143,7 @@ from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class GroupMorphismWithGensImages(SetMorphism):
     r"""
@@ -166,6 +167,7 @@ class GroupMorphismWithGensImages(SetMorphism):
               x2 |--> ()
 
     """
+
     def _repr_defn(self):
         r"""
         Return the part of the representation that includes the images of the generators.
@@ -410,8 +412,8 @@ def wrap_FpGroup(libgap_fpgroup):
     libgap_fpgroup._set_compare_by_id()
     from sage.groups.free_group import wrap_FreeGroup
     free_group = wrap_FreeGroup(libgap_fpgroup.FreeGroupOfFpGroup())
-    relations = tuple( free_group(rel.UnderlyingElement())
-                       for rel in libgap_fpgroup.RelatorsOfFpGroup() )
+    relations = tuple(free_group(rel.UnderlyingElement())
+                      for rel in libgap_fpgroup.RelatorsOfFpGroup())
     return FinitelyPresentedGroup(free_group, relations)
 
 
@@ -474,6 +476,7 @@ class RewritingSystem():
 
     - Miguel Angel Marco Buzunariz (2013-12-16)
     """
+
     def __init__(self, G):
         """
         Initialize ``self``.
@@ -512,7 +515,7 @@ class RewritingSystem():
                 a^2    --->    1
         """
         ret = "Rewriting system of {}\nwith rules:".format(self._fp_group)
-        for i in sorted(self.rules().items()): # Make sure they are sorted to the repr is unique
+        for i in sorted(self.rules().items()):  # Make sure they are sorted to the repr is unique
             ret += "\n    {}    --->    {}".format(i[0], i[1])
         return ret
 
@@ -645,7 +648,7 @@ class RewritingSystem():
                 bfg = self._monoid_isomorphism.PreImagesRepresentative(bfpmon)
                 btz = bfg.UnderlyingElement().TietzeWordAbstractWord(self._free_group.gap().GeneratorsOfGroup())
                 bf = self._free_group(btz.sage())
-                dic[af]=bf
+                dic[af] = bf
         return dic
 
     def is_confluent(self):
@@ -739,8 +742,7 @@ class RewritingSystem():
             raise ValueError('could not make the system confluent')
 
 
-class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
-    Group, ParentLibGAP):
+class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's Finitely Presented Groups.
 
@@ -827,8 +829,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             'Finitely presented group < a, b | a, b^3 >'
         """
         gens = ', '.join(self.variable_names())
-        rels = ', '.join([ str(r) for r in self.relations() ])
-        return 'Finitely presented group ' + '< '+ gens + ' | ' + rels + ' >'
+        rels = ', '.join([str(r) for r in self.relations()])
+        return 'Finitely presented group ' + ' < ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
         """
@@ -1111,14 +1113,14 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         fp_product = libgap.DirectProduct([self.gap(), H.gap()])
         GAP_gens = fp_product.FreeGeneratorsOfFpGroup()
         if new_names:
-            name_itr = _lexi_gen() # Python generator for lexicographical variable names
+            name_itr = _lexi_gen()  # Python generator for lexicographical variable names
             gen_names = [next(name_itr) for i in GAP_gens]
         else:
-            gen_names= [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
+            gen_names = [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
         # Build the direct product in Sage for better variable names
         ret_F = FreeGroup(gen_names)
         ret_rls = tuple([ret_F(rel_word.TietzeWordAbstractWord(GAP_gens).sage())
-            for rel_word in fp_product.RelatorsOfFpGroup()])
+                         for rel_word in fp_product.RelatorsOfFpGroup()])
         ret_fpg = FinitelyPresentedGroup(ret_F, ret_rls)
         if reduced:
             ret_fpg = ret_fpg.simplified()
@@ -1270,8 +1272,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         auto_grp = libgap.AutomorphismGroup(H.gap())
         self_gens = [h.gap() for h in hom[0]]
         # construct image automorphisms in GAP
-        GAP_aut_imgs = [ libgap.GroupHomomorphismByImages(GAP_H, GAP_H, [g.gap() for g in gns],
-            [i.gap() for i in img]) for (gns, img) in hom[1] ]
+        GAP_aut_imgs = [libgap.GroupHomomorphismByImages(GAP_H, GAP_H, [g.gap() for g in gns],
+                        [i.gap() for i in img]) for (gns, img) in hom[1]]
 
         # check for automorphism validity in images of operation defining homomorphism,
         # and construct the defining homomorphism.
@@ -1281,22 +1283,22 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
                 raise ValueError("images of input homomorphism must be automorphisms")
             GAP_def_hom = libgap.GroupHomomorphismByImages(GAP_self, auto_grp, self_gens, GAP_aut_imgs)
         else:
-            GAP_def_hom = GAP_self.GroupHomomorphismByImagesNC( auto_grp, self_gens, GAP_aut_imgs)
+            GAP_def_hom = GAP_self.GroupHomomorphismByImagesNC(auto_grp, self_gens, GAP_aut_imgs)
 
         prod = libgap.SemidirectProduct(GAP_self, GAP_def_hom, GAP_H)
         # Convert pc group to fp group
         if prod.IsPcGroup():
-            prod = libgap.Image(libgap.IsomorphismFpGroupByPcgs(prod.FamilyPcgs() , 'x'))
+            prod = libgap.Image(libgap.IsomorphismFpGroupByPcgs(prod.FamilyPcgs(), 'x'))
         if not prod.IsFpGroup():
             raise NotImplementedError("unable to convert GAP output to equivalent Sage fp group")
 
         # Convert GAP group object to Sage via Tietze
         # lists for readability of variable names
         GAP_gens = prod.FreeGeneratorsOfFpGroup()
-        name_itr = _lexi_gen() # Python generator for lexicographical variable names
+        name_itr = _lexi_gen()  # Python generator for lexicographical variable names
         ret_F = FreeGroup([next(name_itr) for i in GAP_gens])
         ret_rls = tuple([ret_F(rel_word.TietzeWordAbstractWord(GAP_gens).sage())
-            for rel_word in prod.RelatorsOfFpGroup()])
+                         for rel_word in prod.RelatorsOfFpGroup()])
         ret_fpg = FinitelyPresentedGroup(ret_F, ret_rls)
         if reduced:
             ret_fpg = ret_fpg.simplified()
@@ -1315,10 +1317,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: H([1, 2, 1, -2]) # indirect doctest
             a*b*a*b^-1
         """
-        if len(args)!=1:
+        if len(args) != 1:
             return self.element_class(self, *args, **kwds)
         x = args[0]
-        if x==1:
+        if x == 1:
             return self.one()
         try:
             P = x.parent()
@@ -1351,9 +1353,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         Uses GAP.
         """
         invariants = self.gap().AbelianInvariants()
-        return tuple( i.sage() for i in invariants )
+        return tuple(i.sage() for i in invariants)
 
-    def abelianization(self, ring = QQ):
+    def abelianization(self, ring=QQ):
         r"""
         Return the abelianization of ``self`` together with
         the needed information to recover its group algebra.
@@ -1382,7 +1384,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
              Multivariate Laurent Polynomial Ring in f2, f3, f4 over Rational Field,
              [f2^4 - 1, f3^4 - 1], [f2^-1*f3^-2, f3^-2, f4, f3])
         """
-        hom_ab_libgap =  libgap(self).MaximalAbelianQuotient()
+        hom_ab_libgap = libgap(self).MaximalAbelianQuotient()
         ab_libgap = hom_ab_libgap.Range()
         hom_ab_fp = ab_libgap.IsomorphismFpGroup()
         ab_libgap_fp = hom_ab_fp.Range()
@@ -1407,7 +1409,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             for a in L:
                 if a > 0:
                     p *= R.gen(a - 1)
-                elif a<0:
+                elif a < 0:
                     p /= R.gen(-a - 1)
             images.append(p)
         return ab, R, ideal, images
@@ -1450,9 +1452,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         Uses GAP.
         """
-        I = self.gap().IsomorphismSimplifiedFpGroup()
-        codomain = wrap_FpGroup(I.Range())
-        phi = lambda x: codomain(I.ImageElm(x.gap()))
+        II = self.gap().IsomorphismSimplifiedFpGroup()
+        codomain = wrap_FpGroup(II.Range())
+        phi = lambda x: codomain(II.ImageElm(x.gap()))
         HS = self.Hom(codomain)
         return GroupMorphismWithGensImages(HS, phi)
 
@@ -1594,7 +1596,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         rel = self.relations()
         gen = self._free_group.gens()
         return matrix(len(rel), len(gen),
-                      lambda i,j: rel[i].fox_derivative(gen[j], im_gens))
+                      lambda i, j: rel[i].fox_derivative(gen[j], im_gens))
 
     def abelian_alexander_matrix(self, ring=QQ, abelianized=None, simplified=True):
         """
@@ -1740,7 +1742,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         for J in res:
             LJ = J.minimal_associated_primes()
             fct = [id.groebner_basis() for id in LJ]
-            if fct != [(S.onel(),)]:
+            if fct != [(S.one(),)]:
                 res1.append(fct)
         return res1
 
