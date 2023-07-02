@@ -110,25 +110,26 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     ::
 
-        sage: QQ(23.2, 2)
+        sage: QQ(23.2, 2)                                                               # optional - sage.rings.real_mpfr
         6530219459687219/281474976710656
-        sage: 6530219459687219.0/281474976710656
+        sage: 6530219459687219.0/281474976710656                                        # optional - sage.rings.real_mpfr
         23.20000000000000
-        sage: a = 23.2; a
+        sage: a = 23.2; a                                                               # optional - sage.rings.real_mpfr
         23.2000000000000
-        sage: QQ(a, 10)
+        sage: QQ(a, 10)                                                                 # optional - sage.rings.real_mpfr
         116/5
 
     Here's a nice example involving elliptic curves::
 
-        sage: E = EllipticCurve('11a')
-        sage: L = E.lseries().at1(300)[0]; L
+        sage: # optional - sage.rings.real_mpfr sage.schemes
+        sage: E = EllipticCurve('11a')                                                  # optional - sage.schemes
+        sage: L = E.lseries().at1(300)[0]; L                                            # optional - sage.schemes
         0.2538418608559106843377589233...
-        sage: O = E.period_lattice().omega(); O
+        sage: O = E.period_lattice().omega(); O                                         # optional - sage.schemes
         1.26920930427955
-        sage: t = L/O; t
+        sage: t = L/O; t                                                                # optional - sage.schemes
         0.200000000000000
-        sage: QQ(RealField(45)(t))
+        sage: QQ(RealField(45)(t))                                                      # optional - sage.rings.real_mpfr sage.schemes
         1/5
     """
     def __new__(cls):
@@ -324,7 +325,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.completion(infinity, 53)
+            sage: QQ.completion(infinity, 53)                                           # optional - sage.rings.real_mpfr
             Real Field with 53 bits of precision
             sage: QQ.completion(5, 15, {'print_mode': 'bars'})                          # optional - sage.rings.padics
             5-adic Field with capped relative precision 15
@@ -683,19 +684,27 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         from sage.rings.infinity import Infinity
         if prec is None:
-            from sage.rings.real_mpfr import RR as R
-            from sage.rings.cc import CC as C
+            if all_complex:
+                from sage.rings.cc import CC as domain
+            else:
+                from sage.rings.real_mpfr import RR as domain
         elif prec == 53:
-            from sage.rings.real_double import RDF as R
-            from sage.rings.complex_double import CDF as C
+            if all_complex:
+                from sage.rings.complex_double import CDF as domain
+            else:
+                from sage.rings.real_double import RDF as domain
         elif prec == Infinity:
-            from sage.rings.qqbar import AA as R, QQbar as C
+            if all_complex:
+                from sage.rings.qqbar import QQbar as domain
+            else:
+                from sage.rings.qqbar import AA as domain
         else:
-            from sage.rings.real_mpfr import RealField
-            from sage.rings.complex_mpfr import ComplexField
-            R = RealField(prec)
-            C = ComplexField(prec)
-        domain = C if all_complex else R
+            if all_complex:
+                from sage.rings.complex_mpfr import ComplexField
+                domain = ComplexField(prec)
+            else:
+                from sage.rings.real_mpfr import RealField
+                domain = RealField(prec)
         return [self.hom([domain(1)])]
 
     def complex_embedding(self, prec=53):

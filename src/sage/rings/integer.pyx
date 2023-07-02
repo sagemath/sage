@@ -2766,11 +2766,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: Integer(124).log(5)                                                   # optional - sage.symbolic
             log(124)/log(5)
-            sage: Integer(124).log(5, 100)
+            sage: Integer(124).log(5, 100)                                              # optional - sage.rings.real_mpfr
             2.9950093311241087454822446806
             sage: Integer(125).log(5)
             3
-            sage: Integer(125).log(5, prec=53)
+            sage: Integer(125).log(5, prec=53)                                          # optional - sage.rings.real_mpfr
             3.00000000000000
             sage: log(Integer(125))                                                     # optional - sage.symbolic
             3*log(5)
@@ -2791,16 +2791,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         But approximations are probably more useful in this
         case, and work to as high a precision as we desire::
 
-            sage: x.log(3, 53)  # default precision for RealField
+            sage: x.log(3, 53)  # default precision for RealField                       # optional - sage.rings.real_mpfr
             100000.000000000
-            sage: (x + 1).log(3, 53)
+            sage: (x + 1).log(3, 53)                                                    # optional - sage.rings.real_mpfr
             100000.000000000
-            sage: (x + 1).log(3, 1000)
+            sage: (x + 1).log(3, 1000)                                                  # optional - sage.rings.real_mpfr
             100000.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
         We can use non-integer bases, with default e::
 
-            sage: x.log(2.5, prec=53)
+            sage: x.log(2.5, prec=53)                                                   # optional - sage.rings.real_mpfr
             119897.784671579
 
         We also get logarithms of negative integers, via the

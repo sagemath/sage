@@ -182,7 +182,7 @@ cdef class RealField(Field):
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.RealField.__subclasses__()
+        sage: sage.rings.abc.RealField.__subclasses__()                                 # optional - sage.rings.real_mpfr
         [<class 'sage.rings.real_mpfr.RealField_class'>]
 
         sage: len(sage.rings.abc.RealField.__subclasses__()) <= 1
@@ -282,7 +282,7 @@ cdef class ComplexField(Field):
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.ComplexField.__subclasses__()
+        sage: sage.rings.abc.ComplexField.__subclasses__()                              # optional - sage.rings.real_mpfr
         [<class 'sage.rings.complex_mpfr.ComplexField_class'>]
 
         sage: len(sage.rings.abc.ComplexField.__subclasses__()) <= 1
@@ -352,12 +352,12 @@ cdef class ComplexDoubleField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(CDF, sage.rings.abc.ComplexDoubleField)
+        sage: isinstance(CDF, sage.rings.abc.ComplexDoubleField)                        # optional - sage.rings.complex_double
         True
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.ComplexDoubleField.__subclasses__()
+        sage: sage.rings.abc.ComplexDoubleField.__subclasses__()                        # optional - sage.rings.complex_double
         [<class 'sage.rings.complex_double.ComplexDoubleField_class'>]
 
         sage: len(sage.rings.abc.ComplexDoubleField.__subclasses__()) <= 1

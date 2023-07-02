@@ -2019,20 +2019,20 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: (1/7).period()                                                        # optional - sage.libs.pari
             6
-            sage: RR(1/7)
+            sage: RR(1/7)                                                               # optional - sage.rings.real_mpfr
             0.142857142857143
             sage: (1/8).period()                                                        # optional - sage.libs.pari
             1
-            sage: RR(1/8)
+            sage: RR(1/8)                                                               # optional - sage.rings.real_mpfr
             0.125000000000000
-            sage: RR(1/6)
+            sage: RR(1/6)                                                               # optional - sage.rings.real_mpfr
             0.166666666666667
             sage: (1/6).period()                                                        # optional - sage.libs.pari
             1
             sage: x = 333/106
             sage: x.period()                                                            # optional - sage.libs.pari
             13
-            sage: RealField(200)(x)
+            sage: RealField(200)(x)                                                     # optional - sage.rings.real_mpfr
             3.1415094339622641509433962264150943396226415094339622641509
         """
         cdef unsigned int alpha, beta

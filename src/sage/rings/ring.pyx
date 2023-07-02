@@ -160,7 +160,7 @@ cdef class Ring(ParentWithGens):
         False
         sage: QQ._repr_option('element_is_atomic')
         True
-        sage: CDF._repr_option('element_is_atomic')
+        sage: CDF._repr_option('element_is_atomic')                                     # optional - sage.rings.complex_double
         False
 
     Check that categories correctly implement `is_finite` and `cardinality`::
@@ -169,8 +169,8 @@ cdef class Ring(ParentWithGens):
         False
         sage: GF(2^10, 'a').is_finite()                                                 # optional - sage.rings.finite_rings
         True
-        sage: R.<x> = GF(7)[]                                                           # optional - sage.rings.finite_rings
-        sage: R.is_finite()                                                             # optional - sage.rings.finite_rings
+        sage: R.<x> = GF(7)[]
+        sage: R.is_finite()
         False
         sage: S.<y> = R.quo(x^2 + 1)                                                    # optional - sage.rings.finite_rings
         sage: S.is_finite()                                                             # optional - sage.rings.finite_rings
@@ -882,11 +882,11 @@ cdef class Ring(ParentWithGens):
 
             sage: x = polygen(ZZ, 'x')
             sage: R.<a> = ZZ['x'].quo(x^2)                                              # optional - sage.libs.pari
-            sage: R.fraction_field()
+            sage: R.fraction_field()                                                    # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: self must be an integral domain.
-            sage: R.is_integral_domain()
+            sage: R.is_integral_domain()                                                # optional - sage.libs.pari
             False
 
         Forward the proof flag to ``is_field``, see :trac:`22910`::
@@ -1138,7 +1138,7 @@ cdef class Ring(ParentWithGens):
 
         This also works over derived rings::
 
-            sage: RR['x'].epsilon()
+            sage: RR['x'].epsilon()                                                     # optional - sage.rings.real_mpfr
             2.22044604925031e-16
             sage: QQ['x'].epsilon()
             0
