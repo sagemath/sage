@@ -29,8 +29,8 @@ from sage.doctest.parsing import parse_optional_tags, unparse_optional_tags, upd
 from sage.env import SAGE_ROOT
 from sage.features import PythonModule
 from sage.features.all import all_features
+from sage.misc.dev_tools import find_object_modules
 from sage.misc.temporary_file import tmp_filename
-
 
 parser = ArgumentParser(description="Given an input file with doctests, this creates a modified file that passes the doctests (modulo any raised exceptions). By default, the input file is modified. You can also name an output file.")
 parser.add_argument('-l', '--long',
@@ -138,6 +138,29 @@ def module_feature(module_name):
     return longest_prefix_feature
 
 
+def name_feature(name, toplevel=None):
+    r"""
+    Find a top-level :class:`Feature` that provides the top-level ``name``.
+
+    OUTPUT: a :class:`Feature` or ``None``.
+    """
+    if toplevel is None:
+        try:
+            import sage.all as toplevel
+        except ImportError:
+            return None
+    try:
+        obj = getattr(toplevel, name)
+    except AttributeError:
+        return None
+
+    for module, names in find_object_modules(obj).items():
+        if name in names and (feature := module_feature(module)):
+            return feature
+
+    return None
+
+
 def process_block(block, src_in_lines, file_optional_tags):
     # Extract the line, what was expected, and was got.
     if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
@@ -198,9 +221,6 @@ def process_block(block, src_in_lines, file_optional_tags):
                 return
             # Otherwise, continue and show the backtrace as 'GOT'
 
-    if args.only_tags:
-        return
-
     if 'Traceback (most recent call last):' in block:
 
         expected, got = block.split('\nGot:\n')
@@ -222,11 +242,19 @@ def process_block(block, src_in_lines, file_optional_tags):
                     and got[last_frame:].startswith('File "<doctest')):
                 # NameError from top level, so keep it brief
                 if m := re.match("NameError: name '(.*)'", got[index_NameError:]):
-                    name = ": '" + m.group(1) + "'"
+                    name = m.group(1)
+                    if feature := name_feature(name):
+                        add_tags = [feature.name]
+                    else:
+                        if args.only_tags:
+                            return
+                        add_tags = [f"NameError: '{name}'{venv_explainer}"]
                 else:
-                    name = ""
+                    if args.only_tags:
+                        return
+                    add_tags = [f"NameError{venv_explainer}"]
                 src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                        add_tags=[f'NameError{name}{venv_explainer}'])
+                                                                        add_tags=add_tags)
                 return
             got = got.splitlines()
         else:
@@ -238,6 +266,9 @@ def process_block(block, src_in_lines, file_optional_tags):
     else:
         expected, got = block.split('\nGot:\n')
         got = got.splitlines()      # got can't be the empty string
+
+    if args.only_tags:
+        return
 
     expected = expected.splitlines()
 
