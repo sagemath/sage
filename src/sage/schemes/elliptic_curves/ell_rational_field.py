@@ -66,8 +66,6 @@ from . import padics
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.pollack_stevens.space import ps_modsym_from_elliptic_curve
 
-from sage.lfunctions.zero_sums import LFunctionZeroSum_EllipticCurve
-
 import sage.modular.modform.constructor
 import sage.modular.modform.element
 import sage.databases.cremona
@@ -92,6 +90,7 @@ from sage.structure.coerce import py_scalar_to_element
 from sage.structure.element import Element
 from sage.misc.misc_c import prod as mul
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose as verbose_verbose
 
 from sage.functions.log import log
@@ -1769,6 +1768,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             ....:                             bad_primes=bad_primes, ncpus=2)
             32
         """
+        from sage.lfunctions.zero_sums import LFunctionZeroSum_EllipticCurve
+
         Z = LFunctionZeroSum_EllipticCurve(self, N)
         bound = Z.analytic_rank_upper_bound(max_Delta=max_Delta,
                                             adaptive=adaptive,
