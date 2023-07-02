@@ -30,7 +30,7 @@ and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere other
 They are one of the main topics of resarch in fields such as algebraic and
 toric topology, as well as combinatorial algebraic geometry.
 
-Here we view them as simplicial complexes and try to compute mostly
+Here we view them as cubical complexes and try to compute mostly
 things which would not require computing the moment-angle complex itself,
 but rather work with the corresponding simplicial complex.
 
@@ -58,10 +58,9 @@ EXAMPLES::
 # ****************************************************************************
 
 from sage.homology.homology_group import HomologyGroup
-from sage.matrix.constructor import identity_matrix
 from sage.rings.integer_ring import ZZ
-from sage.rings.complex_field import ComplexField
 from sage.structure.sage_object import SageObject
+from .cubical_complex import CubicalComplex, cubical_complexes
 from .simplicial_complex import SimplicialComplex, copy
 from .simplicial_complex_examples import Sphere, Simplex
 from itertools import combinations
@@ -71,18 +70,20 @@ from itertools import combinations
 # - latex?
 # - compute up to homotopy?
 # - and a lot more ...
-# - should union behave different in the construct()? -- yes, working on it
 # - add literature to bibliography?
-# - should we replace disks and spheres in construct() with cubical complexes?
+# - golod decomposition
+# - trivial Massey product
 
-# this is likely to become useles when disjoint_union is fixed
-def union(s1, s2, is_mutable=True):
+def union(c1, c2):
+    embedded_left = len(tuple(c1.maximal_cells()[0]))
+    embedded_right = len(tuple(c2.maximal_cells()[0]))
+    zero = [0] * max(embedded_left, embedded_right)
     facets = []
-    for f in s1._facets:
-        facets.append(tuple([str(v) for v in f]))
-    for f in s2._facets:
-        facets.append(tuple([str(v) for v in f]))
-    return SimplicialComplex(facets, is_mutable=is_mutable)
+    for f in c1.maximal_cells():
+        facets.append(f)
+    for f in c2.maximal_cells():
+        facets.append(f)
+    return CubicalComplex(facets)
 
 class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
     """
@@ -100,12 +101,12 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
     wish to create.
 
     If ``construct`` is ``True``, we also explicitly compute the
-    moment-angle complexes, with the construction described above.
+    moment-angle complex, with the construction described above.
 
     .. WARNING::
 
         The construction can be very slow, it is not reccomended unless
-        the corresponding simplicial complex has less than 5 vertices.
+        the corresponding simplicial complex has 5 or less vertices.
 
     EXAMPLES::
 
@@ -192,43 +193,19 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
             return
 
         n = len(self._simplicial_complex.vertices())
-        # we construct the origin in C^n
-        ones = identity_matrix(n)
-        D = []
-        S = []
+        D = [cubical_complexes.Cube(2)] * n
+        S = [cubical_complexes.Sphere(1)] * n
 
-        for i in range(n):
-            t1 = tuple(ones[i])
-            t2 = tuple(ones[i]*complex(0, 1))
-            t3 = tuple(-ones[i])
-            t4 = tuple(ones[i]*complex(0, -1))
-            D.append(SimplicialComplex([[t1, t2, t3, t4]]))
-            S.append(SimplicialComplex([[t1, t2], [t2, t3], [t3, t4], [t4, t1]]))
-
-        self._moment_angle_complex = SimplicialComplex()
+        self._moment_angle_complex = CubicalComplex()
         for component in self._components.values():
             x = D[0] if component[0] == Simplex(2) else S[0]
-            print(x)
             for j in range(1, len(component)):
                 y = D[j] if component[j] == Simplex(2) else S[j]
-                print(y)
-                x = x.product(y, rename_vertices=False)
+                x = x.product(y)
 
             self._moment_angle_complex = union(self._moment_angle_complex, x)
 
         self._constructed = True
-
-    def vertices(self):
-        """
-        Return vertices of the moment-angle complex.
-
-        EXAMPLES::
-
-        """
-        if not self._constructed:
-            raise ValueError("the moment-angle complex is not constructed")
-
-        return self._moment_angle_complex.vertices()
 
     def homology(self, dim=None, base_ring=ZZ, subcomplex=None,
                  generators=False, cohomology=False, algorithm='pari',
@@ -249,3 +226,17 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         return self._moment_angle_complex.homology(dim, base_ring, subcomplex,
                  generators, cohomology, algorithm,
                  verbose, reduced, **kwds)
+
+    def trivial_massey_product(self):
+        """
+        Return whether ``self`` has a non-trivial Massey product.
+
+        This is the Massey product in the cohomology of the
+        moment-angle complex.
+
+        EXAMPLES::
+
+        """
+        # create the subgraphs and use subgraph_search on the
+        # graph obtained from the 1-skeleton of the simplicial_complex
+        raise NotImplementedError
