@@ -12,11 +12,12 @@ BB = o + o\*BB + o\*|\*BB
 
 Here we define this species using the default structures::
 
-    sage: ball = species.SingletonSpecies(); o = var('o')
+    sage: ball = species.SingletonSpecies()
     sage: bar = species.EmptySetSpecies()
     sage: BB = CombinatorialSpecies()
     sage: BB.define(ball + ball*BB + ball*bar*BB)
-    sage: BB.isotypes([o]*3).list()
+    sage: o = var('o')                                                                  # optional - sage.symbolic
+    sage: BB.isotypes([o]*3).list()                                                     # optional - sage.symbolic
     [o*(o*o), o*((o*{})*o), (o*{})*(o*o), (o*{})*((o*{})*o)]
 
 If we ignore the parentheses, we can read off that the integer

@@ -60,14 +60,15 @@ The arguments in the definition must be symbolic variables (:trac:`10747`)::
     ...
     SyntaxError: can...t assign to function call...
 """
-
 import sage.rings.abc
 from sage.symbolic.ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
+from sage.structure.factory import UniqueFactory
 
-#########################################################################################
+
+######################################################################
 #  Callable functions
-#########################################################################################
+######################################################################
 def is_CallableSymbolicExpressionRing(x):
     """
     Return ``True`` if ``x`` is a callable symbolic expression ring.
@@ -96,10 +97,10 @@ def is_CallableSymbolicExpressionRing(x):
     deprecation(32665, 'is_CallableSymbolicExpressionRing is deprecated; use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead')
     return isinstance(x, CallableSymbolicExpressionRing_class)
 
+
 def is_CallableSymbolicExpression(x):
     r"""
-    Returns ``True`` if ``x`` is a callable symbolic
-    expression.
+    Return ``True`` if ``x`` is a callable symbolic expression.
 
     EXAMPLES::
 
@@ -124,6 +125,7 @@ def is_CallableSymbolicExpression(x):
     deprecation(34215, 'is_CallableSymbolicExpression is deprecated; use isinstance(..., Expression) and ....is_callable() instead')
     from sage.structure.element import Expression
     return isinstance(x, Expression) and isinstance(x.parent(), CallableSymbolicExpressionRing_class)
+
 
 class CallableSymbolicExpressionFunctor(ConstructionFunctor):
     def __init__(self, arguments):
@@ -157,7 +159,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
             sage: CallableSymbolicExpressionFunctor((x,y))
             CallableSymbolicExpressionFunctor(x, y)
         """
-        return "CallableSymbolicExpressionFunctor%s"%repr(self.arguments())
+        return "CallableSymbolicExpressionFunctor%s" % repr(self.arguments())
 
     def merge(self, other):
         """
@@ -373,9 +375,10 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
 
     def arguments(self):
         """
-        Returns the arguments of ``self``. The order that the
-        variables appear in ``self.arguments()`` is the order that
-        is used in evaluating the elements of ``self``.
+        Return the arguments of ``self``.
+
+        The order that the variables appear in ``self.arguments()`` is
+        the order that is used in evaluating the elements of ``self``.
 
         EXAMPLES::
 
@@ -393,7 +396,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
 
     def _repr_element_(self, x):
         """
-        Returns the string representation of the Expression ``x``.
+        Return the string representation of the Expression ``x``.
 
         EXAMPLES::
 
@@ -468,7 +471,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             sage: f(z=100)
             a + 2*x + 3*y + 100
         """
-        if any(type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args): # avoid importing
+        if any(type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args):  # avoid importing
             raise NotImplementedError("Numpy arrays are not supported as arguments for symbolic expressions")
 
         d = dict(zip([repr(_) for _ in self.arguments()], args))
@@ -479,7 +482,6 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
     __reduce__ = object.__reduce__
 
 
-from sage.structure.factory import UniqueFactory
 class CallableSymbolicExpressionRingFactory(UniqueFactory):
     def create_key(self, args, check=True):
         """
@@ -501,8 +503,7 @@ class CallableSymbolicExpressionRingFactory(UniqueFactory):
 
     def create_object(self, version, key, **extra_args):
         """
-        Returns a CallableSymbolicExpressionRing given a version and a
-        key.
+        Return a CallableSymbolicExpressionRing given a version and a key.
 
         EXAMPLES::
 
@@ -511,5 +512,6 @@ class CallableSymbolicExpressionRingFactory(UniqueFactory):
             Callable function ring with arguments (x, y)
         """
         return CallableSymbolicExpressionRing_class(key)
+
 
 CallableSymbolicExpressionRing = CallableSymbolicExpressionRingFactory('sage.symbolic.callable.CallableSymbolicExpressionRing')

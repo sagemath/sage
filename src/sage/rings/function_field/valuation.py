@@ -140,6 +140,7 @@ fields can be found in Section 4.6 of [Rüt2014]_. Most of this was originally
 developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 
 """
+
 # ****************************************************************************
 #       Copyright (C) 2016-2018 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -148,6 +149,7 @@ developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from sage.structure.factory import UniqueFactory
 from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method

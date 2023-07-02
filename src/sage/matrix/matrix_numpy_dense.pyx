@@ -382,8 +382,9 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             sage: m = matrix(RDF,[[1,2],[3,4]])
             sage: n = m.numpy()
             sage: import numpy
-            sage: numpy.linalg.eig(n)
-            (array([-0.37228132,  5.37228132]), array([[-0.82456484, -0.41597356],
+            sage: tuple(numpy.linalg.eig(n))
+            (array([-0.37228132,  5.37228132]),
+             array([[-0.82456484, -0.41597356],
                    [ 0.56576746, -0.90937671]]))
             sage: m = matrix(RDF, 2, range(6)); m
             [0.0 1.0 2.0]
