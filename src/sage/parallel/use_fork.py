@@ -17,7 +17,7 @@ from shutil import rmtree
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 from sage.interfaces.process import ContainChildren
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 
 
 class WorkerData():

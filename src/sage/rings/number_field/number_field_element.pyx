@@ -193,9 +193,9 @@ def _inverse_mod_generic(elt, I):
         raise ZeroDivisionError("%s is not invertible modulo %s" % (elt, I))
     v = R.coordinates(1)
     y = R(0)
-    for j in xrange(n):
+    for j in range(n):
         if v[j] != 0:
-            y += v[j] * sum([b[j,i+n] * B[i] for i in xrange(n)])
+            y += v[j] * sum([b[j,i+n] * B[i] for i in range(n)])
     return I.small_residue(y)
 
 

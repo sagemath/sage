@@ -115,7 +115,7 @@ from sage.structure.element cimport (Element, Vector, Matrix,
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose, get_verbose
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ

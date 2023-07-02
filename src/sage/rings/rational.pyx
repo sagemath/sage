@@ -4187,7 +4187,7 @@ cdef class Q_to_Z(Map):
 
 cdef class int_to_Q(Morphism):
     r"""
-    A morphism from Python 2 ``int`` to `\QQ`.
+    A morphism from Python 3 ``int`` to `\QQ`.
     """
     def __init__(self):
         """
@@ -4196,57 +4196,6 @@ cdef class int_to_Q(Morphism):
         EXAMPLES::
 
             sage: sage.rings.rational.int_to_Q()
-            Native morphism:
-              From: Set of Python objects of class 'int'
-              To:   Rational Field
-        """
-        from . import rational_field
-        import sage.categories.homset
-        from sage.sets.pythonclass import Set_PythonType
-        Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(int), rational_field.QQ))
-
-    cpdef Element _call_(self, a):
-        """
-        Return the image of the morphism on ``a``.
-
-        EXAMPLES::
-
-            sage: f = sage.rings.rational.int_to_Q()
-            sage: f(int(4)) # indirect doctest
-            4
-        """
-        cdef Rational rat
-
-        if type(a) is not int:
-            raise TypeError("must be a Python int object")
-
-        rat = <Rational> Rational.__new__(Rational)
-        mpq_set_si(rat.value, PyInt_AS_LONG(a), 1)
-        return rat
-
-    def _repr_type(self):
-        """
-        Return string that describes the type of morphism.
-
-        EXAMPLES::
-
-            sage: sage.rings.rational.int_to_Q()._repr_type()
-            'Native'
-        """
-        return "Native"
-
-
-cdef class long_to_Q(Morphism):
-    r"""
-    A morphism from Python 2 ``long``/Python 3 ``int`` to `\QQ`.
-    """
-    def __init__(self):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: sage.rings.rational.long_to_Q()
             Native morphism:
               From: Set of Python objects of class 'int'
               To:   Rational Field
@@ -4263,7 +4212,7 @@ cdef class long_to_Q(Morphism):
 
         EXAMPLES::
 
-            sage: f = sage.rings.rational.long_to_Q()
+            sage: f = sage.rings.rational.int_to_Q()
             sage: f(4^100)
             1606938044258990275541962092341162602522202993782792835301376
         """
@@ -4289,7 +4238,7 @@ cdef class long_to_Q(Morphism):
 
         EXAMPLES::
 
-            sage: sage.rings.rational.long_to_Q()._repr_type()
+            sage: sage.rings.rational.int_to_Q()._repr_type()
             'Native'
         """
         return "Native"

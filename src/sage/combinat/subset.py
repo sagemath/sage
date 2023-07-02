@@ -1,7 +1,7 @@
 r"""
 Subsets
 
-The set of subsets of a finite set. The set can be given as a list or a Set
+The set of subsets of a finite set. The set can be given as a list or a :class:`Set`
 or else as an integer `n` which encodes the set `\{1,2,...,n\}`.
 See :class:`Subsets` for more information and examples.
 
@@ -185,11 +185,11 @@ class Subsets_s(Parent):
          {1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4},
          {1, 2, 3, 4}]
 
-        sage: S = Subsets(Subsets(Subsets(GF(3)))); S
+        sage: S = Subsets(Subsets(Subsets(GF(3)))); S                                   # optional - sage.rings.finite_rings
         Subsets of Subsets of Subsets of Finite Field of size 3
-        sage: S.cardinality()
+        sage: S.cardinality()                                                           # optional - sage.rings.finite_rings
         115792089237316195423570985008687907853269984665640564039457584007913129639936
-        sage: S.unrank(3149254230)  # random
+        sage: S.unrank(3149254230)  # random                                            # optional - sage.rings.finite_rings
         {{{1}, {0, 2}}, {{0, 1, 2}, {0, 1}, {1}, {1, 2}},
          {{2}, {1, 2}, {0, 1, 2}, {0, 2}, {1}, {}},
          {{1, 2}, {0}},
@@ -247,7 +247,7 @@ class Subsets_s(Parent):
 
         EXAMPLES::
 
-            sage: Subsets(GF(13)).underlying_set()
+            sage: Subsets(GF(13)).underlying_set()                                      # optional - sage.rings.finite_rings
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
         """
         return self.element_class(self._s)
@@ -549,10 +549,10 @@ class Subsets_s(Parent):
         EXAMPLES::
 
             sage: X = Subsets([7,8,9])
-            sage: X.lattice()
+            sage: X.lattice()                                                           # optional - sage.combinat sage.graphs
             Finite lattice containing 8 elements
             sage: Y = Subsets(0)
-            sage: Y.lattice()
+            sage: Y.lattice()                                                           # optional - sage.combinat sage.graphs
             Finite lattice containing 1 elements
 
         """
@@ -873,8 +873,8 @@ class Subsets_sk(Subsets_s):
 
 def dict_to_list(d):
     r"""
-    Return a list whose elements are the elements of i of d repeated with
-    multiplicity d[i].
+    Return a list whose elements are the elements of ``i`` of ``d`` repeated with
+    multiplicity ``d[i]``.
 
     EXAMPLES::
 
@@ -1166,7 +1166,7 @@ class SubMultiset_s(Parent):
 
 class SubMultiset_sk(SubMultiset_s):
     """
-    The combinatorial class of the subsets of size k of a multiset s.  Note
+    The combinatorial class of the subsets of size ``k`` of a multiset ``s``.  Note
     that each subset is represented by a list of the elements rather than a
     set since we can have multiplicities (no multiset data structure yet in
     sage).
@@ -1289,7 +1289,7 @@ class SubMultiset_sk(SubMultiset_s):
 
     def random_element(self):
         r"""
-        Return a random submultiset of given length
+        Return a random submultiset of given length.
 
         EXAMPLES::
 
