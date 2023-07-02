@@ -12,11 +12,13 @@ This module defines the class :class:`EllipticCurve_field`, based on
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import sage.rings.all as rings
 import sage.rings.abc
 from sage.categories.number_fields import NumberFields
 from sage.categories.finite_fields import FiniteFields
-
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.rational_field import QQ
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
@@ -55,7 +57,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.genus()
             1
         """
-        return rings.ZZ.one()
+        return ZZ.one()
 
     r"""
     Twists: rewritten by John Cremona as follows:
@@ -149,7 +151,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         if D is None:
             if K.is_finite():
-                x = rings.polygen(K)
+                x = polygen(K)
                 if char == 2:
                     # We find D such that x^2+x+D is irreducible. If the
                     # degree is odd we can take D=1; otherwise it suffices to
@@ -229,9 +231,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: EllipticCurve('15a1').two_torsion_rank()
             2
         """
-        f = self.division_polynomial(rings.Integer(2))
+        f = self.division_polynomial(Integer(2))
         n = len(f.roots())+1
-        return rings.Integer(n).ord(rings.Integer(2))
+        return Integer(n).ord(Integer(2))
 
     def quartic_twist(self, D):
         r"""
@@ -425,8 +427,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             return zero
 
         if E.is_isomorphic(F):
-            if K is rings.QQ:
-                return rings.ZZ(1)
+            if K is QQ:
+                return ZZ(1)
             return K.one()
 
         char = K.characteristic()
@@ -445,7 +447,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             if j == 0:
                 um = c6E/c6F
-                x = rings.polygen(K)
+                x = polygen(K)
                 ulist = (x**3-um).roots(multiplicities=False)
                 if not ulist:
                     D = zero
@@ -453,7 +455,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     D = ulist[0]
             elif j == 1728:
                 um = c4E/c4F
-                x = rings.polygen(K)
+                x = polygen(K)
                 ulist = (x**2-um).roots(multiplicities=False)
                 if not ulist:
                     D = zero
@@ -467,7 +469,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if D.is_zero():
             return D
 
-        if K is rings.QQ:
+        if K is QQ:
             D = D.squarefree_part()
 
         assert E.quadratic_twist(D).is_isomorphic(F)
@@ -708,7 +710,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         # j-invariant is in the image, otherwise return an empty list:
 
         j = self.j_invariant()
-        from sage.rings.rational_field import QQ
         if K == QQ:
             try:
                 jK = QQ(j)
@@ -996,7 +997,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - Lorenz Panny (2022): extend to finite fields
         """
         from sage.misc.verbose import verbose
-        l = rings.Integer(l)
+        l = Integer(l)
         if not l.is_prime():
             raise ValueError("l must be a prime number")
 
@@ -1052,7 +1053,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         # Polynomial defining the corresponding Y-coordinate
         curve = self.defining_polynomial().map_coefficients(F_to_K)
-        ypol = curve(X, rings.polygen(K), 1)
+        ypol = curve(X, polygen(K), 1)
         L = ypol.splitting_field(names, map=map, **kwds)
         if map:
             L, K_to_L = L
@@ -1571,7 +1572,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise NotImplementedError("This code could be implemented for general real fields, but has not been yet.")
         if isinstance(F, sage.rings.abc.ComplexField):
             raise NotImplementedError("This code could be implemented for general complex fields, but has not been yet.")
-        if F is rings.QQbar:
+        if isinstance(F, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("This code could be implemented for QQbar, but has not been yet.")
 
         if l is None:
@@ -1581,9 +1582,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             try:
                 l = list(l)
             except TypeError:
-                L = [rings.ZZ(l)]
+                L = [ZZ(l)]
             else:
-                L = [rings.ZZ(d) for d in l]
+                L = [ZZ(d) for d in l]
 
         from .isogeny_small_degree import isogenies_prime_degree
         return sum([isogenies_prime_degree(self, d) for d in L], [])

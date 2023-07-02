@@ -49,7 +49,7 @@ from sage.modular.modform.constructor import EisensteinForms, CuspForms
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.misc.functional import denominator, log
 from sage.misc.misc_c import prod
-import sage.matrix.all as matrix
+from sage.matrix.constructor import Matrix as matrix
 
 
 @richcmp_method
@@ -658,7 +658,7 @@ class TateCurve(SageObject):
                                       "for non-split multiplicative reduction.")
 
         basis = self._E.gens()
-        M = matrix.matrix(K, rank, rank, 0)
+        M = matrix(K, rank, rank, 0)
 
         height = self.padic_height(prec=prec)
         point_height = [height(P) for P in basis]
