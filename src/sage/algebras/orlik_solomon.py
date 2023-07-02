@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.modules
 r"""
 Orlik-Solomon Algebras
 """
@@ -115,9 +115,10 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         We check on the matroid associated to the graph with 3 vertices and
         2 edges between each vertex::
 
+            sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[2,3],[1,3],[1,3]], multiedges=True)
-            sage: M = Matroid(G)
-            sage: OS = M.orlik_solomon_algebra(QQ)
+            sage: MG = Matroid(G)
+            sage: OS = MG.orlik_solomon_algebra(QQ)
             sage: elts = OS.some_elements() + list(OS.algebra_generators())
             sage: TestSuite(OS).run(elements=elts)
         """
@@ -254,10 +255,11 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         Let us check that `e_{s_1} e_{s_2} \cdots e_{s_k} = e_S` for any
         subset `S = \{ s_1 < s_2 < \cdots < s_k \}` of the ground set::
 
+            sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,2]], multiedges=True)
-            sage: M = Matroid(G).regular_matroid()
-            sage: E = M.groundset_list()
-            sage: OS = M.orlik_solomon_algebra(ZZ)
+            sage: MG = Matroid(G).regular_matroid()
+            sage: E = MG.groundset_list()
+            sage: OS = MG.orlik_solomon_algebra(ZZ)
             sage: G = OS.algebra_generators()
             sage: import itertools
             sage: def test_prod(F):
@@ -327,31 +329,33 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             ([2, 5], -OS{0, 2} + OS{0, 5})
             ([4, 5], -OS{3, 4} + OS{3, 5})
 
+            sage: # needs sage.graphs
             sage: M4 = matroids.CompleteGraphic(4)
-            sage: OS = M4.orlik_solomon_algebra(QQ)
-            sage: OS.subset_image(frozenset({2,3,4}))
+            sage: OSM4 = M4.orlik_solomon_algebra(QQ)
+            sage: OSM4.subset_image(frozenset({2,3,4}))
             OS{0, 2, 3} + OS{0, 3, 4}
 
         An example of a custom ordering::
 
+            sage: # needs sage.graphs
             sage: G = Graph([[3, 4], [4, 1], [1, 2], [2, 3], [3, 5], [5, 6], [6, 3]])
-            sage: M = Matroid(G)
+            sage: MG = Matroid(G)
             sage: s = [(5, 6), (1, 2), (3, 5), (2, 3), (1, 4), (3, 6), (3, 4)]
-            sage: sorted([sorted(c) for c in M.circuits()])
+            sage: sorted([sorted(c) for c in MG.circuits()])
             [[(1, 2), (1, 4), (2, 3), (3, 4)],
              [(3, 5), (3, 6), (5, 6)]]
-            sage: OS = M.orlik_solomon_algebra(QQ, ordering=s)
-            sage: OS.subset_image(frozenset([]))
+            sage: OSMG = MG.orlik_solomon_algebra(QQ, ordering=s)
+            sage: OSMG.subset_image(frozenset([]))
             OS{}
-            sage: OS.subset_image(frozenset([(1,2),(3,4),(1,4),(2,3)]))
+            sage: OSMG.subset_image(frozenset([(1,2),(3,4),(1,4),(2,3)]))
             0
-            sage: OS.subset_image(frozenset([(2,3),(1,2),(3,4)]))
+            sage: OSMG.subset_image(frozenset([(2,3),(1,2),(3,4)]))
             OS{(1, 2), (2, 3), (3, 4)}
-            sage: OS.subset_image(frozenset([(1,4),(3,4),(2,3),(3,6),(5,6)]))
+            sage: OSMG.subset_image(frozenset([(1,4),(3,4),(2,3),(3,6),(5,6)]))
             -OS{(1, 2), (1, 4), (2, 3), (3, 6), (5, 6)}
              + OS{(1, 2), (1, 4), (3, 4), (3, 6), (5, 6)}
              - OS{(1, 2), (2, 3), (3, 4), (3, 6), (5, 6)}
-            sage: OS.subset_image(frozenset([(1,4),(3,4),(2,3),(3,6),(3,5)]))
+            sage: OSMG.subset_image(frozenset([(1,4),(3,4),(2,3),(3,6),(3,5)]))
             OS{(1, 2), (1, 4), (2, 3), (3, 5), (5, 6)}
              - OS{(1, 2), (1, 4), (2, 3), (3, 6), (5, 6)}
              + OS{(1, 2), (1, 4), (3, 4), (3, 5), (5, 6)}
@@ -361,34 +365,36 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[2,3],[1,3],[1,3]], multiedges=True)
-            sage: M = Matroid(G)
+            sage: MG = Matroid(G)
             sage: sorted([sorted(c) for c in M.circuits()])
             [[0, 1], [0, 2, 4], [0, 2, 5], [0, 3, 4],
              [0, 3, 5], [1, 2, 4], [1, 2, 5], [1, 3, 4],
              [1, 3, 5], [2, 3], [4, 5]]
-            sage: OS = M.orlik_solomon_algebra(QQ)
-            sage: OS.subset_image(frozenset([]))
+            sage: OSMG = MG.orlik_solomon_algebra(QQ)
+            sage: OSMG.subset_image(frozenset([]))
             OS{}
-            sage: OS.subset_image(frozenset([1, 2, 3]))
+            sage: OSMG.subset_image(frozenset([1, 2, 3]))
             0
-            sage: OS.subset_image(frozenset([1, 3, 5]))
+            sage: OSMG.subset_image(frozenset([1, 3, 5]))
             0
-            sage: OS.subset_image(frozenset([1, 2]))
+            sage: OSMG.subset_image(frozenset([1, 2]))
             OS{0, 2}
-            sage: OS.subset_image(frozenset([3, 4]))
+            sage: OSMG.subset_image(frozenset([3, 4]))
             -OS{0, 2} + OS{0, 4}
-            sage: OS.subset_image(frozenset([1, 5]))
+            sage: OSMG.subset_image(frozenset([1, 5]))
             OS{0, 4}
 
+            sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,2]], multiedges=True)
-            sage: M = Matroid(G)
-            sage: sorted([sorted(c) for c in M.circuits()])
+            sage: MG = Matroid(G)
+            sage: sorted([sorted(c) for c in MG.circuits()])
             [[0, 1], [2, 3, 4]]
-            sage: OS = M.orlik_solomon_algebra(QQ)
-            sage: OS.subset_image(frozenset([]))
+            sage: OSMG = MG.orlik_solomon_algebra(QQ)
+            sage: OSMG.subset_image(frozenset([]))
             OS{}
-            sage: OS.subset_image(frozenset([1, 3, 4]))
+            sage: OSMG.subset_image(frozenset([1, 3, 4]))
             -OS{0, 2, 3} + OS{0, 2, 4}
 
         We check on a non-standard ordering::
@@ -453,6 +459,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: H = hyperplane_arrangements.braid(3)
             sage: O = H.orlik_solomon_algebra(QQ)
             sage: O.as_gca()
@@ -477,6 +484,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: H = hyperplane_arrangements.Catalan(3,QQ).cone()
             sage: O = H.orlik_solomon_algebra(QQ)
             sage: A = O.as_gca()
@@ -516,6 +524,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: H = hyperplane_arrangements.braid(3)
             sage: O = H.orlik_solomon_algebra(QQ)
             sage: O.as_cdga()
@@ -546,10 +555,11 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
     Lets start with the action of `S_3` on the rank `2` braid matroid::
 
-        sage: M = matroids.CompleteGraphic(3)                                           # optional - sage.graphs
-        sage: M.groundset()                                                             # optional - sage.graphs
+        sage: # needs sage.graphs
+        sage: M = matroids.CompleteGraphic(3)
+        sage: M.groundset()
         frozenset({0, 1, 2})
-        sage: G = SymmetricGroup(3)                                                     # optional - sage.groups
+        sage: G = SymmetricGroup(3)                                                     # needs sage.groups
 
     Calling elements ``g`` of ``G`` on an element `i` of `\{1, 2, 3\}`
     defines the action we want, but since the groundset is `\{0, 1, 2\}`
@@ -561,30 +571,33 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
     Now that we have defined an action we can create the invariant, and
     get its basis::
 
-        sage: OSG = M.orlik_solomon_algebra(QQ, invariant=(G, on_groundset))            # optional - sage.graphs sage.groups
-        sage: OSG.basis()                                                               # optional - sage.graphs sage.groups
+        sage: # needs sage.graphs sage.groups
+        sage: OSG = M.orlik_solomon_algebra(QQ, invariant=(G, on_groundset))
+        sage: OSG.basis()
         Finite family {0: B[0], 1: B[1]}
-        sage: [OSG.lift(b) for b in OSG.basis()]                                        # optional - sage.graphs sage.groups
+        sage: [OSG.lift(b) for b in OSG.basis()]
         [OS{}, OS{0} + OS{1} + OS{2}]
 
     Since it is invariant, the action of any ``g`` in ``G`` is trivial::
 
-        sage: x = OSG.an_element(); x                                                   # optional - sage.graphs sage.groups
+        sage: # needs sage.graphs sage.groups
+        sage: x = OSG.an_element(); x
         2*B[0] + 2*B[1]
-        sage: g = G.an_element(); g                                                     # optional - sage.graphs sage.groups
+        sage: g = G.an_element(); g
         (2,3)
-        sage: g * x                                                                     # optional - sage.graphs sage.groups
+        sage: g * x
         2*B[0] + 2*B[1]
 
-        sage: x = OSG.random_element()                                                  # optional - sage.graphs sage.groups
-        sage: g = G.random_element()                                                    # optional - sage.graphs sage.groups
-        sage: g * x == x                                                                # optional - sage.graphs sage.groups
+        sage: # needs sage.graphs sage.groups
+        sage: x = OSG.random_element()
+        sage: g = G.random_element()
+        sage: g * x == x
         True
 
     The underlying ambient module is the Orlik-Solomon algebra,
     which is accessible via :meth:`ambient()`::
 
-        sage: M.orlik_solomon_algebra(QQ) is OSG.ambient()                              # optional - sage.graphs sage.groups
+        sage: M.orlik_solomon_algebra(QQ) is OSG.ambient()                              # needs sage.graphs sage.groups
         True
 
     There is not much structure here, so lets look at a bigger example.
@@ -592,53 +605,53 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
     easier, we'll start the indexing at `1` so that the `S_6` action
     on the groundset is simply calling `g`::
 
-        sage: M = matroids.CompleteGraphic(4); M.groundset()                            # optional - sage.graphs
+        sage: M = matroids.CompleteGraphic(4); M.groundset()                            # needs sage.graphs
         frozenset({0, 1, 2, 3, 4, 5})
-        sage: new_bases = [frozenset(i+1 for i in j) for j in M.bases()]                # optional - sage.graphs
-        sage: M = Matroid(bases=new_bases); M.groundset()                               # optional - sage.graphs
+        sage: new_bases = [frozenset(i+1 for i in j) for j in M.bases()]                # needs sage.graphs
+        sage: M = Matroid(bases=new_bases); M.groundset()                               # needs sage.graphs
         frozenset({1, 2, 3, 4, 5, 6})
-        sage: G = SymmetricGroup(6)                                                     # optional - sage.groups
-        sage: OSG = M.orlik_solomon_algebra(QQ, invariant=G)                            # optional - sage.graphs sage.groups
-        sage: OSG.basis()                                                               # optional - sage.graphs sage.groups
+        sage: G = SymmetricGroup(6)                                                     # needs sage.groups
+        sage: OSG = M.orlik_solomon_algebra(QQ, invariant=G)                            # needs sage.graphs sage.groups
+        sage: OSG.basis()                                                               # needs sage.graphs sage.groups
         Finite family {0: B[0], 1: B[1]}
-        sage: [OSG.lift(b) for b in OSG.basis()]                                        # optional - sage.graphs sage.groups
+        sage: [OSG.lift(b) for b in OSG.basis()]                                        # needs sage.graphs sage.groups
         [OS{}, OS{1} + OS{2} + OS{3} + OS{4} + OS{5} + OS{6}]
-        sage: (OSG.basis()[1])^2                                                        # optional - sage.graphs sage.groups
+        sage: (OSG.basis()[1])^2                                                        # needs sage.graphs sage.groups
         0
-        sage: 5 * OSG.basis()[1]                                                        # optional - sage.graphs sage.groups
+        sage: 5 * OSG.basis()[1]                                                        # needs sage.graphs sage.groups
         5*B[1]
 
     Next, we look at the same matroid but with an `S_3 \times S_3` action
     (here realized as a Young subgroup of `S_6`)::
 
-        sage: H = G.young_subgroup([3, 3])                                              # optional - sage.graphs sage.groups
-        sage: OSH = M.orlik_solomon_algebra(QQ, invariant=H)                            # optional - sage.graphs sage.groups
-        sage: OSH.basis()                                                               # optional - sage.graphs sage.groups
+        sage: H = G.young_subgroup([3, 3])                                              # needs sage.graphs sage.groups
+        sage: OSH = M.orlik_solomon_algebra(QQ, invariant=H)                            # needs sage.graphs sage.groups
+        sage: OSH.basis()                                                               # needs sage.graphs sage.groups
         Finite family {0: B[0], 1: B[1], 2: B[2]}
-        sage: [OSH.lift(b) for b in OSH.basis()]                                        # optional - sage.graphs sage.groups
+        sage: [OSH.lift(b) for b in OSH.basis()]                                        # needs sage.graphs sage.groups
         [OS{}, OS{4} + OS{5} + OS{6}, OS{1} + OS{2} + OS{3}]
 
     We implement an `S_4` action on the vertices::
 
-        sage: M = matroids.CompleteGraphic(4)                                           # optional - sage.graphs
-        sage: G = SymmetricGroup(4)                                                     # optional - sage.groups
-        sage: edge_map = {i: M.groundset_to_edges([i])[0][:2]                           # optional - sage.graphs
+        sage: M = matroids.CompleteGraphic(4)                                           # needs sage.graphs
+        sage: G = SymmetricGroup(4)                                                     # needs sage.groups
+        sage: edge_map = {i: M.groundset_to_edges([i])[0][:2]                           # needs sage.graphs
         ....:             for i in M.groundset()}
-        sage: inv_map = {v: k for k, v in edge_map.items()}                             # optional - sage.graphs
+        sage: inv_map = {v: k for k, v in edge_map.items()}                             # needs sage.graphs
         sage: def vert_action(g, x):
         ....:     a, b = edge_map[x]
         ....:     return inv_map[tuple(sorted([g(a+1)-1, g(b+1)-1]))]
-        sage: OSG = M.orlik_solomon_algebra(QQ, invariant=(G, vert_action))             # optional - sage.graphs sage.groups
-        sage: B = OSG.basis()                                                           # optional - sage.graphs sage.groups
-        sage: [OSG.lift(b) for b in B]                                                  # optional - sage.graphs sage.groups
+        sage: OSG = M.orlik_solomon_algebra(QQ, invariant=(G, vert_action))             # needs sage.graphs sage.groups
+        sage: B = OSG.basis()                                                           # needs sage.graphs sage.groups
+        sage: [OSG.lift(b) for b in B]                                                  # needs sage.graphs sage.groups
         [OS{}, OS{0} + OS{1} + OS{2} + OS{3} + OS{4} + OS{5}]
 
     We use this to describe the Young subgroup `S_2 \times S_2` action::
 
-        sage: H = G.young_subgroup([2,2])                                               # optional - sage.graphs sage.groups
-        sage: OSH = M.orlik_solomon_algebra(QQ, invariant=(H, vert_action))             # optional - sage.graphs sage.groups
-        sage: B = OSH.basis()                                                           # optional - sage.graphs sage.groups
-        sage: [OSH.lift(b) for b in B]                                                  # optional - sage.graphs sage.groups
+        sage: H = G.young_subgroup([2,2])                                               # needs sage.graphs sage.groups
+        sage: OSH = M.orlik_solomon_algebra(QQ, invariant=(H, vert_action))             # needs sage.graphs sage.groups
+        sage: B = OSH.basis()                                                           # needs sage.graphs sage.groups
+        sage: [OSH.lift(b) for b in B]                                                  # needs sage.graphs sage.groups
         [OS{}, OS{5}, OS{1} + OS{2} + OS{3} + OS{4}, OS{0},
          -1/2*OS{1, 2} + OS{1, 5} - 1/2*OS{3, 4} + OS{3, 5},
          OS{0, 5}, OS{0, 1} + OS{0, 2} + OS{0, 3} + OS{0, 4},
@@ -646,7 +659,7 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
     We demonstrate the algebra structure::
 
-        sage: matrix([[b*bp for b in B] for bp in B])                                   # optional - sage.graphs sage.groups
+        sage: matrix([[b*bp for b in B] for bp in B])                                   # needs sage.graphs sage.groups
         [   B[0]    B[1]    B[2]    B[3]    B[4]    B[5]    B[6]    B[7]]
         [   B[1]       0  2*B[4]    B[5]       0       0  2*B[7]       0]
         [   B[2] -2*B[4]       0    B[6]       0 -2*B[7]       0       0]
@@ -669,12 +682,12 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         EXAMPLES::
 
-            sage: M = matroids.CompleteGraphic(4)                                       # optional - sage.graphs
-            sage: new_bases = [frozenset(i+1 for i in j) for j in M.bases()]            # optional - sage.graphs
-            sage: M = Matroid(bases=new_bases)                                          # optional - sage.graphs
-            sage: G = SymmetricGroup(6)                                                 # optional - sage.groups
-            sage: OSG = M.orlik_solomon_algebra(QQ, invariant=G)                        # optional - sage.graphs sage.groups
-            sage: TestSuite(OSG).run()                                                  # optional - sage.graphs sage.groups
+            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
+            sage: new_bases = [frozenset(i+1 for i in j) for j in M.bases()]            # needs sage.graphs
+            sage: M = Matroid(bases=new_bases)                                          # needs sage.graphs
+            sage: G = SymmetricGroup(6)                                                 # needs sage.groups
+            sage: OSG = M.orlik_solomon_algebra(QQ, invariant=G)                        # needs sage.graphs sage.groups
+            sage: TestSuite(OSG).run()                                                  # needs sage.graphs sage.groups
         """
         ordering = kwargs.pop('ordering', None)
         OS = OrlikSolomonAlgebra(R, M, ordering)
@@ -757,16 +770,17 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         EXAMPLES::
 
-            sage: M = matroids.CompleteGraphic(3)                                       # optional - sage.graphs
-            sage: M.groundset()                                                         # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: M = matroids.CompleteGraphic(3)
+            sage: M.groundset()
             frozenset({0, 1, 2})
-            sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
+            sage: G = SymmetricGroup(3)                                                 # needs sage.groups
             sage: def on_groundset(g, x):
             ....:     return g(x+1)-1
-            sage: OSG = M.orlik_solomon_algebra(QQ, invariant=(G,on_groundset))         # optional - sage.graphs sage.groups
+            sage: OSG = M.orlik_solomon_algebra(QQ, invariant=(G,on_groundset))         # needs sage.groups
             sage: act = lambda g: (OSG._basis_action(g,frozenset({0,1})),
             ....:                  OSG._basis_action(g,frozenset({0,2})))
-            sage: [act(g) for g in G]                                                   # optional - sage.graphs sage.groups
+            sage: [act(g) for g in G]                                                   # needs sage.groups
             [(OS{0, 1}, OS{0, 2}),
              (-OS{0, 2}, OS{0, 1} - OS{0, 2}),
              (-OS{0, 1} + OS{0, 2}, -OS{0, 1}),
@@ -776,26 +790,26 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         We also check that the ordering is respected::
 
-            sage: fset = frozenset({1,2})                                               # optional - sage.graphs sage.groups
-            sage: OS1 = M.orlik_solomon_algebra(QQ)                                     # optional - sage.graphs sage.groups
-            sage: OS1.subset_image(fset)                                                # optional - sage.graphs sage.groups
+            sage: fset = frozenset({1,2})                                               # needs sage.graphs sage.groups
+            sage: OS1 = M.orlik_solomon_algebra(QQ)                                     # needs sage.graphs sage.groups
+            sage: OS1.subset_image(fset)                                                # needs sage.graphs sage.groups
             -OS{0, 1} + OS{0, 2}
-            sage: OS2 = M.orlik_solomon_algebra(QQ, range(2,-1,-1))                     # optional - sage.graphs sage.groups
-            sage: OS2.subset_image(fset)                                                # optional - sage.graphs sage.groups
+            sage: OS2 = M.orlik_solomon_algebra(QQ, range(2,-1,-1))                     # needs sage.graphs sage.groups
+            sage: OS2.subset_image(fset)                                                # needs sage.graphs sage.groups
             OS{1, 2}
 
-            sage: OSG2 = M.orlik_solomon_algebra(QQ,                                    # optional - sage.graphs sage.groups
+            sage: OSG2 = M.orlik_solomon_algebra(QQ,                                    # needs sage.graphs sage.groups
             ....:                                invariant=(G,on_groundset),
             ....:                                ordering=range(2,-1,-1))
-            sage: g = G.an_element(); g                                                 # optional - sage.graphs sage.groups
+            sage: g = G.an_element(); g                                                 # needs sage.graphs sage.groups
             (2,3)
 
         This choice of ``g`` acting on this choice of ``fset`` reverses
         the sign::
 
-            sage: OSG._basis_action(g, fset)                                            # optional - sage.graphs sage.groups
+            sage: OSG._basis_action(g, fset)                                            # needs sage.graphs sage.groups
             OS{0, 1} - OS{0, 2}
-            sage: OSG2._basis_action(g, fset)                                           # optional - sage.graphs sage.groups
+            sage: OSG2._basis_action(g, fset)                                           # needs sage.graphs sage.groups
             -OS{1, 2}
         """
         OS = self._ambient

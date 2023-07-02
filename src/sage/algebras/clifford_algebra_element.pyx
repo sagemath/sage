@@ -945,6 +945,7 @@ cdef class CohomologyRAAGElement(CliffordAlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: C4 = graphs.CycleGraph(4)
             sage: A = groups.misc.RightAngledArtin(C4)
             sage: H = A.cohomology()
