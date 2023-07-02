@@ -50,9 +50,9 @@ class Tuples(Parent, UniqueRepresentation):
 
     ::
 
-        sage: K.<a> = GF(4, 'a')                                                        # optional - sage.rings.finite_rings
-        sage: mset = [x for x in K if x != 0]                                           # optional - sage.rings.finite_rings
-        sage: Tuples(mset,2).list()                                                     # optional - sage.rings.finite_rings
+        sage: K.<a> = GF(4, 'a')                                                        # needs sage.rings.finite_rings
+        sage: mset = [x for x in K if x != 0]                                           # needs sage.rings.finite_rings
+        sage: Tuples(mset,2).list()                                                     # needs sage.rings.finite_rings
         [(a, a), (a + 1, a), (1, a), (a, a + 1), (a + 1, a + 1), (1, a + 1),
          (a, 1), (a + 1, 1), (1, 1)]
     """
@@ -118,10 +118,10 @@ class Tuples(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = [1,2,3,4,5]
-            sage: Tuples(S,2).cardinality()                                             # optional - sage.libs.gap
+            sage: Tuples(S,2).cardinality()
             25
             sage: S = [1,1,2,3,4,5]
-            sage: Tuples(S,2).cardinality()                                             # optional - sage.libs.gap
+            sage: Tuples(S,2).cardinality()
             25
         """
         return ZZ(len(self._index_list)).__pow__(self.k)
@@ -141,9 +141,9 @@ class UnorderedTuples(Parent, UniqueRepresentation):
     EXAMPLES::
 
         sage: S = [1,2]
-        sage: UnorderedTuples(S,3).list()                                               # optional - sage.libs.gap
+        sage: UnorderedTuples(S,3).list()
         [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
-        sage: UnorderedTuples(["a","b","c"],2).list()                                   # optional - sage.libs.gap
+        sage: UnorderedTuples(["a","b","c"],2).list()
         [('a', 'a'), ('a', 'b'), ('a', 'c'), ('b', 'b'), ('b', 'c'),
          ('c', 'c')]
     """
@@ -187,12 +187,12 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = [1,2]
-            sage: UnorderedTuples(S,3).list()                                           # optional - sage.libs.gap
+            sage: UnorderedTuples(S,3).list()
             [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
-            sage: UnorderedTuples(["a","b","c"],2).list()                               # optional - sage.libs.gap
+            sage: UnorderedTuples(["a","b","c"],2).list()
             [('a', 'a'), ('a', 'b'), ('a', 'c'), ('b', 'b'), ('b', 'c'),
              ('c', 'c')]
-            sage: UnorderedTuples([1,1,2],3).list()                                     # optional - sage.libs.gap
+            sage: UnorderedTuples([1,1,2],3).list()
             [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
         """
         for ans in combinations_with_replacement(self._index_list, self.k):
@@ -203,7 +203,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = [1,2,3,4,5]
-            sage: UnorderedTuples(S,2).cardinality()                                    # optional - sage.libs.gap
+            sage: UnorderedTuples(S,2).cardinality()
             15
         """
         return binomial(len(self._index_list) + self.k - 1, self.k)

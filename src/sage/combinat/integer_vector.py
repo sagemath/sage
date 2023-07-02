@@ -91,11 +91,11 @@ def is_gale_ryser(r,s):
     EXAMPLES::
 
         sage: from sage.combinat.integer_vector import is_gale_ryser
-        sage: is_gale_ryser([4,2,2], [3,3,1,1])                                         # optional - sage.combinat
+        sage: is_gale_ryser([4,2,2], [3,3,1,1])                                         # needs sage.combinat
         True
-        sage: is_gale_ryser([4,2,1,1], [3,3,1,1])                                       # optional - sage.combinat
+        sage: is_gale_ryser([4,2,1,1], [3,3,1,1])                                       # needs sage.combinat
         True
-        sage: is_gale_ryser([3,2,1,1], [3,3,1,1])                                       # optional - sage.combinat
+        sage: is_gale_ryser([3,2,1,1], [3,3,1,1])                                       # needs sage.combinat
         False
 
     REMARK: In the literature, what we are calling a
@@ -206,14 +206,14 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [2,2,1]
         sage: p2 = [2,2,1]
-        sage: print(gale_ryser_theorem(p1, p2))     # not tested                        # optional - sage.combinat sage.modules
+        sage: print(gale_ryser_theorem(p1, p2))         # not tested                    # needs sage.combinat sage.modules
         [1 1 0]
         [1 0 1]
         [0 1 0]
-        sage: A = gale_ryser_theorem(p1, p2)                                            # optional - sage.combinat sage.modules
-        sage: rs = [sum(x) for x in A.rows()]                                           # optional - sage.combinat sage.modules
-        sage: cs = [sum(x) for x in A.columns()]                                        # optional - sage.combinat sage.modules
-        sage: p1 == rs; p2 == cs                                                        # optional - sage.combinat sage.modules
+        sage: A = gale_ryser_theorem(p1, p2)                                            # needs sage.combinat sage.modules
+        sage: rs = [sum(x) for x in A.rows()]                                           # needs sage.combinat sage.modules
+        sage: cs = [sum(x) for x in A.columns()]                                        # needs sage.combinat sage.modules
+        sage: p1 == rs; p2 == cs                                                        # needs sage.combinat sage.modules
         True
         True
 
@@ -223,27 +223,27 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [3,3,1,1]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # optional - sage.combinat sage.modules
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
         [1 1 1 0]
         [1 1 0 1]
         [1 0 0 0]
         [0 1 0 0]
         sage: p1 = [4,2,2]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # optional - sage.combinat sage.modules
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
         [1 1 1 1]
         [1 1 0 0]
         [1 1 0 0]
         sage: p1 = [4,2,2,0]
         sage: p2 = [3,3,1,1,0,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # optional - sage.combinat sage.modules
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
         [1 1 1 1 0 0]
         [1 1 0 0 0 0]
         [1 1 0 0 0 0]
         [0 0 0 0 0 0]
         sage: p1 = [3,3,2,1]
         sage: p2 = [3,2,2,1,1]
-        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))  # not tested         # optional - sage.combinat sage.modules
+        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))       # not tested, needs sage.combinat sage.modules
         [1 1 1 0 0]
         [1 1 0 0 1]
         [1 0 1 0 0]
@@ -252,7 +252,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
     With `0` in the sequences, and with unordered inputs::
 
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
-        sage: gale_ryser_theorem([3,3,0,1,1,0], [3,1,3,1,0], algorithm="ryser")         # optional - sage.combinat sage.modules
+        sage: gale_ryser_theorem([3,3,0,1,1,0], [3,1,3,1,0], algorithm="ryser")         # needs sage.combinat sage.modules
         [1 1 1 0 0]
         [1 0 1 1 0]
         [0 0 0 0 0]
@@ -260,7 +260,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         [0 0 1 0 0]
         [0 0 0 0 0]
         sage: p1 = [3,1,1,1,1]; p2 = [3,2,2,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # optional - sage.combinat sage.modules
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
         [1 1 1 0]
         [1 0 0 0]
         [1 0 0 0]
@@ -287,17 +287,17 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         ....:        print("Algorithm %s failed with this input:" % algorithm)
         ....:        print(s1, s2)
 
-        sage: for algorithm in ["gale", "ryser"]:             # long time               # optional - sage.combinat sage.modules
+        sage: for algorithm in ["gale", "ryser"]:       # long time                     # needs sage.combinat sage.modules
         ....:    for i in range(50):
         ....:       test_algorithm(algorithm, 3, 10)
 
     Null matrix::
 
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")                   # optional - sage.combinat sage.modules
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")                   # needs sage.combinat sage.modules
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="ryser")                  # optional - sage.combinat sage.modules
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="ryser")                  # needs sage.combinat sage.modules
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]
@@ -516,10 +516,10 @@ class IntegerVector(ClonableArray):
 
         EXAMPLES::
 
-            sage: SM = IntegerVectors()([2,0,1,0,2]).specht_module(QQ); SM              # optional - sage.combinat sage.modules
+            sage: SM = IntegerVectors()([2,0,1,0,2]).specht_module(QQ); SM              # needs sage.combinat sage.modules
             Specht module of [(0, 0), (0, 1), (2, 0), (4, 0), (4, 1)] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()                                        # optional - sage.combinat sage.modules
-            sage: s(SM.frobenius_image())                                               # optional - sage.combinat sage.modules
+            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.combinat sage.modules
+            sage: s(SM.frobenius_image())                                               # needs sage.combinat sage.modules
             s[2, 2, 1]
         """
         from sage.combinat.specht_module import SpechtModule
@@ -540,9 +540,9 @@ class IntegerVector(ClonableArray):
 
         EXAMPLES::
 
-            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()               # optional - sage.combinat sage.modules
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()               # needs sage.combinat sage.modules
             5
-            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))          # optional - sage.combinat sage.modules sage.rings.finite_rings
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))          # needs sage.combinat sage.modules sage.rings.finite_rings
             5
         """
         from sage.combinat.specht_module import specht_module_rank
@@ -593,7 +593,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
     Note that trailing zeros are ignored so that ``[3, 0]`` does not show
     up in the following list (since ``[3]`` does)::
 
-        sage: IntegerVectors(3, max_length=2).list()                                    # optional - sage.combinat
+        sage: IntegerVectors(3, max_length=2).list()
         [[3], [2, 1], [1, 2], [0, 3]]
 
     If ``n`` and ``k`` are both specified, then it returns the class
@@ -665,9 +665,9 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     An example showing the same output by using IntegerListsLex::
 
-        sage: IntegerVectors(4, max_length=2).list()                                    # optional - sage.combinat
+        sage: IntegerVectors(4, max_length=2).list()
         [[4], [3, 1], [2, 2], [1, 3], [0, 4]]
-        sage: list(IntegerListsLex(4, max_length=2))                                    # optional - sage.combinat
+        sage: list(IntegerListsLex(4, max_length=2))
         [[4], [3, 1], [2, 2], [1, 3], [0, 4]]
 
     .. SEEALSO::
@@ -1390,12 +1390,12 @@ class IntegerVectorsConstraints(IntegerVectors):
         """
         TESTS::
 
-            sage: [3,2,2,1] in IntegerVectors(8, 4, min_part=1)                         # optional - sage.combinat
+            sage: [3,2,2,1] in IntegerVectors(8, 4, min_part=1)                         # needs sage.combinat
             True
-            sage: [3,2,2,1] in IntegerVectors(8, 4, min_part=2)                         # optional - sage.combinat
+            sage: [3,2,2,1] in IntegerVectors(8, 4, min_part=2)                         # needs sage.combinat
             False
 
-            sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)                        # optional - sage.combinat
+            sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)                        # needs sage.combinat
             False
         """
         if isinstance(x, IntegerVector) and x.parent() is self:
@@ -1419,17 +1419,17 @@ class IntegerVectorsConstraints(IntegerVectors):
 
         EXAMPLES::
 
-            sage: IntegerVectors(3, 3, min_part=1).cardinality()                        # optional - sage.combinat
+            sage: IntegerVectors(3, 3, min_part=1).cardinality()
             1
-            sage: IntegerVectors(5, 3, min_part=1).cardinality()                        # optional - sage.combinat
+            sage: IntegerVectors(5, 3, min_part=1).cardinality()
             6
-            sage: IntegerVectors(13, 4, max_part=4).cardinality()                       # optional - sage.combinat
+            sage: IntegerVectors(13, 4, max_part=4).cardinality()
             20
-            sage: IntegerVectors(k=4, max_part=3).cardinality()                         # optional - sage.combinat
+            sage: IntegerVectors(k=4, max_part=3).cardinality()
             256
-            sage: IntegerVectors(k=3, min_part=2, max_part=4).cardinality()             # optional - sage.combinat
+            sage: IntegerVectors(k=3, min_part=2, max_part=4).cardinality()
             27
-            sage: IntegerVectors(13, 4, min_part=2, max_part=4).cardinality()           # optional - sage.combinat
+            sage: IntegerVectors(13, 4, min_part=2, max_part=4).cardinality()
             16
         """
         if self.k is None:
