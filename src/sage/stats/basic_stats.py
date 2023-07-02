@@ -198,6 +198,7 @@ def std(v, bias=False):
 
     EXAMPLES::
 
+        sage: # optional - sage.symbolic
         sage: std([1..6], bias=True)                                                    # optional - sage.symbolic
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.std is deprecated;
@@ -212,7 +213,7 @@ def std(v, bias=False):
         use numpy.mean or numpy.nanmean instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         1/2*sqrt(35/3)
-        sage: std([1..6], bias=False)
+        sage: std([1..6], bias=False)                                                   # optional - sage.symbolic
         sqrt(7/2)
         sage: std([e, pi])                                                              # optional - sage.symbolic
         sqrt(1/2)*abs(pi - e)
@@ -223,9 +224,11 @@ def std(v, bias=False):
         + (5*sqrt(2) - 10*I + 3)^2 + (5*sqrt(2) + 5*I - 6)^2)
         sage: std([RIF(1.0103, 1.0103), RIF(2)])
         0.6998235813403261?
-        sage: import numpy                                                                          # optional - numpy
-        sage: x = numpy.array([1,2,3,4,5])                                                          # optional - numpy
-        sage: std(x, bias=False)                                                                    # optional - numpy
+
+        sage: # optional - numpy
+        sage: import numpy                                                              # optional - numpy
+        sage: x = numpy.array([1,2,3,4,5])                                              # optional - numpy
+        sage: std(x, bias=False)                                                        # optional - numpy
         1.5811388300841898
         sage: x = stats.TimeSeries([1..100])                                            # optional - numpy
         sage: std(x)                                                                    # optional - numpy
