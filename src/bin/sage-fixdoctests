@@ -41,10 +41,12 @@ parser.add_argument("--venv", type=str, default='',
                     help="directory name of a venv where 'sage -t' is to be run")
 parser.add_argument("--environment", type=str, default='',
                     help="name of a module that provides the global environment for tests; implies --keep-both and --full-tracebacks")
+parser.add_argument("--no-test", type=str, default='',
+                    help="do not run the doctester, only rewrite '# optional/needs' tags; implies --only-tags")
 parser.add_argument("--full-tracebacks", default=False, action="store_true",
                     help="include full tracebacks rather than '...'")
 parser.add_argument("--only-tags", default=False, action="store_true",
-                    help="only add '# optional' tags where needed, ignore other failures")
+                    help="only add '# optional/needs' tags where needed, ignore other failures")
 parser.add_argument("--probe", metavar="FEATURES", type=str, default='',
                     help="check whether '# optional - FEATURES' tags are still needed, remove these")
 parser.add_argument("--keep-both", default=False, action="store_true",
@@ -298,30 +300,34 @@ else:
     inputs = outputs = args.filename
 
 # Test the doctester, putting the output of the test into sage's temporary directory
-executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
-environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
-probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
-lib_args = f'--only-lib ' if args.venv else ''
-doc_file = tmp_filename()
-if args.venv or environment_args:
-   input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
-   cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
-   print(f'Running "{cmdline}"')
-   if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
-       print(f'Doctester exited with error status {status}')
-       sys.exit(status)
+if not args.no_test:
+    executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
+    environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
+    probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
+    lib_args = f'--only-lib ' if args.venv else ''
+    doc_file = tmp_filename()
+    if args.venv or environment_args:
+       input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
+       cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
+       print(f'Running "{cmdline}"')
+       if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
+           print(f'Doctester exited with error status {status}')
+           sys.exit(status)
 
 for input, output in zip(inputs, outputs):
     if (skipfile_result := skipfile(input, True, log=print)) is True:
         continue
 
-    # Run the doctester, putting the output of the test into sage's temporary directory
-    cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
-    print(f'Running "{cmdline}"')
-    os.system(f'{cmdline} > {shlex.quote(doc_file)}')
+    if args.no_test:
+        doc_out = ''
+    else:
+        # Run the doctester, putting the output of the test into sage's temporary directory
+        cmdline = f'{shlex.quote(executable)} -t {environment_args}{probe_args}{lib_args}{shlex.quote(input)}'
+        print(f'Running "{cmdline}"')
+        os.system(f'{cmdline} > {shlex.quote(doc_file)}')
 
-    with open(doc_file, 'r') as doc:
-        doc_out = doc.read()
+        with open(doc_file, 'r') as doc:
+            doc_out = doc.read()
 
     # echo control messages
     for m in re.finditer('^Skipping .*', doc_out, re.MULTILINE):
