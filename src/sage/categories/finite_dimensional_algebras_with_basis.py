@@ -482,8 +482,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Z12 = Monoids().Finite().example(); Z12
                 An example of a finite multiplicative monoid: the integers modulo 12
                 sage: A = Z12.algebra(QQ)
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
-                sage: sorted(idempotents, key=str)
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()      # optional - sage.rings.number_field
+                sage: sorted(idempotents, key=str)                                      # optional - sage.rings.number_field
                 [-B[0] + 1/2*B[4] + 1/2*B[8],
                  1/2*B[4] - 1/2*B[8],
                  1/2*B[9] + 1/2*B[3] - B[0],
@@ -493,26 +493,26 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  1/4*B[1] - 1/2*B[9] - 1/2*B[3] + 1/4*B[11] + 1/4*B[5] + 1/4*B[7] + B[0] - 1/2*B[4] - 1/2*B[8],
                  1/4*B[1] - 1/4*B[5] + 1/4*B[7] - 1/4*B[11] - 1/2*B[4] + 1/2*B[8],
                  B[0]]
-                sage: sum(idempotents) == 1
+                sage: sum(idempotents) == 1                                             # optional - sage.rings.number_field
                 True
-                sage: all(e*e == e for e in idempotents)
+                sage: all(e*e == e for e in idempotents)                                # optional - sage.rings.number_field
                 True
-                sage: all(e*f == 0 and f*e == 0
+                sage: all(e*f == 0 and f*e == 0                                         # optional - sage.rings.number_field
                 ....:     for e in idempotents for f in idempotents if e != f)
                 True
 
             This is best tested with::
 
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)  # optional - sage.rings.number_field
                 True
 
             We construct orthogonal idempotents for the algebra of the
             `0`-Hecke monoid::
 
-                sage: from sage.monoids.hecke_monoid import HeckeMonoid
-                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)
+                sage: from sage.monoids.hecke_monoid import HeckeMonoid                     # optional - sage.groups
+                sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                        # optional - sage.groups
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()          # optional - sage.groups
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)  # optional - sage.groups
                 True
             """
             one = self.one()
@@ -666,7 +666,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Z12 = Monoids().Finite().example(); Z12
                 An example of a finite multiplicative monoid: the integers modulo 12
                 sage: A = Z12.algebra(QQ)                                               # optional - sage.modules
-                sage: A.cartan_invariants_matrix()                                      # optional - sage.modules
+                sage: A.cartan_invariants_matrix()                                      # optional - sage.modules sage.rings.number_fields
                 [1 0 0 0 0 0 0 0 0]
                 [0 1 0 0 0 0 0 0 0]
                 [0 0 2 0 0 0 0 0 0]
@@ -681,7 +681,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid                 # optional - sage.groups sage.modules
                 sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)                    # optional - sage.groups sage.modules
-                sage: A.cartan_invariants_matrix()                                      # optional - sage.groups sage.modules
+                sage: A.cartan_invariants_matrix()                                      # optional - sage.groups sage.modules sage.rings.number_field
                 [1 0 0 0 0 0 0 0]
                 [0 2 1 0 1 1 0 0]
                 [0 1 1 0 1 0 0 0]

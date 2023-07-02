@@ -1494,7 +1494,7 @@ cdef class Crystal_of_letters_type_E6_element(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # optional - sage.plot
     """
 
     def _repr_(self):
@@ -1751,7 +1751,7 @@ cdef class Crystal_of_letters_type_E6_element_dual(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # optional - sage.plot
     """
 
     def _repr_(self):
@@ -1911,7 +1911,7 @@ cdef class Crystal_of_letters_type_E7_element(LetterTuple):
         sage: all(b.e(i).f(i) == b for i in C.index_set() for b in C if b.e(i) is not None)
         True
         sage: G = C.digraph()
-        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)
+        sage: G.show(edge_labels=true, figsize=12, vertex_size=1)                       # optional - sage.plot
     """
 
     def weight(self):

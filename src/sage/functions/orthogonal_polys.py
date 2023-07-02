@@ -974,7 +974,7 @@ class Func_chebyshev_U(ChebyshevFunction):
             sage: chebyshev_U(x, x)._sympy_()
             chebyshevu(x, x)
             sage: maxima(chebyshev_U(2,x, hold=True))
-            3*((-(8*(1-_SAGE_VAR_x))/3)+(4*(1-_SAGE_VAR_x)^2)/3+1)
+            3*(...-...(8*(1-_SAGE_VAR_x))/3)+(4*(1-_SAGE_VAR_x)^2)/3+1)
             sage: maxima(chebyshev_U(n,x, hold=True))
             chebyshev_u(_SAGE_VAR_n,_SAGE_VAR_x)
         """

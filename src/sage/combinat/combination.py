@@ -148,15 +148,15 @@ def Combinations(mset, k=None):
 
     It is possible to take combinations of Sage objects::
 
-        sage: Combinations([vector([1,1]), vector([2,2]), vector([3,3])], 2).list()
+        sage: Combinations([vector([1,1]), vector([2,2]), vector([3,3])], 2).list()     # optional - sage.modules
         [[(1, 1), (2, 2)], [(1, 1), (3, 3)], [(2, 2), (3, 3)]]
 
     TESTS:
 
     We check that the code works even for non mutable objects::
 
-        sage: l = [vector((0,0)), vector((0,1))]
-        sage: Combinations(l).list()
+        sage: l = [vector((0,0)), vector((0,1))]                                        # optional - sage.modules
+        sage: Combinations(l).list()                                                    # optional - sage.modules
         [[], [(0, 0)], [(0, 1)], [(0, 0), (0, 1)]]
     """
     # Check to see if everything in mset is unique
@@ -269,7 +269,7 @@ class Combinations_mset(Parent):
 
             sage: Combinations([1,2,3]).cardinality()
             8
-            sage: Combinations(['a','a','b']).cardinality()
+            sage: Combinations(['a','a','b']).cardinality()                             # optional - sage.libs.gap
             6
         """
         c = 0
@@ -431,7 +431,7 @@ class Combinations_msetk(Parent):
         EXAMPLES::
 
             sage: mset = [1,1,2,3,4,4,5]
-            sage: Combinations(mset,2).cardinality()
+            sage: Combinations(mset,2).cardinality()                                    # optional - sage.libs.gap
             12
         """
         from sage.libs.gap.libgap import libgap
