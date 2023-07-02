@@ -122,7 +122,7 @@ def DisjointSet(arg):
 
     or an iterable::
 
-        sage: DisjointSet(4.3)
+        sage: DisjointSet(4.3)                                                          # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: 'sage.rings.real_mpfr.RealLiteral' object is not iterable

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs numpy sage.modules
 """
 Hidden Markov Models
 

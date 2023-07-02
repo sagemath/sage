@@ -883,6 +883,7 @@ def all_features():
             sage__modules(),
             sage__numerical__mip(),
             sage__plot(),
+            sage__rings__complex_double(),
             sage__rings__finite_rings(),
             sage__rings__function_field(),
             sage__rings__number_field(),

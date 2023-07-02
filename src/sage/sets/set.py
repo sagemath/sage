@@ -117,6 +117,7 @@ def Set(X=None, category=None):
 
     ::
 
+        sage: # needs sage.symbolic
         sage: d = {Set([2*I, 1 + I]): 10}
         sage: d                  # key is randomly ordered
         {{I + 1, 2*I}: 10}
@@ -586,8 +587,8 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
         EXAMPLES::
 
-            sage: R = Set(RR)
-            sage: R.an_element()  # indirect doctest
+            sage: R = Set(RR)                                                           # optional - sage.rings.real_mpfr
+            sage: R.an_element()  # indirect doctest                                    # optional - sage.rings.real_mpfr
             1.00000000000000
 
             sage: F = Set([1, 2, 3])
@@ -1185,8 +1186,8 @@ class Set_object_enumerated(Set_object):
             sage: X.difference(Y)
             {3, 4}
             sage: Z = Set(ZZ)
-            sage: W = Set([2.5, 4, 5, 6])
-            sage: W.difference(Z)
+            sage: W = Set([2.5, 4, 5, 6])                                               # optional - sage.rings.real_mpfr
+            sage: W.difference(Z)                                                       # optional - sage.rings.real_mpfr
             {2.50000000000000}
         """
         if not isinstance(other, Set_object_enumerated):

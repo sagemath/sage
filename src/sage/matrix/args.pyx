@@ -211,19 +211,19 @@ cdef class MatrixArgs:
         sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized()            # optional - sage.libs.pari
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
-        sage: ma.matrix()
+        sage: ma.matrix()                                                               # optional - sage.libs.pari
         [1 2]
         [3 4]
         sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized()      # optional - sage.libs.pari
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
-        sage: ma.matrix()
+        sage: ma.matrix()                                                               # optional - sage.libs.pari
         [1 2]
         [3 4]
         sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized()            # optional - sage.libs.pari
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Rational Field; typ=SCALAR; entries=3/5>
-        sage: ma.matrix()
+        sage: ma.matrix()                                                               # optional - sage.libs.pari
         [3/5   0]
         [  0 3/5]
         sage: ma = MatrixArgs(entries=matrix(2,2)); ma.finalized()
@@ -249,7 +249,7 @@ cdef class MatrixArgs:
         sage: ma = MatrixArgs(array([[1,2],[3,4]])); ma.finalized()                     # optional - numpy
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Integer Ring; typ=SEQ_SEQ; entries=array([[1, 2], [3, 4]])>
-        sage: ma.matrix()
+        sage: ma.matrix()                                                               # optional - numpy
         [1 2]
         [3 4]
         sage: ma = MatrixArgs(array([[1.,2.],[3.,4.]])); ma.finalized()                 # optional - numpy
@@ -263,7 +263,7 @@ cdef class MatrixArgs:
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Field
          with 20 bits of precision; typ=MATRIX; entries=[1.0 2.0]
                                                         [3.0 4.0]>
-        sage: ma.matrix()
+        sage: ma.matrix()                                                               # optional - numpy
         [1.0000 2.0000]
         [3.0000 4.0000]
         sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized()                     # optional - sage.graphs
@@ -271,7 +271,7 @@ cdef class MatrixArgs:
          over Integer Ring; typ=MATRIX; entries=[0 1 1]
                                                 [1 0 1]
                                                 [1 1 0]>
-        sage: ma.matrix()
+        sage: ma.matrix()                                                               # optional - sage.graphs
         [0 1 1]
         [1 0 1]
         [1 1 0]

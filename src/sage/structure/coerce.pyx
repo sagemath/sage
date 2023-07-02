@@ -238,7 +238,7 @@ cpdef py_scalar_to_element(x):
 
         sage: from sage.structure.coerce import py_scalar_parent
         sage: elt = [True, int(42), float(42), complex(42)]
-        sage: for x in elt:
+        sage: for x in elt:                                                             # optional - sage.rings.complex_double
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
 
         sage: import numpy                                                              # optional - numpy
@@ -254,7 +254,7 @@ cpdef py_scalar_to_element(x):
 
         sage: elt = [gmpy2.mpz(42), gmpy2.mpq('3/4'),
         ....:        gmpy2.mpfr(42.57), gmpy2.mpc(int(42), int(42))]
-        sage: for x in elt:
+        sage: for x in elt:                                                             # optional - sage.rings.complex_double
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
     """
     if isinstance(x, Element):
@@ -469,15 +469,16 @@ cpdef bint is_mpmath_type(t):
 
     EXAMPLES::
 
+        sage: # optional - mpmath
         sage: from sage.structure.coerce import is_mpmath_type
         sage: is_mpmath_type(int)
         False
-        sage: import sage.libs.mpmath                                                             # optional - mpmath
-        sage: is_mpmath_type(sage.libs.mpmath.mpc(2))                                             # optional - mpmath
+        sage: import sage.libs.mpmath.all                                                             # optional - mpmath
+        sage: is_mpmath_type(sage.libs.mpmath.all.mpc(2))                                             # optional - mpmath
         False
-        sage: is_mpmath_type(type(sage.libs.mpmath.mpc(2)))                                       # optional - mpmath
+        sage: is_mpmath_type(type(sage.libs.mpmath.all.mpc(2)))                                       # optional - mpmath
         True
-        sage: is_mpmath_type(type(sage.libs.mpmath.mpf(2)))                                       # optional - mpmath
+        sage: is_mpmath_type(type(sage.libs.mpmath.all.mpf(2)))                                       # optional - mpmath
         True
     """
     return isinstance(t, type) and \
