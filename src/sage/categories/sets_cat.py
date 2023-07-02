@@ -1070,7 +1070,7 @@ class Sets(Category_singleton):
 
             EXAMPLES::
 
-               sage: CDF.an_element()
+               sage: CDF.an_element()                                                   # optional - sage.rings.complex_double
                1.0*I
                sage: ZZ[['t']].an_element()
                t

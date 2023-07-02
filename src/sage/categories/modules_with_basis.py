@@ -391,10 +391,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: phi.category_for()  # todo: not implemented (CC is currently not in Modules(RR)!)  # optional - sage.modules
                 Category of vector spaces over Real Field with 53 bits of precision
 
-                sage: Y = CombinatorialFreeModule(CC['q'], ['z'])                       # optional - sage.modules
-                sage: z = Y.monomial('z')                                               # optional - sage.modules
-                sage: phi = X.module_morphism(on_basis=on_basis, codomain=Y)            # optional - sage.modules
-                sage: phi(v)                                                            # optional - sage.modules
+                sage: Y = CombinatorialFreeModule(CC['q'], ['z'])                       # needs sage.modules
+                sage: z = Y.monomial('z')                                               # needs sage.modules
+                sage: phi = X.module_morphism(on_basis=on_basis, codomain=Y)            # needs sage.modules
+                sage: phi(v)                                                            # needs sage.modules sage.symbolic
                 (3.00000000000000+2.00000000000000*I)*B['z']
 
             Of course, there should be a coercion between the
