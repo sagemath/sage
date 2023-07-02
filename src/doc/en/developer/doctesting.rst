@@ -1467,6 +1467,10 @@ This mode is suitable for mostly unattended runs on many files.
    appear before ``# optional``, any comments that may be mixed with
    the feature annotations will be lost.
 
+If you don't want to update any doctests, you can use the
+option ``--no-test``. In this mode, the doctest fixer does not run
+the doctester and only normalizes the style of the ``# optional`` annotations.
+
 
 Use in virtual environments
 ---------------------------
