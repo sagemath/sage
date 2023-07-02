@@ -1050,9 +1050,9 @@ class SageDocTestParser(doctest.DocTestParser):
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
                                 continue
-                            if all(tag in self.file_optional_tags for tag in extra):
+                            if all(tag in persistent_optional_tags for tag in extra):
                                 # don't probe if test is only conditional
-                                # on file-level tags
+                                # on file-level or block-level tags
                                 continue
                             if self.probed_tags is True:
                                 item.probed_tags = extra
