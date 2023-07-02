@@ -4,7 +4,7 @@ from sage.libs.gmp.types cimport mpz_t
 cdef class MultiModularBasis_base():
     cdef int      n
     cdef mod_int* moduli
-    cdef mpz_t*   partial_products
+    cdef mpz_t* partial_products
     cdef mod_int* C # precomputed values for CRT
     cdef mpz_t    product
     cdef mpz_t    half_product
