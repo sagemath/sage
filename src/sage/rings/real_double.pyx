@@ -103,7 +103,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
     EXAMPLES::
 
-        sage: RR == RDF
+        sage: RR == RDF                                                                 # needs sage.rings.real_mpfr
         False
         sage: RDF == RealDoubleField()    # RDF is the shorthand
         True
@@ -281,7 +281,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: RDF.complex_field()
+            sage: RDF.complex_field()                                                   # needs sage.rings.complex_double
             Complex Double Field
         """
         from sage.rings.complex_double import CDF
@@ -294,7 +294,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: RDF.algebraic_closure()
+            sage: RDF.algebraic_closure()                                               # needs sage.rings.complex_double
             Complex Double Field
         """
         from sage.rings.complex_double import CDF
@@ -320,11 +320,11 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             9499294.0
             sage: RDF.coerce(61/3)
             20.333333333333332
-            sage: parent(RDF(3) + CDF(5))
+            sage: parent(RDF(3) + CDF(5))                                               # needs sage.rings.complex_double
             Complex Double Field
-            sage: parent(CDF(5) + RDF(3))
+            sage: parent(CDF(5) + RDF(3))                                               # needs sage.rings.complex_double
             Complex Double Field
-            sage: CDF.gen(0) + 5.0
+            sage: CDF.gen(0) + 5.0                                                      # needs sage.rings.complex_double
             5.0 + 1.0*I
             sage: RLF(2/3) + RDF(1)
             1.6666666666666665
@@ -1027,9 +1027,9 @@ cdef class RealDoubleElement(FieldElement):
             3.1415926535897931*x
             sage: from sage.misc.sage_input import SageInputBuilder
             sage: sib = SageInputBuilder()
-            sage: RDF(22/7)._sage_input_(sib, True)
+            sage: RDF(22/7)._sage_input_(sib, True)                                     # needs sage.sage.rings.real_mpfr
             {atomic:3.1428571428571428}
-            sage: RDF(22/7)._sage_input_(sib, False)
+            sage: RDF(22/7)._sage_input_(sib, False)                                    # needs sage.sage.rings.real_mpfr
             {call: {atomic:RDF}({atomic:3.1428571428571428})}
         """
         cdef bint isinf = libc.math.isinf(self._value)
