@@ -9686,6 +9686,7 @@ cdef class Matrix(Matrix1):
 
         Hermitian matrices are normal.  ::
 
+            sage: # needs sage.symbolic
             sage: A = matrix(QQ, 5, 5, range(25)) + I*matrix(QQ, 5, 5, range(0, 50, 2))
             sage: B = A*A.conjugate_transpose()
             sage: B.is_hermitian()
@@ -9695,6 +9696,7 @@ cdef class Matrix(Matrix1):
 
         Circulant matrices are normal.  ::
 
+            sage: # needs sage.graphs
             sage: G = graphs.CirculantGraph(20, [3, 7])
             sage: D = digraphs.Circuit(20)
             sage: A = 3*D.adjacency_matrix() - 5*G.adjacency_matrix()
@@ -9859,6 +9861,7 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: M = random_matrix(CC, 5, 7)
             sage: for i in range(5):  M[i,i] = 0
             sage: M[4, 0] = M[0, 6] = M[4, 6] = 0
@@ -9868,6 +9871,7 @@ cdef class Matrix(Matrix1):
         You can use :meth:`~sage.repl.image.Image.save` to save the
         resulting image::
 
+            sage: # needs - pillow sage.rings.real_mpfr
             sage: filename = tmp_filename(ext='.png')
             sage: img.save(filename)
             sage: with open(filename, 'rb') as fobj:
