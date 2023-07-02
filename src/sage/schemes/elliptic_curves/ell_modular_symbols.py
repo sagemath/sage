@@ -129,8 +129,8 @@ def modular_symbol_space(E, sign, base_ring, bound=None):
 
         sage: from sage.schemes.elliptic_curves.ell_modular_symbols import modular_symbol_space
         sage: E = EllipticCurve('11a1')
-        sage: M = modular_symbol_space(E, -1, GF(37))                                   # optional - sage.rings.finite_rings
-        sage: M                                                                         # optional - sage.rings.finite_rings
+        sage: M = modular_symbol_space(E, -1, GF(37))                                   # needs sage.rings.finite_rings
+        sage: M                                                                         # needs sage.rings.finite_rings
         Modular Symbols space of dimension 1 for Gamma_0(11) of weight 2 with sign -1
          over Finite Field of size 37
     """

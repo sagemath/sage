@@ -350,25 +350,25 @@ def cm_j_invariants(K, proof=None):
 
     Over imaginary quadratic fields there are no more than over `QQ`::
 
-        sage: cm_j_invariants(QuadraticField(-1, 'i'))                                  # optional - sage.rings.number_field
+        sage: cm_j_invariants(QuadraticField(-1, 'i'))                                  # needs sage.rings.number_field
         [-262537412640768000, -147197952000, -884736000, -12288000, -884736,
          -32768, -3375, 0, 1728, 8000, 54000, 287496, 16581375]
 
     Over real quadratic fields there may be more, for example::
 
-        sage: len(cm_j_invariants(QuadraticField(5, 'a')))                              # optional - sage.rings.number_field
+        sage: len(cm_j_invariants(QuadraticField(5, 'a')))                              # needs sage.rings.number_field
         31
 
     Over number fields K of many higher degrees this also works::
 
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 2)                                              # optional - sage.rings.number_field
-        sage: cm_j_invariants(K)                                                        # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 2)                                              # needs sage.rings.number_field
+        sage: cm_j_invariants(K)                                                        # needs sage.rings.number_field
         [-262537412640768000, -147197952000, -884736000, -884736, -32768,
          8000, -3375, 16581375, 1728, 287496, 0, 54000, -12288000,
          31710790944000*a^2 + 39953093016000*a + 50337742902000]
-        sage: K.<a> = NumberField(x^4 - 2)                                              # optional - sage.rings.number_field
-        sage: len(cm_j_invariants(K))                                                   # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^4 - 2)                                              # needs sage.rings.number_field
+        sage: len(cm_j_invariants(K))                                                   # needs sage.rings.number_field
         23
     """
     return sorted(j for D, f, j in cm_j_invariants_and_orders(K, proof=proof))
@@ -400,7 +400,7 @@ def cm_j_invariants_and_orders(K, proof=None):
 
     Over an imaginary quadratic field there are no more than over `QQ`::
 
-        sage: cm_j_invariants_and_orders(QuadraticField(-1, 'i'))                       # optional - sage.rings.number_field
+        sage: cm_j_invariants_and_orders(QuadraticField(-1, 'i'))                       # needs sage.rings.number_field
         [(-163, 1, -262537412640768000), (-67, 1, -147197952000),
          (-43, 1, -884736000), (-19, 1, -884736), (-11, 1, -32768),
          (-8, 1, 8000), (-7, 1, -3375), (-7, 2, 16581375), (-4, 1, 1728),
@@ -408,9 +408,9 @@ def cm_j_invariants_and_orders(K, proof=None):
 
     Over real quadratic fields there may be more::
 
-        sage: v = cm_j_invariants_and_orders(QuadraticField(5,'a')); len(v)             # optional - sage.rings.number_field
+        sage: v = cm_j_invariants_and_orders(QuadraticField(5,'a')); len(v)             # needs sage.rings.number_field
         31
-        sage: [(D, f) for D, f, j in v if j not in QQ]                                  # optional - sage.rings.number_field
+        sage: [(D, f) for D, f, j in v if j not in QQ]                                  # needs sage.rings.number_field
         [(-235, 1), (-235, 1), (-115, 1), (-115, 1), (-40, 1), (-40, 1),
          (-35, 1), (-35, 1), (-20, 1), (-20, 1), (-15, 1), (-15, 1), (-15, 2),
          (-15, 2), (-4, 5), (-4, 5), (-3, 5), (-3, 5)]
@@ -418,8 +418,8 @@ def cm_j_invariants_and_orders(K, proof=None):
     Over number fields K of many higher degrees this also works::
 
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 2)                                              # optional - sage.rings.number_field
-        sage: cm_j_invariants_and_orders(K)                                             # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 2)                                              # needs sage.rings.number_field
+        sage: cm_j_invariants_and_orders(K)                                             # needs sage.rings.number_field
         [(-163, 1, -262537412640768000), (-67, 1, -147197952000),
          (-43, 1, -884736000), (-19, 1, -884736), (-11, 1, -32768),
          (-8, 1, 8000), (-7, 1, -3375), (-7, 2, 16581375), (-4, 1, 1728),
@@ -920,12 +920,12 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
         sage: is_cm_j_invariant(8000)
         (True, (-8, 1))
 
-        sage: K.<a> = QuadraticField(5)                                                    # optional - sage.rings.number_field
-        sage: is_cm_j_invariant(282880*a + 632000)                                         # optional - sage.rings.number_field
+        sage: K.<a> = QuadraticField(5)                                                 # needs sage.rings.number_field
+        sage: is_cm_j_invariant(282880*a + 632000)                                      # needs sage.rings.number_field
         (True, (-20, 1))
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^3 - 2)                                                 # optional - sage.rings.number_field
-        sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)    # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 2)                                              # needs sage.rings.number_field
+        sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)             # needs sage.rings.number_field
         (True, (-3, 6))
 
     An example of large degree.  This is only possible using the default algorithm::
