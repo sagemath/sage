@@ -224,6 +224,7 @@ def is_chevie_available():
 
     EXAMPLES::
 
+        sage: # needs sage.groups
         sage: from sage.combinat.root_system.reflection_group_real import is_chevie_available
         sage: is_chevie_available() # random
         False

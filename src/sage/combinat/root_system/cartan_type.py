@@ -544,7 +544,7 @@ class CartanTypeFactory(SageObject):
             sage: CT = CartanType([['A',2]])
             sage: CT.is_irreducible()
             True
-            sage: CT.cartan_matrix()
+            sage: CT.cartan_matrix()                                                    # optional - sage.graphs
             [ 2 -1]
             [-1  2]
             sage: CT = CartanType(['A2'])
@@ -1248,7 +1248,7 @@ class CartanType_abstract():
             O=<=O---O=<=O
             0   1   2   3
             BC3~
-            sage: ct.subtype([1,2,3])
+            sage: ct.subtype([1,2,3])                                                   # optional - sage.graphs
             ['C', 3]
         """
         return self.cartan_matrix().subtype(index_set).cartan_type()
@@ -1514,8 +1514,8 @@ class CartanType_abstract():
 
         EXAMPLES::
 
-            sage: D = CartanMatrix([[2, -3], [-2, 2]]).dynkin_diagram()
-            sage: D._default_folded_cartan_type()
+            sage: D = CartanMatrix([[2, -3], [-2, 2]]).dynkin_diagram()                 # optional - sage.graphs
+            sage: D._default_folded_cartan_type()                                       # optional - sage.graphs
             Dynkin diagram of rank 2 as a folding of  Dynkin diagram of rank 2
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
@@ -1556,7 +1556,7 @@ class CartanType_crystallographic(CartanType_abstract):
         The label option is useful to visualize various statistics on
         the nodes of the Dynkin diagram::
 
-            sage: a = cartan_type.col_annihilator(); a
+            sage: a = cartan_type.col_annihilator(); a                                  # optional - sage.graphs
             Finite family {0: 1, 1: 1, 2: 2, 3: 2, 4: 2, 5: 2}
             sage: print(CartanType(['B',5,1]).ascii_art(label=a.__getitem__))           # optional - sage.graphs
                 O 1
@@ -1622,7 +1622,7 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
-            sage: CartanType(['A',4]).cartan_matrix()
+            sage: CartanType(['A',4]).cartan_matrix()                                   # optional - sage.graphs
             [ 2 -1  0  0]
             [-1  2 -1  0]
             [ 0 -1  2 -1]
@@ -1687,7 +1687,7 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
-            sage: CartanType(["B",5]).symmetrizer()
+            sage: CartanType(["B",5]).symmetrizer()                                     # optional - sage.graphs
             Finite family {1: 2, 2: 2, 3: 2, 4: 2, 5: 1}
 
         Here is a neat trick to visualize it better::
@@ -2094,7 +2094,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: RootSystem(['C',2,1]).cartan_type().acheck()
+            sage: RootSystem(['C',2,1]).cartan_type().acheck()                          # optional - sage.graphs
             Finite family {0: 1, 1: 1, 2: 1}
             sage: RootSystem(['D',4,1]).cartan_type().acheck()
             Finite family {0: 1, 1: 1, 2: 2, 3: 1, 4: 1}
@@ -2143,7 +2143,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: RootSystem(['C',2,1]).cartan_type().a()
+            sage: RootSystem(['C',2,1]).cartan_type().a()                               # optional - sage.graphs
             Finite family {0: 1, 1: 2, 2: 1}
             sage: RootSystem(['D',4,1]).cartan_type().a()
             Finite family {0: 1, 1: 1, 2: 2, 3: 1, 4: 1}
@@ -2172,7 +2172,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: RootSystem(['C',2,1]).cartan_type().c()
+            sage: RootSystem(['C',2,1]).cartan_type().c()                               # optional - sage.graphs
             Finite family {0: 1, 1: 2, 2: 1}
             sage: RootSystem(['D',4,1]).cartan_type().c()
             Finite family {0: 1, 1: 1, 2: 1, 3: 1, 4: 1}
@@ -2228,7 +2228,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
-            sage: CartanType(['C',2,1]).translation_factors()
+            sage: CartanType(['C',2,1]).translation_factors()                           # optional - sage.graphs
             Finite family {0: 1, 1: 2, 2: 1}
             sage: CartanType(['C',2,1]).dual().translation_factors()
             Finite family {0: 1, 1: 1, 2: 1}
