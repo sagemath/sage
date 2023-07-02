@@ -1671,7 +1671,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                                          for pos in leading_positions]
         # leading positions should not have duplicates, which is equivalent to:
         # once sorted, it doesn't contain a pair of equal successive entries
-        # (we do not sort if we want to test
         if not ordered:
             leading_positions.sort()
         # check that there is no zero vector, if it is forbidden
