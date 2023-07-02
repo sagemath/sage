@@ -644,8 +644,15 @@ cdef class GapElement(RingElement):
             ...
             GAPError: Error, no method found! Error, no 1st choice method found for `in' on 2 arguments
         """
-        GAP_IN = libgap.eval(r'\in')
-        return GAP_IN(other, self).sage()
+        cdef bint result = False
+        sig_on()
+        try:
+            GAP_Enter()
+            result = GAP_IN((<GapElement>other).value, self.value)
+        finally:
+            GAP_Leave()
+            sig_off()
+        return result
 
     cpdef _type_number(self):
         """
