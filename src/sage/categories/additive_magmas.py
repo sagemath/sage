@@ -283,7 +283,7 @@ class AdditiveMagmas(Category_singleton):
             elements as lowercase ASCII letters.  ::
 
                 sage: R = IntegerModRing(5)
-                sage: R.addition_table()                                                # optional - sage.modules
+                sage: R.addition_table()                                                # needs sage.modules
                 +  a b c d e
                  +----------
                 a| a b c d e
@@ -298,7 +298,7 @@ class AdditiveMagmas(Category_singleton):
             ``digits`` will include leading zeros as padding.  ::
 
                 sage: R = IntegerModRing(11)
-                sage: P = R.addition_table(names='elements'); P                         # optional - sage.modules
+                sage: P = R.addition_table(names='elements'); P                         # needs sage.modules
                  +   0  1  2  3  4  5  6  7  8  9 10
                   +---------------------------------
                  0|  0  1  2  3  4  5  6  7  8  9 10
@@ -313,7 +313,7 @@ class AdditiveMagmas(Category_singleton):
                  9|  9 10  0  1  2  3  4  5  6  7  8
                 10| 10  0  1  2  3  4  5  6  7  8  9
 
-                sage: T = R.addition_table(names='digits'); T                           # optional - sage.modules
+                sage: T = R.addition_table(names='digits'); T                           # needs sage.modules
                 +  00 01 02 03 04 05 06 07 08 09 10
                   +---------------------------------
                 00| 00 01 02 03 04 05 06 07 08 09 10
@@ -333,7 +333,7 @@ class AdditiveMagmas(Category_singleton):
 
                 sage: S = IntegerModRing(7)
                 sage: elts = [0, 3, 6, 2, 5, 1, 4]
-                sage: S.addition_table(elements=elts)                                   # optional - sage.modules
+                sage: S.addition_table(elements=elts)                                   # needs sage.modules
                 +  a b c d e f g
                  +--------------
                 a| a b c d e f g
@@ -354,7 +354,7 @@ class AdditiveMagmas(Category_singleton):
 
                 sage: T = IntegerModRing(12)
                 sage: elts = [0, 3, 6, 9]
-                sage: T.addition_table(names='elements', elements=elts)                 # optional - sage.modules
+                sage: T.addition_table(names='elements', elements=elts)                 # needs sage.modules
                 +  0 3 6 9
                  +--------
                 0| 0 3 6 9
@@ -368,15 +368,15 @@ class AdditiveMagmas(Category_singleton):
             comprehensive documentation. ::
 
                 sage: R = IntegerModRing(3)
-                sage: T = R.addition_table()                                            # optional - sage.modules
-                sage: T.column_keys()                                                   # optional - sage.modules
+                sage: T = R.addition_table()                                            # needs sage.modules
+                sage: T.column_keys()                                                   # needs sage.modules
                 (0, 1, 2)
-                sage: sorted(T.translation().items())                                   # optional - sage.modules
+                sage: sorted(T.translation().items())                                   # needs sage.modules
                 [('a', 0), ('b', 1), ('c', 2)]
-                sage: T.change_names(['x', 'y', 'z'])                                   # optional - sage.modules
-                sage: sorted(T.translation().items())                                   # optional - sage.modules
+                sage: T.change_names(['x', 'y', 'z'])                                   # needs sage.modules
+                sage: sorted(T.translation().items())                                   # needs sage.modules
                 [('x', 0), ('y', 1), ('z', 2)]
-                sage: T                                                                 # optional - sage.modules
+                sage: T                                                                 # needs sage.modules
                 +  x y z
                  +------
                 x| x y z
@@ -473,16 +473,16 @@ class AdditiveMagmas(Category_singleton):
                 r"""
                 EXAMPLES::
 
-                    sage: G5 = GF(5); G8 = GF(4, 'x'); GG = G5.cartesian_product(G8)    # optional - sage.rings.finite_rings
-                    sage: e = GG((G5(1), G8.primitive_element())); e                    # optional - sage.rings.finite_rings
+                    sage: G5 = GF(5); G8 = GF(4, 'x'); GG = G5.cartesian_product(G8)    # needs sage.rings.finite_rings
+                    sage: e = GG((G5(1), G8.primitive_element())); e                    # needs sage.rings.finite_rings
                     (1, x)
-                    sage: e + e                                                         # optional - sage.rings.finite_rings
+                    sage: e + e                                                         # needs sage.rings.finite_rings
                     (2, 0)
-                    sage: e = groups.misc.AdditiveCyclic(8)                             # optional - sage.rings.finite_rings
-                    sage: x = e.cartesian_product(e)((e(1), e(2)))                      # optional - sage.rings.finite_rings
-                    sage: x                                                             # optional - sage.rings.finite_rings
+                    sage: e = groups.misc.AdditiveCyclic(8)                             # needs sage.rings.finite_rings
+                    sage: x = e.cartesian_product(e)((e(1), e(2)))                      # needs sage.rings.finite_rings
+                    sage: x                                                             # needs sage.rings.finite_rings
                     (1, 2)
-                    sage: 4 * x                                                         # optional - sage.rings.finite_rings
+                    sage: 4 * x                                                         # needs sage.rings.finite_rings
                     (4, 0)
                 """
                 return self.parent()._cartesian_product_of_elements(
@@ -521,8 +521,8 @@ class AdditiveMagmas(Category_singleton):
                     sage: S = CommutativeAdditiveSemigroups().example(); S
                     An example of a commutative semigroup:
                      the free commutative semigroup generated by ('a', 'b', 'c', 'd')
-                    sage: A = S.algebra(QQ)                                             # optional - sage.modules
-                    sage: A.algebra_generators()                                        # optional - sage.modules
+                    sage: A = S.algebra(QQ)                                             # needs sage.modules
+                    sage: A.algebra_generators()                                        # needs sage.modules
                     Family (B[a], B[b], B[c], B[d])
 
                 .. TODO::
@@ -547,9 +547,9 @@ class AdditiveMagmas(Category_singleton):
                     sage: S = CommutativeAdditiveSemigroups().example(); S
                     An example of a commutative semigroup:
                      the free commutative semigroup generated by ('a', 'b', 'c', 'd')
-                    sage: A = S.algebra(QQ)                                             # optional - sage.modules
-                    sage: a, b, c, d = A.algebra_generators()                           # optional - sage.modules
-                    sage: a * d * b                                                     # optional - sage.modules
+                    sage: A = S.algebra(QQ)                                             # needs sage.modules
+                    sage: a, b, c, d = A.algebra_generators()                           # needs sage.modules
+                    sage: a * d * b                                                     # needs sage.modules
                     B[a + b + d]
 
                 .. TODO::
@@ -724,10 +724,11 @@ class AdditiveMagmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: A = AdditiveAbelianGroup([3, 3])                              # optional - sage.groups
-                    sage: A in AdditiveMagmas()                                         # optional - sage.groups
+                    sage: # needs sage.modules
+                    sage: A = AdditiveAbelianGroup([3, 3])
+                    sage: A in AdditiveMagmas()
                     True
-                    sage: A.is_empty()                                                  # optional - sage.groups
+                    sage: A.is_empty()
                     False
 
                     sage: B = CommutativeAdditiveMonoids().example()
@@ -739,7 +740,7 @@ class AdditiveMagmas(Category_singleton):
                 We check that the method ``is_empty`` is inherited from this
                 category in both examples above::
 
-                    sage: A.is_empty.__module__                                         # optional - sage.groups
+                    sage: A.is_empty.__module__                                         # needs sage.modules
                     'sage.categories.additive_magmas'
                     sage: B.is_empty.__module__
                     'sage.categories.additive_magmas'
@@ -807,9 +808,9 @@ class AdditiveMagmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: F = CombinatorialFreeModule(QQ, ['a', 'b'])                   # optional - sage.modules
-                    sage: a, b = F.basis()                                              # optional - sage.modules
-                    sage: a - b                                                         # optional - sage.modules
+                    sage: F = CombinatorialFreeModule(QQ, ['a', 'b'])                   # needs sage.modules
+                    sage: a, b = F.basis()                                              # needs sage.modules
+                    sage: a - b                                                         # needs sage.modules
                     B['a'] - B['b']
 
                 TESTS:
@@ -833,21 +834,21 @@ class AdditiveMagmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: F = CombinatorialFreeModule(QQ, ['a', 'b'])                   # optional - sage.modules
-                    sage: a, b = F.basis()                                              # optional - sage.modules
-                    sage: -b                                                            # optional - sage.modules
+                    sage: F = CombinatorialFreeModule(QQ, ['a', 'b'])                   # needs sage.modules
+                    sage: a, b = F.basis()                                              # needs sage.modules
+                    sage: -b                                                            # needs sage.modules
                     -B['b']
 
                 TESTS::
 
-                    sage: F = CombinatorialFreeModule(ZZ, ['a', 'b'])                   # optional - sage.modules
-                    sage: a, b = F.gens()                                               # optional - sage.modules
-                    sage: FF = cartesian_product((F, F))                                # optional - sage.modules
-                    sage: x = cartesian_product([a, 2*a-3*b]); x                        # optional - sage.modules
+                    sage: F = CombinatorialFreeModule(ZZ, ['a', 'b'])                   # needs sage.modules
+                    sage: a, b = F.gens()                                               # needs sage.modules
+                    sage: FF = cartesian_product((F, F))                                # needs sage.modules
+                    sage: x = cartesian_product([a, 2*a-3*b]); x                        # needs sage.modules
                     B[(0, 'a')] + 2*B[(1, 'a')] - 3*B[(1, 'b')]
-                    sage: x.parent() is FF                                              # optional - sage.modules
+                    sage: x.parent() is FF                                              # needs sage.modules
                     True
-                    sage: -x                                                            # optional - sage.modules
+                    sage: -x                                                            # needs sage.modules
                     -B[(0, 'a')] - 2*B[(1, 'a')] + 3*B[(1, 'b')]
                 """
                 return self._neg_()
@@ -954,7 +955,7 @@ class AdditiveMagmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: GF(8, 'x').cartesian_product(GF(5)).zero()                # optional - sage.rings.finite_rings
+                        sage: GF(8, 'x').cartesian_product(GF(5)).zero()                # needs sage.rings.finite_rings
                         (0, 0)
                     """
                     return self._cartesian_product_of_elements(
@@ -992,12 +993,12 @@ class AdditiveMagmas(Category_singleton):
                         sage: S = CommutativeAdditiveMonoids().example(); S
                         An example of a commutative monoid:
                          the free commutative monoid generated by ('a', 'b', 'c', 'd')
-                        sage: A = S.algebra(ZZ)                                         # optional - sage.modules
-                        sage: A.one_basis()                                             # optional - sage.modules
+                        sage: A = S.algebra(ZZ)                                         # needs sage.modules
+                        sage: A.one_basis()                                             # needs sage.modules
                         0
-                        sage: A.one()                                                   # optional - sage.modules
+                        sage: A.one()                                                   # needs sage.modules
                         B[0]
-                        sage: A(3)                                                      # optional - sage.modules
+                        sage: A(3)                                                      # needs sage.modules
                         3*B[0]
                     """
                     return self.basis().keys().zero()
@@ -1016,17 +1017,17 @@ class AdditiveMagmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: A = Sets().WithRealizations().example(); A                # optional - sage.combinat sage.modules
+                        sage: A = Sets().WithRealizations().example(); A                # needs sage.modules
                         The subset algebra of {1, 2, 3} over Rational Field
-                        sage: A.zero.__module__                                         # optional - sage.combinat sage.modules
+                        sage: A.zero.__module__                                         # needs sage.modules
                         'sage.categories.additive_magmas'
-                        sage: A.zero()                                                  # optional - sage.combinat sage.modules
+                        sage: A.zero()                                                  # needs sage.modules
                         0
 
                     TESTS::
 
-                        sage: A.zero() is A.a_realization().zero()                      # optional - sage.combinat sage.modules
+                        sage: A.zero() is A.a_realization().zero()                      # needs sage.modules
                         True
-                        sage: A._test_zero()                                            # optional - sage.combinat sage.modules
+                        sage: A._test_zero()                                            # needs sage.modules
                     """
                     return self.a_realization().zero()

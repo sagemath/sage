@@ -638,7 +638,7 @@ class Magmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: cartesian_product([QQ, ZZ, RR]).one()
+                        sage: cartesian_product([QQ, ZZ, RR]).one()                     # optional - sage.rings.real_mpfr
                         (1, 1, 1.00000000000000)
                     """
                     return self._cartesian_product_of_elements(
@@ -665,21 +665,21 @@ class Magmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])
-                        sage: c = C([2,-1,2,2]); c                                      # optional - sage.rings.finite_rings
+                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])                # optional - sage.rings.real_mpfr
+                        sage: c = C([2,-1,2,2]); c                                      # optional - sage.rings.real_mpfr
                         (2, -1, 2.00000000000000, 2)
-                        sage: ~c                                                        # optional - sage.rings.finite_rings
+                        sage: ~c                                                        # optional - sage.rings.real_mpfr
                         (1/2, -1, 0.500000000000000, 3)
 
                     This fails as soon as one of the entries is not
                     invertible::
 
-                        sage: ~C([0,2,2,2])
+                        sage: ~C([0,2,2,2])                                             # optional - sage.rings.real_mpfr
                         Traceback (most recent call last):
                         ...
                         ZeroDivisionError: rational division by zero
 
-                        sage: ~C([2,2,2,2])                                             # optional - sage.rings.finite_rings
+                        sage: ~C([2,2,2,2])                                             # optional - sage.rings.real_mpfr
                         (1/2, 1/2, 0.500000000000000, 3)
                     """
                     # variant without coercion:

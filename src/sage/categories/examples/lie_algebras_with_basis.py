@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: optional - sage.combinat sage.modules
 r"""
 Examples of a Lie algebra with basis
 """

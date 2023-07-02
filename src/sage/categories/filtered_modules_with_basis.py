@@ -318,12 +318,12 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = Modules(QQ).WithBasis().Filtered().example()                  # optional - sage.combinat sage.modules
-                sage: p = -2 * A.an_element(); p                                        # optional - sage.combinat sage.modules
+                sage: A = Modules(QQ).WithBasis().Filtered().example()                  # needs sage.combinat sage.modules
+                sage: p = -2 * A.an_element(); p                                        # needs sage.combinat sage.modules
                 -4*P[] - 4*P[1] - 6*P[2]
-                sage: q = A.to_graded_conversion()(p); q                                # optional - sage.combinat sage.modules
+                sage: q = A.to_graded_conversion()(p); q                                # needs sage.combinat sage.modules
                 -4*Bbar[[]] - 4*Bbar[[1]] - 6*Bbar[[2]]
-                sage: q.parent() is A.graded_algebra()                                  # optional - sage.combinat sage.modules
+                sage: q.parent() is A.graded_algebra()                                  # needs sage.combinat sage.modules
                 True
             """
             base_one = self.base_ring().one()
@@ -346,14 +346,14 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = Modules(QQ).WithBasis().Filtered().example()                  # optional - sage.combinat sage.modules
-                sage: p = -2 * A.an_element(); p                                        # optional - sage.combinat sage.modules
+                sage: A = Modules(QQ).WithBasis().Filtered().example()                  # needs sage.combinat sage.modules
+                sage: p = -2 * A.an_element(); p                                        # needs sage.combinat sage.modules
                 -4*P[] - 4*P[1] - 6*P[2]
-                sage: q = A.to_graded_conversion()(p); q                                # optional - sage.combinat sage.modules
+                sage: q = A.to_graded_conversion()(p); q                                # needs sage.combinat sage.modules
                 -4*Bbar[[]] - 4*Bbar[[1]] - 6*Bbar[[2]]
-                sage: A.from_graded_conversion()(q) == p                                # optional - sage.combinat sage.modules
+                sage: A.from_graded_conversion()(q) == p                                # needs sage.combinat sage.modules
                 True
-                sage: q.parent() is A.graded_algebra()                                  # optional - sage.combinat sage.modules
+                sage: q.parent() is A.graded_algebra()                                  # needs sage.combinat sage.modules
                 True
             """
             base_one = self.base_ring().one()
@@ -378,14 +378,14 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = Modules(ZZ).WithBasis().Filtered().example()                  # optional - sage.combinat sage.modules
-                sage: p = -2 * A.an_element(); p                                        # optional - sage.combinat sage.modules
+                sage: A = Modules(ZZ).WithBasis().Filtered().example()                  # needs sage.modules
+                sage: p = -2 * A.an_element(); p                                        # needs sage.combinat sage.modules
                 -4*P[] - 4*P[1] - 6*P[2]
-                sage: q = A.projection(2)(p); q                                         # optional - sage.combinat sage.modules
+                sage: q = A.projection(2)(p); q                                         # needs sage.combinat sage.modules
                 -6*Bbar[[2]]
-                sage: q.parent() is A.graded_algebra()                                  # optional - sage.combinat sage.modules
+                sage: q.parent() is A.graded_algebra()                                  # needs sage.combinat sage.modules
                 True
-                sage: A.projection(3)(p)                                                # optional - sage.combinat sage.modules
+                sage: A.projection(3)(p)                                                # needs sage.combinat sage.modules
                 0
             """
             base_zero = self.base_ring().zero()
@@ -439,12 +439,12 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             We start with the free `\QQ`-module with basis the set of all
             partitions::
 
-                sage: A = Modules(QQ).WithBasis().Filtered().example(); A               # optional - sage.combinat sage.modules
+                sage: A = Modules(QQ).WithBasis().Filtered().example(); A               # needs sage.combinat sage.modules
                 An example of a filtered module with basis: the free module
                  on partitions over Rational Field
-                sage: M = A.indices(); M                                                # optional - sage.combinat sage.modules
+                sage: M = A.indices(); M                                                # needs sage.combinat sage.modules
                 Partitions
-                sage: p1, p2, p21, p321 = [A.basis()[Partition(i)]                      # optional - sage.combinat sage.modules
+                sage: p1, p2, p21, p321 = [A.basis()[Partition(i)]                      # needs sage.combinat sage.modules
                 ....:                      for i in [[1], [2], [2,1], [3,2,1]]]
 
             Let us define a map from ``A`` to itself which acts on the
@@ -452,42 +452,42 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             the conjugates of all partitions `\mu` for which
             `\lambda / \mu` is a horizontal strip::
 
-                sage: def map_on_basis(lam):                                            # optional - sage.combinat sage.modules
+                sage: def map_on_basis(lam):                                            # needs sage.modules
                 ....:     def mus(k):
                 ....:         return lam.remove_horizontal_border_strip(k)
                 ....:     return A.sum_of_monomials([Partition(mu).conjugate()
                 ....:                                for k in range(sum(lam) + 1)
                 ....:                                for mu in mus(k)])
-                sage: f = A.module_morphism(on_basis=map_on_basis,                      # optional - sage.combinat sage.modules
+                sage: f = A.module_morphism(on_basis=map_on_basis,                      # needs sage.combinat sage.modules
                 ....:                       codomain=A)
-                sage: f(p1)                                                             # optional - sage.combinat sage.modules
+                sage: f(p1)                                                             # needs sage.combinat sage.modules
                 P[] + P[1]
-                sage: f(p2)                                                             # optional - sage.combinat sage.modules
+                sage: f(p2)                                                             # needs sage.combinat sage.modules
                 P[] + P[1] + P[1, 1]
-                sage: f(p21)                                                            # optional - sage.combinat sage.modules
+                sage: f(p21)                                                            # needs sage.combinat sage.modules
                 P[1] + P[1, 1] + P[2] + P[2, 1]
-                sage: f(p21 - p1)                                                       # optional - sage.combinat sage.modules
+                sage: f(p21 - p1)                                                       # needs sage.combinat sage.modules
                 -P[] + P[1, 1] + P[2] + P[2, 1]
-                sage: f(p321)                                                           # optional - sage.combinat sage.modules
+                sage: f(p321)                                                           # needs sage.combinat sage.modules
                 P[2, 1] + P[2, 1, 1] + P[2, 2] + P[2, 2, 1]
                  + P[3, 1] + P[3, 1, 1] + P[3, 2] + P[3, 2, 1]
 
             We now compute `\operatorname{gr} f` ::
 
-                sage: grA = A.graded_algebra(); grA                                     # optional - sage.combinat sage.modules
+                sage: grA = A.graded_algebra(); grA                                     # needs sage.combinat sage.modules
                 Graded Module of An example of a filtered module with basis:
                  the free module on partitions over Rational Field
-                sage: pp1, pp2, pp21, pp321 = [A.to_graded_conversion()(i)              # optional - sage.combinat sage.modules
+                sage: pp1, pp2, pp21, pp321 = [A.to_graded_conversion()(i)              # needs sage.combinat sage.modules
                 ....:                          for i in [p1, p2, p21, p321]]
-                sage: pp2 + 4 * pp21                                                    # optional - sage.combinat sage.modules
+                sage: pp2 + 4 * pp21                                                    # needs sage.combinat sage.modules
                 Bbar[[2]] + 4*Bbar[[2, 1]]
-                sage: grf = A.induced_graded_map(A, f); grf                             # optional - sage.combinat sage.modules
+                sage: grf = A.induced_graded_map(A, f); grf                             # needs sage.combinat sage.modules
                 Generic endomorphism of Graded Module of
                  An example of a filtered module with basis:
                   the free module on partitions over Rational Field
-                sage: grf(pp1)                                                          # optional - sage.combinat sage.modules
+                sage: grf(pp1)                                                          # needs sage.combinat sage.modules
                 Bbar[[1]]
-                sage: grf(pp2 + 4 * pp21)                                               # optional - sage.combinat sage.modules
+                sage: grf(pp2 + 4 * pp21)                                               # needs sage.combinat sage.modules
                 Bbar[[1, 1]] + 4*Bbar[[2, 1]]
 
             **Example 2.**
@@ -497,48 +497,48 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             `f` will lead into a graded algebra already, namely into
             the algebra of symmetric functions::
 
-                sage: h = SymmetricFunctions(QQ).h()                                    # optional - sage.combinat sage.modules
-                sage: def map_on_basis(lam):  # redefining map_on_basis                 # optional - sage.combinat sage.modules
+                sage: h = SymmetricFunctions(QQ).h()                                    # needs sage.combinat sage.modules
+                sage: def map_on_basis(lam):  # redefining map_on_basis                 # needs sage.modules
                 ....:     def mus(k):
                 ....:         return lam.remove_horizontal_border_strip(k)
                 ....:     return h.sum_of_monomials([Partition(mu).conjugate()
                 ....:                                for k in range(sum(lam) + 1)
                 ....:                                for mu in mus(k)])
-                sage: f = A.module_morphism(on_basis=map_on_basis,                      # optional - sage.combinat sage.modules
+                sage: f = A.module_morphism(on_basis=map_on_basis,                      # needs sage.combinat sage.modules
                 ....:                       codomain=h)  # redefining f
-                sage: f(p1)                                                             # optional - sage.combinat sage.modules
+                sage: f(p1)                                                             # needs sage.combinat sage.modules
                 h[] + h[1]
-                sage: f(p2)                                                             # optional - sage.combinat sage.modules
+                sage: f(p2)                                                             # needs sage.combinat sage.modules
                 h[] + h[1] + h[1, 1]
-                sage: f(A.zero())                                                       # optional - sage.combinat sage.modules
+                sage: f(A.zero())                                                       # needs sage.combinat sage.modules
                 0
-                sage: f(p2 - 3*p1)                                                      # optional - sage.combinat sage.modules
+                sage: f(p2 - 3*p1)                                                      # needs sage.combinat sage.modules
                 -2*h[] - 2*h[1] + h[1, 1]
 
             The algebra ``h`` of symmetric functions in the `h`-basis
             is already graded, so its associated graded algebra is
             implemented as itself::
 
-                sage: grh = h.graded_algebra(); grh is h                                # optional - sage.combinat sage.modules
+                sage: grh = h.graded_algebra(); grh is h                                # needs sage.combinat sage.modules
                 True
-                sage: grf = A.induced_graded_map(h, f); grf                             # optional - sage.combinat sage.modules
+                sage: grf = A.induced_graded_map(h, f); grf                             # needs sage.combinat sage.modules
                 Generic morphism:
                   From: Graded Module of An example of a filtered
                    module with basis: the free module on partitions
                    over Rational Field
                   To:   Symmetric Functions over Rational Field
                    in the homogeneous basis
-                sage: grf(pp1)                                                          # optional - sage.combinat sage.modules
+                sage: grf(pp1)                                                          # needs sage.combinat sage.modules
                 h[1]
-                sage: grf(pp2)                                                          # optional - sage.combinat sage.modules
+                sage: grf(pp2)                                                          # needs sage.combinat sage.modules
                 h[1, 1]
-                sage: grf(pp321)                                                        # optional - sage.combinat sage.modules
+                sage: grf(pp321)                                                        # needs sage.combinat sage.modules
                 h[3, 2, 1]
-                sage: grf(pp2 - 3*pp1)                                                  # optional - sage.combinat sage.modules
+                sage: grf(pp2 - 3*pp1)                                                  # needs sage.combinat sage.modules
                 -3*h[1] + h[1, 1]
-                sage: grf(pp21)                                                         # optional - sage.combinat sage.modules
+                sage: grf(pp21)                                                         # needs sage.combinat sage.modules
                 h[2, 1]
-                sage: grf(grA.zero())                                                   # optional - sage.combinat sage.modules
+                sage: grf(grA.zero())                                                   # needs sage.combinat sage.modules
                 0
 
             **Example 3.**
@@ -547,45 +547,45 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             have one as the domain instead. Our new ``f`` will go from ``h``
             to ``A``::
 
-                sage: def map_on_basis(lam):  # redefining map_on_basis                 # optional - sage.combinat sage.modules
+                sage: def map_on_basis(lam):  # redefining map_on_basis                 # needs sage.modules
                 ....:     def mus(k):
                 ....:         return lam.remove_horizontal_border_strip(k)
                 ....:     return A.sum_of_monomials([Partition(mu).conjugate()
                 ....:                                for k in range(sum(lam) + 1)
                 ....:                                for mu in mus(k)])
-                sage: f = h.module_morphism(on_basis=map_on_basis,                      # optional - sage.combinat sage.modules
+                sage: f = h.module_morphism(on_basis=map_on_basis,                      # needs sage.combinat sage.modules
                 ....:                       codomain=A)  # redefining f
-                sage: f(h[1])                                                           # optional - sage.combinat sage.modules
+                sage: f(h[1])                                                           # needs sage.combinat sage.modules
                 P[] + P[1]
-                sage: f(h[2])                                                           # optional - sage.combinat sage.modules
+                sage: f(h[2])                                                           # needs sage.combinat sage.modules
                 P[] + P[1] + P[1, 1]
-                sage: f(h[1, 1])                                                        # optional - sage.combinat sage.modules
+                sage: f(h[1, 1])                                                        # needs sage.combinat sage.modules
                 P[1] + P[2]
-                sage: f(h[2, 2])                                                        # optional - sage.combinat sage.modules
+                sage: f(h[2, 2])                                                        # needs sage.combinat sage.modules
                 P[1, 1] + P[2, 1] + P[2, 2]
-                sage: f(h[3, 2, 1])                                                     # optional - sage.combinat sage.modules
+                sage: f(h[3, 2, 1])                                                     # needs sage.combinat sage.modules
                 P[2, 1] + P[2, 1, 1] + P[2, 2] + P[2, 2, 1]
                  + P[3, 1] + P[3, 1, 1] + P[3, 2] + P[3, 2, 1]
-                sage: f(h.one())                                                        # optional - sage.combinat sage.modules
+                sage: f(h.one())                                                        # needs sage.combinat sage.modules
                 P[]
-                sage: grf = h.induced_graded_map(A, f); grf                             # optional - sage.combinat sage.modules
+                sage: grf = h.induced_graded_map(A, f); grf                             # needs sage.combinat sage.modules
                 Generic morphism:
                   From: Symmetric Functions over Rational Field
                    in the homogeneous basis
                   To:   Graded Module of An example of a filtered
                    module with basis: the free module on partitions
                    over Rational Field
-                sage: grf(h[1])                                                         # optional - sage.combinat sage.modules
+                sage: grf(h[1])                                                         # needs sage.combinat sage.modules
                 Bbar[[1]]
-                sage: grf(h[2])                                                         # optional - sage.combinat sage.modules
+                sage: grf(h[2])                                                         # needs sage.combinat sage.modules
                 Bbar[[1, 1]]
-                sage: grf(h[1, 1])                                                      # optional - sage.combinat sage.modules
+                sage: grf(h[1, 1])                                                      # needs sage.combinat sage.modules
                 Bbar[[2]]
-                sage: grf(h[2, 2])                                                      # optional - sage.combinat sage.modules
+                sage: grf(h[2, 2])                                                      # needs sage.combinat sage.modules
                 Bbar[[2, 2]]
-                sage: grf(h[3, 2, 1])                                                   # optional - sage.combinat sage.modules
+                sage: grf(h[3, 2, 1])                                                   # needs sage.combinat sage.modules
                 Bbar[[3, 2, 1]]
-                sage: grf(h.one())                                                      # optional - sage.combinat sage.modules
+                sage: grf(h.one())                                                      # needs sage.combinat sage.modules
                 Bbar[[]]
 
             **Example 4.**
@@ -593,36 +593,36 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             The construct `\operatorname{gr} f` also makes sense when `f`
             is a filtration-preserving map between graded modules. ::
 
-                sage: def map_on_basis(lam):  # redefining map_on_basis                 # optional - sage.combinat sage.modules
+                sage: def map_on_basis(lam):  # redefining map_on_basis                 # needs sage.modules
                 ....:     def mus(k):
                 ....:         return lam.remove_horizontal_border_strip(k)
                 ....:     return h.sum_of_monomials([Partition(mu).conjugate()
                 ....:                                for k in range(sum(lam) + 1)
                 ....:                                for mu in mus(k)])
-                sage: f = h.module_morphism(on_basis=map_on_basis,                      # optional - sage.combinat sage.modules
+                sage: f = h.module_morphism(on_basis=map_on_basis,                      # needs sage.combinat sage.modules
                 ....:                       codomain=h)  # redefining f
-                sage: f(h[1])                                                           # optional - sage.combinat sage.modules
+                sage: f(h[1])                                                           # needs sage.combinat sage.modules
                 h[] + h[1]
-                sage: f(h[2])                                                           # optional - sage.combinat sage.modules
+                sage: f(h[2])                                                           # needs sage.combinat sage.modules
                 h[] + h[1] + h[1, 1]
-                sage: f(h[1, 1])                                                        # optional - sage.combinat sage.modules
+                sage: f(h[1, 1])                                                        # needs sage.combinat sage.modules
                 h[1] + h[2]
-                sage: f(h[2, 1])                                                        # optional - sage.combinat sage.modules
+                sage: f(h[2, 1])                                                        # needs sage.combinat sage.modules
                 h[1] + h[1, 1] + h[2] + h[2, 1]
-                sage: f(h.one())                                                        # optional - sage.combinat sage.modules
+                sage: f(h.one())                                                        # needs sage.combinat sage.modules
                 h[]
-                sage: grf = h.induced_graded_map(h, f); grf                             # optional - sage.combinat sage.modules
+                sage: grf = h.induced_graded_map(h, f); grf                             # needs sage.combinat sage.modules
                 Generic endomorphism of
                  Symmetric Functions over Rational Field in the homogeneous basis
-                sage: grf(h[1])                                                         # optional - sage.combinat sage.modules
+                sage: grf(h[1])                                                         # needs sage.combinat sage.modules
                 h[1]
-                sage: grf(h[2])                                                         # optional - sage.combinat sage.modules
+                sage: grf(h[2])                                                         # needs sage.combinat sage.modules
                 h[1, 1]
-                sage: grf(h[1, 1])                                                      # optional - sage.combinat sage.modules
+                sage: grf(h[1, 1])                                                      # needs sage.combinat sage.modules
                 h[2]
-                sage: grf(h[2, 1])                                                      # optional - sage.combinat sage.modules
+                sage: grf(h[2, 1])                                                      # needs sage.combinat sage.modules
                 h[2, 1]
-                sage: grf(h.one())                                                      # optional - sage.combinat sage.modules
+                sage: grf(h.one())                                                      # needs sage.combinat sage.modules
                 h[]
             """
             grA = self.graded_algebra()
@@ -659,26 +659,26 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = ModulesWithBasis(ZZ).Filtered().example()                     # optional - sage.combinat sage.modules
-                sage: x = A(Partition((3,2,1)))                                         # optional - sage.combinat sage.modules
-                sage: y = A(Partition((4,4,1)))                                         # optional - sage.combinat sage.modules
-                sage: z = A(Partition((2,2,2)))                                         # optional - sage.combinat sage.modules
-                sage: (3*x).is_homogeneous()                                            # optional - sage.combinat sage.modules
+                sage: A = ModulesWithBasis(ZZ).Filtered().example()                     # needs sage.modules
+                sage: x = A(Partition((3,2,1)))                                         # needs sage.combinat sage.modules
+                sage: y = A(Partition((4,4,1)))                                         # needs sage.combinat sage.modules
+                sage: z = A(Partition((2,2,2)))                                         # needs sage.combinat sage.modules
+                sage: (3*x).is_homogeneous()                                            # needs sage.combinat sage.modules
                 True
-                sage: (x - y).is_homogeneous()                                          # optional - sage.combinat sage.modules
+                sage: (x - y).is_homogeneous()                                          # needs sage.combinat sage.modules
                 False
-                sage: (x+2*z).is_homogeneous()                                          # optional - sage.combinat sage.modules
+                sage: (x+2*z).is_homogeneous()                                          # needs sage.combinat sage.modules
                 True
 
             Here is an example with a graded algebra::
 
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # optional - sage.combinat sage.modules
-                sage: (x, y) = (S[2], S[3])                                             # optional - sage.combinat sage.modules
-                sage: (3*x).is_homogeneous()                                            # optional - sage.combinat sage.modules
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # needs sage.combinat sage.modules
+                sage: (x, y) = (S[2], S[3])                                             # needs sage.combinat sage.modules
+                sage: (3*x).is_homogeneous()                                            # needs sage.combinat sage.modules
                 True
-                sage: (x^3 - y^2).is_homogeneous()                                      # optional - sage.combinat sage.modules
+                sage: (x^3 - y^2).is_homogeneous()                                      # needs sage.combinat sage.modules
                 True
-                sage: ((x + y)^2).is_homogeneous()                                      # optional - sage.combinat sage.modules
+                sage: ((x + y)^2).is_homogeneous()                                      # needs sage.combinat sage.modules
                 False
 
             Let us now test a filtered algebra (but remember that the
@@ -717,10 +717,10 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = GradedModulesWithBasis(QQ).example()                          # optional - sage.combinat sage.modules
-                sage: A.degree_on_basis(Partition((2,1)))                               # optional - sage.combinat sage.modules
+                sage: A = GradedModulesWithBasis(QQ).example()                          # needs sage.combinat sage.modules
+                sage: A.degree_on_basis(Partition((2,1)))                               # needs sage.combinat sage.modules
                 3
-                sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))                       # optional - sage.combinat sage.modules
+                sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))                       # needs sage.combinat sage.modules
                 10
             """
 
@@ -738,28 +738,28 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = ModulesWithBasis(ZZ).Filtered().example()                     # optional - sage.combinat sage.modules
-                sage: x = A(Partition((3,2,1)))                                         # optional - sage.combinat sage.modules
-                sage: y = A(Partition((4,4,1)))                                         # optional - sage.combinat sage.modules
-                sage: z = A(Partition((2,2,2)))                                         # optional - sage.combinat sage.modules
-                sage: x.degree()                                                        # optional - sage.combinat sage.modules
+                sage: A = ModulesWithBasis(ZZ).Filtered().example()                     # needs sage.modules
+                sage: x = A(Partition((3,2,1)))                                         # needs sage.combinat sage.modules
+                sage: y = A(Partition((4,4,1)))                                         # needs sage.combinat sage.modules
+                sage: z = A(Partition((2,2,2)))                                         # needs sage.combinat sage.modules
+                sage: x.degree()                                                        # needs sage.combinat sage.modules
                 6
-                sage: (x + 2*z).degree()                                                # optional - sage.combinat sage.modules
+                sage: (x + 2*z).degree()                                                # needs sage.combinat sage.modules
                 6
-                sage: (y - x).degree()                                                  # optional - sage.combinat sage.modules
+                sage: (y - x).degree()                                                  # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: element is not homogeneous
 
             An example in a graded algebra::
 
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # optional - sage.combinat sage.modules
-                sage: (x, y) = (S[2], S[3])                                             # optional - sage.combinat sage.modules
-                sage: x.homogeneous_degree()                                            # optional - sage.combinat sage.modules
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # needs sage.combinat sage.modules
+                sage: (x, y) = (S[2], S[3])                                             # needs sage.combinat sage.modules
+                sage: x.homogeneous_degree()                                            # needs sage.combinat sage.modules
                 2
-                sage: (x^3 + 4*y^2).homogeneous_degree()                                # optional - sage.combinat sage.modules
+                sage: (x^3 + 4*y^2).homogeneous_degree()                                # needs sage.combinat sage.modules
                 6
-                sage: ((1 + x)^3).homogeneous_degree()                                  # optional - sage.combinat sage.modules
+                sage: ((1 + x)^3).homogeneous_degree()                                  # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: element is not homogeneous
@@ -781,8 +781,8 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             TESTS::
 
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # optional - sage.combinat sage.modules
-                sage: S.zero().degree()                                                 # optional - sage.combinat sage.modules
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # needs sage.combinat sage.modules
+                sage: S.zero().degree()                                                 # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: the zero element does not have a well-defined degree
@@ -809,28 +809,28 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             EXAMPLES::
 
-                sage: A = ModulesWithBasis(ZZ).Filtered().example()                     # optional - sage.combinat sage.modules
-                sage: x = A(Partition((3,2,1)))                                         # optional - sage.combinat sage.modules
-                sage: y = A(Partition((4,4,1)))                                         # optional - sage.combinat sage.modules
-                sage: z = A(Partition((2,2,2)))                                         # optional - sage.combinat sage.modules
-                sage: x.maximal_degree()                                                # optional - sage.combinat sage.modules
+                sage: A = ModulesWithBasis(ZZ).Filtered().example()                     # needs sage.modules
+                sage: x = A(Partition((3,2,1)))                                         # needs sage.combinat sage.modules
+                sage: y = A(Partition((4,4,1)))                                         # needs sage.combinat sage.modules
+                sage: z = A(Partition((2,2,2)))                                         # needs sage.combinat sage.modules
+                sage: x.maximal_degree()                                                # needs sage.combinat sage.modules
                 6
-                sage: (x + 2*z).maximal_degree()                                        # optional - sage.combinat sage.modules
+                sage: (x + 2*z).maximal_degree()                                        # needs sage.combinat sage.modules
                 6
-                sage: (y - x).maximal_degree()                                          # optional - sage.combinat sage.modules
+                sage: (y - x).maximal_degree()                                          # needs sage.combinat sage.modules
                 9
-                sage: (3*z).maximal_degree()                                            # optional - sage.combinat sage.modules
+                sage: (3*z).maximal_degree()                                            # needs sage.combinat sage.modules
                 6
 
             Now, we test this on a graded algebra::
 
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # optional - sage.combinat sage.modules
-                sage: (x, y) = (S[2], S[3])                                             # optional - sage.combinat sage.modules
-                sage: x.maximal_degree()                                                # optional - sage.combinat sage.modules
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # needs sage.combinat sage.modules
+                sage: (x, y) = (S[2], S[3])                                             # needs sage.combinat sage.modules
+                sage: x.maximal_degree()                                                # needs sage.combinat sage.modules
                 2
-                sage: (x^3 + 4*y^2).maximal_degree()                                    # optional - sage.combinat sage.modules
+                sage: (x^3 + 4*y^2).maximal_degree()                                    # needs sage.combinat sage.modules
                 6
-                sage: ((1 + x)^3).maximal_degree()                                      # optional - sage.combinat sage.modules
+                sage: ((1 + x)^3).maximal_degree()                                      # needs sage.combinat sage.modules
                 6
 
             Let us now test a filtered algebra::
@@ -852,8 +852,8 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             TESTS::
 
-                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # optional - sage.combinat sage.modules
-                sage: S.zero().degree()                                                 # optional - sage.combinat sage.modules
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # needs sage.combinat sage.modules
+                sage: S.zero().degree()                                                 # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: the zero element does not have a well-defined degree
@@ -1014,16 +1014,16 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 EXAMPLES::
 
-                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                               # optional - sage.combinat sage.modules
-                    sage: S = E.submodule([x + y, x*y - y*z, y])                        # optional - sage.combinat sage.modules
-                    sage: B = S.basis()                                                 # optional - sage.combinat sage.modules
-                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]                       # optional - sage.combinat sage.modules
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                               # needs sage.modules
+                    sage: S = E.submodule([x + y, x*y - y*z, y])                        # needs sage.modules
+                    sage: B = S.basis()                                                 # needs sage.modules
+                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]                       # needs sage.modules
                     [x, y, x*y - y*z]
-                    sage: S.degree_on_basis(0)                                          # optional - sage.combinat sage.modules
+                    sage: S.degree_on_basis(0)                                          # needs sage.modules
                     1
-                    sage: S.degree_on_basis(1)                                          # optional - sage.combinat sage.modules
+                    sage: S.degree_on_basis(1)                                          # needs sage.modules
                     1
-                    sage: S.degree_on_basis(2)                                          # optional - sage.combinat sage.modules
+                    sage: S.degree_on_basis(2)                                          # needs sage.modules
                     2
                 """
                 return self.basis()[m].lift().degree()
@@ -1035,29 +1035,29 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 EXAMPLES::
 
-                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                               # optional - sage.combinat sage.modules
-                    sage: S = E.submodule([x + y, x*y - y*z, y])                        # optional - sage.combinat sage.modules
-                    sage: B = S.basis()                                                 # optional - sage.combinat sage.modules
-                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]                       # optional - sage.combinat sage.modules
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                               # needs sage.modules
+                    sage: S = E.submodule([x + y, x*y - y*z, y])                        # needs sage.modules
+                    sage: B = S.basis()                                                 # needs sage.modules
+                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]                       # needs sage.modules
                     [x, y, x*y - y*z]
-                    sage: B[0].degree()                                                 # optional - sage.combinat sage.modules
+                    sage: B[0].degree()                                                 # needs sage.modules
                     1
-                    sage: B[1].degree()                                                 # optional - sage.combinat sage.modules
+                    sage: B[1].degree()                                                 # needs sage.modules
                     1
-                    sage: (B[0] + 3*B[1]).degree()                                      # optional - sage.combinat sage.modules
+                    sage: (B[0] + 3*B[1]).degree()                                      # needs sage.modules
                     1
 
                 The degree of inhomogeneous elements is not defined
                 (following the behavior of the exterior algebra)::
 
-                    sage: (B[0] + B[2]).degree()                                        # optional - sage.combinat sage.modules
+                    sage: (B[0] + B[2]).degree()                                        # needs sage.modules
                     Traceback (most recent call last):
                     ...
                     ValueError: element is not homogeneous
 
                 We can still get the maximal degree::
 
-                    sage: (B[0] + B[2]).maximal_degree()                                # optional - sage.combinat sage.modules
+                    sage: (B[0] + B[2]).maximal_degree()                                # needs sage.modules
                     2
                 """
                 return self.lift().degree()
@@ -1075,14 +1075,14 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 EXAMPLES::
 
-                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                               # optional - sage.combinat sage.modules
-                    sage: F = E.submodule([x + 1, x*y - 1])                             # optional - sage.combinat sage.modules
-                    sage: B = F.basis()                                                 # optional - sage.combinat sage.modules
-                    sage: [B[0].lift(), B[1].lift()]                                    # optional - sage.combinat sage.modules
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                               # needs sage.modules
+                    sage: F = E.submodule([x + 1, x*y - 1])                             # needs sage.modules
+                    sage: B = F.basis()                                                 # needs sage.modules
+                    sage: [B[0].lift(), B[1].lift()]                                    # needs sage.modules
                     [-x*y + 1, x*y + x]
-                    sage: B[0].maximal_degree()                                         # optional - sage.combinat sage.modules
+                    sage: B[0].maximal_degree()                                         # needs sage.modules
                     2
-                    sage: B[1].maximal_degree()                                         # optional - sage.combinat sage.modules
+                    sage: B[1].maximal_degree()                                         # needs sage.modules
                     2
                 """
                 return self.lift().maximal_degree()

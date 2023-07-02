@@ -70,7 +70,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
             sage: QQ^3 in Algebras(QQ)                                                  # optional - sage.modules
             False
-            sage: QQ['x'] in Algebras(CDF)
+            sage: QQ['x'] in Algebras(CDF)                                              # optional - sage.rings.complex_double
             False
         """
         if super().__contains__(x):
@@ -182,6 +182,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs sage.modules
                     sage: A = FiniteDimensionalAlgebrasWithBasis(QQ).example(); A
                     An example of a finite dimensional algebra with basis:
                     the path algebra of the Kronecker quiver

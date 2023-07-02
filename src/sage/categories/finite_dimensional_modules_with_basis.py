@@ -147,6 +147,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             By default, the action is the standard `*` operation. So
             our first example is about an algebra::
 
+                sage: # needs sage.graphs sage.modules
                 sage: F = FiniteDimensionalAlgebrasWithBasis(QQ).example(); F
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver
@@ -156,39 +157,40 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             In this algebra, multiplication on the right by `x`
             annihilates all basis elements but `x`::
 
-                sage: x*x, y*x, a*x, b*x
+                sage: x*x, y*x, a*x, b*x                                                # needs sage.graphs sage.modules
                 (x, 0, 0, 0)
 
             So the annihilator is the subspace spanned by `y`, `a`, and `b`::
 
-                sage: F.annihilator_basis([x])
+                sage: F.annihilator_basis([x])                                          # needs sage.graphs sage.modules
                 (y, a, b)
 
             The same holds for `a` and `b`::
 
-                sage: x*a, y*a, a*a, b*a
+                sage: x*a, y*a, a*a, b*a                                                # needs sage.graphs sage.modules
                 (a, 0, 0, 0)
-                sage: F.annihilator_basis([a])
+                sage: F.annihilator_basis([a])                                          # needs sage.graphs sage.modules
                 (y, a, b)
 
             On the other hand, `y` annihilates only `x`::
 
-                sage: F.annihilator_basis([y])
+                sage: F.annihilator_basis([y])                                          # needs sage.graphs sage.modules
                 (x,)
 
             Here is a non trivial annihilator::
 
-                sage: F.annihilator_basis([a + 3*b + 2*y])
+                sage: F.annihilator_basis([a + 3*b + 2*y])                              # needs sage.graphs sage.modules
                 (-1/2*a - 3/2*b + x,)
 
             Let's check it::
 
-                sage: (-1/2*a - 3/2*b + x) * (a + 3*b + 2*y)
+                sage: (-1/2*a - 3/2*b + x) * (a + 3*b + 2*y)                            # needs sage.graphs sage.modules
                 0
 
             Doing the same calculations on the left exchanges the
             roles of `x` and `y`::
 
+                sage: # needs sage.graphs sage.modules
                 sage: F.annihilator_basis([y], side="left")
                 (x, a, b)
                 sage: F.annihilator_basis([a], side="left")
@@ -197,28 +199,29 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 (x, a, b)
                 sage: F.annihilator_basis([x], side="left")
                 (y,)
-                sage: F.annihilator_basis([a+3*b+2*x], side="left")
+                sage: F.annihilator_basis([a + 3*b + 2*x], side="left")
                 (-1/2*a - 3/2*b + y,)
 
             By specifying an inner product, this method can be used to
             compute the orthogonal of a subspace::
 
+                sage: # needs sage.graphs sage.modules
                 sage: x,y,a,b = F.basis()
                 sage: def scalar(u,v):
                 ....:     return vector([sum(u[i]*v[i] for i in F.basis().keys())])
-                sage: F.annihilator_basis([x+y, a+b], scalar)
+                sage: F.annihilator_basis([x + y, a + b], scalar)
                 (x - y, a - b)
 
             By specifying the standard Lie bracket as action, one can
             compute the commutator of a subspace of `F`::
 
-                sage: F.annihilator_basis([a+b], action=F.bracket)
+                sage: F.annihilator_basis([a + b], action=F.bracket)                    # needs sage.graphs sage.modules
                 (x + y, a, b)
 
             In particular one can compute a basis of the center of the
             algebra. In our example, it is reduced to the identity::
 
-                sage: F.annihilator_basis(F.algebra_generators(), action=F.bracket)
+                sage: F.annihilator_basis(F.algebra_generators(), action=F.bracket)     # needs sage.graphs sage.modules
                 (x + y,)
 
             But see also

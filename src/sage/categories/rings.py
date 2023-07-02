@@ -1061,9 +1061,9 @@ class Rings(CategoryWithAxiom):
 
             Note that the same syntax can be used to create number fields::
 
-                sage: QQ[I]
+                sage: QQ[I]                                                             # optional - sage.symbolic sage.rings.number_field
                 Number Field in I with defining polynomial x^2 + 1 with I = 1*I
-                sage: QQ[I].coerce_embedding()
+                sage: QQ[I].coerce_embedding()                                          # optional - sage.symbolic sage.rings.number_field
                 Generic morphism:
                   From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
                   To:   Complex Lazy Field
@@ -1430,6 +1430,7 @@ def _gen_names(elts):
 
     EXAMPLES::
 
+        sage: # needs sage.combinat
         sage: from sage.categories.rings import _gen_names
         sage: list(_gen_names([sqrt(5)]))                                               # optional - sage.symbolic
         ['sqrt5']

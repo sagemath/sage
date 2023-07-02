@@ -400,6 +400,7 @@ cdef class Map(Element):
         Since it is a ``cdef``d method, it is tested using a dummy python method.
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: from sage.categories.map import Map
             sage: f = Map(Hom(QQ, ZZ, Rings()))
             sage: f._update_slots_test({"_domain": RR, "_codomain": QQ}) # indirect doctest
@@ -430,6 +431,7 @@ cdef class Map(Element):
 
         TESTS::
 
+            sage: # needs sage.rings.real_mpfr
             sage: from sage.categories.map import Map
             sage: f = Map(Hom(QQ, ZZ, Rings()))
             sage: f._update_slots_test({"_domain": RR, "_codomain": QQ})
@@ -1129,6 +1131,7 @@ cdef class Map(Element):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.complex_double
             sage: mor = CDF.coerce_map_from(RDF)
             sage: mor.extend_domain(QQ)
             Composite map:

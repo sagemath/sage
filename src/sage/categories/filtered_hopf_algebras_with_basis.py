@@ -88,14 +88,14 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
 
                 TESTS::
 
-                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # optional - sage.combinat sage.modules
-                    sage: H.monomial(0).antipode()  # indirect doctest                  # optional - sage.combinat sage.modules
+                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # needs sage.modules
+                    sage: H.monomial(0).antipode()  # indirect doctest                  # needs sage.modules
                     P0
-                    sage: H.monomial(1).antipode()  # indirect doctest                  # optional - sage.combinat sage.modules
+                    sage: H.monomial(1).antipode()  # indirect doctest                  # needs sage.modules
                     -P1
-                    sage: H.monomial(2).antipode()  # indirect doctest                  # optional - sage.combinat sage.modules
+                    sage: H.monomial(2).antipode()  # indirect doctest                  # needs sage.modules
                     P2
-                    sage: H.monomial(3).antipode()  # indirect doctest                  # optional - sage.combinat sage.modules
+                    sage: H.monomial(3).antipode()  # indirect doctest                  # needs sage.modules
                     -P3
                 """
                 if self.monomial(index) == self.one():
@@ -116,15 +116,15 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
 
                 TESTS::
 
-                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # optional - sage.combinat sage.modules
-                    sage: H.antipode(H.monomial(14))                                    # optional - sage.combinat sage.modules
+                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # needs sage.modules
+                    sage: H.antipode(H.monomial(14))                                    # needs sage.modules
                     P14
 
-                    sage: H.monomial(0).antipode()                                      # optional - sage.combinat sage.modules
+                    sage: H.monomial(0).antipode()                                      # needs sage.modules
                     P0
-                    sage: H.monomial(2).antipode()                                      # optional - sage.combinat sage.modules
+                    sage: H.monomial(2).antipode()                                      # needs sage.modules
                     P2
-                    sage: (2*H.monomial(1) + 3*H.monomial(4)).antipode()                # optional - sage.combinat sage.modules
+                    sage: (2*H.monomial(1) + 3*H.monomial(4)).antipode()                # needs sage.modules
                     -2*P1 + 3*P4
                 """
                 return self.linear_combination(

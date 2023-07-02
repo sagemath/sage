@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: optional - sage.groups sage.modules
 r"""
 Examples of Hopf algebras with basis
 """

@@ -394,7 +394,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Y = CombinatorialFreeModule(CC['q'], ['z'])                       # needs sage.modules
                 sage: z = Y.monomial('z')                                               # needs sage.modules
                 sage: phi = X.module_morphism(on_basis=on_basis, codomain=Y)            # needs sage.modules
-                sage: phi(v)                                                            # needs sage.modules
+                sage: phi(v)                                                            # needs sage.modules sage.symbolic
                 (3.00000000000000+2.00000000000000*I)*B['z']
 
             Of course, there should be a coercion between the
