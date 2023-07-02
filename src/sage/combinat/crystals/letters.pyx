@@ -319,6 +319,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
     # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
+
 # Utility. Note: much of this class should be factored out at some point!
 cdef class Letter(Element):
     r"""
@@ -2571,6 +2572,7 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
 
     Element = BKKLetter
 
+
 #################
 # Type q(n) queer
 #################
@@ -2980,6 +2982,7 @@ cdef class LetterWrapped(Element):
             0
         """
         return self.value.phi(i)
+
 
 class ClassicalCrystalOfLettersWrapped(ClassicalCrystalOfLetters):
     r"""
