@@ -517,6 +517,27 @@ class sage__plot(JoinFeature):
                              spkg='sagemath_symbolics', type='standard')
 
 
+class sage__rings__complex_double(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.complex_double`.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__rings__complex_double
+        sage: sage__rings__complex_double().is_present()                                # optional - sage.rings.complex_double
+        FeatureTestResult('sage.rings.complex_double', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__complex_double
+            sage: isinstance(sage__rings__complex_double(), sage__rings__complex_double)
+            True
+        """
+        PythonModule.__init__(self, 'sage.rings.complex_double', type='standard')
+
+
 class sage__rings__finite_rings(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.finite_rings`;
@@ -720,7 +741,7 @@ class sage__rings__real_double(PythonModule):
             sage: isinstance(sage__rings__real_double(), sage__rings__real_double)
             True
         """
-        PythonModule.__init__(self, 'sage.rings.real_double')
+        PythonModule.__init__(self, 'sage.rings.real_double', type='standard')
 
 
 class sage__rings__real_mpfr(JoinFeature):
@@ -745,7 +766,7 @@ class sage__rings__real_mpfr(JoinFeature):
                              [PythonModule('sage.rings.real_mpfr'),
                               PythonModule('sage.rings.complex_mpfr'),
                              ],
-                             spkg='sagemath_modules')
+                             spkg='sagemath_modules', type='standard')
 
 
 class sage__sat(JoinFeature):
@@ -768,7 +789,7 @@ class sage__sat(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.sat',
                              [PythonModule('sage.sat.expression')],
-                             spkg='sagemath_combinat')
+                             spkg='sagemath_combinat', type='standard')
 
 
 class sage__schemes(JoinFeature):
@@ -791,7 +812,7 @@ class sage__schemes(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.schemes',
                              [PythonModule('sage.schemes.elliptic_curves.ell_generic')],
-                             spkg="sagemath_schemes")
+                             spkg="sagemath_schemes", type='standard')
 
 
 class sage__symbolic(JoinFeature):
@@ -825,7 +846,7 @@ class sage__symbolic(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.symbolic',
-                             [PythonModule('sage.symbolic.expression')])
+                             [PythonModule('sage.symbolic.expression')], type='standard')
 
 
 def all_features():
