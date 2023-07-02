@@ -271,7 +271,7 @@ def find_object_modules(obj):
     EXAMPLES::
 
         sage: from sage.misc.dev_tools import find_object_modules
-        sage: find_object_modules(RR)
+        sage: find_object_modules(RR)                                                   # optional - sage.rings.real_mpfr
         {'sage.rings.real_mpfr': ['RR']}
         sage: find_object_modules(ZZ)
         {'sage.rings.integer_ring': ['Z', 'ZZ']}

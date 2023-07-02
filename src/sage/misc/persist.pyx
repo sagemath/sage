@@ -155,8 +155,8 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         sage: t = tmp_filename(ext=".F")
         sage: with open(t, 'w') as f:
         ....:     _ = f.write(code)
-        sage: load(t)                                                                   # optional - numpy
-        sage: hello                                                                     # optional - numpy
+        sage: load(t)                                                                   # needs numpy
+        sage: hello                                                                     # needs numpy
         <fortran ...>
     """
     import sage.repl.load
@@ -239,23 +239,23 @@ def save(obj, filename, compress=True, **kwargs):
 
         sage: import tempfile
         sage: d = tempfile.TemporaryDirectory()
-        sage: a = matrix(2, [1,2, 3,-5/2])                                              # optional - sage.modules
+        sage: a = matrix(2, [1,2, 3,-5/2])                                              # needs sage.modules
         sage: objfile = os.path.join(d.name, 'test.sobj')
         sage: objfile_short = os.path.join(d.name, 'test')
-        sage: save(a, objfile)                                                          # optional - sage.modules
-        sage: load(objfile_short)                                                       # optional - sage.modules
+        sage: save(a, objfile)                                                          # needs sage.modules
+        sage: load(objfile_short)                                                       # needs sage.modules
         [   1    2]
         [   3 -5/2]
-        sage: E = EllipticCurve([-1,0])                                                 # optional - sage.plot sage.schemes
-        sage: P = plot(E)                                                               # optional - sage.plot sage.schemes
-        sage: save(P, objfile_short)   # saves the plot to "test.sobj"                  # optional - sage.plot sage.schemes
-        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)               # optional - sage.plot sage.schemes
-        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))             # optional - sage.plot sage.schemes
+        sage: E = EllipticCurve([-1,0])                                                 # needs sage.plot sage.schemes
+        sage: P = plot(E)                                                               # needs sage.plot sage.schemes
+        sage: save(P, objfile_short)   # saves the plot to "test.sobj"                  # needs sage.plot sage.schemes
+        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)               # needs sage.plot sage.schemes
+        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))             # needs sage.plot sage.schemes
         Traceback (most recent call last):
         ...
         ValueError: allowed file extensions for images are
         '.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg'!
-        sage: print(load(objfile))                                                      # optional - sage.plot sage.schemes
+        sage: print(load(objfile))                                                      # needs sage.plot sage.schemes
         Graphics object consisting of 2 graphics primitives
         sage: save("A python string", os.path.join(d.name, 'test'))
         sage: load(objfile)
@@ -398,19 +398,19 @@ def register_unpickle_override(module, name, callable, call_name=None):
     pickle to play with::
 
         sage: from sage.structure.element import Element
-        sage: class SourPickle(CombinatorialObject): pass                               # optional - sage.combinat
-        sage: class SweetPickle(CombinatorialObject, Element): pass                     # optional - sage.combinat
-        sage: import __main__                                                           # optional - sage.combinat
-        sage: __main__.SourPickle = SourPickle                                          # optional - sage.combinat
-        sage: __main__.SweetPickle = SweetPickle  # a hack to allow us to pickle command line classes  # optional - sage.combinat
-        sage: gherkin = dumps(SourPickle([1, 2, 3]))                                    # optional - sage.combinat
+        sage: class SourPickle(CombinatorialObject): pass
+        sage: class SweetPickle(CombinatorialObject, Element): pass
+        sage: import __main__
+        sage: __main__.SourPickle = SourPickle
+        sage: __main__.SweetPickle = SweetPickle  # a hack to allow us to pickle command line classes
+        sage: gherkin = dumps(SourPickle([1, 2, 3]))
 
     Using :func:`register_unpickle_override` we try to sweeten our pickle, but
     we are unable to eat it::
 
-        sage: from sage.misc.persist import register_unpickle_override                  # optional - sage.combinat
-        sage: register_unpickle_override('__main__', 'SourPickle', SweetPickle)         # optional - sage.combinat
-        sage: loads(gherkin)                                                            # optional - sage.combinat
+        sage: from sage.misc.persist import register_unpickle_override
+        sage: register_unpickle_override('__main__', 'SourPickle', SweetPickle)
+        sage: loads(gherkin)
         Traceback (most recent call last):
         ...
         KeyError: 0
@@ -421,7 +421,7 @@ def register_unpickle_override(module, name, callable, call_name=None):
     unpickling for :class:`CombinatorialObject`. We can fix this by explicitly
     defining a new :meth:`__setstate__` method::
 
-        sage: class SweeterPickle(CombinatorialObject, Element):                        # optional - sage.combinat
+        sage: class SweeterPickle(CombinatorialObject, Element):
         ....:     def __setstate__(self, state):
         ....:         # a pickle from CombinatorialObject is just its instance
         ....:         # dictionary
@@ -434,11 +434,11 @@ def register_unpickle_override(module, name, callable, call_name=None):
         ....:             if P is not None:
         ....:                 self._set_parent(P)
         ....:             self.__dict__ = D
-        sage: __main__.SweeterPickle = SweeterPickle                                    # optional - sage.combinat
-        sage: register_unpickle_override('__main__', 'SourPickle', SweeterPickle)       # optional - sage.combinat
-        sage: loads(gherkin)                                                            # optional - sage.combinat
+        sage: __main__.SweeterPickle = SweeterPickle
+        sage: register_unpickle_override('__main__', 'SourPickle', SweeterPickle)
+        sage: loads(gherkin)                                                            # needs sage.combinat
         [1, 2, 3]
-        sage: loads(dumps(SweeterPickle([1, 2, 3])))  # check that pickles work for SweeterPickle   # optional - sage.combinat
+        sage: loads(dumps(SweeterPickle([1, 2, 3])))  # check that pickles work for SweeterPickle
         [1, 2, 3]
 
     The ``state`` passed to :meth:`__setstate__` will usually be something like
@@ -575,7 +575,7 @@ def unpickle_global(module, name):
     Test that :func:`register_unpickle_override` calls in lazily imported modules
     are respected::
 
-        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')      # optional - sage.combinat sage.modules
+        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')      # needs sage.modules
         <class 'sage.combinat.root_system.type_A.AmbientSpace'>
     """
     unpickler = unpickle_override.get((module, name))
@@ -920,9 +920,9 @@ def loads(s, compress=True, **kwargs):
 
     EXAMPLES::
 
-        sage: a = matrix(2, [1,2, 3,-4/3])                                              # optional - sage.modules
-        sage: s = dumps(a)                                                              # optional - sage.modules
-        sage: loads(s)                                                                  # optional - sage.modules
+        sage: a = matrix(2, [1,2, 3,-4/3])                                              # needs sage.modules
+        sage: s = dumps(a)                                                              # needs sage.modules
+        sage: loads(s)                                                                  # needs sage.modules
         [   1    2]
         [   3 -4/3]
 
@@ -1159,7 +1159,7 @@ def make_None(*args, **kwds):
     EXAMPLES::
 
         sage: from sage.misc.persist import make_None
-        sage: print(make_None(42, pi, foo='bar'))                                       # optional - sage.symbolic
+        sage: print(make_None(42, pi, foo='bar'))                                       # needs sage.symbolic
         None
     """
     return None

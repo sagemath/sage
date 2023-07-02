@@ -13,7 +13,7 @@ that are readable and idiomatic.::
 
     sage: sage_input(3)
     3
-    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                             # optional - sage.symbolic
+    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                             # needs sage.symbolic
     # Verified
     R.<x> = RR[]
     x^2 + 6.2831853071795862*x + 9.869604401089358
@@ -22,7 +22,7 @@ With ``verify=True``, :func:`sage_input` also verifies the results, by
 calling :func:`~sage.misc.sage_eval.sage_eval` on the result and
 verifying that it is equal to the input.::
 
-    sage: sage_input(GF(2)(1), verify=True)                                             # optional - sage.libs.pari
+    sage: sage_input(GF(2)(1), verify=True)
     # Verified
     GF(2)(1)
 
@@ -229,15 +229,15 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
     The result of :func:`sage_input` is actually a pair of strings with a
     special ``__repr__`` method to print nicely.::
 
-        sage: r = sage_input(RealField(20)(pi), verify=True)                            # optional - sage.symbolic
-        sage: r                                                                         # optional - sage.symbolic
+        sage: r = sage_input(RealField(20)(pi), verify=True)                            # needs sage.symbolic
+        sage: r                                                                         # needs sage.symbolic
         # Verified
         RealField(20)(3.1415939)
-        sage: isinstance(r, tuple)                                                      # optional - sage.symbolic
+        sage: isinstance(r, tuple)                                                      # needs sage.symbolic
         True
-        sage: len(r)                                                                    # optional - sage.symbolic
+        sage: len(r)                                                                    # needs sage.symbolic
         2
-        sage: tuple(r)                                                                  # optional - sage.symbolic
+        sage: tuple(r)                                                                  # needs sage.symbolic
         ('# Verified\n', 'RealField(20)(3.1415939)')
 
     We cannot find an input form for a function.::
@@ -378,9 +378,9 @@ class SageInputBuilder:
             sage: sib = SageInputBuilder()
             sage: sib.result(sib(GF(17)(5), True))
             5
-            sage: sib.result(sib(RealField(200)(1.5), True))
+            sage: sib.result(sib(RealField(200)(1.5), True))                            # needs sage.rings.real_mpfr
             1.5000000000000000000000000000000000000000000000000000000000000
-            sage: sib.result(sib(RealField(200)(1.5), 2))
+            sage: sib.result(sib(RealField(200)(1.5), 2))                               # needs sage.rings.real_mpfr
             1.5
 
         Since :func:`sage_input` directly calls this method, all
@@ -400,10 +400,10 @@ class SageInputBuilder:
             sage: sage_input(float(-infinity), preparse=True, verify=True)
             # Verified
             -float(infinity)
-            sage: sage_input(float(NaN), preparse=True, verify=True)                    # optional - sage.symbolic
+            sage: sage_input(float(NaN), preparse=True, verify=True)                    # needs sage.symbolic
             # Verified
             float(NaN)
-            sage: sage_input(float(-pi), preparse=True, verify=True)                    # optional - sage.symbolic
+            sage: sage_input(float(-pi), preparse=True, verify=True)                    # needs sage.symbolic
             # Verified
             float(-RR(3.1415926535897931))
             sage: sage_input(float(42), preparse=True, verify=True)
@@ -586,7 +586,7 @@ class SageInputBuilder:
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib.result(sib.float_str(repr(RR(e))))                                # optional - sage.symbolic
+            sage: sib.result(sib.float_str(repr(RR(e))))                                # needs sage.symbolic
             2.71828182845905
         """
         return SIE_literal_stringrep(self, n)
@@ -1752,7 +1752,7 @@ class SIE_literal_stringrep(SIE_literal):
         sage: sib = SageInputBuilder()
         sage: isinstance(sib(3), SIE_literal_stringrep)
         True
-        sage: isinstance(sib(3.14159, True), SIE_literal_stringrep)
+        sage: isinstance(sib(3.14159, True), SIE_literal_stringrep)                     # needs sage.rings.real_mpfr
         True
         sage: isinstance(sib.name('pi'), SIE_literal_stringrep)
         True
@@ -2158,7 +2158,7 @@ class SIE_tuple(SageInputExpression):
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib((3.5, -2))
+            sage: sib((3.5, -2))                                                        # needs sage.rings.real_mpfr
             {tuple: ({atomic:3.5}, {unop:- {atomic:2}})}
             sage: sib(["Hello", "world"])
             {list: ({atomic:'Hello'}, {atomic:'world'})}
@@ -2243,7 +2243,7 @@ class SIE_dict(SageInputExpression):
         sage: from sage.misc.sage_input import SageInputBuilder
 
         sage: sib = SageInputBuilder()
-        sage: sib.dict([('TeX', RR(pi)), ('Metafont', RR(e))])                          # optional - sage.symbolic
+        sage: sib.dict([('TeX', RR(pi)), ('Metafont', RR(e))])                          # needs sage.symbolic
         {dict: {{atomic:'TeX'}:{call: {atomic:RR}({atomic:3.1415926535897931})},
                 {atomic:'Metafont'}:{call: {atomic:RR}({atomic:2.7182818284590451})}}}
         sage: sib.dict({-40:-40, 0:32, 100:212})
