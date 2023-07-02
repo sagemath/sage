@@ -4154,22 +4154,22 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a1')
-            sage: E.reduction(2)                                                        # optional - sage.rings.finite_rings
+            sage: E.reduction(2)                                                        # needs sage.rings.finite_rings
             Elliptic Curve defined by y^2 + y = x^3 + x^2 over Finite Field of size 2
-            sage: E.reduction(3)                                                        # optional - sage.rings.finite_rings
+            sage: E.reduction(3)                                                        # needs sage.rings.finite_rings
             Elliptic Curve defined by y^2 + y = x^3 + x^2 + x over Finite Field of size 3
-            sage: E.reduction(5)                                                        # optional - sage.rings.finite_rings
+            sage: E.reduction(5)                                                        # needs sage.rings.finite_rings
             Elliptic Curve defined by y^2 + y = x^3 + x^2 + 3*x over Finite Field of size 5
-            sage: E.reduction(38)                                                       # optional - sage.rings.finite_rings
+            sage: E.reduction(38)                                                       # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             AttributeError: p must be prime.
-            sage: E.reduction(389)                                                      # optional - sage.rings.finite_rings
+            sage: E.reduction(389)                                                      # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             AttributeError: The curve must have good reduction at p.
             sage: E = EllipticCurve([5^4, 5^6])
-            sage: E.reduction(5)                                                        # optional - sage.rings.finite_rings
+            sage: E.reduction(5)                                                        # needs sage.rings.finite_rings
             Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
         """
         p = rings.Integer(p)
@@ -4507,7 +4507,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         If we extend scalars to a field in which the discriminant is a
         square, the CM becomes rational::
 
-            sage: E.has_rational_cm(QuadraticField(-3))                                 # optional - sage.rings.number_field
+            sage: E.has_rational_cm(QuadraticField(-3))                                 # needs sage.rings.number_field
             True
 
             sage: E = EllipticCurve(j=8000)
@@ -4521,7 +4521,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         Again, we may extend scalars to a field in which the
         discriminant is a square, where the CM becomes rational::
 
-            sage: E.has_rational_cm(QuadraticField(-2))                                 # optional - sage.rings.number_field
+            sage: E.has_rational_cm(QuadraticField(-2))                                 # needs sage.rings.number_field
             True
 
         The field need not be a number field provided that it is an
@@ -4535,7 +4535,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         An error is raised if a field is given which is not an
         extension of `\QQ`, i.e., not of characteristic `0`::
 
-            sage: E.has_rational_cm(GF(2))                                              # optional - sage.rings.finite_rings
+            sage: E.has_rational_cm(GF(2))                                              # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Error in has_rational_cm: Finite Field of size 2
@@ -5223,7 +5223,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             6 Elliptic Curve defined by y^2 + x*y  = x^3 - 8125*x - 282568 over Rational Field
             7 Elliptic Curve defined by y^2 + x*y  = x^3 - 7930*x - 296725 over Rational Field
             8 Elliptic Curve defined by y^2 + x*y  = x^3 - 130000*x - 18051943 over Rational Field
-            sage: G.plot(edge_labels=True)                                              # optional - sage.plot
+            sage: G.plot(edge_labels=True)                                              # needs sage.plot
             Graphics object consisting of 23 graphics primitives
         """
         return self.isogeny_class(order=order).graph()

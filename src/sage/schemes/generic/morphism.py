@@ -1429,7 +1429,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: H = Hom(A, A)
             sage: f = H([3*x^2/y, y^2/x])
-            sage: f.change_ring(RR)
+            sage: f.change_ring(RR)                                                     # optional - sage.rings.real_mpfr
             Scheme endomorphism of Affine Space of dimension 2 over Real Field with
             53 bits of precision
               Defn: Defined on coordinates by sending (x, y) to

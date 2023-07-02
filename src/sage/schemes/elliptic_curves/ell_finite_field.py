@@ -99,7 +99,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         EXAMPLES::
 
             sage: E = EllipticCurve(FiniteField(17), [0,1])
-            sage: P = plot(E, rgbcolor=(0,0,1))                                         # optional - sage.plot
+            sage: P = plot(E, rgbcolor=(0,0,1))                                         # needs sage.plot
         """
         R = self.base_ring()
         if not R.is_prime_field():

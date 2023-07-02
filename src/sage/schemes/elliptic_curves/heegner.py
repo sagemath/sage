@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 r"""
 Heegner points on elliptic curves over the rational numbers
 
@@ -2647,9 +2647,9 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
 
         EXAMPLES::
 
-            sage: heegner_points(389,-7,5).plot(pointsize=50, rgbcolor='red')           # optional - sage.plot
+            sage: heegner_points(389,-7,5).plot(pointsize=50, rgbcolor='red')           # needs sage.plot
             Graphics object consisting of 12 graphics primitives
-            sage: heegner_points(53,-7,15).plot(pointsize=50, rgbcolor='purple')        # optional - sage.plot
+            sage: heegner_points(53,-7,15).plot(pointsize=50, rgbcolor='purple')        # needs sage.plot
             Graphics object consisting of 48 graphics primitives
         """
         return sum(z.plot(*args, **kwds) for z in self)
@@ -4278,7 +4278,7 @@ class KolyvaginPoint(HeegnerPoint):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-11).kolyvagin_point()
-            sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()              # optional - sage.plot
+            sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()              # needs sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         if self.conductor() != 1:

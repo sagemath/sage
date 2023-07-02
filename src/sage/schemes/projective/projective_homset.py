@@ -161,6 +161,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         ::
 
+            sage: # needs sage.rings.complex_double
             sage: P.<x,y,z> = ProjectiveSpace(CDF, 2)
             sage: E = P.subscheme([y^2 + x^2 + z^2, x*y*z])
             sage: len(E(P.base_ring()).points())                                        # optional - sage.libs.singular

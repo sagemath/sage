@@ -153,7 +153,7 @@ class ModularParameterization:
 
             sage: E = EllipticCurve('37a')
             sage: phi = E.modular_parametrization()
-            sage: phi((sqrt(7)*I - 17)/74, 53)                                          # optional - sage.symbolic
+            sage: phi((sqrt(7)*I - 17)/74, 53)                                          # needs sage.symbolic
             (...e-16 - ...e-16*I : ...e-16 + ...e-16*I : 1.00000000000000)
 
         Verify that the mapping is invariant under the action of `\Gamma_0(N)`
@@ -214,12 +214,12 @@ class ModularParameterization:
 
             sage: E = EllipticCurve('37a'); phi = E.modular_parametrization()
             sage: x = polygen(ZZ, 'x')
-            sage: tau = (sqrt(7)*I - 17)/74                                             # optional - sage.symbolic
-            sage: z = phi.map_to_complex_numbers(tau); z                                # optional - sage.symbolic
+            sage: tau = (sqrt(7)*I - 17)/74                                             # needs sage.symbolic
+            sage: z = phi.map_to_complex_numbers(tau); z                                # needs sage.symbolic
             0.929592715285395 - 1.22569469099340*I
-            sage: E.elliptic_exponential(z)                                             # optional - sage.symbolic
+            sage: E.elliptic_exponential(z)                                             # needs sage.symbolic
             (...e-16 - ...e-16*I : ...e-16 + ...e-16*I : 1.00000000000000)
-            sage: phi(tau)                                                              # optional - sage.symbolic
+            sage: phi(tau)                                                              # needs sage.symbolic
             (...e-16 - ...e-16*I : ...e-16 + ...e-16*I : 1.00000000000000)
         """
         if prec is None:

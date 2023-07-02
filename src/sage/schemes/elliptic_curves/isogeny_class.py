@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 r"""
 Isogeny class of elliptic curves over number fields
 
