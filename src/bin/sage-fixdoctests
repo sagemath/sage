@@ -150,6 +150,7 @@ def process_block(block, src_in_lines, file_optional_tags):
         if src_in_lines[first_line_num - 1].strip() in ['"""', "'''"]:
             # This happens due to a virtual doctest in src/sage/repl/user_globals.py
             return
+        optional = set(optional) - set(file_optional_tags)
         src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
                                                                 add_tags=optional)
 
