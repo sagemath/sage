@@ -4127,14 +4127,16 @@ cdef class Polynomial(CommutativePolynomial):
 
         Arbitrary precision real and complex factorization::
 
+            sage: # needs sage.libs.pari sage.rings.real_mpfr
             sage: R.<x> = RealField(100)[]                                              # optional - sage.rings.real_mpfr
-            sage: F = factor(x^2 - 3); F                                                # optional - sage.rings.real_mpfr
+            sage: F = factor(x^2 - 3); F
             (x - 1.7320508075688772935274463415) * (x + 1.7320508075688772935274463415)
             sage: expand(F)                                                             # optional - sage.rings.real_mpfr
             x^2 - 3.0000000000000000000000000000
             sage: factor(x^2 + 1)                                                       # optional - sage.rings.real_mpfr
             x^2 + 1.0000000000000000000000000000
 
+            sage: # needs sage.libs.pari sage.rings.real_mpfr
             sage: R.<x> = ComplexField(100)[]                                           # optional - sage.rings.real_mpfr
             sage: F = factor(x^2 + 3); F                                                # optional - sage.rings.real_mpfr
             (x - 1.7320508075688772935274463415*I) * (x + 1.7320508075688772935274463415*I)

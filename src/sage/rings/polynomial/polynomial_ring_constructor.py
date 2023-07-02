@@ -355,6 +355,7 @@ def PolynomialRing(base_ring, *args, **kwds):
     You can alternatively create a polynomial ring over a ring `R` with
     square brackets::
 
+        sage: # needs sage.rings.real_mpfr
         sage: RR["x"]
         Univariate Polynomial Ring in x over Real Field with 53 bits of precision
         sage: RR["x,y"]

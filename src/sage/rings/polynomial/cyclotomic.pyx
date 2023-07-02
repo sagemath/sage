@@ -265,7 +265,7 @@ def cyclotomic_value(n, x):
         ....:         if val1.parent() is not val2.parent():
         ....:             print("Wrong parent for cyclotomic_value(%s, %s) in %s"%(n,y,parent(y)))
 
-        sage: cyclotomic_value(20, I)
+        sage: cyclotomic_value(20, I)                                                   # optional - sage.symbolic
         5
         sage: a = cyclotomic_value(10, mod(3, 11)); a
         6
