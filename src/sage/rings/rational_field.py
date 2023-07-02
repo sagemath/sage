@@ -374,7 +374,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         if S is ZZ:
             return rational.Z_to_Q()
         elif S is int:
-            return rational.long_to_Q()
+            return rational.int_to_Q()
         elif ZZ.has_coerce_map_from(S):
             return rational.Z_to_Q() * ZZ._internal_coerce_map_from(S)
         from sage.rings.localization import Localization

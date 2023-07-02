@@ -82,7 +82,8 @@ graft sage/libs/gmp
 
 
 ## FIXME: Needed for doctesting
-include sage/misc/misc.*              # walltime, cputime used in sage.doctest
+include sage/misc/misc.*                # some_tuples used in sage.misc.sage_unittest
+include sage/misc/timing.p*             # walltime, cputime used in sage.doctest
 
 
 global-exclude *.c

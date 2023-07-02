@@ -445,7 +445,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         columns = []
 
-        for i in xrange(d):
+        for i in range(d):
             columns.append( (self * x)._vector_(reverse=reverse) )
             x *= a
 
