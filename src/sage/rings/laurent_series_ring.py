@@ -405,7 +405,6 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         EXAMPLES::
 
             sage: R.<u> = LaurentSeriesRing(Qp(5, 10))                                  # optional - sage.rings.padics
-            sage: S.<t> = LaurentSeriesRing(RationalField())                            # optional - sage.rings.padics
             sage: R(t + t^2 + O(t^3))                                                   # optional - sage.rings.padics
             (1 + O(5^10))*u + (1 + O(5^10))*u^2 + O(u^3)
             sage: R(t + t^2 + O(t^3), prec=2)                                           # optional - sage.rings.padics
@@ -442,6 +441,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         Check that :trac:`28993` is fixed::
 
             sage: from sage.modular.etaproducts import qexp_eta                         # optional - sage.modular
+            sage: S.<t> = LaurentSeriesRing(RationalField())
             sage: qexp_eta(S, prec=30)                                                  # optional - sage.modular
             1 - t - t^2 + t^5 + t^7 - t^12 - t^15 + t^22 + t^26 + O(t^30)
 

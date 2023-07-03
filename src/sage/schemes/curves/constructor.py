@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.singular
 """
 Curve constructor
 

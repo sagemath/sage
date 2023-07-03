@@ -4193,10 +4193,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = CDF[]
             sage: f = (x^2 + 2*R(I))^3
             sage: F = f.factor()                                                        # optional - numpy
-            sage: F  # abs tol 3e-5
+            sage: F  # abs tol 3e-5                                                     # optional - numpy
             (x - 1.0000138879287663 + 1.0000013435286879*I) * (x - 0.9999942196864997 + 0.9999873009803959*I) * (x - 0.9999918923847313 + 1.0000113554909125*I)
             * (x + 0.9999908759550227 - 1.0000069659624138*I) * (x + 0.9999985293216753 - 0.9999886153831807*I) * (x + 1.0000105947233 - 1.0000044186544053*I)
-            sage: [f(t[0][0]).abs() for t in F] # abs tol 1e-13
+            sage: [f(t[0][0]).abs() for t in F] # abs tol 1e-13                         # optional - numpy
             [1.979365054e-14, 1.97936298566e-14, 1.97936990747e-14,
              3.6812407475e-14, 3.65211563729e-14, 3.65220890052e-14]
 
