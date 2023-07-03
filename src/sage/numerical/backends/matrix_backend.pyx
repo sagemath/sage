@@ -62,13 +62,12 @@ cdef class MatrixBackend(GenericBackend):
         self.col_lower_bound = Vector(QQ, [])
         self.col_upper_bound = Vector(QQ, [])
 
-        self.row_name_var = Vector(QQ, [])
-        self.col_name_var = Vector(QQ, [])
+        self.row_name_var = []
+        self.col_name_var = []
 
-        self.is_continuous = Vector(QQ, [])
-        self.is_binary = Vector(QQ, [])
-        self.is_integer = Vector(QQ, [])
-
+        self.is_continuous = []
+        self.is_binary = []
+        self.is_integer = []
         if maximization:
             self.set_sense(+1)
         else:
