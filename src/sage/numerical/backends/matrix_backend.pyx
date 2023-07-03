@@ -20,6 +20,7 @@ other classes implementing solvers.
 from sage.matrix.constructor import Matrix
 from sage.matrix.constructor import Vector
 from .generic_backend cimport GenericBackend
+import numpy
 
 cdef class MatrixBackend(GenericBackend):
     """
@@ -47,7 +48,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "Matrix")                 
 
-        """
+"""
         
         #Sage Matrix and Vector instead of Python lists
         self.objective_function = Vector(QQ, [])
@@ -80,9 +81,9 @@ cdef class MatrixBackend(GenericBackend):
 
     cpdef base_ring(self):
         """
-        The base ring
+    The base ring
     
-        TESTS::
+    TESTS::
     
             sage: from sage.numerical.backends.matrix_backend import MatrixBackend
             sage: MatrixBackend(base_ring=QQ).base_ring()
@@ -734,3 +735,6 @@ cdef class MatrixBackend(GenericBackend):
             self.col_lower_bound[index] = value
         else:
             return self.col_lower_bound[index]
+
+cdef class NumpyMatrixBackend(GenericBackend):
+
