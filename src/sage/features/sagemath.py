@@ -544,7 +544,7 @@ class sage__rings__complex_double(PythonModule):
             sage: isinstance(sage__rings__complex_double(), sage__rings__complex_double)
             True
         """
-        PythonModule.__init__(self, 'sage.rings.complex_double', ,
+        PythonModule.__init__(self, 'sage.rings.complex_double',
                               spkg='sagemath_modules', type='standard')
 
 
@@ -869,7 +869,7 @@ class sage__symbolic(JoinFeature):
                               PythonModule('sage.calculus.predefined'),
                               PythonModule('sage.calculus.tests'),
                               PythonModule('sage.calculus.var'),
-                              PythonModule('sage.geometry.riemannian_manifolds')
+                              PythonModule('sage.geometry.riemannian_manifolds'),
                               PythonModule('sage.geometry.hyperbolic_space'),
                               PythonModule('sage.dynamics.complex_dynamics'),
                               PythonModule('sage.libs.pynac'),
