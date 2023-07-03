@@ -716,7 +716,7 @@ Use the ``--long`` flag to run doctests that have been marked with the
 comment ``# long time``. These tests are normally skipped in order to
 reduce the time spent running tests::
 
-    [roed@sage sage-6.0]$ sage -t src/sage/rings/tests.py
+    [roed@sage sage-6.0]$ ./sage -t src/sage/rings/tests.py
     Running doctests with ID 2012-06-21-16-00-13-40835825.
     Doctesting 1 file.
     sage -t tests.py
@@ -730,7 +730,7 @@ reduce the time spent running tests::
 
 In order to run the long tests as well, do the following::
 
-    [roed@sage sage-6.0]$ sage -t --long src/sage/rings/tests.py
+    [roed@sage sage-6.0]$ ./sage -t --long src/sage/rings/tests.py
     Running doctests with ID 2012-06-21-16-02-05-d13a9a24.
     Doctesting 1 file.
     sage -t tests.py
@@ -747,7 +747,7 @@ To find tests that take longer than the allowed time use the
 print a warning if they take longer than 1.0 second. Note that this is
 a warning, not an error::
 
-    [roed@sage sage-6.0]$ sage -t --warn-long src/sage/rings/factorint.pyx
+    [roed@sage sage-6.0]$ ./sage -t --warn-long src/sage/rings/factorint.pyx
     Running doctests with ID 2012-07-14-03-27-03-2c952ac1.
     Doctesting 1 file.
     sage -t --warn-long src/sage/rings/factorint.pyx
@@ -781,7 +781,7 @@ a warning, not an error::
 
 You can also pass in an explicit amount of time::
 
-    [roed@sage sage-6.0]$ sage -t --long --warn-long 2.0 src/sage/rings/tests.py
+    [roed@sage sage-6.0]$ ./sage -t --long --warn-long 2.0 src/sage/rings/tests.py
     Running doctests with ID 2012-07-14-03-30-13-c9164c9d.
     Doctesting 1 file.
     sage -t --long --warn-long 2.0 tests.py
@@ -808,7 +808,7 @@ Finally, you can disable any warnings about long tests with
 
 Doctests start from a random seed::
 
-    [kliem@sage sage-9.2]$ sage -t src/sage/doctest/tests/random_seed.rst
+    [kliem@sage sage-9.2]$ ./sage -t src/sage/doctest/tests/random_seed.rst
     Running doctests with ID 2020-06-23-23-22-59-49f37a55.
     ...
     Doctesting 1 file.
@@ -834,7 +834,9 @@ Doctests start from a random seed::
 
 This seed can be set explicitly to reproduce possible failures::
 
-    [kliem@sage sage-9.2]$ sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst
+    [kliem@sage sage-9.2]$ ./sage -t --warn-long 89.5                                   \
+                                  --random-seed=112986622569797306072457879734474628454 \
+                                  src/sage/doctest/tests/random_seed.rst
     Running doctests with ID 2020-06-23-23-24-28-14a52269.
     ...
     Doctesting 1 file.
@@ -873,7 +875,8 @@ necessary optional packages in order for these tests to succeed.
 
 By default, Sage only runs doctests that are not marked with the ``optional`` tag.  This is equivalent to running ::
 
-    [roed@sage sage-6.0]$ sage -t --optional=sagemath_doc_html,sage src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ ./sage -t --optional=sagemath_doc_html,sage \
+                                 src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a368a200.
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -887,7 +890,8 @@ By default, Sage only runs doctests that are not marked with the ``optional`` ta
 
 If you want to also run tests that require magma, you can do the following::
 
-    [roed@sage sage-6.0]$ sage -t --optional=sagemath_doc_html,sage,magma src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ ./sage -t --optional=sagemath_doc_html,sage,magma \
+                                 src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a00a7319
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -901,7 +905,7 @@ If you want to also run tests that require magma, you can do the following::
 
 In order to just run the tests that are marked as requiring magma, omit ``sage`` and ``sagemath_doc_html``::
 
-    [roed@sage sage-6.0]$ sage -t --optional=magma src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ ./sage -t --optional=magma src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-33-a2bc1fdf
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -917,7 +921,7 @@ If you want Sage to detect external software or other capabilities
 (such as magma, latex, internet) automatically and run all of the
 relevant tests, then add ``external``::
 
-    $ sage -t --optional=external src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ $ ./sage -t --optional=external src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2016-03-16-14-10-21-af2ebb67.
     Using --optional=external
     External software to be detected: cplex,gurobi,internet,latex,macaulay2,magma,maple,mathematica,matlab,octave,scilab
@@ -934,7 +938,7 @@ relevant tests, then add ``external``::
 
 To run all tests, regardless of whether they are marked optional, pass ``all`` as the ``optional`` tag::
 
-    [roed@sage sage-6.0]$ sage -t --optional=all src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ ./sage -t --optional=all src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-31-18-8c097f55
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -955,7 +959,7 @@ than one thread.  To run doctests in parallel use the ``--nthreads``
 flag (``-p`` is a shortened version).  Pass in the number of threads
 you would like to use (by default Sage just uses 1)::
 
-    [roed@sage sage-6.0]$ sage -tp 2 src/sage/doctest/
+    [roed@sage sage-6.0]$ ./sage -tp 2 src/sage/doctest/
     Running doctests with ID 2012-06-22-19-09-25-a3afdb8c.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 8 files using 2 threads.
@@ -991,7 +995,7 @@ short).  In addition to testing the code in Sage's Python and Cython
 files, this command will run the tests defined in Sage's documentation
 as well as testing the Sage notebook::
 
-    [roed@sage sage-6.0]$ sage -t -a
+    [roed@sage sage-6.0]$ ./sage -t -a
     Running doctests with ID 2012-06-22-19-10-27-e26fce6d.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....
@@ -1012,7 +1016,8 @@ short) then you will drop into an interactive Python debugger whenever
 a Python exception occurs.  As an example, I modified
 :mod:`sage.schemes.elliptic_curves.constructor` to produce an error::
 
-    [roed@sage sage-6.0]$ sage -t --debug src/sage/schemes/elliptic_curves/constructor.py
+    [roed@sage sage-6.0]$ ./sage -t --debug \
+                                 src/sage/schemes/elliptic_curves/constructor.py
     Running doctests with ID 2012-06-23-12-09-04-b6352629.
     Doctesting 1 file.
     **********************************************************************
@@ -1021,22 +1026,22 @@ a Python exception occurs.  As an example, I modified
         EllipticCurve([0,0])
     Exception raised:
         Traceback (most recent call last):
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/doctest/forker.py", line 573, in _run
+          File ".../site-packages/sage/doctest/forker.py", line 573, in _run
             self.execute(example, compiled, test.globs)
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/doctest/forker.py", line 835, in execute
+          File ".../site-packages/sage/doctest/forker.py", line 835, in execute
             exec compiled in globs
           File "<doctest sage.schemes.elliptic_curves.constructor[0]>", line 1, in <module>
             EllipticCurve([Integer(0),Integer(0)])
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/constructor.py", line 346, in EllipticCurve
+          File ".../site-packages/sage/schemes/elliptic_curves/constructor.py", line 346, in EllipticCurve
             return ell_rational_field.EllipticCurve_rational_field(x, y)
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/ell_rational_field.py", line 216, in __init__
+          File ".../site-packages/sage/schemes/elliptic_curves/ell_rational_field.py", line 216, in __init__
             EllipticCurve_number_field.__init__(self, Q, ainvs)
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/ell_number_field.py", line 159, in __init__
+          File ".../site-packages/sage/schemes/elliptic_curves/ell_number_field.py", line 159, in __init__
             EllipticCurve_field.__init__(self, [field(x) for x in ainvs])
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/ell_generic.py", line 156, in __init__
+          File ".../site-packages/sage/schemes/elliptic_curves/ell_generic.py", line 156, in __init__
             "Invariants %s define a singular curve."%ainvs
         ArithmeticError: Invariants [0, 0, 0, 0, 0] define a singular curve.
-    > /Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/ell_generic.py(156)__init__()
+    > .../site-packages/sage/schemes/elliptic_curves/ell_generic.py(156)__init__()
     -> "Invariants %s define a singular curve."%ainvs
     (Pdb) l
     151                 if len(ainvs) == 2:
@@ -1073,7 +1078,8 @@ you know what test caused the problem (if you want this output to
 appear in real time use the ``--verbose`` flag).  To have doctests run
 under the control of gdb, use the ``--gdb`` flag::
 
-    [roed@sage sage-6.0]$ sage -t --gdb src/sage/schemes/elliptic_curves/constructor.py
+    [roed@sage sage-6.0]$ ./sage -t --gdb \
+                                 src/sage/schemes/elliptic_curves/constructor.py
     exec gdb --eval-commands="run" --args /home/roed/sage-9.7/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats_path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
@@ -1108,7 +1114,7 @@ Once you're done fixing whatever problems where revealed by the
 doctests, you can rerun just those files that failed their most recent
 test by using the ``--failed`` flag (``-f`` for short)::
 
-    [roed@sage sage-6.0]$ sage -t -fa
+    [roed@sage sage-6.0]$ ./sage -t -fa
     Running doctests with ID 2012-07-07-00-45-35-d8b5a408.
     Doctesting entire Sage library.
     Only doctesting files that failed last test.
@@ -1136,7 +1142,8 @@ Show skipped optional tests
 To print a summary at the end of each file with the number of optional
 tests skipped, use the ``--show-skipped`` flag::
 
-   [roed@sage sage-6.0]$ sage -t --show-skipped src/sage/rings/finite_rings/integer_mod.pyx
+   [roed@sage sage-6.0]$ ./sage -t --show-skipped \
+                                src/sage/rings/finite_rings/integer_mod.pyx
    Running doctests with ID 2013-03-14-15-32-05-8136f5e3.
    Doctesting 1 file.
    sage -t sage/rings/finite_rings/integer_mod.pyx
@@ -1161,7 +1168,7 @@ you to run tests repeatedly in an attempt to search for Heisenbugs.
 The flag ``--global-iterations`` takes an integer and runs the whole
 set of tests that many times serially::
 
-    [roed@sage sage-6.0]$ sage -t --global-iterations 2 src/sage/sandpiles
+    [roed@sage sage-6.0]$ ./sage -t --global-iterations 2 src/sage/sandpiles
     Running doctests with ID 2012-07-07-00-59-28-e7048ad9.
     Doctesting 3 files (2 global iterations).
     sage -t src/sage/sandpiles/__init__.py
@@ -1192,7 +1199,7 @@ set of tests that many times serially::
 You can also iterate in a different order: the ``--file-iterations``
 flag runs the tests in each file ``N`` times before proceeding::
 
-    [roed@sage sage-6.0]$ sage -t --file-iterations 2 src/sage/sandpiles
+    [roed@sage sage-6.0]$ ./sage -t --file-iterations 2 src/sage/sandpiles
     Running doctests with ID 2012-07-07-01-01-43-8f954206.
     Doctesting 3 files (2 file iterations).
     sage -t src/sage/sandpiles/__init__.py
@@ -1220,7 +1227,7 @@ On a slow machine the default timeout of 5 minutes may not be enough
 for the slowest files.  Use the ``--timeout`` flag (``-T`` for short)
 to set it to something else::
 
-    [roed@sage sage-6.0]$ sage -tp 2 --all --timeout 1
+    [roed@sage sage-6.0]$ ./sage -tp 2 --all --timeout 1
     Running doctests with ID 2012-07-07-01-09-37-deb1ab83.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....
@@ -1235,7 +1242,7 @@ Using absolute paths
 By default filenames are printed using relative paths.  To use
 absolute paths instead pass in the ``--abspath`` flag::
 
-    [roed@sage sage-6.0]$ sage -t --abspath src/sage/doctest/control.py
+    [roed@sage sage-6.0]$ ./sage -t --abspath src/sage/doctest/control.py
     Running doctests with ID 2012-07-07-01-13-03-a023e212.
     Doctesting 1 file.
     sage -t /home/roed/sage-6.0/src/sage/doctest/control.py
@@ -1256,7 +1263,7 @@ convenient to test only the files that have changed.  To do so use the
 ``--new`` flag, which tests files that have been modified or added
 since the last commit::
 
-    [roed@sage sage-6.0]$ sage -t --new
+    [roed@sage sage-6.0]$ ./sage -t --new
     Running doctests with ID 2012-07-07-01-15-52-645620ee.
     Doctesting files changed since last git commit.
     Doctesting 1 file.
@@ -1277,7 +1284,7 @@ By default, tests are run in the order in which they appear in the
 file.  To run tests in a random order (which can reveal subtle bugs),
 use the ``--randorder`` flag and pass in a random seed::
 
-    [roed@sage sage-6.0]$ sage -t --new --randorder 127
+    [roed@sage sage-6.0]$ ./sage -t --new --randorder 127
     Running doctests with ID 2012-07-07-01-19-06-97c8484e.
     Doctesting files changed since last git commit.
     Doctesting 1 file.
@@ -1307,7 +1314,7 @@ Auxiliary files
 To specify a logfile (rather than use the default which is created for
 ``sage -t --all``), use the ``--logfile`` flag::
 
-    [roed@sage sage-6.0]$ sage -t --logfile test1.log src/sage/doctest/control.py
+    [roed@sage sage-6.0]$ ../sage -t --logfile test1.log src/sage/doctest/control.py
     Running doctests with ID 2012-07-07-01-25-49-e7c0e52d.
     Doctesting 1 file.
     sage -t src/sage/doctest/control.py
@@ -1336,7 +1343,7 @@ To give a json file storing the timings for each file, use the
 that slower tests are run first (and thus multiple processes are
 utilized most efficiently)::
 
-    [roed@sage sage-6.0]$ sage -tp 2 --stats-path ~/.sage/timings2.json --all
+    [roed@sage sage-6.0]$ ../sage -tp 2 --stats-path ~/.sage/timings2.json --all
     Running doctests with ID 2012-07-07-01-28-34-2df4251d.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....
@@ -1576,14 +1583,14 @@ Use in virtual environments
 The doctest fixer can also run tests using the Sage doctester installed in
 a virtual environment::
 
-    [mkoeppe@sage sage]$ ./sage --fixdoctests \
+    [mkoeppe@sage sage]$ ./sage --fixdoctests --overwrite \
                                 --distribution sagemath-categories \
                                 src/sage/geometry/schemes/generic/*.py
 
 This command, using ``--distribution``, is equivalent to a command
 that uses the more specific options ``--venv`` and ``--environment``::
 
-    [mkoeppe@sage sage]$ ./sage --fixdoctests \
+    [mkoeppe@sage sage]$ ./sage --fixdoctests --overwrite \
                                 --venv pkgs/sagemath-categories/.tox/sagepython-... \
                                 --environment sage.all__sagemath_categories
                                 src/sage/geometry/schemes/generic/*.py
@@ -1598,4 +1605,4 @@ a full installation of the Sage library) and add a ``# needs ...`` tag
 to the doctest.
 
 Likewise, when the doctester runs into a :class:`ModuleNotFoundError`,
-the doctest fixer will automatically add a ``# needs`` tag.
+the doctest fixer will automatically add a ``# needs ...`` tag.

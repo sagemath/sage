@@ -544,14 +544,19 @@ Testing distribution packages
 Of course, we need tools for testing modularized distributions of
 portions of the Sage library.
 
-- Modularized distributions must be testable separately!
+- Distribution packages of the modularized Sage library must be testable separately!
 
 - But we want to keep integration testing with other portions of Sage too!
 
-Preparing doctests
-------------------
+Preparing doctests for modularized testing
+------------------------------------------
 
-Whenever an optional package is needed for a particular test, we use the
+Section :ref:`section-doctest-writing` explains how to write doctests
+for Sage. Here we show how to prepare existing or new doctests so that
+they are suitable for modularized testing.
+
+Per section :ref:`section-further_conventions`,
+whenever an optional package is needed for a particular test, we use the
 doctest tag ``# optional``. This mechanism can also be used for making a
 doctest conditional on the presence of a portion of the Sage library.
 
@@ -587,14 +592,11 @@ will be a smaller maintenance burden when implementation details change.
 Testing the distribution in virtual environments with tox
 ---------------------------------------------------------
 
-So how to test that this works?
+Chapter :ref:`chapter-doctesting` explains in detail how to run the
+Sage doctester with various options.
 
-Sure, we could go into the installation directory
-``SAGE_VENV/lib/python3.9/site-packages/`` and do ``rm -rf
-sage/symbolic`` and test that things still work. But that's not a good
-way of testing.
-
-Instead, we use a virtual environment in which we only install the
+To test a distribution package of the modularized Sage library,
+we use a virtual environment in which we only install the
 distribution to be tested (and its Python dependencies).
 
 Let's try it out first with the entire Sage library, represented by
@@ -649,7 +651,7 @@ command::
 
 This command does not make any changes to the normal installation of
 Sage. The virtual environment is created in a subdirectory of
-``SAGE_ROOT/pkgs/sagemath-standard-no-symbolics/.tox/``. After the command
+``SAGE_ROOT/pkgs/sagemath-standard/.tox/``. After the command
 finishes, we can start the separate installation of the Sage library
 in its virtual environment::
 
@@ -663,10 +665,10 @@ The whole ``.tox`` directory can be safely deleted at any time.
 
 We can do the same with other distributions, for example the large
 distribution **sagemath-standard-no-symbolics**
-(from :trac:`32601`), which is intended to provide
+(from :trac:`35095`), which is intended to provide
 everything that is currently in the standard Sage library, i.e.,
 without depending on optional packages, but without the packages
-:mod:`sage.symbolic`, :mod:`sage.functions`, :mod:`sage.calculus`, etc.
+:mod:`sage.symbolic`, :mod:`sage.calculus`, etc.
 
 Again we can run the test with ``tox`` in a separate virtual environment::
 
@@ -690,4 +692,4 @@ Building these small distributions serves as a valuable regression
 testsuite.  However, a current issue with both of these distributions
 is that they are not separately testable: The doctests for these
 modules depend on a lot of other functionality from higher-level parts
-of the Sage library.
+of the Sage library. This is being addressed in :issue:`35095`.

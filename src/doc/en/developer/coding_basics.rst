@@ -1009,17 +1009,21 @@ written.
       sage: U._repr_()                                                                                                                                                    # this is fine
       'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
 
-  - Annotations for modularization purposes such as ``# optional - sagemath-combinat sagemath-modules``
+  - Doctest tags for modularization purposes such as ``# needs sage.modules``
     (see :ref:`section-further_conventions`) should be aligned at column 88.
     Clean lines from consistent alignment help reduce visual clutter.
-    Moreover, at the maximum window width, only the word fragment ``# option`` will be
-    visible without horizontal scrolling, striking a thoughtfully chosen balance between presenting
+    Moreover, at the maximum window width, only the word ``# needs`` will be
+    visible in the HTML output without horizontal scrolling, striking a
+    thoughtfully chosen balance between presenting
     the information and reducing visual clutter. (How much can be seen may be
     browser-dependent, of course.) In visually dense doctests, you can try to sculpt out visual space to separate
     the test commands from the annotation.
 
-  - Annotations for doctests depending on optional packages such as ``# optional - pynormaliz``, on the other hand,
+  - Doctest tags such as ``# optional - pynormaliz`` that make the doctest
+    conditional on the presence of optional packages, on the other hand,
     should be aligned so that they are visible without having to scroll horizontally.
+    The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
+    tab stops at columns 48, 56, 64, ... for these tags.
 
 - **Python3 print:** Python3 syntax for print must be used in Sage
   code and doctests. If you use an old-style print in doctests, it
@@ -1194,34 +1198,15 @@ framework. Here is a comprehensive list:
      Neither of this applies to files or directories which are explicitly given
      as command line arguments: those are always tested.
 
-- **optional:** A line flagged with ``optional - keyword`` is not tested unless
-  the ``--optional=keyword`` flag is passed to ``sage -t`` (see
+- **optional/needs:** A line tagged with ``optional - FEATURE``
+  or ``needs FEATURE`` is not tested unless the ``--optional=KEYWORD`` flag
+  is passed to ``sage -t`` (see
   :ref:`section-optional-doctest-flag`). The main applications are:
 
   - **optional packages:** When a line requires an optional package to be
     installed (e.g. the ``sloane_database`` package)::
 
       sage: SloaneEncyclopedia[60843]    # optional - sloane_database
-
-    .. NOTE::
-
-       If one of the first 10 lines of a file starts with any of
-       ``r""" sage.doctest: optional - keyword``
-       (or ``""" sage.doctest: optional - keyword``
-       or ``# sage.doctest: optional - keyword``
-       or ``% sage.doctest: optional - keyword``
-       or ``.. sage.doctest: optional - keyword``,
-       or any of these with different spacing),
-       then that file will be skipped unless
-       the ``--optional=keyword`` flag is passed to ``sage -t``.
-
-       When a file is skipped that was explicitly given as a command line argument,
-       a warning is displayed.
-
-       If you add such a line to a file, you are strongly encouraged
-       to add a note to the module-level documentation, saying that
-       the doctests in this file will be skipped unless the
-       appropriate conditions are met.
 
   - **internet:** For lines that require an internet connection::
 
@@ -1230,8 +1215,8 @@ framework. Here is a comprehensive list:
        n-state Turing machine can make on an initially blank tape before
        eventually halting.
 
-  - **bug:** For lines that describe bugs. Alternatively, use ``# known bug``
-    instead: it is an alias for ``optional bug``.
+  - **known bugs:** For lines that describe known bugs, you can use ``# optional - bug``,
+    although ``# known bug`` is preferred.
 
     .. CODE-BLOCK:: rest
 
@@ -1242,20 +1227,53 @@ framework. Here is a comprehensive list:
             sage: 2+2  # known bug
             5
 
+  - **modularization:** To enable
+    :ref:`separate testing of the distribution packages <section-doctesting-venv>`
+    of the modularized Sage library, doctests that depend on features provided
+    by other distribution packages can be tagged ``# needs FEATURE``.
+    For example:
+
+    .. CODE-BLOCK:: rest
+
+        Consider the following calculation::
+
+            sage: a = AA(2).sqrt()  # needs sage.rings.number_field
+            sage: b = sqrt(3)       # needs sage.symbolic
+            sage: a + AA(b)         # needs sage.rings.number_field sage.symbolic
+
   .. NOTE::
 
-      - Any words after ``# optional`` are interpreted as a list of
+      - Any words after ``# optional`` and ``# needs``  are interpreted as a list of
         package (spkg) names or other feature tags, separated by spaces.
 
       - Any punctuation other than underscores (``_``) and periods (``.``),
         that is, commas, hyphens, semicolons, ..., after the
         first word ends the list of packages.  Hyphens or colons between the
         word ``optional`` and the first package name are allowed.  Therefore,
-        you should not write ``optional: needs package CHomP`` but simply
-        ``optional: CHomP``.
+        you should not write ``# optional - depends on package CHomP`` but simply
+        ``# optional - CHomP``.
 
-      - Optional tags are case-insensitive, so you could also write ``optional:
+      - Optional tags are case-insensitive, so you could also write ``# optional -
         chOMP``.
+
+  If ``# optional`` or ``# needs`` is placed right after the ``sage:`` prompt,
+  it is a codeblock-scoped tag, which applies to all doctest lines until
+  a blank line is encountered.
+
+  These tags can also be applied to an entire file. If one of the first 10 lines
+  of a file starts with any of ``r""" sage.doctest: optional - FEATURE``,
+  ``# sage.doctest: needs FEATURE``, or ``.. sage.doctest: optional - FEATURE``
+  (in ``.rst`` files), etc., then this applies to all doctests in this file.
+
+  When a file is skipped that was explicitly given as a command line argument,
+  a warning is displayed.
+
+  .. NOTE::
+
+       If you add such a line to a file, you are strongly encouraged
+       to add a note to the module-level documentation, saying that
+       the doctests in this file will be skipped unless the
+       appropriate conditions are met.
 
 - **indirect doctest:** in the docstring of a function ``A(...)``, a line
   calling ``A`` and in which the name ``A`` does not appear should have this
