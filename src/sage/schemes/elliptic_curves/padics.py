@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 #
 # All these methods are imported in EllipticCurve_rational_field,
 # so there is no reason to add this module to the documentation.

@@ -1,3 +1,4 @@
+# sage.doctest: needs scipy sage.graphs sage.groups
 r"""
 Riemann matrices and endomorphism rings of algebraic Riemann surfaces
 
@@ -123,6 +124,7 @@ from sage.matrix.special import block_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.functional import numerical_approx
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_integer import IntegerLattice
@@ -133,11 +135,12 @@ from sage.rings.function_field.divisor import FunctionFieldDivisor
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
 import sage.libs.mpmath.all as mpall
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 
 def voronoi_ghost(cpoints, n=6, CC=CDF):
@@ -2371,7 +2374,8 @@ class RiemannSurface():
         easier to test.::
 
             sage: parent(M)
-            Full MatrixSpace of 3 by 6 dense matrices over Complex Field with 30 bits of precision
+            Full MatrixSpace of 3 by 6 dense matrices
+             over Complex Field with 30 bits of precision
             sage: M.rank()
             3
 

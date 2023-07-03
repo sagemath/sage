@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.padics
 """
 Hyperelliptic curves over a `p`-adic field
 """

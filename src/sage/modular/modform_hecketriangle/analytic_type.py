@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Analytic types of modular forms
 
