@@ -9140,6 +9140,12 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: the only implementation available for undirected graphs is with constraint_generation set to True
+
+        :trac:`35889` is fixed::
+
+            sage: G = Graph([('A', 1)])
+            sage: G.feedback_vertex_set()
+            []
         """
         if not constraint_generation and not self.is_directed():
             raise ValueError("the only implementation available for "
