@@ -1773,7 +1773,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         # We only run through spaces of level a multiple of the conductor of the character, which
         # we compute below, or set to 1 in case of Gamma_H or Gamma_1
         chi = self.character()
-        cond = 1 if chi is None   else   chi.conductor()
+        cond = 1 if chi is None   else chi.conductor()
         # Now actually run through the divisor levels, taking only the ones with that are
         # a multiple of the conductor.
         for d in reversed(divisors(self.level())):

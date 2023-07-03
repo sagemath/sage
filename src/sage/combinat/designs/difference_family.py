@@ -5,7 +5,7 @@ Difference families
 This module gathers everything related to difference families. One can build a
 difference family (or check that it can be built) with :func:`difference_family`::
 
-    sage: G,F = designs.difference_family(13,4,1)
+    sage: G,F = designs.difference_family(13,4,1)                                       # optional - sage.modules
 
 It defines the following functions:
 
@@ -70,9 +70,9 @@ def group_law(G):
         sage: from sage.combinat.designs.difference_family import group_law
         sage: group_law(Zmod(3))
         (0, <built-in function add>, <built-in function neg>)
-        sage: group_law(SymmetricGroup(5))
+        sage: group_law(SymmetricGroup(5))                                              # optional - sage.groups
         ((), <built-in function mul>, <built-in function inv>)
-        sage: group_law(VectorSpace(QQ,3))
+        sage: group_law(VectorSpace(QQ, 3))                                             # optional - sage.modules
         ((0, 0, 0), <built-in function add>, <built-in function neg>)
     """
     import operator
@@ -95,9 +95,8 @@ def block_stabilizer(G, B):
 
     INPUT:
 
-    - ``G`` -- a group (additive or multiplicative).
-
-    - ``B`` -- a subset of ``G``.
+    - ``G`` -- a group (additive or multiplicative)
+    - ``B`` -- a subset of ``G``
 
     EXAMPLES::
 
@@ -137,12 +136,10 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
     INPUT:
 
     - ``G`` -- group of cardinality ``v``
-
     - ``D`` -- a set of ``k``-subsets of ``G``
-
     - ``v``, ``k`` and ``l`` -- optional parameters of the difference family
-
-    - ``verbose`` - whether to print additional information
+    - ``verbose`` -- boolean (default: ``False``); whether to print additional
+      information
 
     .. SEEALSO::
 
@@ -179,13 +176,13 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
         sage: is_difference_family(G, D)
         True
 
-        sage: G = AdditiveAbelianGroup([3]*4)
-        sage: a,b,c,d = G.gens()
-        sage: D = [[d, -a+d, -c+d, a-b-d, b+c+d],
+        sage: G = AdditiveAbelianGroup([3]*4)                                           # optional - sage.modules
+        sage: a,b,c,d = G.gens()                                                        # optional - sage.modules
+        sage: D = [[d, -a+d, -c+d, a-b-d, b+c+d],                                       # optional - sage.modules
         ....:      [c, a+b-d, -b+c, a-b+d, a+b+c],
         ....:      [-a-b+c+d, a-b-c-d, -a+c-d, b-c+d, a+b],
         ....:      [-b-d, a+b+d, a-b+c-d, a-b+c, -b+c+d]]
-        sage: is_difference_family(G, D)
+        sage: is_difference_family(G, D)                                                # optional - sage.modules
         True
 
     The following example has a third block with a non-trivial stabilizer::
@@ -198,23 +195,23 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
     The function also supports multiplicative groups (non necessarily Abelian)::
 
-        sage: G = DihedralGroup(8)
-        sage: x,y = G.gens()
-        sage: i = G.one()
-        sage: D1 = [[i,x,x^4], [i,x^2, y*x], [i,x^5,y], [i,x^6,y*x^2], [i,x^7,y*x^5]]
-        sage: is_difference_family(G, D1, 16, 3, 2)
+        sage: G = DihedralGroup(8)                                                      # optional - sage.groups
+        sage: x,y = G.gens()                                                            # optional - sage.groups
+        sage: i = G.one()                                                               # optional - sage.groups
+        sage: D1 = [[i,x,x^4], [i,x^2, y*x], [i,x^5,y], [i,x^6,y*x^2], [i,x^7,y*x^5]]   # optional - sage.groups
+        sage: is_difference_family(G, D1, 16, 3, 2)                                     # optional - sage.groups
         True
         sage: from sage.combinat.designs.bibd import BIBD_from_difference_family
-        sage: bibd = BIBD_from_difference_family(G,D1,lambd=2)
+        sage: bibd = BIBD_from_difference_family(G, D1, lambd=2)                        # optional - sage.groups
 
     TESTS::
 
-        sage: K = GF(3^2,'z')
-        sage: z = K.gen()
-        sage: D = [[1,z+1,2]]
-        sage: _ = is_difference_family(K, D, verbose=True)
+        sage: K = GF(3^2,'z')                                                           # optional - sage.rings.finite_rings
+        sage: z = K.gen()                                                               # optional - sage.rings.finite_rings
+        sage: D = [[1,z+1,2]]                                                           # optional - sage.rings.finite_rings
+        sage: _ = is_difference_family(K, D, verbose=True)                              # optional - sage.rings.finite_rings
         the number of differences (=6) must be a multiple of v-1=8
-        sage: _
+        sage: _                                                                         # optional - sage.rings.finite_rings
         False
     """
     identity, mul, inv = group_law(G)
@@ -270,7 +267,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
     # Check that every x \in G-{0},occurs exactly l times as a difference
     counter = {g: 0 for g in Glist}
-    where   = {g: set() for g in Glist}
+    where = {g: set() for g in Glist}
     del counter[identity]
 
     for i,d in enumerate(D):
@@ -296,7 +293,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
             counter[gg] += tmp_counter[gg]//stabi
 
     # Check the counter and report any error
-    too_few  = []
+    too_few = []
     too_much = []
     for g in Glist:
         if g == identity:
@@ -356,23 +353,23 @@ def singer_difference_set(q,d):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import singer_difference_set, is_difference_family
-        sage: G,D = singer_difference_set(3,2)
-        sage: is_difference_family(G,D,verbose=True)
+        sage: G,D = singer_difference_set(3,2)                                          # optional - sage.rings.finite_rings
+        sage: is_difference_family(G, D, verbose=True)                                  # optional - sage.rings.finite_rings
         It is a (13,4,1)-difference family
         True
 
-        sage: G,D = singer_difference_set(4,2)
-        sage: is_difference_family(G,D,verbose=True)
+        sage: G,D = singer_difference_set(4,2)                                          # optional - sage.rings.finite_rings
+        sage: is_difference_family(G, D, verbose=True)                                  # optional - sage.rings.finite_rings
         It is a (21,5,1)-difference family
         True
 
-        sage: G,D = singer_difference_set(3,3)
-        sage: is_difference_family(G,D,verbose=True)
+        sage: G,D = singer_difference_set(3,3)                                          # optional - sage.rings.finite_rings
+        sage: is_difference_family(G, D, verbose=True)                                  # optional - sage.rings.finite_rings
         It is a (40,13,4)-difference family
         True
 
-        sage: G,D = singer_difference_set(9,3)
-        sage: is_difference_family(G,D,verbose=True)
+        sage: G,D = singer_difference_set(9,3)                                          # optional - sage.rings.finite_rings
+        sage: is_difference_family(G, D, verbose=True)                                  # optional - sage.rings.finite_rings
         It is a (820,91,10)-difference family
         True
     """
@@ -421,11 +418,12 @@ def df_q_6_1(K, existence=False, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import is_difference_family, df_q_6_1
-        sage: prime_powers = [v for v in range(31,500,30) if is_prime_power(v)]
-        sage: parameters = [v for v in prime_powers if df_q_6_1(GF(v,'a'), existence=True) is True]
-        sage: parameters
+        sage: prime_powers = [v for v in range(31,500,30) if is_prime_power(v)]         # optional - sage.rings.finite_rings
+        sage: parameters = [v for v in prime_powers                                     # optional - sage.rings.finite_rings
+        ....:               if df_q_6_1(GF(v,'a'), existence=True) is True]
+        sage: parameters                                                                # optional - sage.rings.finite_rings
         [31, 151, 181, 211, 241, 271, 331, 361, 421]
-        sage: for v in parameters:
+        sage: for v in parameters:                                                      # optional - sage.rings.finite_rings
         ....:     K = GF(v, 'a')
         ....:     df = df_q_6_1(K, check=True)
         ....:     assert is_difference_family(K, df, v, 6, 1)
@@ -481,13 +479,13 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
 
         sage: from sage.combinat.designs.difference_family import radical_difference_set
 
-        sage: D = radical_difference_set(GF(7), 3, 1); D
+        sage: D = radical_difference_set(GF(7), 3, 1); D                                # optional - sage.rings.finite_rings
         [[1, 2, 4]]
-        sage: sorted(x-y for x in D[0] for y in D[0] if x != y)
+        sage: sorted(x-y for x in D[0] for y in D[0] if x != y)                         # optional - sage.rings.finite_rings
         [1, 2, 3, 4, 5, 6]
 
-        sage: D = radical_difference_set(GF(16,'a'), 6, 2)
-        sage: sorted(x-y for x in D[0] for y in D[0] if x != y)
+        sage: D = radical_difference_set(GF(16,'a'), 6, 2)                              # optional - sage.rings.finite_rings
+        sage: sorted(x-y for x in D[0] for y in D[0] if x != y)                         # optional - sage.rings.finite_rings
         [1,
          1,
          a,
@@ -500,7 +498,7 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
          a^3 + a^2 + a + 1,
          a^3 + a^2 + a + 1]
 
-        sage: for k in range(2,50):
+        sage: for k in range(2,50):                                                     # optional - sage.rings.finite_rings
         ....:     for l in reversed(divisors(k*(k-1))):
         ....:         v = k*(k-1)//l + 1
         ....:         if is_prime_power(v) and radical_difference_set(GF(v,'a'),k,l,existence=True) is True:
@@ -594,8 +592,8 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
         x = K.multiplicative_generator()
         D = K.cyclotomic_cosets(x**((v-1)//k), [K.one()])
         if is_difference_family(K, D, v, k, l):
-            print("**  You found a new example of radical difference set **\n"\
-                  "**  for the parameters (v,k,l)=({},{},{}).            **\n"\
+            print("**  You found a new example of radical difference set **\n"
+                  "**  for the parameters (v,k,l)=({},{},{}).            **\n"
                   "**  Please contact sage-devel@googlegroups.com        **\n".format(v, k, l))
             if existence:
                 return True
@@ -605,8 +603,8 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
             D = K.cyclotomic_cosets(x**((v-1)//(k-1)), [K.one()])
             D[0].insert(0,K.zero())
             if is_difference_family(K, D, v, k, l):
-                print("**  You found a new example of radical difference set **\n"\
-                      "**  for the parameters (v,k,l)=({},{},{}).            **\n"\
+                print("**  You found a new example of radical difference set **\n"
+                      "**  for the parameters (v,k,l)=({},{},{}).            **\n"
                       "**  Please contact sage-devel@googlegroups.com        **\n".format(v, k, l))
                 if existence:
                     return True
@@ -708,9 +706,8 @@ def one_radical_difference_family(K, k):
 
     INPUT:
 
-    - ``K`` -- a finite field of cardinality `q`.
-
-    - ``k`` -- a positive integer so that `k(k-1)` divides `q-1`.
+    - ``K`` -- a finite field of cardinality `q`
+    - ``k`` -- a positive integer so that `k(k-1)` divides `q-1`
 
     OUTPUT:
 
@@ -760,12 +757,12 @@ def one_radical_difference_family(K, k):
         ....:    one_radical_difference_family,
         ....:    is_difference_family)
 
-        sage: one_radical_difference_family(GF(13),4)
+        sage: one_radical_difference_family(GF(13),4)                                   # optional - sage.rings.finite_rings
         [[0, 1, 3, 9]]
 
     The parameters that appear in [Bu95]_::
 
-        sage: df = one_radical_difference_family(GF(449), 8); df
+        sage: df = one_radical_difference_family(GF(449), 8); df                        # optional - sage.rings.finite_rings
         [[0, 1, 18, 25, 176, 324, 359, 444],
          [0, 9, 88, 162, 222, 225, 237, 404],
          [0, 11, 140, 198, 275, 357, 394, 421],
@@ -774,7 +771,7 @@ def one_radical_difference_family(K, k):
          [0, 70, 99, 197, 230, 362, 403, 435],
          [0, 121, 141, 193, 293, 331, 335, 382],
          [0, 191, 285, 295, 321, 371, 390, 392]]
-        sage: is_difference_family(GF(449), df, 449, 8, 1)
+        sage: is_difference_family(GF(449), df, 449, 8, 1)                              # optional - sage.rings.finite_rings
         True
     """
     q = K.cardinality()
@@ -833,27 +830,23 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
     INPUT:
 
     - ``K`` - a finite field
-
-    - ``k`` -- positive integer, the size of the blocks
-
-    - ``l`` -- the `\lambda` parameter (default to `1`)
-
+    - ``k`` -- positive integer; the size of the blocks
+    - ``l`` -- integer (default: ``1``); the `\lambda` parameter
     - ``existence`` -- if ``True``, then return either ``True`` if Sage knows
       how to build such design, ``Unknown`` if it does not and ``False`` if it
-      knows that the design does not exist.
-
-    - ``check`` -- boolean (default: ``True``). If ``True`` then the result of
+      knows that the design does not exist
+    - ``check`` -- boolean (default: ``True``); if ``True`` then the result of
       the computation is checked before being returned. This should not be
-      needed but ensures that the output is correct.
+      needed but ensures that the output is correct
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import radical_difference_family
 
-        sage: radical_difference_family(GF(73),9)
+        sage: radical_difference_family(GF(73), 9)                                      # optional - sage.rings.finite_rings
         [[1, 2, 4, 8, 16, 32, 37, 55, 64]]
 
-        sage: radical_difference_family(GF(281),5)
+        sage: radical_difference_family(GF(281), 5)                                     # optional - sage.rings.finite_rings
         [[1, 86, 90, 153, 232],
          [4, 50, 63, 79, 85],
          [5, 36, 149, 169, 203],
@@ -869,7 +862,7 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
          [111, 123, 155, 181, 273],
          [156, 209, 224, 264, 271]]
 
-        sage: for k in range(5,10):
+        sage: for k in range(5,10):                                                     # optional - sage.rings.finite_rings
         ....:     print("k = {}".format(k))
         ....:     list_q = []
         ....:     for q in range(k*(k-1)+1, 2000, k*(k-1)):
@@ -946,17 +939,17 @@ def twin_prime_powers_difference_set(p, check=True):
 
     INPUT:
 
-    - ``check`` -- boolean (default: ``True``). If ``True`` then the result of
+    - ``check`` -- boolean (default: ``True``); if ``True``, then the result of
       the computation is checked before being returned. This should not be
-      needed but ensures that the output is correct.
+      needed but ensures that the output is correct
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import twin_prime_powers_difference_set
-        sage: G,D = twin_prime_powers_difference_set(3)
-        sage: G
+        sage: G, D = twin_prime_powers_difference_set(3)                                # optional - sage.rings.finite_rings
+        sage: G                                                                         # optional - sage.rings.finite_rings
         The Cartesian product of (Finite Field of size 3, Finite Field of size 5)
-        sage: D
+        sage: D                                                                         # optional - sage.rings.finite_rings
         [[(1, 1), (1, 4), (2, 2), (2, 3), (0, 0), (1, 0), (2, 0)]]
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -995,30 +988,29 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
 
     INPUT:
 
-    - ``v``, ``k``, ``lmbda`` - (integers) parameters of the difference family
-
-    - ``return_parameters`` -- (boolean, default ``False``) if ``True`` return a
+    - ``v``, ``k``, ``lmbda`` - integers; parameters of the difference family
+    - ``return_parameters`` -- boolean (default ``False``); if ``True``, return a
       pair ``(True, (q, s))`` so that ``(q,s)`` can be used in the function
       :func:`mcfarland_1973_construction` to actually build a
       ``(v,k,lmbda)``-difference family. Or ``(False, None)`` if the
-      construction is not possible.
+      construction is not possible
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import are_mcfarland_1973_parameters
-        sage: are_mcfarland_1973_parameters(64, 28, 12)
+        sage: are_mcfarland_1973_parameters(64, 28, 12)                                 # optional - sage.rings.finite_rings
         True
-        sage: are_mcfarland_1973_parameters(64, 28, 12, return_parameters=True)
+        sage: are_mcfarland_1973_parameters(64, 28, 12, return_parameters=True)         # optional - sage.rings.finite_rings
         (True, (2, 2))
-        sage: are_mcfarland_1973_parameters(60, 13, 5)
+        sage: are_mcfarland_1973_parameters(60, 13, 5)                                  # optional - sage.rings.finite_rings
         False
-        sage: are_mcfarland_1973_parameters(98125, 19500, 3875)
+        sage: are_mcfarland_1973_parameters(98125, 19500, 3875)                         # optional - sage.rings.finite_rings
         True
-        sage: are_mcfarland_1973_parameters(98125, 19500, 3875, True)
+        sage: are_mcfarland_1973_parameters(98125, 19500, 3875, True)                   # optional - sage.rings.finite_rings
         (True, (5, 3))
 
         sage: from sage.combinat.designs.difference_family import are_mcfarland_1973_parameters
-        sage: for v in range(1, 100):
+        sage: for v in range(1, 100):                                                   # optional - sage.rings.finite_rings
         ....:     for k in range(1,30):
         ....:         for l in range(1,15):
         ....:             if are_mcfarland_1973_parameters(v,k,l):
@@ -1074,7 +1066,7 @@ def mcfarland_1973_construction(q, s):
 
     INPUT:
 
-    - ``q``, ``s`` - (integers) parameters for the difference set (see the above
+    - ``q``, ``s`` - integers; parameters for the difference set (see the above
       formulas for the expression of ``v``, ``k``, ``l`` in terms of ``q`` and
       ``s``)
 
@@ -1096,11 +1088,11 @@ def mcfarland_1973_construction(q, s):
         sage: from sage.combinat.designs.difference_family import (
         ....:    mcfarland_1973_construction, is_difference_family)
 
-        sage: G,D = mcfarland_1973_construction(3, 1)
-        sage: assert is_difference_family(G, D, 45, 12, 3)
+        sage: G,D = mcfarland_1973_construction(3, 1)                                   # optional - sage.modules sage.rings.finite_rings
+        sage: assert is_difference_family(G, D, 45, 12, 3)                              # optional - sage.modules sage.rings.finite_rings
 
-        sage: G,D = mcfarland_1973_construction(2, 2)
-        sage: assert is_difference_family(G, D, 64, 28, 12)
+        sage: G,D = mcfarland_1973_construction(2, 2)                                   # optional - sage.modules sage.rings.finite_rings
+        sage: assert is_difference_family(G, D, 64, 28, 12)                             # optional - sage.modules sage.rings.finite_rings
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
     from sage.modules.free_module import VectorSpace
@@ -1159,7 +1151,7 @@ def hadamard_difference_set_product_parameters(N):
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import hadamard_difference_set_product_parameters
-        sage: hadamard_difference_set_product_parameters(8)
+        sage: hadamard_difference_set_product_parameters(8)                             # optional - sage.rings.finite_rings
         (2, 2)
     """
     if N % 2:
@@ -1199,16 +1191,16 @@ def hadamard_difference_set_product(G1, D1, G2, D2):
         sage: from sage.combinat.designs.difference_family import hadamard_difference_set_product
         sage: from sage.combinat.designs.difference_family import is_difference_family
 
-        sage: G1,D1 = designs.difference_family(16,6,2)
-        sage: G2,D2 = designs.difference_family(36,15,6)
+        sage: G1,D1 = designs.difference_family(16,6,2)                                 # optional - sage.rings.finite_rings
+        sage: G2,D2 = designs.difference_family(36,15,6)                                # optional - sage.rings.finite_rings
 
-        sage: G11,D11 = hadamard_difference_set_product(G1,D1,G1,D1)
-        sage: assert is_difference_family(G11, D11, 256, 120, 56)
-        sage: assert designs.difference_family(256, 120, 56, existence=True) is True
+        sage: G11,D11 = hadamard_difference_set_product(G1,D1,G1,D1)                    # optional - sage.rings.finite_rings
+        sage: assert is_difference_family(G11, D11, 256, 120, 56)                       # optional - sage.rings.finite_rings
+        sage: assert designs.difference_family(256, 120, 56, existence=True) is True    # optional - sage.rings.finite_rings
 
-        sage: G12,D12 = hadamard_difference_set_product(G1,D1,G2,D2)
-        sage: assert is_difference_family(G12, D12, 576, 276, 132)
-        sage: assert designs.difference_family(576, 276, 132, existence=True) is True
+        sage: G12,D12 = hadamard_difference_set_product(G1,D1,G2,D2)                    # optional - sage.rings.finite_rings
+        sage: assert is_difference_family(G12, D12, 576, 276, 132)                      # optional - sage.rings.finite_rings
+        sage: assert designs.difference_family(576, 276, 132, existence=True) is True   # optional - sage.rings.finite_rings
     """
     from sage.categories.cartesian_product import cartesian_product
 
@@ -1234,7 +1226,7 @@ def turyn_1965_3x3xK(k=4):
 
     - ``k`` -- either ``2`` (to get a difference set in `C_3 \times C_3 \times
       C_2 \times C_2`) or ``4`` (to get a difference set in `C_3 \times C_3
-      \times C_3 \times C_4`).
+      \times C_3 \times C_4`)
 
     EXAMPLES::
 
@@ -1266,16 +1258,16 @@ def turyn_1965_3x3xK(k=4):
 
 
 def _is_periodic_sequence(seq, period):
-    r"""Check if the sequence is periodic with correct period.
+    r"""
+    Check if the sequence is periodic with correct period.
 
     The sequence should have length at least twice the period, so that
     periodicity can be checked.
 
     INPUT:
 
-    - ``seq`` -- the sequence to be tested (must have length at least twice the period).
-
-    - ``period`` -- integer, the period that the sequence should have.
+    - ``seq`` -- the sequence to be tested (must have length at least twice the period)
+    - ``period`` -- integer; the period that the sequence should have
 
     EXAMPLES::
 
@@ -1303,7 +1295,8 @@ def _is_periodic_sequence(seq, period):
     return True
 
 def _create_m_sequence(q, n, check=True):
-    r"""Create an m-sequence over GF(q) with period `q^n - 1`.
+    r"""
+    Create an m-sequence over GF(q) with period `q^n - 1`.
 
     Given a prime power `q`, the m-sequence is created as described by [Zie1959]_
     from a primitive function over the finite field `GF(q)`.
@@ -1315,21 +1308,20 @@ def _create_m_sequence(q, n, check=True):
 
     INPUT:
 
-    - ``q`` -- a prime power.
-
-    - ``n`` -- a nonnegative number.
-
-    - ``check`` -- boolean (default True): if true, check that the result is a seqauence with correct period.
-      Setting it to false may speed up considerably the computation.
+    - ``q`` -- a prime power
+    - ``n`` -- a nonnegative number
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
+      result is a sequence with correct period; detting it to ``False`` may
+      speed up considerably the computation
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import _create_m_sequence
-        sage: _create_m_sequence(3, 2) #random
+        sage: _create_m_sequence(3, 2)  # random                                        # optional - sage.rings.finite_rings
         [1, 0, 1, 2, 2, 0, 2, 1]
-        sage: _create_m_sequence(4, 2, check=False) #random
+        sage: _create_m_sequence(4, 2, check=False)  # random                           # optional - sage.rings.finite_rings
         [1, 0, a, a + 1, a, a, 0, a + 1, 1, a + 1, a + 1, 0, 1, a, 1]
-        sage: _create_m_sequence(6, 2)
+        sage: _create_m_sequence(6, 2)                                                  # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: q must be a prime power
@@ -1366,25 +1358,25 @@ def _create_m_sequence(q, n, check=True):
     return seq[:period]
 
 def _get_submodule_of_order(G, order):
-    r"""Construct a submodule of the given order from group `G`.
+    r"""
+    Construct a submodule of the given order from group ``G``.
 
     This method tries to construct submodules from various elements of `G` until
     a submodule of the correct order is found.
 
     INPUT:
 
-    - ``G`` -- an additive abelian group.
-
-    - ``order`` -- integer, the order of the desired syubmodule.
+    - ``G`` -- an additive abelian group
+    - ``order`` -- integer; the order of the desired submodule
 
     TESTS:
 
         sage: from sage.combinat.designs.difference_family import _get_submodule_of_order
-        sage: G = AdditiveAbelianGroup([48])
-        sage: _get_submodule_of_order(G, 6).order()
+        sage: G = AdditiveAbelianGroup([48])                                            # optional - sage.modules
+        sage: _get_submodule_of_order(G, 6).order()                                     # optional - sage.modules
         6
-        sage: G = AdditiveAbelianGroup([13^2-1])
-        sage: _get_submodule_of_order(G, 12).order()
+        sage: G = AdditiveAbelianGroup([13^2 - 1])                                      # optional - sage.modules
+        sage: _get_submodule_of_order(G, 12).order()                                    # optional - sage.modules
         12
     """
     for el in G:
@@ -1393,8 +1385,9 @@ def _get_submodule_of_order(G, order):
             return H
     return None
 
-def relative_difference_set_from_m_sequence(q, N, check=True):
-    r"""Construct `R((q^N-1)/(q-1), q-1, q^{N-1}, q^{N-2})` where `q` is a prime power and `N\ge 2`.
+def relative_difference_set_from_m_sequence(q, N, check=True, return_group=False):
+    r"""
+    Construct `R((q^N-1)/(q-1), q-1, q^{N-1}, q^{N-2})` where ``q`` is a prime power and `N\ge 2`.
 
     The relative difference set is constructed over the set of additive integers modulo `q^N-1`,
     as described in Theorem 5.1 of [EB1966]_. Given an m-sequence `(a_i)` of period `q^N-1`, the
@@ -1402,21 +1395,28 @@ def relative_difference_set_from_m_sequence(q, N, check=True):
 
     INPUT:
 
-    - ``q`` -- a prime power.
+    - ``q`` -- a prime power
+    - ``N`` -- a nonnegative number
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
+      result is a relative difference set before returning it
+    - ``return_group`` -- boolean (default: ``False``); if ``True``, the function
+      will also return the group from which the set is created
 
-    - ``N`` -- a nonnegative number.
+    OUTPUT:
 
-    - ``check`` -- boolean (default True). If true, check that the result is a relative difference
-      set before returning it.
+    If ``return_group=False``, the function return only the relative difference
+    set. Otherwise, it returns a tuple containing the group and the set.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence
-        sage: relative_difference_set_from_m_sequence(2, 4) #random
-        [(0), (4), (5), (6), (7), (9), (11), (12)]
-        sage: relative_difference_set_from_m_sequence(8, 2, check=False) #random
+        sage: relative_difference_set_from_m_sequence(2, 4,               # random      # optional - sage.modules sage.rings.finite_rings
+        ....:                                         return_group=True)
+        (Additive abelian group isomorphic to Z/15,
+         [(0), (4), (5), (6), (7), (9), (11), (12)])
+        sage: relative_difference_set_from_m_sequence(8, 2, check=False)  # random      # optional - sage.modules sage.rings.finite_rings
         [(0), (6), (30), (40), (41), (44), (56), (61)]
-        sage: relative_difference_set_from_m_sequence(6, 2)
+        sage: relative_difference_set_from_m_sequence(6, 2)                             # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: q must be a prime power
@@ -1425,14 +1425,18 @@ def relative_difference_set_from_m_sequence(q, N, check=True):
 
         sage: from sage.combinat.designs.difference_family import is_relative_difference_set, _get_submodule_of_order
         sage: q, N = 5, 3
-        sage: G = AdditiveAbelianGroup([q^N-1])
-        sage: H = _get_submodule_of_order(G, q-1)
-        sage: is_relative_difference_set(relative_difference_set_from_m_sequence(q, N), G, H, ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2)))
+        sage: G, D = relative_difference_set_from_m_sequence(q, N, check=False,         # optional - sage.modules sage.rings.finite_rings
+        ....:                                                return_group=True)
+        sage: H = _get_submodule_of_order(G, q-1)                                       # optional - sage.modules sage.rings.finite_rings
+        sage: is_relative_difference_set(D, G, H,                                       # optional - sage.modules sage.rings.finite_rings
+        ....:                            ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2)))
         True
         sage: q, N = 13, 2
-        sage: G = AdditiveAbelianGroup([q^N-1])
-        sage: H = _get_submodule_of_order(G, q-1)
-        sage: is_relative_difference_set(relative_difference_set_from_m_sequence(q, N), G, H, ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2)))
+        sage: G, D = relative_difference_set_from_m_sequence(q, N, check=False,         # optional - sage.modules sage.rings.finite_rings
+        ....:                                                return_group=True)
+        sage: H = _get_submodule_of_order(G, q-1)                                       # optional - sage.modules sage.rings.finite_rings
+        sage: is_relative_difference_set(D, G, H,                                       # optional - sage.modules sage.rings.finite_rings
+        ....:                            ((q^N-1)//(q-1), q-1, q^(N-1), q^(N-2)))
         True
     """
     from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
@@ -1451,33 +1455,42 @@ def relative_difference_set_from_m_sequence(q, N, check=True):
     if check:
         H = _get_submodule_of_order(G, q-1)
         assert is_relative_difference_set(set1, G, H, (period // (q-1), q - 1, q**(N-1), q**(N-2)))
+
+    if return_group:
+        return G, set1
     return set1
 
-def relative_difference_set_from_homomorphism(q, N, d, check=True):
-    r"""Construct `R((q^N-1)/(q-1), n, q^{N-1}, q^{N-2}d)` where `nd = q-1`.
+def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=False):
+    r"""
+    Construct `R((q^N-1)/(q-1), n, q^{N-1}, q^{N-2}d)` where `nd = q-1`.
 
     Given a prime power `q`, a number `N \ge 2` and integers `d` such that `d | q-1` we create the
     relative difference set using the construction from Corollary 5.1.1 of [EB1966]_.
 
     INPUT:
 
-    - ``q`` -- a prime power.
+    - ``q`` -- a prime power
+    - ``N`` -- an integer greater than 1
+    - ``d`` -- an integer which divides `q-1`
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
+      result is a relative difference set before returning it
+    - ``return_group`` -- boolean (default: ``False``); if ``True``, the function
+      will also return the group from which the set is created
 
-    - ``N`` -- an integer greater than 1.
+    OUTPUT:
 
-    - ``d`` -- an integer which divides `q-1`.
-
-    - ``check`` -- boolean (default True). If true, check that the result is a relative difference
-      set before returning it.
+    If ``return_group=False``, the function return only the relative difference
+    set. Otherwise, it returns a tuple containing the group and the set.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_homomorphism
         sage: relative_difference_set_from_homomorphism(7, 2, 3) #random
         [(0), (3), (4), (2), (13), (7), (14)]
-        sage: relative_difference_set_from_homomorphism(9, 2, 4, check=False) #random
-        [(0), (4), (6), (13), (7), (12), (15), (8), (9)]
-        sage: relative_difference_set_from_homomorphism(9, 2, 5)
+        sage: relative_difference_set_from_homomorphism(9, 2, 4, check=False, return_group=True) #random
+        (Additive abelian group isomorphic to Z/80,
+         [(0), (4), (6), (13), (7), (12), (15), (8), (9)])
+        sage: relative_difference_set_from_homomorphism(9, 2, 5)                        # optional - sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: q-1 must be a multiple of d
@@ -1486,14 +1499,18 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True):
 
         sage: from sage.combinat.designs.difference_family import is_relative_difference_set, _get_submodule_of_order
         sage: q, N, d = 11, 2, 5
-        sage: G = AdditiveAbelianGroup([(q^N-1)//d])
-        sage: H = _get_submodule_of_order(G, (q-1)//d)
-        sage: is_relative_difference_set(relative_difference_set_from_homomorphism(q, N, d), G, H, ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
+        sage: G, D = relative_difference_set_from_homomorphism(q, N, d, check=False,    # optional - sage.modules sage.rings.finite_rings
+        ....:                                                  return_group=True)
+        sage: H = _get_submodule_of_order(G, (q-1)//d)                                  # optional - sage.modules sage.rings.finite_rings
+        sage: is_relative_difference_set(D, G, H,                                       # optional - sage.modules sage.rings.finite_rings
+        ....:                            ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
         True
         sage: q, N, d = 9, 2, 4
-        sage: G = AdditiveAbelianGroup([(q^N-1)//d])
-        sage: H = _get_submodule_of_order(G, (q-1)//d)
-        sage: is_relative_difference_set(relative_difference_set_from_homomorphism(q, N, d), G, H, ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
+        sage: G, D = relative_difference_set_from_homomorphism(q, N, d, check=False,    # optional - sage.modules sage.rings.finite_rings
+        ....:                                                  return_group=True)
+        sage: H = _get_submodule_of_order(G, (q-1)//d)                                  # optional - sage.modules sage.rings.finite_rings
+        sage: is_relative_difference_set(D, G, H,                                       # optional - sage.modules sage.rings.finite_rings
+        ....:                            ((q**N-1)//(q-1), (q-1)//d, q**(N-1), q**(N-2)*d))
         True
     """
     from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
@@ -1518,10 +1535,14 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True):
     if check:
         H = _get_submodule_of_order(G2, (q-1) // d)
         assert is_relative_difference_set(second_diff_set, G2, H, ((q**N-1) // (q-1), (q-1) // d, q**(N-1), q**(N-2) * d))
+
+    if return_group:
+        return G2, second_diff_set
     return second_diff_set
 
 def is_relative_difference_set(R, G, H, params, verbose=False):
-    r"""Check if `R` is a difference set of `G` relative to `H`, with the given parameters.
+    r"""
+    Check if ``R`` is a difference set of ``G`` relative to ``H``, with the given parameters.
 
     This function checks that `G`, `H` and `R` have the orders specified in the parameters, and
     that `R` satisfies the definition of relative difference set (from [EB1966]_): the collection of
@@ -1530,32 +1551,27 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
 
     INPUT:
 
-    - ``R`` -- list, the relative diffeence set of length `k`.
-
-    - ``G`` -- an additive abelian group of order `mn`.
-
-    - ``H`` -- a submodule of ``G`` of order `n`.
-
-    - ``params`` -- a tuple in the form `(m, n, k, d)`.
-
-    - ``verbose`` -- boolean (default False). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``R`` -- list; the relative diffeence set of length `k`
+    - ``G`` -- an additive abelian group of order `mn`
+    - ``H`` -- list; a submodule of ``G`` of order `n`
+    - ``params`` -- a tuple in the form `(m, n, k, d)`
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, the function
+      will be verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import _get_submodule_of_order, relative_difference_set_from_m_sequence, is_relative_difference_set
         sage: q, N = 5, 2
-        sage: G = AdditiveAbelianGroup([q^N - 1])
-        sage: H = _get_submodule_of_order(G, q - 1)
         sage: params = ((q^N-1) // (q-1), q - 1, q^(N-1), q^(N-2))
-        sage: R = relative_difference_set_from_m_sequence(q, N)
-        sage: is_relative_difference_set(R, G, H, params)
+        sage: G, R = relative_difference_set_from_m_sequence(q, N, return_group=True)   # optional - sage.modules
+        sage: H = _get_submodule_of_order(G, q - 1)                                     # optional - sage.modules
+        sage: is_relative_difference_set(R, G, H, params)                               # optional - sage.modules
         True
 
     If we pass the ``verbose`` argument, the function will explain why it failed::
 
-        sage: R2 = [G[1], G[2], G[3], G[5], G[6]]
-        sage: is_relative_difference_set(R2, G, H, params, verbose=True)
+        sage: R2 = [G[1], G[2], G[3], G[5], G[6]]                                       # optional - sage.modules
+        sage: is_relative_difference_set(R2, G, H, params, verbose=True)                # optional - sage.modules
         There is a value in the difference set which is not repeated d times
         False
     """
@@ -1600,58 +1616,102 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
 
     return True
 
-def is_supplementary_difference_set(Ks, v, lmbda):
-    r"""Check that the sets in ``Ks`` are `n-\{v; k_1, ..., k_n; \lambda \}` supplementary difference sets.
-    
-    From the definition in [Spe1975]_: let  `S_1, S_2, ..., S_n` be `n` subsets of an additive abelian group `G` of order `v`
+
+def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=False):
+    r"""
+    Check that the sets in ``Ks`` are `n-\{v; k_1, ..., k_n; \lambda \}` supplementary
+    difference sets over group ``G`` of order ``v``.
+
+    From the definition in [Spe1975]_: let  `S_1, S_2, ..., S_n` be `n` subsets of a group `G` of order `v`
     such that `|S_i| = k_i`. If, for each `g \in G`, `g \neq 0`, the total number of solutions of `a_i - a'_i = g`, with
     `a_i, a'_i \in S_i` is `\lambda`, then `S_1, S_2, ..., S_n` are `n-\{v; k_1, ..., k_n; \lambda\}` supplementary difference sets.
 
+    One of the parameters ``v`` or ``G`` must always be specified. If ``G`` is not
+    given, the function will use an ``AdditiveAbelianGroup`` of order ``v``.
+
     INPUT:
 
-    - ``Ks`` -- a list of sets to be checked.
-
-    - ``v`` -- integer, the parameter `v` of the supplementary difference sets.
-
-    - ``lmbda`` -- integer, the parameter `\lambda` of the supplementary difference sets.
+    - ``Ks`` -- a list of sets to be checked
+    - ``v`` -- integer; the parameter `v` of the supplementary difference sets
+    - ``lmbda`` -- integer; the parameter `\lambda` of the supplementary difference sets
+    - ``G`` -- a group of order `v`
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, the function will
+      be verbose when the sets do not satisfy the contraints
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set, is_supplementary_difference_set
-        sage: S1, S2, S3, S4 = supplementary_difference_set_from_rel_diff_set(17)
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], 16, 16)
+        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(17)  # optional - sage.modules sage.rings.finite_rings
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16, G=G)          # optional - sage.modules sage.rings.finite_rings
         True
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], 16, 14)
+
+    The parameter ``v`` can be given instead of ``G``::
+
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=16, lmbda=16)         # optional - sage.modules sage.rings.finite_rings
+        True
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=20, lmbda=16)         # optional - sage.modules sage.rings.finite_rings
         False
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], 20, 16)
+
+    If ``verbose=True``, the function will be verbose::
+
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=14, G=G,          # optional - sage.modules sage.rings.finite_rings
+        ....:                                 verbose=True)
+        Number of pairs with difference (1) is 16, but lambda is 14
         False
+
+    TESTS::
+
+        sage: is_supplementary_difference_set([[1], [1]], lmbda=0, G=Zmod(3))           # optional - sage.modules sage.rings.finite_rings
+        True
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], v=17, lmbda=16, G=G)    # optional - sage.modules sage.rings.finite_rings
+        False
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], G=G)                    # optional - sage.modules sage.rings.finite_rings
+        True
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16)               # optional - sage.modules sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: one of G or v must be specified
 
     .. SEEALSO::
 
         :func:`supplementary_difference_set_from_rel_diff_set`
     """
-    from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 
-    G = AdditiveAbelianGroup([v])
-    differences_counter = {}
+    if G is None and v is None:
+        raise ValueError('one of G or v must be specified')
+
+    if G is None:
+        from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
+        G = AdditiveAbelianGroup([v])
+
+    if v is not None and G.order() != v:
+        if verbose:
+            print(f'G has order {G.order()}, but it should be {v}')
+        return False
+
+    differences_counter = {el: 0 for el in G}
     for K in Ks:
         for el1 in K:
             for el2 in K:
-                diff = G[el1] - G[el2]
-                if diff not in differences_counter:
-                    differences_counter[diff] = 0
+                diff = G(el1) - G(el2)
                 differences_counter[diff] += 1
 
-    for el in G:
-        if el == 0:
+    for key, diff in differences_counter.items():
+        if key == 0:
             continue
-        elif el not in differences_counter or lmbda != differences_counter[el]:
+        if lmbda is None:
+            lmbda = diff
+        if diff != lmbda:
+            if verbose:
+                print(f'Number of pairs with difference {key} is {diff}, but lambda is {lmbda}')
             return False
 
     return True
 
+
 def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=True):
-    r"""Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
+    r"""
+    Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
 
     The sets are created from relative difference sets as detailed in Theorem 3.3 of [Spe1975]_. this construction
     requires that `q` is an odd prime power and that there exists `s \ge 0` such that `(q-(2^{s+1}+1))/2^{s+1}` is
@@ -1664,31 +1724,30 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
 
     INPUT:
 
-    - ``q`` -- an odd prime power.
-
-    - ``existence`` -- boolean (dafault False). If true, only check whether the supplementary difference sets
-      can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
-      before returning them.
+    - ``q`` -- an odd prime power
+    - ``existence`` -- boolean (default: ``False``); If ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); If ``True``, check that the sets
+      are supplementary difference sets before returning them
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns the 4 sets (containing integers), or raises an
-    error if ``q`` does not satify the constraints.
-    If ``existence`` is true, the function returns a boolean representing whether supplementary difference
-    sets can be constructed.
+    If ``existence=False``, the function returns the 4 sets (containing integers),
+    or raises an error if ``q`` does not satify the constraints.
+    If ``existence=True``, the function returns a boolean representing whether
+    supplementary difference sets can be constructed.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
         sage: supplementary_difference_set_from_rel_diff_set(17) #random
-        ([0, 2, 5, 6, 8, 10, 13, 14],
-        [0, 1, 2, 6, 7, 9, 10, 14, 15],
-        [0, 1, 2, 6, 11, 12, 13, 15],
-        [0, 2, 6, 9, 11, 12, 13, 15])
+        (Additive abelian group isomorphic to Z/16,
+         [[(1), (5), (6), (7), (9), (13), (14), (15)],
+          [(0), (2), (3), (5), (6), (10), (11), (13), (14)],
+          [(0), (1), (2), (3), (5), (6), (7), (12)],
+          [(0), (2), (3), (5), (6), (7), (9), (12)]])
 
-    If existence is ``True``, the function returns a boolean::
+    If ``existence=True``, the function returns a boolean::
 
         sage: supplementary_difference_set_from_rel_diff_set(7, existence=True)
         False
@@ -1698,9 +1757,11 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
-        sage: is_supplementary_difference_set(supplementary_difference_set_from_rel_diff_set(17), 16, 16)
+        sage: G, sets = supplementary_difference_set_from_rel_diff_set(17, check=False)
+        sage: is_supplementary_difference_set(sets, lmbda=16, G=G)
         True
-        sage: is_supplementary_difference_set(supplementary_difference_set_from_rel_diff_set(9), 8, 8)
+        sage: G, sets = supplementary_difference_set_from_rel_diff_set(9, check=False)
+        sage: is_supplementary_difference_set(sets, lmbda=8, G=G)
         True
         sage: supplementary_difference_set_from_rel_diff_set(7)
         Traceback (most recent call last):
@@ -1716,6 +1777,12 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
         False
         sage: supplementary_difference_set_from_rel_diff_set(1, existence=True)
         False
+
+    Check that the function works even when s > 1::
+
+        sage: G, sets = supplementary_difference_set_from_rel_diff_set(353, check=False) #long time
+        sage: is_supplementary_difference_set(sets, lmbda=352, G=G) #long time
+        True
 
     .. SEEALSO::
 
@@ -1749,29 +1816,30 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     for d in set1:
         hall += P.monomial(d[0])
 
-    T_2m = 0
-    for i in range(2 * m):
-        T_2m += P.monomial(i)
+    def get_T(k):
+        T = P.monomial(0) -1
+        for i in range(k):
+            T += P.monomial(i)
+        return T
 
     modulo = P.monomial(2*m) - 1
 
-    diff = T_2m - (1+P.monomial(m))*hall
+    diff = get_T(2*m) - (1+P.monomial(m))*hall
     diff = diff.mod(modulo)
     exp1, exp2 = diff.exponents()
     a = (exp1+exp2-m) // 2
 
-    alfa3 = (P.monomial(a) + hall).mod(modulo)
-    alfa4 = (P.monomial(a+m) + hall).mod(modulo)
+    psi3 = (P.monomial(a) + hall).mod(modulo)
+    psi4 = (P.monomial(a+m) + hall).mod(modulo)
 
-    psi3 = alfa3
-    psi4 = alfa4
     for i in range(s):
-        psi3 = (alfa3(P.monomial(2)) + P.monomial(1)*alfa4(P.monomial(2))).mod(P.monomial(4*m)-1)
-        psi4 = (alfa3(P.monomial(2)) + P.monomial(1)*(T_2m(P.monomial(2)) - alfa4(P.monomial(2)))).mod(P.monomial(4*m)-1)
+        m_start = 2**i * m
+        psi3, psi4 = (psi3(P.monomial(2)) + P.monomial(1)*psi4(P.monomial(2))).mod(P.monomial(4*m_start)-1), \
+                 (psi3(P.monomial(2)) + P.monomial(1)*(get_T(2*m_start)(P.monomial(2)) - psi4(P.monomial(2)))).mod(P.monomial(4*m_start)-1)
 
     # Construction of psi1, psi2
-    set2 = relative_difference_set_from_m_sequence(q, 2, check=False)
-    s3 = get_fixed_relative_difference_set(set2)
+    G2, set2 = relative_difference_set_from_m_sequence(q, 2, check=False, return_group=True)
+    s3 = get_fixed_relative_difference_set(G2, set2)
 
     phi_exps = []
     for i in range(len(s3)):
@@ -1793,28 +1861,41 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
         theta2 += P.monomial(exp)
     theta2 = theta2.mod(P.monomial(q-1) - 1)
 
-    phi1 = 0
-    phi2 = 0
-    for exp in phi_exps:
-        if exp % 2 == 0:
-            phi2 += P.monomial(exp)
-        else:
-            phi1 += P.monomial(exp)
-
     psi1 = ((1 + P.monomial((q-1)//2)) * theta1).mod(P.monomial(q-1) - 1)
     psi2 = (1 + (1 + P.monomial((q-1)//2)) * theta2).mod(P.monomial(q-1) - 1)
 
-    K1 = list(map(Integer, psi1.exponents()))
-    K2 = list(map(Integer, psi2.exponents()))
-    K3 = list(map(Integer, psi3.exponents()))
-    K4 = list(map(Integer, psi4.exponents()))
+    from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
+    G = AdditiveAbelianGroup([q-1])
+    K1 = [G[x] for x in psi1.exponents()]
+    K2 = [G[x] for x in psi2.exponents()]
+    K3 = [G[x] for x in psi3.exponents()]
+    K4 = [G[x] for x in psi4.exponents()]
+
     if check:
-        assert is_supplementary_difference_set([K1, K2, K3, K4], q-1, q-1)
+        assert is_supplementary_difference_set([K1, K2, K3, K4], lmbda=q-1, G=G)
 
-    return K1, K2, K3, K4
+    return G, [K1, K2, K3, K4]
 
-def get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
-    r"""Construct an equivalent relative difference set fixed by the size of the set.
+
+def supplementary_difference_set(q, existence=False, check=True):
+    r"""
+    Construct `4-\{2v; v, v+1, v, v; 2v\}` supplementary difference sets where `q=2v+1`.
+
+    This is a deprecated version of :func:`supplementary_difference_set_from_rel_diff_set`,
+    please use that instead.
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(35211, 'This function is deprecated, please use supplementary_difference_set_from_rel_diff_set instead.')
+
+    if existence:
+        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
+    _, s = supplementary_difference_set_from_rel_diff_set(q, check=check)
+    return s
+
+
+def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
+    r"""
+    Construct an equivalent relative difference set fixed by the size of the set.
 
     Given a relative difference set `R(q+1, q-1, q, 1)`, it is possible to find a translation
     of this set fixed by `q` (see Section 3 of [Spe1975]_). We say that a set is fixed by `t` if
@@ -1825,47 +1906,48 @@ def get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
 
     INPUT:
 
-    - ``rel_diff_set`` -- the relative difference set.
-
-    - ``as_elements`` -- boolean (default False). If true, the list returned will contain elements of the
-      abelian group (this may slow down the computation considerably).
+    - ``G`` -- a group, of which ``rel_diff_set`` is a subset
+    - ``rel_diff_set`` -- the relative difference set
+    - ``as_elements`` -- boolean (default: ``False``); if ``True``, the list
+      returned will contain elements of the abelian group (this may slow down
+      the computation considerably)
 
     OUTPUT:
 
-    By default, this function returns the set as a list of integers. However, if ``as_elements``
-    is set to true it will return the set as a list containing elements of the abelian group.
+    By default, this function returns the set as a list of integers. However, if
+    ``as_elements=True`` it will return the set as a list containing elements of
+    the abelian group.
     If no such set can be found, the function will raise an error.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set
-        sage: s1 = relative_difference_set_from_m_sequence(5, 2)
-        sage: get_fixed_relative_difference_set(s1) #random
+        sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)  # optional - sage.modules
+        sage: get_fixed_relative_difference_set(G, s1)  # random                        # optional - sage.modules
         [2, 10, 19, 23, 0]
 
-    If ``as_elements`` is true, the reuslt will contain elements of the group::
+    If ``as_elements=True``, the result will contain elements of the group::
 
-        sage: get_fixed_relative_difference_set(s1, as_elements=True) #random
+        sage: get_fixed_relative_difference_set(G, s1, as_elements=True)  # random      # optional - sage.modules
         [(2), (10), (19), (23), (0)]
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import is_fixed_relative_difference_set
-        sage: s1 = relative_difference_set_from_m_sequence(5, 2)
-        sage: s2 = get_fixed_relative_difference_set(s1, as_elements=True)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: G, s1 = relative_difference_set_from_m_sequence(5, 2, return_group=True)  # optional - sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)           # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # optional - sage.modules
         True
-        sage: s1 = relative_difference_set_from_m_sequence(9, 2)
-        sage: s2 = get_fixed_relative_difference_set(s1, as_elements=True)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: G, s1 = relative_difference_set_from_m_sequence(9, 2, return_group=True)  # optional - sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)           # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # optional - sage.modules
         True
-        sage: type(s2[0])
+        sage: type(s2[0])                                                               # optional - sage.modules
         <class 'sage.groups.additive_abelian.additive_abelian_group.AdditiveAbelianGroup_fixed_gens_with_category.element_class'>
-        sage: s2 = get_fixed_relative_difference_set(s1)
-        sage: type(s2[0])
+        sage: s2 = get_fixed_relative_difference_set(G, s1)                             # optional - sage.modules
+        sage: type(s2[0])                                                               # optional - sage.modules
         <class 'sage.rings.integer.Integer'>
     """
-    G = rel_diff_set[0].parent()
     q = len(rel_diff_set)
 
     s2 = None
@@ -1888,34 +1970,36 @@ def get_fixed_relative_difference_set(rel_diff_set, as_elements=False):
         return [G[x] for x in s3]
     return s3
 
+
 def is_fixed_relative_difference_set(R, q):
-    r"""Check if the relative difference set `R` is fixed by `q`.
+    r"""
+    Check if the relative difference set ``R`` is fixed by ``q``.
 
     A relative difference set  `R` is fixed by `q` if  `\{qd | d \in R\}= R` (see Section 3 of [Spe1975]_).
 
     INPUT:
 
-    - ``R`` -- the relative difference sets, as a list containing elements of the abelian group.
-
-    - ``q`` -- an integer.
+    - ``R`` -- a list containing elements of an abelian group; the relative
+      difference set
+    - ``q`` -- an integer
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import relative_difference_set_from_m_sequence, get_fixed_relative_difference_set, is_fixed_relative_difference_set
-        sage: s1 = relative_difference_set_from_m_sequence(7, 2)
-        sage: s2 = get_fixed_relative_difference_set(s1, as_elements=True)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: G, s1 = relative_difference_set_from_m_sequence(7, 2, return_group=True)  # optional - sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=True)           # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # optional - sage.modules
         True
-        sage: G = AdditiveAbelianGroup([15])
-        sage: s3 = [G[1], G[2], G[3], G[4]]
-        sage: is_fixed_relative_difference_set(s3, len(s3))
+        sage: G = AdditiveAbelianGroup([15])                                            # optional - sage.modules
+        sage: s3 = [G[1], G[2], G[3], G[4]]                                             # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s3, len(s3))                             # optional - sage.modules
         False
 
     If the relative difference set does not contain elements of the group, the method returns false::
 
-        sage: s1 = relative_difference_set_from_m_sequence(7, 2)
-        sage: s2 = get_fixed_relative_difference_set(s1, as_elements=False)
-        sage: is_fixed_relative_difference_set(s2, len(s2))
+        sage: G, s1 = relative_difference_set_from_m_sequence(7, 2, return_group=True)  # optional - sage.modules
+        sage: s2 = get_fixed_relative_difference_set(G, s1, as_elements=False)          # optional - sage.modules
+        sage: is_fixed_relative_difference_set(s2, len(s2))                             # optional - sage.modules
         False
     """
     for el in R:
@@ -1924,14 +2008,190 @@ def is_fixed_relative_difference_set(R, q):
     return True
 
 
-def skew_supplementary_difference_set(n, existence=False, check=True):
-    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, check=True):
+    r"""
+    Construct skew supplementary difference sets over a polynomial ring of order ``n``.
+
+    The skew supplementary difference sets for `n=81, 169` are taken from [Djo1994a]_.
+
+    INPUT:
+
+    - ``n`` -- integer; the parameter of the supplementary difference sets
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets with `S_1` skew before returning them;
+      setting this parameter to ``False`` may speed up the computation considerably
+
+    OUTPUT:
+
+    If ``existence=False``, the function returns a Polynomial Ring of order ``n``
+    and a list containing 4 sets, or raises an error if data for the given ``n``
+    is not available.
+    If ``existence=True``, the function returns a boolean representing whether
+    skew supplementary difference sets can be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set_over_polynomial_ring
+        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(81)
+
+    If ``existence=True``, the function returns a boolean::
+
+        sage: skew_supplementary_difference_set_over_polynomial_ring(81, existence=True)
+        True
+        sage: skew_supplementary_difference_set_over_polynomial_ring(17, existence=True)
+        False
+
+    TESTS::
+
+        sage: skew_supplementary_difference_set_over_polynomial_ring(7)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: skew SDS of order 7 not yet implemented
+    """
+    data = {
+        81: (3, lambda x: x**4 - x**3 - 1, 16, 5,
+             [1, 2, 4, 6, 8, 10, 12, 14], [1, 2, 3, 4, 10, 11, 13],
+             [4, 5, 6, 8, 12, 13, 14], [2, 4, 5, 6, 7, 11, 12, 13, 15]),
+        169: (13, lambda x: x**2 - 4*x + 6, 24, 7,
+              [0, 2, 5, 7, 9, 10, 12, 15, 16, 18, 21, 22], [0, 1, 2, 7, 8, 9, 13, 14, 18, 20, 23],
+              [1, 4, 6, 7, 9, 14, 16, 17, 20, 21, 23], [3, 5, 6, 9, 10, 12, 13, 14, 15, 17, 20])
+    }
+
+    if existence:
+        return n in data
+
+    if n not in data:
+        raise NotImplementedError(f'skew SDS of order {n} not yet implemented')
+
+    mod, poly, exp, order, ind1, ind2, ind3, ind4 = data[n]
+
+    from sage.rings.finite_rings.integer_mod_ring import Zmod
+
+    Z3 = Zmod(mod)
+    R = ZZ['x']
+    x = R.gen()
+    F = Z3.extension(poly(x))
+
+    H = [F.gen() ** (exp * i) for i in range(order)]
+
+    cosets = []
+    for i in range((n - 1) // (2 * order)):
+        cosets.append([F.gen()**i * el for el in H])
+        cosets.append([-F.gen()**i * el for el in H])
+
+    def generate_set(index_set, cosets):
+        return sum((cosets[idx] for idx in index_set), [])
+
+    S1 = generate_set(ind1, cosets)
+    S2 = generate_set(ind2, cosets)
+    S3 = generate_set(ind3, cosets)
+    S4 = generate_set(ind4, cosets)
+
+    if check:
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=F)
+        assert _is_skew_set(F, S1)
+
+    return F, [S1, S2, S3, S4]
+
+
+def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=True):
+    r"""
+    Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` skew supplementary difference sets where `S_1` is the Paley-Todd difference set.
+
+    The skew SDS returned have the property that `n_1 + n_2 + n_3 + n_4 = n + \lambda`.
+
+    This construction is described in [DK2016]_. The function contains, for each
+    value of `n`, a set `H` containing integers modulo `n`, and four sets `J, K, L`.
+    Then, these are used to construct `(n; k_2, k_3, k_4; \lambda_2)` difference family,
+    with `\lambda_2 = k_2 + k_3 + k_4 + (3n - 1) / 4`. Finally, these sets together
+    with the Paley-Todd difference set form a skew supplementary difference set.
+
+    INPUT:
+
+    - ``n`` -- integer; the parameter of the supplementary difference set
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets with `S_1` skew before returning them;
+      setting this parameter to ``False`` may speed up the computation considerably
+
+    OUTPUT:
+
+    If ``existence=False``, the function returns the group G of integers modulo
+    ``n`` and a list containing 4 sets, or raises an error if data for the given
+    ``n`` is not available.
+    If ``existence=True``, the function returns a boolean representing whether
+    skew supplementary difference sets can be constructed.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set_with_paley_todd
+        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set_with_paley_todd(239)
+
+    If existence is ``True``, the function returns a boolean::
+
+        sage: skew_supplementary_difference_set_with_paley_todd(239, existence=True)
+        True
+        sage: skew_supplementary_difference_set_with_paley_todd(17, existence=True)
+        False
+
+    TESTS::
+
+        sage: skew_supplementary_difference_set_with_paley_todd(7)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: data for skew SDS of order 7 not yet implemented
+    """
+    H_db = {
+        239: [1, 10, 24, 44, 98, 100, 201],
+    }
+
+    indices = {
+        239: [[1, 3, 5, 6, 15, 17, 19, 28, 34, 38, 39, 57, 58, 63, 85, 95, 107],
+              [1, 3, 4, 5, 15, 16, 17, 18, 19, 21, 23, 29, 35, 45, 58, 63],
+              [0, 1, 4, 6, 7, 8, 13, 16, 18, 34, 35, 45, 47, 58, 63, 95]],
+    }
+
+    if existence:
+        return n in H_db
+
+    if n not in H_db:
+        raise NotImplementedError(f'data for skew SDS of order {n} not yet implemented')
+
+    G = Zmod(n)
+    H = {G(el) for el in H_db[n]}
+
+    def generate_subset(indices, H):
+        return list({el * idx for el in H for idx in indices})
+
+    from sage.arith.misc import quadratic_residues
+
+    S1 = [G(el) for el in quadratic_residues(n) if el != 0]
+    S2 = generate_subset(indices[n][0], H)
+    S3 = generate_subset(indices[n][1], H)
+    S4 = generate_subset(indices[n][2], H)
+
+    if check:
+        lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
+        assert _is_skew_set(G, S1)
+
+    return G, [S1, S2, S3, S4]
+
+
+def skew_supplementary_difference_set(n, existence=False, check=True, return_group=False):
+    r"""
+    Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets,
+    where `S_1` is skew and `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     These sets are constructed from available data, as described in [Djo1994a]_. The set `S_1 \subset G` is
     always skew, i.e. `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G \setminus \{0\}`.
 
     The data is taken from:
-    
+
     * `n = 103, 151`: [Djo1994a]_
     * `n = 67, 113, 127, 157, 163, 181, 241`: [Djo1992a]_
     * `n = 37, 43`: [Djo1992b]_
@@ -1939,30 +2199,43 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     * `n = 97`: [Djo2008a]_
     * `n = 109, 145, 247`: [Djo2008b]_
     * `n = 73`: [Djo2023b]_
-    
+    * `n = 213, 631`: [DGK2014]_
+    * `n = 331`: [DK2016]_
+
+    Additional skew Supplementary difference sets are built using the function
+    :func:`skew_supplementary_difference_set_over_polynomial_ring`, and
+    :func:`skew_supplementary_difference_set_with_paley_todd`.
+
     INPUT:
 
-    - ``n`` -- integer, the parameter of the supplementary difference set.
-
-    - ``existence`` -- boolean (dafault False). If true, only check whether the supplementary difference sets
-      can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are supplementary difference sets
-      with `S_1` skew before returning them. Setting this parameter to False may speed up the computation considerably.
+    - ``n`` -- integer; the parameter of the supplementary difference set
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets with `S_1` skew before returning them;
+      setting this parameter to ``False`` may speed up the computation considerably
+    - ``return_group`` -- boolean (default: ``False``); if ``True``, the function
+      will also return the group from which the sets are created
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns the 4 sets (containing integers modulo `n`), or raises an
-    error if data for the given ``n`` is not available.
-    If ``existence`` is true, the function returns a boolean representing whether skew supplementary difference
-    sets can be constructed.
+    If ``existence=False``, the function returns a list containing 4 sets,
+    or raises an error if data for the given ``n`` is not available. If
+    ``return_group=True`` the function will additionally return the group from
+    which the sets are created.
+    If ``existence=True``, the function returns a boolean representing whether
+    skew supplementary difference sets can be constructed.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import skew_supplementary_difference_set
-        sage: S1, S2, S3, S4 = skew_supplementary_difference_set(103)
+        sage: [S1, S2, S3, S4] = skew_supplementary_difference_set(39)
 
-    If existence is ``True``, the function returns a boolean ::
+    If ``return_group=True``, the function will also return the group::
+
+        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set(103, return_group=True)
+
+    If ``existence=True``, the function returns a boolean::
 
         sage: skew_supplementary_difference_set(103, existence=True)
         True
@@ -1972,15 +2245,15 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set, _is_skew_set
-        sage: S1, S2, S3, S4 = skew_supplementary_difference_set(113, check=False)
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], 113, len(S1)+len(S2)+len(S3)+len(S4)-113)
+        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set(113, check=False, return_group=True)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-113, G=G)
         True
-        sage: _is_skew_set(S1, 113)
+        sage: _is_skew_set(G, S1)
         True
-        sage: S1, S2, S3, S4 = skew_supplementary_difference_set(67, check=False)
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], 67, len(S1)+len(S2)+len(S3)+len(S4)-67)
+        sage: G, [S1, S2, S3, S4] = skew_supplementary_difference_set(67, check=False, return_group=True)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-67, G=G)
         True
-        sage: _is_skew_set(S1, 67)
+        sage: _is_skew_set(G, S1)
         True
         sage: skew_supplementary_difference_set(7)
         Traceback (most recent call last):
@@ -1989,6 +2262,8 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         sage: skew_supplementary_difference_set(7, existence=True)
         False
         sage: skew_supplementary_difference_set(127, existence=True)
+        True
+        sage: skew_supplementary_difference_set(81, existence=True)
         True
 
     .. NOTE::
@@ -2043,7 +2318,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
               [0, 1, 3, 6, 7, 9, 10, 12, 14, 15],
               [0, 1, 3, 4, 5, 7, 8, 9, 15, 16],
               [1, 4, 5, 6, 9, 10, 13, 14, 15, 16]],
-        129: [[1, 2, 4, 7, 9, 11, 12, 14,16,18],
+        129: [[1, 2, 4, 7, 9, 11, 12, 14, 16, 18],
               [0, 1, 2, 3, 9, 11, 14, 15, 19],
               [0, 1, 3, 6, 8, 10, 12, 16, 18, 19],
               [0, 3, 7, 8, 9, 10, 12, 14, 15, 17]],
@@ -2067,6 +2342,10 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
               [4, 5, 7, 8, 11, 14, 15, 16, 18, 19],
               [0, 4, 10, 11, 13, 15, 16, 18, 19],
               [2, 4, 5, 7, 11, 13, 15, 17, 19]],
+        213: [[1, 2, 5, 6, 9, 11, 12, 14, 16, 19, 20, 23, 24, 26, 29, 30],
+              [3, 6, 8, 12, 13, 14, 15, 17, 20, 22, 23, 25, 26, 27, 28, 31],
+              [2, 3, 5, 7, 9, 13, 16, 17, 19, 21, 23, 24, 27, 28, 29],
+              [0, 5, 6, 9, 11, 13, 14, 17, 20, 22, 23, 26, 29, 31]],
         217: [[0, 3, 5, 7, 8, 11, 12, 14], [1, 3, 4, 7, 9, 11, 12, 15],
               [3, 4, 5, 6, 7, 9, 10, 14, 15], [1, 3, 4, 5, 7, 8, 11, 13, 14]],
         219: [[1, 3, 5, 6, 8, 11, 12, 15, 17, 18, 21, 22, 24],
@@ -2085,6 +2364,14 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
               [0, 1, 4, 5, 6, 8, 14, 15, 18, 21, 23],
               [0, 2, 4, 5, 7, 9, 10, 11, 14, 15, 16, 17, 25],
               [0, 1, 3, 4, 6, 14, 15, 16, 17, 18, 20, 22, 23, 25]],
+        331: [[1, 2, 4, 7, 9, 10, 12, 15, 16, 18, 21, 22, 24, 26, 28],
+              [-1, 0, 2, 6, 9, 11, 12, 14, 15, 17, 20, 21, 24, 25, 28],
+              [-1, 0, 1, 5, 6, 7, 8, 9, 10, 12, 15, 18, 23, 28, 29],
+              [-1, 0, 3, 7, 8, 10, 11, 12, 14, 16, 19, 20, 21, 26, 29]],
+        631: [[0, 2, 4, 6, 9, 10, 12, 15, 16, 18, 20, 23, 24, 26, 29, 30, 32, 35, 36, 38, 40],
+              [0, 1, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 16, 20, 23, 28, 29, 30, 32, 36, 38, 41],
+              [0, 2, 3, 4, 6, 9, 10, 12, 14, 15, 16, 17, 18, 19, 20, 22, 24, 25, 26, 29, 34, 40],
+              [0, 2, 4, 5, 6, 7, 8, 10, 15, 16, 18, 22, 23, 24, 26, 30, 31, 33, 35, 36, 37, 38]],
     }
 
     # If the element is a list, that is the coset.
@@ -2113,6 +2400,7 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         157: [1, 2, 3, 5, 9, 15],
         163: [1, 2, 3, 5, 6, 9, 10, 15, 18],
         181: [1, 2, 3, 4, 6, 7, 8, 12, 13, 24],
+        213: [1, 2, 3, 4, 5, 6, 10, 11, 12, 13, 15, 20, 22, 30, 43, 71],
         217: [1, 2, 4, 5, 7, 10, 19, [31, 62, 124]],
         219: [1, 2, 3, 5, 7, 9, 11, 15, 19, 22, 23, 33, [73]],
         241: [1, 2, 4, 5, 7, 13, 19, 35],
@@ -2122,6 +2410,8 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
               [14, 29, 40, 79, 113, 126, 146, 217, 224], [17, 25, 43, 49, 140, 142, 153, 194, 225], [19, 57, 171],
               [33, 34, 37, 50, 59, 86, 98, 141, 203], [35, 66, 68, 74, 100, 118, 159, 172, 196], [38, 95, 114]],
         267: [1, 2, 3, 5, 7, 9, 10, 13, 14, 15, 19, 39, [89]],
+        331: [1, 2, 4, 5, 7, 8, 10, 13, 14, 16, 19, 20, 28, 32, 56],
+        631: [1, 2, 3, 4, 5, 6, 7, 9, 12, 14, 17, 18, 19, 21, 23, 27, 31, 35, 38, 42, 62],
     }
 
     H_db = {
@@ -2146,31 +2436,51 @@ def skew_supplementary_difference_set(n, existence=False, check=True):
         157: [1, 14, 16, 39, 46, 67, 75, 93, 99, 101, 108, 130, 153],
         163: [1, 38, 40, 53, 58, 85, 104, 133, 140],
         181: [1, 39, 43, 48, 62, 65, 73, 80, 132],
+        213: [1, 37, 91, 103, 172, 187, 190],
         217: [1, 8, 9, 25, 51, 64, 72, 78, 81, 142, 190, 191, 193, 200, 214],
         219: [1, 4, 16, 37, 55, 64, 148, 154, 178],
         241: [1, 15, 24, 54, 87, 91, 94, 98, 100, 119, 160, 183, 205, 225, 231],
         247: [1, 9, 16, 55, 61, 81, 139, 144, 235],
         267: [1, 4, 16, 64, 67, 91, 97, 121, 217, 223, 256],
+        331: [1, 74, 80, 85, 111, 120, 167, 180, 270, 274, 293],
+        631: [1, 8, 43, 64, 79, 188, 228, 242, 279, 310, 339, 344, 512, 562, 587],
     }
 
+    G, S1, S2, S3, S4 = None, [], [], [], []
+
+    if n in indices:
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
+    elif skew_supplementary_difference_set_over_polynomial_ring(n, existence=True):
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = skew_supplementary_difference_set_over_polynomial_ring(n, check=False)
+    elif skew_supplementary_difference_set_with_paley_todd(n, existence=True):
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = skew_supplementary_difference_set_with_paley_todd(n, check=False)
+
     if existence:
-        return n in indices
+        return False
 
-    if n not in indices:
+    if G is None:
         raise ValueError(f'Skew SDS of order {n} not yet implemented.')
-
-    S1, S2, S3, S4 = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
 
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
-        assert is_supplementary_difference_set([S1, S2, S3, S4], n, lmbda)
-        assert _is_skew_set(S1, n)
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
+        assert _is_skew_set(G, S1)
 
-    return S1, S2, S3, S4
+    if return_group:
+        return G, [S1, S2, S3, S4]
+    return [S1, S2, S3, S4]
 
 
 def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=True):
-    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+    r"""
+    Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets,
+    where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     This construction is described in [Djo1994a]_.
 
@@ -2187,23 +2497,20 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
 
     INPUT:
 
-    - ``n`` -- integer, the parameter of the supplementary difference set.
-
-    - ``H`` -- list of integers, the set `H` used to construct the cosets.
-
-    - ``indices`` -- list containing four list of integers, which are the sets
-      `J_1, J_2, J_3, J_4` described above.
-
-    - ``cosets_gen`` -- list containing integers or list of integers, is the set `A`
-      described above.
-
-    - ``check`` -- boolean (default True). If true, check that the sets
-      are supplementary difference sets. Setting this parameter to False may speed
-      up the computation considerably.
+    - ``n`` -- integer; the parameter of the supplementary difference set
+    - ``H`` -- list of integers; the set `H` used to construct the cosets
+    - ``indices`` -- list containing four lists of integers; the sets
+      `J_1, J_2, J_3, J_4` described above
+    - ``cosets_gen`` -- list containing integers or list of integers; the set `A`
+      described above
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets; setting this parameter to ``False`` may
+      speed up the computation considerably
 
     OUTPUT:
 
-    The function returns the 4 sets (containing integers modulo `n`).
+    The function returns the ring of integers modulo ``n`` and a list containing
+    the 4 sets.
 
     TESTS::
 
@@ -2212,23 +2519,25 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
         sage: cosets_gen = [1, 2, 3, 5, 6, 9]
         sage: indices =  [[0, 3, 5, 7, 9, 10], [0, 5, 6, 7, 8], [1, 2, 6, 7, 9], [2, 6, 8, 9, 10]]
         sage: _construction_supplementary_difference_set(37, H, indices, cosets_gen)
-        ([1, 10, 26, 35, 17, 22, 34, 7, 33, 32, 24, 18, 31, 14, 29, 9, 16, 12],
-         [1, 10, 26, 34, 7, 33, 5, 13, 19, 32, 24, 18, 6, 23, 8],
-         [36, 27, 11, 2, 20, 15, 5, 13, 19, 32, 24, 18, 31, 14, 29],
-         [2, 20, 15, 5, 13, 19, 6, 23, 8, 31, 14, 29, 9, 16, 12])
+        (Ring of integers modulo 37,
+        [[32, 1, 33, 35, 34, 7, 9, 10, 12, 14, 16, 17, 18, 22, 24, 26, 29, 31],
+         [32, 1, 33, 34, 5, 6, 7, 8, 10, 13, 18, 19, 23, 24, 26],
+         [32, 2, 36, 5, 11, 13, 14, 15, 18, 19, 20, 24, 27, 29, 31],
+         [2, 5, 6, 8, 9, 12, 13, 14, 15, 16, 19, 20, 23, 29, 31]])
         sage: H = [1, 16, 22]
         sage: cosets_gen = [1, 2, 3, 4, 6, 8, [13]]
         sage: indices = [[1, 3, 5, 6, 8, 10, 12], [0, 1, 5, 8, 12, 13], [1, 3, 4, 7, 9, 12, 13], [0, 1, 2, 3, 7, 8]]
         sage: _construction_supplementary_difference_set(39, H, indices, cosets_gen)
-        ([38, 23, 17, 37, 7, 34, 36, 30, 12, 4, 25, 10, 6, 18, 15, 8, 11, 20, 13],
-         [1, 16, 22, 38, 23, 17, 36, 30, 12, 6, 18, 15, 13, 26],
-         [38, 23, 17, 37, 7, 34, 3, 9, 27, 35, 14, 29, 33, 21, 24, 13, 26],
-         [1, 16, 22, 38, 23, 17, 2, 32, 5, 37, 7, 34, 35, 14, 29, 6, 18, 15])
+        (Ring of integers modulo 39,
+        [[4, 6, 7, 8, 10, 11, 12, 13, 15, 17, 18, 20, 23, 25, 30, 34, 36, 37, 38],
+         [1, 36, 38, 6, 12, 13, 15, 16, 17, 18, 22, 23, 26, 30],
+         [3, 7, 9, 13, 14, 17, 21, 23, 24, 26, 27, 29, 33, 34, 35, 37, 38],
+         [32, 1, 2, 34, 35, 5, 38, 37, 7, 6, 14, 15, 16, 17, 18, 22, 23, 29]])
         sage: H = [1, 4, 11, 16, 21, -2, -8]
         sage: cosets_gen = [1, 3, 7]
         sage: indices = [[1, 2, 4], [1, 2, 4], [0, 2, 3], [3, 4, -1]]
-        sage: sets = _construction_supplementary_difference_set(43, H, indices, cosets_gen, check=False)
-        sage: is_supplementary_difference_set(sets, 43, 35)
+        sage: G, sets = _construction_supplementary_difference_set(43, H, indices, cosets_gen, check=False)
+        sage: is_supplementary_difference_set(sets, lmbda=35, G=G)
         True
 
     .. SEEALSO::
@@ -2236,24 +2545,24 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
         :func:`skew_supplementary_difference_set`
     """
     def generate_set(index_set, cosets):
-        S = []
+        S = set()
         for idx in index_set:
             if idx == -1:
-                S.append(Z(0))
+                S.add(Z(0))
             else:
-                S += cosets[idx]
-        return S
+                S = S.union(cosets[idx])
+        return list(S)
 
     Z = Zmod(n)
-    H = list(map(Z, H))
+    H = set(map(Z, H))
 
     cosets = []
     for el in cosets_gen:
         if isinstance(el, list):
-            even_coset = [Z(x) for x in el]
+            even_coset = {Z(x) for x in el}
         else:
-            even_coset = [x*el for x in H]
-        odd_coset = [-x for x in even_coset]
+            even_coset = {x*el for x in H}
+        odd_coset = {-x for x in even_coset}
         cosets.append(even_coset)
         cosets.append(odd_coset)
 
@@ -2264,63 +2573,70 @@ def _construction_supplementary_difference_set(n, H, indices, cosets_gen, check=
 
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
-        assert is_supplementary_difference_set([S1, S2, S3, S4], n, lmbda)
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=Z)
 
-    return S1, S2, S3, S4
+    return Z, [S1, S2, S3, S4]
 
 
-def supplementary_difference_set(n, existence=False, check=True):
-    r"""Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
+def supplementary_difference_set_hadamard(n, existence=False, check=True):
+    r"""
+    Construct `4-\{n; n_1, n_2, n_3, n_4; \lambda\}` supplementary difference sets,
+    where `n_1 + n_2 + n_3 + n_4 = n+\lambda`.
 
     These sets are constructed from available data, as described in [Djo1994a]_.
+    The data is taken from:
 
-    The data for `n=191` is taken from [Djo2008c]_, and data for `n=239` is from [Djo1994b]_.
+    * `n = 191`: [Djo2008c]_
+    * `n = 239`: [Djo1994b]_
+    * `n = 251`: [DGK2014]_
+
     Additional SDS are constructed using :func:`skew_supplementary_difference_set`.
 
     INPUT:
 
-    - ``n`` -- integer, the parameter of the supplementary difference set.
-
-    - ``existence`` -- boolean (default False). If true, only check whether the
-      supplementary difference sets can be constructed.
-
-    - ``check`` -- boolean (default True). If true, check that the sets are
-      supplementary difference sets before returning them. Setting this parameter
-      to False may speed up the computation considerably.
+    - ``n`` -- integer; the parameter of the supplementary difference set
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are supplementary difference sets before returning them; Setting this
+      parameter to ``False`` may speed up the computation considerably
 
     OUTPUT:
 
-    If ``existence`` is false, the function returns the 4 sets (containing integers
-    modulo `n`), or raises an error if data for the given ``n`` is not available.
-    If ``existence`` is true, the function returns a boolean representing whether
+    If ``existence=False``, the function returns the ring of integers modulo
+    ``n`` and a list containing the 4 sets, or raises an error if data for the
+    given ``n`` is not available.
+    If ``existence=True``, the function returns a boolean representing whether
     skew supplementary difference sets can be constructed.
 
     EXAMPLES::
 
-        sage: from sage.combinat.designs.difference_family import supplementary_difference_set
-        sage: S1, S2, S3, S4 = supplementary_difference_set(191) # long time
+        sage: from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
+        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(191)
 
-    If existence is ``True``, the function returns a boolean ::
+    If ``existence=True``, the function returns a boolean::
 
-        sage: supplementary_difference_set(191, existence=True)
+        sage: supplementary_difference_set_hadamard(191, existence=True)
         True
-        sage: supplementary_difference_set(17, existence=True)
+        sage: supplementary_difference_set_hadamard(17, existence=True)
         False
 
     TESTS::
 
         sage: from sage.combinat.designs.difference_family import is_supplementary_difference_set
-        sage: S1, S2, S3, S4 = supplementary_difference_set(191, check=False)
-        sage: is_supplementary_difference_set([S1, S2, S3, S4], 191, len(S1)+len(S2)+len(S3)+len(S4)-191) # long time
+        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(191, check=False)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-191, G=G)
         True
-        sage: S1, S2, S3, S4 = supplementary_difference_set(37, check=False)
-        sage: supplementary_difference_set(7)
+        sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(37, check=False)
+        sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-37, G=G)
+        True
+        sage: supplementary_difference_set_hadamard(7)
         Traceback (most recent call last):
         ...
         ValueError: SDS of order 7 not yet implemented.
-        sage: supplementary_difference_set(7, existence=True)
+        sage: supplementary_difference_set_hadamard(7, existence=True)
         False
-        sage: supplementary_difference_set(127, existence=True)
+        sage: supplementary_difference_set_hadamard(127, existence=True)
         True
     """
 
@@ -2333,26 +2649,33 @@ def supplementary_difference_set(n, existence=False, check=True):
               [0, 1, 3, 7, 9, 12, 15, 18, 20, 22, 26, 28, 29, 30, 31, 32, 33],
               [2, 3, 4, 5, 8, 9, 10, 11, 13, 17, 19, 21, 22, 24, 27, 31, 32],
               [0, 1, 2, 3, 6, 7, 8, 11, 13, 15, 17, 18, 19, 22, 25, 26, 27, 32, 33]],
+        251: [[2, 6, 8, 10, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 27, 28, 35, 36, 39, 41, 43, 44, 47, 48],
+              [2, 5, 10, 11, 17, 18, 21, 23, 24, 25, 26, 28, 29, 30, 34, 35, 38, 39, 40, 41, 42, 43, 44, 49],
+              [0, 2, 6, 7, 10, 11, 14, 15, 16, 18, 21, 22, 24, 26, 30, 35, 37, 38, 45, 46, 47, 48, 49],
+              [1, 2, 3, 4, 8, 9, 12, 17, 21, 22, 27, 28, 29, 30, 33, 34, 39, 41, 42, 43, 46, 47, 48]],
     }
 
     cosets_gens = {
         191: [1, 2, 3, 4, 6, 8, 9, 11, 12, 13, 16, 17, 18, 19, 22, 32, 36, 38, 41],
         239: [1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 15, 18, 21, 28, 35, 42],
+        251: [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 14, 15, 17, 18, 19, 21, 28, 30, 33, 34, 35, 41, 43, 45, 68],
     }
 
     H_db = {
         191: [1, 39, 184, 109, 49],
         239: [1, 10, 24, 44, 98, 100, 201],
+        251: [1, 20, 113, 149, 219],
     }
 
     if existence:
         return n in indices or skew_supplementary_difference_set(n, existence=True)
 
     sets = None
+    G = None
     if n in indices:
-        sets = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
+        G, sets = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
     elif skew_supplementary_difference_set(n, existence=True):
-        sets = skew_supplementary_difference_set(n, check=False)
+        G, sets = skew_supplementary_difference_set(n, check=False, return_group=True)
 
     if sets is None:
         raise ValueError(f'SDS of order {n} not yet implemented.')
@@ -2360,35 +2683,34 @@ def supplementary_difference_set(n, existence=False, check=True):
     S1, S2, S3, S4 = sets
     if check:
         lmbda = len(S1) + len(S2) + len(S3) + len(S4) - n
-        assert is_supplementary_difference_set([S1, S2, S3, S4], n, lmbda)
+        assert is_supplementary_difference_set([S1, S2, S3, S4], lmbda=lmbda, G=G)
 
-    return S1, S2, S3, S4
+    return G, [S1, S2, S3, S4]
 
 
-def _is_skew_set(S, n):
-    r"""Check if `S` is a skew set over the set of integers modulo `n`.
+def _is_skew_set(G, S):
+    r"""
+    Check if ``S`` is a skew set over the group ``G``.
 
     From [Djo1994a]_, a set `S \subset G` (where `G` is a finite abelian group of order `n`) is of skew
     type if `S_1 \cap (-S_1) = \emptyset` and `S_1 \cup (-S_1) = G\setminus \{0\}`.
 
     INPUT:
 
-    - ``S`` -- the set to be checked, containing integers modulo `n`.
-
-    - ``n`` -- the order of `G`.
+    - ``G`` -- a group
+    - ``S`` -- list containing elements of ``G``; the set to be checked
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import _is_skew_set
         sage: Z5 = Zmod(5)
-        sage: _is_skew_set([Z5(1), Z5(2)], 5)
+        sage: _is_skew_set(Z5, [Z5(1), Z5(2)])
         True
-        sage: _is_skew_set([Z5(1), Z5(2), Z5(3)], 5)
+        sage: _is_skew_set(Z5, [Z5(1), Z5(2), Z5(3)])
         False
-        sage: _is_skew_set([Z5(1)], 5)
+        sage: _is_skew_set(Z5, [Z5(1)])
         False
     """
-    G = Zmod(n)
     for el in S:
         if -el in S:
             return False
@@ -2398,6 +2720,395 @@ def _is_skew_set(S, n):
         if el not in S and -el not in S:
             return False
     return True
+
+
+def are_complementary_difference_sets(G, A, B, verbose=False):
+    r"""
+    Check if ``A`` and ``B`` are complementary difference sets over the group ``G``.
+
+    According to [Sze1971]_, two sets `A`, `B` of size `m` are complementary
+    difference sets over a group `G` of size `2m+1` if:
+
+    1. they are `2-\{2m+1; m, m; m-1\}` supplementary difference sets
+    2. `A` is skew, i.e. `a \in A` implies `-a \not \in A`
+
+    INPUT:
+
+    - ``G`` -- a group of odd order
+    - ``A`` -- a set of elements of ``G``
+    - ``B`` -- a set of elements of ``G``
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will
+      be verbose when the sets do not satisfy the contraints
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: are_complementary_difference_sets(Zmod(7), [1, 2, 4], [1, 2, 4])
+        True
+
+    If ``verbose=True``, the function will be verbose::
+
+        sage: are_complementary_difference_sets(Zmod(7), [1, 2, 5], [1, 2, 4], verbose=True)
+        The sets are not supplementary difference sets with lambda = 2
+        False
+
+    TESTS::
+
+        sage: are_complementary_difference_sets(Zmod(16), [1, 2, 4], [1, 2, 4])
+        False
+        sage: are_complementary_difference_sets(Zmod(7), [1, 2, 4], [1, 2, 3, 4])
+        False
+        sage: are_complementary_difference_sets(Zmod(19), [1, 4, 5, 6, 7, 9, 11, 16, 17], [1, 4, 5, 6, 7, 9, 11, 16, 17])
+        True
+
+    .. SEEALSO::
+
+        :func:`is_supplementary_difference_set`
+    """
+    n = G.order()
+
+    if n % 2 != 1:
+        if verbose:
+            print('G must have odd order')
+        return False
+
+    m = (n - 1) // 2
+
+    if len(A) != m or len(B) != m:
+        if verbose:
+            print(f'A and B must have size {m}')
+        return False
+
+    if not is_supplementary_difference_set([A, B], lmbda=m-1, G=G):
+        if verbose:
+            print(f'The sets are not supplementary difference sets with lambda = {m-1}')
+        return False
+
+    if not _is_skew_set(G, A):
+        if verbose:
+            print('The set A is not skew')
+        return False
+
+    return True
+
+
+def complementary_difference_setsI(n, check=True):
+    r"""
+    Construct complementary difference sets in a group of order `n \cong 3 \mod 4`, `n` a prime power.
+
+    Let `G` be a Galois Field of order `n`, where `n` satisfies the requirements
+    above. Let `A` be the set of non-zero quadratic elements in `G`, and `B = A`.
+    Then `A` and `B` are complementary difference sets over a group of order `n`.
+    This construction is described in [Sze1971]_.
+
+    INPUT:
+
+    - ``n`` -- integer; the order of the group `G`
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are complementary difference sets before returning them
+
+    OUTPUT:
+
+    The function returns the Galois field of order ``n`` and the two sets, or raises
+    an error if ``n`` does not satisfy the requirements of this construction.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setsI
+        sage: complementary_difference_setsI(19)
+        (Finite Field of size 19,
+         [1, 4, 5, 6, 7, 9, 11, 16, 17],
+         [1, 4, 5, 6, 7, 9, 11, 16, 17])
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: G, A, B = complementary_difference_setsI(23, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: complementary_difference_setsI(17)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameter 17 is not valid
+        sage: complementary_difference_setsI(15)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameter 15 is not valid
+
+    .. SEEALSO::
+
+        :func:`are_complementary_difference_sets`
+        :func:`complementary_difference_sets`
+    """
+    if not (n % 4 == 3 and is_prime_power(n)):
+        raise ValueError(f'the parameter {n} is not valid')
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+
+    G = GF(n, 'a')
+    A = list({x**2 for x in G if x**2 != 0})
+    B = A
+    if check:
+        assert are_complementary_difference_sets(G, A, B)
+
+    return G, A, B
+
+
+def complementary_difference_setsII(n, check=True):
+    r"""
+    Construct complementary difference sets in a group of order `n = p^t`, where `p \cong 5 \mod 8` and `t \cong 1, 2, 3 \mod 4`.
+
+    Consider a finite field `G` of order `n` and let `\rho` be the generator of
+    the corresponding multiplicative group. Then, there are two different constructions,
+    depending on whether `t` is even or odd.
+
+    If `t \cong 2 \mod 4`, let `C_0` be the set of non-zero octic residues in `G`,
+    and let `C_i = \rho^i C_0` for `1 \le i \le  7`.
+    Then, `A = C_0 \cup C_1 \cup C_2 \cup C_3` and  `B = C_0 \cup C_1 \cup C_6 \cup C_7`.
+
+    If `t` is odd, let `C_0` be the set of non-zero fourth powers in `G`, and let
+    `C_i = \rho^i C_0` for `1 \le i \le  3`.
+    Then, `A = C_0 \cup C_1` and  `B = C_0 \cup C_3`.
+
+    For more details on this construction, see [Sze1971]_.
+
+    INPUT:
+
+    - ``n`` -- integer; the order of the group `G`
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are complementary difference sets before returning them; setting this to
+      ``False`` might speed up the computation for large values of ``n``
+
+    OUTPUT:
+
+    The function returns the Galois field of order ``n`` and the two sets, or raises
+    an error if ``n`` does not satisfy the requirements of this construction.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setsII
+        sage: complementary_difference_setsII(5)
+        (Finite Field of size 5, [1, 2], [1, 3])
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: G, A, B = complementary_difference_setsII(25, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: G, A, B = complementary_difference_setsII(13, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: complementary_difference_setsII(49)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameter 49 is not valid
+        sage: complementary_difference_setsII(15)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameter 15 is not valid
+
+    .. SEEALSO::
+
+        :func:`are_complementary_difference_sets`
+        :func:`complementary_difference_sets`
+    """
+    p, t = is_prime_power(n, get_data=True)
+    if not (p % 8 == 5 and t > 0 and t % 4 in [1, 2, 3]):
+        raise ValueError(f'the parameter {n} is not valid')
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    G = GF(n, 'a')
+    A, B = None, None
+
+    if t % 2 == 0:
+        rho = G.multiplicative_generator()
+        C0 = list({el**8 for el in G if el != 0})
+        C1, C2, C3, C6, C7 = map(lambda i: [rho**i * el for el in C0], [1, 2, 3, 6, 7])
+        A = C0 + C1 + C2 + C3
+        B = C0 + C1 + C6 + C7
+    else:
+        rho = G.multiplicative_generator()
+        C0 = list({el**4 for el in G if el**4 != 0})
+        C1 = [rho * el for el in C0]
+        C3 = [rho**3 * el for el in C0]
+        A = C0 + C1
+        B = C0 + C3
+
+    if check:
+        assert are_complementary_difference_sets(G, A, B)
+
+    return G, A, B
+
+
+def complementary_difference_setsIII(n, check=True):
+    r"""
+    Construct complementary difference sets in a group of order `n = 2m + 1`, where `4m + 3` is a prime power.
+
+    Consider a finite field `G` of order `n` and let `\rho` be a primite element
+    of this group. Now let `Q` be the set of non zero quadratic residues in `G`,
+    and let `A = \{ a | \rho^{2a} - 1 \in Q\}`, `B' = \{ b | -(\rho^{2b} + 1) \in Q\}`.
+    Then `A` and `B = Q \setminus B'` are complementary difference sets over the ring
+    of integers modulo `n`. For more details, see [Sz1969]_.
+
+    INPUT:
+
+    - ``n`` -- integer; the order of the group over which the sets are constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are complementary difference sets before returning them; setting this to
+      ``False`` might speed up the computation for large values of ``n``
+
+    OUTPUT:
+
+    The function returns the Galois field of order ``n`` and the two sets, or raises
+    an error if ``n`` does not satisfy the requirements of this construction.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import complementary_difference_setsIII
+        sage: complementary_difference_setsIII(11)
+        (Ring of integers modulo 11, [1, 2, 5, 7, 8], [0, 1, 3, 8, 10])
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: G, A, B = complementary_difference_setsIII(21, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: G, A, B = complementary_difference_setsIII(65, check=False)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: complementary_difference_setsIII(10)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameter 10 is not valid
+        sage: complementary_difference_setsIII(17)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameter 17 is not valid
+
+    .. SEEALSO::
+
+        :func:`are_complementary_difference_sets`
+        :func:`complementary_difference_sets`
+    """
+    m = (n - 1) // 2
+    q = 4*m + 3
+    if n % 2 != 1 or not is_prime_power(q):
+        raise ValueError(f'the parameter {n} is not valid')
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    G = Zmod(n)
+    G2 = GF(q)
+    rho = G2.primitive_element()
+
+    Q = [rho ** (2*b) for b in range(1, n+1)]
+
+    A = [G(a) for a in range(n) if rho**(2*a) - 1 in Q]
+    B = [G(b) for b in range(n) if -rho**(2*b) - 1 not in Q]
+
+    if check:
+        assert are_complementary_difference_sets(G, A, B)
+
+    return G, A, B
+
+
+def complementary_difference_sets(n, existence=False, check=True):
+    r"""
+    Compute complementary difference sets over a group of order `n = 2m + 1`.
+
+    According to [Sze1971]_, two sets `A`, `B` of size `m` are complementary
+    difference sets over a group `G` of size `n = 2m + 1` if:
+
+    1. they are `2-\{2m+1; m, m; m-1\}` supplementary difference sets
+    2. `A` is skew, i.e. `a \in A` implies `-a \not \in A`
+
+    This method tries to call :func:`complementary_difference_setsI`,
+    :func:`complementary_difference_setsII` or :func:`complementary_difference_setsIII`
+    if the parameter `n` satisfies the requirements of one of these functions.
+
+    INPUT:
+
+    - ``n`` -- integer; the order of the group over which the sets are constructed
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
+      whether the supplementary difference sets can be constructed
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
+      are complementary difference sets before returning them; setting this to
+      ``False`` might speed up the computation for large values of ``n``
+
+    OUTPUT:
+
+    If ``existence=False``, the function returns group ``G`` and two complementary
+    difference sets, or raises an error if data for the given ``n`` is not available.
+    If ``existence=True``, the function returns a boolean representing whether
+    complementary difference sets can be constructed for the given ``n``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.difference_family import complementary_difference_sets
+        sage: complementary_difference_sets(15)
+        (Ring of integers modulo 15, [1, 2, 4, 6, 7, 10, 12], [0, 1, 2, 6, 9, 13, 14])
+
+    If ``existence=True``, the function returns a boolean::
+
+        sage: complementary_difference_sets(15, existence=True)
+        True
+        sage: complementary_difference_sets(16, existence=True)
+        False
+
+    TESTS::
+
+        sage: from sage.combinat.designs.difference_family import are_complementary_difference_sets
+        sage: G, A, B = complementary_difference_sets(29)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: G, A, B = complementary_difference_sets(65)
+        sage: are_complementary_difference_sets(G, A, B)
+        True
+        sage: complementary_difference_sets(10)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameter n must be odd
+        sage: complementary_difference_sets(17)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: complementary difference sets of order 17 are not implemented yet
+
+    .. SEEALSO::
+
+        :func:`are_complementary_difference_sets`
+    """
+    if n % 2 == 0:
+        if existence:
+            return False
+        raise ValueError('the parameter n must be odd')
+
+    p, t = is_prime_power(n, get_data=True)
+    G, A, B = None, None, None
+
+    if n % 4 == 3 and t > 0:
+        if existence:
+            return True
+        G, A, B = complementary_difference_setsI(n, check=False)
+    elif p % 8 == 5 and t > 0 and t % 4 in [1, 2, 3]:
+        if existence:
+            return True
+        G, A, B = complementary_difference_setsII(n, check=False)
+    elif is_prime_power(2*n + 1):
+        if existence:
+            return True
+        G, A, B = complementary_difference_setsIII(n, check=False)
+
+    if existence:
+        return False
+
+    if G is None:
+        raise NotImplementedError(f'complementary difference sets of order {n} are not implemented yet')
+
+    if check:
+        assert are_complementary_difference_sets(G, A, B)
+    return G, A, B
+
 
 def difference_family(v, k, l=1, existence=False, explain_construction=False, check=True):
     r"""
@@ -2421,24 +3132,21 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     INPUT:
 
     - ``v,k,l`` -- parameters of the difference family. If ``l`` is not provided
-      it is assumed to be ``1``.
-
+      it is assumed to be ``1``
     - ``existence`` -- if ``True``, then return either ``True`` if Sage knows
       how to build such design, ``Unknown`` if it does not and ``False`` if it
-      knows that the design does not exist.
-
+      knows that the design does not exist
     - ``explain_construction`` -- instead of returning a difference family,
-      returns a string that explains the construction used.
-
-    - ``check`` -- boolean (default: ``True``). If ``True`` then the result of
+      returns a string that explains the construction used
+    - ``check`` -- boolean (default: ``True``); if ``True``, then the result of
       the computation is checked before being returned. This should not be
-      needed but ensures that the output is correct.
+      needed but ensures that the output is correct
 
     OUTPUT:
 
     A pair ``(G,D)`` made of a group `G` and a difference family `D` on that
-    group. Or, if ``existence`` is ``True`` a troolean or if
-    ``explain_construction`` is ``True`` a string.
+    group. Or, if ``existence=True``` a troolean or if
+    ``explain_construction=True`` a string.
 
     EXAMPLES::
 
@@ -2524,7 +3232,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         10: (9,8)
         11: (2,1), (4,6), (5,2), (5,4), (6,3)
         13: (2,1), (3,1), (3,2), (4,1), (4,3), (5,5), (6,5)
-        15: (3,1), (4,6), (5,6), (7,3)
+        15: (3,1), (4,6), (5,6), (7,3), (7,6)
         16: (3,2), (5,4), (6,2)
         17: (2,1), (4,3), (5,5), (8,7)
         19: (2,1), (3,1), (3,2), (4,2), (6,5), (9,4), (9,8)
@@ -2602,6 +3310,11 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         sage: for p in [3,5,7,9,11]:
         ....:     v = p*(p+2); k = (v-1)/2;  lmbda = (k-1)/2
         ....:     G,D = designs.difference_family(v,k,lmbda)
+
+    Check Complementary difference sets::
+
+        sage: for v in [15, 33, 35, 39, 51]:
+        ....:     G, D = designs.difference_family(v, (v-1)//2, (v-1)//2-1)
 
     Check the database::
 
@@ -2856,6 +3569,15 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
             if p > q:
                 p,q = q,p
             G,D = twin_prime_powers_difference_set(p,check=False)
+
+    elif (v-1)//2 == k and (v-1)//2-1 == l and complementary_difference_sets(v, existence=True):
+        if existence:
+            return True
+        elif explain_construction:
+            return "Complementary difference sets"
+        else:
+            G, A, B = complementary_difference_sets(v)
+            D = [A, B]
 
     else:
         if existence:

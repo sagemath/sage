@@ -121,7 +121,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
     """
 
     @staticmethod
-    def __classcall_private__(cls, starting_weight, cartan_type = None, starting_weight_parent = None):
+    def __classcall_private__(cls, starting_weight, cartan_type=None, starting_weight_parent=None):
         """
         Classcall to mend the input.
 
@@ -150,7 +150,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             extended = cartan_type.is_affine()
 
             R = RootSystem(cartan_type)
-            P = R.weight_space(extended = extended)
+            P = R.weight_space(extended=extended)
             Lambda = P.basis()
             offset = R.index_set()[Integer(0)]
             starting_weight = P.sum(starting_weight[j-offset]*Lambda[j] for j in R.index_set())
@@ -162,7 +162,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             if starting_weight.parent() != starting_weight_parent:
                 raise ValueError("The passed parent is not equal to parent of the inputted weight!")
 
-        return super().__classcall__(cls, starting_weight, starting_weight_parent = starting_weight_parent)
+        return super().__classcall__(cls, starting_weight, starting_weight_parent=starting_weight_parent)
 
     def __init__(self, starting_weight, starting_weight_parent):
         """
@@ -808,7 +808,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             w = x.weight()
             return P0.sum(int(c)*P0.basis()[i] for i,c in w if i in P0.index_set())
         if group_components:
-            G = self.digraph(index_set = self.cartan_type().classical().index_set())
+            G = self.digraph(index_set=self.cartan_type().classical().index_set())
             C = G.connected_components()
             return sum(q**(c[0].energy_function())*B.sum(B(weight(b)) for b in c) for c in C)
         return B.sum(q**(b.energy_function())*B(weight(b)) for b in self)
@@ -1330,7 +1330,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 return ret
             WLR = self.parent().weight_lattice_realization()
             value = list(ret.value)
-            endpoint = sum(p for p in value)
+            endpoint = sum(value)
             rho = WLR.rho()
             h = WLR.simple_coroots()
 
@@ -1385,7 +1385,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             ret = dual_path.dualize()
             WLR = self.parent().weight_lattice_realization()
             value = list(ret.value)
-            endpoint = sum(p for p in value)
+            endpoint = sum(value)
             rho = WLR.rho()
             h = WLR.simple_coroots()
 

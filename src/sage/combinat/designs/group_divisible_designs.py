@@ -114,20 +114,20 @@ def group_divisible_design(v,K,G,existence=False,check=False):
         return GDD_4_2(v//2,check=check)
 
     # From a TD(k,g)
-    elif (len(G)    == 1 and
-          len(K)    == 1 and
+    elif (len(G) == 1 and
+          len(K) == 1 and
           K[0]*G[0] == v):
         from .orthogonal_arrays import transversal_design
         return transversal_design(k=K[0],n=G[0],existence=existence)
 
     if blocks:
         return GroupDivisibleDesign(v,
-                                    groups = groups,
-                                    blocks = blocks,
-                                    G = G,
-                                    K = K,
-                                    check = check,
-                                    copy  = True)
+                                    groups=groups,
+                                    blocks=blocks,
+                                    G=G,
+                                    K=K,
+                                    check=check,
+                                    copy=True)
 
     if existence:
         return Unknown
@@ -193,12 +193,12 @@ def GDD_4_2(q,existence=False,check=True):
                for g in G for j in range(2)]
 
     return GroupDivisibleDesign(2*q,
-                                groups = [[i,i+1] for i in range(0,2*q,2)],
-                                blocks = sum(classes,[]),
-                                K      = [4],
-                                G      = [2],
-                                check  = check,
-                                copy   = False)
+                                groups=[[i,i+1] for i in range(0,2*q,2)],
+                                blocks=sum(classes,[]),
+                                K=[4],
+                                G=[2],
+                                check=check,
+                                copy=False)
 
 class GroupDivisibleDesign(IncidenceStructure):
     r"""

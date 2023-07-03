@@ -54,9 +54,9 @@ def random_testing(fn):
     fails (raises an exception).
 
     If you want a very long-running test using this setup, you should do
-    something like (in Python 2)::
+    something like::
 
-        for _ in xrange(10^10): test_foo(100)
+        for _ in range(10^10): test_foo(100)
 
     instead of::
 

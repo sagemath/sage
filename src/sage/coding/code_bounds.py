@@ -94,11 +94,11 @@ questions" is equivalent to determining `A_2(n,d)`! Using
 Sage, you can determine the best known estimates for this number in
 2 ways:
 
-1. Indirectly, using best_known_linear_code_www(n, k, F),
-    which connects to the website http://www.codetables.de by Markus Grassl;
+1. Indirectly, using ``best_known_linear_code_www(n, k, F)``,
+   which connects to the website http://www.codetables.de by Markus Grassl;
 
-2. codesize_upper_bound(n,d,q), dimension_upper_bound(n,d,q),
-    and best_known_linear_code(n, k, F).
+2. ``codesize_upper_bound(n,d,q)``, ``dimension_upper_bound(n,d,q)``,
+   and ``best_known_linear_code(n, k, F)``.
 
 The output of :func:`best_known_linear_code`,
 :func:`best_known_linear_code_www`, or :func:`dimension_upper_bound` would
@@ -108,52 +108,52 @@ the best possible solution, that may belong to a linear or nonlinear code.
 
 This module implements:
 
--  codesize_upper_bound(n,d,q), for the best known (as of May,
-   2006) upper bound A(n,d) for the size of a code of length n,
-   minimum distance d over a field of size q.
+-  ``codesize_upper_bound(n,d,q)``, for the best known (as of May,
+   2006) upper bound `A(n,d)` for the size of a code of length `n`,
+   minimum distance `d` over a field of size `q`.
 
--  dimension_upper_bound(n,d,q), an upper bound
+-  ``dimension_upper_bound(n,d,q)``, an upper bound
    `B(n,d)=B_q(n,d)` for the dimension of a linear code of
-   length n, minimum distance d over a field of size q.
+   length `n`, minimum distance `d` over a field of size `q`.
 
--  gilbert_lower_bound(n,q,d), a lower bound for number of
-   elements in the largest code of min distance d in
+-  ``gilbert_lower_bound(n,q,d)``, a lower bound for number of
+   elements in the largest code of min distance `d` in
    `\GF{q}^n`.
 
--  gv_info_rate(n,delta,q), `log_q(GLB)/n`, where GLB is
-   the Gilbert lower bound and delta = d/n.
+-  ``gv_info_rate(n,delta,q)``, `log_q(GLB)/n`, where GLB is
+   the Gilbert lower bound and `\delta = d/n`.
 
--  gv_bound_asymp(delta,q), asymptotic analog of Gilbert lower
+-  ``gv_bound_asymp(delta,q)``, asymptotic analog of Gilbert lower
    bound.
 
--  plotkin_upper_bound(n,q,d)
+-  ``plotkin_upper_bound(n,q,d)``
 
--  plotkin_bound_asymp(delta,q), asymptotic analog of Plotkin
+-  ``plotkin_bound_asymp(delta,q)``, asymptotic analog of Plotkin
    bound.
 
--  griesmer_upper_bound(n,q,d)
+-  ``griesmer_upper_bound(n,q,d)``
 
--  elias_upper_bound(n,q,d)
+-  ``elias_upper_bound(n,q,d)``
 
--  elias_bound_asymp(delta,q), asymptotic analog of Elias bound.
+-  ``elias_bound_asymp(delta,q)``, asymptotic analog of Elias bound.
 
--  hamming_upper_bound(n,q,d)
+-  ``hamming_upper_bound(n,q,d)``
 
--  hamming_bound_asymp(delta,q), asymptotic analog of Hamming
+-  ``hamming_bound_asymp(delta,q)``, asymptotic analog of Hamming
    bound.
 
--  singleton_upper_bound(n,q,d)
+-  ``singleton_upper_bound(n,q,d)``
 
--  singleton_bound_asymp(delta,q), asymptotic analog of Singleton
+-  ``singleton_bound_asymp(delta,q)``, asymptotic analog of Singleton
    bound.
 
--  mrrw1_bound_asymp(delta,q), "first" asymptotic
+-  ``mrrw1_bound_asymp(delta,q)``, "first" asymptotic
    McEliese-Rumsey-Rodemich-Welsh bound for the information rate.
 
 -  Delsarte (a.k.a. Linear Programming (LP)) upper bounds.
 
-PROBLEM: In this module we shall typically either (a) seek bounds
-on k, given n, d, q, (b) seek bounds on R, delta, q (assuming n is
+PROBLEM: In this module we shall typically either (a) seek bounds on `k`, given
+`n`, `d`, `q`, (b) seek bounds on `R`, `\delta`, `q` (assuming `n` is
 "infinity").
 
 .. TODO::
@@ -174,16 +174,17 @@ on k, given n, d, q, (b) seek bounds on R, delta, q (assuming n is
 # ****************************************************************************
 
 from sage.arith.misc import binomial, is_prime_power
-from sage.libs.gap.libgap import libgap
+from sage.features.gap import GapPackage
 from sage.misc.functional import sqrt, log
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import RR
 
 from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
-from sage.features.gap import GapPackage
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
 def _check_n_q_d(n, q, d, field_based=True):
@@ -233,19 +234,19 @@ def codesize_upper_bound(n, d, q, algorithm=None):
     This function computes the minimum value of the upper bounds of Singleton,
     Hamming, Plotkin, and Elias.
 
-    If algorithm="gap" then this returns the best known upper
-    bound `A(n,d)=A_q(n,d)` for the size of a code of length n,
-    minimum distance d over a field of size q. The function first
-    checks for trivial cases (like d=1 or n=d), and if the value
+    If ``algorithm="gap"``, then this returns the best known upper
+    bound `A(n,d)=A_q(n,d)` for the size of a code of length `n`,
+    minimum distance `d` over a field of size `q`. The function first
+    checks for trivial cases (like `d=1` or `n=d`), and if the value
     is in the built-in table. Then it calculates the minimum value
     of the upper bound using the algorithms of Singleton, Hamming,
     Johnson, Plotkin and Elias. If the code is binary,
     `A(n, 2\ell-1) = A(n+1,2\ell)`, so the function
     takes the minimum of the values obtained from all algorithms for the
     parameters `(n, 2\ell-1)` and `(n+1, 2\ell)`. This
-    wraps GUAVA's (i.e. GAP's package Guava) UpperBound( n, d, q ).
+    wraps GUAVA's (i.e. GAP's package Guava) ``UpperBound(n, d, q)``.
 
-    If algorithm="LP" then this returns the Delsarte (a.k.a. Linear
+    If ``algorithm="LP"``, then this returns the Delsarte (a.k.a. Linear
     Programming) upper bound.
 
     EXAMPLES::
@@ -299,10 +300,11 @@ def dimension_upper_bound(n, d, q, algorithm=None):
     Return an upper bound for the dimension of a linear code.
 
     Return an upper bound `B(n,d) = B_q(n,d)` for the
-    dimension of a linear code of length n, minimum distance d over a
-    field of size q.
+    dimension of a linear code of length `n`, minimum distance `d` over a
+    field of size `q`.
 
-    Parameter "algorithm" has the same meaning as in :func:`codesize_upper_bound`
+    Parameter ``algorithm`` has the same meaning as in
+    :func:`codesize_upper_bound`
 
     EXAMPLES::
 
@@ -395,6 +397,7 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
             return int(d/( d - t*n))
         elif d < t*n + 1:
             fact = (d-1) / t
+            from sage.rings.real_mpfr import RR
             if RR(fact)==RR(int(fact)):
                 fact = int(fact) + 1
             return int(d/( d - t * fact)) * q**(n - fact)
@@ -462,7 +465,7 @@ def elias_upper_bound(n,q,d,algorithm=None):
 
     Return the Elias upper bound for number of elements in the largest
     code of minimum distance `d` in `\GF{q}^n`, cf. [HP2003]_.
-    If the method is "gap", it wraps GAP's ``UpperBoundElias``.
+    If ``algorithm="gap"``, it wraps GAP's ``UpperBoundElias``.
 
     EXAMPLES::
 
@@ -497,8 +500,8 @@ def hamming_upper_bound(n,q,d):
     Return the Hamming upper bound.
 
     Return the Hamming upper bound for number of elements in the
-    largest code of length n and minimum distance d over alphabet
-    of size q.
+    largest code of length `n` and minimum distance `d` over alphabet
+    of size `q`.
 
     The Hamming bound (also known as the sphere packing bound) returns
     an upper bound on the size of a code of length `n`, minimum distance
@@ -516,7 +519,7 @@ def hamming_upper_bound(n,q,d):
 
 
     where `M` is the maximum number of codewords and `V(n,e)` is
-    equal to the contents of a ball of radius e. This bound is useful
+    equal to the contents of a ball of radius `e`. This bound is useful
     for small values of `d`. Codes for which equality holds are called
     perfect. See e.g. [HP2003]_.
 
@@ -534,7 +537,7 @@ def singleton_upper_bound(n, q, d):
     Return the Singleton upper bound.
 
     Return the Singleton upper bound for number of elements in a
-    largest code of minimum distance d in `\GF{q}^n`.
+    largest code of minimum distance `d` in `\GF{q}^n`.
 
     This bound is based on the shortening of codes. By shortening an
     `(n, M, d)` code `d-1` times, an `(n-d+1,M,1)` code
@@ -580,9 +583,9 @@ def entropy(x, q=2):
 
     INPUT:
 
-    - ``x`` - real number in the interval `[0, 1]`.
+    - ``x`` -- real number in the interval `[0, 1]`.
 
-    - ``q`` - (default: 2) integer greater than 1. This is the base of the
+    - ``q`` -- (default: 2) integer greater than 1. This is the base of the
       logarithm.
 
     EXAMPLES::
@@ -621,7 +624,7 @@ def entropy(x, q=2):
 
 def entropy_inverse(x, q=2):
     """
-    Find the inverse of the ``q``-ary entropy function at the point ``x``.
+    Find the inverse of the `q`-ary entropy function at the point ``x``.
 
     INPUT:
 
@@ -656,7 +659,7 @@ def entropy_inverse(x, q=2):
     if q < 2:   # Here we check that q is actually at least 2
         raise ValueError("The value q must be an integer greater than 1")
 
-    eps  = 4.5e-16 # find_root has about this as the default xtol
+    eps = 4.5e-16 # find_root has about this as the default xtol
     ymax = 1 - 1/q
     if x <= eps:
         return 0

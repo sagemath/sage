@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Siegel Products
 """
@@ -33,7 +34,7 @@ from sage.rings.rational_field import QQ
 
 def siegel_product(self, u):
     """
-    Computes the infinite product of local densities of the quadratic
+    Compute the infinite product of local densities of the quadratic
     form for the number `u`.
 
     EXAMPLES::
@@ -110,7 +111,7 @@ def siegel_product(self, u):
             factor1 *= i
 
         genericfactor = factor1 * ((u / f) ** m) \
-            * QQ(sqrt((2 ** n) *  f) / (u * d)) \
+            * QQ(sqrt((2 ** n) * f) / (u * d)) \
             * abs(QuadraticBernoulliNumber(m, d1) / bernoulli(2*m))
 
     # DIAGNOSTIC

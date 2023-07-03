@@ -21,7 +21,7 @@ from .constructor import random_matrix, Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 from sage.interfaces.magma import magma
@@ -562,7 +562,6 @@ s := Cputime(t);
         raise ValueError('unknown system "%s"'%system)
 
 
-
 #######################################################################
 # Dense Benchmarks over GF(p), for small p.
 #######################################################################
@@ -719,7 +718,6 @@ s := Cputime(t);
         return magma.eval('s')
     else:
         raise ValueError('unknown system "%s"'%system)
-
 
 
 # Matrix multiplication over GF(p)
@@ -900,7 +898,7 @@ def hilbert_matrix(n):
     A = Matrix(QQ,n,n)
     for i in range(A.nrows()):
         for j in range(A.ncols()):
-            A[i,j] =  QQ(1)/((i+1)+(j+1)-1)
+            A[i,j] = QQ(1)/((i+1)+(j+1)-1)
     return A
 
 # Reduced row echelon form over QQ

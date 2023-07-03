@@ -726,27 +726,27 @@ cdef class ntl_mat_GF2E():
 
         if not nonzero:
             if _density == 1.0:
-                for i in xrange(self.x.NumRows()):
-                    for j in xrange(self.x.NumCols()):
+                for i in range(self.x.NumRows()):
+                    for j in range(self.x.NumCols()):
                         tmp = GF2E_random()
                         mat_GF2E_setitem(&self.x, i, j, &tmp)
             else:
-                for i in xrange(self.x.NumRows()):
-                    for j in xrange(self.x.NumCols()):
+                for i in range(self.x.NumRows()):
+                    for j in range(self.x.NumCols()):
                         if rstate.c_rand_double() <= _density:
                             tmp = GF2E_random()
                             mat_GF2E_setitem(&self.x, i, j, &tmp)
         else:
             if _density == 1.0:
-                for i in xrange(self.x.NumRows()):
-                    for j in xrange(self.x.NumCols()):
+                for i in range(self.x.NumRows()):
+                    for j in range(self.x.NumCols()):
                         tmp = GF2E_random()
                         while GF2E_IsZero(tmp):
                             tmp = GF2E_random()
                         mat_GF2E_setitem(&self.x, i, j, &tmp)
             else:
-                for i in xrange(self.x.NumRows()):
-                    for j in xrange(self.x.NumCols()):
+                for i in range(self.x.NumRows()):
+                    for j in range(self.x.NumCols()):
                         if rstate.c_rand_double() <= _density:
                             tmp = GF2E_random()
                             while GF2E_IsZero(tmp):

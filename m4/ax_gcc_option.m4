@@ -8,7 +8,7 @@
 #
 # DESCRIPTION
 #
-#   AX_GCC_OPTION checks wheter gcc accepts the passed OPTION. If it accepts
+#   AX_GCC_OPTION checks whether gcc accepts the passed OPTION. If it accepts
 #   the OPTION then ACTION-IF-SUCCESSFUL will be executed, otherwise
 #   ACTION-IF-UNSUCCESSFUL.
 #

@@ -572,7 +572,7 @@ from sage.rings.cc import CC
 from sage.rings.cif import CIF
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_interval import is_ComplexIntervalFieldElement
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -645,12 +645,12 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
 
     def common_polynomial(self, poly):
         """
-        Given a polynomial with algebraic coefficients, returns a
+        Given a polynomial with algebraic coefficients, return a
         wrapper that caches high-precision calculations and
-        factorizations. This wrapper can be passed to ``polynomial_root``
+        factorizations. This wrapper can be passed to :meth:`polynomial_root`
         in place of the polynomial.
 
-        Using ``common_polynomial`` makes no semantic difference, but will
+        Using :meth:`common_polynomial` makes no semantic difference, but will
         improve efficiency if you are dealing with multiple roots
         of a single polynomial.
 
@@ -665,13 +665,13 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             sage: phi * tau == -1
             True
 
-            sage: x = polygen(SR)
-            sage: p = (x - sqrt(-5)) * (x - sqrt(3)); p
+            sage: x = polygen(SR)                                                       # optional - sage.symbolic
+            sage: p = (x - sqrt(-5)) * (x - sqrt(3)); p                                 # optional - sage.symbolic
             x^2 + (-sqrt(3) - sqrt(-5))*x + sqrt(3)*sqrt(-5)
-            sage: p = QQbar.common_polynomial(p)
-            sage: a = QQbar.polynomial_root(p, CIF(RIF(-0.1, 0.1), RIF(2, 3))); a
+            sage: p = QQbar.common_polynomial(p)                                        # optional - sage.symbolic
+            sage: a = QQbar.polynomial_root(p, CIF(RIF(-0.1, 0.1), RIF(2, 3))); a       # optional - sage.symbolic
             0.?e-18 + 2.236067977499790?*I
-            sage: b = QQbar.polynomial_root(p, RIF(1, 2)); b
+            sage: b = QQbar.polynomial_root(p, RIF(1, 2)); b                            # optional - sage.symbolic
             1.732050807568878?
 
         These "common polynomials" can be shared between real and
@@ -1012,7 +1012,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
 
         trial = Factorization(factorization).value()
 
-        return Factorization(factorization, unit = f.lc() / trial.lc())
+        return Factorization(factorization, unit=f.lc() / trial.lc())
 
 
 class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicRealField):
@@ -1177,9 +1177,10 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             True
             sage: a + AA(3)
             5.645751311064590?
-            sage: AA.has_coerce_map_from(SR)
+            sage: AA.has_coerce_map_from(SR)                                            # optional - sage.symbolic
             False
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 - 2, 'a', embedding=2.**(1/3))
             sage: AA.has_coerce_map_from(K)
             True
@@ -1683,7 +1684,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             True
             sage: QQbar.has_coerce_map_from(CC)
             False
-            sage: QQbar.has_coerce_map_from(SR)
+            sage: QQbar.has_coerce_map_from(SR)                                         # optional - sage.symbolic
             False
 
             sage: i + QQbar(2)
@@ -3134,7 +3135,7 @@ class AlgebraicGenerator(SageObject):
 
     def is_trivial(self):
         """
-        Return true iff this is the trivial generator (alpha == 1), which
+        Return ``True`` iff this is the trivial generator (alpha == 1), which
         does not actually extend the rationals.
 
         EXAMPLES::
@@ -4107,8 +4108,6 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         self.exactify()
         return bool(self)
 
-
-
     def is_square(self):
         """
         Return whether or not this number is square.
@@ -4697,27 +4696,28 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: AA(1/sqrt(5)).radical_expression()
+            sage: AA(1/sqrt(5)).radical_expression()                                    # optional - sage.symbolic
             sqrt(1/5)
-            sage: AA(sqrt(5 + sqrt(5))).radical_expression()
+            sage: AA(sqrt(5 + sqrt(5))).radical_expression()                            # optional - sage.symbolic
             sqrt(sqrt(5) + 5)
-            sage: QQbar.zeta(5).radical_expression()
+            sage: QQbar.zeta(5).radical_expression()                                    # optional - sage.symbolic
             1/4*sqrt(5) + 1/2*sqrt(-1/2*sqrt(5) - 5/2) - 1/4
-            sage: a = QQ[x](x^7 - x - 1).roots(AA, False)[0]
-            sage: a.radical_expression()
+            sage: x = polygen(QQ, 'x')
+            sage: a = (x^7 - x - 1).roots(AA, False)[0]
+            sage: a.radical_expression()                                                # optional - sage.symbolic
             1.112775684278706?
-            sage: a.radical_expression().parent() == SR
+            sage: a.radical_expression().parent() == SR                                 # optional - sage.symbolic
             False
-            sage: a = sorted(QQ[x](x^7-x-1).roots(QQbar, False), key=imag)[0]
-            sage: a.radical_expression()
+            sage: a = sorted((x^7-x-1).roots(QQbar, False), key=imag)[0]
+            sage: a.radical_expression()                                                # optional - sage.symbolic
             -0.3636235193291805? - 0.9525611952610331?*I
-            sage: QQbar.zeta(5).imag().radical_expression()
+            sage: QQbar.zeta(5).imag().radical_expression()                             # optional - sage.symbolic
             1/2*sqrt(1/2*sqrt(5) + 5/2)
-            sage: AA(5/3).radical_expression()
+            sage: AA(5/3).radical_expression()                                          # optional - sage.symbolic
             5/3
-            sage: AA(5/3).radical_expression().parent() == SR
+            sage: AA(5/3).radical_expression().parent() == SR                           # optional - sage.symbolic
             True
-            sage: QQbar(0).radical_expression()
+            sage: QQbar(0).radical_expression()                                         # optional - sage.symbolic
             0
 
         TESTS:
@@ -4728,13 +4728,15 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         ::
 
-            sage: a = AA(sqrt(2) + 10^25)
-            sage: p = a.minpoly()
-            sage: v = a._value
-            sage: f = ComplexIntervalField(v.prec())
-            sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]
+            sage: a = AA(sqrt(2) + 10^25)                                               # optional - sage.symbolic
+            sage: p = a.minpoly()                                                       # optional - sage.symbolic
+            sage: v = a._value                                                          # optional - sage.symbolic
+            sage: f = ComplexIntervalField(v.prec())                                    # optional - sage.symbolic
+            sage: var('x')                                                              # optional - sage.symbolic
+            x
+            sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]                   # optional - sage.symbolic
             [True, True]
-            sage: a.radical_expression()
+            sage: a.radical_expression()                                                # optional - sage.symbolic
             sqrt(2) + 10000000000000000000000000
         """
         from sage.symbolic.ring import SR  # Lazy to avoid cyclic dependency
@@ -4764,15 +4766,15 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
             sage: maxima(AA(7))
             7
-            sage: maxima(QQbar(sqrt(5/2)))
+            sage: maxima(QQbar(sqrt(5/2)))                                              # optional - sage.symbolic
             sqrt(10)/2
-            sage: maxima(AA(-sqrt(5)))
+            sage: maxima(AA(-sqrt(5)))                                                  # optional - sage.symbolic
             -sqrt(5)
-            sage: maxima(QQbar(sqrt(-2)))
+            sage: maxima(QQbar(sqrt(-2)))                                               # optional - sage.symbolic
             sqrt(2)*%i
-            sage: maxima(AA(2+sqrt(5)))
+            sage: maxima(AA(2+sqrt(5)))                                                 # optional - sage.symbolic
             sqrt(5)+2
-            sage: maxima(QQ[x](x^7 - x - 1).roots(AA, False)[0])
+            sage: maxima(QQ[x](x^7 - x - 1).roots(AA, False)[0])                        # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot find radical expression
@@ -4791,7 +4793,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
     r"""
     The class for algebraic numbers (complex numbers which are the roots
     of a polynomial with integer coefficients). Much of its functionality
-    is inherited from ``AlgebraicNumber_base``.
+    is inherited from :class:`AlgebraicNumber_base`.
 
     .. automethod:: _richcmp_
     """
@@ -4886,24 +4888,24 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
         TESTS::
 
-            sage: QQbar.zeta(6) == QQbar(1/2 + I*sqrt(3)/2)
+            sage: QQbar.zeta(6) == QQbar(1/2 + I*sqrt(3)/2)                             # optional - sage.symbolic
             True
             sage: QQbar(I) == QQbar(I * (2^100+1)/(2^100))
             False
             sage: QQbar(2) == 2
             True
-            sage: QQbar(2) == GF(7)(2)
+            sage: QQbar(2) == GF(7)(2)                                                  # optional - sage.rings.finite_rings
             False
-            sage: GF(7)(2) in QQbar
+            sage: GF(7)(2) in QQbar                                                     # optional - sage.rings.finite_rings
             False
 
-            sage: QQbar.zeta(6) != QQbar(1/2 + I*sqrt(3)/2)
+            sage: QQbar.zeta(6) != QQbar(1/2 + I*sqrt(3)/2)                             # optional - sage.symbolic
             False
             sage: QQbar(I) != QQbar(I * (2^100+1)/(2^100))
             True
             sage: QQbar(2) != 2
             False
-            sage: QQbar(2) != GF(7)(2)
+            sage: QQbar(2) != GF(7)(2)                                                  # optional - sage.rings.finite_rings
             True
 
             sage: QQbar.zeta(3).real() == -1/2
@@ -5120,7 +5122,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def real(self):
         r"""
-        Return the real part of self.
+        Return the real part of ``self``.
 
         EXAMPLES::
 
@@ -5131,7 +5133,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def imag(self):
         r"""
-        Return the imaginary part of self.
+        Return the imaginary part of ``self``.
 
         EXAMPLES::
 
@@ -5175,7 +5177,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def interval_exact(self, field):
         r"""
-        Given a ``ComplexIntervalField``, compute the best possible
+        Given a :class:`ComplexIntervalField`, compute the best possible
         approximation of this number in that field. Note that if
         either the real or imaginary parts of this number are
         sufficiently close to some floating-point number (and, in
@@ -5188,10 +5190,10 @@ class AlgebraicNumber(AlgebraicNumber_base):
             0.7071067811865475? + 0.7071067811865475?*I
             sage: a.interval_exact(CIF)
             0.7071067811865475? + 0.7071067811865475?*I
-            sage: b = QQbar((1+I)*sqrt(2)/2)
-            sage: (a - b).interval(CIF)
+            sage: b = QQbar((1+I)*sqrt(2)/2)                                            # optional - sage.symbolic
+            sage: (a - b).interval(CIF)                                                 # optional - sage.symbolic
             0.?e-19 + 0.?e-18*I
-            sage: (a - b).interval_exact(CIF)
+            sage: (a - b).interval_exact(CIF)                                           # optional - sage.symbolic
             0
         """
         if not isinstance(field, sage.rings.abc.ComplexIntervalField):
@@ -5218,12 +5220,12 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def complex_number(self, field):
         r"""
-        Given the complex field ``field`` compute an accurate approximation of
+        Given the complex field ``field``, compute an accurate approximation of
         this element in that field.
 
         The approximation will be off by at most two ulp's in each component,
         except for components which are very close to zero, which will have an
-        absolute error at most `2^{-prec+1}` where `prec` is the precision of
+        absolute error at most `2^{-prec+1}` where ``prec`` is the precision of
         the field.
 
         EXAMPLES::
@@ -5241,10 +5243,10 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def complex_exact(self, field):
         r"""
-        Given a ``ComplexField``, return the best possible approximation of
+        Given a :class:`ComplexField`, return the best possible approximation of
         this number in that field. Note that if either component is
         sufficiently close to the halfway point between two floating-point
-        numbers in the corresponding ``RealField``, then this will trigger
+        numbers in the corresponding :class:`RealField`, then this will trigger
         exact computation, which may be very slow.
 
         EXAMPLES::
@@ -5271,7 +5273,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: QQbar(-sqrt(3)/2 - I/2).multiplicative_order()
+            sage: QQbar(-sqrt(3)/2 - I/2).multiplicative_order()                        # optional - sage.symbolic
             12
             sage: QQbar(1).multiplicative_order()
             1
@@ -5297,11 +5299,11 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: QQbar((1+I)*(sqrt(2)+sqrt(5))).rational_argument()
+            sage: QQbar((1+I)*(sqrt(2)+sqrt(5))).rational_argument()                    # optional - sage.symbolic
             1/8
-            sage: QQbar(-1 + I*sqrt(3)).rational_argument()
+            sage: QQbar(-1 + I*sqrt(3)).rational_argument()                             # optional - sage.symbolic
             1/3
-            sage: QQbar(-1 - I*sqrt(3)).rational_argument()
+            sage: QQbar(-1 - I*sqrt(3)).rational_argument()                             # optional - sage.symbolic
             -1/3
             sage: QQbar(3+4*I).rational_argument() is None
             True
@@ -5331,9 +5333,9 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: QQbar(1) ^ QQbar(sqrt(2))
+            sage: QQbar(1) ^ QQbar(sqrt(2))                                             # optional - sage.symbolic
             1
-            sage: 1 ^ QQbar(sqrt(2))
+            sage: 1 ^ QQbar(sqrt(2))                                                    # optional - sage.symbolic
             1
             sage: QQbar(2) ^ QQbar(2)
             Traceback (most recent call last):
@@ -5403,8 +5405,8 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: a = QQbar(sqrt(2))
-            sage: a._more_precision()
+            sage: a = QQbar(sqrt(2))                                                    # optional - sage.symbolic
+            sage: a._more_precision()                                                   # optional - sage.symbolic
 
         TESTS:
 
@@ -5412,7 +5414,8 @@ class AlgebraicReal(AlgebraicNumber_base):
         real which is not the case without calling _ensure_real (see
         :trac:`11728`)::
 
-            sage: P = AA['x'](1+x^4); a1,a2 = P.factor()[0][0],P.factor()[1][0]; a1*a2
+            sage: x = polygen(ZZ, 'x')
+            sage: P = AA['x'](1 + x^4); a1,a2 = P.factor()[0][0], P.factor()[1][0]; a1*a2
             x^4 + 1.000000000000000?
             sage: a1,a2
             (x^2 - 1.414213562373095?*x + 1, x^2 + 1.414213562373095?*x + 1)
@@ -5428,8 +5431,8 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: t = AA(sqrt(2))
-            sage: loads(dumps(t)) == t
+            sage: t = AA(sqrt(2))                                                       # optional - sage.symbolic
+            sage: loads(dumps(t)) == t                                                  # optional - sage.symbolic
             True
         """
         return (AlgebraicReal, (self._descr, ))
@@ -5449,32 +5452,32 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS::
 
-            sage: AA(golden_ratio) < AA(sqrt(5))
+            sage: AA(golden_ratio) < AA(sqrt(5))                                        # optional - sage.symbolic
             True
-            sage: AA(golden_ratio) == AA((sqrt(5)+1)/2)
+            sage: AA(golden_ratio) == AA((sqrt(5)+1)/2)                                 # optional - sage.symbolic
             True
             sage: AA(7) >= AA(50/7)
             False
 
         Check for trivial equality with identical elements::
 
-            sage: x1 = AA(2^(1/50))
-            sage: x2 = AA(2^(1/50))
-            sage: y = x1 - x2
-            sage: y == y
+            sage: x1 = AA(2^(1/50))                                                     # optional - sage.symbolic
+            sage: x2 = AA(2^(1/50))                                                     # optional - sage.symbolic
+            sage: y = x1 - x2                                                           # optional - sage.symbolic
+            sage: y == y                                                                # optional - sage.symbolic
             True
-            sage: y >= y
+            sage: y >= y                                                                # optional - sage.symbolic
             True
-            sage: y < y
+            sage: y < y                                                                 # optional - sage.symbolic
             False
 
-            sage: z = x1 - x2
-            sage: z == 0
+            sage: z = x1 - x2                                                           # optional - sage.symbolic
+            sage: z == 0                                                                # optional - sage.symbolic
             True
 
-            sage: a = x1 - x2
-            sage: b = x1 - x2
-            sage: a == b
+            sage: a = x1 - x2                                                           # optional - sage.symbolic
+            sage: b = x1 - x2                                                           # optional - sage.symbolic
+            sage: a == b                                                                # optional - sage.symbolic
             True
         """
         if self is other:
@@ -5610,9 +5613,9 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: AA(sqrt(2)).floor()
+            sage: AA(sqrt(2)).floor()                                                   # optional - sage.symbolic
             1
-            sage: AA(-sqrt(2)).floor()
+            sage: AA(-sqrt(2)).floor()                                                  # optional - sage.symbolic
             -2
             sage: AA(42).floor()
             42
@@ -5621,8 +5624,8 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         Check that :trac:`15501` is fixed::
 
-            sage: a = QQbar((-1)^(1/4)).real()
-            sage: (floor(a-a) + a).parent()
+            sage: a = QQbar((-1)^(1/4)).real()                                          # optional - sage.symbolic
+            sage: (floor(a-a) + a).parent()                                             # optional - sage.symbolic
             Algebraic Real Field
         """
         return self._floor_ceil(lambda x: x.floor())
@@ -5633,9 +5636,9 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: AA(sqrt(2)).ceil()
+            sage: AA(sqrt(2)).ceil()                                                    # optional - sage.symbolic
             2
-            sage: AA(-sqrt(2)).ceil()
+            sage: AA(-sqrt(2)).ceil()                                                   # optional - sage.symbolic
             -1
             sage: AA(42).ceil()
             42
@@ -5648,7 +5651,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: AA(sqrt(2)).round()
+            sage: AA(sqrt(2)).round()                                                   # optional - sage.symbolic
             1
             sage: AA(1/2).round()
             1
@@ -5663,9 +5666,9 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: AA(sqrt(2)).trunc()
+            sage: AA(sqrt(2)).trunc()                                                   # optional - sage.symbolic
             1
-            sage: AA(-sqrt(2)).trunc()
+            sage: AA(-sqrt(2)).trunc()                                                  # optional - sage.symbolic
             -1
             sage: AA(1).trunc()
             1
@@ -5684,11 +5687,11 @@ class AlgebraicReal(AlgebraicNumber_base):
             Rational Field
             sage: AA(-22/7)._rational_()
             -22/7
-            sage: AA(sqrt(7))._rational_()
+            sage: AA(sqrt(7))._rational_()                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: Cannot coerce irrational Algebraic Real 2.645751311064591? to Rational
-            sage: v = AA(1/2 + sqrt(2))^3 - AA(11/4*sqrt(2)); v
+            sage: v = AA(1/2 + sqrt(2))^3 - AA(11/4*sqrt(2)); v                         # optional - sage.symbolic
             3.125000000000000?
             sage: v._rational_()
             25/8
@@ -5707,10 +5710,10 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: a = AA(sqrt(2) + sqrt(3))
-            sage: a.real()
+            sage: a = AA(sqrt(2) + sqrt(3))                                             # optional - sage.symbolic
+            sage: a.real()                                                              # optional - sage.symbolic
             3.146264369941973?
-            sage: a.real() is a
+            sage: a.real() is a                                                         # optional - sage.symbolic
             True
         """
         return self
@@ -5723,10 +5726,10 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: a = AA(sqrt(2) + sqrt(3))
-            sage: a.imag()
+            sage: a = AA(sqrt(2) + sqrt(3))                                             # optional - sage.symbolic
+            sage: a.imag()                                                              # optional - sage.symbolic
             0
-            sage: parent(a.imag())
+            sage: parent(a.imag())                                                      # optional - sage.symbolic
             Algebraic Real Field
         """
         return AA_0
@@ -5737,10 +5740,10 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: a = AA(sqrt(2) + sqrt(3))
-            sage: a.conjugate()
+            sage: a = AA(sqrt(2) + sqrt(3))                                             # optional - sage.symbolic
+            sage: a.conjugate()                                                         # optional - sage.symbolic
             3.146264369941973?
-            sage: a.conjugate() is a
+            sage: a.conjugate() is a                                                    # optional - sage.symbolic
             True
         """
         return self
@@ -5753,7 +5756,7 @@ class AlgebraicReal(AlgebraicNumber_base):
         that `x^n = 1`. If there is no such `n`, returns ``+Infinity``.
 
         We first check that ``abs(x)`` is very close to 1. If so, we compute
-        `x` exactly and compare it to 1 and -1.
+        `x` exactly and compare it to `1` and `-1`.
 
         EXAMPLES::
 
@@ -5775,8 +5778,8 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def sign(self):
         """
-        Compute the sign of this algebraic number (return -1 if negative,
-        0 if zero, or 1 if positive).
+        Compute the sign of this algebraic number (return `-1` if negative,
+        `0` if zero, or `1` if positive).
 
         This computes an interval enclosing this number using 128-bit interval
         arithmetic; if this interval includes 0, then fall back to
@@ -5813,9 +5816,9 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: (a*b - b*a).sign()
             0
 
-            sage: a = AA(sqrt(1/2))
-            sage: b = AA(-sqrt(1/2))
-            sage: (a + b).sign()
+            sage: a = AA(sqrt(1/2))                                                     # optional - sage.symbolic
+            sage: b = AA(-sqrt(1/2))                                                    # optional - sage.symbolic
+            sage: (a + b).sign()                                                        # optional - sage.symbolic
             0
 
         TESTS:
@@ -5824,17 +5827,17 @@ class AlgebraicReal(AlgebraicNumber_base):
         following example will take a long time (more than 5 seconds)
         when calling ``y.exactify()``::
 
-            sage: x1 = AA(2^(1/50))
-            sage: x2 = AA(2^(1/50))
-            sage: y = x1 - x2
-            sage: y.sign()
+            sage: x1 = AA(2^(1/50))                                                     # optional - sage.symbolic
+            sage: x2 = AA(2^(1/50))                                                     # optional - sage.symbolic
+            sage: y = x1 - x2                                                           # optional - sage.symbolic
+            sage: y.sign()                                                              # optional - sage.symbolic
             0
 
         Simplify to rationals for binary operations when computing the sign::
 
-            sage: a = AA(2^(1/60))
-            sage: b = a - (a + 1)
-            sage: (b + 1).sign()
+            sage: a = AA(2^(1/60))                                                      # optional - sage.symbolic
+            sage: b = a - (a + 1)                                                       # optional - sage.symbolic
+            sage: (b + 1).sign()                                                        # optional - sage.symbolic
             0
         """
         if not self._value.contains_zero():
@@ -5930,15 +5933,15 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         EXAMPLES::
 
-            sage: t = AA(sqrt(7))
-            sage: t._interval_fast(100)
+            sage: t = AA(sqrt(7))                                                       # optional - sage.symbolic
+            sage: t._interval_fast(100)                                                 # optional - sage.symbolic
             2.64575131106459059050161575364?
         """
         return self.interval_fast(RealIntervalField(prec))
 
     def interval_exact(self, field):
         """
-        Given a ``RealIntervalField``, compute the best possible
+        Given a :class:`RealIntervalField`, compute the best possible
         approximation of this number in that field. Note that if this
         number is sufficiently close to some floating-point number
         (and, in particular, if this number is exactly representable in
@@ -6012,7 +6015,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def real_number(self, field):
         """
-        Given a ``RealField``, compute a good approximation to self in
+        Given a :class:`RealField`, compute a good approximation to ``self`` in
         that field. The approximation will be off by at most two
         ulp's, except for numbers which are very close to 0, which
         will have an absolute error at most
@@ -6098,7 +6101,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def real_exact(self, field):
         r"""
-        Given a ``RealField``, compute the best possible approximation of
+        Given a :class:`RealField`, compute the best possible approximation of
         this number in that field. Note that if this number is
         sufficiently close to the halfway point between two
         floating-point numbers in the field (for the default
@@ -6415,7 +6418,7 @@ class AlgebraicNumberPowQQAction(Action):
 
 class ANRational(ANDescr):
     r"""
-    The subclass of ``ANDescr`` that represents an arbitrary
+    The subclass of :class:`ANDescr` that represents an arbitrary
     rational. This class is private, and should not be used directly.
     """
 
@@ -6512,7 +6515,7 @@ class ANRational(ANDescr):
 
     def is_complex(self):
         r"""
-        Return False, since rational numbers are real
+        Return ``False``, since rational numbers are real
 
         EXAMPLES::
 
@@ -6523,7 +6526,7 @@ class ANRational(ANDescr):
 
     def exactify(self):
         r"""
-        Calculate self exactly. Since self is a rational number, return self.
+        Calculate ``self`` exactly. Since ``self`` is a rational number, return ``self``.
 
         EXAMPLES::
 
@@ -6549,7 +6552,7 @@ class ANRational(ANDescr):
 
     def minpoly(self):
         r"""
-        Return the min poly of self over `\QQ`.
+        Return the min poly of ``self`` over `\QQ`.
 
         EXAMPLES::
 
@@ -6560,7 +6563,7 @@ class ANRational(ANDescr):
 
     def neg(self, n):
         r"""
-        Negation of self.
+        Negation of ``self``.
 
         EXAMPLES::
 
@@ -6575,7 +6578,7 @@ class ANRational(ANDescr):
 
     def invert(self, n):
         r"""
-        1/self.
+        1/``self``.
 
         EXAMPLES::
 
@@ -6588,7 +6591,7 @@ class ANRational(ANDescr):
 
     def abs(self, n):
         r"""
-        Absolute value of self.
+        Absolute value of ``self``.
 
         EXAMPLES::
 
@@ -6638,7 +6641,7 @@ class ANRational(ANDescr):
     def scale(self):
         r"""
         Return a rational number `r` such that ``self`` is equal to `r e^{2 \pi
-        i q}` for some `q \in (-1/2, 1/2]`.  In other words, just return self
+        i q}` for some `q \in (-1/2, 1/2]`.  In other words, just return ``self``
         as a rational number.
 
         EXAMPLES::
@@ -6803,7 +6806,7 @@ class AlgebraicPolynomialTracker(SageObject):
 
     def poly(self):
         r"""
-        Return the underlying polynomial of self.
+        Return the underlying polynomial of ``self``.
 
         EXAMPLES::
 
@@ -6840,7 +6843,7 @@ class AlgebraicPolynomialTracker(SageObject):
             sage: cp = AA.common_polynomial(x^4 - 2)
 
         Note that the precision is not guaranteed to find the tightest
-        possible interval since ``complex_roots()`` depends on the
+        possible interval since :meth:`complex_roots` depends on the
         underlying BLAS implementation. ::
 
             sage: cp.complex_roots(30, 1)
@@ -6925,7 +6928,7 @@ class AlgebraicPolynomialTracker(SageObject):
     def generator(self):
         r"""
         Return an :class:`AlgebraicGenerator` for a number field containing all
-        the coefficients of self.
+        the coefficients of ``self``.
 
         EXAMPLES::
 
@@ -6933,7 +6936,8 @@ class AlgebraicPolynomialTracker(SageObject):
             sage: p = sqrt(AA(2)) * x^2 - sqrt(AA(3))
             sage: cp = AA.common_polynomial(p)
             sage: cp.generator()
-            Number Field in a with defining polynomial y^4 - 4*y^2 + 1 with a in -0.5176380902050415?
+            Number Field in a with defining polynomial y^4 - 4*y^2 + 1
+             with a in -0.5176380902050415?
         """
         self.exactify()
         return self._gen
@@ -6941,7 +6945,7 @@ class AlgebraicPolynomialTracker(SageObject):
 
 class ANRoot(ANDescr):
     """
-    The subclass of ``ANDescr`` that represents a particular
+    The subclass of :class:`ANDescr` that represents a particular
     root of a polynomial with algebraic coefficients.
     This class is private, and should not be used directly.
     """
@@ -6994,8 +6998,8 @@ class ANRoot(ANDescr):
     def handle_sage_input(self, sib, coerce, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
-        and an indication of whether this value is worth sharing (always True,
-        for ``ANRoot``).
+        and an indication of whether this value is worth sharing (always ``True``
+        for :class:`ANRoot`).
 
         EXAMPLES::
 
@@ -7076,17 +7080,17 @@ class ANRoot(ANDescr):
 
     def conjugate(self, n):
         r"""
-        Complex conjugate of this ANRoot object.
+        Complex conjugate of this :class:`ANRoot` object.
 
         EXAMPLES::
 
-            sage: a = (x^2 + 23).roots(ring=QQbar, multiplicities=False)[0]
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = (x^2 + 23).roots(ring=QQbar, multiplicities=False)[0]             # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANRoot'>
-            sage: c = b.conjugate(a); c
+            sage: c = b.conjugate(a); c                                                 # optional - sage.symbolic
             <sage.rings.qqbar.ANUnaryExpr object at ...>
-            sage: c.exactify()
+            sage: c.exactify()                                                          # optional - sage.symbolic
             -2*a + 1 where a^2 - a + 6 = 0 and a in 0.50000000000000000? - 2.397915761656360?*I
         """
         if not self._complex:
@@ -7463,8 +7467,8 @@ class ANRoot(ANDescr):
 
     def exactify(self):
         """
-        Return either an ``ANRational`` or an
-        ``ANExtensionElement`` with the same value as this number.
+        Return either an :class:`ANRational` or an
+        :class:`ANExtensionElement` with the same value as this number.
 
         EXAMPLES::
 
@@ -7481,10 +7485,10 @@ class ANRoot(ANDescr):
 
         Verify that :trac:`12727` is fixed::
 
-            sage: m = sqrt(sin(pi/5)); a = QQbar(m); b = AA(m)
-            sage: a.minpoly()
+            sage: m = sqrt(sin(pi/5)); a = QQbar(m); b = AA(m)                          # optional - sage.symbolic
+            sage: a.minpoly()                                                           # optional - sage.symbolic
             x^8 - 5/4*x^4 + 5/16
-            sage: b.minpoly()
+            sage: b.minpoly()                                                           # optional - sage.symbolic
             x^8 - 5/4*x^4 + 5/16
         """
         gen = self._poly.generator()
@@ -7626,10 +7630,10 @@ class ANRoot(ANDescr):
 
 class ANExtensionElement(ANDescr):
     r"""
-    The subclass of ``ANDescr`` that represents a number field
+    The subclass of :class:`ANDescr` that represents a number field
     element in terms of a specific generator. Consists of a polynomial
     with rational coefficients in terms of the generator, and the
-    generator itself, an ``AlgebraicGenerator``.
+    generator itself, an :class:`AlgebraicGenerator`.
     """
 
     def __new__(self, generator, value):
@@ -7670,8 +7674,8 @@ class ANExtensionElement(ANDescr):
     def handle_sage_input(self, sib, coerce, is_qqbar):
         r"""
         Produce an expression which will reproduce this value when evaluated,
-        and an indication of whether this value is worth sharing (always True,
-        for ``ANExtensionElement``).
+        and an indication of whether this value is worth sharing (always ``True``
+        for :class:`ANExtensionElement`).
 
         EXAMPLES::
 
@@ -7739,23 +7743,23 @@ class ANExtensionElement(ANDescr):
 
     def is_complex(self):
         r"""
-        Return True if the number field that defines this element is not real.
+        Return ``True`` if the number field that defines this element is not real.
 
         This does not imply that the element itself is definitely non-real, as
         in the example below.
 
         EXAMPLES::
 
-            sage: rt2 = QQbar(sqrt(2))
-            sage: rtm3 = QQbar(sqrt(-3))
-            sage: x = rtm3 + rt2 - rtm3
-            sage: x.exactify()
-            sage: y = x._descr
-            sage: type(y)
+            sage: rt2 = QQbar(sqrt(2))                                                  # optional - sage.symbolic
+            sage: rtm3 = QQbar(sqrt(-3))                                                # optional - sage.symbolic
+            sage: x = rtm3 + rt2 - rtm3                                                 # optional - sage.symbolic
+            sage: x.exactify()                                                          # optional - sage.symbolic
+            sage: y = x._descr                                                          # optional - sage.symbolic
+            sage: type(y)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANExtensionElement'>
-            sage: y.is_complex()
+            sage: y.is_complex()                                                        # optional - sage.symbolic
             True
-            sage: x.imag() == 0
+            sage: x.imag() == 0                                                         # optional - sage.symbolic
             True
         """
         return not self._exactly_real
@@ -7765,25 +7769,25 @@ class ANExtensionElement(ANDescr):
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.
 
-        For ``ANExtensionElement`` elements, we check this by
+        For :class:`ANExtensionElement` elements, we check this by
         comparing the degree of the minimal polynomial to the degree
         of the field.
 
         EXAMPLES::
 
-            sage: rt2 = AA(sqrt(2))
-            sage: rt3 = AA(sqrt(3))
-            sage: rt2b = rt3 + rt2 - rt3
-            sage: rt2.exactify()
-            sage: rt2._descr
+            sage: rt2 = AA(sqrt(2))                                                     # optional - sage.symbolic
+            sage: rt3 = AA(sqrt(3))                                                     # optional - sage.symbolic
+            sage: rt2b = rt3 + rt2 - rt3                                                # optional - sage.symbolic
+            sage: rt2.exactify()                                                        # optional - sage.symbolic
+            sage: rt2._descr                                                            # optional - sage.symbolic
             a where a^2 - 2 = 0 and a in 1.414213562373095?
-            sage: rt2._descr.is_simple()
+            sage: rt2._descr.is_simple()                                                # optional - sage.symbolic
             True
 
-            sage: rt2b.exactify()
-            sage: rt2b._descr
+            sage: rt2b.exactify()                                                       # optional - sage.symbolic
+            sage: rt2b._descr                                                           # optional - sage.symbolic
             a^3 - 3*a where a^4 - 4*a^2 + 1 = 0 and a in -0.5176380902050415?
-            sage: rt2b._descr.is_simple()
+            sage: rt2b._descr.is_simple()                                               # optional - sage.symbolic
             False
         """
         try:
@@ -7794,10 +7798,11 @@ class ANExtensionElement(ANDescr):
 
     def generator(self):
         r"""
-        Return the :class:`~AlgebraicGenerator` object corresponding to self.
+        Return the :class:`~AlgebraicGenerator` object corresponding to ``self``.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: v.generator()
             Number Field in a with defining polynomial y^2 - y - 1 with a in 1.618033988749895?
@@ -7812,6 +7817,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: type(v)
             <class 'sage.rings.qqbar.ANExtensionElement'>
@@ -7826,6 +7832,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: v.field_element_value()
             a
@@ -7838,6 +7845,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: type(v)
             <class 'sage.rings.qqbar.ANExtensionElement'>
@@ -7862,13 +7870,13 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
-            sage: rt2 = AA(sqrt(2))
-            sage: rt3 = AA(sqrt(3))
-            sage: rt2b = rt3 + rt2 - rt3
-            sage: rt2b.exactify()
-            sage: rt2b._descr
+            sage: rt2 = AA(sqrt(2))                                                     # optional - sage.symbolic
+            sage: rt3 = AA(sqrt(3))                                                     # optional - sage.symbolic
+            sage: rt2b = rt3 + rt2 - rt3                                                # optional - sage.symbolic
+            sage: rt2b.exactify()                                                       # optional - sage.symbolic
+            sage: rt2b._descr                                                           # optional - sage.symbolic
             a^3 - 3*a where a^4 - 4*a^2 + 1 = 0 and a in -0.5176380902050415?
-            sage: rt2b._descr.simplify(rt2b)
+            sage: rt2b._descr.simplify(rt2b)                                            # optional - sage.symbolic
             a where a^2 - 2 = 0 and a in 1.414213562373095?
         """
 
@@ -7896,75 +7904,84 @@ class ANExtensionElement(ANDescr):
 
     def neg(self, n):
         r"""
-        Negation of self.
+        Negation of ``self``.
 
         EXAMPLES::
 
-            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))
-            sage: a.exactify()
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))                                 # optional - sage.symbolic
+            sage: a.exactify()                                                          # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANExtensionElement'>
-            sage: c = b.neg(None); c # random (not uniquely represented)
-            -1/3*a^3 + 1/3*a^2 - a - 1 where a^4 - 2*a^3 + a^2 + 6*a + 3 = 0 and a in 1.724744871391589? + 1.573132184970987?*I
-            sage: c.generator() == b.generator() and c.field_element_value() + b.field_element_value() == 0
+            sage: c = b.neg(None); c  # random (not uniquely represented)               # optional - sage.symbolic
+            -1/3*a^3 + 1/3*a^2 - a - 1 where a^4 - 2*a^3 + a^2 + 6*a + 3 = 0
+             and a in 1.724744871391589? + 1.573132184970987?*I
+            sage: (c.generator() == b.generator()                                       # optional - sage.symbolic
+            ....:  and c.field_element_value() + b.field_element_value() == 0)
             True
 
         The parameter is ignored::
 
-            sage: b.neg("random").generator() == c.generator() and b.neg("random").field_element_value() == c.field_element_value()
+            sage: (b.neg("random").generator() == c.generator()                         # optional - sage.symbolic
+            ....:  and b.neg("random").field_element_value() == c.field_element_value())
             True
         """
         return ANExtensionElement(self._generator, -self._value)
 
     def invert(self, n):
         r"""
-        Reciprocal of self.
+        Reciprocal of ``self``.
 
         EXAMPLES::
 
-            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))
-            sage: a.exactify()
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))                                 # optional - sage.symbolic
+            sage: a.exactify()                                                          # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANExtensionElement'>
-            sage: c = b.invert(None); c # random (not uniquely represented)
-            -7/3*a^3 + 19/3*a^2 - 7*a - 9 where a^4 - 2*a^3 + a^2 + 6*a + 3 = 0 and a in 1.724744871391589? + 1.573132184970987?*I
-            sage: c.generator() == b.generator() and c.field_element_value() * b.field_element_value() == 1
+            sage: c = b.invert(None); c  # random (not uniquely represented)            # optional - sage.symbolic
+            -7/3*a^3 + 19/3*a^2 - 7*a - 9 where a^4 - 2*a^3 + a^2 + 6*a + 3 = 0
+             and a in 1.724744871391589? + 1.573132184970987?*I
+            sage: (c.generator() == b.generator()                                       # optional - sage.symbolic
+            ....:  and c.field_element_value() * b.field_element_value() == 1)
             True
 
         The parameter is ignored::
 
-            sage: b.invert("random").generator() == c.generator() and b.invert("random").field_element_value() == c.field_element_value()
+            sage: (b.invert("random").generator() == c.generator()                      # optional - sage.symbolic
+            ....:  and b.invert("random").field_element_value() == c.field_element_value())
             True
         """
         return ANExtensionElement(self._generator, ~self._value)
 
     def conjugate(self, n):
-        r"""Complex conjugate of self.
+        r"""
+        Complex conjugate of ``self``.
 
         EXAMPLES::
 
-            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))
-            sage: a.exactify()
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))                                 # optional - sage.symbolic
+            sage: a.exactify()                                                          # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANExtensionElement'>
-            sage: c = b.conjugate(None); c # random (not uniquely represented)
-            1/3*a^3 - 1/3*a^2 + a + 1 where a^4 - 2*a^3 + a^2 + 6*a + 3 = 0 and a in 1.724744871391589? - 1.573132184970987?*I
+            sage: c = b.conjugate(None); c  # random (not uniquely represented)         # optional - sage.symbolic
+            1/3*a^3 - 1/3*a^2 + a + 1 where a^4 - 2*a^3 + a^2 + 6*a + 3 = 0
+             and a in 1.724744871391589? - 1.573132184970987?*I
 
         Internally, complex conjugation is implemented by taking the
         same abstract field element but conjugating the complex embedding of
         the field::
 
-            sage: c.generator() == b.generator().conjugate()
+            sage: c.generator() == b.generator().conjugate()                            # optional - sage.symbolic
             True
-            sage: c.field_element_value() == b.field_element_value()
+            sage: c.field_element_value() == b.field_element_value()                    # optional - sage.symbolic
             True
 
         The parameter is ignored::
 
-            sage: b.conjugate("random").generator() == c.generator() and b.conjugate("random").field_element_value() == c.field_element_value()
+            sage: (b.conjugate("random").generator() == c.generator()                   # optional - sage.symbolic
+            ....:  and b.conjugate("random").field_element_value() == c.field_element_value())
             True
 
         """
@@ -7978,16 +7995,16 @@ class ANExtensionElement(ANDescr):
 
     def norm(self, n):
         r"""
-        Norm of self (square of complex absolute value)
+        Norm of ``self`` (square of complex absolute value)
 
         EXAMPLES::
 
-            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))
-            sage: a.exactify()
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))                                 # optional - sage.symbolic
+            sage: a.exactify()                                                          # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANExtensionElement'>
-            sage: b.norm(a)
+            sage: b.norm(a)                                                             # optional - sage.symbolic
             <sage.rings.qqbar.ANUnaryExpr object at ...>
         """
         if self._exactly_real:
@@ -7999,33 +8016,33 @@ class ANExtensionElement(ANDescr):
 
     def abs(self, n):
         r"""
-        Return the absolute value of self (square root of the norm).
+        Return the absolute value of ``self`` (square root of the norm).
 
         EXAMPLES::
 
-            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))
-            sage: a.exactify()
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(-3))                                 # optional - sage.symbolic
+            sage: a.exactify()                                                          # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANExtensionElement'>
-            sage: b.abs(a)
+            sage: b.abs(a)                                                              # optional - sage.symbolic
             Root 3.146264369941972342? of x^2 - 9.89897948556636?
         """
         return AlgebraicReal(self.norm(n)).sqrt()._descr
 
     def rational_argument(self, n):
         r"""
-        If the argument of self is `2\pi` times some rational number in `[1/2,
+        If the argument of ``self`` is `2\pi` times some rational number in `[1/2,
         -1/2)`, return that rational; otherwise, return ``None``.
 
         EXAMPLES::
 
-            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(3))
-            sage: a.exactify()
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = QQbar(sqrt(-2)) + QQbar(sqrt(3))                                  # optional - sage.symbolic
+            sage: a.exactify()                                                          # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANExtensionElement'>
-            sage: b.rational_argument(a) is None
+            sage: b.rational_argument(a) is None                                        # optional - sage.symbolic
             True
             sage: x = polygen(QQ)
             sage: a = (x^4 + 1).roots(QQbar, multiplicities=False)[0]
@@ -8076,7 +8093,7 @@ class ANUnaryExpr(ANDescr):
 
         EXAMPLES::
 
-            sage: t = ~QQbar(sqrt(2)); type(t._descr) # indirect doctest
+            sage: t = ~QQbar(sqrt(2)); type(t._descr)  # indirect doctest               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANUnaryExpr'>
         """
         self._arg = arg
@@ -8089,9 +8106,9 @@ class ANUnaryExpr(ANDescr):
 
         EXAMPLES::
 
-            sage: t = ~QQbar(sqrt(2)); type(t._descr)
+            sage: t = ~QQbar(sqrt(2)); type(t._descr)                                   # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANUnaryExpr'>
-            sage: loads(dumps(t)) == 1/QQbar(sqrt(2))
+            sage: loads(dumps(t)) == 1/QQbar(sqrt(2))                                   # optional - sage.symbolic
             True
         """
         return (ANUnaryExpr, (self._arg, self._op))
@@ -8100,7 +8117,7 @@ class ANUnaryExpr(ANDescr):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always
-        True for ``ANUnaryExpr``).
+        ``True`` for :class:`ANUnaryExpr`).
 
         EXAMPLES::
 
@@ -8185,18 +8202,18 @@ class ANUnaryExpr(ANDescr):
     def is_complex(self):
         r"""
         Return whether or not this element is complex. Note that this is a data
-        type check, and triggers no computations -- if it returns False, the
+        type check, and triggers no computations -- if it returns ``False``, the
         element might still be real, it just doesn't know it yet.
 
         EXAMPLES::
 
-            sage: t = AA(sqrt(2))
-            sage: s = (-t)._descr
-            sage: s
+            sage: t = AA(sqrt(2))                                                       # optional - sage.symbolic
+            sage: s = (-t)._descr                                                       # optional - sage.symbolic
+            sage: s                                                                     # optional - sage.symbolic
             <sage.rings.qqbar.ANUnaryExpr object at ...>
-            sage: s.is_complex()
+            sage: s.is_complex()                                                        # optional - sage.symbolic
             False
-            sage: QQbar(-sqrt(2))._descr.is_complex()
+            sage: QQbar(-sqrt(2))._descr.is_complex()                                   # optional - sage.symbolic
             True
         """
         return self._complex
@@ -8207,11 +8224,11 @@ class ANUnaryExpr(ANDescr):
 
         EXAMPLES::
 
-            sage: t = AA(sqrt(2))
-            sage: s = (-t)._descr
-            sage: s
+            sage: t = AA(sqrt(2))                                                       # optional - sage.symbolic
+            sage: s = (-t)._descr                                                       # optional - sage.symbolic
+            sage: s                                                                     # optional - sage.symbolic
             <sage.rings.qqbar.ANUnaryExpr object at ...>
-            sage: s._interval_fast(150)
+            sage: s._interval_fast(150)                                                 # optional - sage.symbolic
             -1.414213562373095048801688724209698078569671876?
         """
         op = self._op
@@ -8260,14 +8277,14 @@ class ANUnaryExpr(ANDescr):
 
     def exactify(self):
         r"""
-        Trigger exact computation of self.
+        Trigger exact computation of ``self``.
 
         EXAMPLES::
 
-            sage: v = (-QQbar(sqrt(2)))._descr
-            sage: type(v)
+            sage: v = (-QQbar(sqrt(2)))._descr                                          # optional - sage.symbolic
+            sage: type(v)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANUnaryExpr'>
-            sage: v.exactify()
+            sage: v.exactify()                                                          # optional - sage.symbolic
             -a where a^2 - 2 = 0 and a in 1.414213562373095?
         """
         op = self._op
@@ -8331,7 +8348,7 @@ class ANBinaryExpr(ANDescr):
 
         EXAMPLES::
 
-            sage: t = QQbar(sqrt(2)) + QQbar(sqrt(3)); type(t._descr) # indirect doctest
+            sage: t = QQbar(sqrt(2)) + QQbar(sqrt(3)); type(t._descr) # indirect doctest    # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANBinaryExpr'>
         """
         self._left = left
@@ -8345,9 +8362,9 @@ class ANBinaryExpr(ANDescr):
 
         EXAMPLES::
 
-            sage: t = QQbar(sqrt(2)) + QQbar(sqrt(3)); type(t._descr)
+            sage: t = QQbar(sqrt(2)) + QQbar(sqrt(3)); type(t._descr)                   # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANBinaryExpr'>
-            sage: loads(dumps(t)) == QQbar(sqrt(2)) + QQbar(sqrt(3))
+            sage: loads(dumps(t)) == QQbar(sqrt(2)) + QQbar(sqrt(3))                    # optional - sage.symbolic
             True
         """
         return (ANBinaryExpr, (self._left, self._right, self._op))
@@ -8356,7 +8373,7 @@ class ANBinaryExpr(ANDescr):
         r"""
         Produce an expression which will reproduce this value when evaluated,
         and an indication of whether this value is worth sharing (always
-        True for ``ANBinaryExpr``).
+        ``True`` for :class:`ANBinaryExpr`).
 
         EXAMPLES::
 
@@ -8395,10 +8412,10 @@ class ANBinaryExpr(ANDescr):
             True
             sage: sage_input(n)
             1 + AA(3)
-            sage: rt3 = QQbar(sqrt(3))
-            sage: one = rt3/rt3
-            sage: n = sqrt(AA(2))+one
-            sage: one == 1
+            sage: rt3 = QQbar(sqrt(3))                                                  # optional - sage.symbolic
+            sage: one = rt3/rt3                                                         # optional - sage.symbolic
+            sage: n = sqrt(AA(2)) + one
+            sage: one == 1                                                              # optional - sage.symbolic
             True
             sage: sage_input(n)
             R.<x> = AA[]
@@ -8465,12 +8482,12 @@ class ANBinaryExpr(ANDescr):
     def is_complex(self):
         r"""
         Whether this element is complex. Does not trigger exact computation, so
-        may return True even if the element is real.
+        may return ``True`` even if the element is real.
 
         EXAMPLES::
 
-            sage: x = (QQbar(sqrt(-2)) / QQbar(sqrt(-5)))._descr
-            sage: x.is_complex()
+            sage: x = (QQbar(sqrt(-2)) / QQbar(sqrt(-5)))._descr                        # optional - sage.symbolic
+            sage: x.is_complex()                                                        # optional - sage.symbolic
             True
         """
         return self._complex
@@ -8481,10 +8498,10 @@ class ANBinaryExpr(ANDescr):
 
         EXAMPLES::
 
-            sage: x = (QQbar(sqrt(-2)) / QQbar(sqrt(-5)))._descr
-            sage: y= x._interval_fast(64); y
+            sage: x = (QQbar(sqrt(-2)) / QQbar(sqrt(-5)))._descr                        # optional - sage.symbolic
+            sage: y= x._interval_fast(64); y                                            # optional - sage.symbolic
             0.632455532033675867?
-            sage: y.parent()
+            sage: y.parent()                                                            # optional - sage.symbolic
             Complex Interval Field with 64 bits of precision
         """
         op = self._op
@@ -8501,8 +8518,8 @@ class ANBinaryExpr(ANDescr):
         """
         TESTS::
 
-            sage: rt2c = QQbar.zeta(3) + AA(sqrt(2)) - QQbar.zeta(3)
-            sage: rt2c.exactify()
+            sage: rt2c = QQbar.zeta(3) + AA(sqrt(2)) - QQbar.zeta(3)                    # optional - sage.symbolic
+            sage: rt2c.exactify()                                                       # optional - sage.symbolic
 
         We check to make sure that this method still works even. We
         do this by increasing the recursion level at each step and
@@ -8590,25 +8607,27 @@ def an_binop_expr(a, b, op):
 
     EXAMPLES::
 
-        sage: a = QQbar(sqrt(2)) + QQbar(sqrt(3))
-        sage: b = QQbar(sqrt(3)) + QQbar(sqrt(5))
-        sage: type(a._descr); type(b._descr)
+        sage: a = QQbar(sqrt(2)) + QQbar(sqrt(3))                                       # optional - sage.symbolic
+        sage: b = QQbar(sqrt(3)) + QQbar(sqrt(5))                                       # optional - sage.symbolic
+        sage: type(a._descr); type(b._descr)                                            # optional - sage.symbolic
         <class 'sage.rings.qqbar.ANBinaryExpr'>
         <class 'sage.rings.qqbar.ANBinaryExpr'>
         sage: from sage.rings.qqbar import an_binop_expr
-        sage: x = an_binop_expr(a, b, operator.add); x
+        sage: x = an_binop_expr(a, b, operator.add); x                                  # optional - sage.symbolic
         <sage.rings.qqbar.ANBinaryExpr object at ...>
-        sage: x.exactify()
-        6/7*a^7 - 2/7*a^6 - 71/7*a^5 + 26/7*a^4 + 125/7*a^3 - 72/7*a^2 - 43/7*a + 47/7 where a^8 - 12*a^6 + 23*a^4 - 12*a^2 + 1 = 0 and a in -0.3199179336182997?
+        sage: x.exactify()                                                              # optional - sage.symbolic
+        6/7*a^7 - 2/7*a^6 - 71/7*a^5 + 26/7*a^4 + 125/7*a^3 - 72/7*a^2 - 43/7*a + 47/7
+        where a^8 - 12*a^6 + 23*a^4 - 12*a^2 + 1 = 0 and a in -0.3199179336182997?
 
-        sage: a = QQbar(sqrt(2)) + QQbar(sqrt(3))
-        sage: b = QQbar(sqrt(3)) + QQbar(sqrt(5))
-        sage: type(a._descr)
+        sage: a = QQbar(sqrt(2)) + QQbar(sqrt(3))                                       # optional - sage.symbolic
+        sage: b = QQbar(sqrt(3)) + QQbar(sqrt(5))                                       # optional - sage.symbolic
+        sage: type(a._descr)                                                            # optional - sage.symbolic
         <class 'sage.rings.qqbar.ANBinaryExpr'>
-        sage: x = an_binop_expr(a, b, operator.mul); x
+        sage: x = an_binop_expr(a, b, operator.mul); x                                  # optional - sage.symbolic
         <sage.rings.qqbar.ANBinaryExpr object at ...>
-        sage: x.exactify()
-        2*a^7 - a^6 - 24*a^5 + 12*a^4 + 46*a^3 - 22*a^2 - 22*a + 9 where a^8 - 12*a^6 + 23*a^4 - 12*a^2 + 1 = 0 and a in -0.3199179336182997?
+        sage: x.exactify()                                                              # optional - sage.symbolic
+        2*a^7 - a^6 - 24*a^5 + 12*a^4 + 46*a^3 - 22*a^2 - 22*a + 9
+        where a^8 - 12*a^6 + 23*a^4 - 12*a^2 + 1 = 0 and a in -0.3199179336182997?
     """
     return ANBinaryExpr(a, b, op)
 
@@ -8740,7 +8759,7 @@ def get_AA_golden_ratio():
 
     EXAMPLES::
 
-        sage: AA(golden_ratio) # indirect doctest
+        sage: AA(golden_ratio)  # indirect doctest                                      # optional - sage.symbolic
         1.618033988749895?
     """
     global AA_golden_ratio

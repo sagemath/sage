@@ -1950,7 +1950,7 @@ class StandardSkewTableaux(SkewTableaux):
 
         sage: S = StandardSkewTableaux(2); S
         Standard skew tableaux of size 2
-        sage: S.cardinality()
+        sage: S.cardinality()                                                           # optional - sage.modules
         4
 
     ::
@@ -1984,7 +1984,7 @@ class StandardSkewTableaux(SkewTableaux):
         elif skp in SkewPartitions():
             return StandardSkewTableaux_shape(skp)
         else:
-            raise TypeError("Invalid argument")
+            raise TypeError("invalid argument")
 
     def __contains__(self, x):
         """
@@ -2015,7 +2015,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
         EXAMPLES::
 
             sage: s = StandardSkewTableaux()
-            sage: TestSuite(s).run()
+            sage: TestSuite(s).run()                                                    # optional - sage.graphs
         """
         StandardSkewTableaux.__init__(self, category=InfiniteEnumeratedSets())
 
@@ -2037,7 +2037,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
         EXAMPLES::
 
             sage: it = StandardSkewTableaux().__iter__()
-            sage: [next(it) for x in range(10)]
+            sage: [next(it) for x in range(10)]                                         # optional - sage.graphs
             [[],
              [[1]],
              [[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]],
@@ -2060,7 +2060,7 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         EXAMPLES::
 
             sage: S = StandardSkewTableaux(3)
-            sage: TestSuite(S).run()
+            sage: TestSuite(S).run()                                                    # optional - sage.graphs
         """
         self.n = n
         StandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
@@ -2078,13 +2078,13 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         """
         EXAMPLES::
 
-            sage: StandardSkewTableaux(1).cardinality()
+            sage: StandardSkewTableaux(1).cardinality()                                 # optional - sage.modules
             1
-            sage: StandardSkewTableaux(2).cardinality()
+            sage: StandardSkewTableaux(2).cardinality()                                 # optional - sage.modules
             4
-            sage: StandardSkewTableaux(3).cardinality()
+            sage: StandardSkewTableaux(3).cardinality()                                 # optional - sage.modules
             24
-            sage: StandardSkewTableaux(4).cardinality()
+            sage: StandardSkewTableaux(4).cardinality()                                 # optional - sage.modules
             194
         """
         count = 0
@@ -2101,10 +2101,10 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux(2).list()
+            sage: StandardSkewTableaux(2).list()                                        # optional - sage.graphs
             [[[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]]]
 
-            sage: StandardSkewTableaux(3).list()
+            sage: StandardSkewTableaux(3).list()                                        # optional - sage.graphs
             [[[1, 2, 3]],
              [[1, 2], [3]], [[1, 3], [2]],
              [[None, 2, 3], [1]], [[None, 1, 2], [3]], [[None, 1, 3], [2]],
@@ -2149,7 +2149,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
         TESTS::
 
             sage: S = StandardSkewTableaux([[3, 2, 1], [1, 1]])
-            sage: TestSuite(S).run()
+            sage: TestSuite(S).run()                                                    # optional - sage.graphs sage.modules
         """
         self.skp = skp
         StandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
@@ -2173,7 +2173,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).cardinality()
+            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).cardinality()               # optional - sage.modules
             8
         """
         outer, inner = self.skp
@@ -2200,7 +2200,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()
+            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()                      # optional - sage.graphs
             [[[None, 2, 3], [None, 4], [1]],
              [[None, 1, 2], [None, 3], [4]],
              [[None, 1, 2], [None, 4], [3]],
@@ -2333,7 +2333,7 @@ class SemistandardSkewTableaux(SkewTableaux):
         if p is None:
             if mu is None:
                 return SemistandardSkewTableaux_all(max_entry)
-            raise ValueError("You must specify either a size or a shape")
+            raise ValueError("you must specify either a size or a shape")
 
         if isinstance(p, (int, Integer)):
             if mu is None:
@@ -2347,7 +2347,7 @@ class SemistandardSkewTableaux(SkewTableaux):
             else:
                 return SemistandardSkewTableaux_shape_weight(p, mu)
 
-        raise ValueError("Invalid input")
+        raise ValueError("invalid input")
 
     def __contains__(self, x):
         """

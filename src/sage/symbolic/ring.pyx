@@ -205,28 +205,20 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
             return False
         else:
-            from sage.rings.real_mpfr import mpfr_prec_min
-
             from sage.rings.fraction_field import is_FractionField
-            from sage.rings.real_mpfi import is_RealIntervalField
-            from sage.rings.real_arb import RealBallField
-            from sage.rings.complex_arb import ComplexBallField
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-            from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
-            from sage.rings.complex_mpfr import ComplexField
+            from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
             from sage.rings.infinity import InfinityRing, UnsignedInfinityRing
             from sage.rings.real_lazy import RLF, CLF
             from sage.rings.finite_rings.finite_field_base import FiniteField
-
-            from sage.interfaces.maxima import Maxima
 
             from .subring import GenericSymbolicSubring
 
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
                 return R not in (RLF, CLF)
-            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or is_LaurentPolynomialRing(R):
+            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or isinstance(R, LaurentPolynomialRing_generic):
                 base = R.base_ring()
                 return base is not self and self.has_coerce_map_from(base)
             elif (R is InfinityRing or R is UnsignedInfinityRing

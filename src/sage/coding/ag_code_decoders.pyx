@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.finite_rings sage.schemes
 r"""
 Decoders for AG codes
 
@@ -61,7 +61,7 @@ AUTHORS:
 cimport cython
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.function_field.all import FunctionField
+from sage.rings.function_field.constructor import FunctionField
 
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix

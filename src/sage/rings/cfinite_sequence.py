@@ -1038,7 +1038,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 
     def __contains__(self, x):
         """
-        Return True if x is an element of ``CFiniteSequences`` or
+        Return ``True`` if x is an element of ``CFiniteSequences`` or
         canonically coerces to this ring.
 
         EXAMPLES::
@@ -1233,7 +1233,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
                 return CFiniteSequence(num / den)
         else:
             from sage.matrix.constructor import matrix
-            from sage.functions.other import ceil
+            from sage.arith.misc import integer_ceil as ceil
             from numpy import trim_zeros
             seq = sequence[:]
             while seq and sequence[-1] == 0:

@@ -58,11 +58,13 @@ class Polyhedron_field(Polyhedron_base):
 
     Check that :trac:`19013` is fixed::
 
-        sage: K.<phi> = NumberField(x^2-x-1, embedding=1.618)                   # optional - sage.rings.number_field
-        sage: P1 = Polyhedron([[0,1],[1,1],[1,-phi+1]])                         # optional - sage.rings.number_field
-        sage: P2 = Polyhedron(ieqs=[[-1,-phi,0]])                               # optional - sage.rings.number_field
-        sage: P1.intersection(P2)                                               # optional - sage.rings.number_field
-        The empty polyhedron in (Number Field in phi with defining polynomial x^2 - x - 1 with phi = 1.618033988749895?)^2
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<phi> = NumberField(x^2-x-1, embedding=1.618)                           # optional - sage.rings.number_field
+        sage: P1 = Polyhedron([[0,1],[1,1],[1,-phi+1]])                                 # optional - sage.rings.number_field
+        sage: P2 = Polyhedron(ieqs=[[-1,-phi,0]])                                       # optional - sage.rings.number_field
+        sage: P1.intersection(P2)                                                       # optional - sage.rings.number_field
+        The empty polyhedron
+         in (Number Field in phi with defining polynomial x^2 - x - 1 with phi = 1.618033988749895?)^2
 
     Check that :trac:`28654` is fixed::
 
@@ -248,7 +250,8 @@ class Polyhedron_field(Polyhedron_base):
             sage: Vrep = [[[0], [1]], [], []]
             sage: Hrep = [[[0, 1], [1, -1]], []]
             sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest  # optional - sage.rings.number_field
-            ....:                      Vrep_minimal=True, Hrep_minimal=True)
+            ....:                      Vrep_minimal=True,
+            ....:                      Hrep_minimal=True)
             sage: p.vertices_list()                                             # optional - sage.rings.number_field
             [[0], [1]]
         """
@@ -268,8 +271,10 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0,1/sqrt(2)),(sqrt(2),0),(4,sqrt(5)/6)],   # optional - sage.rings.number_field
-            ....:                base_ring=AA, backend='field')  # indirect doctest
+            sage: p = Polyhedron(vertices=[(0, 1/sqrt(2)),  # indirect doctest  # optional - sage.rings.number_field
+            ....:                          (sqrt(2), 0),
+            ....:                          (4, sqrt(5)/6)],
+            ....:                base_ring=AA, backend='field')
             sage: p.Hrepresentation()                                           # optional - sage.rings.number_field
             (An inequality (-0.1582178750233332?, 1.097777812326429?) x + 0.2237538646678492? >= 0,
              An inequality (-0.1419794359520263?, -1.698172434277148?) x + 1.200789243901438? >= 0,
@@ -311,8 +316,10 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0,1/sqrt(2)),(sqrt(2),0),(4,sqrt(5)/6)],   # optional - sage.rings.number_field
-            ....:                base_ring=AA, backend='field')  # indirect doctest
+            sage: p = Polyhedron(vertices=[(0, 1/sqrt(2)),  # indirect doctest  # optional - sage.rings.number_field
+            ....:                          (sqrt(2), 0),
+            ....:                          (4, sqrt(5)/6)],
+            ....:                base_ring=AA, backend='field')
             sage: p.Hrepresentation()                                           # optional - sage.rings.number_field
             (An inequality (-0.1582178750233332?, 1.097777812326429?) x + 0.2237538646678492? >= 0,
              An inequality (-0.1419794359520263?, -1.698172434277148?) x + 1.200789243901438? >= 0,

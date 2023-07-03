@@ -69,7 +69,7 @@ from sage.libs.mpfr cimport *
 from sage.libs.mpc cimport *
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.libs.pari.all import pari
@@ -206,7 +206,7 @@ cpdef inline split_complex_string(string, int base=10):
         else:
             return None
 
-        if  z.group(prefix + '_re_abs') is not None:
+        if z.group(prefix + '_re_abs') is not None:
             x = z.expand(r'\g<' + prefix + '_re_abs>')
             if z.group(prefix + '_re_sign') is not None:
                 x = z.expand(r'\g<' + prefix + '_re_sign>') + x
@@ -816,7 +816,6 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         # This should not be called except when the number is being created.
         # Complex Numbers are supposed to be immutable.
-        cdef RealNumber x
         cdef mpc_rnd_t rnd
         rnd =(<MPComplexField_class>self._parent).__rnd
         if y is None:
@@ -2184,7 +2183,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         tt= RealNumber(R)
 
         cdef list zlist = [z]
-        for i in xrange(1,n):
+        for i in range(1,n):
             z = self._new()
             mpfr_mul_ui(tt.value, t.value, i, rrnd)
             mpfr_add(tt.value, tt.value, a.value, rrnd)
@@ -2338,12 +2337,11 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: u.agm(v, algorithm="optimal")
             -0.410522769709397 + 4.60061063922097*I
         """
-        if algorithm=="pari":
+        if algorithm == "pari":
             t = self._parent(right).__pari__()
             return self._parent(self.__pari__().agm(t))
 
         cdef MPComplexNumber a, b, d, s, res
-        cdef mpfr_t sn,dn
         cdef mp_exp_t rel_prec
         cdef bint optimal = algorithm == "optimal"
 
@@ -2578,5 +2576,5 @@ cdef class CCtoMPC(Map):
 
 
 # Support Python's numbers abstract base class
-import numbers
+# import numbers
 from sage.rings.complex_mpc import MPComplexNumber

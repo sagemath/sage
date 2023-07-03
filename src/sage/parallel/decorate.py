@@ -517,10 +517,10 @@ def fork(f=None, timeout=0, verbose=False):
         sage: a
         5
 
-    We use ``fork`` to make sure that the function terminates after one
-    second, no matter what::
+    We use ``fork`` to make sure that the function terminates after 100 ms,
+    no matter what::
 
-        sage: @fork(timeout=1, verbose=True)
+        sage: @fork(timeout=0.1, verbose=True)
         ....: def g(n, m): return factorial(n).ndigits() + m
         sage: g(5, m=5)
         8
@@ -556,7 +556,9 @@ def fork(f=None, timeout=0, verbose=False):
 
         sage: cython('def f(): print(<char*>0)')                            # optional - sage.misc.cython
         sage: @fork
-        ....: def g(): f()
+        ....: def g():
+        ....:     os.environ["CYSIGNALS_CRASH_NDEBUG"]="yes" # skip enhanced backtrace (it is slow)
+        ....:     f()
         sage: print("this works"); g()                                      # optional - sage.misc.cython
         this works...
         <BLANKLINE>

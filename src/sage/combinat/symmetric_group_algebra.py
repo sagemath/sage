@@ -1,3 +1,4 @@
+# optional - sage.combinat sage.modules sage.groups
 r"""
 Symmetric Group Algebra
 """
@@ -418,7 +419,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         try:
             W = self.basis().keys().__class__(n)
-        except Exception:
+        except (AttributeError, TypeError, ValueError):
             raise NotImplementedError("Constructing the sibling algebra of a different order "
                                       "only implemented for PermutationGroup and SymmetricGroup")
         return SymmetricGroupAlgebra(self.base_ring(), W)
@@ -1165,9 +1166,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 big_coeff = character_table[lam_index][0] / denom
                 character_row = character_table[lam_index]
                 iaxpy(1,
-                     {g: big_coeff * character_row[ind]
-                      for ind in cycles for g in cycles[ind]},
-                     cpi)
+                      {g: big_coeff * character_row[ind]
+                       for ind in cycles for g in cycles[ind]},
+                      cpi)
 
         if not all(R(cpi[g].denominator()) for g in cpi):
             return None
@@ -1339,14 +1340,13 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: def test_rsw_comm(n):
             ....:     QSn = SymmetricGroupAlgebra(QQ, n)
             ....:     rsws = [QSn.rsw_shuffling_element(k) for k in range(2, n)]
-            ....:     return all( all( rsws[i] * rsws[j] == rsws[j] * rsws[i]
-            ....:                      for j in range(i) )
-            ....:                 for i in range(len(rsws)) )
+            ....:     return all(ri * rsws[j] == rsws[j] * ri
+            ....:                for i, ri in enumerate(rsws) for j in range(i))
             sage: test_rsw_comm(3)
             True
-            sage: test_rsw_comm(4)
+            sage: test_rsw_comm(4)   # long time
             True
-            sage: test_rsw_comm(5)   # long time
+            sage: test_rsw_comm(5)   # not tested
             True
 
         .. NOTE::
@@ -1543,6 +1543,46 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         P = Permutations(n)
         return self.sum_of_monomials([self._indices(P(list(q) + complement(q)))
                                       for q in itertools.combinations(range(1, n + 1), int(k))])
+
+    def specht_module(self, D):
+        r"""
+        Return the Specht module of ``self`` indexed by the diagram ``D``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module(Partition([3,1,1]))
+            sage: SM
+            Specht module of [(0, 0), (0, 1), (0, 2), (1, 0), (2, 0)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[3, 1, 1]
+
+            sage: SM = SGA.specht_module([(1,1),(1,3),(2,2),(3,1),(3,2)])
+            sage: SM
+            Specht module of [(1, 1), (1, 3), (2, 2), (3, 1), (3, 2)] over Rational Field
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1] + s[3, 1, 1] + s[3, 2]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        return SpechtModule(self, D)
+
+    def specht_module_dimension(self, D):
+        r"""
+        Return the dimension of the Specht module of ``self`` indexed by ``D``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SGA.specht_module_dimension(Partition([3,1,1]))
+            6
+            sage: SGA.specht_module_dimension([(1,1),(1,3),(2,2),(3,1),(3,2)])
+            16
+        """
+        from sage.combinat.specht_module import specht_module_spanning_set, _to_diagram
+        D = _to_diagram(D)
+        span_set = specht_module_spanning_set(D, self)
+        return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
 
     def jucys_murphy(self, k):
         r"""

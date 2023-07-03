@@ -23,9 +23,9 @@ def prime_finite_field():
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.prime_finite_field(); K
+        sage: K = sage.rings.tests.prime_finite_field(); K                              # optional - sage.rings.finite_rings
         Finite Field of size ...
-        sage: K.cardinality().is_prime()
+        sage: K.cardinality().is_prime()                                                # optional - sage.rings.finite_rings
         True
     """
     from sage.rings.integer_ring import ZZ
@@ -42,11 +42,11 @@ def finite_field():
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.finite_field(); K
+        sage: K = sage.rings.tests.finite_field(); K                                    # optional - sage.rings.finite_rings
         Finite Field...of size ...
-        sage: K.cardinality().is_prime_power()
+        sage: K.cardinality().is_prime_power()                                          # optional - sage.rings.finite_rings
         True
-        sage: while K.cardinality().is_prime():
+        sage: while K.cardinality().is_prime():                                         # optional - sage.rings.finite_rings
         ....:     K = sage.rings.tests.finite_field()
     """
     from sage.rings.integer_ring import ZZ
@@ -65,12 +65,12 @@ def small_finite_field():
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.small_finite_field(); K
+        sage: K = sage.rings.tests.small_finite_field(); K                              # optional - sage.rings.finite_rings
         Finite Field...of size ...
-        sage: q = K.cardinality()
-        sage: q.is_prime_power()
+        sage: q = K.cardinality()                                                       # optional - sage.rings.finite_rings
+        sage: q.is_prime_power()                                                        # optional - sage.rings.finite_rings
         True
-        sage: q <= 2^16
+        sage: q <= 2^16                                                                 # optional - sage.rings.finite_rings
         True
     """
     from sage.rings.integer_ring import ZZ
@@ -107,7 +107,7 @@ def padic_field():
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: sage.rings.tests.padic_field()
+        sage: sage.rings.tests.padic_field()                                            # optional - sage.rings.padics
         ...-adic Field with capped relative precision ...
     """
     from sage.rings.integer_ring import ZZ
@@ -124,7 +124,7 @@ def quadratic_number_field():
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.quadratic_number_field(); K
+        sage: K = sage.rings.tests.quadratic_number_field(); K                          # optional - sage.rings.number_field
         Number Field in a with defining polynomial x^2 ... with a = ...
     """
     from sage.rings.integer_ring import ZZ
@@ -142,9 +142,9 @@ def absolute_number_field(maxdeg=10):
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.absolute_number_field(); K
+        sage: K = sage.rings.tests.absolute_number_field(); K                           # optional - sage.rings.number_field
         Number Field in a with defining polynomial ...
-        sage: K.degree() <= 10
+        sage: K.degree() <= 10                                                          # optional - sage.rings.number_field
         True
     """
     from sage.rings.integer_ring import ZZ
@@ -167,26 +167,26 @@ def relative_number_field(n=2, maxdeg=2):
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.relative_number_field(3); K
+        sage: K = sage.rings.tests.relative_number_field(3); K                          # optional - sage.rings.number_field
         Number Field in aaa with defining polynomial x^2 ... over its base field
-        sage: K.relative_degree()
+        sage: K.relative_degree()                                                       # optional - sage.rings.number_field
         2
-        sage: L = K.base_ring()
-        sage: L.relative_degree()
+        sage: L = K.base_ring()                                                         # optional - sage.rings.number_field
+        sage: L.relative_degree()                                                       # optional - sage.rings.number_field
         2
-        sage: M = L.base_ring()
-        sage: M.relative_degree()
+        sage: M = L.base_ring()                                                         # optional - sage.rings.number_field
+        sage: M.relative_degree()                                                       # optional - sage.rings.number_field
         2
-        sage: M.base_ring() is QQ
+        sage: M.base_ring() is QQ                                                       # optional - sage.rings.number_field
         True
 
     TESTS:
 
     Check that :trac:`32117` is fixed::
 
-        sage: set_random_seed(3030)
-        sage: from sage.rings.tests import relative_number_field
-        sage: _ = relative_number_field(3)
+        sage: set_random_seed(3030)                                                     # optional - sage.rings.number_field
+        sage: from sage.rings.tests import relative_number_field                        # optional - sage.rings.number_field
+        sage: _ = relative_number_field(3)                                              # optional - sage.rings.number_field
     """
     from sage.rings.integer_ring import ZZ
     K = absolute_number_field(maxdeg)
@@ -333,7 +333,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: sage.rings.tests.test_random_elements(trials=2, seed=0)
+        sage: sage.rings.tests.test_random_elements(trials=2, seed=0)                   # optional - sage.rings.number_field
         survived 0 tests
         Rational Field
         -1/2
@@ -382,7 +382,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: sage.rings.tests.test_random_arith(trials=2, seed=0)
+        sage: sage.rings.tests.test_random_arith(trials=2, seed=0)                      # optional - sage.rings.number_field
         survived 0 tests
         Rational Field
         -1/2 -1/95
@@ -421,8 +421,8 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     First check that random tests are reproducible::
 
-        sage: import sage.rings.tests
-        sage: sage.rings.tests.test_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
+        sage: from sage.rings.tests import test_karatsuba_multiplication
+        sage: test_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
         test_karatsuba_multiplication: ring=Univariate Polynomial Ring in x over Integer Ring, threshold=2
         (2*x^6 - x^5 - x^4 - 3*x^3 + 4*x^2 + 4*x + 1)*(4*x^4 + x^3 - 2*x^2 - 20*x + 3)
           (16*x^2)*(-41*x + 1)
@@ -437,22 +437,31 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     Test Karatsuba multiplication of polynomials of small degree over some common rings::
 
-        sage: for C in [QQ, ZZ[I], ZZ[I, sqrt(2)], GF(49, 'a'), MatrixSpace(GF(17), 3)]:
-        ....:     sage.rings.tests.test_karatsuba_multiplication(C, 10, 10)
+        sage: rings = [QQ]
+        sage: rings += [ZZ[I], ZZ[I, sqrt(2)]]                                          # optional - sage.rings.number_field
+        sage: rings += [GF(49, 'a')]                                                    # optional - sage.rings.finite_rings
+        sage: rings += [MatrixSpace(GF(17), 3)]                                         # optional - sage.rings.finite_rings sage.modules
+        sage: for C in rings:
+        ....:     test_karatsuba_multiplication(C, 10, 10)
 
     Zero-tests over ``QQbar`` are currently very slow, so we test only very small examples::
 
-        sage.rings.tests.test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)
+        sage: test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)    # long time     # optional - sage.rings.number_field
 
     Larger degrees (over ``ZZ``, using FLINT)::
 
-        sage: sage.rings.tests.test_karatsuba_multiplication(ZZ, 1000, 1000, ref_mul=lambda f,g: f*g, base_ring_random_elt_args=[1000])
+        sage: test_karatsuba_multiplication(ZZ, 1000, 1000,
+        ....:                               ref_mul=lambda f,g: f*g,
+        ....:                               base_ring_random_elt_args=[1000])
 
     Some more aggressive tests::
 
-        sage: for C in [QQ, ZZ[I], ZZ[I, sqrt(2)], GF(49, 'a'), MatrixSpace(GF(17), 3)]:
-        ....:     sage.rings.tests.test_karatsuba_multiplication(C, 10, 10) # long time
-        sage: sage.rings.tests.test_karatsuba_multiplication(ZZ, 10000, 10000, ref_mul=lambda f,g: f*g, base_ring_random_elt_args=[100000])
+        sage: testrings = [ZZ[I, sqrt(2)], ZZ[I, sqrt(2), sqrt(3)]]     # long time
+        sage: for C in testrings:                                       # long time
+        ....:     test_karatsuba_multiplication(C, 100, 100)
+        sage: test_karatsuba_multiplication(ZZ, 10000, 10000,           # long time
+        ....:                               ref_mul=lambda f,g: f*g,
+        ....:                               base_ring_random_elt_args=[100000])
 
     """
     from sage.misc.prandom import randint

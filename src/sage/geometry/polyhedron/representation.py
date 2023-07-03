@@ -901,9 +901,10 @@ class Inequality(Hrepresentation):
 
         Test that :trac:`21105` has been fixed::
 
-            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)         # optional - sage.rings.number_field
-            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])            # optional - sage.rings.number_field
-            sage: P.inequalities()                                              # optional - sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)                 # optional - sage.rings.number_field
+            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])                    # optional - sage.rings.number_field
+            sage: P.inequalities()                                                      # optional - sage.rings.number_field
             (An inequality (-cbrt2^2 - cbrt2 - 1, 0, 0) x + cbrt2^2 + cbrt2 + 2 >= 0,
              An inequality (cbrt2^2 + cbrt2 + 1, 0, 0) x - cbrt2^2 + cbrt2 + 1 >= 0)
         """
@@ -1036,7 +1037,6 @@ class Equation(Hrepresentation):
             False
         """
         return self.EQUATION
-
 
     def is_equation(self):
         """

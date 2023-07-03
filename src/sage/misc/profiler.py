@@ -15,7 +15,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 import inspect
 import sys
 
@@ -29,7 +29,7 @@ class Profiler:
     EXAMPLES::
 
         sage: def f():                        # not tested
-        ....:     p = Profiler()              # not tested
+        ....:     p = Profiler()
 
     Calling ``p(message)`` creates a checkpoint::
 

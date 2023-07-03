@@ -3,7 +3,7 @@
 # distutils: library_dirs = CBLAS_LIBDIR
 # distutils: include_dirs = CBLAS_INCDIR
 r"""
-Dense matrices over `\ZZ/n\ZZ` for `n < 2^{11}` using LinBox's ``Modular<float>``
+Dense matrices over `\ZZ/n\ZZ` for `n < 2^{8}` using LinBox's ``Modular<float>``
 
 AUTHORS:
 - Burcin Erocal
@@ -31,7 +31,7 @@ from sage.libs.linbox.linbox cimport \
 
 from sage.libs.linbox.fflas cimport \
     fgemm, pfgemm, fgemv, Det, pDet, Rank, pRank, ReducedRowEchelonForm, pReducedRowEchelonForm, applyP, \
-    MinPoly, CharPoly, MinPoly, \
+    MinPoly, CharPoly, \
     ModFloatDensePolynomial as ModDensePoly
 
 ctypedef Poly1Dom[ModField, Dense] ModDensePolyRing
@@ -44,15 +44,16 @@ include "matrix_modn_dense_template.pxi"
 
 cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
     r"""
-    Dense matrices over `\ZZ/n\ZZ` for `n < 2^{11}` using LinBox's ``Modular<float>``
+    Dense matrices over `\ZZ/n\ZZ` for `n < 2^{8}` using LinBox's ``Modular<float>``
 
     These are matrices with integer entries mod ``n`` represented as
     floating-point numbers in a 32-bit word for use with LinBox routines.
-    This allows for ``n`` up to `2^{11}`.  The
-    ``Matrix_modn_dense_double`` class is used for larger moduli.
+    This could allow for ``n`` up to `2^{11}`, but for performance reasons
+    this is limited to ``n`` up to `2^{8}`, and for larger moduli the
+    ``Matrix_modn_dense_double`` class is used.
 
     Routines here are for the most basic access, see the
-    `matrix_modn_dense_template.pxi` file for higher-level routines.
+    ``matrix_modn_dense_template.pxi`` file for higher-level routines.
     """
     def __cinit__(self):
         """

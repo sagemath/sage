@@ -1,14 +1,24 @@
 r"""
-Feature for testing the presence of the Python interface to polymake
+Feature for testing the presence of ``jupymake``, the Python interface to polymake
 """
+
+# *****************************************************************************
+#       Copyright (C) 2021 Matthias Koeppe
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
 from . import PythonModule
 from .join_feature import JoinFeature
 
 
 class JuPyMake(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the :mod:`JuPyMake`
-    module, a Python interface to the polymake library.
+    A :class:`~sage.features.Feature` describing the presence of the :ref:`JuPyMake <spkg_jupymake>`
+    module, a Python interface to the :ref:`polymake <spkg_polymake>` library.
 
     EXAMPLES::
 

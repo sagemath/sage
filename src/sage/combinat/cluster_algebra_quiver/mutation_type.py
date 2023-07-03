@@ -284,7 +284,7 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
         return 'unknown'
     # divides into cases depending on whether or not a list 'conn_vert_list' of connecting vertices is given.
     if conn_vert_list:
-        mut_type = _connected_mutation_type_AAtildeD( dg, ret_conn_vert = True )
+        mut_type = _connected_mutation_type_AAtildeD( dg, ret_conn_vert=True )
         # when 'conn_vert_list' is given, the output of _connected_mutation_type_AAtildeD is
         # either 'unknown' or a pair (mut_type, conn_verts).  Then, it is tested if the vertices can be glued together as desired.
         if not mut_type == 'unknown':
@@ -292,7 +292,7 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
     else:
         # when conn_vert_list == False, the output of _connected_mutation_type _AAtildeD is simply 'unknown' or the mutation type.
         # no 'connecting vertices' need to be computed.
-        mut_type = _connected_mutation_type_AAtildeD( dg, ret_conn_vert = False )
+        mut_type = _connected_mutation_type_AAtildeD( dg, ret_conn_vert=False )
         conn_verts = []
     # when the mutation type is recognized, program now tries more specifically to figure out 'letter' and 'twist'
     if not mut_type == 'unknown':
@@ -763,7 +763,7 @@ def _connected_mutation_type(dg):
     elif len( exc_labels ) == 1:
         label = exc_labels[0]
         v_out = label[0]
-        v_in  = label[1]
+        v_in = label[1]
         label = label[2]
         if label == (1,-2):
             if dict_in_out[ v_in ][0] == 1 and dict_in_out[ v_in ][1] == 0:

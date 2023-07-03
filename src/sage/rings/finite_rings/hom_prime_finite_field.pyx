@@ -24,8 +24,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-from sage.rings.integer cimport Integer
-
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
 
@@ -34,7 +32,6 @@ from .hom_finite_field cimport FiniteFieldHomomorphism_generic
 from .hom_finite_field cimport FrobeniusEndomorphism_finite_field
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.morphism cimport RingHomomorphism_im_gens
 
 
 cdef class SectionFiniteFieldHomomorphism_prime(SectionFiniteFieldHomomorphism_generic):

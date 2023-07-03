@@ -1,13 +1,25 @@
-# -*- coding: utf-8 -*-
 r"""
 Feature for testing the presence of ``kenzo``
 """
+
+# ****************************************************************************
+#       Copyright (C) 2020 Travis Scrimshaw
+#                     2021 Matthias Koeppe
+#                     2021 Michael Orlitzky
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 
 from . import Feature, FeatureTestResult
 
 class Kenzo(Feature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``Kenzo``.
+    A :class:`~sage.features.Feature` describing the presence of :ref:`Kenzo <spkg_kenzo>`.
 
     EXAMPLES::
 

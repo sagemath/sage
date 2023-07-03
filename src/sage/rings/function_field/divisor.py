@@ -1,3 +1,5 @@
+# sage.doctest: optional - sage.rings.finite_rings               (because all doctests use finite fields)
+# sage.doctest: optional - sage.rings.function_field    (because almost all doctests use function field extensions)
 """
 Divisors of function fields
 
@@ -37,14 +39,16 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): initial version
 
 """
-#*****************************************************************************
-#       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
+
+# ****************************************************************************
+#       Copyright (C) 2016-2022 Kwankyu Lee <ekwankyu@gmail.com>
+#                     2019      Brent Baccala
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import random
 

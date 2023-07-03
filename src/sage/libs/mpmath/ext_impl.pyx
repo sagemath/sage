@@ -413,11 +413,16 @@ cdef void MPF_neg(MPF *r, MPF *s):
     Sets r = -s. MPF_neg(x, x) negates in place.
     """
     if s.special:
-        if   s.special == S_ZERO: r.special = S_ZERO #r.special = S_NZERO
-        elif s.special == S_NZERO: r.special = S_ZERO
-        elif s.special == S_INF: r.special = S_NINF
-        elif s.special == S_NINF: r.special = S_INF
-        else: r.special = s.special
+        if s.special == S_ZERO:
+            r.special = S_ZERO  # r.special = S_NZERO
+        elif s.special == S_NZERO:
+            r.special = S_ZERO
+        elif s.special == S_INF:
+            r.special = S_NINF
+        elif s.special == S_NINF:
+            r.special = S_INF
+        else:
+            r.special = s.special
         return
     r.special = s.special
     mpz_neg(r.man, s.man)
@@ -429,8 +434,10 @@ cdef void MPF_abs(MPF *r, MPF *s):
     Sets r = abs(s). MPF_abs(r, r) sets the absolute value in place.
     """
     if s.special:
-        if    s.special == S_NINF: r.special = S_INF
-        else: r.special = s.special
+        if s.special == S_NINF:
+            r.special = S_INF
+        else:
+            r.special = s.special
         return
     r.special = s.special
     mpz_abs(r.man, s.man)
@@ -1891,7 +1898,7 @@ cdef MPF_complex_pow_re(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *y, MPopts o
     xret = MPF_to_tuple(xre)
     ximt = MPF_to_tuple(xim)
     yret = MPF_to_tuple(y)
-    from mpmath.libmp import mpc_pow_mpf, fzero
+    from mpmath.libmp import mpc_pow_mpf
     vr, vi = mpc_pow_mpf((xret, ximt), yret,
                          opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)

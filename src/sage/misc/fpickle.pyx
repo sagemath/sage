@@ -5,7 +5,6 @@ Function pickling
 
 REFERENCE: The python cookbook.
 """
-
 import copyreg
 import pickle
 import sys
@@ -91,6 +90,7 @@ def pickle_function(func):
     """
     return pickle.dumps(func.__code__)
 
+
 def unpickle_function(pickled):
     """
     Unpickle a pickled function.
@@ -106,14 +106,15 @@ def unpickle_function(pickled):
     return types.FunctionType(recovered, globals())
 
 
-
 def call_pickled_function(fpargs):
     import sage.all
-    from sage.misc.fpickle import unpickle_function
+    from sage.misc.fpickle import unpickle_function  # used below
     (fp, (args, kwds)) = fpargs
-    f = eval("unpickle_function(fp)", sage.all.__dict__, {'fp':fp})
-    res = eval("f(*args, **kwds)",sage.all.__dict__, {'args':args, 'kwds':kwds, 'f':f})
+    f = eval("unpickle_function(fp)", sage.all.__dict__, {'fp': fp})
+    res = eval("f(*args, **kwds)", sage.all.__dict__,
+               {'args': args, 'kwds': kwds, 'f': f})
     return ((args, kwds), res)
+
 
 # The following four methods are taken from twisted.persisted.styles - the
 # import of twisted.persisted.styles takes a long time and we do not use
@@ -128,11 +129,11 @@ def pickleMethod(method):
 
 
 def unpickleMethod(im_name,
-                    __self__,
-                    im_class):
+                   __self__,
+                   im_class):
     'support function for copyreg to unpickle method refs'
     try:
-        unbound = getattr(im_class,im_name)
+        unbound = getattr(im_class, im_name)
         if __self__ is None:
             return unbound
 
@@ -154,21 +155,25 @@ def unpickleMethod(im_name,
                                  __self__)
         return bound
 
+
 copyreg.pickle(types.MethodType,
-                pickleMethod,
-                unpickleMethod)
+               pickleMethod,
+               unpickleMethod)
 
 oldModules = {}
+
 
 def pickleModule(module):
     'support function for copyreg to pickle module refs'
     return unpickleModule, (module.__name__,)
 
+
 def unpickleModule(name):
     'support function for copyreg to unpickle module refs'
     if name in oldModules:
         name = oldModules[name]
-    return __import__(name,{},{},'x')
+    return __import__(name, {}, {}, 'x')
+
 
 copyreg.pickle(types.ModuleType,
                pickleModule,
