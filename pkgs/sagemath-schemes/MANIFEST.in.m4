@@ -26,8 +26,8 @@ exclude sage/modular/modsym/apply.p*
 exclude sage/modular/modsym/heilbronn.p*
 exclude sage/modular/pollack_stevens/dist.p*
 exclude sage/schemes/elliptic_curves/descent_two_isogeny.p*
-exclude sage/modular/arithgroup/arithgroup_element.pyx          # via Matrix_integer_dense
-exclude sage/modular/arithgroup/congroup.pyx                    # via Matrix_integer_dense
+#exclude sage/modular/arithgroup/arithgroup_element.pyx          # via Matrix_integer_dense
+#exclude sage/modular/arithgroup/congroup.pyx                    # via Matrix_integer_dense
 
 
 global-exclude *.py[co]
