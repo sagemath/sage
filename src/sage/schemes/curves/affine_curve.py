@@ -123,30 +123,29 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
-
-from sage.arith.misc import binomial
-from sage.interfaces.singular import singular
 from builtins import sum as add
 
+from sage.arith.misc import binomial
 from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.homset import Hom, End, hom
 from sage.categories.number_fields import NumberFields
-
 from sage.matrix.constructor import matrix
-
-from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
-from sage.rings.number_field.number_field import NumberField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import number_field_elements_from_algebraics, QQbar
-from sage.rings.rational_field import is_RationalField
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import infinity
+from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import is_RationalField
 
 from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
 from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
                                                   AlgebraicScheme_subscheme_affine_field)
+
+lazy_import('sage.interfaces.singular', 'singular')
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
+lazy_import('sage.rings.qqbar', ['number_field_elements_from_algebraics', 'QQbar'])
 
 from .curve import Curve_generic
 

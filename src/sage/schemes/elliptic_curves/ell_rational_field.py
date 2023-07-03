@@ -81,7 +81,6 @@ from sage.rings.infinity import Infinity as oo
 from sage.rings.integer_ring import ZZ, IntegerRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
-from sage.rings.real_mpfi import RealIntervalField
 from sage.rings.real_mpfr import RealField
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.rational_field import RationalField
@@ -99,7 +98,7 @@ from sage.matrix.matrix_space import MatrixSpace
 lazy_import('sage.libs.pari.all', 'pari')
 lazy_import("sage.functions.gamma", "gamma_inc")
 from math import sqrt
-from sage.interfaces.gp import gp
+lazy_import('sage.interfaces.gp', 'gp')
 from sage.misc.cachefunc import cached_method
 from copy import copy
 
@@ -107,7 +106,6 @@ Q = RationalField()
 C = ComplexField()
 R = RealField()
 Z = IntegerRing()
-IR = RealIntervalField(20)
 
 _MAX_HEIGHT = 21
 

@@ -70,7 +70,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.ring import IntegralDomain
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
-from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import CommutativeAlgebra
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
@@ -81,7 +80,8 @@ from sage.structure.element import CommutativeAlgebraElement, ModuleElement
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
-lazy_import("sage.functions.log", "log")
+lazy_import('sage.functions.log', 'log')
+lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
 
 
 class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):

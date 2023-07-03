@@ -40,16 +40,18 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ######################################################################
-from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Qp
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp, richcmp_method
 from sage.arith.functions import lcm as LCM
-from sage.modular.modform.constructor import EisensteinForms, CuspForms
-from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.misc.functional import denominator, log
-from sage.misc.misc_c import prod
 from sage.matrix.constructor import Matrix as matrix
+from sage.misc.functional import denominator, log
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.modular.modform.constructor import EisensteinForms, CuspForms
+from sage.rings.integer_ring import ZZ
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
+from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.sage_object import SageObject
+
+lazy_import('sage.rings.padics.factory', 'Qp')
 
 
 @richcmp_method

@@ -33,11 +33,9 @@ import bisect
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
-from sage.rings.cif import CIF
 from sage.rings.cc import CC
 from sage.rings.complex_double import CDF
 from sage.rings.real_double import RDF
-from sage.rings.real_mpfi import RIF
 from sage.rings.real_mpfr import RR
 
 from sage.misc.cachefunc import cached_method
@@ -47,6 +45,8 @@ from sage.arith.misc import factorial
 from sage.ext.fast_callable import fast_callable
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", ["log", "exp"])
+lazy_import("sage.rings.cif", "CIF")
+lazy_import("sage.rings.real_mpfi", "RIF")
 lazy_import("sage.symbolic.ring", "SR")
 
 

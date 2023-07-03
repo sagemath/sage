@@ -80,7 +80,6 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.padics.factory import Qp
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
@@ -89,6 +88,7 @@ from sage.structure.sage_object import SageObject
 
 lazy_import("sage.functions.log", "log")
 lazy_import("sage.functions.other", "floor")
+lazy_import('sage.rings.padics.factory', 'Qp')
 
 
 @richcmp_method
