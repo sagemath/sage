@@ -19,13 +19,15 @@ AUTHORS:
 import sage.geometry.abc
 
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.rings.cc import CC
-from sage.rings.qqbar import AA, QQbar
+
+lazy_import('sage.rings.qqbar', ['AA', 'QQbar'])
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 

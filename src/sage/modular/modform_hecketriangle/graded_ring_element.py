@@ -25,13 +25,13 @@ from sage.rings.big_oh import O
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring_element import LaurentSeries
-from sage.rings.number_field.number_field import QuadraticField
 from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.parent_gens import localvars
 from sage.structure.richcmp import op_NE, op_EQ
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import("sage.functions.log", "exp")
+lazy_import("sage.rings.number_field.number_field", "QuadraticField")
 lazy_import("sage.symbolic.constants", "pi")
 
 from .constructor import rational_type, FormsSpace, FormsRing
