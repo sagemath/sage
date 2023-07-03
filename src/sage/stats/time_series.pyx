@@ -1447,7 +1447,7 @@ cdef class TimeSeries:
             sage: v.autocovariance(1)
             -2.7
             sage: mu = v.mean()
-            sage: sum((v[i]-mu)*(v[i+1]-mu) for i in range(len(v)-1)])/len(v)
+            sage: sum((v[i]-mu)*(v[i+1]-mu) for i in range(len(v)-1))/len(v)
             -2.7
             sage: v.autocovariance(1)
             -2.7
