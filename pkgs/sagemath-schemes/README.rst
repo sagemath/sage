@@ -50,4 +50,4 @@ The wheel builds. Some Cython modules that depend on FLINT or NTL are excluded.
 
 `sage.all__sagemath_schemes` can be imported.
 
-Other tests are disabled in `tox.ini`.
+Many tests fail; see ``known-test-failures.json``.
