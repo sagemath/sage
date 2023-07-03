@@ -22,23 +22,26 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.element import Element
+from sage.categories.number_fields import NumberFields
+from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
+from sage.matrix.constructor import Matrix
 from sage.misc.classcall_metaclass import typecall
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.schemes.affine.affine_space import is_AffineSpace
 from sage.schemes.berkovich.berkovich_space import (Berkovich_Cp_Affine,
                                 Berkovich_Cp_Projective, is_Berkovich_Cp,
                                 Berkovich_Element_Cp_Affine)
 from sage.schemes.projective.projective_space import is_ProjectiveSpace
-from sage.schemes.affine.affine_space import is_AffineSpace
-from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
-from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
-from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
-from sage.categories.number_fields import NumberFields
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.infinity import Infinity
-from sage.matrix.constructor import Matrix
+from sage.structure.element import Element
+
+lazy_import('sage.rings.padics.padic_base_generic', 'pAdicBaseGeneric')
+
 
 class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMetaclass):
     r"""

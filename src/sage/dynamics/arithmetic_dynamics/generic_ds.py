@@ -27,17 +27,21 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from copy import copy
+
 from sage.categories.homset import End
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+from sage.misc.lazy_import import lazy_import
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import is_AffineSpace
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
-from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
-from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.qqbar import AlgebraicField_common
 from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
-from sage.rings.rational_field import QQ
-from copy import copy
+from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
+lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
+lazy_import('sage.rings.qqbar', 'AlgebraicField_common')
+
 
 class DynamicalSystem(SchemeMorphism_polynomial,
                       metaclass=InheritComparisonClasscallMetaclass):
