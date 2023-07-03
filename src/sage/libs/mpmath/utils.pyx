@@ -421,7 +421,7 @@ def call(func, *args, **kwargs):
         3.141592653589793j
 
     """
-    from sage.libs.mpmath import mp
+    from sage.libs.mpmath.all import mp
     orig = mp.prec
     prec = kwargs.pop('prec', orig)
     parent = kwargs.pop('parent', None)

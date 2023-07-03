@@ -950,7 +950,7 @@ cdef class BuiltinFunction(Function):
             (1.5430806348152437-0j)
             sage: assert type(_) is complex
 
-            sage: import sage.libs.mpmath.all                                           # optional - mpmath
+            sage: import sage.libs.mpmath.all                                         # optional - mpmath
             sage: cos(sage.libs.mpmath.all.mpf('1.321412'))                             # optional - mpmath
             mpf('0.24680737898640387')
             sage: cos(sage.libs.mpmath.all.mpc(1,1))                                    # optional - mpmath

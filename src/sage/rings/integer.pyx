@@ -3441,8 +3441,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: divmod(1, sys.maxsize+1r)  # should not raise OverflowError: Python int too large to convert to C long
             (0, 1)
             sage: import sage.libs.mpmath                                                         # optional - mpmath
-            sage: sage.libs.mpmath.mp.prec = 1000                                                 # optional - mpmath
-            sage: root = sage.libs.mpmath.findroot(lambda x: x^2 - 3, 2)                          # optional - mpmath
+            sage: sage.libs.mpmath.all.mp.prec = 1000                                                 # optional - mpmath
+            sage: root = sage.libs.mpmath.all.findroot(lambda x: x^2 - 3, 2)                          # optional - mpmath
             sage: len(str(root))                                                        # optional - mpmath
             301
         """

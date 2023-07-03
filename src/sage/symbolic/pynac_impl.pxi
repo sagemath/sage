@@ -1639,7 +1639,7 @@ cdef py_stieltjes(x):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(sage.libs.mpmath.stieltjes, n, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.all.stieltjes, n, prec=prec)
 
 def py_stieltjes_for_doctests(x):
     """
@@ -1991,7 +1991,7 @@ cdef py_lgamma(x):
         sage: py_lgamma(ComplexField(100).0)
         -0.65092319930185633888521683150 - 1.8724366472624298171188533494*I
     """
-    from sage.libs.mpmath import loggamma
+    from sage.libs.mpmath.all import loggamma
 
     try:
         return x.log_gamma()
@@ -2139,7 +2139,7 @@ cdef py_li(x, n, parent):
         prec = parent.prec()
     except AttributeError:
         prec = 53
-    return mpmath_utils.call(sage.libs.mpmath.polylog, n, x, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.all.polylog, n, x, prec=prec)
 
 
 def py_li_for_doctests(x, n, parent):
@@ -2175,7 +2175,7 @@ cdef py_psi(x):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(sage.libs.mpmath.psi, 0, x, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.all.psi, 0, x, prec=prec)
 
 
 def py_psi_for_doctests(x):
@@ -2204,7 +2204,7 @@ cdef py_psi2(n, x):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(sage.libs.mpmath.psi, n, x, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.all.psi, n, x, prec=prec)
 
 def py_psi2_for_doctests(n, x):
     """
@@ -2232,7 +2232,7 @@ cdef py_li2(x):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(sage.libs.mpmath.polylog, 2, x, prec=prec)
+    return mpmath_utils.call(sage.libs.mpmath.all.polylog, 2, x, prec=prec)
 
 
 def py_li2_for_doctests(x):
