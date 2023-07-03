@@ -210,7 +210,7 @@ AUTHORS:
 
 """
 
-# ****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>
 #                     2010      Robert Bradshaw <robertwb@math.washington.edu>
 #                     2011-2018 Julian Rüth <julian.rueth@gmail.com>
@@ -231,7 +231,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# ****************************************************************************
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport

@@ -370,7 +370,8 @@ from sage.arith.misc import GCD as gcd
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module_element import vector
-from sage.geometry.all import Cone, Fan
+from sage.geometry.cone import Cone
+from sage.geometry.fan import Fan
 
 from sage.schemes.generic.scheme import is_Scheme
 from sage.schemes.generic.morphism import (

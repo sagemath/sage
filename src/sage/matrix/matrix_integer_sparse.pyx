@@ -348,7 +348,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             if copy:
                 return list(x)
             return x
-        nzc = [[] for _ in xrange(self._ncols)]
+        nzc = [[] for _ in range(self._ncols)]
         cdef Py_ssize_t i, j
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
