@@ -33,6 +33,8 @@ TESTS::
 from copy import copy
 from random import randrange
 
+import sage.rings.abc
+
 from sage.arith.functions import lcm as LCM
 from sage.arith.misc import divisors, next_prime, is_prime
 from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
@@ -55,7 +57,6 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.ring import is_Ring
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
@@ -66,6 +67,8 @@ from sage.structure.sequence import Sequence, Sequence_generic
 
 lazy_import('sage.databases.cremona',
             ['cremona_letter_code', 'CremonaDatabase'])
+lazy_import('sage.rings.qqbar', 'QQbar')
+
 
 from . import homspace
 from . import lseries
@@ -798,7 +801,7 @@ class ModularAbelianVariety_abstract(Parent):
             L = B.base_field()
             if K == L:
                 F = K
-            elif K == QQbar or L == QQbar:
+            elif isinstance(K, sage.rings.abc.AlgebraicField) or isinstance(L, sage.rings.abc.AlgebraicField):
                 F = QQbar
             else:
                 # TODO -- improve this
