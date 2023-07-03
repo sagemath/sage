@@ -48,8 +48,8 @@ underlying *classical* polynomial. This holds, e.g., when applying the
 There is a permutation action on Infinite Polynomial Rings by
 permuting the indices of the variables::
 
-    sage: P = Permutation(((4,5),(2,3)))                                                # optional - sage.combinat
-    sage: c^P                                                                           # optional - sage.combinat
+    sage: P = Permutation(((4,5),(2,3)))
+    sage: c^P
     x_2^3 + x_2*y_5 - 2*y_5^4
 
 Note that ``P(0)==0``, and thus variables of index zero are invariant
@@ -440,13 +440,13 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         The substitution can also handle matrices::
 
-            sage: M = matrix([[1,0], [0,2]])                                            # optional - sage.modules
-            sage: N = matrix([[0,3], [4,0]])                                            # optional - sage.modules
-            sage: g = x[0]^2 + 3*x[1]                                                   # optional - sage.modules
-            sage: g.subs({'x_0': M})                                                    # optional - sage.modules
+            sage: M = matrix([[1,0], [0,2]])                                            # needs sage.modules
+            sage: N = matrix([[0,3], [4,0]])                                            # needs sage.modules
+            sage: g = x[0]^2 + 3*x[1]                                                   # needs sage.modules
+            sage: g.subs({'x_0': M})                                                    # needs sage.modules
             [3*x_1 + 1         0]
             [        0 3*x_1 + 4]
-            sage: g.subs({x[0]: M, x[1]: N})                                            # optional - sage.modules
+            sage: g.subs({x[0]: M, x[1]: N})                                            # needs sage.modules
             [ 1  9]
             [12  4]
 
@@ -464,7 +464,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         TESTS::
 
-            sage: g.subs(fixed=x[0], x_1=N)
+            sage: g.subs(fixed=x[0], x_1=N)                                             # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: fixed must be a dict
@@ -540,10 +540,10 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         EXAMPLES::
 
-            sage: R.<x> = InfinitePolynomialRing(QQbar)                                 # optional - sage.rings.number_field
-            sage: (x[0] + x[1]).is_nilpotent()                                          # optional - sage.rings.number_field
+            sage: R.<x> = InfinitePolynomialRing(QQbar)                                 # needs sage.rings.number_field
+            sage: (x[0] + x[1]).is_nilpotent()                                          # needs sage.rings.number_field
             False
-            sage: R(0).is_nilpotent()                                                   # optional - sage.rings.number_field
+            sage: R(0).is_nilpotent()                                                   # needs sage.rings.number_field
             True
             sage: _.<x> = InfinitePolynomialRing(Zmod(4))
             sage: (2*x[0]).is_nilpotent()
@@ -656,7 +656,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: z = 1/(x[2]*(x[1]+x[2]))+1/(x[1]*(x[1]+x[2]))
             sage: z.parent()
             Fraction Field of Infinite polynomial ring in x over Rational Field
-            sage: factor(z)                                                             # optional - sage.libs.singular
+            sage: factor(z)                                                             # needs sage.libs.singular
             x_1^-1 * x_2^-1
         """
         if not x.variables():
@@ -896,11 +896,11 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: X.<x,y> = InfinitePolynomialRing(QQ)
             sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]^2)
             (None, 1, 1)
-            sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])              # optional - sage.combinat
+            sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])
             (-1, [2, 3, 1], y_1)
-            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])         # optional - sage.combinat
+            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])
             (None, 1, 1)
-            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[2])         # optional - sage.combinat
+            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[2])
             (-1, [2, 3, 1], 1)
 
         """
@@ -1097,7 +1097,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         reduction. However, reduction by ``y[1]*x[2]^2`` works, since
         one can change variable index 1 into 2 and 2 into 3::
 
-            sage: p.reduce([y[1]*x[2]^2])                                               # optional - sage.libs.singular
+            sage: p.reduce([y[1]*x[2]^2])                                               # needs sage.libs.singular
             y_3*y_1^2
 
         The next example shows that tail reduction is not done, unless
@@ -1105,15 +1105,15 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         Ideal::
 
             sage: I = (y[3])*X
-            sage: p.reduce(I)                                                           # optional - sage.libs.singular
+            sage: p.reduce(I)
             x_3^3*y_2 + y_3*y_1^2
-            sage: p.reduce(I, tailreduce=True)                                          # optional - sage.libs.singular
+            sage: p.reduce(I, tailreduce=True)                                          # needs sage.libs.singular
             x_3^3*y_2
 
         Last, we demonstrate the ``report`` option::
 
             sage: p = x[1]^2 + y[2]^2 + x[1]*x[2]*y[3] + x[1]*y[4]
-            sage: p.reduce(I, tailreduce=True, report=True)                             # optional - sage.libs.singular
+            sage: p.reduce(I, tailreduce=True, report=True)                             # needs sage.libs.singular
             :T[2]:>
             >
             x_1^2 + y_2^2
@@ -1258,8 +1258,8 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: a(x_1=x[100])
             x_100 + x_0
 
-            sage: M = matrix([[1,1], [2,0]])                                            # optional - sage.modules
-            sage: a(x_1=M)                                                              # optional - sage.modules
+            sage: M = matrix([[1,1], [2,0]])                                            # needs sage.modules
+            sage: a(x_1=M)                                                              # needs sage.modules
             [x_0 + 1       1]
             [      2     x_0]
         """
@@ -1389,8 +1389,8 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
             sage: X.<x,y> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: p = x[10]*y[2] + 2*x[1]*y[3]
-            sage: P = Permutation(((1,2),(3,4,5)))                                      # optional - sage.combinat
-            sage: p^P # indirect doctest                                                # optional - sage.combinat
+            sage: P = Permutation(((1,2),(3,4,5)))
+            sage: p^P # indirect doctest
             x_10*y_1 + 2*x_2*y_4
 
         """
@@ -1665,8 +1665,8 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: x[10]^3
             x_10^3
             sage: p = x[10]*y[2] + 2*x[1]*y[3]
-            sage: P = Permutation(((1,2),(3,4,5)))                                      # optional - sage.combinat
-            sage: p^P                                                                   # optional - sage.combinat
+            sage: P = Permutation(((1,2),(3,4,5)))
+            sage: p^P
             x_10*y_1 + 2*x_2*y_4
 
         """
