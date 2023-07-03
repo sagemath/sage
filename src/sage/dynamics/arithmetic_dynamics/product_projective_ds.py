@@ -305,21 +305,21 @@ class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_pr
 
             sage: P.<a,b,c,d> = ProductProjectiveSpaces(GF(3), [1,1])
             sage: f = DynamicalSystem_projective([a^2, b^2, c^2, d^2], domain=P)
-            sage: f.cyclegraph()
+            sage: f.cyclegraph()                                                        # needs sage.graphs
             Looped digraph on 16 vertices
 
         ::
 
             sage: P.<a,b,c,d> = ProductProjectiveSpaces(GF(5), [1,1])
             sage: f = DynamicalSystem_projective([a^2, b^2, c, d], domain=P)
-            sage: f.cyclegraph()
+            sage: f.cyclegraph()                                                        # needs sage.graphs
             Looped digraph on 36 vertices
 
         ::
 
             sage: P.<a,b,c,d,e> = ProductProjectiveSpaces(GF(2), [1,2])
             sage: f = DynamicalSystem_projective([a^2, b^2, c, d, e], domain=P)
-            sage: f.cyclegraph()
+            sage: f.cyclegraph()                                                        # needs sage.graphs
             Looped digraph on 21 vertices
 
         .. TODO:: Dynamical systems for subschemes of product projective spaces needs work.
