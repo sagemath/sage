@@ -140,7 +140,7 @@ class Graphics(WithEqualityById, SageObject):
         sage: G = Graphics()
         sage: for x in srange(1, h+1):                                                  # optional - sage.symbolic
         ....:     l = [[0,x*sqrt(3)],[-x/2,-x*sqrt(3)/2],[x/2,-x*sqrt(3)/2],[0,x*sqrt(3)]]
-        ....:     G + =line(l, color=hue(c + p*(x/h)))
+        ....:     G += line(l, color=hue(c + p*(x/h)))
         sage: G.show(figsize=[5,5])                                                     # optional - sage.symbolic
 
     We can change the scale of the axes in the graphics before displaying.::
