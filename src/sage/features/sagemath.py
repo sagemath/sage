@@ -663,7 +663,9 @@ class sage__rings__number_field(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.rings.number_field',
-                             [PythonModule('sage.rings.number_field.number_field_element')],
+                             [PythonModule('sage.rings.number_field.number_field_element'),
+                              PythonModule('sage.rings.universal_cyclotomic_field'),
+                              PythonModule('sage.rings.qqbar')],
                              type='standard')
 
 
