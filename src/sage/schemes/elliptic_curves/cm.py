@@ -80,6 +80,7 @@ def hilbert_class_polynomial(D, algorithm=None):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: hilbert_class_polynomial(-4)
         x - 1728
         sage: hilbert_class_polynomial(-7)
@@ -203,8 +204,10 @@ def is_HCP(f, check_monic_irreducible=True):
 
         sage: from sage.schemes.elliptic_curves.cm import is_HCP
         sage: D = -1856563
-        sage: D.class_number()
+        sage: D.class_number()                                                          # optional - sage.libs.pari
         100
+
+        sage: # optional - sage.libs.flint
         sage: H = hilbert_class_polynomial(D)
         sage: H.degree()
         100
@@ -215,16 +218,19 @@ def is_HCP(f, check_monic_irreducible=True):
 
     Testing polynomials which are not HCPs is faster::
 
-        sage: is_HCP(H+1)
+        sage: is_HCP(H+1)                                                               # optional - sage.libs.flint
         0
 
 
     TESTS::
 
+        sage: # optional - sage.libs.flint
         sage: from sage.schemes.elliptic_curves.cm import is_HCP
-        sage: all(is_HCP(hilbert_class_polynomial(D))==D for D in srange(-4,-100,-1) if D.is_discriminant())
+        sage: all(is_HCP(hilbert_class_polynomial(D)) == D
+        ....:     for D in srange(-4,-100,-1) if D.is_discriminant())
         True
-        sage: all(not is_HCP(hilbert_class_polynomial(D)+1) for D in srange(-4,-100,-1) if D.is_discriminant())
+        sage: all(not is_HCP(hilbert_class_polynomial(D) + 1)
+        ....:     for D in srange(-4,-100,-1) if D.is_discriminant())
         True
     """
     zero = ZZ(0)
@@ -299,6 +305,7 @@ def OrderClassNumber(D0,h0,f):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: from sage.schemes.elliptic_curves.cm import OrderClassNumber
         sage: D0 = -4
         sage: h = D0.class_number()
@@ -478,6 +485,7 @@ def cm_orders(h, proof=None):
          (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]
         sage: type(v[0][0]), type(v[0][1])
         (<... 'sage.rings.integer.Integer'>, <... 'sage.rings.integer.Integer'>)
+        sage: # needs sage.libs.pari
         sage: v = cm_orders(2); v
          [(-3, 4), (-3, 5), (-3, 7), (-4, 3), (-4, 4), (-4, 5), (-7, 4), (-8, 2),
           (-8, 3), (-11, 3), (-15, 1), (-15, 2), (-20, 1), (-24, 1), (-35, 1),
@@ -490,6 +498,7 @@ def cm_orders(h, proof=None):
 
     Any degree up to 100 is implemented, but may be slow::
 
+        sage: # needs sage.libs.pari
         sage: cm_orders(3)
         [(-3, 6), (-3, 9), (-11, 2), (-19, 2), (-23, 1), (-23, 2), (-31, 1), (-31, 2),
          (-43, 2), (-59, 1), (-67, 2), (-83, 1), (-107, 1), (-139, 1), (-163, 2),
@@ -737,6 +746,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: from sage.schemes.elliptic_curves.cm import discriminants_with_bounded_class_number
         sage: v = discriminants_with_bounded_class_number(3)
         sage: sorted(v)
@@ -931,11 +941,11 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
 
         sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
         sage: D = -1856563
-        sage: H = hilbert_class_polynomial(D)
-        sage: H.degree()
+        sage: H = hilbert_class_polynomial(D)                                           # needs sage.libs.flint
+        sage: H.degree()                                                                # needs sage.libs.flint
         100
-        sage: K.<j> = NumberField(H)
-        sage: is_cm_j_invariant(j)
+        sage: K.<j> = NumberField(H)                                                    # needs sage.libs.flint sage.rings.number_field
+        sage: is_cm_j_invariant(j)                                                      # needs sage.libs.flint sage.rings.number_field
         (True, (-1856563, 1))
 
     TESTS::

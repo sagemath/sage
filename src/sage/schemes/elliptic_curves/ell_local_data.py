@@ -16,6 +16,7 @@ The functions in this file will typically be called by using ``local_data``.
 
 EXAMPLES::
 
+    sage: # needs sage.rings.number_field
     sage: x = polygen(ZZ, 'x')
     sage: K.<i> = NumberField(x^2 + 1)
     sage: E = EllipticCurve([(2+i)^2, (2+i)^7])
@@ -45,6 +46,7 @@ An example to show how the Neron model can change as one extends the field::
       Kodaira Symbol: II
       Tamagawa Number: 1
 
+    sage: # needs sage.rings.number_field
     sage: EK = E.base_extend(K)
     sage: EK.local_data(1+i)
     Local data at Fractional ideal (i + 1):
@@ -61,6 +63,8 @@ Or how the minimal equation changes::
     sage: E = EllipticCurve([0,8])
     sage: E.is_minimal()
     True
+
+    sage: # needs sage.rings.number_field
     sage: EK = E.base_extend(K)
     sage: da = EK.local_data(1+i)
     sage: da.minimal_model()
@@ -120,7 +124,7 @@ class EllipticCurveLocalData(SageObject):
 
     - ``P`` -- a prime ideal of the field, or a prime integer if the field is `\QQ`.
 
-    - ``proof`` (bool)-- if True, only use provably correct
+    - ``proof`` (bool) -- if ``True``, only use provably correct
       methods (default controlled by global proof module).  Note
       that the proof module is number_field, not elliptic_curves,
       since the functions that actually need the flag are in
@@ -332,6 +336,7 @@ class EllipticCurveLocalData(SageObject):
 
         To demonstrate the behaviour of the parameter ``reduce``::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x + 1)
             sage: E = EllipticCurve(K, [0, 0, a, 0, 1])
@@ -356,6 +361,7 @@ class EllipticCurveLocalData(SageObject):
 
         :trac:`14476`::
 
+            sage: # needs sage.rings.number_field
             sage: t = QQ['t'].0
             sage: K.<g> = NumberField(t^4 - t^3-3*t^2 - t +1)
             sage: E = EllipticCurve([-2*g^3 + 10/3*g^2 + 3*g - 2/3,
@@ -517,6 +523,7 @@ class EllipticCurveLocalData(SageObject):
             sage: [(p,E.local_data(p).bad_reduction_type()) for p in prime_range(15)]
             [(2, -1), (3, None), (5, None), (7, 1), (11, None), (13, None)]
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
@@ -536,6 +543,7 @@ class EllipticCurveLocalData(SageObject):
             sage: [(p,E.local_data(p).has_good_reduction()) for p in prime_range(15)]
             [(2, False), (3, True), (5, True), (7, False), (11, True), (13, True)]
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
@@ -558,6 +566,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
@@ -585,6 +594,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
@@ -607,6 +617,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
@@ -631,6 +642,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
@@ -653,6 +665,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
@@ -695,16 +708,14 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES (this raised a type error in sage prior to 4.4.4, see :trac:`7930`) ::
 
+            sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('99d1')
-
             sage: R.<X> = QQ[]
             sage: K.<t> = NumberField(X^3 + X^2 - 2*X - 1)
             sage: L.<s> = NumberField(X^3 + X^2 - 36*X - 4)
-
             sage: EK = E.base_extend(K)
             sage: toK = EK.torsion_order()
             sage: da = EK.local_data()  # indirect doctest
-
             sage: EL = E.base_extend(L)
             sage: da = EL.local_data()  # indirect doctest
 
@@ -712,6 +723,7 @@ class EllipticCurveLocalData(SageObject):
 
         The following example shows that the bug at :trac:`9324` is fixed::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - x + 6)
             sage: E = EllipticCurve([0,0,0,-53160*a-43995,-5067640*a+19402006])
@@ -720,6 +732,7 @@ class EllipticCurveLocalData(SageObject):
 
         The following example shows that the bug at :trac:`9417` is fixed::
 
+            sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^2 + 18*x + 1)
             sage: E = EllipticCurve(K, [0, -36, 0, 320, 0])
             sage: E.tamagawa_number(K.ideal(2))
@@ -727,6 +740,7 @@ class EllipticCurveLocalData(SageObject):
 
         This is to show that the bug :trac:`11630` is fixed. (The computation of the class group would produce a warning)::
 
+            sage: # needs sage.rings.number_field
             sage: K.<t> = NumberField(x^7 - 2*x + 177)
             sage: E = EllipticCurve([0,1,0,t,t])
             sage: P = K.ideal(2, t^3 + t + 1)
@@ -1141,6 +1155,8 @@ def check_prime(K, P):
         3
         sage: check_prime(QQ, ZZ.ideal(31))
         31
+
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 5)
         sage: check_prime(K, a)
