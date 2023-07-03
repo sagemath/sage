@@ -1440,36 +1440,72 @@ instead of overwriting the source file::
                                 --no-overwrite src/sage/geometry/cone.py
 
 
-Managing ``# optional`` tags
-----------------------------
+.. _section-fixdoctests-optional-needs:
 
-When a file uses a ``# sage.doctest: optional - FEATURE`` directive, the
-doctest fixer automatically removes these tags from ``# optional - FEATURE``
-annotations on individual doctests.
+Managing ``# optional`` and ``# needs`` tags
+--------------------------------------------
+
+When a file uses a ``# sage.doctest: optional/needs FEATURE`` directive, the
+doctest fixer automatically removes the redundant ``# optional/needs FEATURE``
+tags from all ``sage:`` lines. Likewise, when a codeblock-scoped tag
+``sage: # optional/needs FEATURE`` is used, then the doctest fixer removes
+redundant tags from all doctests in this scope. For example::
+
+  | # sage.doctest: optional - sirocco, needs sage.rings.number_field
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: # needs sage.modules sage.rings.number_field
+  |     sage: Q5 = QuadraticField(5)
+  |     sage: V = Q5^42                                 # needs sage.modules
+  |     sage: T = transmogrify(V)           # optional - bliss sirocco
+
+is automatically transformed to::
+
+  | # sage.doctest: optional - sirocco, needs sage.rings.number_field
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: # needs sage.modules
+  |     sage: Q5 = QuadraticField(5)
+  |     sage: V = Q5^42
+  |     sage: T = transmogrify(V)               # optional - bliss
+
+The doctest fixer also aligns the ``# optional/needs FEATURE`` tags on
+individual doctests at a fixed set of tab stops.
 
 In places where the doctester issues a doctest dataflow warning
 (``Variable ... referenced here was set only in doctest marked '# optional - FEATURE'``),
-the doctest fixer automatically adds the missing ``# optional`` annotations.
+the doctest fixer automatically adds the missing ``# optional/needs`` tags.
 
-Sometimes code changes can make existing ``# optional - FEATURE`` annotations unnecessary.
-In an installation or virtual environment where FEATURE is not available,
+Sometimes code changes can make existing ``# optional/needs FEATURE`` tags unnecessary.
+In an installation or virtual environment where ``FEATURE`` is not available,
 you can invoke the doctest fixer with the option ``--probe FEATURE``.
-Then it will run examples marked ``# optional - FEATURE`` silently, and if the example
-turns out to work anyway, the annotation is automatically removed.
+Then it will run examples marked ``# optional/needs - FEATURE`` silently, and if the example
+turns out to work anyway, the tag is automatically removed.
 
-To have the doctest fixer take care of the ``# optional`` annotations,
+.. note::
+
+   Probing works best when the doctests within a docstring do not reuse the same variable
+   for different values.
+
+To have the doctest fixer take care of the ``# optional/needs`` tags,
 but not change the expected results of examples, use the option ``--only-tags``.
 This mode is suitable for mostly unattended runs on many files.
 
 .. warning::
 
    While the doctest fixer guarantees to preserve any comments that
-   appear before ``# optional``, any comments that may be mixed with
-   the feature annotations will be lost.
+   appear before ``# optional/needs``, any comments that may be mixed with
+   the doctest tags will be lost.
 
 If you don't want to update any doctests, you can use the
 option ``--no-test``. In this mode, the doctest fixer does not run
-the doctester and only normalizes the style of the ``# optional`` annotations.
+the doctester and only normalizes the style of the ``# optional`` tags.
 
 
 Use in virtual environments
