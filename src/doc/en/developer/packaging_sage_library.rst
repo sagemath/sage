@@ -552,7 +552,7 @@ Preparing doctests
 ------------------
 
 Whenever an optional package is needed for a particular test, we use the
-doctest annotation ``# optional``. This mechanism can also be used for making a
+doctest tag ``# optional``. This mechanism can also be used for making a
 doctest conditional on the presence of a portion of the Sage library.
 
 The available tags take the form of package or module names such as
@@ -566,15 +566,21 @@ hints to the user.
 For example, the package :mod:`sage.tensor` is purely algebraic and has
 no dependency on symbolics. However, there are a small number of
 doctests that depend on :class:`sage.symbolic.ring.SymbolicRing` for integration
-testing. Hence, these doctests are marked ``# optional -
-sage.symbolic``.
+testing. Hence, these doctests are marked as depending on the feature
+:class:`sage.symbolic <~sage.features.sagemath.sage__symbolic>`.
 
-When defining new features for the purpose of doctest annotations, it may be a good
+By convention, because :class:`sage.symbolic <~sage.features.sagemath.sage__symbolic>`
+is present in a standard installation of Sage, we use the keyword ``# needs``
+instead of ``# optional``. These two keywords have identical semantics;
+the tool :ref:`sage --fixdoctests <section-fixdoctests-optional-needs>`
+rewrites the doctest tags according to the convention.
+
+When defining new features for the purpose of conditionalizing doctests, it may be a good
 idea to hide implementation details from feature names. For example, all doctests that
-use finite fields have to depend on PARI. However, we have defined a feature
+use large finite fields have to depend on PARI. However, we have defined a feature
 :mod:`sage.rings.finite_rings` (which implies the presence of :mod:`sage.libs.pari`).
-Annotating the doctests ``# optional - sage.rings.finite_rings`` expresses the
-dependency in a clearer way than using ``# optional - sage.libs.pari``, and it
+Marking the doctests ``# needs sage.rings.finite_rings`` expresses the
+dependency in a clearer way than using ``# needs sage.libs.pari``, and it
 will be a smaller maintenance burden when implementation details change.
 
 
