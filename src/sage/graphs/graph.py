@@ -1634,9 +1634,9 @@ class Graph(GenericGraph):
             sage: g.is_forest(certificate=True)
             (True, None)
             sage: (2*g + graphs.PetersenGraph() + g).is_forest(certificate=True)
-            (False, [68, 66, 69, 67, 65])
+            (False, [64, 69, 67, 65, 60])
         """
-        connected_components = self.connected_components()
+        connected_components = self.connected_components(sort=False)
         number_of_connected_components = len(connected_components)
         isit = (self.order() ==
                 self.size() + number_of_connected_components)

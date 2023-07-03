@@ -119,7 +119,7 @@ def is_connected(G):
         return len(conn_verts) == G.num_verts()
 
 
-def connected_components(G, sort=True):
+def connected_components(G, sort=False):
     """
     Return the list of connected components.
 
@@ -130,19 +130,19 @@ def connected_components(G, sort=True):
 
     - ``G`` -- the input graph
 
-    - ``sort`` -- boolean (default ``True``); whether to sort vertices inside
+    - ``sort`` -- boolean (default: ``False``); whether to sort vertices inside
       each component
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_components
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components(G)
+        sage: connected_components(G, sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
-        sage: G.connected_components()
+        sage: G.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components(D)
+        sage: connected_components(D, True)
         [[0, 1, 2, 3], [4, 5, 6]]
 
     TESTS:
@@ -236,7 +236,7 @@ def connected_components_subgraphs(G):
     return [G.subgraph(c, inplace=False) for c in connected_components(G, sort=False)]
 
 
-def connected_component_containing_vertex(G, vertex, sort=True):
+def connected_component_containing_vertex(G, vertex, sort=False):
     """
     Return a list of the vertices connected to vertex.
 
@@ -246,19 +246,19 @@ def connected_component_containing_vertex(G, vertex, sort=True):
 
     - ``v`` -- the vertex to search for
 
-    - ``sort`` -- boolean (default ``True``); whether to sort vertices inside
+    - ``sort`` -- boolean (default: ``False``); whether to sort vertices inside
       the component
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_component_containing_vertex
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_component_containing_vertex(G, 0)
+        sage: connected_component_containing_vertex(G, 0, sort=True)
         [0, 1, 2, 3]
-        sage: G.connected_component_containing_vertex(0)
+        sage: G.connected_component_containing_vertex(0, sort=True)
         [0, 1, 2, 3]
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_component_containing_vertex(D, 0)
+        sage: connected_component_containing_vertex(D, 0, sort=True)
         [0, 1, 2, 3]
 
     TESTS:
@@ -270,6 +270,16 @@ def connected_component_containing_vertex(G, vertex, sort=True):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    :trac:`35889` is fixed::
+
+        sage: G = Graph([('A', 1)])
+        sage: G.connected_component_containing_vertex(1)
+        [1, 'A']
+        sage: G.connected_component_containing_vertex(1, sort=True)
+        Traceback (most recent call last):
+        ...
+        TypeError: '<' not supported between instances of 'str' and 'int'
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
@@ -1042,7 +1052,9 @@ def edge_connectivity(G,
 
         sage: g = graphs.PetersenGraph()
         sage: edge_connectivity((2 * g), vertices=True)
-        [0, [], [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]]]
+        [0, [], [{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {10, 11, 12, 13, 14, 15, 16, 17, 18, 19}]]
+        sage: edge_connectivity(Graph(), vertices=True)
+        [0, [], [{}, {}]]
 
     If ``G`` is not a Sage graph, an error is raised::
 
@@ -1078,7 +1090,7 @@ def edge_connectivity(G,
         if value_only:
             return 0
         elif vertices:
-            return [0, [], [[], []]]
+            return [0, [], [{}, {}]]
         else:
             return [0, []]
 
@@ -1103,7 +1115,7 @@ def edge_connectivity(G,
             else:
                 val.append(connected_components(H))
         elif vertices:
-            val.append(connected_components(G))
+            val.append([set(c) for c in connected_components(G)])
 
         return val
 
@@ -1190,13 +1202,13 @@ def edge_connectivity(G,
         val.append(edges)
 
         if vertices:
-            a = []
-            b = []
+            a = {}
+            b = {}
             for v in g:
                 if in_set[0, v]:
-                    a.append(v)
+                    a.add(v)
                 else:
-                    b.append(v)
+                    b.add(v)
             val.append([a, b])
 
         return val
