@@ -49,7 +49,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p = get_solver(solver = "Matrix")                 
 
 """
-        
+    
         #Sage Matrix and Vector instead of Python lists
         self.objective_function = Vector(QQ, [])
         self.G_matrix = Matrix(QQ, [])
@@ -82,9 +82,9 @@ cdef class MatrixBackend(GenericBackend):
     cpdef base_ring(self):
         """
     The base ring
-    
+
     TESTS::
-    
+
             sage: from sage.numerical.backends.matrix_backend import MatrixBackend
             sage: MatrixBackend(base_ring=QQ).base_ring()
             Rational Field
