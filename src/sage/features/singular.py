@@ -23,7 +23,7 @@ class Singular(Executable):
     EXAMPLES::
 
         sage: from sage.features.singular import Singular
-        sage: Singular().is_present()
+        sage: Singular().is_present()                                                   # needs singular
         FeatureTestResult('singular', True)
     """
     def __init__(self):
@@ -49,7 +49,7 @@ class sage__libs__singular(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.singular import sage__libs__singular
-        sage: sage__libs__singular().is_present()                       # optional - sage.libs.singular
+        sage: sage__libs__singular().is_present()                                       # needs sage.libs.singular
         FeatureTestResult('sage.libs.singular', True)
     """
     def __init__(self):

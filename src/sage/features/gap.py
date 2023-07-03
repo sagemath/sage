@@ -70,7 +70,7 @@ class sage__libs__gap(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.gap import sage__libs__gap
-        sage: sage__libs__gap().is_present()                       # optional - sage.libs.gap
+        sage: sage__libs__gap().is_present()                                            # needs sage.libs.gap
         FeatureTestResult('sage.libs.gap', True)
     """
     def __init__(self):

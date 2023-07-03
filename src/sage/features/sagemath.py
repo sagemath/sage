@@ -339,6 +339,9 @@ class sage__libs__flint(JoinFeature):
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.flint`
     and other modules depending on FLINT and arb.
 
+    In addition to the modularization purposes that this tag serves, it also provides attribution
+    to the upstream project.
+
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__libs__flint
@@ -363,6 +366,9 @@ class sage__libs__ntl(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.ntl`
     and other modules depending on NTL and arb.
+
+    In addition to the modularization purposes that this tag serves, it also provides attribution
+    to the upstream project.
 
     EXAMPLES::
 
@@ -540,7 +546,7 @@ class sage__plot(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.plot',
                              [PythonModule('sage.plot.plot')],
-                             spkg='sagemath_symbolics', type='standard')
+                             spkg='sagemath_plot', type='standard')
 
 
 class sage__rings__complex_double(PythonModule):
@@ -561,7 +567,8 @@ class sage__rings__complex_double(PythonModule):
             sage: isinstance(sage__rings__complex_double(), sage__rings__complex_double)
             True
         """
-        PythonModule.__init__(self, 'sage.rings.complex_double', type='standard')
+        PythonModule.__init__(self, 'sage.rings.complex_double', ,
+                              spkg='sagemath_modules', type='standard')
 
 
 class sage__rings__finite_rings(JoinFeature):
@@ -647,7 +654,7 @@ class sage__rings__number_field(JoinFeature):
         sage: QQ in NumberFields()
         True
 
-    Doctests that construct algebraic number fields should be marked ``# optional - sage.rings.number_field``::
+    Doctests that construct algebraic number fields should be marked ``# needs sage.rings.number_field``::
 
         sage: # needs sage.rings.number_field
         sage: K.<cuberoot2> = NumberField(x^3 - 2)
@@ -749,7 +756,7 @@ class sage__rings__real_double(PythonModule):
 
     EXAMPLES:
 
-    The Real Double Field is basically always available, and no ``# optional`` tag is needed::
+    The Real Double Field is basically always available, and no ``# optional/needs`` tag is needed::
 
         sage: RDF.characteristic()
         0
@@ -876,7 +883,32 @@ class sage__symbolic(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.symbolic',
-                             [PythonModule('sage.symbolic.expression')])
+                             [PythonModule('sage.symbolic.expression'),
+                              PythonModule('sage.manifolds'),
+                              PythonModule('sage.calculus.calculus'),
+                              PythonModule('sage.calculus.desolvers'),
+                              PythonModule('sage.calculus.predefined'),
+                              PythonModule('sage.calculus.tests'),
+                              PythonModule('sage.calculus.var'),
+                              PythonModule('sage.geometry.riemannian_manifolds')
+                              PythonModule('sage.geometry.hyperbolic_space'),
+                              PythonModule('sage.dynamics.complex_dynamics'),
+                              PythonModule('sage.libs.pynac'),
+                              PythonModule('sage.libs.ecl'),
+                              PythonModule('sage.interfaces.fricas'),
+                              PythonModule('sage.interfaces.giac'),
+                              PythonModule('sage.interfaces.magma'),
+                              PythonModule('sage.interfaces.magma_free'),
+                              PythonModule('sage.interfaces.maple'),
+                              PythonModule('sage.interfaces.mathematica'),
+                              PythonModule('sage.interfaces.mathics'),
+                              PythonModule('sage.interfaces.maxima'),
+                              PythonModule('sage.interfaces.maxima_abstract'),
+                              PythonModule('sage.interfaces.maxima_lib'),
+                              PythonModule('sage.interfaces.qepcad'),
+                              PythonModule('sage.interfaces.sympy'),
+                              PythonModule('sage.interfaces.sympy_wrapper'),
+                             ], spkg='sagemath_symbolics', type='standard')
 
 
 def all_features():
