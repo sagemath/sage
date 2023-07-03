@@ -737,4 +737,3 @@ cdef class MatrixBackend(GenericBackend):
             return self.col_lower_bound[index]
 
 #cdef class NumpyMatrixBackend(MatrixBackend):
-
