@@ -231,12 +231,14 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             The radical is an ideal of `A`, and thus a finite
             dimensional non unital associative algebra::
 
+                sage: # optional - sage.graphs sage.modules
                 sage: from sage.categories.associative_algebras import AssociativeAlgebras
                 sage: radical in AssociativeAlgebras(QQ).WithBasis().FiniteDimensional()
                 True
                 sage: radical in Algebras(QQ)
                 False
 
+                sage: # optional - sage.graphs sage.modules
                 sage: radical.dimension()
                 2
                 sage: radical.basis()
@@ -254,7 +256,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: TestSuite(radical).run()
+                sage: TestSuite(radical).run()                                          # optional - sage.graphs sage.modules
             """
             category = AssociativeAlgebras(self.base_ring()).WithBasis().FiniteDimensional().Subobjects()
             radical = self.submodule(self.radical_basis(),
