@@ -132,8 +132,8 @@ class MatrixPlot(GraphicPrimitive):
 
         EXAMPLES::
 
-            sage: M = matrix_plot([[sin(i*j) for i in range(5)] for j in range(5)])     # optional - sage.symbolic
-            sage: isinstance(M[0]._allowed_options(), dict)                             # optional - sage.symbolic
+            sage: M = matrix_plot([[sin(i*j) for i in range(5)] for j in range(5)])     # needs sage.symbolic
+            sage: isinstance(M[0]._allowed_options(), dict)                             # needs sage.symbolic
             True
         """
         return {'cmap':"""the name of a predefined colormap,
@@ -158,8 +158,8 @@ class MatrixPlot(GraphicPrimitive):
 
         EXAMPLES::
 
-            sage: M = matrix_plot([[sin(i*j) for i in range(5)] for j in range(5)])     # optional - sage.symbolic
-            sage: m = M[0]; m                                                           # optional - sage.symbolic
+            sage: M = matrix_plot([[sin(i*j) for i in range(5)] for j in range(5)])     # needs sage.symbolic
+            sage: m = M[0]; m                                                           # needs sage.symbolic
             MatrixPlot defined by a 5 x 5 data grid
         """
         return "MatrixPlot defined by a %s x %s data grid"%(self.xy_array_row, self.xy_array_col)
@@ -412,9 +412,9 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     A custom bounding box in which to draw the matrix can be specified using
     the ``xrange`` and ``yrange`` arguments::
 
-        sage: P = matrix_plot(identity_matrix(10), xrange=(0, pi), yrange=(-pi, 0)); P  # optional - sage.symbolic
+        sage: P = matrix_plot(identity_matrix(10), xrange=(0, pi), yrange=(-pi, 0)); P  # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: P.get_minmax_data()                                                       # optional - sage.symbolic
+        sage: P.get_minmax_data()                                                       # needs sage.symbolic
         {'xmax': 3.14159..., 'xmin': 0.0, 'ymax': 0.0, 'ymin': -3.14159...}
 
     If the horizontal and vertical dimension of the image are very different,
@@ -427,13 +427,13 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     Another random plot, but over `\GF{389}`::
 
-        sage: m = random_matrix(GF(389), 10)                                            # optional - sage.rings.finite_rings
-        sage: matrix_plot(m, cmap='Oranges')                                            # optional - sage.rings.finite_rings
+        sage: m = random_matrix(GF(389), 10)                                            # needs sage.rings.finite_rings
+        sage: matrix_plot(m, cmap='Oranges')                                            # needs sage.rings.finite_rings
         Graphics object consisting of 1 graphics primitive
 
     It also works if you lift it to the polynomial ring::
 
-        sage: matrix_plot(m.change_ring(GF(389)['x']), cmap='Oranges')                  # optional - sage.rings.finite_rings
+        sage: matrix_plot(m.change_ring(GF(389)['x']), cmap='Oranges')                  # needs sage.rings.finite_rings
         Graphics object consisting of 1 graphics primitive
 
     We have several options for colorbars::
@@ -474,8 +474,8 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     converted to floating point numbers before plotting.  Thus the
     following works::
 
-        sage: b = random_matrix(GF(2), 200, sparse=True, density=0.01)                  # optional - sage.rings.finite_rings
-        sage: matrix_plot(b)
+        sage: b = random_matrix(GF(2), 200, sparse=True, density=0.01)                  # needs sage.rings.finite_rings
+        sage: matrix_plot(b)                                                            # needs sage.rings.finite_rings
         Graphics object consisting of 1 graphics primitive
 
     While this returns an error::
@@ -500,8 +500,8 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     As does plotting of NumPy arrays::
 
-        sage: import numpy                                                              # optional - numpy
-        sage: matrix_plot(numpy.random.rand(10, 10))                                    # optional - numpy
+        sage: import numpy                                                              # needs numpy
+        sage: matrix_plot(numpy.random.rand(10, 10))                                    # needs numpy
         Graphics object consisting of 1 graphics primitive
 
     A plot title can be added to the matrix plot.::
