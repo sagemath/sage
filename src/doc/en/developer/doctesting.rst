@@ -1360,7 +1360,8 @@ contain installations of built (non-editable) wheels.
 To test all modules of Sage that are installed in a virtual environment,
 use the option ``--installed`` (instead of ``--all``)::
 
-    [mkoeppe@sage sage]$ pkgs/sagemath-standard/.tox/sagepython-sagewheels-.../sage -tp4 --installed
+    [mkoeppe@sage sage]$ pkgs/sagemath-standard/.tox/sagepython-sagewheels-.../sage -t \
+                             -p4 --installed
 
 This tests against the doctests as they appear in the installed copies of the files
 (in ``site-packages/sage/...``).
@@ -1371,23 +1372,31 @@ When testing a modularized distribution package other than sagemath-standard,
 the top-level module :mod:`sage.all` is not available.  Use the option ``--environment``
 to select an appropriate top-level module::
 
-    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories --installed
+    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -t \
+                             -p4 --environment sage.all__sagemath_categories             \
+                             --installed
 
 To test the installed modules against the doctests as they appear in the source
 tree (``src/sage/...``)::
 
-    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories src/sage/structure
+    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -t \
+                             -p4 --environment sage.all__sagemath_categories             \
+                             src/sage/structure
 
 Note that testing all doctests as they appear in the source tree does not make sense
 because many of the source files may not be installed in the virtual environment.
 Use the option ``--only-lib`` to skip the source files of all Python/Cython modules
 that are not installed in the virtual environment::
 
-    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories --only-lib src/sage/schemes
+    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -t \
+                             -p4 --environment sage.all__sagemath_categories --only-lib  \
+                             src/sage/schemes
 
 This option can also be combined with ``--all``::
 
-    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -tp4 --environment sage.all__sagemath_categories --only-lib --all
+    [mkoeppe@sage sage]$ pkgs/sagemath-categories/.tox/sagepython-sagewheels-.../sage -t \
+                             -p4 --environment sage.all__sagemath_categories --only-lib  \
+                             --all
 
 
 .. _section-fixdoctests:
@@ -1405,7 +1414,35 @@ By default, ``./sage --fixdoctests`` runs the doctester and replaces the expecte
 of all examples by the actual outputs from the current version of Sage::
 
     [mkoeppe@sage sage]$ ./sage --fixdoctests \
-                                --overwrite src/sage/geometry/cone.py
+                                --overwrite src/sage/arith/weird.py
+
+For example, when applied to this Python file::
+
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: 2 + 2
+  |     5
+  |     sage: factor("91")
+  |     "7" * "13"
+  | ...
+
+the doctest fixer edits the file as follows::
+
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: 2 + 2
+  |     4
+  |     sage: factor("91")
+  |     Traceback (most recent call last):
+  |     ...
+  |     TypeError: unable to factor '91'
+  | ...
 
 As this command edits the source file, it may be a good practice to first use ``git commit``
 to save any changes made in the file.
@@ -1420,24 +1457,49 @@ neither of the two copies is run; this makes ``./sage --fixdoctests`` idempotent
 
 When exceptions are expected by an example, it is standard practice to abbreviate
 the tracebacks using ``...``.  The doctest fixer uses this abbreviation automatically
-when formatting the actual output. To disable it so that the details of the exception
+when formatting the actual output, as shown in the above example.
+To disable it so that the details of the exception
 can be inspected, use the option ``--full-tracebacks``. This is particularly useful
 in combination with ``--keep-both``::
 
     [mkoeppe@sage sage]$ ./sage --fixdoctests --keep-both --full-tracebacks \
-                                --overwrite src/sage/geometry/cone.py
+                                --overwrite src/sage/arith/weird.py
+
+This will give the following result on the above example::
+
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: 2 + 2                                 # optional - EXPECTED
+  |     5
+  |     sage: 2 + 2                                 # optional - GOT
+  |     4
+  |     sage: factor("91")                          # optional - EXPECTED
+  |     "7" * "13"
+  |     sage: factor("91")                          # optional - GOT
+  |     Traceback (most recent call last):
+  |     ...
+  |     File "<doctest...>", line 1, in <module>
+  |     factor("91")
+  |     File ".../src/sage/arith/misc.py", line 2680, in factor
+  |     raise TypeError("unable to factor {!r}".format(n))
+  |     TypeError: unable to factor '91'
+  | ...
+  | """
 
 To make sure that all doctests are updated, you may have to use the option ``--long``::
 
     [mkoeppe@sage sage]$ ./sage --fixdoctests --long \
-                                --overwrite src/sage/geometry/cone.py
+                                --overwrite src/sage/arith/weird.py
 
 If you are not comfortable with allowing this tool to edit your source files, you can use
 the option ``--no-overwrite``, which will create a new file with the extension ``.fixed``
 instead of overwriting the source file::
 
     [mkoeppe@sage sage]$ ./sage --fixdoctests \
-                                --no-overwrite src/sage/geometry/cone.py
+                                --no-overwrite src/sage/arith/weird.py
 
 
 .. _section-fixdoctests-optional-needs:
@@ -1528,3 +1590,12 @@ that uses the more specific options ``--venv`` and ``--environment``::
 
 Either way, the options ``--keep-both``, ``--full-tracebacks``, and
 ``--only-lib`` are implied.
+
+In this mode of operation, when the doctester encounters a global name
+that is unknown in its virtual environment (:class:`NameError`),
+the doctest fixer will look up the name in its own environment (typically
+a full installation of the Sage library) and add a ``# needs ...`` tag
+to the doctest.
+
+Likewise, when the doctester runs into a :class:`ModuleNotFoundError`,
+the doctest fixer will automatically add a ``# needs`` tag.
