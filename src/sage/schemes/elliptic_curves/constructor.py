@@ -423,7 +423,7 @@ class EllipticCurveFactory(UniqueFactory):
             x = x.lhs() - x.rhs()
 
         if isinstance(parent(x), sage.rings.abc.SymbolicRing):
-            x = x._polynomial_(rings.QQ['x', 'y'])
+            x = x._polynomial_(QQ['x', 'y'])
 
         if isinstance(x, MPolynomial):
             if y is None:
