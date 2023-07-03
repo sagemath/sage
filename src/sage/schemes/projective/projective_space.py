@@ -1109,9 +1109,12 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<z,w> = ProjectiveSpace(ZZ, 1) # TODO this is not implemented yet
+            sage: P.<w,z> = ProjectiveSpace(ZZ, 1)
             sage: sorted(list(P.points_of_bounded_height(bound=2)))
-            []
+            [(-2 : -1), (-2 : 1), (-1 : -2), (-1 : -1),
+             (-1 : 0), (-1 : 1), (-1 : 2), (0 : -1),
+             (0 : 1), (1 : -2), (1 : -1), (1 : 0),
+             (1 : 1), (1 : 2), (2 : -1), (2 : 1)]
         """
         from sage.schemes.projective.proj_bdd_height import (
             ZZ_points_of_bounded_height,
