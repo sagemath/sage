@@ -49,7 +49,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p = get_solver(solver = "Matrix")                 
 
 """
-    
+
         #Sage Matrix and Vector instead of Python lists
         self.objective_function = Vector(QQ, [])
         self.G_matrix = Matrix(QQ, [])
@@ -736,5 +736,5 @@ cdef class MatrixBackend(GenericBackend):
         else:
             return self.col_lower_bound[index]
 
-cdef class NumpyMatrixBackend(GenericBackend):
+#cdef class NumpyMatrixBackend(MatrixBackend):
 
