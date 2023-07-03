@@ -35,8 +35,49 @@ from sage.rings.integer import Integer
 from sage.geometry.polyhedron.constructor import Polyhedron
 
 
-def ZZ_points_of_bounded_height(dim, bound, normalize=False):
-    yield []
+def ZZ_points_of_bounded_height(dim, bound):
+    r"""
+    Return an iterator of the points in ``self`` of absolute multiplicative
+    height of at most ``bound`` in the rational field.
+
+    INPUT:
+
+    - ``dim`` -- a positive integer
+
+    - ``bound`` -- a positive integer
+
+    OUTPUT:
+
+    - an iterator of points of bounded height
+
+    EXAMPLES:
+
+        sage: from sage.schemes.projective.proj_bdd_height import ZZ_points_of_bounded_height
+        sage: sorted(list(ZZ_points_of_bounded_height(1, 1)))
+        [(-1 : -1), (-1 : 0), (-1 : 1), (0 : -1), (0 : 1), (1 : -1), (1 : 0), (1 : 1)]
+        sage: len(list(ZZ_points_of_bounded_height(1, 5)))
+        80
+        sage: sorted(list(ZZ_points_of_bounded_height(1, 2)))
+        [(-2 : -1), (-2 : 1), (-1 : -2), (-1 : -1),
+         (-1 : 0), (-1 : 1), (-1 : 2), (0 : -1),
+         (0 : 1), (1 : -2), (1 : -1), (1 : 0),
+         (1 : 1), (1 : 2), (2 : -1), (2 : 1)]
+
+    There are no points of negative height::
+
+        sage: from sage.schemes.projective.proj_bdd_height import ZZ_points_of_bounded_height
+        sage: list(ZZ_points_of_bounded_height(1, -3))
+        []
+    """
+    if bound < 1:
+        return iter(set([]))
+
+    PN = ProjectiveSpace(ZZ, dim)
+
+    for i in range(-bound, bound + 1):
+        for j in range(-bound, bound + 1):
+            if gcd(i, j) == 1:
+                yield PN((i, j))
 
 
 def QQ_points_of_bounded_height(dim, bound, normalize=False):
@@ -220,18 +261,12 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53, normalize=False):
 
     ::
 
-        sage: P.<z,w> = ProjectiveSpace(ZZ, 1)
-        sage: sorted(list(P.points_of_bounded_height(bound=2)))
-        []
-
-    ::
-
         sage: R.<x> = QQ[]
         sage: K.<a> = NumberField(3*x^2 + 1)
         sage: O = K.maximal_order()
         sage: P.<z,w> = ProjectiveSpace(O, 1)
-        sage: sorted(list(P.points_of_bounded_height(bound=2)))
-        []
+        sage: len(list(P.points_of_bounded_height(bound=2)))
+        44
     """
     if bound < 1:
         return iter([])
