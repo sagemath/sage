@@ -124,6 +124,14 @@ def process_block(block, src_in_lines, file_optional_tags):
     filename = m.group(1)
     first_line_num = line_num = int(m.group(2))  # 1-based line number of the first line of the example
 
+    if m := re.search(r"using.*block-scoped tag.*'(sage: .*)'.*to avoid repeating the tag", block):
+        indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
+        src_in_lines[line_num - 1] = ' ' * indent + m.group(1) + '\n' + src_in_lines[line_num - 1]
+
+    if m := re.search(r"updating.*block-scoped tag.*'sage: (.*)'.*to avoid repeating the tag", block):
+        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
+                                                                tags=parse_optional_tags('# ' + m.group(1)))
+
     if m := re.search(r"referenced here was set only in doctest marked '# (optional|needs)[-: ]*([^;']*)", block):
         optional = m.group(2).split()
         if src_in_lines[first_line_num - 1].strip() in ['"""', "'''"]:
@@ -330,7 +338,7 @@ for input, output in zip(inputs, outputs):
         src_in_lines = src_in.splitlines()
         shallow_copy_of_src_in_lines = list(src_in_lines)
 
-        # First remove duplicate optional tags and rewrite all '# optional' that should be '# needs'
+        # Emove duplicate optional tags and rewrite all '# optional' that should be '# needs'
         file_optional_tags = {}
         persistent_optional_tags = {}
         for i, line in enumerate(src_in_lines):
