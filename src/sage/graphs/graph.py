@@ -8910,7 +8910,7 @@ class Graph(GenericGraph):
         if not self:
             yield []
             return
-        if self.order() % 2 or any(len(cc) % 2 for cc in self.connected_components()):
+        if self.order() % 2 or any(len(cc) % 2 for cc in self.connected_components(sort=False)):
             return
 
         def rec(G):
@@ -9164,7 +9164,7 @@ class Graph(GenericGraph):
 
         self._scream_if_not_simple()
         if not self.is_connected():
-            connected_i = self.connected_component_containing_vertex(i)
+            connected_i = self.connected_component_containing_vertex(i, sort=False)
             if j in connected_i:
                 component = self.subgraph(connected_i)
                 return component.effective_resistance(i, j)

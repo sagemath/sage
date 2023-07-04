@@ -317,7 +317,7 @@ class Ear():
                                in g.degree_iterator(labels=True)
                                if degree == 2]
         subgraph = g.subgraph(degree_two_vertices)
-        for component in subgraph.connected_components():
+        for component in subgraph.connected_components(sort=False):
             edges = g.edges_incident(vertices=component, labels=True)
             all_vertices = sorted(set(sum([e[:2] for e in edges], ())))
             if len(all_vertices) < 3:

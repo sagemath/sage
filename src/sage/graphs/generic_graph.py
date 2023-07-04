@@ -6527,7 +6527,7 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 if self.is_planar():
                     # We use Euler's formula: V-E+F-C=1
-                    C = len(self.connected_components())
+                    C = self.connected_components_number()
                     return self.size() - self.order() + C + 1
                 else:
                     raise ValueError("no embedding is provided and the graph is not planar")
@@ -6734,7 +6734,7 @@ class GenericGraph(GenericGraph_pyx):
 
         # Can the problem be solved ? Are all the vertices in the same
         # connected component ?
-        cc = g.connected_component_containing_vertex(vertices[0])
+        cc = g.connected_component_containing_vertex(vertices[0], sort=False)
         if any(v not in cc for v in vertices):
             from sage.categories.sets_cat import EmptySetError
             raise EmptySetError("the given vertices do not all belong to the "
@@ -14752,7 +14752,7 @@ class GenericGraph(GenericGraph_pyx):
         a special vertex `-1` is a ''star-shaped'' Gallai tree::
 
             sage: g = 8 * graphs.CompleteGraph(6)
-            sage: g.add_edges([(-1, c[0]) for c in g.connected_components()])
+            sage: g.add_edges([(-1, c[0]) for c in g.connected_components(sort=False)])
             sage: g.is_gallai_tree()
             True
 
@@ -19367,7 +19367,7 @@ class GenericGraph(GenericGraph_pyx):
                 return Graph(self.min_spanning_tree(weight_function=lambda e: 1))
             else:
                 G = Graph(list(self))
-                for cc in self.connected_components():
+                for cc in self.connected_components(sort=False):
                     if len(cc) > 1:
                         edges = self.subgraph(cc).min_spanning_tree(weight_function=lambda e: 1)
                         G.add_edges(edges)
