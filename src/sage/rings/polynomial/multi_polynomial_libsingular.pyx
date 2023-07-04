@@ -240,7 +240,8 @@ from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.matrix.constructor import matrix as MatrixConstructor
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from _operator import matmul
+from operator import matmul
+from sage.groups.matrix_gps.group_element_gap import MatrixGroupElement_gap
 
 from sage.structure.element import coerce_binop
 
@@ -2118,9 +2119,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if sage_res._parent is not res_parent:
             sage_res = res_parent(sage_res)
         return sage_res
-    
-    def _get_action_(self, G):
-        if isinstance(G, (MatrixSpace, MatrixGroup)) and self.base_ring().has_coerce_map_from(G.base_ring()):
+
+    cpdef _get_action_(self, G, op, bint self_on_left):
+        print("_get_action_ called!")
+        if isinstance(G, (MatrixSpace, MatrixGroupElement_gap)) and self.base_ring().has_coerce_map_from(G.base_ring()) and op==matmul:            
             return MatrixPolynomialAction(G, self)
         return super()
 
