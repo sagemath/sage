@@ -456,7 +456,7 @@ class RecognizableSeries(ModuleElement):
             return m
 
         if isinstance(mu, dict):
-            mu = dict((a, immutable(M)) for a, M in mu.items())
+            mu = {a: immutable(M) for a, M in mu.items()}
         mu = Family(mu)
 
         if not mu.is_finite():
@@ -1284,7 +1284,7 @@ class RecognizableSeries(ModuleElement):
 
         result = P.element_class(
             P,
-            dict((a, self.mu[a].block_sum(other.mu[a])) for a in P.alphabet()),
+            {a: self.mu[a].block_sum(other.mu[a]) for a in P.alphabet()},
             vector(tuple(self.left) + tuple(other.left)),
             vector(tuple(self.right) + tuple(other.right)))
 
@@ -1541,8 +1541,7 @@ class RecognizableSeries(ModuleElement):
             return T
         result = P.element_class(
             P,
-            dict((a, tensor_product(self.mu[a], other.mu[a]))
-                 for a in P.alphabet()),
+            {a: tensor_product(self.mu[a], other.mu[a]) for a in P.alphabet()},
             vector(tensor_product(Matrix(self.left), Matrix(other.left))),
             vector(tensor_product(Matrix(self.right), Matrix(other.right))))
 
@@ -2012,7 +2011,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         from sage.modules.free_module_element import vector
 
         one = self.coefficient_ring()(1)
-        return self(dict((a, Matrix([[one]])) for a in self.alphabet()),
+        return self({a: Matrix([[one]]) for a in self.alphabet()},
                     vector([one]), vector([one]))
 
     def _element_constructor_(self, data,
