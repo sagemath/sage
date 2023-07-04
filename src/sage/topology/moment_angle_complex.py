@@ -71,12 +71,10 @@ from itertools import combinations
 # - and a lot more ...
 # - add literature to bibliography?
 # - golod decomposition
-# - trivial Massey product
+# - cohomology ring (Buchstaber 154, 155) -- consequence of hochter's formula
+# - polyhedral products and real moment-angle complexes?
 
 def union(c1, c2):
-    embedded_left = len(tuple(c1.maximal_cells()[0]))
-    embedded_right = len(tuple(c2.maximal_cells()[0]))
-    zero = [0] * max(embedded_left, embedded_right)
     facets = []
     for f in c1.maximal_cells():
         facets.append(f)
@@ -89,15 +87,15 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
     Define a moment-angle complex.
 
     :param simplicial_complex: the corresponding simplicial complex
-    :type simplicial_complex: a simplicial complex
+    :type simplicial_complex: a simplicial complex, or a list of facets that defines a simplicial complex
     :param construct: see below
     :type construct: boolean; optional, default ``False``
     :return: the associated moment-angle complex
 
     ``simplicial_complex`` must be an intance of
-    :class:`~sage.topology.simplicial_complex.SimplicialComplex`, which
-    represents the simplicial complex whose moment-angle complex we
-    wish to create.
+    :class:`~sage.topology.simplicial_complex.SimplicialComplex` or a
+    list of facets, which represents the simplicial complex whose
+    moment-angle complex we wish to create.
 
     If ``construct`` is ``True``, we also explicitly compute the
     moment-angle complex, with the construction described above.
@@ -116,7 +114,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
                  simplicial_complex,
                  construct=False):
         """
-        Define a moment-angle complex.  See :class:`MomentAngleComplex`
+        Define a moment-angle complex. See :class:`MomentAngleComplex`
         for full documentation.
 
         EXAMPLES::
@@ -210,6 +208,25 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
             self._moment_angle_complex = union(self._moment_angle_complex, x)
 
         self._constructed = True
+
+    def components(self):
+        """
+        Print the components (disks and spheres) of ``self``.
+
+        Here the components are represented by ``D^2`` (disk) and
+        ``S^1`` (sphere).
+
+        EXAMPLES::
+
+        <Lots and lots of examples>
+        """
+
+        for component in self._components:
+            print(component, end=": ")
+            for x in self._components.get(component):
+                prnt = "D^2" if x == Simplex(2) else "S^1"
+                print(prnt, end=" ")
+            print()
 
     def homology(self, dim=None, base_ring=ZZ, subcomplex=None,
                  generators=False, cohomology=False, algorithm='pari',
