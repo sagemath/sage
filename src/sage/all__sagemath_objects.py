@@ -13,18 +13,16 @@ from time import sleep
 # This import also sets up the interrupt handler
 from cysignals.signals import (AlarmInterrupt, SignalError,
         sig_on_reset as sig_on_count)
+from cysignals.alarm import alarm, cancel_alarm
 
+# Full and final
+from sage.cpython.all import *
+from sage.structure.all import *
 
-from sage.misc.all__sagemath_objects       import *
-from sage.structure.all  import *
 # Partial
 from sage.arith.all__sagemath_objects import *
 from sage.categories.all__sagemath_objects import *
-
-from sage.cpython.all    import *
-
-from cysignals.alarm import alarm, cancel_alarm
-
+from sage.misc.all__sagemath_objects import *
 
 true = True
 false = False
