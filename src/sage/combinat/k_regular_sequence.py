@@ -918,6 +918,39 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         except OverflowError:
             raise ValueError('value {} of index is negative'.format(n)) from None
 
+    @cached_method
+    def one(self):
+        r"""
+        Return the one element of this :class:`kRegularSequenceSpace`,
+        i.e. the unique neutral element for `*` and also
+        the embedding of the unique neutral element for `*` in the
+        coefficient ring.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: O = Seq2.one(); O
+            2-regular sequence 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+            sage: O.linear_representation()
+            ((1), Finite family {0: [1], 1: [0]}, (1))
+
+        TESTS:
+
+            sage: Seq2.one() is Seq2.one()
+            True
+        """
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+
+        R = self.coefficient_ring()
+        one = R.one()
+        zero = R.zero()
+        return self.element_class(self,
+                                  [Matrix([[one]])]
+                                  + (self.k-1)*[Matrix([[zero]])],
+                                  vector([one]),
+                                  vector([one]))
+
     def from_recurrence(self, *args, **kwds):
         r"""
         Construct the unique `k`-regular sequence which fulfills the given
