@@ -263,7 +263,7 @@ def list_of_subfunctions(root, only_local_functions=True):
             return False
         return True
 
-    functions =  {getattr(root,name):name for name,f in root.__dict__.items() if
+    functions = {getattr(root,name):name for name,f in root.__dict__.items() if
                   (not name.startswith('_')          and  # private functions
                    can_import(f)                     and  # unresolved lazy imports
                    not hasattr(f,'issue_number')     and  # deprecated functions
