@@ -9,7 +9,6 @@ from sage.misc.all__sagemath_modules import *
 from sage.rings.all__sagemath_modules import *
 from sage.combinat.all__sagemath_modules import *
 from sage.algebras.all__sagemath_modules import *
-from sage.arith.all import *
 from sage.modules.all import *
 from sage.matrix.all import *
 from sage.groups.all__sagemath_modules import *
