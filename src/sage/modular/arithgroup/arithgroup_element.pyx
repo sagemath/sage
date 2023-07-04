@@ -21,7 +21,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense as MatrixClass
 # FIXME: This was Matrix_integer_dense; changed for modularization to avoid flint dep
 
-M2Z = MatrixSpace(ZZ, 2)
+M2Z = MatrixSpace(ZZ, 2, implementation='generic')
 
 
 cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
@@ -40,12 +40,11 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         - ``parent`` -- an arithmetic subgroup
 
-        - `x` -- data defining a 2x2 matrix over ZZ
-                 which lives in parent
+        - ``x`` -- data defining a 2x2 matrix over ZZ
+          which lives in ``parent``
 
         - ``check`` -- if ``True``, check that parent is an arithmetic
-                       subgroup, and that `x` defines a matrix of
-                       determinant `1`.
+          subgroup, and that `x` defines a matrix of determinant `1`.
 
         We tend not to create elements of arithmetic subgroups that are not
         SL2Z, in order to avoid coercion issues (that is, the other arithmetic
