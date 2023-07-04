@@ -237,6 +237,21 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
         EXAMPLES::
 
         """
-        # create the subgraphs and use subgraph_search on the
-        # graph obtained from the 1-skeleton of the simplicial_complex
-        raise NotImplementedError
+        from sage.graphs.graph import Graph
+        from sage.graphs.generic_graph import GenericGraph
+
+        one_skeleton = self._simplicial_complex.faces()[1]
+        G = Graph([tuple(f) for f in one_skeleton])
+
+        obstruction_graphs = [
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (2, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (4, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (4, 5), (1, 6), (2, 6), (4, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (1, 6), (4, 5)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (1, 6), (4, 5), (4, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (4, 5), (4, 6)]),
+            Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (4, 6)]),
+        ]
+
+        return not any(G.subgraph_search(g) is not None for g in obstruction_graphs)
