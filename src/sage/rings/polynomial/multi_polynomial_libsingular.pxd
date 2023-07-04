@@ -15,6 +15,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
     cpdef is_constant(self)
     cpdef _homogenize(self, int var)
     cpdef MPolynomial_libsingular _new_constant_poly(self, x, MPolynomialRing_libsingular P)
+    cpdef _get_action_(self, G, op, bint self_on_left)
     cpdef long number_of_terms(self)
 
 cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
