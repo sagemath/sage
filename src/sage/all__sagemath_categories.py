@@ -12,6 +12,7 @@ from sage.sets.all__sagemath_categories import *
 from sage.combinat.all__sagemath_categories import *
 from sage.arith.all import *
 from sage.data_structures.all import *
+from sage.ext.all__sagemath_categories import *
 from sage.groups.all__sagemath_categories import *
 from sage.interfaces.all import *
 from sage.misc.all__sagemath_categories import *
@@ -23,5 +24,3 @@ from sage.functions.all import *
 
 from sage.parallel.all import *
 
-from sage.ext.fast_callable  import fast_callable
-from sage.ext.fast_eval      import fast_float
