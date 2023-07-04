@@ -2,12 +2,12 @@ from sage.ext.mod_int cimport *
 from sage.libs.gmp.types cimport mpz_t
 
 cdef class MultiModularBasis_base():
-    cdef int      n
+    cdef int n
     cdef mod_int* moduli
     cdef mpz_t* partial_products
-    cdef mod_int* C # precomputed values for CRT
-    cdef mpz_t    product
-    cdef mpz_t    half_product
+    cdef mod_int* C  # precomputed values for CRT
+    cdef mpz_t product
+    cdef mpz_t half_product
     cdef unsigned long _l_bound
     cdef unsigned long _u_bound
     cdef unsigned long _num_primes
