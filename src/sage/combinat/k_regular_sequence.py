@@ -1425,7 +1425,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: import logging
-            sage: logging.basicConfig(level=logging.INFO)
+            sage: logging.getLogger().setLevel(logging.INFO)
             sage: S1 = Seq2.guess(s); S1
             INFO:...:including f_{1*m+0}
             INFO:...:including f_{2*m+1}
@@ -1500,6 +1500,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                             1: [0 1]
                                [0 1]},
              (0, 1))
+            sage: logging.getLogger().setLevel(logging.WARN)
 
         The following linear representation of `S` is chosen bad (is
         degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
@@ -1648,7 +1649,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         ::
 
-            sage: A = Seq2((Matrix([[1, 1], [1, 1]]), Matrix([[1, 1], [1, 1]])), left=(1, 1), right=(1, 1))
+            sage: A = Seq2((Matrix([[1, 1], [1, 1]]), Matrix([[1, 1], [1, 1]])),
+            ....:     left=(1, 1), right=(1, 1),
+            ....:     allow_degenerated_sequence=True)
             sage: Seq2.guess(lambda n: n, sequence=A, n_verify=5)
             Traceback (most recent call last):
             ...
