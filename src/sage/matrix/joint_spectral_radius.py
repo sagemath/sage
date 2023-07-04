@@ -227,7 +227,7 @@ def joint_spectral_radius(S, delta=None, norm=None,
             break
 
     else:
-        logger.warn('Stopping since maximum number of iterations reached.')
+        logger.warning('Stopping since maximum number of iterations reached.')
 
     logger.info('lower bound: %s', alpha)
     logger.info('upper bound: %s', beta)
