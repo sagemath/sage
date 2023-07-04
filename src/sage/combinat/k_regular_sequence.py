@@ -674,6 +674,91 @@ class kRegularSequence(RecognizableSeries):
         return self.subsequence(1, {1: 1, 0: -1}, **kwds)
 
     @minimize_result
+    def _mul_(self, other):
+        r"""
+        Return the product of this `k`-regular sequence with ``other``,
+        where the multiplication is convolution.
+
+        INPUT:
+
+        - ``other`` -- a :class:`kRegularSequence`
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: E
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+            sage: E * E
+            2-regular sequence 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, ...
+
+            sage: o = Seq2.one_hadamard()
+            sage: E * o
+            2-regular sequence 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, ...
+            sage: E * o == E.partial_sums(include_n=True)
+            True
+            sage: E * o == o * E
+            True
+        """
+        from sage.arith.srange import srange
+        from sage.matrix.constructor import Matrix
+        from sage.matrix.special import zero_matrix
+        from sage.modules.free_module_element import vector
+
+        P = self.parent()
+        k = P.k
+
+        def tensor_product(left, right):
+            T = left.tensor_product(right)
+            T.subdivide()
+            return T
+
+        matrices_0 = {r: sum(tensor_product(self.mu[s], other.mu[r-s])
+                             for s in srange(0, r+1))
+                      for r in P.alphabet()}
+        matrices_1 = {r: sum(tensor_product(self.mu[s], other.mu[k+r-s])
+                             for s in srange(r+1, k))
+                      for r in P.alphabet()}
+        left = vector(tensor_product(Matrix(self.left), Matrix(other.left)))
+        right = vector(tensor_product(Matrix(self.right), Matrix(other.right)))
+
+        def linear_representation_morphism_recurrence_order_1(A, B):
+            r"""
+                Return the morphism of a linear representation
+                for the sequence `z_n` satisfying
+                `z_{2n+r} = A_r z_n + B_r z_{n-1}`.
+            """
+            Z = zero_matrix(A[0].dimensions()[0])
+
+            def blocks(r):
+                upper = list([A[s], B[s], Z]
+                             for s in reversed(srange(max(0, r-2), r+1)))
+                lower = list([Z, A[s], B[s]]
+                             for s in reversed(srange(k-3+len(upper), k)))
+                return upper + lower
+
+            return {r: Matrix.block(blocks(r)) for r in P.alphabet()}
+
+        result = P.element_class(
+            P,
+            linear_representation_morphism_recurrence_order_1(matrices_0,
+                                                              matrices_1),
+            vector(list(left) + (2*len(list(left)))*[0]),
+            vector(list(right) + (2*len(list(right)))*[0]))
+
+        return result
+
+    @minimize_result
     def partial_sums(self, include_n=False):
         r"""
         Return the sequence of partial sums of this
