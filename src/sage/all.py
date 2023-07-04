@@ -78,10 +78,10 @@ from sage.rings.all      import *
 from sage.algebras.all   import *
 
 from sage.all__sagemath_schemes import *
+from sage.all__sagemath_combinat import *
 from sage.all__sagemath_graphs import *
 from sage.all__sagemath_groups import *
 from sage.all__sagemath_polyhedra import *
-from sage.all__sagemath_combinat import *       # Must appear after other all__... imports so that sage.combinat.all.Posets wins over sage.categories.all.Posets
 
 from sage.databases.all  import *
 from sage.sets.all       import *
@@ -127,6 +127,9 @@ try:
     from sage.geometry.riemannian_manifolds.all   import *
 except ImportError:
     pass
+
+from sage.combinat.all import Posets  # so that sage.combinat.all.Posets wins over sage.categories.all.Posets
+
 
 ###########################################################
 #### WARNING:

@@ -12,7 +12,7 @@ import sage.rings.abc
 from sage.misc.lazy_import import lazy_import
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
-lazy_import('sage.rings.padics.factory', 'Qp')
+lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
 
 from . import hyperelliptic_generic
 

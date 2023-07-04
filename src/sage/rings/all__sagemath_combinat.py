@@ -1,3 +1,5 @@
+from .all__sagemath_categories import *
+
 from sage.misc.lazy_import import lazy_import
 
 # Lazy Laurent series ring

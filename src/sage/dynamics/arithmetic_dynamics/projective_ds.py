@@ -112,11 +112,15 @@ from sage.schemes.projective.projective_space import ProjectiveSpace, is_Project
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
 
-lazy_import('sage.libs.pari.all', 'PariError')
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.rings.qqbar', ['QQbar', 'number_field_elements_from_algebraics'])
+
+try:
+    from sage.libs.pari.all import PariError
+except ImportError:
+    PariError = ()
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,

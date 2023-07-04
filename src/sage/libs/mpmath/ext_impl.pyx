@@ -7,12 +7,12 @@ TESTS:
 
 See if :trac:`15118` is fixed::
 
-    sage: import sage.libs.mpmath
-    sage: sage.libs.mpmath.all.mpf(0)^(-2)
+    sage: import sage.libs.mpmath.all as mpmath
+    sage: mpmath.mpf(0)^(-2)
     Traceback (most recent call last):
     ...
     ZeroDivisionError
-    sage: sage.libs.mpmath.all.zeta(2r, -3r)
+    sage: mpmath.zeta(2r, -3r)
     Traceback (most recent call last):
     ...
     ZeroDivisionError
