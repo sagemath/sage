@@ -14,6 +14,7 @@ AUTHORS::
   situations when either the expected output or computed output are empty.
   Added doctest to sage.tests.cmdline
 """
+import itertools
 import os
 import re
 import shlex
@@ -24,7 +25,7 @@ from argparse import ArgumentParser, FileType
 from pathlib import Path
 
 from sage.doctest.control import skipfile
-from sage.doctest.parsing import parse_optional_tags, unparse_optional_tags, update_optional_tags
+from sage.doctest.parsing import parse_file_optional_tags, parse_optional_tags, unparse_optional_tags, update_optional_tags
 from sage.env import SAGE_ROOT
 from sage.features import PythonModule
 from sage.features.all import all_features, module_feature, name_feature
@@ -338,8 +339,17 @@ for input, output in zip(inputs, outputs):
         src_in_lines = src_in.splitlines()
         shallow_copy_of_src_in_lines = list(src_in_lines)
 
-        # Emove duplicate optional tags and rewrite all '# optional' that should be '# needs'
-        file_optional_tags = {}
+        file_optional_tags = set(parse_file_optional_tags(enumerate(src_in_lines)))
+
+        for block in doctests:
+            process_block(block, src_in_lines, file_optional_tags)
+
+        # Now source line numbers do not matter any more, and lines can be real lines again
+        src_in_lines = list(itertools.chain.from_iterable(
+            [] if line is None else [''] if not line else line.splitlines()
+            for line in src_in_lines))
+
+        # Remove duplicate optional tags and rewrite all '# optional' that should be '# needs'
         persistent_optional_tags = {}
         for i, line in enumerate(src_in_lines):
             if m := re.match(' *sage: *(.*)#', line):
@@ -359,21 +369,8 @@ for input, output in zip(inputs, outputs):
                                                and tag not in persistent_optional_tags)}
                     line = update_optional_tags(line, tags=tags, force_rewrite='standard')
                 src_in_lines[i] = line
-            elif m := re.match('([#.]* *sage[.]doctest:[ #]*)([^(]*)(.*)', line):
-                # file-scoped annotation
-                prefix = m.group(1)
-                tags = parse_optional_tags('#' + m.group(2))
-                suffix = m.group(3)
-                file_optional_tags.update(tags)
-                line = unparse_optional_tags(tags, prefix='')
-                if suffix:
-                    suffix = ' ' + suffix
-                src_in_lines[i] = prefix + line + suffix
             elif line.strip() in ['', '"""', "'''"]:    # Blank line or end of docstring
                 persistent_optional_tags = {}
-
-        for block in doctests:
-            process_block(block, src_in_lines, file_optional_tags)
 
         if src_in_lines != shallow_copy_of_src_in_lines:
             with open(output, 'w') as test_output:
