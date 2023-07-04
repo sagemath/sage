@@ -19,6 +19,7 @@ from sage.functions.log import exp
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import vector
 from sage.rings.big_oh import O
 from sage.rings.infinity import infinity
