@@ -748,18 +748,18 @@ class kRegularSequence(RecognizableSeries):
         left = vector(tensor_product(Matrix(self.left), Matrix(other.left)))
         right = vector(tensor_product(Matrix(self.right), Matrix(other.right)))
 
-        def linear_representation_morphism_recurrence_order_1(A, B):
+        def linear_representation_morphism_recurrence_order_1(C, D):
             r"""
                 Return the morphism of a linear representation
                 for the sequence `z_n` satisfying
-                `z_{2n+r} = A_r z_n + B_r z_{n-1}`.
+                `z_{kn+r} = C_r z_n + D_r z_{n-1}`.
             """
-            Z = zero_matrix(A[0].dimensions()[0])
+            Z = zero_matrix(C[0].dimensions()[0])
 
             def blocks(r):
-                upper = list([A[s], B[s], Z]
+                upper = list([C[s], D[s], Z]
                              for s in reversed(srange(max(0, r-2), r+1)))
-                lower = list([Z, A[s], B[s]]
+                lower = list([Z, C[s], D[s]]
                              for s in reversed(srange(k-3+len(upper), k)))
                 return upper + lower
 
