@@ -17,13 +17,11 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import divisors
-from sage.functions.gamma import psi1
-from sage.functions.log import exp
-from sage.functions.trig import sec
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
