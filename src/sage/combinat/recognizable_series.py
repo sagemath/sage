@@ -1955,6 +1955,37 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             vector([]), vector([]))
 
     @cached_method
+    def one(self):
+        r"""
+        Return the one element of this :class:`RecognizableSeriesSpace`,
+        i.e. the embedding of the unique neutral element for `*` in the
+        coefficient ring.
+
+        EXAMPLES::
+
+            sage: Rec = RecognizableSeriesSpace(ZZ, [0, 1])
+            sage: O = Rec.one(); O
+            [] + ...
+            sage: O.linear_representation()
+            ((1), Finite family {0: [0], 1: [0]}, (1))
+
+        TESTS:
+
+            sage: Rec.one() is Rec.one()
+            True
+        """
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+
+        R = self.coefficient_ring()
+        one = R.one()
+        zero = R.zero()
+        return self.element_class(self,
+                                  len(self.alphabet())*[Matrix([[zero]])],
+                                  vector([one]),
+                                  vector([one]))
+
+    @cached_method
     def one_hadamard(self):
         r"""
         Return the identity with respect to the
@@ -2008,6 +2039,19 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: Rec(S) is S
             True
 
+        ::
+
+            sage: A = Rec(42); A
+            42*[] + ...
+            sage: A.linear_representation()
+            ((42), Finite family {0: [0], 1: [0]}, (1))
+            sage: Z = Rec(0); Z
+            0
+            sage: Z.linear_representation()
+            ((), Finite family {0: [], 1: []}, ())
+
+        ::
+
             sage: Rec((M0, M1))
             Traceback (most recent call last):
             ...
@@ -2033,6 +2077,10 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         elif isinstance(data, RecognizableSeries):
             element = self.element_class(self, data.mu, data.left, data.right)
+
+        elif data in self.coefficient_ring():
+            c = self.coefficient_ring()(data)
+            return c * self.one()
 
         else:
             mu = data
