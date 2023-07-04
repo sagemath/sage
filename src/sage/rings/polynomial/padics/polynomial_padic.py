@@ -21,9 +21,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six.moves import range
-from builtins import zip
 import re
 
 from sage.rings.padics.precision_error import PrecisionError
@@ -254,7 +251,6 @@ class Polynomial_padic(Polynomial):
                 "p-adic factorization not well-defined since the discriminant is zero up to the requestion p-adic precision")
         G = self_normal.__pari__().factorpadic(self.base_ring().prime(), absprec)
         return _pari_padic_factorization_to_sage(G, self.parent(), self.leading_coefficient())
-
 
     def root_field(self, names, check_irreducible=True, **kwds):
         """

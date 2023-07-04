@@ -31,11 +31,11 @@ The problem
 
 Consider the following hierarchy of classes::
 
-    sage: class A1(object): pass
-    sage: class A2(object):
+    sage: class A1(): pass
+    sage: class A2():
     ....:     def foo(self): return 2
-    sage: class A3(object): pass
-    sage: class A4(object):
+    sage: class A3(): pass
+    sage: class A4():
     ....:     def foo(self): return 4
     sage: class A5(A2, A1):
     ....:     def foo(self): return 5
@@ -70,13 +70,7 @@ algorithm easily fails if the order of the bases is not chosen
 consistently (here for ``A2`` w.r.t. ``A1``)::
 
     sage: class B6(A1,A2): pass
-    sage: class B7(B6,A5): pass  # py2
-    Traceback (most recent call last):
-    ...
-    TypeError: Error when calling the metaclass bases
-        Cannot create a consistent method resolution
-    order (MRO) for bases ...
-    sage: class B7(B6,A5): pass  # py3
+    sage: class B7(B6,A5): pass
     Traceback (most recent call last):
     ...
     TypeError: Cannot create a consistent method resolution
@@ -219,7 +213,7 @@ Using the standard ``C3`` algorithm fails::
     sage: x.mro_standard
     Traceback (most recent call last):
     ...
-    ValueError: Can not merge the items 3, 3, 2.
+    ValueError: Cannot merge the items 3, 3, 2.
 
 We also get a failure when we relabel `P` according to another linear
 extension. For easy relabelling, we first need to set an appropriate
@@ -239,7 +233,7 @@ Now we play with a specific linear extension of `P`::
     sage: x.mro_standard
     Traceback (most recent call last):
     ...
-    ValueError: Can not merge the items 2, 3, 3.
+    ValueError: Cannot merge the items 2, 3, 3.
 
 On the other hand, both the instrumented ``C3`` algorithm, and the
 controlled ``C3`` algorithm give the desired MRO::
@@ -331,9 +325,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    94
+    114
     sage: x.all_bases_controlled_len()
-    101
+    117
 
 The following can be used to search through the Sage named categories
 for any that requires the addition of some bases. The output may
@@ -351,19 +345,18 @@ doctest::
      Category of finite dimensional hopf algebras with basis over Rational Field,
      Category of finite enumerated permutation groups,
      Category of finite weyl groups,
-     Category of group algebras over Rational Field,
      Category of number fields]
 
 AUTHOR:
 
 - Nicolas M. Thiery (2012-09): initial version.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012-2013  Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.cachefunc import cached_function, cached_method
@@ -658,7 +651,7 @@ def C3_merge(list lists):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Can not merge the items %s."%', '.join([repr(head) for head in heads]))
+            raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
 
 cpdef identity(x):
@@ -882,12 +875,14 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                 if O_key in tailsets[j]:
                     cont = True
                     break
-            if cont: continue
+            if cont:
+                continue
             for j from i<j<nbheads:
                 if O_key in tailsets[j]:
                     cont = True
                     break
-            if cont: continue
+            if cont:
+                continue
 
             # The plain C3 algorithm would have chosen O as next item!
             if max_bad is None or O_key > key(max_bad):
@@ -1076,6 +1071,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             succ = succ.neighbors_out
         if key is None:
             key = identity
+
         @cached_function
         def f(x):
             return typecall(cls, x, [f(y) for y in succ(x)], key, f)

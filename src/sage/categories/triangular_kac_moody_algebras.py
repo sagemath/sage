@@ -6,21 +6,21 @@ AUTHORS:
 - Travis Scrimshaw (07-15-2017): Initial implementation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_types import Category_over_base_ring
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.kac_moody_algebras import KacMoodyAlgebras
+
 
 class TriangularKacMoodyAlgebras(Category_over_base_ring):
     """
@@ -222,7 +222,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             return VermaModule(self, la, basis_key=basis_key, **kwds)
 
     class ElementMethods:
-       def part(self):
+        def part(self):
             """
             Return whether the element ``v`` is in the lower,
             zero, or upper part of ``self``.
@@ -259,4 +259,3 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             if all(k == 0 for k in S):
                 return 0
             raise ValueError("element is not in one part")
-

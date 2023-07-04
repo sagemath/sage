@@ -1,21 +1,19 @@
 r"""
 Ambient lattices and ambient spaces
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
 from .weight_lattice_realizations import WeightLatticeRealizations
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.categories.homset import End
-
-import six
 
 
 class AmbientSpace(CombinatorialFreeModule):
@@ -73,6 +71,7 @@ class AmbientSpace(CombinatorialFreeModule):
         sage: e1 == e2
         False
     """
+
     def __init__(self, root_system, base_ring, index_set=None):
         """
         EXAMPLES::
@@ -88,11 +87,11 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         self.root_system = root_system
         if index_set is None:
-            index_set = tuple(range(0, self.dimension()))
+            index_set = tuple(range(self.dimension()))
         CombinatorialFreeModule.__init__(self, base_ring,
                                          index_set,
                                          prefix='e',
-                                         category = WeightLatticeRealizations(base_ring))
+                                         category=WeightLatticeRealizations(base_ring))
         coroot_lattice = self.root_system.coroot_lattice()
         coroot_lattice.module_morphism(self.simple_coroot, codomain=self).register_as_coercion()
 
@@ -104,10 +103,9 @@ class AmbientSpace(CombinatorialFreeModule):
             self._v0 = self([0,0,0,0,0, 0,1, 1])
             self._v1 = self([0,0,0,0,0,-2,1,-1])
 
-
     def _test_norm_of_simple_roots(self, **options):
         """
-        Tests that the norm of the roots is, up to an overal constant factor,
+        Test that the norm of the roots is, up to an overall constant factor,
         given by the symmetrizer of the Cartan matrix.
 
         .. SEEALSO:: :class:`TestSuite`
@@ -196,7 +194,6 @@ class AmbientSpace(CombinatorialFreeModule):
             return self._from_dict(dict((i,K(c)) for i,c in enumerate(v) if c))
         else:
             return CombinatorialFreeModule.__call__(self, v)
-
 
     def __getitem__(self,i):
         """
@@ -356,6 +353,7 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         return End(self).identity()
 
+
 class AmbientSpaceElement(CombinatorialFreeModule.Element):
     # For backward compatibility
     def _repr_(self):
@@ -385,7 +383,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         lambdacheck_mc = lambdacheck._monomial_coefficients
 
         result = self.parent().base_ring().zero()
-        for t,c in six.iteritems(lambdacheck_mc):
+        for t,c in lambdacheck_mc.items():
             if t not in self_mc:
                 continue
             result += c*self_mc[t]
@@ -490,7 +488,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         v0 = self.parent()._v0
         v1 = self.parent()._v1
         x = x - (x.inner_product(v0)/2)*v0
-        return  x - (x.inner_product(v1)/6)*v1
+        return x - (x.inner_product(v1)/6)*v1
 
     def to_ambient(self):
         r"""
@@ -509,5 +507,5 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         """
         return self
 
-AmbientSpace.Element = AmbientSpaceElement
 
+AmbientSpace.Element = AmbientSpaceElement

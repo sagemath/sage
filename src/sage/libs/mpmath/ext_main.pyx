@@ -14,8 +14,6 @@ context class, and related utilities.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cpython.int cimport *
 from cpython.long cimport *
 from cpython.float cimport *
@@ -78,9 +76,12 @@ cdef MPF MPF_C_0
 cdef MPF MPF_C_1
 cdef MPF MPF_C_2
 
-MPF_init(&MPF_C_0); MPF_set_zero(&MPF_C_0);
-MPF_init(&MPF_C_1); MPF_set_si(&MPF_C_1, 1);
-MPF_init(&MPF_C_2); MPF_set_si(&MPF_C_2, 2);
+MPF_init(&MPF_C_0)
+MPF_set_zero(&MPF_C_0)
+MPF_init(&MPF_C_1)
+MPF_set_si(&MPF_C_1, 1)
+MPF_init(&MPF_C_2)
+MPF_set_si(&MPF_C_2, 2)
 
 # Temporaries used for operands in binary operations
 cdef mpz_t tmp_mpz
@@ -129,7 +130,7 @@ cdef int MPF_set_any(MPF *re, MPF *im, x, MPopts opts, bint str_tuple_ok) except
         MPF_set(re, &(<mpc>x).re)
         MPF_set(im, &(<mpc>x).im)
         return 2
-    if isinstance(x, int) or isinstance(x, long) or isinstance(x, Integer):
+    if isinstance(x, (int, Integer)):
         MPF_set_int(re, x)
         return 1
     if isinstance(x, float):
@@ -900,7 +901,7 @@ cdef class Context:
             ttyp = MPF_set_any(&tre, &tim, a, workopts, 0)
             utyp = MPF_set_any(&ure, &uim, b, workopts, 0)
             if utyp == 2 and conjugate:
-                MPF_neg(&uim, &uim);
+                MPF_neg(&uim, &uim)
             if ttyp == 0 or utyp == 0:
                 if conjugate:
                     b = b.conj()
@@ -997,7 +998,7 @@ cdef class Context:
         """
         cdef MPF v
         cdef bint ismpf, ismpc
-        if isinstance(x, int) or isinstance(x, long) or isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             return int(x), 'Z'
         if isinstance(x, tuple):
             p, q = x
@@ -1067,18 +1068,14 @@ cdef class Context:
 
             sage: class MyInt(int):
             ....:     pass
-            sage: class MyLong(long):  # py2
-            ....:     pass
             sage: class MyFloat(float):
             ....:     pass
             sage: mag(MyInt(10))
             4
-            sage: mag(MyLong(10))  # py2
-            4
 
         """
         cdef int typ
-        if isinstance(x, int) or isinstance(x, long) or isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             mpz_set_integer(tmp_opx_re.man, x)
             if mpz_sgn(tmp_opx_re.man) == 0:
                 return global_context.ninf
@@ -1592,19 +1589,6 @@ cdef class mpnumber:
         """
         return binop(OP_MUL, self, other, global_opts)
 
-    def __div__(self, other):
-        """
-        Division of mpmath numbers. Compatible numerical types
-        are automatically converted to mpmath numbers ::
-
-            sage: from mpmath import mpf, mpc
-            sage: mpf(10) / mpc(5)
-            mpc(real='2.0', imag='0.0')
-            sage: float(9) / mpf(3)
-            mpf('3.0')
-        """
-        return binop(OP_DIV, self, other, global_opts)
-
     def __truediv__(self, other):
         """
         Division of mpmath numbers. Compatible numerical types
@@ -1657,10 +1641,11 @@ cdef class mpnumber:
         """
         return global_context.almosteq(s, t, rel_eps, abs_eps)
 
+
 cdef class mpf_base(mpnumber):
 
     # Shared methods for mpf, constant. However, somehow some methods
-    # (hash?, __richcmp__?) aren't inerited, so they have to
+    # (hash?, __richcmp__?) are not inherited, so they have to
     # be defined multiple times. TODO: fix this.
 
     def __hash__(self):
@@ -1792,18 +1777,6 @@ cdef class mpf_base(mpnumber):
         """
         return int(libmp.to_int(self._mpf_))
 
-    def __long__(self):
-        """
-        Support long conversion for derived classes ::
-
-            sage: from mpmath import mpf
-            sage: from sage.libs.mpmath.ext_main import mpf_base
-            sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
-            sage: long(X())
-            3L
-        """
-        return long(self.__int__())
-
     def __float__(self):
         """
         Support float conversion for derived classes ::
@@ -1928,7 +1901,7 @@ cdef class mpf(mpf_base):
 
     _mpf_ = property(_get_mpf, _set_mpf, doc=_get_mpf.__doc__)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns whether the number is nonzero ::
 
@@ -1995,7 +1968,7 @@ cdef class mpf(mpf_base):
             sage: mpf(-500.5).man
             1001
             sage: type(_)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self._mpf_[1]
 
@@ -2053,26 +2026,6 @@ cdef class mpf(mpf_base):
         MPF_to_fixed(tmp_mpz, &self.value, 0, True)
         return mpzi(tmp_mpz)
 
-    def __long__(self):
-        r"""
-        Convert this mpf value to a long.
-
-        (Due to http://bugs.python.org/issue9869, to allow NZMATH to use
-        this Sage-modified version of mpmath, it is vital that we
-        return a long, not an int.)
-
-        TESTS::
-
-            sage: import mpmath  # py2
-            sage: v = mpmath.mpf(2)  # py2
-            sage: class MyLong(long):  # py2
-            ....:     pass
-            sage: MyLong(v)  # py2
-            2L
-        """
-        MPF_to_fixed(tmp_mpz, &self.value, 0, True)
-        return mpzl(tmp_mpz)
-
     def __float__(self):
         """
         Convert to a double-precision Python float ::
@@ -2115,7 +2068,7 @@ cdef class mpf(mpf_base):
         """
         MPF_init(&self.value)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         MPF_clear(&self.value)
 
     def __neg__(s):
@@ -2274,7 +2227,7 @@ cdef class constant(mpf_base):
             return str(self)
         return "<%s: %s~>" % (self.name, global_context.nstr(self))
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns whether the constant is nonzero ::
 
@@ -2406,7 +2359,7 @@ cdef class mpc(mpnumber):
         MPF_init(&self.re)
         MPF_init(&self.im)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         MPF_clear(&self.re)
         MPF_clear(&self.im)
 
@@ -2458,7 +2411,7 @@ cdef class mpc(mpnumber):
         """
         return "(%s)" % libmp.mpc_to_str(s._mpc_, global_context._str_digits)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS ::
 
@@ -2541,11 +2494,21 @@ cdef class mpc(mpnumber):
         """
         Returns the hash value of self ::
 
+        EXAMPLES::
+
             sage: from mpmath import mp
             sage: hash(mp.mpc(2,3)) == hash(complex(2,3))
             True
+
+        TESTS:
+
+        Check that :trac:`31676` is fixed::
+
+            sage: from mpmath import mpc
+            sage: hash(mpc(1, -1)) == hash(mpc(-1, -1))  # should not return OverflowError: Python int too large to convert to C ssize_t
+            False
         """
-        return libmp.mpc_hash(self._mpc_)
+        return hash(libmp.mpc_hash(self._mpc_))
 
     def __neg__(s):
         """
@@ -2639,13 +2602,15 @@ def hypsum_internal(int p, int q, param_types, str ztype, coeffs, z,
         sage: print(mp.hyp1f1(1,2,3))
         6.36184564106256
 
-    TODO: convert mpf/mpc parameters to fixed-point numbers here
-    instead of converting to tuples within MPF_hypsum.
+    .. TODO::
+
+        convert mpf/mpc parameters to fixed-point numbers here
+        instead of converting to tuples within MPF_hypsum.
     """
     cdef mpf f
     cdef mpc c
     c = mpc.__new__(mpc)
-    have_complex, magn = MPF_hypsum(&c.re, &c.im, p, q, param_types, \
+    have_complex, magn = MPF_hypsum(&c.re, &c.im, p, q, param_types,
         ztype, coeffs, z, prec, wp, epsshift, magnitude_check, kwargs)
     if have_complex:
         v = c

@@ -83,11 +83,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import richcmp
-import sage.rings.number_field.number_field_rel as number_field_rel
 import sage.rings.polynomial.polynomial_singular_interface as polynomial_singular_interface
 
 
@@ -133,7 +131,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             if not isinstance(polynomial, Polynomial):
                 raise TypeError("polynomial must be a polynomial")
 
-            if not polynomial in parent.polynomial_ring():
+            if polynomial not in parent.polynomial_ring():
                 raise TypeError("polynomial must be in the polynomial ring of the parent")
 
         f = parent.modulus()
@@ -154,8 +152,27 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
                 polynomial = R
         self._polynomial = polynomial
 
-    def _im_gens_(self, codomain, im_gens):
-        return self._polynomial._im_gens_(codomain, im_gens)
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        Return the image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
+
+        EXAMPLES::
+
+            sage: Zx.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: S.<y> = K[]
+            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))
+            sage: T.<t> = S.quotient(y*(y+1))
+            sage: phi = Q.hom([t+1], base_map=cc)
+            sage: phi(q)
+            t + 1
+            sage: phi(i*q)
+            -i*t - i
+        """
+        return self._polynomial._im_gens_(codomain, im_gens, base_map=base_map)
 
     def __hash__(self):
         return hash(self._polynomial)
@@ -310,7 +327,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: int(a)
             Traceback (most recent call last):
             ...
-            TypeError: cannot coerce nonconstant polynomial to int
+            TypeError: cannot convert nonconstant polynomial
         """
         return int(self._polynomial)
 
@@ -342,11 +359,22 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             Traceback (most recent call last):
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+
+        Check that :trac:`29469` is fixed::
+
+            sage: S(3).is_unit()
+            True
         """
         if self._polynomial.is_zero():
             return False
         if self._polynomial.is_one():
             return True
+        try:
+            if self._polynomial.is_unit():
+                return True
+        except NotImplementedError:
+            pass
+
         parent = self.parent()
         base = parent.base_ring()
         if not base.is_field():
@@ -387,12 +415,26 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             Traceback (most recent call last):
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+
+        Check that :trac:`29469` is fixed::
+
+            sage: ~S(3)
+            11
         """
         if self._polynomial.is_zero():
             raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
         if self._polynomial.is_one():
             return self
+
         parent = self.parent()
+
+        try:
+            if self._polynomial.is_unit():
+                inv_pol = self._polynomial.inverse_of_unit()
+                return parent(inv_pol)
+        except (TypeError, NotImplementedError):
+            pass
+
         base = parent.base_ring()
         if not base.is_field():
             raise NotImplementedError("The base ring (=%s) is not a field" % base)
@@ -401,23 +443,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
         c = g[0]
         return self.__class__(self.parent(), (~c)*a, check=False)
-
-    def __long__(self):
-        """
-        Coerce this element to a long if possible.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = R.quotient(x^3-2)
-            sage: long(S(10))
-            10L
-            sage: long(a)  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: cannot coerce nonconstant polynomial to long
-        """
-        return long(self._polynomial)
 
     def field_extension(self, names):
         r"""
@@ -498,7 +523,8 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         #TODO: is the return order backwards from the magma convention?
 
-##         We do another example over $\ZZ$.
+##         We do another example over $\ZZ$::
+##
 ##             sage: R.<x> = ZZ['x']
 ##             sage: S.<a> = R.quo(x^3 - 2)
 ##             sage: F.<b>, g, h = a.field_extension()
@@ -506,21 +532,24 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 ##             a^2 + 3
 ##             sage: g(x^2 + 2)
 ##             a^2 + 2
+##
 ##         Note that the homomorphism is not defined on the entire
 ##         ''domain''.   (Allowing creation of such functions may be
-##         disallowed in a future version of Sage.):        <----- INDEED!
+##         disallowed in a future version of Sage.)::        <----- INDEED!
+##
 ##             sage: h(1/3)
 ##             Traceback (most recent call last):
 ##             ...
 ##             TypeError: Unable to coerce rational (=1/3) to an Integer.
-##         Note that the parent ring must be an integral domain:
+##
+##         Note that the parent ring must be an integral domain::
+##
 ##             sage: R.<x> = GF(25,'b')['x']
 ##             sage: S.<a> = R.quo(x^3 - 2)
 ##             sage: F, g, h = a.field_extension()
 ##             Traceback (most recent call last):
 ##             ...
 ##             ValueError: polynomial must be irreducible
-
 
         R = self.parent()
         x = R.gen()
@@ -530,16 +559,16 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         f = R.hom([alpha], F, check=False)
 
+        import sage.rings.number_field.number_field_rel as number_field_rel
         if number_field_rel.is_RelativeNumberField(F):
 
-            base_hom = F.base_field().hom([R.base_ring().gen()])
-            g = F.Hom(R)(x, base_hom)
+            base_map = F.base_field().hom([R.base_ring().gen()])
+            g = F.Hom(R)(x, base_map)
 
         else:
             g = F.hom([x], R, check=False)
 
         return F, f, g
-
 
     def charpoly(self, var):
         """
@@ -654,13 +683,59 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
     def minpoly(self):
         """
         The minimal polynomial of this element, which is by definition the
-        minimal polynomial of right multiplication by this element.
+        minimal polynomial of the :meth:`matrix` of this element.
+
+        ALGORITHM: Use
+        :meth:`~sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX.minpoly_mod`
+        if possible, otherwise compute the minimal polynomial of the :meth:`matrix`.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: S.<a> = R.quotient(x^3 + 2*x - 5)
+            sage: (a+123).minpoly()
+            x^3 - 369*x^2 + 45389*x - 1861118
+            sage: (a+123).matrix().minpoly()
+            x^3 - 369*x^2 + 45389*x - 1861118
+
+        One useful application of this function is to compute a minimal
+        polynomial of a finite-field element over an intermediate extension,
+        rather than the absolute minimal polynomial over the prime field::
+
+            sage: F2.<i> = GF((431,2), modulus=[1,0,1])
+            sage: F6.<u> = F2.extension(3)
+            sage: (u+1).minpoly()
+            x^6 + 425*x^5 + 19*x^4 + 125*x^3 + 189*x^2 + 239*x + 302
+            sage: ext = F6.over(F2)
+            sage: ext(u+1).minpoly()  # indirect doctest
+            x^3 + (396*i + 428)*x^2 + (80*i + 39)*x + 9*i + 178
+
+        TESTS:
+
+        We make sure that the previous example works on random examples::
+
+            sage: p = random_prime(50)
+            sage: K.<u> = GF((p, randrange(1,20)))
+            sage: L.<v> = K.extension(randrange(2,20))
+            sage: LK = L.over(K)
+            sage: a = L.random_element()
+            sage: poly = LK(a).minpoly()  # indirect doctest
+            sage: poly(a)
+            0
+            sage: abs_deg = a.minpoly().degree()
+            sage: poly.degree() == abs_deg // gcd(abs_deg, K.degree())
+            True
         """
+        poly = self.lift()
+        try:
+            return poly.minpoly_mod(self.parent().modulus())
+        except AttributeError:
+            pass
         return self.matrix().minpoly()
 
     def norm(self):
         """
-        The norm of this element, which is the norm of the matrix of right
+        The norm of this element, which is the determinant of the matrix of right
         multiplication by this element.
 
         EXAMPLES::
@@ -686,4 +761,25 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         return self.matrix().trace()
 
+    def rational_reconstruction(self, *args, **kwargs):
+        r"""
+        Compute a rational reconstruction of this polynomial quotient
+        ring element to its cover ring.
 
+        This method is a thin convenience wrapper around
+        :meth:`Polynomial.rational_reconstruction`.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(65537)[]
+            sage: m = x^11 + 25345*x^10 + 10956*x^9 + 13873*x^8 + 23962*x^7 + 17496*x^6 + 30348*x^5 + 7440*x^4 + 65438*x^3 + 7676*x^2 + 54266*x + 47805
+            sage: f = 20437*x^10 + 62630*x^9 + 63241*x^8 + 12820*x^7 + 42171*x^6 + 63091*x^5 + 15288*x^4 + 32516*x^3 + 2181*x^2 + 45236*x + 2447
+            sage: f_mod_m = R.quotient(m)(f)
+            sage: f_mod_m.rational_reconstruction()
+            (51388*x^5 + 29141*x^4 + 59341*x^3 + 7034*x^2 + 14152*x + 23746,
+             x^5 + 15208*x^4 + 19504*x^3 + 20457*x^2 + 11180*x + 28352)
+        """
+        m = self.parent().modulus()
+        R = m.parent()
+        f = R(self._polynomial)
+        return f.rational_reconstruction(m, *args, **kwargs)

@@ -1,7 +1,7 @@
 --- src/tests/test_dot2tex.py        2014-11-08 10:21:31.565955354 -0800
 +++ src/tests/test_dot2tex.py        2014-11-08 10:24:09.985964244 -0800
-@@ -137,29 +137,6 @@
-         self.failUnless(r'{1.2.3.4}' in source)
+@@ -138,29 +138,6 @@ class NeedsQuotesTests(unittest.TestCase):
+         self.assertTrue(r'{1.2.3.4}' in source)
  
  
 -class MultipleStatements(unittest.TestCase):
@@ -24,9 +24,10 @@
 -                                  figonly=True, format='tikz', autosize=True)
 -        source2 = dot2tex.dot2tex(testgraph2,
 -                                  figonly=True, format='tikz', autosize=True)
--        self.failUnless(source1 == source2)
+-        self.assertEqual(source1, source2)
 -
 -
  class TestPositionsOutputFormat(unittest.TestCase):
      # http://code.google.com/p/dot2tex/issues/detail?id=20
      def test_floating_point_coordinates(self):
+

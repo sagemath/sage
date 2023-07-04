@@ -4,7 +4,7 @@
 Modular forms
 *************
 
-One of 's computational specialities is (the very technical field
+One of SageMath's computational specialities is (the very technical field
 of) modular forms and can do a lot more than is even suggested in
 this very brief introduction.
 
@@ -19,6 +19,7 @@ section "Modular forms" in the Tutorial:
 
 ::
 
+    sage: from sage.modular.dims import dimension_cusp_forms
     sage: dimension_cusp_forms(Gamma0(11),2)
     1
     sage: dimension_cusp_forms(Gamma0(1),12)
@@ -30,8 +31,6 @@ Related commands: ``dimension_new__cusp_forms_gamma0`` (for
 dimensions of newforms), ``dimension_modular_forms`` (for modular
 forms), and ``dimension_eis`` (for Eisenstein series). The syntax is
 similar - see the Reference Manual for examples.
-
-In future versions of Sage, more related commands will be added.
 
 .. index:: cosets of Gamma_0
 
@@ -91,7 +90,7 @@ of Full Modular Symbols for :math:`\Gamma_0(1)` of weight
     sage: M = ModularSymbols(Gamma1(6),3,sign=0)
     sage: M
     Modular Symbols space of dimension 4 for Gamma_1(6) of weight 3 with sign 0
-    and over Rational Field
+    over Rational Field
     sage: M.basis()
     ([X,(0,5)], [X,(3,5)], [X,(4,5)], [X,(5,5)])
     sage: M._compute_hecke_matrix_prime(2).charpoly()
@@ -115,6 +114,7 @@ and related curves. Here are some examples of the syntax:
 
 ::
 
+    sage: from sage.modular.dims import dimension_cusp_forms
     sage: dimension_cusp_forms(Gamma0(22))
     2
     sage: dimension_cusp_forms(Gamma0(30))

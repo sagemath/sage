@@ -52,7 +52,7 @@ class QuantumGroupRepresentation(CombinatorialFreeModule):
         """
         if q is None:
             q = R.gen()
-        return super(QuantumGroupRepresentation, cls).__classcall__(cls, R, C, q)
+        return super().__classcall__(cls, R, C, q)
 
     def __init__(self, R, C, q):
         """
@@ -172,7 +172,7 @@ class CyclicRepresentation(QuantumGroupRepresentation):
             sage: K = crystals.ProjectedLevelZeroLSPaths(La[1])
             sage: A = AdjointRepresentation(R, K)
             sage: latex(A)
-            V\left( -2\Lambda_{0} + \Lambda_{1} \right)
+            V\left( -2 \Lambda_{0} + \Lambda_{1} \right)
         """
         try:
             mg = self.basis().keys().module_generator()
@@ -283,14 +283,14 @@ class AdjointRepresentation(CyclicRepresentation):
 
         sage: A.print_options(sorting_key=lambda x: str(x))
         sage: v = A.an_element(); v
-        3*B[(-Lambda[0] + Lambda[3] - Lambda[4],)]
-         + 2*B[(-Lambda[0] + Lambda[4],)] + 2*B[(Lambda[0]
-         - Lambda[1] + Lambda[4],)]
+        2*B[(-Lambda[0] + Lambda[3] - Lambda[4],)]
+         + 2*B[(-Lambda[0] + Lambda[4],)]
+         + 3*B[(Lambda[0] - Lambda[1] + Lambda[4],)]
         sage: v.e(0)
-        3*B[(Lambda[0] - Lambda[1] + Lambda[3] - Lambda[4],)]
+        2*B[(Lambda[0] - Lambda[1] + Lambda[3] - Lambda[4],)]
          + 2*B[(Lambda[0] - Lambda[1] + Lambda[4],)]
         sage: v.f(0)
-        2*B[(-Lambda[0] + Lambda[4],)]
+        3*B[(-Lambda[0] + Lambda[4],)]
 
     REFERENCES:
 
@@ -583,4 +583,3 @@ class MinusculeRepresentation(CyclicRepresentation):
         if x is None:
             return self.zero()
         return self.monomial(x)
-

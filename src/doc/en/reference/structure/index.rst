@@ -89,7 +89,6 @@ Internals
    sage/structure/debug_options
    sage/structure/list_clone_timings
    sage/structure/list_clone_timings_cy
-   sage/structure/misc
    sage/structure/test_factory
 
 .. include:: ../footer.txt

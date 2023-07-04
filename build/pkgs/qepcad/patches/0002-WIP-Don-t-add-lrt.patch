@@ -1,0 +1,49 @@
+From 9fa8ce43a1ebbc1807528acf7d109abc19ba3ba4 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Thu, 22 Aug 2019 22:39:21 -0400
+Subject: [PATCH 2/2] WIP: Don't add -lrt
+
+---
+ source/Makefile | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/source/Makefile b/source/Makefile
+index d184650..f13113b 100644
+--- a/source/Makefile
++++ b/source/Makefile
+@@ -30,6 +30,14 @@ SPECIFLAGS =	-I/opt/sfw/include
+ SPECLFLAGS =	-lcurses # on solaris you have to link curses to get readline!
+ endif
+ 
++LIBS = -lreadline
++
++# On macOS, librt is not available,
++# see https://github.com/sagemath/sage/issues/28388
++#ifeq ($(findstring darwin,${OSTYPE}),)
++#LIBS += -lrt
++#endif
++
+ # ============================================================
+ #     Do not touch below unless you know what you are doing
+ # ============================================================
+@@ -44,7 +52,7 @@ EXTLIBS   =	${qe}/extensions/sfext/sfexto.a \
+ 		${qe}/extensions/adj2d/adj2do.a \
+ 		${qe}/extensions/rend/rendo.a \
+ 		${saclib}/lib/saclibo.a \
+-		-lreadline -lrt \
++		$(LIBS) \
+ 		${SPECLFLAGS}
+ 
+ 
+@@ -54,7 +62,7 @@ EXTLIBSD  =	${qe}/extensions/sfext/sfextd.a \
+ 		${qe}/extensions/adj2d/adj2dd.a \
+ 		${qe}/extensions/rend/rendd.a \
+ 		${saclib}/lib/saclibd.a \
+-		-lreadline -lrt \
++		$(LIBS) \
+ 		${SPECLFLAGS}
+ 
+ NAME      =  qepcad
+-- 
+2.19.0
+

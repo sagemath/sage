@@ -1,7 +1,6 @@
 """
 Coerce maps
 """
-from __future__ import print_function, absolute_import
 
 import re
 import types
@@ -54,7 +53,7 @@ cdef class DefaultConvertMap(Map):
             sage: from sage.structure.coerce_maps import DefaultConvertMap
             sage: DefaultConvertMap(ZZ, ZZ)
             doctest:...: DeprecationWarning: DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable
-            See https://trac.sagemath.org/26879 for details.
+            See https://github.com/sagemath/sage/issues/26879 for details.
             Conversion map:
               From: Integer Ring
               To:   Integer Ring
@@ -64,7 +63,7 @@ cdef class DefaultConvertMap(Map):
         # When removing this deprecation, this class should be merged
         # into DefaultConvertMap_unique.
         if not isinstance(self, DefaultConvertMap_unique):
-            from sage.misc.superseded import deprecation
+            from sage.misc.superseded import deprecation_cython as deprecation
             deprecation(26879, "DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable")
 
         if not isinstance(domain, Parent):
@@ -283,7 +282,7 @@ cdef class NamedConvertMap(Map):
                 print(type(x), x)
                 print(type(C), C)
                 print(self.method_name)
-            raise TypeError("Cannot coerce {} to {}".format(x, C))
+            raise TypeError(f"cannot coerce {x} to {C}")
         cdef Map m
         cdef Element e = method(C)
         if e is None:
@@ -313,7 +312,7 @@ cdef class NamedConvertMap(Map):
 
 cdef class CallableConvertMap(Map):
     def __init__(self, domain, codomain, func, parent_as_first_arg=None):
-        """
+        r"""
         This lets one easily create maps from any callable object.
 
         This is especially useful to create maps from bound methods.
@@ -330,7 +329,7 @@ cdef class CallableConvertMap(Map):
               From: Integer Ring
               To:   Rational Field
 
-        Create a homomorphism from $\RR$ to $\RR^+$ viewed as additive groups.
+        Create a homomorphism from `\RR` to `\RR^+` viewed as additive groups.
 
         ::
 

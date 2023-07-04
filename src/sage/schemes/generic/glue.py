@@ -1,7 +1,6 @@
 """
 Scheme obtained by gluing two other schemes
 """
-from __future__ import absolute_import
 
 #*******************************************************************************
 #  Copyright (C) 2006 William Stein
@@ -48,4 +47,3 @@ class GluedScheme(scheme.Scheme):
     def _repr_(self):
         return "Scheme obtained by gluing X and Y along U, where\n  X: %s\n  Y: %s\n  U: %s"%(
             self.__f.codomain(), self.__g.codomain(), self.__f.domain())
-

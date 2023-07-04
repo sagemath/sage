@@ -1,0 +1,8 @@
+XML-Writer
+XML-LibXML
+XML-LibXSLT
+File-Slurp
+dev-perl/Term-ReadLine-Gnu
+dev-perl/TermReadKey
+JSON
+SVG

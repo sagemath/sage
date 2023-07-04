@@ -11,9 +11,7 @@ AUTHORS
 -------
 (c) 2016 Ralf Stephan <ralf@ark.in-berlin.de>
 
-SEE ALSO
---------
-https://github.com/symengine/symengine/blob/master/symengine/tests/basic/
+See https://github.com/symengine/symengine/blob/master/symengine/tests/basic/
 
 TESTS::
 

@@ -1,7 +1,6 @@
 r"""
 Groupoid
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>
@@ -28,10 +27,9 @@ class Groupoid(CategoryWithParameters):
 
         sage: Groupoid(DihedralGroup(3))
         Groupoid with underlying set Dihedral group of order 6 as a permutation group
-
     """
 
-    def __init__(self, G = None):
+    def __init__(self, G=None):
         """
         TESTS::
 

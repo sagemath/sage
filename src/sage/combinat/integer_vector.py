@@ -27,12 +27,11 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import, division
-from six.moves import range
-from six import add_metaclass
 
 from sage.combinat.integer_lists import IntegerListsLex
 from itertools import product
+from collections.abc import Sequence
+import numbers
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -43,10 +42,11 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.infinity import PlusInfinity
-from sage.arith.all import binomial
-from sage.rings.all import ZZ
-from sage.rings.semirings.all import NN
+from sage.arith.misc import binomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
+
 
 def is_gale_ryser(r,s):
     r"""
@@ -123,7 +123,9 @@ def is_gale_ryser(r,s):
     #                                same number of 1s           domination
     return len(rstar) <= len(s2) and sum(r2) == sum(s2) and rstar.dominates(s)
 
-def gale_ryser_theorem(p1, p2, algorithm="gale"):
+
+def gale_ryser_theorem(p1, p2, algorithm="gale",
+                       *, solver=None, integrality_tolerance=1e-3):
     r"""
     Returns the binary matrix given by the Gale-Ryser theorem.
 
@@ -142,6 +144,17 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
 
       - ``'ryser'`` implements the construction due to Ryser [Ryser63]_.
       - ``'gale'`` (default) implements the construction due to Gale [Gale57]_.
+
+    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+      (MILP) solver to be used. If set to ``None``, the default one is used. For
+      more information on MILP solvers and which default solver is used, see
+      the method
+      :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>`
+      of the class
+      :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
 
     OUTPUT:
 
@@ -276,8 +289,8 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
         ....:        print(s1, s2)
 
         sage: for algorithm in ["gale", "ryser"]:             # long time
-        ....:    for i in range(50):                          # long time
-        ....:       test_algorithm(algorithm, 3, 10)          # long time
+        ....:    for i in range(50):
+        ....:       test_algorithm(algorithm, 3, 10)
 
     Null matrix::
 
@@ -349,7 +362,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
     elif algorithm == "gale":
         from sage.numerical.mip import MixedIntegerLinearProgram
         k1, k2=len(p1), len(p2)
-        p = MixedIntegerLinearProgram()
+        p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary = True)
         for (i,c) in enumerate(p1):
             p.add_constraint(p.sum([b[i,j] for j in range(k2)]) ==c)
@@ -357,11 +370,11 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
             p.add_constraint(p.sum([b[j,i] for j in range(k1)]) ==c)
         p.set_objective(None)
         p.solve()
-        b = p.get_values(b)
+        b = p.get_values(b, convert=ZZ, tolerance=integrality_tolerance)
         M = [[0]*k2 for i in range(k1)]
         for i in range(k1):
             for j in range(k2):
-                M[i][j] = int(b[i,j])
+                M[i][j] = b[i,j]
         return matrix(M)
 
     else:
@@ -433,6 +446,7 @@ class IntegerVector(ClonableArray):
     """
     An integer vector.
     """
+
     def check(self):
         """
         Check to make sure this is a valid integer vector by making sure
@@ -443,13 +457,101 @@ class IntegerVector(ClonableArray):
             sage: IV = IntegerVectors()
             sage: elt = IV([1,2,1])
             sage: elt.check()
+
+        Check :trac:`34510`::
+
+            sage: IV3 = IntegerVectors(n=3)
+            sage: IV3([2,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2] doesn't satisfy correct constraints
+            sage: IVk3 = IntegerVectors(k=3)
+            sage: IVk3([2,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2] doesn't satisfy correct constraints
+            sage: IV33 = IntegerVectors(n=3, k=3)
+            sage: IV33([2,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2] doesn't satisfy correct constraints
         """
         if any(x < 0 for x in self):
             raise ValueError("all entries must be non-negative")
+        if self not in self.parent():
+            raise ValueError(f"{self} doesn't satisfy correct constraints")
+
+    def trim(self):
+        """
+        Remove trailing zeros from the integer vector.
+
+        EXAMPLES::
+
+            sage: IV = IntegerVectors()
+            sage: IV([5,3,5,1,0,0]).trim()
+            [5, 3, 5, 1]
+            sage: IV([5,0,5,1,0]).trim()
+            [5, 0, 5, 1]
+            sage: IV([4,3,3]).trim()
+            [4, 3, 3]
+            sage: IV([0,0,0]).trim()
+            []
+
+            sage: IV = IntegerVectors(k=4)
+            sage: v = IV([4,3,2,0]).trim(); v
+            [4, 3, 2]
+            sage: v.parent()
+            Integer vectors
+        """
+        P = IntegerVectors()
+        v = list(self)
+        if all(i == 0 for i in v):
+            return P.element_class(P, [], check=False)
+        while not v[-1]:
+            v = v[:-1]
+        return P.element_class(P, v, check=False)
+
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: SM = IntegerVectors()([2,0,1,0,2]).specht_module(QQ)
+            sage: SM
+            Specht module of [(0, 0), (0, 1), (2, 0), (4, 0), (4, 1)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        return SpechtModule(R, self)
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``BR`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()
+            5
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))
+            5
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
 
 
-@add_metaclass(ClasscallMetaclass)
-class IntegerVectors(Parent):
+class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
     """
     The class of (non-negative) integer vectors.
 
@@ -507,8 +609,8 @@ class IntegerVectors(Parent):
         [5, 0, 0]
         sage: IV53.last()
         [0, 0, 5]
-        sage: IV53.random_element()
-        [4, 0, 1]
+        sage: IV53.random_element().parent() is IV53
+        True
 
     Further examples::
 
@@ -571,8 +673,8 @@ class IntegerVectors(Parent):
         [[4], [3, 1], [2, 2], [1, 3], [0, 4]]
 
     .. SEEALSO::
-    
-        :class: `sage.combinat.integer_lists.invlex.IntegerListsLex`.
+
+        :class:`sage.combinat.integer_lists.invlex.IntegerListsLex`
     """
     @staticmethod
     def __classcall_private__(cls, n=None, k=None, **kwargs):
@@ -592,6 +694,13 @@ class IntegerVectors(Parent):
             Traceback (most recent call last):
             ...
             ValueError: k and length both specified
+
+        :trac:`29524`::
+
+            sage: IntegerVectors(3, 3/1)
+            Traceback (most recent call last):
+            ...
+            TypeError: 'k' must be an integer or a tuple, got Rational
         """
         if 'length' in kwargs:
             if k is not None:
@@ -607,12 +716,12 @@ class IntegerVectors(Parent):
         if n is None:
             return IntegerVectors_k(k)
 
-        try:
+        if isinstance(k, numbers.Integral):
+            return IntegerVectors_nk(n, k)
+        elif isinstance(k, (tuple, list)):
             return IntegerVectors_nnondescents(n, tuple(k))
-        except TypeError:
-            pass
-
-        return IntegerVectors_nk(n, k)
+        else:
+            raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
 
     def __init__(self, category=None):
         """
@@ -660,7 +769,7 @@ class IntegerVectors(Parent):
         if isinstance(x, IntegerVector):
             return True
 
-        if not isinstance(x, (list, tuple)):
+        if not isinstance(x, Sequence):
             return False
 
         for i in x:
@@ -675,6 +784,7 @@ class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     """
     Class of all integer vectors.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -719,6 +829,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors that sum to `n`.
     """
+
     def __init__(self, n):
         """
         TESTS::
@@ -791,6 +902,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors of length `k`.
     """
+
     def __init__(self, k):
         """
         TESTS::
@@ -865,6 +977,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     - Martin Albrecht
     - Mike Hansen
     """
+
     def __init__(self, n, k):
         """
         TESTS::
@@ -999,10 +1112,15 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
             False
             sage: [3,2,2,1] in IntegerVectors(8, 4)
             True
-        """
-        if isinstance(x, IntegerVector) and x.parent() is self:
-            return True
 
+        Check :trac:`34510`::
+
+            sage: IV33 = IntegerVectors(n=3, k=3)
+            sage: IV33([0])
+            Traceback (most recent call last):
+            ...
+            ValueError: [0] doesn't satisfy correct constraints
+        """
         if not IntegerVectors.__contains__(self, x):
             return False
 
@@ -1080,7 +1198,7 @@ class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
             sage: IntegerVectors(4, [2,1]) is IntegerVectors(int(4), (2,1))
             True
         """
-        return super(IntegerVectors_nnondescents, cls).__classcall__(cls, n, tuple(comp))
+        return super().__classcall__(cls, n, tuple(comp))
 
     def __init__(self, n, comp):
         """
@@ -1170,6 +1288,7 @@ class IntegerVectorsConstraints(IntegerVectors):
     """
     Class of integer vectors subject to various constraints.
     """
+
     def __init__(self, n=None, k=None, **constraints):
         """
         Initialize ``self``.
@@ -1336,8 +1455,10 @@ class IntegerVectorsConstraints(IntegerVectors):
                     return Integer(binomial(self.n + self.k - 1, self.n))
                 # do by inclusion / exclusion on the number
                 # i of parts greater than m
-                return Integer(sum( (-1)**i * binomial(self.n+self.k-1-i*(m+1), self.k-1) \
-                    * binomial(self.k,i) for i in range(self.n/(m+1)+1) ))
+                n, k = self.n, self.k
+                return Integer(sum(
+                    (-1)**i * binomial(n + k - 1 - i * (m + 1), k - 1)
+                    * binomial(k, i) for i in range(self.n // (m + 1) + 1)))
         return ZZ.sum(ZZ.one() for x in self)
 
     def __iter__(self):

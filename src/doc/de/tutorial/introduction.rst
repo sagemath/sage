@@ -12,7 +12,8 @@ Obwohl große Teile von Sage mithilfe von Python implementiert sind,
 ist kein tieferes Verständnis von Python notwendig um dieses Tutorial
 lesen zu können. Sie werden Python zu einem gewissen Zeitpunkt lernen
 wollen (Python kann sehr viel Spass bereiten) und es gibt viele
-ausgezeichnete freie Quellen, wozu auch [PyT]_ und [Dive]_ gehören.
+ausgezeichnete freie Quellen: das Python-Anfängerhandbuch [PyB]_
+listet viele Optionen auf.
 Wenn Sie nur kurz etwas in Sage ausprobieren möchten, ist dieses
 Tutorial der richtige Ort um damit anzufangen. Zum Beispiel:
 
@@ -77,12 +78,8 @@ Hier geben wir nur ein paar Kommentare ab.
    weiter benutzt, müssen Sie diese Programme  nicht separat
    installieren, da diese in der Sage-Distribution enthalten
    sind. Jedoch müssen Sie, um bestimmte Sage Zusatzfunktionen, zum
-   Beispiel Macaulay oder KASH, nutzen zu können, diese entsprechenden
-   optionalen Pakete installieren, oder zumindest die relevanten
-   Programme auf ihrem Computer schon installiert haben.  Macaulay und
-   KASH sind Sage-Pakete (um eine Liste aller verfügbaren Sage-Pakete
-   zu sehen,  geben Sie ``sage -optional`` ein, oder rufen  Sie die
-   "Download" Seite auf der Sage Webseite auf).
+   Beispiel Macaulay oder KASH, nutzen zu können, die relevanten
+   Programme auf ihrem Computer schon installiert haben.
 
 #. Die vorkompilierte Binärversion von Sage (zu finden auf der
    Sage-Webseite) ist vielleicht einfacher und
@@ -101,17 +98,17 @@ Hier geben wir nur ein paar Kommentare ab.
    einzige Datei in ein Verzeichnis kopieren, welches TeX durchsucht.
 
    Die Dokumentation für SageTeX befindet sich in
-   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, wobei
+   ``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, wobei
    "``$SAGE_ROOT``" auf das Verzeichnis zeigt, in welches Sie Sage
-   installiert haben, zum Beispiel ``/opt/sage-4.2.1``.
+   installiert haben, zum Beispiel ``/opt/sage-9.6``.
 
 Wie man Sage benutzen kann
 ==========================
 
 Sie können Sage auf verschiedene Weise benutzen.
 
--  **graphisches Notebook-Interface:** lesen Sie den Abschnitt
-   zum Notebook im Referenzhandbuch und :ref:`section-notebook` weiter unten,
+-  **graphisches Notebook-Interface:** rufen Sie ``sage -n jupyter`` auf; lesen Sie
+   `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
 
 -  **interaktive Kommandozeile:** lesen Sie :ref:`chapter-interactive_shell`,
 

@@ -16,7 +16,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 import itertools
 
@@ -306,7 +305,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
 
         An exception :class:`~sage.categories.sets_cat.EmptySetError`
         is raised if this set is empty, that is if the codomain is
-        empty and the domain is not.
+        empty and the domain is not. ::
 
             sage: M = FiniteSetMaps(4, 0)
             sage: M.cardinality()
@@ -586,4 +585,3 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
         self._action = action
 
     Element = FiniteSetEndoMap_Set
-

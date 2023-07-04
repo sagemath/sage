@@ -11,7 +11,7 @@ in a permutation than construct the next object directly
 from the next permutation in a list. The backtracking
 algorithm in sage/graphs/genus.pyx is an example of this.
 
-The lowest level is implemented as a struct with auxilliary
+The lowest level is implemented as a struct with auxiliary
 methods.  This is because Cython does not allow pointers to
 class instances, so a list of these objects is inherently
 slower than a list of structs.  The author prefers ugly code
@@ -32,8 +32,6 @@ speed, we provide a class that wraps our struct.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import print_function
 
 cimport cython
 
@@ -205,17 +203,17 @@ cpdef bint next_perm(array l):
         sage: L = array('I', [1, 1, 2, 3])
         sage: while next_perm(L):
         ....:     print(L)
-        array('I', [1L, 1L, 3L, 2L])
-        array('I', [1L, 2L, 1L, 3L])
-        array('I', [1L, 2L, 3L, 1L])
-        array('I', [1L, 3L, 1L, 2L])
-        array('I', [1L, 3L, 2L, 1L])
-        array('I', [2L, 1L, 1L, 3L])
-        array('I', [2L, 1L, 3L, 1L])
-        array('I', [2L, 3L, 1L, 1L])
-        array('I', [3L, 1L, 1L, 2L])
-        array('I', [3L, 1L, 2L, 1L])
-        array('I', [3L, 2L, 1L, 1L])
+        array('I', [1, 1, 3, 2])
+        array('I', [1, 2, 1, 3])
+        array('I', [1, 2, 3, 1])
+        array('I', [1, 3, 1, 2])
+        array('I', [1, 3, 2, 1])
+        array('I', [2, 1, 1, 3])
+        array('I', [2, 1, 3, 1])
+        array('I', [2, 3, 1, 1])
+        array('I', [3, 1, 1, 2])
+        array('I', [3, 1, 2, 1])
+        array('I', [3, 2, 1, 1])
     """
     cdef Py_ssize_t n = len(l)
 
@@ -250,7 +248,7 @@ cpdef bint next_perm(array l):
     #mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
     n -= 1 # In the loop, we only need n-1, so just do it once here
     cdef Py_ssize_t i
-    for i in xrange((n+1 - two) // 2 - 1, -1, -1):
+    for i in range((n + 1 - two) // 2 - 1, -1, -1):
         t = l.data.as_uints[i + two]
         l.data.as_uints[i + two] = l.data.as_uints[n - i]
         l.data.as_uints[n - i] = t
@@ -416,4 +414,3 @@ cpdef list right_action_product(list S, list rp):
     for i in range(len(rp)+1, len(S)+1):
         rp.append(i)
     return right_action_same_n(S, rp)
-

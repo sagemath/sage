@@ -1,17 +1,17 @@
 r"""
-Educational version of the `d`-Groebner Basis Algorithm over PIDs.
+Educational version of the `d`-Groebner basis algorithm over PIDs
 
 No attempt was made to optimize this algorithm as the emphasis of this
 implementation is a clean and easy presentation.
 
 .. NOTE::
 
-    The notion of 'term' and 'monomial' in [BW93]_ is swapped from the
+    The notion of 'term' and 'monomial' in [BW1993]_ is swapped from the
     notion of those words in Sage (or the other way around, however you
     prefer it). In Sage a term is a monomial multiplied by a
-    coefficient, while in [BW93]_ a monomial is a term multiplied by a
+    coefficient, while in [BW1993]_ a monomial is a term multiplied by a
     coefficient. Also, what is called LM (the leading monomial) in
-    Sage is called HT (the head term) in [BW93]_.
+    Sage is called HT (the head term) in [BW1993]_.
 
 EXAMPLES::
 
@@ -116,7 +116,8 @@ AUTHOR:
 - Martin Albrecht (2008-08): initial version
 """
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import xgcd, lcm, gcd
+from sage.arith.functions import lcm
+from sage.arith.misc import XGCD as xgcd, GCD as gcd
 from sage.rings.polynomial.toy_buchberger import inter_reduction
 from sage.structure.sequence import Sequence
 
@@ -196,7 +197,7 @@ def LC(f):
 
 def d_basis(F, strat=True):
     r"""
-    Return the `d`-basis for the Ideal ``F`` as defined in [BW93]_.
+    Return the `d`-basis for the Ideal ``F`` as defined in [BW1993]_.
 
     INPUT:
 
@@ -304,7 +305,7 @@ def select(P):
 def update(G, B, h):
     """
     Update ``G`` using the list of critical pairs ``B`` and the
-    polynomial ``h`` as presented in [BW93]_, page 230. For this,
+    polynomial ``h`` as presented in [BW1993]_, page 230. For this,
     Buchberger's first and second criterion are tested.
 
     This function uses the Gebauer-Moeller Installation.
@@ -324,7 +325,7 @@ def update(G, B, h):
         sage: from sage.rings.polynomial.toy_d_basis import update
         sage: A.<x,y> = PolynomialRing(ZZ, 2)
         sage: G = set([3*x^2 + 7, 2*y + 1, x^3 - y^2 + 7*x - y + 1])
-        sage: B = set([])
+        sage: B = set()
         sage: h = x^2*y - x^2 + y - 3
         sage: update(G,B,h)
         ({2*y + 1, 3*x^2 + 7, x^2*y - x^2 + y - 3, x^3 - y^2 + 7*x - y + 1},

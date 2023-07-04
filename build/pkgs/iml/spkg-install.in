@@ -1,0 +1,18 @@
+cd src
+
+export CFLAGS=$CFLAGS_O3
+
+# When using GMP from a standard system location it shouldn't really
+# matter what we put here, but iml's configure script requires we
+# provide *something*, and this should be reasonable in most cases
+SAGE_GMP_LIB="`echo "$SAGE_GMP_INCLUDE" | sed 's|/include|/lib|'`"
+
+sdh_configure --enable-shared \
+              --with-default="$SAGE_LOCAL" \
+              --with-gmp-include="$SAGE_GMP_INCLUDE" \
+              --with-gmp-lib="$SAGE_GMP_LIB" \
+              --with-cblas="$(pkg-config --libs cblas)" \
+              --with-cblas-include="$(pkg-config --cflags cblas)" \
+              "$IML_CONFIGURE"
+sdh_make
+sdh_make_install

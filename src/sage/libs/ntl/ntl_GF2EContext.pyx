@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -12,7 +19,6 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 include 'misc.pxi'
 include 'decl.pxi'
@@ -21,7 +27,7 @@ import weakref
 GF2EContextDict = {}
 
 
-cdef class ntl_GF2EContext_class(object):
+cdef class ntl_GF2EContext_class():
     def __init__(self, ntl_GF2X v):
         """
         EXAMPLES::
@@ -39,7 +45,7 @@ cdef class ntl_GF2EContext_class(object):
             sage: ntl.GF2E(2, GF(2^8,'a'))+ntl.GF2E([0,1],ctx)
             Traceback (most recent call last):
             ...
-            ValueError: You can not perform arithmetic with elements in different fields.
+            ValueError: You cannot perform arithmetic with elements in different fields.
 
             sage: n2+n1  # Mismatched moduli:  It will go BOOM!
             [1]

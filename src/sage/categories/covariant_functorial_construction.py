@@ -100,9 +100,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
        functor, and also (when relevant) of the method on parents and
        elements used for calling the construction.
 
-
     TODO: What syntax do we want for `F_{Cat}`? For example, for the
-    tensor product construction, which one of the followings do we want (see
+    tensor product construction, which one do we want among (see
     chat on IRC, on 07/12/2009):
 
      - ``tensor(Cat)``
@@ -137,10 +136,10 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
             sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])
             sage: tensor.category_from_parents((E, E, E))
-            Category of tensor products of vector spaces with basis over Rational Field
+            Category of tensor products of finite dimensional vector spaces with basis over Rational Field
         """
         from sage.structure.parent import Parent
-        assert(all(isinstance(parent, Parent) for parent in parents))
+        assert all(isinstance(parent, Parent) for parent in parents)
         # Should we pass a set of categories to reduce the cache size?
         # But then this would impose that, for any constructor, the
         # category of the result does not depend on the order/repetition
@@ -170,7 +169,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
             sage: cartesian_product.category_from_categories((Cat1, Cat2))
             Category of Cartesian products of monoids
         """
-        assert(len(categories) > 0)
+        assert len(categories) > 0
         return self.category_from_category(Category.meet(categories))
 
     def category_from_category(self, category):
@@ -206,6 +205,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
         Functorial construction application
 
         INPUT:
+
          - ``self``: a covariant functorial construction `F`
          - ``args``: a tuple (or iterable) of parents or elements
 
@@ -217,10 +217,11 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
             sage: tensor((E, E, E))
             E # E # E
         """
-        args = tuple(args) # a bit brute force; let's see if this becomes a bottleneck later
-        assert(all( hasattr(arg, self._functor_name) for arg in args))
-        assert(len(args) > 0)
+        args = tuple(args)  # a bit brute force; let's see if this becomes a bottleneck later
+        assert all(hasattr(arg, self._functor_name) for arg in args)
+        assert len(args) > 0
         return getattr(args[0], self._functor_name)(*args[1:], **kwargs)
+
 
 class FunctorialConstructionCategory(Category): # Should this be CategoryWithBase?
     """
@@ -285,7 +286,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         module_name = cls.__module__.replace(cls._functor_category.lower() + "_","")
         import sys
-        name   = cls.__name__.replace(cls._functor_category, "")
+        name = cls.__name__.replace(cls._functor_category, "")
         __import__(module_name)
         module = sys.modules[module_name]
         return (module.__dict__[name],)
@@ -316,7 +317,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         base_category_class = cls._base_category_class[0]
         if isinstance(category, base_category_class):
-            return super(FunctorialConstructionCategory, cls).__classcall__(cls, category, *args)
+            return super().__classcall__(cls, category, *args)
         else:
             return cls.category_of(base_category_class(category, *args))
 
@@ -327,7 +328,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
 
         This implements a hack allowing e.g. ``category.Subquotients``
         to recover the default ``Subquotients`` method defined in
-        ``Category``, even if it has been overriden by a
+        ``Category``, even if it has been overridden by a
         ``Subquotients`` class.
 
         EXAMPLES::
@@ -346,11 +347,11 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         It also forces the resolution of lazy imports (see :trac:`15648`)::
 
             sage: type(Algebras.__dict__["Graded"])
-            <type 'sage.misc.lazy_import.LazyImport'>
+            <class 'sage.misc.lazy_import.LazyImport'>
             sage: Algebras.Graded
             <class 'sage.categories.graded_algebras.GradedAlgebras'>
             sage: type(Algebras.__dict__["Graded"])
-            <type 'sage.misc.classcall_metaclass.ClasscallMetaclass'>
+            <class 'sage.misc.classcall_metaclass.ClasscallMetaclass'>
 
         .. TODO::
 
@@ -436,7 +437,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         assert isinstance(category, Category)
         self._base_category = category
         self._args = args
-        super(FunctorialConstructionCategory, self).__init__(*args)
+        super().__init__(*args)
 
     def base_category(self):
         """
@@ -481,7 +482,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         return Category.join([self.__class__.default_super_categories(self.base_category(), *self._args)] +
                              self.extra_super_categories(),
-                             as_list = True)
+                             as_list=True)
 
     def _repr_object_names(self):
         """
@@ -545,7 +546,8 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         algebras and tensor products of coalgebras::
 
             sage: Bialgebras(QQ).TensorProducts().super_categories()
-            [Category of tensor products of algebras over Rational Field, Category of tensor products of coalgebras over Rational Field]
+            [Category of tensor products of algebras over Rational Field,
+             Category of tensor products of coalgebras over Rational Field]
 
         Here is how :meth:`default_super_categories` was called internally::
 
@@ -604,13 +606,13 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
             ``F``, a join category is returned. Therefore, in such
             cases, this method is not available::
 
-                sage: Coalgebras(QQ).Graded().is_construction_defined_by_base()
+                sage: Bialgebras(QQ).Graded().is_construction_defined_by_base()
                 Traceback (most recent call last):
                 ...
                 AttributeError: 'JoinCategory_with_category' object has no attribute 'is_construction_defined_by_base'
         """
         base = self.base_category()
-        f = self._functor_category;
+        f = self._functor_category
         return not any(hasattr(C, f) for C in base.super_categories())
 
     def additional_structure(self):
@@ -684,4 +686,5 @@ class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):
             sage: C.__class__.default_super_categories(C.base_category(), *C._args)
             Category of unital subquotients of semigroups
         """
-        return Category.join([category, super(RegressiveCovariantConstructionCategory, cls).default_super_categories(category, *args)])
+        return Category.join([category,
+                              super().default_super_categories(category, *args)])

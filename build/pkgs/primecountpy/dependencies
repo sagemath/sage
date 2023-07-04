@@ -1,0 +1,4 @@
+$(PYTHON) primecount cysignals | $(PYTHON_TOOLCHAIN) cython
+
+----------
+All lines of this file are ignored except the first.

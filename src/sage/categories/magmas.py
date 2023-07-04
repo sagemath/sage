@@ -1,13 +1,12 @@
 r"""
 Magmas
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
@@ -21,6 +20,7 @@ import sage.categories.coercion_methods
 from sage.categories.sets_cat import Sets
 from sage.categories.realizations import RealizationsCategory
 from sage.cpython.getattr import raw_getattr
+
 
 class Magmas(Category_singleton):
     """
@@ -283,7 +283,7 @@ class Magmas(Category_singleton):
             subcategory of both :class:`Magmas` and
             :class:`AdditiveMagmas` and upgrades it to a subcategory
             of :class:`MagmasAndAdditiveMagmas` before applying the
-            axiom. It complains overwise, since the ``Distributive``
+            axiom. It complains otherwise, since the ``Distributive``
             axiom does not make sense for a plain magma.
 
             EXAMPLES::
@@ -366,7 +366,6 @@ class Magmas(Category_singleton):
             """
             from sage.categories.magmatic_algebras import MagmaticAlgebras
             return [MagmaticAlgebras(self.base_ring())]
-
 
         class ParentMethods:
             def is_field(self, proof=True):
@@ -515,13 +514,13 @@ class Magmas(Category_singleton):
                 one = self.one()
                 tester.assertTrue(self.is_parent_of(one))
                 for x in tester.some_elements():
-                    tester.assertTrue(x * one == x)
-                    tester.assertTrue(one * x == x)
+                    tester.assertEqual(x * one, x)
+                    tester.assertEqual(one * x, x)
                 # Check that one is immutable if it looks like we can test this
-                if hasattr(one,"is_immutable"):
-                    tester.assertEqual(one.is_immutable(),True)
-                if hasattr(one,"is_mutable"):
-                    tester.assertEqual(one.is_mutable(),False)
+                if hasattr(one, "is_immutable"):
+                    tester.assertTrue(one.is_immutable())
+                if hasattr(one, "is_mutable"):
+                    tester.assertFalse(one.is_mutable())
 
             def is_empty(self):
                 r"""
@@ -550,44 +549,7 @@ class Magmas(Category_singleton):
                 return False
 
         class ElementMethods:
-            def _div_(left, right):
-                r"""
-                Default implementation of division, multiplying (on the right) by the inverse.
-
-                INPUT:
-
-                - ``left``, ``right`` -- two elements of the same unital magma
-
-                .. SEEALSO:: :meth:`__div__`
-
-                EXAMPLES::
-
-                    sage: G = FreeGroup(2)
-                    sage: x0, x1 = G.group_generators()
-                    sage: c1 = cartesian_product([x0, x1])
-                    sage: c2 = cartesian_product([x1, x0])
-                    sage: c1._div_(c2)
-                    (x0*x1^-1, x1*x0^-1)
-
-                With this implementation, division will fail as soon
-                as ``right`` is not invertible, even if ``right``
-                actually divides ``left``::
-
-                    sage: x = cartesian_product([2, 1])
-                    sage: y = cartesian_product([1, 1])
-                    sage: x / y
-                    (2, 1)
-                    sage: x / x
-                    Traceback (most recent call last):
-                    ...
-                    TypeError: no conversion of this rational to integer
-
-                TESTS::
-
-                    sage: c1._div_.__module__
-                    'sage.categories.magmas'
-                """
-                return left * ~right
+            pass
 
         class SubcategoryMethods:
 
@@ -709,9 +671,7 @@ class Magmas(Category_singleton):
                         ZeroDivisionError: rational division by zero
 
                         sage: ~C([2,2,2,2])
-                        Traceback (most recent call last):
-                        ...
-                        TypeError: no conversion of this rational to integer
+                        (1/2, 1/2, 0.500000000000000, 3)
                     """
                     # variant without coercion:
                     # return self.parent()._cartesian_product_of_elements(
@@ -751,6 +711,8 @@ class Magmas(Category_singleton):
                     r"""
                     Return the unit element of ``self``.
 
+                    EXAMPLES::
+
                         sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup
                         sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()
                         sage: PvW0 in Magmas().Unital().Realizations()
@@ -758,7 +720,7 @@ class Magmas(Category_singleton):
                         sage: PvW0.one()
                         1
                     """
-                    return(self(self.realization_of().a_realization().one()))
+                    return self(self.realization_of().a_realization().one())
 
     class ParentMethods:
 
@@ -795,9 +757,7 @@ class Magmas(Category_singleton):
 
             Currently, ``S.product`` is just a bound method::
 
-                sage: bin  # py2
-                <bound method FreeSemigroup_with_category.product of An example of a semigroup: the free semigroup generated by ('a', 'b', 'c', 'd')>
-                sage: bin  # py3, due to difference in how bound methods are repr'd
+                sage: bin
                 <bound method FreeSemigroup.product of An example of a semigroup: the free semigroup generated by ('a', 'b', 'c', 'd')>
 
             When Sage will support multivariate morphisms, it will be
@@ -816,17 +776,18 @@ class Magmas(Category_singleton):
 
         def __init_extra__(self):
             """
+            EXAMPLES::
+
                 sage: S = Semigroups().example("free")
                 sage: S('a') * S('b') # indirect doctest
                 'ab'
                 sage: S('a').__class__._mul_ == S('a').__class__._mul_parent
                 True
-
             """
             # This should instead register the multiplication to the coercion model
             # But this is not yet implemented in the coercion model
             #
-            # Trac ticket #11900: The following used to test whether
+            # Github issue #11900: The following used to test whether
             # self.product != self.product_from_element_class_mul. But
             # that is, of course, a bug. Namely otherwise, if the parent
             # has an optimized `product` then its elements will *always* use
@@ -855,7 +816,7 @@ class Magmas(Category_singleton):
                 if E_mul_func is C_mul_func:
                     # self.product is custom, thus, we rely on it
                     E._mul_ = E._mul_parent
-            else: # E._mul_ has so far been abstract
+            else:  # E._mul_ has so far been abstract
                 E._mul_ = E._mul_parent
 
         def multiplication_table(self, names='letters', elements=None):
@@ -898,6 +859,7 @@ class Magmas(Category_singleton):
               this can be used when the base set is infinite.
 
             OUTPUT:
+
             The multiplication table as an object of the class
             :class:`~sage.matrix.operation_table.OperationTable`
             which defines several methods for manipulating and
@@ -971,7 +933,7 @@ class Magmas(Category_singleton):
             the elements be represented with their usual string
             representation.  ::
 
-                sage: L=LeftRegularBand(('a','b','c'))
+                sage: L = LeftRegularBand(('a','b','c'))
                 sage: elts=['a', 'c', 'ac', 'ca']
                 sage: L.multiplication_table(names='elements', elements=elts)
                    *   'a'  'c' 'ac' 'ca'
@@ -986,8 +948,8 @@ class Magmas(Category_singleton):
             :class:`~sage.matrix.operation_table.OperationTable` for more
             comprehensive documentation. ::
 
-                sage: G=AlternatingGroup(3)
-                sage: T=G.multiplication_table()
+                sage: G = AlternatingGroup(3)
+                sage: T = G.multiplication_table()
                 sage: T.column_keys()
                 ((), (1,2,3), (1,3,2))
                 sage: T.translation()
@@ -1007,7 +969,7 @@ class Magmas(Category_singleton):
             return OperationTable(self, operation=operator.mul, names=names, elements=elements)
 
     class ElementMethods:
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def _mul_(self, right):
             """
             Product of two elements
@@ -1082,7 +1044,8 @@ class Magmas(Category_singleton):
                 sage: C = Magmas().CartesianProducts().example(); C
                 The Cartesian product of (Rational Field, Integer Ring, Integer Ring)
                 sage: C.category()
-                Category of Cartesian products of commutative rings
+                Join of Category of Cartesian products of commutative rings and
+                Category of Cartesian products of metric spaces
                 sage: sorted(C.category().axioms())
                 ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
                  'AdditiveUnital', 'Associative', 'Commutative',
@@ -1116,7 +1079,9 @@ class Magmas(Category_singleton):
                     sage: x*y
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
                 """
-                return self._cartesian_product_of_elements([(a*b) for (a,b) in zip(left.cartesian_factors(), right.cartesian_factors())])
+                prods = ((a * b) for a, b in zip(left.cartesian_factors(),
+                                                 right.cartesian_factors()))
+                return self._cartesian_product_of_elements(prods)
 
     class Subquotients(SubquotientsCategory):
         r"""
@@ -1165,8 +1130,8 @@ class Magmas(Category_singleton):
                     sage: B[3] * B[2]
                     4*B[2] + 6*B[3] + 5*B[6]
                 """
-                assert(x in self)
-                assert(y in self)
+                assert x in self
+                assert y in self
                 return self.retract(self.lift(x) * self.lift(y))
 
     class Realizations(RealizationsCategory):
@@ -1187,7 +1152,7 @@ class Magmas(Category_singleton):
                     sage: Out = Sets().WithRealizations().example().Out(); Out
                     The subset algebra of {1, 2, 3} over Rational Field in the Out basis
                     sage: Out.product
-                    <bound method SubsetAlgebra.Out_with_category.product_by_coercion of The subset algebra of {1, 2, 3} over Rational Field in the Out basis>
+                    <bound method Magmas.Realizations.ParentMethods.product_by_coercion of The subset algebra of {1, 2, 3} over Rational Field in the Out basis>
                     sage: Out.product.__module__
                     'sage.categories.magmas'
                     sage: x = Out.an_element()

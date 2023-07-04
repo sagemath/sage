@@ -46,8 +46,8 @@ type the following::
     3.14159265358979323846264338328
     sage: mathematica(pi)             # optional - mathematica
     Pi
-    sage: maple(pi)                   # optional - maple
-    Pi
+    sage: pi._maple_init_()
+    'Pi'
     sage: octave(pi)                  # optional - octave
     3.14159
 
@@ -74,7 +74,7 @@ EXAMPLES: Decimal expansions of constants
 
 We can obtain floating point approximations to each of these
 constants by coercing into the real field with given precision. For
-example, to 200 decimal places we have the following::
+example, to 200 binary places we have the following::
 
     sage: R = RealField(200); R
     Real Field with 200 bits of precision
@@ -214,13 +214,12 @@ Check that :trac:`8237` is fixed::
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
-from __future__ import absolute_import
 
 import math
 from functools import partial
 from sage.rings.infinity import (infinity, minus_infinity,
                                  unsigned_infinity)
+from sage.structure.richcmp import richcmp_method, op_EQ, op_GE, op_LE
 
 constants_table = {}
 constants_name_table = {}
@@ -228,11 +227,20 @@ constants_name_table[repr(infinity)] = infinity
 constants_name_table[repr(unsigned_infinity)] = unsigned_infinity
 constants_name_table[repr(minus_infinity)] = minus_infinity
 
-from sage.libs.pynac.pynac import register_symbol, I
-register_symbol(infinity, {'maxima':'inf'})
-register_symbol(minus_infinity, {'maxima':'minf'})
-register_symbol(unsigned_infinity, {'maxima':'infinity'})
-register_symbol(I, {'mathematica':'I'})
+from sage.symbolic.expression import register_symbol, init_pynac_I
+
+I = init_pynac_I()
+
+register_symbol(infinity, {'maxima':'inf'}, 0)
+register_symbol(minus_infinity, {'maxima':'minf'}, 0)
+register_symbol(unsigned_infinity, {'maxima':'infinity'}, 0)
+register_symbol(I, {'mathematica':'I'}, 0)
+register_symbol(True, {'giac':'true',
+                       'mathematica':'True',
+                       'maxima':'true'}, 0)
+register_symbol(False, {'giac':'false',
+                        'mathematica':'False',
+                        'maxima':'false'}, 0)
 
 
 def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
@@ -263,7 +271,8 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
         cls = globals()[class_name]
         return cls(name=name)
 
-class Constant(object):
+@richcmp_method
+class Constant():
     def __init__(self, name, conversions=None, latex=None, mathml="",
                  domain='complex'):
         """
@@ -284,7 +293,7 @@ class Constant(object):
             setattr(self, "_%s_"%system, partial(self._generic_interface, value))
             setattr(self, "_%s_init_"%system, partial(self._generic_interface_init, value))
 
-        from sage.libs.pynac.constant import PynacConstant
+        from .expression import PynacConstant
         self._pynac = PynacConstant(self._name, self._latex, self._domain)
         self._serial = self._pynac.serial()
         constants_table[self._serial] = self
@@ -292,7 +301,7 @@ class Constant(object):
 
         register_symbol(self.expression(), self._conversions)
 
-    def __eq__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -306,8 +315,10 @@ class Constant(object):
             sage: p != s
             True
         """
-        return (self.__class__ == other.__class__ and
-                self._name == other._name)
+        if self.__class__ == other.__class__ and self._name == other._name:
+            return op in [op_EQ, op_GE, op_LE]
+        else:
+            return NotImplemented
 
     def __reduce__(self):
         """
@@ -338,7 +349,6 @@ class Constant(object):
         return (unpickle_Constant, (self.__class__.__name__, self._name,
                                     self._conversions, self._latex,
                                     self._mathml, self._domain))
-
 
     def domain(self):
         """
@@ -551,8 +561,9 @@ class Pi(Constant):
             sage: mathml(pi)
             <mi>&pi;</mi>
         """
-        conversions = dict(axiom='%pi', fricas='%pi', maxima='%pi', giac='pi', gp='Pi', kash='PI',
-                           mathematica='Pi', matlab='pi', maple='pi',
+        conversions = dict(axiom='%pi', fricas='%pi', maxima='%pi', giac='pi',
+                           gp='Pi', kash='PI',
+                           mathematica='Pi', matlab='pi', maple='Pi',
                            octave='pi', pari='Pi', pynac='Pi')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r"\pi", mathml="<mi>&pi;</mi>",
@@ -605,20 +616,20 @@ The formal square root of -1.
 
 EXAMPLES::
 
-    sage: I
+    sage: SR.I()
     I
-    sage: I^2
+    sage: SR.I()^2
     -1
 
 Note that conversions to real fields will give TypeErrors::
 
-    sage: float(I)
+    sage: float(SR.I())
     Traceback (most recent call last):
     ...
     TypeError: unable to simplify to float approximation
-    sage: gp(I)
+    sage: gp(SR.I())
     I
-    sage: RR(I)
+    sage: RR(SR.I())
     Traceback (most recent call last):
     ...
     TypeError: unable to convert '1.00000000000000*I' to a real number
@@ -634,50 +645,53 @@ We can convert to complex fields::
 
     sage: C = ComplexField(200); C
     Complex Field with 200 bits of precision
-    sage: C(I)
+    sage: C(SR.I())
     1.0000000000000000000000000000000000000000000000000000000000*I
-    sage: I._complex_mpfr_field_(ComplexField(53))
+    sage: SR.I()._complex_mpfr_field_(ComplexField(53))
     1.00000000000000*I
 
-    sage: I._complex_double_(CDF)
+    sage: SR.I()._complex_double_(CDF)
     1.0*I
-    sage: CDF(I)
+    sage: CDF(SR.I())
     1.0*I
 
-    sage: z = I + I; z
+    sage: z = SR.I() + I; z
     2*I
     sage: C(z)
     2.0000000000000000000000000000000000000000000000000000000000*I
-    sage: 1e8*I
+    sage: 1e8*SR.I()
     1.00000000000000e8*I
 
-    sage: complex(I)
+    sage: complex(SR.I())
     1j
 
-    sage: QQbar(I)
+    sage: QQbar(SR.I())
     I
 
-    sage: abs(I)
+    sage: abs(SR.I())
     1
 
-    sage: I.minpoly()
+    sage: SR.I().minpoly()
     x^2 + 1
-    sage: maxima(2*I)
+    sage: maxima(2*SR.I())
     2*%i
 
 TESTS::
 
-    sage: repr(I)
+    sage: repr(SR.I())
     'I'
-    sage: latex(I)
+    sage: latex(SR.I())
     i
 """
 
 # The base of the natural logarithm, e, is not a constant in GiNaC/Sage. It is
 # represented by exp(1). A dummy class to make this work with arithmetic and
-# coercion is implemented in the module sage.symbolic.constants_c for speed.
-from sage.symbolic.constants_c import E
+# coercion is implemented in the module sage.symbolic.expression for speed.
+from sage.symbolic.expression import E
 e = E()
+
+# Allow for backtranslation to this symbol from Mathematica (#29833).
+register_symbol(e, {'mathematica': 'E'})
 
 class NotANumber(Constant):
     """
@@ -709,7 +723,7 @@ class NotANumber(Constant):
             sage: NaN._mpfr_(RealField(53))
             NaN
             sage: type(_)
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
         """
         return R('NaN') #??? nan in mpfr: void mpfr_set_nan (mpfr_t x)
 
@@ -779,7 +793,7 @@ class GoldenRatio(Constant):
             sage: golden_ratio.minpoly()
             x^2 - x - 1
         """
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         x = QQ['x'].gen(0)
         return x**2 - x - 1
 
@@ -802,7 +816,6 @@ class GoldenRatio(Constant):
             1.618033988749895
         """
         return R('1.61803398874989484820458')
-
 
     def _mpfr_(self,R):
         """
@@ -905,7 +918,6 @@ class Log2(Constant):
         """
         return R.log2()
 
-
     def _mpfr_(self,R):
         """
         EXAMPLES::
@@ -947,7 +959,8 @@ class EulerGamma(Constant):
         """
         conversions = dict(kash='EulerGamma(R)', maple='gamma',
                            mathematica='EulerGamma', pari='Euler',
-                           maxima='%gamma', pynac='Euler', giac='euler_gamma')
+                           maxima='%gamma', pynac='Euler', giac='euler_gamma',
+                           fricas='-digamma(1)')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\gamma', domain='positive')
 
@@ -1019,7 +1032,6 @@ class Catalan(Constant):
         Constant.__init__(self, name, conversions=conversions,
                           domain='positive')
 
-
     def _mpfr_(self, R):
         """
         EXAMPLES::
@@ -1039,7 +1051,6 @@ class Catalan(Constant):
             0.915965594177219
         """
         return R('0.91596559417721901505460351493252')
-
 
     def __float__(self):
         """
@@ -1079,10 +1090,7 @@ class Khinchin(Constant):
         sage: m = mathematica(khinchin); m             # optional - mathematica
         Khinchin
         sage: m.N(200)                                 # optional - mathematica
-            2.6854520010653064453097148354817956938203822939944629530511523455572
-        >    188595371520028011411749318476979951534659052880900828976777164109630517
-        >    925334832596683818523154213321194996260393285220448194096181
-
+        2.685452001065306445309714835481795693820382293...32852204481940961807
     """
     def __init__(self, name='khinchin'):
         """

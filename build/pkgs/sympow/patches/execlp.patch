@@ -1,9 +1,0 @@
-diff -ur src/generate.c src.new/generate.c
---- src/generate.c	2007-08-21 06:57:01.000000000 +0200
-+++ src.new/generate.c	2011-10-17 21:55:10.000000000 +0200
-@@ -201,4 +201,4 @@
-  else if (c) sprintf(ARGS,"-cm -sp %i",sp);
-  else if (sp&1) sprintf(ARGS,"-sp %i -dv %i",sp,dv);
-  else sprintf(ARGS,"-sp %i",sp);
-- execl(SH,SH,PATH,SH,GP,ARGS,NULL);}
-+ execlp(SH,SH,PATH,SH,GP,ARGS,NULL);}

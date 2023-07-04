@@ -87,19 +87,20 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
-from sage.structure.richcmp import richcmp_method, richcmp
+from sage.arith.misc import divisors, gcd
+from sage.misc.misc_c import prod
 from sage.modular.abvar.torsion_point import TorsionPoint
-from sage.modules.module            import Module
-from .finite_subgroup                import FiniteSubgroup
-from sage.rings.all                 import ZZ, QQ
-from sage.sets.primes               import Primes
-from sage.modular.arithgroup.all    import is_Gamma0, is_Gamma1
-from sage.all                       import divisors, gcd, prime_range
-from sage.modular.dirichlet         import DirichletGroup
-from sage.misc.misc_c               import prod
+from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
+from sage.modular.dirichlet import DirichletGroup
+from sage.modules.module import Module
+from sage.rings.fast_arith import prime_range
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.sets.primes import Primes
+from sage.structure.richcmp import richcmp_method, richcmp
+
+from .finite_subgroup import FiniteSubgroup
 
 
 @richcmp_method
@@ -184,12 +185,6 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         OUTPUT:
 
         The order of this torsion subgroup.
-
-        REFERENCE:
-
-        .. [CES2003] Brian Conrad, Bas Edixhoven, William Stein
-           `J_1(p)` Has Connected Fibers
-           Documenta Math.  8 (2003) 331--408
 
         EXAMPLES::
 

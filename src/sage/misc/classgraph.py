@@ -1,19 +1,20 @@
 r"""
 Class inheritance graphs
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2007 William Stein <wstein@math.ucsd.edu>
 #                2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 import inspect
 
-def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
+
+def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
     """
-    Returns the class inheritance graph of a module, class, or object
+    Return the class inheritance graph of a module, class, or object
 
     INPUT:
 
@@ -35,14 +36,14 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
         sage: from sage.rings.polynomial.padics import polynomial_padic_capped_relative_dense, polynomial_padic_flat
         sage: G = class_graph(sage.rings.polynomial.padics); G
         Digraph on 6 vertices
-        sage: G.vertices()
+        sage: G.vertices(sort=True)
         ['Polynomial',
          'Polynomial_generic_cdv',
          'Polynomial_generic_dense',
          'Polynomial_padic',
          'Polynomial_padic_capped_relative_dense',
          'Polynomial_padic_flat']
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [('Polynomial_padic', 'Polynomial'),
          ('Polynomial_padic_capped_relative_dense', 'Polynomial_generic_cdv'),
          ('Polynomial_padic_capped_relative_dense', 'Polynomial_padic'),
@@ -51,12 +52,12 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
 
     We construct the inheritance graph of a given class::
 
-        sage: class_graph(Parent).edges(labels=False)
+        sage: class_graph(Parent).edges(sort=True, labels=False)
         [('CategoryObject', 'SageObject'), ('Parent', 'CategoryObject'), ('SageObject', 'object')]
 
     We construct the inheritance graph of the class of an object::
 
-        sage: class_graph([1,2,3]).edges(labels=False)
+        sage: class_graph([1,2,3]).edges(sort=True, labels=False)
         [('list', 'object')]
 
     .. warning:: the output of ``class_graph`` used to be a dictionary
@@ -96,13 +97,13 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
     # Build the list ``children`` of submodules (resp. base classes)
     # of ``top`` the function will recurse through
     if inspect.ismodule(top):
-        if top.__name__.endswith('.all'): # Ignore sage.rings.all and friends
+        if top.__name__.endswith('.all'):  # Ignore sage.rings.all and friends
             return classes
         if name_filter is None:
             name_filter = top.__name__
         children = [item for item in top.__dict__.values()
-                       if inspect.ismodule(item) or inspect.isclass(item)]
-        depth = depth -1
+                    if inspect.ismodule(item) or inspect.isclass(item)]
+        depth -= 1
     elif inspect.isclass(top):
         if name_filter is None:
             name_filter = ""
@@ -110,12 +111,13 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
             return classes
         children = top.__bases__
         classes[top.__name__] = [e.__name__ for e in children]
-    else: # top is a plain Python object; inspect its class
+    else:  # top is a plain Python object; inspect its class
         children = [top.__class__]
 
     # Recurse
     for child in children:
-        class_graph(child, depth = depth, name_filter=name_filter, classes=classes, as_graph = False)
+        class_graph(child, depth=depth, name_filter=name_filter,
+                    classes=classes, as_graph=False)
 
     # (first recursive call): construct the graph
     if as_graph:
@@ -123,4 +125,3 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
         return DiGraph(classes)
     else:
         return classes
-

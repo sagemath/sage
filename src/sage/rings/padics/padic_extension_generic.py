@@ -1,5 +1,5 @@
 """
-p-Adic Extension Generic
+`p`-adic Extension Generic
 
 A common superclass for all extensions of Qp and Zp.
 
@@ -7,7 +7,6 @@ AUTHORS:
 
 - David Roe
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
@@ -29,13 +28,16 @@ from sage.rings.infinity import Infinity
 from sage.structure.richcmp import op_EQ
 from functools import reduce
 from sage.categories.morphism import Morphism
+from sage.categories.map import Map
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.metric_spaces import MetricSpaces
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
-
+from sage.misc.flatten import flatten
+from sage.misc.cachefunc import cached_method
+from sage.structure.richcmp import rich_to_bool
 
 class pAdicExtensionGeneric(pAdicGeneric):
     def __init__(self, poly, prec, print_mode, names, element_class):
@@ -105,8 +107,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def _extension_type(self):
         """
-        Return the type (``Unramified``, ``Eisenstein``) of this 
-        extension as a string, if any. 
+        Return the type (``Unramified``, ``Eisenstein``) of this
+        extension as a string, if any.
 
         Used for printing.
 
@@ -508,7 +510,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: c(R0) == R
             True
 
-        For a field, by default we return a fraction field functor.
+        For a field, by default we return a fraction field functor. ::
 
             sage: K.<a> = Qq(25, 8)
             sage: c, R = K.construction(); R
@@ -548,17 +550,92 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125, 5); R.random_element()
-            (3*a^2 + 3*a + 3) + (a^2 + 4*a + 1)*5 + (3*a^2 + 4*a + 1)*5^2 + 
-            (2*a^2 + 3*a + 3)*5^3 + (4*a^2 + 3)*5^4 + O(5^5)
+            sage: R.<a> = Zq(125, 5)
+            sage: R.random_element().parent() is R
+            True
             sage: R = Zp(5,3); S.<x> = ZZ[]; f = x^5 + 25*x^2 - 5; W.<w> = R.ext(f)
-            sage: W.random_element()
-            4 + 3*w + w^2 + 4*w^3 + w^5 + 3*w^6 + w^7 + 4*w^10 + 2*w^12 + 4*w^13 + 3*w^14 + O(w^15)
+            sage: W.random_element().parent() is W
+            True
         """
         return reduce(lambda x,y: x+y,
                       [self.ground_ring().random_element() * self.gen()**i for i in
                            range(self.modulus().degree())],
                       0)
+
+    @cached_method(key=(lambda self, base, basis, map: (base or self.base_ring(), map)))
+    def free_module(self, base=None, basis=None, map=True):
+        """
+        Return a free module `V` over a specified base ring together with maps to and from `V`.
+
+        INPUT:
+
+        - ``base`` -- a subring `R` so that this ring/field is isomorphic
+          to a finite-rank free `R`-module `V`
+
+        - ``basis`` -- a basis for this ring/field over the base
+
+        - ``map`` -- boolean (default ``True``), whether to return
+          `R`-linear maps to and from `V`
+
+        OUTPUT:
+
+        - A finite-rank free `R`-module `V`
+
+        - An `R`-module isomorphism from `V` to this ring/field
+          (only included if ``map`` is ``True``)
+
+        - An `R`-module isomorphism from this ring/field to `V`
+          (only included if ``map`` is ``True``)
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = Qq(125)
+            sage: L.<pi> = K.extension(x^2-5)
+            sage: V, from_V, to_V = K.free_module()
+            sage: W, from_W, to_W = L.free_module()
+            sage: W0, from_W0, to_W0 = L.free_module(base=Qp(5))
+            sage: to_V(a + O(5^7))
+            (O(5^7), 1 + O(5^7), O(5^7))
+            sage: to_W(a)
+            (a + O(5^20), O(5^20))
+            sage: to_W0(a + O(5^7))
+            (O(5^7), 1 + O(5^7), O(5^7), O(5^7), O(5^7), O(5^7))
+            sage: to_W(pi)
+            (O(5^21), 1 + O(5^20))
+            sage: to_W0(pi + O(pi^11))
+            (O(5^6), O(5^6), O(5^6), 1 + O(5^5), O(5^5), O(5^5))
+
+            sage: X, from_X, to_X = K.free_module(K)
+            sage: to_X(a)
+            (a + O(5^20))
+        """
+        if basis is not None:
+            raise NotImplementedError
+        B = self.base_ring()
+        if base is None:
+            base = B
+        A = B.base_ring()
+        d = self.relative_degree()
+        if base is B:
+            # May eventually want to take advantage of the fact that precision is flat
+            V = B**d
+            from_V = MapFreeModuleToOneStep
+            to_V = MapOneStepToFreeModule
+        elif base is A:
+            d *= B.relative_degree()
+            V = A**d
+            from_V = MapFreeModuleToTwoStep
+            to_V = MapTwoStepToFreeModule
+        elif base is self:
+            return super(pAdicExtensionGeneric, self).free_module(base=base, basis=basis, map=map)
+        else:
+            raise NotImplementedError
+        FromV = Hom(V, self)
+        ToV = Hom(self, V)
+        from_V = FromV.__make_element_class__(from_V)(FromV)
+        to_V = ToV.__make_element_class__(to_V)(ToV)
+        return V, from_V, to_V
 
     #def unit_group(self):
     #    raise NotImplementedError
@@ -574,6 +651,210 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     #def zeta_order(self):
     #    raise NotImplementedError
+
+# We could have used morphisms in the category
+# FiniteDimensionalModulesWithBasis over Qp(p)
+# But currently if you try to add this category
+# to p-adic extensions you get errors on
+# object creation.  Moreover, some of the methods
+# obtained from the category (such as dimension)
+# don't take base ring into account, making it
+# awkward to treat the same field as simultaneously
+# an object in two free module categories with
+# different base rings. So for now we
+# just stick with Map.
+class pAdicModuleIsomorphism(Map):
+    r"""
+    A base class for various isomorphisms between p-adic rings/fields and free modules
+
+    EXAMPLES::
+
+        sage: K.<a> = Qq(125)
+        sage: V, fr, to = K.free_module()
+        sage: from sage.rings.padics.padic_extension_generic import pAdicModuleIsomorphism
+        sage: isinstance(fr, pAdicModuleIsomorphism)
+        True
+    """
+    def _repr_type(self):
+        r"""
+        EXAMPLES::
+
+            sage: K.<a> = Qq(125)
+            sage: V, fr, to = K.free_module()
+            sage: fr._repr_type()
+            'Isomorphism'
+        """
+        return "Isomorphism"
+
+    def is_injective(self):
+        r"""
+        EXAMPLES::
+
+            sage: K.<a> = Qq(125)
+            sage: V, fr, to = K.free_module()
+            sage: fr.is_injective()
+            True
+        """
+        return True
+
+    def is_surjective(self):
+        r"""
+        EXAMPLES::
+
+            sage: K.<a> = Qq(125)
+            sage: V, fr, to = K.free_module()
+            sage: fr.is_surjective()
+            True
+        """
+        return True
+
+    def _richcmp_(self, other, op):
+        r"""
+        EXAMPLES::
+
+            sage: K.<a> = Qq(125)
+            sage: V, fr, to = K.free_module()
+            sage: fr == fr
+            True
+        """
+        # For maps of this type, equality depends only on the parent
+        if isinstance(other, pAdicModuleIsomorphism):
+            return rich_to_bool(op, 0)
+        else:
+            return rich_to_bool(op, 1)
+
+class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
+    """
+    The isomorphism from the underlying module of a one-step p-adic extension
+    to the extension.
+
+    EXAMPLES::
+
+        sage: K.<a> = Qq(125)
+        sage: V, fr, to = K.free_module()
+        sage: TestSuite(fr).run(skip=['_test_nonzero_equal']) # skipped since Qq(125) doesn't have dimension()
+    """
+    def _call_(self, x):
+        """
+        EXAMPLES::
+
+            sage: K.<a> = Qq(125)
+            sage: V, fr, to = K.free_module()
+            sage: v = V([1,2,3])
+            sage: fr(v)
+            (3*a^2 + 2*a + 1) + O(5^20)
+        """
+        return self.codomain()(list(x))
+
+    def _call_with_args(self, x, args=(), kwds={}):
+        """
+        EXAMPLES::
+
+            sage: K.<a> = Qq(125)
+            sage: V, fr, to = K.free_module()
+            sage: v = V([1,2,3])
+            sage: fr(v, 7)
+            (3*a^2 + 2*a + 1) + O(5^7)
+        """
+        return self.codomain()(list(x), *args, **kwds)
+
+class MapOneStepToFreeModule(pAdicModuleIsomorphism):
+    """
+    The isomorphism from a one-step p-adic extension to its underlying free module
+
+    EXAMPLES::
+
+        sage: K.<a> = Qq(125)
+        sage: V, fr, to = K.free_module()
+        sage: TestSuite(to).run()
+    """
+    def _call_(self, x):
+        """
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<pi> = Qp(5).extension(x^3 - 5)
+            sage: V, fr, to = K.free_module()
+            sage: to(1 + pi^2 + O(pi^11))
+            (1 + O(5^4), O(5^4), 1 + O(5^3))
+            sage: to(1 + pi + O(pi^11))
+            (1 + O(5^4), 1 + O(5^4), O(5^3))
+        """
+        return self.codomain()(x._polynomial_list(pad=True))
+
+class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
+    """
+    The isomorphism from the underlying module of a two-step p-adic extension
+    to the extension.
+
+    EXAMPLES::
+
+        sage: K.<a> = Qq(125)
+        sage: R.<x> = ZZ[]
+        sage: L.<b> = K.extension(x^2 - 5*x + 5)
+        sage: V, fr, to = L.free_module(base=Qp(5))
+        sage: TestSuite(fr).run(skip=['_test_nonzero_equal']) # skipped since L doesn't have dimension()
+    """
+    def _call_(self, x):
+        """
+        EXAMPLES::
+
+            sage: K.<a> = Qq(125)
+            sage: R.<x> = ZZ[]
+            sage: L.<pi> = K.extension(x^2 - 5)
+            sage: V, fr, to = L.free_module(base=Qp(5))
+            sage: v = V([1,2,3,4,5,6])
+            sage: fr(v)
+            (3*a^2 + 2*a + 1) + (a^2 + 4)*pi + (a^2 + a)*pi^3 + O(pi^40)
+        """
+        L = self.codomain()
+        U = L.base_ring()
+        x = list(x)
+        n = len(x)
+        d = n // L.relative_degree()
+        v = [U(x[i:i+d]) for i in range(0,n,d)]
+        return L(v)
+
+    def _call_with_args(self, x, args=(), kwds={}):
+        """
+        EXAMPLES::
+
+            sage: K.<a> = Qq(125)
+            sage: R.<x> = ZZ[]
+            sage: L.<pi> = K.extension(x^2 - 5)
+            sage: V, fr, to = L.free_module(base=Qp(5))
+            sage: v = V([1,2,3,4,5,6])
+            sage: fr(v, 7)
+            (3*a^2 + 2*a + 1) + (a^2 + 4)*pi + (a^2 + a)*pi^3 + O(pi^7)
+        """
+        return self.codomain()(self._call_(x), *args, **kwds)
+
+class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
+    """
+    The isomorphism from a two-step p-adic extension to its underlying free module
+
+    EXAMPLES::
+
+        sage: K.<a> = Qq(125)
+        sage: R.<x> = ZZ[]
+        sage: L.<b> = K.extension(x^2 - 5*x + 5)
+        sage: V, fr, to = L.free_module(base=Qp(5))
+        sage: TestSuite(to).run()
+    """
+    def _call_(self, x):
+        """
+        EXAMPLES::
+
+            sage: K.<a> = Qq(25)
+            sage: R.<x> = ZZ[]
+            sage: L.<pi> = K.extension(x^3 - 5)
+            sage: V, fr, to = L.free_module(base=Qp(5))
+            sage: b = 1 + a*pi + O(pi^7)
+            sage: to(b)
+            (1 + O(5^3), O(5^3), O(5^2), 1 + O(5^2), O(5^2), O(5^2))
+        """
+        v = flatten([c._polynomial_list(pad=True) for c in x._polynomial_list(pad=True)])
+        return self.codomain()(v)
 
 class DefPolyConversion(Morphism):
     """
@@ -609,8 +890,11 @@ class DefPolyConversion(Morphism):
             sage: S.<x> = ZZ[]
             sage: W.<w> = Zp(3).extension(x^4 + 9*x^2 + 3*x - 3)
             sage: z = W.random_element()
-            sage: repr(W.change(print_mode='digits')(z))
-            '...20112102111011011200001212210222202220100111100200011222122121202100210120010120'
+            sage: r = repr(W.change(print_mode='digits')(z))
+            sage: r[:3] == '...'
+            True
+            sage: all(l in ['0', '1', '2'] for l in r[3:])
+            True
 
         TESTS:
 
@@ -653,8 +937,11 @@ class DefPolyConversion(Morphism):
             sage: S.<x> = ZZ[]
             sage: W.<w> = Zp(3).extension(x^4 + 9*x^2 + 3*x - 3)
             sage: z = W.random_element()
-            sage: repr(W.change(print_mode='digits')(z, absprec=8)) # indirect doctest
-            '...20010120'
+            sage: r = repr(W.change(print_mode='digits')(z, absprec=8)) # indirect doctest
+            sage: r[:3] == '...'
+            True
+            sage: all(l in ['0', '1', '2'] for l in r[3:])
+            True
 
         TESTS::
 

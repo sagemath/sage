@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python
 
 # Cleverly run Mathematica with the benefit of readline, which
 # is something the usual commercial mathematica doesn't provide!
@@ -8,7 +8,7 @@
 import sys
 import signal
 import subprocess
-from six.moves import input
+from sage.cpython.string import str_to_bytes
 
 def child_exited(*args):
     global child
@@ -23,7 +23,7 @@ pipe = child.stdin
 while True:
     try:
         line = input()
-        pipe.write(line + '\n')
+        pipe.write(str_to_bytes(line + '\n'))
         pipe.flush()
     except KeyboardInterrupt:
         pipe.close()

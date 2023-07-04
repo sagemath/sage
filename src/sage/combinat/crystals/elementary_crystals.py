@@ -53,7 +53,7 @@ REFERENCES:
 - [NZ1997]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2013 Ben Salisbury <benjamin_salisbury at brown dot edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -65,13 +65,15 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
-from sage.categories.classical_crystals import ClassicalCrystals
+from sage.categories.regular_crystals import RegularCrystals
+from sage.categories.supercrystals import SuperCrystals
+from sage.categories.regular_supercrystals import RegularSuperCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -86,7 +88,8 @@ class AbstractSingleCrystalElement(Element):
     r"""
     Abstract base class for elements in crystals with a single element.
     """
-    def __lt__(self,other):
+
+    def __lt__(self, other):
         r"""
         EXAMPLES::
 
@@ -111,7 +114,7 @@ class AbstractSingleCrystalElement(Element):
         """
         return hash(self.parent())
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         r"""
         EXAMPLES::
 
@@ -139,7 +142,7 @@ class AbstractSingleCrystalElement(Element):
             return self.parent() is other.parent()
         return False
 
-    def __ne__(self,other):
+    def __ne__(self, other):
         r"""
         EXAMPLES::
 
@@ -152,7 +155,7 @@ class AbstractSingleCrystalElement(Element):
         """
         return not self == other
 
-    def e(self,i):
+    def e(self, i):
         r"""
         Return `e_i` of ``self``, which is ``None`` for all `i`.
 
@@ -171,7 +174,7 @@ class AbstractSingleCrystalElement(Element):
         """
         return None
 
-    def f(self,i):
+    def f(self, i):
         r"""
         Return `f_i` of ``self``, which is ``None`` for all `i`.
 
@@ -189,6 +192,7 @@ class AbstractSingleCrystalElement(Element):
             sage: t.f(2)
         """
         return None
+
 
 class TCrystal(UniqueRepresentation, Parent):
     r"""
@@ -255,7 +259,7 @@ class TCrystal(UniqueRepresentation, Parent):
             weight = cartan_type
             cartan_type = weight.parent().cartan_type()
         cartan_type = CartanType(cartan_type)
-        return super(TCrystal, cls).__classcall__(cls, cartan_type, weight)
+        return super().__classcall__(cls, cartan_type, weight)
 
     def __init__(self, cartan_type, weight):
         r"""
@@ -267,9 +271,13 @@ class TCrystal(UniqueRepresentation, Parent):
             sage: B = crystals.elementary.T("A2", 5*la[2])
             sage: TestSuite(B).run()
         """
-        Parent.__init__(self, category = (FiniteCrystals(), HighestWeightCrystals()))
         self._weight = weight
         self._cartan_type = cartan_type
+        if self._cartan_type.type() == 'Q':
+            category = SuperCrystals().Finite()
+        else:
+            category = (FiniteCrystals(), HighestWeightCrystals())
+        Parent.__init__(self, category=category)
         self.module_generators = (self.element_class(self),)
 
     def _repr_(self):
@@ -283,7 +291,7 @@ class TCrystal(UniqueRepresentation, Parent):
             sage: B
             The T crystal of type ['E', 6] and weight Lambda[6]
         """
-        return "The T crystal of type {1!s} and weight {0!s}".format(self._weight,self._cartan_type)
+        return "The T crystal of type {1!s} and weight {0!s}".format(self._weight, self._cartan_type)
 
     def _element_constructor_(self, weight):
         r"""
@@ -301,7 +309,7 @@ class TCrystal(UniqueRepresentation, Parent):
             Lambda[7] + Lambda[8]
         """
         if weight != self._weight:
-            raise ValueError("Only element is t(%s)"%self._weight)
+            raise ValueError("only element is t(%s)" % self._weight)
         return self.element_class(self)
 
     def cardinality(self):
@@ -343,6 +351,7 @@ class TCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `T_{\lambda}` crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::
@@ -367,11 +376,11 @@ class TCrystal(UniqueRepresentation, Parent):
                 sage: T = crystals.elementary.T(ct, 2*la[1]-3*la[3]+la[0])
                 sage: t = T.highest_weight_vector()
                 sage: latex(t)
-                {t_{-e_{0} - 3e_{1} - 3e_{2} - 3e_{deltacheck}}}
+                {t_{-e_{0} - 3 e_{1} - 3 e_{2} - 3 e_{deltacheck}}}
             """
-            return "{t_{"+self.parent()._weight._latex_()+"}}"
+            return "{t_{" + self.parent()._weight._latex_() + "}}"
 
-        def epsilon(self,i):
+        def epsilon(self, i):
             r"""
             Return `\varepsilon_i` of ``self``, which is `-\infty` for all `i`.
 
@@ -390,7 +399,7 @@ class TCrystal(UniqueRepresentation, Parent):
             """
             return float("-inf")
 
-        def phi(self,i):
+        def phi(self, i):
             r"""
             Return `\varphi_i` of ``self``, which is `-\infty` for all `i`.
 
@@ -424,6 +433,7 @@ class TCrystal(UniqueRepresentation, Parent):
             """
             return self.parent()._weight
 
+
 class RCrystal(UniqueRepresentation, Parent):
     r"""
     The crystal `R_{\lambda}`.
@@ -448,11 +458,22 @@ class RCrystal(UniqueRepresentation, Parent):
     the crystal graph of `R_{\lambda} \otimes B(\infty)` generated from the
     component `r_{\lambda} \otimes u_{\infty}`.
 
+    There is also a dual version of this crystal given by
+    `R^{\vee}_{\lambda} = \{ r^{\vee}_{\lambda} \}` with the crystal
+    structure defined by
+
+    .. MATH::
+
+        \mathrm{wt}(r^{\vee}_{\lambda}) = \lambda, \quad
+        e_i r^{\vee}_{\lambda} = f_i r^{\vee}_{\lambda} = 0, \quad
+        \varepsilon_i(r^{\vee}_{\lambda}) = 0, \quad
+        \varphi_i(r^{\vee}_{\lambda}) = \langle h_i, \lambda\rangle.
+
     INPUT:
 
-    - ``cartan_type`` -- A Cartan type
-
-    - ``weight`` -- An element of the weight lattice of type ``cartan_type``
+    - ``cartan_type`` -- a Cartan type
+    - ``weight`` -- an element of the weight lattice of type ``cartan_type``
+    - ``dual`` -- (default: ``False``) boolean
 
     EXAMPLES:
 
@@ -478,7 +499,7 @@ class RCrystal(UniqueRepresentation, Parent):
     """
 
     @staticmethod
-    def __classcall_private__(cls, cartan_type, weight=None):
+    def __classcall_private__(cls, cartan_type, weight=None, dual=False):
         r"""
         Normalize input to ensure a unique representation.
 
@@ -495,9 +516,9 @@ class RCrystal(UniqueRepresentation, Parent):
             weight = cartan_type
             cartan_type = weight.parent().cartan_type()
         cartan_type = CartanType(cartan_type)
-        return super(RCrystal, cls).__classcall__(cls, cartan_type, weight)
+        return super().__classcall__(cls, cartan_type, weight, dual)
 
-    def __init__(self, cartan_type, weight):
+    def __init__(self, cartan_type, weight, dual):
         r"""
         Initialize ``self``.
 
@@ -507,9 +528,14 @@ class RCrystal(UniqueRepresentation, Parent):
             sage: B = crystals.elementary.R("A2",5*la[2])
             sage: TestSuite(B).run()
         """
-        Parent.__init__(self, category = (FiniteCrystals(),HighestWeightCrystals()))
         self._weight = weight
         self._cartan_type = cartan_type
+        self._dual = dual
+        if self._cartan_type.type() == 'Q':
+            category = SuperCrystals().Finite()
+        else:
+            category = (FiniteCrystals(), HighestWeightCrystals())
+        Parent.__init__(self, category=category)
         self.module_generators = (self.element_class(self),)
 
     def _repr_(self):
@@ -519,11 +545,16 @@ class RCrystal(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: la = RootSystem(['E',6]).weight_lattice().fundamental_weights()
-            sage: B = crystals.elementary.R(['E',6],la[6])
+            sage: B = crystals.elementary.R(['E',6], la[6])
             sage: B
             The R crystal of weight Lambda[6] and type ['E', 6]
+
+            sage: crystals.elementary.R(['E',6], la[1], dual=True)
+            The dual R crystal of weight Lambda[1] and type ['E', 6]
         """
-        return "The R crystal of weight {0!s} and type {1!s}".format(self._weight,self._cartan_type)
+        dual_str = " dual" if self._dual else ""
+        return "The{} R crystal of weight {} and type {}".format(
+                    dual_str, self._weight, self._cartan_type)
 
     def _element_constructor_(self, weight):
         r"""
@@ -541,7 +572,7 @@ class RCrystal(UniqueRepresentation, Parent):
             Lambda[7] + Lambda[8]
         """
         if weight != self._weight:
-            raise ValueError("Only element is r(%s)"%self._weight)
+            raise ValueError("Only element is r(%s)" % self._weight)
         return self.element_class(self)
 
     def cardinality(self):
@@ -583,6 +614,7 @@ class RCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `R_{\lambda}` crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::
@@ -607,8 +639,14 @@ class RCrystal(UniqueRepresentation, Parent):
                 sage: r = R.highest_weight_vector()
                 sage: latex(r)
                 {r_{\Lambda_{1}}}
+
+                sage: R = crystals.elementary.R("G2", la[1], dual=True)
+                sage: latex(R.highest_weight_vector())
+                {r^{\vee}_{\Lambda_{1}}}
             """
-            return "{r_{"+self.parent()._weight._latex_()+"}}"
+            if self.parent()._dual:
+                return r"{r^{\vee}_{" + self.parent()._weight._latex_() + "}}"
+            return "{r_{" + self.parent()._weight._latex_() + "}}"
 
         def epsilon(self, i):
             r"""
@@ -624,14 +662,22 @@ class RCrystal(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: la = RootSystem(['A',2]).weight_lattice().fundamental_weights()
-                sage: R = crystals.elementary.R("A2",la[1])
+                sage: R = crystals.elementary.R("A2", la[1])
                 sage: r = R.highest_weight_vector()
                 sage: [r.epsilon(i) for i in R.index_set()]
                 [-1, 0]
+
+                sage: R = crystals.elementary.R("A2", la[1], dual=True)
+                sage: r = R.highest_weight_vector()
+                sage: [r.epsilon(i) for i in R.index_set()]
+                [0, 0]
             """
-            P = self.parent().weight_lattice_realization()
-            h = P.simple_coroots()
-            return -P(self.weight()).scalar(h[i])
+            if self.parent()._dual:
+                return ZZ.zero()
+            else:
+                P = self.parent().weight_lattice_realization()
+                h = P.simple_coroots()
+                return -P(self.weight()).scalar(h[i])
 
         def phi(self, i):
             r"""
@@ -644,12 +690,22 @@ class RCrystal(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: la = RootSystem("C5").weight_lattice().fundamental_weights()
-                sage: R = crystals.elementary.R("C5",la[4]+la[5])
+                sage: R = crystals.elementary.R("C5", la[4]+la[5])
                 sage: r = R.highest_weight_vector()
                 sage: [r.phi(i) for i in R.index_set()]
                 [0, 0, 0, 0, 0]
+
+                sage: R = crystals.elementary.R("C5", la[4]+la[5], dual=True)
+                sage: r = R.highest_weight_vector()
+                sage: [r.phi(i) for i in R.index_set()]
+                [0, 0, 0, 1, 1]
             """
-            return ZZ.zero()
+            if self.parent()._dual:
+                P = self.parent().weight_lattice_realization()
+                h = P.simple_coroots()
+                return P(self.weight()).scalar(h[i])
+            else:
+                return ZZ.zero()
 
         def weight(self):
             r"""
@@ -666,6 +722,7 @@ class RCrystal(UniqueRepresentation, Parent):
             """
             return self.parent()._weight
 
+
 class ElementaryCrystal(UniqueRepresentation, Parent):
     r"""
     The elementary crystal `B_i`.
@@ -677,7 +734,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
         B_i = \{ b_i(m) : m \in \ZZ \},
 
-    where the crystal stucture is given by
+    where the crystal structure is given by
 
     .. MATH::
 
@@ -734,8 +791,8 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         """
         cartan_type = CartanType(cartan_type)
         if i not in cartan_type.index_set():
-            raise ValueError('i must an element of the index set.')
-        return super(ElementaryCrystal, cls).__classcall__(cls, cartan_type, i)
+            raise ValueError('i must an element of the index set')
+        return super().__classcall__(cls, cartan_type, i)
 
     def __init__(self, cartan_type, i):
         r"""
@@ -746,10 +803,10 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             sage: B = crystals.elementary.Elementary("D4",3)
             sage: TestSuite(B).run()
         """
-        Parent.__init__(self, category = (Crystals(), InfiniteEnumeratedSets()))
+        Parent.__init__(self, category=(Crystals(), InfiniteEnumeratedSets()))
         self._i = i
         self._cartan_type = cartan_type
-        self.module_generators = (self.element_class(self,0),)
+        self.module_generators = (self.element_class(self, 0),)
 
     def _repr_(self):
         r"""
@@ -761,7 +818,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             sage: B
             The 4-elementary crystal of type ['B', 5, 1]
         """
-        return "The {0!s}-elementary crystal of type {1!s}".format(self._i,self._cartan_type)
+        return "The {0!s}-elementary crystal of type {1!s}".format(self._i, self._cartan_type)
 
     def _element_constructor_(self, m):
         r"""
@@ -800,6 +857,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `B_i` crystal.
         """
+
         def __init__(self, parent, m):
             r"""
             EXAMPLES::
@@ -831,7 +889,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             return repr(self._m)
 
-        def __lt__(self,other):
+        def __lt__(self, other):
             r"""
             EXAMPLES::
 
@@ -847,7 +905,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
                 return False
             return Integer(self._m) < Integer(other._m)
 
-        def __eq__(self,other):
+        def __eq__(self, other):
             r"""
             EXAMPLES::
 
@@ -863,7 +921,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
                 return self.parent() is other.parent() and self._m == other._m
             return False
 
-        def __ne__(self,other):
+        def __ne__(self, other):
             r"""
             EXAMPLES::
 
@@ -885,9 +943,9 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
                 sage: latex(B(26))
                 {b_{6}(26)}
             """
-            return "{b_{%s}(%s)}"%(self.parent()._i, self._m)
+            return "{b_{%s}(%s)}" % (self.parent()._i, self._m)
 
-        def e(self,i):
+        def e(self, i):
             r"""
             Return the action of `e_i` on ``self``.
 
@@ -905,7 +963,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
                 sage: B(0).e(2)
             """
             if i == self.parent()._i:
-                return self.__class__(self.parent(), self._m+1)
+                return self.__class__(self.parent(), self._m + 1)
             else:
                 return None
 
@@ -927,7 +985,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
                 sage: B(0).e(2)
             """
             if i == self.parent()._i:
-                return self.__class__(self.parent(), self._m-1)
+                return self.__class__(self.parent(), self._m - 1)
             else:
                 return None
 
@@ -990,6 +1048,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             Q = self.parent().weight_lattice_realization()
             return self._m * Q.simple_root(self.parent()._i)
 
+
 class ComponentCrystal(UniqueRepresentation, Parent):
     r"""
     The component crystal.
@@ -1030,14 +1089,15 @@ class ComponentCrystal(UniqueRepresentation, Parent):
         """
         if cartan_type in RootLatticeRealizations:
             P = cartan_type
+            cartan_type = P.cartan_type()
         elif P is None:
             cartan_type = CartanType(cartan_type)
             P = cartan_type.root_system().ambient_space()
             if P is None:
                 P = cartan_type.root_system().weight_lattice()
-        return super(ComponentCrystal, cls).__classcall__(cls, P)
+        return super().__classcall__(cls, cartan_type, P)
 
-    def __init__(self, P):
+    def __init__(self, cartan_type, P):
         r"""
         Initialize ``self``.
 
@@ -1046,9 +1106,13 @@ class ComponentCrystal(UniqueRepresentation, Parent):
             sage: B = crystals.elementary.Component("D4")
             sage: TestSuite(B).run()
         """
-        Parent.__init__(self, category = ClassicalCrystals())
         self._weight_lattice_realization = P
-        self._cartan_type = P.cartan_type()
+        self._cartan_type = cartan_type
+        if self._cartan_type.type() == 'Q':
+            category = RegularSuperCrystals()
+        else:
+            category = (RegularCrystals().Finite(), HighestWeightCrystals())
+        Parent.__init__(self, category=category)
         self.module_generators = (self.element_class(self),)
 
     def _repr_(self):
@@ -1112,6 +1176,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a component crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::
@@ -1136,7 +1201,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
             """
             return "{c}"
 
-        def epsilon(self,i):
+        def epsilon(self, i):
             r"""
             Return `\varepsilon_i` of ``self``, which is `0` for all `i`.
 
@@ -1153,7 +1218,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
             """
             return 0
 
-        def phi(self,i):
+        def phi(self, i):
             r"""
             Return `\varphi_i` of ``self``, which is `0` for all `i`.
 
@@ -1182,4 +1247,3 @@ class ComponentCrystal(UniqueRepresentation, Parent):
                 (0, 0, 0, 0)
             """
             return self.parent().weight_lattice_realization().zero()
-

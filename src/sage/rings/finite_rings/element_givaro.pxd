@@ -1,13 +1,13 @@
-# distutils: extra_compile_args = GIVARO_CFLAGS
+# distutils: extra_compile_args = GIVARO_CFLAGS -std=c++11
+# distutils: include_dirs = GIVARO_INCDIR
 
 from libcpp.vector cimport vector
 ctypedef vector[int] intvec
 
 from libc.stdint cimport int64_t
 
-from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
+from sage.rings.finite_rings.element_base cimport FinitePolyExtElement, Cache_base
 from sage.structure.parent cimport Parent
-from sage.structure.sage_object cimport SageObject
 
 
 cdef extern from "givaro/givconfig.h":
@@ -20,35 +20,35 @@ cdef extern from "givaro/givrandom.h":
     GivRandom GivRandomSeeded  "Givaro::GivRandom"(unsigned long seed)
 
 cdef extern from "givaro/gfq.h":
-    ctypedef struct GivaroGfq "Givaro::GFqDom<int>":
+    cdef cppclass GivaroGfq "Givaro::GFqDom<int>":
         #attributes
         unsigned int one
         unsigned int zero
 
         # methods
-        int (* mul)(int r, int a, int b)
-        int (* add)(int r, int a, int b)
-        int (* sub)(int r, int a, int b)
-        int (* div)(int r, int a, int b)
-        int (* inv)(int r, int x)
-        int (* neg)(int r, int x)
-        int (* mulin)(int a, int b)
-        unsigned int (* characteristic)()
-        unsigned int (* cardinality)()
-        int (* exponent)()
-        int (* random)(GivRandom gen, int res)
-        int (* initi "init")(int res, int64_t e)
-        int (* initd "init")(int res, double e)
-        int (* indeterminate)()
-        int (* convert)(int64_t r, int p)
-        int (* read)(int r, int p)
-        int (* axpyin)(int r, int a, int x)
-        int (* axpy)(int r, int a, int b, int c)
-        int (* axmy)(int r, int a, int b, int c)
-        int (* maxpy)(int r, int a, int b, int c)
-        bint (* isZero)(int e)
-        bint (* isOne)(int e)
-        bint (* isunit)(int e)
+        int mul(int r, int a, int b)
+        int add(int r, int a, int b)
+        int sub(int r, int a, int b)
+        int div(int r, int a, int b)
+        int inv(int r, int x)
+        int neg(int r, int x)
+        int mulin(int a, int b)
+        unsigned int characteristic()
+        unsigned int cardinality()
+        int exponent()
+        int random(GivRandom gen, int res)
+        int initi "init"(int& res, int64_t e)
+        int initd "init"(int& res, double e)
+        int indeterminate()
+        int64_t convert(int64_t& r, int p)
+        int read(int& r, int p)
+        int axpyin(int r, int a, int x)
+        int axpy(int r, int a, int b, int c)
+        int axmy(int r, int a, int b, int c)
+        int maxpy(int r, int a, int b, int c)
+        bint isZero(int e)
+        bint isOne(int e)
+        bint isunit(int e)
 
     GivaroGfq *gfq_factorypk "new Givaro::GFqDom<int>" (unsigned int p, unsigned int k)
     GivaroGfq *gfq_factorypkp "new Givaro::GFqDom<int>" (unsigned int p, unsigned int k, intvec poly)
@@ -64,7 +64,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
     cdef object _multiplicative_order
     cdef FiniteField_givaroElement _new_c(self, int value)
 
-cdef class Cache_givaro(SageObject):
+cdef class Cache_givaro(Cache_base):
     cdef GivaroGfq *objectptr # C++ object
     cdef public object _array
     cdef FiniteField_givaroElement _zero_element

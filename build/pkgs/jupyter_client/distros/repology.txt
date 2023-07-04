@@ -1,0 +1,2 @@
+jupyter-client
+python:jupyter-client

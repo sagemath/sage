@@ -91,8 +91,6 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 import random
@@ -100,16 +98,17 @@ import random
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
 
-from sage.rings.all import RDF
-from sage.interfaces.all import gap
+from sage.rings.real_double import RDF
+from sage.interfaces.gap import gap
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
-from sage.plot.polygon import polygon
-from sage.plot.text import text
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.polygon", "polygon")
+lazy_import("sage.plot.text", "text")
 pi = RDF.pi()
 from sage.rings.rational_field import QQ
 
-from sage.plot.plot3d.shapes import Box
-from sage.plot.plot3d.texture import Texture
+lazy_import("sage.plot.plot3d.shapes", "Box")
+lazy_import("sage.plot.plot3d.texture", "Texture")
 
 ####################### predefined colors ##################
 
@@ -431,30 +430,54 @@ def cubie_colors(label, state0):
     #  colors of the cubies on the F,U, R faces
     clr_any = named_colors['white']
     state = inv_list(state0)
-    if label == 1: return  [clr_any, named_colors[color_of_square(state[1-1])], clr_any] #ulb,
-    if label == 2: return  [clr_any,named_colors[color_of_square(state[2-1])],clr_any] # ub,
-    if label == 3: return  [clr_any, named_colors[color_of_square(state[3-1])], named_colors[color_of_square(state[27-1])]] # ubr,
-    if label == 4: return  [clr_any, named_colors[color_of_square(state[4-1])], clr_any] # ul,
-    if label == 5: return  [clr_any, named_colors[color_of_square(state[5-1])], named_colors[color_of_square(state[26-1])]] # ur,
-    if label == 6: return  [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # ufl,
-    if label == 7: return  [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # uf,
-    if label == 8: return  [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # urf,
-    if label == 17: return [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # flu
-    if label == 18: return [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # fu
-    if label == 19: return [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # fur
-    if label == 20: return [named_colors[color_of_square(state[20-1])], clr_any, clr_any] # fl
-    if label == 21: return [named_colors[color_of_square(state[21-1])], clr_any, named_colors[color_of_square(state[28-1])]] # fr
-    if label == 22: return [named_colors[color_of_square(state[22-1])], clr_any, clr_any] # fdl
-    if label == 23: return [named_colors[color_of_square(state[23-1])], clr_any, clr_any] # fd
-    if label == 24: return [named_colors[color_of_square(state[24-1])], clr_any, named_colors[color_of_square(state[30-1])]] # frd
-    if label == 25: return [named_colors[color_of_square(state[19-1])],named_colors[color_of_square(state[8-1])],named_colors[color_of_square(state[25-1])]]  #rfu,
-    if label == 26: return [clr_any,named_colors[color_of_square(state[5-1])],named_colors[color_of_square(state[26-1])]] # ru,
-    if label == 27: return [clr_any,named_colors[color_of_square(state[3-1])],named_colors[color_of_square(state[27-1])]] # rub,
-    if label == 28: return [named_colors[color_of_square(state[21-1])],clr_any,named_colors[color_of_square(state[28-1])]] # rf,
-    if label == 29: return [clr_any,clr_any,named_colors[color_of_square(state[29-1])]] # rb,
-    if label == 30: return [named_colors[color_of_square(state[24-1])],clr_any,named_colors[color_of_square(state[30-1])]] # rdf,
-    if label == 31: return [clr_any,clr_any,named_colors[color_of_square(state[31-1])]] # rd,
-    if label == 32: return [clr_any,clr_any,named_colors[color_of_square(state[32-1])]] #rbd,
+    if label == 1:
+        return [clr_any, named_colors[color_of_square(state[1-1])], clr_any] #ulb,
+    if label == 2:
+        return [clr_any,named_colors[color_of_square(state[2-1])],clr_any] # ub,
+    if label == 3:
+        return [clr_any, named_colors[color_of_square(state[3-1])], named_colors[color_of_square(state[27-1])]] # ubr,
+    if label == 4:
+        return [clr_any, named_colors[color_of_square(state[4-1])], clr_any] # ul,
+    if label == 5:
+        return [clr_any, named_colors[color_of_square(state[5-1])], named_colors[color_of_square(state[26-1])]] # ur,
+    if label == 6:
+        return [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # ufl,
+    if label == 7:
+        return [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # uf,
+    if label == 8:
+        return [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # urf,
+    if label == 17:
+        return [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # flu
+    if label == 18:
+        return [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # fu
+    if label == 19:
+        return [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # fur
+    if label == 20:
+        return [named_colors[color_of_square(state[20-1])], clr_any, clr_any] # fl
+    if label == 21:
+        return [named_colors[color_of_square(state[21-1])], clr_any, named_colors[color_of_square(state[28-1])]] # fr
+    if label == 22:
+        return [named_colors[color_of_square(state[22-1])], clr_any, clr_any] # fdl
+    if label == 23:
+        return [named_colors[color_of_square(state[23-1])], clr_any, clr_any] # fd
+    if label == 24:
+        return [named_colors[color_of_square(state[24-1])], clr_any, named_colors[color_of_square(state[30-1])]] # frd
+    if label == 25:
+        return [named_colors[color_of_square(state[19-1])],named_colors[color_of_square(state[8-1])],named_colors[color_of_square(state[25-1])]]  #rfu,
+    if label == 26:
+        return [clr_any,named_colors[color_of_square(state[5-1])],named_colors[color_of_square(state[26-1])]] # ru,
+    if label == 27:
+        return [clr_any,named_colors[color_of_square(state[3-1])],named_colors[color_of_square(state[27-1])]] # rub,
+    if label == 28:
+        return [named_colors[color_of_square(state[21-1])],clr_any,named_colors[color_of_square(state[28-1])]] # rf,
+    if label == 29:
+        return [clr_any,clr_any,named_colors[color_of_square(state[29-1])]] # rb,
+    if label == 30:
+        return [named_colors[color_of_square(state[24-1])],clr_any,named_colors[color_of_square(state[30-1])]] # rdf,
+    if label == 31:
+        return [clr_any,clr_any,named_colors[color_of_square(state[31-1])]] # rd,
+    if label == 32:
+        return [clr_any,clr_any,named_colors[color_of_square(state[32-1])]] #rbd,
 
 
 def plot3d_cubie(cnt, clrs):
@@ -713,7 +736,7 @@ class CubeGroup(PermutationGroup_generic):
             return mv if mv.parent() is self else PermutationGroup_generic.__call__(self, mv, check)
         elif isinstance(mv, str):
             # It is a string: may be in cycle notation or Rubik's notation
-            if '(' in mv and not '^' in mv:
+            if '(' in mv and '^' not in mv:
                 return PermutationGroup_generic.__call__(self, mv, check)
             else:
                 gens = self.gens()
@@ -725,7 +748,7 @@ class CubeGroup(PermutationGroup_generic):
                 mv = mv.strip().replace(" ","*").replace("**", "*").replace("'", "-1").replace('^','').replace('(','').replace(')','')
                 M = mv.split("*")
                 for m in M:
-                    if len(m) == 0:
+                    if not m:
                         pass
                     elif len(m) == 1:
                         g *= map[m[0]]
@@ -838,7 +861,7 @@ class CubeGroup(PermutationGroup_generic):
         g = self.parse(mv)
         return g, self.facets(g)
 
-    def display2d(self,mv):
+    def display2d(self, mv):
         r"""
         Print the 2d representation of ``self``.
 
@@ -921,7 +944,7 @@ class CubeGroup(PermutationGroup_generic):
         line13 = "             +--------------+\n"
         return line1+line2+line3+line4+line5+line6+line7+line8+line9+line10+line11+line12+line13
 
-    def plot_cube(self, mv, title=True, colors = [lpurple, yellow, red, green, orange, blue]):
+    def plot_cube(self, mv, title=True, colors=[lpurple, yellow, red, green, orange, blue]):
         r"""
         Input the move mv, as a string in the Singmaster notation, and
         output the 2D plot of the cube in that state.
@@ -951,7 +974,7 @@ class CubeGroup(PermutationGroup_generic):
             return P
         return clrs
 
-    def plot3d_cube(self,mv,title=True):
+    def plot3d_cube(self, mv, title=True):
         r"""
         Displays `F,U,R` faces of the cube after the given move ``mv``. Mostly
         included for the purpose of drawing pictures and checking moves.
@@ -994,7 +1017,7 @@ class CubeGroup(PermutationGroup_generic):
             return P
         return P
 
-    def legal(self,state,mode="quiet"):
+    def legal(self, state, mode="quiet"):
         r"""
         Return 1 (true) if the dictionary ``state`` (in the
         same format as returned by the faces method) represents a legal
@@ -1016,7 +1039,7 @@ class CubeGroup(PermutationGroup_generic):
         try:
             g = self.parse(state)
             res = 1
-        except TypeError:
+        except ValueError:
             res = 0
             g = self.identity()
         if mode != 'quiet':
@@ -1024,9 +1047,9 @@ class CubeGroup(PermutationGroup_generic):
         else:
             return res
 
-    def solve(self,state, algorithm='default'):
+    def solve(self, state, algorithm='default'):
         r"""
-        Solves the cube in the ``state``, given as a dictionary
+        Solve the cube in the ``state``, given as a dictionary
         as in ``legal``. See the ``solve`` method
         of the RubiksCube class for more details.
 
@@ -1054,7 +1077,7 @@ class CubeGroup(PermutationGroup_generic):
 
         The Rubik's cube group has about `4.3 \times 10^{19}`
         elements, so this process is time-consuming. See
-        http://www.gap-system.org/Doc/Examples/rubik.html for an
+        https://www.gap-system.org/Doc/Examples/rubik.html for an
         interesting discussion of some GAP code analyzing the Rubik's
         cube.
 
@@ -1083,7 +1106,7 @@ class CubeGroup(PermutationGroup_generic):
             return C.solve(algorithm)
 
         hom = self._gap_().EpimorphismFromFreeGroup()
-        soln = hom.PreImagesRepresentative(gap(str(g)))
+        soln = hom.PreImagesRepresentative(str(g))
         sol = str(soln)
         names = self.gen_names()
         for i in range(6):
@@ -1191,7 +1214,7 @@ class RubiksCube(SageObject):
                      +--------------+
         sage: C.show()
         sage: C.solve(algorithm='gap')  # long time
-        'L R'
+        'L*R'
         sage: C == RubiksCube("L*R")
         True
     """
@@ -1215,7 +1238,7 @@ class RubiksCube(SageObject):
             if not isinstance(state, PermutationGroupElement):
                 legal, state = self._group.legal(state, mode="gimme_group_element")
                 if not legal:
-                    raise ValueError("Not a legal cube.")
+                    raise ValueError("not a legal cube")
             self._state = state
 
     def move(self, g):
@@ -1242,7 +1265,7 @@ class RubiksCube(SageObject):
             sage: D.undo() == C
             True
         """
-        if len(self._history) == 0:
+        if not self._history:
             raise ValueError("no moves to undo")
         g = self._history[-1]
         return RubiksCube(self._state * ~g, self._history[:-1], self.colors)
@@ -1308,7 +1331,7 @@ class RubiksCube(SageObject):
         """
         self.plot().show()
 
-    def cubie(self, size, gap, x,y,z, colors, stickers=True):
+    def cubie(self, size, gap, x, y, z, colors, stickers=True):
         """
         Return the cubie at `(x,y,z)`.
 
@@ -1414,22 +1437,30 @@ class RubiksCube(SageObject):
             (may take a long time)
           - ``gap`` - Use GAP word solution (can be slow)
 
+        Any choice other than ``gap`` requires the optional package
+        ``rubiks``. Otherwise, the ``gap`` algorithm is used.
+
         EXAMPLES::
 
             sage: C = RubiksCube("R U F L B D")
-            sage: C.solve()
+            sage: C.solve()           # optional - rubiks
             'R U F L B D'
 
         Dietz's program is much faster, but may give highly non-optimal
         solutions::
 
-            sage: s = C.solve('dietz'); s
+            sage: s = C.solve('dietz'); s   # optional - rubiks
             "U' L' L' U L U' L U D L L D' L' D L' D' L D L' U' L D' L' U L' B' U' L' U B L D L D' U' L' U L B L B' L' U L U' L' F' L' F L' F L F' L' D' L' D D L D' B L B' L B' L B F' L F F B' L F' B D' D' L D B' B' L' D' B U' U' L' B' D' F' F' L D F'"
-            sage: C2 = RubiksCube(s)
-            sage: C == C2
+            sage: C2 = RubiksCube(s)  # optional - rubiks
+            sage: C == C2             # optional - rubiks
             True
         """
-        import sage.interfaces.rubik # here to avoid circular referencing
+        from sage.features.rubiks import Rubiks
+        if Rubiks().is_present():
+            import sage.interfaces.rubik  # here to avoid circular referencing
+        else:
+            algorithm = 'gap'
+
         if algorithm == "default":
             algorithm = "hybrid"
 
@@ -1456,7 +1487,7 @@ class RubiksCube(SageObject):
 
         elif algorithm == "gap":
             solver = CubeGroup()
-            return solver.solve(self._state)
+            return solver.solve(self._state, algorithm="gap")
 
         else:
             raise ValueError("Unrecognized algorithm: %s" % algorithm)
@@ -1492,4 +1523,3 @@ class RubiksCube(SageObject):
             last_move = move
             all.append(move)
         return self.move(' '.join(all))
-

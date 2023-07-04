@@ -36,25 +36,18 @@ ACKNOWLEDGEMENT:
 
 - Daniel Krenn is supported by the Austrian Science Fund (FWF): P 24644-N26.
 
-
 Functions
 =========
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function
-from __future__ import absolute_import
-from six import iteritems
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import operator
 from sage.misc.cachefunc import cached_function
 
@@ -322,7 +315,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
         if not D:
             raise ZeroDivisionError('Denominator contains a factor 0.')
         elif len(D) == 1:
-            exponent, coefficient = next(iteritems(D))
+            exponent, coefficient = next(iter(D.items()))
             if exponent == 0:
                 other_factors.append(L0(factor))
             else:
@@ -331,7 +324,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
             if D.get(0, 0) != 1:
                 raise NotImplementedError('Factor {} is not normalized.'.format(factor))
             D.pop(0)
-            exponent, coefficient = next(iteritems(D))
+            exponent, coefficient = next(iter(D.items()))
             decoded_factors.append((-coefficient, exponent))
         else:
             raise NotImplementedError('Cannot handle factor {}.'.format(factor))
@@ -365,8 +358,7 @@ def _simplify_(numerator, terms):
     OUTPUT:
 
     A pair of a Laurent polynomial and a tuple of Laurent polynomials
-    representing numerator and denominator as described in the
-    INPUT-section.
+    representing numerator and denominator as described in the INPUT-section.
 
     EXAMPLES::
 
@@ -446,7 +438,7 @@ def _Omega_(A, decoded_factors):
         (x + 1) * (-x*y + 1)^-1
     """
     if not decoded_factors:
-        return sum(c for a, c in iteritems(A) if a >= 0), tuple()
+        return sum(c for a, c in A.items() if a >= 0), tuple()
 
     # Below we sort to make the caching more efficient. Doing this here
     # (in contrast to directly in Omega_ge) results in much cleaner
@@ -456,7 +448,7 @@ def _Omega_(A, decoded_factors):
     numerator = 0
     factors_denominator = None
     rules = None
-    for a, c in iteritems(A):
+    for a, c in A.items():
         n, fd = Omega_ge(a, exponents)
         if factors_denominator is None:
             factors_denominator = fd
@@ -564,7 +556,8 @@ def Omega_ge(a, exponents):
     logger = logging.getLogger(__name__)
     logger.info('Omega_ge: a=%s, exponents=%s', a, exponents)
 
-    from sage.arith.all import lcm, srange
+    from sage.arith.functions import lcm
+    from sage.arith.srange import srange
     from sage.rings.integer_ring import ZZ
     from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
     from sage.rings.number_field.number_field import CyclotomicField
@@ -597,13 +590,14 @@ def Omega_ge(a, exponents):
         divisible by ``exponent``.
         """
         p = tuple(var.dict().popitem()[0]).index(1)  # var is the p-th generator
+
         def subs_e(e):
             e = list(e)
             assert e[p] % exponent == 0
             e[p] = e[p] // exponent
             return tuple(e)
         parent = expression.parent()
-        result = parent({subs_e(e): c for e, c in iteritems(expression.dict())})
+        result = parent({subs_e(e): c for e, c in expression.dict().items()})
         return result
 
     def de_power(expression):
@@ -738,11 +732,11 @@ def _Omega_numerator_(a, x, y, t):
 
     if m == 0:
         result = 1 - (prod(_Omega_factors_denominator_(x, y)) *
-                      sum(homogenous_symmetric_function(j, xy)
+                      sum(homogeneous_symmetric_function(j, xy)
                           for j in srange(-a))
                       if a < 0 else 0)
     elif n == 0:
-        result = sum(homogenous_symmetric_function(j, xy)
+        result = sum(homogeneous_symmetric_function(j, xy)
                      for j in srange(a+1))
     else:
         result = _Omega_numerator_P_(a, x_flat[:-1], y_flat, t).subs({t: x_flat[-1]})
@@ -804,7 +798,7 @@ def _Omega_numerator_P_(a, x, y, t):
         x0 = t
         result = x0**(-a) + \
             (prod(1 - x0*yy for yy in y) *
-             sum(homogenous_symmetric_function(j, y) * (1-x0**(j-a))
+             sum(homogeneous_symmetric_function(j, y) * (1-x0**(j-a))
                  for j in srange(a))
              if a > 0 else 0)
     else:
@@ -952,7 +946,7 @@ def partition(items, predicate=bool):
             (item for pred, item in b if pred))
 
 
-def homogenous_symmetric_function(j, x):
+def homogeneous_symmetric_function(j, x):
     r"""
     Return a complete homogeneous symmetric polynomial
     (:wikipedia:`Complete_homogeneous_symmetric_polynomial`).
@@ -969,15 +963,15 @@ def homogenous_symmetric_function(j, x):
 
     EXAMPLES::
 
-        sage: from sage.rings.polynomial.omega import homogenous_symmetric_function
+        sage: from sage.rings.polynomial.omega import homogeneous_symmetric_function
         sage: P = PolynomialRing(ZZ, 'X', 3)
-        sage: homogenous_symmetric_function(0, P.gens())
+        sage: homogeneous_symmetric_function(0, P.gens())
         1
-        sage: homogenous_symmetric_function(1, P.gens())
+        sage: homogeneous_symmetric_function(1, P.gens())
         X0 + X1 + X2
-        sage: homogenous_symmetric_function(2, P.gens())
+        sage: homogeneous_symmetric_function(2, P.gens())
         X0^2 + X0*X1 + X1^2 + X0*X2 + X1*X2 + X2^2
-        sage: homogenous_symmetric_function(3, P.gens())
+        sage: homogeneous_symmetric_function(3, P.gens())
         X0^3 + X0^2*X1 + X0*X1^2 + X1^3 + X0^2*X2 +
         X0*X1*X2 + X1^2*X2 + X0*X2^2 + X1*X2^2 + X2^3
     """

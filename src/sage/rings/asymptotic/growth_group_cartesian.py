@@ -20,7 +20,7 @@ ACKNOWLEDGEMENT:
 TESTS::
 
     sage: from sage.rings.asymptotic.growth_group import GrowthGroup
-    sage: A = GrowthGroup('QQ^x * x^ZZ'); A
+    sage: A = GrowthGroup('(QQ_+)^x * x^ZZ'); A
     Growth Group QQ^x * x^ZZ
     sage: A.construction()
     (The cartesian_product functorial construction,
@@ -48,15 +48,26 @@ TESTS::
 ::
 
     sage: cm = sage.structure.element.get_coercion_model()
-    sage: D = GrowthGroup('QQ^x * x^QQ')
+    sage: D = GrowthGroup('(QQ_+)^x * x^QQ')
     sage: cm.common_parent(A, D)
     Growth Group QQ^x * x^QQ
-    sage: E = GrowthGroup('ZZ^x * x^QQ')
+    sage: E = GrowthGroup('(ZZ_+)^x * x^QQ')
     sage: cm.record_exceptions()  # not tested, see #19411
     sage: cm.common_parent(A, E)
     Growth Group QQ^x * x^QQ
     sage: for t in cm.exception_stack():  # not tested, see #19411
     ....:     print(t)
+
+::
+
+    sage: assume(SR.an_element() > 0)
+    sage: F = GrowthGroup('(SR_+)^n * n^ZZ * UU^n'); F
+    Growth Group SR^n * n^ZZ * UU^n
+    sage: G = GrowthGroup('QQ^n * n^QQ'); G
+    Growth Group QQ^n * n^QQ * Signs^n
+    sage: cm.common_parent(F, G)
+    Growth Group SR^n * n^QQ * UU^n
+    sage: forget()
 
 ::
 
@@ -79,8 +90,6 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.structure.factory import UniqueFactory
 
@@ -155,6 +164,13 @@ class CartesianProductFactory(UniqueFactory):
         Traceback (most recent call last):
         ...
         TypeError: Cannot create Cartesian product without factors.
+
+        sage: from sage.rings.asymptotic.growth_group import GrowthGroup
+        sage: G1 = GrowthGroup('x^QQ')
+        sage: G2 = GrowthGroup('log(x)^ZZ')
+        sage: G = cartesian_product([G1, G2])
+        sage: cartesian_product([G1, G2], category=G.category()) is G
+        True
     """
     def create_key_and_extra_args(self, growth_groups, category, **kwds):
         r"""
@@ -168,10 +184,17 @@ class CartesianProductFactory(UniqueFactory):
             sage: A = GrowthGroup('x^ZZ')
             sage: CartesianProductFactory('factory').create_key_and_extra_args(
             ....:     [A], category=Sets(), order='blub')
-            (((Growth Group x^ZZ,), Category of sets), {'order': 'blub'})
+            (((Growth Group x^ZZ,), Category of posets), {'order': 'blub'})
         """
-        return (tuple(growth_groups), category), kwds
 
+        # CartesianProductPosets automatically add Posets() to their categories
+        from sage.categories.category import Category
+        from sage.categories.posets import Posets
+        if not isinstance(category, tuple):
+            category = (category,)
+        category = Category.join(category + (Posets(),))
+
+        return (tuple(growth_groups), category), kwds
 
     def create_object(self, version, args, **kwds):
         r"""
@@ -263,7 +286,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
     __classcall__ = CartesianProductPoset.__classcall__
 
-
     def __init__(self, sets, category, **kwds):
         r"""
         See :class:`GenericProduct` for details.
@@ -295,9 +317,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         GenericGrowthGroup.__init__(self, sets[0], Vars, self.category(), **kwds)
 
-
     __hash__ = CartesianProductPoset.__hash__
-
 
     def some_elements(self):
         r"""
@@ -313,18 +333,18 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             sage: from itertools import islice
             sage: from sage.rings.asymptotic.growth_group import GrowthGroup
-            sage: G = GrowthGroup('QQ^y * x^QQ * log(x)^ZZ')
+            sage: G = GrowthGroup('(QQ_+)^y * x^QQ * log(x)^ZZ')
             sage: tuple(islice(G.some_elements(), 10r))
             (x^(1/2)*(1/2)^y,
-             x^(-1/2)*log(x)*(-1/2)^y,
-             x^2*log(x)^(-1)*2^y,
-             x^(-2)*log(x)^2*(-2)^y,
-             log(x)^(-2),
-             x*log(x)^3*(-1)^y,
-             x^(-1)*log(x)^(-3)*42^y,
-             x^42*log(x)^4*(2/3)^y,
-             x^(2/3)*log(x)^(-4)*(-2/3)^y,
-             x^(-2/3)*log(x)^5*(3/2)^y)
+             x^(-1/2)*log(x)*2^y,
+             x^2*log(x)^(-1),
+             x^(-2)*log(x)^2*42^y,
+             log(x)^(-2)*(2/3)^y,
+             x*log(x)^3*(3/2)^y,
+             x^(-1)*log(x)^(-3)*(4/5)^y,
+             x^42*log(x)^4*(5/4)^y,
+             x^(2/3)*log(x)^(-4)*(6/7)^y,
+             x^(-2/3)*log(x)^5*(7/6)^y)
         """
         from builtins import zip
         return iter(
@@ -374,7 +394,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             parent = self._underlying_class()(tuple(n.parent() for n in element),
                                             category=self.category())
         return parent(element)
-
 
     def _element_constructor_(self, data):
         r"""
@@ -426,23 +445,27 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             x*log(x)
             sage: type(l)
             <class 'sage.rings.asymptotic.growth_group_cartesian.UnivariateProduct_with_category.element_class'>
-            sage: GrowthGroup('QQ^x * x^QQ')(['2^log(x)'])
+            sage: GrowthGroup('(QQ_+)^x * x^QQ')(['2^log(x)'])
             Traceback (most recent call last):
             ...
             ValueError: ['2^log(x)'] is not in Growth Group QQ^x * x^QQ.
             > *previous* ValueError: 2^log(x) is not in any of the factors of
             Growth Group QQ^x * x^QQ
-            sage: GrowthGroup('QQ^x * x^QQ')(['2^log(x)', 'x^55'])
+            >> *previous* ValueError: 2^log(x) is not in Growth Group QQ^x.
+            >> *and* ValueError: 2^log(x) is not in Growth Group x^QQ.
+            sage: GrowthGroup('(QQ_+)^x * x^QQ')(['2^log(x)', 'x^55'])
             Traceback (most recent call last):
             ...
             ValueError: ['2^log(x)', 'x^55'] is not in Growth Group QQ^x * x^QQ.
             > *previous* ValueError: 2^log(x) is not in any of the factors of
             Growth Group QQ^x * x^QQ
+            >> *previous* ValueError: 2^log(x) is not in Growth Group QQ^x.
+            >> *and* ValueError: 2^log(x) is not in Growth Group x^QQ.
 
         ::
 
             sage: n = GrowthGroup('n^ZZ * log(n)^ZZ')('n')
-            sage: G = GrowthGroup('QQ^n * n^ZZ * log(n)^ZZ')
+            sage: G = GrowthGroup('(QQ_+)^n * n^ZZ * log(n)^ZZ')
             sage: G(n).value
             (1, n, 1)
         """
@@ -484,7 +507,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             # room for other parents (e.g. polynomial ring et al.)
 
         try:
-            return super(GenericProduct, self)._element_constructor_(data)
+            return super()._element_constructor_(data)
         except (TypeError, ValueError):
             pass
         if isinstance(data, (tuple, list, CartesianProduct.Element)):
@@ -492,9 +515,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         return convert_factors((data,), data)
 
-
     _repr_ = GenericGrowthGroup._repr_
-
 
     def _repr_short_(self):
         r"""
@@ -519,7 +540,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         """
         return ' * '.join(S._repr_short_() for S in self.cartesian_factors())
 
-
     def _convert_factors_(self, factors):
         r"""
         Helper method. Try to convert some ``factors`` to an
@@ -541,20 +561,53 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: e1 = G._convert_factors_([x^2])
             sage: (e1, e1.parent())
             (x^2, Growth Group x^ZZ * log(x)^QQ * y^QQ)
+
+        ::
+
+            sage: G = GrowthGroup('(QQ_+)^n * n^ZZ * UU^n')
+            sage: n = SR.var('n')
+            sage: G((-2)^n)
+            2^n*(-1)^n
         """
         from sage.misc.misc_c import prod
+        from .growth_group import PartialConversionValueError
+        from .misc import combine_exceptions
 
-        def get_factor(data):
+        def get_factors(data):
+            result = []
+            errors = []
             for factor in self.cartesian_factors():
                 try:
-                    return factor, factor(data)
-                except (ValueError, TypeError):
-                    pass
-            raise ValueError('%s is not in any of the factors of %s' % (data, self))
+                    try:
+                        result.append((factor, factor(data)))
+                        break
+                    except PartialConversionValueError as e:
+                        try:
+                            element, todo = e.element.split()
+                        except NotImplementedError as nie:
+                            raise combine_exceptions(
+                                ValueError('cannot split {}: no splitting '
+                                           'implemented'.format(e.element)),
+                                nie)
+                        except ValueError as ve:
+                            raise combine_exceptions(
+                                ValueError('cannot split {} after failed '
+                                           'conversion into element of '
+                                           '{}'.format(e.element, factor)),
+                                ve)
+                        assert todo is not None
+                        result.append((factor, element))
+                        data = todo
+                except (ValueError, TypeError) as error:
+                    errors.append(error)
+            if not result:
+                raise combine_exceptions(
+                    ValueError('%s is not in any of the factors of %s' % (data, self)),
+                    *errors)
+            return result
 
-        return prod(self.cartesian_injection(*get_factor(f))
-                    for f in factors)
-
+        return prod(self.cartesian_injection(*fs)
+                    for f in factors for fs in get_factors(f))
 
     def cartesian_injection(self, factor, element):
         r"""
@@ -579,7 +632,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         """
         return self(tuple((f.one() if f != factor else element)
                           for f in self.cartesian_factors()))
-
 
     def _coerce_map_from_(self, S):
         r"""
@@ -615,7 +667,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                for f in factors):
             return True
 
-
     def _pushout_(self, other):
         r"""
         Construct the pushout of this and the other growth group. This is called by
@@ -626,7 +677,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: from sage.rings.asymptotic.growth_group import GrowthGroup
             sage: from sage.categories.pushout import pushout
             sage: cm = sage.structure.element.get_coercion_model()
-            sage: A = GrowthGroup('QQ^x * x^ZZ')
+            sage: A = GrowthGroup('(QQ_+)^x * x^ZZ')
             sage: B = GrowthGroup('x^ZZ * log(x)^ZZ')
             sage: A._pushout_(B)
             Growth Group QQ^x * x^ZZ * log(x)^ZZ
@@ -646,8 +697,8 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         ::
 
-            sage: C = GrowthGroup('QQ^x * x^QQ * y^ZZ')
-            sage: D = GrowthGroup('x^ZZ * log(x)^QQ * QQ^z')
+            sage: C = GrowthGroup('(QQ_+)^x * x^QQ * y^ZZ')
+            sage: D = GrowthGroup('x^ZZ * log(x)^QQ * (QQ_+)^z')
             sage: C._pushout_(D)
             Growth Group QQ^x * x^QQ * log(x)^QQ * y^ZZ * QQ^z
             sage: cm.common_parent(C, D)
@@ -675,18 +726,24 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         ::
 
-            sage: pushout(GrowthGroup('QQ^x * x^ZZ'), GrowthGroup('ZZ^x * x^QQ'))
+            sage: pushout(GrowthGroup('(QQ_+)^x * x^ZZ'), GrowthGroup('(ZZ_+)^x * x^QQ'))
             Growth Group QQ^x * x^QQ
-            sage: cm.common_parent(GrowthGroup('QQ^x * x^ZZ'), GrowthGroup('ZZ^x * x^QQ'))
+            sage: cm.common_parent(GrowthGroup('(QQ_+)^x * x^ZZ'), GrowthGroup('(ZZ_+)^x * x^QQ'))
             Growth Group QQ^x * x^QQ
 
         ::
 
-            sage: pushout(GrowthGroup('QQ^n * n^QQ'), GrowthGroup('SR^n'))
+            sage: pushout(GrowthGroup('(QQ_+)^n * n^QQ'), GrowthGroup('(SR_+)^n'))
             Growth Group SR^n * n^QQ
+
+        ::
+
+            sage: cm.common_parent(GrowthGroup('n^ZZ * log(n)^ZZ * UU^n'),
+            ....:                  GrowthGroup('n^QQ * UU^n'))
+            Growth Group n^QQ * log(n)^ZZ * UU^n
         """
         from .growth_group import GenericGrowthGroup, AbstractGrowthGroupFunctor
-        from .misc import merge_overlapping
+        from .misc import bidirectional_merge_sorted
         from sage.structure.element import get_coercion_model
 
         Sfactors = self.cartesian_factors()
@@ -702,10 +759,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         def pushout_univariate_factors(self, other, var, Sfactors, Ofactors):
             try:
-                return merge_overlapping(
+                return bidirectional_merge_sorted(
                     Sfactors, Ofactors,
                     lambda f: (f._underlying_class(), f._var_.var_repr))
-            except ValueError:
+            except RuntimeError:
                 pass
 
             cm = get_coercion_model()
@@ -724,10 +781,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                         yield f
 
             try:
-                return merge_overlapping(
+                return bidirectional_merge_sorted(
                     tuple(subfactors(Sfactors)), tuple(subfactors(Ofactors)),
                     lambda f: (f._underlying_class(), f._var_.var_repr))
-            except ValueError:
+            except RuntimeError:
                 pass
 
             from sage.structure.coerce_exceptions import CoercionException
@@ -796,7 +853,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         from sage.categories.cartesian_product import cartesian_product
         return pushout(cartesian_product(newS), cartesian_product(newO))
 
-
     def gens_monomial(self):
         r"""
         Return a tuple containing monomial generators of this growth group.
@@ -832,7 +888,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             for factor in self.cartesian_factors()),
                    tuple())
 
-
     def variable_names(self):
         r"""
         Return the names of the variables.
@@ -853,12 +908,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         from itertools import groupby
         return tuple(v for v, _ in groupby(vars))
 
-
     class Element(CartesianProductPoset.Element):
 
         from .growth_group import _is_lt_one_
         is_lt_one = _is_lt_one_
-
 
         def _repr_(self, latex=False):
             r"""
@@ -893,7 +946,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 return '1'
             return s
 
-
         def _latex_(self):
             r"""
             A representation string for this Cartesian product element.
@@ -909,11 +961,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 sage: L = GrowthGroup('log(x)^ZZ')
                 sage: latex(cartesian_product([P, L], order='lex').an_element())  # indirect doctest
                 x^{\frac{1}{2}} \log\left(x\right)
-                sage: latex(GrowthGroup('QQ^n * n^QQ').an_element())  # indirect doctest
+                sage: latex(GrowthGroup('(QQ_+)^n * n^QQ').an_element())  # indirect doctest
                 \left(\frac{1}{2}\right)^{n} n^{\frac{1}{2}}
             """
             return self._repr_(latex=True)
-
 
         def __pow__(self, exponent):
             r"""
@@ -944,7 +995,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             """
             return self.parent()._create_element_in_extension_(
                 tuple(x ** exponent for x in self.cartesian_factors()))
-
 
         def factors(self):
             r"""
@@ -994,13 +1044,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                             if not f.is_one()),
                        tuple())
 
-
         from .growth_group import _log_factor_, _log_
         log = _log_
         log_factor = _log_factor_
 
-
-        def _log_factor_(self, base=None):
+        def _log_factor_(self, base=None, locals=None):
             r"""
             Helper method for calculating the logarithm of the factorization
             of this element.
@@ -1009,6 +1057,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             - ``base`` -- the base of the logarithm. If ``None``
               (default value) is used, the natural logarithm is taken.
+
+            - ``locals`` -- a dictionary which may contain the following keys and values:
+
+              - ``'log'`` -- value: a function. If not used, then the usual
+                :class:`log <sage.functions.log.Function_log>` is taken.
 
             OUTPUT:
 
@@ -1035,7 +1088,9 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             try:
                 return sum(iter(tuple((try_create_growth(g), c)
-                                      for g, c in factor._log_factor_(base=base))
+                                      for g, c in
+                                      factor._log_factor_(base=base,
+                                                          locals=locals))
                                 for factor in self.cartesian_factors()
                                 if factor != factor.parent().one()),
                            tuple())
@@ -1045,10 +1100,8 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                     ArithmeticError('Cannot build log(%s) in %s.' %
                                     (self, self.parent())), e)
 
-
         from .growth_group import _rpow_
         rpow = _rpow_
-
 
         def _rpow_element_(self, base):
             r"""
@@ -1090,7 +1143,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             if not isinstance(factor.parent(), MonomialGrowthGroup):
                 raise ValueError  # calling method has to deal with it...
             return factor._rpow_element_(base)
-
 
         def exp(self):
             r"""
@@ -1136,7 +1188,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             """
             return self.rpow('e')
 
-
         def __invert__(self):
             r"""
             Return the multiplicative inverse of this Cartesian product.
@@ -1152,14 +1203,13 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             TESTS::
 
                  sage: from sage.rings.asymptotic.growth_group import GrowthGroup
-                 sage: G = GrowthGroup('ZZ^x * x^ZZ')
+                 sage: G = GrowthGroup('(ZZ_+)^x * x^ZZ')
                  sage: g = G('2^x * x^3')
                  sage: (~g).parent()
                  Growth Group QQ^x * x^ZZ
             """
             return self.parent()._create_element_in_extension_(
                 tuple(~x for x in self.cartesian_factors()))
-
 
         def _substitute_(self, rules):
             r"""
@@ -1256,8 +1306,8 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 sage: G(1)._singularity_analysis_('n', 2, precision=3)
                 Traceback (most recent call last):
                 ...
-                NotImplementedOZero: The error term in the result is O(0)
-                which means 0 for sufficiently large n.
+                NotImplementedOZero: got O(0)
+                The error term O(0) means 0 for sufficiently large n.
                 sage: G('exp(x)')._singularity_analysis_('n', 2, precision=3)
                 Traceback (most recent call last):
                 ...
@@ -1268,7 +1318,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             if len(factors) == 0:
                 from .asymptotic_expansion_generators import asymptotic_expansions
                 from .misc import NotImplementedOZero
-                raise NotImplementedOZero(var=var)
+                raise NotImplementedOZero(var=var, exact_part=0)
             elif len(factors) == 1:
                 return factors[0]._singularity_analysis_(
                     var=var, zeta=zeta, precision=precision)
@@ -1303,7 +1353,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                     'singularity analysis of {} not yet implemented '
                     'since it has more than two factors'.format(self))
 
-
         def variable_names(self):
             r"""
             Return the names of the variables of this growth element.
@@ -1332,7 +1381,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                        tuple())
             from itertools import groupby
             return tuple(v for v, _ in groupby(vars))
-
 
     CartesianProduct = CartesianProductGrowthGroups
 
@@ -1366,9 +1414,7 @@ class UnivariateProduct(GenericProduct):
             sage: type(GrowthGroup('x^ZZ * log(x)^ZZ'))  # indirect doctest
             <class 'sage.rings.asymptotic.growth_group_cartesian.UnivariateProduct_with_category'>
         """
-        super(UnivariateProduct, self).__init__(
-            sets, category, order='lex', **kwargs)
-
+        super().__init__(sets, category, order='lex', **kwargs)
 
     CartesianProduct = CartesianProductGrowthGroups
 
@@ -1399,8 +1445,6 @@ class MultivariateProduct(GenericProduct):
             sage: type(GrowthGroup('x^ZZ * y^ZZ'))  # indirect doctest
             <class 'sage.rings.asymptotic.growth_group_cartesian.MultivariateProduct_with_category'>
         """
-        super(MultivariateProduct, self).__init__(
-            sets, category, order='product', **kwargs)
-
+        super().__init__(sets, category, order='product', **kwargs)
 
     CartesianProduct = CartesianProductGrowthGroups

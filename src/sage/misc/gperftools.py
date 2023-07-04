@@ -40,11 +40,11 @@ import time
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 from sage.misc.compat import find_library
+from sage.cpython.string import bytes_to_str
 
 
 libc = None
 libprofiler = None
-
 
 
 class Profiler(SageObject):
@@ -206,12 +206,11 @@ class Profiler(SageObject):
 
         EXAMPLES::
 
-            sage: import six
             sage: from sage.misc.gperftools import Profiler
             sage: prof = Profiler()
             sage: try:
             ....:     pp = prof._pprof()
-            ....:     assert isinstance(pp, six.string_types)
+            ....:     assert isinstance(pp, str)
             ....: except OSError:
             ....:     pass    # not installed
         """
@@ -222,6 +221,7 @@ class Profiler(SageObject):
                 version = check_output([name, '--version'], stderr=STDOUT)
             except (CalledProcessError, OSError):
                 continue
+            version = bytes_to_str(version)
             if 'gperftools' not in version:
                 from warnings import warn
                 warn('the "{0}" utility does not appear to be the gperftools profiler'

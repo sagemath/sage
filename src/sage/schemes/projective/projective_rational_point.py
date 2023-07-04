@@ -15,8 +15,8 @@ EXAMPLES:
 Projective, over `\QQ`::
 
     sage: from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
-    sage: P.<X,Y,Z> = ProjectiveSpace(2,QQ)
-    sage: C = P.subscheme([X+Y-Z])
+    sage: P.<X,Y,Z> = ProjectiveSpace(2, QQ)
+    sage: C = P.subscheme([X + Y - Z])
     sage: enum_projective_rational_field(C, 3)
     [(-2 : 3 : 1), (-1 : 1 : 0), (-1 : 2 : 1), (-1/2 : 3/2 : 1),
      (0 : 1 : 1), (1/3 : 2/3 : 1), (1/2 : 1/2 : 1), (2/3 : 1/3 : 1),
@@ -26,8 +26,8 @@ Projective, over `\QQ`::
 Projective over a finite field::
 
     sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-    sage: E = EllipticCurve('72').change_ring(GF(19))
-    sage: enum_projective_finite_field(E)
+    sage: E = EllipticCurve('72').change_ring(GF(19))                                               # optional - sage.rings.finite_rings
+    sage: enum_projective_finite_field(E)                                                           # optional - sage.rings.finite_rings
     [(0 : 1 : 0), (1 : 0 : 1), (3 : 0 : 1), (4 : 9 : 1), (4 : 10 : 1),
      (6 : 6 : 1), (6 : 13 : 1), (7 : 6 : 1), (7 : 13 : 1), (9 : 4 : 1),
      (9 : 15 : 1), (12 : 8 : 1), (12 : 11 : 1), (13 : 8 : 1), (13 : 11 : 1),
@@ -56,10 +56,13 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.arith.all import gcd, srange, next_prime, previous_prime, crt
-from sage.rings.all import ZZ, RR
+from sage.arith.misc import gcd, next_prime, previous_prime, crt
+from sage.arith.srange import srange
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.all import cartesian_product_iterator, prod
+from sage.misc.mrange import cartesian_product_iterator
+from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange
 from sage.schemes.generic.scheme import is_Scheme
 from sage.parallel.ncpus import ncpus
@@ -86,7 +89,7 @@ def enum_projective_rational_field(X, B):
     EXAMPLES::
 
         sage: P.<X,Y,Z> = ProjectiveSpace(2, QQ)
-        sage: C = P.subscheme([X+Y-Z])
+        sage: C = P.subscheme([X + Y - Z])
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
         sage: enum_projective_rational_field(C(QQ), 6)
         [(-5 : 6 : 1), (-4 : 5 : 1), (-3 : 4 : 1), (-2 : 3 : 1),
@@ -107,15 +110,15 @@ def enum_projective_rational_field(X, B):
         sage: P3.<W,X,Y,Z> = ProjectiveSpace(3, QQ)
         sage: enum_projective_rational_field(P3, 1)
         [(-1 : -1 : -1 : 1), (-1 : -1 : 0 : 1), (-1 : -1 : 1 : 0), (-1 : -1 : 1 : 1),
-        (-1 : 0 : -1 : 1), (-1 : 0 : 0 : 1), (-1 : 0 : 1 : 0), (-1 : 0 : 1 : 1),
-        (-1 : 1 : -1 : 1), (-1 : 1 : 0 : 0), (-1 : 1 : 0 : 1), (-1 : 1 : 1 : 0),
-        (-1 : 1 : 1 : 1), (0 : -1 : -1 : 1), (0 : -1 : 0 : 1), (0 : -1 : 1 : 0),
-        (0 : -1 : 1 : 1), (0 : 0 : -1 : 1), (0 : 0 : 0 : 1), (0 : 0 : 1 : 0),
-        (0 : 0 : 1 : 1), (0 : 1 : -1 : 1), (0 : 1 : 0 : 0), (0 : 1 : 0 : 1),
-        (0 : 1 : 1 : 0), (0 : 1 : 1 : 1), (1 : -1 : -1 : 1), (1 : -1 : 0 : 1),
-        (1 : -1 : 1 : 0), (1 : -1 : 1 : 1), (1 : 0 : -1 : 1), (1 : 0 : 0 : 0),
-        (1 : 0 : 0 : 1), (1 : 0 : 1 : 0), (1 : 0 : 1 : 1), (1 : 1 : -1 : 1),
-        (1 : 1 : 0 : 0), (1 : 1 : 0 : 1), (1 : 1 : 1 : 0), (1 : 1 : 1 : 1)]
+         (-1 : 0 : -1 : 1), (-1 : 0 : 0 : 1), (-1 : 0 : 1 : 0), (-1 : 0 : 1 : 1),
+         (-1 : 1 : -1 : 1), (-1 : 1 : 0 : 0), (-1 : 1 : 0 : 1), (-1 : 1 : 1 : 0),
+         (-1 : 1 : 1 : 1), (0 : -1 : -1 : 1), (0 : -1 : 0 : 1), (0 : -1 : 1 : 0),
+         (0 : -1 : 1 : 1), (0 : 0 : -1 : 1), (0 : 0 : 0 : 1), (0 : 0 : 1 : 0),
+         (0 : 0 : 1 : 1), (0 : 1 : -1 : 1), (0 : 1 : 0 : 0), (0 : 1 : 0 : 1),
+         (0 : 1 : 1 : 0), (0 : 1 : 1 : 1), (1 : -1 : -1 : 1), (1 : -1 : 0 : 1),
+         (1 : -1 : 1 : 0), (1 : -1 : 1 : 1), (1 : 0 : -1 : 1), (1 : 0 : 0 : 0),
+         (1 : 0 : 0 : 1), (1 : 0 : 1 : 0), (1 : 0 : 1 : 1), (1 : 1 : -1 : 1),
+         (1 : 1 : 0 : 0), (1 : 1 : 0 : 1), (1 : 1 : 1 : 0), (1 : 1 : 1 : 1)]
 
     ALGORITHM:
 
@@ -163,8 +166,8 @@ def enum_projective_number_field(X, **kwds):
     ALGORITHM:
 
     This is an implementation of the revised algorithm (Algorithm 4) in
-    [Doyle-Krumm]_. Algorithm 5 is used for imaginary quadratic fields.
-    
+    [DK2013]_. Algorithm 5 is used for imaginary quadratic fields.
+
     INPUT:
 
     kwds:
@@ -184,21 +187,20 @@ def enum_projective_number_field(X, **kwds):
 
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^3 - 5,'v')
-        sage: P.<x,y,z> = ProjectiveSpace(K, 2)
-        sage: X = P.subscheme([x - y])
-        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)
-        [(0 : 0 : 1), (-1 : -1 : 1), (1 : 1 : 1), (-1/5*v^2 : -1/5*v^2 : 1), (-v : -v : 1),
-        (1/5*v^2 : 1/5*v^2 : 1), (v : v : 1), (1 : 1 : 0)]
+        sage: K = NumberField(u^3 - 5, 'v')                                                         # optional - sage.rings.number_field
+        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
+        sage: X = P.subscheme([x - y])                                                              # optional - sage.rings.number_field
+        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)                      # optional - sage.rings.number_field
+        [(0 : 0 : 1), (1 : 1 : 0), (-1 : -1 : 1), (1 : 1 : 1)]
 
     ::
 
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 3, 'v')
-        sage: A.<x,y> = ProjectiveSpace(K,1)
-        sage: X = A.subscheme(x-y)
+        sage: K = NumberField(u^2 + 3, 'v')                                                         # optional - sage.rings.number_field
+        sage: A.<x,y> = ProjectiveSpace(K, 1)                                                       # optional - sage.rings.number_field
+        sage: X = A.subscheme(x - y)                                                                # optional - sage.rings.number_field
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_number_field
-        sage: enum_projective_number_field(X, bound=2)
+        sage: enum_projective_number_field(X, bound=2)                                              # optional - sage.rings.number_field
         [(1 : 1)]
     """
     B = kwds.pop('bound')
@@ -242,35 +244,35 @@ def enum_projective_finite_field(X):
 
     EXAMPLES::
 
-        sage: F = GF(53)
-        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)
+        sage: F = GF(53)                                                                            # optional - sage.rings.finite_rings
+        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)                                                     # optional - sage.rings.finite_rings
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-        sage: len(enum_projective_finite_field(P(F)))
+        sage: len(enum_projective_finite_field(P(F)))                                               # optional - sage.rings.finite_rings
         2863
-        sage: 53^2+53+1
+        sage: 53^2 + 53 + 1
         2863
 
     ::
 
-        sage: F = GF(9,'a')
-        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)
-        sage: C = Curve(X^3-Y^3+Z^2*Y)
-        sage: enum_projective_finite_field(C(F))
+        sage: F = GF(9, 'a')                                                                        # optional - sage.rings.finite_rings
+        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)                                                      # optional - sage.rings.finite_rings
+        sage: C = Curve(X^3 - Y^3 + Z^2*Y)                                                          # optional - sage.rings.finite_rings
+        sage: enum_projective_finite_field(C(F))                                                    # optional - sage.rings.finite_rings
         [(0 : 0 : 1), (0 : 1 : 1), (0 : 2 : 1), (1 : 1 : 0), (a + 1 : 2*a : 1),
-        (a + 1 : 2*a + 1 : 1), (a + 1 : 2*a + 2 : 1), (2*a + 2 : a : 1),
-        (2*a + 2 : a + 1 : 1), (2*a + 2 : a + 2 : 1)]
+         (a + 1 : 2*a + 1 : 1), (a + 1 : 2*a + 2 : 1), (2*a + 2 : a : 1),
+         (2*a + 2 : a + 1 : 1), (2*a + 2 : a + 2 : 1)]
 
     ::
 
-        sage: F = GF(5)
-        sage: P2F.<X,Y,Z> = ProjectiveSpace(2,F)
-        sage: enum_projective_finite_field(P2F)
+        sage: F = GF(5)                                                                             # optional - sage.rings.finite_rings
+        sage: P2F.<X,Y,Z> = ProjectiveSpace(2, F)                                                   # optional - sage.rings.finite_rings
+        sage: enum_projective_finite_field(P2F)                                                     # optional - sage.rings.finite_rings
         [(0 : 0 : 1), (0 : 1 : 0), (0 : 1 : 1), (0 : 2 : 1), (0 : 3 : 1), (0 : 4 : 1),
-        (1 : 0 : 0), (1 : 0 : 1), (1 : 1 : 0), (1 : 1 : 1), (1 : 2 : 1), (1 : 3 : 1),
-        (1 : 4 : 1), (2 : 0 : 1), (2 : 1 : 0), (2 : 1 : 1), (2 : 2 : 1), (2 : 3 : 1),
-        (2 : 4 : 1), (3 : 0 : 1), (3 : 1 : 0), (3 : 1 : 1), (3 : 2 : 1), (3 : 3 : 1),
-        (3 : 4 : 1), (4 : 0 : 1), (4 : 1 : 0), (4 : 1 : 1), (4 : 2 : 1), (4 : 3 : 1),
-        (4 : 4 : 1)]
+         (1 : 0 : 0), (1 : 0 : 1), (1 : 1 : 0), (1 : 1 : 1), (1 : 2 : 1), (1 : 3 : 1),
+         (1 : 4 : 1), (2 : 0 : 1), (2 : 1 : 0), (2 : 1 : 1), (2 : 2 : 1), (2 : 3 : 1),
+         (2 : 4 : 1), (3 : 0 : 1), (3 : 1 : 0), (3 : 1 : 1), (3 : 2 : 1), (3 : 3 : 1),
+         (3 : 4 : 1), (4 : 0 : 1), (4 : 1 : 0), (4 : 1 : 1), (4 : 2 : 1), (4 : 3 : 1),
+         (4 : 4 : 1)]
 
     ALGORITHM:
 
@@ -305,22 +307,21 @@ def enum_projective_finite_field(X):
     return pts
 
 
-
 def sieve(X, bound):
     r"""
     Returns the list of all projective, rational points on scheme ``X`` of
     height up to ``bound``.
 
-    Height of a projective point X = (x_1, x_2,..., x_n) is given by
-    H_X = max(y_1, y_2,..., y_n), where H_X is height of point X and y_i's
-    are the normalized coordinates such that all y_i are integers and
-    gcd(y_1, y_2,..., y_n) = 1.
+    Height of a projective point `X = (x_1, x_2,\dots, x_n)` is given by
+    `H_X = \max(y_1, y_2,\dots, y_n)`, where the values `y_i`
+    are the normalized coordinates such that all `y_i` are integers and
+    `\gcd(y_1, y_2,\dots, y_n) = 1`.
 
     ALGORITHM:
 
     Main idea behind the algorithm is to find points modulo primes
     and then reconstruct them using chinese remainder theorem.
-    We find modulo primes parallely and then lift them and apply
+    We find modulo primes parallelly and then lift them and apply
     LLL in parallel.
 
     For the algorithm to work correctly, sufficient primes need
@@ -341,9 +342,9 @@ def sieve(X, bound):
     EXAMPLES::
 
         sage: from sage.schemes.projective.projective_rational_point import sieve
-        sage: P.<x,y,z,q>=ProjectiveSpace(QQ,3)
-        sage: Y=P.subscheme([x^2-3^2*y^2+z*q,x+z+4*q])
-        sage: sorted(sieve(Y, 12))
+        sage: P.<x,y,z,q> = ProjectiveSpace(QQ, 3)
+        sage: Y = P.subscheme([x^2 - 3^2*y^2 + z*q, x + z + 4*q])
+        sage: sorted(sieve(Y, 12))  # long time
         [(-4 : -4/3 : 0 : 1), (-4 : 4/3 : 0 : 1),
          (-1 : -1/3 : 1 : 0), (-1 : 1/3 : 1 : 0)]
 
@@ -351,7 +352,7 @@ def sieve(X, bound):
 
         sage: from sage.schemes.projective.projective_rational_point import sieve
         sage: E = EllipticCurve('37a')
-        sage: sorted(sieve(E, 14))
+        sage: sorted(sieve(E, 14))  # long time
         [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1),
          (0 : 0 : 1), (0 : 1 : 0), (1/4 : -5/8 : 1),
          (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
@@ -362,7 +363,7 @@ def sieve(X, bound):
     Algorithm works even if coefficients are fraction::
 
         sage: from sage.schemes.projective.projective_rational_point import sieve
-        sage: P.<x,y,z> = ProjectiveSpace(2,QQ)
+        sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
         sage: X = P.subscheme(3*x - 3/2*y)
         sage: sieve(X, 3)
         [(-1 : -2 : 1), (-1/2 : -1 : 1), (-1/3 : -2/3 : 1), (0 : 0 : 1),
@@ -443,7 +444,7 @@ def sieve(X, bound):
         best_size = 2
         best_time = (N**2)*M[2][-1]**(N) + (N**5 * RR(prod(M[2])**dim_scheme / M[2][-1]) )
         for i in range(2, max_length + 1):
-            current_time = (N**2)*M[i][-1]**(N) + (N**5 * RR(prod(M[i])**dim_scheme  / M[i][-1]) )
+            current_time = (N**2)*M[i][-1]**(N) + (N**5 * RR(prod(M[i])**dim_scheme / M[i][-1]) )
             if current_time < best_time:
                 best_size = i
                 best_time = current_time
@@ -463,7 +464,7 @@ def sieve(X, bound):
     def points_modulo_primes(X, primes):
         r"""
         Return a list of rational points modulo all `p` in primes,
-        computed parallely.
+        computed parallelly.
         """
         normalized_input = []
         for p in primes_list:
@@ -472,11 +473,7 @@ def sieve(X, bound):
 
         points_pair = list(p_iter(parallel_function, normalized_input))
         points_pair.sort()
-        modulo_points = []
-        for pair in points_pair:
-            modulo_points.append(pair[1])
-
-        return modulo_points
+        return [pair[1] for pair in points_pair]
 
     def parallel_function_combination(point_p_max):
         r"""
@@ -519,7 +516,7 @@ def sieve(X, bound):
 
     def lift_all_points():
         r"""
-        Returns list of all rational points lifted parallely.
+        Return list of all rational points lifted parallelly.
         """
         normalized_input = []
         points = modulo_points.pop() # remove the list of points corresponding to largest prime
@@ -538,18 +535,16 @@ def sieve(X, bound):
 
         return list(lifted_points)
 
-
     # start of main algorithm
 
     primes_list = good_primes(B.ceil())
 
     modulo_points = points_modulo_primes(X, primes_list)
-    len_modulo_points = [len(_) for _ in modulo_points]
+    len_modulo_points = [len(pt) for pt in modulo_points]
     len_primes = len(primes_list)
     prod_primes = prod(primes_list)
 
     # stores final result
-    rat_points = set()
 
     for i in range(N + 1):
         w = [0 for _ in range(N + 1)]
@@ -559,4 +554,3 @@ def sieve(X, bound):
     rat_points = lift_all_points()
 
     return sorted(rat_points)
-

@@ -42,11 +42,11 @@ cdef class CallableDict(dict):
 
         sage: d[1]
         Traceback (most recent call last):
-        ....
+        ...
         KeyError: 1
         sage: d(1)
         Traceback (most recent call last):
-        ....
+        ...
         ValueError: 1 is not in dict
     """
     def __call__(self, key):
@@ -67,7 +67,7 @@ cdef class CallableDict(dict):
             (1, 2, 3)
             sage: d('x')
             Traceback (most recent call last):
-            ....
+            ...
             ValueError: 'x' is not in dict
         """
         try:

@@ -140,7 +140,7 @@ product into irreducibles::
 The element `spin` of the WeylCharacterRing is the representation
 corresponding to the third highest weight representation, the
 eight-dimensional spin representation of `spin(7)`. We could
-just as easily construct it with the commmand::
+just as easily construct it with the command::
 
     sage: spin = B3(1/2,1/2,1/2)
 
@@ -164,7 +164,7 @@ coefficients) through the usual free module accessors::
     [((0, 0, 0), 1), ((1, 0, 0), 1), ((1, 1, 0), 1), ((1, 1, 1), 1)]
     sage: pprint(dict(chi))
     {(0, 0, 0): 1, (1, 0, 0): 1, (1, 1, 0): 1, (1, 1, 1): 1}
-    sage: M = sorted(chi.monomials(), key=lambda x: x.support()); M
+    sage: M = sorted(chi.monomials(), key=lambda x: tuple(x.support())); M
     [B3(0,0,0), B3(1,0,0), B3(1,1,0), B3(1,1,1)]
     sage: sorted(chi.support())
     [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1)]
@@ -208,7 +208,7 @@ Suppose that we wish to compute the integral
    \int_{U(n)} |tr(g)|^{2k}\,dg
 
 for various `n`. Here `U(n)` is the unitary group, which is the maximal
-compact subroup of `GL(n,\mathbb{C})`. The irreducible unitary representations
+compact subgroup of `GL(n,\mathbb{C})`. The irreducible unitary representations
 of `U(n)` may be regarded as the basis elements of the WeylCharacterRing of
 type `A_r`, where `r=n-1` so we might work in that ring. The trace `tr(g)` is
 then just the character of the standard representation. We may realize
@@ -462,7 +462,7 @@ Suppose that we wish to compute the integral
    \int_{U(n)} |tr(g)|^{2k}\,dg
 
 for various `n`. Here `U(n)` is the unitary group, which is the maximal
-compact subroup of `GL(n,\mathbf{C})`, and `dg` is the Haar measure on
+compact subgroup of `GL(n,\mathbf{C})`, and `dg` is the Haar measure on
 `U(n)`, normalized so that the volume of the group is 1.
 
 The irreducible unitary representations of `U(n)` may be regarded as the basis
@@ -485,7 +485,7 @@ itself, that is, the integral of `|tr(g)|^{10}`::
 
     sage: tr^5
     5*A2(2,2,1) + 6*A2(3,1,1) + 5*A2(3,2,0) + 4*A2(4,1,0) + A2(5,0,0)
-    sage: sorted((tr^5).monomials(), key=lambda x: x.support())
+    sage: sorted((tr^5).monomials(), key=lambda x: tuple(x.support()))
     [A2(2,2,1), A2(3,1,1), A2(3,2,0), A2(4,1,0), A2(5,0,0)]
     sage: sorted((tr^5).coefficients())
     [1, 4, 5, 5, 6]

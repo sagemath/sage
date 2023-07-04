@@ -1,7 +1,6 @@
 """
 Dense Matrices over a general ring
 """
-from __future__ import absolute_import
 
 cimport cython
 from cpython.list cimport *
@@ -26,21 +25,19 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     EXAMPLES::
 
-        sage: A = random_matrix(Integers(25)['x'],2); A
-        [       0  8*x + 1]
-        [17*x + 4        0]
+        sage: A = random_matrix(Integers(25)['x'], 2)
         sage: type(A)
-        <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-        sage: TestSuite(A).run()
+        <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+        sage: TestSuite(A).run(skip='_test_minpoly')
 
     Test comparisons::
 
-        sage: A = random_matrix(Integers(25)['x'],2)
+        sage: A = random_matrix(Integers(25)['x'], 2)
         sage: A == A
         True
-        sage: A < A + 1
+        sage: A < A + 1 or A[0, 0].coefficients()[0] == 24
         True
-        sage: A+1 < A
+        sage: A+1 < A and A[0, 0].coefficients()[0] != 24
         False
 
     Test hashing::
@@ -144,7 +141,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     # LEVEL 2 functionality
     # X  * cdef _add_
     #    * cdef _mul_
-    #    * cpdef _cmp_
+    #    * cpdef _richcmp_
     #    * __neg__
     #    * __invert__
     # x  * __copy__
@@ -273,7 +270,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [  x   y]
             [x^2 y^2]
             sage: type(a)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: a*a
             [  x^2*y + x^2     y^3 + x*y]
             [x^2*y^2 + x^3   y^4 + x^2*y]

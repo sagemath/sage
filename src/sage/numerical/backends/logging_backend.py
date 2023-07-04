@@ -17,7 +17,6 @@ See :class:`LoggingBackendFactory` for more information.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
 
 from sage.numerical.backends.generic_backend import GenericBackend
 
@@ -184,7 +183,7 @@ class LoggingBackend(GenericBackend):
             sage: lb = LoggingBackend(backend=b)
             sage: lb.base_ring()
             Real Double Field
-            sage: from sage.rings.all import QQ
+            sage: from sage.rings.rational_field import QQ
             sage: lb = LoggingBackend(backend=b, base_ring=QQ)
             sage: lb.base_ring()
             Rational Field
@@ -233,7 +232,7 @@ r'''
             tester = p._tester(**options)
 '''.replace("SAGE:", "sage:") # so that the above test does not get picked up by the doctester
 
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 
 def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_method_file=None,
                           test_method=None, base_ring=QQ):

@@ -1,3 +1,4 @@
+# distutils: libraries = symmetrica
 """
 Symmetrica library
 """

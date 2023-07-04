@@ -168,20 +168,20 @@ REFERENCES:
 - [3] Knuth, Donald (2000). *Dancing links*. :arxiv:`cs/0011047`.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Sebastien Labbe <slabqc@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import division
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.plot.all import Graphics
-from sage.plot.plot3d.platonic import cube
-from sage.plot.plot3d.shapes2 import text3d
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", "Graphics")
+lazy_import("sage.plot.plot3d.platonic", "cube")
+lazy_import("sage.plot.plot3d.shapes2", "text3d")
 from sage.modules.free_module_element import vector
 from sage.combinat.tiling import Polyomino, TilingSolver
 
@@ -413,7 +413,7 @@ class QuantuminoSolver(SageObject):
         Quantumino solver for the box (5, 4, 4)
         Aside pentamino number: 12
     """
-    def __init__(self, aside, box=(5,8,2)):
+    def __init__(self, aside, box=(5, 8, 2)):
         r"""
         Constructor.
 
@@ -424,7 +424,7 @@ class QuantuminoSolver(SageObject):
             Quantumino solver for the box (5, 8, 2)
             Aside pentamino number: 9
         """
-        if not  0 <= aside < 17:
+        if not(0 <= aside < 17):
             raise ValueError("aside (=%s) must be between 0 and 16" % aside)
         self._aside = aside
         self._box = box
@@ -592,4 +592,3 @@ class QuantuminoSolver(SageObject):
             ??? hundreds of millions ???
         """
         return self.tiling_solver().number_of_solutions()
-

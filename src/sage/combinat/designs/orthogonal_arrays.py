@@ -45,17 +45,12 @@ This module defines the following functions:
 
 REFERENCES:
 
-- [CD1996]_
+-- [CD1996]_
 
 Functions
 ---------
 
 """
-from __future__ import print_function, absolute_import
-
-from builtins import zip
-from six import itervalues, iteritems
-from six.moves import range
 
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
@@ -917,7 +912,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
         return [[i,j,(i+j)%n] for i in range(n) for j in range(n)]
 
     # projective spaces are equivalent to OA(n+1,n,2)
-    elif (projective_plane(n, existence=True) or
+    elif (projective_plane(n, existence=True) is True or
            (k == n+1 and projective_plane(n, existence=True) is False)):
         _OA_cache_set(n+1,n,projective_plane(n, existence=True))
         if k == n+1:
@@ -983,7 +978,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
                 break
 
     # From Difference Matrices
-    elif may_be_available and difference_matrix(n,k-1,existence=True):
+    elif may_be_available and difference_matrix(n,k-1,existence=True) is True:
         _OA_cache_set(k,n,True)
         if existence:
             return True
@@ -1050,7 +1045,7 @@ def largest_available_k(n,t=2):
         from sage.rings.infinity import Infinity
         return Infinity
     elif t == 2:
-        if projective_plane(n,existence=True):
+        if projective_plane(n,existence=True) is True:
             return n+1
         else:
             k=1
@@ -1188,7 +1183,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         sage: iOA = designs.incomplete_orthogonal_array(10,153,[9]*10)  # long time
         sage: OA9 = designs.orthogonal_arrays.build(10,9)               # long time
         sage: for i in range(10):                                       # long time
-        ....:     iOA.extend([[153-9*(i+1)+x for x in B] for B in OA9]) # long time
+        ....:     iOA.extend([[153-9*(i+1)+x for x in B] for B in OA9])
         sage: is_orthogonal_array(iOA,10,153)                           # long time
         True
 
@@ -1232,10 +1227,10 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
     if not holes:
         return orthogonal_array(k,n,existence=existence,resolvable=resolvable)
 
-    sum_of_holes    = sum(holes)
+    sum_of_holes = sum(holes)
     number_of_holes = len(holes)
-    max_hole        = max(holes)
-    min_hole        = min(holes)
+    max_hole = max(holes)
+    min_hole = min(holes)
 
     if sum_of_holes > n:
         if existence:
@@ -1337,15 +1332,15 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
                              "intersect in a projective plane.").format(number_of_holes))
 
     # Holes of size 1 from OA(k+1,n)
-    elif max_hole==1 and orthogonal_array(k+1,n,existence=True):
+    elif max_hole==1 and orthogonal_array(k+1,n,existence=True) is True:
         if existence:
             return True
         OA = orthogonal_array(k+1,n)
         independent_set = [B[:-1] for B in OA if B[-1] == 0][:number_of_holes]
         OA = [B[:-1] for B in OA]
 
-    elif max_hole==1 and orthogonal_array(k,n,existence=True):
-        OA = orthogonal_array(k, n)
+    elif max_hole==1 and orthogonal_array(k,n,existence=True) is True:
+        OA = orthogonal_array(k,n)
         try:
             independent_set = OA_find_disjoint_blocks(OA,k,n,number_of_holes)
         except ValueError:
@@ -1356,18 +1351,18 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
             return True
         independent_set = OA_find_disjoint_blocks(OA,k,n,number_of_holes)
 
-    elif max_hole==1 and not orthogonal_array(k,n,existence=True):
+    elif max_hole==1 and not orthogonal_array(k,n,existence=True) is True:
         return orthogonal_array(k,n,existence=existence)
 
     # From a quasi-difference matrix
     elif (number_of_holes == 1 and
           any(uu == sum_of_holes and mu <= 1 and lmbda == 1 and k <= kk + 1
-              for (nn,lmbda,mu,uu),(kk,_) in iteritems(QDM.get((n,1),{})))):
-        for (nn,lmbda,mu,uu),(kk,f) in iteritems(QDM[n,1]):
+              for (nn,lmbda,mu,uu),(kk,_) in QDM.get((n,1),{}).items())):
+        for (nn,lmbda,mu,uu),(kk,f) in QDM[n,1].items():
             if uu == sum_of_holes and mu <= 1 and lmbda == 1 and k <= kk + 1:
                 break
         G,M = f()
-        OA  = OA_from_quasi_difference_matrix(M,G,fill_hole=False)
+        OA = OA_from_quasi_difference_matrix(M,G,fill_hole=False)
         return [B[:k] for B in OA]
 
     # Equal holes [h,h,...] with h>1 through OA product construction
@@ -1380,7 +1375,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
           incomplete_orthogonal_array(k,n//min_hole,[1]*number_of_holes,existence=True)): # OA(k,n/h)-x.OA(k,1)
         if existence:
             return True
-        h    = min_hole
+        h = min_hole
         iOA1 = incomplete_orthogonal_array(k,n//holes[0],[1]*number_of_holes)
         iOA2 = orthogonal_array(k,h)
 
@@ -1404,7 +1399,8 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
 
     return OA
 
-def OA_find_disjoint_blocks(OA,k,n,x):
+def OA_find_disjoint_blocks(OA, k, n, x,
+                            *, solver=None, integrality_tolerance=1e-3):
     r"""
     Return `x` disjoint blocks contained in a given `OA(k,n)`.
 
@@ -1416,7 +1412,18 @@ def OA_find_disjoint_blocks(OA,k,n,x):
 
     - ``OA`` -- an orthogonal array
 
-    - ``k,n,x`` (integers)
+    - ``k``, ``n``, ``x`` (integers)
+
+    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
 
     .. SEEALSO::
 
@@ -1437,7 +1444,7 @@ def OA_find_disjoint_blocks(OA,k,n,x):
     """
     # Computing an independent set of order x with a Linear Program
     from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
-    p = MixedIntegerLinearProgram()
+    p = MixedIntegerLinearProgram(solver=solver)
     b = p.new_variable(binary=True)
     p.add_constraint(p.sum(b[i] for i in range(len(OA))) == x)
 
@@ -1456,7 +1463,7 @@ def OA_find_disjoint_blocks(OA,k,n,x):
     except MIPSolverException:
         raise ValueError("There does not exist {} disjoint blocks in this OA({},{})".format(x,k,n))
 
-    b = p.get_values(b)
+    b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
     independent_set = [OA[i] for i,v in b.items() if v]
     return independent_set
 
@@ -1560,7 +1567,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
 
     - let `s_1` and `s_2` denote the two values of `s` given above, then exactly
       one of `C_{i,s_1} - C_{j,s_1}` and `C_{i,s_2} - C_{j,s_2}` belongs to the
-      `GF(2)`-hyperplane `(Y_i - Y_j) \cdot H` (we implicitely assumed that `Y_i
+      `GF(2)`-hyperplane `(Y_i - Y_j) \cdot H` (we implicitly assumed that `Y_i
       \not= Y_j`).
 
     Under these conditions, it is easy to check that the array whose `k-1` rows
@@ -1683,7 +1690,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
                 Hij = set([(Y[i] - Y[j]) * v for v in H])
                 for s in range(2 * G_card):
                     g_to_col_indices[B[i][s] - B[j][s]].append(s)
-                for s1, s2 in itervalues(g_to_col_indices):
+                for s1, s2 in g_to_col_indices.values():
                     v1 = A[i][s1][1] - A[j][s1][1]
                     v2 = A[i][s2][1] - A[j][s2][1]
 
@@ -1781,8 +1788,8 @@ def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
 
     # A cache for addition in G
     G_sum = [[0] * Gn for _ in range(Gn)]
-    for x, i in iteritems(G_to_int):
-        for xx, ii in iteritems(G_to_int):
+    for x, i in G_to_int.items():
+        for xx, ii in G_to_int.items():
             G_sum[i][ii] = G_to_int[x + xx]
 
     # Convert M to integers
@@ -2081,7 +2088,7 @@ class OAMainFunctions():
         """
         raise RuntimeError("This is not a function but a class. You want to call the designs.orthogonal_arrays.* functions")
 
-    largest_available_k  = staticmethod(largest_available_k)
+    largest_available_k = staticmethod(largest_available_k)
 
     @staticmethod
     def explain_construction(k,n,t=2):

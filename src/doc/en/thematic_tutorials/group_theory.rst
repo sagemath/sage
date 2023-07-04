@@ -27,6 +27,7 @@ http://abstract.ups.edu/sage-aata.html.
 
 .. contents:: Table of contents
    :depth: 2
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Changelog:
 
@@ -203,7 +204,7 @@ Experiment by running the following code several times::
 
     sage: m = random_prime(10000)
     sage: n = random_prime(10000)
-    sage: euler_phi(m*n) == euler_phi(m) * euler_phi(n)
+    sage: euler_phi(m*n) == euler_phi(m) * euler_phi(n) or m == n
     True
 
 Feel a conjecture coming on?  Can you generalize this result?
@@ -251,7 +252,7 @@ Permutation groups
 
 A good portion of Sage's support for group theory is based on routines
 from GAP (Groups, Algorithms, and Programming at
-http://www.gap-system.org.  Groups can be described in many different
+https://www.gap-system.org.  Groups can be described in many different
 ways, such as sets of matrices or sets of symbols subject to a few
 defining relations.  A very concrete way to represent groups is via
 permutations (one-to-one and onto functions of the integers 1
@@ -317,7 +318,7 @@ since `\sigma` is an odd permutation.
 Many more available functions that can be applied to a permutation can
 be found via "tab-completion."  With ``sigma`` defined as an element
 of a permutation group, in a Sage cell, type ``sigma.`` (Note the
-"``.``") and then press the tab key.  You will get a list of available
+"``.``") and then press the :kbd:`Tab` key.  You will get a list of available
 functions (you may need to scroll down to see the whole list).
 Experiment and explore!  It is what Sage is all about.  You really
 cannot break anything.
@@ -358,13 +359,13 @@ and then a variety of functions become available.
 
 After trying the examples below, experiment with tab-completion.
 Having defined ``H``, type ``H.`` (note the "``.``") and then press
-the tab key.  You will get a list of available functions (you may need
+the :kbd:`Tab` key.  You will get a list of available functions (you may need
 to scroll down to see the whole list).  As before,
 *experiment and explore*---it is really hard to break anything.
 
 Here is another couple of ways to experiment and explore.  Find a
 function that looks interesting, say ``is_abelian()``.  Type
-``H.is_abelian?`` (note the question mark) followed by the enter key.
+``H.is_abelian?`` (note the question mark) followed by the :kbd:`Enter` key.
 This will display a portion of the source code for the
 ``is_abelian()`` function, describing the inputs and output, possibly
 illustrated with example uses.
@@ -522,7 +523,7 @@ In more mathematical notation, we might write
     sage: sigma = G("(1,2,3) (4,5)")
     sage: H = G.subgroup([sigma])
     sage: H.list()
-    [(), (1,2,3), (1,3,2), (4,5), (1,2,3)(4,5), (1,3,2)(4,5)]
+    [(), (1,2,3)(4,5), (1,3,2), (4,5), (1,2,3), (1,3,2)(4,5)]
 
 Experiment by trying different permutations for ``sigma`` and
 observing the effect on ``H``.
@@ -543,25 +544,25 @@ preceded by the order of each element. ::
     sage: for g in CN:
     ....:     print("{}   {}".format(g.order(), g))
     1   ()
-    5   (1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8)
-    5   (1,13,5,17,9)(2,14,6,18,10)(3,15,7,19,11)(4,16,8,20,12)
-    5   (1,9,17,5,13)(2,10,18,6,14)(3,11,19,7,15)(4,12,20,8,16)
-    5   (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)
-    10   (1,19,17,15,13,11,9,7,5,3)(2,20,18,16,14,12,10,8,6,4)
-    10   (1,15,9,3,17,11,5,19,13,7)(2,16,10,4,18,12,6,20,14,8)
-    2   (1,11)(2,12)(3,13)(4,14)(5,15)(6,16)(7,17)(8,18)(9,19)(10,20)
-    10   (1,7,13,19,5,11,17,3,9,15)(2,8,14,20,6,12,18,4,10,16)
-    10   (1,3,5,7,9,11,13,15,17,19)(2,4,6,8,10,12,14,16,18,20)
-    20   (1,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2)
-    4   (1,16,11,6)(2,17,12,7)(3,18,13,8)(4,19,14,9)(5,20,15,10)
-    20   (1,12,3,14,5,16,7,18,9,20,11,2,13,4,15,6,17,8,19,10)
-    20   (1,8,15,2,9,16,3,10,17,4,11,18,5,12,19,6,13,20,7,14)
-    20   (1,4,7,10,13,16,19,2,5,8,11,14,17,20,3,6,9,12,15,18)
-    20   (1,18,15,12,9,6,3,20,17,14,11,8,5,2,19,16,13,10,7,4)
-    20   (1,14,7,20,13,6,19,12,5,18,11,4,17,10,3,16,9,2,15,8)
-    20   (1,10,19,8,17,6,15,4,13,2,11,20,9,18,7,16,5,14,3,12)
-    4   (1,6,11,16)(2,7,12,17)(3,8,13,18)(4,9,14,19)(5,10,15,20)
     20   (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
+    10   (1,3,5,7,9,11,13,15,17,19)(2,4,6,8,10,12,14,16,18,20)
+    20   (1,4,7,10,13,16,19,2,5,8,11,14,17,20,3,6,9,12,15,18)
+    5   (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)
+    4   (1,6,11,16)(2,7,12,17)(3,8,13,18)(4,9,14,19)(5,10,15,20)
+    10   (1,7,13,19,5,11,17,3,9,15)(2,8,14,20,6,12,18,4,10,16)
+    20   (1,8,15,2,9,16,3,10,17,4,11,18,5,12,19,6,13,20,7,14)
+    5   (1,9,17,5,13)(2,10,18,6,14)(3,11,19,7,15)(4,12,20,8,16)
+    20   (1,10,19,8,17,6,15,4,13,2,11,20,9,18,7,16,5,14,3,12)
+    2   (1,11)(2,12)(3,13)(4,14)(5,15)(6,16)(7,17)(8,18)(9,19)(10,20)
+    20   (1,12,3,14,5,16,7,18,9,20,11,2,13,4,15,6,17,8,19,10)
+    5   (1,13,5,17,9)(2,14,6,18,10)(3,15,7,19,11)(4,16,8,20,12)
+    20   (1,14,7,20,13,6,19,12,5,18,11,4,17,10,3,16,9,2,15,8)
+    10   (1,15,9,3,17,11,5,19,13,7)(2,16,10,4,18,12,6,20,14,8)
+    4   (1,16,11,6)(2,17,12,7)(3,18,13,8)(4,19,14,9)(5,20,15,10)
+    5   (1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8)
+    20   (1,18,15,12,9,6,3,20,17,14,11,8,5,2,19,16,13,10,7,4)
+    10   (1,19,17,15,13,11,9,7,5,3)(2,20,18,16,14,12,10,8,6,4)
+    20   (1,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2)
 
 By varying the size of the group (change the value of ``n``) you can
 begin to illustrate some of the structure of a cyclic group (for
@@ -576,10 +577,10 @@ subgroup::
     sage: H = C20.subgroup([rho])
     sage: H.list()
     [(),
-     (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20),
-     (1,9,17,5,13)(2,10,18,6,14)(3,11,19,7,15)(4,12,20,8,16),
+     (1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8),
      (1,13,5,17,9)(2,14,6,18,10)(3,15,7,19,11)(4,16,8,20,12),
-     (1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8)]
+     (1,9,17,5,13)(2,10,18,6,14)(3,11,19,7,15)(4,12,20,8,16),
+     (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)]
 
 For a cyclic group, the following command will list *all* of the
 subgroups. ::
@@ -1006,7 +1007,9 @@ Groups of small order as permutation groups
 ============================================
 
 We list here constructions, as permutation groups, for all of the
-groups of order less than 16. ::
+groups of order less than 16.
+
+.. CODE-BLOCK:: text
 
     ---------------------------------------------------------------------------------------------
     Size  Construction                                Notes

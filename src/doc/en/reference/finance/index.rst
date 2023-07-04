@@ -2,9 +2,8 @@ Quantitative Finance
 ======================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   sage/finance/time_series
    sage/finance/stock
    sage/finance/option
    sage/finance/fractal

@@ -10,7 +10,6 @@ Bimodules
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 from sage.categories.category import Category, CategoryWithParameters
 from sage.categories.left_modules import LeftModules
@@ -43,11 +42,11 @@ class Bimodules(CategoryWithParameters):
             sage: C = Bimodules(QQ, ZZ)
             sage: TestSuite(C).run()
         """
-        if not ( left_base in Rings or
+        if not ( left_base in Rings() or
                  (isinstance(left_base, Category)
                   and left_base.is_subcategory(Rings())) ):
             raise ValueError("the left base must be a ring or a subcategory of Rings()")
-        if not ( right_base in Rings or
+        if not ( right_base in Rings() or
                  (isinstance(right_base, Category)
                   and right_base.is_subcategory(Rings())) ):
             raise ValueError("the right base must be a ring or a subcategory of Rings()")
@@ -107,7 +106,8 @@ class Bimodules(CategoryWithParameters):
             sage: Bimodules.an_instance()
             Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right
         """
-        from sage.rings.all import QQ, RR
+        from sage.rings.rational_field import QQ
+        from sage.rings.real_mpfr import RR
         return cls(QQ, RR)
 
     def _repr_object_names(self):

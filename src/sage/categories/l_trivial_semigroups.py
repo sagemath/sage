@@ -2,7 +2,6 @@
 r"""
 L-trivial semigroups
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2016 Nicolas M. Thiéry <nthiery at users.sf.net>
 #

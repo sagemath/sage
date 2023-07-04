@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Run this test from SAGE_ROOT.
+# If SAGE_ROOT is not defined (this will be the case when called from
+# the top-level Makefile), assume the current directory is SAGE_ROOT.
+if [ -n "$SAGE_ROOT" ]; then
+    cd "$SAGE_ROOT"
+fi
+
+echo
+echo "Testing that Sage starts..."
+. src/bin/sage-version.sh
+echo "[`date +'%Y-%m-%d %H:%M:%S'`] $SAGE_VERSION_BANNER" | tee -a logs/start.log
+# This script is run by the top-level Makefile, so may be run by a
+# sysadmin.  We use --nodotsage so we don't force a .sage directory
+# in the sysadmin's HOME directory.
+cmd='print("Yes, Sage starts.")'
+build/bin/sage-logger "./sage --nodotsage -c '$cmd'" logs/start.log
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Sage failed to start up."
+    echo >&2 "Please email sage-devel (http://groups.google.com/group/sage-devel)"
+    echo >&2 "explaining the problem and send the log file"
+    echo >&2 "  `pwd`/logs/start.log"
+    echo >&2 "Describe your computer, operating system, etc."
+    exit 1
+fi

@@ -39,16 +39,14 @@ import re
 import os.path
 import gzip
 import bz2
-from sage.misc.all import tmp_filename
-import sys
 
-# import compatible with py2 and py3
-import six
-from six.moves.urllib.request import urlopen
-from six import string_types, PY2
+from urllib.request import urlopen
 
-XML_NAMESPACE   = 'http://designtheory.org/xml-namespace'
-DTRS_PROTOCOL   = '2.0'
+from sage.misc.temporary_file import tmp_filename
+
+
+XML_NAMESPACE = 'http://designtheory.org/xml-namespace'
+DTRS_PROTOCOL = '2.0'
 
 # The following string is the file
 # http://designtheory.org/database/v-b-k/v2-b2-k2.icgsa.txt.bz2
@@ -602,7 +600,7 @@ def _encode_attribute(string):
     else:
         return string
 
-class XTree(object):
+class XTree():
     '''
     A lazy class to wrap a rooted tree representing an XML document.
     The tree's nodes are tuples of the structure:
@@ -662,8 +660,7 @@ class XTree(object):
              ('block', {}, [[6, 8, 10]])]
         """
 
-
-        if isinstance(node, string_types):
+        if isinstance(node, str):
             node = (node, {}, [])
         name, attributes, children = node
         self.xt_node = node
@@ -776,7 +773,7 @@ class XTree(object):
 
         return len(self.xt_children)
 
-class XTreeProcessor(object):
+class XTreeProcessor():
     '''
     An incremental event-driven parser for ext-rep documents.
     The processing stages:
@@ -871,7 +868,7 @@ class XTreeProcessor(object):
         elif name == 'designs':
             pass # self.outf.write(' <%s>\n' % name)
         if self.in_item:
-            for k, v in six.iteritems(attrs):
+            for k, v in attrs.items():
                 attrs[k] = _encode_attribute(v)
             new_node = (name, attrs, [])
             self.node_stack.append(new_node)
@@ -963,8 +960,8 @@ class XTreeProcessor(object):
             #@ this stripping may distort char data in the <info> subtree
             # if they are not bracketed in some way.
             data = data.strip()
-            if data != '':
-                # we use the xtree's childrens list here to collect char data
+            if data:
+                # we use the xtree's children list here to collect char data
                 # since only leaves have char data.
                 self.current_node[2].append(data)
 
@@ -991,10 +988,8 @@ class XTreeProcessor(object):
         p.StartElementHandler = self._start_element
         p.EndElementHandler = self._end_element
         p.CharacterDataHandler = self._char_data
-        if PY2:
-            p.returns_unicode = 0
 
-        if isinstance(xml_source, string_types+(bytes,)):
+        if isinstance(xml_source, (str, bytes)):
             p.Parse(xml_source)
         else:
             p.ParseFile(xml_source)

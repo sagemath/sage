@@ -6,9 +6,7 @@ Check that :trac:`9876` has been fixed, this test comes from PARI's
 self-test :pari:`rnfkummer` but was modified such that the answer is
 canonical::
 
-    sage: pari('addprimes([31438243, 238576291, 18775387483, 24217212463267, 1427657500359111961, 135564809928627323997297867381959])')
-    [31438243, 238576291, 18775387483, 24217212463267, 1427657500359111961, 135564809928627323997297867381959]
-    sage: pari('K = bnfinit(y^4-52*y^2+26,1); pol = rnfkummer(bnrinit(K,3,1),Mat(5)); L = rnfinit(K, pol); polredabs(polredbest(L.polabs))')  # long time
+    sage: pari('K = bnfinit(y^4-52*y^2+26,1); pol = rnfkummer(bnrinit(K,3,1),Mat(5)); L = rnfinit(K, [pol, 10^6]); polredabs(polredbest(L.polabs))')  # long time
     x^20 - 112*x^18 + 5108*x^16 - 123460*x^14 + 1724337*x^12 - 14266996*x^10 + 69192270*x^8 - 188583712*x^6 + 260329852*x^4 - 141461008*x^2 + 19860776
 
 Check that :trac:`10195` (PARI bug 1153) has been fixed::

@@ -1,7 +1,6 @@
 r"""
 Finite dimensional semisimple algebras with basis
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2011-2015 Nicolas M. Thiery <nthiery at users.sf.net>
 #                2014-2015 Aladin Virmaux <aladin.virmaux at u-psud.fr>
@@ -105,7 +104,6 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             """
             return tuple([x.lift()
                           for x in self.center().central_orthogonal_idempotents()])
-
 
     class Commutative(CategoryWithAxiom_over_base_ring):
 
@@ -258,4 +256,3 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 """
                 return tuple([(e.leading_coefficient()/(e*e).leading_coefficient())*e
                               for e in self._orthogonal_decomposition()])
-

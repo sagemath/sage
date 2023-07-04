@@ -1,5 +1,11 @@
+# distutils: language = c++
+# distutils: libraries = gmp m NTL_LIBRARIES
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 """
-Optimized Cython code needed by quaternion algebras.
+Optimized Cython code needed by quaternion algebras
 
 This is a collection of miscellaneous routines that are in Cython for
 speed purposes and are used by the quaternion algebra code.  For
@@ -9,9 +15,10 @@ from a list of n rational quaternions.
 AUTHORS:
 
 - William Stein
+
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,8 +26,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -76,13 +82,15 @@ def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
     cdef Py_ssize_t i, n=len(v)
     M = MatrixSpace(ZZ, n, 4)
     cdef Matrix_integer_dense A = M.zero_matrix().__copy__()
-    if n == 0: return A
+    if n == 0:
+        return A
 
     # Find least common multiple of the denominators
     cdef QuaternionAlgebraElement_rational_field x
     cdef Integer d = Integer()
     # set denom to the denom of the first quaternion
-    x = v[0]; mpz_set(d.value, x.d)
+    x = v[0]
+    mpz_set(d.value, x.d)
     for x in v[1:]:
         mpz_lcm(d.value, d.value, x.d)
 
@@ -146,7 +154,8 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
     cdef Py_ssize_t i, j, n=len(v)
     M = MatrixSpace(QQ, n, 4)
     cdef Matrix_rational_dense A = M.zero_matrix().__copy__()
-    if n == 0: return A
+    if n == 0:
+        return A
 
     cdef QuaternionAlgebraElement_rational_field x
     if reverse:
@@ -251,5 +260,3 @@ def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense 
         v.append(x)
     mpz_clear(tmp)
     return v
-
-

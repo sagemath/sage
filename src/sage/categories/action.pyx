@@ -1,10 +1,10 @@
 r"""
-Group, ring, etc. actions on objects.
+Group, ring, etc. actions on objects
 
 The terminology and notation used is suggestive of groups acting on sets,
 but this framework can be used for modules, algebras, etc.
 
-A group action $G \times S \rightarrow S$ is a functor from $G$ to Sets.
+A group action `G \times S \rightarrow S` is a functor from `G` to Sets.
 
 .. WARNING::
 
@@ -43,17 +43,15 @@ AUTHOR:
 - Robert Bradshaw: initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.tuple cimport PyTuple_GET_ITEM
 
@@ -64,17 +62,15 @@ from sage.structure.element cimport parent
 from sage.structure.parent cimport Parent
 
 from . import homset
-import sage.structure.element
 from weakref import ref
-from sage.misc.constant_function import ConstantFunction
 
 
 cdef inline category(x):
     try:
         return x.category()
     except AttributeError:
-        import sage.categories.all
-        return sage.categories.all.Objects()
+        from sage.categories.objects import Objects
+        return Objects()
 
 
 cdef class Action(Functor):
@@ -103,6 +99,27 @@ cdef class Action(Functor):
 
     def _apply_functor(self, x):
         return self(x)
+
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        .. WARNING::
+
+            If you change the signature of the ``__init__`` for a subclass,
+            you must override this method as well.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: P = QQ['x']
+            sage: R = (ZZ['x'])['y']
+            sage: A = R.get_action(P, operator.mul, True)
+            sage: loads(dumps(A)) is not None
+            True
+        """
+        return (type(self), (self.G, self.underlying_set(), self._is_left, self.op))
 
     def __call__(self, *args):
         """
@@ -224,8 +241,8 @@ cdef class Action(Functor):
 
     def _repr_(self):
         side = "Left" if self._is_left else "Right"
-        return "%s %s by %r on %r"%(side, self._repr_name_(), self.G,
-                                    self.underlying_set())
+        return "%s %s by %r on %r" % (side, self._repr_name_(), self.G,
+                                      self.underlying_set())
 
     def _repr_name_(self):
         return "action"
@@ -285,7 +302,7 @@ cdef class Action(Functor):
         return S
 
     def codomain(self):
-       return self.underlying_set()
+        return self.underlying_set()
 
     def domain(self):
         return self.underlying_set()
@@ -365,6 +382,23 @@ cdef class InverseAction(Action):
             pass
         raise TypeError(f"no inverse defined for {action!r}")
 
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: V = QQ^3
+            sage: v = V((1, 2, 3))
+            sage: cm = get_coercion_model()
+            sage: a = cm.get_action(V, QQ, operator.mul)
+            sage: loads(dumps(~a)) is not None
+            True
+        """
+        return (type(self), (self._action,))
+
     cpdef _act_(self, g, x):
         if self.S_precomposition is not None:
             x = self.S_precomposition(x)
@@ -418,7 +452,7 @@ cdef class PrecomposedAction(Action):
         if right_precomposition is not None:
             rco = right_precomposition._codomain
             if rco is not right:
-              right_precomposition = homset.Hom(rco, right).natural_map() * right_precomposition
+                right_precomposition = homset.Hom(rco, right).natural_map() * right_precomposition
             right = right_precomposition.domain()
         if action._is_left:
             Action.__init__(self, left, US, 1)
@@ -431,6 +465,24 @@ cdef class PrecomposedAction(Action):
         else:
             self.G_precomposition = right_precomposition
             self.S_precomposition = left_precomposition
+
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: E = ModularSymbols(11).2
+            sage: v = E.manin_symbol_rep()
+            sage: c,x = v[0]
+            sage: y = x.modular_symbol_rep()
+            sage: act = coercion_model.get_action(QQ, parent(y), op=operator.mul)
+            sage: loads(dumps(act)) is not None
+            True
+        """
+        return (type(self), (self._action, self.G_precomposition, self.S_precomposition))
 
     cpdef _act_(self, g, x):
         if self.G_precomposition is not None:
@@ -550,8 +602,9 @@ cdef class ActionEndomorphism(Morphism):
         return self._action._act_(self._g, x)
 
     def _repr_(self):
-        return "Action of %s on %s under %s."%(self._g,
-                                               self._action.underlying_set(), self._action)
+        return "Action of %s on %s under %s." % (self._g,
+                                                 self._action.underlying_set(),
+                                                 self._action)
 
     def __mul__(left, right):
         cdef ActionEndomorphism left_c, right_c
@@ -566,10 +619,8 @@ cdef class ActionEndomorphism(Morphism):
         return Morphism.__mul__(left, right)
 
     def __invert__(self):
-            inv_g = ~self._g
-            if parent(inv_g) is parent(self._g):
-                return ActionEndomorphism(self._action, inv_g)
-            else:
-                return (~self._action)(self._g)
-
-
+        inv_g = ~self._g
+        if parent(inv_g) is parent(self._g):
+            return ActionEndomorphism(self._action, inv_g)
+        else:
+            return (~self._action)(self._g)

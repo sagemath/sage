@@ -7,34 +7,39 @@
 Sage Quickstart for Statistics
 ==============================
 
-This `Sage <http://www.sagemath.org>`_ quickstart tutorial was developed
+This `Sage <https://www.sagemath.org>`_ quickstart tutorial was developed
 for the MAA PREP Workshop "Sage: Using Open\-Source Mathematics Software
 with Undergraduates" (funding provided by NSF DUE 0817071).  It is
 licensed under the Creative Commons Attribution\-ShareAlike 3.0 license
-(`CC BY\-SA <http://creativecommons.org/licenses/by-sa/3.0/>`_).
+(`CC BY\-SA <https://creativecommons.org/licenses/by-sa/3.0/>`_).
 
-Although Sage began as a project in algebra and geometry, it has many
-functions for statistics and finance. Particularly due to the `R project
-<http://www.r-project.org>`_ being a component of Sage, we have very
-powerful statistical techniques at our disposal.
 
 Basic Descriptive Statistics
 ----------------------------
 
-Some basic statistical functions are built right in.
+Basic statistical functions are best to get from `numpy <https://numpy.org/doc/stable/reference/routines.statistics.html>`_
+and `scipy.stats <https://docs.scipy.org/doc/scipy/reference/stats.html>`_.
 
-::
+NumPy provides, for example, functions to compute the arithmetic mean and
+the standard deviation::
 
-    sage: mean([1,2,3,5])
-    11/4
+    sage: import numpy as np
+    sage: np.mean([1, 2, 3, 5])
+    2.75
 
-::
+    sage: np.std([1, 2, 2, 4, 5, 6, 8])  # rel to 1e-13
+    2.32992949004287
 
-    sage: std([1,2,2,4,5,6,8]) # The standard deviation
-    sqrt(19/3)
+SciPy offers many more functions, for example a function to compute the
+harmonic mean::
 
-Once we get beyond such things, there are usually several ways to
-accomplish things -- which can be complicated, but also powerful.
+    sage: from scipy.stats import hmean
+    sage: hmean([1, 2, 2, 4, 5, 6, 8])  # rel to 1e-13
+    2.5531914893617023
+
+We do not recommend to use Python's built in ``statistics`` module with Sage.
+It has a known incompatibility with number types defined in Sage, see :trac:`28234`.
+
 
 Distributions
 -------------
@@ -49,7 +54,7 @@ distribution using native Python random generators.
 
 ::
 
-    sage: my_data=[lognormvariate(2,3) for i in range(10)]
+    sage: my_data = [lognormvariate(2, 3) for i in range(10)]
     sage: my_data # random
     [13.189347821530054, 151.28229284782799, 0.071974845847761343, 202.62181449742425, 1.9677158880100207, 71.959830176932542, 21.054742855786007, 3.9235315623286406, 4129.9880239483346, 16.41063858663054]
 
@@ -57,7 +62,7 @@ We can check whether the mean of the log of the data is close to 2.
 
 ::
 
-    sage: mean([log(item) for item in my_data]) # random
+    sage: np.mean([log(item) for item in my_data]) # random
     3.0769518857697618
 
 Here is an example using the `Gnu scientific library
@@ -87,10 +92,9 @@ plot a histogram with 10 bins.
     sage: T.plot_histogram(normalize=False,bins=10)
     Graphics object consisting of 10 graphics primitives
 
-To access discrete distributions, we access another part of Sage which
-has statistics built in: `Scipy <http://www.scipy.org>`_.
+To access discrete distributions, we again use `Scipy <http://www.scipy.org>`_.
 
-- We have to ``import`` this module.
+- We have to ``import`` the module ``scipy.stats``.
 
 - We use ``binom_dist`` to denote the binomial distribution with 20 trials
   and 5% expected failure rate.
@@ -109,31 +113,23 @@ has statistics built in: `Scipy <http://www.scipy.org>`_.
 The ``bar_chart`` function performs some of the duties of histograms.
 
 Scipy's statistics can do other things too.  Here, we find the median
-(as the fiftieth percentile) of an earlier data set.  (We use a Python
-``int`` to work around a bug in Numpy.)
+(as the fiftieth percentile) of an earlier data set.
 
 ::
 
-    sage: scipy.stats.scoreatpercentile(my_data, int(50)) # random
+    sage: scipy.stats.scoreatpercentile(my_data, 50) # random
     0.51271641116183286
 
 The key thing to remember here is to look at the documentation!
 
-- Particularly for Scipy, not everything in Sage is "wrapped" with an
-  easy command, so you may have to do some experimentation.
-
-- Improving this documentation would be a great way to get students
-  involved.
 
 Using R from within Sage
 ------------------------
 
-There are several other pieces of Sage that have statistical
-capabilities, but by far the most important is the `R project
-<http://www.r-project.org>`_ , which is the industry and academic
-standard for statistical analysis of *all* kinds.
+The `R project <http://www.r-project.org>`_ is a leading software package
+for statistical analysis with widespread use in industry and academics.
 
-There are several ways to access R.
+There are several ways to access R; they are based on the ``rpy2`` package.
 
 - One of the easiest is to just put ``r()`` around things you want to
   make into statistical objects, and then ...
@@ -146,12 +142,13 @@ the examples in ``r.kruskal_test?`` in the notebook.
 
 ::
 
-    sage: x=r([2.9, 3.0, 2.5, 2.6, 3.2]) # normal subjects
-    sage: y=r([3.8, 2.7, 4.0, 2.4])      # with obstructive airway disease
-    sage: z=r([2.8, 3.4, 3.7, 2.2, 2.0]) # with asbestosis
-    sage: a = r([x,y,z]) # make a long R vector of all the data
-    sage: b = r.factor(5*[1]+4*[2]+5*[3]) # create something for R to tell which subjects are which
-    sage: a; b # show them
+    sage: x=r([2.9, 3.0, 2.5, 2.6, 3.2])  # normal subjects                       # optional - rpy2
+    sage: y=r([3.8, 2.7, 4.0, 2.4])       # with obstructive airway disease       # optional - rpy2
+    sage: z=r([2.8, 3.4, 3.7, 2.2, 2.0])  # with asbestosis                       # optional - rpy2
+    sage: a = r([x,y,z])                  # make a long R vector of all the data  # optional - rpy2
+    sage: b = r.factor(5*[1]+4*[2]+5*[3]) # create something for R to tell        # optional - rpy2
+    ....:                                 #   which subjects are which
+    sage: a; b                            # show them                             # optional - rpy2
      [1] 2.9 3.0 2.5 2.6 3.2 3.8 2.7 4.0 2.4 2.8 3.4 3.7 2.2 2.0
      [1] 1 1 1 1 1 2 2 2 2 3 3 3 3 3
     Levels: 1 2 3
@@ -160,7 +157,7 @@ the examples in ``r.kruskal_test?`` in the notebook.
 
 ::
 
-    sage: r.kruskal_test(a,b) # do the KW test!
+    sage: r.kruskal_test(a,b)             # do the KW test!                       # optional - rpy2
         Kruskal-Wallis rank sum test
 
     data:  sage17 and sage33
@@ -178,7 +175,7 @@ Notice that R also uses the ``#`` symbol to indicate comments.
 
 ::
 
-    sage: %r
+    sage: %r                                                                      # optional - rpy2
     ....: x = c(18,23,25,35,65,54,34,56,72,19,23,42,18,39,37) # ages of individuals
     ....: y = c(202,186,187,180,156,169,174,172,153,199,193,174,198,183,178) # maximum heart rate of each one
     ....: png() # turn on plotting
@@ -202,7 +199,3 @@ Notice that R also uses the ``#`` symbol to indicate comments.
 To get a whole worksheet to evaluate in R (and be able to ignore the
 ``%``), you could also drop down the ``r`` option in the menu close to
 the top which currently has ``sage`` in it.
-
-(There is also yet another Python interface to R called the `rpy2
-<http://rpy.sourceforge.net/rpy2.html>`_ interface, but we do not currently
-recommend its use with Sage.)

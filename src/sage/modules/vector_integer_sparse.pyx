@@ -142,6 +142,15 @@ cdef int mpz_vector_get_entry(mpz_t ans, mpz_vector* v, Py_ssize_t n) except -1:
     mpz_set(ans, v.entries[m])
     return 0
 
+cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n):
+    """
+    Return if the ``n``-th entry of the sparse vector ``v`` is zero.
+
+    This is meant for internal use only. If ``n`` is not valid, then
+    this might lead to a segfault.
+    """
+    return binary_search0(v.positions, v.num_nonzero, n) == -1
+
 cdef object mpz_vector_to_list(mpz_vector* v):
     """
     Returns a Python list of 2-tuples (i,x), where x=v[i] runs
@@ -278,7 +287,8 @@ cdef int add_mpz_vector_init(mpz_vector* sum,
 
     # 1. Allocate memory:
     nz = v.num_nonzero + w.num_nonzero
-    if nz > v.degree: nz = v.degree
+    if nz > v.degree:
+        nz = v.degree
     mpz_vector_init(z, v.degree, nz)
     # 2. Merge entries
     i = 0  # index into entries of v
@@ -392,4 +402,3 @@ cdef int mpz_vector_cmp(mpz_vector* v, mpz_vector* w):
         elif c > 0:
             return 1
     return 0
-

@@ -1,0 +1,4 @@
+$(PYTHON) vcversioner jupyter_core jupyter_client jinja2 tornado ipython packaging terminado traitlets nbconvert send2trash nbformat prometheus_client ipython_genutils argon2_cffi pyzmq idna requests jsonschema babel notebook | $(PYTHON_TOOLCHAIN)
+
+----------
+All lines of this file are ignored except the first.

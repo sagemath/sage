@@ -1,0 +1,6 @@
+cd src
+if [ "$UNAME" = "Linux" ]; then
+   sdh_configure
+   sdh_make
+   sdh_make_install
+fi

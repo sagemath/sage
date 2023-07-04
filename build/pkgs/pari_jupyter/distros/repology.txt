@@ -1,0 +1,2 @@
+pari-jupyter
+python:pari-jupyter

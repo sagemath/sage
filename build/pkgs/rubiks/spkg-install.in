@@ -1,0 +1,53 @@
+###########################################
+## rubiks
+###########################################
+
+# Most packages do not need all these set
+# But it is better to do them all each time, rather than ommit
+# a flag by mistake.
+
+export CFLAGS="$CFLAGS $EXTRA_FLAG"
+export CXXFLAGS="$CXXFLAGS $EXTRA_FLAG"
+export FCFLAGS="$FCFLAGS $EXTRA_FLAG"
+export F77FLAGS="$F77FLAGS $EXTRA_FLAG"
+export CPPFLAGS
+export LDFLAGS
+export ABI
+export CPPFLAGS
+
+# These are all used by GNU to specify compilers.
+echo "Using CC=$CC"
+echo "Using CXX=$CXX"
+echo "Using FC=$FC"
+echo "Using F77=$F77"
+
+# Flags which may be set.
+echo "The following environment variables will be exported"
+echo "Using CFLAGS=$CFLAGS"
+echo "Using CXXFLAGS=$CXXFLAGS"
+echo "Using FCFLAGS=$FCFLAGS"
+echo "Using F77FLAGS=$F77FLAGS"
+echo "Using CPPFLAGS=$CPPFLAGS"
+echo "Using LDFLAGS=$LDFLAGS"
+echo "Using ABI=$ABI"
+echo "configure scripts and/or makefiles might override these later"
+echo " "
+
+# End of pretty general spkg-install file.
+# Now do the specific things needed for this package (rubiks)
+
+if [ $UNAME = "SunOS" ]; then
+    INSTALL=cp; export INSTALL
+else
+    INSTALL=install; export INSTALL
+fi
+
+if [ $UNAME = "Darwin" ]; then
+    # #34293: Work around compiler hang
+    export CXXFLAGS="$CXXFLAGS -O1"
+fi
+
+cd src
+
+echo "Building Rubiks cube solvers"
+sdh_make_install PREFIX="$SAGE_LOCAL"

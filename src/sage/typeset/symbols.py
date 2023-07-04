@@ -8,51 +8,50 @@ EXAMPLES::
 
     sage: from sage.typeset.symbols import *
 
-    sage: symbols = ascii_art(u'')
+    sage: symbols = ascii_art('')
     sage: for i in range(1, 5):
     ....:     symbols += ascii_left_parenthesis.character_art(i)
-    ....:     symbols += ascii_art(u' ')
+    ....:     symbols += ascii_art(' ')
     ....:     symbols += ascii_right_parenthesis.character_art(i)
-    ....:     symbols += ascii_art(u' ')
+    ....:     symbols += ascii_art(' ')
     sage: for i in range(1, 5):
     ....:     symbols += ascii_left_square_bracket.character_art(i)
-    ....:     symbols += ascii_art(u' ')
+    ....:     symbols += ascii_art(' ')
     ....:     symbols += ascii_right_square_bracket.character_art(i)
-    ....:     symbols += ascii_art(u' ')
+    ....:     symbols += ascii_art(' ')
     sage: for i in range(1, 5):
     ....:     symbols += ascii_left_curly_brace.character_art(i)
-    ....:     symbols += ascii_art(u' ')
+    ....:     symbols += ascii_art(' ')
     ....:     symbols += ascii_right_curly_brace.character_art(i)
-    ....:     symbols += ascii_art(u' ')
+    ....:     symbols += ascii_art(' ')
     sage: symbols
                 ( )             [ ]             { }
             ( ) ( )         [ ] [ ]         { } { }
         ( ) ( ) ( )     [ ] [ ] [ ]     { } { } { }
     ( ) ( ) ( ) ( ) [ ] [ ] [ ] [ ] { } { } { } { }
 
-    sage: symbols = unicode_art(u'')
+    sage: symbols = unicode_art('')
     sage: for i in range(1, 5):
     ....:     symbols += unicode_left_parenthesis.character_art(i)
-    ....:     symbols += unicode_art(u' ')
+    ....:     symbols += unicode_art(' ')
     ....:     symbols += unicode_right_parenthesis.character_art(i)
-    ....:     symbols += unicode_art(u' ')
+    ....:     symbols += unicode_art(' ')
     sage: for i in range(1, 5):
     ....:     symbols += unicode_left_square_bracket.character_art(i)
-    ....:     symbols += unicode_art(u' ')
+    ....:     symbols += unicode_art(' ')
     ....:     symbols += unicode_right_square_bracket.character_art(i)
-    ....:     symbols += unicode_art(u' ')
+    ....:     symbols += unicode_art(' ')
     sage: for i in range(1, 5):
     ....:     symbols += unicode_left_curly_brace.character_art(i)
-    ....:     symbols += unicode_art(u' ')
+    ....:     symbols += unicode_art(' ')
     ....:     symbols += unicode_right_curly_brace.character_art(i)
-    ....:     symbols += unicode_art(u' ')
+    ....:     symbols += unicode_art(' ')
     sage: symbols
                 ⎛ ⎞             ⎡ ⎤             ⎧ ⎫
             ⎛ ⎞ ⎜ ⎟         ⎡ ⎤ ⎢ ⎥         ⎧ ⎫ ⎭ ⎩
         ⎛ ⎞ ⎜ ⎟ ⎜ ⎟     ⎡ ⎤ ⎢ ⎥ ⎢ ⎥     ⎰ ⎱ ⎨ ⎬ ⎫ ⎧
     ( ) ⎝ ⎠ ⎝ ⎠ ⎝ ⎠ [ ] ⎣ ⎦ ⎣ ⎦ ⎣ ⎦ { } ⎱ ⎰ ⎩ ⎭ ⎩ ⎭
 """
-
 import unicodedata
 from sage.structure.sage_object import SageObject
 
@@ -126,7 +125,7 @@ class CompoundSymbol(SageObject):
             sage: unicode_left_parenthesis
             multi_line version of "("
         """
-        return u'multi_line version of "{0}"'.format(self.character)
+        return 'multi_line version of "{0}"'.format(self.character)
 
     def __call__(self, num_lines):
         r"""
@@ -144,7 +143,7 @@ class CompoundSymbol(SageObject):
 
             sage: from sage.typeset.symbols import unicode_left_parenthesis
             sage: unicode_left_parenthesis(4)
-            [u'\u239b', u'\u239c', u'\u239c', u'\u239d']
+            ['\u239b', '\u239c', '\u239c', '\u239d']
         """
         if num_lines <= 0:
             raise ValueError('number of lines must be positive')
@@ -154,11 +153,11 @@ class CompoundSymbol(SageObject):
             return [self.top_2, self.bottom_2]
         elif num_lines == 3:
             return [self.top, self.middle, self.bottom]
-        elif num_lines %2 == 0:
-            ext = [self.extension] * ((num_lines-4) // 2)
+        elif num_lines % 2 == 0:
+            ext = [self.extension] * ((num_lines - 4) // 2)
             return [self.top] + ext + [self.middle_top, self.middle_bottom] + ext + [self.bottom]
-        else: # num_lines %2 == 1
-            ext = [self.extension] * ((num_lines-3) // 2)
+        else:  # num_lines %2 == 1
+            ext = [self.extension] * ((num_lines - 3) // 2)
             return [self.top] + ext + [self.middle] + ext + [self.bottom]
 
     def print_to_stdout(self, num_lines):
@@ -189,7 +188,7 @@ class CompoundSymbol(SageObject):
             ⎮
             ⌡
         """
-        print(u'\n'.join(self(num_lines)))
+        print('\n'.join(self(num_lines)))
 
 
 class CompoundAsciiSymbol(CompoundSymbol):
@@ -335,6 +334,3 @@ unicode_right_curly_brace = CompoundUnicodeSymbol(
     unicodedata.lookup('UPPER RIGHT OR LOWER LEFT CURLY BRACKET SECTION'),
     unicodedata.lookup('UPPER LEFT OR LOWER RIGHT CURLY BRACKET SECTION'),
 )
-
-
-

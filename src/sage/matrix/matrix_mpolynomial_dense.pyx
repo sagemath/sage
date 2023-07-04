@@ -62,7 +62,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         The row echelon form of A depending on the chosen algorithm,
         as an immutable matrix.  Note that ``self`` is *not* changed
-        by this command. Use ``A.echelonize()``` to change `A` in
+        by this command. Use ``A.echelonize()`` to change `A` in
         place.
 
         EXAMPLES::
@@ -106,7 +106,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         x = self.fetch('echelon_form_'+algorithm)
         if x is not None: return x
 
-        if  algorithm == "frac":
+        if algorithm == "frac":
             E = self.matrix_over_field()
             E.echelonize(**kwds)
         else:
@@ -150,7 +150,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             2
         """
         x = self.fetch('pivots')
-        if not x is None:
+        if x is not None:
             return x
 
         self.echelon_form('frac')
@@ -159,7 +159,6 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         if x is None:
             raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'"%self.parent())
         return x
-
 
     def echelonize(self, algorithm='row_reduction', **kwds):
         """
@@ -219,7 +218,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             return
 
         x = self.fetch('in_echelon_form_'+algorithm)
-        if not x is None:
+        if x is not None:
             return  # already known to be in echelon form
 
         if algorithm == 'bareiss':
@@ -241,11 +240,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: R.<x,y> = QQ[]
-            sage: C = random_matrix(R, 2, 2, terms=2)
-            sage: C
-            [-6/5*x*y - y^2 -6*y^2 - 1/4*y]
-            [  -1/3*x*y - 3        x*y - x]
-
+            sage: C = matrix(R, [[-6/5*x*y - y^2, -6*y^2 - 1/4*y],
+            ....:                [  -1/3*x*y - 3, x*y - x]])
             sage: E = C.echelon_form('bareiss')     # indirect doctest
             sage: E
             [ -1/3*x*y - 3                                                          x*y - x]
@@ -260,7 +256,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         cdef R = self.base_ring()
 
         x = self.fetch('in_echelon_form_bareiss')
-        if not x is None:
+        if x is not None:
             return  # already known to be in echelon form
 
         if isinstance(self.base_ring(), MPolynomialRing_libsingular):
@@ -283,7 +279,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                 for c in xrange(self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
 
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             l = [ZZ(e-1) for e in l]
 
             self.cache('in_echelon_form_bareiss',True)
@@ -391,7 +387,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         cdef int c, r, i, j, rc, start_row, nr, nc
 
         x = self.fetch('in_echelon_form_row_reduction')
-        if not x is None: return  # already known to be in echelon form
+        if x is not None:
+            return  # already known to be in echelon form
 
         nr,nc = self.nrows(),self.ncols()
         F = self.base_ring().base_ring()
@@ -440,7 +437,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         of the Gauss-Bareiss algorithm (see :meth:`echelon_form` for details).
 
         The tuple as length equal to the rank of self and the value at the
-        $i$-th position indicates the source column which was put as the $i$-th
+        `i`-th position indicates the source column which was put as the `i`-th
         column.
 
         If no Gauss-Bareiss reduction was performed yet, None is
@@ -450,10 +447,12 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
             sage: R.<x,y> = QQ[]
             sage: C = random_matrix(R, 2, 2, terms=2)
+            sage: while C.rank() != 2:
+            ....:     C = random_matrix(R, 2, 2, terms=2)
             sage: C.swapped_columns()
             sage: E = C.echelon_form('bareiss')
-            sage: E.swapped_columns()
-            (0, 1)
+            sage: sorted(E.swapped_columns())
+            [0, 1]
         """
         return self.fetch('swapped_columns')
 
@@ -481,10 +480,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         We check if two implementations agree on the result::
 
             sage: R.<x,y> = QQ[]
-            sage: C = random_matrix(R, 2, 2, terms=2)
-            sage: C
-            [-6/5*x*y - y^2 -6*y^2 - 1/4*y]
-            [  -1/3*x*y - 3        x*y - x]
+            sage: C = matrix(R, [[-6/5*x*y - y^2, -6*y^2 - 1/4*y],
+            ....:                [  -1/3*x*y - 3, x*y - x]])
             sage: C.determinant()
             -6/5*x^2*y^2 - 3*x*y^3 + 6/5*x^2*y + 11/12*x*y^2 - 18*y^2 - 3/4*y
 
@@ -494,12 +491,10 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         Finally, we check whether the Singular interface is working::
 
             sage: R.<x,y> = RR[]
-            sage: C = random_matrix(R, 2, 2, terms=2)
-            sage: C
-            [0.368965517352886*y^2 + 0.425700773972636*x  -0.800362171389760*y^2 - 0.807635502485287]
-            [  0.706173539423122*y^2 - 0.915986060298440     0.897165181570476*y + 0.107903328188376]
+            sage: C = matrix(R, [[0.368965517352886*y^2 + 0.425700773972636*x, -0.800362171389760*y^2 - 0.807635502485287],
+            ....:                [0.706173539423122*y^2 - 0.915986060298440, 0.897165181570476*y + 0.107903328188376]])
             sage: C.determinant()
-            0.565194587390682*y^4 + 0.331023015369146*y^3 + 0.381923912175852*x*y - 0.122977163520282*y^2 + 0.0459345303240150*x - 0.739782862078649
+            0.565194587390682*y^4 + 0.33102301536914...*y^3 + 0.381923912175852*x*y - 0.122977163520282*y^2 + 0.0459345303240150*x - 0.739782862078649
 
         ALGORITHM: Calls Singular, libSingular or native implementation.
 
@@ -531,7 +526,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         d = self.fetch('det')
 
-        if not d is None:
+        if d is not None:
             return d
 
         if self._nrows == 0:
@@ -543,9 +538,9 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         elif self.fetch('charpoly') is not None:
             # if charpoly known, then det is easy.
             D = self.fetch('charpoly')
-            if not D is None:
+            if D is not None:
                 c = D[0]
-                if self._nrows % 2 != 0:
+                if self._nrows % 2:
                     c = -c
                 d = self._coerce_element(c)
         else:
@@ -564,6 +559,3 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         self.cache('det', d)
         return d
-
-
-

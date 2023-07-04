@@ -4,27 +4,20 @@ The set of prime numbers
 AUTHORS:
 
  - William Stein (2005): original version
- - Florent Hivert (2009-11): adapted to the category framework. The following
-   methods were removed:
-
-    - cardinality, __len__, __iter__: provided by EnumeratedSets
-    - __cmp__(self, other): __eq__ is provided by UniqueRepresentation
-      and seems to do as good a job (all test pass)
+ - Florent Hivert (2009-11): adapted to the category framework.
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #                     2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from sage.rings.all import ZZ
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from sage.rings.integer_ring import ZZ
 from .set import Set_generic
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.arith.all import nth_prime
+from sage.arith.misc import nth_prime
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -64,7 +57,7 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: Primes(proof=False) is Primes()
             False
         """
-        return super(Primes, cls).__classcall__(cls, proof)
+        return super().__classcall__(cls, proof)
 
     def __init__(self, proof):
         """
@@ -102,8 +95,8 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P != x^2+x
             True
         """
-        super(Primes, self).__init__(facade=ZZ,
-                                     category=InfiniteEnumeratedSets())
+        super().__init__(facade=ZZ,
+                         category=InfiniteEnumeratedSets())
         self.__proof = proof
 
     def _repr_(self):

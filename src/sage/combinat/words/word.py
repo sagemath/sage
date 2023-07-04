@@ -9,8 +9,8 @@ AUTHORS:
 - Sébastien Labbé
 - Franco Saliola
 
+
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Arnaud Bergeron <abergeron@gmail.com>,
 #                          Amy Glen <amy.glen@gmail.com>,
@@ -35,10 +35,12 @@ from .word_infinite_datatypes import (
                             WordDatatype_iter,
                             WordDatatype_callable_with_caching,
                             WordDatatype_callable)
+from .morphic import WordDatatype_morphic
 from sage.monoids.free_monoid_element import FreeMonoidElement
 
 # TODO. Word needs to be replaced by Word. Consider renaming
 # Word_class to Word and imbedding Word as its __call__ method.
+
 
 def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK_data=None):
     r"""
@@ -175,7 +177,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
         sage: Word(5)
         Traceback (most recent call last):
         ...
-        ValueError: Cannot guess a datatype from data (=5); please specify one
+        ValueError: cannot guess a datatype from data (=5); please specify one
 
     ::
 
@@ -216,6 +218,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
 #######################################################################
 
 ##### Finite Words #####
+
 
 class FiniteWord_char(WordDatatype_char, FiniteWord_class):
     r"""
@@ -264,10 +267,10 @@ class FiniteWord_char(WordDatatype_char, FiniteWord_class):
         Looped digraph on 9 vertices
 
         sage: u = W([1,2,3])
-        sage: u.first_pos_in(w)
+        sage: w.first_occurrence(u)
         0
-        sage: u.first_pos_in(w[1:])
-        8
+        sage: w.first_occurrence(u, start=1)
+        9
 
     TESTS::
 
@@ -278,11 +281,12 @@ class FiniteWord_char(WordDatatype_char, FiniteWord_class):
     """
     pass
 
+
 class FiniteWord_list(WordDatatype_list, FiniteWord_class):
     r"""
     Finite word represented by a Python list.
 
-    For any word `w`, type ``w.`` and hit TAB key to see the list of
+    For any word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     EXAMPLES::
@@ -299,11 +303,12 @@ class FiniteWord_list(WordDatatype_list, FiniteWord_class):
     """
     pass
 
+
 class FiniteWord_str(WordDatatype_str, FiniteWord_class):
     r"""
     Finite word represented by a Python str.
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     EXAMPLES::
@@ -320,11 +325,12 @@ class FiniteWord_str(WordDatatype_str, FiniteWord_class):
     """
     pass
 
+
 class FiniteWord_tuple(WordDatatype_tuple, FiniteWord_class):
     r"""
     Finite word represented by a Python tuple.
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     EXAMPLES::
@@ -341,11 +347,12 @@ class FiniteWord_tuple(WordDatatype_tuple, FiniteWord_class):
     """
     pass
 
+
 class FiniteWord_iter_with_caching(WordDatatype_iter_with_caching, FiniteWord_class):
     r"""
     Finite word represented by an iterator (with caching).
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     EXAMPLES::
@@ -367,11 +374,12 @@ class FiniteWord_iter_with_caching(WordDatatype_iter_with_caching, FiniteWord_cl
     """
     pass
 
+
 class FiniteWord_iter(WordDatatype_iter, FiniteWord_class):
     r"""
     Finite word represented by an iterator.
 
-    For such word `w`, type  ``w.`` and hit TAB key to see the list of
+    For such word `w`, type  ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     EXAMPLES::
@@ -395,11 +403,12 @@ class FiniteWord_iter(WordDatatype_iter, FiniteWord_class):
     """
     pass
 
+
 class FiniteWord_callable_with_caching(WordDatatype_callable_with_caching, FiniteWord_class):
     r"""
     Finite word represented by a callable (with caching).
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     EXAMPLES::
@@ -446,11 +455,12 @@ class FiniteWord_callable_with_caching(WordDatatype_callable_with_caching, Finit
     """
     pass
 
+
 class FiniteWord_callable(WordDatatype_callable, FiniteWord_class):
     r"""
     Finite word represented by a callable.
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     EXAMPLES::
@@ -475,13 +485,14 @@ class FiniteWord_callable(WordDatatype_callable, FiniteWord_class):
     """
     pass
 
+
 ##### Infinite Words #####
 
 class InfiniteWord_iter_with_caching(WordDatatype_iter_with_caching, InfiniteWord_class):
     r"""
     Infinite word represented by an iterable (with caching).
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     Infinite words behave like a Python list : they can be sliced using
@@ -511,15 +522,16 @@ class InfiniteWord_iter_with_caching(WordDatatype_iter_with_caching, InfiniteWor
         sage: dumps(w)
         Traceback (most recent call last):
         ...
-        TypeError: can't pickle generator objects
+        TypeError: can...t...pickle...generator...object...
     """
     pass
+
 
 class InfiniteWord_iter(WordDatatype_iter, InfiniteWord_class):
     r"""
     Infinite word represented by an iterable.
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     Infinite words behave like a Python list : they can be sliced using
@@ -549,15 +561,16 @@ class InfiniteWord_iter(WordDatatype_iter, InfiniteWord_class):
         sage: dumps(w)
         Traceback (most recent call last):
         ...
-        TypeError: can't pickle generator objects
+        TypeError: can...t...pickle...generator...object...
     """
     pass
+
 
 class InfiniteWord_callable_with_caching(WordDatatype_callable_with_caching, InfiniteWord_class):
     r"""
     Infinite word represented by a callable (with caching).
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     Infinite words behave like a Python list : they can be sliced using
@@ -583,11 +596,12 @@ class InfiniteWord_callable_with_caching(WordDatatype_callable_with_caching, Inf
     """
     pass
 
+
 class InfiniteWord_callable(WordDatatype_callable, InfiniteWord_class):
     r"""
     Infinite word represented by a callable.
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     Infinite words behave like a Python list : they can be sliced using
@@ -614,6 +628,7 @@ class InfiniteWord_callable(WordDatatype_callable, InfiniteWord_class):
     """
     pass
 
+
 ##### Words of unknown length #####
 
 class Word_iter_with_caching(WordDatatype_iter_with_caching, Word_class):
@@ -621,7 +636,7 @@ class Word_iter_with_caching(WordDatatype_iter_with_caching, Word_class):
     Word of unknown length (finite or infinite) represented by an
     iterable (with caching).
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     Words behave like a Python list : they can be sliced using
@@ -648,16 +663,17 @@ class Word_iter_with_caching(WordDatatype_iter_with_caching, Word_class):
         sage: dumps(w)
         Traceback (most recent call last):
         ...
-        TypeError: can't pickle generator objects
+        TypeError: can...t...pickle...generator...object...
     """
     pass
+
 
 class Word_iter(WordDatatype_iter, Word_class):
     r"""
     Word of unknown length (finite or infinite) represented by an
     iterable.
 
-    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
     functions defined on `w`.
 
     Words behave like a Python list : they can be sliced using
@@ -684,7 +700,62 @@ class Word_iter(WordDatatype_iter, Word_class):
         sage: dumps(w)
         Traceback (most recent call last):
         ...
-        TypeError: can't pickle generator objects
+        TypeError: can...t...pickle...generator...object...
     """
     pass
 
+
+##### Morphic Words #####
+
+class FiniteWord_morphic(WordDatatype_morphic, FiniteWord_class):
+    r"""
+    Finite morphic word.
+
+    For such word `w`, type  ``w.`` and hit :kbd:`Tab` key to see the list of
+    functions defined on `w`.
+
+    EXAMPLES::
+
+        sage: m = WordMorphism("a->ab,b->")
+        sage: w = m.fixed_point("a")
+        sage: w
+        word: ab
+
+
+    TESTS::
+
+        sage: m = WordMorphism("a->ab,b->")
+        sage: w = m.fixed_point("a")
+        sage: type(w)
+        <class 'sage.combinat.words.word.FiniteWord_morphic'>
+        sage: loads(dumps(w))
+        word: ab
+    """
+    pass
+
+
+class InfiniteWord_morphic(WordDatatype_morphic, InfiniteWord_class):
+    r"""
+    Morphic word of infinite length.
+
+    For such word `w`, type ``w.`` and hit :kbd:`Tab` key to see the list of
+    functions defined on `w`.
+
+    Infinite words behave like a Python list : they can be sliced using
+    square braquets to define for example a prefix or a factor.
+
+    EXAMPLES::
+
+        sage: m = WordMorphism('a->ab,b->a')
+        sage: w = m.fixed_point('a')
+        sage: w
+        word: abaababaabaababaababaabaababaabaababaaba...
+
+    TESTS:
+
+    Pickle is supported::
+
+        sage: loads(dumps(w))
+        word: abaababaabaababaababaabaababaabaababaaba...
+    """
+    pass

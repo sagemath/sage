@@ -17,7 +17,6 @@ AUTHOR:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 #############################################################################
-from __future__ import absolute_import
 
 from cpython.object cimport PyObject_RichCompare
 
@@ -30,7 +29,7 @@ import math
 cdef double sqrt2pi = sqrt(2*math.pi)
 
 from sage.misc.randstate cimport current_randstate, randstate
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 
 
 
@@ -380,7 +379,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)]).__repr__()
             '0.2*N(-10.0,0.5) + 0.6*N(1.0,1.0) + 0.2*N(20.0,0.5)'
         """
-        return ' + '.join(["%s*N(%s,%s)"%x for x in self])
+        return ' + '.join("%s*N(%s,%s)" % x for x in self)
 
     def sample(self, n=None):
         """
@@ -398,14 +397,23 @@ cdef class GaussianMixtureDistribution(Distribution):
         EXAMPLES::
 
             sage: P = hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)])
-            sage: P.sample()
-            19.65824361087513
-            sage: P.sample(1)
-            [-10.4683]
-            sage: P.sample(5)
-            [-0.1688, -10.3479, 1.6812, 20.1083, -9.9801]
-            sage: P.sample(0)
-            []
+            sage: type(P.sample())
+            <class 'float'>
+            sage: l = P.sample(1)
+            sage: len(l)
+            1
+            sage: type(l)
+            <class 'sage.stats.time_series.TimeSeries'>
+            sage: l = P.sample(5)
+            sage: len(l)
+            5
+            sage: type(l)
+            <class 'sage.stats.time_series.TimeSeries'>
+            sage: l = P.sample(0)
+            sage: len(l)
+            0
+            sage: type(l)
+            <class 'sage.stats.time_series.TimeSeries'>
             sage: P.sample(-3)
             Traceback (most recent call last):
             ...

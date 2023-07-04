@@ -582,6 +582,3 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
         output_py = False
     sig_free(output)
     return output_py
-
-
-

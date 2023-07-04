@@ -9,16 +9,16 @@ Here is some terminology used in this file:
 - An *order ideal* (or *lower set*) of a poset `P` is a subset `S` of `P`
   such that if `x \leq y` and `y\in S` then `x\in S`.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.plot.plot import graphics_array
+
 
 class FinitePosets(CategoryWithAxiom):
     r"""
@@ -420,7 +420,7 @@ class FinitePosets(CategoryWithAxiom):
             else:
                 I = self.order_filter(antichain)
             I_comp = set(self).difference(I)
-            return set(self.order_ideal_generators(I_comp, direction = direction))
+            return set(self.order_ideal_generators(I_comp, direction=direction))
 
         panyushev_complement = order_ideal_complement_generators
 
@@ -479,7 +479,7 @@ class FinitePosets(CategoryWithAxiom):
             Let us hold back defining this, and introduce birational
             toggles and birational rowmotion first. These notions have
             been introduced in [EP2013]_ as generalizations of the notions
-            of toggles (:meth:`~sage.categories.posets.Posets.ParentMethods.order_ideal_toggle`) 
+            of toggles (:meth:`~sage.categories.posets.Posets.ParentMethods.order_ideal_toggle`)
             and :meth:`rowmotion <rowmotion>` on order ideals of a finite poset. They
             have been studied further in [GR2013]_.
 
@@ -1255,7 +1255,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: def test_rectangle_periodicity_tropical(n, m, k):
                 ....:     P = posets.ChainPoset(n).product(posets.ChainPoset(m))
                 ....:     TT = TropicalSemiring(ZZ)
-                ....:     t0 = (TT, {v: TT(floor(random()*100)) for v in P}, TT(0), TT(124))
+                ....:     t0 = (TT, {v: TT(randint(0, 99)) for v in P}, TT(0), TT(124))
                 ....:     t = t0
                 ....:     for i in range(k):
                 ....:         t = P.birational_rowmotion(t)
@@ -1315,7 +1315,7 @@ class FinitePosets(CategoryWithAxiom):
                 l = self.birational_toggle(v, l)
             return l
 
-        def panyushev_orbits(self, element_constructor = set):
+        def panyushev_orbits(self, element_constructor=set):
             r"""
             Return the Panyushev orbits of antichains in ``self``.
 
@@ -1363,20 +1363,21 @@ class FinitePosets(CategoryWithAxiom):
             """
             # TODO: implement a generic function taking a set and
             # bijections on this set, and returning the orbits.
-            AC = set(self.antichains(element_constructor = frozenset))
+            AC = set(self.antichains(element_constructor=frozenset))
             orbits = []
             while AC:
                 A = AC.pop()
-                orbit = [ A ]
+                orbit = [A]
                 while True:
                     A = frozenset(self.order_ideal_complement_generators(A))
-                    if A not in AC: break
-                    orbit.append( A )
-                    AC.remove( A )
-                orbits.append([element_constructor(_) for _ in orbit])
+                    if A not in AC:
+                        break
+                    orbit.append(A)
+                    AC.remove(A)
+                orbits.append([element_constructor(elt) for elt in orbit])
             return orbits
 
-        def rowmotion_orbits(self, element_constructor = set):
+        def rowmotion_orbits(self, element_constructor=set):
             r"""
             Return the rowmotion orbits of order ideals in ``self``.
 
@@ -1415,8 +1416,9 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P.rowmotion_orbits(element_constructor=tuple)
                 [[()]]
             """
-            pan_orbits = self.panyushev_orbits(element_constructor = list)
-            return [[element_constructor(self.order_ideal(oideal)) for oideal in orbit] for orbit in pan_orbits]
+            pan_orbits = self.panyushev_orbits(element_constructor=list)
+            return [[element_constructor(self.order_ideal(oideal))
+                     for oideal in orbit] for orbit in pan_orbits]
 
         def rowmotion_orbits_plots(self):
             r"""
@@ -1432,23 +1434,23 @@ class FinitePosets(CategoryWithAxiom):
                 Graphics Array of size 2 x 5
                 sage: P = Poset({})
                 sage: P.rowmotion_orbits_plots()
-                Graphics Array of size 2 x 1
+                Graphics Array of size 1 x 1
 
             """
+            from sage.plot.plot import graphics_array
             plot_of_orb_plots=[]
-            max_orbit_size = 0            
+            max_orbit_size = 0
             for orb in self.rowmotion_orbits():
                 orb_plots=[]
                 if len(orb) > max_orbit_size:
-                    max_orbit_size = len(orb)                
+                    max_orbit_size = len(orb)
                 for oi in orb:
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
-                plot_of_orb_plots.append(orb_plots)    
-            return graphics_array(plot_of_orb_plots, ncols = max_orbit_size)
+                plot_of_orb_plots.append(orb_plots)
+            return graphics_array(plot_of_orb_plots, ncols=max_orbit_size)
 
-
-        def toggling_orbits(self, vs, element_constructor = set):
+        def toggling_orbits(self, vs, element_constructor=set):
             r"""
             Return the orbits of order ideals in ``self`` under the
             operation of toggling the vertices ``vs[0], vs[1], ...``
@@ -1496,7 +1498,8 @@ class FinitePosets(CategoryWithAxiom):
                 orbit = [ A ]
                 while True:
                     A = self.order_ideal_toggles(A, vs)
-                    if A not in OI: break
+                    if A not in OI:
+                        break
                     orbit.append( A )
                     OI.remove( A )
                 orbits.append([element_constructor(_) for _ in orbit])
@@ -1517,22 +1520,24 @@ class FinitePosets(CategoryWithAxiom):
                 Graphics Array of size 2 x 5
                 sage: P = Poset({})
                 sage: P.toggling_orbits_plots([])
-                Graphics Array of size 2 x 1
+                Graphics Array of size 1 x 1
 
             """
-            plot_of_orb_plots=[]  
-            max_orbit_size = 0             
+            from sage.plot.plot import graphics_array
+            plot_of_orb_plots=[]
+            max_orbit_size = 0
             for orb in self.toggling_orbits(vs):
                 orb_plots=[]
                 if len(orb) > max_orbit_size:
-                    max_orbit_size = len(orb)                
+                    max_orbit_size = len(orb)
                 for oi in orb:
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
-                plot_of_orb_plots.append(orb_plots)    
-            return graphics_array(plot_of_orb_plots, ncols = max_orbit_size)
+                plot_of_orb_plots.append(orb_plots)
+            return graphics_array(plot_of_orb_plots, ncols=max_orbit_size)
 
-        def panyushev_orbit_iter(self, antichain, element_constructor=set, stop=True, check=True):
+        def panyushev_orbit_iter(self, antichain, element_constructor=set,
+                                 stop=True, check=True):
             r"""
             Iterate over the Panyushev orbit of an antichain
             ``antichain`` of ``self``.
@@ -1889,7 +1894,7 @@ class FinitePosets(CategoryWithAxiom):
             if facade is None:
                 facade = self._is_facade
             if as_ideals:
-                from sage.misc.misc import attrcall
+                from sage.misc.call import attrcall
                 from sage.sets.set import Set
                 ideals = [Set(self.order_ideal(antichain))
                           for antichain in self.antichains()]
@@ -1898,14 +1903,16 @@ class FinitePosets(CategoryWithAxiom):
             else:
                 from sage.misc.cachefunc import cached_function
                 antichains = [tuple(a) for a in self.antichains()]
+
                 @cached_function
                 def is_above(a, xb):
                     return any(self.is_lequal(xa, xb) for xa in a)
+
                 def compare(a, b):
                     return all(is_above(a, xb) for xb in b)
                 return LatticePoset((antichains, compare), facade=facade)
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def antichains(self):
             r"""
             Return all antichains of ``self``.
@@ -1943,5 +1950,5 @@ class FinitePosets(CategoryWithAxiom):
                 [[]]
             """
             if direction != 'up' and direction != 'down':
-                raise ValueError("Direction must be either 'up' or 'down'.")
+                raise ValueError("direction must be either 'up' or 'down'")
             return self.antichains().map(lambda elements: self.directed_subset(elements, direction))

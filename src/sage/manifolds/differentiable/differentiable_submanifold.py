@@ -18,15 +18,19 @@ parameters.
 AUTHORS:
 
 - Florentin Jaffredo (2018): initial version
+- Eric Gourgoulhon (2018-2019): add documentation
+- Matthias Koeppe (2021): open subsets of submanifolds
 
 REFERENCES:
 
-- [Lee2013]_
+- \J. M. Lee:  *Introduction to Smooth Manifolds* [Lee2013]_
 
 """
 
 # *****************************************************************************
-#  Copyright (C) 2018 Florentin Jaffredo <florentin.jaffredo@polytechnique.edu>
+#  Copyright (C) 2018      Florentin Jaffredo <florentin.jaffredo@polytechnique.edu>
+#  Copyright (C) 2018-2019 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#  Copyright (C) 2021      Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,10 +64,10 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
 
     INPUT:
 
-    - ``n`` -- positive integer; dimension of the manifold
-    - ``name`` -- string; name (symbol) given to the manifold
-    - ``field`` -- field `K` on which the manifold is defined; allowed values
-      are
+    - ``n`` -- positive integer; dimension of the submanifold
+    - ``name`` -- string; name (symbol) given to the submanifold
+    - ``field`` -- field `K` on which the sub manifold is defined; allowed
+      values are
 
         - ``'real'`` or an object of type ``RealField`` (e.g., ``RR``) for
            a manifold over `\RR`
@@ -77,25 +81,28 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
     - ``structure`` -- manifold structure (see
       :class:`~sage.manifolds.structure.TopologicalStructure` or
       :class:`~sage.manifolds.structure.RealTopologicalStructure`)
-    - ``ambient`` -- (default: ``None``) manifold of destination
-      of the immersion. If ``None``, set to ``self``
+    - ``ambient`` -- (default: ``None``) codomain `M` of the immersion `\phi`;
+      must be a differentiable manifold. If ``None``, it is set to ``self``
     - ``base_manifold`` -- (default: ``None``) if not ``None``, must be a
-      topological manifold; the created object is then an open subset of
+      differentiable manifold; the created object is then an open subset of
       ``base_manifold``
+    - ``diff_degree`` -- (default: ``infinity``) degree of differentiability
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to
-      denote the manifold; if none are provided, it is set to ``name``
+      denote the submanifold; if none are provided, it is set to ``name``
     - ``start_index`` -- (default: 0) integer; lower value of the range of
-      indices used for "indexed objects" on the manifold, e.g., coordinates
+      indices used for "indexed objects" on the submanifold, e.g., coordinates
       in a chart
-    - ``category`` -- (default: ``None``) to specify the category; if
-      ``None``, ``Manifolds(field)`` is assumed (see the category
+    - ``category`` -- (default: ``None``) to specify the category; if ``None``,
+      ``Manifolds(field).Differentiable()`` (or ``Manifolds(field).Smooth()``
+      if ``diff_degree`` = ``infinity``) is assumed (see the category
       :class:`~sage.categories.manifolds.Manifolds`)
     - ``unique_tag`` -- (default: ``None``) tag used to force the construction
       of a new object when all the other arguments have been used previously
       (without ``unique_tag``, the
       :class:`~sage.structure.unique_representation.UniqueRepresentation`
       behavior inherited from
-      :class:`~sage.manifolds.subset.ManifoldSubset`
+      :class:`~sage.manifolds.subset.ManifoldSubset` via
+      :class:`~sage.manifolds.differentiable.manifold.DifferentiableManifold`
       would return the previously constructed object corresponding to these
       arguments)
 
@@ -106,21 +113,30 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
         sage: M = Manifold(3, 'M')
         sage: N = Manifold(2, 'N', ambient=M)
         sage: N
-        2-dimensional differentiable submanifold N embedded in 3-dimensional
-         differentiable manifold M
+        2-dimensional differentiable submanifold N immersed in the
+         3-dimensional differentiable manifold M
         sage: CM.<x,y,z> = M.chart()
         sage: CN.<u,v> = N.chart()
 
-    Let us define a 1-dimension foliation indexed by `t`. The inverse map is
-    needed in order to compute the adapted chart in the ambient manifold::
+    Let us define a 1-dimensional foliation indexed by `t`::
 
         sage: t = var('t')
-        sage: phi = N.diff_map(M,{(CN, CM):[u, v, t+u**2+v**2]}); phi
-        Differentiable map from the 2-dimensional differentiable submanifold N
-         embedded in 3-dimensional differentiable manifold M to the
-         3-dimensional differentiable manifold M
-        sage: phi_inv = M.diff_map(N, {(CM, CN):[x, y]})
-        sage: phi_inv_t = M.scalar_field({CM: z-x**2-y**2})
+        sage: phi = N.continuous_map(M, {(CN,CM): [u, v, t+u^2+v^2]})
+        sage: phi.display()
+        N → M
+           (u, v) ↦ (x, y, z) = (u, v, u^2 + v^2 + t)
+
+    The foliation inverse maps are needed for computing the adapted chart on
+    the ambient manifold::
+
+        sage: phi_inv = M.continuous_map(N, {(CM, CN): [x, y]})
+        sage: phi_inv.display()
+        M → N
+           (x, y, z) ↦ (u, v) = (x, y)
+        sage: phi_inv_t = M.scalar_field({CM: z-x^2-y^2})
+        sage: phi_inv_t.display()
+        M → ℝ
+        (x, y, z) ↦ -x^2 - y^2 + z
 
     `\phi` can then be declared as an embedding `N\to M`::
 
@@ -134,6 +150,8 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
 
         sage: N.adapted_chart()
         [Chart (M, (u_M, v_M, t_M))]
+        sage: M.atlas()
+        [Chart (M, (x, y, z)), Chart (M, (u_M, v_M, t_M))]
         sage: len(M.coord_changes())
         2
 
@@ -150,13 +168,19 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
         r"""
         Construct a submanifold of a differentiable manifold.
 
-        EXAMPLES::
+        TESTS::
 
             sage: M = Manifold(3, 'M')
             sage: N = Manifold(2, 'N', ambient=M)
             sage: N
-            2-dimensional differentiable submanifold N embedded in 3-dimensional
-             differentiable manifold M
+            2-dimensional differentiable submanifold N immersed in the
+             3-dimensional differentiable manifold M
+            sage: S = Manifold(2, 'S', latex_name=r'\Sigma', ambient=M,
+            ....:              start_index=1)
+            sage: latex(S)
+            \Sigma
+            sage: S.start_index()
+            1
 
         """
         DifferentiableManifold.__init__(self, n, name, field, structure,
@@ -165,10 +189,10 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
                                         latex_name=latex_name,
                                         start_index=start_index,
                                         category=category)
-        TopologicalSubmanifold.__init__(self, n, name, field, structure,
-                                        ambient=ambient,
-                                        base_manifold=base_manifold,
-                                        category=category)
+        if not (ambient is None
+                or isinstance(ambient, DifferentiableManifold)):
+            raise TypeError("ambient must be a differentiable manifold")
+        self._init_immersion(ambient=ambient)
 
     def _repr_(self):
         r"""
@@ -181,14 +205,93 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
 
             sage: M = Manifold(3, 'M')
             sage: N = Manifold(2, 'N', ambient=M)
-            sage: N._repr_()
-            '2-dimensional differentiable submanifold N embedded in
-             3-dimensional differentiable manifold M'
+            sage: N
+            2-dimensional differentiable submanifold N immersed in the
+             3-dimensional differentiable manifold M
+            sage: phi = N.diff_map(M)
+            sage: N.set_embedding(phi)
+            sage: N
+            2-dimensional differentiable submanifold N embedded in the
+             3-dimensional differentiable manifold M
 
         """
+        if self is not self._manifold:
+            return "Open subset {} of the {}".format(self._name, self._manifold)
         if self._ambient is None:
             return super(DifferentiableManifold, self).__repr__()
-        return "{}-dimensional differentiable submanifold {} embedded in {}-" \
-               "dimensional differentiable " \
-               "manifold {}".format(self._dim, self._name, self._ambient._dim,
-                                    self._ambient._name)
+        if self._embedded:
+            return "{}-dimensional {} submanifold {} embedded in the {}".format(
+                self._dim, self._structure.name, self._name, self._ambient)
+        return "{}-dimensional {} submanifold {} immersed in the {}".format(
+                self._dim, self._structure.name, self._name, self._ambient)
+
+    def open_subset(self, name, latex_name=None, coord_def={}, supersets=None):
+        r"""
+        Create an open subset of the manifold.
+
+        An open subset is a set that is (i) included in the manifold and (ii)
+        open with respect to the manifold's topology. It is a differentiable
+        manifold by itself.
+
+        As ``self`` is a submanifold of its ambient manifold,
+        the new open subset is also considered a submanifold of that.
+        Hence the returned object is an instance of
+        :class:`DifferentiableSubmanifold`.
+
+        INPUT:
+
+        - ``name`` -- name given to the open subset
+        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
+          subset; if none is provided, it is set to ``name``
+        - ``coord_def`` -- (default: {}) definition of the subset in
+          terms of coordinates; ``coord_def`` must a be dictionary with keys
+          charts in the manifold's atlas and values the symbolic expressions
+          formed by the coordinates to define the subset.
+        - ``supersets`` -- (default: only ``self``) list of sets that the
+          new open subset is a subset of
+
+        OUTPUT:
+
+        - the open subset, as an instance of :class:`DifferentiableSubmanifold`
+
+        EXAMPLES::
+
+            sage: M = Manifold(3, 'M', structure="differentiable")
+            sage: N = Manifold(2, 'N', ambient=M, structure="differentiable"); N
+            2-dimensional differentiable submanifold N immersed in the
+             3-dimensional differentiable manifold M
+            sage: S = N.subset('S'); S
+            Subset S of the
+             2-dimensional differentiable submanifold N immersed in the
+              3-dimensional differentiable manifold M
+            sage: O = N.subset('O', is_open=True); O  # indirect doctest
+            Open subset O of the
+             2-dimensional differentiable submanifold N immersed in the
+              3-dimensional differentiable manifold M
+
+            sage: phi = N.diff_map(M)
+            sage: N.set_embedding(phi)
+            sage: N
+            2-dimensional differentiable submanifold N embedded in the
+             3-dimensional differentiable manifold M
+            sage: S = N.subset('S'); S
+            Subset S of the
+             2-dimensional differentiable submanifold N embedded in the
+              3-dimensional differentiable manifold M
+            sage: O = N.subset('O', is_open=True); O  # indirect doctest
+            Open subset O of the
+             2-dimensional differentiable submanifold N embedded in the
+              3-dimensional differentiable manifold M
+
+        """
+        resu = DifferentiableSubmanifold(self._dim, name, self._field,
+                                         self._structure, ambient=self._ambient,
+                                         base_manifold=self._manifold,
+                                         diff_degree=self._diff_degree,
+                                         latex_name=latex_name,
+                                         start_index=self._sindex)
+        if supersets is None:
+            supersets = [self]
+        for superset in supersets:
+            superset._init_open_subset(resu, coord_def=coord_def)
+        return resu

@@ -1,13 +1,12 @@
 """
 Branching Rules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Daniel Bump <bump at match.stanford.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.combinat.root_system.weyl_characters
 from sage.combinat.root_system.root_system import RootSystem
@@ -16,7 +15,7 @@ from sage.misc.flatten import flatten
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.misc.functional import is_even, is_odd
 
 
@@ -451,8 +450,8 @@ def branch_weyl_character(chi, R, S, rule="default"):
          B4(0,0,0,0) + B4(1/2,1/2,1/2,1/2) + B4(1,0,0,0)]
 
         sage: E6 = WeylCharacterRing("E6", style="coroots")
-        sage: A2xA2xA2=WeylCharacterRing("A2xA2xA2",style="coroots")
-        sage: A5xA1=WeylCharacterRing("A5xA1",style="coroots")
+        sage: A2xA2xA2 = WeylCharacterRing("A2xA2xA2",style="coroots")
+        sage: A5xA1 = WeylCharacterRing("A5xA1",style="coroots")
         sage: G2 = WeylCharacterRing("G2", style="coroots")
         sage: A1xA1 = WeylCharacterRing("A1xA1", style="coroots")
         sage: F4 = WeylCharacterRing("F4",style="coroots")
@@ -470,7 +469,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         sage: D6xA1 = WeylCharacterRing("D6xA1",style="coroots")
         sage: E7(1,0,0,0,0,0,0).branch(D6xA1,rule="extended")
          D6xA1(0,0,0,0,1,0,1) + D6xA1(0,1,0,0,0,0,0) + D6xA1(0,0,0,0,0,0,2)
-        sage: A5xA2 =WeylCharacterRing("A5xA2",style="coroots")
+        sage: A5xA2 = WeylCharacterRing("A5xA2",style="coroots")
         sage: E7(1,0,0,0,0,0,0).branch(A5xA2,rule="extended")
         A5xA2(0,0,0,1,0,1,0) + A5xA2(0,1,0,0,0,0,1) + A5xA2(1,0,0,0,1,0,0) + A5xA2(0,0,0,0,0,1,1)
         sage: E8 = WeylCharacterRing("E8",style="coroots")
@@ -980,7 +979,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         sage: A3(0,1,0).branch(C2,rule=br)
         C2(0,0) + C2(0,1)
     """
-    if isinstance(rule, str) or isinstance(rule, list):
+    if isinstance(rule, (str, list)):
         rule = branching_rule(R._cartan_type, S._cartan_type, rule)
     if hasattr(rule, "_S"):
         if rule._S != S.cartan_type():
@@ -1010,6 +1009,7 @@ class BranchingRule(SageObject):
     """
     A class for branching rules.
     """
+
     def __init__(self, R, S, f, name="default", intermediate_types=[],
                  intermediate_names=[]):
         """
@@ -1750,7 +1750,7 @@ def branching_rule(Rtype, Stype, rule="default"):
     elif rule == "tensor" or rule == "tensor-debug":
         if not Stype.is_compound():
             raise ValueError("Tensor product requires more than one factor")
-        if len(stypes) is not 2:
+        if len(stypes) != 2:
             raise ValueError("Not implemented")
         if Rtype[0] == 'A':
             nr = Rtype[1]+1
@@ -1950,6 +1950,7 @@ def branching_rule(Rtype, Stype, rule="default"):
                                  lambda x: [x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7],-(x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7])], "vii")
         raise ValueError("Wrong source Cartan Type for rule %s" % rule)
     raise ValueError("Rule not found")
+
 
 get_branching_rule = branching_rule
 

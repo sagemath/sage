@@ -181,14 +181,12 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from copy import copy
 
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 
 cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
@@ -221,8 +219,8 @@ cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
         if part.levels[i] <= part.depth:
             # [loc_begin, ..., i] is a block of the old partition
             if i > loc_begin:
-                global_refine_vals_array = refine_vals;
-                qsort(part.entries + loc_begin, (i+1)-loc_begin, sizeof(int), my_comp_func);
+                global_refine_vals_array = refine_vals
+                qsort(part.entries + loc_begin, (i+1)-loc_begin, sizeof(int), my_comp_func)
             last_val = refine_vals[ part.entries[loc_begin] ]
             j = loc_begin
             while True:
@@ -429,7 +427,7 @@ cdef class LabelledBranching:
             sage: from sage.groups.perm_gps.partn_ref2.refinement_generic import LabelledBranching
             sage: L = LabelledBranching(3)
             sage: L.small_generating_set()
-            []
+            [()]
             sage: L.add_gen(libgap.eval('(1,2,3)'))
             sage: L.small_generating_set()
             [(1,2,3)]
@@ -641,7 +639,7 @@ cdef class PartitionRefinement_generic:
         self._backtrack(True)
         self._finish_latex()
 
-    cdef void _backtrack(self, bint first_step = False):
+    cdef void _backtrack(self, bint first_step=False):
         r"""
         Backtracking with pruning.
 
@@ -915,7 +913,7 @@ cdef class PartitionRefinement_generic:
                 "\\begin{tikzpicture}\n" +
                 "\\tikzset{level distance=3cm, edge from parent/.style=" +
                 "{draw, edge from parent path={(\\tikzparentnode.south) -- (\\tikzchildnode.north)}}}\n" +
-                "\Tree")
+                "\\Tree")
             self._latex_debug_string += "[."
             self._latex_act_node()
 

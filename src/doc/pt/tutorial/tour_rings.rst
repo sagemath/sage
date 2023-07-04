@@ -71,10 +71,10 @@ para restabelecer o valor original de ``i``.
 
 Há uma sutileza ao definir números complexos: como mencionado acima,
 o símbolo ``i`` representa a raiz quadrada de `-1`, mas é uma raiz
-quadrada de `-1` *formal* ou *simbólica*. Evocando ``CC(i)`` ou
-``CC.0`` obtém-se a raiz de `-1` complexa. Aritmética envolvendo tipos
-diferentes de números é possível graças ao que se chama de coação,
-veja :ref:`section-coercion`.
+quadrada de `-1` como número algébrico. Evocando ``CC(i)`` ou ``CC.0``
+ou ``CC.gen(0)`` obtém-se a raiz de `-1` complexa. Aritmética
+envolvendo tipos diferentes de números é possível graças ao que se
+chama de coação, veja :ref:`section-coercion`.
 
 ::
 
@@ -99,7 +99,7 @@ veja :ref:`section-coercion`.
     Rational Field
     sage: 2/3 + 0.1       # automatic coercion before addition
     0.766666666666667
-    sage: 0.1 + 2/3       # coercion rules are symmetric in SAGE
+    sage: 0.1 + 2/3       # coercion rules are symmetric in Sage
     0.766666666666667
 
 Aqui estão mais exemplos de anéis básicos em Sage. Como observado

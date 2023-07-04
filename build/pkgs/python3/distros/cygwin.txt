@@ -1,0 +1,5 @@
+# as of #27824, we use python3 for venv as well
+python39-devel
+# #34088 - make ensurepip work
+python-pip-wheel
+python-setuptools-wheel

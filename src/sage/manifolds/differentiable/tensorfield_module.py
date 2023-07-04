@@ -26,22 +26,24 @@ REFERENCES:
 
 """
 
-#******************************************************************************
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
-#       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
-#       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
+# *****************************************************************************
+#       Copyright (C) 2015-2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#                     2015      Michal Bejger <bejger@camk.edu.pl>
+#                     2016      Travis Scrimshaw <tscrimsh@umn.edu>
+#                     2020      Michael Jung
+#                     2022      Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.rings.integer import Integer
+from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
 from sage.tensor.modules.tensor_free_module import TensorFreeModule
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
@@ -52,7 +54,8 @@ from sage.manifolds.differentiable.multivectorfield import (MultivectorField,
 from sage.manifolds.differentiable.automorphismfield import (AutomorphismField,
                                                              AutomorphismFieldParal)
 
-class TensorFieldModule(UniqueRepresentation, Parent):
+
+class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
     r"""
     Module of tensor fields of a given type `(k,l)` along a differentiable
     manifold `U` with values on a differentiable manifold `M`, via a
@@ -124,14 +127,15 @@ class TensorFieldModule(UniqueRepresentation, Parent):
     `T^{(2,0)}(M)` is a module over the algebra `C^k(M)`::
 
         sage: T20.category()
-        Category of modules over Algebra of differentiable scalar fields on the
-         2-dimensional differentiable manifold M
+        Category of tensor products of modules over Algebra of differentiable scalar fields
+         on the 2-dimensional differentiable manifold M
         sage: T20.base_ring() is M.scalar_field_algebra()
         True
 
     `T^{(2,0)}(M)` is not a free module::
 
-        sage: isinstance(T20, FiniteRankFreeModule)
+        sage: from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
+        sage: isinstance(T20, FiniteRankFreeModule_abstract)
         False
 
     because `M = S^2` is not parallelizable::
@@ -143,7 +147,7 @@ class TensorFieldModule(UniqueRepresentation, Parent):
     free module, since `U` is parallelizable (being a coordinate domain)::
 
         sage: T20U = U.tensor_field_module((2,0))
-        sage: isinstance(T20U, FiniteRankFreeModule)
+        sage: isinstance(T20U, FiniteRankFreeModule_abstract)
         True
         sage: U.is_manifestly_parallelizable()
         True
@@ -226,10 +230,16 @@ class TensorFieldModule(UniqueRepresentation, Parent):
         [1 0]
         [0 1]
 
+    TESTS::
+
+        sage: T11.tensor_factors()
+        [Module X(M) of vector fields on the 2-dimensional differentiable manifold M,
+        Module Omega^1(M) of 1-forms on the 2-dimensional differentiable manifold M]
+
     """
     Element = TensorField
 
-    def __init__(self, vector_field_module, tensor_type):
+    def __init__(self, vector_field_module, tensor_type, category=None):
         r"""
         Construct a module of tensor fields taking values on a (a priori) not
         parallelizable differentiable manifold.
@@ -281,7 +291,8 @@ class TensorFieldModule(UniqueRepresentation, Parent):
         # the member self._ring is created for efficiency (to avoid calls to
         # self.base_ring()):
         self._ring = domain.scalar_field_algebra()
-        Parent.__init__(self, base=self._ring, category=Modules(self._ring))
+        category = Modules(self._ring).TensorProducts().or_subcategory(category)
+        Parent.__init__(self, base=self._ring, category=category)
         self._domain = domain
         self._dest_map = dest_map
         self._ambient_domain = vector_field_module._ambient_domain
@@ -304,14 +315,18 @@ class TensorFieldModule(UniqueRepresentation, Parent):
             Tensor field t of type (2,0) on the 2-dimensional differentiable
              manifold M
             sage: t.display(c_xy.frame())
-            t = (x + 1) d/dx*d/dx + 2 d/dx*d/dy + x*y d/dy*d/dx
-             + (-y + 3) d/dy*d/dy
+            t = (x + 1) ∂/∂x⊗∂/∂x + 2 ∂/∂x⊗∂/∂y + x*y ∂/∂y⊗∂/∂x
+             + (-y + 3) ∂/∂y⊗∂/∂y
             sage: T20(0) is T20.zero()
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, DiffForm):
             # coercion of a p-form to a type-(0,p) tensor field:
             form = comp # for readability
@@ -370,14 +385,16 @@ class TensorFieldModule(UniqueRepresentation, Parent):
                 and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
             else:
-               raise TypeError("cannot convert the {}".format(comp) +
-                               " to an element of {}".format(self))
-
+                raise TypeError("cannot convert the {}".format(comp) +
+                                " to an element of {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         # standard construction
         resu = self.element_class(self._vmodule, self._tensor_type,
                                   name=name, latex_name=latex_name,
                                   sym=sym, antisym=antisym)
-        if comp != []:
+        if comp:
             resu.set_comp(frame)[:] = comp
         return resu
 
@@ -398,14 +415,13 @@ class TensorFieldModule(UniqueRepresentation, Parent):
 
         """
         resu = self.element_class(self._vmodule, self._tensor_type)
-        # Non-trivial open covers of the domain:
-        open_covers = self._domain.open_covers()[1:]  # the open cover 0 is trivial
-        if open_covers != []:
-            oc = open_covers[0]  # the first non-trivial open cover is selected
+        for oc in self._domain.open_covers(trivial=False):
+            # the first non-trivial open cover is selected
             for dom in oc:
                 vmodule_dom = dom.vector_field_module(dest_map=self._dest_map.restrict(dom))
                 tmodule_dom = vmodule_dom.tensor_module(*(self._tensor_type))
                 resu.set_restriction(tmodule_dom._an_element_())
+            return resu
         return resu
 
     def _coerce_map_from_(self, other):
@@ -504,9 +520,9 @@ class TensorFieldModule(UniqueRepresentation, Parent):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def base_module(self):
         r"""
@@ -572,13 +588,13 @@ class TensorFieldModule(UniqueRepresentation, Parent):
             Tensor field zero of type (2,0) on the
              2-dimensional differentiable manifold M
         """
-        resu = self.element_class(self._vmodule, self._tensor_type,
-                                  name='zero', latex_name='0',
-                                  sym=None, antisym=None)
+        resu = self._element_constructor_(name='zero', latex_name='0')
         for frame in self._domain._frames:
             if self._dest_map.restrict(frame._domain) == frame._dest_map:
                 resu.add_comp(frame)
                 # (since new components are initialized to zero)
+        resu._is_zero = True  # This element is certainly zero
+        resu.set_immutable()
         return resu
 
 #***********************************************************************
@@ -647,14 +663,15 @@ class TensorFieldFreeModule(TensorFreeModule):
     `T^{(2,0)}(\RR^3)` is a module over the algebra `C^k(\RR^3)`::
 
         sage: T20.category()
-        Category of finite dimensional modules over Algebra of differentiable
-         scalar fields on the 3-dimensional differentiable manifold R^3
+        Category of tensor products of finite dimensional modules over
+         Algebra of differentiable scalar fields on the 3-dimensional differentiable manifold R^3
         sage: T20.base_ring() is M.scalar_field_algebra()
         True
 
     `T^{(2,0)}(\RR^3)` is a free module::
 
-        sage: isinstance(T20, FiniteRankFreeModule)
+        sage: from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
+        sage: isinstance(T20, FiniteRankFreeModule_abstract)
         True
 
     because `M = \RR^3` is parallelizable::
@@ -751,7 +768,7 @@ class TensorFieldFreeModule(TensorFreeModule):
         kcon = tensor_type[0]
         lcov = tensor_type[1]
         name = "T^({},{})({}".format(kcon, lcov, domain._name)
-        latex_name = r"\mathcal{{T}}^{{({}, {})}}\left(".format(kcon,
+        latex_name = r"\mathcal{{T}}^{{({}, {})}}\left({}".format(kcon,
                                                lcov, domain._latex_name)
         if dest_map is not domain.identity_map():
             dm_name = dest_map._name
@@ -787,15 +804,19 @@ class TensorFieldFreeModule(TensorFreeModule):
             Tensor field t of type (1,2) on the 2-dimensional
              differentiable manifold M
             sage: t.display()
-            t = x d/dx*dx*dx - y d/dx*dx*dy + 2 d/dx*dy*dx + y d/dx*dy*dy
-             + (x + 1) d/dy*dx*dx + y^2 d/dy*dx*dy + x^2 d/dy*dy*dx
-             + 3 d/dy*dy*dy
+            t = x ∂/∂x⊗dx⊗dx - y ∂/∂x⊗dx⊗dy + 2 ∂/∂x⊗dy⊗dx + y ∂/∂x⊗dy⊗dy
+             + (x + 1) ∂/∂y⊗dx⊗dx + y^2 ∂/∂y⊗dx⊗dy + x^2 ∂/∂y⊗dy⊗dx
+             + 3 ∂/∂y⊗dy⊗dy
             sage: T12(0) is T12.zero()
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, DiffFormParal):
             # coercion of a p-form to a type-(0,p) tensor field:
             form = comp # for readability
@@ -857,11 +878,14 @@ class TensorFieldFreeModule(TensorFreeModule):
             else:
                 raise TypeError("cannot convert the {}".format(comp) +
                                 " to an element of {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         # Standard construction
         resu = self.element_class(self._fmodule, self._tensor_type,
                                   name=name, latex_name=latex_name,
                                   sym=sym, antisym=antisym)
-        if comp != []:
+        if comp:
             resu.set_comp(frame)[:] = comp
         return resu
 
@@ -949,4 +973,3 @@ class TensorFieldFreeModule(TensorFreeModule):
             description += "along the {}".format(self._domain) + \
                            " mapped into the {}".format(self._ambient_domain)
         return description
-

@@ -130,9 +130,9 @@ class Download(object):
             else:
                 filename, info = opener.retrieve(
                     self.url, self.destination)
-        except IOError as err:
+        except IOError as error:
             self.error_progress_bar()
-            log.error(err)
+            log.error(error)
             if not self.ignore_errors:
-                raise
+                raise error
         self.success_progress_bar()

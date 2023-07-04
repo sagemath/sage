@@ -1,3 +1,5 @@
+# distutils: libraries = braiding
+# distutils: language = c++
 r"""
 Cython wrapper for the libbraiding library.
 
@@ -12,14 +14,14 @@ first list contains only an integer, representing the power of
 permutation braids.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Miguel Marco  <mmarco@unizar.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at youroption) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from cysignals.signals cimport sig_on, sig_off
@@ -36,9 +38,10 @@ cdef extern from "braiding.h" namespace "Braiding":
     list[list[list[int]]] CentralizerGenerators(int n, list[int] word)
     list[list[list[int]]] SuperSummitSet(int n, list[int] word)
     list[list[list[list[int]]]] UltraSummitSet(int n, list[int] word)
-    int thurstontype(int n, list[int] word);
-    int Rigidity_ext(int n, list[int] word);
+    int thurstontype(int n, list[int] word)
+    int Rigidity_ext(int n, list[int] word)
     list[list[list[list[int]]]] SlidingCircuits(int n, list[int] word)
+
 
 def conjugatingbraid(braid1, braid2):
     r"""
@@ -300,7 +303,7 @@ def thurston_type(braid):
 
     OUTPUT:
 
-    One of ``'periodic'``, ``'reucible'`` or ``'pseudo-anosov'``.
+    One of ``'periodic'``, ``'reducible'`` or ``'pseudo-anosov'``.
 
     EXAMPLES::
 
@@ -315,7 +318,6 @@ def thurston_type(braid):
         sage: d = B([1,1,1,2,2])
         sage: thurston_type(d)
         'pseudo-anosov'
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()
@@ -382,7 +384,6 @@ def sliding_circuits(braid):
         [[[0], [2, 1], [1, 2], [2]]],
         [[[0], [1, 2], [2], [2, 1]]],
         [[[0], [2, 1], [1], [1, 2]]]]
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()
@@ -390,4 +391,3 @@ def sliding_circuits(braid):
     cdef list[list[list[list[int]]]] rop = SlidingCircuits(nstrands, l)
     sig_off()
     return rop
-

@@ -13,7 +13,7 @@ AUTHORS:
   re-implementation of the default call method,
   making functors applicable to morphisms (not only to objects)
 
-- Simon King (2010-12): Pickling of functors without loosing domain and codomain
+- Simon King (2010-12): Pickling of functors without losing domain and codomain
 
 """
 
@@ -32,7 +32,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from . import category
 
@@ -57,9 +56,10 @@ def _Functor_unpickle(Cl, D, domain, codomain):
     """
     F = Functor.__new__(Cl)
     Functor.__init__(F,domain,codomain)
-    for s,v in D:
-        setattr(F,s,v)
+    for s, v in D:
+        setattr(F, s, v)
     return F
+
 
 cdef class Functor(SageObject):
     """
@@ -293,9 +293,8 @@ cdef class Functor(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: x (=Integer Ring) is not in Category of fields
-
         """
-        if not (x in  self.__domain):
+        if x not in self.__domain:
             raise TypeError("x (=%s) is not in %s" % (x, self.__domain))
         return x
 
@@ -315,9 +314,8 @@ cdef class Functor(SageObject):
             The identity functor on Category of rings
             sage: I.rename('Id'); I
             Id
-
         """
-        return "Functor from %s to %s"%(self.__domain, self.__codomain)
+        return "Functor from %s to %s" % (self.__domain, self.__codomain)
 
     def __call__(self, x):
         """
@@ -501,7 +499,7 @@ class ForgetfulFunctor_generic(Functor):
 
             sage: F1 = ForgetfulFunctor(FiniteFields(),Fields())
 
-        This is to test against a bug occuring in a previous version
+        This is to test against a bug occurring in a previous version
         (see :trac:`8800`)::
 
             sage: F1 == QQ #indirect doctest
@@ -587,7 +585,6 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
             sage: F = IdentityFunctor(Groups())
             sage: loads(F.dumps()) == F
             True
-
         """
         return IdentityFunctor, (self.domain(), )
 
@@ -599,9 +596,8 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
             sage: F = IdentityFunctor(fields)
             sage: F #indirect doctest
             The identity functor on Category of fields
-
         """
-        return "The identity functor on %s"%(self.domain())
+        return "The identity functor on %s" % (self.domain())
 
     def _apply_functor(self, x):
         """
@@ -623,6 +619,7 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
         """
         return x
 
+
 def IdentityFunctor(C):
     """
     Construct the identity functor of the given category.
@@ -641,9 +638,9 @@ def IdentityFunctor(C):
         sage: F = IdentityFunctor(rings)
         sage: F(ZZ['x','y']) is ZZ['x','y']
         True
-
     """
     return IdentityFunctor_generic(C)
+
 
 def ForgetfulFunctor(domain, codomain):
     """
@@ -682,11 +679,9 @@ def ForgetfulFunctor(domain, codomain):
 
         sage: ForgetfulFunctor(abgrps, abgrps) == IdentityFunctor(abgrps)
         True
-
     """
     if domain == codomain:
         return IdentityFunctor(domain)
     if not domain.is_subcategory(codomain):
         raise ValueError("Forgetful functor not supported for domain %s" % domain)
     return ForgetfulFunctor_generic(domain, codomain)
-

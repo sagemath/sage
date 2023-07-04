@@ -25,14 +25,14 @@ language to separate multiple commands.
 # Note: no magics in doctests, hence # not tested
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.repl.rich_output.display_manager import get_display_manager
@@ -79,8 +79,7 @@ EXAMPLES::
 """
 
 
-
-class InterfaceMagic(object):
+class InterfaceMagic():
 
     @classmethod
     def all_iter(cls):
@@ -93,7 +92,10 @@ class InterfaceMagic(object):
             sage: next(InterfaceMagic.all_iter())
             <sage.repl.interface_magic.InterfaceMagic object at 0x...>
         """
-        import sage.interfaces.all
+        try:
+            import sage.interfaces.all
+        except ImportError:
+            return
         for name, obj in sage.interfaces.all.__dict__.items():
             if isinstance(obj, sage.interfaces.interface.Interface):
                 yield cls(name, obj)
@@ -137,7 +139,7 @@ class InterfaceMagic(object):
                 magic_name=interface._name,
                 magic_kind='cell'
             )
-        
+
     @classmethod
     def find(cls, name):
         """
@@ -163,7 +165,7 @@ class InterfaceMagic(object):
         for magic in cls.all_iter():
             if magic._name == name:
                 return magic
-                
+
     def __init__(self, name, interface):
         """
         Interface Magic
@@ -200,7 +202,7 @@ class InterfaceMagic(object):
             sage: from sage.repl.interface_magic import InterfaceMagic
             sage: line_magic = InterfaceMagic.find('gap').line_magic_factory()
             sage: output = line_magic('1+1')
-            sage: output 
+            sage: output
             2
             sage: type(output)
             <class 'sage.interfaces.gap.GapElement'>
@@ -219,6 +221,7 @@ class InterfaceMagic(object):
             ...
         """
         terminal = get_display_manager().is_in_terminal()
+
         def line_magic(line):
             if line:
                 return self._interface(line)
@@ -260,7 +263,7 @@ class InterfaceMagic(object):
             2
             120
             sage: shell.run_cell('%%gap foo\n1+1;\n')
-            File "<string>", line unknown
+            ...File...<string>...
             SyntaxError: Interface magics have no options, got "foo"
             <BLANKLINE>
             sage: shell.run_cell('%%gap?')
@@ -273,21 +276,21 @@ class InterfaceMagic(object):
         def cell_magic(line, cell):
             """
             Evaluate cell magic
-            
+
             Docstring is overwritten in the instance
-            
+
             INPUT:
-            
+
             - ``line`` -- string. The option part of the cell magic.
-            
+
             - ``cell`` -- string. The lines of the cell magic.
 
             OUTPUT:
 
             Prints the interface output.
-            
+
             RAISES:
-            
+
             ``SyntaxError`` if a line is specified; Interfaces have no
             options.
             """

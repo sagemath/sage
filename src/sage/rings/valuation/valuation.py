@@ -44,17 +44,15 @@ send more than just zero to infinity::
 
     sage: w.augmentation(x, infinity)
     [ Gauss valuation induced by 2-adic valuation, v(x) = +Infinity ]
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+# ****************************************************************************
 
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import op_EQ, op_NE, op_LE, op_LT, op_GE, op_GT
@@ -109,11 +107,11 @@ class DiscretePseudoValuation(Morphism):
             True
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if self(f) is infinity:
             return self(g) is infinity
 
-        return self(f-g) > self(f)
+        return self(f - g) > self(f)
 
     def __hash__(self):
         r"""
@@ -150,7 +148,7 @@ class DiscretePseudoValuation(Morphism):
             sage: v = QQ.valuation(2)
             sage: hash(v) == hash(v) # indirect doctest
             True
-            
+
         """
         return id(self)
 
@@ -250,7 +248,8 @@ class DiscretePseudoValuation(Morphism):
             sage: v >= w
             False
         """
-        if self == other: return True
+        if self == other:
+            return True
         from .scaled_valuation import ScaledValuation_generic
         if isinstance(other, ScaledValuation_generic):
             return other <= self
@@ -271,10 +270,11 @@ class DiscretePseudoValuation(Morphism):
         EXAMPLES::
 
             sage: QQ.valuation(2)._test_valuation_inheritance()
-
         """
         tester = self._tester(**options)
-        tester.assertTrue(isinstance(self, InfiniteDiscretePseudoValuation) != isinstance(self, DiscreteValuation))
+        tester.assertNotEqual(isinstance(self, InfiniteDiscretePseudoValuation),
+                              isinstance(self, DiscreteValuation))
+
 
 class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
     r"""
@@ -288,7 +288,7 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
         sage: v = GaussValuation(R, v)
         sage: w = v.augmentation(x, infinity); w # indirect doctest
         [ Gauss valuation induced by 2-adic valuation, v(x) = +Infinity ]
-    
+
     TESTS::
 
         sage: from sage.rings.valuation.valuation import InfiniteDiscretePseudoValuation
@@ -314,6 +314,7 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
 
         """
         return False
+
 
 class NegativeInfiniteDiscretePseudoValuation(InfiniteDiscretePseudoValuation):
     r"""
@@ -414,11 +415,11 @@ class DiscreteValuation(DiscretePseudoValuation):
           at least that valuation.
 
         - ``require_incomparability`` -- a boolean (default: ``False``);
-          whether to require require the returned valuations to be incomparable
+          whether to require the returned valuations to be incomparable
           (with respect to the partial order on valuations defined by comparing
           them pointwise.)
 
-        - ``require_maximal_degree`` -- a boolean (deault: ``False``); whether
+        - ``require_maximal_degree`` -- a boolean (default: ``False``); whether
           to require the last key polynomial of the returned valuation to have
           maximal degree. This is most relevant when using this algorithm to
           compute approximate factorizations of ``G``, when set to ``True``,
@@ -481,7 +482,7 @@ class DiscreteValuation(DiscretePseudoValuation):
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^2 + (x^2 + x)*y + 1) = 1 ],
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^3 + (x + 1)*y^2 + (x + 1)*y + x^2 + x + 1) = 1 ],
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^3 + x^2*y + x) = 1 ],
-             [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^4 + (x + 1)*y^3 + x^2*y^2 + (x^2 + x)*y + x) = 1 ],   
+             [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^4 + (x + 1)*y^3 + x^2*y^2 + (x^2 + x)*y + x) = 1 ],
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^7 + x^2*y^6 + (x + 1)*y^4 + x^2*y^3 + (x^2 + x + 1)*y^2 + x^2*y + x) = 1 ]]
 
         Cases with trivial residue field extensions::
@@ -604,17 +605,17 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         Another problematic case::
 
-            sage: R.<x> = QQ[] 
-            sage: Delta = x^12 + 20*x^11 + 154*x^10 + 664*x^9 + 1873*x^8 + 3808*x^7 + 5980*x^6 + 7560*x^5 + 7799*x^4 + 6508*x^3 + 4290*x^2 + 2224*x + 887 
-            sage: K.<theta> = NumberField(x^6 + 108) 
+            sage: R.<x> = QQ[]
+            sage: Delta = x^12 + 20*x^11 + 154*x^10 + 664*x^9 + 1873*x^8 + 3808*x^7 + 5980*x^6 + 7560*x^5 + 7799*x^4 + 6508*x^3 + 4290*x^2 + 2224*x + 887
+            sage: K.<theta> = NumberField(x^6 + 108)
             sage: K.is_galois()
             True
             sage: vK = QQ.valuation(2).extension(K)
-            sage: vK(2) 
-            1 
-            sage: vK(theta) 
+            sage: vK(2)
+            1
+            sage: vK(theta)
             1/3
-            sage: G=Delta.change_ring(K) 
+            sage: G=Delta.change_ring(K)
             sage: vK.mac_lane_approximants(G)
             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/4, v(x^4 + 1/2*theta^4 + 3*theta + 1) = 3/2 ],
              [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/4, v(x^4 + 1/2*theta^4 + theta + 1) = 3/2 ],
@@ -662,12 +663,12 @@ class DiscreteValuation(DiscretePseudoValuation):
         if R.base_ring() is not self.domain():
             raise ValueError("G must be defined over the domain of this valuation")
 
-        from sage.misc.misc import verbose
-        verbose("Approximants of %r on %r towards %r"%(self, self.domain(), G), level=3)
+        from sage.misc.verbose import verbose
+        verbose("Approximants of %r on %r towards %r" % (self, self.domain(), G), level=3)
 
         from sage.rings.valuation.gauss_valuation import GaussValuation
 
-        if not all([self(c) >= 0 for c in G.coefficients()]):
+        if not all(self(c) >= 0 for c in G.coefficients()):
             raise ValueError("G must be integral")
 
         if require_maximal_degree:
@@ -689,14 +690,14 @@ class DiscreteValuation(DiscretePseudoValuation):
                 return False
             if require_final_EF and not leaf.ef:
                 return False
-            if require_maximal_degree and leaf.valuation.phi().degree() != leaf.valuation.E()*leaf.valuation.F():
+            if require_maximal_degree and leaf.valuation.phi().degree() != leaf.valuation.E() * leaf.valuation.F():
                 return False
             if require_incomparability:
                 if any(leaf.valuation <= o.valuation for o in others):
                     return False
             return True
 
-        seed = MacLaneApproximantNode(GaussValuation(R,self), None, G.degree() == 1, G.degree(), None, None)
+        seed = MacLaneApproximantNode(GaussValuation(R, self), None, G.degree() == 1, G.degree(), None, None)
         seed.forced_leaf = is_sufficient(seed, [])
 
         def create_children(node):
@@ -734,22 +735,20 @@ class DiscreteValuation(DiscretePseudoValuation):
         def reduce_tree(v, w):
             return v + w
 
-        from sage.all import RecursivelyEnumeratedSet
+        from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
         tree = RecursivelyEnumeratedSet([seed],
-            successors = create_children,
-            structure = 'forest',
-            enumeration = 'breadth')
+                                        successors=create_children,
+                                        structure='forest',
+                                        enumeration='breadth')
         # this is a tad faster but annoying for profiling / debugging
         if algorithm == 'parallel':
-            nodes = tree.map_reduce(
-                map_function = lambda x: [x],
-                reduce_init = [])
+            nodes = tree.map_reduce(map_function=lambda x: [x],
+                                    reduce_init=[])
         elif algorithm == 'serial':
             from sage.parallel.map_reduce import RESetMapReduce
-            nodes = RESetMapReduce(
-                   forest = tree,
-                   map_function = lambda x: [x],
-                   reduce_init = []).run_serial()
+            nodes = RESetMapReduce(forest=tree,
+                                   map_function=lambda x: [x],
+                                   reduce_init=[]).run_serial()
         else:
             raise NotImplementedError(algorithm)
         leafs = set([node.valuation for node in nodes])
@@ -801,7 +800,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         else:
             return self.simplify(x*self._pow(x, e-1, error=error*(e-1)/e), error=error)
 
-    def mac_lane_approximant(self, G, valuation, approximants = None):
+    def mac_lane_approximant(self, G, valuation, approximants=None):
         r"""
         Return the approximant from :meth:`mac_lane_approximants` for ``G``
         which is approximated by or approximates ``valuation``.
@@ -878,7 +877,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         # Check that valuation is an approximant for a valuation
         # on domain that extends its restriction to the base field.
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if valuation(G) is not infinity:
             v = valuation
             while not v.is_gauss_valuation():
@@ -896,7 +895,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             raise ValueError("The valuation %r does not approximate a unique extension of %r with respect to %r"%(valuation, self, G))
         if len(greater_approximants) == 1:
             return greater_approximants[0]
-        
+
         smaller_approximants = [w for w in approximants if w <= valuation]
         if len(smaller_approximants) > 1:
             raise ValueError("The valuation %r is not approximated by a unique extension of %r with respect to %r"%(valuation, self, G))
@@ -981,7 +980,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         """
         if required_precision is None:
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             required_precision = infinity
 
         R = G.parent()
@@ -989,7 +988,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             raise ValueError("G must be defined over the domain of this valuation")
         if not G.is_monic():
             raise ValueError("G must be monic")
-        if not all([self(c)>=0 for c in G.coefficients()]):
+        if not all(self(c) >= 0 for c in G.coefficients()):
             raise ValueError("G must be integral")
 
         # W contains approximate factors of G
@@ -997,7 +996,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         ret = [w.phi() for w in W]
 
         from sage.structure.factorization import Factorization
-        return Factorization([ (g,1) for g in ret ], simplify=False)
+        return Factorization([(g, 1) for g in ret], simplify=False)
 
     def _ge_(self, other):
         r"""
@@ -1014,10 +1013,10 @@ class DiscreteValuation(DiscretePseudoValuation):
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
-        return super(DiscreteValuation, self)._ge_(other)
+        return super()._ge_(other)
 
 
-class MacLaneApproximantNode(object):
+class MacLaneApproximantNode():
     r"""
     A node in the tree computed by :meth:`DiscreteValuation.mac_lane_approximants`
 

@@ -62,13 +62,11 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import print_function
 
-from sage.rings.infinity import infinity
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.abelian_gps.dual_abelian_group_element import (
-    DualAbelianGroupElement, is_DualAbelianGroupElement )
+    DualAbelianGroupElement, is_DualAbelianGroupElement)
 from sage.misc.mrange import mrange
 from sage.misc.cachefunc import cached_method
 from sage.groups.group import AbelianGroup as AbelianGroupBase
@@ -127,7 +125,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         self._group = G
         names = normalize_names(G.ngens(), names)
         self._assign_names(names)
-        AbelianGroupBase.__init__(self) # TODO: category=CommutativeGroups()
+        AbelianGroupBase.__init__(self)  # TODO: category=CommutativeGroups()
 
     def group(self):
         """
@@ -166,7 +164,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: print(Fd)
             DualAbelianGroup( AbelianGroup ( 3, (5, 64, 729) ) )
         """
-        s = "DualAbelianGroup( AbelianGroup ( %s, %s ) )"%(self.ngens(), self.gens_orders())
+        s = "DualAbelianGroup( AbelianGroup ( %s, %s ) )" % (self.ngens(), self.gens_orders())
         return s
 
     def _repr_(self):
@@ -189,9 +187,9 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         eldv = G.gens_orders()
         gp = ""
         for x in eldv:
-            if x!=0:
-                gp = gp + "Z/%sZ x "%x
-            if x==0:
+            if x != 0:
+                gp = gp + "Z/%sZ x " % x
+            if x == 0:
                 gp = gp + "Z x "
         gp = gp[:-2].strip()
         s = 'Dual of Abelian Group isomorphic to ' + gp + ' over ' + str(self.base_ring())
@@ -218,8 +216,8 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
             sage: G = AbelianGroup([2,3,9])
             sage: Gd = G.dual_group(base_ring=CC)
-            sage: Gd.random_element()
-            X1^2
+            sage: Gd.random_element().parent() is Gd
+            True
 
             sage: N = 43^2-1
             sage: G = AbelianGroup([N],names="a")
@@ -227,16 +225,16 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: a, = G.gens()
             sage: A, = Gd.gens()
             sage: x = a^(N/4); y = a^(N/3); z = a^(N/14)
-            sage: X = A*Gd.random_element(); X
-            A^615
-            sage: len([a for a in [x,y,z] if abs(X(a)-1)>10^(-8)])
-            2
+            sage: found = [False]*4
+            sage: while not all(found):
+            ....:     X = A*Gd.random_element()
+            ....:     found[len([b for b in [x,y,z] if abs(X(b)-1)>10^(-8)])] = True
         """
         from sage.misc.prandom import randint
         result = self.one()
         for g in self.gens():
             order = g.order()
-            result *= g**(randint(0,order))
+            result *= g**(randint(0, order))
         return result
 
     def gen(self, i=0):
@@ -256,8 +254,8 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         n = self.group().ngens()
         if i < 0 or i >= n:
-            raise IndexError("Argument i (= %s) must be between 0 and %s."%(i, n-1))
-        x = [0]*n
+            raise IndexError("Argument i (= %s) must be between 0 and %s." % (i, n - 1))
+        x = [0] * n
         if self.gens_orders()[i] != 1:
             x[i] = 1
         return self.element_class(self, x)
@@ -325,7 +323,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         # TODO: deprecate
         return self.group().gens_orders()
 
-    def __contains__(self,X):
+    def __contains__(self, X):
         """
         Implements "in".
 
@@ -381,13 +379,10 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: Gd.list()
             (1, B, B^2, A, A*B, A*B^2)
         """
-        if not(self.is_finite()):
-           raise NotImplementedError("Group must be finite")
+        if not self.is_finite():
+            raise NotImplementedError("the group must be finite")
         invs = self.gens_orders()
-        T = mrange(invs)
-        n = self.order()
-        L = tuple( self(t) for t in T )
-        return L
+        return tuple(self(t) for t in mrange(invs))
 
     def __iter__(self):
         """
@@ -412,6 +407,3 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         for g in self.list():
             yield g
-
-
-

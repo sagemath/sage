@@ -32,7 +32,7 @@ up-to-date information or check out the
 to get started immediately.
 
 
-Writing Cython Code in Sage
+Writing cython code in Sage
 ===========================
 
 There are several ways to create and build Cython code in Sage.
@@ -66,25 +66,10 @@ There are several ways to create and build Cython code in Sage.
    the notebook).
 
 #. Create a ``.pyx`` file and add it to the Sage library.
-
-   #. First, add a listing for the Cython extension to the variable
-      ``ext_modules`` in the file
-      ``SAGE_ROOT/src/module_list.py``. See the
-      ``distutils.extension.Extension`` class for more information on
-      creating a new Cython extension.
-
-   #. Run ``sage -b`` to rebuild Sage.
-
-   For example, in order to compile
-   ``SAGE_ROOT/src/sage/graphs/chrompoly.pyx``, we see the following
-   lines in ``module_list.py``::
-
-    Extension('sage.graphs.chrompoly',
-              sources = ['sage/graphs/chrompoly.pyx'],
-              libraries = ['gmp']),
+   Then run ``sage -b`` to rebuild Sage.
 
 
-Attaching or Loading .spyx Files
+Attaching or loading .spyx files
 ================================
 
 The easiest way to try out Cython without having to learn anything
@@ -93,7 +78,9 @@ about distutils, etc., is to create a file with the extension
 
 #. Create a file ``power2.spyx``.
 
-#. Put the following in it::
+#. Put the following in it:
+
+   .. CODE-BLOCK:: cython
 
        def is2pow(n):
            while n != 0 and n%2 == 0:
@@ -155,7 +142,7 @@ version with a type declaration, by changing ``def is2pow(n):`` to
 
 .. _section-interrupt:
 
-Interrupt and Signal Handling
+Interrupt and signal handling
 =============================
 
 When writing Cython code for Sage, special care must be taken to ensure
@@ -165,7 +152,7 @@ Sage uses the `cysignals package <https://github.com/sagemath/cysignals>`_
 for this, see the `cysignals documentation <http://cysignals.readthedocs.org/>`_
 for more information.
 
-Unpickling Cython Code
+Unpickling Cython code
 ======================
 
 Pickling for Python classes and extension classes, such as Cython, is different.
@@ -174,7 +161,9 @@ extension classes you need to write a :meth:`__reduce__` method which typically
 returns a tuple ``(f, args, ...)`` such that ``f(*args)`` returns (a copy of) the
 original object. As an example, the following code snippet is the
 :meth:`~sage.rings.integer.Integer.__reduce__` method from
-:class:`sage.rings.integer.Integer`::
+:class:`sage.rings.integer.Integer`:
+
+.. CODE-BLOCK:: cython
 
     def __reduce__(self):
         '''

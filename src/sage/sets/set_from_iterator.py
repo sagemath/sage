@@ -60,15 +60,13 @@ The module also provides decorator for functions and methods::
 #
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.function_mangling import ArgumentFixer
 from sage.misc.lazy_list import lazy_list
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class EnumeratedSetFromIterator(Parent):
@@ -164,7 +162,6 @@ class EnumeratedSetFromIterator(Parent):
         else:
             Parent.__init__(self, facade = True, category = EnumeratedSets())
 
-
         if name is not None:
             self.rename(name)
 
@@ -188,9 +185,8 @@ class EnumeratedSetFromIterator(Parent):
 
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
             sage: E = EnumeratedSetFromIterator(xsrange, (1,200))
-            sage: hash(E)
-            4600916458883504074 # 64-bit
-            -2063607862         # 32-bit
+            sage: hash(E) == hash(tuple(range(1, 14)))
+            True
         """
         try:
             return hash(self._cache[:13])
@@ -392,7 +388,7 @@ class EnumeratedSetFromIterator(Parent):
         """
         if hasattr(self, '_cache'):
             return self._cache[i]
-        return super(EnumeratedSetFromIterator,self).unrank(i)
+        return super().unrank(i)
 
     def _element_constructor_(self, el):
         """
@@ -401,9 +397,10 @@ class EnumeratedSetFromIterator(Parent):
         TESTS::
 
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: from six.moves import range
             sage: S = EnumeratedSetFromIterator(range, args=(1,4))
-            sage: S(1)  # indirect doctest
+
+            sage: S(1)
+            doctest:...: UserWarning: Testing equality of infinite sets which will not end in case of equality
             1
             sage: S(0)  # indirect doctest
             Traceback (most recent call last):
@@ -444,7 +441,7 @@ class EnumeratedSetFromIterator(Parent):
 
 #TODO: move it in sage.misc ?
 @instancedoc
-class Decorator(object):
+class Decorator():
     r"""
     Abstract class that manage documentation and sources of the wrapped object.
 
@@ -465,23 +462,16 @@ class Decorator(object):
             ...
                Calls the PARI "isprime" function.
         """
-        from sage.misc.sageinspect import sage_getsourcelines, sage_getfile, _extract_embedded_position
+        # Duplicates sage.misc.cachefunc.CachedFunction._instancedoc_
+        from sage.misc.sageinspect import sage_getsourcelines, sage_getfile_relative, _extract_embedded_position
         f = self.f
         doc = f.__doc__ or ''
         if _extract_embedded_position(doc) is None:
             try:
                 sourcelines = sage_getsourcelines(f)
-                from sage.env import SAGE_LIB, SAGE_SRC
-                filename = sage_getfile(f)
-                # The following is a heuristics to get
-                # the file name of the cached function
-                # or method
-                if filename.startswith(SAGE_SRC):
-                    filename = filename[len(SAGE_SRC):]
-                elif filename.startswith(SAGE_LIB):
-                    filename = filename[len(SAGE_LIB):]
-                file_info = "File: %s (starting at line %d)\n"%(filename,sourcelines[1])
-                doc = file_info+doc
+                filename = sage_getfile_relative(f)
+                file_info = "File: %s (starting at line %d)\n" % (filename, sourcelines[1])
+                doc = file_info + doc
             except IOError:
                 pass
         return doc
@@ -535,7 +525,9 @@ class Decorator(object):
             sage: d = Decorator()
             sage: d.f = find_local_minimum
             sage: sage_getargspec(d) # indirect doctest
-            ArgSpec(args=['f', 'a', 'b', 'tol', 'maxfun'], varargs=None, keywords=None, defaults=(1.48e-08, 500))
+            FullArgSpec(args=['f', 'a', 'b', 'tol', 'maxfun'],
+                        varargs=None, varkw=None, defaults=(1.48e-08, 500),
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         from sage.misc.sageinspect import sage_getargspec
         return sage_getargspec(self.f)
@@ -573,7 +565,6 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
     EXAMPLES::
 
         sage: from sage.sets.set_from_iterator import set_from_function
-        sage: from six.moves import range
         sage: @set_from_function
         ....: def f(n):
         ....:     for i in range(n):
@@ -674,7 +665,7 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
     def __call__(self, *args, **kwds):
         r"""
         Build a new :class:`EnumeratedSet` by calling ``self.f`` with
-        apropriate argument. If ``f`` is ``None``, then returns a new instance
+        appropriate argument. If ``f`` is ``None``, then returns a new instance
         of :class:`EnumeratedSetFromIterator`.
 
         EXAMPLES::
@@ -754,7 +745,7 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
             sage: loads(dumps(d.f()))
             Traceback (most recent call last):
             ...
-            PicklingError: Can't pickle <... 'function'>: attribute lookup __builtin__.function failed
+            _pickle.PicklingError: Can't pickle <function DummyExampleForPicklingTest.f at ...>: it's not the same object as sage.sets.set_from_iterator.DummyExampleForPicklingTest.f
         """
         self.inst = inst
         self.f = f
@@ -839,7 +830,7 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
                 self.name,
                 **self.options)
 
-class EnumeratedSetFromIterator_method_decorator(object):
+class EnumeratedSetFromIterator_method_decorator():
     r"""
     Decorator for enumerated set built from a method.
 
@@ -954,8 +945,8 @@ class EnumeratedSetFromIterator_method_decorator(object):
         TESTS::
 
             sage: from sage.sets.set_from_iterator import set_from_method
-            sage: class A:
-            ....:  @set_from_method()    # indirect doctest
+            sage: class A:                # indirect doctest
+            ....:  @set_from_method()
             ....:  def f(self):
             ....:      return xsrange(3)
             sage: a = A()

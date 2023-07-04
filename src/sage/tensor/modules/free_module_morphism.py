@@ -14,19 +14,24 @@ REFERENCES:
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
 
 """
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-from six import itervalues
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+from __future__ import annotations
 
-from sage.rings.integer import Integer
+from typing import TYPE_CHECKING
+
 from sage.categories.morphism import Morphism
+from sage.rings.integer import Integer
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 
 class FiniteRankFreeModuleMorphism(Morphism):
@@ -261,10 +266,10 @@ class FiniteRankFreeModuleMorphism(Morphism):
         if is_identity:
             # Construction of the identity endomorphism
             if fmodule1 != fmodule2:
-                raise TypeError("the domain and codomain must coincide " + \
+                raise TypeError("the domain and codomain must coincide " +
                                 "for the identity endomorphism.")
             if bases[0] != bases[1]:
-                raise TypeError("the two bases must coincide for " + \
+                raise TypeError("the two bases must coincide for " +
                                 "constructing the identity endomorphism.")
             self._is_identity = True
             zero = ring.zero()
@@ -336,7 +341,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def __eq__(self, other):
         r"""
@@ -487,10 +492,8 @@ class FiniteRankFreeModuleMorphism(Morphism):
             False
         """
         # Some matrix representation is picked at random:
-        matrix_rep = next(itervalues(self._matrices))
+        matrix_rep = next(iter(self._matrices.values()))
         return not matrix_rep.is_zero()
-
-    __nonzero__ = __bool__
 
     def _add_(self, other):
         r"""
@@ -685,7 +688,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             resu._matrices[bases] = scalar * mat
         return resu
 
-
     #
     #  Other module methods
     #
@@ -768,7 +770,9 @@ class FiniteRankFreeModuleMorphism(Morphism):
     # Map methods
     #
 
-    def _call_(self, element):
+    def _call_(
+        self, element: FiniteRankFreeModuleElement
+    ) -> FiniteRankFreeModuleElement:
         r"""
         Action of the homomorphism ``self`` on some free module element
 
@@ -914,8 +918,8 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         """
         # Some matrix representation is picked at random:
-        matrix_rep = next(itervalues(self._matrices))
-        return matrix_rep.right_kernel().rank() == 0
+        matrix_rep = next(iter(self._matrices.values()))
+        return not matrix_rep.right_kernel().rank()
 
     def is_surjective(self):
         r"""
@@ -1051,11 +1055,11 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: phi.matrix()     # default bases
             [-1  2  0]
             [ 5  1  2]
-            sage: phi.matrix(e,f)  # bases explicited
+            sage: phi.matrix(e, f)  # given bases
             [-1  2  0]
             [ 5  1  2]
             sage: type(phi.matrix())
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
 
         Matrix in bases different from those in which the homomorphism has
         been defined::
@@ -1109,7 +1113,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         if basis1 is None:
             basis1 = fmodule1.default_basis()
         elif basis1 not in fmodule1.bases():
-            raise TypeError(str(basis1) + " is not a basis on the " + \
+            raise TypeError(str(basis1) + " is not a basis on the " +
                             str(fmodule1) + ".")
         if basis2 is None:
             if self.is_endomorphism():
@@ -1117,7 +1121,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
             else:
                 basis2 = fmodule2.default_basis()
         elif basis2 not in fmodule2.bases():
-            raise TypeError(str(basis2) + " is not a basis on the " + \
+            raise TypeError(str(basis2) + " is not a basis on the " +
                             str(fmodule2) + ".")
         if (basis1, basis2) not in self._matrices:
             if self._is_identity:

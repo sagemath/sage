@@ -401,7 +401,7 @@ cdef void late_import():
            SymmetricFunctions, \
            sqrt, \
            builtinlist, \
-           MPolynomialRing_base, is_MPolynomial,\
+           MPolynomialRing_base, MPolynomial,\
            SchubertPolynomialRing, SchubertPolynomial_class,\
            two, fifteen, thirty, zero, sage_maxint
 
@@ -448,13 +448,13 @@ cdef void late_import():
     import sage.combinat.sf.sf
     SymmetricFunctions = sage.combinat.sf.sf.SymmetricFunctions
 
-    from six.moves import builtins
+    import builtins
     builtinlist = builtins.list
 
     import sage.rings.polynomial.multi_polynomial_ring
     MPolynomialRing_base = sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_base
-    import sage.rings.polynomial.multi_polynomial_element
-    is_MPolynomial = sage.rings.polynomial.multi_polynomial_element.is_MPolynomial
+    import sage.rings.polynomial.multi_polynomial
+    MPolynomial = sage.rings.polynomial.multi_polynomial.MPolynomial
 
     import sage.combinat.schubert_polynomial
     SchubertPolynomialRing = sage.combinat.schubert_polynomial.SchubertPolynomialRing
@@ -667,8 +667,7 @@ cdef object _py_sq_radical(OP a):
         else:
             res += _py(S_PO_K(ptr))*sqrt(_py(S_PO_S(ptr)))
 
-
-        ptr = S_L_N(ptr);
+        ptr = S_L_N(ptr)
 
     return res.radical_simplify()
 
@@ -706,11 +705,8 @@ cdef void* _op_skew_partition(object p, OP a):
     cdef OP gross, klein
     gross = callocobject()
     klein = callocobject()
-
-    #print p[0], p[1]
     _op_partition(p[0], gross)
     _op_partition(p[1], klein)
-
     b_gk_spa(gross, klein, a)
 
 cdef object _py_skew_partition(OP a):
@@ -1179,5 +1175,6 @@ cdef object _py_tableau(OP t):
 def start():
     anfang()
 
-def end():
-    ende()
+    # Automatically clean up when sage exits.
+    import atexit
+    atexit.register(ende)

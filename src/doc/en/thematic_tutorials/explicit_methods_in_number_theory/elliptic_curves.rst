@@ -108,7 +108,7 @@ compute its cardinality, which behind the scenes uses SEA.
 ::
 
     sage: E = EllipticCurve_from_j(k.random_element())
-    sage: E.cardinality()                   # less than a second
+    sage: E.cardinality()                   # random, less than a second
     99999999999371984255
 
 To see how Sage chooses when to use SEA versus other methods, type

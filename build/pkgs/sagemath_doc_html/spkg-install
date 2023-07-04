@@ -1,0 +1,3 @@
+#! /usr/bin/env bash
+cd $SAGE_ROOT/src/doc
+$MAKE doc-html

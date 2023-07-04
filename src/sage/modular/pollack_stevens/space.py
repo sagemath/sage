@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 r"""
-Pollack-Stevens' Modular Symbols Spaces
+Pollack-Stevens' modular symbols spaces
 
 This module contains a class for spaces of modular symbols that use Glenn
-Stevens' conventions, as explained in [PS]_.
+Stevens' conventions, as explained in [PS2011]_.
 
 There are two main differences between the modular symbols in this directory
 and the ones in :mod:`sage.modular.modsym`:
@@ -55,13 +55,6 @@ classical modular symbols (or even elliptic curves) as follows::
     [0, 1, 0, 0, 0, -1, 1, 0, 0]
     sage: phi.parent()
     Space of modular symbols for Congruence Subgroup Gamma0(37) with sign 0 and values in Sym^0 Q^2
-
-REFERENCES:
-
-.. [PS] Overconvergent modular symbols and p-adic L-functions
-   Robert Pollack, Glenn Stevens
-   Annales Scientifiques de l'Ecole Normale Superieure, serie 4, 44 fascicule 1 (2011), 1--42.
-
 """
 #*****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
@@ -71,8 +64,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 from sage.modules.module import Module
 from sage.modular.dirichlet import DirichletCharacter
 from sage.modular.arithgroup.all import Gamma0
@@ -491,8 +482,8 @@ class PollackStevensModularSymbolspace(Module):
             sage: M.precision_cap()
             10
         """
-        ### WARNING -- IF YOU ARE WORKING IN SYM^K(Q^2) THIS WILL JUST
-        ### RETURN K-1.  NOT GOOD
+        # WARNING -- IF YOU ARE WORKING IN SYM^K(Q^2) THIS WILL JUST
+        # RETURN K-1.  NOT GOOD
         return self.coefficient_module()._prec_cap
 
     def weight(self):
@@ -667,15 +658,16 @@ class PollackStevensModularSymbolspace(Module):
 
         OUTPUT:
 
-        An element of the modular symbol space.
+        an element of the modular symbol space
 
-        Returns a "typical" element of this space; in this case the constant
-        map sending every element to an element of the coefficient module.
+        This returns a "typical" element of this space; in this case
+        the constant map sending every element to an element of the
+        coefficient module.
 
         .. WARNING::
 
-        This is not really an element of the space because it does not satisfy
-        the Manin relations.
+            This is not really an element of the space because it does
+            not satisfy the Manin relations.
 
         EXAMPLES::
 
@@ -728,19 +720,19 @@ class PollackStevensModularSymbolspace(Module):
         # p = self.prime()
         manin = self.source()
 
-#        ## There must be a problem here with that +1 -- should be
-#        ## variable depending on a c of some matrix We'll need to
-#        ## divide by some power of p and so we add extra accuracy
-#        ## here.
+#        # There must be a problem here with that +1 -- should be
+#        # variable depending on a c of some matrix We'll need to
+#        # divide by some power of p and so we add extra accuracy
+#        # here.
 #        if k != 0:
 #            MM = M + valuation(k,p) + 1 + M.exact_log(p)
 #        else:
 #            MM = M + M.exact_log(p) + 1
 
-        ## this loop runs thru all of the generators (except
-        ## (0)-(infty)) and randomly chooses a distribution to assign
-        ## to this generator (in the 2,3-torsion cases care is taken
-        ## to satisfy the relevant relation)
+        # this loop runs thru all of the generators (except
+        # (0)-(infty)) and randomly chooses a distribution to assign
+        # to this generator (in the 2,3-torsion cases care is taken
+        # to satisfy the relevant relation)
         D = {}
         for g in manin.gens():
             D[g] = self.coefficient_module().random_element(M)
@@ -755,10 +747,10 @@ class PollackStevensModularSymbolspace(Module):
                     D[g] = 2 * D[g] - D[g] * gamg - D[g] * gamg ** 2
                     #            print("post:",D[g])
 
-        ## now we compute nu_infty of Prop 5.1 of [PS1]
+        # now we compute nu_infty of Prop 5.1 of [PS1]
         t = self.coefficient_module().zero()
         for g in manin.gens()[1:]:
-            if (not g in manin.reps_with_two_torsion()) and (not g in manin.reps_with_three_torsion()):
+            if (g not in manin.reps_with_two_torsion()) and (g not in manin.reps_with_three_torsion()):
                 t += D[g] * manin.gammas[g] - D[g]
             else:
                 # this was previously MR.reps_with_two_torsion() but there is no variable MR defined...
@@ -767,11 +759,11 @@ class PollackStevensModularSymbolspace(Module):
                 else:
                     t -= D[g]
 
-        ## If k = 0, then t has total measure zero.  However, this is not true when k != 0
-        ## (unlike Prop 5.1 of [PS1] this is not a lift of classical symbol).
-        ## So instead we simply add (const)*mu_1 to some (non-torsion) v[j] to fix this
-        ## here since (mu_1 |_k ([a,b,c,d]-1))(trivial char) = chi(a) k a^{k-1} c ,
-        ## we take the constant to be minus the total measure of t divided by (chi(a) k a^{k-1} c)
+        # If k = 0, then t has total measure zero.  However, this is not true when k != 0
+        # (unlike Prop 5.1 of [PS1] this is not a lift of classical symbol).
+        # So instead we simply add (const)*mu_1 to some (non-torsion) v[j] to fix this
+        # here since (mu_1 |_k ([a,b,c,d]-1))(trivial char) = chi(a) k a^{k-1} c ,
+        # we take the constant to be minus the total measure of t divided by (chi(a) k a^{k-1} c)
 
         if k != 0:
             j = 1
@@ -832,7 +824,7 @@ def cusps_from_mat(g):
     You can also just give the matrix of ``g``::
 
         sage: type(g)
-        <type 'sage.modular.arithgroup.arithgroup_element.ArithmeticSubgroupElement'>
+        <class 'sage.modular.arithgroup.arithgroup_element.ArithmeticSubgroupElement'>
         sage: cusps_from_mat(g.matrix())
         (+Infinity, 0)
 
@@ -859,7 +851,7 @@ def cusps_from_mat(g):
     return ac, bd
 
 
-def ps_modsym_from_elliptic_curve(E, sign = 0, implementation='eclib'):
+def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
     r"""
     Return the overconvergent modular symbol associated to
     an elliptic curve defined over the rationals.

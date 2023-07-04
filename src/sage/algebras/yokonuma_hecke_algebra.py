@@ -18,7 +18,7 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -136,7 +136,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         q = R(q)
         if R not in Rings().Commutative():
             raise TypeError("base ring must be a commutative ring")
-        return super(YokonumaHeckeAlgebra, cls).__classcall__(cls, d, n, q, R)
+        return super().__classcall__(cls, d, n, q, R)
 
     def __init__(self, d, n, q, R):
         """
@@ -154,14 +154,14 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         self._Pn = Permutations(n)
         import itertools
         C = itertools.product(*([range(d)]*n))
-        indices = list( itertools.product(C, self._Pn))
+        indices = list(itertools.product(C, self._Pn))
         cat = Algebras(R).WithBasis()
         CombinatorialFreeModule.__init__(self, R, indices, prefix='Y',
                                          category=cat)
         self._assign_names(self.algebra_generators().keys())
 
     def _repr_(self):
-        """ 
+        """
         Return a string representation of ``self``.
 
         EXAMPLES::
@@ -370,8 +370,8 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         """
         t1,g1 = m1
         t2,g2 = m2
-        # Commmute g1 and t2, then multiply t1 and t2
-        #ig1 = g1
+        # Commute g1 and t2, then multiply t1 and t2
+        # ig1 = g1
         t = [(t1[i] + t2[g1.index(i+1)]) % self._d for i in range(self._n)]
         one = self._Pn.one()
         if g1 == one:
@@ -414,10 +414,8 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
              - (q^-1-q)*t1^2*t2^3*t3^2*g[1] - (q^-1-q)*t1^3*t2^2*t3^2*g[1]
         """
         t, w = m
-        # We have to flip the side due to Sage's multiplication
-        #   convention for permutations
-        wi = w.apply_simple_reflection(i, side="left")
-        if not w.has_descent(i, side="left"):
+        wi = w.apply_simple_reflection(i, side="right")
+        if not w.has_descent(i, side="right"):
             return self.monomial((t, wi))
 
         R = self.base_ring()
@@ -456,7 +454,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         return self.g(i) + (~self._q + self._q) * self.e(i)
 
     class Element(CombinatorialFreeModule.Element):
-        def inverse(self):
+        def __invert__(self):
             r"""
             Return the inverse if ``self`` is a basis element.
 
@@ -465,7 +463,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
                 sage: Y = algebras.YokonumaHecke(3, 3)
                 sage: t = prod(Y.t()); t
                 t1*t2*t3
-                sage: ~t
+                sage: t.inverse()   # indirect doctest
                 t1^2*t2^2*t3^2
                 sage: [3*~(t*g) for g in Y.g()]
                 [(q^-1+q)*t2*t3^2 + (q^-1+q)*t1*t3^2
@@ -496,6 +494,3 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             c = ~self.coefficients()[0]
             telt = H.monomial( (tuple((H._d - e) % H._d for e in t), H._Pn.one()) )
             return c * telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))
-
-        __invert__ = inverse
-

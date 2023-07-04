@@ -1,14 +1,29 @@
 """
 Rings
 
-Test for deprecations of imports into global namespace::
+Tests for deprecations of imports in global namespace from :trac:`33602`::
 
-    sage: convergents
+    sage: PowerSeries
     doctest:warning...:
     DeprecationWarning:
-    Importing convergents from here is deprecated. If you need to use it, please import it directly from sage.rings.continued_fraction
-    See https://trac.sagemath.org/27066 for details.
-    <function convergents at ...>
+    Importing PowerSeries from here is deprecated;
+    please use "from sage.rings.power_series_ring_element import PowerSeries" instead.
+    See https://github.com/sagemath/sage/issues/33602 for details.
+    ...
+    sage: PuiseuxSeries
+    doctest:warning...:
+    DeprecationWarning:
+    Importing PuiseuxSeries from here is deprecated;
+    please use "from sage.rings.puiseux_series_ring_element import PuiseuxSeries" instead.
+    See https://github.com/sagemath/sage/issues/33602 for details.
+    ...
+    sage: LaurentSeries
+    doctest:warning...:
+    DeprecationWarning:
+    Importing LaurentSeries from here is deprecated;
+    please use "from sage.rings.laurent_series_ring_element import LaurentSeries" instead.
+    See https://github.com/sagemath/sage/issues/33602 for details.
+    ...
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -19,8 +34,9 @@ Test for deprecations of imports into global namespace::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
+
+from .all__sagemath_categories import *
 
 # Ring base classes
 from .ring import (Ring, Field, CommutativeRing, IntegralDomain,
@@ -107,8 +123,8 @@ from .real_mpfi import (RealIntervalField,
                        RealInterval)
 
 # Complex numbers
-from .complex_field import ComplexField
-from .complex_number import (create_ComplexNumber as ComplexNumber)
+from .complex_mpfr import ComplexField
+from .complex_mpfr import create_ComplexNumber as ComplexNumber
 Complexes = ComplexField
 from .complex_interval_field import ComplexIntervalField
 from .complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
@@ -119,16 +135,26 @@ from .complex_mpc import MPComplexField
 
 from sage.rings.complex_arb import ComplexBallField, CBF
 
+lazy_import("sage.rings.imaginary_unit", "I")
+
 # Power series rings
 from .power_series_ring import PowerSeriesRing
-from .power_series_ring_element import PowerSeries
+lazy_import('sage.rings.power_series_ring_element', 'PowerSeries', deprecation=33602)
 
 # Laurent series ring in one variable
 from .laurent_series_ring import LaurentSeriesRing
-from .laurent_series_ring_element import LaurentSeries
+lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
+
+# Lazy Laurent series ring
+lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
+                                            'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
 
 # Tate algebras
 from .tate_algebra import TateAlgebra
+
+# Puiseux series ring
+from .puiseux_series_ring import PuiseuxSeriesRing
+lazy_import('sage.rings.puiseux_series_ring_element', 'PuiseuxSeries', deprecation=33602)
 
 # Pseudo-ring of PARI objects.
 from .pari_ring import PariRing, Pari
@@ -140,6 +166,9 @@ from .big_oh import O
 from .fraction_field import FractionField
 Frac = FractionField
 
+# Localization
+from .localization import Localization
+
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
 
@@ -147,8 +176,8 @@ from .bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
 
 from .monomials import monomials
 
-CC = ComplexField()
-CIF = ComplexIntervalField()
+from .cc import CC
+from .cif import CIF
 
 # invariant theory
 from .invariants.all import *
@@ -158,12 +187,9 @@ from .fast_arith import prime_range
 # continued fractions
 from sage.rings.continued_fraction import (continued_fraction,
                                            continued_fraction_list)
-lazy_import("sage.rings.continued_fraction", 'convergents', deprecation=27066)
 
 # asymptotic ring
 from .asymptotic.all import *
 
 # Register classes in numbers abc
 from . import numbers_abc
-
-del absolute_import

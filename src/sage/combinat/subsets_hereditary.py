@@ -7,7 +7,6 @@ Subsets satisfying a hereditary property
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 
 def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
@@ -64,7 +63,7 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
 
     Same, on two threads::
 
-        sage: sorted(list(subsets_with_hereditary_property(f,range(4),ncpus=2)))
+        sage: sorted(subsets_with_hereditary_property(f,range(4),ncpus=2))
         [[], [0], [0, 2], [1], [1, 3], [2], [3]]
 
     One can use this function to compute the independent sets of a graph. We
@@ -78,11 +77,11 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
         ....:     global num_calls
         ....:     num_calls+=1
         ....:     return g.subgraph(S).size()==0
-        sage: l1=list(subsets_with_hereditary_property(is_independent_set,g.vertices()))
+        sage: l1=list(subsets_with_hereditary_property(is_independent_set, g.vertices(sort=False)))
         sage: num_calls
         91
         sage: num_calls=0
-        sage: l2=list(subsets_with_hereditary_property(is_independent_set,g.vertices(),max_obstruction_size=2))
+        sage: l2=list(subsets_with_hereditary_property(is_independent_set, g.vertices(sort=False), max_obstruction_size=2))
         sage: num_calls
         56
         sage: l1==l2

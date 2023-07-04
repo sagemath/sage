@@ -1,0 +1,9 @@
+cd src
+# Do not use sdh_make or sdh_make_check here because we are doing our own error
+# handling below
+${MAKE:-make} check
+
+if [ $? -ne 0 ]; then
+        cat tests/test-suite.log
+        exit 1
+fi

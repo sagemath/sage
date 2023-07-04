@@ -1,0 +1,195 @@
+/* animation.css */
+
+#animation-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+#animation-ui .tick-marks {
+    height: 6px;
+    margin-bottom: 6px;
+    margin-left: 6px; /* Take into account the slider knob/thumb's width. */
+    margin-right: 5px; /* Same, but save a pixel for the last tick mark. */
+    background-image: repeating-linear-gradient(
+        to right,
+        darkgray 0 1px, /* Make each tick 1px wide. */
+        /* -1px here because of that extra pixel on the right margin */
+        transparent 1px calc((100% - 1px) / SAGE_FRAME_COUNT)
+    );
+}
+
+#animation-ui,
+#animation-ui .buttons {
+    font-size: 0; /* hack to ignore white-space between inline-block elements */
+}
+
+#animation-ui button {
+    display: inline-block;
+    margin: 0;
+    padding: 2px;
+    width: 28px;
+    height: 28px;
+    background: none;
+    border: none;
+    border-radius: 28px;
+    cursor: pointer;
+}
+.dark-theme #animation-ui button {
+    padding: 1px;
+    border: 1px dotted black;
+}
+
+#animation-ui button:focus {
+    background: #b8b9ff;
+    outline: none;
+}
+.dark-theme #animation-ui button:focus {
+    background: none;
+    border-color: white;
+}
+
+/* Setting the outline to none isn't enough for Firefox. */
+#animation-ui button::-moz-focus-inner {
+    border: none;
+}
+
+#animation-ui button:active {
+    background: #efefff;
+}
+.dark-theme #animation-ui button:active {
+    background: #303030;
+    border-style: solid;
+}
+
+#animation-ui.playing .play,
+#animation-ui.paused .pause,
+#animation-ui.loop .once,
+#animation-ui.once .loop {
+    display: none;
+}
+
+/*
+Slider styled using range.css tool by Daniel Stern
+   http://danielstern.ca/range.css/#/
+   Generated April 24, 2020
+Customizations:
+    - darker focus color
+    - focused styling for Firefox.
+*/
+input[type=range].slider {
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 0px 0;
+}
+input[type=range].slider:focus {
+    outline: none;
+}
+input[type=range].slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: #efefff;
+    border-radius: 6px;
+    border: 0px solid #000000;
+}
+input[type=range].slider::-webkit-slider-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    height: 12px;
+    width: 12px;
+    border-radius: 6px;
+    background: #3131ff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: 0px;
+}
+input[type=range].slider:focus::-webkit-slider-runnable-track {
+    background: #b8b9f6;
+}
+input[type=range].slider::-moz-range-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: #efefff;
+    border-radius: 6px;
+    border: 0px solid #000000;
+}
+input[type=range].slider::-moz-range-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    height: 12px;
+    width: 12px;
+    border-radius: 6px;
+    background: #3131ff;
+    cursor: pointer;
+}
+input[type=range].slider:focus::-moz-range-track {
+    background: #b8b9f6;
+}
+input[type=range].slider::-moz-focus-outer {
+    border: none;
+}
+input[type=range].slider::-ms-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+input[type=range].slider::-ms-fill-lower {
+    background: #efefff;
+    border: 0px solid #000000;
+    border-radius: 6px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+input[type=range].slider::-ms-fill-upper {
+    background: #efefff;
+    border: 0px solid #000000;
+    border-radius: 6px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+input[type=range].slider::-ms-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    width: 12px;
+    border-radius: 6px;
+    background: #3131ff;
+    cursor: pointer;
+    height: 12px;
+}
+input[type=range].slider:focus::-ms-fill-lower {
+    background: #b8b9f6;
+}
+input[type=range].slider:focus::-ms-fill-upper {
+    background: #b8b9f6;
+}
+
+.dark-theme input[type=range].slider {
+    background: black;
+}
+.dark-theme input[type=range].slider::-webkit-slider-runnable-track {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-webkit-slider-thumb {
+    border: 1px dotted white;
+}
+.dark-theme input[type=range].slider::-moz-range-track {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-moz-range-thumb {
+    border: 1px dotted white;
+}
+.dark-theme input[type=range].slider::-ms-fill-lower {
+    background: #303030;
+}
+.dark-theme input[type=range].slider::-ms-fill-upper {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-ms-thumb {
+    border: 1px dotted white;
+}

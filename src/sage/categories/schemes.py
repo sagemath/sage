@@ -1,19 +1,19 @@
 r"""
 Schemes
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
-from sage.categories.homsets import HomsetsCategory
 from sage.categories.sets_cat import Sets
+
 
 class Schemes(Category):
     """
@@ -52,7 +52,7 @@ class Schemes(Category):
     """
 
     @staticmethod
-    def __classcall_private__(cls, X = None):
+    def __classcall_private__(cls, X=None):
         """
         Implement the dispatching ``Schemes(ZZ)`` -> ``Schemes_over_base``.
 
@@ -72,8 +72,7 @@ class Schemes(Category):
             if not is_Scheme(X):
                 X = Schemes()(X)
             return Schemes_over_base(X)
-        else:
-            return super(Schemes, cls).__classcall__(cls)
+        return super().__classcall__(cls)
 
     def super_categories(self):
         """
@@ -138,11 +137,11 @@ class Schemes(Category):
         from sage.schemes.generic.morphism import is_SchemeMorphism
         if is_SchemeMorphism(x):
             return x
-        from sage.rings.ring import CommutativeRing
+        from sage.categories.commutative_rings import CommutativeRings
         from sage.schemes.generic.spec import Spec
         from sage.categories.map import Map
-        from sage.categories.all import Rings
-        if isinstance(x, CommutativeRing):
+        from sage.categories.rings import Rings
+        if x in CommutativeRings():
             return Spec(x)
         elif isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
             # x is a morphism of Rings

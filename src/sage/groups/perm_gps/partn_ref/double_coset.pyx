@@ -96,8 +96,7 @@ REFERENCE:
 from cysignals.memory cimport sig_calloc
 
 from .data_structures cimport *
-include "sage/data_structures/bitset.pxi"
-
+from sage.data_structures.bitset_base cimport *
 
 # Functions
 
@@ -269,9 +268,10 @@ cdef void deallocate_dc_work_space(dc_work_space *work_space):
 
 cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *ordering2,
     int n, bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
-    int (*refine_and_return_invariant)\
-         (PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len),
-    int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree),
+    int (*refine_and_return_invariant)(PartitionStack *PS, void *S,
+                                       int *cells_to_refine_by, int ctrb_len),
+    int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2,
+                              int degree),
     StabilizerChain *input_group,
     dc_work_space *work_space_prealloc, int *isom) except -1:
     """
@@ -437,9 +437,11 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
         j = refine_also_by_orbits(current_ps, S2, refine_and_return_invariant,
             cells_to_refine_by, j, group, perm_stack)
     if k != j:
-        possible = 0; unknown = 0
+        possible = 0
+        unknown = 0
     elif not stacks_are_equivalent(left_ps, current_ps):
-        possible = 0; unknown = 0
+        possible = 0
+        unknown = 0
     else:
         PS_move_all_mins_to_front(current_ps)
 
@@ -732,8 +734,3 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     if work_space_prealloc is NULL:
         deallocate_dc_work_space(work_space)
     return 1 if (possible and not unknown) else 0
-
-
-
-
-

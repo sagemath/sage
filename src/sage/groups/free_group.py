@@ -60,7 +60,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import six
+from sage.categories.groups import Groups
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
 from sage.structure.unique_representation import UniqueRepresentation
@@ -149,13 +149,14 @@ def _lexi_gen(zeroes=False):
     count = Integer(0)
     while True:
         mwrap, ind  = count.quo_rem(26)
-        if mwrap == 0 and not(zeroes):
+        if mwrap == 0 and not zeroes:
             name = ''
         else:
             name = str(mwrap)
         name = chr(ord('a') + ind) + name
         yield name
-        count = count + 1
+        count += 1
+
 
 class FreeGroupElement(ElementLibGAP):
     """
@@ -227,7 +228,7 @@ class FreeGroupElement(ElementLibGAP):
                 else:
                     i=i+1
             AbstractWordTietzeWord = libgap.eval('AbstractWordTietzeWord')
-            x = AbstractWordTietzeWord(l, parent._gap_gens())
+            x = AbstractWordTietzeWord(l, parent.gap().GeneratorsOfGroup())
         ElementLibGAP.__init__(self, parent, x)
 
     def __hash__(self):
@@ -235,9 +236,8 @@ class FreeGroupElement(ElementLibGAP):
         TESTS::
 
             sage: G.<a,b> = FreeGroup()
-            sage: hash(a*b*b*~a)
-            -485698212495963022 # 64-bit
-            -1876767630         # 32-bit
+            sage: hash(a*b*b*~a) == hash((1, 2, 2, -1))
+            True
         """
         return hash(self.Tietze())
 
@@ -323,7 +323,7 @@ class FreeGroupElement(ElementLibGAP):
             sage: type(a.Tietze())
             <... 'tuple'>
             sage: type(a.Tietze()[0])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         tl = self.gap().TietzeWordAbstractWord()
         return tuple(tl.sage())
@@ -405,17 +405,17 @@ class FreeGroupElement(ElementLibGAP):
         If ``im_gens`` is given, the images of the generators are
         mapped to them::
 
-            sage: F=FreeGroup(3)
-            sage: a=F([2,1,3,-1,2])
+            sage: F = FreeGroup(3)
+            sage: a = F([2,1,3,-1,2])
             sage: a.fox_derivative(F([1]))
             x1 - x1*x0*x2*x0^-1
-            sage: R.<t>=LaurentPolynomialRing(ZZ)
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t,t,t])
             t - t^2
-            sage: S.<t1,t2,t3>=LaurentPolynomialRing(ZZ)
+            sage: S.<t1,t2,t3> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t1,t2,t3])
             -t2*t3 + t2
-            sage: R.<x,y,z>=QQ[]
+            sage: R.<x,y,z> = QQ[]
             sage: a.fox_derivative(F([1]),[x,y,z])
             -y*z + y
             sage: a.inverse().fox_derivative(F([1]),[x,y,z])
@@ -436,15 +436,15 @@ class FreeGroupElement(ElementLibGAP):
 
         TESTS::
 
-            sage: F=FreeGroup(3)
-            sage: a=F([])
+            sage: F = FreeGroup(3)
+            sage: a = F([])
             sage: a.fox_derivative(F([1]))
             0
-            sage: R.<t>=LaurentPolynomialRing(ZZ)
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t,t,t])
             0
         """
-        if not gen in self.parent().generators():
+        if gen not in self.parent().generators():
             raise ValueError("Fox derivative can only be computed with respect to generators of the group")
         l = list(self.Tietze())
         if im_gens is None:
@@ -467,7 +467,7 @@ class FreeGroupElement(ElementLibGAP):
                              # generator of the free group.
         a = R.zero()
         coef = R.one()
-        while len(l) > 0:
+        while l:
             b = l.pop(0)
             if b == i:
                 a += coef * R.one()
@@ -505,7 +505,6 @@ class FreeGroupElement(ElementLibGAP):
         """
         g = self.gap().UnderlyingElement()
         k = g.NumberSyllables().sage()
-        gen = self.parent().gen
         exponent_syllable  = libgap.eval('ExponentSyllable')
         generator_syllable = libgap.eval('GeneratorSyllable')
         result = []
@@ -668,7 +667,7 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
             n = None
     # derive n from counting names
     if n is None:
-        if isinstance(names, six.string_types):
+        if isinstance(names, str):
             n = len(names.split(','))
         else:
             names = list(names)
@@ -711,7 +710,7 @@ def wrap_FreeGroup(libgap_free_group):
 
         sage: F = libgap.FreeGroup(['a', 'b'])
         sage: type(F)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
     Now wrap it::
 
@@ -743,6 +742,8 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         sage: G = FreeGroup('a, b')
         sage: TestSuite(G).run()
+        sage: G.category()
+        Category of infinite groups
     """
     Element = FreeGroupElement
 
@@ -771,7 +772,11 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         if libgap_free_group is None:
             libgap_free_group = libgap.FreeGroup(generator_names)
         ParentLibGAP.__init__(self, libgap_free_group)
-        Group.__init__(self)
+        if not generator_names:
+            cat = Groups().Finite()
+        else:
+            cat = Groups().Infinite()
+        Group.__init__(self, category=cat)
 
     def _repr_(self):
         """
@@ -833,7 +838,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G([1, 2, -2, 1, 1, -2]) # indirect doctest
             a^3*b^-1
 
-            sage: G( G._gap_gens()[0] )
+            sage: G( a.gap() )
             a
             sage: type(_)
             <class 'sage.groups.free_group.FreeGroup_class_with_category.element_class'>
@@ -903,7 +908,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         """
         return (0,) * self.ngens()
 
-    def quotient(self, relations):
+    def quotient(self, relations, **kwds):
         """
         Return the quotient of ``self`` by the normal subgroup generated
         by the given elements.
@@ -916,6 +921,8 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         - ``relations`` -- A list/tuple/iterable with the elements of
           the free group.
+        - further named arguments, that are passed to the constructor
+          of a finitely presented group.
 
         OUTPUT:
 
@@ -937,9 +944,9 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         Relations are converted to the free group, even if they are not
         elements of it (if possible) ::
 
-            sage: F1.<a,b,c,d>=FreeGroup()
-            sage: F2.<a,b>=FreeGroup()
-            sage: r=a*b/a
+            sage: F1.<a,b,c,d> = FreeGroup()
+            sage: F2.<a,b> = FreeGroup()
+            sage: r = a*b/a
             sage: r.parent()
             Free Group on generators {a, b}
             sage: F1/[r]
@@ -947,6 +954,6 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         """
         from sage.groups.finitely_presented import FinitelyPresentedGroup
-        return FinitelyPresentedGroup(self, tuple(map(self, relations) ) )
+        return FinitelyPresentedGroup(self, tuple(map(self, relations) ), **kwds)
 
     __truediv__ = quotient

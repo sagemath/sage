@@ -1,0 +1,50 @@
+cd src/
+
+sdh_configure --with-curses --enable-shared --disable-static
+echo "Now building static and shared readline libraries..."
+sdh_make
+
+echo "Build succeedeed.  Deleting old readline headers and libs"
+echo "before installing the new ones..."
+# (Note; Actually also readline does this by itself, but doing it
+# here, too, doesn't hurt either.)
+rm -rf "$SAGE_LOCAL"/include/readline/ "$SAGE_LOCAL"/lib/libreadline.*
+if [[ $? -ne 0 ]]; then
+    echo >&2 "Error removing old version of readline."
+    exit 1
+fi
+
+echo "Now installing the new readline headers and libraries..."
+sdh_make_install
+
+case "$UNAME" in
+    Darwin)
+        DYLIB_NAME=libreadline.dylib;;
+    CYGWIN)
+        # It is of course very lame that readline names the file .dll.a, but that's what it does.
+        DYLIB_NAME=libreadline.dll.a;;
+    OpenBSD)
+        # Untested. (David Kirkby, 11th November 2010)
+        # Extension changed from 6.1 to 6.2; still untested. (October 2011)
+        # Extension changed from 6.2 to 6.3; still untested. (June 2014)
+        DYLIB_NAME=libreadline.so.6.3;;
+    FreeBSD)
+        DYLIB_NAME=libreadline.so.6;;
+    HP-UX)
+        DYLIB_NAME=libreadline.sl.6;;
+    *)  # e.g. "Linux" or "SunOS"
+        DYLIB_NAME=libreadline.so
+esac
+
+# Make sure that the install worked, despite whatever the
+# exit code of 'make' or 'make install' was:
+if [[ -f "$SAGE_DESTDIR$SAGE_LOCAL/lib/$DYLIB_NAME" ]]; then
+    echo "Fixing permissions of libraries..."
+    chmod 755 "$SAGE_DESTDIR$SAGE_LOCAL"/lib/libreadline.*
+    chmod 755 "$SAGE_DESTDIR$SAGE_LOCAL"/lib/libhistory.*
+else
+    # One or both of the readline libraries are missing, i.e.
+    # haven't been installed.
+    echo >&2 "Error: Readline's build claims to have finished, but $DYLIB_NAME was not installed.)"
+    exit 1
+fi

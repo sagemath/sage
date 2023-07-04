@@ -21,7 +21,7 @@ one can query it through :meth:`designs.best_known_covering_design_from_LJCR
 
     sage: C = designs.best_known_covering_design_from_LJCR(7, 3, 2)   # optional - internet
     sage: C                            # optional - internet
-    (7,3,2)-covering design of size 7
+    (7, 3, 2)-covering design of size 7
     Lower bound: 7
     Method: lex covering
     Submitted on: 1996-12-01 00:00:00
@@ -30,7 +30,7 @@ one can query it through :meth:`designs.best_known_covering_design_from_LJCR
 
 **Design constructors**
 
-This module gathers the following designs :
+This module gathers the following designs:
 
 .. csv-table::
     :class: contentstable
@@ -58,6 +58,8 @@ This module gathers the following designs :
     :meth:`~sage.combinat.designs.bibd.steiner_triple_system`
     :meth:`~sage.combinat.designs.steiner_quadruple_systems.steiner_quadruple_system`
     :meth:`~sage.combinat.designs.block_design.projective_plane`
+    :meth:`~sage.combinat.designs.biplane`
+    :meth:`~sage.combinat.designs.gen_quadrangles_with_spread`
 
 And the :meth:`designs.best_known_covering_design_from_LJCR
 <sage.combinat.designs.covering_design.best_known_covering_design_www>` function
@@ -72,34 +74,48 @@ REFERENCES:
 .. [1] La Jolla Covering Repository,
   https://math.ccrwest.org/cover.html
 """
+from sage.misc.lazy_import import lazy_import
 
-from sage.combinat.designs.block_design import (BlockDesign,
-                                                ProjectiveGeometryDesign,
-                                                DesarguesianProjectivePlaneDesign,
-                                                projective_plane,
-                                                AffineGeometryDesign,
-                                                WittDesign,
-                                                HadamardDesign,
-                                                Hadamard3Design,
-                                                HughesPlane,
-                                                CremonaRichmondConfiguration)
+lazy_import('sage.combinat.designs.block_design',
+            ('BlockDesign',
+             'ProjectiveGeometryDesign',
+             'DesarguesianProjectivePlaneDesign',
+             'projective_plane',
+             'AffineGeometryDesign',
+             'WittDesign',
+             'HadamardDesign',
+             'Hadamard3Design',
+             'HughesPlane',
+             'CremonaRichmondConfiguration'))
 
-from .database import HigmanSimsDesign
+lazy_import('sage.combinat.designs.database', 'HigmanSimsDesign')
 
-from sage.combinat.designs.steiner_quadruple_systems import steiner_quadruple_system
+lazy_import('sage.combinat.designs.steiner_quadruple_systems',
+            'steiner_quadruple_system')
 
-from sage.combinat.designs.covering_design import best_known_covering_design_www as best_known_covering_design_from_LJCR
+lazy_import('sage.combinat.designs.covering_design',
+            'best_known_covering_design_www',
+            as_='best_known_covering_design_from_LJCR')
 
-from sage.combinat.designs.latin_squares import mutually_orthogonal_latin_squares
+lazy_import('sage.combinat.designs.latin_squares',
+            'mutually_orthogonal_latin_squares')
 
-from sage.combinat.designs.orthogonal_arrays import transversal_design, incomplete_orthogonal_array
+lazy_import('sage.combinat.designs.orthogonal_arrays',
+            ('transversal_design', 'incomplete_orthogonal_array'))
 
+lazy_import('sage.combinat.designs.difference_family', 'difference_family')
+lazy_import('sage.combinat.designs.difference_matrices', 'difference_matrix')
 
-from sage.combinat.designs.difference_family import difference_family
-from .difference_matrices import difference_matrix
+lazy_import('sage.combinat.designs.bibd',
+            ('balanced_incomplete_block_design', 'steiner_triple_system', 'biplane'))
+lazy_import('sage.combinat.designs.resolvable_bibd',
+            ('resolvable_balanced_incomplete_block_design',
+             'kirkman_triple_system'))
+lazy_import('sage.combinat.designs.group_divisible_designs',
+            'group_divisible_design')
 
-from sage.combinat.designs.bibd import balanced_incomplete_block_design, steiner_triple_system
-from sage.combinat.designs.resolvable_bibd import resolvable_balanced_incomplete_block_design, kirkman_triple_system
-from sage.combinat.designs.group_divisible_designs import group_divisible_design
+lazy_import('sage.combinat.designs.orthogonal_arrays',
+            'OAMainFunctions', as_='orthogonal_arrays')
 
-from .orthogonal_arrays import OAMainFunctions as orthogonal_arrays
+lazy_import('sage.combinat.designs.gen_quadrangles_with_spread',
+            ('generalised_quadrangle_with_spread', 'generalised_quadrangle_hermitian_with_ovoid'))

@@ -55,13 +55,15 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
-from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+from sage.rings.integer_ring import ZZ
+from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 
-class ExtPowerFreeModule(FiniteRankFreeModule):
+class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
     r"""
     Exterior power of a free module of finite rank over a commutative
     ring.
@@ -83,7 +85,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
     `R`, where `n` is the rank of `M`.
     Accordingly, the class :class:`ExtPowerFreeModule` inherits from the
     class
-    :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`.
+    :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule_abstract`.
 
     This is a Sage *parent* class, whose *element* class is
     :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`
@@ -140,7 +142,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
         Alternating contravariant tensor of degree 2 on the Rank-3 free
          module M over the Integer Ring
         sage: a.display() # expansion with respect to M's default basis (e)
-        e_0/\e_1
+        e_0∧e_1
         sage: from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
         sage: isinstance(a, AlternatingContrTensor)
         True
@@ -168,7 +170,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
         Alternating contravariant tensor a of degree 2 on the Rank-3
          free module M over the Integer Ring
         sage: a.display(e)
-        a = 3 e_0/\e_1 - e_0/\e_2 + 4 e_1/\e_2
+        a = 3 e_0∧e_1 - e_0∧e_2 + 4 e_1∧e_2
 
     An alternative is to construct the alternating contravariant tensor from an
      empty list of components and to set the nonzero components afterwards::
@@ -178,7 +180,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
         sage: a.set_comp(e)[0,2] = -1
         sage: a.set_comp(e)[1,2] = 4
         sage: a.display(e)
-        a = 3 e_0/\e_1 - e_0/\e_2 + 4 e_1/\e_2
+        a = 3 e_0∧e_1 - e_0∧e_2 + 4 e_1∧e_2
 
     The exterior powers are unique::
 
@@ -209,9 +211,9 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
         sage: ta = T20(a) ; ta
         Type-(2,0) tensor a on the Rank-3 free module M over the Integer Ring
         sage: ta.display(e)
-        a = 3 e_0*e_1 - e_0*e_2 - 3 e_1*e_0 + 4 e_1*e_2 + e_2*e_0 - 4 e_2*e_1
+        a = 3 e_0⊗e_1 - e_0⊗e_2 - 3 e_1⊗e_0 + 4 e_1⊗e_2 + e_2⊗e_0 - 4 e_2⊗e_1
         sage: a.display(e)
-        a = 3 e_0/\e_1 - e_0/\e_2 + 4 e_1/\e_2
+        a = 3 e_0∧e_1 - e_0∧e_2 + 4 e_1∧e_2
         sage: ta.symmetries()  # the antisymmetry is of course preserved
         no symmetry;  antisymmetry: (0, 1)
         sage: ta == a  # equality as type-(2,0) tensors
@@ -234,36 +236,39 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
             sage: TestSuite(A).run()
 
         """
-        from sage.functions.other import binomial
+        from sage.arith.misc import binomial
+        from sage.typeset.unicode_characters import unicode_bigwedge
         self._fmodule = fmodule
-        self._degree = degree
+        self._degree = ZZ(degree)
         rank = binomial(fmodule._rank, degree)
-        self._zero_element = 0 # provisory (to avoid infinite recursion
-                               # in what follows)
         if name is None and fmodule._name is not None:
-            name = r'/\^{}('.format(degree) + fmodule._name + ')'
+            name = unicode_bigwedge + r'^{}('.format(degree) \
+                   + fmodule._name + ')'
         if latex_name is None and fmodule._latex_name is not None:
-            latex_name = r'\Lambda^{' + str(degree) + r'}\left(' + \
-                                       fmodule._latex_name + r'\right)'
-        FiniteRankFreeModule.__init__(self, fmodule._ring, rank,
-                                      name=name, latex_name=latex_name,
-                                      start_index=fmodule._sindex,
-                             output_formatter=fmodule._output_formatter)
-        # Unique representation:
-        if self._degree == 1 or \
-           self._degree in self._fmodule._exterior_powers:
-            raise ValueError("the {}th exterior power of ".format(degree) +
-                             "{}".format(self._fmodule) +
-                             " has already been created")
-        else:
-            self._fmodule._exterior_powers[self._degree] = self
-        # Zero element
-        self._zero_element = self._element_constructor_(name='zero',
-                                                        latex_name='0')
-        for basis in self._fmodule._known_bases:
-            self._zero_element._components[basis] = \
-                                     self._zero_element._new_comp(basis)
-            # (since new components are initialized to zero)
+            latex_name = r'\Lambda^{' + str(degree) + r'}\left(' \
+                         + fmodule._latex_name + r'\right)'
+        super().__init__(fmodule._ring, rank,
+                         name=name, latex_name=latex_name)
+        fmodule._all_modules.add(self)
+
+    def construction(self):
+        r"""
+        Return the functorial construction of ``self``.
+
+        This implementation just returns ``None``, as no functorial construction is implemented.
+
+        TESTS::
+
+            sage: from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: A = ExtPowerFreeModule(M, 2)
+            sage: A.construction() is None
+            True
+        """
+        # No construction until https://github.com/sagemath/sage/issues/30242
+        # makes this a quotient of TensorFreeModule
+        return None
 
     #### Parent methods
 
@@ -285,11 +290,11 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
              free module M over the Integer Ring
             sage: a[e,0,2], a[e,1,2] = 3, -1
             sage: a.display()
-            a = 3 e_0/\e_2 - e_1/\e_2
+            a = 3 e_0∧e_2 - e_1∧e_2
 
         """
         if isinstance(comp, (int, Integer)) and comp == 0:
-            return self._zero_element
+            return self.zero()
         resu = self.element_class(self._fmodule, self._degree, name=name,
                                   latex_name=latex_name)
         if comp:
@@ -298,7 +303,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) alternating contravariant tensor.
+        Construct some (unnamed) alternating contravariant tensor.
 
         EXAMPLES::
 
@@ -308,27 +313,68 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
             Alternating contravariant tensor of degree 2 on the 4-dimensional vector space M
              over the Rational Field
             sage: a.display()
-            1/2 e_0/\e_1
+            1/2 e_0∧e_1
             sage: a = M.exterior_power(3)._an_element_() ; a
             Alternating contravariant tensor of degree 3 on the 4-dimensional vector space M
              over the Rational Field
             sage: a.display()
-            1/2 e_0/\e_1/\e_2
+            1/2 e_0∧e_1∧e_2
             sage: a = M.exterior_power(4)._an_element_() ; a
             Alternating contravariant tensor of degree 4 on the 4-dimensional vector space M
              over the Rational Field
             sage: a.display()
-            1/2 e_0/\e_1/\e_2/\e_3
+            1/2 e_0∧e_1∧e_2∧e_3
+
+        TESTS:
+
+        When the base module has no default basis, a default
+        basis will be set for it::
+
+            sage: M2 = FiniteRankFreeModule(QQ, 4, name='M2')
+            sage: a = M2.exterior_power(2)._an_element_(); a
+            Alternating contravariant tensor of degree 2
+            on the 4-dimensional vector space M2 over the Rational Field
+            sage: a + a
+            Alternating contravariant tensor of degree 2
+            on the 4-dimensional vector space M2 over the Rational Field
+            sage: M2.default_basis()
+            Basis (e_0,e_1,e_2,e_3) on the 4-dimensional vector space M2 over the Rational Field
 
         """
         resu = self.element_class(self._fmodule, self._degree)
-        if self._fmodule._def_basis is not None:
-            sindex = self._fmodule._sindex
-            ind = [sindex + i for i in range(resu._tensor_rank)]
-            resu.set_comp()[ind] = self._fmodule._ring.an_element()
+        # Make sure that the base module has a default basis
+        self._fmodule.an_element()
+        sindex = self._fmodule._sindex
+        ind = [sindex + i for i in range(resu._tensor_rank)]
+        resu.set_comp()[ind] = self._fmodule._ring.an_element()
         return resu
 
     #### End of parent methods
+
+    @cached_method
+    def zero(self):
+        r"""
+        Return the zero of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: A = M.exterior_power(2)
+            sage: A.zero()
+            Alternating contravariant tensor zero of degree 2 on the Rank-3 free
+             module M over the Integer Ring
+            sage: A(0) is A.zero()
+            True
+
+        """
+        resu = self._element_constructor_(name='zero', latex_name='0')
+        for basis in self._fmodule._known_bases:
+            resu._add_comp_unsafe(basis)
+            # (since new components are initialized to zero)
+        resu._is_zero = True # This element is certainly zero
+        resu.set_immutable()
+        return resu
 
     def _repr_(self):
         r"""
@@ -345,15 +391,10 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
             '4th exterior power of the Rank-5 free module M over the Integer Ring'
             sage: M.exterior_power(5)._repr_()
             '5th exterior power of the Rank-5 free module M over the Integer Ring'
-
+            sage: M.exterior_power(21)._repr_()
+            '21st exterior power of the Rank-5 free module M over the Integer Ring'
         """
-        description = "{}".format(self._degree)
-        if self._degree == 2:
-            description += "nd"
-        elif self._degree == 3:
-            description += "rd"
-        else:
-            description += "th"
+        description = "{}".format(self._degree.ordinal_str())
         description += " exterior power of the {}".format(self._fmodule)
         return description
 
@@ -399,11 +440,10 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
         """
         return self._degree
 
-
 #***********************************************************************
 
 
-class ExtPowerDualFreeModule(FiniteRankFreeModule):
+class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
     r"""
     Exterior power of the dual of a free module of finite rank
     over a commutative ring.
@@ -425,7 +465,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
     `R`, where `n` is the rank of `M`.
     Accordingly, the class :class:`ExtPowerDualFreeModule` inherits from
     the class
-    :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`.
+    :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule_abstract`.
 
     This is a Sage *parent* class, whose *element* class is
     :class:`~sage.tensor.modules.free_module_alt_form.FreeModuleAltForm`.
@@ -482,7 +522,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
         Alternating form of degree 2 on the Rank-3 free module M over the
          Integer Ring
         sage: a.display() # expansion with respect to M's default basis (e)
-        e^0/\e^1
+        e^0∧e^1
         sage: from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
         sage: isinstance(a, FreeModuleAltForm)
         True
@@ -510,7 +550,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
         Alternating form a of degree 2 on the Rank-3 free module M over the
          Integer Ring
         sage: a.display(e)
-        a = 3 e^0/\e^1 - e^0/\e^2 + 4 e^1/\e^2
+        a = 3 e^0∧e^1 - e^0∧e^2 + 4 e^1∧e^2
 
     An alternative is to construct the alternating form from an empty list of
     components and to set the nonzero components afterwards::
@@ -520,7 +560,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
         sage: a.set_comp(e)[0,2] = -1
         sage: a.set_comp(e)[1,2] = 4
         sage: a.display(e)
-        a = 3 e^0/\e^1 - e^0/\e^2 + 4 e^1/\e^2
+        a = 3 e^0∧e^1 - e^0∧e^2 + 4 e^1∧e^2
 
     The exterior powers are unique::
 
@@ -536,21 +576,12 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
         sage: latex(M.dual())
         M^*
 
-    Since any tensor of type (0,1) is a linear form, there is a coercion map
-    from the set `T^{(0,1)}(M)` of such tensors to `M^*`::
+    It also coincides with the module of type-`(0,1)` tensors::
 
-        sage: T01 = M.tensor_module(0,1) ; T01
-        Free module of type-(0,1) tensors on the Rank-3 free module M over the
-         Integer Ring
-        sage: M.dual().has_coerce_map_from(T01)
+        sage: M.dual_exterior_power(1) is M.tensor_module(0,1)
         True
 
-    There is also a coercion map in the reverse direction::
-
-        sage: T01.has_coerce_map_from(M.dual())
-        True
-
-    For a degree `p\geq 2`, the coercion holds only in the direction
+    For a degree `p\geq 2`, there is a coercion map
     `\Lambda^p(M^*)\rightarrow T^{(0,p)}(M)`::
 
         sage: T02 = M.tensor_module(0,2) ; T02
@@ -561,32 +592,14 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
         sage: A.has_coerce_map_from(T02)
         False
 
-    The coercion map `T^{(0,1)}(M) \rightarrow M^*` in action::
-
-        sage: b = T01([-2,1,4], basis=e, name='b') ; b
-        Type-(0,1) tensor b on the Rank-3 free module M over the Integer Ring
-        sage: b.display(e)
-        b = -2 e^0 + e^1 + 4 e^2
-        sage: lb = M.dual()(b) ; lb
-        Linear form b on the Rank-3 free module M over the Integer Ring
-        sage: lb.display(e)
-        b = -2 e^0 + e^1 + 4 e^2
-
-    The coercion map `M^* \rightarrow T^{(0,1)}(M)` in action::
-
-        sage: tlb = T01(lb) ; tlb
-        Type-(0,1) tensor b on the Rank-3 free module M over the Integer Ring
-        sage: tlb == b
-        True
-
     The coercion map `\Lambda^2(M^*)\rightarrow T^{(0,2)}(M)` in action::
 
         sage: ta = T02(a) ; ta
         Type-(0,2) tensor a on the Rank-3 free module M over the Integer Ring
         sage: ta.display(e)
-        a = 3 e^0*e^1 - e^0*e^2 - 3 e^1*e^0 + 4 e^1*e^2 + e^2*e^0 - 4 e^2*e^1
+        a = 3 e^0⊗e^1 - e^0⊗e^2 - 3 e^1⊗e^0 + 4 e^1⊗e^2 + e^2⊗e^0 - 4 e^2⊗e^1
         sage: a.display(e)
-        a = 3 e^0/\e^1 - e^0/\e^2 + 4 e^1/\e^2
+        a = 3 e^0∧e^1 - e^0∧e^2 + 4 e^1∧e^2
         sage: ta.symmetries() # the antisymmetry is of course preserved
         no symmetry;  antisymmetry: (0, 1)
 
@@ -607,41 +620,39 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
             sage: TestSuite(A).run()
 
         """
-        from sage.functions.other import binomial
+        from sage.arith.misc import binomial
+        from sage.typeset.unicode_characters import unicode_bigwedge
         self._fmodule = fmodule
-        self._degree = degree
+        self._degree = ZZ(degree)
         rank = binomial(fmodule._rank, degree)
-        self._zero_element = 0 # provisory (to avoid infinite recursion in what
-                               # follows)
-        if degree == 1:  # case of the dual
-            if name is None and fmodule._name is not None:
-                name = fmodule._name + '*'
-            if latex_name is None and fmodule._latex_name is not None:
-                latex_name = fmodule._latex_name + r'^*'
-        else:
-            if name is None and fmodule._name is not None:
-                name = r'/\^{}('.format(degree) + fmodule._name + '*)'
-            if latex_name is None and fmodule._latex_name is not None:
-                latex_name = r'\Lambda^{' + str(degree) + r'}\left(' + \
-                             fmodule._latex_name + r'^*\right)'
-        FiniteRankFreeModule.__init__(self, fmodule._ring, rank, name=name,
-                                      latex_name=latex_name,
-                                      start_index=fmodule._sindex,
-                                    output_formatter=fmodule._output_formatter)
-        # Unique representation:
-        if self._degree in self._fmodule._dual_exterior_powers:
-            raise ValueError("the {}th exterior power of ".format(degree) +
-                             "the dual of {}".format(self._fmodule) +
-                             " has already been created")
-        else:
-            self._fmodule._dual_exterior_powers[self._degree] = self
-        # Zero element
-        self._zero_element = self._element_constructor_(name='zero',
-                                                        latex_name='0')
-        for basis in self._fmodule._known_bases:
-            self._zero_element._components[basis] = \
-                                            self._zero_element._new_comp(basis)
-            # (since new components are initialized to zero)
+        if name is None and fmodule._name is not None:
+            name = unicode_bigwedge + r'^{}('.format(degree) \
+                   + fmodule._name + '*)'
+        if latex_name is None and fmodule._latex_name is not None:
+            latex_name = r'\Lambda^{' + str(degree) + r'}\left(' \
+                         + fmodule._latex_name + r'^*\right)'
+        super().__init__(fmodule._ring, rank, name=name,
+                         latex_name=latex_name)
+        fmodule._all_modules.add(self)
+
+    def construction(self):
+        r"""
+        Return the functorial construction of ``self``.
+
+        This implementation just returns ``None``, as no functorial construction is implemented.
+
+        TESTS::
+
+            sage: from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: A = ExtPowerDualFreeModule(M, 2)
+            sage: A.construction() is None
+            True
+        """
+        # No construction until https://github.com/sagemath/sage/issues/30242
+        # makes this a quotient of TensorFreeModule
+        return None
 
     #### Parent methods
 
@@ -654,13 +665,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: e = M.basis('e')
-            sage: A = M.dual_exterior_power(1)
-            sage: a = A._element_constructor_(0) ; a
-            Linear form zero on the Rank-3 free module M over the Integer Ring
-            sage: a = A._element_constructor_([2,0,-1], name='a') ; a
-            Linear form a on the Rank-3 free module M over the Integer Ring
-            sage: a.display()
-            a = 2 e^0 - e^2
             sage: A = M.dual_exterior_power(2)
             sage: a = A._element_constructor_(0) ; a
             Alternating form zero of degree 2 on the Rank-3 free module M over
@@ -670,11 +674,11 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
              the Integer Ring
             sage: a[e,0,2], a[e,1,2] = 3, -1
             sage: a.display()
-            a = 3 e^0/\e^2 - e^1/\e^2
+            a = 3 e^0∧e^2 - e^1∧e^2
 
         """
         if isinstance(comp, (int, Integer)) and comp == 0:
-            return self._zero_element
+            return self.zero()
         if isinstance(comp, FreeModuleTensor):
             # coercion of a tensor of type (0,1) to a linear form
             tensor = comp # for readability
@@ -697,83 +701,76 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) alternating form.
+        Construct some (unnamed) alternating form.
 
         EXAMPLES::
 
             sage: M = FiniteRankFreeModule(QQ, 4, name='M')
             sage: e = M.basis('e')
-            sage: a = M.dual_exterior_power(1)._an_element_() ; a
-            Linear form on the 4-dimensional vector space M over the Rational
-             Field
-            sage: a.display()
-            1/2 e^0
             sage: a = M.dual_exterior_power(2)._an_element_() ; a
             Alternating form of degree 2 on the 4-dimensional vector space M
              over the Rational Field
             sage: a.display()
-            1/2 e^0/\e^1
+            1/2 e^0∧e^1
             sage: a = M.dual_exterior_power(3)._an_element_() ; a
             Alternating form of degree 3 on the 4-dimensional vector space M
              over the Rational Field
             sage: a.display()
-            1/2 e^0/\e^1/\e^2
+            1/2 e^0∧e^1∧e^2
             sage: a = M.dual_exterior_power(4)._an_element_() ; a
             Alternating form of degree 4 on the 4-dimensional vector space M
              over the Rational Field
             sage: a.display()
-            1/2 e^0/\e^1/\e^2/\e^3
+            1/2 e^0∧e^1∧e^2∧e^3
+
+        TESTS:
+
+        When the base module has no default basis, a default
+        basis will be set for it::
+
+            sage: M2 = FiniteRankFreeModule(QQ, 4, name='M2')
+            sage: a = M2.dual_exterior_power(2)._an_element_(); a
+            Alternating form of degree 2 on the 4-dimensional vector space M2 over the Rational Field
+            sage: a + a
+            Alternating form of degree 2 on the 4-dimensional vector space M2 over the Rational Field
+            sage: M2.default_basis()
+            Basis (e_0,e_1,e_2,e_3) on the 4-dimensional vector space M2 over the Rational Field
 
         """
         resu = self.element_class(self._fmodule, self._degree)
-        if self._fmodule._def_basis is not None:
-            sindex = self._fmodule._sindex
-            ind = [sindex + i for i in range(resu._tensor_rank)]
-            resu.set_comp()[ind] = self._fmodule._ring.an_element()
+        # Make sure that the base module has a default basis
+        self._fmodule.an_element()
+        sindex = self._fmodule._sindex
+        ind = [sindex + i for i in range(resu._tensor_rank)]
+        resu.set_comp()[ind] = self._fmodule._ring.an_element()
         return resu
 
-    def _coerce_map_from_(self, other):
+    #### End of parent methods
+
+    @cached_method
+    def zero(self):
         r"""
-        Determine whether coercion to ``self`` exists from other parent.
+        Return the zero of ``self``.
 
-        EXAMPLES:
-
-        Sets of type-`(0,1)` tensors coerce to ``self`` if the degree is 1::
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: L1 = M.dual_exterior_power(1) ; L1
-            Dual of the Rank-3 free module M over the Integer Ring
-            sage: T01 = M.tensor_module(0,1) ; T01
-            Free module of type-(0,1) tensors on the Rank-3 free module M over
+            sage: e = M.basis('e')
+            sage: A = M.dual_exterior_power(2)
+            sage: A.zero()
+            Alternating form zero of degree 2 on the Rank-3 free module M over
              the Integer Ring
-            sage: L1._coerce_map_from_(T01)
+            sage: A(0) is A.zero()
             True
 
-        Of course, coercions from other tensor types are meaningless::
-
-            sage: L1._coerce_map_from_(M.tensor_module(1,0))
-            False
-            sage: L1._coerce_map_from_(M.tensor_module(0,2))
-            False
-
-        If the degree is larger than 1, there is no coercion::
-
-            sage: L2 = M.dual_exterior_power(2) ; L2
-            2nd exterior power of the dual of the Rank-3 free module M over
-             the Integer Ring
-            sage: L2._coerce_map_from_(M.tensor_module(0,2))
-            False
-
         """
-        from sage.tensor.modules.tensor_free_module import TensorFreeModule
-        if isinstance(other, TensorFreeModule):
-            # coercion of a type-(0,1) tensor to a linear form
-            if self._fmodule is other._fmodule and self._degree == 1 and \
-               other.tensor_type() == (0,1):
-                return True
-        return False
-
-    #### End of parent methods
+        resu = self._element_constructor_(name='zero', latex_name='0')
+        for basis in self._fmodule._known_bases:
+            resu._components[basis] = resu._new_comp(basis)
+            # (since new components are initialized to zero)
+        resu._is_zero = True # This element is certainly zero
+        resu.set_immutable()
+        return resu
 
     def _repr_(self):
         r"""
@@ -782,8 +779,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
         EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 5, name='M')
-            sage: M.dual_exterior_power(1)._repr_()
-            'Dual of the Rank-5 free module M over the Integer Ring'
             sage: M.dual_exterior_power(2)._repr_()
             '2nd exterior power of the dual of the Rank-5 free module M over the Integer Ring'
             sage: M.dual_exterior_power(3)._repr_()
@@ -792,17 +787,11 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
             '4th exterior power of the dual of the Rank-5 free module M over the Integer Ring'
             sage: M.dual_exterior_power(5)._repr_()
             '5th exterior power of the dual of the Rank-5 free module M over the Integer Ring'
+            sage: M.dual_exterior_power(21)._repr_()
+            '21st exterior power of the dual of the Rank-5 free module M over the Integer Ring'
 
         """
-        if self._degree == 1:
-            return "Dual of the {}".format(self._fmodule)
-        description = "{}".format(self._degree)
-        if self._degree == 2:
-            description += "nd"
-        elif self._degree == 3:
-            description += "rd"
-        else:
-            description += "th"
+        description = "{}".format(self._degree.ordinal_str())
         description += " exterior power of the dual of the {}".format(
                                                                  self._fmodule)
         return description
@@ -847,5 +836,3 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
 
         """
         return self._degree
-
-

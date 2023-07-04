@@ -1,0 +1,8 @@
+cd src
+
+# Workaround for bugs with -D_FORTIFY_SOURCE=2 on antiques
+export CPPFLAGS='-U_FORTIFY_SOURCE'
+
+sdh_configure
+sdh_make
+sdh_make_install -j1

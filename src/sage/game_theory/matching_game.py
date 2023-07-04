@@ -1,5 +1,5 @@
 """
-Matching games.
+Matching games
 
 This module implements a class for matching games (stable marriage problems)
 [DI1989]_. At present the extended Gale-Shapley algorithm is implemented
@@ -20,7 +20,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from copy import deepcopy
 from sage.graphs.bipartite_graph import BipartiteGraph
 
@@ -491,18 +491,8 @@ class MatchingGame(SageObject):
                 and all(s1.pref == s2.pref for s1, s2 in
                         zip(set(self._suitors), set(other._suitors))))
 
-    def __hash__(self):
-        """
-        Raise an error because this is mutable.
-
-        EXAMPLES::
-
-            sage: hash(MatchingGame(3))
-            Traceback (most recent call last):
-            ...
-            TypeError: unhashable because matching games are mutable
-        """
-        raise TypeError("unhashable because matching games are mutable")
+    __hash__ = None
+   # not hashable because this is mutable.
 
     def plot(self):
         r"""
@@ -948,7 +938,7 @@ class MatchingGame(SageObject):
         return {key: self._sol_dict[key][0] for key in self._suitors}
 
 
-class Player(object):
+class Player():
     r"""
     A class to act as a data holder for the players used of the
     matching games.

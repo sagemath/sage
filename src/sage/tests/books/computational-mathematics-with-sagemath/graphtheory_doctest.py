@@ -40,10 +40,10 @@ Sage example in ./graphtheory.tex, line 128::
   sage: g.delete_edges([(1,5), (2,5)])
   sage: g.order(), g.size()
   (6, 3)
-  sage: g.vertices()
+  sage: sorted(g.vertices(sort=False), key=str)
   [1, 2, 5, 9, 'Edinburgh', 'Madrid']
-  sage: g.edges()
-  [(1, 9, None), (2, 9, None), ('Edinburgh', 'Madrid', None)]
+  sage: sorted(g.edges(sort=False, labels=False), key=str)
+  [('Edinburgh', 'Madrid'), (1, 9), (2, 9)]
 
 Sage example in ./graphtheory.tex, line 159::
 
@@ -86,7 +86,7 @@ Sage example in ./graphtheory.tex, line 332::
 Sage example in ./graphtheory.tex, line 340::
 
   sage: all( graphs.KneserGraph(n,k).chromatic_number() == n - 2*k + 2
-  ....:      for n in range(5,9) for k in range(2,floor(n/2)) )
+  ....:      for n in range(5, 9) for k in range(2, n // 2) )
   True
 
 Sage example in ./graphtheory.tex, line 459::
@@ -219,12 +219,12 @@ Sage example in ./graphtheory.tex, line 1625::
 
   sage: # Number of colors used
   sage: max(color.values()) + 1
-  6
+  5
 
 Sage example in ./graphtheory.tex, line 1635::
 
   sage: P = Permutations([0,1,2,3]); P.random_element()
-  [2, 0, 1, 3]
+  [3, 2, 1, 0]
 
 Sage example in ./graphtheory.tex, line 1646::
 
@@ -233,7 +233,7 @@ Sage example in ./graphtheory.tex, line 1646::
 Sage example in ./graphtheory.tex, line 1656::
 
   sage: n_tests = 30
-  sage: vertices = g.vertices()
+  sage: vertices = g.vertices(sort=False)
   sage: P = Permutations(range(n))
   sage: best_coloring = {}
   sage: best_chromatic_number = +oo
@@ -257,14 +257,14 @@ Sage example in ./graphtheory.tex, line 1678::
 Sage example in ./graphtheory.tex, line 1697::
 
   sage: best_chromatic_number # Number of colors used
-  4
+  5
 
 Sage example in ./graphtheory.tex, line 1718::
 
   sage: def greedy_coloring(g, permutation):
   ....:     n = g.order()
   ....:     available_colors = Set(range(n))
-  ....:     vertices = g.vertices()
+  ....:     vertices = g.vertices(sort=False)
   ....:     color = {}
   ....:     for i in range(n):
   ....:         u = vertices[permutation[i]]
@@ -280,10 +280,10 @@ Sage example in ./graphtheory.tex, line 1736::
 Sage example in ./graphtheory.tex, line 1746::
 
   sage: P = Permutations(range(g.order()))
-  sage: n_colors, coloration = min(
-  ....:    greedy_coloring(g, P.random_element()) for i in range(50))
+  sage: n_colors, coloration = min([greedy_coloring(g, P.random_element())
+  ....:     for i in range(50)], key=lambda c: c[0])
   sage: n_colors
-  4
+  5
 
 Sage example in ./graphtheory.tex, line 1782::
 
@@ -322,16 +322,16 @@ Sage example in ./graphtheory.tex, line 1989::
   ....:  # the function from V(H) to V(G) we aim to define:
   ....:  f = {}
   ....:  # set of vertices of G not yet used by f:
-  ....:  G_remain = G.vertices()
+  ....:  G_remain = G.vertices(sort=False)
   ....:  # set of vertices having no representative yet:
-  ....:  H_remain = H.vertices()
+  ....:  H_remain = H.vertices(sort=False)
   ....:  # while the function is not complete:
   ....:  while H_remain:
   ....:      v = H_remain.pop(0) # look for the next vertex of H
   ....:      # and its potential images in G
-  ....:      candidates = [u for u in G_remain if
-  ....:             all([H.has_edge(h,v) == G.has_edge(f_h,u)
-  ....:                     for h, f_h in f.items()])]
+  ....:      candidates = [u for u in G_remain
+  ....:                    if all(H.has_edge(h,v) == G.has_edge(f_h,u)
+  ....:                           for h, f_h in f.items())]
   ....:      # if no candidate is found, we abort immediately
   ....:      if not candidates:
   ....:          raise ValueError("No copy of H has been found in G")
@@ -342,14 +342,14 @@ Sage example in ./graphtheory.tex, line 1989::
 
 Sage example in ./graphtheory.tex, line 2012::
 
-  sage: set_random_seed(3)
+  sage: set_random_seed(4)
 
 Sage example in ./graphtheory.tex, line 2021::
 
   sage: H = graphs.PetersenGraph()
   sage: G = graphs.RandomGNP(500,0.5)
   sage: find_induced(H,G)
-  {0: 0, 1: 4, 2: 3, 3: 7, 4: 35, 5: 10, 6: 67, 7: 108, 8: 240, 9: 39}
+  {0: 0, 1: 1, 2: 3, 3: 13, 4: 7, 5: 62, 6: 24, 7: 232, 8: 67, 9: 45}
 
 Sage example in ./graphtheory.tex, line 2070::
 
@@ -380,8 +380,9 @@ Sage example in ./graphtheory.tex, line 2139::
 Sage example in ./graphtheory.tex, line 2182::
 
   sage: M = Graph(G.matching())
-  sage: for i in tasks:
-  ....:   print("t{} assigned to {}".format(i,M.neighbors('t'+str(i))[0]))
+  sage: txt = "t{} assigned to {}"
+  sage: for i in tasks:                                        # random
+  ....:     print(txt.format(i, M.neighbors('t' + str(i))[0])) # random
   t0 assigned to w2
   t1 assigned to w3
   t2 assigned to w5
@@ -416,4 +417,3 @@ Sage example in ./graphtheory.tex, line 2260::
   sage: g.show(edge_colors=edge_coloring(g, hex_colors=True))
 
 """
-

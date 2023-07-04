@@ -7,10 +7,9 @@ EXAMPLES::
 
 REFERENCE:
 
-- [1] McKay, Brendan D. Practical Graph Isomorphism. Congressus Numerantium,
+- [1] McKay, Brendan D. *Practical Graph Isomorphism*. Congressus Numerantium,
   Vol. 30 (1981), pp. 45-87.
 """
-
 # ****************************************************************************
 #       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
@@ -21,13 +20,11 @@ REFERENCE:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function
-
 from .data_structures cimport *
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
 from sage.graphs.base.sparse_graph cimport SparseGraph
-from sage.graphs.base.dense_graph cimport DenseGraph
+from sage.graphs.base.dense_graph cimport DenseGraph, copy_dense_graph
 from .double_coset cimport double_coset
 
 
@@ -72,7 +69,8 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
     cdef list partition, cell
     cdef bint loops = 0
 
-    from sage.graphs.all import Graph, DiGraph
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
     from sage.graphs.generic_graph import GenericGraph
     from copy import copy
     which_G = 1
@@ -90,7 +88,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
                 n = G_in.num_verts()
             elif n != G_in.num_verts():
                 return False
-            if G_in.vertices() != list(xrange(n)):
+            if G_in.vertices(sort=True) != list(xrange(n)):
                 G_in = copy(G_in)
                 to = G_in.relabel(return_map=True)
                 frm = {}
@@ -118,7 +116,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             G = <CGraph> G_in
             if n == -1:
                 n = G.num_verts
-            elif n != G.num_verts:
+            elif n != <int>G.num_verts:
                 return False
             if not loops:
                 for i from 0 <= i < n:
@@ -130,7 +128,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             if first:
                 partition = partn
         else:
-            raise TypeError("G must be a Sage graph.")
+            raise TypeError("G must be a Sage graph")
         if first: frm1=frm;to1=to
         else: frm2=frm;to2=to
         GS.G = G
@@ -277,7 +275,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
 
         sage: G = graphs.CubeGraph(3)
         sage: G.relabel()
-        sage: Pi = [G.vertices()]
+        sage: Pi = [G.vertices(sort=False)]
         sage: st(G, Pi, order=True)[2]
         48
 
@@ -289,7 +287,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         sage: for i,j,_ in G.edge_iterator():
         ....:  GD.add_arc(i,j); GD.add_arc(j,i)
         ....:  GS.add_arc(i,j); GS.add_arc(j,i)
-        sage: Pi=[range(20)]
+        sage: Pi = [range(20)]
         sage: a,b = st(G, Pi)
         sage: asp,bsp = st(GS, Pi)
         sage: ade,bde = st(GD, Pi)
@@ -315,30 +313,30 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     Cubes!::
 
         sage: C = graphs.CubeGraph(1)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         2
         sage: C = graphs.CubeGraph(2)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         8
         sage: C = graphs.CubeGraph(3)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         48
         sage: C = graphs.CubeGraph(4)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         384
         sage: C = graphs.CubeGraph(5)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         3840
         sage: C = graphs.CubeGraph(6)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         46080
 
     One can also turn off the indicator function (note: this will take longer)::
 
         sage: D1 = DiGraph({0:[2],2:[0],1:[1]}, loops=True)
         sage: D2 = DiGraph({1:[2],2:[1],0:[0]}, loops=True)
-        sage: a,b = st(D1, [D1.vertices()], dig=True, use_indicator_function=False)
-        sage: c,d = st(D2, [D2.vertices()], dig=True, use_indicator_function=False)
+        sage: a,b = st(D1, [D1.vertices(sort=False)], dig=True, use_indicator_function=False)
+        sage: c,d = st(D2, [D2.vertices(sort=False)], dig=True, use_indicator_function=False)
         sage: b==d
         True
 
@@ -348,11 +346,11 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         sage: alqs = [Set(c) for c in (HS.complement()).cliques_maximum()]
         sage: Y = Graph([alqs, lambda s,t: len(s.intersection(t))==0])
         sage: Y0,Y1 = Y.connected_components_subgraphs()
-        sage: st(Y0, [Y0.vertices()])[1] == st(Y1, [Y1.vertices()])[1]
+        sage: st(Y0, [Y0.vertices(sort=False)])[1] == st(Y1, [Y1.vertices(sort=False)])[1]
         True
-        sage: st(Y0, [Y0.vertices()])[1] == st(HS, [HS.vertices()])[1]
+        sage: st(Y0, [Y0.vertices(sort=False)])[1] == st(HS, [HS.vertices(sort=False)])[1]
         True
-        sage: st(HS, [HS.vertices()])[1] == st(Y1, [Y1.vertices()])[1]
+        sage: st(HS, [HS.vertices(sort=False)])[1] == st(Y1, [Y1.vertices(sort=False)])[1]
         True
 
     Certain border cases need to be tested as well::
@@ -381,13 +379,14 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     cdef bint loops
     cdef aut_gp_and_can_lab *output
     cdef PartitionStack *part
-    from sage.graphs.all import Graph, DiGraph
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
     from sage.graphs.generic_graph import GenericGraph
     from copy import copy
     if isinstance(G_in, GenericGraph):
         loops = G_in.has_loops()
         n = G_in.num_verts()
-        if G_in.vertices() != list(xrange(n)):
+        if G_in.vertices(sort=False) != list(xrange(n)):
             G_in = copy(G_in)
             to = G_in.relabel(return_map=True)
             frm = {}
@@ -419,7 +418,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         for a in G.verts(): to[a]=a
         frm = to
     else:
-        raise TypeError("G must be a Sage graph.")
+        raise TypeError("G must be a Sage graph")
 
     cdef GraphStruct GS = GraphStruct()
     GS.G = G
@@ -464,7 +463,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     # prepare output
     list_of_gens = []
     for i from 0 <= i < output.num_gens:
-        list_of_gens.append([output.generators[j+i*G.num_verts] for j from 0 <= j < G.num_verts])
+        list_of_gens.append([output.generators[j+i*G.num_verts] for j from 0 <= j < <int>G.num_verts])
     return_tuple = [list_of_gens]
     if dict_rep:
         ddd = {}
@@ -486,7 +485,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         return_tuple.append(G_C)
     if certificate:
         dd = {}
-        for i from 0 <= i < G.num_verts:
+        for i from 0 <= i < <int>G.num_verts:
             dd[frm[i]] = output.relabeling[i]
         return_tuple.append(dd)
     if base:
@@ -534,7 +533,7 @@ cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, 
     cdef int *degrees = GS.scratch # length 3n+1
     cdef bint necessary_to_split_cell
     cdef int against_index
-    if G.num_verts != PS.degree and PS.depth == 0:
+    if <int>G.num_verts != PS.degree and PS.depth == 0:
         # should be less verts, then, so place the "nonverts" in separate cell at the end
         current_cell = 0
         while current_cell < PS.degree:
@@ -643,23 +642,22 @@ cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degr
     r"""
     Compare gamma_1(S1) and gamma_2(S2).
 
-    Return return -1 if gamma_1(S1) < gamma_2(S2), 0 if gamma_1(S1) ==
-    gamma_2(S2), 1 if gamma_1(S1) > gamma_2(S2).  (Just like the python
-    \code{cmp}) function.
+    Return -1 if gamma_1(S1) < gamma_2(S2), 0 if gamma_1(S1) ==
+    gamma_2(S2), 1 if gamma_1(S1) > gamma_2(S2).
 
     INPUT:
 
     - ``gamma_1``, ``gamma_2`` -- list permutations (inverse)
     - ``S1``, ``S2`` -- graph struct objects
     """
-    cdef int i, j, m
+    cdef size_t i, j
     cdef GraphStruct GS1 = <GraphStruct> S1
     cdef GraphStruct GS2 = <GraphStruct> S2
     cdef CGraph G1 = GS1.G
     cdef CGraph G2 = GS2.G
     if G1.active_vertices.size != G2.active_vertices.size or \
        not bitset_cmp(G1.active_vertices, G2.active_vertices):
-        for i from 0 <= i < degree:
+        for i from 0 <= i < <size_t>degree:
             if G1.has_vertex(gamma_1[i]) != G2.has_vertex(gamma_2[i]):
                 return G1.has_vertex(gamma_1[i]) - G2.has_vertex(gamma_2[i])
     for i from 0 <= i < G1.num_verts:
@@ -777,7 +775,7 @@ def all_labeled_graphs(n):
         5 34
 
     """
-    from sage.graphs.all import Graph
+    from sage.graphs.graph import Graph
     TE = []
     for i in range(n):
         for j in range(i):
@@ -839,11 +837,11 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
         H = copy(G)
         for i from 0 <= i < perms_per_graph:
             G = copy(H)
-            G1 = search_tree(G, [G.vertices()])[1]
+            G1 = search_tree(G, [G.vertices(sort=False)])[1]
             perm = list(S.random_element())
             perm = [perm[j]-1 for j from 0 <= j < n]
             G.relabel(perm)
-            G2 = search_tree(G, [G.vertices()])[1]
+            G2 = search_tree(G, [G.vertices(sort=False)])[1]
             if G1 != G2:
                 print("search_tree FAILURE: graph6-")
                 print(H.graph6_string())
@@ -864,11 +862,11 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
         E = copy(D)
         for i from 0 <= i < perms_per_graph:
             D = copy(E)
-            D1 = search_tree(D, [D.vertices()], dig=True)[1]
+            D1 = search_tree(D, [D.vertices(sort=False)], dig=True)[1]
             perm = list(S.random_element())
             perm = [perm[j]-1 for j from 0 <= j < n]
             D.relabel(perm)
-            D2 = search_tree(D, [D.vertices()], dig=True)[1]
+            D2 = search_tree(D, [D.vertices(sort=False)], dig=True)[1]
             if D1 != D2:
                 print("search_tree FAILURE: dig6-")
                 print(E.dig6_string())
@@ -1130,17 +1128,6 @@ cdef int gen_children_dg_edge(void *S, aut_gp_and_can_lab *group, iterator *it):
         start_canonical_generator(group.group, NULL, n, edge_iterator)
     return (edge_iterator is NULL)
 
-cdef void copy_dense_graph(DenseGraph dest, DenseGraph src):
-    r"""
-    caution! active_vertices must be same size!
-    """
-    memcpy(dest.edges,       src.edges,       src.active_vertices.size * src.num_longs * sizeof(unsigned long))
-    memcpy(dest.in_degrees,  src.in_degrees,  src.active_vertices.size * sizeof(int))
-    memcpy(dest.out_degrees, src.out_degrees, src.active_vertices.size * sizeof(int))
-    bitset_copy(dest.active_vertices, src.active_vertices)
-    dest.num_verts = src.num_verts
-    dest.num_arcs  = src.num_arcs
-
 cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err):
     r"""
     Apply the augmentation to ``parent`` storing the result in ``child``. Here
@@ -1268,8 +1255,9 @@ cdef void free_dg_edge_gen(iterator *dg_edge_gen):
     sig_free(dg_edge_gen)
 
 
-def generate_dense_graphs_edge_addition(int n, bint loops, G = None, depth = None, bint construct = False,
-    bint indicate_mem_err = True):
+def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
+                                        bint construct=False,
+                                        bint indicate_mem_err=True):
     r"""
 
     EXAMPLES::
@@ -1304,7 +1292,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G = None, depth = Non
         12346
 
     """
-    from sage.graphs.all import Graph
+    from sage.graphs.graph import Graph
     cdef iterator *graph_iterator
     cdef DenseGraph DG, ODG
     cdef GraphStruct GS
@@ -1333,7 +1321,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G = None, depth = Non
     GS = (<GraphStruct> (<canonical_generator_data *> graph_iterator.data).object_stack[0])
     if G is not None:
         DG = GS.G
-        for u,v in G.edges(labels=False):
+        for u,v in G.edges(sort=False, labels=False):
             DG.add_arc(u,v)
             if u != v:
                 DG.add_arc(v,u)
@@ -1545,7 +1533,10 @@ cdef void free_cgd_2(void *data):
     cdef canonical_generator_data *cgd = <canonical_generator_data *> data
     deallocate_cgd(cgd)
 
-def generate_dense_graphs_vert_addition(int n, base_G = None, bint construct = False, bint indicate_mem_err = True):
+
+def generate_dense_graphs_vert_addition(int n, base_G=None,
+                                        bint construct=False,
+                                        bint indicate_mem_err=True):
     r"""
 
     EXAMPLES::
@@ -1574,7 +1565,7 @@ def generate_dense_graphs_vert_addition(int n, base_G = None, bint construct = F
         11
 
     """
-    from sage.graphs.all import Graph
+    from sage.graphs.graph import Graph
     cdef iterator *graph_iterator
     cdef DenseGraph DG, ODG
     cdef GraphStruct GS
@@ -1604,9 +1595,9 @@ def generate_dense_graphs_vert_addition(int n, base_G = None, bint construct = F
     GS = (<GraphStruct> (<canonical_generator_data *> graph_iterator.data).object_stack[0])
     DG = GS.G
     if base_G is not None:
-        for v in base_G.vertices():
+        for v in base_G.vertices(sort=False):
             DG.add_vertex(v)
-        for u,v in base_G.edges(labels=False):
+        for u,v in base_G.edges(sort=False, labels=False):
             DG.add_arc(u,v)
             DG.add_arc(v,u)
 

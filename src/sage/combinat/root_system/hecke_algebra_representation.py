@@ -1,13 +1,13 @@
 r"""
 Hecke algebra representations
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 import functools
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -18,6 +18,7 @@ from sage.sets.family import Family
 from sage.combinat.subset import Subsets
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+
 
 class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     r"""
@@ -80,11 +81,9 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
     REFERENCES:
 
-    .. [HST2008] \F. Hivert, A. Schilling, N. Thiery,
-       *Hecke group algebras as quotients of affine Hecke algebras at level 0*,
-       Journal of Combinatorial Theory, Series A 116 (2009) 844-863
-       (:arxiv:`0804.3781`)
+    - [HST2008]_
     """
+
     def __init__(self, domain, on_basis, cartan_type, q1, q2, q=ZZ.one(), side="right"):
         r"""
         TESTS::
@@ -358,7 +357,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
             sage: x = KW.an_element(); x
-            123 + 3*32 + 2*3 + e
+            123 + 3*2312 + 2*31 + e
 
             sage: T = KW.demazure_lusztig_operators(q1,q2)
             sage: T12 = T.Tw( (1,2) )
@@ -399,7 +398,6 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         result.signs = signs
         result.scalar = scalar
         return result
-
 
     def Tw_inverse(self, word):
         r"""
@@ -463,6 +461,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         q1 = self._q1
         q2 = self._q2
         T = self
+
         def Ti(x,i,c):
             return T[i](x)+c*x
         # Check the quadratic relation
@@ -602,6 +601,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         # (co)weight space, because the alcove walks currently uses
         # rho_classical and, in type BC, the later does not have
         # integral coefficients:
+
         # sage: RootSystem(["BC",2,2]).coweight_lattice().rho_classical()
 
         # On the other hand, at this point we need the expression of
@@ -613,7 +613,6 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         alphacheck = P_check.simple_roots()
         c = Q_check.cartan_type().translation_factors()
         t = P_check.linear_combination( (alphacheck[i], c[i] * coeff) for i,coeff in lambdacheck )
-        #print lambdacheck, "=", t
         # In type BC, c[i] may introduce rational coefficients
         # If we want to work in the lattice we might want to use the
         # following workaround after the fact ...
@@ -626,7 +625,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         # and Macdonald polynomials)
         if self._side == "left":
             word = tuple([x for x in reversed(word)])
-            signs= tuple([x for x in reversed(signs)])
+            signs = tuple([x for x in reversed(signs)])
         # The power of q implements the fact that Y^\deltacheck = 1/q.
         # The classical simple coroots have no \deltacheck term.
         # alpha[0] has a \deltacheck with coefficient one
@@ -745,7 +744,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
              -2121 + 212,
              (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121 + (q2/(-q1+q2))*212 - 12 + ((-q2)/(-q1+q2))*21 + 2,
              ((-q2^2)/(-q1^2+q1*q2-q2^2))*2121 - 121 + (q2^2/(-q1^2+q1*q2-q2^2))*212 + 21,
-             ((q1^2+q2^2)/(-q1^2+q1*q2-q2^2))*2121 + ((-q1^2-q2^2)/(-q1^2+q1*q2-q2^2))*121 + ((-q2^2)/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
+             ((-q1^2-q2^2)/(q1^2-q1*q2+q2^2))*2121 + ((-q1^2-q2^2)/(-q1^2+q1*q2-q2^2))*121 + ((-q2^2)/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
              2121,
              (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12,
              -2121 + 121]
@@ -755,6 +754,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         return CherednikOperatorsEigenvectors(self)
 
 # TODO: this should probably inherit from family!
+
+
 class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
     r"""
     A class for the family of eigenvectors of the `Y` Cherednik
@@ -800,6 +801,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         Add tests for the above assumptions, and also that the
         classical operators `T_1, \ldots, T_n` from `T` and `T_Y` coincide.
     """
+
     def __init__(self, T, T_Y = None, normalized = True):
         r"""
         INPUT:
@@ -1140,9 +1142,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         muaffi = self.twist(muaff, i)
         mui = self.affine_retract(muaffi)
         E_mui = self[mui]
-        #print "Computing %s from E_%s=%s with T_%s"%(l, mui, E_mui, i)
-        q1,q2 = self.hecke_parameters(i)
-        #print q1, q2, self.eigenvalue(mui, -alphacheck[i])
+        q1, q2 = self.hecke_parameters(i)
         coroot = alphacheck[i]
         ct = self.cartan_type()
         special_node = ct.special_node()

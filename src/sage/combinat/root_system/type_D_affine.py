@@ -9,10 +9,10 @@ Root system data for (untwisted) type D affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .cartan_type import CartanType_standard_untwisted_affine, CartanType_simply_laced
+
+
 class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
     def __init__(self, n):
         """
@@ -62,7 +62,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O---O---O
             1   2   3   4   5
             D6~
-           sage: sorted(d.edges())
+           sage: d.edges(sort=True)
            [(0, 2, 1), (1, 2, 1), (2, 0, 1), (2, 1, 1), (2, 3, 1),
             (3, 2, 1), (3, 4, 1), (4, 3, 1), (4, 5, 1), (4, 6, 1), (5, 4, 1), (6, 4, 1)]
 
@@ -76,7 +76,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
                |
                O 0
            D4~
-           sage: sorted(d.edges())
+           sage: d.edges(sort=True)
            [(0, 2, 1),
             (1, 2, 1),
             (2, 0, 1),
@@ -95,7 +95,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
            O---O---O
            3   1   2
            D3~
-           sage: sorted(d.edges())
+           sage: d.edges(sort=True)
            [(0, 2, 1), (0, 3, 1), (1, 2, 1), (1, 3, 1), (2, 0, 1), (2, 1, 1), (3, 0, 1), (3, 1, 1)]
 
         """
@@ -204,4 +204,3 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
         ret += "---".join(node(label(i)) for i in range(1, n))
         ret += '\n' + "".join("{!s:4}".format(label(i)) for i in range(1,n))
         return ret
-

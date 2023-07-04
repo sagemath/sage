@@ -24,6 +24,7 @@ Morphisms
    :maxdepth: 1
 
    sage/rings/number_field/morphism
+   sage/rings/number_field/homset
    sage/rings/number_field/number_field_morphisms
    sage/rings/number_field/maps
    sage/rings/number_field/structure
@@ -41,6 +42,7 @@ Orders, Ideals, Ideal Classes
    sage/rings/number_field/unit_group
    sage/rings/number_field/S_unit_solver
    sage/rings/number_field/small_primes_of_degree_one
+   sage/rings/number_field/selmer_group
 
 .. SEEALSO::
 

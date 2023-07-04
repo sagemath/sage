@@ -1,6 +1,5 @@
 r"""
 Counting
-========
 
 - :ref:`sage.databases.oeis`
 - :ref:`sage.combinat.sloane_functions`

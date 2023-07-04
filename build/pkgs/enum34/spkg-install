@@ -1,6 +1,0 @@
-if [ "$SAGE_PYTHON3" = "yes" ]; then
-    echo "Not installing enum34: it is only needed for Python version 3.3 or older."
-    exit 0
-fi
-
-cd src && sdh_pip_install .

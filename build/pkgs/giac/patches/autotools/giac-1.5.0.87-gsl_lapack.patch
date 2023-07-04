@@ -1,0 +1,85 @@
+diff --git a/configure.ac b/configure.ac
+index 204d17a..434e4c9 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -38,6 +38,7 @@ AC_LANG([C++])
+ AC_PROG_LIBTOOL
+ AC_PROG_YACC
+ AM_PROG_LEX
++PKG_PROG_PKG_CONFIG
+ AC_C_BIGENDIAN
+ 
+ dnl Check for standard C+headers
+@@ -139,47 +140,17 @@ AC_CHECK_SIZEOF(long)
+ AC_CHECK_SIZEOF(long long)
+   
+ dnl Checking for Gnu Sci Lib
+-CONFIG_GSL="yes"
+-AC_ARG_ENABLE([gsl],[
+-	AS_HELP_STRING([--enable-gsl], [Use GNU scientific library [[default=yes]]])],
+-	[ if test "x$enableval" = "xno"; then CONFIG_GSL="no"; fi], [])
+-
+-if test "$CONFIG_GSL" = "yes"; then
+-	AC_CHECK_HEADERS(gsl/gsl_blas.h)
+-	AC_CHECK_HEADERS(gsl/gsl_eigen.h)
+-	if test "$ac_cv_header_gsl_gsl_blas_h" != "yes" -o "$ac_cv_header_gsl_gsl_eigen_h" != "yes"; then
+-		CONFIG_GSL="no"
+-	fi
+-fi
+-if test "$CONFIG_GSL" = "yes"; then
+-	save_LIBS="$LIBS"
+-	AC_CHECK_LIB(gslcblas, main, [], [CONFIG_GSL="no"])
+-	AC_CHECK_LIB(gsl, gsl_sf_gamma, [], [CONFIG_GSL="no"])
+-	LIBS="$save_LIBS"
+-  fi
+-GSL_LIBS=""
+-if test "$CONFIG_GSL" = "yes"; then
+-	GSL_LIBS="-lgsl -lgslcblas"
+-  fi
+-AC_SUBST(CONFIG_GSL)
+-AC_SUBST(GSL_LIBS)
+-AM_CONDITIONAL(CONFIG_GSL, [test "$CONFIG_GSL" = "yes"])
+-  
+-CONFIG_LAPACK="yes"
+-AC_ARG_ENABLE([lapack],
+-	[AS_HELP_STRING([--enable-lapack], [Use LAPACK [[default=yes]]])],
+-	[ if test "$enableval" = "no"; then CONFIG_LAPACK="no"; fi], [])
++PKG_CHECK_MODULES([GSL], [gsl],[
++    AC_DEFINE(HAVE_LIBGSL,1, [Define if gsl is installed])
++    AC_SUBST(GSL_LIBS)])
+   
+-if test "$CONFIG_LAPACK" = "yes"; then
+-#	AC_CHECK_LIB(f2c, main, [], [CONFIG_LAPACK="no"])
+-#	AC_CHECK_LIB(blas, main, [], [CONFIG_LAPACK="no"])
+-#	AC_CHECK_LIB(tmglib, main, [], [CONFIG_LAPACK="no"])
+-	AC_CHECK_LIB(gfortran, main)
+-	AC_CHECK_LIB(blas, main)
+-	AC_CHECK_LIB(lapack, main, [], [CONFIG_LAPACK="no"])
+-#        AX_BLAS([have_blas=yes],[have_blas=no])
+-#        AX_LAPACK([have_lapack=yes],[have_lapack=no])
+-fi
++PKG_CHECK_MODULES([LAPACK], [lapack],[
++    AC_DEFINE(HAVE_LIBLAPACK,1,[Define if LAPACK is installed])
++    AC_SUBST(LAPACK_LIBS)])
++
++PKG_CHECK_MODULES([BLAS], [blas],[
++    AC_DEFINE(HAVE_BLAS,1,[Define if BLAS is installed])
++    AC_SUBST(BLAS_LIBS)])
+   
+ CONFIG_PARI="yes"
+ AC_ARG_ENABLE([pari],
+diff --git a/src/Makefile.am b/src/Makefile.am
+index b5dd325..d45b553 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -14,6 +14,8 @@ libgiac_la_SOURCES = input_lexer.ll sym2poly.cc gausspol.cc threaded.cc \
+   caseval.c cutils.c graphic.c libbf.c libregexp.c libunicode.c \
+   qjsgiac.c quickjs.c quickjs-libc.c js.c
+ 
+-libgiac_la_LIBADD = $(NTL_LIBS) $(COCOA_LIBS) $(PARI_LIBS) $(GSL_LIBS) 
++libgiac_la_LIBADD = $(NTL_LIBS) $(COCOA_LIBS) $(PARI_LIBS) $(GSL_LIBS) $(LAPACK_LIBS) $(BLAS_LIBS)
++
++AM_LDFLAGS = -no-undefined
+ 
+ giacincludedir = $(includedir)/giac
+ giacinclude_HEADERS = dispatch.h fraction.h gen.h desolve.h misc.h ti89.h \

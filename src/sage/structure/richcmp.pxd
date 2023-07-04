@@ -20,7 +20,7 @@ cpdef inline richcmp(x, y, int op):
         sage: from sage.structure.richcmp import *
         sage: richcmp(3, 4, op_LT)
         True
-        sage: richcmp(x, x^2, op_EQ)
+        sage: richcmp(x, x^2, op_EQ)      # optional - sage.symbolic
         x == x^2
 
     The two examples above are completely equivalent to ``3 < 4``
@@ -165,7 +165,7 @@ cpdef inline bint rich_to_bool(int op, int c):
         (True, False, True)
     """
     # op is a value in [0,5], c a value in [-1,1]. We implement this
-    # function very efficienly using a bitfield. Note that the masking
+    # function very efficiently using a bitfield. Note that the masking
     # below implies we consider c mod 4, so c = -1 implicitly becomes
     # c = 3.
 

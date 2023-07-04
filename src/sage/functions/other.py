@@ -7,14 +7,11 @@ Check that gamma function imports are deprecated (:trac:`24411`)::
 
     sage: from sage.functions.other import beta
     sage: beta(x, x)
-    doctest:...: DeprecationWarning:
-    Importing beta from here is deprecated. If you need to use it, please import it directly from sage.functions.gamma
-    See http://trac.sagemath.org/24411 for details.
+    doctest:warning...: DeprecationWarning:
+    Importing beta from here is deprecated; please use "from sage.functions.gamma import beta" instead.
+    See https://github.com/sagemath/sage/issues/24411 for details.
     beta(x, x)
 """
-from __future__ import print_function
-from six.moves import range
-from six import integer_types
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.functions.gamma',
@@ -22,12 +19,14 @@ lazy_import('sage.functions.gamma',
              'gamma_inc_lower', 'psi', 'beta'), deprecation=24411)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
-from sage.symbolic.expression import Expression
-from sage.libs.pynac.pynac import (register_symbol, symbol_table, I)
-from sage.symbolic.all import SR
-from sage.rings.all import Integer, Rational, RealField, ZZ, ComplexField
-from sage.rings.complex_number import is_ComplexNumber
+from sage.symbolic.expression import Expression, register_symbol, symbol_table
+from sage.symbolic.ring import SR, SymbolicRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational import Rational
+from sage.rings.complex_mpfr import ComplexField
 from sage.misc.latex import latex
+from sage.structure.element import Element
 import math
 
 from sage.structure.element import coercion_model
@@ -35,14 +34,11 @@ from sage.structure.element import coercion_model
 # avoid name conflicts with `parent` as a function parameter
 from sage.structure.all import parent as s_parent
 
-from sage.symbolic.constants import pi
-from sage.functions.log import exp
 from sage.functions.trig import arctan2
-from sage.functions.exp_integral import Ei
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.arith.all import binomial as arith_binomial
 
-one_half = SR.one() / SR(2)
+from sage.arith.misc import binomial as arith_binomial
+
+from sage.misc.functional import sqrt
 
 
 class Function_abs(GinacFunction):
@@ -120,11 +116,15 @@ class Function_abs(GinacFunction):
             abs(x)*e^2
             sage: abs((pi+e)*x)
             (pi + e)*abs(x)
+
+            sage: fricas(abs(x)).sage().derivative()  # optional - fricas
+            1/2*(x + conjugate(x))/abs(x)
         """
         GinacFunction.__init__(self, "abs", latex_name=r"\mathrm{abs}",
                                conversions=dict(sympy='Abs',
                                                 mathematica='Abs',
-                                                giac='abs'))
+                                                giac='abs',
+                                                fricas='abs'))
 
 abs = abs_symbolic = Function_abs()
 
@@ -178,6 +178,15 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: Calling ceil() on infinity or NaN
+
+    Test that elements of symbolic subrings work in the same way as
+    elements of ``SR``, :trac:`32724`::
+
+        sage: SCR = SR.subring(no_variables=True)
+        sage: floor(log(2^(3/2)) / log(2) + 1/2)
+        2
+        sage: floor(SCR(log(2^(-3/2)) / log(2) + 1/2))
+        -1
     """
     # First, some obvious things...
     try:
@@ -187,7 +196,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
     else:
         return m()
 
-    if isinstance(x, integer_types):
+    if isinstance(x, int):
         return Integer(x)
     if isinstance(x, (float, complex)):
         m = getattr(math, method)
@@ -211,11 +220,11 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
     # The strategy is to first reduce the absolute diameter of the
     # interval until its size is at most 10^(-6). Then we check for
     # (B) by simplifying the expression.
-    from sage.rings.all import RealIntervalField
+    from sage.rings.real_mpfi import RealIntervalField
 
     # Might it be needed to simplify x? This only applies for
-    # elements of SR.
-    need_to_simplify = (s_parent(x) is SR)
+    # elements of SR (or its subrings)
+    need_to_simplify = isinstance(s_parent(x), SymbolicRing)
 
     # An integer which is close to x. We use this to increase precision
     # by subtracting this guess before converting to an interval field.
@@ -337,7 +346,7 @@ class Function_ceil(BuiltinFunction):
             sage: ceil(5.4)
             6
             sage: type(ceil(5.4))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         ::
 
@@ -448,7 +457,7 @@ class Function_ceil(BuiltinFunction):
         try:
             return x.ceil()
         except AttributeError:
-            if isinstance(x, integer_types):
+            if isinstance(x, int):
                 return Integer(x)
             elif isinstance(x, (float, complex)):
                 return Integer(math.ceil(x))
@@ -486,7 +495,7 @@ class Function_floor(BuiltinFunction):
             sage: floor(5.4)
             5
             sage: type(floor(5.4))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: var('x')
             x
             sage: a = floor(5.4 + x); a
@@ -612,13 +621,14 @@ class Function_floor(BuiltinFunction):
         try:
             return x.floor()
         except AttributeError:
-            if isinstance(x, integer_types):
+            if isinstance(x, int):
                 return Integer(x)
             elif isinstance(x, (float, complex)):
                 return Integer(math.floor(x))
         return None
 
 floor = Function_floor()
+
 
 class Function_Order(GinacFunction):
     def __init__(self):
@@ -640,8 +650,6 @@ class Function_Order(GinacFunction):
             Order(x)
             sage: (x^2 + x).Order()
             Order(x^2 + x)
-            sage: x.Order()._sympy_()
-            O(x)
 
         TESTS:
 
@@ -651,10 +659,39 @@ class Function_Order(GinacFunction):
             Order
         """
         GinacFunction.__init__(self, "Order",
-                conversions=dict(sympy='O'),
+                conversions=dict(),
                 latex_name=r"\mathcal{O}")
 
+    def _sympy_(self, arg):
+        """
+        EXAMPLES::
+
+            sage: x.Order()._sympy_()
+            O(x)
+            sage: SR(1).Order()._sympy_()
+            O(1)
+            sage: ((x-1)^3).Order()._sympy_()
+            O((x - 1)**3, (x, 1))
+            sage: exp(x).series(x==1, 3)._sympy_()
+            E + E*(x - 1) + E*(x - 1)**2/2 + O((x - 1)**3, (x, 1))
+
+            sage: (-(pi-x)^3).Order()._sympy_()
+            O((x - pi)**3, (x, pi))
+            sage: cos(x).series(x==pi, 3)._sympy_()
+            -1 + (pi - x)**2/2 + O((x - pi)**3, (x, pi))
+        """
+        roots = arg.solve(arg.default_variable(), algorithm='sympy',
+                          multiplicities=False, explicit_solutions=True)
+        if len(roots) == 1:
+            arg = (arg, (roots[0].lhs(), roots[0].rhs()))
+        elif len(roots) > 1:
+            raise ValueError("order term %s has multiple roots" % arg)
+        # else there are no roots, e.g. O(1), so we leave arg unchanged
+        import sympy
+        return sympy.O(*sympy.sympify(arg, evaluate=False))
+
 Order = Function_Order()
+
 
 class Function_frac(BuiltinFunction):
     def __init__(self):
@@ -668,7 +705,7 @@ class Function_frac(BuiltinFunction):
             sage: frac(5.4)
             0.400000000000000
             sage: type(frac(5.4))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
             sage: frac(456/123)
             29/41
             sage: var('x')
@@ -714,7 +751,7 @@ class Function_frac(BuiltinFunction):
         try:
             return x - x.floor()
         except AttributeError:
-            if isinstance(x, integer_types):
+            if isinstance(x, int):
                 return Integer(0)
             elif isinstance(x, (float, complex)):
                 return x - Integer(math.floor(x))
@@ -726,163 +763,189 @@ class Function_frac(BuiltinFunction):
 
 frac = Function_frac()
 
-def _do_sqrt(x, prec=None, extend=True, all=False):
-        r"""
-        Used internally to compute the square root of x.
-
-        INPUT:
-
-        -  ``x`` - a number
-
-        -  ``prec`` - None (default) or a positive integer
-           (bits of precision) If not None, then compute the square root
-           numerically to prec bits of precision.
-
-        -  ``extend`` - bool (default: True); this is a place
-           holder, and is always ignored since in the symbolic ring everything
-           has a square root.
-
-        -  ``extend`` - bool (default: True); whether to extend
-           the base ring to find roots. The extend parameter is ignored if
-           prec is a positive integer.
-
-        -  ``all`` - bool (default: False); whether to return
-           a list of all the square roots of x.
-
-
-        EXAMPLES::
-
-            sage: from sage.functions.other import _do_sqrt
-            sage: _do_sqrt(3)
-            sqrt(3)
-            sage: _do_sqrt(3,prec=10)
-            1.7
-            sage: _do_sqrt(3,prec=100)
-            1.7320508075688772935274463415
-            sage: _do_sqrt(3,all=True)
-            [sqrt(3), -sqrt(3)]
-
-        Note that the extend parameter is ignored in the symbolic ring::
-
-            sage: _do_sqrt(3,extend=False)
-            sqrt(3)
-        """
-        if prec:
-            if x >= 0:
-                 return RealField(prec)(x).sqrt(all=all)
-            else:
-                 return ComplexField(prec)(x).sqrt(all=all)
-        if x == -1:
-            z = I
-        else:
-            z = SR(x) ** one_half
-
-        if all:
-            if z:
-                return [z, -z]
-            else:
-                return [z]
-        return z
-
-def sqrt(x, *args, **kwds):
-        r"""
-        INPUT:
-
-        -  ``x`` - a number
-
-        -  ``prec`` - integer (default: None): if None, returns
-           an exact square root; otherwise returns a numerical square root if
-           necessary, to the given bits of precision.
-
-        -  ``extend`` - bool (default: True); this is a place
-           holder, and is always ignored or passed to the sqrt function for x,
-           since in the symbolic ring everything has a square root.
-
-        -  ``all`` - bool (default: False); if True, return all
-           square roots of self, instead of just one.
-
-        EXAMPLES::
-
-            sage: sqrt(-1)
-            I
-            sage: sqrt(2)
-            sqrt(2)
-            sage: sqrt(2)^2
-            2
-            sage: sqrt(4)
-            2
-            sage: sqrt(4,all=True)
-            [2, -2]
-            sage: sqrt(x^2)
-            sqrt(x^2)
-
-        For a non-symbolic square root, there are a few options.
-        The best is to numerically approximate afterward::
-
-            sage: sqrt(2).n()
-            1.41421356237310
-            sage: sqrt(2).n(prec=100)
-            1.4142135623730950488016887242
-
-        Or one can input a numerical type.
-
-            sage: sqrt(2.)
-            1.41421356237310
-            sage: sqrt(2.000000000000000000000000)
-            1.41421356237309504880169
-            sage: sqrt(4.0)
-            2.00000000000000
-
-        To prevent automatic evaluation, one can use the ``hold`` parameter
-        after coercing to the symbolic ring::
-
-            sage: sqrt(SR(4),hold=True)
-            sqrt(4)
-            sage: sqrt(4,hold=True)
-            Traceback (most recent call last):
-            ...
-            TypeError: _do_sqrt() got an unexpected keyword argument 'hold'
-
-        This illustrates that the bug reported in :trac:`6171` has been fixed::
-
-            sage: a = 1.1
-            sage: a.sqrt(prec=100)  # this is supposed to fail
-            Traceback (most recent call last):
-            ...
-            TypeError: sqrt() got an unexpected keyword argument 'prec'
-            sage: sqrt(a, prec=100)
-            1.0488088481701515469914535137
-            sage: sqrt(4.00, prec=250)
-            2.0000000000000000000000000000000000000000000000000000000000000000000000000
-
-        One can use numpy input as well::
-
-            sage: import numpy
-            sage: a = numpy.arange(2,5)
-            sage: sqrt(a)
-            array([1.41421356, 1.73205081, 2.        ])
-        """
-        if isinstance(x, float):
-            return math.sqrt(x)
-        elif type(x).__module__ == 'numpy':
-            from numpy import sqrt
-            return sqrt(x)
-        try:
-            return x.sqrt(*args, **kwds)
-        # The following includes TypeError to catch cases where sqrt
-        # is called with a "prec" keyword, for example, but the sqrt
-        # method for x doesn't accept such a keyword.
-        except (AttributeError, TypeError):
-            pass
-        return _do_sqrt(x, *args, **kwds)
 
 # register sqrt in pynac symbol_table for conversion back from other systems
-register_symbol(sqrt, dict(mathematica='Sqrt'))
+register_symbol(sqrt, dict(mathematica='Sqrt'), 2)
 symbol_table['functions']['sqrt'] = sqrt
 
 Function_sqrt = type('deprecated_sqrt', (),
         {'__call__': staticmethod(sqrt),
             '__setstate__': lambda x, y: None})
+
+
+class Function_real_nth_root(BuiltinFunction):
+    r"""
+    Real `n`-th root function `x^\frac{1}{n}`.
+
+    The function assumes positive integer `n` and real number `x`.
+
+    EXAMPLES::
+
+        sage: real_nth_root(2, 3)
+        2^(1/3)
+        sage: real_nth_root(-2, 3)
+        -2^(1/3)
+        sage: real_nth_root(8, 3)
+        2
+        sage: real_nth_root(-8, 3)
+        -2
+
+        sage: real_nth_root(-2, 4)
+        Traceback (most recent call last):
+        ...
+        ValueError: no real nth root of negative real number with even n
+
+    For numeric input, it gives a numerical approximation. ::
+
+        sage: real_nth_root(2., 3)
+        1.25992104989487
+        sage: real_nth_root(-2., 3)
+        -1.25992104989487
+
+    Some symbolic calculus::
+
+        sage: f = real_nth_root(x, 5)^3
+        sage: f
+        real_nth_root(x^3, 5)
+        sage: f.diff()
+        3/5*x^2*real_nth_root(x^(-12), 5)
+        sage: result = f.integrate(x)
+        ...
+        sage: result
+        integrate((abs(x)^3)^(1/5)*sgn(x^3), x)
+        sage: _.diff()
+        (abs(x)^3)^(1/5)*sgn(x^3)
+    """
+    def __init__(self):
+        r"""
+        Initialize.
+
+        TESTS::
+
+            sage: cube_root = real_nth_root(x, 3)
+            sage: loads(dumps(cube_root))
+            real_nth_root(x, 3)
+
+        ::
+
+            sage: f = real_nth_root(x, 3)
+            sage: f._sympy_()
+            Piecewise((Abs(x)**(1/3)*sign(x), Eq(im(x), 0)), (x**(1/3), True))
+
+        """
+        BuiltinFunction.__init__(self, "real_nth_root", nargs=2,
+                                 conversions=dict(sympy='real_root',
+                                                  mathematica='Surd',
+                                                  maple='surd'))
+
+    def _print_latex_(self, base, exp):
+        r"""
+        TESTS::
+
+            sage: latex(real_nth_root(x, 3))
+            x^{\frac{1}{3}}
+            sage: latex(real_nth_root(x^2 + x, 3))
+            {\left(x^{2} + x\right)}^{\frac{1}{3}}
+        """
+        return latex(base**(1/exp))
+
+    def _evalf_(self, base, exp, parent=None):
+        """
+        TESTS::
+
+            sage: real_nth_root(RDF(-2), 3)
+            -1.25992104989487...
+            sage: real_nth_root(Reals(100)(2), 2)
+            1.4142135623730950488016887242
+        """
+        if hasattr(exp, 'real_part'):
+            # To allow complex "noise" while plotting, the fast_callable()
+            # interpreters used in plots will convert all intermediate
+            # expressions to CDF, returning only the final answer as a
+            # real number. However, for a symbolic function such as this,
+            # the "exp" argument is in fact an intermediate expression.
+            # Thus we are forced to deal with exponents of the form
+            # (n + 0*I), which a priori will throw a TypeError at the "%"
+            # below. Here we special-case only CDF and CC, leaving the
+            # python "complex" type unhandled: you have to try very hard
+            # to pass a python "complex" in as an exponent, and the extra
+            # effort/slowdown doesn't seem worth it.
+            if exp.imag_part().is_zero():
+                exp = exp.real_part()
+            else:
+                raise ValueError("exponent cannot be complex")
+        exp = ZZ(exp)
+
+        negative = base < 0
+
+        if negative:
+            if exp.mod(2) == 0:
+                raise ValueError('no real nth root of negative real number with even n')
+            base = -base
+
+        r = base**(1/exp)
+
+        if negative:
+            return -r
+        else:
+            return r
+
+    def _eval_(self, base, exp):
+        """
+        TESTS::
+
+            sage: real_nth_root(x, 1)
+            x
+            sage: real_nth_root(x, 3)
+            real_nth_root(x, 3)
+
+            sage: real_nth_root(RIF(2), 3)
+            1.259921049894873?
+            sage: real_nth_root(RBF(2), 3)
+            [1.259921049894873 +/- 3.92e-16]
+        """
+        if not isinstance(base, Expression) and not isinstance(exp, Expression):
+            if isinstance(base, Integer):
+                try:
+                    return base.nth_root(exp)
+                except ValueError:
+                    pass
+            return self._evalf_(base, exp, parent=s_parent(base))
+
+        if isinstance(exp, Integer) and exp.is_one():
+            return base
+
+    def _power_(self, base, exp, power_param=None):
+        """
+        TESTS::
+
+            sage: f = real_nth_root(x, 3)
+            sage: f^5
+            real_nth_root(x^5, 3)
+        """
+        return self(base**power_param, exp)
+
+    def _derivative_(self, base, exp, diff_param=None):
+        """
+        TESTS::
+
+            sage: f = real_nth_root(x, 3)
+            sage: f.diff()
+            1/3*real_nth_root(x^(-2), 3)
+            sage: f = real_nth_root(-x, 3)
+            sage: f.diff()
+            -1/3*real_nth_root(x^(-2), 3)
+            sage: f = real_nth_root(x, 4)
+            sage: f.diff()
+            1/4*real_nth_root(x^(-3), 4)
+            sage: f = real_nth_root(-x, 4)
+            sage: f.diff()
+            -1/4*real_nth_root(-1/x^3, 4)
+        """
+        return 1/exp * self(base, exp)**(1-exp)
+
+real_nth_root = Function_real_nth_root()
+
 
 class Function_arg(BuiltinFunction):
     def __init__(self):
@@ -1062,7 +1125,7 @@ class Function_real_part(GinacFunction):
             sage: real(a)
             2.50000000000000
             sage: type(real(a))
-            <type 'sage.rings.real_mpfr.RealLiteral'>
+            <class 'sage.rings.real_mpfr.RealLiteral'>
             sage: real(1.0r)
             1.0
             sage: real(complex(3, 4))
@@ -1110,7 +1173,8 @@ class Function_real_part(GinacFunction):
         GinacFunction.__init__(self, "real_part",
                                conversions=dict(maxima='realpart',
                                                 sympy='re',
-                                                giac='re'),
+                                                mathematica='Re',
+                                                giac='re', fricas='real'),
                                alt_name="real")
 
     def __call__(self, x, **kwargs):
@@ -1126,6 +1190,7 @@ class Function_real_part(GinacFunction):
             return GinacFunction.__call__(self, x, **kwargs)
 
 real = real_part = Function_real_part()
+
 
 class Function_imag_part(GinacFunction):
     def __init__(self):
@@ -1170,6 +1235,8 @@ class Function_imag_part(GinacFunction):
         GinacFunction.__init__(self, "imag_part",
                                conversions=dict(maxima='imagpart',
                                                 sympy='im',
+                                                mathematica='Im',
+                                                fricas='imag',
                                                 giac='im'),
                                alt_name="imag")
 
@@ -1184,6 +1251,7 @@ class Function_imag_part(GinacFunction):
             return x.imag
         else:
             return GinacFunction.__call__(self, x, **kwargs)
+
 
 imag = imag_part = imaginary = Function_imag_part()
 
@@ -1269,9 +1337,13 @@ class Function_conjugate(GinacFunction):
         """
         GinacFunction.__init__(self, "conjugate",
                                conversions=dict(sympy='conjugate',
-                                                giac='conj'))
+                                                giac='conj',
+                                                mathematica='Conjugate',
+                                                fricas='conjugate'))
+
 
 conjugate = Function_conjugate()
+
 
 class Function_factorial(GinacFunction):
     def __init__(self):
@@ -1393,8 +1465,8 @@ class Function_factorial(GinacFunction):
         Check that :trac:`16166` is fixed::
 
             sage: RBF = RealBallField(53)
-            sage: factorial(RBF(4.2))
-            [32.5780960503313 +/- 6.72e-14]
+            sage: factorial(RBF(4.2)) # abs tol 1e-13
+            [32.5780960503314 +/- 6.06e-14]
 
         Test pickling::
 
@@ -1438,8 +1510,15 @@ class Function_factorial(GinacFunction):
 
             sage: factorial(RBF(2)**64)
             [+/- 2.30e+347382171326740403407]
+
+        Check that :trac:`26749` is fixed::
+
+            sage: factorial(float(3.2))        # abs tol 1e-14
+            7.7566895357931776
+            sage: type(factorial(float(3.2)))
+            <class 'float'>
         """
-        if isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             try:
                 return x.factorial()
             except OverflowError:
@@ -1447,10 +1526,14 @@ class Function_factorial(GinacFunction):
         elif isinstance(x, Rational):
             from sage.functions.gamma import gamma
             return gamma(x + 1)
-        elif self._is_numerical(x):
+        elif isinstance(x, Element) and hasattr(x.parent(), 'precision'):
             return (x + 1).gamma()
+        elif self._is_numerical(x):
+            from sage.functions.gamma import gamma
+            return gamma(x + 1)
 
 factorial = Function_factorial()
+
 
 class Function_binomial(GinacFunction):
     def __init__(self):
@@ -1597,7 +1680,7 @@ class Function_binomial(GinacFunction):
         if k == 1:
             return n
 
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         return prod(n - i for i in range(k)) / factorial(k)
 
     def _eval_(self, n, k):
@@ -1607,9 +1690,9 @@ class Function_binomial(GinacFunction):
             sage: binomial._eval_(5, 3)
             10
             sage: type(binomial._eval_(5, 3))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(binomial._eval_(5., 3))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
             sage: binomial._eval_(x, 3)
             1/6*(x - 1)*(x - 2)*x
             sage: binomial._eval_(x, x-2)
@@ -1736,13 +1819,13 @@ class Function_prod(BuiltinFunction):
             product(sin(m), m, 1, n)
             sage: isinstance(r.operator(), sage.functions.other.Function_prod)
             True
-            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r # known bug
+            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r  # known bug
             product(sin(m), m, 1, n)
-            sage: isinstance(r.operator(),
-            ....:     sage.functions.other.Function_prod) # known bug
+            sage: isinstance(r.operator(),                     # known bug
+            ....:     sage.functions.other.Function_prod)
             True
-            sage: giac(sprod(m, m, 1, n))
-            n!
+            sage: giac(sprod(m, m, 1, n)).sage()
+            factorial(n)
         """
         BuiltinFunction.__init__(self, "product", nargs=4,
                                conversions=dict(maxima='product',
@@ -1932,14 +2015,10 @@ class Function_cases(GinacFunction):
 
         TESTS::
 
-            sage: cases()  # py2
+            sage: cases()
             Traceback (most recent call last):
             ...
-            TypeError: __call__() takes exactly 2 arguments (1 given)
-            sage: cases()  # py3
-            Traceback (most recent call last):
-            ...
-            TypeError: __call__() missing 1 required positional argument: 'l'
+            TypeError: ...__call__() missing 1 required positional argument: 'l'
 
             sage: cases(x)
             Traceback (most recent call last):
@@ -1957,6 +2036,14 @@ class Function_cases(GinacFunction):
             cases(((x == 0, pi), (1, 0)))
             sage: latex(ex)
             \begin{cases}{\pi} & {x = 0}\\{0} & {1}\end{cases}
+
+        TESTS:
+
+        Verify that :trac:`25624` is fixed::
+
+            sage: L = latex(cases([(x == 0, 0), (1, 1)]))
+            sage: L
+            \begin{cases}{0} & {x = 0}\\{1} & {1}\end{cases}
         """
         if not isinstance(l, (list, tuple)):
             raise ValueError("cases() argument must be a list")
@@ -1968,7 +2055,7 @@ class Function_cases(GinacFunction):
             else:
                 right = pair
             str += r"{%s} & {%s}\\" % (latex(left), latex(right))
-        print(str[:-2] + r"\end{cases}")
+        return str[:-2] + r"\end{cases}"
 
     def _sympy_(self, l):
         """
@@ -1983,12 +2070,13 @@ class Function_cases(GinacFunction):
         from sympy import Piecewise as pw
         args = []
         for tup in l.operands():
-            cond,expr = tup.operands()
+            cond, expr = tup.operands()
             if SR(cond).is_numeric():
                 args.append((SR(expr)._sympy_(), bool(SR(cond)._sympy_())))
             else:
                 args.append((SR(expr)._sympy_(), SR(cond)._sympy_()))
         return pw(*args)
+
 
 cases = Function_cases()
 
@@ -2082,3 +2170,75 @@ class Function_crootof(BuiltinFunction):
 
 complex_root_of = Function_crootof()
 
+
+class Function_elementof(BuiltinFunction):
+    """
+    Formal set membership function that is only accessible internally.
+
+    This function is called to express a set membership statement,
+    usually as part of a solution set returned by ``solve()``.
+    See :class:`sage.sets.set.Set` and :class:`sage.sets.real_set.RealSet`
+    for possible set arguments.
+
+    EXAMPLES::
+
+        sage: from sage.functions.other import element_of
+        sage: element_of(x, SR(ZZ))
+        element_of(x, Integer Ring)
+        sage: element_of(sin(x), SR(QQ))
+        element_of(sin(x), Rational Field)
+        sage: element_of(x, SR(RealSet.open_closed(0,1)))
+        element_of(x, (0, 1])
+        sage: element_of(x, SR(Set([4,6,8])))
+        element_of(x, {8, 4, 6})
+    """
+    def __init__(self):
+        """
+        EXAMPLES::
+
+            sage: from sage.functions.other import element_of
+            sage: loads(dumps(element_of))
+            element_of
+        """
+        BuiltinFunction.__init__(self, "element_of", nargs=2,
+                                 conversions=dict(sympy='Contains'))
+
+    def _eval_(self, x, s):
+        """
+        EXAMPLES::
+
+            sage: from sage.functions.other import element_of
+            sage: element_of(x, SR(RealSet(-oo, oo)))
+            element_of(x, (-oo, +oo))
+            sage: element_of(x, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a set: 0
+        """
+        from sage.categories.sets_cat import Sets
+        if s not in Sets():
+            raise ValueError("not a set: {}".format(s))
+
+    def _latex_(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.functions.other import element_of
+            sage: latex(element_of)
+            \in
+        """
+        return r'\in'
+
+    def _print_latex_(self, ex, s):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.functions.other import element_of
+            sage: latex(element_of(x, SR(ZZ)))
+            x \in \Bold{Z}
+            sage: latex(element_of(x, SR(Set([4,6,8]))))
+            x \in \left\{8, 4, 6\right\}
+        """
+        return r"{} \in {}".format(latex(ex), latex(s))
+
+element_of = Function_elementof()

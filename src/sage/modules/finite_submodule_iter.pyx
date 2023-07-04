@@ -64,8 +64,6 @@ will result in improved running times::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-
 
 cdef class FiniteZZsubmodule_iterator:
     r"""

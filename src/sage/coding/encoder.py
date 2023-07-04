@@ -1,9 +1,13 @@
 r"""
-Base class for Encoders
+Encoders
 
 Representation of a bijection between a message space and a code.
-"""
 
+AUTHORS:
+
+- David Lucas (2015): initial version
+
+"""
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
 #
@@ -23,14 +27,15 @@ class Encoder(SageObject):
     r"""
     Abstract top-class for :class:`Encoder` objects.
 
-    Every encoder class should inherit from this abstract class.
+    Every encoder class for linear codes (of any metric) should inherit from
+    this abstract class.
 
     To implement an encoder, you need to:
 
     - inherit from :class:`Encoder`,
 
     - call ``Encoder.__init__`` in the subclass constructor.
-      Example: ``super(SubclassName, self).__init__(code)``.
+      Example: ``super().__init__(code)``.
       By doing that, your subclass will have its ``code`` parameter initialized.
 
     - Then, if the message space is a vector space, default implementations of :meth:`encode` and
@@ -73,7 +78,7 @@ class Encoder(SageObject):
             sage: from sage.coding.encoder import Encoder
             sage: class EncoderExample(Encoder):
             ....:   def __init__(self, code):
-            ....:       super(EncoderExample, self).__init__(code)
+            ....:       super().__init__(code)
 
         We now create a member of our newly made class::
 
@@ -114,8 +119,8 @@ class Encoder(SageObject):
 
         This is a default implementation which assumes that the message
         space of the encoder is `F^{k}`, where `F` is
-        :meth:`sage.coding.linear_code.AbstractLinearCode.base_field`
-        and `k` is :meth:`sage.coding.linear_code.AbstractLinearCode.dimension`.
+        :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.base_field`
+        and `k` is :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.dimension`.
         If this is not the case, this method should be overwritten by the subclass.
 
         .. NOTE::
@@ -151,7 +156,7 @@ class Encoder(SageObject):
             sage: E.encode(word)
             Traceback (most recent call last):
             ...
-            ArithmeticError: reduction modulo 2 not defined
+            ValueError: The value to encode must be in Vector space of dimension 4 over Finite Field of size 2
         """
         M = self.message_space()
         if word not in M:
@@ -188,7 +193,6 @@ class Encoder(SageObject):
             (10, 3, 9, 6, 5, 6, 9, 3, 10, 8)
         """
         return self.encode(m)
-
 
     def unencode(self, c, nocheck=False):
         r"""

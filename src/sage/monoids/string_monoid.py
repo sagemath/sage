@@ -7,7 +7,6 @@ AUTHORS:
 
 Sage supports a wide range of specific free string monoids.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
@@ -522,7 +521,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
             sage: S([ i for i in range(26) ])
             ABCDEFGHIJKLMNOPQRSTUVWXYZ
         """
-        from sage.rings.all import RealField
+        from sage.rings.real_mpfr import RealField
         RR = RealField()
         # The characteristic frequency probability distribution of
         # Robert Edward Lewand.

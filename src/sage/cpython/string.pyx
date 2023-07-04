@@ -6,7 +6,8 @@ TESTS:
 
 Check that this can be used outside of Sage (see :trac:`25549`)::
 
-    sage: cython('''
+    sage: cython(                                               # optional - sage.misc.cython
+    ....: '''
     ....: from sage.cpython.string cimport char_to_str
     ....: print(char_to_str("hello world!"))
     ....: ''')
@@ -22,8 +23,6 @@ Check that this can be used outside of Sage (see :trac:`25549`)::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import
 
 import sys
 

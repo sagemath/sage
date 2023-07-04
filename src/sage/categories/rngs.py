@@ -17,7 +17,7 @@ class Rngs(CategoryWithAxiom):
     """
     The category of rngs.
 
-    An *rng* `(S, +, *)` is similar to a ring but not necessarilly
+    An *rng* `(S, +, *)` is similar to a ring but not necessarily
     unital. In other words, it is a combination of a commutative
     additive group `(S, +)` and a multiplicative semigroup `(S, *)`,
     where `*` distributes over `+`.
@@ -47,4 +47,3 @@ class Rngs(CategoryWithAxiom):
     _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, "AdditiveInverse")
 
     Unital = LazyImport('sage.categories.rings', 'Rings', at_startup=True)
-

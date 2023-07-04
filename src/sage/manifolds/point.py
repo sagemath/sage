@@ -22,8 +22,8 @@ EXAMPLES:
 Defining a point in `\RR^3` by its spherical coordinates::
 
     sage: M = Manifold(3, 'R^3', structure='topological')
-    sage: U = M.open_subset('U')  # the complement of the half-plane (y=0, x>=0)
-    sage: c_spher.<r,th,ph> = U.chart(r'r:(0,+oo) th:(0,pi):\theta ph:(0,2*pi):\phi')
+    sage: U = M.open_subset('U')  # the domain of spherical coordinates
+    sage: c_spher.<r,th,ph> = U.chart(r'r:(0,+oo) th:(0,pi):\theta ph:(0,2*pi):periodic:\phi')
 
 We construct the point in the coordinates in the default chart of ``U``
 (``c_spher``)::
@@ -53,11 +53,27 @@ Computing the coordinates of ``p`` in a new chart::
 Points can be compared::
 
     sage: p1 = U((1, pi/2, pi))
-    sage: p == p1
+    sage: p1 == p
     True
-    sage: q = U((1,2,3), chart=c_cart, name='Q') # point defined by its Cartesian coordinates
-    sage: p == q
+    sage: q = U((2, pi/2, pi))
+    sage: q == p
     False
+
+even if they were initially not defined within the same coordinate chart::
+
+    sage: p2 = U((-1,0,0), chart=c_cart)
+    sage: p2 == p
+    True
+
+The `2\pi`-periodicity of the `\phi` coordinate is also taken into account
+for the comparison::
+
+    sage: p3 = U((1, pi/2, 5*pi))
+    sage: p3 == p
+    True
+    sage: p4 = U((1, pi/2, -pi))
+    sage: p4 == p
+    True
 
 """
 
@@ -69,12 +85,13 @@ Points can be compared::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.structure.element import Element
 from sage.misc.decorators import options
 from sage.symbolic.expression import Expression
+from sage.rings.integer_ring import ZZ
 
 class ManifoldPoint(Element):
     r"""
@@ -165,7 +182,10 @@ class ManifoldPoint(Element):
             sage: TestSuite(q).run()
 
         """
+        if parent.is_empty():
+            raise TypeError(f'cannot define a point on the {parent} because it has been declared empty')
         Element.__init__(self, parent)
+        parent._has_defined_points = True
         self._manifold = parent.manifold()  # a useful shortcut
         self._coordinates = {} # dictionary of the point coordinates in various
                                # charts, with the charts as keys
@@ -230,7 +250,7 @@ class ManifoldPoint(Element):
             sage: X.<x,y> = M.chart()
             sage: p = M((2,-3))
             sage: p._latex_()
-            '\\mbox{Point on the 2-dimensional topological manifold M}'
+            '\\text{Point on the 2-dimensional topological manifold M}'
             sage: p = M((2,-3), name='p')
             sage: p._latex_()
             'p'
@@ -242,7 +262,7 @@ class ManifoldPoint(Element):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         return self._latex_name
 
     def coordinates(self, chart=None, old_chart=None):
@@ -354,7 +374,7 @@ class ManifoldPoint(Element):
             chart = dom._def_chart
             def_chart = chart
         else:
-            dom = chart._domain
+            dom = chart.domain()
             def_chart = dom._def_chart
             if self not in dom:
                 raise ValueError("the point does not belong to the domain " +
@@ -589,6 +609,26 @@ class ManifoldPoint(Element):
             sage: p == q or q == p
             False
 
+        Comparison with periodic coordinates::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart('x y:period=2')
+            sage: p = M((0,1))
+            sage: q = M((0,3))
+            sage: p == q and q == p
+            True
+            sage: q = M((0,2))
+            sage: p == q or q == p
+            False
+            sage: Y.<u,v> = M.chart('u:(0,2*pi):periodic v')
+            sage: p = M((0,1), chart=Y)
+            sage: q = M((-4*pi,1), chart=Y)
+            sage: p == q and q == p
+            True
+            sage: q = M((3*pi,1), chart=Y)
+            sage: p == q or q == p
+            False
+
         """
         if other is self:
             return True
@@ -612,7 +652,7 @@ class ManifoldPoint(Element):
                     common_chart = chart
                     break
         if common_chart is None:
-            # A commont chart is searched via a coordinate transformation,
+            # A common chart is searched via a coordinate transformation,
             # privileging the default chart
             if def_chart in self._coordinates:
                 try:
@@ -628,7 +668,7 @@ class ManifoldPoint(Element):
                 except ValueError:
                     pass
         if common_chart is None:
-            # At this stage, a commont chart is searched via a coordinate
+            # At this stage, a common chart is searched via a coordinate
             # transformation from any chart
             for chart in self._coordinates:
                 try:
@@ -651,13 +691,19 @@ class ManifoldPoint(Element):
             #!# Another option would be:
             # raise ValueError("no common chart has been found to compare " +
             #                  "{} and {}".format(self, other))
-        for xs, xo in zip(self._coordinates[common_chart],
-                          other._coordinates[common_chart]):
+        periods = common_chart.periods()
+        for ind, (xs, xo) in enumerate(zip(self._coordinates[common_chart],
+                                           other._coordinates[common_chart])):
             diff = xs - xo
-            if isinstance(diff, Expression) and not diff.is_trivial_zero():
-                return False
-            elif not (diff == 0):
-                return False
+            period = periods[ind]
+            if period is not None:
+                if not (diff/period in ZZ):
+                    return False
+            else:
+                if isinstance(diff, Expression) and not diff.is_trivial_zero():
+                    return False
+                elif not (diff == 0):
+                    return False
         return True
 
     def __ne__(self, other):
@@ -857,8 +903,8 @@ class ManifoldPoint(Element):
             sage: F = S2.continuous_map(M, {(XS, X): [sin(th)*cos(ph),
             ....:                           sin(th)*sin(ph), cos(th)]}, name='F')
             sage: F.display()
-            F: S^2 --> M
-            on U: (th, ph) |--> (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
+            F: S^2 → M
+            on U: (th, ph) ↦ (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
             sage: g = p.plot(chart=X, mapping=F)
             sage: gS2 = XS.plot(chart=X, mapping=F, number_values=9)
             sage: g + gS2
@@ -949,4 +995,3 @@ class ManifoldPoint(Element):
             resu += (point3d(xp, color=color, size=size) +
                      text3d(label, xlab, fontsize=fontsize, color=label_color))
         return resu
-

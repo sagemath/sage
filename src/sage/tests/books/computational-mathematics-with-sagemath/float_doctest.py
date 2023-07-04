@@ -384,7 +384,7 @@ Sage example in ./float.tex, line 1975::
   0.026525823848649222628147293?
   0.02893726238034460650343342?
   sage: dfs = lambda x: -cos(1/x)/x^2
-  sage: not any([dfs(z).contains_zero() for z in zeros])
+  sage: not any(dfs(z).contains_zero() for z in zeros)
   True
 
 Sage example in ./float.tex, line 2022::
@@ -429,13 +429,13 @@ Sage example in ./float.tex, line 2095::
 Sage example in ./float.tex, line 2135::
 
   sage: CBF(sqrt(2),pi)
-  [1.414213562373095 +/- 4.10e-16] + [3.141592653589793 +/- ...e-16]*I
+  [1.414213562373095...] + [3.141592653589793...]*I
   sage: CIF(sqrt(2),pi)
   1.414213562373095? + 3.141592653589794?*I
   sage: CIF(sqrt(2)+pi*I)
   1.414213562373095? + 3.141592653589794?*I
   sage: CBF(sqrt(2)+pi*I)
-  [1.414213562373095 +/- 4.10e-16] + [3.141592653589793 +/- ...e-16]*I
+  [1.414213562373095...] + [3.141592653589793...]*I
 
 Sage example in ./float.tex, line 2146::
 
@@ -476,4 +476,3 @@ Sage example in ./float.tex, line 2245::
   1.73205080756887729352744634151?
 
 """
-

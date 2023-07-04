@@ -1,7 +1,6 @@
 r"""
 G-Sets
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>
@@ -16,11 +15,11 @@ from .sets_cat import Sets
 
 #############################################################
 # GSets
-#     $G$-Sets play an important role in permutation groups.
+#     `G`-Sets play an important role in permutation groups.
 #############################################################
 class GSets(Category):
     """
-    The category of $G$-sets, for a group $G$.
+    The category of `G`-sets, for a group `G`.
 
     EXAMPLES::
 

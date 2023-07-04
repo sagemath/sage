@@ -302,7 +302,7 @@ Python, сработает нормально.
 
 ::
 
-    sage: range(1, 15)  # py2
+    sage: list(range(1, 15))
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 Это удобно, когда для создания списков используется вид списка:
@@ -367,7 +367,7 @@ Python, сработает нормально.
     sage: type(v)
     <class 'sage.structure.sequence.Sequence_generic'>
     sage: type(v[1])
-    <type 'sage.rings.rational.Rational'>
+    <class 'sage.rings.rational.Rational'>
     sage: v.universe()
     Rational Field
     sage: v.is_immutable()
@@ -508,8 +508,7 @@ http://docs.python.org/lib/typesmapping.html) произвольным объе�
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))  # py2
-    sage: v = (n^2 for n in range(10000000))  # py3
+    sage: v = (n^2 for n in range(10000000))
     sage: next(v)
     0
     sage: next(v)

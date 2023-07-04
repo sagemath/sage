@@ -9,11 +9,11 @@ Root system data for type BC affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .cartan_type import CartanType_standard_affine
 from sage.rings.integer_ring import ZZ
+
+
 class CartanType(CartanType_standard_affine):
     def __init__(self, n):
         """
@@ -79,7 +79,7 @@ class CartanType(CartanType_standard_affine):
             O=<=O---O=<=O
             0   1   2   3
             BC3~
-            sage: sorted(c.edges())
+            sage: c.edges(sort=True)
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
             sage: c = CartanType(["A", 6, 2]).dynkin_diagram() # should be the same as above; did fail at some point!
@@ -87,7 +87,7 @@ class CartanType(CartanType_standard_affine):
             O=<=O---O=<=O
             0   1   2   3
             BC3~
-            sage: sorted(c.edges())
+            sage: c.edges(sort=True)
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
             sage: c = CartanType(['BC',2,2]).dynkin_diagram()
@@ -95,7 +95,7 @@ class CartanType(CartanType_standard_affine):
             O=<=O=<=O
             0   1   2
             BC2~
-            sage: sorted(c.edges())
+            sage: c.edges(sort=True)
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 2)]
 
             sage: c = CartanType(['BC',1,2]).dynkin_diagram()
@@ -104,7 +104,7 @@ class CartanType(CartanType_standard_affine):
             O=<=O
             0   1
             BC1~
-            sage: sorted(c.edges())
+            sage: c.edges(sort=True)
             [(0, 1, 1), (1, 0, 4)]
 
         """
@@ -137,9 +137,9 @@ class CartanType(CartanType_standard_affine):
             sage: CartanType.options._reset()
         """
         if self.options.notation == "Kac":
-            return "A_{%s}^{(2)}"%(2*self.classical().rank())
+            return "A_{%s}^{(2)}" % (2 * self.classical().rank())
         else:
-            return "BC_{%s}^{(2)}"%self.n
+            return "BC_{%s}^{(2)}" % self.n
 
     def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
         r"""
@@ -284,4 +284,3 @@ class CartanType(CartanType_standard_affine):
         n = self.n
         return CartanTypeFolded(self, ['A', 2*n - 1, 1],
             [[0]] + [[i, 2*n-i] for i in range(1, n)] + [[n]])
-

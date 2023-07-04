@@ -56,16 +56,15 @@ TESTS::
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from .matroid cimport Matroid
@@ -276,9 +275,13 @@ cdef class CircuitClosuresMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.named_matroids.Vamos()
-            sage: sorted(M._max_independent(set(['a', 'c', 'd', 'e', 'f'])))
+            sage: X = M._max_independent(set(['a', 'c', 'd', 'e', 'f']))
+            sage: sorted(X)  # random
             ['a', 'd', 'e', 'f']
-
+            sage: M.is_independent(X)
+            True
+            sage: all(M.is_dependent(X.union([y])) for y in M.groundset() if y not in X)
+            True
         """
         I = set(F)
         for r in sorted(self._circuit_closures.keys()):
@@ -514,7 +517,7 @@ cdef class CircuitClosuresMatroid(Matroid):
             N.rename(getattr(self, '__custom_name'))
         return N
 
-    def __deepcopy__(self, memo={}):
+    def __deepcopy__(self, memo=None):
         """
         Create a deep copy.
 
@@ -531,6 +534,8 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: M.groundset() is N.groundset()
             False
         """
+        if memo is None:
+            memo = {}
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = CircuitClosuresMatroid(groundset=deepcopy(self._groundset, memo), circuit_closures=deepcopy(self._circuit_closures, memo))

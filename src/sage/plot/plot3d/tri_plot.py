@@ -20,7 +20,6 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import print_function
 
 from sage.plot.colors import hue
 from math import sqrt
@@ -218,7 +217,6 @@ class TriangleFactory:
         return list
 
 
-
 class TrianglePlot:
     """
     Recursively plots a function of two variables by building squares of 4 triangles, checking at
@@ -228,7 +226,7 @@ class TrianglePlot:
 
     def str(self):
         """
-        Returns a string listing the objects in the instance of the TrianglePlot class.
+        Return a string listing the objects in the instance of the TrianglePlot class.
 
         TESTS::
 
@@ -238,7 +236,7 @@ class TrianglePlot:
             sage: len(t.str())
             68980
         """
-        return "".join([o.str() for o in self._objects])
+        return "".join(o.str() for o in self._objects)
 
     def __init__(self, triangle_factory, f, min_x__max_x, min_y__max_y, g = None,
                        min_depth=4, max_depth=8, num_colors = None, max_bend=.3):
@@ -252,7 +250,7 @@ class TrianglePlot:
             sage: t._f(1,1)
             2
         """
-        (min_x, max_x) = min_x__max_x 
+        (min_x, max_x) = min_x__max_x
         (min_y, max_y) = min_y__max_y
         self._triangle_factory = triangle_factory
         self._f = f
@@ -262,7 +260,7 @@ class TrianglePlot:
         self._max_bend = max_bend
         self._objects = []
         if min(max_x - min_x, max_y - min_y) == 0:
-            raise ValueError('Plot rectangle is really a line.  Make sure min_x != max_x and min_y != max_y.')
+            raise ValueError('plot rectangle is really a line; make sure min_x != max_x and min_y != max_y')
         self._num_colors = num_colors
         if g is None:
             def fcn(x,y):
@@ -272,7 +270,6 @@ class TrianglePlot:
                 return [self._f(x,y), self._g(x,y)]
 
         self._fcn = fcn
-
 
         # generate the necessary data to kick-start the recursion
         mid_x = (min_x + max_x)/2
@@ -303,7 +300,6 @@ class TrianglePlot:
                 vertices = o.get_vertices()
                 avg_z = (vertices[0][2] + vertices[1][2] + vertices[2][2])/3
                 o.set_color(colors[int(num_colors * (avg_z - self._min) / zrange)])
-
 
     def plot_block(self, min_x, mid_x, max_x, min_y, mid_y, max_y, sw_z, nw_z, se_z, ne_z, mid_z, depth):
         """
@@ -402,7 +398,6 @@ class TrianglePlot:
             mid_se_z = self._fcn(qtr3_x,qtr1_y)
             mid_ne_z = self._fcn(qtr3_x,qtr3_y)
 
-
             self.extrema([mid_w_z[0], mid_n_z[0], mid_e_z[0], mid_s_z[0], mid_sw_z[0], mid_se_z[0], mid_nw_z[0], mid_sw_z[0]])
 
             # recurse into the sub-squares
@@ -441,7 +436,6 @@ class TrianglePlot:
                 se = [(max_x,min_y,se_z[0]),se_z[1]]
                 ne = [(max_x,max_y,ne_z[0]),ne_z[1]]
                 c  = [[(mid_x,mid_y,mid_z[0]),mid_z[1]]]
-
 
             left     = [sw,nw]
             left_c   = c
@@ -501,7 +495,6 @@ class TrianglePlot:
         self.triangulate(m, mpc)
         self.triangulate(m, mqc)
 
-
     def triangulate(self, p, c):
         """
         Pass in a list of edge points (p) and center points (c).
@@ -524,7 +517,6 @@ class TrianglePlot:
         else:
             for i in range(0,len(p)-1):
                 self._objects.append(self._triangle_factory.smooth_triangle(p[i][0], p[i+1][0], c[i][0],p[i][1], p[i+1][1], c[i][1]))
-
 
     def extrema(self, list):
         """

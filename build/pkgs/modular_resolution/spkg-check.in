@@ -1,0 +1,3 @@
+cd src
+
+$MAKE check || sdh_die "Error testing modular_resolution"

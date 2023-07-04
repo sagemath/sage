@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 # Note: the is_xxx functions are imported to here, but not from here up to sage.modular.all, so
 # they are invisible to the user but easy to import all in one go by other code that needs them.
 
@@ -16,4 +15,3 @@ from .congroup import (degeneracy_coset_representatives_gamma0,
                             degeneracy_coset_representatives_gamma1)
 
 from .farey_symbol import Farey as FareySymbol
-

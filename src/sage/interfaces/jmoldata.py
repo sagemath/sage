@@ -18,7 +18,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 
@@ -30,13 +29,15 @@ import os
 import re
 import subprocess
 import sys
+from pathlib import Path
+
 
 class JmolData(SageObject):
     r"""
-    .. todo::
+    .. TODO::
 
-       Create an animated image file (GIF) if spin is on and put data
-       extracted from a file into a variable/string/structure to return
+        Create an animated image file (GIF) if spin is on and put data
+        extracted from a file into a variable/string/structure to return
     """
     def __init__(self):
         """
@@ -67,14 +68,14 @@ class JmolData(SageObject):
         except (subprocess.CalledProcessError, OSError):
             return False
 
-        java_version = re.search(r'version.*([1][.][789]|"[\d.]+")', version)
-        return java_version is not None
+        java_version_number = int(re.sub(r'.*version "(0\.|1\.)?(\d*)[\s\S]*', r'\2', version, flags=re.S))
+        return java_version_number >= 7
 
     def export_image(self,
         targetfile,
         datafile, #name (path) of data file Jmol can read or script file telling it what to read or load
         datafile_cmd='script', #"script" or "load"
-        image_type ='PNG', #PNG, JPG, GIF
+        image_type='PNG', #PNG, JPG, GIF
         figsize=5,
         **kwds):
         r"""
@@ -134,19 +135,23 @@ class JmolData(SageObject):
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
             sage: D = dodecahedron()
-            sage: from sage.misc.misc import SAGE_TMP
-            sage: archive_name = os.path.join(SAGE_TMP, "archive.jmol.zip")
-            sage: D.export_jmol(archive_name)  #not scaled properly...need some more steps.
-            sage: archive_native = archive_name
+            sage: from tempfile import NamedTemporaryFile
+            sage: archive = NamedTemporaryFile(suffix=".zip")
+            sage: D.export_jmol(archive.name)
+            sage: archive_native = archive.name
             sage: import sys
             sage: if sys.platform == 'cygwin':
             ....:     import cygwin
             ....:     archive_native = cygwin.cygpath(archive_native, 'w')
-            sage: script = 'set defaultdirectory "{0}"\n script SCRIPT\n'.format(archive_native)
-            sage: testfile = os.path.join(SAGE_TMP, "testimage.png")
-            sage: JData.export_image(targetfile=testfile, datafile=script, image_type="PNG") # optional -- java
-            sage: print(os.path.exists(testfile)) # optional -- java
+            sage: script  = f'set defaultdirectory "f{archive_native}"\n'
+            sage: script += 'script SCRIPT\n'
+            sage: with NamedTemporaryFile(suffix=".png") as testfile:  # optional -- java
+            ....:     JData.export_image(targetfile=testfile.name,
+            ....:                        datafile=script,
+            ....:                        image_type="PNG")
+            ....:     os.path.exists(testfile.name)
             True
+            sage: archive.close()
         """
         # Set up paths, file names and scripts
         jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
@@ -178,5 +183,5 @@ class JmolData(SageObject):
                 "-J", launchscript, "-j", imagescript],
                 stdout=jout, stderr=jout, env=env)
         if not os.path.isfile(targetfile):
-            raise RuntimeError("Jmol failed to create file %s, see %s for details"%(repr(targetfile), repr(scratchout)))
+            raise RuntimeError(f"Jmol failed to create file {targetfile}: {Path(scratchout).read_text()}")
         os.unlink(scratchout)

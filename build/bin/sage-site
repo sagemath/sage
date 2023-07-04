@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+# Handle options of the src/bin/sage script that pertain to SAGE_ROOT or sage-the-distribution.
+
+usage() {
+    echo
+    ####  1.......................26..................................................78
+    ####  |.....................--.|...................................................|
+    echo "Sage-the-distribution options:"
+    echo "  --optional          -- list all optional packages that can be installed"
+    echo "  --experimental      -- list all experimental packages that can be installed"
+    echo "  --info [packages]   -- print the SPKG.txt or SPKG.rst of the given packages,"
+    echo "                         and some additional information."
+    echo "  -i [packages]       -- install the given Sage packages"
+}
+
+usage_advanced() {
+    echo
+    ####  1.......................26..................................................78
+    ####  |.....................--.|...................................................|
+    echo "Building the Sage library:"
+    echo
+    echo "  -b                  -- build Sage library -- do this if you have"
+    echo "                         modified any source code files in SAGE_ROOT/src/sage/"
+    echo "  -ba                 -- same as -b, but rebuild *all* Cython"
+    echo "                         code."
+    echo "  -br                 -- build and run Sage"
+    echo
+    echo "  -bt [...]           -- build Sage and test; same options as -t"
+    echo "  -btp <N> [...]      -- build Sage and test in parallel; same options as -tp"
+    echo "  -btnew [...]        -- build Sage and test modified files, as in -t --new"
+    echo
+    echo "  -bn [...], --build-and-notebook [...]"
+    echo "                      -- build the Sage library (as by running \"sage -b\")"
+    echo "                         and then start the notebook"
+    echo
+    echo "Package handling:"
+    echo
+    echo "  --package [args]    -- call the package manager with given arguments."
+    echo "                         Run without arguments for help."
+    echo "  --experimental      -- list all experimental packages that can be installed"
+    echo "  -i [opts] [pkgs]    -- install the given Sage packages.  Options:"
+    echo "                           -c -- run the packages' test suites,"
+    echo "                                 overriding the settings of"
+    echo "                                 SAGE_CHECK and SAGE_CHECK_PACKAGES"
+    echo "                           -d -- only download, do not install packages"
+    echo "                           -f -- force build: install the packages even"
+    echo "                                 if they are already installed"
+    echo "                           -s -- do not delete the temporary build directories"
+    echo "                                 after a successful build"
+    echo "                           -y -- reply yes to prompts about experimental"
+    echo "                                 and old-style packages; warning: there"
+    echo "                                 is no guarantee that these packages will"
+    echo "                                 build correctly; use at your own risk"
+    echo "                           -n -- reply no to prompts about experimental"
+    echo "                                 and old-style packages"
+    echo "  -f [opts] [pkgs]    -- shortcut for -i -f: force build of the given Sage"
+    echo "                         packages"
+    echo "  -p [opts] [packages]-- install the given Sage packages, without dependency"
+    echo "                         checking. Options are the same as for the -i command."
+    echo "  --optional          -- list all optional packages that can be installed"
+    echo "  --standard          -- list all standard packages that can be installed"
+    echo "  --installed         -- list all installed packages"
+
+    echo
+    ####  1.......................26..................................................78
+    ####  |.....................--.|...................................................|
+    echo "Making Sage distributions:"
+    echo
+    echo "  --sdist             -- build a source distribution of Sage"
+    echo
+    echo "Building the documentation:"
+    echo
+    echo "  --docbuild [lang/]<document> <html|pdf|...> -- Build the Sage documentation"
+    echo
+    echo "Other developer tools:"
+    echo
+    echo "  --root              -- print the Sage root directory"
+    echo "  --git-branch        -- print the current git branch"
+    echo "  --buildsh [...]     -- run a shell with Sage environment variables"
+    echo "                         as they are set while building Sage and its packages"
+    echo
+    ####  1.......................26..................................................78
+    ####  |.....................--.|...................................................|
+}
+
+if [ "$1" = '-h' -o "$1" = '-?' -o "$1" = '-help' -o "$1" = '--help' ]; then
+    usage
+    exit 0
+fi
+if [ "$1" = "-advanced" -o "$1" = "--advanced" ]; then
+    usage_advanced
+    exit 0
+fi
+
+#####################################################################
+# Package handling
+#####################################################################
+
+if [ "$1" = '-package' -o "$1" = "--package" ]; then
+    shift
+    exec sage-package "$@"
+fi
+
+if [ "$1" = '-optional' -o "$1" = "--optional" ]; then
+    shift
+    exec sage-list-packages optional $@
+fi
+
+if [ "$1" = '-experimental' -o "$1" = "--experimental" ]; then
+    shift
+    exec sage-list-packages experimental $@
+fi
+
+if [ "$1" = '-standard' -o "$1" = "--standard" ]; then
+    shift
+    exec sage-list-packages standard $@
+fi
+
+if [ "$1" = '-p' ]; then
+    # If there are no further arguments, display usage help
+    if [ $# -eq 1 ]; then
+        set -- --info
+    else
+        # Delegate to option handling of -i below
+        set -- -i "$@"
+    fi
+fi
+
+if [ "$1" = '-f' ]; then
+    # -f is an alias for -i -f
+    set -- -i "$@"
+fi
+
+if [ "$1" = '-i' ]; then
+    shift
+    if [ -z "$MAKE" ]; then
+        MAKE="make"
+    fi
+
+    set -e
+    cd "$SAGE_ROOT"
+
+    # Parse options
+    PACKAGES=""         # Packages to install
+    INSTALL_OPTIONS=""  # Options to sage-spkg
+    NO_DEPS=""          # Append to the package name in 'make'
+    for OPT in "$@"; do
+        case "$OPT" in
+            -info|--info)
+                echo >&2 "Error: 'sage -i $OPT <package>' is no longer supported, use 'sage --info <package>' instead."
+                exit 2;;
+            -f) FORCE_INSTALL=yes;;
+            -p) NO_DEPS=-no-deps;;
+            # Setting SAGE_CHECK here duplicates what we do in sage-spkg
+            # but we need it in "make" already when there are (order-only)
+            # dependencies on packages providing test infrastructure
+            -c) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT"; export SAGE_CHECK=yes;;
+            -w) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT"; export SAGE_CHECK=warn;;
+            -*) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT";;
+            *.spkg)
+                echo "Error: Installing old-style SPKGs is no longer supported."
+                exit 1;;
+            *) PACKAGES="$PACKAGES $OPT";;
+        esac
+    done
+
+    # Get list of targets; this may trigger bootstrap/configure
+    ALL_TARGETS="$($MAKE list)"
+
+    # First, uninstall the packages if -f was given
+    if [ "$FORCE_INSTALL" = yes ]; then
+        for PKG in $PACKAGES; do
+            $MAKE "$PKG-uninstall" || true  # Ignore errors
+        done
+    fi
+
+    if [ -z "$NO_DEPS" ]; then
+        # Make sure that the toolchain is up-to-date
+        # (which is a dependency of every package)
+        $MAKE all-toolchain
+    fi
+
+    # Now install the packages
+    for PKG in $PACKAGES; do
+        echo
+        # Check that $PKG is actually a Makefile target
+        # See https://github.com/sagemath/sage/issues/25078
+        if ! echo "$ALL_TARGETS" | grep "^${PKG}$" >/dev/null; then
+            echo >&2 "Error: package '$PKG' not found"
+            echo >&2 "Note: if it is an old-style package, installing these is no longer supported"
+            exit 1
+        fi
+        $MAKE SAGE_SPKG="sage-spkg $INSTALL_OPTIONS" "$PKG$NO_DEPS"
+    done
+
+    if [ -z "$NO_DEPS" ]; then
+        echo "New packages may have been installed."
+        echo "Re-running configure and make in case any dependent packages need updating."
+        touch "$SAGE_ROOT/configure" && $MAKE all-build
+    fi
+    exit 0
+fi
+
+if [ "$1" = '-info' -o "$1" = '--info' ]; then
+    shift
+    if [ $# -eq 0 ]; then
+        # If there are no further arguments, display usage help.
+        "$SAGE_ROOT"/build/bin/sage-spkg
+        exit 0
+    fi
+    for PKG in "$@"
+    do
+        "$SAGE_ROOT"/build/bin/sage-spkg --info "$PKG" || exit $?
+    done
+    exit 0
+fi
+
+if [ "$1" = '-git-branch' -o "$1" = '--git-branch' ]; then
+    shift
+    exec git --git-dir="$SAGE_ROOT"/.git rev-parse --abbrev-ref HEAD
+fi
+
+echo "Error: unknown option: $1"
+exit 1

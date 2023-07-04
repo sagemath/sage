@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.sets.real_set', 'RealSet')
 from .set import Set
@@ -12,4 +11,5 @@ from .disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from .primes import Primes
 from .family import Family
 from .disjoint_set import DisjointSet
+from .condition_set import ConditionSet
 from .finite_set_maps import FiniteSetMaps

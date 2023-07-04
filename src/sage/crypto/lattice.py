@@ -60,8 +60,10 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
       :class:`FreeModule_submodule_with_basis_integer` object instead
       of an integer matrix representing the basis.
 
-    OUTPUT: ``B`` a unique size-reduced triangular (primal: lower_left,
-      dual: lower_right) basis of row vectors for the lattice in question.
+    OUTPUT:
+
+    ``B`` a unique size-reduced triangular (primal: lower_left,
+    dual: lower_right) basis of row vectors for the lattice in question.
 
     EXAMPLES:
 
@@ -222,7 +224,8 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         set_random_seed(seed)
 
     if type == 'random':
-        if n != 1: raise ValueError('random bases require n = 1')
+        if n != 1:
+            raise ValueError('random bases require n = 1')
 
     ZZ = IntegerRing()
     ZZ_q = IntegerModRing(q)
@@ -253,7 +256,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
             A = A.stack(R.random_element().matrix())
 
     elif type == 'cyclotomic':
-        from sage.arith.all import euler_phi
+        from sage.arith.misc import euler_phi
         from sage.misc.functional import cyclotomic_polynomial
 
         # we assume that n+1 <= min( euler_phi^{-1}(n) ) <= 2*n
@@ -272,8 +275,10 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     # switch from representatives 0,...,(q-1) to (1-q)/2,....,(q-1)/2
     def minrep(a):
-        if abs(a-q) < abs(a): return a-q
-        else: return a
+        if abs(a-q) < abs(a):
+            return a-q
+        else:
+            return a
     A_prime = A[n:m].lift().apply_map(minrep)
 
     if not dual:

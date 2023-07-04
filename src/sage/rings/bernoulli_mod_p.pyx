@@ -1,3 +1,9 @@
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 r"""
 Bernoulli numbers modulo p
 
@@ -17,7 +23,6 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
@@ -34,10 +39,9 @@ from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.bernmm import bernmm_bern_modp
 
 
-
 def verify_bernoulli_mod_p(data):
-    """
-    Computes checksum for Bernoulli numbers.
+    r"""
+    Compute checksum for Bernoulli numbers.
 
     It checks the identity
 

@@ -2,17 +2,16 @@
 Parallel iterator built using the ``fork()`` system call
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 from shutil import rmtree
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
@@ -21,7 +20,7 @@ from sage.interfaces.process import ContainChildren
 from sage.misc.misc import walltime
 
 
-class WorkerData(object):
+class WorkerData():
     """
     Simple class which stores data about a running ``p_iter_fork``
     worker.
@@ -42,7 +41,7 @@ class WorkerData(object):
         sage: W.starttime  # random
         1499330252.463206
     """
-    def __init__(self, input, starttime=None, failure=""):
+    def __init__(self, input_value, starttime=None, failure=""):
         r"""
         See the class documentation for description of the inputs.
 
@@ -51,12 +50,12 @@ class WorkerData(object):
             sage: from sage.parallel.use_fork import WorkerData
             sage: W = WorkerData(42)
         """
-        self.input = input
+        self.input = input_value
         self.starttime = starttime or walltime()
         self.failure = failure
 
 
-class p_iter_fork(object):
+class p_iter_fork():
     """
     A parallel iterator implemented using ``fork()``.
 
@@ -155,7 +154,9 @@ class p_iter_fork(object):
         """
         n = self.ncpus
         v = list(inputs)
-        import os, sys, signal
+        import os
+        import sys
+        import signal
         from sage.misc.persist import loads
         from sage.misc.temporary_file import tmp_dir
         dir = tmp_dir()
@@ -163,9 +164,9 @@ class p_iter_fork(object):
 
         workers = {}
         try:
-            while len(v) > 0 or len(workers) > 0:
+            while v or workers:
                 # Spawn up to n subprocesses
-                while len(v) > 0 and len(workers) < n:
+                while v and len(workers) < n:
                     v0 = v.pop(0)  # Input value for the next subprocess
                     with ContainChildren():
                         pid = os.fork()
@@ -196,8 +197,7 @@ class p_iter_fork(object):
                             if T - W.starttime > timeout:
                                 if self.verbose:
                                     print(
-                                        "Killing subprocess %s with input %s which took too long"
-                                         % (pid, W.input) )
+                                        "Killing subprocess %s with input %s which took too long" % (pid, W.input))
                                 os.kill(pid, signal.SIGKILL)
                                 W.failure = " (timed out)"
                     except KeyError:
@@ -205,7 +205,7 @@ class p_iter_fork(object):
                         pass
                     else:
                         # collect data from process that successfully terminated
-                        sobj = os.path.join(dir, '%s.sobj'%pid)
+                        sobj = os.path.join(dir, '%s.sobj' % pid)
                         try:
                             with open(sobj, "rb") as file:
                                 data = file.read()
@@ -218,7 +218,7 @@ class p_iter_fork(object):
                             except Exception as E:
                                 answer = "INVALID DATA {}".format(E)
 
-                        out = os.path.join(dir, '%s.out'%pid)
+                        out = os.path.join(dir, '%s.out' % pid)
                         try:
                             with open(out) as file:
                                 sys.stdout.write(file.read())
@@ -279,19 +279,24 @@ class p_iter_fork(object):
             sage: F._subprocess(operator.add, tmp_dir(), (1, 2))
             sage: sys.stdout = saved_stdout
         """
-        import imp, os, sys
+        import os
+        import sys
+        try:
+            from importlib import reload
+        except ImportError:
+            from imp import reload
         from sage.misc.persist import save
 
         # Make it so all stdout is sent to a file so it can
         # be displayed.
-        out = os.path.join(dir, '%s.out'%os.getpid())
+        out = os.path.join(dir, '%s.out' % os.getpid())
         sys.stdout = open(out, 'w')
 
         # Run some commands to tell Sage that its
         # pid has changed (forcing a reload of
         # misc).
         import sage.misc.misc
-        imp.reload(sage.misc.misc)
+        reload(sage.misc.misc)
 
         # The pexpect interfaces (and objects defined in them) are
         # not valid.
@@ -302,5 +307,5 @@ class p_iter_fork(object):
         value = f(*args, **kwds)
 
         # And save the result to disk.
-        sobj = os.path.join(dir, '%s.sobj'%os.getpid())
+        sobj = os.path.join(dir, '%s.sobj' % os.getpid())
         save(value, sobj, compress=False)

@@ -65,6 +65,12 @@ def _from_whatever(data, fmt=None):
       either ``'graph6'``, ``sparse6``, or ``None``, with the latter case
       indicating that the ``Graph`` constructor should determine this for
       itself
+
+    EXAMPLES::
+
+        sage: l = ['N@@?N@UGAGG?gGlKCMO', ':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI']
+        sage: graphs_list.from_whatever(l)
+        [Graph on 15 vertices, Looped multi-graph on 17 vertices]
     """
     from sage.graphs.graph import Graph
 
@@ -138,8 +144,13 @@ def from_sparse6(data):
 
     EXAMPLES::
 
-        sage: l = [':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI', ':f`??KO?B_OOSCGE_?OWONDBO?GOJBDO?_SSJdApcOIG`?og_UKEbg?_SKFq@[CCBA`p?oYMFp@gw]Qaa@xEMHDb@hMCBCbQ@ECHEcAKKQKFPOwo[PIDQ{KIHEcQPOkVKEW_WMNKqPWwcRKOOWSKIGCqhWt??___WMJFCahWzEBa`xOu[MpPPKqYNoOOOKHHDBPs|??__gWMKEcAHKgTLErqA?A@a@G{kVLErs?GDBA@XCs\\NggWSOJIDbHh@?A@aF']
-        sage: graphs_list.from_sparse6(l)
+        sage: g1 = ':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI'
+        sage: g2 = ':f`??KO?B_OOSCGE_?OWONDBO?GOJBDO?_SSJdApcOIG`?og_UKEbg?_SKF'
+        sage: g2 += 'q@[CCBA`p?oYMFp@gw]Qaa@xEMHDb@hMCBCbQ@ECHEcAKKQKFPOwo[PIDQ'
+        sage: g2 += '{KIHEcQPOkVKEW_WMNKqPWwcRKOOWSKIGCqhWt??___WMJFCahWzEBa`xO'
+        sage: g2 += 'u[MpPPKqYNoOOOKHHDBPs|??__gWMKEcAHKgTLErqA?A@a@G{kVLErs?GD'
+        sage: g2 += 'BA@XCs\\NggWSOJIDbHh@?A@aF'
+        sage: graphs_list.from_sparse6([g1, g2])
         [Looped multi-graph on 17 vertices, Looped multi-graph on 39 vertices]
     """
     return _from_whatever(data, fmt='sparse6')
@@ -200,8 +211,16 @@ def to_sparse6(graphs, file=None, output_list=False):
 
 
 def _to_graph6(graphs, file=None, output_list=False, sparse=False):
-    """
+    r"""
     Internal implementation of :func:`to_graph6` and :func:`to_sparse6`.
+
+    EXAMPLES::
+
+        sage: l = [graphs.DodecahedralGraph(), graphs.PetersenGraph()]
+        sage: graphs_list._to_graph6(l, sparse=False)
+        'ShCHGD@?K?_@?@?C_GGG@??cG?G?GK_?C\nIheA@GUAo\n'
+        sage: graphs_list._to_graph6(l, sparse=True)
+        ':S_`abcaDe`Fg_HijhKfLdMkNcOjP_BQ\n:I`ES@obGkqegW~\n'
     """
     if sparse:
         method = 'sparse6_string'
@@ -303,6 +322,9 @@ def show_graphs(graph_list, **kwds):
         sage: glist.append(graphs.BarbellGraph(7, 4))
         sage: glist.append(graphs.CycleGraph(15))
         sage: glist.append(graphs.DiamondGraph())
+        sage: glist.append(graphs.GemGraph())
+        sage: glist.append(graphs.DartGraph())
+        sage: glist.append(graphs.ForkGraph())
         sage: glist.append(graphs.HouseGraph())
         sage: glist.append(graphs.HouseXGraph())
         sage: glist.append(graphs.KrackhardtKiteGraph())
@@ -316,7 +338,7 @@ def show_graphs(graph_list, **kwds):
     Check that length is <= 20::
 
         sage: len(glist)
-        14
+        17
 
     Show the graphs in a graphics array::
 

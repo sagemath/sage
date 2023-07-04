@@ -33,6 +33,9 @@ stdbuf -i0 -o0 -e0 awk -v limit=$1 -v firstMissingNR=-1 -v offset=$OFFSET -v byt
     a[NR] = $0;
     delete a[NR-offset];
     printf "." > "/dev/stderr"
+    if (/^sage-logger/){
+      print > "/dev/stderr"
+    }
   }
 }
 END {

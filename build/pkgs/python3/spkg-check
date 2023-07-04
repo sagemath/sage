@@ -1,8 +1,0 @@
-cd src
-$MAKE test
-
-if [ $? -ne 0 ]; then
-    echo "An error occurred while testing Python"
-    exit 1
-fi
-

@@ -41,15 +41,14 @@ Here, the expansion lists the remainders of repeated division by `x^2 + x + 1`::
     [x + 1, 1]
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .valuation import DiscretePseudoValuation
 from sage.misc.abstract_method import abstract_method
@@ -88,11 +87,11 @@ class DevelopingValuation(DiscretePseudoValuation):
         domain = parent.domain()
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         if not is_PolynomialRing(domain) or not domain.ngens() == 1:
-            raise TypeError("domain must be a univariate polynomial ring but %r is not"%(domain,))
+            raise TypeError("domain must be a univariate polynomial ring but %r is not" % (domain,))
 
         phi = domain.coerce(phi)
         if phi.is_constant() or not phi.is_monic():
-            raise ValueError("phi must be a monic non-constant polynomial but %r is not"%(phi,))
+            raise ValueError("phi must be a monic non-constant polynomial but %r is not" % (phi,))
 
         self._phi = phi
 
@@ -142,7 +141,7 @@ class DevelopingValuation(DiscretePseudoValuation):
         if valuations is None:
             valuations = list(self.valuations(f))
         v = min(valuations)
-        return [i for i,w in enumerate(valuations) if w == v][-1]
+        return [i for i, w in enumerate(valuations) if w == v][-1]
 
     @cached_method
     def _pow(self, f, e, error, effective_degree):
@@ -213,7 +212,7 @@ class DevelopingValuation(DiscretePseudoValuation):
                 yield domain(c)
         else:
             while f.degree() >= 0:
-                f,r = self._quo_rem(f)
+                f, r = self._quo_rem(f)
                 yield r
 
     def _quo_rem(self, f):
@@ -227,13 +226,12 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v = GaussValuation(S, QQ.valuation(2))
             sage: v._quo_rem(x^2 + 1)
             (x, 1)
-
         """
         return f.quo_rem(self.phi())
 
     def newton_polygon(self, f, valuations=None):
         r"""
-        Return the newton polygon of the `\phi`-adic development of ``f``.
+        Return the Newton polygon of the `\phi`-adic development of ``f``.
 
         INPUT:
 
@@ -290,7 +288,7 @@ class DevelopingValuation(DiscretePseudoValuation):
         """
         f = self.domain().coerce(f)
 
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if f.is_zero():
             return infinity
 
@@ -336,7 +334,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: v._test_effective_degree()
-        
         """
         tester = self._tester(**options)
         S = tester.some_elements(self.domain().base_ring().some_elements())

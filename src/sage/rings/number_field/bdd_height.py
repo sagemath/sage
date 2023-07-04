@@ -16,8 +16,8 @@ AUTHORS:
 
 REFERENCES:
 
-..  [Doyle-Krumm] John R. Doyle and David Krumm, *Computing algebraic numbers
-    of bounded height*, :arxiv:`1111.4963v4` (2013).
+- [DK2013]
+
 """
 # ****************************************************************************
 #       Copyright (C) 2013 John Doyle and David Krumm
@@ -27,8 +27,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 from copy import copy
 from itertools import product
@@ -37,7 +35,8 @@ from sage.rings.number_field.unit_group import UnitGroup
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import column_matrix
 from sage.rings.rational_field import QQ
-from sage.rings.all import RR, Infinity
+from sage.rings.infinity import Infinity
+from sage.rings.real_mpfr import RR
 from sage.geometry.polyhedron.constructor import Polyhedron
 
 
@@ -115,7 +114,7 @@ def bdd_height_iq(K, height_bound):
 
     ALGORITHM:
 
-    This is an implementation of Algorithm 5 in [Doyle-Krumm]_.
+    This is an implementation of Algorithm 5 in [DK2013]_.
 
     INPUT:
 
@@ -188,7 +187,7 @@ def bdd_height_iq(K, height_bound):
     class_number = len(class_group_reps)
 
     # Find principal ideals of bounded norm
-    possible_norm_set = set([])
+    possible_norm_set = set()
     for n in range(class_number):
         for m in range(1, int(height_bound + 1)):
             possible_norm_set.add(m*class_group_rep_norms[n])
@@ -249,7 +248,7 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         sage: from sage.rings.number_field.bdd_height import bdd_norm_pr_ideal_gens
         sage: K.<g> = QuadraticField(123)
         sage: bdd_norm_pr_ideal_gens(K, range(5))
-        {0: [0], 1: [1], 2: [-g - 11], 3: [], 4: [2]}
+        {0: [0], 1: [1], 2: [g + 11], 3: [], 4: [2]}
 
     ::
 
@@ -346,7 +345,7 @@ def integer_points_in_polytope(matrix, interval_radius):
 
 
 def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
-    r""" 
+    r"""
     Compute all elements in the number field `K` which have relative
     multiplicative height at most ``height_bound``.
 
@@ -365,7 +364,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     ALGORITHM:
 
     This is an implementation of the revised algorithm (Algorithm 4) in
-    [Doyle-Krumm]_.
+    [DK2013]_.
 
     INPUT:
 
@@ -431,7 +430,6 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     if B < 1:
         return
     embeddings = K.places(prec=precision)
-    O_K = K.ring_of_integers()
     r1, r2 = K.signature()
     r = r1 + r2 - 1
     RF = RealField(precision)
@@ -456,14 +454,14 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     def delta_approximation(x, delta):
         r"""
-        Compute a rational number in range (x-delta, x+delta)
+        Compute a rational number in range `(x-delta, x+delta)`
         """
         return rational_in(x - delta, x + delta)
 
     def vector_delta_approximation(v, delta):
         r"""
-        Compute a rational vector w=(w1, ..., wn)
-        such that |vi-wi|<delta for all i in [1, n]
+        Compute a rational vector `w=(w_1, ..., w_n)`
+        such that `|v_i-w_i|<delta` for all `i` in `[1, n]`
         """
         return [delta_approximation(vi, delta) for vi in v]
 
@@ -487,7 +485,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
         Return a lambda approximation h_K(alpha/beta)
         """
         delta = Lambda / (r + 2)
-        norm_log = delta_approximation(RR(O_K.ideal(alpha, beta).norm()).log(), delta)
+        norm_log = delta_approximation(RR(K.ideal(alpha, beta).norm()).log(), delta)
         log_ga = vector_delta_approximation(log_map(alpha), delta)
         log_gb = vector_delta_approximation(log_map(beta), delta)
         arch_sum = sum([max(log_ga[k], log_gb[k]) for k in range(r + 1)])
@@ -526,13 +524,13 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     # Step 2
     # Find generators for principal ideals of bounded norm
-    possible_norm_set = set([])
+    possible_norm_set = set()
     for n in range(class_number):
         for m in range(1, (B + 1).ceil()):
             possible_norm_set.add(m * class_group_rep_norms[n])
     bdd_ideals = bdd_norm_pr_ideal_gens(K, possible_norm_set)
 
-    # Stores it in form of an dictionary and gives lambda(g)_approx for key g 
+    # Stores it in form of an dictionary and gives lambda(g)_approx for key g
     for norm in possible_norm_set:
         gens = bdd_ideals[norm]
         for g in gens:
@@ -618,7 +616,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     U_copy = copy(U)
     inter_bound = b - (5*t)/12
 
-    for u in U:    
+    for u in U:
         u_log = sum([u[j]*vector(fund_unit_log_approx[j]) for j in range(r)])
         unit_log_dict[u] = u_log
         u_height = sum([max(u_log[k], 0) for k in range(r + 1)])
@@ -643,10 +641,10 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
             for u in U:
                 if unit_height_dict[u] < u_height_bound:
                     candidate_height = packet_height(n, pair, u)
-                    if candidate_height <= b - (7/12)*t:
+                    if candidate_height <= b - 7*t/12:
                         L0.append([n, pair, u])
                         relevant_tuples.add(u)
-                    if candidate_height > b - (7/12)*t and candidate_height < b + t/4:
+                    elif candidate_height < b + t/4:
                         L0_tilde.append([n, pair, u])
                         relevant_tuples.add(u)
 
@@ -654,7 +652,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     # forms a dictionary of all_unit_tuples and their value
     tuple_to_unit_dict = {}
     for u in relevant_tuples:
-        unit = K(1)
+        unit = K.one()
         for k in range(r):
             unit *= fund_units[k]**u[k]
         tuple_to_unit_dict[u] = unit

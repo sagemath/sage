@@ -14,7 +14,7 @@
  * Hence, we use signed 64-bit ints. This gives us fast conversion
  * to/from Python on 64-bit Linux and OSX, and a large number of
  * available (but not quite as fast) primes on 64-bit Windows and all
- * 32-bit platforms (see Trac #10281)
+ * 32-bit platforms (see Issue #10281)
  */
 
 typedef int64_t mod_int;

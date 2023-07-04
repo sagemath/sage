@@ -202,7 +202,7 @@ Left-special and bispecial factors::
     sage: f.bispecial_factors()
     [word: , word: 0, word: 010, word: 010010, word: 01001010010]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Arnaud Bergeron <abergeron@gmail.com>,
 #                     2008 Amy Glen <amy.glen@gmail.com>,
 #                     2008-2012 Sébastien Labbé <slabqc@gmail.com>,
@@ -212,24 +212,21 @@ Left-special and bispecial factors::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
-
-from builtins import zip
-
-from six import iteritems
-from six.moves import range
-from six import iteritems
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import repeat
 from collections import defaultdict
 from itertools import islice, cycle
+
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.words import Words
 from sage.misc.cachefunc import cached_method
 from sage.combinat.words.word_options import word_options
-from sage.rings.all import Integer, Infinity, ZZ, QQ
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.misc.superseded import deprecated_function_alias
 
 
 class FiniteWord_class(Word_class):
@@ -270,11 +267,10 @@ class FiniteWord_class(Word_class):
             sage: print(w)
             012340123401234012340123401234012340123401234012340123401234
         """
-        global word_options
         if word_options['display'] == 'string':
             ls = word_options['letter_separator']
-            letters = [str(_) for _ in self]
-            if all(len(a)==1 for a in letters):
+            letters = [str(a) for a in self]
+            if all(len(a) == 1 for a in letters):
                 return ''.join(letters)
             else:
                 return ls.join(letters)
@@ -292,7 +288,6 @@ class FiniteWord_class(Word_class):
             sage: Word(range(100))._repr_()
             'word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...'
         """
-        global word_options
         if word_options['old_repr']:
             if word_options['truncate'] and \
                     self.length() > word_options['truncate_length']:
@@ -381,7 +376,7 @@ class FiniteWord_class(Word_class):
             sage: z + y
             Traceback (most recent call last):
             ...
-            ValueError: 5 not in alphabet!
+            ValueError: 5 not in alphabet
 
         Eventually, it should work::
 
@@ -419,7 +414,7 @@ class FiniteWord_class(Word_class):
             return other
         if isinstance(other, Word_class) and other.is_empty():
             return self
-        f = CallableFromListOfWords([self,other])
+        f = CallableFromListOfWords([self, other])
         length = self.length() + other.length()
         parent = self._parent
         if length == Infinity:
@@ -557,7 +552,7 @@ class FiniteWord_class(Word_class):
 
         OUTPUT:
 
-        - a list where the `i`-th entry indiciates the multiplicity
+        - a list where the `i`-th entry indicates the multiplicity
           of the `i`-th letter in the alphabet in ``self``
 
         EXAMPLES::
@@ -576,13 +571,15 @@ class FiniteWord_class(Word_class):
             sage: w.content()
             [0, 1, 0, 1]
         """
+        from collections import Counter
+        c = Counter(self)
         if n is not None:
             alphabet = range(1,n+1)
         elif not self.parent().alphabet().cardinality() == +Infinity:
             alphabet = self.parent().alphabet()
         else:
-            alphabet = sorted(self.letters())
-        return [self.count(i) for i in alphabet]
+            alphabet = sorted(c.keys())
+        return [Integer(c[a]) for a in alphabet]
 
     def is_yamanouchi(self, n=None):
         r"""
@@ -631,7 +628,7 @@ class FiniteWord_class(Word_class):
                 return False
         return True
 
-    def schuetzenberger_involution(self, n = None):
+    def schuetzenberger_involution(self, n=None):
         r"""
         Return the Schützenberger involution of the word ``self``, which is obtained
         by reverting the word and then complementing all letters within the
@@ -1329,7 +1326,7 @@ class FiniteWord_class(Word_class):
         TESTS::
 
             sage: type( Word('cacao').factor_iterator() )
-            <... 'generator'>
+            <class 'generator'>
         """
         return self.suffix_tree().factor_iterator(n)
 
@@ -1504,7 +1501,7 @@ class FiniteWord_class(Word_class):
         if n == 0:
             return 1
         pn = self.number_of_factors(n)
-        from sage.functions.all import log
+        from sage.functions.log import log
         return log(pn, base=d)/n
 
     def rauzy_graph(self, n):
@@ -1526,9 +1523,9 @@ class FiniteWord_class(Word_class):
             sage: g = w.rauzy_graph(3); g
             Looped digraph on 8 vertices
             sage: WordOptions(identifier='')
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [012, 123, 234, 345, 456, 567, 678, 789]
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(012, 123, 3),
              (123, 234, 4),
              (234, 345, 5),
@@ -1548,7 +1545,7 @@ class FiniteWord_class(Word_class):
 
             sage: w = Word('1111111')
             sage: g = w.rauzy_graph(3)
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(word: 111, word: 111, word: 1)]
 
         ::
@@ -1567,7 +1564,7 @@ class FiniteWord_class(Word_class):
             sage: w = W('abc')
             sage: w.rauzy_graph(0)
             Looped multi-digraph on 1 vertex
-            sage: _.edges()
+            sage: _.edges(sort=True)
             [(word: , word: , word: a),
              (word: , word: , word: b),
              (word: , word: , word: c)]
@@ -1636,9 +1633,9 @@ class FiniteWord_class(Word_class):
             word: 0123456789
             sage: g = w.reduced_rauzy_graph(3); g
             Looped multi-digraph on 2 vertices
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [word: 012, word: 789]
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(word: 012, word: 789, word: 3456789)]
 
         For the Fibonacci word::
@@ -1646,9 +1643,9 @@ class FiniteWord_class(Word_class):
             sage: f = words.FibonacciWord()[:100]
             sage: g = f.reduced_rauzy_graph(8);g
             Looped multi-digraph on 2 vertices
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [word: 01001010, word: 01010010]
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(word: 01001010, word: 01010010, word: 010), (word: 01010010, word: 01001010, word: 01010), (word: 01010010, word: 01001010, word: 10)]
 
         For periodic words::
@@ -1656,7 +1653,7 @@ class FiniteWord_class(Word_class):
             sage: from itertools import cycle
             sage: w = Word(cycle('abcd'))[:100]
             sage: g = w.reduced_rauzy_graph(3)
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(word: abc, word: abc, word: dabc)]
 
         ::
@@ -1675,9 +1672,9 @@ class FiniteWord_class(Word_class):
             sage: w = sigma.fixed_point('a')[:100]; w
             word: abcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd...
             sage: g = w.reduced_rauzy_graph(5)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [word: abcdc, word: cdcdc]
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(word: abcdc, word: cdcdc, word: dc), (word: cdcdc, word: cdcdc, word: dc)]
 
         AUTHOR:
@@ -2148,7 +2145,7 @@ class FiniteWord_class(Word_class):
 
     def is_conjugate_with(self, other):
         r"""
-        Return ``True`  if ``self`` is a conjugate of ``other``, and ``False`` otherwise.
+        Return ``True`` if ``self`` is a conjugate of ``other``, and ``False`` otherwise.
 
         INPUT:
 
@@ -2224,14 +2221,15 @@ class FiniteWord_class(Word_class):
             sage: Word('121132123').is_cadence([])
             True
         """
-        if len(seq) == 0:
+        if not seq:
             return True
         try:
             it = iter(self)
             s = next(islice(it, int(seq[0]), None))
             for i in range(1, len(seq)):
-                steps = seq[i] - seq[i-1]
-                for n in range(steps-1): next(it)
+                steps = seq[i] - seq[i - 1]
+                for n in range(steps - 1):
+                    next(it)
                 if next(it) != s:
                     return False
         except StopIteration:
@@ -2376,7 +2374,7 @@ class FiniteWord_class(Word_class):
 
         With an infinite word::
 
-            sage: t=words.ThueMorseWord('ab')
+            sage: t = words.ThueMorseWord('ab')
             sage: w.longest_common_suffix(t)
             Traceback (most recent call last):
             ...
@@ -2625,7 +2623,7 @@ class FiniteWord_class(Word_class):
         and lacunas of ``self`` (see [BMBL2008]_ and [BMBFLR2008]_).
 
         Note that a word `w` has at most `|w| + 1` different palindromic factors
-        (see [DJP2001]_). For `f`-palindromes (or pseudopalidromes or theta-palindromes),
+        (see [DJP2001]_). For `f`-palindromes (or pseudopalindromes or theta-palindromes),
         the maximum number of `f`-palindromic factors is `|w|+1-g_f(w)`, where
         `g_f(w)` is the number of pairs `\{a, f(a)\}` such that `a` is a letter,
         `a` is not equal to `f(a)`, and `a` or `f(a)` occurs in `w`, see [Star2011]_.
@@ -2687,52 +2685,10 @@ class FiniteWord_class(Word_class):
 
             if pal in palindromes:
                 lacunas.append(i)
-            else :
+            else:
                 palindromes.add(pal)
 
         return lengths_lps, lacunas, palindromes
-
-    def lengths_lps(self, f=None):
-        r"""
-        Return the list of the length of the longest palindromic
-        suffix (lps) for each non-empty prefix of ``self``.
-
-        It corresponds to the function `G_w` defined in [BMBFLR2008]_.
-
-        INPUT:
-
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``).
-
-        OUTPUT:
-
-        a list -- list of the length of the longest palindromic
-        suffix (lps) for each non-empty prefix of ``self``
-
-        EXAMPLES::
-
-            sage: Word().lengths_lps()
-            []
-            sage: Word('a').lengths_lps()
-            [1]
-            sage: Word('aaa').lengths_lps()
-            [1, 2, 3]
-            sage: Word('abbabaabbaab').lengths_lps()
-            [1, 1, 2, 4, 3, 3, 2, 4, 2, 4, 6, 8]
-
-        ::
-
-            sage: f = WordMorphism('a->b,b->a')
-            sage: Word('abbabaabbaab').lengths_lps(f)
-            [0, 2, 0, 2, 2, 4, 6, 8, 4, 6, 4, 6]
-
-        ::
-
-            sage: f = WordMorphism({5:[8],8:[5]})
-            sage: Word([5,8,5,5,8,8,5,5,8,8,5,8,5]).lengths_lps(f)
-            [0, 2, 2, 0, 2, 4, 6, 4, 6, 8, 10, 12, 4]
-        """
-        return self.palindromic_lacunas_study(f=f)[0]
 
     def lacunas(self, f=None):
         r"""
@@ -2792,7 +2748,7 @@ class FiniteWord_class(Word_class):
             sage: w.lengths_unioccurrent_lps()
             [1, 1, 2, 1, 1, 1, 1, None, 1, None]
             sage: f = words.FibonacciWord()[:20]
-            sage: f.lengths_unioccurrent_lps() == f.lengths_lps()
+            sage: f.lengths_unioccurrent_lps() == f.lps_lengths()[1:]
             True
             sage: t = words.ThueMorseWord()
             sage: t[:20].lengths_unioccurrent_lps()
@@ -2801,7 +2757,7 @@ class FiniteWord_class(Word_class):
             sage: t[:15].lengths_unioccurrent_lps(f)
             [None, 2, None, 2, None, 4, 6, 8, 4, 6, 4, 6, None, 4, 6]
         """
-        l = self.lengths_lps(f=f)
+        l = self.lps_lengths(f=f)[1:]
         for i in self.lacunas(f=f):
             l[i] = None
         return l
@@ -2889,7 +2845,7 @@ class FiniteWord_class(Word_class):
 
         # Initialize length of the known palindrome
         if m is None:
-            m = 0 if jj % 2 == 1 else -1
+            m = 0 if jj % 2 else -1
 
         # Initialize the next (left) position to check
         i = (jj - m - 1) / 2
@@ -2941,7 +2897,7 @@ class FiniteWord_class(Word_class):
             sage: Word('abbabaab').lengths_maximal_palindromes(f)
             [0, 0, 2, 0, 0, 0, 2, 0, 8, 0, 2, 0, 0, 0, 2, 0, 0]
         """
-        if f is not None :
+        if f is not None:
             from sage.combinat.words.morphism import WordMorphism
             if not isinstance(f, WordMorphism):
                 f = WordMorphism(f)
@@ -3006,16 +2962,15 @@ class FiniteWord_class(Word_class):
             [0, 0, 2, 0, 2, 2, 4, 6, 8]
         """
         LPC = self.lengths_maximal_palindromes(f)
-        LPS = []  # lengths of the longest palindromic suffix of prefixes
-        k = 0
-        LPS.append(0)
+        Nk = LPC[0]
+        LPS = [0]  # lengths of the longest palindromic suffix of prefixes
 
-        for j in range(1, 2*len(self)+1):
-            if j + LPC[j] > k + LPC[k]:
-                for i in range(k + LPC[k] + 1, j + LPC[j] + 1):
-                    if i % 2 == 0:
-                        LPS.append(i-j)
-                    k = j
+        for j in range(1, 2 * len(self) + 1):
+            Nj = j + LPC[j]
+            if Nj > Nk:
+                for i in range(Nk + 2 - (Nk % 2), Nj + 1, 2):
+                    LPS.append(i - j)
+                Nk = Nj
         return LPS
 
     def palindromes(self, f=None):
@@ -3071,7 +3026,7 @@ class FiniteWord_class(Word_class):
             sage: [w.palindromic_complexity(i) for i in range(20)]
             [1, 2, 2, 2, 2, 0, 4, 0, 4, 0, 4, 0, 4, 0, 2, 0, 2, 0, 4, 0]
         """
-        return len([x for x in self.palindromes() if len(x)==n])    
+        return len([x for x in self.palindromes() if len(x)==n])
 
     def palindrome_prefixes(self):
         r"""
@@ -3327,7 +3282,7 @@ class FiniteWord_class(Word_class):
             sage: w.palindromic_closure(f=f, side='left')
             Traceback (most recent call last):
             ...
-            ValueError: b not in alphabet!
+            ValueError: b not in alphabet
         """
         if f is None:
             if side == 'right':
@@ -3549,7 +3504,7 @@ class FiniteWord_class(Word_class):
                     current_exp = QQ((current_pos+1, current_pos+1-m))
                     if current_exp > best_exp:
                         best_exp = current_exp
-                for ((i,j),u) in iteritems(st._transition_function[v]):
+                for ((i,j),u) in st._transition_function[v].items():
                     if j is None:
                         j = self.length()
                     queue.append((u, i, j, l+j-i+1))
@@ -3589,14 +3544,11 @@ class FiniteWord_class(Word_class):
             sage: Word('121212').primitive_length()
             2
         """
-        l = lu = self.length()
+        l = self.length()
         if l == 0:
             return 0
-        p = self.prefix_function_table()
-        while l > 0:
-            l = p[l-1]
-            if lu % (lu - l) == 0:
-                return lu - l
+        p = self.minimal_period()
+        return p if l % p == 0 else l
 
     def is_primitive(self):
         r"""
@@ -3785,7 +3737,7 @@ class FiniteWord_class(Word_class):
 
         # The weird +1 that follows exists to make sure that lcs[i,-1] returns
         # the empty word.
-        lcs = [[[] for i in range(len(w2)+1)] for j in range(2)]
+        lcs = [[[] for _ in repeat(None, len(w2) + 1)] for j in range(2)]
 
         for i,l1 in enumerate(self):
             for j,l2 in enumerate(other):
@@ -3794,7 +3746,7 @@ class FiniteWord_class(Word_class):
 
             # Maintaining the meaning of lcs for the next loop
             lcs.pop(1)
-            lcs.insert(0,[[] for i in range(len(w2)+1)])
+            lcs.insert(0, [[] for _ in repeat(None, len(w2) + 1)])
 
         return Word(lcs[1][-2])
 
@@ -3831,7 +3783,7 @@ class FiniteWord_class(Word_class):
         .. SEEALSO::
 
             :meth:`longest_common_subword`
-            :meth:`nb_subword_occurrences_in`
+            :meth:`number_of_subword_occurrences`
             :meth:`is_factor`
         """
         its = iter(self)
@@ -3844,6 +3796,82 @@ class FiniteWord_class(Word_class):
                 return False
         except StopIteration:
             return True
+
+    def subword_complementaries(self, other):
+        """
+        Return the possible complementaries ``other`` minus ``self`` if
+        ``self`` is a subword of ``other`` (empty list otherwise).
+        The complementary is made of all the letters that are in ``other`` once
+        we removed the letters of ``self``.
+        There can be more than one.
+
+        To check whether ``self`` is a subword of ``other`` (without knowing its
+        complementaries), use ``self.is_subword_of(other)``, and to count the
+        number of occurrences of ``self`` in ``other``, use
+        ``other.number_of_subword_occurrences(self)``.
+
+        INPUT:
+
+        - ``other`` -- finite word
+
+        OUTPUT:
+
+        - list of all the complementary subwords of ``self`` in ``other``.
+
+        EXAMPLES::
+
+            sage: Word('tamtam').subword_complementaries(Word('ta'))
+            []
+
+            sage: Word('mta').subword_complementaries(Word('tamtam'))
+            [word: tam]
+
+            sage: Word('ta').subword_complementaries(Word('tamtam'))
+            [word: mtam, word: amtm, word: tamm]
+
+            sage: Word('a').subword_complementaries(Word('a'))
+            [word: ]
+
+        """
+
+        ls = self.length()
+        lo = other.length()
+
+        # Create a matrix to declare when letters in ``self`` and ``other`` are
+        # equal or not
+        Eq = [[self[i] == other[j] for j in range(lo)] for i in range(ls)]
+
+        # Create a matrix that tells the positions of subwords of the suffixes
+        Mpos = [[[] for _ in repeat(None, lo)] for i in range(ls)]
+        for j in range(lo):
+            if Eq[ls-1][j]:
+                Mpos[ls-1][j] = [[j]]
+        for i in range(ls-2, -1, -1):
+            for j in range(lo):
+                if Eq[i][j]:
+                    temp = []
+                    for k in range(j+1, lo):
+                        if Eq[i+1][k]:
+                            m = Mpos[i+1][k]
+                            if len(m) == 1:
+                                temp.append([j]+m[0])
+                            if len(m) > 1:
+                                for sw in m:
+                                    temp.append([j]+sw)
+                    Mpos[i][j] = temp
+
+        # Create the list of positions for occurrences of `self` as a subword
+        selfpos = []
+        for j in range(lo):
+            selfpos.extend(Mpos[0][j])
+
+        # Create the list of the complementaries of `self`
+        from sage.combinat.words.word import Word
+        comp_words = []
+        for sp in selfpos:  # list with positions of one occurrence of `self`
+            comp_pos = (i for i in range(lo) if i not in set(sp))
+            comp_words.append(Word([other[i] for i in comp_pos]))
+        return comp_words
 
     def is_lyndon(self):
         r"""
@@ -3981,7 +4009,7 @@ class FiniteWord_class(Word_class):
             while k < i:
                 F.append(k + j - i + 1)
                 k = k + j - i
-        return Factorization([self[F[i]:F[i+1]] for i in range(len(F)-1)])
+        return Factorization([self[F[l]:F[l+1]] for l in range(len(F)-1)])
 
     def inversions(self):
         r"""
@@ -4193,9 +4221,20 @@ class FiniteWord_class(Word_class):
         Return the position of the first occurrence of ``self`` starting at
         position ``p`` in ``other``.
 
+        .. WARNING::
+
+            This method is deprecated since 2020 and will be removed in a
+            later version of SageMath.
+            Use :meth:`first_occurrence` instead.
+
         EXAMPLES::
 
             sage: Word('12')._pos_in(Word('131231'), 2)
+            doctest:warning
+            ...
+            DeprecationWarning: f._pos_in(w, start) is deprecated.
+            Use w.first_occurrence(f, start) instead.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2
             sage: Word('12')._pos_in(Word('131231'), 3) is None
             True
@@ -4209,38 +4248,38 @@ class FiniteWord_class(Word_class):
             sage: Word('')._pos_in(Word(''), 0)
             0
         """
-        lf = self.length()
-        lm = other.length()
-        if lf == 0:
-            return p
-        elif lm == 0:
-            return None
-        occ = self.last_position_dict()
-        suff = self.good_suffix_table()
-        s = p
-        while s <= lm - lf:
-            for j in range(lf-1, -1, -1):
-                a = other[s+j]
-                if self[j] != a :
-                    s += max(suff[j + 1], j - occ.get(a,-1))
-                    break
-            else:
-                return s
-        return None
+        from sage.misc.superseded import deprecation
+        deprecation(30187, 'f._pos_in(w, start) is deprecated.'
+                ' Use w.first_occurrence(f, start) instead.')
+        return other.first_occurrence(self, p)
 
     def first_pos_in(self, other):
         r"""
         Return the position of the first occurrence of ``self`` in ``other``,
         or ``None`` if ``self`` is not a factor of ``other``.
 
+        .. WARNING::
+
+            This method is deprecated since 2020 and will be removed in a
+            later version of SageMath.
+            Use :meth:`first_occurrence` instead.
+
         EXAMPLES::
 
             sage: Word('12').first_pos_in(Word('131231'))
+            doctest:warning
+            ...
+            DeprecationWarning: f.first_pos_in(w) is deprecated.
+            Use w.first_occurrence(f) instead.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2
             sage: Word('32').first_pos_in(Word('131231')) is None
             True
         """
-        return self._pos_in(other, 0)
+        from sage.misc.superseded import deprecation
+        deprecation(30187, 'f.first_pos_in(w) is deprecated.'
+                ' Use w.first_occurrence(f) instead.')
+        return other.first_occurrence(self)
 
     def find(self, sub, start=0, end=None):
         r"""
@@ -4320,7 +4359,7 @@ class FiniteWord_class(Word_class):
                 sub = self.parent()(sub)
             except (ValueError,TypeError):
                 return -1
-        p = sub.first_pos_in(self[start:end])
+        p = self[start:end].first_occurrence(sub)
         return -1 if p is None else p+start
 
     def rfind(self, sub, start=0, end=None):
@@ -4395,7 +4434,7 @@ class FiniteWord_class(Word_class):
         if not isinstance(sub, FiniteWord_class):
             try:
                 sub = self.parent()(sub)
-            except (ValueError,TypeError):
+            except (ValueError, TypeError):
                 return -1
         L = len(sub)
         start = max(0, int(start))
@@ -4404,7 +4443,8 @@ class FiniteWord_class(Word_class):
         else:
             i = min(end, len(self)) - L
         while i >= start:
-            if self[i:i+L] == sub: return i
+            if self[i:i + L] == sub:
+                return i
             i -= 1
         return -1
 
@@ -4437,47 +4477,70 @@ class FiniteWord_class(Word_class):
             sage: Word().is_factor(Word(lambda n:n, length=5))
             True
         """
-        return self.first_pos_in(other) is not None
+        return other.first_occurrence(self) is not None
 
     def factor_occurrences_in(self, other):
         r"""
         Return an iterator over all occurrences (including overlapping ones)
         of ``self`` in ``other`` in their order of appearance.
 
+        .. WARNING::
+
+            This method is deprecated since 2020 and will be removed in a
+            later version of SageMath.
+            Use :meth:`factor_occurrences_iterator` instead.
+
         EXAMPLES::
 
             sage: u = Word('121')
             sage: w = Word('121213211213')
             sage: list(u.factor_occurrences_in(w))
+            doctest:warning
+            ...
+            DeprecationWarning: f.factor_occurrences_in(w) is deprecated.
+            Use w.factor_occurrences_iterator(f) instead.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             [0, 2, 8]
         """
-        if self.length() == 0:
-            raise NotImplementedError("The factor must be non empty")
-        p = self._pos_in(other, 0)
-        while p is not None:
-            yield p
-            p = self._pos_in(other, p+1)
+        from sage.misc.superseded import deprecation
+        deprecation(30187, 'f.factor_occurrences_in(w) is deprecated.'
+                ' Use w.factor_occurrences_iterator(f) instead.')
+        return other.factor_occurrences_iterator(self)
 
     def nb_factor_occurrences_in(self, other):
         r"""
         Return the number of times ``self`` appears as a factor
         in ``other``.
 
+        .. WARNING::
+
+            This method is deprecated since 2020 and will be removed in a
+            later version of SageMath.
+            Use :meth:`number_of_factor_occurrences` instead.
+
         EXAMPLES::
+
+            sage: Word('123').nb_factor_occurrences_in(Word('112332312313112332121123'))
+            doctest:warning
+            ...
+            DeprecationWarning: f.nb_factor_occurrences_in(w) is deprecated.
+            Use w.number_of_factor_occurrences(f) instead.
+            See https://github.com/sagemath/sage/issues/30187 for details.
+            4
+            sage: Word('321').nb_factor_occurrences_in(Word('11233231231311233221123'))
+            0
+
+        An error is raised for the empty word::
 
             sage: Word().nb_factor_occurrences_in(Word('123'))
             Traceback (most recent call last):
             ...
             NotImplementedError: The factor must be non empty
-            sage: Word('123').nb_factor_occurrences_in(Word('112332312313112332121123'))
-            4
-            sage: Word('321').nb_factor_occurrences_in(Word('11233231231311233221123'))
-            0
         """
-        n = 0
-        for _ in self.factor_occurrences_in(other):
-            n += 1
-        return n
+        from sage.misc.superseded import deprecation
+        deprecation(30187, 'f.nb_factor_occurrences_in(w) is deprecated.'
+                ' Use w.number_of_factor_occurrences(f) instead.')
+        return other.number_of_factor_occurrences(self)
 
     def nb_subword_occurrences_in(self, other):
         r"""
@@ -4486,6 +4549,12 @@ class FiniteWord_class(Word_class):
         This corresponds to the notion of `binomial coefficient` of two
         finite words whose properties are presented in the chapter of
         Lothaire's book written by Sakarovitch and Simon [Lot1997]_.
+
+        .. WARNING::
+
+            This method is deprecated since 2020 and will be removed in a
+            later version of SageMath.
+            Use :meth:`number_of_subword_occurrences` instead.
 
         INPUT:
 
@@ -4497,6 +4566,11 @@ class FiniteWord_class(Word_class):
 
             sage: u = Word([0,1,0,1])
             sage: u.nb_subword_occurrences_in(tm[:1000])
+            doctest:warning
+            ...
+            DeprecationWarning: f.nb_subword_occurrences_in(w) is deprecated.
+            Use w.number_of_subword_occurrences(f) instead.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2604124996
 
             sage: u = Word([0,1,0,1,1,0])
@@ -4532,22 +4606,159 @@ class FiniteWord_class(Word_class):
             sage: v.nb_subword_occurrences_in(u)
             1
         """
-        # record the position of letters in self
+        from sage.misc.superseded import deprecation
+        deprecation(30187, 'f.nb_subword_occurrences_in(w) is deprecated.'
+                ' Use w.number_of_subword_occurrences(f) instead.')
+        return other.number_of_subword_occurrences(self)
+
+    def number_of_factor_occurrences(self, other):
+        r"""
+        Return the number of times ``other`` appears as a factor
+        in ``self``.
+
+        INPUT:
+
+        ``other`` -- a non empty word
+
+        EXAMPLES::
+
+            sage: w = Word('112332312313112332121123')
+            sage: w.number_of_factor_occurrences(Word('123'))
+            4
+            sage: w = Word('11233231231311233221123')
+            sage: w.number_of_factor_occurrences(Word('321'))
+            0
+
+        ::
+
+            sage: Word().number_of_factor_occurrences(Word('123'))
+            0
+
+        An error is raised for the empty word::
+
+            sage: Word('123').number_of_factor_occurrences(Word())
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: The factor must be non empty
+        """
+        return sum(1 for _ in self.factor_occurrences_iterator(other))
+
+    def number_of_subword_occurrences(self, other):
+        r"""
+        Return the number of times ``other`` appears in ``self`` as a subword.
+
+        This corresponds to the notion of `binomial coefficient` of two
+        finite words whose properties are presented in the chapter of
+        Lothaire's book written by Sakarovitch and Simon [Lot1997]_.
+
+        INPUT:
+
+        - ``other`` -- finite word
+
+        EXAMPLES::
+
+            sage: tm = words.ThueMorseWord()
+            sage: u = Word([0,1,0,1])
+            sage: tm[:1000].number_of_subword_occurrences(u)
+            2604124996
+
+            sage: u = Word([0,1,0,1,1,0])
+            sage: tm[:100].number_of_subword_occurrences(u)
+            20370432
+
+        .. NOTE::
+
+            This code, based on [MSSY2001]_, actually compute the number of
+            occurrences of all prefixes of ``self`` as subwords in all
+            prefixes of ``other``.  In particular, its complexity is
+            bounded by ``len(self) * len(other)``.
+
+        TESTS::
+
+            sage: Word('').number_of_subword_occurrences(Word(''))
+            1
+            sage: parent(_)
+            Integer Ring
+            sage: v,u = Word(), Word('123')
+            sage: u.number_of_subword_occurrences(v)
+            1
+            sage: v,u = Word('123'), Word('1133432311132311112')
+            sage: u.number_of_subword_occurrences(v)
+            11
+            sage: v,u = Word('4321'), Word('1132231112233212342231112')
+            sage: u.number_of_subword_occurrences(v)
+            0
+            sage: v,u = Word('3'), Word('122332112321213')
+            sage: u.number_of_subword_occurrences(v)
+            4
+            sage: v,u = Word([]), words.ThueMorseWord()[:1000]
+            sage: u.number_of_subword_occurrences(v)
+            1
+        """
+        # record the position of letters in other
         pos = defaultdict(list)
-        for i, a in enumerate(self):
+        for i, a in enumerate(other):
             pos[a].append(i)
         for a in pos:
             pos[a].reverse()
 
-        # compute the occurrences of all prefixes of self as subwords in other
-        occ = [ZZ.zero()] * (len(self)+1)
+        # compute the occurrences of all prefixes of other as subwords in self
+        occ = [ZZ.zero()] * (len(other)+1)
         occ[0] = ZZ.one()
-        for a in other:
+        for a in self:
             for i in pos[a]:
                 occ[i+1] += occ[i]
 
-        # return only the number of occurrences of self
+        # return only the number of occurrences of other
         return occ[-1]
+
+    def number_of_letter_occurrences(self, letter):
+        r"""
+        Return the number of occurrences of ``letter`` in ``self``.
+
+        INPUT:
+
+        - ``letter`` - a letter
+
+        OUTPUT:
+
+        - integer
+
+        EXAMPLES::
+
+            sage: w = Word('abbabaab')
+            sage: w.number_of_letter_occurrences('a')
+            4
+            sage: w.number_of_letter_occurrences('ab')
+            0
+
+        This methods is equivalent to ``list(w).count(letter)`` and
+        ``tuple(w).count(letter)``, thus ``count`` is an alias for the method
+        ``number_of_letter_occurrences``::
+
+            sage: list(w).count('a')
+            4
+            sage: w.count('a')
+            4
+
+        But notice that if ``s`` and ``w`` are strings,
+        ``Word(s).count(w)`` counts the number occurrences of ``w`` as a
+        letter in ``Word(s)`` which is not the same as ``s.count(w)`` which
+        counts the number of occurrences of the string ``w`` inside ``s``::
+
+            sage: s = 'abbabaab'
+            sage: s.count('ab')
+            3
+            sage: Word(s).count('ab')
+            0
+
+        .. SEEALSO::
+
+            :meth:`sage.combinat.words.finite_word.FiniteWord_class.number_of_factor_occurrences`
+
+        """
+        return Integer(sum(1 for a in self if a == letter))
+    count = number_of_letter_occurrences
 
     def _return_words_list(self, fact):
         r"""
@@ -4669,12 +4880,12 @@ class FiniteWord_class(Word_class):
         """
         l = self.length()
         if l <= 1:
-           return False
+            return False
         for i in range(1, l - 1):
             return_lengths = [x.length() for x in self.return_words(self[:i])]
-            if return_lengths != []:
-               if (max(return_lengths) <= i and self[l-i:l] == self[:i]):
-                  return True
+            if return_lengths:
+                if max(return_lengths) <= i and self[l - i:l] == self[:i]:
+                    return True
         return False
 
     def quasiperiods(self):
@@ -4699,13 +4910,13 @@ class FiniteWord_class(Word_class):
         """
         l = self.length()
         if l <= 1:
-           return []
+            return []
         Q = []
         for i in range(1, l - 1):
             return_lengths = [x.length() for x in self.return_words(self[:i])]
-            if return_lengths != []:
-               if (max(return_lengths) <= i and self[l-i:l] == self[:i]):
-                  Q.append(self[:i])
+            if return_lengths:
+                if max(return_lengths) <= i and self[l - i:l] == self[:i]:
+                    Q.append(self[:i])
         return Q
 
     def crochemore_factorization(self):
@@ -4789,7 +5000,7 @@ class FiniteWord_class(Word_class):
             sage: sorted(Word("abcaccab").evaluation_sparse())
             [('a', 3), ('b', 2), ('c', 3)]
         """
-        return list(iteritems(self.evaluation_dict()))
+        return list(self.evaluation_dict().items())
 
     def evaluation_partition(self):
         r"""
@@ -4809,7 +5020,7 @@ class FiniteWord_class(Word_class):
         else:
             return Partition(p)
 
-    def overlap_partition(self, other, delay=0, p=None, involution=None) :
+    def overlap_partition(self, other, delay=0, p=None, involution=None):
         r"""
         Return the partition of the alphabet induced by the overlap of
         ``self`` and ``other`` with the given ``delay``.
@@ -5082,15 +5293,15 @@ class FiniteWord_class(Word_class):
             sage: w._s(1).parent()
             Finite words over {1, 2, 3}
         """
-        unpaired_i  = [] # positions of unpaired is
-        unpaired_ip = [] # positions of unpaired i+1s
-        for p,x in enumerate(self):
+        unpaired_i = []  # positions of unpaired is
+        unpaired_ip = []  # positions of unpaired i+1s
+        for p, x in enumerate(self):
             if x == i:
                 if unpaired_ip:
                     unpaired_ip.pop()
                 else:
                     unpaired_i.append(p)
-            elif x == i+1:
+            elif x == i + 1:
                 unpaired_ip.append(p)
 
         unpaired = unpaired_i + unpaired_ip
@@ -5250,11 +5461,11 @@ class FiniteWord_class(Word_class):
                 return self._to_partition_content().charge()
         res = 0
         w = self.to_integer_list()
-        while len(w) != 0:
-            i =len(w) - 1
+        while w:
+            i = len(w) - 1
             l = min(w)
             index = 0
-            while len(w) != 0 and l <= max(w):
+            while w and l <= max(w):
                 while w[i] != l:
                     i -= 1
                     if i < 0:
@@ -5294,9 +5505,10 @@ class FiniteWord_class(Word_class):
             word: a
         """
         if self.is_empty():
-           return self
+            return self
         conjugates = sorted(self._conjugates_list())
-        return self.parent()([x[x.length()-1] for x in conjugates], check=False)
+        return self.parent()([x[x.length() - 1] for x in conjugates],
+                             check=False)
 
     def iterated_left_palindromic_closure(self, f=None):
         r"""
@@ -5339,17 +5551,6 @@ class FiniteWord_class(Word_class):
             from sage.combinat.words.morphism import WordMorphism
             f = WordMorphism(f)
             return f(self).reversal().iterated_right_palindromic_closure(f=f)
-
-    def count(self, letter):
-        r"""
-        Count the number of occurrences of ``letter`` in ``self``.
-
-        EXAMPLES::
-
-            sage: Word('abbabaab').count('a')
-            4
-        """
-        return Integer(sum(1 for a in self if a == letter))
 
     def balance(self):
         r"""
@@ -5749,7 +5950,6 @@ class FiniteWord_class(Word_class):
                     desubstitued_word = desubstitued_word + w_running ** (current_run_length - min_run)
             return desubstitued_word.sturmian_desubstitute_as_possible()
 
-
     def is_sturmian_factor(self):
         r"""
         Tell whether ``self`` is a factor of a Sturmian word.
@@ -5790,8 +5990,6 @@ class FiniteWord_class(Word_class):
             sage: W = Words('ab')
             sage: w = W('ab')
             sage: for i in range(8): w = choice([s1,s2,s3,s4])(w)
-            sage: w
-            word: abaaabaaabaabaaabaaabaabaaabaabaaabaaaba...
             sage: w.is_sturmian_factor()
             True
 
@@ -5811,7 +6009,6 @@ class FiniteWord_class(Word_class):
         -   Thierry Monteil
         """
         return self.sturmian_desubstitute_as_possible().is_empty()
-
 
     def is_tangent(self):
         r"""
@@ -5881,7 +6078,6 @@ class FiniteWord_class(Word_class):
                 height = height - 1
                 mini = min(mini , height)
         return (maxi - mini <= 2)
-
 
     # TODO.
     # 1. Those three swap functions should use the cmp of python.
@@ -6681,11 +6877,11 @@ class FiniteWord_class(Word_class):
             key_error = True
 
         if key_error or not isinstance(mpl_cmap, C):
-            possibilities = ', '.join([str(x) for x in cm.__dict__.keys() if \
-                                       isinstance(cm.__dict__[x], C)])
-            import sage.misc.misc
-            sage.misc.misc.verbose("The possible color maps include: %s"%possibilities, level=0)
-            raise RuntimeError("Color map %s not known"%cmap)
+            possibilities = ', '.join(str(x) for x, val in cm.__dict__.items()
+                                      if isinstance(val, C))
+            import sage.misc.verbose
+            sage.misc.verbose.verbose("The possible color maps include: %s" % possibilities, level=0)
+            raise RuntimeError("Color map %s not known" % cmap)
 
         #Drawing the colored vector...
         from sage.plot.line import line
@@ -6702,8 +6898,8 @@ class FiniteWord_class(Word_class):
         rep = line(L, rgbcolor=(0,0,0), thickness=thickness)
 
         #The label
-        if not label is None:
-            hl = height/2.0 # height of the label rectangle
+        if label is not None:
+            hl = height/2.0  # height of the label rectangle
             ymax2 = ymax + hl
             rep += text(str(label), (x+width/2.0, ymax + hl/2.0), rgbcolor=(1,0,0))
             L = [(x,ymax), (x+width,ymax), (x+width,ymax2), (x,ymax2), (x,ymax)]
@@ -6721,15 +6917,15 @@ class FiniteWord_class(Word_class):
         else:
             ordered_alphabet = self.parent().alphabet()
             dim = float(self.parent().alphabet().cardinality())
-        letter_to_integer_dict = dict((a,i) for (i,a) in
+        letter_to_integer_dict = dict((a, i) for (i, a) in
                 enumerate(ordered_alphabet))
         xp = x
         for a in self:
             i = letter_to_integer_dict[a]
             xq = xp + base
-            L = [(xp,y), (xq,y), (xq,ymax), (xp,ymax) ]
-            rgbcolor = mpl_cmap( i / dim ) [:3]
-            rep += polygon(L, rgbcolor = rgbcolor)
+            L = [(xp, y), (xq, y), (xq, ymax), (xp, ymax)]
+            rgbcolor = mpl_cmap(i / dim)[:3]
+            rep += polygon(L, rgbcolor=rgbcolor)
             xp = xq
         rep.axes(False)
         return rep
@@ -6751,7 +6947,7 @@ class FiniteWord_class(Word_class):
             sage: Word().is_square()
             True
         """
-        if self.length() % 2 != 0:
+        if self.length() % 2:
             return False
         else:
             l = self.length() // 2
@@ -6782,14 +6978,27 @@ class FiniteWord_class(Word_class):
             sage: Word('3211').is_square_free()
             False
         """
-        L = self.length()
-        if L < 2:
-            return True
-        for start in range(0, L-1):
-            for end in range(start+2, L+1, 2):
-                if self[start:end].is_square():
-                    return False
-        return True
+        from sage.combinat.words.suffix_trees import DecoratedSuffixTree
+        T = DecoratedSuffixTree(self)
+        return T.square_vocabulary() == [(0, 0)]
+
+    def squares(self):
+        r"""
+        Returns a set of all distinct squares of ``self``.
+
+        EXAMPLES::
+
+            sage: sorted(Word('cacao').squares())
+            [word: , word: caca]
+            sage: sorted(Word('1111').squares())
+            [word: , word: 11, word: 1111]
+            sage: w = Word('00110011010')
+            sage: sorted(w.squares())
+            [word: , word: 00, word: 00110011, word: 01100110, word: 1010, word: 11]
+        """
+        from sage.combinat.words.suffix_trees import DecoratedSuffixTree
+        T = DecoratedSuffixTree(self)
+        return set(T.square_vocabulary(output='word'))
 
     def is_cube(self):
         r"""
@@ -6838,8 +7047,8 @@ class FiniteWord_class(Word_class):
         L = self.length()
         if L < 3:
             return True
-        for start in range(0, L - 2):
-            for end in range(start+3, L+1, 3):
+        for start in range(L - 2):
+            for end in range(start + 3, L + 1, 3):
                 if self[start:end].is_cube():
                     return False
         return True
@@ -6931,8 +7140,39 @@ class FiniteWord_class(Word_class):
         else:
             return False
 
+    def minimal_conjugate(self):
+        r"""
+        Return the lexicographically minimal conjugate of this word (see
+        :wikipedia:`Lexicographically_minimal_string_rotation`).
 
-#######################################################################
+        EXAMPLES::
+
+            sage: Word('213').minimal_conjugate()
+            word: 132
+            sage: Word('11').minimal_conjugate()
+            word: 11
+            sage: Word('12112').minimal_conjugate()
+            word: 11212
+            sage: Word('211').minimal_conjugate()
+            word: 112
+            sage: Word('211211211').minimal_conjugate()
+            word: 112112112
+
+        TESTS::
+
+            sage: Word().minimal_conjugate()
+            word:
+        """
+        if not self:
+            return self
+        p = self.primitive()
+        q = self.length() // p.length()
+        end = 0
+        for factor in (p ** 2).lyndon_factorization():
+            end += factor.length()
+            if end >= p.length():
+                return factor ** q
+
 
 class CallableFromListOfWords(tuple):
     r"""
@@ -6979,6 +7219,7 @@ class CallableFromListOfWords(tuple):
             j -= c.length()
         raise IndexError("index (=%s) out of range" % i)
 
+
 class Factorization(list):
     r"""
     A list subclass having a nicer representation for factorization of words.
@@ -7001,6 +7242,7 @@ class Factorization(list):
             (ab, ba)
         """
         return '(%s)' % ', '.join(w.string_rep() for w in self)
+
 
 #######################################################################
 
@@ -7027,12 +7269,12 @@ def evaluation_dict(w):
 
         sage: evaluation_dict('1213121') # keys appear in random order
         {'1': 4, '2': 2, '3': 1}
-
     """
     d = defaultdict(int)
     for a in w:
         d[a] += 1
     return dict(d)
+
 
 def word_to_ordered_set_partition(w):
     r"""
@@ -7070,7 +7312,7 @@ def word_to_ordered_set_partition(w):
         []
     """
     vals = sorted(set(w))
-    dc = {val: i for (i, val) in enumerate(vals)}
+    dc = {val: i for i, val in enumerate(vals)}
     P = [[] for _ in vals]
     for i, val in enumerate(w):
         P[dc[val]].append(i + 1)

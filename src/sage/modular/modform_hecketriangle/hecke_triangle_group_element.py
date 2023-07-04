@@ -15,13 +15,15 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 
-from sage.rings.all import AA, QQbar, ZZ, infinity, CC
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import infinity
+from sage.rings.cc import CC
+from sage.rings.qqbar import AA, QQbar
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
@@ -41,7 +43,7 @@ def coerce_AA(p):
         sage: AA(p)._exact_field()
         Number Field in a with defining polynomial y^8 ... with a in ...
         sage: coerce_AA(p)._exact_field()
-        Number Field in a with defining polynomial y^4 - 1910*y^2 - 3924*y + 681058 with a in 39.710518724...?
+        Number Field in a with defining polynomial y^4 - 1910*y^2 - 3924*y + 681058 with a in ...?
     """
     el = AA(p)
     el.simplify()
@@ -135,7 +137,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             [ -1   0]
             [lam  -1]
             sage: el.matrix().parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^4 - 5*x^2 + 5
+            Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^4 - 5*x^2 + 5 with lam = 1.902113032590308?
 
             sage: M = matrix([[-1, lam], [0, 1]])
             sage: G(M)
@@ -200,10 +202,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             (((1, 1), (0, 1)), 1)
         """
         res = []
-        ID  = self.parent().I()._matrix
-        T   = self.parent().T()._matrix
-        S   = self.parent().S()._matrix
-        M   = self._matrix
+        ID = self.parent().I()._matrix
+        T = self.parent().T()._matrix
+        S = self.parent().S()._matrix
+        M = self._matrix
         lam = self.parent().lam()
         zero = ZZ.zero()
         one = ZZ.one()
@@ -600,18 +602,18 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             # emb = self.root_extension_embedding(QQbar)
             raise NotImplementedError
 
-        emb      = self.root_extension_embedding(AA)
-        G        = self.parent()
-        S        = G.S()
-        TI       = G.T().inverse()
-        lam      = G.lam()
+        emb = self.root_extension_embedding(AA)
+        G = self.parent()
+        S = G.S()
+        TI = G.T().inverse()
+        lam = G.lam()
 
-        p        = self.fixed_points()[0]
+        p = self.fixed_points()[0]
 
-        cf_dict  = {}
-        L        = []
+        cf_dict = {}
+        L = []
         cf_index = ZZ.zero()
-        one      = ZZ.one()
+        one = ZZ.one()
 
         while(p not in cf_dict):
             cf_dict[p] = cf_index
@@ -763,22 +765,22 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         G = self.parent()
         zero = ZZ.zero()
-        one  = ZZ.one()
+        one = ZZ.one()
 
         # The elliptic case (for this case we use a special notation):
         if self.is_elliptic():
             if self.parent().n() == infinity:
                 raise NotImplementedError
 
-            emb    = self.root_extension_embedding(QQbar)
-            p      = self.fixed_points()[0]
-            embp   = emb(p)
+            emb = self.root_extension_embedding(QQbar)
+            p = self.fixed_points()[0]
+            embp = emb(p)
             embp.simplify()
             embp.exactify()
             (R, embw) = G.get_FD(embp)
-            w      = R.inverse().acton(p)
+            w = R.inverse().acton(p)
             # we should have: embw == emb(w)
-            embw   = emb(w)
+            embw = emb(w)
             embw.simplify()
             embw.exactify()
 
@@ -805,7 +807,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         (preperiod, period) = self.continued_fraction()
 
         number_of_ones = []
-        list_larger  = []
+        list_larger = []
         ones = 0
         for l in period:
             if l > 1:
@@ -818,11 +820,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         initial_ones = number_of_ones.pop(0)
         if len(list_larger) == 0:
-            list_v1           = [-ZZ(1)]
-            list_vlarger      = [ initial_ones + 2 ]
+            list_v1 = [-ZZ(1)]
+            list_vlarger = [ initial_ones + 2 ]
         else:
-            list_v1           = [ v-2 for v in list_larger ]
-            list_vlarger      = [ v+2 for v in number_of_ones ]
+            list_v1 = [ v-2 for v in list_larger ]
+            list_vlarger = [ v+2 for v in number_of_ones ]
             list_vlarger[-1] += initial_ones
 
         L = []
@@ -1329,8 +1331,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             warn("The case n=infinity here is not verified at all and probably wrong!")
 
         zero = ZZ.zero()
-        one  = ZZ.one()
-        two  = ZZ(2)
+        one = ZZ.one()
+        two = ZZ(2)
 
         if self.is_identity():
             return zero
@@ -1350,7 +1352,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 Uj = G.I()
                 for j in range(1, G.n()):
                     Uj *= U
-                    if U_power  == Uj:
+                    if U_power == Uj:
                         #L = [one, ZZ(j)]
                         break
                     elif U_power == -Uj:
@@ -2084,11 +2086,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U[0]
             (lam, -1)
             sage: U[0].parent()
-            Ambient free module of rank 2 over the principal ideal domain Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Ambient free module of rank 2 over the principal ideal domain Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
             sage: U[1][0]
             1
             sage: U[1][0].parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[key]
 
@@ -2103,7 +2105,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U.a()
             lam
             sage: U.a().parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[0][0]
 
@@ -2118,7 +2120,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U.b()
             -1
             sage: U.b().parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[0][1]
 
@@ -2712,7 +2714,6 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             ....:     MF = QuasiModularForms(group=G, k=2, ep=-1)
             ....:     q = MF.get_q(prec=prec)
             ....:     int_series = integrate((MF.E2().q_expansion(prec=prec) - 1) / q)
-            ....:
             ....:     t_const = (2*pi*i/G.lam()).n(num_prec)
             ....:     d = MF.get_d(fix_d=True, d_num_prec=num_prec)
             ....:     q = exp(t_const * z)
@@ -2723,7 +2724,6 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             ....:     b = ComplexField(num_prec)(gamma.b())
             ....:     c = ComplexField(num_prec)(gamma.c())
             ....:     d = ComplexField(num_prec)(gamma.d())
-            ....:
             ....:     if c == 0:
             ....:         return 0
             ....:     elif a + d == 0:
@@ -2758,7 +2758,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             5.40301236071... + 0.926018962976...*I
             6
 
-            sage: z = - 2.3 + 3.1*i
+            sage: z = ComplexField(1000)(- 2.3 + 3.1*i)
             sage: B = G.I()
             sage: for A in [G.S(), G.T(), G.U(), G.U()^(G.n()//2), G.U()^(-3)]:
             ....:     print("A={}: ".format(A.string_repr("conj")))
@@ -2780,7 +2780,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             5.99730551444... + 0.000847636355069...*I
             6
 
-            sage: z = - 2.3 + 3.1*i
+            sage: z = ComplexField(5000)(- 2.3 + 3.1*i)
             sage: B = G.U()
             sage: for A in [G.S(), G.T(), G.U(), G.U()^(G.n()//2), G.U()^(-3)]:    # long time
             ....:     print("A={}: ".format(A.string_repr("conj")))
@@ -3106,10 +3106,15 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(5)
-            sage: G.S().acton(1 + i/2)
+            sage: G.S().acton(SR(1 + i/2))
             2/5*I - 4/5
-            sage: G.S().acton(1 + i/2).parent()
+            sage: G.S().acton(SR(1 + i/2)).parent()
             Symbolic Ring
+            sage: G.S().acton(QQbar(1 + i/2))
+            2/5*I - 4/5
+            sage: G.S().acton(QQbar(1 + i/2)).parent()
+            Algebraic Field
+
             sage: G.S().acton(i + exp(-2))
             -1/(e^(-2) + I)
             sage: G.S().acton(i + exp(-2)).parent()
@@ -3292,7 +3297,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             try:
                 tau = f.numerator().parent().gen()
             except (ValueError, TypeError, AttributeError):
-                raise ValueError("f={} is not a rational function or a polynomial in one variable, so tau has to be specified explicitely!".format(f))
+                raise ValueError("f={} is not a rational function or a polynomial in one variable, so tau has to be specified explicitly!".format(f))
 
         if (tau in HyperbolicPlane()):
             tau = tau.to_model('UHP').coordinates()

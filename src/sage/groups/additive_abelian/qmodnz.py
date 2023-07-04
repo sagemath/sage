@@ -10,8 +10,8 @@ When `n \in \Z`, you can construct these groups as follows::
 
 You can create random elements::
 
-    sage: [G.random_element() for _ in range(4)]
-    [15/16, 0, 1/2, 139/190]
+    sage: all(G.random_element().parent() is G for _ in range(4))
+    True
 
 There is an iterator over the (infinitely many) elements::
 
@@ -31,7 +31,8 @@ There is an iterator over the (infinitely many) elements::
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from .qmodnz_element import QmodnZ_Element
 
@@ -192,12 +193,8 @@ class QmodnZ(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: G = QQ/(6*ZZ)
-            sage: G.random_element()
-            47/16
-            sage: G.random_element()
-            1
-            sage: G.random_element()
-            3/5
+            sage: G.random_element().parent() is G
+            True
         """
         if self.n == 0:
             return self(QQ.random_element())

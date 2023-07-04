@@ -1,5 +1,5 @@
 r"""
-Arithmetic subgroups (finite index subgroups of `{\rm SL}_2(\ZZ)`)
+Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`
 """
 ################################################################################
 #
@@ -9,15 +9,14 @@ Arithmetic subgroups (finite index subgroups of `{\rm SL}_2(\ZZ)`)
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ################################################################################
-from __future__ import absolute_import
-from six.moves import range
 
 from sage.groups.old import Group
-from sage.rings.all import ZZ
-from sage.arith.all import lcm
+from sage.categories.groups import Groups
+from sage.rings.integer_ring import ZZ
+from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method
 from copy import copy # for making copies of lists of cusps
 from sage.modular.modsym.p1list import lift_to_sl2z
@@ -29,9 +28,10 @@ from sage.structure.element import parent
 
 from .arithgroup_element import ArithmeticSubgroupElement, M2Z as Mat2Z
 
+
 def is_ArithmeticSubgroup(x):
     r"""
-    Return True if x is of type ArithmeticSubgroup.
+    Return ``True`` if ``x`` is of type :class:`ArithmeticSubgroup`.
 
     EXAMPLES::
 
@@ -41,13 +41,12 @@ def is_ArithmeticSubgroup(x):
         sage: is_ArithmeticSubgroup(Gamma0(4))
         True
     """
-
     return isinstance(x, ArithmeticSubgroup)
 
 
 class ArithmeticSubgroup(Group):
     r"""
-    Base class for arithmetic subgroups of `{\rm SL}_2(\ZZ)`. Not
+    Base class for arithmetic subgroups of `\SL_2(\ZZ)`. Not
     intended to be used directly, but still includes quite a few
     general-purpose routines which compute data about an arithmetic subgroup
     assuming that it has a working element testing routine.
@@ -63,9 +62,9 @@ class ArithmeticSubgroup(Group):
 
             sage: G = Gamma1(7)
             sage: G.category() # indirect doctest
-            Category of groups
+            Category of infinite groups
         """
-        Group.__init__(self)
+        Group.__init__(self, category=Groups().Infinite())
 
     def _repr_(self):
         r"""
@@ -93,7 +92,7 @@ class ArithmeticSubgroup(Group):
         """
         if key == 'element_ascii_art':
             return True
-        return super(ArithmeticSubgroup, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def __reduce__(self):
         r"""
@@ -163,7 +162,8 @@ class ArithmeticSubgroup(Group):
             if not (x[0] in ZZ and x[1] in ZZ and x[2] in ZZ and x[3] in ZZ):
                 return False
             a,b,c,d = map(ZZ, x)
-            if a*d - b*c != 1: return False
+            if a*d - b*c != 1:
+                return False
             return self._contains_sl2(a,b,c,d)
         else:
             if parent(x) is not SL2Z:
@@ -685,6 +685,7 @@ class ArithmeticSubgroup(Group):
         r"""
         Return a sorted list of inequivalent cusps for self, i.e. a set of
         representatives for the orbits of self on `\mathbb{P}^1(\QQ)`.
+
         These should be returned in a reduced form where this makes sense.
 
         INPUT:
@@ -708,19 +709,20 @@ class ArithmeticSubgroup(Group):
         """
         try:
             return copy(self._cusp_list[algorithm])
-        except (AttributeError,KeyError):
+        except (AttributeError, KeyError):
             self._cusp_list = {}
 
         from .congroup_sl2z import is_SL2Z
-        if is_SL2Z(self):
-            s = [Cusp(1,0)]
-
         if algorithm == 'default':
-            s = self._find_cusps()
+            if is_SL2Z(self):
+                s = [Cusp(1, 0)]
+            else:
+                s = self._find_cusps()
         elif algorithm == 'modsym':
-            s = sorted([self.reduce_cusp(c) for c in self.modular_symbols().cusps()])
+            s = sorted(self.reduce_cusp(c)
+                       for c in self.modular_symbols().cusps())
         else:
-            raise ValueError("unknown algorithm: %s"%algorithm)
+            raise ValueError("unknown algorithm: %s" % algorithm)
 
         self._cusp_list[algorithm] = s
         return copy(s)
@@ -742,7 +744,7 @@ class ArithmeticSubgroup(Group):
         so this should usually be overridden in subclasses; but it doesn't have
         to be.
         """
-        i = Cusp([1,0])
+        i = Cusp([1, 0])
         L = [i]
         for a in self.coset_reps():
             ai = i.apply([a.a(), a.b(), a.c(), a.d()])
@@ -755,11 +757,12 @@ class ArithmeticSubgroup(Group):
                 L.append(ai)
         return L
 
-    def are_equivalent(self, x, y, trans = False):
+    def are_equivalent(self, x, y, trans=False):
         r"""
-        Test whether or not cusps x and y are equivalent modulo self.  If self
-        has a reduce_cusp() method, use that; otherwise do a slow explicit
-        test.
+        Test whether or not cusps x and y are equivalent modulo self.
+
+        If self has a reduce_cusp() method, use that; otherwise do a
+        slow explicit test.
 
         If trans = False, returns True or False. If trans = True, then return
         either False or an element of self mapping x onto y.
@@ -845,7 +848,8 @@ class ArithmeticSubgroup(Group):
             sage: Gamma1(4).is_regular_cusp(Cusps(oo))
             True
         """
-        if self.is_even(): return True
+        if self.is_even():
+            return True
         return (self.cusp_data(c)[2] == 1)
 
     def cusp_width(self, c):
@@ -912,7 +916,7 @@ class ArithmeticSubgroup(Group):
 
     def projective_index(self):
         r"""
-        Return the index of the image of self in `{\rm PSL}_2(\ZZ)`. This is equal
+        Return the index of the image of self in `\PSL_2(\ZZ)`. This is equal
         to the index of self if self contains -1, and half of this otherwise.
 
         This is equal to the degree of the natural map from the modular curve
@@ -949,7 +953,7 @@ class ArithmeticSubgroup(Group):
 
     def genus(self):
         r"""
-        Return the genus of the modular curve of self.
+        Return the genus of the modular curve of ``self``.
 
         EXAMPLES::
 
@@ -957,6 +961,7 @@ class ArithmeticSubgroup(Group):
             0
             sage: Gamma1(31).genus()
             26
+            sage: from sage.modular.dims import dimension_cusp_forms
             sage: Gamma1(157).genus() == dimension_cusp_forms(Gamma1(157), 2)
             True
             sage: GammaH(7, [2]).genus()
@@ -965,11 +970,8 @@ class ArithmeticSubgroup(Group):
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 2, 2]
             sage: [n for n in [1..200] if Gamma0(n).genus() == 1]
             [11, 14, 15, 17, 19, 20, 21, 24, 27, 32, 36, 49]
-
-
         """
-
-        return ZZ(1 + (self.projective_index()) / ZZ(12)  - (self.nu2())/ZZ(4) - (self.nu3())/ZZ(3) - self.ncusps()/ZZ(2))
+        return ZZ(1 + (self.projective_index()) / ZZ(12) - (self.nu2())/ZZ(4) - (self.nu3())/ZZ(3) - self.ncusps()/ZZ(2))
 
     def farey_symbol(self):
         r"""
@@ -1181,7 +1183,8 @@ class ArithmeticSubgroup(Group):
             NotImplementedError: Computation of dimensions of weight 1 cusp forms spaces not implemented in general
         """
         k = ZZ(k)
-        if k <= 0: return ZZ(0)
+        if k <= 0:
+            return ZZ(0)
 
         if not (k % 2):
             # k even
@@ -1231,8 +1234,10 @@ class ArithmeticSubgroup(Group):
             sage: GammaH(33, [4]).dimension_eis(1)
             4
         """
-        if k < 0: return ZZ(0)
-        if k == 0: return ZZ(1)
+        if k < 0:
+            return ZZ(0)
+        if k == 0:
+            return ZZ(1)
 
         if not (k % 2): # k even
             if k > 2:

@@ -1,3 +1,9 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 """
 PowComputer
 
@@ -31,7 +37,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import weakref
 from cysignals.memory cimport sig_malloc, sig_free
@@ -604,9 +609,9 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
         81
     """
     if cache_limit < 0:
-        raise ValueError("cache_limit must be non-negative.")
+        raise ValueError("cache_limit must be non-negative")
     if prec_cap < 0:
-        raise ValueError("prec_cap must be non-negative.")
+        raise ValueError("prec_cap must be non-negative")
     if mpz_cmp_si((<Integer>prec_cap).value, maxpreccap) >= 0:
         raise ValueError("cannot create p-adic parents with precision cap larger than (1 << (sizeof(long)*8 - 2))")
 

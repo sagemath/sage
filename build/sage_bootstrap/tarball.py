@@ -3,15 +3,15 @@
 Third-Party Tarballs
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import logging
@@ -37,7 +37,7 @@ class FileNotMirroredError(Exception):
 
 
 class Tarball(object):
-    
+
     def __init__(self, tarball_name, package=None):
         """
         A (third-party downloadable) tarball
@@ -48,7 +48,7 @@ class Tarball(object):
 
         INPUT:
 
-        - ``name`` - string. The full filename (``foo-1.3.tar.bz2``)
+        - ``tarball_name`` - string. The full filename (``foo-1.3.tar.bz2``)
           of a tarball on the Sage mirror network.
         """
         self.__filename = tarball_name
@@ -70,7 +70,7 @@ class Tarball(object):
 
     def __repr__(self):
         return 'Tarball {0}'.format(self.filename)
-            
+
     @property
     def filename(self):
         """
@@ -82,7 +82,7 @@ class Tarball(object):
         tarball.
         """
         return self.__filename
-        
+
     @property
     def package(self):
         """
@@ -93,7 +93,7 @@ class Tarball(object):
         Instance of :class:`sage_bootstrap.package.Package`
         """
         return self.__package
-        
+
     @property
     def upstream_fqn(self):
         """
@@ -103,7 +103,7 @@ class Tarball(object):
 
     def __eq__(self, other):
         return self.filename == other.filename
-        
+
     def _compute_hash(self, algorithm):
         with open(self.upstream_fqn, 'rb') as f:
             while True:
@@ -120,11 +120,11 @@ class Tarball(object):
     def _compute_md5(self):
         import hashlib
         return self._compute_hash(hashlib.md5())
-    
+
     def _compute_cksum(self):
         from sage_bootstrap.cksum import CksumAlgorithm
         return self._compute_hash(CksumAlgorithm())
-    
+
     def checksum_verifies(self):
         """
         Test whether the checksum of the downloaded file is correct.
@@ -132,10 +132,19 @@ class Tarball(object):
         sha1 = self._compute_sha1()
         return sha1 == self.package.sha1
 
-    def download(self):
+    def is_distributable(self):
+        return 'do-not-distribute' not in self.filename
+
+    def download(self, allow_upstream=False):
         """
         Download the tarball to the upstream directory.
+
+        If allow_upstream is False and the package cannot be found
+        on the sage mirrors, fall back to downloading it from
+        the upstream URL if the package has one.
         """
+        if not self.filename:
+            raise ValueError('non-normal package does define a tarball, so cannot download')
         destination = self.upstream_fqn
         if os.path.isfile(destination):
             if self.checksum_verifies():
@@ -159,7 +168,15 @@ class Tarball(object):
             except IOError:
                 log.debug('File not on mirror')
         if not successful_download:
-            raise FileNotMirroredError('tarball does not exist on mirror network')
+            url = self.package.tarball_upstream_url
+            if allow_upstream and url:
+                log.info('Attempting to download from {}'.format(url))
+                try:
+                    Download(url, destination).run()
+                except IOError:
+                    raise FileNotMirroredError('tarball does not exist on mirror network and neither at the upstream URL')
+            else:
+                raise FileNotMirroredError('tarball does not exist on mirror network')
         if not self.checksum_verifies():
             raise ChecksumError('checksum does not match')
 
@@ -169,4 +186,3 @@ class Tarball(object):
         """
         import shutil
         shutil.copy(self.upstream_fqn, destination)
-

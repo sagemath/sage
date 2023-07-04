@@ -12,7 +12,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six import integer_types, iteritems
 
 from copy import copy
 from sage.misc.abstract_method import abstract_method
@@ -29,7 +28,7 @@ from sage.categories.poor_man_map import PoorManMap
 from sage.categories.sets_cat import Sets
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.sets.family import Family
 
 
@@ -144,6 +143,7 @@ class IndexedMonoidElement(MonoidElement):
             ascii_art_gen = lambda m: P._ascii_art_generator(m[0])
         else:
             pref = AsciiArt([P.prefix()])
+
             def ascii_art_gen(m):
                 if m[1] != 1:
                     r = (AsciiArt([" " * len(pref)]) + ascii_art(m[1]))
@@ -380,12 +380,10 @@ class IndexedFreeMonoidElement(IndexedMonoidElement):
         TESTS::
 
             sage: F = FreeMonoid(index_set=tuple('abcde'))
-            sage: hash(F ([(1,2),(0,1)]) )
-            2401565693828035651 # 64-bit
-            1164080195          # 32-bit
-            sage: hash(F ([(0,2),(1,1)]) )
-            -3359280905493236379 # 64-bit
-            -1890405019          # 32-bit
+            sage: hash(F ([(1,2),(0,1)]) ) == hash(((1, 2), (0, 1)))
+            True
+            sage: hash(F ([(0,2),(1,1)]) ) == hash(((0, 2), (1, 1)))
+            True
         """
         return hash(self._monomial)
 
@@ -545,7 +543,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             sage: x^0
             1
         """
-        if not isinstance(n, integer_types + (Integer,)):
+        if not isinstance(n, (int, Integer)):
             raise TypeError("Argument n (= {}) must be an integer".format(n))
         if n < 0:
             raise ValueError("Argument n (= {}) must be positive".format(n))
@@ -553,7 +551,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             return self
         if n == 0:
             return self.parent().one()
-        return self.__class__(self.parent(), {k:v*n for k,v in iteritems(self._monomial)})
+        return self.__class__(self.parent(), {k:v*n for k,v in self._monomial.items()})
 
     def __floordiv__(self, elt):
         """
@@ -581,7 +579,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             ValueError: invalid cancellation
         """
         d = copy(self._monomial)
-        for k, v in iteritems(elt._monomial):
+        for k, v in elt._monomial.items():
             if k not in d:
                 raise ValueError("invalid cancellation")
             diff = d[k] - v
@@ -670,8 +668,8 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
         if isinstance(latex_bracket, list):
             kwds['latex_bracket'] = tuple(latex_bracket)
 
-        return super(IndexedMonoid, cls).__classcall__(cls, indices, prefix,
-                                                       names=names, **kwds)
+        return super().__classcall__(cls, indices, prefix,
+                                     names=names, **kwds)
 
     def __init__(self, indices, prefix, category=None, names=None, **kwds):
         """
@@ -961,7 +959,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
                     d[k] = v
             x = d
         if isinstance(x, dict):
-            x = {k: v for k, v in iteritems(x) if v != 0}
+            x = {k: v for k, v in x.items() if v != 0}
         return IndexedMonoid._element_constructor_(self, x)
 
     Element = IndexedFreeAbelianMonoidElement
@@ -1004,7 +1002,6 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
         if x not in self._indices:
             raise IndexError("{} is not in the index set".format(x))
         try:
-            return self.element_class(self, {self._indices(x):1})
-        except (TypeError, NotImplementedError): # Backup (e.g., if it is a string)
-            return self.element_class(self, {x:1})
-
+            return self.element_class(self, {self._indices(x): 1})
+        except (TypeError, NotImplementedError):  # Backup (e.g., if it is a string)
+            return self.element_class(self, {x: 1})

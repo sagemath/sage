@@ -1,11 +1,19 @@
 Category Framework
 ==================
 
+Introduction
+------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/categories/all
+
 The Sage Category Framework
 ---------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/primer
    sage/categories/category
@@ -17,7 +25,7 @@ Maps and Morphisms
 ------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/map
    sage/categories/homset
@@ -28,7 +36,7 @@ Individual Categories
 ---------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/action
    sage/categories/additive_groups
@@ -95,6 +103,8 @@ Individual Categories
    sage/categories/finite_semigroups
    sage/categories/finite_sets
    sage/categories/finite_weyl_groups
+   sage/categories/finitely_generated_lambda_bracket_algebras
+   sage/categories/finitely_generated_lie_conformal_algebras
    sage/categories/finitely_generated_magmas
    sage/categories/finitely_generated_semigroups
    sage/categories/function_fields
@@ -111,6 +121,7 @@ Individual Categories
    sage/categories/graded_hopf_algebras_with_basis
    sage/categories/graded_lie_algebras
    sage/categories/graded_lie_algebras_with_basis
+   sage/categories/graded_lie_conformal_algebras
    sage/categories/graded_modules
    sage/categories/graded_modules_with_basis
    sage/categories/graphs
@@ -126,10 +137,14 @@ Individual Categories
    sage/categories/integral_domains
    sage/categories/j_trivial_semigroups
    sage/categories/kac_moody_algebras
+   sage/categories/lambda_bracket_algebras
+   sage/categories/lambda_bracket_algebras_with_basis
    sage/categories/lattice_posets
    sage/categories/left_modules
    sage/categories/lie_algebras
    sage/categories/lie_algebras_with_basis
+   sage/categories/lie_conformal_algebras
+   sage/categories/lie_conformal_algebras_with_basis
    sage/categories/lie_groups
    sage/categories/loop_crystals
    sage/categories/l_trivial_semigroups
@@ -174,12 +189,16 @@ Individual Categories
    sage/categories/super_algebras
    sage/categories/super_algebras_with_basis
    sage/categories/super_hopf_algebras_with_basis
+   sage/categories/super_lie_conformal_algebras
    sage/categories/super_modules
    sage/categories/super_modules_with_basis
+   sage/categories/supercommutative_algebras
+   sage/categories/supercrystals
    sage/categories/topological_spaces
    sage/categories/triangular_kac_moody_algebras
    sage/categories/unique_factorization_domains
    sage/categories/unital_algebras
+   sage/categories/vector_bundles
    sage/categories/vector_spaces
    sage/categories/weyl_groups
 
@@ -187,7 +206,7 @@ Technical Categories
 ~~~~~~~~~~~~~~~~~~~~
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/facade_sets
 
@@ -195,12 +214,13 @@ Functorial constructions
 ------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/covariant_functorial_construction
 
    sage/categories/cartesian_product
    sage/categories/tensor
+   sage/categories/signed_tensor
    sage/categories/dual
    sage/categories/algebra_functor
 
@@ -219,7 +239,7 @@ Examples of parents using categories
 -------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/examples/algebras_with_basis
    sage/categories/examples/commutative_additive_monoids
@@ -230,8 +250,8 @@ Examples of parents using categories
    sage/categories/examples/facade_sets
    sage/categories/examples/finite_coxeter_groups
    sage/categories/examples/finite_dimensional_algebras_with_basis
-   sage/categories/examples/finite_enumerated_sets
    sage/categories/examples/finite_dimensional_lie_algebras_with_basis
+   sage/categories/examples/finite_enumerated_sets
    sage/categories/examples/finite_monoids
    sage/categories/examples/finite_semigroups
    sage/categories/examples/finite_weyl_groups
@@ -240,13 +260,14 @@ Examples of parents using categories
    sage/categories/examples/graphs
    sage/categories/examples/hopf_algebras_with_basis
    sage/categories/examples/infinite_enumerated_sets
-   sage/categories/examples/manifolds
    sage/categories/examples/lie_algebras
    sage/categories/examples/lie_algebras_with_basis
+   sage/categories/examples/magmas
+   sage/categories/examples/manifolds
    sage/categories/examples/monoids
    sage/categories/examples/posets
-   sage/categories/examples/semigroups_cython
    sage/categories/examples/semigroups
+   sage/categories/examples/semigroups_cython
    sage/categories/examples/sets_cat
    sage/categories/examples/sets_with_grading
    sage/categories/examples/with_realizations
@@ -255,7 +276,7 @@ Internals
 ---------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/category_types
    sage/categories/category_singleton

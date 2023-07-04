@@ -1,0 +1,11 @@
+. ./set-library-path
+
+# #29241: gfortran on 32bit: Configure for the same ABI as gcc
+ARCH=$($CC -dumpmachine 2>/dev/null || echo unknown)
+case $(uname -m),"$ARCH" in
+    x86_64,i[3456]86*)
+        EXTRA_GCC_CONFIGURE="--build=$ARCH"
+        ;;
+esac
+
+./build-gcc --disable-bootstrap --enable-languages=fortran --disable-darwin-at-rpath $EXTRA_GCC_CONFIGURE

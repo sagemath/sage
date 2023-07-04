@@ -6,7 +6,7 @@ where functions that depend on the ramification of the defining polynomial are p
 
 .. NOTE::
 
-    There are no doctests in this file since the functions here can not be
+    There are no doctests in this file since the functions here cannot be
     called directly from Python. Testing of this function is necessarily
     indirect and mostly done through arithmetic black-box tests that are part
     of the test suites of the `p`-adic parents.
@@ -29,7 +29,8 @@ AUTHORS:
 from cpython.list cimport *
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.ext.stdsage cimport PY_NEW
 from copy import copy
 from sage.rings.padics.common_conversion cimport cconv_mpz_t_out_shared, cconv_mpz_t_shared, cconv_mpq_t_out_shared, cconv_mpq_t_shared, cconv_shared
@@ -127,14 +128,14 @@ cdef inline long cremove(celement out, celement a, long prec, PowComputer_ prime
     INPUT:
 
     - ``out`` -- a ``celement`` to store the unit part
- 
+
     - ``a`` -- the ``celement`` whose valuation and unit are desired
- 
+
     - ``prec`` -- a ``long``, the return value if ``a`` is zero
- 
+
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
-    - ``reduce_relative`` -- a bint: whether the final result          
+    - ``reduce_relative`` -- a bint: whether the final result
       should be reduced at precision ``prec`` (case ``False``)
       or ``prec - valuation`` (case ``True``)
 
@@ -572,4 +573,4 @@ cdef inline int cconv_mpq_t_out(mpq_t out, celement x, long valshift, long prec,
         c = QQ(prime_pow.powhelper_cconv_out.__coeffs[0])
         mpq_set(out, c.value)
     else:
-        raise ValueError("cannot convert to ratioal")
+        raise ValueError("cannot convert to rational")

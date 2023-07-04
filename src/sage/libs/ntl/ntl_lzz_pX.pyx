@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 """
 ntl_lzz_pX.pyx
 
@@ -16,8 +23,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import, division
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -47,9 +52,9 @@ ZZ_sage = IntegerRing()
 #
 ##############################################################################
 
-cdef class ntl_zz_pX(object):
+cdef class ntl_zz_pX():
     r"""
-    The class \class{zz_pX} implements polynomial arithmetic modulo $p$,
+    The class \class{zz_pX} implements polynomial arithmetic modulo `p`,
     for p smaller than a machine word.
 
     Polynomial arithmetic is implemented using the FFT, combined with
@@ -150,7 +155,7 @@ cdef class ntl_zz_pX(object):
             self.c = <ntl_zz_pContext_class>modulus
         elif isinstance(modulus, Integer):
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
-        elif isinstance(modulus, long):
+        elif isinstance(modulus, int):
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
         else:
             try:
@@ -164,7 +169,8 @@ cdef class ntl_zz_pX(object):
 
     def __reduce__(self):
         """
-        TESTS:
+        TESTS::
+
             sage: f = ntl.zz_pX([10,10^30+1], 20)
             sage: f == loads(dumps(f))
             True
@@ -183,7 +189,7 @@ cdef class ntl_zz_pX(object):
         """
         return str(self.list())
 
-    def __getitem__(self, i):
+    def __getitem__(self, long i):
         """
         Return the ith coefficient of f.
 
@@ -203,12 +209,10 @@ cdef class ntl_zz_pX(object):
         y = ntl_zz_p.__new__(ntl_zz_p)
         y.c = self.c
         self.c.restore_c()
-        if not isinstance(i, long):
-            i = long(i)
         y.x = zz_pX_GetCoeff(self.x, i)
         return y
 
-    def __setitem__(self, i, val):
+    def __setitem__(self, long i, val):
         """
         Set the ith coefficient of self to val. If
         i is out of range, raise an exception.
@@ -223,13 +227,8 @@ cdef class ntl_zz_pX(object):
             ...
             ValueError: index (=-1) is out of range
         """
-        cdef long zero = 0L
-        if not isinstance(i, long):
-            i = long(i)
-        if (i < zero):
+        if (i < 0):
             raise ValueError("index (=%s) is out of range" % i)
-        if not isinstance(val, long):
-            val = long(val)
         self.c.restore_c()
         zz_pX_SetCoeff_long(self.x, i, val)
         return
@@ -358,9 +357,6 @@ cdef class ntl_zz_pX(object):
             raise ArithmeticError("self (=%s) is not divisible by other (=%s)" % (self, other))
         return q
 
-    def __div__(self, other):
-        return self / other
-
     def __mod__(ntl_zz_pX self, other):
         """
         Given polynomials a, b in ZZ[X], there exist polynomials q, r
@@ -413,7 +409,7 @@ cdef class ntl_zz_pX(object):
         """
         Returns the quotient and remainder when self is divided by right.
 
-        Specifically, this return r, q such that $self = q * right + r$
+        Specifically, this return r, q such that `self = q * right + r`
 
         EXAMPLES::
 
@@ -438,7 +434,7 @@ cdef class ntl_zz_pX(object):
 
     def __floordiv__(ntl_zz_pX self, ntl_zz_pX right):
         """
-        Returns the whole part of $self / right$.
+        Returns the whole part of `self / right`.
 
         EXAMPLES::
 
@@ -456,7 +452,7 @@ cdef class ntl_zz_pX(object):
 
     def __lshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the left, which is multiplication by $x^n$.
+        Shifts this polynomial to the left, which is multiplication by `x^n`.
 
         EXAMPLES::
 
@@ -471,7 +467,7 @@ cdef class ntl_zz_pX(object):
 
     def __rshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the right, which is division by $x^n$ (and truncation).
+        Shifts this polynomial to the right, which is division by `x^n` (and truncation).
 
         EXAMPLES::
 
@@ -501,7 +497,7 @@ cdef class ntl_zz_pX(object):
 
     def reverse(self):
         """
-        Returns self with coefficients reversed, i.e. $x^n self(x^{-n})$.
+        Returns self with coefficients reversed, i.e. `x^n self(x^{-n})`.
 
         EXAMPLES::
 
@@ -726,7 +722,7 @@ cdef class ntl_zz_pX(object):
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo $x^m$.
+        Compute and return the inverse of self modulo `x^m`.
         The constant term of self must be 1 or -1.
 
         EXAMPLES::
@@ -810,8 +806,8 @@ cdef class ntl_zz_pX(object):
         """
         self.c.restore_c()
         if zz_pX_IsZero(self.x):
-             return False
-        return ( zz_p_rep(zz_pX_LeadCoeff(self.x)) == 1 )
+            return False
+        return zz_p_rep(zz_pX_LeadCoeff(self.x)) == 1
 
     def set_x(self):
         """
@@ -900,7 +896,8 @@ def make_zz_pX(L, context):
     """
     For unpickling.
 
-    TESTS:
+    TESTS::
+
         sage: f = ntl.zz_pX(range(16), 12)
         sage: loads(dumps(f)) == f
         True

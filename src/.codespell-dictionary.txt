@@ -1,0 +1,3 @@
+ans->answer, and,
+numer->numerator, number,
+numers->numerators, numbers,

@@ -20,7 +20,8 @@ from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
+
 
 class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
     r"""
@@ -132,6 +133,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
     - [JL2009]_
     - [LTV1999]_
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.
@@ -186,6 +188,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
         """
         An element in a BZ multisegments crystal.
         """
+
         def __init__(self, parent, value):
             """
             Initialize ``self``.
@@ -216,9 +219,11 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
             """
             if not self.value:
                 return '0'
+
             def sort_key(mc):
                 x = mc[0]
                 return (-x[0], ZZ(x[1]))
+
             def seg(x):
                 m, c = x
                 if c != 1:
@@ -243,9 +248,11 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
             """
             if not self.value:
                 return "0"
+
             def sort_key(mc):
                 x = mc[0]
                 return (-x[0], ZZ(x[1]))
+
             def seg(x):
                 m, c = x
                 if c != 1:
@@ -451,4 +458,3 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
             n = self.parent()._cartan_type.rank()
             return WLR.sum(-1*alpha[j % n] for k,i in self.value
                            for j in range(ZZ(i),ZZ(i)+k))
-

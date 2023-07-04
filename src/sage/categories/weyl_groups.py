@@ -12,8 +12,6 @@ from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.rings.infinity import infinity
-from sage.rings.rational_field import QQ
 
 
 class WeylGroups(Category_singleton):
@@ -147,10 +145,83 @@ class WeylGroups(Category_singleton):
             # Do not remove this line which makes sure the pieri factor
             # code is properly inserted inside the Cartan Types
             import sage.combinat.root_system.pieri_factors
+            assert sage.combinat.root_system.pieri_factors
             ct = self.cartan_type()
             if hasattr(ct, "PieriFactors"):
                 return ct.PieriFactors(self, *args, **keywords)
             raise NotImplementedError("Pieri factors for type {}".format(ct))
+
+        def bruhat_cone(self, x, y, side='upper', backend='cdd'):
+            r"""
+            Return the (upper or lower) Bruhat cone associated to the interval ``[x,y]``.
+
+            To a cover relation `v \prec w` in strong Bruhat order you can assign a positive
+            root `\beta` given by the unique reflection `s_\beta` such that `s_\beta v = w`.
+
+            The upper Bruhat cone of the interval `[x,y]` is the non-empty, polyhedral cone generated
+            by the roots corresponding to `x \prec a` for all atoms `a` in the interval.
+            The lower Bruhat cone of the interval `[x,y]` is the non-empty, polyhedral cone generated
+            by the roots corresponding to `c \prec y` for all coatoms `c` in the interval.
+
+            INPUT:
+
+            - ``x`` - an element in the group `W`
+
+            - ``y`` - an element in the group `W`
+
+            - ``side`` (default: ``'upper'``) -- must be one of the following:
+
+              * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
+              * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+
+            - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(['A',2])
+                sage: x = W.from_reduced_word([1])
+                sage: y = W.w0
+                sage: W.bruhat_cone(x, y)
+                A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex and 2 rays
+
+                sage: W = WeylGroup(['E',6])
+                sage: x = W.one()
+                sage: y = W.w0
+                sage: W.bruhat_cone(x, y, side='lower')
+                A 6-dimensional polyhedron in QQ^8 defined as the convex hull of 1 vertex and 6 rays
+
+            TESTS::
+
+                sage: W = WeylGroup(['A',2])
+                sage: x = W.one()
+                sage: y = W.w0
+                sage: W.bruhat_cone(x, y, side='nonsense')
+                Traceback (most recent call last):
+                ...
+                ValueError: side must be either 'upper' or 'lower'
+
+            REFERENCES:
+
+            - [Dy1994]_
+            - [JS2021]_
+            """
+            from sage.modules.free_module_element import vector
+            if side == 'upper':
+                roots = [vector((x * r * x.inverse()).reflection_to_root().to_ambient())
+                         for z, r in x.bruhat_upper_covers_reflections()
+                         if z.bruhat_le(y)]
+            elif side == 'lower':
+                roots = [vector((y * r * y.inverse()).reflection_to_root().to_ambient())
+                         for z, r in y.bruhat_lower_covers_reflections()
+                         if x.bruhat_le(z)]
+            else:
+                raise ValueError("side must be either 'upper' or 'lower'")
+
+            from sage.geometry.polyhedron.constructor import Polyhedron
+            return Polyhedron(vertices=[vector([0] * self.degree())],
+                              rays=roots,
+                              ambient_dim=self.degree(),
+                              backend=backend)
 
         @cached_method
         def quantum_bruhat_graph(self, index_set=()):
@@ -172,9 +243,9 @@ class WeylGroups(Category_singleton):
                 sage: g = W.quantum_bruhat_graph((1,3))
                 sage: g
                 Parabolic Quantum Bruhat Graph of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) for nodes (1, 3): Digraph on 6 vertices
-                sage: g.vertices()
+                sage: g.vertices(sort=True)
                 [s2*s3*s1*s2, s3*s1*s2, s1*s2, s3*s2, s2, 1]
-                sage: g.edges()
+                sage: g.edges(sort=True)
                 [(s2*s3*s1*s2, s2, alpha[2]),
                  (s3*s1*s2, s2*s3*s1*s2, alpha[1] + alpha[2] + alpha[3]),
                  (s3*s1*s2, 1, alpha[2]),
@@ -212,6 +283,7 @@ class WeylGroups(Category_singleton):
             visited = {}
             todo = {self.one()}
             len_cache = {}
+
             def length(x):
                 if x in len_cache:
                     return len_cache[x]
@@ -277,8 +349,7 @@ class WeylGroups(Category_singleton):
 
             return self in self.parent().pieri_factors()
 
-
-        def left_pieri_factorizations(self, max_length = infinity):
+        def left_pieri_factorizations(self, max_length=None):
             r"""
             Returns all factorizations of ``self`` as `uv`, where `u`
             is a Pieri factor and `v` is an element of the Weyl group.
@@ -334,14 +405,18 @@ class WeylGroups(Category_singleton):
                 sage: W.from_reduced_word([0,2,1,0]).left_pieri_factorizations().cardinality()
                 6
             """
+            if max_length is None:
+                from sage.rings.infinity import infinity
+                max_length = infinity
             pieri_factors = self.parent().pieri_factors()
+
             def predicate(u):
                 return u in pieri_factors and u.length() <= max_length
 
             return self.binary_factorizations(predicate)
 
         @cached_in_parent_method
-        def stanley_symmetric_function_as_polynomial(self, max_length = infinity):
+        def stanley_symmetric_function_as_polynomial(self, max_length=None):
             r"""
             Returns a multivariate generating function for the number
             of factorizations of a Weyl group element into Pieri
@@ -403,17 +478,20 @@ class WeylGroups(Category_singleton):
             by taking right factors, and in particular Grassmanian
             elements.
             """
+            if max_length is None:
+                from sage.rings.infinity import infinity
+                max_length = infinity
             W = self.parent()
             pieri_factors = W.pieri_factors()
+            from sage.rings.rational_field import QQ
             R = QQ[','.join('x%s'%l for l in range(1,pieri_factors.max_length()+1))]
             x = R.gens()
             if self.is_one():
                 return R.one()
 
-            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length = u.length())
+            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
                            for (u,v) in self.left_pieri_factorizations(max_length)
                            if u != W.one()))
-
 
         def stanley_symmetric_function(self):
             r"""
@@ -482,17 +560,18 @@ class WeylGroups(Category_singleton):
             - [Pon2010]_
             """
             import sage.combinat.sf
+            from sage.rings.rational_field import QQ
             m = sage.combinat.sf.sf.SymmetricFunctions(QQ).monomial()
             return m.from_polynomial_exp(self.stanley_symmetric_function_as_polynomial())
 
         @cached_in_parent_method
         def reflection_to_root(self):
             r"""
-            Returns the root associated with the reflection ``self``.
+            Return the root associated with the reflection ``self``.
 
             EXAMPLES::
 
-                sage: W=WeylGroup(['C',2],prefix="s")
+                sage: W = WeylGroup(['C',2],prefix="s")
                 sage: W.from_reduced_word([1,2,1]).reflection_to_root()
                 2*alpha[1] + alpha[2]
                 sage: W.from_reduced_word([1,2]).reflection_to_root()
@@ -504,7 +583,6 @@ class WeylGroups(Category_singleton):
                 ...
                 ValueError: s2*s1*s2*s1 is not a reflection
             """
-
             i = self.first_descent()
             if i is None:
                 raise ValueError("{} is not a reflection".format(self))
@@ -518,11 +596,11 @@ class WeylGroups(Category_singleton):
         @cached_in_parent_method
         def reflection_to_coroot(self):
             r"""
-            Returns the coroot associated with the reflection ``self``.
+            Return the coroot associated with the reflection ``self``.
 
             EXAMPLES::
 
-                sage: W=WeylGroup(['C',2],prefix="s")
+                sage: W = WeylGroup(['C',2],prefix="s")
                 sage: W.from_reduced_word([1,2,1]).reflection_to_coroot()
                 alphacheck[1] + alphacheck[2]
                 sage: W.from_reduced_word([1,2]).reflection_to_coroot()
@@ -534,7 +612,6 @@ class WeylGroups(Category_singleton):
                 ...
                 ValueError: s2*s1*s2*s1 is not a reflection
             """
-
             i = self.first_descent()
             if i is None:
                 raise ValueError("{} is not a reflection".format(self))
@@ -545,14 +622,14 @@ class WeylGroups(Category_singleton):
                 raise ValueError("{} is not a reflection".format(self))
             return rsi.apply_simple_reflection(i, side='left').reflection_to_coroot().simple_reflection(i)
 
-        def inversions(self, side = 'right', inversion_type = 'reflections'):
+        def inversions(self, side='right', inversion_type='reflections'):
             """
-            Returns the set of inversions of ``self``.
+            Return the set of inversions of ``self``.
 
             INPUT:
 
             - ``side`` -- 'right' (default) or 'left'
-            - ``inversion_type`` -- 'reflections' (default), 'roots', or 'coroots'.
+            - ``inversion_type`` -- 'reflections' (default), 'roots', or 'coroots'
 
             OUTPUT:
 
@@ -564,8 +641,8 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W=WeylGroup(['C',2], prefix="s")
-                sage: w=W.from_reduced_word([1,2])
+                sage: W = WeylGroup(['C',2], prefix="s")
+                sage: w = W.from_reduced_word([1,2])
                 sage: w.inversions()
                 [s2, s2*s1*s2]
                 sage: w.inversions(inversion_type = 'reflections')
@@ -580,9 +657,7 @@ class WeylGroups(Category_singleton):
                 [alpha[1], 2*alpha[1] + alpha[2]]
                 sage: w.inversions(side = 'left', inversion_type = 'coroots')
                 [alphacheck[1], alphacheck[1] + alphacheck[2]]
-
             """
-
             if side == 'left':
                 self = self.inverse()
             reflections = self.inversions_as_reflections()
@@ -592,7 +667,7 @@ class WeylGroups(Category_singleton):
                 return [r.reflection_to_root() for r in reflections]
             if inversion_type == 'coroots':
                 return [r.reflection_to_coroot() for r in reflections]
-            raise ValueError("inversion_type {} is invalid".format(inversion_type))
+            raise ValueError(f"inversion_type {inversion_type} is invalid")
 
         def inversion_arrangement(self, side='right'):
             r"""
@@ -632,6 +707,7 @@ class WeylGroups(Category_singleton):
             inv = self.inversions(side=side, inversion_type='roots')
             from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
             I = self.parent().cartan_type().index_set()
+            from sage.rings.rational_field import QQ
             H = HyperplaneArrangements(QQ, tuple(['a{}'.format(i) for i in I]))
             gens = H.gens()
             if not inv:
@@ -760,4 +836,3 @@ class WeylGroups(Category_singleton):
                     else:
                         successors.append(wrc)
             return successors
-

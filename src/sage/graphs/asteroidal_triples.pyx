@@ -17,7 +17,7 @@ Definition
 Three independent vertices of a graph form an *asteroidal triple* if every two
 of them are connected by a path avoiding the neighborhood of the third one. A
 graph is *asteroidal triple-free* (*AT-free*, for short) if it contains no
-asteroidal triple [LB62]_.
+asteroidal triple [LB1962]_.
 
 Use ``graph_classes.AT_free.description()`` to get some known properties of
 AT-free graphs, or visit `this page
@@ -27,8 +27,8 @@ AT-free graphs, or visit `this page
 Algorithm
 ---------
 
-This module implements the  *Straightforward algorithm* recalled in [Koh04]_ and
-due to [LB62]_ for testing if a graph is AT-free or not. This algorithm has time
+This module implements the  *Straightforward algorithm* recalled in [Koh2004]_ and
+due to [LB1962]_ for testing if a graph is AT-free or not. This algorithm has time
 complexity in `O(n^3)` and space complexity in `O(n^2)`.
 
 This algorithm uses the *connected structure* of the graph, stored into a
@@ -46,39 +46,27 @@ between `v` and `w` avoiding the neighborhood of `u`. The algorithm iterates
 over all triples.
 
 
-References
-----------
-
-.. [Koh04] \E. Kohler. *Recognizing graphs without asteroidal triples*. Journal of
-      Discrete Algorithms 2(4):439-452, Dec. 2004
-      :doi:`10.1016/j.jda.2004.04.005`
-
-.. [LB62] \C. G. Lekkerkerker, J. Ch. Boland. *Representation of a finite graph
-      by a set of intervals on the real line*. Fundamenta Mathematicae,
-      51:45-64, 1962.
-
-
 Functions
 ---------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.stdint cimport uint32_t
 from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
 
-include "sage/data_structures/bitset.pxi"
-
+from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
-from sage.ext.memory_allocator cimport MemoryAllocator
+
 
 def is_asteroidal_triple_free(G, certificate=False):
     """
@@ -141,7 +129,7 @@ def is_asteroidal_triple_free(G, certificate=False):
     if not isinstance(G, Graph):
         raise ValueError("The first parameter must be a Graph.")
 
-    cdef int n = G.order()
+    cdef uint32_t n = <uint32_t>G.order()
     cdef int i
 
     # ==> Trivial cases
@@ -150,8 +138,8 @@ def is_asteroidal_triple_free(G, certificate=False):
 
     # ==> Initialize some data structures for is_asteroidal_triple_free_C
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef uint32_t* waiting_list         = <uint32_t*>  mem.allocarray(n, sizeof(uint32_t))
-    cdef uint32_t* _connected_structure = <uint32_t*>  mem.calloc(n * n, sizeof(uint32_t))
+    cdef uint32_t* waiting_list = <uint32_t*> mem.allocarray(n, sizeof(uint32_t))
+    cdef uint32_t* _connected_structure = <uint32_t*> mem.calloc(n * n, sizeof(uint32_t))
     cdef uint32_t** connected_structure = <uint32_t**> mem.allocarray(n, sizeof(uint32_t*))
 
     # Copying the whole graph to obtain the list of neighbors quicker than by
@@ -192,10 +180,10 @@ def is_asteroidal_triple_free(G, certificate=False):
     return False if ret else True
 
 
-cdef list is_asteroidal_triple_free_C(int n,
+cdef list is_asteroidal_triple_free_C(uint32_t n,
                                       short_digraph sd,
                                       uint32_t** connected_structure,
-                                      uint32_t*  waiting_list,
+                                      uint32_t* waiting_list,
                                       bitset_t seen):
     """
     INPUT:
@@ -219,8 +207,8 @@ cdef list is_asteroidal_triple_free_C(int n,
     See the module's documentation.
     """
     cdef uint32_t waiting_beginning = 0
-    cdef uint32_t waiting_end       = 0
-    cdef uint32_t idx_cc            = 0
+    cdef uint32_t waiting_end = 0
+    cdef uint32_t idx_cc = 0
     cdef uint32_t source, u, v, w
     cdef uint32_t* p_tmp
     cdef uint32_t* end
@@ -301,8 +289,8 @@ cdef list is_asteroidal_triple_free_C(int n,
             if connected_structure[u][v]:
                 for w in range(v + 1, n):
                     if (connected_structure[u][v] == connected_structure[u][w] and
-                        connected_structure[v][u] == connected_structure[v][w] and
-                        connected_structure[w][u] == connected_structure[w][v]):
+                            connected_structure[v][u] == connected_structure[v][w] and
+                            connected_structure[w][u] == connected_structure[w][v]):
                         # We have found an asteroidal triple
                         return [u, v, w]
 

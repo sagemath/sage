@@ -1,0 +1,21 @@
+Description: Use int64_t instead of signed long int for 64-bit integer typedef.
+On 32-bit architectures, longs are only 32 bits. The resulting overflow was
+causing an infinite loop in the 0602ResultantFanProjection test.
+
+References:
+https://github.com/sagemath/sage/issues/32088
+https://salsa.debian.org/math-team/gfan/-/commit/acaaa70
+https://github.com/void-linux/void-packages/pull/34182
+
+Author: Doug Torrance <dtorrance@piedmont.edu>
+
+--- a/src/vektor.h
++++ b/src/vektor.h
+@@ -10,7 +10,7 @@
+ 
+ using namespace std;
+ 
+-typedef signed long int int64;
++typedef int64_t int64;
+ 
+ void outOfRange(int i, int n);

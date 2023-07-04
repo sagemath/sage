@@ -509,4 +509,3 @@ cdef class abc_pd(binary_pd):
         self.value = self.left.value * self.right.value + coeffs[self.index]
         pd_clean(self.left)
         pd_clean(self.right)
-

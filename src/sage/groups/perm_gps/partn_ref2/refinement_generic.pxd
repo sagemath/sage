@@ -35,7 +35,7 @@ cdef class LabelledBranching:
     cdef int count
     cdef int *father
     cdef int *act_perm
-    cpdef GapElement group, ClosureGroup
+    cdef GapElement group, ClosureGroup
     cdef Parent sym_gp
     cdef bint has_empty_intersection(self, PartitionStack * part)
     cpdef add_gen(self, GapElement_Permutation gen)

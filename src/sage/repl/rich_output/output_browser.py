@@ -3,9 +3,14 @@ r"""
 Rich Output for the Browser
 """
 
+import re
+
 from sage.repl.rich_output.output_basic import OutputBase
 from sage.repl.rich_output.buffer import OutputBuffer
 
+# regex to match "<html>\[...\]</html>" or "<html>\(...\)</html>"
+latex_re = re.compile(r'<html>(?P<mathstart>\\\[|\\\()(?P<latex>.*)(?P<mathend>\\\]|\\\))</html>',
+                      flags=re.DOTALL)
 
 class OutputHtml(OutputBase):
 
@@ -16,10 +21,9 @@ class OutputHtml(OutputBase):
         INPUT:
 
         - ``html`` --
-          :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively,
-          a string (bytes) can be passed directly which will then be
-          converted into an
-          :class:`~sage.repl.rich_output.buffer.OutputBuffer`. String
+          :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively, a
+          string (bytes) can be passed directly which will then be converted
+          into an :class:`~sage.repl.rich_output.buffer.OutputBuffer`. String
           containing the html fragment code. Excludes the surrounding
           ``<body>`` and ``<html>`` tag.
 
@@ -30,6 +34,20 @@ class OutputHtml(OutputBase):
             OutputHtml container
         """
         self.html = OutputBuffer(html)
+
+        # if the html is a simple wrapper of latex for mathjax rendering, then
+        # the latex string is saved for possible latex output such as Jupyter's
+        # pdf export of a notebook
+        m = latex_re.match(html)
+        if m:
+            mathjax_string = m.group('latex')
+            latex_string = mathjax_string.replace('&lt;', '<')
+            if m.group('mathstart') == r'\[' and m.group('mathend') == r'\]':
+                self.latex = OutputBuffer('$$' + latex_string + '$$')
+            else:
+                self.latex = OutputBuffer('$' + latex_string + '$')
+        else:
+            self.latex = None
 
     @classmethod
     def example(cls):

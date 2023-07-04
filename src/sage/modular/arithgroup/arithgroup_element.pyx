@@ -1,5 +1,5 @@
 """
-Elements of Arithmetic Subgroups
+Elements of arithmetic subgroups
 """
 
 ################################################################################
@@ -13,11 +13,10 @@ Elements of Arithmetic Subgroups
 #                  https://www.gnu.org/licenses/
 #
 ################################################################################
-from __future__ import absolute_import
 
 from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
 from sage.structure.richcmp cimport richcmp
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.modular.cusps import Cusp
 
 from sage.matrix.matrix_space import MatrixSpace
@@ -28,7 +27,7 @@ M2Z = MatrixSpace(ZZ, 2)
 
 cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
     r"""
-    An element of the group `{\rm SL}_2(\ZZ)`, i.e. a 2x2 integer matrix of
+    An element of the group `\SL_2(\ZZ)`, i.e. a 2x2 integer matrix of
     determinant 1.
     """
 
@@ -194,8 +193,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         cdef ArithmeticSubgroupElement right = <ArithmeticSubgroupElement>right_r
         return richcmp(self.__x, right.__x, op)
 
-    def __nonzero__(self):
-        """
+    def __bool__(self):
+        r"""
         Return ``True``, since the ``self`` lives in SL(2,\Z), which does not
         contain the zero matrix.
 
@@ -255,7 +254,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             [4 5]
             [3 4]
             sage: type(x.matrix())
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         """
         return self.__x
 

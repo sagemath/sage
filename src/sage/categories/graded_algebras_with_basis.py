@@ -10,6 +10,8 @@ Graded algebras with basis
 #******************************************************************************
 
 from sage.categories.graded_modules import GradedModulesCategory
+from sage.categories.signed_tensor import SignedTensorProductsCategory, tensor_signed
+from sage.misc.cachefunc import cached_method
 
 class GradedAlgebrasWithBasis(GradedModulesCategory):
     """
@@ -82,6 +84,148 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
         # Also, ``projection`` could be overridden by, well, a
         # projection.
 
+        def free_graded_module(self, generator_degrees, names=None):
+            """
+            Create a finitely generated free graded module over ``self``
+
+            INPUT:
+
+            - ``generator_degrees`` -- tuple of integers defining the
+              number of generators of the module and their degrees
+
+            - ``names`` -- (optional) the names of the generators. If
+              ``names`` is a comma-separated string like ``'a, b,
+              c'``, then those will be the names. Otherwise, for
+              example if ``names`` is ``abc``, then the names will be
+              ``abc[d,i]``.
+
+            By default, if all generators are in distinct degrees,
+            then the ``names`` of the generators will have the form
+            ``g[d]`` where ``d`` is the degree of the generator. If
+            the degrees are not distinct, then the generators will be
+            called ``g[d,i]`` where ``d`` is the degree and ``i`` is
+            its index in the list of generators in that degree.
+
+            See :mod:`sage.modules.fp_graded.free_module` for more
+            examples and details.
+
+            EXAMPLES::
+
+                sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])
+                sage: Cl = CliffordAlgebra(Q)
+                sage: M = Cl.free_graded_module((0, 2, 3))
+                sage: M.gens()
+                (g[0], g[2], g[3])
+                sage: N.<xy, z> = Cl.free_graded_module((1, 2))
+                sage: N.generators()
+                (xy, z)
+            """
+            try:
+                return self._free_graded_module_class(self, generator_degrees, names=names)
+            except AttributeError:
+                from sage.modules.fp_graded.free_module import FreeGradedModule
+                return FreeGradedModule(self, generator_degrees, names=names)
+
+        def formal_series_ring(self):
+            r"""
+            Return the completion of all formal linear combinations of
+            ``self`` with finite linear combinations in each homogeneous
+            degree (computed lazily).
+
+            EXAMPLES::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: S = NCSF.Complete()
+                sage: L = S.formal_series_ring()
+                sage: L
+                Lazy completion of Non-Commutative Symmetric Functions over
+                 the Rational Field in the Complete basis
+            """
+            from sage.rings.lazy_series_ring import LazyCompletionGradedAlgebra
+            return LazyCompletionGradedAlgebra(self)
+
+        completion = formal_series_ring
+
     class ElementMethods:
         pass
 
+    class SignedTensorProducts(SignedTensorProductsCategory):
+        """
+        The category of algebras with basis constructed by signed tensor
+        product of algebras with basis.
+        """
+        @cached_method
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: Cat = AlgebrasWithBasis(QQ).Graded()
+                sage: Cat.SignedTensorProducts().extra_super_categories()
+                [Category of graded algebras with basis over Rational Field]
+                sage: Cat.SignedTensorProducts().super_categories()
+                [Category of graded algebras with basis over Rational Field,
+                 Category of signed tensor products of graded algebras over Rational Field]
+            """
+            return [self.base_category()]
+
+        class ParentMethods:
+            """
+            Implements operations on tensor products of super algebras
+            with basis.
+            """
+            @cached_method
+            def one_basis(self):
+                """
+                Return the index of the one of this signed tensor product of
+                algebras, as per ``AlgebrasWithBasis.ParentMethods.one_basis``.
+
+                It is the tuple whose operands are the indices of the
+                ones of the operands, as returned by their
+                :meth:`.one_basis` methods.
+
+                EXAMPLES::
+
+                    sage: A.<x,y> = ExteriorAlgebra(QQ)
+                    sage: A.one_basis()
+                    0
+                    sage: B = tensor((A, A, A))
+                    sage: B.one_basis()
+                    (0, 0, 0)
+                    sage: B.one()
+                    1 # 1 # 1
+                """
+                # FIXME: this method should be conditionally defined,
+                # so that B.one_basis returns NotImplemented if not
+                # all modules provide one_basis
+                if all(hasattr(module, "one_basis") for module in self._sets):
+                    return tuple(module.one_basis() for module in self._sets)
+                else:
+                    raise NotImplementedError
+
+            def product_on_basis(self, t0, t1):
+                """
+                The product of the algebra on the basis, as per
+                ``AlgebrasWithBasis.ParentMethods.product_on_basis``.
+
+                EXAMPLES:
+
+                Test the sign in the super tensor product::
+
+                    sage: A = SteenrodAlgebra(3)
+                    sage: x = A.Q(0)
+                    sage: y = x.coproduct()
+                    sage: y^2
+                    0
+
+                TODO: optimize this implementation!
+                """
+                basic = tensor_signed((module.monomial(x0) * module.monomial(x1)
+                                      for (module, x0, x1) in zip(self._sets, t0, t1)))
+                n = len(self._sets)
+                parity0 = [self._sets[idx].degree_on_basis(x0)
+                           for (idx, x0) in enumerate(t0)]
+                parity1 = [self._sets[idx].degree_on_basis(x1)
+                           for (idx, x1) in enumerate(t1)]
+                parity = sum(parity0[i] * parity1[j]
+                             for j in range(n) for i in range(j+1,n))
+                return (-1)**parity * basic

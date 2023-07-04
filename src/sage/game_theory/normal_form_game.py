@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Normal form games with N players.
 
@@ -563,7 +564,7 @@ is evidenced by the various algorithms returning different solutions::
     sage: A = matrix([[3,3],[2,5],[0,6]])
     sage: B = matrix([[3,3],[2,6],[3,1]])
     sage: degenerate_game = NormalFormGame([A,B])
-    sage: degenerate_game.obtain_nash(algorithm='lrs') # optional - lrslib
+    sage: degenerate_game.obtain_nash(algorithm='lrs') # random, optional - lrslib
     [[(0, 1/3, 2/3), (1/3, 2/3)], [(1, 0, 0), (1/2, 3)], [(1, 0, 0), (1, 3)]]
     sage: degenerate_game.obtain_nash(algorithm='LCP') # optional - gambit
     [[(0.0, 0.3333333333, 0.6666666667), (0.3333333333, 0.6666666667)],
@@ -612,9 +613,10 @@ REFERENCES:
 
 - [SLB2008]_
 
-AUTHOR:
+AUTHORS:
 
 - James Campbell and Vince Knight (06-2014): Original version
+
 - Tobenna P. Igwe: Constant-sum game solvers
 
 """
@@ -628,20 +630,20 @@ AUTHOR:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
-from collections import MutableMapping
+from collections.abc import MutableMapping
 from itertools import product
 from .parser import Parser
 from sage.misc.latex import latex
 from sage.misc.misc import powerset
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import vector
 from sage.misc.temporary_file import tmp_filename
 from sage.numerical.mip import MixedIntegerLinearProgram
 from sage.misc.package import PackageNotFoundError
+from sage.cpython.string import bytes_to_str
 
 try:
     from gambit import Game
@@ -739,14 +741,10 @@ class NormalFormGame(SageObject, MutableMapping):
 
             sage: p1 = matrix([[1, 2], [3, 4]])
             sage: p2 = matrix([[3, 3], [1, 4], [6, 6]])
-            sage: error = NormalFormGame(p1, p2)  # py2
+            sage: error = NormalFormGame(p1, p2)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes at most 2 arguments (3 given)
-            sage: error = NormalFormGame(p1, p2)  # py3
-            Traceback (most recent call last):
-            ...
-            TypeError: __init__() takes from 1 to 2 positional arguments but 3 were given
+            TypeError: ...__init__() takes from 1 to 2 positional arguments but 3 were given
 
         When initiating, argument passed must be a list or nothing::
 
@@ -1139,7 +1137,7 @@ class NormalFormGame(SageObject, MutableMapping):
             { "" 3, 5, 8 }
             { "" 2, 6, 4 }
             }
-            1 2 3 4 5 6 7 8 
+            1 2 3 4 5 6 7 8
             <BLANKLINE>
         """
         from decimal import Decimal
@@ -1538,7 +1536,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: cg = NormalFormGame([A])
             sage: cg.obtain_nash(algorithm='lp')
             [[(0.5, 0.5), (0.5, 0.5)]]
-            sage: cg.obtain_nash(algorithm='lp', solver='Coin') # optional - cbc
+            sage: cg.obtain_nash(algorithm='lp', solver='Coin') # optional - sage_numerical_backends_coin
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(1/2, 1/2), (1/2, 1/2)]]
@@ -1549,8 +1547,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = cg.obtain_nash(algorithm='lp', solver='glpk')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin') # optional - cbc
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - cbc
+            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin') # optional - sage_numerical_backends_coin
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - sage_numerical_backends_coin
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(2/3, 1/3), (2/3, 1/3)]]
@@ -1563,8 +1561,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = cg.obtain_nash(algorithm='lp', solver='glpk')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.333333, 0.333333, 0.333333], [0.333333, 0.333333, 0.333333]]]
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin') # optional - cbc
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - cbc
+            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin') # optional - sage_numerical_backends_coin
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - sage_numerical_backends_coin
             [[[0.333333, 0.333333, 0.333333], [0.333333, 0.333333, 0.333333]]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)]]
@@ -1676,17 +1674,17 @@ class NormalFormGame(SageObject, MutableMapping):
         if not self._is_complete():
             raise ValueError("utilities have not been populated")
 
-        from sage.features.lrs import Lrs
+        from sage.features.lrs import LrsNash
         if not algorithm:
             if self.is_constant_sum():
                 algorithm = "lp"
-            elif Lrs().is_present():
+            elif LrsNash().is_present():
                 algorithm = "lrs"
             else:
                 algorithm = "enumeration"
 
         if algorithm == "lrs":
-            Lrs().require()
+            LrsNash().require()
             return self._solve_lrs(maximization)
 
         if algorithm == "LCP":
@@ -1750,24 +1748,18 @@ class NormalFormGame(SageObject, MutableMapping):
         if maximization is False:
             m1 = - m1
             m2 = - m2
-        game1_str, game2_str = self._Hrepresentation(m1, m2)
 
-        g1_name = tmp_filename()
-        with open(g1_name, 'w') as g1_file:
-            g1_file.write(game1_str)
-        g2_name = tmp_filename()
-        with open(g2_name, 'w') as g2_file:
-            g2_file.write(game2_str)
+        game_str = self._lrs_nash_format(m1, m2)
+        game_name = tmp_filename()
+        with open(game_name, 'w') as game_file:
+            game_file.write(game_str)
 
-        try:
-            process = Popen(['lrsnash', g1_name, g2_name],
-                    stdout=PIPE,
-                    stderr=PIPE)
-        except OSError:
-            from sage.misc.package import PackageNotFoundError
-            raise PackageNotFoundError("lrslib")
+        from sage.features.lrs import LrsNash
+        LrsNash().require()
+        process = Popen([LrsNash().absolute_filename(), game_name],
+                        stdout=PIPE, stderr=PIPE)
 
-        lrs_output = [row for row in process.stdout]
+        lrs_output = [bytes_to_str(row) for row in process.stdout]
         process.terminate()
 
         nasheq = Parser(lrs_output).format_lrs()
@@ -1813,7 +1805,7 @@ class NormalFormGame(SageObject, MutableMapping):
         """
         if Game is None:
             raise NotImplementedError("gambit is not installed")
-        g = self._gambit_(maximization = maximization)
+        g = self._gambit_(maximization=maximization)
         output = ExternalLPSolver().solve(g)
         nasheq = Parser(output).format_gambit(g)
         return sorted(nasheq)
@@ -1840,7 +1832,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: g._solve_LP('gambit') # optional - gambit
             [[(0.5, 0.5), (0.5, 0.5)]]
-            sage: g._solve_LP('Coin') # optional - cbc
+            sage: g._solve_LP('Coin') # optional - sage_numerical_backends_coin
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: g._solve_LP('PPL')
             [[(1/2, 1/2), (1/2, 1/2)]]
@@ -1852,8 +1844,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = g._solve_LP('gambit') # optional - gambit
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - gambit
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
-            sage: ne = g._solve_LP('Coin') # optional - cbc
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - cbc
+            sage: ne = g._solve_LP('Coin') # optional - sage_numerical_backends_coin
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - sage_numerical_backends_coin
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
             sage: g._solve_LP('PPL')
             [[(2/3, 1/3), (2/3, 1/3)]]
@@ -2071,7 +2063,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def _solve_indifference(self, support1, support2, M):
         r"""
-        For support1, retrns the strategy with support: support2 that makes the
+        For support1, returns the strategy with support: support2 that makes the
         column player indifferent for the utilities given by M.
 
         This is done by building the corresponding linear system.
@@ -2213,11 +2205,11 @@ class NormalFormGame(SageObject, MutableMapping):
             False
         """
         # Check that supports are obeyed
-        if not(all(a[i] > 0 for i in p1_support) and
-               all(b[j] > 0 for j in p2_support) and
-               all(a[i] == 0 for i in range(len(a))
+        if not (all(a[i] > 0 for i in p1_support) and
+                all(b[j] > 0 for j in p2_support) and
+                all(a[i] == 0 for i in range(len(a))
                     if i not in p1_support) and
-               all(b[j] == 0 for j in range(len(b))
+                all(b[j] == 0 for j in range(len(b))
                     if j not in p2_support)):
             return False
 
@@ -2240,7 +2232,11 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def _Hrepresentation(self, m1, m2):
         r"""
-        Create the H-representation strings required to use lrs nash.
+        Create the H-representation strings required to use ``lrsnash``.
+
+        Since lrslib 6.1, this format is referred to as "legacy format".
+
+        This method is deprecated.
 
         EXAMPLES::
 
@@ -2248,6 +2244,10 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = matrix([[3, 3], [1, 4]])
             sage: C = NormalFormGame([A, B])
             sage: print(C._Hrepresentation(A, B)[0])
+            doctest:warning...
+            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
+            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
+            See https://github.com/sagemath/sage/issues/27745 for details.
             H-representation
             linearity 1 5
             begin
@@ -2273,6 +2273,12 @@ class NormalFormGame(SageObject, MutableMapping):
             <BLANKLINE>
 
         """
+        from sage.misc.superseded import deprecation
+        deprecation(27745,
+                    "NormalFormGame._Hrepresentation is deprecated as it "
+                    "creates the legacy input format. "
+                    "Use NormalFormGame._lrs_nash_format instead")
+
         from sage.geometry.polyhedron.misc import _to_space_separated_string
         m = self.players[0].num_strategies
         n = self.players[1].num_strategies
@@ -2307,6 +2313,73 @@ class NormalFormGame(SageObject, MutableMapping):
         t += '0 \n'
         t += 'end\n'
         return s, t
+
+    def _lrs_nash_format(self, m1, m2):
+        r"""
+        Create the input format for ``lrsnash``, version 6.1 or newer.
+
+        EXAMPLES:
+
+        An example from the ``lrsnash`` manual in the old and the format::
+
+            sage: A = matrix([[0, 6], [2, 5], [3, 3]])
+            sage: B = matrix([[1, 0], [0, 2], [4, 3]])
+            sage: C = NormalFormGame([A, B])
+            sage: print(C._lrs_nash_format(A, B))
+            3 2
+            <BLANKLINE>
+            0 6
+            2 5
+            3 3
+            <BLANKLINE>
+            1 0
+            0 2
+            4 3
+            <BLANKLINE>
+
+            sage: legacy_format = C._Hrepresentation(A, B)
+            doctest:warning...
+            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
+            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
+            See https://github.com/sagemath/sage/issues/27745 for details.
+            sage: print('*game: player 1\n', legacy_format[0])
+            *game: player 1
+            H-representation
+            linearity 1 6
+            begin
+            6 5 rational
+            0 1 0 0 0
+            0 0 1 0 0
+            0 0 0 1 0
+            0 -1 0 -4  1
+            0 0 -2 -3  1
+            -1 1 1 1 0
+            end
+            <BLANKLINE>
+            sage: print('*game: player 2\n', legacy_format[1])
+            *game: player 2
+            H-representation
+            linearity 1 6
+            begin
+            6 4 rational
+            0 0 -6  1
+            0 -2 -5  1
+            0 -3 -3  1
+            0 1 0 0
+            0 0 1 0
+            -1 1 1 0
+            end
+        """
+        from sage.geometry.polyhedron.misc import _to_space_separated_string
+        m = self.players[0].num_strategies
+        n = self.players[1].num_strategies
+        s = f'{m} {n}\n\n'
+        for r in m1.rows():
+            s += _to_space_separated_string(r) + '\n'
+        s += '\n'
+        for r in m2.rows():
+            s += _to_space_separated_string(r) + '\n'
+        return s
 
     def is_degenerate(self, certificate=False):
         """
@@ -2670,8 +2743,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g._is_degenerate_pure()
             True
 
-            Whilst this game is not degenerate in pure strategies, it is
-            actually degenerate, but only in mixed strategies.
+        Whilst this game is not degenerate in pure strategies, it is
+        actually degenerate, but only in mixed strategies::
 
             sage: A = matrix([[3, 0], [0, 3], [1.5, 1.5]])
             sage: B = matrix([[4, 3], [2, 6], [3, 1]])

@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 # -*- coding: utf-8 -*-
 """
 Sage IPython startup script.

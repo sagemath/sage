@@ -13,15 +13,12 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import absolute_import
 
 import os
 import re
 import sys
 
 from collections import defaultdict
-
-from six import iteritems, string_types
 
 
 def runsnake(command):
@@ -106,7 +103,7 @@ def import_statement_string(module, names, lazy):
             name, alias = names[0]
             if name == alias:
                 if name is None:
-                    raise ValueError("can not lazy import modules")
+                    raise ValueError("cannot lazy import modules")
                 return "lazy_import('%s', '%s')" % (module, name)
             else:
                 return "lazy_import('%s', '%s', '%s')" % (module, name, alias)
@@ -162,8 +159,8 @@ def load_submodules(module=None, exclude_pattern=None):
     The second argument allows to exclude a pattern::
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry, "database$|lattice")
+        load sage.geometry.cone_catalog... succeeded
         load sage.geometry.fan_isomorphism... succeeded
-        load sage.geometry.hyperplane_arrangement.affine_subspace... succeeded
         ...
         load sage.geometry.riemannian_manifolds.surface3d_generators... succeeded
 
@@ -172,7 +169,7 @@ def load_submodules(module=None, exclude_pattern=None):
         load sage.geometry.polyhedron.palp_database... succeeded
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
-    import pkgutil
+    from .package_dir import walk_packages
 
     if module is None:
         import sage
@@ -184,7 +181,7 @@ def load_submodules(module=None, exclude_pattern=None):
     else:
         exclude = None
 
-    for importer, module_name, ispkg in pkgutil.walk_packages(module.__path__, module.__name__ + '.'):
+    for importer, module_name, ispkg in walk_packages(module.__path__, module.__name__ + '.'):
         if ispkg or module_name in sys.modules:
             continue
 
@@ -222,7 +219,7 @@ def find_objects_from_name(name, module_name=None):
 
         sage: import sage.misc.dev_tools as dt
         sage: dt.find_objects_from_name('FareySymbol')
-        [<type 'sage.modular.arithgroup.farey_symbol.Farey'>]
+        [<class 'sage.modular.arithgroup.farey_symbol.Farey'>]
 
         sage: import sympy
         sage: dt.find_objects_from_name('RR')
@@ -249,7 +246,7 @@ def find_objects_from_name(name, module_name=None):
     """
 
     obj = []
-    for smodule_name, smodule in iteritems(sys.modules):
+    for smodule_name, smodule in sys.modules.items():
         if module_name and not smodule_name.startswith(module_name):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
@@ -295,7 +292,7 @@ def find_object_modules(obj):
 
     if module_name:
         if module_name not in sys.modules:
-            raise ValueError("This should not happen!")
+            raise ValueError("this should never happen")
         d = sys.modules[module_name].__dict__
         matching = sorted(key for key in d if d[key] is obj)
         if matching:
@@ -304,7 +301,7 @@ def find_object_modules(obj):
     # otherwise, we parse all (already loaded) modules and hope to find
     # something
     module_to_obj = {}
-    for module_name, module in iteritems(sys.modules):
+    for module_name, module in sys.modules.items():
         if module_name != '__main__' and hasattr(module, '__dict__'):
             d = module.__dict__
             names = [key for key in d if d[key] is obj]
@@ -315,15 +312,18 @@ def find_object_modules(obj):
     if sageinspect.isclassinstance(obj):
         dec_pattern = re.compile(r"^(\w[\w0-9\_]*)\s*=", re.MULTILINE)
         module_to_obj2 = {}
-        for module_name, obj_names in iteritems(module_to_obj):
+        for module_name, obj_names in module_to_obj.items():
             module_to_obj2[module_name] = []
-            src = sageinspect.sage_getsource(sys.modules[module_name])
-            m = dec_pattern.search(src)
-            while m:
-                if m.group(1) in obj_names:
-                    module_to_obj2[module_name].append(m.group(1))
-                m = dec_pattern.search(src, m.end())
-
+            try:
+                src = sageinspect.sage_getsource(sys.modules[module_name])
+            except TypeError:
+                pass
+            else:
+                m = dec_pattern.search(src)
+                while m:
+                    if m.group(1) in obj_names:
+                        module_to_obj2[module_name].append(m.group(1))
+                    m = dec_pattern.search(src, m.end())
             if not module_to_obj2[module_name]:
                 del module_to_obj2[module_name]
 
@@ -339,7 +339,7 @@ def import_statements(*objects, **kwds):
 
     INPUT:
 
-    - ``*objects`` -- a sequence of objects or names.
+    - ``*objects`` -- a sequence of objects or comma-separated strings of names.
 
     - ``lazy`` -- a boolean (default: ``False``)
       Whether to print a lazy import statement.
@@ -406,6 +406,12 @@ def import_statements(*objects, **kwds):
         #   - sage.rings.integer_ring
         from sage.rings.integer_ring import Z
 
+    The strings are allowed to be comma-separated names, and parenthesis
+    are stripped for convenience::
+
+        sage: import_statements('(floor, ceil)')
+        from sage.functions.other import floor, ceil
+
     Specifying a string is also useful for objects that are not
     imported in the Sage interpreter namespace by default. In this
     case, an object with that name is looked up in all the modules
@@ -467,7 +473,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements('deprecated_RR')
         Traceback (most recent call last):
         ...
-        LookupError: object named 'deprecated_RR' is deprecated (see trac ticket 17458)
+        LookupError: object named 'deprecated_RR' is deprecated (see github issue 17458)
         sage: lazy_import('sage.all', 'RR', namespace=sage.__dict__, deprecation=17458)
         sage: import_statements('RR')
         from sage.rings.real_mpfr import RR
@@ -479,7 +485,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements(sage.combinat.partition_algebra.SetPartitionsAk)
         from sage.combinat.partition_algebra import SetPartitionsAk
         sage: import_statements(CIF)
-        from sage.rings.all import CIF
+        from sage.rings.cif import CIF
         sage: import_statements(NaN)
         from sage.symbolic.constants import NaN
         sage: import_statements(pi)
@@ -493,7 +499,7 @@ def import_statements(*objects, **kwds):
     :trac:`23779`)::
 
         sage: import_statements('log')
-        from sage.functions.log import log
+        from sage.misc.functional import log
 
     .. NOTE::
 
@@ -502,6 +508,7 @@ def import_statements(*objects, **kwds):
         detect deprecated stuff). So, if you use it, double check the answer and
         report weird behaviors.
     """
+    import itertools
     import inspect
     from sage.misc.lazy_import import LazyImport
 
@@ -518,11 +525,19 @@ def import_statements(*objects, **kwds):
     if kwds:
         raise TypeError("Unexpected '{}' argument".format(next(iter(kwds))))
 
-    for obj in objects:
+    def expand_comma_separated_names(obj):
+        if isinstance(obj, str):
+            for w in obj.strip('()').split(','):
+                yield w.strip()
+        else:
+            yield obj
+
+    for obj in itertools.chain.from_iterable(expand_comma_separated_names(object)
+                                             for object in objects):
         name = None    # the name of the object
 
         # 1. if obj is a string, we look for an object that has that name
-        if isinstance(obj, string_types):
+        if isinstance(obj, str):
             from sage.all import sage_globals
             G = sage_globals()
             name = obj
@@ -543,7 +558,7 @@ def import_statements(*objects, **kwds):
                 if isinstance(obj[i], LazyImport):
                     tmp = obj.pop(i)
                     # Ignore deprecated lazy imports
-                    tmp_deprecation = tmp._get_deprecation_ticket()
+                    tmp_deprecation = tmp._get_deprecation_issue()
                     if tmp_deprecation:
                         deprecation = tmp_deprecation
                     else:
@@ -569,7 +584,7 @@ def import_statements(*objects, **kwds):
             except IndexError:
                 if deprecation:
                     raise LookupError(
-                        "object named {!r} is deprecated (see trac ticket "
+                        "object named {!r} is deprecated (see github issue "
                         "{})".format(name, deprecation))
                 else:
                     raise LookupError("no object named {!r}".format(name))
@@ -592,9 +607,30 @@ def import_statements(*objects, **kwds):
         modules = find_object_modules(obj)
         if '__main__' in modules:
             del modules['__main__']
+        if '__mp_main__' in modules:
+            del modules['__mp_main__']
 
         if not modules:
             raise ValueError("no import statement found for '{}'.".format(obj))
+
+        if name is None:
+            # if the object is available under both ascii and unicode names,
+            # prefer the ascii version.
+            def is_ascii(s):
+                """
+                Equivalent of `str.isascii` in Python >= 3.7
+                """
+                return all(ord(c) < 128 for c in s)
+            if any(is_ascii(s)
+                   for (module_name, obj_names) in modules.items()
+                   for s in obj_names):
+                for module_name, obj_names in list(modules.items()):
+                    if any(not is_ascii(s) for s in obj_names):
+                        obj_names = [name for name in obj_names if is_ascii(name)]
+                        if not obj_names:
+                            del modules[module_name]
+                        else:
+                            modules[module_name] = obj_names
 
         if len(modules) == 1:  # the module is well defined
             (module_name, obj_names), = modules.items()

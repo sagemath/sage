@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 #########################################################################
 #       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>
 #
@@ -25,4 +24,4 @@ from .numerical import NumericalEigenforms as numerical_eigenforms
 
 from .element import delta_lseries
 
-from .find_generators import ModularFormsRing # span_of_series, modform_generators
+from .ring import ModularFormsRing

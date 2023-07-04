@@ -1,0 +1,51 @@
+#!/bin/sh
+
+########################################################################
+# Helper script for sdist
+#
+# Usage: sage-clone-source SRC DST
+#
+# Create empty directory DST (delete it if it existed) and copy all
+# Sage source files from SRC to DST using git.
+#
+# Also extract auto-generated files from the configure tarball.
+########################################################################
+
+set -e
+
+if [ $# -ne 2 ]; then
+    echo >&2 "Usage: $0 SRC DST"
+    exit 2
+fi
+
+SRC="$1"
+DST="$2"
+
+cd "$SRC"
+
+# Filename of configure tarball, which is downloaded if it doesn't exist
+CONFVERSION=`cat build/pkgs/configure/package-version.txt`
+CONFBALL="$SRC/upstream/configure-$CONFVERSION.tar.gz"
+[ -f "$CONFBALL" ] || ./bootstrap -D
+
+rm -rf "$DST"
+mkdir -p "$DST"
+
+git clone --origin upstream "$SRC" "$DST"
+
+cd "$DST"
+git remote set-url upstream "$SAGE_REPO_ANONYMOUS"
+git remote set-url --push upstream "do not push to upstream"
+git remote add trac https://github.com/sagemath/sagetrac-mirror.git
+git remote set-url --push trac "do not push to trac"
+
+# Save space
+git gc --aggressive --prune=now
+
+# Extract configure tarball. Use m option such that the timestamps of
+# these auto-generated files are NOW (instead of the time stored in the
+# tarball). We need these files to be more recent than the input files
+# like configure.ac, otherwise "make" gets confused.
+tar xzmf "$CONFBALL"
+
+echo "Finished cloning Sage sources"

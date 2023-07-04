@@ -1,0 +1,27 @@
+cd src
+
+# Avoid running autotools. Patch no_vendor_cddlib.patch makes changes
+# both to input and output.
+touch configure Makefile.in
+
+./configure \
+    --prefix="$SAGE_LOCAL" \
+    --libdir="$SAGE_LOCAL/lib" \
+    $SAGE_CONFIGURE_GMP \
+    --with-cdd="$SAGE_LOCAL"
+if [ $? -ne 0 ]; then
+   echo "Error configuring TOPCOM."
+   exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+   echo "Error building TOPCOM."
+   exit 1
+fi
+
+$MAKE install-strip
+if [ $? -ne 0 ]; then
+   echo "Error installing TOPCOM."
+   exit 1
+fi

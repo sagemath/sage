@@ -63,15 +63,14 @@ REFERENCES:
 
 Some details are also online at:  http://www.permutationpuzzles.org/hexad/
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 David Joyner <wdjoyner@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or later (at your choice)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.infinity import infinity
 from sage.matrix.matrix_space import MatrixSpace
@@ -108,7 +107,6 @@ def view_list(L):
     return matrix(GF(2), 3, 3, lambda x, y: 1 if (x,y) in L else 0)
 
 
-
 def picture_set(A, L):
     """
     This is needed in the :meth:`Minimog.find_hexad` function below.
@@ -125,7 +123,7 @@ def picture_set(A, L):
     return set([A[x] for x in L])
 
 
-class Minimog(object):
+class Minimog():
     r"""
     This implements the Conway/Curtis minimog idea for describing
     the Steiner triple system `S(5, 6, 12)`.
@@ -712,4 +710,3 @@ class Minimog(object):
                 return str(x) + ' --> ' + str(y) + ". The total went from " + str(total) + " to " + str(total - x + y) + "."
         print("This is a hexad. \n There is no winning move, so make a random legal move.")
         return L0
-

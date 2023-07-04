@@ -9,10 +9,10 @@ Root system data for (untwisted) type E affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .cartan_type import CartanType_standard_untwisted_affine, CartanType_simply_laced
+
+
 class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
     def __init__(self, n):
         """
@@ -58,7 +58,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             sage: latex(CartanType(['E',7,1]))
             E_7^{(1)}
         """
-        return "E_%s^{(1)}"%self.n
+        return "E_%s^{(1)}" % self.n
 
     def dynkin_diagram(self):
         """
@@ -77,7 +77,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O---O---O
             1   3   4   5   6
             E6~
-            sage: sorted(e.edges())
+            sage: e.edges(sort=True)
             [(0, 2, 1),
              (1, 3, 1),
              (2, 0, 1),
@@ -99,7 +99,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O---O---O---O---O
             0   1   3   4   5   6   7
             E7~
-            sage: sorted(e.edges())
+            sage: e.edges(sort=True)
             [(0, 1, 1), (1, 0, 1), (1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1),
              (4, 2, 1), (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1),
              (6, 5, 1), (6, 7, 1), (7, 6, 1)]
@@ -111,7 +111,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O---O---O---O---O---O
             1   3   4   5   6   7   8   0
             E8~
-            sage: sorted(e.edges())
+            sage: e.edges(sort=True)
             [(0, 8, 1), (1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1),
              (4, 2, 1), (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1),
              (6, 5, 1), (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 0, 1), (8, 7, 1)]
@@ -219,12 +219,11 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             return ret + self.classical().ascii_art(label, node)
         elif n == 7:
             ret = "            {} {}\n            |\n            |\n".format(node(label(2)), label(2))
-            labels = [label(_) for _ in [0,1,3,4,5,6,7]]
-            nodes = [node(_) for _ in labels]
+            labels = [label(i) for i in [0,1,3,4,5,6,7]]
+            nodes = [node(i) for i in labels]
             return ret + '---'.join(n for n in nodes) + '\n' + "".join("{!s:4}".format(i) for i in labels)
         elif n == 8:
             ret = "        {} {}\n        |\n        |\n".format(node(label(2)), label(2))
-            labels = [label(_) for _ in [1,3,4,5,6,7,8,0]]
-            nodes = [node(_) for _ in labels]
+            labels = [label(i) for i in [1,3,4,5,6,7,8,0]]
+            nodes = [node(i) for i in labels]
             return ret + '---'.join(n for n in nodes) + '\n' + "".join("{!s:4}".format(i) for i in labels)
-

@@ -105,7 +105,7 @@ Sage example in ./numbertheory.tex, line 593::
   ....:     q = lcm(range(1,n+1))
   ....:     pmax = RR(q*(log(n)+1))
   ....:     m = ZZ(2*pmax^2)
-  ....:     m = ceil(m/q)*q + 1
+  ....:     m = integer_ceil(m / q) * q + 1
   ....:     a = harmonic_mod(n,m)
   ....:     return rational_reconstruction(a,m)
 
@@ -139,7 +139,7 @@ Sage example in ./numbertheory.tex, line 755::
   sage: crt(15,2,30,4)
   Traceback (most recent call last):
     ...
-  ValueError: No solution to crt problem since gcd(30,4) does not divide 15-2
+  ValueError: no solution to crt problem since gcd(30,4) does not divide 15-2
 
 Sage example in ./numbertheory.tex, line 1008::
 
@@ -154,4 +154,3 @@ Sage example in ./numbertheory.tex, line 1226::
   17
 
 """
-

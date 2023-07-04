@@ -11,15 +11,15 @@ AUTHORS:
     and return as the ``construction()``.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -31,7 +31,8 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.modules.free_module_element import vector
 from sage.sets.family import Family
 from sage.structure.richcmp import richcmp
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 class VermaModule(CombinatorialFreeModule):
@@ -227,7 +228,7 @@ class VermaModule(CombinatorialFreeModule):
             sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
             sage: M = L.verma_module(2*La[1] + 7*La[4] - 3/4*La[7])
             sage: latex(M)
-            M_{2\Lambda_{1} + 7\Lambda_{4} - \frac{3}{4}\Lambda_{7}}
+            M_{2 \Lambda_{1} + 7 \Lambda_{4} - \frac{3}{4} \Lambda_{7}}
         """
         from sage.misc.latex import latex
         return "M_{{{}}}".format(latex(self._weight))
@@ -252,7 +253,7 @@ class VermaModule(CombinatorialFreeModule):
             sage: 2 * M.highest_weight_vector()
             2*v[(-1/14, 3/7)]
         """
-        ret = super(VermaModule, self)._repr_generator(m)
+        ret = super()._repr_generator(m)
         if ret == '1':
             ret = ''
         else:
@@ -272,14 +273,14 @@ class VermaModule(CombinatorialFreeModule):
             sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
             sage: v = x * M.highest_weight_vector()
             sage: M._latex_generator(v.leading_support())
-            f_{-2\alpha_{1} - \alpha_{2}} v_{-\frac{1}{14}e_{0} + \frac{3}{7}e_{1}}
+            f_{-2 \alpha_{1} - \alpha_{2}} v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
 
             sage: latex(2 * M.highest_weight_vector())
-            2 v_{-\frac{1}{14}e_{0} + \frac{3}{7}e_{1}}
+            2  v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
             sage: latex(M.highest_weight_vector())
-            v_{-\frac{1}{14}e_{0} + \frac{3}{7}e_{1}}
+             v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
         """
-        ret = super(VermaModule, self)._latex_generator(m)
+        ret = super()._latex_generator(m)
         if ret == '1':
             ret = ''
         from sage.misc.latex import latex
@@ -420,7 +421,7 @@ class VermaModule(CombinatorialFreeModule):
             H = Hom(R, self)
             if H.dimension() == 1:
                 return H.natural_map()
-        return super(VermaModule, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def _element_constructor_(self, x):
         r"""
@@ -448,7 +449,7 @@ class VermaModule(CombinatorialFreeModule):
             return self._from_dict({self._indices.one(): x})
         if isinstance(x, self._pbw.element_class):
             return self.highest_weight_vector()._acted_upon_(x, False)
-        return super(VermaModule, self)._element_constructor_(self, x)
+        return super()._element_constructor_(self, x)
 
     @lazy_attribute
     def _dominant_data(self):
@@ -562,6 +563,7 @@ class VermaModule(CombinatorialFreeModule):
         f = {i: self._pbw(g) for i,g in enumerate(self._g.f())}
         basis = d.parent().basis() # Standard basis vectors
         ret = set()
+
         def degree(m):
             m = m.dict()
             if not m:
@@ -651,7 +653,7 @@ class VermaModule(CombinatorialFreeModule):
             try:
                 scalar = P._pbw(scalar)
             except (ValueError, TypeError):
-                # Cannot be made into a PBW element, so propogate it up
+                # Cannot be made into a PBW element, so propagate it up
                 return CombinatorialFreeModule.Element._acted_upon_(self,
                         scalar, self_on_left)
 
@@ -733,9 +735,11 @@ class VermaModuleMorphism(Morphism):
         return "Verma module"
 
     def _repr_defn(self):
-        """
+        r"""
         Return a string describing the definition of ``self``,
         to be used when printing ``self``.
+
+        EXAMPLES::
 
             sage: L = lie_algebras.sl(QQ, 3)
             sage: La = L.cartan_type().root_system().weight_lattice().fundamental_weights()
@@ -810,7 +814,7 @@ class VermaModuleMorphism(Morphism):
             sage: v = Mpp.highest_weight_vector()
             sage: psi(v)
             0
-        """ 
+        """
         if not self._scalar or self.parent().singular_vector() is None:
             return self.codomain().zero()
         mc = x.monomial_coefficients(copy=False)
@@ -925,7 +929,7 @@ class VermaModuleMorphism(Morphism):
         if (isinstance(right, VermaModuleMorphism)
             and right.domain()._g is self.codomain()._g):
             return homset.element_class(homset, right._scalar * self._scalar)
-        return super(VermaModuleMorphism, self)._composition_(right, homset)
+        return super()._composition_(right, homset)
 
     def is_injective(self):
         r"""
@@ -1047,7 +1051,7 @@ class VermaModuleHomset(Homset):
                 return self.zero()
             return self.element_class(self, self.base_ring()(x))
 
-        return super(VermaModuleHomset, self).__call__(x, **options)
+        return super().__call__(x, **options)
 
     def _an_element_(self):
         """
@@ -1170,7 +1174,7 @@ class VermaModuleHomset(Homset):
                 return None
             elt = F[i]**ZZ(exp) * elt
             wt = wt.dot_action([i])
-        return elt * C.highest_weight_vector()
+        return C.highest_weight_vector()._acted_upon_(elt, False)
 
     @cached_method
     def natural_map(self):
@@ -1319,4 +1323,3 @@ def _convert_wt_to_root(wt):
     b = b[0]  # Get the actual vector that gives the linear dependency
     # Get v as a linear combination of the simple roots
     return vector(QQ, [-x / b[0] for x in b[1:]])
-

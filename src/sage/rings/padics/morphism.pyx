@@ -11,7 +11,6 @@ Frobenius endomorphisms on p-adic fields
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import Infinity
@@ -89,6 +88,42 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         self._order = self._degree / domain.absolute_f().gcd(self._power)
         RingHomomorphism.__init__(self, Hom(domain, domain))
 
+    cdef dict _extra_slots(self):
+        """
+        Helper for copying and pickling.
+
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: U.<a> = Qp(2).extension(x^2 + x + 1)
+            sage: F = U.frobenius_endomorphism(); F
+            Frobenius endomorphism on 2-adic Unramified Extension Field in a defined by x^2 + x + 1 lifting a |--> a^2 on the residue field
+            sage: copy(F)
+            Frobenius endomorphism on 2-adic Unramified Extension Field in a defined by x^2 + x + 1 lifting a |--> a^2 on the residue field
+        """
+        slots = RingHomomorphism._extra_slots(self)
+        slots['_degree'] = self._degree
+        slots['_power'] = self._power
+        slots['_order'] = self._order
+        return slots
+
+    cdef _update_slots(self, dict slots):
+        """
+        Helper for copying and pickling.
+
+        TESTS::
+
+            sage: R.<x> = ZZ[]
+            sage: U.<a> = Zp(2).extension(x^2 + x + 1)
+            sage: F = U.frobenius_endomorphism(); F
+            Frobenius endomorphism on 2-adic Unramified Extension Ring in a defined by x^2 + x + 1 lifting a |--> a^2 on the residue field
+            sage: loads(dumps(F)) == F
+            True
+        """
+        self._degree = slots['_degree']
+        self._power = slots['_power']
+        self._order = slots['_order']
+        RingHomomorphism._update_slots(self, slots)
 
     def _repr_(self):
         """
@@ -279,15 +314,13 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return self.power() == 0
 
-
     def __hash__(self):
-        """
+        r"""
         Return a hash of this morphism.
 
         It is the hash of ``(domain, codomain, ('Frob', power)``
-        where ``power`` is the smalles integer `n` such that
-        this morphism acts by `x \mapsto x^(p^n)` on the
-        residue field
+        where ``power`` is the smallest integer `n` such that
+        this morphism acts by `x \mapsto x^(p^n)` on the residue field.
 
         EXAMPLES::
 
@@ -298,7 +331,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         domain = self.domain()
         codomain = self.codomain()
-        return hash((domain,codomain,('Frob',self._power)))
+        return hash((domain, codomain, ('Frob', self._power)))
 
     cpdef _richcmp_(left, right, int op):
         """

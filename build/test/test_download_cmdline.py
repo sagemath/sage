@@ -3,22 +3,21 @@
 Test sage-download-file commandline utility
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import unittest
 import subprocess
 import logging
 
-from sage_bootstrap.env import SAGE_DISTFILES
 from sage_bootstrap.download.mirror_list import MIRRORLIST_FILENAME
 from sage_bootstrap.util import is_url
 
@@ -35,9 +34,11 @@ EXECUTABLE = os.path.join(
 
 class SageDownloadFileTestCase(unittest.TestCase):
 
+    maxDiff = None
+
     def test_print_mirror_list_no_network(self):
         """
-        Subsequent runs of sage-download-file 
+        Subsequent runs of sage-download-file
         """
         try:
             os.remove(MIRRORLIST_FILENAME)
@@ -66,7 +67,7 @@ class SageDownloadFileTestCase(unittest.TestCase):
 
     def test_print_mirror_list_timing(self):
         """
-        The first run of sage-download-file 
+        The first run of sage-download-file
         """
         try:
             os.remove(MIRRORLIST_FILENAME)
@@ -74,7 +75,7 @@ class SageDownloadFileTestCase(unittest.TestCase):
             pass
         proc = subprocess.Popen(
             [EXECUTABLE, '--print-fastest-mirror'],
-            stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
+            stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         )
         stdout, stderr = proc.communicate()
         stdout = stdout.decode('utf-8')
@@ -89,11 +90,11 @@ class SageDownloadFileTestCase(unittest.TestCase):
 
     def test_print_mirror_list_cached(self):
         """
-        Subsequent runs of sage-download-file 
+        Subsequent runs of sage-download-file
         """
         proc = subprocess.Popen(
             [EXECUTABLE, '--print-fastest-mirror'],
-            stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
+            stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         )
         stdout, stderr = proc.communicate()
         stdout = stdout.decode('utf-8')
@@ -104,5 +105,3 @@ class SageDownloadFileTestCase(unittest.TestCase):
         # Prints single url to stdout
         self.assertTrue(is_url(stdout))
         # May or may not print to stderr depending on whether cache was saved
-        
-        

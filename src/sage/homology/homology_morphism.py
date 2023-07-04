@@ -20,7 +20,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
 
 # To do: implement morphisms of cubical complexes, with methods
 #   - domain
@@ -33,7 +32,7 @@ from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
 from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
-from sage.homology.simplicial_complex import SimplicialComplex
+from sage.topology.simplicial_complex import SimplicialComplex
 
 class InducedHomologyMorphism(Morphism):
     r"""
@@ -53,7 +52,7 @@ class InducedHomologyMorphism(Morphism):
 
         This is not intended to be used directly by the user, but instead
         via the method
-        :meth:`~sage.homology.simplicial_complex_morphism.SimplicialComplexMorphism.induced_homology_morphism`.
+        :meth:`~sage.topology.simplicial_complex_morphism.SimplicialComplexMorphism.induced_homology_morphism`.
 
     EXAMPLES::
 

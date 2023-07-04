@@ -1,3 +1,7 @@
+# distutils: sources = sage/geometry/triangulation/functions.cc sage/geometry/triangulation/data.cc sage/geometry/triangulation/triangulations.cc
+# distutils: depends = sage/geometry/triangulation/functions.h sage/geometry/triangulation/data.h sage/geometry/triangulation/triangulations.h
+# distutils: language = c++
+
 r"""
 Base classes for triangulations
 
@@ -16,14 +20,12 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import absolute_import
 
 from sage.misc.fast_methods cimport hash_by_id
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
 from sage.categories.sets_cat import Sets
 from sage.matrix.constructor import matrix
-from sage.misc.cachefunc import cached_method
 
 from .functions cimport binomial
 from .triangulations cimport \
@@ -337,10 +339,9 @@ cdef class Point(SageObject):
             sage: p.reduced_affine_vector()
             (2, 2)
             sage: type(p.reduced_affine_vector())
-            <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+            <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
         """
         return self._reduced_projective_vector
-
 
     cpdef _repr_(self):
         """
@@ -426,15 +427,15 @@ cdef class PointConfiguration_base(Parent):
             configuration are assumed to be connected, not necessarily
             fine, not necessarily regular.
         """
-        n = len(projective_points)
-        if n==0:
+        if not projective_points:
             self._ambient_dim = 0
             self._dim = -1
             self._pts = tuple()
             return
 
         # We now are sure that projective_points is not empty
-        self._ambient_dim = len(projective_points[0])-1
+        n = len(projective_points)
+        self._ambient_dim = len(projective_points[0]) - 1
         assert all(len(p) == self._ambient_dim+1 for p in projective_points), \
             'The given point coordinates must all have the same length.'
         assert len(set(projective_points)) == len(projective_points), \
@@ -731,7 +732,6 @@ cdef class PointConfiguration_base(Parent):
         """
         return self._pts[i]
 
-
     def __len__(self):
         """
         Return the number of points.
@@ -834,23 +834,21 @@ cdef class PointConfiguration_base(Parent):
         simplex = []
         cdef int l = 0
         cdef int n = self.n_points()
-        cdef int d = self.dim()+1
+        cdef int d = self.dim() + 1
         cdef int k, b
-        for k in range(1,d):
+        for k in range(1, d):
             l += 1
-            i = l
             j = 1
-            b = binomial(n-l,d-k)
-            while (s>b) and (b>0):
+            b = binomial(n - l, d - k)
+            while s > b > 0:
                 j += 1
                 l += 1
                 s -= b
-                b = binomial(n-l,d-k)
-            simplex.append(l-1)
-        simplex.append(s+l-1)
+                b = binomial(n - l, d - k)
+            simplex.append(l - 1)
+        simplex.append(s + l - 1)
         assert len(simplex) == d
         return tuple(simplex)
-
 
 
 ########################################################################
@@ -1004,7 +1002,6 @@ cdef class ConnectedTriangulationsIterator(SageObject):
         """
         return self
 
-
     def __next__(self):
         r"""
         The iterator interface: Next iteration.
@@ -1018,6 +1015,6 @@ cdef class ConnectedTriangulationsIterator(SageObject):
             (9, 10)
         """
         t = next_triangulation(self._tp)
-        if len(t) == 0:
+        if not t:
             raise StopIteration
         return t

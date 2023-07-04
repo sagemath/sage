@@ -151,7 +151,9 @@ with the irreducible types. Such a type is implemented in Sage as a
 pair ``['X', r]`` where 'X' is one of A, B, C, D, E, F or G and `r` is a
 positive integer. If 'X' is 'D' then we must have `r > 1` and if 'X' is
 one of the *exceptional types* 'E', 'F' or 'G' then `r` is limited to
-only a few possibilities. The exceptional types are::
+only a few possibilities. The exceptional types are:
+
+.. CODE-BLOCK:: text
 
     ['G', 2], ['F', 4], ['E', 6], ['E', 7] or ['E', 8].
 

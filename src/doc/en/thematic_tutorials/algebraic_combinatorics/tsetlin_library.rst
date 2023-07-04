@@ -158,7 +158,7 @@ The stationary distribution is the eigenvector of eigenvalues `1=x_0+x_1+x_2`. D
     #.  Write a function ``transition_operator(sigma, i)`` which implements the operator
         `\partial_i` which takes as input a tuple ``sigma`` and integer `i \in \{1,2,\ldots,n\}`
         and outputs a new tuple. It might be useful to extract subtuples
-        (``sigma[i:j]``) and concatentation.
+        (``sigma[i:j]``) and concatenation.
 
     #.  Write a function ``tsetlin_digraph(n)`` which constructs the
         (multi digraph) as described as shown above. This can be achieved using
@@ -187,4 +187,4 @@ arbitrary posets was given in [AKS2013]_.
 .. [AKS2013] Arvind Ayyer, Steven Klee, Anne Schilling.
     *Combinatorial Markov chains on linear extensions*
     J. Algebraic Combinatorics,
-    :doi:`10.1007/s10801-013-0470-9`, :arXiv:`1205.7074`.
+    :doi:`10.1007/s10801-013-0470-9`, :arxiv:`1205.7074`.

@@ -5,7 +5,7 @@ Polynomial Rings
 ----------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/polynomial/polynomial_ring_constructor
 
@@ -13,7 +13,7 @@ Univariate Polynomials
 ----------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    polynomial_rings_univar
    sage/rings/polynomial/convolution
@@ -23,21 +23,11 @@ Multivariate Polynomials
 ------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    polynomial_rings_multivar
    invariant_theory
    polynomial_rings_toy_implementations
-
-Skew Polynomials
-----------------
-
-.. toctree::
-   :maxdepth: 2
-
-   sage/rings/polynomial/skew_polynomial_element
-   sage/rings/polynomial/skew_polynomial_ring_constructor
-   sage/rings/polynomial/skew_polynomial_ring
 
 Rational Functions
 ------------------
@@ -55,6 +45,7 @@ Laurent Polynomials
 .. toctree::
    :maxdepth: 1
 
+   sage/rings/polynomial/laurent_polynomial_ring_base
    sage/rings/polynomial/laurent_polynomial_ring
    sage/rings/polynomial/laurent_polynomial
    sage/rings/polynomial/omega
@@ -77,14 +68,6 @@ Boolean Polynomials
 .. toctree::
    :maxdepth: 1
 
-   sage/rings/polynomial/pbori
-
-Noncommutative Polynomials
---------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/rings/polynomial/plural
+   sage/rings/polynomial/pbori/pbori
 
 .. include:: ../footer.txt

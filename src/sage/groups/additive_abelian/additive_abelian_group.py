@@ -9,9 +9,10 @@ major differences are in the way elements are printed.
 from sage.groups.old import AbelianGroup
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.fg_pid.fgp_element import FGP_Element
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
-def AdditiveAbelianGroup(invs, remember_generators = True):
+
+def AdditiveAbelianGroup(invs, remember_generators=True):
     r"""
     Construct a finitely-generated additive abelian group.
 
@@ -43,7 +44,7 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
         sage: H = AdditiveAbelianGroup([0, 2, 3], remember_generators = False); H
         Additive abelian group isomorphic to Z/6 + Z
         sage: H.gens()
-        ((0, 1, 2), (1, 0, 0))
+        ((0, 1, 1), (1, 0, 0))
 
     There are several ways to create elements of an additive abelian group.
     Realize that there are two sets of generators:  the "obvious" ones composed
@@ -56,65 +57,67 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
     that pair up naturally with the invariants.  We create the same element
     repeatedly. ::
 
-        sage: H=AdditiveAbelianGroup([3,2,0], remember_generators=True)
+        sage: H = AdditiveAbelianGroup([3,2,0], remember_generators=True)
         sage: H.gens()
         ((1, 0, 0), (0, 1, 0), (0, 0, 1))
         sage: [H.0, H.1, H.2]
         [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
-        sage: p=H.0+H.1+6*H.2; p
+        sage: p = H.0+H.1+6*H.2; p
         (1, 1, 6)
 
         sage: H.smith_form_gens()
         ((2, 1, 0), (0, 0, 1))
-        sage: q=H.linear_combination_of_smith_form_gens([5,6]); q
+        sage: q = H.linear_combination_of_smith_form_gens([5,6]); q
         (1, 1, 6)
-        sage: p==q
+        sage: p == q
         True
 
-        sage: r=H(vector([1,1,6])); r
+        sage: r = H(vector([1,1,6])); r
         (1, 1, 6)
-        sage: p==r
+        sage: p == r
         True
 
-        sage: s=H(p)
-        sage: p==s
+        sage: s = H(p)
+        sage: p == s
         True
 
     Again, but now where the generators are the minimal set.  Coercing a
     list or a vector works as before, but the default generators are different. ::
 
-        sage: G=AdditiveAbelianGroup([3,2,0], remember_generators=False)
+        sage: G = AdditiveAbelianGroup([3,2,0], remember_generators=False)
         sage: G.gens()
         ((2, 1, 0), (0, 0, 1))
         sage: [G.0, G.1]
         [(2, 1, 0), (0, 0, 1)]
-        sage: p=5*G.0+6*G.1; p
+        sage: p = 5*G.0+6*G.1; p
         (1, 1, 6)
 
         sage: H.smith_form_gens()
         ((2, 1, 0), (0, 0, 1))
-        sage: q=G.linear_combination_of_smith_form_gens([5,6]); q
+        sage: q = G.linear_combination_of_smith_form_gens([5,6]); q
         (1, 1, 6)
-        sage: p==q
+        sage: p == q
         True
 
-        sage: r=G(vector([1,1,6])); r
+        sage: r = G(vector([1,1,6])); r
         (1, 1, 6)
-        sage: p==r
+        sage: p == r
         True
 
-        sage: s=H(p)
-        sage: p==s
+        sage: s = H(p)
+        sage: p == s
         True
     """
     invs = [ZZ(x) for x in invs]
-    if not all( [x >= 0 for x in invs] ): raise ValueError("Invariants must be nonnegative")
+    if not all(x >= 0 for x in invs):
+        raise ValueError("Invariants must be nonnegative")
     A, B = cover_and_relations_from_invariants(invs)
     if remember_generators:
         G = AdditiveAbelianGroup_fixed_gens(A, B, A.gens())
     else:
         G = AdditiveAbelianGroup_class(A, B)
     return G
+
 
 def cover_and_relations_from_invariants(invs):
     r"""
@@ -134,12 +137,10 @@ def cover_and_relations_from_invariants(invs):
         [0 2 0]
         [0 0 3])
     """
-    from six.moves import range
     n = len(invs)
     A = ZZ**n
     B = A.span([A.gen(i) * invs[i] for i in range(n)])
     return (A, B)
-
 
 
 class AdditiveAbelianGroupElement(FGP_Element):
@@ -164,7 +165,6 @@ class AdditiveAbelianGroupElement(FGP_Element):
             sage: v._hermite_lift()
             (1, 0)
         """
-        from six.moves import range
         y = self.lift()
         H = self.parent().W().basis_matrix()
         pivot_rows = H.pivot_rows()
@@ -246,13 +246,13 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
         EXAMPLES::
 
-            sage: G=AdditiveAbelianGroup([66, 77, 0, 0])
+            sage: G = AdditiveAbelianGroup([66, 77, 0, 0])
             sage: G._latex_()
             '\\frac{\\ZZ}{11\\ZZ} \\oplus \\frac{\\ZZ}{462\\ZZ} \\oplus \\ZZ \\oplus \\ZZ'
 
         A trivial group is represented as zero, rather than Z/1Z. ::
 
-            sage: G=AdditiveAbelianGroup([1])
+            sage: G = AdditiveAbelianGroup([1])
             sage: G._latex_()
             '0'
         """
@@ -351,7 +351,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
             1
         """
         if not self.invariants():
-            return 1
+            return ZZ(1)
         else:
             ann =  self.annihilator().gen()
             if ann:
@@ -378,19 +378,19 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         With no common factors between the orders of the generators,
         the group will be cyclic. ::
 
-            sage: G=AdditiveAbelianGroup([6, 7, 55])
+            sage: G = AdditiveAbelianGroup([6, 7, 55])
             sage: G.is_cyclic()
             True
 
         Repeating primes in the orders will create a non-cyclic group. ::
 
-            sage: G=AdditiveAbelianGroup([6, 15, 21, 33])
+            sage: G = AdditiveAbelianGroup([6, 15, 21, 33])
             sage: G.is_cyclic()
             False
 
         A trivial group is trivially cyclic. ::
 
-            sage: T=AdditiveAbelianGroup([1])
+            sage: T = AdditiveAbelianGroup([1])
             sage: T.is_cyclic()
             True
         """
@@ -464,9 +464,8 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
             TypeError: Additive Abelian group must be finite
         """
         # GAP does not support infinite permutation groups
-        if not self.is_finite(): 
+        if not self.is_finite():
             raise TypeError('Additive Abelian group must be finite')
         from sage.groups.perm_gps.permgroup import PermutationGroup
         s = 'Image(IsomorphismPermGroup(AbelianGroup(%s)))'%(list(self.invariants()),)
         return PermutationGroup(gap_group=s)
-

@@ -39,7 +39,6 @@ EXAMPLES::
     sage: f([0,1,-1])
     (3 : 0 : 1)
 """
-from __future__ import absolute_import
 
 ##############################################################################
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
@@ -58,7 +57,7 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
 
     def __init__(self, domain, codomain, defining_polynomials, post_multiplication):
         r"""
-        A morphism of a a genus-one curve to/from the Weierstrass form.
+        A morphism of a genus-one curve to/from the Weierstrass form.
 
         INPUT:
 
@@ -109,7 +108,7 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
             (1/3 : 0 : 1)
         """
         Hom = domain.Hom(codomain)
-        super(WeierstrassTransformation, self).__init__(Hom, defining_polynomials)
+        super().__init__(Hom, defining_polynomials)
         self._post = post_multiplication
 
     def post_rescaling(self):
@@ -147,7 +146,7 @@ def WeierstrassTransformationWithInverse(domain, codomain,
                                          defining_polynomials, post_multiplication,
                                          inv_defining_polynomials, inv_post_multiplication):
     """
-    Construct morphism of a a genus-one curve to/from the Weierstrass
+    Construct morphism of a genus-one curve to/from the Weierstrass
     form with its inverse.
 
     EXAMPLES::

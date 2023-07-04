@@ -5,7 +5,6 @@ The actual computation of homology groups ends up being linear algebra
 with the differentials thought of as matrices. This module contains
 some utility functions for this purpose.
 """
-
 ########################################################################
 #       Copyright (C) 2013 John H. Palmieri <palmieri@math.washington.edu>
 #
@@ -13,10 +12,8 @@ some utility functions for this purpose.
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
-from six.moves import range
 
 # TODO: this module is a clear candidate for cythonizing. Need to
 # evaluate speed benefits.
@@ -205,4 +202,3 @@ def dhsw_snf(mat, verbose=False):
     if len(ed) < rows:
         return ed + [0]*(rows - len(ed))
     return ed[:rows]
-

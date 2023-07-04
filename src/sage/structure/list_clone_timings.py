@@ -79,7 +79,6 @@ Various timings using a Python class::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.list_clone import ClonableArray
 from sage.structure.list_clone_demo import IncreasingArrays
@@ -129,7 +128,8 @@ def add1_internal(bla):
     """
     blo = bla.__copy__()
     lst = blo._get_list()
-    for i in range(len(blo)): lst[i] += 1
+    for i in range(len(blo)):
+        lst[i] += 1
     blo.set_immutable()
     blo.check()
     return blo
@@ -143,7 +143,8 @@ def add1_immutable(bla):
         [2, 5, 6]
     """
     lbla = bla[:]
-    for i in range(len(lbla)): lbla[i] += 1
+    for i in range(len(lbla)):
+        lbla[i] += 1
     return bla.__class__(bla.parent(), lbla)
 
 def add1_mutable(bla):
@@ -155,7 +156,8 @@ def add1_mutable(bla):
         [2, 5, 6]
     """
     blo = bla.__copy__()
-    for i in range(len(blo)): blo[i] += 1
+    for i in range(len(blo)):
+        blo[i] += 1
     blo.set_immutable()
     blo.check()
     return blo
@@ -169,5 +171,6 @@ def add1_with(bla):
         [2, 5, 6]
     """
     with bla.clone() as blo:
-        for i in range(len(blo)): blo[i] += 1
+        for i in range(len(blo)):
+            blo[i] += 1
     return blo

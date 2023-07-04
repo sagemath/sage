@@ -1,7 +1,7 @@
 """
 Finite Enumerated Sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,9 +13,8 @@ Finite Enumerated Sets
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -47,7 +46,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         [1, 2, 3]
         sage: S.cardinality()
         3
-        sage: S.random_element()
+        sage: S.random_element()  # random
         1
         sage: S.first()
         1
@@ -55,7 +54,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         Category of facade finite enumerated sets
         sage: TestSuite(S).run()
 
-    Note that being and enumerated set, the result depends on the order::
+    Note that being an enumerated set, the result depends on the order::
 
         sage: S1 = FiniteEnumeratedSet((1, 2, 3))
         sage: S1
@@ -75,7 +74,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         sage: S1
         {1, 2, 1, 2, 2, 3}
 
-    Finaly the elements are not aware of their parent::
+    Finally, the elements are not aware of their parent::
 
         sage: S.first().parent()
         Integer Ring
@@ -98,9 +97,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: S2 is S3
             True
         """
-        return super(FiniteEnumeratedSet, cls).__classcall__(
-                cls,
-                tuple(iterable))
+        return super().__classcall__(cls, tuple(iterable))
 
     def __init__(self, elements):
         """
@@ -110,9 +107,9 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: TestSuite(FiniteEnumeratedSet([])).run()
         """
         self._elements = elements
-        Parent.__init__(self, facade = True, category = FiniteEnumeratedSets())
+        Parent.__init__(self, facade=True, category=FiniteEnumeratedSets())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Conversion to boolean.
 
@@ -124,8 +121,6 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             False
         """
         return bool(self._elements)
-
-    __nonzero__ = __bool__
 
     def _repr_(self):
         """
@@ -240,6 +235,12 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: S = FiniteEnumeratedSet('abc')
             sage: S.random_element()   # random
             'b'
+
+        TESTS::
+
+            sage: S = FiniteEnumeratedSet([1,2,3])
+            sage: S.random_element() in S
+            True
         """
         if not self._elements:
             raise EmptySetError
@@ -324,6 +325,11 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             This workaround prevents conversions or coercions from
             facade parents over plain Python objects into ``self``.
 
+        If the :meth:`Parent.__call__` fails, then we try
+        :meth:`_element_constructor_` directly as the element returned
+        may not be a subclass of :class:`Element`, which is currently
+        not supported (see :trac:`19553`).
+
         EXAMPLES::
 
             sage: F = FiniteEnumeratedSet([1, 2, 'a', 'b'])
@@ -351,11 +357,21 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             2
             sage: F('a')
             'a'
+
+        Check that :trac:`19554` is fixed::
+
+            sage: S = FiniteEnumeratedSet(range(5))
+            sage: S(1)
+            1
+            sage: type(S(1))
+            <class 'int'>
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)
-        else:
+        try:
             return Parent.__call__(self, el)
+        except TypeError:
+            return self._element_constructor_(el)
 
     def _element_constructor_(self, el):
         """

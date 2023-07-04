@@ -1,0 +1,2 @@
+# Disabled for now because of https://github.com/sagemath/sage/issues/30845#comment:269
+# gdb

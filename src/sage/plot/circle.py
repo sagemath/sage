@@ -1,7 +1,6 @@
 """
 Circles
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
@@ -393,7 +392,7 @@ def circle(center, radius, **options):
         sage: circle((1,1,1,1), 1, rgbcolor=(1,0,0))
         Traceback (most recent call last):
         ...
-        ValueError: The center of a plotted circle should have two or three coordinates.
+        ValueError: the center of a plotted circle should have two or three coordinates
 
     The default aspect ratio for a circle is 1.0::
 
@@ -421,5 +420,5 @@ def circle(center, radius, **options):
         return g
     elif len(center) == 3:
         return g[0].plot3d(z=center[2])
-    else:
-        raise ValueError('The center of a plotted circle should have two or three coordinates.')
+    raise ValueError('the center of a plotted circle should have '
+                     'two or three coordinates')

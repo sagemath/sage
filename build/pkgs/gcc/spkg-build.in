@@ -1,0 +1,29 @@
+# Exit on error
+set -e
+
+# On OS X 10.9, g++ and the cdefs.h header are currently incompatible
+# Temporary workaround posted at http://trac.macports.org/ticket/41033
+if { uname -sr | grep 'Darwin 13\.' ;} &>/dev/null; then
+    mkdir -p "include/sys"
+    sed 's+defined(__GNUC_STDC_INLINE__)+& \&\& !defined(__cplusplus)+' /usr/include/sys/cdefs.h > "include/sys/cdefs.h"
+fi
+
+# On OS X 10.10 there is random ObjC stuff in a C header
+if { uname -sr | grep 'Darwin 14\.' ;} &>/dev/null; then
+    if [ -f /usr/include/dispatch/object.h ]; then
+        mkdir -p "include/dispatch"
+        sed 's+typedef void (\^dispatch_block_t)(void)+typedef void* dispatch_block_t+' \
+            /usr/include/dispatch/object.h > "include/dispatch/object.h"
+    else
+        echo "Warning: header /usr/include/dispatch/object.h not found, not applying fix."
+    fi
+fi
+
+# If we wrote any custom headers, make sure to include them on CPATH
+if [ -d include ]; then
+    export CPATH="$(pwd)/include:$CPATH"
+fi
+
+. ./set-library-path
+
+./build-gcc --enable-languages=c,c++,fortran

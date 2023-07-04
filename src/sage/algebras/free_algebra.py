@@ -39,7 +39,15 @@ two-sided ideals, and thus provide ideal containment tests::
     Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
     sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
     sage: I.groebner_basis(degbound=4)
-    Twosided Ideal (y*z*y*y - y*z*y*z + y*z*z*y - y*z*z*z, y*z*y*x + y*z*y*z + y*z*z*x + y*z*z*z, y*y*z*y - y*y*z*z + y*z*z*y - y*z*z*z, y*y*z*x + y*y*z*z + y*z*z*x + y*z*z*z, y*y*y - y*y*z + y*z*y - y*z*z, y*y*x + y*y*z + y*z*x + y*z*z, x*y + y*z, x*x - y*x - y*y - y*z) of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
+    Twosided Ideal (x*y + y*z,
+        x*x - y*x - y*y - y*z,
+        y*y*y - y*y*z + y*z*y - y*z*z,
+        y*y*x + y*y*z + y*z*x + y*z*z,
+        y*y*z*y - y*y*z*z + y*z*z*y - y*z*z*z,
+        y*z*y*y - y*z*y*z + y*z*z*y - y*z*z*z,
+        y*y*z*x + y*y*z*z + y*z*z*x + y*z*z*z,
+        y*z*y*x + y*z*y*z + y*z*z*x + y*z*z*z) of Free Associative Unital
+        Algebra on 3 generators (x, y, z) over Rational Field
     sage: y*z*y*y*z*z + 2*y*z*y*z*z*x + y*z*y*z*z*z - y*z*z*y*z*x + y*z*z*z*z*x in I
     True
 
@@ -116,7 +124,7 @@ Note that the letterplace implementation can only be used if the corresponding
     sage: FreeAlgebra(FreeAlgebra(ZZ,2,'ab'), 2, 'x', implementation='letterplace')
     Traceback (most recent call last):
     ...
-    TypeError: The base ring Free Algebra on 2 generators (a, b) over Integer Ring is not a commutative ring
+    NotImplementedError: polynomials over Free Algebra on 2 generators (a, b) over Integer Ring are not supported in Singular
 """
 
 #*****************************************************************************
@@ -131,10 +139,6 @@ Note that the letterplace implementation can only be used if the corresponding
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-from six.moves import range
-from six import integer_types
-import six
 
 from sage.categories.rings import Rings
 
@@ -145,7 +149,7 @@ from sage.algebras.free_algebra_element import FreeAlgebraElement
 
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
-from sage.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import Algebra
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -195,7 +199,7 @@ class FreeAlgebraFactory(UniqueFactory):
     By :trac:`7797`, we provide a different implementation of free
     algebras, based on Singular's "letterplace rings". Our letterplace
     wrapper allows for choosing positive integral degree weights for the
-    generators of the free algebra. However, only (weighted) homogenous
+    generators of the free algebra. However, only (weighted) homogeneous
     elements are supported. Of course, isomorphic algebras in different
     implementations are not identical::
 
@@ -236,7 +240,7 @@ class FreeAlgebraFactory(UniqueFactory):
         a*b^2*c^3
     """
     def create_key(self, base_ring, arg1=None, arg2=None,
-            sparse=None, order='degrevlex',
+            sparse=None, order=None,
             names=None, name=None,
             implementation=None, degrees=None):
         """
@@ -267,6 +271,8 @@ class FreeAlgebraFactory(UniqueFactory):
             return tuple(degrees),base_ring
         # test if we can use libSingular/letterplace
         if implementation == "letterplace":
+            if order is None:
+                order = 'degrevlex' if degrees is None else 'deglex'
             args = [arg for arg in (arg1, arg2) if arg is not None]
             kwds = dict(sparse=sparse, order=order, implementation="singular")
             if name is not None:
@@ -276,24 +282,24 @@ class FreeAlgebraFactory(UniqueFactory):
             PolRing = PolynomialRing(base_ring, *args, **kwds)
             if degrees is None:
                 return (PolRing,)
-            from sage.all import TermOrder
-            T = PolRing.term_order() + TermOrder('lex',1)
+            from sage.rings.polynomial.term_order import TermOrder
+            T = TermOrder(PolRing.term_order(), PolRing.ngens() + 1)
             varnames = list(PolRing.variable_names())
             newname = 'x'
             while newname in varnames:
                 newname += '_'
             varnames.append(newname)
             R = PolynomialRing(
-                    PolRing.base(), varnames,
-                    sparse=sparse, order=T)
+                PolRing.base(), varnames,
+                sparse=sparse, order=T)
             return tuple(degrees), R
         # normalise the generator names
-        from sage.all import Integer
-        if isinstance(arg1, (Integer,) + integer_types):
+        from sage.rings.integer import Integer
+        if isinstance(arg1, (Integer, int)):
             arg1, arg2 = arg2, arg1
-        if not names is None:
+        if names is not None:
             arg1 = names
-        elif not name is None:
+        elif name is not None:
             arg1 = name
         if arg2 is None:
             arg2 = len(arg1)
@@ -420,7 +426,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
 
         EXAMPLES::
 
-            sage: F.<x,y,z> = FreeAlgebra(QQ, 3); F # indirect doctet
+            sage: F.<x,y,z> = FreeAlgebra(QQ, 3); F # indirect doctest
             Free Algebra on 3 generators (x, y, z) over Rational Field
 
         TESTS:
@@ -433,7 +439,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             Free Algebra on 3 generators (a, b, c) over Integer Ring
         """
         if R not in Rings():
-            raise TypeError("Argument R must be a ring.")
+            raise TypeError("argument R must be a ring")
         self.__ngens = n
         indices = FreeMonoid(n, names=names)
         cat = AlgebrasWithBasis(R)
@@ -585,16 +591,17 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             if self.has_coerce_map_from(P): # letterplace versus generic
                 ngens = P.ngens()
                 M = self._indices
+
                 def exp_to_monomial(T):
                     out = []
                     for i in range(len(T)):
                         if T[i]:
                             out.append((i%ngens,T[i]))
                     return M(out)
-                return self.element_class(self, {exp_to_monomial(T):c for T,c in six.iteritems(x.letterplace_polynomial().dict())})
+                return self.element_class(self, {exp_to_monomial(T):c for T,c in x.letterplace_polynomial().dict().items()})
         # ok, not a free algebra element (or should not be viewed as one).
-        if isinstance(x, six.string_types):
-            from sage.all import sage_eval
+        if isinstance(x, str):
+            from sage.misc.sage_eval import sage_eval
             G = self.gens()
             d = {str(v): G[i] for i,v in enumerate(self.variable_names())}
             return self(sage_eval(x, locals=d))
@@ -700,7 +707,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             x
         """
         if i < 0 or not i < self.__ngens:
-            raise IndexError("Argument i (= {}) must be between 0 and {}.".format(i, self.__ngens-1))
+            raise IndexError("argument i (= {}) must be between 0 and {}".format(i, self.__ngens - 1))
         R = self.base_ring()
         F = self._indices
         return self.element_class(self, {F.gen(i): R.one()})
@@ -750,7 +757,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         """
         return self.monomial(x * y)
 
-    def quotient(self, mons, mats=None, names=None):
+    def quotient(self, mons, mats=None, names=None, **args):
         """
         Return a quotient algebra.
 
@@ -776,7 +783,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             Free algebra quotient on 3 generators ('i', 'j', 'k') and dimension 4 over Rational Field
         """
         if mats is None:
-            return super(FreeAlgebra_generic, self).quotient(mons, names)
+            return super().quotient(mons, names)
         from . import free_algebra_quotient
         return free_algebra_quotient.FreeAlgebraQuotient(self, mons, mats, names)
 
@@ -850,7 +857,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         for i in range(n):
             for j in range(i + 1, n):
                 cmat[i,j] = 1
-        for (to_commute,commuted) in six.iteritems(relations):
+        for (to_commute,commuted) in relations.items():
             #This is dirty, coercion is broken
             assert isinstance(to_commute, FreeAlgebraElement), to_commute.__class__
             assert isinstance(commuted, FreeAlgebraElement), commuted
@@ -860,20 +867,21 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             assert v1 > v2
             c_coef = None
             d_poly = None
-            for (m,c) in commuted:
+            for m, c in commuted:
                 if list(m) == [(v2,1),(v1,1)]:
                     c_coef = c
-                    #buggy coercion workaround
+                    # buggy coercion workaround
                     d_poly = commuted - self(c) * self(m)
                     break
-            assert not c_coef is None,list(m)
+            assert c_coef is not None, list(m)
             v2_ind = self.gens().index(v2)
             v1_ind = self.gens().index(v1)
             cmat[v2_ind,v1_ind] = c_coef
             if d_poly:
                 dmat[v2_ind,v1_ind] = d_poly
         from sage.rings.polynomial.plural import g_Algebra
-        return g_Algebra(base_ring, cmat, dmat, names = names or self.variable_names(),
+        return g_Algebra(base_ring, cmat, dmat,
+                         names=names or self.variable_names(),
                          order=order, check=check)
 
     def poincare_birkhoff_witt_basis(self):
@@ -1081,7 +1089,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
             if n is None:
                 n = len(names)
             alg = FreeAlgebra(R, n, names)
-        return super(PBWBasisOfFreeAlgebra, cls).__classcall__(cls, alg)
+        return super().__classcall__(cls, alg)
 
     def __init__(self, alg):
         """
@@ -1130,7 +1138,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
             3*PBW[1]
         """
         if len(w) == 0:
-            return super(PBWBasisOfFreeAlgebra, self)._repr_term(w)
+            return super()._repr_term(w)
         ret = ''
         p = 1
         cur = None
@@ -1142,7 +1150,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                     if p != 1:
                         ret += "^{}".format(p)
                     ret += "*"
-                ret += super(PBWBasisOfFreeAlgebra, self)._repr_term(x.to_monoid_element())
+                ret += super()._repr_term(x.to_monoid_element())
                 cur = x
                 p = 1
         if p != 1:
@@ -1330,4 +1338,3 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                 x + x^2*y - 2*x*y*x + y*x^2 + y^4*x
             """
             return self.parent().expansion(self)
-

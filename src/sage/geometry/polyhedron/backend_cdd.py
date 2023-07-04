@@ -14,17 +14,17 @@ The cdd backend for polyhedral computations
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
-from six import PY2
 
 from subprocess import Popen, PIPE
-from sage.rings.all import ZZ, QQ, RDF
-from sage.misc.all import SAGE_TMP, tmp_filename, union, cached_method, prod
+from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix
+from sage.features.cddlib import CddExecutable
 
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
-from .base_RDF import Polyhedron_RDF
+
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.geometry.polyhedron.backend_cdd_rdf', 'Polyhedron_RDF_cdd', deprecation=32592)
 
 
 class Polyhedron_cdd(Polyhedron_base):
@@ -54,8 +54,8 @@ class Polyhedron_cdd(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: Polyhedron(vertices=[(0,0)], rays=[(1,1)],
-            ....:            lines=[(1,-1)], backend='cdd', base_ring=QQ)  # indirect doctest
+            sage: Polyhedron(vertices=[(0,0)], rays=[(1,1)],               # indirect doctest
+            ....:            lines=[(1,-1)], backend='cdd', base_ring=QQ)
             A 2-dimensional polyhedron in QQ^2 defined as the
             convex hull of 1 vertex, 1 ray, 1 line
         """
@@ -65,7 +65,7 @@ class Polyhedron_cdd(Polyhedron_base):
         s = self._run_cdd(s, '--repall', verbose=verbose)
         self._init_from_cdd_output(s)
         if not self.base_ring().is_exact():
-            # cdd's parser can not handle the full output of --repall, so we
+            # cdd's parser cannot handle the full output of --repall, so we
             # need to extract the first block before we feed it back into cdd
             s = s.splitlines()
             s = s[:s.index('end')+1]
@@ -106,12 +106,22 @@ class Polyhedron_cdd(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: Polyhedron(ieqs=[(0,1,1)], eqns=[(0,1,-1)],
-            ....:            backend='cdd', base_ring=QQ)  # indirect doctest
+            sage: Polyhedron(ieqs=[(0,1,1)], eqns=[(0,1,-1)],  # indirect doctest
+            ....:            backend='cdd', base_ring=QQ)
             A 1-dimensional polyhedron in QQ^2 defined as the
             convex hull of 1 vertex and 1 ray
+
+        TESTS:
+
+        The polyhedron with zero inequalities can be initialized from Hrepresentation;
+        see :trac:`29899`::
+
+            sage: Polyhedron(ieqs=[], ambient_dim=5, backend='cdd')
+            A 5-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex and 5 lines
         """
         from .cdd_file_format import cdd_Hrepresentation
+        # We have to add a trivial inequality, in case the polyhedron is the universe.
+        ieqs = tuple(ieqs) + ((1,) + tuple(0 for _ in range(self.ambient_dim())),)
         s = cdd_Hrepresentation(self._cdd_type, ieqs, eqns)
         s = self._run_cdd(s, '--redcheck', verbose=verbose)
         s = self._run_cdd(s, '--repall', verbose=verbose)
@@ -121,7 +131,7 @@ class Polyhedron_cdd(Polyhedron_base):
                 # cdd (reasonably) refuses to handle empty polyhedra, so we
                 # skip this check
                 return
-            # cdd's parser can not handle the full output of --repall, so we
+            # cdd's parser cannot handle the full output of --repall, so we
             # need to extract the first block before we feed it back into cdd
             s = s.splitlines()
             s = s[:s.index('end')+1]
@@ -148,13 +158,9 @@ class Polyhedron_cdd(Polyhedron_base):
             print('---- CDD input -----')
             print(cdd_input_string)
 
-        if PY2:
-            enc_kwargs = {}
-        else:
-            enc_kwargs = {'encoding': 'latin-1'}
-
-        cdd_proc = Popen([self._cdd_executable, cmdline_arg],
-                         stdin=PIPE, stdout=PIPE, stderr=PIPE, **enc_kwargs)
+        cdd_proc = Popen([CddExecutable(self._cdd_executable).absolute_filename(), cmdline_arg],
+                         stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                         encoding='latin-1')
         ans, err = cdd_proc.communicate(input=cdd_input_string)
 
         if verbose:
@@ -211,21 +217,58 @@ class Polyhedron_cdd(Polyhedron_base):
 
         TESTS::
 
-            sage: p = Polyhedron(vertices = [[0,0],[1,0],[0,1],[1,1]], backend='cdd', base_ring=QQ) # indirect doctest
+            sage: p = Polyhedron(vertices = [[0,0],[1,0],[0,1],[1,1]], backend='cdd', base_ring=QQ)  # indirect doctest
             sage: p.vertices()
             (A vertex at (0, 0), A vertex at (1, 0), A vertex at (0, 1), A vertex at (1, 1))
+
+        Check that :trac:`29176` is fixed::
+
+            sage: e = [[11582947.657000002, 5374.38, 4177.06, 1.0], [11562795.9322, 5373.62, 4168.38, 1.0]]
+            sage: p = Polyhedron(ieqs=e); p
+            A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 1 vertex, 2 rays, 1 line
+            sage: p.incidence_matrix()
+            [1 1]
+            [1 0]
+            [0 1]
+            [1 1]
+
+            sage: P = [[-2687.19, -2088.53], [-2686.81, -2084.19]]
+            sage: V = VoronoiDiagram(P)
+            sage: R = V.regions()
+            sage: V.points()[0], R[V.points()[0]]
+            (P(-2687.19000000000, -2088.53000000000),
+             A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex, 1 ray, 1 line)
+            sage: V.points()[1], R[V.points()[1]]
+            (P(-2686.81000000000, -2084.19000000000),
+             A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex, 1 ray, 1 line)
+
+        Check that :trac:`31253` is fixed::
+
+            sage: P = polytopes.permutahedron(2, backend='cdd')
+            sage: P.Hrepresentation()
+            (An inequality (0, 1) x - 1 >= 0,
+             An inequality (1, 0) x - 1 >= 0,
+             An equation (1, 1) x - 3 == 0)
+            sage: Q = Polyhedron(P.vertices(), backend='cdd')
+            sage: Q.Hrepresentation()
+            (An inequality (-1, 0) x + 2 >= 0,
+             An inequality (1, 0) x - 1 >= 0,
+             An equation (1, 1) x - 3 == 0)
+            sage: [x.ambient_Hrepresentation() for x in P.facets()]
+            [(An inequality (1, 0) x - 1 >= 0, An equation (1, 1) x - 3 == 0),
+             (An inequality (0, 1) x - 1 >= 0, An equation (1, 1) x - 3 == 0)]
         """
         cddout = cddout.splitlines()
 
         def parse_indices(count, cdd_indices, cdd_indices_to_sage_indices=None):
             cdd_indices = [int(x) for x in cdd_indices]
             if cdd_indices_to_sage_indices is None:
-                cdd_indices_to_sage_indices = {i:i-1 for i in cdd_indices}
+                cdd_indices_to_sage_indices = {i: i-1 for i in cdd_indices}
             if count < 0:
                 assert cdd_indices_to_sage_indices is not None, "Did not expect negative counts here"
                 count = -count
                 cdd_indices = list(set(cdd_indices_to_sage_indices.keys()) - set(cdd_indices))
-                assert count in [len(cdd_indices), len(cdd_indices) -1]
+                assert count in [len(cdd_indices), len(cdd_indices) - 1]
             assert count == len(cdd_indices)
             return [cdd_indices_to_sage_indices[i] for i in cdd_indices if cdd_indices_to_sage_indices[i] is not None]
 
@@ -237,17 +280,22 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_H_representation(intro, data):
             if '_Hrepresentation' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             self._Hrepresentation = []
             # we drop some entries in cdd's output and this changes the numbering; this dict keeps track of that
             self._cdd_H_to_sage_H = {}
             equations = parse_linearities(intro)
-            data[0].pop(2) # ignore data type, we know the base ring already
+            data[0].pop(2)  # ignore data type, we know the base ring already
             count, dimension = map(int, data.pop(0))
             assert self.ambient_dim() == dimension - 1, "Unexpected ambient dimension"
             assert len(data) == count, "Unexpected number of lines"
             R = self.base_ring()
-            for i, line in enumerate(data):
+            from itertools import chain
+            # We add equations to the end of the Hrepresentation.
+            for i in chain(
+                    (j for j in range(len(data)) if j not in equations),
+                    equations):
+                line = data[i]
                 coefficients = [R(x) for x in line]
                 if coefficients[0] != 0 and all(e == 0 for e in coefficients[1:]):
                     # cddlib sometimes includes an implicit plane at infinity: 1 0 0 ... 0
@@ -265,12 +313,12 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_V_representation(intro, data):
             if '_Vrepresentation' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             self._Vrepresentation = []
             # we drop some entries in cdd's output and this changes the numbering; this dict keeps track of that
             self._cdd_V_to_sage_V = {}
             lines = parse_linearities(intro)
-            data[0].pop(2) # ignore data type, we know the base ring already
+            data[0].pop(2)  # ignore data type, we know the base ring already
             count, dimension = map(int, data.pop(0))
             assert self.ambient_dim() == dimension - 1, "Unexpected ambient dimension"
             assert len(data) == count, "Unexpected number of lines"
@@ -280,13 +328,13 @@ class Polyhedron_cdd(Polyhedron_base):
                 coefficients = map(self.base_ring(), line)
                 self._cdd_V_to_sage_V[i+1] = len(self._Vrepresentation)
                 if i in lines:
-                    self.parent()._make_Line(self, coefficients);
+                    self.parent()._make_Line(self, coefficients)
                 elif kind == '0':
-                    self.parent()._make_Ray(self, coefficients);
+                    self.parent()._make_Ray(self, coefficients)
                 else:
                     self.parent()._make_Vertex(self, coefficients)
                     has_vertex = True
-            if len(self._Vrepresentation) and not has_vertex:
+            if self._Vrepresentation and not has_vertex:
                 # when the Polyhedron consists only of lines/rays from the
                 # origin, cddlib does not output the single vertex at the
                 # origin so we have to add it here as the Polyhedron class
@@ -294,9 +342,12 @@ class Polyhedron_cdd(Polyhedron_base):
                 self.parent()._make_Vertex(self, [self.base_ring().zero()] * self.ambient_dim())
             self._Vrepresentation = tuple(self._Vrepresentation)
 
-        def parse_adjacency(intro, data, N, cdd_indices_to_sage_indices):
-            ret = matrix(ZZ, N, N, 0)
-            cdd_vertex_count = int(data.pop(0)[0])
+        def parse_adjacency(intro, data, M, N, cdd_indices_to_sage_indices, cdd_indices_to_sage_indices2=None):
+            # This function is also used to parse the incidence matrix.
+            if cdd_indices_to_sage_indices2 is None:
+                cdd_indices_to_sage_indices2 = cdd_indices_to_sage_indices
+            ret = matrix(ZZ, M, N, 0)
+            data.pop(0)
             data.reverse()
             for adjacencies in data:
                 assert adjacencies[2] == ':', "Not a line of adjacency data"
@@ -312,7 +363,7 @@ class Polyhedron_cdd(Polyhedron_base):
                 v = cdd_indices_to_sage_indices[cdd_vertex]
                 if v is None:
                     continue
-                for w in parse_indices(count, adjacencies[3:], cdd_indices_to_sage_indices):
+                for w in parse_indices(count, adjacencies[3:], cdd_indices_to_sage_indices2):
                     if w is None:
                         continue
                     ret[v, w] = 1
@@ -320,32 +371,42 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_vertex_adjacency(intro, data):
             if '_V_adjacency_matrix' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             N = len(self._Vrepresentation)
-            self._V_adjacency_matrix = parse_adjacency(intro, data, N, self._cdd_V_to_sage_V)
+            self._V_adjacency_matrix = parse_adjacency(intro, data, N, N, self._cdd_V_to_sage_V)
             for i, v in enumerate(self._Vrepresentation):
                 # cdd reports that lines are never adjacent to anything.
                 # we disagree, they are adjacent to everything.
                 if v.is_line():
                     for j in range(len(self._Vrepresentation)):
-                        self._V_adjacency_matrix[i,j] = 1
-                        self._V_adjacency_matrix[j,i] = 1
+                        self._V_adjacency_matrix[i ,j] = 1
+                        self._V_adjacency_matrix[j, i] = 1
                 self._V_adjacency_matrix[i,i] = 0
             self._V_adjacency_matrix.set_immutable()
             self.vertex_adjacency_matrix.set_cache(self._V_adjacency_matrix)
 
         def parse_facet_adjacency(intro, data):
             if '_H_adjacency_matrix' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             N = len(self._Hrepresentation)
-            self._H_adjacency_matrix = parse_adjacency(intro, data, N, self._cdd_H_to_sage_H)
+            self._H_adjacency_matrix = parse_adjacency(intro, data, N, N, self._cdd_H_to_sage_H)
             self._H_adjacency_matrix.set_immutable()
             self.facet_adjacency_matrix.set_cache(self._H_adjacency_matrix)
+
+        def parse_incidence_matrix(intro, data):
+            if 'incidence_matrix' in self.__dict__:
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
+            N = len(self._Hrepresentation)
+            M = len(self._Vrepresentation)
+            inc_mat = parse_adjacency(intro, data, M, N, self._cdd_V_to_sage_V, self._cdd_H_to_sage_H)
+            inc_mat.set_immutable()
+            self.incidence_matrix.set_cache(inc_mat)
 
         Polyhedron_cdd._parse_block(cddout, 'H-representation', parse_H_representation)
         Polyhedron_cdd._parse_block(cddout, 'V-representation', parse_V_representation)
         Polyhedron_cdd._parse_block(cddout, 'Facet adjacency', parse_facet_adjacency)
         Polyhedron_cdd._parse_block(cddout, 'Vertex adjacency', parse_vertex_adjacency)
+        Polyhedron_cdd._parse_block(cddout, 'Vertex incidence', parse_incidence_matrix)
 
 
 class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
@@ -368,6 +429,17 @@ class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
         sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
         sage: Polyhedron_QQ_cdd(parent, [ [(1,0),(0,1),(0,0)], [], []], None, verbose=False)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 3 vertices
+
+    TESTS:
+
+    Check that :trac:`19803` is fixed::
+
+        sage: from sage.geometry.polyhedron.parent import Polyhedra
+        sage: P_cdd = Polyhedra(QQ, 3, 'cdd')
+        sage: P_cdd([[],[],[]], None)
+        The empty polyhedron in QQ^3
+        sage: Polyhedron(vertices=[], backend='cdd', base_ring=QQ)
+        The empty polyhedron in QQ^0
     """
 
     _cdd_type = 'rational'
@@ -389,45 +461,3 @@ class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
             sage: TestSuite(p).run()
         """
         Polyhedron_cdd.__init__(self, parent, Vrep, Hrep, **kwds)
-
-
-class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
-    """
-    Polyhedra over RDF with cdd
-
-    INPUT:
-
-    - ``ambient_dim`` -- integer. The dimension of the ambient space.
-
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
-
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.polyhedron.parent import Polyhedra
-        sage: parent = Polyhedra(RDF, 2, backend='cdd')
-        sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_RDF_cdd
-        sage: Polyhedron_RDF_cdd(parent, [ [(1,0),(0,1),(0,0)], [], []], None, verbose=False)
-        A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 3 vertices
-    """
-    _cdd_type = 'real'
-
-    _cdd_executable = 'cddexec'
-
-    def __init__(self, parent, Vrep, Hrep, **kwds):
-        """
-        The Python constructor.
-
-        See :class:`Polyhedron_base` for a description of the input
-        data.
-
-        TESTS::
-
-            sage: p = Polyhedron(backend='cdd', base_ring=RDF)
-            sage: type(p)
-            <class 'sage.geometry.polyhedron.parent.Polyhedra_RDF_cdd_with_category.element_class'>
-            sage: TestSuite(p).run()
-        """
-        Polyhedron_cdd.__init__(self, parent, Vrep, Hrep, **kwds)
-

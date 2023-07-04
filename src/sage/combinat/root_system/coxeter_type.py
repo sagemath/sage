@@ -1,7 +1,7 @@
 """
 Coxeter Types
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>,
 #                     2015 Jean-Philippe Labbe <labbe at math.huji.ac.il>,
 #
@@ -14,24 +14,22 @@ Coxeter Types
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from six import add_metaclass
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.combinat.root_system.cartan_type import CartanType
+import sage.rings.abc
 from sage.matrix.args import SparseEntry
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from sage.symbolic.ring import SR
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
-from sage.rings.number_field.number_field import is_QuadraticField
 
 
-@add_metaclass(ClasscallMetaclass)
-class CoxeterType(SageObject):
+class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
     """
     Abstract class for Coxeter types.
     """
@@ -56,7 +54,7 @@ class CoxeterType(SageObject):
         except (ValueError, TypeError):
             pass
 
-        if len(x) == 1: # In case the input is similar to CoxeterType([['A',2]])
+        if len(x) == 1:  # In case the input is similar to CoxeterType([['A',2]])
             return CoxeterType(x[0])
 
         raise NotImplementedError("Coxeter types not from Cartan types not yet implemented")
@@ -175,12 +173,12 @@ class CoxeterType(SageObject):
              Coxeter type of ['F', 4, 1], Coxeter type of ['G', 2, 1],
              Coxeter type of ['A', 1, 1]]
         """
-        finite = [CoxeterType(t)   for t in [['A', 1], ['A', 5], ['B', 1], ['B', 5],
-                                            ['C', 1], ['C', 5], ['D', 4], ['D', 5],
-                                            ['E', 6], ['E', 7], ['E', 8], ['F', 4],
-                                            ['H', 3], ['H', 4], ['I', 10]]]
+        finite = [CoxeterType(t) for t in [['A', 1], ['A', 5], ['B', 1], ['B', 5],
+                                           ['C', 1], ['C', 5], ['D', 4], ['D', 5],
+                                           ['E', 6], ['E', 7], ['E', 8], ['F', 4],
+                                           ['H', 3], ['H', 4], ['I', 10]]]
 
-        affine = [CoxeterType(t)  for t in [['A', 2, 1], ['B', 5, 1],
+        affine = [CoxeterType(t) for t in [['A', 2, 1], ['B', 5, 1],
                                            ['C', 5, 1], ['D', 5, 1], ['E', 6, 1],
                                            ['E', 7, 1], ['E', 8, 1], ['F', 4, 1],
                                            ['G', 2, 1], ['A', 1, 1]]]
@@ -393,7 +391,7 @@ class CoxeterType(SageObject):
                     return (E(2*x) + ~E(2*x)) / R(-2)
                 else:
                     return R(x)
-        elif is_QuadraticField(R):
+        elif isinstance(R, sage.rings.abc.NumberField_quadratic):
 
             def val(x):
                 if x > -1:
@@ -435,8 +433,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
             sage: C1 is C2
             True
         """
-        return super(CoxeterTypeFromCartanType, cls).__classcall__(cls,
-                         CartanType(cartan_type))
+        return super().__classcall__(cls, CartanType(cartan_type))
 
     def __init__(self, cartan_type):
         """
@@ -498,7 +495,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         EXAMPLES::
 
             sage: C = CoxeterType(['H',3])
-            sage: C.coxeter_graph().edges()
+            sage: C.coxeter_graph().edges(sort=True)
             [(1, 2, 3), (2, 3, 5)]
         """
         return self._cartan_type.coxeter_diagram()
@@ -514,6 +511,18 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
             ['C', 3]
         """
         return self._cartan_type
+
+    def type(self):
+        """
+        Return the type of ``self``.
+
+        EXAMPLES::
+
+            sage: C = CoxeterType(['A', 4])
+            sage: C.type()
+            'A'
+        """
+        return self._cartan_type.type()
 
     def rank(self):
         """
@@ -595,6 +604,59 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_simply_laced()
 
+    def is_reducible(self):
+        """
+        Return if ``self`` is reducible.
+
+        EXAMPLES::
+
+            sage: C = CoxeterType(['A', 5])
+            sage: C.is_reducible()
+            False
+
+            sage: C = CoxeterType('A2xA2')
+            sage: C.is_reducible()
+            True
+        """
+        return self._cartan_type.is_reducible()
+
+    def is_irreducible(self):
+        """
+        Return if ``self`` is irreducible.
+
+        EXAMPLES::
+
+            sage: C = CoxeterType(['A', 5])
+            sage: C.is_irreducible()
+            True
+
+            sage: C = CoxeterType('B3xB3')
+            sage: C.is_irreducible()
+            False
+        """
+        return self._cartan_type.is_irreducible()
+
+    def component_types(self):
+        """
+        A list of Coxeter types making up the reducible type.
+
+        EXAMPLES::
+
+            sage: CoxeterType(['A',2],['B',2]).component_types()
+            [Coxeter type of ['A', 2], Coxeter type of ['B', 2]]
+
+            sage: CoxeterType('A4xB3').component_types()
+            [Coxeter type of ['A', 4], Coxeter type of ['B', 3]]
+
+            sage: CoxeterType(['A', 2]).component_types()
+            Traceback (most recent call last):
+            ...
+            ValueError: component types only defined for reducible types
+        """
+        if self.is_irreducible():
+            raise ValueError('component types only defined for reducible types')
+        return [CoxeterType(t) for t in self._cartan_type.component_types()]
+
     def relabel(self, relabelling):
         """
         Return a relabelled copy of ``self``.
@@ -606,4 +668,3 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
             Coxeter type of ['A', 2] relabelled by {1: -1, 2: -2}
         """
         return CoxeterType(self._cartan_type.relabel(relabelling))
-

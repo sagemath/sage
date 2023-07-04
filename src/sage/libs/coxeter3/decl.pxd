@@ -8,17 +8,17 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-cdef extern from "globals.h":
+cdef extern from "coxeter/globals.h":
     ctypedef unsigned long Ulong
 
 
 ########
 # Bits #
 ########
-cdef extern from "bits.h":
+cdef extern from "coxeter/bits.h":
     ctypedef Ulong LFlags
 
-cdef extern from "coxtypes.h" namespace "coxtypes":
+cdef extern from "coxeter/coxtypes.h" namespace "coxtypes":
     ctypedef unsigned short Rank
     ctypedef Ulong CoxSize            # should hold at least 32 bits
     ctypedef Ulong BettiNbr           # should hold at least 32 bits
@@ -46,7 +46,7 @@ cdef extern from "coxtypes.h" namespace "coxtypes":
 ################
 #    String    #
 ################
-cdef extern from "io.h" namespace "io":
+cdef extern from "coxeter/io.h" namespace "io":
     cdef cppclass c_String "io::String":
         c_String()
         c_String(char* s)
@@ -59,7 +59,7 @@ cdef extern from "io.h" namespace "io":
 ##############
 #    Type    #
 ##############
-cdef extern from "type.h":
+cdef extern from "coxeter/type.h":
     cdef cppclass c_Type "coxeter::Type":
         c_Type()
         c_Type(char* s)
@@ -69,13 +69,13 @@ cdef extern from "type.h":
 ##############
 #    Bits    #
 ##############
-cdef extern from "bits.h" namespace "bits":
+cdef extern from "coxeter/bits.h" namespace "bits":
     Generator firstBit(Ulong n)
 
 ##################
 #    CoxGraph    #
 ##################
-cdef extern from "graph.h" namespace "graph":
+cdef extern from "coxeter/graph.h" namespace "graph":
     ctypedef unsigned short CoxEntry
     ctypedef struct c_CoxGraph "graph::CoxGraph":
         pass
@@ -83,19 +83,19 @@ cdef extern from "graph.h" namespace "graph":
 ###############
 #    KLPol    #
 ###############
-cdef extern from "kl.h" namespace "kl":
+cdef extern from "coxeter/kl.h" namespace "kl":
     cdef cppclass c_KLPol "kl::KLPol":
         const unsigned short& operator[](Ulong j)
         unsigned long deg()
         int isZero()
 
-cdef extern from "polynomials.h" namespace "polynomials":
+cdef extern from "coxeter/polynomials.h" namespace "polynomials":
     c_String klpoly_append "polynomials::append"(c_String str, c_KLPol, char* x)
 
 ##################
 #    List    #
 ##################
-cdef extern from "list.h" namespace "list":
+cdef extern from "coxeter/list.h" namespace "list":
     cdef cppclass c_List_CoxWord "list::List<coxtypes::CoxWord> ":
         c_List_CoxWord()
         c_List_CoxWord(Ulong len)
@@ -106,7 +106,7 @@ cdef extern from "list.h" namespace "list":
 ###################
 #     CoxGroup    #
 ###################
-cdef extern from "coxgroup.h":
+cdef extern from "coxeter/coxgroup.h":
     cdef cppclass c_CoxGroup "coxeter::CoxGroup":
         c_CoxGroup()
         c_CoxGroup(c_Type t, Rank r)
@@ -139,16 +139,16 @@ cdef extern from "coxgroup.h":
 #####################
 #    Interactive    #
 #####################
-cdef extern from "interactive.h" namespace "interactive":
+cdef extern from "coxeter/interactive.h" namespace "interactive":
     c_CoxGroup* coxeterGroup(c_Type x, Rank l)
 
-cdef extern from "constants.h":
+cdef extern from "coxeter/constants.h":
     void initConstants()
 
 ###############################
 #    Finite Coxeter groups    #
 ###############################
-cdef extern from "fcoxgroup.h" namespace "fcoxgroup":
+cdef extern from "coxeter/fcoxgroup.h" namespace "fcoxgroup":
     ctypedef struct c_FiniteCoxGroup "fcoxgroup::FiniteCoxGroup":
         void fullContext()
         bint isFullContext()
@@ -161,5 +161,5 @@ cdef extern from "fcoxgroup.h" namespace "fcoxgroup":
 ######################
 #    Sage specific   #
 ######################
-cdef extern from "sage.h" namespace "sage":
+cdef extern from "coxeter/sage.h" namespace "sage":
     void interval(c_List_CoxWord& l, c_CoxGroup& W, c_CoxWord& g, c_CoxWord& h)

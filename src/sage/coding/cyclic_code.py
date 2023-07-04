@@ -1,8 +1,8 @@
 r"""
-Cyclic Code
+Cyclic code
 
 Let `F` be a field. A `[n, k]` code `C` over `F` is called cyclic if every
-cyclic shift of a codeword is also a codeword [R06]_:
+cyclic shift of a codeword is also a codeword [Rot2006]_:
 
     .. MATH::
 
@@ -20,28 +20,6 @@ This polynomial is called the generator polynomial of `C`.
 
 For now, only single-root cyclic codes (i.e. whose length `n` and field order
 `q` are coprimes) are implemented.
-
-
-REFERENCES:
-
-    .. [R06] Ron Roth, Introduction to Coding Theory,
-       Cambridge University Press, 2006
-
-
-TESTS:
-
-This class uses the following experimental feature:
-:class:`sage.coding.relative_finite_field_extension.RelativeFiniteFieldExtension`.
-This test block is here only to trigger the experimental warning so it does not
-interferes with doctests::
-
-    sage: from sage.coding.relative_finite_field_extension import *
-    sage: Fqm.<aa> = GF(16)
-    sage: Fq.<a> = GF(4)
-    sage: RelativeFiniteFieldExtension(Fqm, Fq)
-    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/20284 for details.
-    Relative field extension between Finite Field in aa of size 2^4 and Finite Field in a of size 2^2
 """
 
 # *****************************************************************************
@@ -62,12 +40,12 @@ from .encoder import Encoder
 from .decoder import Decoder
 from copy import copy
 from sage.rings.integer import Integer
-from sage.arith.all import gcd
+from sage.categories.homset import Hom
+from sage.arith.misc import gcd
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import Zmod
-from .relative_finite_field_extension import RelativeFiniteFieldExtension
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Zmod
 
 
 def find_generator_polynomial(code, check=True):
@@ -357,7 +335,7 @@ class CyclicCode(AbstractLinearCode):
             ...
             ValueError: The code is not cyclic.
 
-        If the `primitive_root` does not lie in an extension of `field`,
+        If the ``primitive_root`` does not lie in an extension of ``field``,
         or is not a primitive `n`-th root of unity, then
         an exception is raised::
 
@@ -405,7 +383,7 @@ class CyclicCode(AbstractLinearCode):
                 self._generator_polynomial = generator_pol.monic()
             else:
                 self._generator_polynomial = generator_pol
-            super(CyclicCode, self).__init__(F, length, "Vector", "Syndrome")
+            super().__init__(F, length, "Vector", "Syndrome")
 
         # Case (2) : a code is provided.
         elif (code is not None and
@@ -423,8 +401,7 @@ class CyclicCode(AbstractLinearCode):
             self._polynomial_ring = g.parent()
             self._generator_polynomial = g
             self._dimension = code.dimension()
-            super(CyclicCode, self).__init__(code.base_ring(), n,
-                                             "Vector", "Syndrome")
+            super().__init__(code.base_ring(), n, "Vector", "Syndrome")
 
         # Case (3) : a defining set, a length and a field are provided
         elif (D is not None and length is not None and field is not None and
@@ -444,19 +421,18 @@ class CyclicCode(AbstractLinearCode):
             if primitive_root is not None:
                 Fsplit = primitive_root.parent()
                 try:
-                    FE = RelativeFiniteFieldExtension(Fsplit, F)
+                    FE = Hom(F, Fsplit)[0]
                 except Exception:
                     raise ValueError("primitive_root must belong to an "
                                      "extension of the base field")
-                if (FE.extension_degree() != s or
+                extension_degree = Fsplit.degree() // F.degree()
+                if (extension_degree != s or
                         primitive_root.multiplicative_order() != n):
                     raise ValueError("primitive_root must be a primitive "
                                      "n-th root of unity")
                 alpha = primitive_root
             else:
-                Fsplit, F_to_Fsplit = F.extension(Integer(s), map=True)
-                FE = RelativeFiniteFieldExtension(Fsplit, F,
-                                                  embedding=F_to_Fsplit)
+                Fsplit, FE = F.extension(Integer(s), map=True)
                 alpha = Fsplit.zeta(n)
 
             Rsplit = Fsplit['xx']
@@ -465,12 +441,13 @@ class CyclicCode(AbstractLinearCode):
             cosets = Zmod(n).cyclotomic_cosets(q, D)
             pows = [item for l in cosets for item in l]
 
+            sec = FE.section()
             g = R.one()
             for J in cosets:
                 pol = Rsplit.one()
                 for j in J:
                     pol *= xx - alpha**j
-                g *= R([FE.cast_into_relative_field(coeff) for coeff in pol])
+                g *= R([sec(coeff) for coeff in pol])
 
             # we set class variables
             self._field_embedding = FE
@@ -479,7 +456,7 @@ class CyclicCode(AbstractLinearCode):
             self._polynomial_ring = R
             self._generator_polynomial = g
             self._dimension = n - g.degree()
-            super(CyclicCode, self).__init__(F, n, "Vector", "SurroundingBCH")
+            super().__init__(F, n, "Vector", "SurroundingBCH")
 
         else:
             raise AttributeError("You must provide either a code, or a list "
@@ -594,7 +571,10 @@ class CyclicCode(AbstractLinearCode):
             sage: g = x ** 3 + x + 1
             sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: C.field_embedding()
-            Relative field extension between Finite Field in z3 of size 2^3 and Finite Field of size 2
+            Ring morphism:
+              From: Finite Field of size 2
+              To:   Finite Field in z3 of size 2^3
+              Defn: 1 |--> 1
         """
         if not(hasattr(self, "_field_embedding")):
             self.defining_set()
@@ -668,16 +648,13 @@ class CyclicCode(AbstractLinearCode):
             s = Zmod(n)(q).multiplicative_order()
 
             if primitive_root is None:
-                Fsplit, F_to_Fsplit = F.extension(Integer(s), map=True)
-                FE = RelativeFiniteFieldExtension(Fsplit, F,
-                                                  embedding=F_to_Fsplit)
+                Fsplit, FE = F.extension(Integer(s), map=True)
                 alpha = Fsplit.zeta(n)
             else:
                 try:
                     alpha = primitive_root
                     Fsplit = alpha.parent()
-                    FE = RelativeFiniteFieldExtension(Fsplit, F)
-                    F_to_Fsplit = FE.embedding()
+                    FE = Hom(Fsplit, F)[0]
                 except ValueError:
                     raise ValueError("primitive_root does not belong to the "
                                      "right splitting field")
@@ -686,9 +663,10 @@ class CyclicCode(AbstractLinearCode):
                                      "order equal to the code length")
 
             Rsplit = Fsplit['xx']
-            gsplit = Rsplit([F_to_Fsplit(coeff) for coeff in g])
+            gsplit = Rsplit([FE(coeff) for coeff in g])
             roots = gsplit.roots(multiplicities=False)
             D = [root.log(alpha) for root in roots]
+
             self._field_embedding = FE
             self._primitive_root = alpha
             self._defining_set = sorted(D)
@@ -826,7 +804,7 @@ class CyclicCode(AbstractLinearCode):
             sage: all(r in CC for r in C.generator_matrix())
             True
         """
-        from .bch import BCHCode
+        from .bch_code import BCHCode
         delta, params = self.bch_bound(arithmetic=True)
         return BCHCode(self.base_field(), self.length(), delta,
                        offset=params[1], jump_size=params[0])
@@ -872,7 +850,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         if not isinstance(code, CyclicCode):
             raise ValueError("code has to be a CyclicCode")
         self._polynomial_ring = code._polynomial_ring
-        super(CyclicCodePolynomialEncoder, self).__init__(code)
+        super().__init__(code)
 
     def __eq__(self, other):
         r"""
@@ -1047,7 +1025,7 @@ class CyclicCodeVectorEncoder(Encoder):
         if not isinstance(code, CyclicCode):
             raise ValueError("code has to be a CyclicCode")
         self._polynomial_ring = code._polynomial_ring
-        super(CyclicCodeVectorEncoder, self).__init__(code)
+        super().__init__(code)
 
     def __eq__(self, other):
         r"""
@@ -1124,7 +1102,7 @@ class CyclicCodeVectorEncoder(Encoder):
             (1, 1, 1, 0, 0, 1, 0)
         """
         if self.generator_matrix.cache is not None:
-            return super(CyclicCodeVectorEncoder, self).encode(m)
+            return super().encode(m)
 
         k = self.code().dimension()
         n = self.code().length()
@@ -1241,8 +1219,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         self._bch_code = code.surrounding_bch_code()
         self._bch_decoder = self._bch_code.decoder(**kwargs)
         self._decoder_type = copy(self._bch_decoder.decoder_type())
-        super(CyclicCodeSurroundingBCHDecoder, self).__init__(
-            code, code.ambient_space(), "Vector")
+        super().__init__(code, code.ambient_space(), "Vector")
 
     def __eq__(self, other):
         r"""
@@ -1345,7 +1322,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         return self._bch_decoder.decoding_radius()
 
 
-####################### registration ###############################
+# ###################### registration ##############################
 
 CyclicCode._registered_encoders["Polynomial"] = CyclicCodePolynomialEncoder
 CyclicCode._registered_encoders["Vector"] = CyclicCodeVectorEncoder

@@ -1,5 +1,5 @@
 r"""
-Lists of Manin symbols (elements of `\mathbb{P}^1(R/N)`) over number fields
+Lists of Manin symbols over number fields, elements of `\mathbb{P}^1(R/N)`
 
 Lists of elements of `\mathbb{P}^1(R/N)` where `R` is the ring of integers of a number
 field `K` and `N` is an integral ideal.
@@ -58,7 +58,7 @@ Lift an MSymbol to a matrix in `SL(2, R)`:
 
     sage: alpha = MSymbol(N, a + 2, 3*a^2)
     sage: alpha.lift_to_sl2_Ok()
-    [-3*a^2 + a + 12, 25*a^2 - 50*a + 100, a + 2, a^2 - 3*a + 3]
+    [-1, 4*a^2 - 13*a + 23, a + 2, 5*a^2 + 3*a - 3]
     sage: Ok = k.ring_of_integers()
     sage: M = Matrix(Ok, 2, alpha.lift_to_sl2_Ok())
     sage: det(M)
@@ -211,7 +211,7 @@ class MSymbol(SageObject):
 
     def __repr__(self):
         """
-        Returns the string representation of this MSymbol.
+        Return the string representation of this MSymbol.
 
         EXAMPLES::
 
@@ -261,7 +261,7 @@ class MSymbol(SageObject):
 
     def N(self):
         """
-        Returns the level or modulus of this MSymbol.
+        Return the level or modulus of this MSymbol.
 
         EXAMPLES::
 
@@ -275,7 +275,7 @@ class MSymbol(SageObject):
 
     def tuple(self):
         """
-        Returns the MSymbol as a list (c, d).
+        Return the MSymbol as a list (c, d).
 
         EXAMPLES::
 
@@ -312,7 +312,7 @@ class MSymbol(SageObject):
 
     def __get_c(self):
         """
-        Returns the first coefficient of the M-symbol.
+        Return the first coefficient of the M-symbol.
 
         EXAMPLES::
 
@@ -327,7 +327,7 @@ class MSymbol(SageObject):
 
     def __get_d(self):
         """
-        Returns the second coefficient of the M-symbol.
+        Return the second coefficient of the M-symbol.
 
         EXAMPLES::
 
@@ -546,7 +546,7 @@ class P1NFList(SageObject):
 
     def __len__(self):
         """
-        Returns the length of this P1NFList.
+        Return the length of this P1NFList.
 
         EXAMPLES::
 
@@ -560,7 +560,7 @@ class P1NFList(SageObject):
 
     def __repr__(self):
         """
-        Returns the string representation of this P1NFList.
+        Return the string representation of this P1NFList.
 
         EXAMPLES::
 
@@ -574,7 +574,7 @@ class P1NFList(SageObject):
 
     def list(self):
         """
-        Returns the underlying list of this P1NFList object.
+        Return the underlying list of this P1NFList object.
 
         EXAMPLES::
 
@@ -645,7 +645,7 @@ class P1NFList(SageObject):
 
     def N(self):
         """
-        Returns the level or modulus of this P1NFList.
+        Return the level or modulus of this P1NFList.
 
         EXAMPLES::
 
@@ -771,13 +771,14 @@ class P1NFList(SageObject):
         """
         if d is None:
             try:
-                c = MSymbol(self.__N, c) # check that c is an MSymbol
-            except ValueError: # catch special case of wrong level
+                c = MSymbol(self.__N, c)  # check that c is an MSymbol
+            except ValueError:  # catch special case of wrong level
                 raise ValueError("The MSymbol is of a different level")
             t, i = search(self.__list, c)
         else:
             t, i = search(self.__list, MSymbol(self.__N, c, d))
-        if t: return i
+        if t:
+            return i
         return False
 
     def lift_to_sl2_Ok(self, i):
@@ -811,7 +812,7 @@ class P1NFList(SageObject):
 
             sage: Ok = k.ring_of_integers()
             sage: L = [Matrix(Ok, 2, P.lift_to_sl2_Ok(i)) for i in range(len(P))]
-            sage: all([det(L[i]) == 1 for i in range(len(L))])
+            sage: all(det(L[i]) == 1 for i in range(len(L)))
             True
         """
         return self[i].lift_to_sl2_Ok()
@@ -944,11 +945,11 @@ class P1NFList(SageObject):
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
             sage: u = k.unit_group().gens_values(); u
-            [-1, 2*a^2 + 4*a - 1]
+            [-1, -2*a^2 - 4*a + 1]
             sage: P.apply_J_epsilon(4, -1)
             2
             sage: P.apply_J_epsilon(4, u[0], u[1])
-            1
+            5
 
         ::
 
@@ -956,7 +957,7 @@ class P1NFList(SageObject):
             sage: N = k.ideal(a + 1)
             sage: P = P1NFList(N)
             sage: u = k.unit_group().gens_values(); u
-            [-1, a^3 + a^2 + a + 12, a^3 + 3*a^2 - 1]
+            [-1, -a^3 - a^2 - a - 12, -a^3 - 3*a^2 + 1]
             sage: P.apply_J_epsilon(3, u[2]^2)==P.apply_J_epsilon(P.apply_J_epsilon(3, u[2]),u[2])
             True
         """
@@ -975,7 +976,7 @@ class P1NFList(SageObject):
 
 def p1NFlist(N):
     """
-    Returns a list of the normalized elements of `\\mathbb{P}^1(R/N)`, where
+    Return a list of the normalized elements of `\\mathbb{P}^1(R/N)`, where
     `N` is an integral ideal.
 
     INPUT:
@@ -996,7 +997,7 @@ def p1NFlist(N):
     #N.residues() = iterator through the residues mod N
     L = L+[MSymbol(N, k(1), r, check=False) for r in N.residues()]
 
-    from sage.arith.all import divisors
+    from sage.arith.misc import divisors
     for D in divisors(N):
         if not D.is_trivial() and D!=N:
             #we find Dp ideal coprime to N, in inverse class to D
@@ -1124,9 +1125,10 @@ def lift_to_sl2_Ok(N, c, d):
     a = (1-B)/d
     return [a, b, c, d]
 
+
 def make_coprime(N, c, d):
     """
-    Returns (c, d') so d' is congruent to d modulo N, and such that c and d' are
+    Return (c, d') so d' is congruent to d modulo N, and such that c and d' are
     coprime (<c> + <d'> = R).
 
     INPUT:
@@ -1196,7 +1198,7 @@ def psi(N):
     if not N.is_integral():
         raise ValueError("psi only defined for integral ideals")
 
-    from sage.misc.all import prod
-    return prod([(np+1)*np**(e-1) \
-                     for np,e in [(p.absolute_norm(),e) \
-                                  for p,e in N.factor()]])
+    from sage.misc.misc_c import prod
+    return prod([(np + 1) * np**(e - 1)
+                 for np, e in [(p.absolute_norm(), e)
+                               for p, e in N.factor()]])

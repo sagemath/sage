@@ -1,6 +1,8 @@
 # distutils: extra_compile_args = LINBOX_CFLAGS
+# distutils: include_dirs = LINBOX_INCDIR
 # distutils: libraries = LINBOX_LIBRARIES
 # distutils: library_dirs = LINBOX_LIBDIR
+# distutils: extra_link_args = LINBOX_LIBEXTRA
 # distutils: language = c++
 
 from libc.stdint cimport uint32_t, uint64_t
@@ -10,10 +12,10 @@ from .givaro cimport *
 
 cdef extern from "linbox/matrix/dense-matrix.h":
     ## template <class _Field, class _blasRep=typename Vector<_Field>::Dense >
-    ## class BlasMatrix ;
+    ## class DenseMatrix ;
     ##
     ## template <class _Field>
-    ## using DenseMatrix = BlasMatrix<_Field> ;
+    ## using DenseMatrix = DenseMatrix<_Field> ;
     cdef cppclass DenseMatrix_integer "LinBox::DenseMatrix<Givaro::ZRing<Givaro::Integer>>":
         ctypedef ZRing Field
         ctypedef Integer Element
@@ -30,6 +32,7 @@ cdef extern from "linbox/matrix/dense-matrix.h":
         ctypedef Modular_double Field
         ctypedef double Element
         DenseMatrix_Modular_double(Field F, size_t m, size_t n)
+        DenseMatrix_Modular_double(Field F, Element*, size_t m, size_t n)
         void setEntry(size_t i, size_t j, Element& a)
         Element &getEntry(size_t i, size_t j)
 
@@ -39,6 +42,7 @@ cdef extern from "linbox/matrix/dense-matrix.h":
         ctypedef Modular_float Field
         ctypedef float Element
         DenseMatrix_Modular_float(Field F, size_t m, size_t n)
+        DenseMatrix_Modular_float(Field F, Element*, size_t m, size_t n)
         void setEntry(size_t i, size_t j, Element& a)
         Element &getEntry(size_t i, size_t j)
 
@@ -125,7 +129,7 @@ cdef extern from "linbox/solutions/methods.h" namespace "LinBox":
         pass
     cdef struct WiedemannTraits:
         pass
-    cdef struct BlasEliminationTraits:
+    cdef struct DenseEliminationTraits:
         pass
     cdef struct SparseEliminationTraits:
         pass
@@ -135,7 +139,7 @@ cdef extern from "linbox/solutions/methods.h" namespace "LinBox":
         ctypedef BlackboxSpecifier Blackbox
         ctypedef EliminationSpecifier Elimination
         ctypedef WiedemannTraits Wiedemann
-        ctypedef BlasEliminationTraits BlasElimination
+        ctypedef DenseEliminationTraits DenseElimination
         ctypedef SparseEliminationTraits SparseElimination
 
 cdef extern from "linbox/solutions/charpoly.h" namespace "LinBox":
@@ -157,18 +161,24 @@ cdef extern from "linbox/algorithms/gauss.h":
                                              unsigned long Ni,
                                              unsigned long Nj)
 
-cdef extern from "linbox/algorithms/echelon-form.h":
-    ## template<class Field>
-    ## class EchelonFormDomain
-    cdef cppclass EchelonForm_Modular_double "LinBox::EchelonFormDomain<Givaro::Modular<double>>":
-        ctypedef double Element
-        EchelonForm_Modular_double(Modular_double)
-        int rowReducedEchelon(DenseMatrix_Modular_double&, const DenseMatrix_Modular_double&)
+cdef extern from "linbox/solutions/echelon.h" namespace "LinBox":
+    size_t rowEchelon (DenseMatrix_Modular_float&, const DenseMatrix_Modular_float&)
+    size_t rowEchelonize (DenseMatrix_Modular_float&)
+    size_t reducedRowEchelon (DenseMatrix_Modular_float&, const DenseMatrix_Modular_float&)
+    size_t reducedRowEchelonize (DenseMatrix_Modular_float&)
+    size_t colEchelon (DenseMatrix_Modular_float&, const DenseMatrix_Modular_float&)
+    size_t colEchelonize (DenseMatrix_Modular_float&)
+    size_t reducedColEchelon (DenseMatrix_Modular_float&, const DenseMatrix_Modular_float&)
+    size_t reducedColEchelonize (DenseMatrix_Modular_float&)
 
-    cdef cppclass EchelonForm_Modular_float "LinBox::EchelonFormDomain<Givaro::Modular<float>>":
-        ctypedef float Element
-        EchelonForm_Modular_float(Modular_float)
-        int rowReducedEchelon(DenseMatrix_Modular_float, const DenseMatrix_Modular_float)
+    size_t rowEchelon (DenseMatrix_Modular_double&, const DenseMatrix_Modular_double&)
+    size_t rowEchelonize (DenseMatrix_Modular_double&)
+    size_t reducedRowEchelon (DenseMatrix_Modular_double&, const DenseMatrix_Modular_double&)
+    size_t reducedRowEchelonize (DenseMatrix_Modular_double&)
+    size_t colEchelon (DenseMatrix_Modular_double&, const DenseMatrix_Modular_double&)
+    size_t colEchelonize (DenseMatrix_Modular_double&)
+    size_t reducedColEchelon (DenseMatrix_Modular_double&, const DenseMatrix_Modular_double&)
+    size_t reducedColEchelonize (DenseMatrix_Modular_double&)
 
 cdef extern from "linbox/solutions/rank.h" namespace "LinBox":
     unsigned long & rank (unsigned long&, DenseMatrix_integer)
@@ -185,7 +195,7 @@ cdef extern from "linbox/solutions/solve.h" namespace "LinBox":
                                 Integer &,
                                 SparseMatrix_integer &,
                                 DenseVector_integer &,
-                                Method.BlasElimination) except +
+                                Method.DenseElimination) except +
 
     DenseVector_integer& solve (DenseVector_integer &,
                                 Integer &,

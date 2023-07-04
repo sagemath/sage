@@ -13,7 +13,6 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import absolute_import
 
 cdef class GLPKExactBackend(GLPKBackend):
 
@@ -25,13 +24,6 @@ cdef class GLPKExactBackend(GLPKBackend):
     as doubles.
 
     There is no support for integer variables.
-
-    TESTS:
-
-    General backend testsuite::
-
-        sage: p = MixedIntegerLinearProgram(solver="GLPK/exact")
-        sage: TestSuite(p.get_backend()).run(skip="_test_pickling")
     """
     def __cinit__(self, maximization = True):
         """

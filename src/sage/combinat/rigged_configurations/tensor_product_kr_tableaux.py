@@ -74,6 +74,7 @@ from sage.combinat.rigged_configurations.kr_tableaux import KirillovReshetikhinT
 
 from sage.rings.integer import Integer
 
+
 class HighestWeightTensorKRT(UniqueRepresentation):
     """
     Class so we do not have to build the module generators for
@@ -84,6 +85,7 @@ class HighestWeightTensorKRT(UniqueRepresentation):
 
         This class is for internal use only!
     """
+
     def __init__(self, tp_krt):
         """
         Initialize ``self``.
@@ -170,6 +172,7 @@ class HighestWeightTensorKRT(UniqueRepresentation):
         return Integer(count)
 
     __len__ = cardinality
+
 
 class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCrystals):
     r"""
@@ -317,20 +320,20 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
         FullTensorProductOfRegularCrystals.__init__(self, tensor_prod, cartan_type=cartan_type)
         # This is needed to override the module_generators set in FullTensorProductOfRegularCrystals
         self.module_generators = HighestWeightTensorKRT(self)
-        self.rename("Tensor product of Kirillov-Reshetikhin tableaux of type %s and factor(s) %s"%(\
-          cartan_type, B))
+        self.rename("Tensor product of Kirillov-Reshetikhin tableaux "
+                    f"of type {cartan_type} and factor(s) {B}")
 
     def __iter__(self):
         """
-        Returns the iterator of ``self``.
+        Return the iterator of ``self``.
 
         EXAMPLES::
 
             sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['A', 3, 1], [[2,1], [1,1]])
             sage: g = KRT.__iter__()
-            sage: next(g)
+            sage: next(g)         # random
             [[2], [3]] (X) [[1]]
-            sage: next(g)
+            sage: next(g)         # random
             [[2], [4]] (X) [[1]]
         """
         index_set = self._cartan_type.classical().index_set()
@@ -357,8 +360,8 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
             if z != x:
                 rejects.append((x, z))
 
-        tester.assertTrue(len(rejects) == 0, "Bijection is not correct: %s"%rejects)
-        if len(rejects) != 0:
+        tester.assertEqual(len(rejects), 0, "Bijection is not correct: %s"%rejects)
+        if rejects:
             return rejects
 
     def _element_constructor_(self, *path, **options):
@@ -490,5 +493,6 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
                     dims.append([B._r, B._s])
             return TensorProductOfKirillovReshetikhinTableaux(ct, dims)
         return super(TensorProductOfKirillovReshetikhinTableaux, self).tensor(*crystals, **options)
+
 
 TensorProductOfKirillovReshetikhinTableaux.Element = TensorProductOfKirillovReshetikhinTableauxElement

@@ -29,8 +29,17 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.comp import Components
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+    from sage.tensor.modules.free_module_basis import FreeModuleBasis
+
 
 class FiniteRankFreeModuleElement(AlternatingContrTensor):
     r"""
@@ -162,7 +171,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
     Tensor product::
 
         sage: s = a*b ; s
-        Type-(2,0) tensor a*b on the Rank-3 free module M over the Integer Ring
+        Type-(2,0) tensor a⊗b on the Rank-3 free module M over the Integer Ring
         sage: s.symmetries()
         no symmetry;  no antisymmetry
         sage: s[:]
@@ -170,7 +179,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         [ 2 -2  1]
         [ 6 -6  3]
         sage: s = a*s ; s
-        Type-(3,0) tensor a*a*b on the Rank-3 free module M over the Integer Ring
+        Type-(3,0) tensor a⊗a⊗b on the Rank-3 free module M over the Integer Ring
         sage: s[:]
         [[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
          [[0, 0, 0], [2, -2, 1], [6, -6, 3]],
@@ -179,13 +188,19 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
     Exterior product::
 
         sage: s = a.wedge(b) ; s
-        Alternating contravariant tensor a/\b of degree 2 on the Rank-3 free
+        Alternating contravariant tensor a∧b of degree 2 on the Rank-3 free
          module M over the Integer Ring
         sage: s.display()
-        a/\b = -2 e_0/\e_1 - 6 e_0/\e_2 + 7 e_1/\e_2
+        a∧b = -2 e_0∧e_1 - 6 e_0∧e_2 + 7 e_1∧e_2
 
     """
-    def __init__(self, fmodule, name=None, latex_name=None):
+
+    def __init__(
+        self,
+        fmodule: FiniteRankFreeModule,
+        name: Optional[str] = None,
+        latex_name: Optional[str] = None,
+    ):
         r"""
         TESTS::
 
@@ -209,7 +224,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         AlternatingContrTensor.__init__(self, fmodule, 1, name=name,
                                         latex_name=latex_name)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -227,7 +242,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         description += "of the {}".format(self._fmodule)
         return description
 
-    def _new_comp(self, basis):
+    def _new_comp(self, basis: FreeModuleBasis) -> Components:
         r"""
         Create some (uninitialized) components of ``self`` in a given basis.
 
@@ -257,7 +272,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         fmodule = self._fmodule  # the base free module
         return Components(fmodule._ring, basis, 1, start_index=fmodule._sindex,
                           output_formatter=fmodule._output_formatter)
-
 
     def _new_instance(self):
         r"""

@@ -11,8 +11,10 @@ document.
 Sage example in ./integration.tex, line 73::
 
   sage: x = var('x'); f(x) = exp(-x^2) * log(x)
-  sage: N(integrate(f, x, 1, 3))
-  0.035860294991267694
+  sage: result = integrate(f, x, 1, 3)
+  ...
+  sage: N(result)  # abs tol 1e-14
+  0.03586029499126769
 
 Sage example in ./integration.tex, line 78::
 
@@ -42,8 +44,8 @@ Sage example in ./integration.tex, line 162::
 
 Sage example in ./integration.tex, line 522::
 
-  sage: N(integrate(exp(-x^2)*log(x), x, 17, 42))  # rel tol 2e-12
-  2.5657285006962035e-127
+  sage: N(integrate(cos(log(cos(x))), x, 0, pi/4))  # rel tol 2e-12
+  0.7766520331543109
 
 Sage example in ./integration.tex, line 536::
 
@@ -54,8 +56,8 @@ Sage example in ./integration.tex, line 536::
 
 Sage example in ./integration.tex, line 562::
 
-  sage: numerical_integral(exp(-x^2)*log(x), 17, 42)  # rel tol 2e-11
-  (2.5657285006962035e-127, 3.3540254049238093e-128)
+  sage: numerical_integral(cos(log(cos(x))), 0, pi/4)  # rel tol 2e-11
+  (0.7766520331543109, 8.622569693298564e-15)
 
 Sage example in ./integration.tex, line 600::
 
@@ -66,13 +68,13 @@ Sage example in ./integration.tex, line 600::
 
 Sage example in ./integration.tex, line 612::
 
-  sage: integrate(exp(-x^2)*log(x), x, 17, 42)
-  integrate(e^(-x^2)*log(x), x, 17, 42)
+  sage: integrate(cos(log(cos(x))), x, 0, pi/4)
+  integrate(cos(log(cos(x))), x, 0, 1/4*pi)
 
 Sage example in ./integration.tex, line 622::
 
-  sage: N(integrate(exp(-x^2)*log(x), x, 17, 42), digits=60) # rel tol 2e-12
-  2.5657285006962035e-127
+  sage: N(integrate(cos(log(cos(x))), x, 0, pi/4), digits=60) # abs tol 2e-12
+  0.7766520331543109
 
 Sage example in ./integration.tex, line 628::
 
@@ -146,10 +148,11 @@ Sage example in ./integration.tex, line 824::
 
 Sage example in ./integration.tex, line 846::
 
-  sage: mpmath.quad(sin(sin(x)), [0, 1])
+  sage: f(x) = sin(sin(x))
+  sage: mpmath.quad(f, [0, 1])
   Traceback (most recent call last):
   ...
-  TypeError: no canonical coercion from <type 'sage.libs.mpmath.ext_main.mpf'> to Symbolic Ring
+  TypeError: no canonical coercion from <class 'sage.libs.mpmath.ext_main.mpf'> to ...
 
 Sage example in ./integration.tex, line 866::
 
@@ -286,4 +289,3 @@ Sage example in ./integration.tex, line 1497::
   mpf('2.7135204235459511323824699502438')
 
 """
-

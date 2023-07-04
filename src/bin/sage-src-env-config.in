@@ -1,0 +1,39 @@
+# -*- shell-script -*- @configure_input@
+
+###########################################################################
+#
+#  Set some environment variables that are needed at the runtime of Sage
+#  and by its child processes.
+#
+#  This file is only for use when sage is invoked from SAGE_ROOT.
+#  It is not installed in SAGE_LOCAL.
+#
+#  NOTES:
+#  - You must *source* this script instead of executing.
+#  - Use "return" instead of "exit" to signal a failure.  Since this
+#    file is sourced, an "exit" here will actually exit src/bin/sage,
+#    which is probably not intended.
+#  - Environment variables that should be available in the Sage environment
+#    should be exported.
+#  - This file is only for setting immediate values.  Any kind of conditionals
+#    or computed values are to be set by src/bin/sage-env after sourcing this
+#    file.
+#  - Environment variables that are only needed at the time of building
+#    SPKGs or sagelib should be set in build/bin/sage-build-env-config
+#    instead.
+#  - Configuration variables that are only needed by the Sage runtime,
+#    but not as environment variables, should instead be set in
+#    pkgs/sage-conf/_sage_conf/_conf.py
+#
+##########################################################################
+
+# SAGE_LOCAL is the installation prefix and can be customized by using
+# ./configure --prefix
+export SAGE_LOCAL="@prefix@"
+
+# SAGE_VENV is the root of the virtual environment of sagelib.
+# By default, it is identical to SAGE_LOCAL
+export SAGE_VENV="@SAGE_VENV@"
+
+# SAGE_ROOT is the location of the Sage source/build tree.
+export SAGE_ROOT="@SAGE_ROOT@"

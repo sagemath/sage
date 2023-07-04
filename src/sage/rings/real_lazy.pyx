@@ -9,6 +9,15 @@ precision.
 The main purpose of these classes is to provide a place for exact rings (e.g.
 number fields) to embed for the coercion model (as only one embedding can be
 specified in the forward direction).
+
+TESTS:
+
+Bug :trac:`21991`::
+
+    sage: a = QuadraticField(5).gen()
+    sage: u = -573147844013817084101/2*a + 1281597540372340914251/2
+    sage: RealIntervalField(128)(RLF(u)).is_exact()
+    False
 """
 
 # ****************************************************************************
@@ -19,9 +28,9 @@ specified in the forward direction).
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, division, print_function
 
-import math, cmath
+import math
+import cmath
 
 cdef add, sub, mul, truediv, pow, neg, inv
 from operator import add, sub, mul, pow, neg, inv, truediv
@@ -40,8 +49,8 @@ from sage.rings.integer import Integer
 cdef QQ, RR, CC, RealField, ComplexField
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR, RealField
-from sage.rings.complex_field import ComplexField
-CC = ComplexField(53)
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.cc import CC
 
 cdef _QQx = None
 
@@ -371,30 +380,11 @@ class ComplexLazyField_class(LazyField):
 
     TESTS::
 
-        sage: TestSuite(CLF).run(skip=["_test_prod"])
-
-    .. NOTE::
-
-        The following ``TestSuite`` failure::
-
-            sage: CLF._test_prod()
-            Traceback (most recent call last):
-            ...
-            AssertionError: False is not true
-
-        is due to (acceptable?) numerical noise::
-
-            sage: x = CLF.I
-            sage: x*x == x^2
-            False
-            sage: x*x
-            -1
-            sage: x^2
-            -0.9999999999999999? + 0.?e-15*I
+        sage: TestSuite(CLF).run()
     """
     def __init__(self):
         """
-        This lazy field doesn't evaluate its elements until they are cast into
+        This lazy field does not evaluate its elements until they are cast into
         a field of fixed precision.
 
         EXAMPLES::
@@ -421,10 +411,11 @@ class ComplexLazyField_class(LazyField):
             sage: CLF.interval_field() is CIF
             True
         """
-        from sage.rings.all import CIF, ComplexIntervalField
         if prec is None:
+            from sage.rings.cif import CIF
             return CIF
         else:
+            from sage.rings.complex_interval_field import ComplexIntervalField
             return ComplexIntervalField(prec)
 
     def gen(self, i=0):
@@ -575,7 +566,7 @@ cdef class LazyFieldElement(FieldElement):
 
     cpdef _mul_(left, right):
         """
-        Mutliply ``left`` with ``right``.
+        Multiply ``left`` with ``right``.
 
         EXAMPLES::
 
@@ -821,7 +812,7 @@ cdef class LazyFieldElement(FieldElement):
         try:
             return self.eval(complex)
         except Exception:
-            from .complex_field import ComplexField
+            from .complex_mpfr import ComplexField
             return complex(self.eval(ComplexField(53)))
 
     cpdef eval(self, R):
@@ -984,7 +975,7 @@ cdef class LazyWrapper(LazyFieldElement):
         """
         return <double>self._value
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Check to see if ``self`` is not zero.
 
@@ -1177,9 +1168,9 @@ cdef class LazyBinop(LazyFieldElement):
 
             sage: from sage.rings.real_lazy import LazyBinop
             sage: a = LazyBinop(RLF, 5, 1/2, operator.sub)
-            sage: hash(a)
-            -1607638785           # 32-bit
-            -7461864723258187521  # 64-bit
+            sage: b = LazyBinop(RLF, 4, 1/2, operator.add)
+            sage: hash(a) == hash(b)
+            False
         """
         return hash(self._op(hash(self._left), hash(self._right)))
 
@@ -1391,8 +1382,9 @@ cdef class LazyNamedUnop(LazyUnop):
 
             sage: from sage.rings.real_lazy import LazyNamedUnop
             sage: a = LazyNamedUnop(RLF, 1, 'sin')
-            sage: hash(a)
-            2110729788
+            sage: b = LazyNamedUnop(RLF, 1, 'cos')
+            sage: hash(a) == hash(b)
+            False
         """
         return hash(complex(self))
 
@@ -1554,8 +1546,8 @@ cdef class LazyConstant(LazyFieldElement):
 
             sage: from sage.rings.real_lazy import LazyConstant
             sage: a = LazyConstant(RLF, 'e')
-            sage: hash(a)
-            2141977644
+            sage: hash(a) == hash(1)
+            False
         """
         return hash(complex(self))
 
@@ -1614,8 +1606,7 @@ cdef class LazyAlgebraic(LazyFieldElement):
             c, b, a = self._poly.list()
             self._quadratic_disc = b*b - 4*a*c
         if isinstance(parent, RealLazyField_class):
-            from sage.rings.real_double import RDF
-            if len(self._poly.roots(RDF)) == 0:
+            if not self._poly.number_of_real_roots():
                 raise ValueError("%s has no real roots" % self._poly)
             approx = (RR if prec == 0 else RealField(prec))(approx)
         else:
@@ -1719,7 +1710,7 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: a = f(3); a
             3
             sage: type(a)
-            <type 'sage.rings.real_lazy.LazyWrapper'>
+            <class 'sage.rings.real_lazy.LazyWrapper'>
             sage: a._value
             3
             sage: a._value.parent()
@@ -1737,7 +1728,7 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: a = f(1/3); a # indirect doctest
             0.3333333333333334?
             sage: type(a)
-            <type 'sage.rings.real_lazy.LazyWrapper'>
+            <class 'sage.rings.real_lazy.LazyWrapper'>
             sage: Reals(100)(a)
             0.33333333333333333333333333333
 
@@ -1757,4 +1748,3 @@ cdef class LazyWrapperMorphism(Morphism):
         else:
             e._value = x
         return e
-

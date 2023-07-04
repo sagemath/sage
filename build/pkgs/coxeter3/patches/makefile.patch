@@ -9,7 +9,7 @@ diff -druN src/makefile src/makefile
  
  ifdef optimize
  	NDEBUG = true
-@@ -22,18 +23,74 @@
+@@ -22,18 +27,78 @@
  	cflags = $(pflags)
  endif
  
@@ -53,21 +53,25 @@ diff -druN src/makefile src/makefile
 +executable: $(objects)
 +	$(CXX) -o $(EXENAME)$(EXEEXT) $(objects)
 +
-+DATADIR="$$SAGE_LOCAL/coxeter/"
-+INCLUDEDIR="$$SAGE_LOCAL/include/coxeter/"
-+LIBRARYDIR="$$SAGE_LOCAL/$(LIBDIR)"
++BINDIR=$$SAGE_LOCAL/bin/
++DATADIR=$$SAGE_LOCAL/coxeter/
++INCLUDEDIR=$$SAGE_LOCAL/include/coxeter/
++LIBRARYDIR=$$SAGE_LOCAL/$(LIBDIR)
 +
 +install: coxeter executable
-+	cp $(EXENAME)$(EXEEXT) "$$SAGE_LOCAL/bin/"
-+	cp $(LIBRARY) $(LIBRARYDIR)
++	mkdir -p "$(DESTDIR)$(BINDIR)"
++	mkdir -p "$(DESTDIR)$(LIBRARYDIR)"
++	cp $(EXENAME)$(EXEEXT) "$(DESTDIR)$(BINDIR)"
++	cp $(LIBRARY) "$(DESTDIR)$(LIBRARYDIR)"
 +	if [ $(UNAME) = "CYGWIN" ]; then                 \
-+	    cp $(IMPLIB) "$$SAGE_LOCAL/lib/";  \
++	    mkdir -p "$(DESTDIR)$$SAGE_LOCAL/lib/";      \
++	    cp $(IMPLIB) "$(DESTDIR)$$SAGE_LOCAL/lib/";  \
 +	fi
 +
-+	mkdir -p $(DATADIR)
-+	cp -r coxeter_matrices headers messages $(DATADIR)
-+	mkdir -p $(INCLUDEDIR)
-+	cp -r *.h *.hpp $(INCLUDEDIR)
++	mkdir -p "$(DESTDIR)$(DATADIR)"
++	cp -r coxeter_matrices headers messages "$(DESTDIR)$(DATADIR)"
++	mkdir -p "$(DESTDIR)$(INCLUDEDIR)"
++	cp -r *.h *.hpp "$(DESTDIR)$(INCLUDEDIR)"
 +
 +check: coxeter executable
 +	$(EXENAME)$(EXEEXT) < test.input > test.output

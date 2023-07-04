@@ -11,7 +11,7 @@ implementing numerical algorithms in python.
 The following fortran code implements a single iteration of a
 relaxation method for solving Laplace's equation in a square.
 
-::
+.. CODE-BLOCK:: fortran
 
     %fortran
           subroutine timestep(u,n,m,dx,dy,error)
@@ -40,7 +40,7 @@ relaxation method for solving Laplace's equation in a square.
 
 If you do
 
-::
+.. CODE-BLOCK:: ipycon
 
     timestep?
 
@@ -49,10 +49,10 @@ spacing dx,dy and it will return the updated u, together with an
 error estimate. To apply this to actually solve a problem use this
 driver code
 
-::
+.. CODE-BLOCK:: python
 
     import numpy
-    j=numpy.complex(0,1)
+    j=complex(0,1)
     num_points=50
     u=numpy.zeros((num_points,num_points),dtype=float)
     pi_c=float(pi)
@@ -69,7 +69,7 @@ driver code
 
 Now call the routine using
 
-::
+.. CODE-BLOCK:: python
 
     (sol,err,iter)=solve_laplace(u,pi_c/(num_points-1),pi_c/(num_points-1))
 
@@ -81,7 +81,7 @@ the gnuplot package installed (use optional
 packages() to find its name and install
 package to install it), then you can plot this using
 
-::
+.. CODE-BLOCK:: python
 
     import Gnuplot
     g=Gnuplot.Gnuplot(persist=1)
@@ -97,7 +97,7 @@ To see what we have gained by using f2py let us compare the same
 algorithm in pure python and a vectorized version using numpy
 arrays.
 
-::
+.. CODE-BLOCK:: python
 
     def slowTimeStep(u,dx,dy):
         """Takes a time step using straight forward Python loops."""

@@ -9,7 +9,6 @@ Echelon matrices over finite fields.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.matrix.matrix0 cimport Matrix
 
@@ -152,4 +151,3 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
                 yield m
             del v   # hack: Python itertools reuses the tuple if nobody else uses it
         del pivots  # hack: Python itertools reuses the tuple if nobody else uses it
-

@@ -1,1 +1,2 @@
+#! /usr/bin/env bash
 rm -rf "$SAGE_LOCAL"/lib/python*/site-packages/numpy

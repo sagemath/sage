@@ -3,20 +3,12 @@ Generation of trees
 
 This is an implementation of the algorithm for generating trees with `n`
 vertices (up to isomorphism) in constant time per tree described in
-[WRIGHT-ETAL]_.
+[WROM1986]_.
 
 AUTHORS:
 
 - Ryan Dingman (2009-04-16): initial version
-
-REFERENCES:
-
-.. [WRIGHT-ETAL] Wright, Robert Alan; Richmond, Bruce; Odlyzko, Andrew;
-  McKay, Brendan D.
-  Constant time generation of free trees. SIAM J. Comput. 15 (1986), no. 2,
-  540--548.
 """
-from __future__ import print_function
 
 from libc.limits cimport INT_MAX
 from cysignals.memory cimport check_allocarray, sig_free
@@ -97,7 +89,7 @@ cdef class TreeIterator:
             sage: print(t)  # indirect doctest
             Iterator over all trees with 100 vertices
         """
-        return "Iterator over all trees with %s vertices"%(self.vertices)
+        return "Iterator over all trees with %s vertices" % (self.vertices)
 
     def __iter__(self):
         r"""
@@ -155,29 +147,13 @@ cdef class TreeIterator:
         cdef int vertex2
         cdef object G
 
-#        from networkx import MultiGraph
-#        G = Graph(self.vertices)
-#        cdef object XG = G._backend._nxg
-#
-#        for i from 2 <= i <= self.vertices:
-#            vertex1 = i - 1
-#            vertex2 = self.current_level_sequence[i - 1] - 1
-#            XG.add_edge(vertex1, vertex2)
-#
-#        return G
-
-        # Currently, c_graph does not have all the same functionality as networkx.
-        # Until it does, we can't generate graphs using the c_graph backend even
-        # though it is twice as fast (for our purposes) as networkx.
-
-        G = Graph(self.vertices, implementation='c_graph', sparse=True)
+        G = Graph(self.vertices, sparse=True)
         cdef SparseGraph SG = (<SparseGraphBackend?> G._backend)._cg
 
         for i in range(2, self.vertices + 1):
             vertex1 = i - 1
             vertex2 = self.current_level_sequence[i - 1] - 1
             SG.add_arc_unsafe(vertex1, vertex2)
-            SG.add_arc_unsafe(vertex2, vertex1)
 
         return G
 
@@ -198,7 +174,7 @@ cdef class TreeIterator:
         self.h1 = k
         self.h2 = self.vertices
         if self.vertices % 2:
-            self.c = INT_MAX # oo
+            self.c = INT_MAX  # oo
         else:
             self.c = self.vertices + 1
 
@@ -253,9 +229,9 @@ cdef class TreeIterator:
         if p <= h1:
             h1 = p - 1
         if p <= r:
-           needr = 1
+            needr = 1
         elif p <= h2:
-           needh2 = 1
+            needh2 = 1
         elif l[h2 - 1] == l[h1 - 1] - 1 and n - h2 == r - h1:
             if p <= c:
                 needc = 1

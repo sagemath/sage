@@ -20,27 +20,29 @@ Miscellaneous `p`-adic methods
 #
 #                  https://www.gnu.org/licenses/
 ######################################################################
-from __future__ import absolute_import
 
-
-import sage.rings.all as rings
-from . import padic_lseries as plseries
-import sage.arith.all as arith
-from sage.rings.all import (
-    Qp, Zp,
-    Integers,
-    Integer,
-    O,
-    PowerSeriesRing,
-    LaurentSeriesRing,
-    RationalField)
 import math
-import sage.misc.misc as misc
+
+import sage.arith.all as arith
 import sage.matrix.all as matrix
-sqrt = math.sqrt
-import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+import sage.misc.misc as misc
+import sage.rings.all as rings
 import sage.schemes.hyperelliptic_curves.hypellfrob
-from sage.misc.all import cached_method
+import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+
+from sage.misc.cachefunc import cached_method
+from sage.rings.big_oh import O
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer import Integer
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.padics.factory import Qp, Zp
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import RationalField
+
+from . import padic_lseries as plseries
+
+sqrt = math.sqrt
+
 
 def __check_padic_hypotheses(self, p):
     r"""
@@ -92,14 +94,17 @@ def _normalize_padic_lseries(self, p, normalize, implementation, precision):
             raise ValueError("Must specify precision when using 'pollackstevens'")
         if normalize is not None:
             raise ValueError("The 'normalize' parameter is not used for Pollack-Stevens' overconvergent modular symbols")
+    elif implementation == "num":
+        if normalize is not None:
+            raise ValueError("The 'normalize' parameter is not used for numerical modular symbols")
     else:
-        raise ValueError("Implementation should be one of  'sage', 'eclib' or 'pollackstevens'")
-    #if precision is not None and implementation != 'pollackstevens':
-    #    raise ValueError("Must *not* specify precision unless using 'pollackstevens'")
+        raise ValueError("Implementation should be one of  'sage', 'eclib', 'num' or 'pollackstevens'")
     return (p, normalize, implementation, precision)
 
+
 @cached_method(key=_normalize_padic_lseries)
-def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision = None):
+def padic_lseries(self, p, normalize=None, implementation='eclib',
+                  precision=None):
     r"""
     Return the `p`-adic `L`-series of self at
     `p`, which is an object whose approx method computes
@@ -108,17 +113,18 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
 
     INPUT:
 
-    -  ``p`` -- prime
+    - ``p`` -- prime
 
-    -  ``normalize`` -- 'L_ratio' (default), 'period' or 'none';
-       this is describes the way the modular symbols
-       are normalized. See modular_symbol for
-       more details.
+    - ``normalize`` -- 'L_ratio' (default), 'period' or 'none';
+      this is describes the way the modular symbols
+      are normalized. See modular_symbol for
+      more details.
 
-    -  ``implementation`` -- 'eclib' (default), 'sage', 'pollackstevens';
-       Whether to use John Cremona's eclib, the Sage implementation,
-       or Pollack-Stevens' implementation of overconvergent
-       modular symbols.
+    - ``implementation`` -- 'eclib' (default), 'sage', 'num' or 'pollackstevens';
+      Whether to use John Cremona's eclib, the Sage implementation,
+      numerical modular symbols
+      or Pollack-Stevens' implementation of overconvergent
+      modular symbols.
 
     EXAMPLES::
 
@@ -176,6 +182,14 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
         sage: L.series(5,prec=10)
         2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 3^6 + O(3^7) + (1 + 3 + 2*3^2 + 3^3 + O(3^4))*T + (1 + 2*3 + O(3^4))*T^2 + (3 + 2*3^2 + O(3^3))*T^3 + (2*3 + 3^2 + O(3^3))*T^4 + (2 + 2*3 + 2*3^2 + O(3^3))*T^5 + (1 + 3^2 + O(3^3))*T^6 + (2 + 3^2 + O(3^3))*T^7 + (2 + 2*3 + 2*3^2 + O(3^3))*T^8 + (2 + O(3^2))*T^9 + O(T^10)
 
+    Also the numerical modular symbols can be used.
+    This may allow for much larger conductor in some instances::
+
+        sage: E = EllipticCurve([101,103])
+        sage: L = E.padic_lseries(5, implementation="num")
+        sage: L.series(2)
+        O(5^4) + (3 + O(5))*T + (1 + O(5))*T^2 + (3 + O(5))*T^3 + O(5)*T^4 + O(T^5)
+
     Finally, we can use the overconvergent method of Pollack-Stevens.::
 
         sage: e = EllipticCurve('11a')
@@ -194,22 +208,22 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
         sage: L[3]
         O(11^0)
     """
-    p, normalize, implementation, precision = self._normalize_padic_lseries(p,\
-                             normalize, implementation, precision)
+    p, normalize, implementation, precision = self._normalize_padic_lseries(p,
+        normalize, implementation, precision)
 
-    if implementation in ['sage', 'eclib']:
+    if implementation in ['sage', 'eclib', 'num']:
         if self.ap(p) % p != 0:
             Lp = plseries.pAdicLseriesOrdinary(self, p,
-                                  normalize = normalize, implementation = implementation)
+                                  normalize=normalize, implementation=implementation)
         else:
             Lp = plseries.pAdicLseriesSupersingular(self, p,
-                                  normalize = normalize, implementation = implementation)
+                                  normalize=normalize, implementation=implementation)
     else:
         phi = self.pollack_stevens_modular_symbol(sign=0)
         if phi.parent().level() % p == 0:
-            Phi = phi.lift(p, precision, eigensymbol = True)
+            Phi = phi.lift(p, precision, eigensymbol=True)
         else:
-            Phi = phi.p_stabilize_and_lift(p, precision, eigensymbol = True)
+            Phi = phi.p_stabilize_and_lift(p, precision, eigensymbol=True)
         Lp = Phi.padic_lseries()  #mm TODO should this pass precision on too ?
         Lp._cinf = self.real_components()
     return Lp
@@ -278,7 +292,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_regulator(5, max_prec)           # long time
         sage: for prec in range(1, max_prec):                 # long time
-        ....:     assert E.padic_regulator(5, prec) == full   # long time
+        ....:     assert E.padic_regulator(5, prec) == full
 
     A case where the generator belongs to the formal group already
     (:trac:`3632`)::
@@ -335,18 +349,16 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
 
     INPUT:
 
+    - ``p`` -- prime >= 5
 
-    -  ``p`` - prime >= 5
+    - ``prec`` -- answer will be returned modulo
+      `p^{\mathrm{prec}}`
 
-    -  ``prec`` - answer will be returned modulo
-       `p^{\mathrm{prec}}`
+    - ``height`` -- precomputed height function. If not
+      supplied, this function will call padic_height to compute it.
 
-    -  ``height`` - precomputed height function. If not
-       supplied, this function will call padic_height to compute it.
-
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic height makes sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic height makes sense
 
     OUTPUT: The p-adic cyclotomic height pairing matrix of this curve
     to the given precision.
@@ -387,7 +399,6 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
         [4 + 3*5 + 4*5^2 + 4*5^3 + O(5^4)       4 + 4*5^2 + 2*5^3 + O(5^4)       3*5 + 4*5^2 + 5^3 + O(5^4)]
         [      4 + 4*5^2 + 2*5^3 + O(5^4)   3 + 4*5 + 3*5^2 + 5^3 + O(5^4)                 2 + 4*5 + O(5^4)]
         [      3*5 + 4*5^2 + 5^3 + O(5^4)                 2 + 4*5 + O(5^4)     1 + 3*5 + 5^2 + 5^3 + O(5^4)]
-
     """
     if check_hypotheses:
         p = __check_padic_hypotheses(self, p)
@@ -421,19 +432,17 @@ def _multiply_point(E, R, P, m):
 
     INPUT:
 
+    - ``E`` -- elliptic curve over Q with integer
+      coefficients
 
-    -  ``E`` - elliptic curve over Q with integer
-       coefficients
+    - ``P`` -- a rational point on P that reduces to a
+      non-singular point at all primes
 
-    -  ``P`` - a rational point on P that reduces to a
-       non-singular point at all primes
+    - ``R`` -- a ring in which 2 is invertible (typically
+      `\ZZ/L\ZZ` for some positive odd integer
+      `L`).
 
-    -  ``R`` - a ring in which 2 is invertible (typically
-       `\ZZ/L\ZZ` for some positive odd integer
-       `L`).
-
-    -  ``m`` - an integer, = 1
-
+    - ``m`` -- an integer, = 1
 
     OUTPUT: A triple `(a', b', d')` such that if the point
     `mP` has coordinates `(a/d^2, b/d^3)`, then we have
@@ -584,17 +593,16 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     INPUT:
 
-    -  ``p`` - prime >= 5 for which the curve has
-       semi-stable reduction
+    - ``p`` -- prime >= 5 for which the curve has
+      semi-stable reduction
 
-    -  ``prec`` - integer >= 1 (default 20), desired precision of result
+    - ``prec`` -- integer >= 1 (default 20), desired precision of result
 
-    -  ``sigma`` - precomputed value of sigma. If not
-       supplied, this function will call padic_sigma to compute it.
+    - ``sigma`` -- precomputed value of sigma. If not
+      supplied, this function will call padic_sigma to compute it.
 
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic height makes sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic height makes sense
 
     OUTPUT: A function that accepts two parameters:
 
@@ -655,7 +663,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(1, max_prec):                 # long time
-        ....:     assert E.padic_height(5, prec)(P) == full   # long time
+        ....:     assert E.padic_height(5, prec)(P) == full
 
     A supersingular prime for a curve::
 
@@ -695,15 +703,15 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     TESTS:
 
-    Check that ticket :trac:`20798` is solved::
+    Check that issue :trac:`20798` is solved::
 
         sage: E = EllipticCurve("91b")
         sage: h = E.padic_height(7,10)
         sage: P = E.gen(0)
         sage: h(P)
-        2*7 + 7^2 + 5*7^3 + 6*7^4 + 2*7^5 + 3*7^6 + 7^7 + O(7^9)
+        2*7 + 7^2 + 5*7^3 + 6*7^4 + 2*7^5 + 3*7^6 + 7^7 + 4*7^9 + 5*7^10 + O(7^11)
         sage: h(P+P)
-        7 + 5*7^2 + 6*7^3 + 5*7^4 + 4*7^5 + 6*7^6 + 5*7^7 + O(7^9)
+        7 + 5*7^2 + 6*7^3 + 5*7^4 + 4*7^5 + 6*7^6 + 5*7^7 + 2*7^9 + 7^10 + O(7^11)
     """
     if check_hypotheses:
         if not p.is_prime():
@@ -778,10 +786,8 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
                    "answer with precision at least prec, but we didn't."
         return K(answer)
 
-
     # (man... I love python's local function definitions...)
     return height
-
 
 
 def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
@@ -792,20 +798,18 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
 
     INPUT:
 
+    - ``p`` -- prime >= 5 for which the curve has good
+      ordinary reduction
 
-    -  ``p`` - prime >= 5 for which the curve has good
-       ordinary reduction
+    - ``prec`` -- integer >= 2 (default 20), desired precision of result
 
-    -  ``prec`` - integer >= 2 (default 20), desired precision of result
+    - ``E2`` -- precomputed value of E2. If not supplied,
+      this function will call padic_E2 to compute it. The value supplied
+      must be correct mod `p^(prec-2)` (or slightly higher in the
+      anomalous case; see the code for details).
 
-    -  ``E2`` - precomputed value of E2. If not supplied,
-       this function will call padic_E2 to compute it. The value supplied
-       must be correct mod `p^(prec-2)` (or slightly higher in the
-       anomalous case; see the code for details).
-
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic height makes sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic height makes sense
 
     OUTPUT: A function that accepts two parameters:
 
@@ -859,7 +863,7 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(2, max_prec):                 # long time
-        ....:     assert E.padic_height_via_multiply(5, prec)(P) == full   # long time
+        ....:     assert E.padic_height_via_multiply(5, prec)(P) == full
     """
     if check_hypotheses:
         if not p.is_prime():
@@ -928,7 +932,6 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
                    "answer with precision at least prec, but we didn't."
         return K(answer)
 
-
     # (man... I love python's local function definitions...)
     return height
 
@@ -944,29 +947,27 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     INPUT:
 
+    - ``p`` -- prime >= 5 for which the curve has good
+      ordinary reduction
 
-    -  ``p`` - prime >= 5 for which the curve has good
-       ordinary reduction
+    - ``N`` -- integer >= 1 (default 20), indicates precision of result;
+      see OUTPUT section for description
 
-    -  ``N`` - integer >= 1 (default 20), indicates precision of result;
-       see OUTPUT section for description
+    - ``E2`` -- precomputed value of E2. If not supplied,
+      this function will call padic_E2 to compute it. The value supplied
+      must be correct mod `p^{N-2}`.
 
-    -  ``E2`` - precomputed value of E2. If not supplied,
-       this function will call padic_E2 to compute it. The value supplied
-       must be correct mod `p^{N-2}`.
+    - ``check`` -- boolean, whether to perform a
+      consistency check (i.e. verify that the computed sigma satisfies
+      the defining
 
-    -  ``check`` - boolean, whether to perform a
-       consistency check (i.e. verify that the computed sigma satisfies
-       the defining
+    - ``differential equation`` -- note that this does NOT
+      guarantee correctness of all the returned digits, but it comes
+      pretty close :-))
 
-    -  ``differential equation`` - note that this does NOT
-       guarantee correctness of all the returned digits, but it comes
-       pretty close :-))
-
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic sigma function makes
-       sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic sigma function makes
+      sense
 
     OUTPUT: A power series `t + \cdots` with coefficients in
     `\ZZ_p`.
@@ -1043,7 +1044,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
         sage: E2 = E.padic_E2(5, max_N)                     # long time
         sage: max_sigma = E.padic_sigma(p, max_N, E2=E2)    # long time
         sage: for N in range(3, max_N):                     # long time
-        ....:    sigma = E.padic_sigma(p, N, E2=E2)         # long time
+        ....:    sigma = E.padic_sigma(p, N, E2=E2)
         ....:    assert sigma == max_sigma
     """
     if check_hypotheses:
@@ -1092,7 +1093,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     Rt = x.parent()
 
-    A  = (x + c) * f
+    A = (x + c) * f
     # do integral over QQ, to avoid divisions by p
     A = Rt(QQt(A).integral())
     A = (-X.a1()/2 - A) * f
@@ -1113,9 +1114,9 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
     sigma = theta * theta.parent().gen()
 
     # Convert the answer to power series over p-adics; drop the precision
-    # of the $t^k$ coefficient to $p^(N-k+1)$.
+    # of the t^k coefficient to p^(N-k+1).
     # [Note: there are actually more digits available, but it's a bit
-    # tricky to figure out exactly how many, and we only need $p^(N-k+1)$
+    # tricky to figure out exactly how many, and we only need p^(N-k+1)
     # for p-adic height purposes anyway]
     K = rings.pAdicField(p, N + 1)
 
@@ -1168,23 +1169,22 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     INPUT:
 
-    -  ``p`` - prime >= 5 for which the curve has good
-       ordinary reduction
+    - ``p`` -- prime >= 5 for which the curve has good
+      ordinary reduction
 
-    -  ``N`` - integer >= 2 (default 20), indicates precision of result;
-       see OUTPUT section for description
+    - ``N`` -- integer >= 2 (default 20), indicates precision of result;
+      see OUTPUT section for description
 
-    -  ``lamb`` - integer >= 0, see OUTPUT section for
-       description
+    - ``lamb`` -- integer >= 0, see OUTPUT section for
+      description
 
-    -  ``E2`` - precomputed value of E2. If not supplied,
-       this function will call padic_E2 to compute it. The value supplied
-       must be correct mod `p^{N-2}`.
+    - ``E2`` -- precomputed value of E2. If not supplied,
+      this function will call padic_E2 to compute it. The value supplied
+      must be correct mod `p^{N-2}`.
 
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic sigma function makes
-       sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic sigma function makes
+      sense
 
     OUTPUT: A power series `t + \cdots` with coefficients in
     `\ZZ_p`.
@@ -1201,10 +1201,10 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
     Running time is soft-`O(N^2 \lambda^{-1} \log p)`, plus
     whatever time is necessary to compute `E_2`.
 
-    AUTHOR:
+    AUTHORS:
 
     - David Harvey (2008-01): wrote based on previous
-      :func:`padic_sigma function`
+      :func:`padic_sigma` function
 
     EXAMPLES::
 
@@ -1226,10 +1226,10 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
         sage: E = EllipticCurve([1, 2, 3, 4, 7])                            # long time
         sage: E2 = E.padic_E2(5, 50)                                        # long time
         sage: for N in range(2, 10):                                        # long time
-        ....:    for lamb in range(10):                                     # long time
-        ....:       correct = E.padic_sigma(5, N + 3*lamb, E2=E2)           # long time
-        ....:       compare = E.padic_sigma_truncated(5, N=N, lamb=lamb, E2=E2)    # long time
-        ....:       assert compare == correct                               # long time
+        ....:    for lamb in range(10):
+        ....:       correct = E.padic_sigma(5, N + 3*lamb, E2=E2)
+        ....:       compare = E.padic_sigma_truncated(5, N=N, lamb=lamb, E2=E2)
+        ....:       assert compare == correct
     """
     if check_hypotheses:
         p = __check_padic_hypotheses(self, p)
@@ -1281,7 +1281,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     Rt = x.parent()
 
-    A  = (x + c) * f
+    A = (x + c) * f
     # do integral over QQ, to avoid divisions by p
     A = Rt(QQt(A).integral())
     A = (-X.a1()/2 - A) * f
@@ -1302,7 +1302,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
     sigma = theta * theta.parent().gen()
 
     # Convert the answer to power series over p-adics; drop the precision
-    # of the $t^j$ coefficient to $p^{N - 2 + (3 - j)(lamb + 1)})$.
+    # of the t^j coefficient to p^{N - 2 + (3 - j)(lamb + 1)}).
     K = rings.pAdicField(p, N - 2 + 3*(lamb+1))
 
     sigma = sigma.padded_list(trunc+1)
@@ -1326,44 +1326,42 @@ def padic_E2(self, p, prec=20, check=False, check_hypotheses=True, algorithm="au
 
     INPUT:
 
+    - ``p`` -- prime (= 5) for which `E` is good
+      and ordinary
 
-    -  ``p`` - prime (= 5) for which `E` is good
-       and ordinary
+    - ``prec`` -- (relative) p-adic precision (= 1) for
+      result
 
-    -  ``prec`` - (relative) p-adic precision (= 1) for
-       result
+    - ``check`` -- boolean, whether to perform a
+      consistency check. This will slow down the computation by a
+      constant factor 2. (The consistency check is to compute the whole
+      matrix of frobenius on Monsky-Washnitzer cohomology, and verify
+      that its trace is correct to the specified precision. Otherwise,
+      the trace is used to compute one column from the other one
+      (possibly after a change of basis).)
 
-    -  ``check`` - boolean, whether to perform a
-       consistency check. This will slow down the computation by a
-       constant factor 2. (The consistency check is to compute the whole
-       matrix of frobenius on Monsky-Washnitzer cohomology, and verify
-       that its trace is correct to the specified precision. Otherwise,
-       the trace is used to compute one column from the other one
-       (possibly after a change of basis).)
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic sigma function makes
+      sense
 
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic sigma function makes
-       sense
+    - ``algorithm`` -- one of "standard", "sqrtp", or
+      "auto". This selects which version of Kedlaya's algorithm is used.
+      The "standard" one is the one described in Kedlaya's paper. The
+      "sqrtp" one has better performance for large `p`, but only
+      works when `p > 6N` (`N=` prec). The "auto" option
+      selects "sqrtp" whenever possible.
 
-    -  ``algorithm`` - one of "standard", "sqrtp", or
-       "auto". This selects which version of Kedlaya's algorithm is used.
-       The "standard" one is the one described in Kedlaya's paper. The
-       "sqrtp" one has better performance for large `p`, but only
-       works when `p > 6N` (`N=` prec). The "auto" option
-       selects "sqrtp" whenever possible.
-
-       Note that if the "sqrtp" algorithm is used, a consistency check
-       will automatically be applied, regardless of the setting of the
-       "check" flag.
-
+      Note that if the "sqrtp" algorithm is used, a consistency check
+      will automatically be applied, regardless of the setting of the
+      "check" flag.
 
     OUTPUT: p-adic number to precision prec
 
-    .. note::
+    .. NOTE::
 
-       If the discriminant of the curve has nonzero valuation at p,
-       then the result will not be returned mod `p^\text{prec}`,
-       but it still *will* have prec *digits* of precision.
+        If the discriminant of the curve has nonzero valuation at p,
+        then the result will not be returned mod `p^\text{prec}`,
+        but it still *will* have prec *digits* of precision.
 
     .. TODO::
 
@@ -1480,7 +1478,7 @@ def padic_E2(self, p, prec=20, check=False, check_hypotheses=True, algorithm="au
     if self.conductor() % p == 0:
         if not self.conductor() % (p**2) == 0:
             eq = self.tate_curve(p)
-            return  eq.E2(prec=prec)
+            return eq.E2(prec=prec)
 
     X = self.minimal_model().short_weierstrass_model()
     frob_p = X.matrix_of_frobenius(p, prec, check, check_hypotheses, algorithm).change_ring(Integers(p**prec))
@@ -1513,33 +1511,33 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
 
     INPUT:
 
-    -  ``p`` - prime (>= 3) for which `E` is good
-       and ordinary
+    - ``p`` -- prime (>= 3) for which `E` is good
+      and ordinary
 
-    -  ``prec`` - (relative) `p`-adic precision for
-       result  (default 20)
+    - ``prec`` -- (relative) `p`-adic precision for
+      result  (default 20)
 
-    -  ``check`` - boolean (default: False), whether to perform a
-       consistency check. This will slow down the computation by a
-       constant factor 2. (The consistency check is to verify
-       that its trace is correct to the specified precision. Otherwise,
-       the trace is used to compute one column from the other one
-       (possibly after a change of basis).)
+    - ``check`` -- boolean (default: False), whether to perform a
+      consistency check. This will slow down the computation by a
+      constant factor 2. (The consistency check is to verify
+      that its trace is correct to the specified precision. Otherwise,
+      the trace is used to compute one column from the other one
+      (possibly after a change of basis).)
 
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the `p`-adic sigma function makes
-       sense
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the `p`-adic sigma function makes
+      sense
 
-    -  ``algorithm`` - one of "standard", "sqrtp", or
-       "auto". This selects which version of Kedlaya's algorithm is used.
-       The "standard" one is the one described in Kedlaya's paper. The
-       "sqrtp" one has better performance for large `p`, but only
-       works when `p > 6N` (`N=` prec). The "auto" option
-       selects "sqrtp" whenever possible.
+    - ``algorithm`` -- one of "standard", "sqrtp", or
+      "auto". This selects which version of Kedlaya's algorithm is used.
+      The "standard" one is the one described in Kedlaya's paper. The
+      "sqrtp" one has better performance for large `p`, but only
+      works when `p > 6N` (`N=` prec). The "auto" option
+      selects "sqrtp" whenever possible.
 
-       Note that if the "sqrtp" algorithm is used, a consistency check
-       will automatically be applied, regardless of the setting of the
-       "check" flag.
+      Note that if the "sqrtp" algorithm is used, a consistency check
+      will automatically be applied, regardless of the setting of the
+      "check" flag.
 
     OUTPUT: a matrix of `p`-adic number to precision ``prec``
 
@@ -1650,24 +1648,22 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
 
     return frob_p.change_ring(Zp(p, prec))
 
+
 def _brent(F, p, N):
     r"""
     This is an internal function; it is used by padic_sigma().
 
-    `F` is a assumed to be a power series over
-    `R = \ZZ/p^{N-1}\ZZ`.
+    `F` is a assumed to be a power series over `R = \ZZ/p^{N-1}\ZZ`.
 
     It solves the differential equation `G'(t)/G(t) = F(t)`
     using Brent's algorithm, with initial condition `G(0) = 1`.
-    It is assumed that the solution `G` has
-    `p`-integral coefficients.
+    It is assumed that the solution `G` has `p`-integral coefficients.
 
     More precisely, suppose that `f(t)` is a power series with
     genuine `p`-adic coefficients, and suppose that
     `g(t)` is an exact solution to `g'(t)/g(t) = f(t)`.
     Let `I` be the ideal
-    `(p^N, p^{N-1} t, \ldots,
-        p t^{N-1}, t^N)`. The input
+    `(p^N, p^{N-1} t, \ldots, p t^{N-1}, t^N)`. The input
     `F(t)` should be a finite-precision approximation to
     `f(t)`, in the sense that `\int (F - f) dt` should
     lie in `I`. Then the function returns a series
@@ -1677,8 +1673,7 @@ def _brent(F, p, N):
     some log-log factors.
 
     For more information, and a proof of the precision guarantees, see
-    Lemma 4 in "Efficient Computation of p-adic Heights" (David
-    Harvey).
+    Lemma 4 in "Efficient Computation of p-adic Heights" (David Harvey).
 
     AUTHORS:
 

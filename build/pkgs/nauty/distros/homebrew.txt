@@ -1,0 +1,2 @@
+# Homebrew's nauty package provides executables and also /usr/local/include/nauty.h and /usr/local/lib/libnauty.a
+nauty

@@ -21,12 +21,12 @@ than the minimal valuation at that prime; we provide a function to
 return such a model.
 
 The implementation of this functionality is based on work of Kraus
-[Kraus]_ which gives a local condition for when a pair of number field
+[Kra1989]_ which gives a local condition for when a pair of number field
 elements \(c_4\), \(c_6\) belong to a Weierstrass model which is
 integral at a prime \(P\), together with a global version. Only primes
 dividing 2 or 3 are hard to deal with. In order to compute the
 corresponding integral model one then needs to combine together the
-local transformations implicit in [Kraus]_ into a single global one.
+local transformations implicit in [Kra1989]_ into a single global one.
 
 Various utility functions relating to the testing and use of Kraus's
 conditions are included here.
@@ -34,12 +34,6 @@ conditions are included here.
 AUTHORS:
 
 - John Cremona (2015)
-
-REFERENCES:
-
-.. [Kraus] Kraus, Alain, Quelques remarques à propos des invariants
-   \(c_4\), \(c_6\) et \(\Delta\) d'une courbe elliptique, Acta
-   Arith. 54 (1989), 75-80.
 """
 
 ##############################################################################
@@ -57,9 +51,8 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function
 
-from sage.schemes.elliptic_curves.all import EllipticCurve
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
 
 def c4c6_nonsingular(c4, c6):
@@ -241,7 +234,7 @@ def test_b2_local(c4, c6, P, b2, debug=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``P`` - a prime ideal of the number field which divides 3
+    - ``P`` -- a prime ideal of the number field which divides 3
 
     - ``b2`` -- an element of the number field
 
@@ -349,7 +342,7 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``P`` - a prime ideal of the number field which divides 3
+    - ``P`` -- a prime ideal of the number field which divides 3
 
     - ``assume_nonsingular`` (boolean, default False) -- if True,
       check for integrality and nosingularity.
@@ -419,7 +412,7 @@ def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``P`` - a prime ideal of the number field which divides 2
+    - ``P`` -- a prime ideal of the number field which divides 2
 
     - ``a1``, ``a3`` -- elements of the number field
 
@@ -649,7 +642,7 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``P`` - a prime ideal of the number field
+    - ``P`` -- a prime ideal of the number field
 
     - ``assume_nonsingular`` (boolean, default False) -- if True,
       check for integrality and nosingularity.
@@ -764,7 +757,6 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
         sage: assert L.class_number()== 2
         sage: EL.isogeny_class() # long time (~10s)
         Isogeny class of Elliptic Curve defined by y^2 + (-1/90*b^4+7/18*b^2-1/2*b-98/45)*x*y + y = x^3 + (1/45*b^5-1/18*b^4-7/9*b^3+41/18*b^2+167/90*b-29/9)*x + (-1/90*b^5+1/30*b^4+7/18*b^3-4/3*b^2-61/90*b+11/5) over Number Field in b with defining polynomial x^6 - 42*x^4 + 441*x^2 - 697
-
     """
     if not assume_nonsingular:
         if not c4c6_nonsingular(c4,c6):
@@ -816,7 +808,7 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
     a1list = [d[1] for d in dat]
     a1 = K.solve_CRT(a1list,P2list, check=True)
     # See comment below: this is needed for when we combine with the primes above 3.
-    if not a1 in three: # three.divides(a1) causes a segfault
+    if a1 not in three:  # three.divides(a1) causes a segfault
         a1 = 3*a1
 
     # Using this a1, recompute the local a3's:
@@ -899,7 +891,7 @@ def semi_global_minimal_model(E, debug=False):
     cases,
     Emin.minimal_discriminant_ideal() * I**12 == (E.discriminant()).
 
-    .. note::
+    .. NOTE::
 
         This function is normally not called directly by users, who
         will use the elliptic curve method :meth:`global_minimal_model`

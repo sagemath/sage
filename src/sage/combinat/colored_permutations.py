@@ -7,26 +7,28 @@ Colored Permutations
     generalized to `G \wr S_n`
 """
 import itertools
-from six.moves import range
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
+from sage.arith.functions import lcm
 
 from sage.combinat.permutation import Permutations
 from sage.matrix.constructor import diagonal_matrix
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 class ColoredPermutation(MultiplicativeGroupElement):
     """
     A colored permutation.
     """
+
     def __init__(self, parent, colors, perm):
         """
         Initialize ``self``.
@@ -47,9 +49,8 @@ class ColoredPermutation(MultiplicativeGroupElement):
 
             sage: C = ColoredPermutations(4, 3)
             sage: s1,s2,t = C.gens()
-            sage: hash(s1), hash(s2), hash(t)
-            (2666658751600856334, 3639282354432100950, 3639281107336048003) # 64-bit
-            (-1973744370, 88459862, -1467077245)                            # 32-bit
+            sage: for gen in s1,s2,t:
+            ....:     assert hash(gen) ^^ hash(gen._colors) == hash(gen._perm)
         """
         return hash(self._perm) ^ hash(self._colors)
 
@@ -78,9 +79,22 @@ class ColoredPermutation(MultiplicativeGroupElement):
             [3_{1}, 1_{0}, 2_{0}]
         """
         ret = "["
-        ret += ", ".join("{}_{{{}}}".format(x, self._colors[i])
-                         for i, x in enumerate(self._perm))
+        ret += ", ".join("{}_{{{}}}".format(x, c)
+                         for c, x in zip(self._colors, self._perm))
         return ret + "]"
+
+    def __len__(self):
+        """
+        Return the length of the one line form of ``self``.
+
+        EXAMPLES::
+
+            sage: C = ColoredPermutations(2, 3)
+            sage: s1,s2,t = C.gens()
+            sage: len(s1)
+            3
+        """
+        return len(self._perm)
 
     def _mul_(self, other):
         """
@@ -93,12 +107,12 @@ class ColoredPermutation(MultiplicativeGroupElement):
             sage: s1*s2*s1 == s2*s1*s2
             True
         """
-        colors = tuple(self._colors[i] + other._colors[val - 1]  # -1 for indexing
-                       for i, val in enumerate(self._perm))
+        colors = tuple(c + other._colors[val - 1]  # -1 for indexing
+                       for c, val in zip(self._colors, self._perm))
         p = self._perm._left_to_right_multiply_on_right(other._perm)
         return self.__class__(self.parent(), colors, p)
 
-    def inverse(self):
+    def __invert__(self):
         """
         Return the inverse of ``self``.
 
@@ -106,17 +120,15 @@ class ColoredPermutation(MultiplicativeGroupElement):
 
             sage: C = ColoredPermutations(4, 3)
             sage: s1,s2,t = C.gens()
-            sage: ~t
+            sage: ~t  # indirect doctest
             [[0, 0, 3], [1, 2, 3]]
             sage: all(x * ~x == C.one() for x in C.gens())
             True
         """
         ip = ~self._perm
         return self.__class__(self.parent(),
-                              tuple([-self._colors[i - 1] for i in ip]),  # -1 for indexing
+                              tuple(-self._colors[i - 1] for i in ip),  # -1 for indexing
                               ip)
-
-    __invert__ = inverse
 
     def __eq__(self, other):
         """
@@ -166,8 +178,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
             sage: list(x)
             [(1, 3), (0, 1), (0, 2)]
         """
-        for i, p in enumerate(self._perm):
-            yield (self._colors[i], p)
+        yield from zip(self._colors, self._perm)
 
     def one_line_form(self):
         """
@@ -184,6 +195,26 @@ class ColoredPermutation(MultiplicativeGroupElement):
             [(1, 3), (0, 1), (0, 2)]
         """
         return list(self)
+
+    def __getitem__(self, key):
+        """
+        Return the specified element in the one line form of ``self``.
+
+        EXAMPLES::
+
+            sage: C = ColoredPermutations(4, 3)
+            sage: s1,s2,t = C.gens()
+            sage: x = s1*s2*t
+            sage: x
+            [[1, 0, 0], [3, 1, 2]]
+            sage: x[1]
+            (0, 1)
+            sage: x[1:]
+            [(0, 1), (0, 2)]
+        """
+        if isinstance(key, slice):
+            return list(zip(self._colors[key], self._perm[key]))
+        return (self._colors[key], self._perm[key])
 
     def colors(self):
         """
@@ -372,6 +403,8 @@ class ColoredPermutation(MultiplicativeGroupElement):
 
 # TODO: Parts of this should be put in the category of complex
 # reflection groups
+
+
 class ColoredPermutations(Parent, UniqueRepresentation):
     r"""
     The group of `m`-colored permutations on `\{1, 2, \ldots, n\}`.
@@ -405,7 +438,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         [[0, 1, 0], [1, 2, 3]]
 
     We can also create a colored permutation by passing
-    either a list of tuples consisting of ``(color, element)``::
+    an iterable consisting of tuples consisting of ``(color, element)``::
 
         sage: x = C([(2,1), (3,3), (3,2)]); x
         [[2, 3, 3], [1, 3, 2]]
@@ -414,6 +447,8 @@ class ColoredPermutations(Parent, UniqueRepresentation):
 
         sage: C([[3,3,1], [1,3,2]])
         [[3, 3, 1], [1, 3, 2]]
+        sage: C(([3,3,1], [1,3,2]))
+        [[3, 3, 1], [1, 3, 2]]
 
     There is also the natural lift from permutations::
 
@@ -421,11 +456,18 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         sage: C(P.an_element())
         [[0, 0, 0], [3, 1, 2]]
 
+
+    A colored permutation::
+
+        sage: C(C.an_element()) == C.an_element()
+        True
+
     REFERENCES:
 
     - :wikipedia:`Generalized_symmetric_group`
     - :wikipedia:`Complex_reflection_group`
     """
+
     def __init__(self, m, n):
         """
         Initialize ``self``.
@@ -656,20 +698,22 @@ class ColoredPermutations(Parent, UniqueRepresentation):
             sage: x == C([[2,3,3], [1,3,2]])
             True
         """
-        if isinstance(x, list):
-            if isinstance(x[0], tuple):
-                c = []
-                p = []
-                for k in x:
-                    if len(k) != 2:
-                        raise ValueError("input must be pairs (color, element)")
-                    c.append(self._C(k[0]))
-                    p.append(k[1])
-                return self.element_class(self, c, self._P(p))
+        if isinstance(x, self.element_class) and x.parent() is self:
+            return self
+        x = list(x)
+        if isinstance(x[0], tuple):
+            c = []
+            p = []
+            for k in x:
+                if len(k) != 2:
+                    raise ValueError("input must be pairs (color, element)")
+                c.append(self._C(k[0]))
+                p.append(k[1])
+            return self.element_class(self, c, self._P(p))
 
-            if len(x) != 2:
-                raise ValueError("input must be a pair of a list of colors and a permutation")
-            return self.element_class(self, [self._C(v) for v in x[0]], self._P(x[1]))
+        if len(x) != 2:
+            raise ValueError("input must be a pair of a list of colors and a permutation")
+        return self.element_class(self, [self._C(v) for v in x[0]], self._P(x[1]))
 
     def _coerce_map_from_(self, C):
         """
@@ -697,13 +741,13 @@ class ColoredPermutations(Parent, UniqueRepresentation):
             False
         """
         if isinstance(C, Permutations) and C.n == self._n:
-            return lambda P, x: P.element_class(P, [P._C.zero()]*P._n, x)
+            return lambda P, x: P.element_class(P, [P._C.zero()] * P._n, x)
         if self._m == 2 and isinstance(C, SignedPermutations) and C._n == self._n:
             return lambda P, x: P.element_class(P,
                                                 [P._C.zero() if v == 1 else P._C.one()
                                                  for v in x._colors],
                                                 x._perm)
-        return super(ColoredPermutations, self)._coerce_map_from_(C)
+        return super()._coerce_map_from_(C)
 
     def __iter__(self):
         """
@@ -930,8 +974,8 @@ class ColoredPermutations(Parent, UniqueRepresentation):
             True
         """
         deg = self.degrees()
-        dstar = self.codegrees()
-        return all(deg[-1] == d + dstar[i] for i, d in enumerate(deg))
+        codeg = self.codegrees()
+        return all(deg[-1] == d + dstar for d, dstar in zip(deg, codeg))
 
     Element = ColoredPermutation
 
@@ -939,10 +983,32 @@ class ColoredPermutations(Parent, UniqueRepresentation):
 ## Signed permutations
 
 
-class SignedPermutation(ColoredPermutation):
+class SignedPermutation(ColoredPermutation,
+                        metaclass=InheritComparisonClasscallMetaclass):
     """
     A signed permutation.
     """
+    @staticmethod
+    def __classcall_private__(cls, pi):
+        """
+        Create a signed permutation.
+
+        EXAMPLES::
+
+            sage: SignedPermutation([2, 1, 3])
+            [2, 1, 3]
+
+            sage: SignedPermutation([2, 1, -3])
+            [2, 1, -3]
+
+            sage: SignedPermutation((2,1,-3))
+            [2, 1, -3]
+
+            sage: SignedPermutation(range(1,4))
+            [1, 2, 3]
+        """
+        return SignedPermutations(len(list(pi)))(pi)
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -978,12 +1044,12 @@ class SignedPermutation(ColoredPermutation):
             sage: s3*s4*s3*s4 == s4*s3*s4*s3
             True
         """
-        colors = tuple(self._colors[i] * other._colors[val - 1]  # -1 for indexing
-                       for i, val in enumerate(self._perm))
+        colors = tuple(c * other._colors[val - 1]  # -1 for indexing
+                       for c, val in zip(self._colors, self._perm))
         p = self._perm._left_to_right_multiply_on_right(other._perm)
         return self.__class__(self.parent(), colors, p)
 
-    def inverse(self):
+    def __invert__(self):
         """
         Return the inverse of ``self``.
 
@@ -992,17 +1058,15 @@ class SignedPermutation(ColoredPermutation):
             sage: S = SignedPermutations(4)
             sage: s1,s2,s3,s4 = S.gens()
             sage: x = s4*s1*s2*s3*s4
-            sage: ~x
+            sage: ~x   # indirect doctest
             [2, 3, -4, -1]
             sage: x * ~x == S.one()
             True
         """
         ip = ~self._perm
         return self.__class__(self.parent(),
-                              tuple([self._colors[i - 1] for i in ip]),  # -1 for indexing
+                              tuple(self._colors[i - 1] for i in ip),  # -1 for indexing
                               ip)
-
-    __invert__ = inverse
 
     def __iter__(self):
         """
@@ -1016,8 +1080,53 @@ class SignedPermutation(ColoredPermutation):
             sage: [a for a in x]
             [-4, 1, 2, -3]
         """
-        for i, p in enumerate(self._perm):
-            yield self._colors[i] * p
+        for c, p in zip(self._colors, self._perm):
+            yield c * p
+
+    def __getitem__(self, key):
+        """
+        Return the specified element in the one line form of ``self``.
+
+        EXAMPLES::
+
+            sage: pi = SignedPermutation([-4, 5, -1, 2, -3])
+            sage: pi[-1]
+            -3
+            sage: pi[1::2]
+            [5, 2]
+        """
+        if isinstance(key, slice):
+            return [c * v for c, v in zip(self._colors[key], self._perm[key])]
+        return self._colors[key] * self._perm[key]
+
+    def __call__(self, i):
+        """
+        Return the image of the integer ``i`` in ``self``.
+
+        EXAMPLES::
+
+            sage: pi = SignedPermutations(7)([2,-1,4,-6,-5,-3,7])
+            sage: pi(2)
+            -1
+            sage: pi(-2)
+            1
+            sage: pi(7)
+            7
+            sage: pi(-7)
+            -7
+            sage: [pi(i) for i in range(1,8)]
+            [2, -1, 4, -6, -5, -3, 7]
+            sage: [pi(-i) for i in range(1,8)]
+            [-2, 1, -4, 6, 5, 3, -7]
+        """
+        if i in ZZ and 1 <= abs(i) <= len(self):
+            i = ZZ(i)
+            if i < 0:
+                return -self._colors[-i-1] * self._perm[-i-1]
+            return self._colors[i-1] * self._perm[i-1]
+        else:
+            raise TypeError("i (= %s) must equal +/- an integer between %s and %s"
+                            % (i,1,len(self)))
 
     def to_matrix(self):
         """
@@ -1061,6 +1170,79 @@ class SignedPermutation(ColoredPermutation):
             return self._colors[i] == 1 or self._perm[i - 1] < self._perm[i]
         return self._colors[i] == 1 and self._perm[i - 1] > self._perm[i]
 
+    def to_cycles(self, singletons=True, use_min=True, negative_singletons=True):
+        """
+        Return the signed permutation ``self`` as a list of disjoint cycles.
+
+        The cycles are returned in the order of increasing smallest
+        elements, and each cycle is returned as a tuple which starts
+        with its smallest positive element. We do not include the
+        corresponding negative cycles.
+
+        INPUT:
+
+        - ``singletons`` -- (default: ``True``) whether to include singleton
+          cycles or not
+        - ``use_min`` -- (default: ``True``) if ``False``, the cycles are
+          returned in the order of increasing *largest* (not smallest)
+          elements, and each cycle starts with its largest element
+
+        EXAMPLES::
+
+            sage: pi = SignedPermutations(7)([2,-1,4,-6,-5,-3,7])
+            sage: pi.to_cycles()
+            [(1, 2, -1, -2), (3, 4, -6), (5, -5), (7,)]
+            sage: pi.to_cycles(singletons=False)
+            [(1, 2, -1, -2), (3, 4, -6), (5, -5)]
+            sage: pi.to_cycles(use_min=False)
+            [(7,), (6, -3, -4), (5, -5), (2, -1, -2, 1)]
+            sage: pi.to_cycles(singletons=False, use_min=False)
+            [(6, -3, -4), (5, -5), (2, -1, -2, 1)]
+        """
+        cycles = []
+
+        l = self._perm[:]
+
+        if use_min:
+            groundset = range(len(l))
+        else:
+            groundset = reversed(range(len(l)))
+
+        # Go through until we've considered every number between 1 and len(l)
+        for i in groundset:
+            if not l[i]:
+                continue
+            cycle_first = i + 1
+            cycle = [cycle_first]
+            l[i], next_val = False, l[i]
+            s = self._colors[i]
+            while next_val != cycle_first:
+                cycle.append(s * next_val)
+                s *= self._colors[next_val-1]
+                l[next_val-1], next_val = False, l[next_val-1]
+            if s != 1:
+                cycle.extend([-e for e in cycle])
+
+            # Add the cycle to the list of cycles
+            if singletons or len(cycle) > 1:
+                cycles.append(tuple(cycle))
+
+        return cycles
+
+    def order(self):
+        """
+        Return the multiplicative order of the signed permutation.
+
+        EXAMPLES::
+
+            sage: pi = SignedPermutations(7)([2,-1,4,-6,-5,-3,7])
+            sage: pi.to_cycles(singletons=False)
+            [(1, 2, -1, -2), (3, 4, -6), (5, -5)]
+            sage: pi.order()
+            12
+        """
+        return lcm(len(c) for c in self.to_cycles(singletons=False))
+
 
 class SignedPermutations(ColoredPermutations):
     r"""
@@ -1082,8 +1264,7 @@ class SignedPermutations(ColoredPermutations):
     This is a finite Coxeter group of type `B_n`::
 
         sage: S.canonical_representation()
-        Finite Coxeter group over Number Field in a with
-        defining polynomial x^2 - 2 with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095? with Coxeter matrix:
         [1 3 2 2]
         [3 1 3 2]
         [2 3 1 4]
@@ -1118,6 +1299,7 @@ class SignedPermutations(ColoredPermutations):
 
     - :wikipedia:`Hyperoctahedral_group`
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.
@@ -1190,38 +1372,48 @@ class SignedPermutations(ColoredPermutations):
             True
             sage: x == S([1, -3, -2])
             True
+
+            sage: S = SignedPermutations(0)
+            sage: S([]) == list(S)[0]
+            True
+
+            sage: T = SignedPermutation(range(1,4))
+            sage: SignedPermutations(3)(T)
+            [1, 2, 3]
         """
-        if isinstance(x, list):
-            if isinstance(x[0], tuple):
-                c = []
-                p = []
-                for k in x:
-                    if len(k) != 2:
-                        raise ValueError("input must be pairs (sign, element)")
-                    if k[0] != 1 and k[0] != -1:
-                        raise ValueError("the sign must be +1 or -1")
-                    c.append(ZZ(k[0]))
-                    p.append(k[1])
-                return self.element_class(self, c, self._P(p))
+        if isinstance(x, self.element_class) and x.parent() is self:
+            return self
+        x = list(x)
+        if x and isinstance(x[0], tuple):
+            c = []
+            p = []
+            for k in x:
+                if len(k) != 2:
+                    raise ValueError("input must be pairs (sign, element)")
+                if k[0] != 1 and k[0] != -1:
+                    raise ValueError("the sign must be +1 or -1")
+                c.append(ZZ(k[0]))
+                p.append(k[1])
+            return self.element_class(self, c, self._P(p))
 
-            if len(x) == self._n:
-                c = []
-                p = []
-                one = ZZ.one()
-                for v in x:
-                    if v > 0:
-                        c.append(one)
-                        p.append(v)
-                    else:
-                        c.append(-one)
-                        p.append(-v)
-                return self.element_class(self, c, self._P(p))
+        if len(x) == self._n:
+            c = []
+            p = []
+            one = ZZ.one()
+            for v in x:
+                if v > 0:
+                    c.append(one)
+                    p.append(v)
+                else:
+                    c.append(-one)
+                    p.append(-v)
+            return self.element_class(self, c, self._P(p))
 
-            if len(x) != 2:
-                raise ValueError("input must be a pair of a list of signs and a permutation")
-            if any(s != 1 and s != -1 for s in x[0]):
-                raise ValueError("the sign must be +1 or -1")
-            return self.element_class(self, [ZZ(v) for v in x[0]], self._P(x[1]))
+        if len(x) != 2:
+            raise ValueError("input must be a pair of a list of signs and a permutation")
+        if any(s != 1 and s != -1 for s in x[0]):
+            raise ValueError("the sign must be +1 or -1")
+        return self.element_class(self, [ZZ(v) for v in x[0]], self._P(x[1]))
 
     def __iter__(self):
         """

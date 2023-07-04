@@ -47,8 +47,10 @@ AUTHORS:
 
 - Simon King (2013-02): added examples
 """
-#*****************************************************************************
-#  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>, William Stein <wstein@gmail.com>
+
+# ****************************************************************************
+#  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>,
+#                     William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -59,10 +61,8 @@ AUTHORS:
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import absolute_import, print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.category import Category, JoinCategory
 from . import morphism
@@ -74,19 +74,19 @@ from sage.misc.lazy_attribute import lazy_attribute
 
 ###################################
 # Use the weak "triple" dictionary
-# introduced in trac ticket #715
+# introduced in github issue #715
 # with weak values, as introduced in
-# trac ticket #14159
+# github issue #14159
 
 from sage.structure.coerce_dict import TripleDict
 _cache = TripleDict(weak_values=True)
+
 
 def Hom(X, Y, category=None, check=True):
     """
     Create the space of homomorphisms from X to Y in the category ``category``.
 
     INPUT:
-
 
     - ``X`` -- an object of a category
 
@@ -310,7 +310,7 @@ def Hom(X, Y, category=None, check=True):
         sage: Hom(S, S, C)
         Set of Morphisms from S to S in Permissive category
 
-    With ``check=False``, unitialized parents, as can appear upon
+    With ``check=False``, uninitialized parents, as can appear upon
     unpickling, are supported. Case of a parent::
 
         sage: cls = type(Set())
@@ -328,7 +328,7 @@ def Hom(X, Y, category=None, check=True):
         sage: H = Hom(S, S, SimplicialComplexes(), check=False)
 
     Typical example where unpickling involves calling Hom on an
-    unitialized parent::
+    uninitialized parent::
 
         sage: P.<x,y> = QQ['x,y']
         sage: Q = P.quotient([x^2-1,y^2-1])
@@ -364,7 +364,8 @@ def Hom(X, Y, category=None, check=True):
         ....:             raise TypeError
         sage: from sage.structure.element import Element
         sage: class Foo(Parent):
-        ....:     _no_generic_basering_coercion = True
+        ....:     def _coerce_map_from_base_ring(self):
+        ....:         return self._generic_coerce_map(self.base_ring())
         ....:     class Element(Element):
         ....:         pass
         sage: X = Foo(base=QQ, category=AlgebrasWithHom(QQ))
@@ -462,7 +463,8 @@ def hom(X, Y, f):
 
     EXAMPLES::
 
-        sage: phi = hom(QQ['x'], QQ, [2])
+        sage: R.<x> = QQ[]
+        sage: phi = hom(R, QQ, [2])
         sage: phi(x^2 + 3)
         7
     """
@@ -579,17 +581,16 @@ class Homset(Set_generic):
         sage: loads(dumps(H)) == H
         True
     """
-    def __init__(self, X, Y, category=None, base = None, check=True):
+    def __init__(self, X, Y, category=None, base=None, check=True):
         r"""
         TESTS::
 
             sage: X = ZZ['x']; X.rename("X")
             sage: Y = ZZ['y']; Y.rename("Y")
+            sage: f = X.hom([0], Y)
             sage: class MyHomset(Homset):
-            ....:     def my_function(self, x):
-            ....:         return Y(x[0])
             ....:     def _an_element_(self):
-            ....:         return sage.categories.morphism.SetMorphism(self, self.my_function)
+            ....:         return sage.categories.morphism.SetMorphism(self, f)
             sage: import __main__; __main__.MyHomset = MyHomset # fakes MyHomset being defined in a Python module
             sage: H = MyHomset(X, Y, category=Monoids(), base = ZZ)
             sage: H
@@ -601,9 +602,6 @@ class Homset(Set_generic):
             ...
             TypeError: category (=1) must be a category
 
-            sage: H
-            Set of Morphisms from X to Y in Category of monoids
-            sage: TestSuite(H).run()
             sage: H = MyHomset(X, Y, category=1, base = ZZ, check = False)
             Traceback (most recent call last):
             ...
@@ -652,8 +650,8 @@ class Homset(Set_generic):
             # See also #15801.
             base = X.base_ring()
 
-        Parent.__init__(self, base = base,
-                        category = category.Endsets() if X is Y else category.Homsets())
+        Parent.__init__(self, base=base,
+                        category=category.Endsets() if X is Y else category.Homsets())
 
     def __reduce__(self):
         """
@@ -666,7 +664,7 @@ class Homset(Set_generic):
         .. NOTE::
 
             It can happen, that ``Hom(X,X)`` is called during
-            unpickling with an unitialized instance ``X`` of a Python
+            unpickling with an uninitialized instance ``X`` of a Python
             class. In some of these cases, testing that ``X in
             category`` can trigger ``X.category()``. This in turn can
             raise a error, or return a too large category (``Sets()``,
@@ -729,15 +727,15 @@ class Homset(Set_generic):
             sage: hash(Hom(QQ, ZZ)) == hash((QQ, ZZ, QQ))
             True
 
-            sage: E = EllipticCurve('37a')
-            sage: H = E(0).parent(); H
+            sage: E = EllipticCurve('37a')                              # optional - sage.symbolic
+            sage: H = E(0).parent(); H                                  # optional - sage.symbolic
             Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))
             True
         """
         return hash((self._domain, self._codomain, self.base()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         TESTS::
 
@@ -745,8 +743,6 @@ class Homset(Set_generic):
             True
         """
         return True
-
-    __nonzero__ = __bool__
 
     def homset_category(self):
         """
@@ -831,7 +827,7 @@ class Homset(Set_generic):
             sage: H = Hom(Set([1,2,3]), Set([1,2,3]))
             sage: f = H( lambda x: 4-x )
             sage: f.parent()
-            Set of Morphisms from {1, 2, 3} to {1, 2, 3} in Category of finite sets
+            Set of Morphisms from {1, 2, 3} to {1, 2, 3} in Category of finite enumerated sets
             sage: f(1), f(2), f(3) # todo: not implemented
 
             sage: H = Hom(ZZ, QQ, Sets())
@@ -897,13 +893,13 @@ class Homset(Set_generic):
             ...
             TypeError: unable to convert 0 to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
-             to Free Group on generators {x, y, z} in Category of groups
+             to Free Group on generators {x, y, z} in Category of infinite groups
             sage: H("whatever")
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 'whatever' to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
-             to Free Group on generators {x, y, z} in Category of groups
+             to Free Group on generators {x, y, z} in Category of infinite groups
             sage: HH = Hom(H, H)
             sage: HH(HH.identity(), foo="bar")
             Traceback (most recent call last):
@@ -922,6 +918,8 @@ class Homset(Set_generic):
             try:
                 call_with_keywords = self.__call_on_basis__
             except AttributeError:
+                if 'base_map' in options:
+                    raise NotImplementedError("base_map not supported for this Homset; you may need to specify a category")
                 raise NotImplementedError("no keywords are implemented for constructing elements of {}".format(self))
             options.setdefault("category", self.homset_category())
             return call_with_keywords(**options)
@@ -1042,7 +1040,7 @@ class Homset(Set_generic):
 
             sage: H = Hom(ZZ, ZZ)
             sage: H.element_class_set_morphism
-            <type 'sage.categories.morphism.SetMorphism'>
+            <class 'sage.categories.morphism.SetMorphism'>
         """
         return self.__make_element_class__(morphism.SetMorphism)
 
@@ -1084,7 +1082,7 @@ class Homset(Set_generic):
             True
         """
         return not (self == other)
-    
+
     def __contains__(self, x):
         """
         Test whether the parent of the argument is ``self``.
@@ -1144,7 +1142,7 @@ class Homset(Set_generic):
             sage: H.identity()
             Traceback (most recent call last):
             ...
-            TypeError: Identity map only defined for endomorphisms. Try natural_map() instead.
+            TypeError: identity map only defined for endomorphisms; try natural_map() instead
             sage: H.natural_map()
             Natural morphism:
               From: Integer Ring
@@ -1152,8 +1150,7 @@ class Homset(Set_generic):
         """
         if self.is_endomorphism_set():
             return morphism.IdentityMorphism(self)
-        else:
-            raise TypeError("Identity map only defined for endomorphisms. Try natural_map() instead.")
+        raise TypeError("identity map only defined for endomorphisms; try natural_map() instead")
 
     def one(self):
         """
@@ -1167,7 +1164,7 @@ class Homset(Set_generic):
 
             sage: K = GaussianIntegers()
             sage: End(K).one()
-            Identity endomorphism of Gaussian Integers in Number Field in I with defining polynomial x^2 + 1
+            Identity endomorphism of Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         return self.identity()
 
@@ -1225,7 +1222,8 @@ class Homset(Set_generic):
             sage: type(H.reversed())
             <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
         """
-        return Hom(self.codomain(), self.domain(), category = self.homset_category())
+        return Hom(self.codomain(), self.domain(),
+                   category=self.homset_category())
 
 
 # Really needed???
@@ -1236,11 +1234,10 @@ class HomsetWithBase(Homset):
 
             sage: X = ZZ['x']; X.rename("X")
             sage: Y = ZZ['y']; Y.rename("Y")
+            sage: f = X.hom([0], Y)
             sage: class MyHomset(HomsetWithBase):
-            ....:     def my_function(self, x):
-            ....:         return Y(x[0])
             ....:     def _an_element_(self):
-            ....:         return sage.categories.morphism.SetMorphism(self, self.my_function)
+            ....:         return sage.categories.morphism.SetMorphism(self, f)
             sage: import __main__; __main__.MyHomset = MyHomset # fakes MyHomset being defined in a Python module
             sage: H = MyHomset(X, Y, category=Monoids())
             sage: H
@@ -1251,7 +1248,8 @@ class HomsetWithBase(Homset):
         """
         if base is None:
             base = X.base_ring()
-        Homset.__init__(self, X, Y, check=check, category=category, base = base)
+        Homset.__init__(self, X, Y, check=check, category=category, base=base)
+
 
 def is_Homset(x):
     """
@@ -1287,4 +1285,3 @@ def is_Endset(x):
         True
     """
     return isinstance(x, Homset) and x.is_endomorphism_set()
-

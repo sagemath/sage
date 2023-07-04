@@ -47,14 +47,13 @@ References:
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import, division
-from six.moves import range
-
-from sage.arith.all import is_prime_power
+from itertools import repeat
+from sage.arith.misc import is_prime_power
 from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
 from sage.categories.sets_cat import EmptySetError
 from .bibd import balanced_incomplete_block_design
 from sage.misc.unknown import Unknown
+
 
 def resolvable_balanced_incomplete_block_design(v,k,existence=False):
     r"""
@@ -92,7 +91,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
 
         sage: for v in range(40):
         ....:     for k in range(v):
-        ....:         if designs.resolvable_balanced_incomplete_block_design(v,k,existence=True):
+        ....:         if designs.resolvable_balanced_incomplete_block_design(v,k,existence=True) is True:
         ....:             _ = designs.resolvable_balanced_incomplete_block_design(v,k)
     """
     # Trivial cases
@@ -220,10 +219,14 @@ def kirkman_triple_system(v,existence=False):
 
         # First parallel class
         first_class = [[(0,1),(0,2),'inf']]
-        b0 = K.one(); b1 = a**t; b2 = a**m
+        b0 = K.one()
+        b1 = a**t
+        b2 = a**m
         first_class.extend([(b0*a**i,1),(b1*a**i,1),(b2*a**i,2)]
                             for i in list(range(t))+list(range(2*t,3*t))+list(range(4*t,5*t)))
-        b0 = a**(m+t); b1=a**(m+3*t); b2=a**(m+5*t)
+        b0 = a**(m+t)
+        b1 = a**(m+3*t)
+        b2 = a**(m+5*t)
         first_class.extend([[(b0*a**i,2),(b1*a**i,2),(b2*a**i,2)]
                             for i in range(t)])
 
@@ -254,9 +257,9 @@ def kirkman_triple_system(v,existence=False):
         a = K.primitive_element()
         t = (q - 1) // 6
         A0 = [(0,0),(0,1),(0,2)]
-        B  = [[(a**i,j),(a**(i+2*t),j),(a**(i+4*t),j)] for j in range(3)
+        B = [[(a**i,j),(a**(i+2*t),j),(a**(i+4*t),j)] for j in range(3)
               for i in range(t)]
-        A  = [[(a**i,0),(a**(i+2*t),1),(a**(i+4*t),2)] for i in range(6*t)]
+        A = [[(a**i,0),(a**(i+2*t),1),(a**(i+4*t),2)] for i in range(6*t)]
 
         # Action of K on the points
         action = lambda v,x: (v+x[0],x[1])
@@ -266,7 +269,7 @@ def kirkman_triple_system(v,existence=False):
                    for i,p in enumerate(K)
                    for j in range(3)}
 
-        B0  = [A0] + B + A[t:2*t] + A[3*t:4*t] + A[5*t:6*t]
+        B0 = [A0] + B + A[t:2*t] + A[3*t:4*t] + A[5*t:6*t]
 
         # Classes
         classes = [[[relabel[action(p,x)] for x in tr] for tr in B0]
@@ -319,22 +322,30 @@ def kirkman_triple_system(v,existence=False):
         # 23(n'-1), etc..
         # Then remove the blocks containing (n'-1)
         for B in gdd4:
-            for i,b in enumerate(B):
-                if 8 in b: j = min(b); del B[i]; B.insert(0,j); break
+            for i, b in enumerate(B):
+                if 8 in b:
+                    j = min(b)
+                    del B[i]
+                    B.insert(0, j)
+                    break
         gdd4.sort()
         for B in gdd4:
             B.pop(0)
 
         for B in gdd7:
-            for i,b in enumerate(B):
-                if 14 in b: j = min(b); del B[i]; B.insert(0,j); break
+            for i, b in enumerate(B):
+                if 14 in b:
+                    j = min(b)
+                    del B[i]
+                    B.insert(0, j)
+                    break
         gdd7.sort()
         for B in gdd7:
             B.pop(0)
 
         # Pasting the KTS(n') without {x,x',\infty} blocks
-        classes = [[] for i in range((v-1) // 2)]
-        gdd = {4:gdd4, 7: gdd7}
+        classes = [[] for _ in repeat(None, (v - 1) // 2)]
+        gdd = {4: gdd4, 7: gdd7}
         for B in PBD_4_7((v-1)//2,check=False):
             for i,classs in enumerate(gdd[len(B)]):
                 classes[B[i]].extend([[2*B[x//2]+x%2 for x in BB] for BB in classs])
@@ -348,11 +359,12 @@ def kirkman_triple_system(v,existence=False):
                                             k=3,
                                             lambd=1,
                                             check=True,
-                                            copy =False)
+                                            copy=False)
         KTS._classes = classes
         assert KTS.is_resolvable()
 
         return KTS
+
 
 def v_4_1_rbibd(v,existence=False):
     r"""
@@ -387,9 +399,9 @@ def v_4_1_rbibd(v,existence=False):
 
     TESTS::
 
-        sage: for q in prime_powers(2,30):
+        sage: for q in prime_powers(2,30):  # indirect doctest
         ....:     if (3*q+1)%12 == 4:
-        ....:         _ = designs.resolvable_balanced_incomplete_block_design(3*q+1,4) # indirect doctest
+        ....:         _ = designs.resolvable_balanced_incomplete_block_design(3*q+1,4)
     """
     # Volume 1, VII.7.5.a from [BJL99]_
     if v%3 != 1 or not is_prime_power((v-1)//3):
@@ -447,7 +459,7 @@ def PBD_4_7(v,check=True, existence=False):
 
         sage: for i in range(1,300,3):
         ....:     if i not in [10,19,31]:
-        ....:         assert PBD_4_7(i,existence=True)
+        ....:         assert PBD_4_7(i,existence=True) is True
         ....:         _ = PBD_4_7(i,check=True)
     """
     if v%3 != 1 or v in [10,19,31]:
@@ -547,7 +559,7 @@ def PBD_4_7(v,check=True, existence=False):
         from .group_divisible_designs import group_divisible_design
         from .orthogonal_arrays       import transversal_design
         GDD = group_divisible_design(3*5,K=[4],G=[3],check=False)
-        TD  = transversal_design(5,5)
+        TD = transversal_design(5,5)
 
         # A (75,{4},{15})-GDD
         GDD2 = [[3*B[x//3]+x%3 for x in BB] for B in TD for BB in GDD]
@@ -622,7 +634,7 @@ def PBD_4_7(v,check=True, existence=False):
 
         return PBD_4_7_from_Y(GDD,check=check)
 
-    elif v % 6 == 1 and GDD_4_2((v - 1) // 6, existence=True):
+    elif v % 6 == 1 and GDD_4_2((v - 1) // 6, existence=True) is True:
         # VII.5.17 from [BJL99]
         gdd = GDD_4_2((v - 1) // 6)
         return PBD_4_7_from_Y(gdd, check=check)
@@ -633,9 +645,9 @@ def PBD_4_7(v,check=True, existence=False):
         PBD = PBD_4_7_from_Y(PBD,check=False)
         return PBD_4_7_from_Y(PBD,check=check)
 
-    elif balanced_incomplete_block_design(v,4,existence=True):
+    elif balanced_incomplete_block_design(v,4,existence=True) is True:
         return balanced_incomplete_block_design(v,4)
-    elif balanced_incomplete_block_design(v,7,existence=True):
+    elif balanced_incomplete_block_design(v,7,existence=True) is True:
         return balanced_incomplete_block_design(v,7)
     else:
         from sage.combinat.designs.orthogonal_arrays import orthogonal_array
@@ -650,9 +662,9 @@ def PBD_4_7(v,check=True, existence=False):
         vv = (v - 1) // 3
         for g in range((vv + 5 - 1) // 5, vv // 4 + 1):
             u = vv-4*g
-            if (orthogonal_array(5,g,existence=True) and
-                PBD_4_7(3*g+1,existence=True)        and
-                PBD_4_7(3*u+1,existence=True)):
+            if (orthogonal_array(5,g,existence=True) is True and
+                PBD_4_7(3*g+1,existence=True) is True and
+                PBD_4_7(3*u+1,existence=True) is True):
                 from .orthogonal_arrays import transversal_design
                 domain = set(range(vv))
                 GDD = transversal_design(5,g)
@@ -722,7 +734,7 @@ def PBD_4_7_from_Y(gdd,check=True):
                          "but there are other: {}".format(txt))
 
     for gs in group_sizes:
-        if not PBD_4_7(3*gs+1,existence=True):
+        if not PBD_4_7(3*gs+1,existence=True) is True:
             raise RuntimeError("A group has size {} but I do not know how to "
                                "build a ({},[4,7])-PBD".format(gs,3*gs+1))
 

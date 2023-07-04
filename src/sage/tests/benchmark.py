@@ -1,7 +1,6 @@
 """
 Benchmarks
 
-
 COMMENTS:
 
 Taken as a whole these benchmarks suggest that by far the fastest math
@@ -15,8 +14,6 @@ TESTS::
 
     sage: import sage.tests.benchmark
 """
-from __future__ import print_function
-from six.moves import range
 
 from sage.all import * # QQ, alarm, ModularSymbols, gp, pari, cputime, EllipticCurve
 
@@ -67,12 +64,16 @@ class Benchmark:
         given.
 
         INPUT:
-            systems -- list of strings of which systems to run tests on
-                if None, runs the standard systems
-            timeout -- how long (in seconds) to run each test for
-            trials -- integer, number of trials
-            sort -- whether to sort system names
-            optional -- if systems is None, whether to test optional systems
+
+        - systems -- optional list of strings of which systems to run tests on;
+          if ``None``, runs the standard systems
+        - timeout -- optional integer (default 60); how long (in seconds)
+          to run each test for
+        - trials -- optional integer (default 1); number of trials
+        - sort -- optional boolean (default ``False``); whether to sort
+          system names
+        - optional -- optional boolean (default ``False``);
+          if systems is ``None``, whether to test optional systems
 
         EXAMPLES::
 
@@ -87,7 +88,6 @@ class Benchmark:
         if sort:
             systems.sort()
         print('\n\n\n' + str(self))
-        #print "Timeout: %s seconds"%timeout
         print('  %-12s%-12s%-12s%-12s%-12s%15s' % ('System', 'min',
                                                    'avg', 'max',
                                                    'trials', 'cpu or wall'))
@@ -143,6 +143,7 @@ class Benchmark:
             return self.repr_str
         except AttributeError:
             return 'sage.tests.benchmark.Benchmark instance'
+
 
 class Divpoly(Benchmark):
     def __init__(self, n):
@@ -381,7 +382,6 @@ class MPolynomialPower(Benchmark):
 ##         f = z**self.exp
 ##         return float(gp.eval('gettime/1000.0'))
 
-
     def magma(self):
         """
         Time the computation in Magma.
@@ -401,7 +401,6 @@ class MPolynomialPower(Benchmark):
         t = magma.cputime()
         w = z**magma(self.exp)
         return magma.cputime(t)
-
 
 
 class MPolynomialMult(Benchmark):
@@ -584,7 +583,6 @@ class MPolynomialMult2(Benchmark):
 ##         z1 = gp(str(z1))
 ##         gp.eval('gettime')
 ##         f = z0*z1
-##         print f
 ##         return float(gp.eval('gettime/1000.0'))
 
     def maxima(self):
@@ -747,7 +745,6 @@ class MPolynomialMult2(Benchmark):
         return magma.cputime(t)
 
 
-
 class CharPolyTp(Benchmark):
     def __init__(self, N=37,k=2,p=2,sign=1):
         self.N = N
@@ -832,8 +829,6 @@ class CharPolyTp(Benchmark):
         return magma.cputime(t)
 
 
-
-
 class PolyFactor(Benchmark):
     def __init__(self, n, R):
         self.__n = n
@@ -901,7 +896,6 @@ class PolyFactor(Benchmark):
         gp.eval('gettime')
         f.factor()
         return float(gp.eval('gettime/1000.0'))
-
 
 
 class SquareInts(Benchmark):
@@ -1286,7 +1280,6 @@ class Fibonacci(Benchmark):
         return float(gp.eval('gettime/1000.0'))
 
 
-
 class SEA(Benchmark):
     def __init__(self, p):
         self.__p = p
@@ -1557,7 +1550,7 @@ class EllipticCurveTraces(Benchmark):
             sage: isinstance(B.sage(), float)
             Traceback (most recent call last):
             ...
-            TypeError: anlist() got an unexpected keyword argument 'pari_ints'
+            TypeError: ...anlist() got an unexpected keyword argument 'pari_ints'
 
         """
         E = EllipticCurve([1,2,3,4,5])
@@ -1761,8 +1754,9 @@ class FiniteExtFieldMult(Benchmark):
         v = magma('[e*f : i in [1..%s]]'%self.__times)
         return magma.cputime(t)
 
+
 class FiniteExtFieldAdd(Benchmark):
-    def __init__(self,field,times):
+    def __init__(self, field, times):
         self.__times = times
         self.field = field
         self.e = field.gen()**(field.cardinality()/3)
@@ -1826,7 +1820,8 @@ class FiniteExtFieldAdd(Benchmark):
 
 
 """
-TODO:
+.. TODO::
+
    * multiply reals
    * modular degree
    * anlist
@@ -1836,8 +1831,6 @@ TODO:
    * multivariate poly factor
 
 """
-
-
 
 
 def suite1():

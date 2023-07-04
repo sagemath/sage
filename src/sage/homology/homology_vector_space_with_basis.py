@@ -14,8 +14,6 @@ AUTHORS:
 
 - John H. Palmieri, Travis Scrimshaw (2015-09)
 """
-from __future__ import absolute_import
-
 ########################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>
 #                          Travis Scrimshaw <tscrimsh at umn.edu>
@@ -24,7 +22,7 @@ from __future__ import absolute_import
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.misc.cachefunc import cached_method
@@ -32,8 +30,8 @@ from sage.categories.algebras import Algebras
 from sage.categories.modules import Modules
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.sets.family import Family
-from .simplicial_complex import SimplicialComplex
-from .simplicial_set import SimplicialSet_arbitrary
+from sage.topology.simplicial_complex import SimplicialComplex
+from sage.topology.simplicial_set import SimplicialSet_arbitrary
 
 class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     r"""
@@ -50,10 +48,10 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
 
         This is not intended to be created directly by the user, but
         instead via the methods
-        :meth:`~sage.homology.cell_complex.GenericCellComplex.homology_with_basis` and
-        :meth:`~sage.homology.cell_complex.GenericCellComplex.cohomology_ring`
+        :meth:`~sage.topology.cell_complex.GenericCellComplex.homology_with_basis` and
+        :meth:`~sage.topology.cell_complex.GenericCellComplex.cohomology_ring`
         for the class of :class:`cell
-        complexes<sage.homology.cell_complex.GenericCellComplex>`.
+        complexes<sage.topology.cell_complex.GenericCellComplex>`.
 
     INPUT:
 
@@ -107,19 +105,19 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     This works with simplicial, cubical, and `\Delta`-complexes, and
     also simplicial sets::
 
-        sage: Klein_c = cubical_complexes.KleinBottle()
-        sage: H = Klein_c.cohomology_ring(GF(2))
+        sage: Torus_c = cubical_complexes.Torus()
+        sage: H = Torus_c.cohomology_ring(GF(2))
         sage: x,y = H.basis(1)
         sage: x.cup_product(x)
         0
         sage: x.cup_product(y)
         h^{2,0}
         sage: y.cup_product(y)
-        h^{2,0}
+        0
 
         sage: Klein_d = delta_complexes.KleinBottle()
         sage: H = Klein_d.cohomology_ring(GF(2))
-        sage: u,v = H.basis(1)
+        sage: u,v = sorted(H.basis(1))
         sage: u.cup_product(u)
         h^{2,0}
         sage: u.cup_product(v)
@@ -415,9 +413,9 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 
         This is not intended to be created directly by the user, but
         instead via the
-        :meth:`cohomology ring<sage.homology.cell_complex.GenericCellComplex.cohomology_ring>`
+        :meth:`cohomology ring<sage.topology.cell_complex.GenericCellComplex.cohomology_ring>`
         of a :class:`cell
-        complex<sage.homology.cell_complex.GenericCellComplex>`.
+        complex<sage.topology.cell_complex.GenericCellComplex>`.
 
     INPUT:
 
@@ -571,7 +569,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 
         and simplicial sets::
 
-            sage: from sage.homology.simplicial_set_examples import RealProjectiveSpace
+            sage: from sage.topology.simplicial_set_examples import RealProjectiveSpace
             sage: RP5 = RealProjectiveSpace(5)
             sage: x = RP5.cohomology_ring(GF(2)).basis()[1,0]
             sage: x**4
@@ -587,7 +585,6 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             sage: a.cup_product(y)
             0
         """
-        B = self.basis()
         scomplex = self.complex()
         base_ring = self.base_ring()
         deg_left = li[0]
@@ -873,4 +870,3 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
         return [[S_k]]
     return [[i_k] + l for i_k in range(S_k, i_k_plus_one)
             for l in sum_indices(k-1, i_k, S_k)]
-

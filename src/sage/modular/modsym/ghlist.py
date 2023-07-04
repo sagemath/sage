@@ -1,8 +1,8 @@
 r"""
-List of coset representatives for `\Gamma_H(N)` in `{\rm SL}_2(\ZZ)`
+List of coset representatives for `\Gamma_H(N)` in `\SL_2(\ZZ)`
 """
 ###########################################################################
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -17,7 +17,6 @@ List of coset representatives for `\Gamma_H(N)` in `{\rm SL}_2(\ZZ)`
 #
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import absolute_import
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
 from sage.misc.persist import register_unpickle_override
@@ -29,7 +28,7 @@ from . import p1list
 class GHlist(SageObject):
     r"""
     A class representing a list of coset representatives for `\Gamma_H(N)` in
-    `{\rm SL}_2(\ZZ)`.
+    `\SL_2(\ZZ)`.
 
     TESTS::
 
@@ -178,4 +177,3 @@ class _GHlist_old_pickle(GHlist):
 
 register_unpickle_override('sage.modular.modsym.ghlist', 'GHlist',
                            _GHlist_old_pickle)
-

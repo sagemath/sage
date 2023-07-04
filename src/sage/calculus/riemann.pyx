@@ -10,7 +10,7 @@ AUTHORS:
 Development supported by NSF award No. 0702939.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Ethan Van Andel <evlutte@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -22,24 +22,20 @@ Development supported by NSF award No. 0702939.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.decorators import options
-from sage.plot.all import list_plot, Graphics
 
-from sage.ext.fast_eval import fast_callable
+from sage.ext.fast_callable import fast_callable
 
-from sage.rings.all import CDF
+from sage.rings.complex_double import CDF
 
 from sage.arith.srange import srange
 
 from sage.calculus.interpolation import spline
-
-from sage.plot.complex_plot import ComplexPlot
 
 from sage.calculus.integration import numerical_integral
 
@@ -256,13 +252,13 @@ cdef class Riemann_Map:
             for k in xrange(self.B):
                 for i in xrange(N):
                     fk = fs[k](self.tk[N-i-1])
-                    cps[k, i] = np.complex(1/fk)
-                    dps[k, i] = np.complex(1/fk**2*fprimes[k](self.tk[N-i-1]))
+                    cps[k, i] = complex(1/fk)
+                    dps[k, i] = complex(1/fk**2*fprimes[k](self.tk[N-i-1]))
         else:
             for k in xrange(self.B):
                 for i in xrange(N):
-                    cps[k, i] = np.complex(fs[k](self.tk[i]))
-                    dps[k, i] = np.complex(fprimes[k](self.tk[i]))
+                    cps[k, i] = complex(fs[k](self.tk[i]))
+                    dps[k, i] = complex(fprimes[k](self.tk[i]))
         if self.exterior:
             xmax = (1/cps).real.max()
             xmin = (1/cps).real.min()
@@ -283,7 +279,6 @@ cdef class Riemann_Map:
         self._generate_theta_array()
         self._generate_interior_mapper()
         self._generate_inverse_mapper()
-
 
     def _repr_(self):
         """
@@ -383,7 +378,7 @@ cdef class Riemann_Map:
 
     def get_szego(self, int boundary=-1, absolute_value=False):
         """
-        Returns a discretized version of the Szego kernel for each boundary
+        Return a discretized version of the Szego kernel for each boundary
         function.
 
         INPUT:
@@ -457,7 +452,7 @@ cdef class Riemann_Map:
 
     def get_theta_points(self, int boundary=-1):
         """
-        Returns an array of points of the form
+        Return an array of points of the form
         ``[t value, theta in e^(I*theta)]``, that is, a discretized version
         of the theta/boundary correspondence function. In other words, a point
         in this array [t1, t2] represents that the boundary point given by f(t1)
@@ -552,9 +547,9 @@ cdef class Riemann_Map:
             if N % 3 == 0:
                 p_vector[k, N] = 1*coeff * dps[k, 0] * exp(I*theta_array[k, 0])
             elif (N - 2) % 3 == 0:
-                p_vector[k, N - 2] = ((coeff + I/(3*N)) * dps[k, N- 2 ] *
+                p_vector[k, N - 2] = ((coeff + I/(3*N)) * dps[k, N - 2] *
                                       exp(I * theta_array[k, N - 2]))
-                p_vector[k, N- 1 ] = (4*I / (3*N) * dps[k, N - 1] *
+                p_vector[k, N - 1] = (4*I / (3*N) * dps[k, N - 1] *
                                       exp(I * theta_array[k, N - 1]))
                 p_vector[k, N] = (I / (3*N) * dps[k, 0] *
                                   exp(I * theta_array[k, 0]))
@@ -575,12 +570,13 @@ cdef class Riemann_Map:
 
     cpdef riemann_map(self, COMPLEX_T pt):
         """
-        Returns the Riemann mapping of a point. That is, given ``pt`` on
-        the interior of the mapped region, ``riemann_map`` will return
-        the point on the unit disk that ``pt`` maps to. Note that this
-        method only works for interior points; accuracy breaks down very close
-        to the boundary. To get boundary correspondance, use
-        :meth:`get_theta_points`.
+        Return the Riemann mapping of a point.
+
+        That is, given ``pt`` on the interior of the mapped region,
+        ``riemann_map`` will return the point on the unit disk that
+        ``pt`` maps to. Note that this method only works for interior
+        points; accuracy breaks down very close to the boundary. To
+        get boundary correspondence, use :meth:`get_theta_points`.
 
         INPUT:
 
@@ -606,8 +602,7 @@ cdef class Riemann_Map:
             (-1.56...e-05+0.989694...j)
             sage: m.riemann_map(0.4)
             (0.73324...+3.2...e-06j)
-            sage: import numpy as np
-            sage: m.riemann_map(np.complex(-3, 0.0001))
+            sage: m.riemann_map(complex(-3, 0.0001))
             (1.405757...e-05+8.06...e-10j)
         """
 
@@ -663,11 +658,12 @@ cdef class Riemann_Map:
 
     cpdef inverse_riemann_map(self, COMPLEX_T pt):
         """
-        Returns the inverse Riemann mapping of a point. That is, given ``pt``
-        on the interior of the unit disc, ``inverse_riemann_map()`` will
-        return the point on the original region that would be Riemann
-        mapped to ``pt``. Note that this method does not work for multiply
-        connected domains.
+        Return the inverse Riemann mapping of a point.
+
+        That is, given ``pt`` on the interior of the unit disc,
+        ``inverse_riemann_map()`` will return the point on the
+        original region that would be Riemann mapped to ``pt``. Note
+        that this method does not work for multiply connected domains.
 
         INPUT:
 
@@ -691,8 +687,7 @@ cdef class Riemann_Map:
             (0.486319...-4.90019052...j)
             sage: m.inverse_riemann_map(0.25 - 0.3*I)
             (0.1653244...-0.180936...j)
-            sage: import numpy as np
-            sage: m.inverse_riemann_map(np.complex(-0.2, 0.5))
+            sage: m.inverse_riemann_map(complex(-0.2, 0.5))
             (-0.156280...+0.321819...j)
         """
         if self.exterior:
@@ -753,6 +748,8 @@ cdef class Riemann_Map:
             sage: m.plot_boundaries(plotjoined=False, rgbcolor=[0,0,1], thickness=6)
             Graphics object consisting of 1 graphics primitive
         """
+        from sage.plot.all import list_plot
+
         plots = list(range(self.B))
         for k in xrange(self.B):
             # This conditional should be eliminated when the thickness/pointsize
@@ -767,11 +764,11 @@ cdef class Riemann_Map:
                     pointsize=thickness)
         return sum(plots)
 
-
     cpdef compute_on_grid(self, plot_range, int x_points):
         """
-        Computes the Riemann map on a grid of points. Note that these points
-        are complex of the form z = x + y*i.
+        Compute the Riemann map on a grid of points.
+
+        Note that these points are complex of the form z = x + y*i.
 
         INPUT:
 
@@ -831,16 +828,17 @@ cdef class Riemann_Map:
                     z_values[j, i] = -np.dot(p_vector,1/(pre_q_vector - pt))
         return z_values, xmin, xmax, ymin, ymax
 
-
     @options(interpolation='catrom')
     def plot_spiderweb(self, spokes=16, circles=4, pts=32, linescale=0.99,
-            rgbcolor=[0,0,0], thickness=1, plotjoined=True, withcolor = False,
-            plot_points = 200, min_mag = 0.001, **options):
+            rgbcolor=[0, 0, 0], thickness=1, plotjoined=True, withcolor=False,
+            plot_points=200, min_mag=0.001, **options):
         """
-        Generates a traditional "spiderweb plot" of the Riemann map. Shows
-        what concentric circles and radial lines map to. The radial lines
-        may exhibit erratic behavior near the boundary; if this occurs,
-        decreasing ``linescale`` may mitigate the problem.
+        Generate a traditional "spiderweb plot" of the Riemann map.
+
+        This shows what concentric circles and radial lines map to.
+        The radial lines may exhibit erratic behavior near the
+        boundary; if this occurs, decreasing ``linescale`` may
+        mitigate the problem.
 
         For multiply connected domains the spiderweb is by necessity
         generated using the forward mapping. This method is more
@@ -939,11 +937,14 @@ cdef class Riemann_Map:
             sage: m = Riemann_Map([z1,z2,z3],[z1p,z2p,z3p],0,ncorners=4) # long time
             sage: p = m.plot_spiderweb(withcolor=True,plot_points=500, thickness = 2.0, min_mag=0.1) # long time
         """
+        from sage.plot.complex_plot import ComplexPlot
+        from sage.plot.all import list_plot, Graphics
+
         cdef int k, i
         if self.exterior:
             raise ValueError(
                 "Spiderwebs for exterior maps are not currently    supported")
-        if self.B == 1: #The efficient simply connected
+        if self.B == 1:  # The efficient simply connected
             edge = self.plot_boundaries(plotjoined=plotjoined,
                 rgbcolor=rgbcolor, thickness=thickness)
             circle_list = list(range(circles))
@@ -973,7 +974,7 @@ cdef class Riemann_Map:
                 for i in xrange(pts - 1):
                     temp[i] = self.inverse_riemann_map(
                         (i * 1.0) / (pts * 1.0) * exp(I * angle) * linescale)
-                temp[pts - 1] = np.complex(
+                temp[pts - 1] = complex(
                     self.f(s(angle)) if angle <= tmax else self.f(s(angle-TWOPI)))
                 if plotjoined:
                     line_list[k] = list_plot(
@@ -999,7 +1000,6 @@ cdef class Riemann_Map:
                 spokes, circles, rgbcolor,thickness, withcolor, min_mag),
                 (xmin, xmax), (ymin, ymax),options))
             return g + self.plot_boundaries(thickness = thickness)
-
 
     @options(interpolation='catrom')
     def plot_colored(self, plot_range=[], int plot_points=100, **options):
@@ -1050,6 +1050,9 @@ cdef class Riemann_Map:
             sage: m.plot_colored()
             Graphics object consisting of 1 graphics primitive
         """
+        from sage.plot.complex_plot import ComplexPlot
+        from sage.plot.all import Graphics
+
         z_values, xmin, xmax, ymin, ymax = self.compute_on_grid(plot_range,
             plot_points)
         g = Graphics()
@@ -1403,7 +1406,7 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
         sage: m = Riemann_Map([f], [fp],0,200)
         sage: s = spline(m.get_theta_points())
         sage: test_pt = uniform(0,2*pi)
-        sage: s(test_pt) - analytic_boundary(test_pt,20, .3) < 10^-4
+        sage: s(test_pt) - analytic_boundary(test_pt,20, .3) < 10^-3
         True
     """
     cdef FLOAT_T i
@@ -1411,7 +1414,6 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
     for i from 1 <= i < n+1:
         result += (2*(-1)**i/i)*(epsilon**i/(1+epsilon**(2*i)))*sin(2*i*t)
     return result
-
 
 
 cpdef cauchy_kernel(t, args):
@@ -1456,7 +1458,9 @@ cpdef cauchy_kernel(t, args):
         return result.real
     elif part == 'i':
         return result.imag
-    else: return None
+    else:
+        return None
+
 
 cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
     """
@@ -1485,7 +1489,7 @@ cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
         sage: abs(m.riemann_map(.5)-analytic_interior(.5, 20, .3)) < 10^-6
         True
     """
-    # evaluates the cauchy integral of the boundary, split into the real
+    # evaluates the Cauchy integral of the boundary, split into the real
     # and imaginary results because numerical_integral can't handle complex data.
     rp = 1/(TWOPI)*numerical_integral(cauchy_kernel,0,2*pi,
         params = [epsilon,z,n,'i'])[0]

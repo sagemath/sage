@@ -1,5 +1,5 @@
 r"""
-Cell Modules
+Cell modules
 """
 #*****************************************************************************
 #       Copyright (C) 2015-2018 Travis Scrimshaw <tcscrims at gmail.com>
@@ -12,7 +12,7 @@ Cell Modules
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import ModulesWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.data_structures.blas_dict import linear_combination
@@ -72,7 +72,7 @@ class CellModule(CombinatorialFreeModule):
         """
         mu = A.cell_poset()(mu)
         kwds['prefix'] = kwds.get('prefix', 'W')
-        return super(CellModule, cls).__classcall__(cls, A, mu, **kwds)
+        return super().__classcall__(cls, A, mu, **kwds)
 
     def __init__(self, A, mu, **kwds):
         r"""
@@ -357,7 +357,7 @@ class CellModule(CombinatorialFreeModule):
                 # Temporary needed by coercion (see Polynomial/FractionField tests).
                 if not P._algebra.has_coerce_map_from(scalar.parent()):
                     return None
-                scalar = P._algebra( scalar )
+                scalar = P._algebra(scalar)
 
             if self_on_left:
                 raise NotImplementedError
@@ -432,7 +432,7 @@ class SimpleModule(QuotientModuleWithBasis):
         """
         if A == self._ambient:
             return A.module_morphism(self.retract, codomain=self)
-        return super(SimpleModule, self)._coerce_map_from_(A)
+        return super()._coerce_map_from_(A)
 
     class Element(QuotientModuleWithBasis.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
@@ -473,4 +473,3 @@ class SimpleModule(QuotientModuleWithBasis):
         # For backward compatibility
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
-

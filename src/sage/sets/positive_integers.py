@@ -75,3 +75,17 @@ class PositiveIntegers(IntegerRangeInfinite):
             42
         """
         return Integer(42)
+
+    def _sympy_(self):
+        r"""
+        Return the SymPy set ``Naturals``.
+
+        EXAMPLES::
+
+            sage: PositiveIntegers()._sympy_()
+            Naturals
+        """
+        from sympy import Naturals
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return Naturals

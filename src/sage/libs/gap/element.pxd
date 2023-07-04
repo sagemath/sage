@@ -27,7 +27,11 @@ cdef GapElement_Rational make_GapElement_Rational(parent, Obj obj)
 cdef GapElement_String make_GapElement_String(parent, Obj obj)
 cdef GapElement_Boolean make_GapElement_Boolean(parent, Obj obj)
 cdef GapElement_Function make_GapElement_Function(parent, Obj obj)
-cdef char *crepr(Obj)
+cdef GapElement_Permutation make_GapElement_Permutation(parent, Obj obj)
+
+cdef char *capture_stdout(Obj, Obj)
+cdef char *gap_element_str(Obj)
+cdef char *gap_element_repr(Obj)
 
 
 cdef class GapElement(RingElement):
@@ -85,7 +89,7 @@ cdef class GapElement_MethodProxy(GapElement_Function):
 cdef class GapElement_Record(GapElement):
     cpdef UInt record_name_to_index(self, name)
 
-cdef class GapElement_RecordIterator(object):
+cdef class GapElement_RecordIterator():
     cdef GapElement_Record rec
     cdef UInt i
 

@@ -36,6 +36,6 @@ mv "d3js-${ZIP_VERSION}.tar.gz" "${SAGE_ROOT}/upstream/"
 # update package info
 cd ..
 echo "${ZIP_VERSION}" > 'package-version.txt'
-sage -sh 'sage-fix-pkg-checksums'
+sage --package fix-checksum
 
 

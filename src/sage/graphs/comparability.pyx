@@ -6,7 +6,7 @@ This module implements method related to :wikipedia:`Comparability_graph` and
 :wikipedia:`Permutation_graph`, that is, for the moment, only recognition
 algorithms.
 
-Most of the information found here can alo be found in [Cleanup]_ or [ATGA]_.
+Most of the information found here can also be found in [ST1994]_ or [Sha1997]_.
 
 The following methods are implemented in this module
 
@@ -84,7 +84,7 @@ to be the equivalence class in `G` of the oriented edge `uv`.
 Of course, if there exists a transitive orientation of a graph `G`, then no edge
 `uv` implies its contrary `vu`, i.e. it is necessary to ensure that `\forall
 uv\in G, vu\not\in C^G_{uv}`. The key result on which the greedy algorithm is
-built is the following (see [Cleanup]_):
+built is the following (see [ST1994]_):
 
   **Theorem** -- The following statements are equivalent :
 
@@ -161,7 +161,7 @@ Implementation details
 This is done by a call to :meth:`Graph.is_bipartite`, and here is how :
 
    Around a vertex `u`, any two edges `uv, uv'` such that `vv'\not\in G` are
-   equivalent. Hence, the equivalence classe of edges around a vertex are
+   equivalent. Hence, the equivalence class of edges around a vertex are
    precisely the connected components of the complement of the graph induced by
    the neighbors of `u`.
 
@@ -185,43 +185,30 @@ This is done by a call to :meth:`Graph.is_bipartite`, and here is how :
     of more complicated ones, and it is reaaaaaaaaaaaalllly bad whenever you
     look at it with performance in mind.
 
-References
-----------
-
-.. [ATGA] Advanced Topics in Graph Algorithms,
-  Ron Shamir,
-  `<http://www.cs.tau.ac.il/~rshamir/atga/atga.html>`_
-
-.. [Cleanup] A cleanup on transitive orientation,
-  Orders, Algorithms, and Applications, 1994,
-  Simon, K. and Trunz, P.,
-  `<ftp://ftp.inf.ethz.ch/doc/papers/ti/ga/ST94.ps.gz>`_
-
 Methods
 -------
 """
 
-#*****************************************************************************
-#       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gail.com>
+# ****************************************************************************
+#       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport sig_free
-
+from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from copy import copy
+
 
 #####################
 # Greedy Algorithms #
 #####################
 
-def greedy_is_comparability(g, no_certificate = False, equivalence_class = False):
+def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
     r"""
     Tests whether the graph is a comparability graph (greedy algorithm)
 
@@ -256,9 +243,7 @@ def greedy_is_comparability(g, no_certificate = False, equivalence_class = False
       sage: g = graphs.PetersenGraph()
       sage: is_comparability(g)
       False
-      sage: is_comparability(g, no_certificate=True)  # py2
-      (False, [0, 4, 9, 6, 1, 0])
-      sage: is_comparability(g, no_certificate=True)  # py3
+      sage: is_comparability(g, no_certificate=True)
       (False, [2, 1, 0, 4, 3, 2])
 
     But the Bull graph is::
@@ -267,37 +252,37 @@ def greedy_is_comparability(g, no_certificate = False, equivalence_class = False
       sage: is_comparability(g)
       True
     """
-    cdef int i,j
+    cdef int i, j
 
     # Each vertex can partition its neighbors into equivalence classes
     equivalence_classes = {}
     for v in g:
-        equivalence_classes[v] = g.subgraph(vertices = g.neighbors(v)).complement().connected_components()
+        equivalence_classes[v] = g.subgraph(vertices=g.neighbors(v)).complement().connected_components()
 
     # We build a graph h with one vertex per (vertex of g + equivalence class)
     from sage.graphs.graph import Graph
     h = Graph()
-    h.add_vertices([(v,i) for v in g for i in range(len(equivalence_classes[v]))])
+    h.add_vertices([(v, i) for v in g for i in range(len(equivalence_classes[v]))])
 
     # We add an edge between two vertices of h if they represent
     # opposed equivalence classes
 
-    for u,v in g.edge_iterator(labels=False):
+    for u, v in g.edge_iterator(labels=False):
 
-        for i,s in enumerate(equivalence_classes[v]):
+        for i, s in enumerate(equivalence_classes[v]):
             if u in s:
                 break
 
-        for j,s in enumerate(equivalence_classes[u]):
+        for j, s in enumerate(equivalence_classes[u]):
             if v in s:
                 break
 
-        h.add_edge((v,i),(u,j))
+        h.add_edge((v, i), (u, j))
 
     # Is it a comparability graph ?
 
     cdef int isit
-    isit, certif = h.is_bipartite(certificate = True)
+    isit, certif = h.is_bipartite(certificate=True)
 
     if isit:
         if equivalence_class:
@@ -306,16 +291,16 @@ def greedy_is_comparability(g, no_certificate = False, equivalence_class = False
             cc = sorted(h.connected_components(), key=len)[-1]
 
             edges = []
-            for v,sid in cc:
+            for v, sid in cc:
                 s = equivalence_classes[v][sid]
 
                 # For each edge we pick the good orientations
-                if certif[v,sid] == 1:
+                if certif[v, sid] == 1:
                     for vv in s:
-                        edges.append((v,vv))
+                        edges.append((v, vv))
                 else:
                     for vv in s:
-                        edges.append((vv,v))
+                        edges.append((vv, v))
 
             # We return the value but take care of removing edges that were
             # added twice.
@@ -326,12 +311,13 @@ def greedy_is_comparability(g, no_certificate = False, equivalence_class = False
     else:
         if no_certificate:
             certif.append(certif[0])
-            cycle = [v for v,_ in certif]
+            cycle = [v for v, _ in certif]
             return False, cycle
         else:
             return False
 
-def greedy_is_comparability_with_certificate(g, certificate = False):
+
+def greedy_is_comparability_with_certificate(g, certificate=False):
     r"""
     Tests whether the graph is a comparability graph and returns
     certificates(greedy algorithm).
@@ -353,16 +339,12 @@ def greedy_is_comparability_with_certificate(g, certificate = False):
     The 5-cycle or the Petersen Graph are not transitively orientable::
 
       sage: from sage.graphs.comparability import greedy_is_comparability_with_certificate as is_comparability
-      sage: is_comparability(graphs.CycleGraph(5), certificate=True)  # py2
-      (False, [1, 2, 3, 4, 0, 1])
-      sage: is_comparability(graphs.CycleGraph(5), certificate=True)  # py3
+      sage: is_comparability(graphs.CycleGraph(5), certificate=True)
       (False, [2, 1, 0, 4, 3, 2])
       sage: g = graphs.PetersenGraph()
       sage: is_comparability(g)
       False
-      sage: is_comparability(g, certificate=True)  # py2
-      (False, [0, 4, 9, 6, 1, 0])
-      sage: is_comparability(g, certificate=True)  # py3
+      sage: is_comparability(g, certificate=True)
       (False, [2, 1, 0, 4, 3, 2])
 
     But the Bull graph is::
@@ -390,9 +372,9 @@ def greedy_is_comparability_with_certificate(g, certificate = False):
     h = DiGraph()
     h.add_vertices(gg)
 
-    for u,v in certif:
-        gg.delete_edge(u,v)
-        h.add_edge(u,v)
+    for u, v in certif:
+        gg.delete_edge(u, v)
+        h.add_edge(u, v)
 
     # While there are some edges left to be oriented
     while gg.size():
@@ -401,11 +383,12 @@ def greedy_is_comparability_with_certificate(g, certificate = False):
         isit, certif = greedy_is_comparability(gg, no_certificate=True, equivalence_class=True)
 
         # Then remove it from the former graph
-        for u,v in certif:
-            gg.delete_edge(u,v)
-            h.add_edge(u,v)
+        for u, v in certif:
+            gg.delete_edge(u, v)
+            h.add_edge(u, v)
 
     return True, h
+
 
 ###################
 # Integer Program #
@@ -418,7 +401,7 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     INPUT:
 
     - ``certificate`` (boolean) -- whether to return a certificate for
-      yes instances. This method can not return negative certificates.
+      yes instances. This method cannot return negative certificates.
 
     - ``solver`` -- (default: ``None``); Specify a Linear Program (LP) solver to
       be used. If set to ``None``, the default one is used. For more information
@@ -456,30 +439,30 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     p = MixedIntegerLinearProgram(solver=solver)
     o = p.new_variable(binary=True)
 
-    for u,v in g.edge_iterator(labels=False):
-        p.add_constraint( o[u,v] + o[v,u] == 1)
+    for u, v in g.edge_iterator(labels=False):
+        p.add_constraint(o[u, v] + o[v, u] == 1)
 
     for u in g:
         neighbors = g.neighbors(u)
 
         for i in range(len(neighbors)):
             v = neighbors[i]
-            for j in range(i+1,len(neighbors)):
+            for j in range(i + 1, len(neighbors)):
                 vv = neighbors[j]
 
                 # If there is an edge between v and vv, we must be
                 # sure it is in the good direction when v-u-vv is a
                 # directed path
-                if g.has_edge(v,vv):
-                    p.add_constraint(o[u,v] + o[vv,u] - o[vv,v] <= 1)
-                    p.add_constraint(o[u,vv] + o[v,u] - o[v,vv] <= 1)
+                if g.has_edge(v, vv):
+                    p.add_constraint(o[u, v] + o[vv, u] - o[vv, v] <= 1)
+                    p.add_constraint(o[u, vv] + o[v, u] - o[v, vv] <= 1)
 
                 # If there is no edge, there are only two
                 # orientations possible (see the module's documentation
                 # about edges which imply each other)
                 else:
-                    p.add_constraint(o[u,v] + o[vv,u] <= 1)
-                    p.add_constraint(o[u,vv] + o[v,u] <= 1)
+                    p.add_constraint(o[u, v] + o[vv, u] <= 1)
+                    p.add_constraint(o[u, vv] + o[v, u] <= 1)
 
     try:
         p.solve(log=verbose)
@@ -491,12 +474,13 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
         d = DiGraph()
         d.add_vertices(g)
 
-        o = p.get_values(o)
-        for u,v in g.edge_iterator(labels=False):
-            if o[u,v] > .5:
-                d.add_edge(u,v)
+        tol = 0 if p.base_ring().is_exact() else 1e-6
+        o = p.get_values(o, convert=True, tolerance=tol)
+        for u, v in g.edge_iterator(labels=False):
+            if o[u, v]:
+                d.add_edge(u, v)
             else:
-                d.add_edge(v,u)
+                d.add_edge(v, u)
 
         return True, d
 
@@ -504,6 +488,7 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
         if certificate:
             return False, None
         return False
+
 
 ###############
 # Empty shell #
@@ -585,16 +570,17 @@ def is_comparability(g, algorithm="greedy", certificate=False, check=True,
     isit, certif = comparability_test
 
     if check and isit and (not certif.is_transitive()):
-        raise ValueError("Looks like there is a bug somewhere. The "+
-                         "algorithm thinks that the orientation is "+
-                         "transitive, but we just checked and it is not."+
-                         "Please report the bug on sage-devel, and give"+
+        raise ValueError("Looks like there is a bug somewhere. The "
+                         "algorithm thinks that the orientation is "
+                         "transitive, but we just checked and it is not."
+                         "Please report the bug on sage-devel, and give"
                          "us the graph that made this method fail !")
 
     return isit, certif
 
+
 def is_permutation(g, algorithm="greedy", certificate=False, check=True,
-                       solver=None, verbose=0):
+                   solver=None, verbose=0):
     r"""
     Tests whether the graph is a permutation graph.
 
@@ -707,9 +693,9 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
             return False, co_certif
 
         # Building the two orderings
-        tmp = co_certif.edges(labels=False, sort=False)
-        for u,v in certif.edge_iterator(labels=False):
-            co_certif.add_edge(v,u)
+        tmp = list(co_certif.edges(labels=False, sort=False))
+        for u, v in certif.edge_iterator(labels=False):
+            co_certif.add_edge(v, u)
         certif.add_edges(tmp)
 
         ordering = certif.topological_sort()
@@ -721,18 +707,17 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
             from sage.graphs.graph_generators import GraphGenerators
             pg = GraphGenerators().PermutationGraph(ordering, co_ordering)
             if not pg.is_isomorphic(g):
-                raise ValueError("There is a mistake somewhere ! It looks like "+
-                                 "the Permutation Graph model computed does "+
+                raise ValueError("There is a mistake somewhere ! It looks like "
+                                 "the Permutation Graph model computed does "
                                  "not match the input graph !")
 
         return True, (ordering, co_ordering)
 
     # No certificate... A piece of cake
     else:
-        return (is_comparability(g, algorithm=algorithm, solver=solver, verbose=verbose) and \
+        return (is_comparability(g, algorithm=algorithm, solver=solver, verbose=verbose) and
                 is_comparability(g.complement(), algorithm=algorithm, solver=solver, verbose=verbose))
 
-from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 
 def is_transitive(g, certificate=False):
     r"""
@@ -766,7 +751,7 @@ def is_transitive(g, certificate=False):
         sage: cert = D.is_transitive(certificate=True)
         sage: D.has_edge(*cert)
         False
-        sage: D.shortest_path(*cert) != []
+        sage: bool(D.shortest_path(*cert))
         True
         sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()
         True
@@ -787,8 +772,7 @@ def is_transitive(g, certificate=False):
 
     for j in range(n):
         for i in range(n):
-            if ((c_distances[i] != <unsigned short> -1) and
-                (c_distances[i] > 1)):
+            if c_distances[i] != <unsigned short> -1 and c_distances[i] > 1:
                 sig_free(distances)
                 if certificate:
 

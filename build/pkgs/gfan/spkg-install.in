@@ -1,0 +1,29 @@
+CXXFLAGS="$CXXFLAGS"
+
+export CC CXX CFLAGS CXXFLAGS LDFLAGS
+
+cd src
+
+# clash of log2 macro with standard library (C++ >= 14), #28984
+find src -type f -print0 | xargs -0 sed -i.bak "s/log2/logger2/g"
+
+# To let testsuite/0009RenderStairCase pass on 32bit machines
+# See https://github.com/sagemath/sage/issues/32088
+case "$($CC -dumpmachine)" in
+    i[3456]86*)
+        CXXFLAGS+=" -ffloat-store"
+        ;;
+esac
+
+echo "Now building gfan..."
+# We don't use the makefile to install gfan so we don't need to set PREFIX
+sdh_make CPPFLAGS="-I$SAGE_LOCAL/include"
+
+[ -f gfan ] || \
+    sdh_die "Error: Build completed normally but gfan executable not found."
+
+sdh_install gfan "$SAGE_LOCAL/bin"
+
+cd "${SAGE_DESTDIR_LOCAL}/bin"
+echo "Now running gfan to install links in '$SAGE_LOCAL/bin/'..."
+./gfan installlinks || sdh_die "gfan links not created correctly"

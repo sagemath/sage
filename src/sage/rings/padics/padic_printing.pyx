@@ -1,5 +1,11 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 """
-p-Adic Printing
+`p`-adic Printing
 
 This file contains code for printing p-adic elements.
 
@@ -21,7 +27,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cpython.list cimport *
 from sage.libs.gmp.mpz cimport *
@@ -368,7 +373,7 @@ cdef class pAdicPrinter_class(SageObject):
               p-adic digits into strings (so that no separator need be
               used in 'digits' mode).
 
-            - show_prec -- Specify how the precision is printed; it 
+            - show_prec -- Specify how the precision is printed; it
               can be 'none', 'bigoh' or 'dots' (the latter being not
               available for all modes)
 
@@ -478,18 +483,17 @@ cdef class pAdicPrinter_class(SageObject):
             sage: P._sep()
             '&'
         """
-
-        return pAdicPrinter, (self.ring, \
-                              {'mode': self._print_mode(), \
-                               'pos': self.pos, \
-                               'ram_name': self.ram_name, \
-                               'unram_name': self.unram_name, \
-                               'var_name': self.var_name, \
-                               'max_ram_terms': self.max_ram_terms, \
-                               'max_unram_terms': self.max_unram_terms, \
-                               'max_terse_terms': self.max_terse_terms, \
-                               'sep':self.sep, \
-                               'alphabet': self.alphabet, \
+        return pAdicPrinter, (self.ring,
+                              {'mode': self._print_mode(),
+                               'pos': self.pos,
+                               'ram_name': self.ram_name,
+                               'unram_name': self.unram_name,
+                               'var_name': self.var_name,
+                               'max_ram_terms': self.max_ram_terms,
+                               'max_unram_terms': self.max_unram_terms,
+                               'max_terse_terms': self.max_terse_terms,
+                               'sep':self.sep,
+                               'alphabet': self.alphabet,
                                'show_prec': self.show_prec})
 
     def __richcmp__(self, other, op):
@@ -1017,7 +1021,7 @@ cdef class pAdicPrinter_class(SageObject):
                 elif self.max_unram_terms == 1:
                     L = ["[..., %s]"%(a[-1]) if len(a) > 1 else str(a) for a in L]
                 else:
-                    L = ["[%s,..., "%(a[0]) + ", ".join([str(b) for b in a[1-self.max_unram_terms:]]) + "]" if len(a) > 2 else str(a) for a in L]
+                    L = ["[%s,..., " % (a[0]) + ", ".join(str(b) for b in a[1-self.max_unram_terms:]) + "]" if len(a) > 2 else str(a) for a in L]
             if n > 0:
                 if self.base or self._ring().absolute_f() == 1:
                     L += ['0']*n

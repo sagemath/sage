@@ -5,7 +5,6 @@ Let `C` be a linear code. Let `C_i` be the set of all words of `C` with the
 `i`-th coordinate being removed. `C_i` is the punctured code of `C`
 on the `i`-th position.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
@@ -93,7 +92,6 @@ def _insert_punctured_positions(l, punctured_points, value = None):
     return final
 
 
-
 class PuncturedCode(AbstractLinearCode):
     r"""
     Representation of a punctured code.
@@ -132,18 +130,18 @@ class PuncturedCode(AbstractLinearCode):
         """
         if not isinstance(positions, (Integer, int, set, list)):
             raise TypeError("positions must be either a Sage Integer, a Python int, a set or a list")
-        if isinstance(positions, (list, set)) and not all (isinstance(i, (int, Integer)) for i in positions):
-                raise TypeError("if positions is a list or a set, it has to contain only Python ints or Sage Integers")
+        if isinstance(positions, (list, set)) and not all(isinstance(i, (int, Integer)) for i in positions):
+            raise TypeError("if positions is a list or a set, it has to contain only Python ints or Sage Integers")
         if isinstance(positions, (Integer, int)):
             positions = {positions}
         if isinstance(positions, list):
             positions = set(positions)
         if not isinstance(C, AbstractLinearCode):
             raise ValueError("Provided code must be a linear code")
-        if not all (i in range(0, C.length()) for i in positions):
+        if not all(i in range(C.length()) for i in positions):
             raise ValueError("Positions to puncture must be positive integers smaller than the length of the provided code")
-        super(PuncturedCode, self).__init__(C.base_ring(), C.length() - len(positions), \
-                "PuncturedMatrix", "OriginalCode")
+        super().__init__(C.base_ring(), C.length() - len(positions),
+                         "PuncturedMatrix", "OriginalCode")
         self._original_code = C
         self._positions = positions
 
@@ -239,7 +237,7 @@ class PuncturedCode(AbstractLinearCode):
         Returns a random codeword of ``self``.
 
         This method does not trigger the computation of
-        ``self``'s :meth:`sage.coding.linear_code.generator_matrix`.
+        ``self``'s :meth:`sage.coding.linear_code_no_metric.generator_matrix`.
 
         INPUT:
 
@@ -367,7 +365,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
         """
         if not isinstance(code, PuncturedCode):
             raise TypeError("code has to be an instance of PuncturedCode class")
-        super(PuncturedCodePuncturedMatrixEncoder, self).__init__(code)
+        super().__init__(code)
 
     def _repr_(self):
         r"""
@@ -424,13 +422,6 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
         M = G[:k]
         M.set_immutable()
         return M
-
-
-
-
-
-
-
 
 
 class PuncturedCodeOriginalCodeDecoder(Decoder):
@@ -563,8 +554,8 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         self._decoder_type = copy(self._decoder_type)
         self._decoder_type.remove("dynamic")
         self._decoder_type = self._original_decoder.decoder_type()
-        super(PuncturedCodeOriginalCodeDecoder, self).__init__(code, code.ambient_space(),\
-                self._original_decoder.connected_encoder())
+        super().__init__(code, code.ambient_space(),
+                         self._original_decoder.connected_encoder())
 
     def _repr_(self):
         r"""
@@ -580,7 +571,6 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
         """
         return "Decoder of %s through %s" % (self.code(), self.original_decoder())
-
 
     def _latex_(self):
         r"""

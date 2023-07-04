@@ -15,16 +15,21 @@ Hasse diagrams of posets
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-
-from six.moves import range
+from __future__ import annotations
 
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
+from sage.arith.misc import binomial
 from sage.misc.rest_index_of_methods import gen_rest_table_index
+from sage.combinat.posets.hasse_cython import (moebius_matrix_fast,
+                                               coxeter_matrix_fast,
+                                               IncreasingChains)
+
+from collections import deque
 
 
 class LatticeError(ValueError):
@@ -100,7 +105,7 @@ class HasseDiagram(DiGraph):
         r"""
         Return a linear extension
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[]})
@@ -114,7 +119,7 @@ class HasseDiagram(DiGraph):
         r"""
         Return an iterator over all linear extensions.
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[]})
@@ -145,7 +150,7 @@ class HasseDiagram(DiGraph):
             [0, 1, 2, 3, 4]
             [0, 2, 3, 1, 4]
 
-        TESTS:
+        TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: list(HasseDiagram({}).greedy_linear_extensions_iterator())
@@ -162,17 +167,16 @@ class HasseDiagram(DiGraph):
 
             S = []
             if linext:
-                S = [x for x in H.neighbors_out(linext[-1])
-                     if all(low in linext for low in H.neighbors_in(x))]
+                S = [x for x in H.neighbor_out_iterator(linext[-1])
+                     if all(low in linext for low in H.neighbor_in_iterator(x))]
             if not S:
                 S_ = set(self).difference(set(linext))
                 S = [x for x in S_
-                     if not any(low in S_ for low in self.neighbors_in(x))]
+                     if not any(low in S_
+                                for low in self.neighbor_in_iterator(x))]
 
             for e in S:
-                # Python3-todo: use yield from
-                for tmp in greedy_rec(H, linext + [e]):
-                    yield tmp
+                yield from greedy_rec(H, linext + [e])
 
         return greedy_rec(self, [])
 
@@ -228,24 +232,22 @@ class HasseDiagram(DiGraph):
                     if not k:  # Start from new minimal element
                         S = [x for x in self.sources() if x not in linext]
                     else:
-                        S = [x for x in self.neighbors_out(linext[k - 1])
+                        S = [x for x in self.neighbor_out_iterator(linext[k - 1])
                              if x not in linext and
                              all(low in linext
-                                 for low in self.neighbors_in(x))]
+                                 for low in self.neighbor_in_iterator(x))]
                         k -= 1
 
                 for e in S:
-                    # Python3-todo: use yield from
-                    for tmp in supergreedy_rec(H, linext + [e]):
-                        yield tmp
+                    yield from supergreedy_rec(H, linext + [e])
 
         return supergreedy_rec(self, [])
 
-    def is_linear_extension(self, lin_ext=None):
+    def is_linear_extension(self, lin_ext=None) -> bool:
         r"""
         Test if an ordering is a linear extension.
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[]})
@@ -255,35 +257,29 @@ class HasseDiagram(DiGraph):
             False
         """
         if lin_ext is None or lin_ext == list(range(len(self))):
-            for x, y in self.cover_relations_iterator():
-                if not x < y:
-                    return False
-            return True
+            return all(x < y for x, y in self.cover_relations_iterator())
         else:
-            for x, y in self.cover_relations_iterator():
-                if not lin_ext.index(x) < lin_ext.index(y):
-                    return False
-            return True
+            return all(lin_ext.index(x) < lin_ext.index(y)
+                       for x, y in self.cover_relations_iterator())
 
     def cover_relations_iterator(self):
         r"""
         Iterate over cover relations.
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: list(H.cover_relations_iterator())
             [(0, 2), (0, 3), (1, 3), (1, 4), (2, 5), (3, 5), (4, 5)]
         """
-        for u, v, l in self.edge_iterator():
-            yield (u, v)
+        yield from self.edge_iterator(labels=False)
 
     def cover_relations(self):
         r"""
         Return the list of cover relations.
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
@@ -292,17 +288,17 @@ class HasseDiagram(DiGraph):
         """
         return list(self.cover_relations_iterator())
 
-    def is_lequal(self, i, j):
+    def is_lequal(self, i, j) -> bool:
         """
-        Return True if i is less than or equal to j in the poset, and
-        False otherwise.
+        Return ``True`` if i is less than or equal to j in the poset, and
+        ``False`` otherwise.
 
         .. note::
 
             If the :meth:`lequal_matrix` has been computed, then this method is
-            redefined to use the cached matrix (see :meth:`_alternate_is_lequal`).
+            redefined to use the cached data (see :meth:`_alternate_is_lequal`).
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[2], 1:[2], 2:[3], 3:[4], 4:[]})
@@ -320,12 +316,12 @@ class HasseDiagram(DiGraph):
         """
         return i == j or (i < j and j in self.breadth_first_search(i))
 
-    def is_less_than(self, x, y):
+    def is_less_than(self, x, y) -> bool:
         r"""
-        Return True if ``x`` is less than or equal to ``y`` in the
-        poset, and False otherwise.
+        Return ``True`` if ``x`` is less than but not equal to ``y`` in the
+        poset, and ``False`` otherwise.
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[2], 1:[2], 2:[3], 3:[4], 4:[]})
@@ -343,10 +339,9 @@ class HasseDiagram(DiGraph):
         """
         if x == y:
             return False
-        else:
-            return self.is_lequal(x, y)
+        return self.is_lequal(x, y)
 
-    def is_gequal(self, x, y):
+    def is_gequal(self, x, y) -> bool:
         r"""
         Return ``True`` if ``x`` is greater than or equal to ``y``, and
         ``False`` otherwise.
@@ -371,7 +366,7 @@ class HasseDiagram(DiGraph):
         """
         return self.is_lequal(y, x)
 
-    def is_greater_than(self, x, y):
+    def is_greater_than(self, x, y) -> bool:
         """
         Return ``True`` if ``x`` is greater than but not equal to
         ``y``, and ``False`` otherwise.
@@ -424,6 +419,7 @@ class HasseDiagram(DiGraph):
         """
         return self.sinks()
 
+    @cached_method
     def bottom(self):
         """
         Return the bottom element of the poset, if it exists.
@@ -442,9 +438,9 @@ class HasseDiagram(DiGraph):
             return min_elms[0]
         return None
 
-    def has_bottom(self):
+    def has_bottom(self) -> bool:
         """
-        Return True if the poset has a unique minimal element.
+        Return ``True`` if the poset has a unique minimal element.
 
         EXAMPLES::
 
@@ -475,7 +471,7 @@ class HasseDiagram(DiGraph):
             return max_elms[0]
         return None
 
-    def has_top(self):
+    def has_top(self) -> bool:
         """
         Return ``True`` if the poset contains a unique maximal element, and
         ``False`` otherwise.
@@ -491,10 +487,10 @@ class HasseDiagram(DiGraph):
         """
         return self.top() is not None
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         """
-        Return True if the poset contains a unique maximal element and a
-        unique minimal element, and False otherwise.
+        Return ``True`` if the poset contains a unique maximal element and a
+        unique minimal element, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -507,9 +503,9 @@ class HasseDiagram(DiGraph):
         """
         return self.has_top() and self.has_bottom()
 
-    def is_chain(self):
+    def is_chain(self) -> bool:
         """
-        Return True if the poset is totally ordered, and False otherwise.
+        Return ``True`` if the poset is totally ordered, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -534,7 +530,7 @@ class HasseDiagram(DiGraph):
                 all(d <= 1 for d in self.out_degree()) and
                 all(d <= 1 for d in self.in_degree()))
 
-    def is_antichain_of_poset(self, elms):
+    def is_antichain_of_poset(self, elms) -> bool:
         """
         Return ``True`` if ``elms`` is an antichain of the Hasse
         diagram and ``False`` otherwise.
@@ -556,6 +552,10 @@ class HasseDiagram(DiGraph):
     def dual(self):
         """
         Return a poset that is dual to the given poset.
+
+        This means that it has the same elements but opposite order.
+        The elements are renumbered to ensure that ``range(n)``
+        is a linear extension.
 
         EXAMPLES::
 
@@ -582,8 +582,8 @@ class HasseDiagram(DiGraph):
         Precompute all intervals of the poset.
 
         This will significantly speed up computing congruences. On the
-        other hand it will cost much more memory. Currently this is
-        "hidden" feature. See example below of using.
+        other hand, it will cost much more memory. Currently this is
+        a hidden feature. See the example below for how to use it.
 
         EXAMPLES::
 
@@ -596,50 +596,31 @@ class HasseDiagram(DiGraph):
             True
         """
         n = self.order()
-
-        v_up = [frozenset(self.depth_first_search(v)) for v in range(n)]
+        v_up = (frozenset(self.depth_first_search(v)) for v in range(n))
         v_down = [frozenset(self.depth_first_search(v, neighbors=self.neighbors_in))
                   for v in range(n)]
         self._intervals = [[sorted(up.intersection(down)) for down in v_down]
                            for up in v_up]
 
-        self.interval = self._alternate_interval
-
-    def _alternate_interval(self, x, y):
-        """
-        Return the list of the elements greater than or equal to ``x``
-        and less than or equal to ``y``.
-
-        The list is sorted by numerical value, which is one linear
-        extension for the elements of the interval, but not necessary
-        the same as returned by ``interval()``.
-
-        This will be taken to use when ``_precompute_intervals()``
-        is called.
-
-        EXAMPLES::
-
-            sage: P = posets.BooleanLattice(3)
-            sage: P.interval(1, 7)
-            [1, 3, 5, 7]
-            sage: P._hasse_diagram._precompute_intervals()
-            sage: P.interval(1, 7)  # Uses this function
-            [1, 3, 5, 7]
-
-        """
-        return self._intervals[x][y]
-
     def interval(self, x, y):
         r"""
         Return a list of the elements `z` of ``self`` such that
-        `x \leq z \leq y`. The order is that induced by the
-        ordering in ``self.linear_extension``.
+        `x \leq z \leq y`.
+
+        The order is that induced by the ordering in ``self.linear_extension``.
 
         INPUT:
 
         -  ``x`` -- any element of the poset
 
         -  ``y`` -- any element of the poset
+
+        .. NOTE::
+
+            The method :meth:`_precompute_intervals()` creates a cache
+            which is used if available, making the function very fast.
+
+        .. SEEALSO:: :meth:`interval_iterator`
 
         EXAMPLES::
 
@@ -651,16 +632,51 @@ class HasseDiagram(DiGraph):
             sage: I == set(H.interval(2,7))
             True
         """
-        return [z for z in range(x, y + 1) if
-                self.is_lequal(x, z) and self.is_lequal(z, y)]
+        try:
+            # when the intervals have been precomputed
+            return self._intervals[x][y]
+        except AttributeError:
+            return list(self.interval_iterator(x, y))
+
+    def interval_iterator(self, x, y):
+        r"""
+        Return an iterator of the elements `z` of ``self`` such that
+        `x \leq z \leq y`.
+
+        INPUT:
+
+        -  ``x`` -- any element of the poset
+
+        -  ``y`` -- any element of the poset
+
+        .. SEEALSO:: :meth:`interval`
+
+        .. NOTE::
+
+            This becomes much faster when first calling :meth:`_leq_storage`,
+            which precomputes the principal upper ideals.
+
+        EXAMPLES::
+
+            sage: uc = [[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]]
+            sage: dag = DiGraph(dict(zip(range(len(uc)),uc)))
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram(dag)
+            sage: I = set([2,5,6,4,7])
+            sage: I == set(H.interval_iterator(2,7))
+            True
+        """
+        for z in range(x, y + 1):
+            if self.is_lequal(x, z) and self.is_lequal(z, y):
+                yield z
 
     closed_interval = interval
 
     def open_interval(self, x, y):
         """
-        Return a list of the elements `z` of ``self`` such that
-        `x < z < y`. The order is that induced by the ordering in
-        ``self.linear_extension``.
+        Return a list of the elements `z` of ``self`` such that `x < z < y`.
+
+        The order is that induced by the ordering in ``self.linear_extension``.
 
         EXAMPLES::
 
@@ -674,7 +690,7 @@ class HasseDiagram(DiGraph):
             []
         """
         ci = self.interval(x, y)
-        if len(ci) == 0:
+        if not ci:
             return []
         else:
             return ci[1:-1]
@@ -730,7 +746,7 @@ class HasseDiagram(DiGraph):
             sage: Q.rank_function() is None
             True
 
-        test for ticket :trac:`14006`::
+        test for issue :trac:`14006`::
 
             sage: H = Poset()._hasse_diagram
             sage: s = dumps(H)
@@ -781,12 +797,12 @@ class HasseDiagram(DiGraph):
                 # look at the neighbors of y and set the ranks;
                 # then look at the neighbors of the neighbors ...
                 y = queue.pop()
-                for x in self.neighbors_out(y):
+                for x in self.neighbor_out_iterator(y):
                     if rank[x] is None:
                         rank[x] = rank[y] + 1
                         queue.add(x)
                         component.add(x)
-                for x in self.neighbors_in(y):
+                for x in self.neighbor_in_iterator(y):
                     if rank[x] is None:
                         rank[x] = rank[y] - 1
                         queue.add(x)
@@ -827,9 +843,9 @@ class HasseDiagram(DiGraph):
         else:
             return self.rank_function()(element)
 
-    def is_ranked(self):
+    def is_ranked(self) -> bool:
         r"""
-        Return True if the poset is ranked, and False otherwise.
+        Return ``True`` if the poset is ranked, and ``False`` otherwise.
 
         A poset is *ranked* if it admits a rank function. For more information
         about the rank function, see :meth:`~rank_function`
@@ -848,7 +864,7 @@ class HasseDiagram(DiGraph):
 
     def covers(self, x, y):
         """
-        Return True if y covers x and False otherwise.
+        Return ``True`` if y covers x and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -953,22 +969,89 @@ class HasseDiagram(DiGraph):
                     self._moebius_function_values[(i, j)] = -sum(self.moebius_function(i, k) for k in ci[:-1])
         return self._moebius_function_values[(i, j)]
 
-    def moebius_function_matrix(self):
+    def bottom_moebius_function(self, j):
         r"""
-        Return the matrix of the Möbius function of this poset
+        Return the value of the Möbius function of the poset
+        on the elements ``zero`` and ``j``, where ``zero`` is
+        ``self.bottom()``, the unique minimal element of the poset.
 
-        This returns the sparse matrix over `\ZZ` whose ``(x, y)`` entry
+        EXAMPLES::
+
+            sage: P = Poset({0: [1,2]})
+            sage: hasse = P._hasse_diagram
+            sage: hasse.bottom_moebius_function(1)
+            -1
+            sage: hasse.bottom_moebius_function(2)
+            -1
+            sage: P = Poset({0: [1,3], 1:[2], 2:[4], 3:[4]})
+            sage: hasse = P._hasse_diagram
+            sage: for i in range(5):
+            ....:   print(hasse.bottom_moebius_function(i))
+            1
+            -1
+            0
+            -1
+            1
+
+        TESTS::
+
+            sage: P = Poset({0:[2], 1:[2]})
+            sage: hasse = P._hasse_diagram
+            sage: hasse.bottom_moebius_function(1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the poset does not have a bottom element
+        """
+        zero = self.bottom()
+        if zero is None:
+            raise ValueError("the poset does not have a bottom element")
+        # if the value has already been computed, either by self.moebius_function
+        # or by self.bottom_moebius_function, then just use the cached value.
+        try:
+            return self._moebius_function_values[(zero, j)]
+        # if the dict has not been initialized, do that and try again
+        except AttributeError:
+            self._moebius_function_values = {}
+            return self.bottom_moebius_function(j)
+        # if mu(zero, j) has not already been computed, we'll get a key error.
+        except KeyError:
+            if zero == j:
+                self._moebius_function_values[(zero, j)] = 1
+            # since zero is the minimal element, we can ignore the case that zero > j,
+            # and move on to computing the interval, which is exactly the order ideal.
+            else:
+                # do the depth_first_search over order_ideal, because we don't care
+                # about sorting the elements of the order ideal.
+                ci = self._backend.depth_first_search(j, reverse=True)
+                next(ci)  # throw out the first element, which is j
+                self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci)
+        return self._moebius_function_values[(zero, j)]
+
+    def moebius_function_matrix(self, algorithm='cython'):
+        r"""
+        Return the matrix of the Möbius function of this poset.
+
+        This returns the matrix over `\ZZ` whose ``(x, y)`` entry
         is the value of the Möbius function of ``self`` evaluated on
-        ``x`` and ``y``, and redefines :meth:`moebius_function` to use
-        it.
+        ``x`` and ``y``, and redefines :meth:`moebius_function` to use it.
+
+        INPUT:
+
+        - ``algorithm`` -- optional, ``'recursive'``, ``'matrix'``
+          or ``'cython'`` (default)
+
+        This uses either the recursive formula, a generic matrix inversion
+        or a specific matrix inversion coded in Cython.
+
+        OUTPUT:
+
+        a dense matrix for the algorithm ``cython``, a sparse matrix otherwise
 
         .. NOTE::
 
             The result is cached in :meth:`_moebius_function_matrix`.
 
-        .. TODO::
-
-            Use an inversion algorithm for triangular matrices.
+        .. SEEALSO:: :meth:`lequal_matrix`, :meth:`coxeter_transformation`
 
         EXAMPLES::
 
@@ -993,9 +1076,49 @@ class HasseDiagram(DiGraph):
 
             sage: H.moebius_function == H._moebius_function_from_matrix
             True
+
+            sage: H = posets.TamariLattice(3)._hasse_diagram
+            sage: M = H.moebius_function_matrix('matrix'); M
+            [ 1 -1 -1  0  1]
+            [ 0  1  0  0 -1]
+            [ 0  0  1 -1  0]
+            [ 0  0  0  1 -1]
+            [ 0  0  0  0  1]
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
+            sage: H.moebius_function_matrix('cython') == M
+            True
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
+            sage: H.moebius_function_matrix('recursive') == M
+            True
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
+            sage: H.moebius_function_matrix('banana')
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm
         """
         if not hasattr(self, '_moebius_function_matrix'):
-            self._moebius_function_matrix = self.lequal_matrix().inverse_of_unit()
+            if algorithm == 'recursive':
+                n = self.cardinality()
+                gt = self._leq_storage
+                greater_than = [sorted(gt[i]) for i in range(n)]
+                m = {}
+                for i in range(n - 1, -1, -1):
+                    m[(i, i)] = ZZ.one()
+                    available = []
+                    for k in greater_than[i]:
+                        if k != i:
+                            available.append(k)
+                            m[(i, k)] = -ZZ.sum(m[(j, k)]
+                                                for j in available
+                                                if k in greater_than[j])
+                M = matrix(ZZ, n, n, m, sparse=True)
+            elif algorithm == "matrix":
+                M = self.lequal_matrix().inverse_of_unit()
+            elif algorithm == "cython":
+                M = moebius_matrix_fast(self._leq_storage)
+            else:
+                raise ValueError("unknown algorithm")
+            self._moebius_function_matrix = M
             self._moebius_function_matrix.set_immutable()
             self.moebius_function = self._moebius_function_from_matrix
         return self._moebius_function_matrix
@@ -1022,28 +1145,51 @@ class HasseDiagram(DiGraph):
         return self._moebius_function_matrix[i, j]
 
     @cached_method
-    def coxeter_transformation(self):
+    def coxeter_transformation(self, algorithm='cython'):
         r"""
         Return the matrix of the Auslander-Reiten translation acting on
         the Grothendieck group of the derived category of modules on the
         poset, in the basis of simple modules.
 
+        INPUT:
+
+        - ``algorithm`` -- optional, ``'cython'`` (default) or ``'matrix'``
+
+        This uses either a specific matrix code in Cython, or generic matrices.
+
+        .. SEEALSO:: :meth:`lequal_matrix`, :meth:`moebius_function_matrix`
+
         EXAMPLES::
 
-            sage: M = posets.PentagonPoset()._hasse_diagram.coxeter_transformation(); M
+            sage: P = posets.PentagonPoset()._hasse_diagram
+            sage: M = P.coxeter_transformation(); M
             [ 0  0  0  0 -1]
             [ 0  0  0  1 -1]
             [ 0  1  0  0 -1]
             [-1  1  1  0 -1]
             [-1  1  0  1 -1]
+            sage: P.__dict__['coxeter_transformation'].clear_cache()
+            sage: P.coxeter_transformation(algorithm="matrix") == M
+            True
 
         TESTS::
 
-            sage: M = posets.PentagonPoset()._hasse_diagram.coxeter_transformation()
+            sage: P = posets.PentagonPoset()._hasse_diagram
+            sage: M = P.coxeter_transformation()
             sage: M**8 == 1
             True
+            sage: P.__dict__['coxeter_transformation'].clear_cache()
+            sage: P.coxeter_transformation(algorithm="banana")
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm
         """
-        return - self.lequal_matrix() * self.moebius_function_matrix().transpose()
+        if algorithm == 'matrix':
+            return - self.lequal_matrix() * self.moebius_function_matrix().transpose()
+        elif algorithm == 'cython':
+            return coxeter_matrix_fast(self._leq_storage)
+        else:
+            raise ValueError("unknown algorithm")
 
     def order_filter(self, elements):
         r"""
@@ -1058,7 +1204,7 @@ class HasseDiagram(DiGraph):
             sage: H.order_filter([3,8])
             [3, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         """
-        return sorted(list(self.depth_first_search(elements)))
+        return sorted(self.depth_first_search(elements))
 
     def principal_order_filter(self, i):
         """
@@ -1085,8 +1231,34 @@ class HasseDiagram(DiGraph):
             sage: H.order_ideal([7,10])
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 10]
         """
-        return sorted(list(
-            self.depth_first_search(elements, neighbors=self.neighbors_in)))
+        return sorted(self.depth_first_search(elements,
+                                              neighbors=self.neighbors_in))
+
+    def order_ideal_cardinality(self, elements):
+        r"""
+        Return the cardinality of the order ideal generated by ``elements``.
+
+        `I` is an order ideal if, for any `x` in `I` and `y` such that
+        `y \le x`, then `y` is in `I`.
+
+        EXAMPLES::
+
+            sage: H = posets.BooleanLattice(4)._hasse_diagram
+            sage: H.order_ideal_cardinality([7,10])
+            10
+        """
+        seen = set()
+        q = deque(elements)
+        size = 0
+        while q:
+            v = q.popleft()
+            if v in seen:
+                continue
+            size += 1
+            seen.add(v)
+            q.extend(self.neighbors_in(v))
+
+        return ZZ(size)
 
     def principal_order_ideal(self, i):
         """
@@ -1101,51 +1273,45 @@ class HasseDiagram(DiGraph):
         return self.order_ideal([i])
 
     @lazy_attribute
-    def _leq_matrix(self):
-        r"""
-        Computes a matrix whose ``(i,j)`` entry is 1 if ``i`` is less than
-        ``j`` in the poset, and 0 otherwise; and redefines ``__lt__`` to
-        use this matrix.
+    def _leq_storage(self):
+        """
+        Store the comparison relation as a list of Python sets.
+
+        The `i`-th item in the list is the set of elements greater than `i`.
 
         EXAMPLES::
 
-            sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
-            sage: H = P._hasse_diagram
-            sage: H._leq_matrix
-            [1 1 1 1 1 1 1 1]
-            [0 1 0 1 0 0 0 1]
-            [0 0 1 1 1 0 1 1]
-            [0 0 0 1 0 0 0 1]
-            [0 0 0 0 1 0 0 1]
-            [0 0 0 0 0 1 1 1]
-            [0 0 0 0 0 0 1 1]
-            [0 0 0 0 0 0 0 1]
-
+            sage: H = posets.DiamondPoset(7)._hasse_diagram
+            sage: H._leq_storage
+            [{0, 1, 2, 3, 4, 5, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {5, 6}, {6}]
         """
-        # Create the matrix
         n = self.order()
-        D = {}
-        for i in range(n):
-            for v in self.breadth_first_search(i):
-                D[(i, v)] = 1
-        M = matrix(ZZ, n, n, D, sparse=True)
-        M.set_immutable()
+        greater_than = [set([i]) for i in range(n)]
+        for i in range(n - 1, -1, -1):
+            gt = greater_than[i]
+            for j in self.neighbor_out_iterator(i):
+                gt = gt.union(greater_than[j])
+            greater_than[i] = gt
+
         # Redefine self.is_lequal
         self.is_lequal = self._alternate_is_lequal
-        # Return the matrix
-        return M
 
-    def lequal_matrix(self):
-        """
-        Return the matrix whose ``(i,j)`` entry is 1 if ``i`` is less
-        than ``j`` in the poset, and 0 otherwise; and redefines
-        ``__lt__`` to use this matrix.
+        return greater_than
+
+    @lazy_attribute
+    def _leq_matrix_boolean(self):
+        r"""
+        Compute a boolean matrix whose ``(i,j)`` entry is 1 if ``i``
+        is less than ``j`` in the poset, and 0 otherwise; and
+        redefines ``__lt__`` to use this matrix.
+
+        .. SEEALSO:: :meth:`_leq_matrix`
 
         EXAMPLES::
 
             sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
             sage: H = P._hasse_diagram
-            sage: H.lequal_matrix()
+            sage: M = H._leq_matrix_boolean; M
             [1 1 1 1 1 1 1 1]
             [0 1 0 1 0 0 0 1]
             [0 0 1 1 1 0 1 1]
@@ -1154,13 +1320,93 @@ class HasseDiagram(DiGraph):
             [0 0 0 0 0 1 1 1]
             [0 0 0 0 0 0 1 1]
             [0 0 0 0 0 0 0 1]
+            sage: M.base_ring()
+            Finite Field of size 2
+        """
+        n = self.order()
+        R = GF(2)
+        one = R.one()
+        greater_than = self._leq_storage
+        D = {(i, j): one for i in range(n) for j in greater_than[i]}
+        M = matrix(R, n, n, D, sparse=True)
+        M.set_immutable()
+        return M
+
+    @lazy_attribute
+    def _leq_matrix(self):
+        r"""
+        Compute an integer matrix whose ``(i,j)`` entry is 1 if ``i``
+        is less than ``j`` in the poset, and 0 otherwise.
+
+        .. SEEALSO:: :meth:`_leq_matrix_boolean`
+
+        EXAMPLES::
+
+            sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
+            sage: H = P._hasse_diagram
+            sage: M = H._leq_matrix; M
+            [1 1 1 1 1 1 1 1]
+            [0 1 0 1 0 0 0 1]
+            [0 0 1 1 1 0 1 1]
+            [0 0 0 1 0 0 0 1]
+            [0 0 0 0 1 0 0 1]
+            [0 0 0 0 0 1 1 1]
+            [0 0 0 0 0 0 1 1]
+            [0 0 0 0 0 0 0 1]
+            sage: M.base_ring()
+            Integer Ring
+        """
+        n = self.order()
+        greater_than = self._leq_storage
+        D = {(i, j): 1 for i in range(n) for j in greater_than[i]}
+        return matrix(ZZ, n, n, D, sparse=True, immutable=True)
+
+    def lequal_matrix(self, boolean=False):
+        r"""
+        Return a matrix whose ``(i,j)`` entry is 1 if ``i`` is less
+        than ``j`` in the poset, and 0 otherwise; and redefines
+        ``__lt__`` to use the boolean version of this matrix.
+
+        INPUT:
+
+        - ``boolean`` -- optional flag (default ``False``) telling whether to
+          return a matrix with coefficients in `\GF(2)` or in `\ZZ`
+
+        .. SEEALSO::
+
+            :meth:`moebius_function_matrix`, :meth:`coxeter_transformation`
+
+        EXAMPLES::
+
+            sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
+            sage: H = P._hasse_diagram
+            sage: M = H.lequal_matrix(); M
+            [1 1 1 1 1 1 1 1]
+            [0 1 0 1 0 0 0 1]
+            [0 0 1 1 1 0 1 1]
+            [0 0 0 1 0 0 0 1]
+            [0 0 0 0 1 0 0 1]
+            [0 0 0 0 0 1 1 1]
+            [0 0 0 0 0 0 1 1]
+            [0 0 0 0 0 0 0 1]
+            sage: M.base_ring()
+            Integer Ring
+
+            sage: P = posets.DiamondPoset(6)
+            sage: H = P._hasse_diagram
+            sage: M = H.lequal_matrix(boolean=True)
+            sage: M.base_ring()
+            Finite Field of size 2
 
         TESTS::
 
             sage: H.lequal_matrix().is_immutable()
             True
         """
-        return self._leq_matrix
+        if boolean:
+            return self._leq_matrix_boolean
+        else:
+            return self._leq_matrix
 
     def _alternate_is_lequal(self, i, j):
         r"""
@@ -1170,7 +1416,7 @@ class HasseDiagram(DiGraph):
         .. NOTE::
 
             If the :meth:`lequal_matrix` has been computed, then
-            :meth:`is_lequal` is redefined to use the cached matrix.
+            :meth:`is_lequal` is redefined to use the cached data.
 
         EXAMPLES::
 
@@ -1194,7 +1440,7 @@ class HasseDiagram(DiGraph):
             sage: H._alternate_is_lequal(z,z)
             True
         """
-        return bool(self._leq_matrix[i, j])
+        return j in self._leq_storage[i]
 
     def prime_elements(self):
         r"""
@@ -1253,77 +1499,89 @@ class HasseDiagram(DiGraph):
     @lazy_attribute
     def _meet(self):
         r"""
-        Return the matrix of meets of ``self``. The ``(x,y)``-entry of
-        this matrix is the meet of ``x`` and ``y`` in ``self``.
+        Return the matrix of meets of ``self``.
+
+        The ``(x,y)``-entry of this matrix is the meet of ``x`` and
+        ``y`` in ``self`` if the meet exists; and `-1` otherwise.
 
         EXAMPLES::
 
-           sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-           sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-           sage: H._meet
-           [0 0 0 0 0 0 0 0]
-           [0 1 0 0 1 0 0 1]
-           [0 0 2 0 2 2 2 2]
-           [0 0 0 3 0 0 3 3]
-           [0 1 2 0 4 2 2 4]
-           [0 0 2 0 2 5 2 5]
-           [0 0 2 3 2 2 6 6]
-           [0 1 2 3 4 5 6 7]
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
+            sage: H._meet
+            [0 0 0 0 0 0 0 0]
+            [0 1 0 0 1 0 0 1]
+            [0 0 2 0 2 2 2 2]
+            [0 0 0 3 0 0 3 3]
+            [0 1 2 0 4 2 2 4]
+            [0 0 2 0 2 5 2 5]
+            [0 0 2 3 2 2 6 6]
+            [0 1 2 3 4 5 6 7]
+
+            sage: H = HasseDiagram({0:[2,3],1:[2,3]})
+            sage: H._meet
+            [ 0 -1  0  0]
+            [-1  1  1  1]
+            [ 0  1  2 -1]
+            [ 0  1 -1  3]
+
+            sage: H = HasseDiagram({0:[1,2],1:[3,4],2:[3,4]})
+            sage: H._meet
+            [ 0  0  0  0  0]
+            [ 0  1  0  1  1]
+            [ 0  0  2  2  2]
+            [ 0  1  2  3 -1]
+            [ 0  1  2 -1  4]
 
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H = HasseDiagram({0:[2,3],1:[2,3]})
-            sage: H.meet_matrix()
-            Traceback (most recent call last):
-            ...
-            ValueError: not a meet-semilattice: no bottom element
-
-            sage: H = HasseDiagram({0:[1,2],1:[3,4],2:[3,4]})
-            sage: H.meet_matrix()
-            Traceback (most recent call last):
-            ...
-            LatticeError: no meet for ...
-
             sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})
             sage: P = L.dual()
             sage: P.meet(2,3)
             4
         """
+        self._meet_semilattice_failure = ()
         n = self.cardinality()
         if n == 0:
             return matrix(0)
-        if not self.has_bottom():
-            raise ValueError("not a meet-semilattice: no bottom element")
-        meet = [[0 for x in range(n)] for x in range(n)]
+        meet = [[-1 for x in range(n)] for x in range(n)]
         lc = [self.neighbors_in(x) for x in range(n)]  # Lc = lower covers
 
         for x in range(n):
             meet[x][x] = x
             for y in range(x):
-                T = [meet[y][z] for z in lc[x]]
-
-                q = max(T)
-                for z in T:
-                    if meet[z][q] != z:
-                        raise LatticeError('meet', x, y)
+                T = [meet[y][z] for z in lc[x] if meet[y][z] != -1]
+                if not T:
+                    q = -1
+                else:
+                    q = max(T)
+                    for z in T:
+                        if meet[z][q] != z:
+                            q = -1
+                            break
                 meet[x][y] = q
                 meet[y][x] = q
-
+                if q == -1:
+                    self._meet_semilattice_failure += ((x, y),)
         return matrix(ZZ, meet)
 
     def meet_matrix(self):
         r"""
-        Return the matrix of meets of ``self``. The ``(x,y)``-entry of
-        this matrix is the meet of ``x`` and ``y`` in ``self``.
+        Return the matrix of meets of ``self``, when ``self`` is a
+        meet-semilattice; raise an error otherwise.
+
+        The ``(x,y)``-entry of this matrix is the meet of ``x`` and
+        ``y`` in ``self``.
 
         This algorithm is modelled after the algorithm of Freese-Jezek-Nation
         (p217). It can also be found on page 140 of [Gec81]_.
 
         .. NOTE::
 
-            Once the matrix has been computed, it is stored in
-            :meth:`_meet_matrix`. Delete this attribute if you want to
+            If ``self`` is a meet-semilattice, then the return of this method
+            is the same as :meth:`_meet`. Once the matrix has been computed,
+            it is stored in :meth:`_meet`. Delete this attribute if you want to
             recompute the matrix.
 
         EXAMPLES::
@@ -1363,9 +1621,17 @@ class HasseDiagram(DiGraph):
             ...
             LatticeError: no meet for ...
         """
-        return self._meet
+        n = self.cardinality()
+        if (n != 0) and (not self.has_bottom()):
+            raise ValueError("not a meet-semilattice: no bottom element")
+        # call the attribute to build the matrix and _meet_semilattice_failure
+        mt = self._meet
+        if self._meet_semilattice_failure:
+            x, y = self._meet_semilattice_failure[0]
+            raise LatticeError('meet', x, y)
+        return mt
 
-    def is_meet_semilattice(self):
+    def is_meet_semilattice(self) -> bool:
         r"""
         Return ``True`` if ``self`` has a meet operation, and
         ``False`` otherwise.
@@ -1384,6 +1650,10 @@ class HasseDiagram(DiGraph):
             sage: H = HasseDiagram({0:[2,3],1:[2,3]})
             sage: H.is_meet_semilattice()
             False
+
+            sage: H = HasseDiagram({0:[1,2],1:[3,4],2:[3,4]})
+            sage: H.is_meet_semilattice()
+            False
         """
         try:
             self.meet_matrix()
@@ -1396,13 +1666,13 @@ class HasseDiagram(DiGraph):
     def _join(self):
         r"""
         Computes a matrix whose ``(x,y)``-entry is the join of ``x``
-        and ``y`` in ``self``
+        and ``y`` in ``self`` if the join exists; and `-1` otherwise.
 
         EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-            sage: H.join_matrix() # indirect doctest
+            sage: H._join
             [0 1 2 3 4 5 6 7]
             [1 1 4 7 4 7 7 7]
             [2 4 2 6 4 5 6 7]
@@ -1412,60 +1682,71 @@ class HasseDiagram(DiGraph):
             [6 7 6 6 7 7 6 7]
             [7 7 7 7 7 7 7 7]
 
+            sage: H = HasseDiagram({0:[2,3],1:[2,3]})
+            sage: H._join
+            [ 0 -1  2  3]
+            [-1  1  2  3]
+            [ 2  2  2 -1]
+            [ 3  3 -1  3]
+
+            sage: H = HasseDiagram({0:[2,3],1:[2,3],2:[4],3:[4]})
+            sage: H._join
+            [ 0 -1  2  3  4]
+            [-1  1  2  3  4]
+            [ 2  2  2  4  4]
+            [ 3  3  4  3  4]
+            [ 4  4  4  4  4]
+
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H = HasseDiagram({0:[2,3],1:[2,3]})
-            sage: H.join_matrix()
-            Traceback (most recent call last):
-            ...
-            ValueError: not a join-semilattice: no top element
-
-            sage: H = HasseDiagram({0:[2,3],1:[2,3],2:[4],3:[4]})
-            sage: H.join_matrix()
-            Traceback (most recent call last):
-            ...
-            LatticeError: no join for ...
-
             sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})
             sage: P = L.dual()
             sage: P.join(2,3)
             0
         """
+        self._join_semilattice_failure = ()
         n = self.cardinality()
         if n == 0:
             return matrix(0)
-        if not self.has_top():
-            raise ValueError("not a join-semilattice: no top element")
-        join = [[n for x in range(n)] for x in range(n)]
+        join = [[-1 for x in range(n)] for x in range(n)]
         uc = [self.neighbors_out(x) for x in range(n)]  # uc = upper covers
 
         for x in range(n - 1, -1, -1):
             join[x][x] = x
             for y in range(n - 1, x, -1):
-                T = [join[y][z] for z in uc[x]]
-
-                q = min(T)
-                for z in T:
-                    if join[z][q] != z:
-                        raise LatticeError('join', x, y)
+                T = [join[y][z] for z in uc[x] if join[y][z] != -1]
+                if not T:
+                    q = -1
+                else:
+                    q = min(T)
+                    for z in T:
+                        if join[z][q] != z:
+                            q = -1
+                            break
                 join[x][y] = q
                 join[y][x] = q
+                if q == -1:
+                    self._join_semilattice_failure += ((x, y),)
 
         return matrix(ZZ, join)
 
     def join_matrix(self):
         r"""
-        Return the matrix of joins of ``self``. The ``(x,y)``-entry
-        of this matrix is the join of ``x`` and ``y`` in ``self``.
+        Return the matrix of joins of ``self``, when ``self`` is a
+        join-semilattice; raise an error otherwise.
+
+        The ``(x,y)``-entry of this matrix is the join of ``x`` and
+        ``y`` in ``self``.
 
         This algorithm is modelled after the algorithm of Freese-Jezek-Nation
         (p217). It can also be found on page 140 of [Gec81]_.
 
-        .. note::
+        .. NOTE::
 
-            Once the matrix has been computed, it is stored in
-            :meth:`_join_matrix`. Delete this attribute if you want
+            If ``self`` is a join-semilattice, then the return of this method
+            is the same as :meth:`_join`. Once the matrix has been computed,
+            it is stored in :meth:`_join`. Delete this attribute if you want
             to recompute the matrix.
 
         EXAMPLES::
@@ -1497,9 +1778,17 @@ class HasseDiagram(DiGraph):
             ...
             LatticeError: no join for ...
         """
-        return self._join
+        n = self.cardinality()
+        if (n != 0) and (not self.has_top()):
+            raise ValueError("not a join-semilattice: no top element")
+        # call the attribute to build the matrix and _join_semilattice_failure
+        jn = self._join
+        if self._join_semilattice_failure:
+            x, y = self._join_semilattice_failure[0]
+            raise LatticeError('join', x, y)
+        return jn
 
-    def is_join_semilattice(self):
+    def is_join_semilattice(self) -> bool:
         r"""
         Return ``True`` if ``self`` has a join operation, and
         ``False`` otherwise.
@@ -1554,11 +1843,11 @@ class HasseDiagram(DiGraph):
             True
         """
         if meet_or_join == 'join':
-            M1 = self._join
-            M2 = self._meet
+            M1 = self.join_matrix()
+            M2 = self.meet_matrix()
         elif meet_or_join == 'meet':
-            M1 = self._meet
-            M2 = self._join
+            M1 = self.meet_matrix()
+            M2 = self.join_matrix()
         else:
             raise ValueError("meet_or_join must be 'join' or 'meet'")
 
@@ -1624,7 +1913,7 @@ class HasseDiagram(DiGraph):
         result.pop()  # Remove the top element.
         return result
 
-    def is_complemented(self):
+    def is_complemented(self) -> int | None:
         """
         Return an element of the lattice that has no complement.
 
@@ -1688,11 +1977,12 @@ class HasseDiagram(DiGraph):
             True
         """
         e = self.order() - 1
-        while self._meet[e, element] != 0:
+        mt = self.meet_matrix()
+        while mt[e, element] != 0:
             e -= 1
         e1 = e
         while e1 > 0:
-            if self._meet[e1, element] == 0 and not self.is_lequal(e1, e):
+            if mt[e1, element] == 0 and not self.is_lequal(e1, e):
                 return None
             e1 -= 1
         return e
@@ -1763,7 +2053,7 @@ class HasseDiagram(DiGraph):
             []
 
         Unique orthocomplementations; second is not uniquely complemented,
-        but has only one orthocomplementation.
+        but has only one orthocomplementation::
 
             sage: H = posets.BooleanLattice(4)._hasse_diagram  # Uniquely complemented
             sage: len(list(H.orthocomplementations_iterator()))
@@ -1787,7 +2077,7 @@ class HasseDiagram(DiGraph):
         for chain 0-1-6-11 would be 11-7-8-0, which is not a chain::
 
             sage: H = HasseDiagram('KTGG_?AAC?O?o?@?@?E?@?@??')
-            sage: list([_ for _ in H.orthocomplementations_iterator()])
+            sage: list(H.orthocomplementations_iterator())
             []
         """
         n = self.order()
@@ -1817,10 +2107,12 @@ class HasseDiagram(DiGraph):
                 orbit_number[e] = ind
 
         comps = [None] * n
+        mt = self.meet_matrix()
+        jn = self.join_matrix()
         for e in range(n):
-            # Fix following after ticket #20727
+            # Fix following after issue #20727
             comps[e] = [x for x in range(n) if
-                        self._meet[e, x] == 0 and self._join[e, x] == n - 1 and
+                        mt[e, x] == 0 and jn[e, x] == n - 1 and
                         x in orbits[orbit_number[dual_isomorphism[e]]]]
 
         # Fitting is done by this recursive function:
@@ -1847,13 +2139,12 @@ class HasseDiagram(DiGraph):
                     new_unbinded = unbinded[1:]  # Remove next_to_fit
                     new_unbinded.remove(e)
 
-                    for i_want_python3_yield_from in recursive_fit(new_binded, new_unbinded):
-                        yield i_want_python3_yield_from
+                    yield from recursive_fit(new_binded, new_unbinded)
 
         start = [None] * n
         # A little optimization
         for e in range(n):
-            if len(comps[e]) == 0:  # Not any possible orthocomplement
+            if not comps[e]:  # Not any possible orthocomplement
                 return
             if len(comps[e]) == 1:  # Do not re-fit this every time
                 e_ = comps[e][0]
@@ -1868,8 +2159,7 @@ class HasseDiagram(DiGraph):
                     start[e_] = e
         start_unbinded = [e for e in range(n) if start[e] is None]
 
-        for i_want_python3_yield_from in recursive_fit(start, start_unbinded):
-            yield i_want_python3_yield_from
+        yield from recursive_fit(start, start_unbinded)
 
     def find_nonsemimodular_pair(self, upper):
         """
@@ -1877,7 +2167,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - upper, a Boolean -- if ``True``, test wheter the lattice is
+        - upper, a Boolean -- if ``True``, test whether the lattice is
           upper semimodular; otherwise test whether the lattice is
           lower semimodular.
 
@@ -1986,7 +2276,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-         - ``i``, ``j`` -- vertices of this Hasse diagram
+        - ``i``, ``j`` -- vertices of this Hasse diagram
 
         EXAMPLES::
 
@@ -1994,11 +2284,16 @@ class HasseDiagram(DiGraph):
             sage: H = P._hasse_diagram
             sage: H.are_incomparable(1,2)
             True
-            sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_incomparable(i,j)]
+            sage: V = H.vertices(sort=True)
+            sage: [ (i,j) for i in V for j in V if H.are_incomparable(i,j)]
             [(1, 2), (1, 3), (2, 1), (3, 1)]
         """
-        mat = self._leq_matrix
-        return not mat[i, j] and not mat[j, i]
+        if i == j:
+            return False
+        if i > j:
+            i, j = j, i
+        mat = self._leq_matrix_boolean
+        return not mat[i, j]
 
     def are_comparable(self, i, j):
         """
@@ -2014,11 +2309,16 @@ class HasseDiagram(DiGraph):
             sage: H = P._hasse_diagram
             sage: H.are_comparable(1,2)
             False
-            sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_comparable(i,j)]
+            sage: V = H.vertices(sort=True)
+            sage: [ (i,j) for i in V for j in V if H.are_comparable(i,j)]
             [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 4), (2, 0), (2, 2), (2, 3), (2, 4), (3, 0), (3, 2), (3, 3), (3, 4), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]
         """
-        mat = self._leq_matrix
-        return bool(mat[i, j]) or bool(mat[j, i])
+        if i == j:
+            return True
+        if i > j:
+            i, j = j, i
+        mat = self._leq_matrix_boolean
+        return bool(mat[i, j])
 
     def antichains(self, element_class=list):
         """
@@ -2026,7 +2326,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-         - ``element_class`` -- (default:list) an iterable type
+        - ``element_class`` -- (default:list) an iterable type
 
         EXAMPLES::
 
@@ -2046,34 +2346,38 @@ class HasseDiagram(DiGraph):
 
             sage: TestSuite(A).run()
 
-        TESTS::
-
             sage: A = Poset()._hasse_diagram.antichains()
             sage: list(A)
             [[]]
             sage: TestSuite(A).run()
         """
         from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-        return PairwiseCompatibleSubsets(self.vertices(),
+        return PairwiseCompatibleSubsets(self.vertices(sort=True),
                                          self.are_incomparable,
                                          element_class=element_class)
 
-    def chains(self, element_class=list, exclude=None):
+    def chains(self, element_class=list, exclude=None, conversion=None):
         """
         Return all chains of ``self``, organized as a prefix tree.
 
         INPUT:
 
-        - ``element_class`` -- (default: ``list``) an iterable type
+        - ``element_class`` -- (optional, default: ``list``) an iterable type
 
         - ``exclude`` -- elements of the poset to be excluded
-          (default: ``None``)
+          (optional, default: ``None``)
+
+        - ``conversion`` -- (optional, default: ``None``) used to pass
+           the list of elements of the poset in their fixed order
 
         OUTPUT:
 
         The enumerated set (with a forest structure given by prefix
         ordering) consisting of all chains of ``self``, each of
         which is given as an ``element_class``.
+
+        If ``conversion`` is given, then the chains are converted
+        to chain of elements of this list.
 
         EXAMPLES::
 
@@ -2095,7 +2399,7 @@ class HasseDiagram(DiGraph):
             [[], [0], [0, 1], [0, 2], [1], [2]]
 
         The ``element_class`` keyword determines how the chains are
-        being returned:
+        being returned::
 
             sage: P = Poset({1: [2, 3], 2: [4]})
             sage: list(P._hasse_diagram.chains(element_class=tuple))
@@ -2103,21 +2407,162 @@ class HasseDiagram(DiGraph):
             sage: list(P._hasse_diagram.chains())
             [[], [0], [0, 1], [0, 1, 2], [0, 2], [0, 3], [1], [1, 2], [2], [3]]
 
-        (Note that taking the Hasse diagram has renamed the vertices.)
+        (Note that taking the Hasse diagram has renamed the vertices.) ::
 
             sage: list(P._hasse_diagram.chains(element_class=tuple, exclude=[0]))
             [(), (1,), (1, 2), (2,), (3,)]
 
         .. SEEALSO:: :meth:`antichains`
         """
-        from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-        if not(exclude is None):
-            vertices = [u for u in self.vertex_iterator() if u not in exclude]
-        else:
-            vertices = self.vertices()
-        return PairwiseCompatibleSubsets(vertices,
-                                         self.are_comparable,
-                                         element_class=element_class)
+        return IncreasingChains(self._leq_storage, element_class, exclude, conversion)
+
+    def is_linear_interval(self, t_min, t_max) -> bool:
+        """
+        Return whether the interval ``[t_min, t_max]`` is linear.
+
+        This means that this interval is a total order.
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: H.is_linear_interval(0, 4)
+            False
+            sage: H.is_linear_interval(0, 3)
+            True
+            sage: H.is_linear_interval(1, 3)
+            False
+            sage: H.is_linear_interval(1, 1)
+            True
+
+        TESTS::
+
+            sage: P = posets.TamariLattice(3)
+            sage: H = P._hasse_diagram
+            sage: D = H._leq_storage
+            sage: a, b = H.bottom(), H.top()
+            sage: H.is_linear_interval(a, b)
+            False
+            sage: H.is_linear_interval(a, a)
+            True
+        """
+        if '_leq_storage' in self.__dict__:
+            if not self.is_lequal(t_min, t_max):  # very quick check
+                return False
+            t = t_max
+            while t != t_min:
+                found = False
+                for u in self.neighbor_in_iterator(t):
+                    if self.is_lequal(t_min, u):
+                        if not found:
+                            found = True
+                            t = u
+                        else:
+                            return False
+            return True
+
+        # fall back to default implementation
+        it = self.all_paths_iterator([t_min], [t_max],
+                                     simple=True, trivial=True)
+        try:
+            next(it)
+        except StopIteration:  # not comparable
+            return False
+        try:
+            next(it)
+        except StopIteration:  # one path
+            return True
+        return False
+
+    def diamonds(self):
+        r"""
+        Return the list of diamonds of ``self``.
+
+        A diamond is the following subgraph of the Hasse diagram::
+
+                    z
+                   / \
+                  x   y
+                   \ /
+                    w
+
+        Thus each edge represents a cover relation in the Hasse diagram.
+        We represent his as the tuple `(w, x, y, z)`.
+
+        OUTPUT:
+
+        A tuple with
+
+        - a list of all diamonds in the Hasse Diagram,
+        - a boolean checking that every `w,x,y` that form a ``V``, there is a
+          unique element `z`, which completes the diamond.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0: [1,2], 1: [3], 2: [3], 3: []})
+            sage: H.diamonds()
+            ([(0, 1, 2, 3)], True)
+
+            sage: P = posets.YoungDiagramPoset(Partition([3, 2, 2]))
+            sage: H = P._hasse_diagram
+            sage: H.diamonds()
+            ([(0, 1, 3, 4), (3, 4, 5, 6)], False)
+        """
+        diamonds = []
+        all_diamonds_completed = True
+        for w in self.vertices(sort=True):
+            covers = self.neighbors_out(w)
+            for i, x in enumerate(covers):
+                for y in covers[i + 1:]:
+                    zs = self.common_upper_covers([x, y])
+                    if len(zs) != 1:
+                        all_diamonds_completed = False
+                    for z in zs:
+                        diamonds.append((w, x, y, z))
+        return (diamonds, all_diamonds_completed)
+
+    def common_upper_covers(self, vertices):
+        r"""
+        Return the list of all common upper covers of ``vertices``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0: [1,2], 1: [3], 2: [3], 3: []})
+            sage: H.common_upper_covers([1, 2])
+            [3]
+
+            sage: from sage.combinat.posets.poset_examples import Posets
+            sage: H = Posets.YoungDiagramPoset(Partition([3, 2, 2]))._hasse_diagram
+            sage: H.common_upper_covers([4, 5])
+            [6]
+        """
+        covers = set(self.neighbors_out(vertices.pop()))
+        for v in vertices:
+            covers = covers.intersection(self.neighbors_out(v))
+        return list(covers)
+
+    def common_lower_covers(self, vertices):
+        r"""
+        Return the list of all common lower covers of ``vertices``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0: [1,2], 1: [3], 2: [3], 3: []})
+            sage: H.common_lower_covers([1, 2])
+            [0]
+
+            sage: from sage.combinat.posets.poset_examples import Posets
+            sage: H = Posets.YoungDiagramPoset(Partition([3, 2, 2]))._hasse_diagram
+            sage: H.common_lower_covers([4, 5])
+            [3]
+        """
+        covers = set(self.neighbors_in(vertices.pop()))
+        for v in vertices:
+            covers = covers.intersection(self.neighbors_in(v))
+        return list(covers)
 
     def _trivial_nonregular_congruence(self):
         """
@@ -2192,8 +2637,9 @@ class HasseDiagram(DiGraph):
             sage: next(it)
             {0}
         """
-        # Python3-note: "yield from" would be simpler.
         yield elms
+        mt = self.meet_matrix()
+        jn = self.join_matrix()
         for e in range(min_e, self.cardinality()):
             if e in elms:
                 continue
@@ -2206,12 +2652,11 @@ class HasseDiagram(DiGraph):
                 if g in current_set:
                     continue
                 for x in current_set:
-                    gens.add(self._meet[x, g])
-                    gens.add(self._join[x, g])
+                    gens.add(mt[x, g])
+                    gens.add(jn[x, g])
                 current_set.add(g)
             else:
-                for x in self.sublattices_iterator(current_set, e + 1):
-                    yield x
+                yield from self.sublattices_iterator(current_set, e + 1)
 
     def maximal_sublattices(self):
         """
@@ -2379,10 +2824,10 @@ class HasseDiagram(DiGraph):
         if self.in_degree(uc) == 1:
             return uc
         lt_a = set(self.depth_first_search(a, neighbors=self.neighbors_in))
-        tmp = list(self.depth_first_search(uc, neighbors=lambda v: [v_ for v_ in self.neighbors_in(v) if v_ not in lt_a]))
+        tmp = list(self.depth_first_search(uc, neighbors=lambda v: [v_ for v_ in self.neighbor_in_iterator(v) if v_ not in lt_a]))
         result = None
         for e in tmp:
-            if all(x not in tmp for x in self.neighbors_in(e)):
+            if all(x not in tmp for x in self.neighbor_in_iterator(e)):
                 if result:
                     return None
                 result = e
@@ -2418,7 +2863,7 @@ class HasseDiagram(DiGraph):
                 raise ValueError("lattice is not pseudocomplemented")
             p_atoms.append(p_atom)
         n = len(p_atoms)
-        mt = self._meet
+        mt = self.meet_matrix()
         pos = [0] * n
         meets = [self.order() - 1] * n
         result = [self.order() - 1]
@@ -2437,7 +2882,7 @@ class HasseDiagram(DiGraph):
 
         return result
 
-    def is_convex_subset(self, S):
+    def is_convex_subset(self, S) -> bool:
         r"""
         Return ``True`` if `S` is a convex subset of the poset,
         and ``False`` otherwise.
@@ -2499,8 +2944,8 @@ class HasseDiagram(DiGraph):
         EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H= HasseDiagram({0: [1, 2], 1: [4], 2: [3], 3: [4, 5],
-            ....:                  4: [6], 5:[6]})
+            sage: H = HasseDiagram({0: [1, 2], 1: [4], 2: [3], 3: [4, 5],
+            ....:                   4: [6], 5:[6]})
             sage: sorted(H.neutral_elements())
             [0, 4, 6]
 
@@ -2533,8 +2978,8 @@ class HasseDiagram(DiGraph):
         notneutrals = set()
         all_elements = set(range(n))
 
-        mt = self._meet
-        jn = self._join
+        mt = self.meet_matrix()
+        jn = self.join_matrix()
 
         def is_neutral(a):
             noncomp = all_elements.difference(self.depth_first_search(a))
@@ -2619,10 +3064,10 @@ class HasseDiagram(DiGraph):
         if self.out_degree(lc) == 1:
             return lc
         gt_a = set(self.depth_first_search(a))
-        tmp = list(self.depth_first_search(lc, neighbors=lambda v: [v_ for v_ in self.neighbors_out(v) if v_ not in gt_a]))
+        tmp = list(self.depth_first_search(lc, neighbors=lambda v: [v_ for v_ in self.neighbor_out_iterator(v) if v_ not in gt_a]))
         result = None
         for e in tmp:
-            if all(x not in tmp for x in self.neighbors_out(e)):
+            if all(x not in tmp for x in self.neighbor_out_iterator(e)):
                 if result:
                     return None
                 result = e
@@ -2757,8 +3202,8 @@ class HasseDiagram(DiGraph):
         from copy import copy
 
         n = self.order()
-        mt = self._meet
-        jn = self._join
+        mt = self.meet_matrix()
+        jn = self.join_matrix()
 
         def fill_to_interval(S):
             """
@@ -2808,7 +3253,7 @@ class HasseDiagram(DiGraph):
             for a in block:  # Quadrilateral up
                 for c in self.neighbor_out_iterator(a):
                     if c not in block:
-                        d = self._join[c, b]
+                        d = jn[c, b]
                         if cong.find(d) != cong.find(c):
                             break
                 else:
@@ -2820,7 +3265,7 @@ class HasseDiagram(DiGraph):
                 for b in reversed(block):  # ...quadrilateral down
                     for d in self.neighbor_in_iterator(b):
                         if d not in block:
-                            c = self._meet[d, a]
+                            c = mt[d, a]
                             if cong.find(c) != cong.find(d):
                                 break
                     else:
@@ -2849,10 +3294,10 @@ class HasseDiagram(DiGraph):
                 if len(mins) > 1 or len(maxs) > 1:
                     c = n - 1
                     for m in mins:
-                        c = self._meet[c, m]
+                        c = mt[c, m]
                     d = 0
                     for m in maxs:
-                        d = self._join[d, m]
+                        d = jn[d, m]
 
             # This removes duplicates from todo.
             todo = set(cong.find(x) for x in todo)
@@ -2957,7 +3402,7 @@ class HasseDiagram(DiGraph):
                 D[ab] = cong
                 P[ab] = cong_
 
-        # Todo: Make a function that creates the poset from a set
+        # TODO: Make a function that creates the poset from a set
         # by comparison function with minimal number of comparisons.
 
         T = SetPartitions(n)
@@ -2995,7 +3440,7 @@ class HasseDiagram(DiGraph):
                 yield c
                 congs[achain] = c
 
-    def is_congruence_normal(self):
+    def is_congruence_normal(self) -> bool:
         """
         Return ``True`` if the lattice can be constructed from the one-element
         lattice with Day doubling constructions of convex subsets.
@@ -3038,22 +3483,180 @@ class HasseDiagram(DiGraph):
         from sage.combinat.set_partition import SetPartition
 
         n = self.order()
-        congs_ji = {}
+        congs_ji: dict[SetPartition, list] = {}
 
         for ji in range(n):
             if self.in_degree(ji) == 1:
-                cong = SetPartition(self.congruence([[ji, next(self.neighbor_in_iterator(ji))]]))
+                cong = SetPartition(self.congruence([[ji, next(self.neighbor_in_iterator(ji))]]))  # type:ignore
                 if cong not in congs_ji:
                     congs_ji[cong] = []
                 congs_ji[cong].append(ji)
 
         for mi in range(n):
             if self.out_degree(mi) == 1:
-                cong = SetPartition(self.congruence([[mi, next(self.neighbor_out_iterator(mi))]]))
+                cong = SetPartition(self.congruence([[mi, next(self.neighbor_out_iterator(mi))]]))  # type:ignore
                 if any(self.is_lequal(ji, mi) for ji in congs_ji[cong]):
                     return False
 
         return True
+
+    @staticmethod
+    def _glue_spectra(a_spec, b_spec, orientation):
+        r"""
+        Return the `a`-spectrum of a poset by merging ``a_spec`` and ``b_spec``.
+
+        ``a_spec`` and ``b_spec`` are the `a`-spectrum and `b`-spectrum of two different
+        posets (see :meth:`atkinson` for the definition of `a`-spectrum).
+
+        The orientation determines whether `a < b` or `b < a` in the combined poset.
+
+        This is a helper method for :meth:`atkinson`.
+
+        INPUT:
+
+        - ``a_spec`` -- list; the `a`-spectrum of a poset `P`
+
+        - ``b_spec`` -- list; the `b`-spectrum of a poset `Q`
+
+        - ``orientation`` -- boolean; ``True`` if `a < b`, ``False`` otherwise
+
+        OUTPUT:
+
+        The `a`-spectrum (or `b`-spectrum, depending on orientation),
+        returned as a list, of the poset which is a disjoint union
+        of `P` and `Q`, together with the additional
+        covering relation `a < b`.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: Pdata = [0, 1, 2, 0]
+            sage: Qdata = [1, 1, 0]
+            sage: HasseDiagram._glue_spectra(Pdata, Qdata, True)
+            [0, 20, 28, 18, 0, 0, 0]
+
+            sage: Pdata = [0, 0, 2]
+            sage: Qdata = [0, 1]
+            sage: HasseDiagram._glue_spectra(Pdata, Qdata, False)
+            [0, 0, 0, 0, 8]
+        """
+        new_a_spec = []
+
+        if not orientation:
+            a_spec, b_spec = b_spec, a_spec
+
+        p = len(a_spec)
+        q = len(b_spec)
+
+        for r in range(1, p + q + 1):
+            new_a_spec.append(0)
+            for i in range(max(1, r - q), min(p, r) + 1):
+                k_val = binomial(r - 1, i - 1) * binomial(p + q - r, p - i)
+                if orientation:
+                    inner_sum = sum(b_spec[j - 1] for j in range(r - i + 1, len(b_spec) + 1))
+                else:
+                    inner_sum = sum(b_spec[j - 1] for j in range(1, r - i + 1))
+                new_a_spec[-1] = new_a_spec[-1] + (a_spec[i - 1] * k_val * inner_sum)
+
+        return new_a_spec
+
+    def _split(self, a, b):
+        r"""
+        Return the two connected components obtained by deleting the covering
+        relation `a < b` from a Hasse diagram that is a tree.
+
+        This is a helper method for :meth:`FinitePoset.atkinson`.
+
+        INPUT:
+
+        - ``a`` -- an element of the poset
+        - ``b`` -- an element of the poset which covers ``a``
+
+        OUTPUT:
+
+        A list containing two posets which are the connected components
+        of this poset after deleting the covering relation `a < b`.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0: [1, 2], 1: [], 2: []})
+            sage: H._split(0, 1)
+            [Hasse diagram of a poset containing 2 elements, Hasse diagram of a poset containing 1 elements]
+
+            sage: H = HasseDiagram({0: [1], 1: [2], 2: [3], 3: [4], 4: []})
+            sage: H._split(1, 2)
+            [Hasse diagram of a poset containing 2 elements, Hasse diagram of a poset containing 3 elements]
+
+        TESTS::
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0: [1,2,3], 1: [4, 5], 2: [4, 6], 3: [5, 6], 4: [7], 5: [7], 6: [7], 7: []})
+            sage: H._split(0, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong number of connected components after the covering relation is deleted
+
+            sage: H = HasseDiagram({0: [1], 1: [], 2: []})
+            sage: H._split(0, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong number of connected components after the covering relation is deleted
+        """
+        split_hasse = self.copy(self)
+        split_hasse.delete_edge(a, b)
+        components = split_hasse.connected_components_subgraphs()
+        if not len(components) == 2:
+            raise ValueError("wrong number of connected components after the covering relation is deleted")
+
+        c1, c2 = components
+        if a in c2:
+            c1, c2 = c2, c1
+
+        return [c1, c2]
+
+    def _spectrum_of_tree(self, a):
+        r"""
+        Return the `a`-spectrum of a poset whose underlying graph is a tree.
+
+        This is a helper method for :meth:`FinitePoset.atkinson`.
+
+        INPUT:
+
+        - ``a`` -- an element of the poset
+
+        OUTPUT:
+
+        The `a`-spectrum of this poset, returned as a list.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0: [2], 1: [2], 2: [3, 4], 3: [], 4: []})
+            sage: H._spectrum_of_tree(0)
+            [2, 2, 0, 0, 0]
+
+            sage: H = HasseDiagram({0: [2], 1: [2], 2: [3, 4], 3: [], 4: []})
+            sage: H._spectrum_of_tree(2)
+            [0, 0, 4, 0, 0]
+
+            sage: H = HasseDiagram({0: [2], 1: [2], 2: [3, 4], 3: [], 4: []})
+            sage: H._spectrum_of_tree(3)
+            [0, 0, 0, 2, 2]
+        """
+        upper_covers = self.neighbors_out(a)
+        lower_covers = self.neighbors_in(a)
+        if not upper_covers and not lower_covers:
+            return [1]
+        if upper_covers:
+            b = upper_covers[0]
+            orientation = True
+        else:
+            (a, b) = (lower_covers[0], a)
+            orientation = False
+        P, Q = self._split(a, b)
+        a_spec = P._spectrum_of_tree(a)
+        b_spec = Q._spectrum_of_tree(b)
+        return HasseDiagram._glue_spectra(a_spec, b_spec, orientation)
 
 
 __doc__ = __doc__.format(INDEX_OF_FUNCTIONS=gen_rest_table_index(HasseDiagram))

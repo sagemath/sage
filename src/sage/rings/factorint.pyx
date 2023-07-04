@@ -17,8 +17,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
+from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_set_mpz
+from sage.libs.flint.fmpz_factor cimport *
 
 from sage.rings.integer cimport Integer
 from sage.rings.fast_arith import prime_range
@@ -33,7 +37,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     r"""
     Return the Aurifeuillian factors `F_n^\pm(m^2n)`.
 
-    This is based off Theorem 3 of [Brent93]_.
+    This is based off Theorem 3 of [Bre1993]_.
 
     INPUT:
 
@@ -74,15 +78,8 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
 
         There is no need to set `F`. It's only for increasing speed
         of :meth:`factor_aurifeuillian()`.
-
-    REFERENCES:
-
-    .. [Brent93] Richard P. Brent.
-       *On computing factors of cyclotomic polynomials*.
-       Mathematics of Computation. **61** (1993). No. 203. pp 131-149.
-       :arXiv:`1004.5466v1`. http://www.jstor.org/stable/2152941
     """
-    from sage.arith.all import euler_phi
+    from sage.arith.misc import euler_phi
     from sage.rings.real_mpfi import RealIntervalField
     if check:
         if not n.is_squarefree():
@@ -158,12 +155,12 @@ cpdef factor_aurifeuillian(n, check=True):
         ....:         s = -1 if n % 4 == 1 else 1
         ....:         y = (m^2*n)^n + s
         ....:         F = fa(y)
-        ....:         assert(len(F) > 0 and prod(F) == y)
+        ....:         assert(F and prod(F) == y)
 
     REFERENCES:
 
     - http://mathworld.wolfram.com/AurifeuilleanFactorization.html
-    - [Brent93]_ Theorem 3
+    - [Bre1993]_ Theorem 3
     """
     if n in [-2, -1, 0, 1, 2]:
         return [n]
@@ -227,15 +224,15 @@ def factor_cunningham(m, proof=None):
     EXAMPLES::
 
         sage: from sage.rings.factorint import factor_cunningham
-        sage: factor_cunningham(2^257-1) # optional - cunningham
+        sage: factor_cunningham(2^257-1) # optional - cunningham_tables
         535006138814359 * 1155685395246619182673033 * 374550598501810936581776630096313181393
-        sage: factor_cunningham((3^101+1)*(2^60).next_prime(),proof=False) # optional - cunningham
+        sage: factor_cunningham((3^101+1)*(2^60).next_prime(),proof=False) # optional - cunningham_tables
         2^2 * 379963 * 1152921504606847009 * 1017291527198723292208309354658785077827527
 
     """
     from sage.databases import cunningham_tables
     cunningham_prime_factors = cunningham_tables.cunningham_prime_factors()
-    if m.nbits() < 100 or len(cunningham_prime_factors) == 0:
+    if m.nbits() < 100 or not cunningham_prime_factors:
         return m.factor(proof=proof)
     n = Integer(m)
     L = []
@@ -357,3 +354,77 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
     finally:
         if prev != debug_level:
             pari.set_debug_level(prev)
+
+
+def factor_using_flint(Integer n):
+    r"""
+    Factor the nonzero integer ``n`` using FLINT.
+
+    This function returns a list of (factor, exponent) pairs. The
+    factors will be of type ``Integer``, and the exponents will be of
+    type ``int``.
+
+    INPUT:
+
+    - ``n`` -- a nonzero sage Integer; the number to factor.
+
+    OUTPUT:
+
+    A list of ``(Integer, int)`` pairs representing the factors and
+    their exponents.
+
+    EXAMPLES::
+
+        sage: from sage.rings.factorint import factor_using_flint
+        sage: n = ZZ(9962572652930382)
+        sage: factors = factor_using_flint(n)
+        sage: factors
+        [(2, 1), (3, 1), (1660428775488397, 1)]
+        sage: prod( f^e for (f,e) in factors ) == n
+        True
+
+     Negative numbers will have a leading factor of ``(-1)^1``::
+
+        sage: n = ZZ(-1 * 2 * 3)
+        sage: factor_using_flint(n)
+        [(-1, 1), (2, 1), (3, 1)]
+
+    The factorization of unity is empty::
+
+        sage: factor_using_flint(ZZ.one())
+        []
+
+    While zero has a single factor, of... zero::
+
+        sage: factor_using_flint(ZZ.zero())
+        [(0, 1)]
+
+    TESTS:
+
+    Check that the integers [-10,000, 10,000] are factored correctly::
+
+        sage: all(
+        ....:   prod( f^e for (f,e) in factor_using_flint(ZZ(c*k)) ) == c*k
+        ....:   for k in range(10000)
+        ....:   for c in [-1, 1]
+        ....: )
+        True
+    """
+    if n.is_zero():
+        return [(n, int(1))]
+
+    cdef fmpz_t p
+    fmpz_init(p)
+    fmpz_set_mpz(p, (<Integer>n).value)
+
+    cdef fmpz_factor_t factors
+    fmpz_factor_init(factors)
+
+    sig_on()
+    fmpz_factor(factors, p)
+    sig_off()
+
+    pairs = fmpz_factor_to_pairlist(factors)
+
+    fmpz_factor_clear(factors)
+    return pairs

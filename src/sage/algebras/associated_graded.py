@@ -114,7 +114,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         sage: A = Modules(QQ).WithBasis().Filtered().example()
         sage: grA = A.graded_algebra()
         sage: grA.category()
-        Category of graded modules with basis over Rational Field
+        Category of graded vector spaces with basis over Rational Field
         sage: x = A.basis()[Partition([3,2,1])]
         sage: grA(x)
         Bbar[[3, 2, 1]]
@@ -249,7 +249,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         if isinstance(x, CombinatorialFreeModule.Element):
             if x.parent() is self._A:
                 return self._from_dict(dict(x))
-        return super(AssociatedGradedAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def gen(self, *args, **kwds):
         """
@@ -340,4 +340,3 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         return self.sum_of_terms([(i,c) for i,c in ret
                                      if self._A.degree_on_basis(i) == deg],
                                  distinct=True)
-

@@ -1,22 +1,21 @@
 """
 Database of Hilbert Polynomials
 """
-
-#######################################################################
+# ****************************************************************************
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2016 Vincent Delecroix <vincent.delecroix@labri.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import print_function, absolute_import
 from .db_modular_polynomials import _dbz_to_integers
 
 disc_format = "%07d"  #  disc_length = 7
 level_format = "%03d" #  level_length = 3
+
 
 class ClassPolynomialDatabase:
     def _dbpath(self, disc, level=1):
@@ -38,9 +37,9 @@ class ClassPolynomialDatabase:
         n1 = 5000*((abs(disc)-1)//5000)
         s1 = disc_format % (n1+1) #_pad_int(n1+1, disc_length)
         s2 = disc_format % (n1+5000)
-        subdir = "%s-%s"%(s1,s2)
+        subdir = "%s-%s" % (s1, s2)
         discstr = disc_format % abs(disc)
-        return "PolHeeg/%s/%s/pol.%s.dbz"%(self.model, subdir, discstr)
+        return "PolHeeg/%s/%s/pol.%s.dbz" % (self.model, subdir, discstr)
 
     def __getitem__(self, disc):
         r"""
@@ -52,13 +51,14 @@ class ClassPolynomialDatabase:
             sage: db[123913912]
             Traceback (most recent call last):
             ...
-            LookupError: filename .../kohel/PolHeeg/Cls/123910001-123915000/pol.123913912.dbz does not exist
+            ValueError: file not found in the Kohel database
         """
         from sage.rings.integer_ring import ZZ
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         classpol = self._dbpath(disc)
         coeff_list = _dbz_to_integers(classpol)
         return PolynomialRing(ZZ, 'x')(coeff_list)
+
 
 class HilbertClassPolynomialDatabase(ClassPolynomialDatabase):
     """
@@ -96,12 +96,14 @@ class AtkinClassPolynomialDatabase(ClassPolynomialDatabase):
     def __repr__(self):
         return "Atkin class polynomial database"
 
+
 class WeberClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     The database of Weber class polynomials.
     """
     def __repr__(self):
         return "Weber class polynomial database"
+
 
 class DedekindEtaClassPolynomialDatabase(ClassPolynomialDatabase):
     """
@@ -111,4 +113,3 @@ class DedekindEtaClassPolynomialDatabase(ClassPolynomialDatabase):
 
     def __repr__(self):
         return "Dedekind eta class polynomial database"
-

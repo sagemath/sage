@@ -1,0 +1,19 @@
+export CFLAGS="$CFLAGS -Wno-strict-prototypes -Wno-implicit-function-declaration"
+cd src
+mkdir build
+cd build
+# https://igraph.org/c/doc/igraph-Installation.html
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DBUILD_SHARED_LIBS=ON \
+          -DIGRAPH_USE_INTERNAL_GLPK=OFF \
+          -DIGRAPH_USE_INTERNAL_GMP=OFF \
+          -DBLA_VENDOR=OpenBLAS \
+          -DBLAS_LIBRARIES="$(pkg-config --libs blas)" \
+          -DLAPACK_LIBRARIES="$(pkg-config --libs lapack)" \
+          -DIGRAPH_USE_INTERNAL_BLAS=OFF \
+          -DIGRAPH_USE_INTERNAL_LAPACK=OFF \
+          -DIGRAPH_USE_INTERNAL_SUITESPARSE=OFF \
+          -DIGRAPH_GLPK_SUPPORT=ON \
+          ..
+sdh_make
+sdh_make_install

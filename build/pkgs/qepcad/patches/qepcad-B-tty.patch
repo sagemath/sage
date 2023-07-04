@@ -1,0 +1,45 @@
+--- a/source/db/SINGULAR.c.orig	2018-08-29 20:10:06.406075801 -0600
++++ b/source/db/SINGULAR.c	2018-08-29 20:11:02.229992773 -0600
+@@ -1,6 +1,7 @@
+ #include "SINGULAR.h"
+ #include <iostream>
+ #include <string>
++#include <unistd.h>
+ using namespace std;
+ 
+ 
+@@ -15,6 +16,12 @@ SingularServer::SingularServer(string Si
+   if (childpid == 0) {
+     intoSingular.setStdinToPipe();
+     outofSingular.setStdoutToPipe();
++    outofSingular.setStderrToPipe();
++    intoSingular.closeIn();
++    intoSingular.closeOut();
++    outofSingular.closeIn();
++    outofSingular.closeOut();
++    setsid();
+ 
+     // Begin: Just for debug!!
+     //system("/home/wcbrown/bin/Singular -q --no-warn --min-time=0.001 --ticks-per-sec=1000 | tee /tmp/SingOutLog");
+@@ -30,9 +37,10 @@ SingularServer::SingularServer(string Si
+ 	   "--ticks-per-sec=1000",
+ 	   NULL);
+       perror("SingularServer Constructor: Singular startup failed! (Set SINGULAR environment variable)");
+-      outofSingular.closeOut();
+       exit(0);
+   }
++  intoSingular.closeIn();
++  outofSingular.closeOut();
+ }
+ 
+ SingularServer::~SingularServer()
+--- a/source/db/unnamedpipe.h.orig	2018-08-29 20:10:06.406075801 -0600
++++ b/source/db/unnamedpipe.h	2018-08-29 20:11:02.229992773 -0600
+@@ -113,6 +113,7 @@ public:
+   int fdout() { return fd[1]; }
+   int setStdinToPipe() { return dup2(fdin(),fileno(stdin)); }
+   int setStdoutToPipe() { return dup2(fdout(),fileno(stdout)); }
++  int setStderrToPipe() { return dup2(fdout(),fileno(stderr)); }
+   void closeIn() { 
+     if (_in) { delete _in; _in = 0; }
+     if (openmask[0]) { close(fd[0]); openmask[0] = false; } 

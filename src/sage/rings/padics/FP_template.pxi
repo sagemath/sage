@@ -1,5 +1,5 @@
 """
-Floating point template for complete discrete valuation rings.
+Floating point template for complete discrete valuation rings
 
 In order to use this template you need to write a linkage file and
 gluing file.  For an example see mpz_linkage.pxi (linkage file) and
@@ -290,7 +290,7 @@ cdef class FPElement(pAdicTemplateElement):
 
             sage: a = ZpFP(5)(-3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: loads(dumps(a)) == a
             True
         """
@@ -359,7 +359,9 @@ cdef class FPElement(pAdicTemplateElement):
         else:
             if self.ordp > right.ordp:
                 # Addition is commutative, swap so self.ordp < right.ordp
-                ans = right; right = self; self = ans
+                ans = right
+                right = self
+                self = ans
             tmpL = right.ordp - self.ordp
             if tmpL > self.prime_pow.ram_prec_cap:
                 return self
@@ -600,13 +602,23 @@ cdef class FPElement(pAdicTemplateElement):
             1 + 4*11^2 + 3*11^3 + 7*11^4
             sage: R(11)^-1
             11^-1
+
+        TESTS:
+
+        Check that :trac:`31875` is fixed::
+
+            sage: R(1)^R(0)
+            1
+            sage: S.<a> = ZqFP(4)
+            sage: S(1)^S(0)
+            1
         """
         cdef long dummyL
         cdef mpz_t tmp
         cdef Integer right
         cdef FPElement base, pright, ans
         cdef bint exact_exp
-        if isinstance(_right, (Integer, int, long, Rational)):
+        if isinstance(_right, (Integer, int, Rational)):
             if _right < 0:
                 self = ~self
                 _right = -_right
@@ -614,7 +626,7 @@ cdef class FPElement(pAdicTemplateElement):
         elif self.parent() is _right.parent():
             ## For extension elements, we need to switch to the
             ## fraction field sometimes in highly ramified extensions.
-            exact_exp = False
+            exact_exp = (<FPElement>_right)._is_exact_zero()
             pright = _right
         else:
             self, _right = canonical_coercion(self, _right)
@@ -881,13 +893,12 @@ cdef class FPElement(pAdicTemplateElement):
             absprec = Integer(absprec)
         return mpz_cmp_si((<Integer>absprec).value, self.ordp) <= 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
-        Returns True if this element is distinguishable from zero.
+        Return ``True`` if this element is distinguishable from zero.
 
         For most applications, explicitly specifying the power of p
-        modulo which the element is supposed to be nonzero is
-        preferrable.
+        modulo which the element is supposed to be nonzero is preferable.
 
         EXAMPLES::
 
@@ -1029,9 +1040,40 @@ cdef class FPElement(pAdicTemplateElement):
         else:
             cteichmuller(self.unit, self.unit, self.prime_pow.ram_prec_cap, self.prime_pow)
 
+    def _polynomial_list(self, pad=False):
+        """
+        Return the coefficient list for a polynomial over the base ring
+        yielding this element.
+
+        INPUT:
+
+        - ``pad`` -- whether to pad the result with zeros of the appropriate precision
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = QqFP(5^3)
+            sage: W.<w> = K.extension(x^3-5)
+            sage: (1 + w)._polynomial_list()
+            [1, 1]
+            sage: (1 + w)._polynomial_list(pad=True)
+            [1, 1, 0]
+        """
+        R = self.base_ring()
+        if very_pos_val(self.ordp):
+            L = []
+        elif very_neg_val(self.ordp):
+            L = [~R(0)]
+        else:
+            L = ccoefficients(self.unit, self.ordp, self.prime_pow.ram_prec_cap, self.prime_pow)
+        if pad:
+            n = self.parent().relative_degree()
+            L.extend([R.zero()] * (n - len(L)))
+        return L
+
     def polynomial(self, var='x'):
         """
-        Returns a polynomial over the base ring that yields this element
+        Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
 
         INPUT:
@@ -1050,12 +1092,7 @@ cdef class FPElement(pAdicTemplateElement):
         """
         R = self.base_ring()
         S = R[var]
-        if very_pos_val(self.ordp):
-            return S([])
-        elif very_neg_val(self.ordp):
-            return S([~R(0)])
-        else:
-            return S(ccoefficients(self.unit, self.ordp, self.prime_pow.ram_prec_cap, self.prime_pow))
+        return S(self._polynomial_list())
 
     def precision_absolute(self):
         """
@@ -1117,7 +1154,7 @@ cdef class FPElement(pAdicTemplateElement):
             ...
             ValueError: unit part of 0 and infinity not defined
             sage: type(R(5).unit_part())
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: R = ZpFP(5, 5); a = R(75); a.unit_part()
             3
         """
@@ -1233,7 +1270,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
         EXAMPLES::
 
             sage: f = ZpFP(5).coerce_map_from(ZZ); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicCoercion_ZZ_FP'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicCoercion_ZZ_FP'>
         """
         RingHomomorphism.__init__(self, ZZ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1315,7 +1352,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
 
             sage: R = ZpFP(5,4)
             sage: type(R(10,2))
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: R(30,2)
             5
             sage: R(30,3,2)
@@ -1381,7 +1418,7 @@ cdef class pAdicConvert_FP_ZZ(RingMap):
         EXAMPLES::
 
             sage: f = ZpFP(5).coerce_map_from(ZZ).section(); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicConvert_FP_ZZ'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicConvert_FP_ZZ'>
             sage: f.category()
             Category of homsets of sets
         """
@@ -1445,7 +1482,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
         EXAMPLES::
 
             sage: f = QpFP(5).coerce_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicCoercion_QQ_FP'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicCoercion_QQ_FP'>
         """
         RingHomomorphism.__init__(self, QQ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1536,7 +1573,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
 
             sage: R = QpFP(5,4)
             sage: type(R(10/3,2))
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: R(10/3,2)
             4*5
             sage: R(10/3,3,1)
@@ -1601,7 +1638,7 @@ cdef class pAdicConvert_FP_QQ(RingMap):
         EXAMPLES::
 
             sage: f = QpFP(5).coerce_map_from(QQ).section(); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicConvert_FP_QQ'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicConvert_FP_QQ'>
             sage: f.category()
             Category of homsets of sets with partial maps
         """
@@ -1649,7 +1686,7 @@ cdef class pAdicConvert_QQ_FP(Morphism):
         EXAMPLES::
 
             sage: f = ZpFP(5).convert_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicConvert_QQ_FP'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicConvert_QQ_FP'>
         """
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
         self._zero = R.element_class(R, 0)
@@ -1730,7 +1767,7 @@ cdef class pAdicConvert_QQ_FP(Morphism):
 
             sage: R = ZpFP(5,4)
             sage: type(R(1/7,2))
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: R(1/7,2)
             3 + 3*5
             sage: R(1/7,3,2)
@@ -1785,7 +1822,7 @@ cdef class pAdicCoercion_FP_frac_field(RingHomomorphism):
             sage: R.<a> = ZqFP(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R); type(f)
-            <type 'sage.rings.padics.qadic_flint_FP.pAdicCoercion_FP_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_FP.pAdicCoercion_FP_frac_field'>
         """
         RingHomomorphism.__init__(self, R.Hom(K))
         self._zero = K(0)
@@ -1962,7 +1999,7 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
             sage: R.<a> = ZqFP(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); type(f)
-            <type 'sage.rings.padics.qadic_flint_FP.pAdicConvert_FP_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_FP.pAdicConvert_FP_frac_field'>
         """
         Morphism.__init__(self, Hom(K, R, SetsWithPartialMaps()))
         self._zero = R(0)
@@ -1980,7 +2017,8 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
             a
         """
         cdef FPElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef FPElement ans = self._zero._new_c()
         ans.ordp = x.ordp
         cshift_notrunc(ans.unit, x.unit, 0, ans.prime_pow.ram_prec_cap, ans.prime_pow, False)
@@ -2023,7 +2061,8 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
         """
         cdef long aprec, rprec
         cdef FPElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef FPElement ans = self._zero._new_c()
         cdef bint reduce = False
         _process_args_and_kwds(&aprec, &rprec, args, kwds, False, ans.prime_pow)

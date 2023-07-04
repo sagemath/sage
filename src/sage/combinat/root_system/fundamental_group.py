@@ -249,7 +249,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         """
         return self.parent()._prefix + "[" + repr(self.value()) + "]"
 
-    def inverse(self):
+    def __invert__(self):
         r"""
         Return the inverse element of ``self``.
 
@@ -257,7 +257,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
 
             sage: from sage.combinat.root_system.fundamental_group import FundamentalGroupOfExtendedAffineWeylGroup
             sage: F = FundamentalGroupOfExtendedAffineWeylGroup(['A',3,1])
-            sage: F(1).inverse()
+            sage: F(1).inverse()   # indirect doctest
             pi[3]
             sage: F = FundamentalGroupOfExtendedAffineWeylGroup(['E',6,1], prefix="f")
             sage: F(1).inverse()
@@ -265,8 +265,6 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         """
         par = self.parent()
         return self.__class__(par, par.dual_node(self.value()))
-
-    __invert__ = inverse
 
     def _richcmp_(self, x, op):
         r"""
@@ -371,7 +369,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             auto_dict[special_node,i] = i
         # dictionary for the finite Weyl component of the special automorphisms
         reduced_words_dict = {}
-        reduced_words_dict[0] = tuple([])
+        reduced_words_dict[0] = tuple()
 
         if cartan_type.dual().is_untwisted_affine():
             # this combines the computations for an untwisted affine
@@ -503,7 +501,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             sage: FundamentalGroupOfExtendedAffineWeylGroup(['E',6,1],prefix="f").group_generators()
             Finite family {0: f[0], 1: f[1], 6: f[6]}
         """
-        return Family(self.special_nodes(), lambda i: self(i))
+        return Family(self.special_nodes(), self)
 
     def __iter__(self):
         r"""
@@ -779,7 +777,6 @@ class FundamentalGroupGL(FundamentalGroupOfExtendedAffineWeylGroup_Class):
         """
         i = i % self._n
         if i == 0:
-            return tuple([])
+            return tuple()
         om = self.cartan_type().classical().root_system().weight_lattice().fundamental_weight(i)
         return tuple((-om).reduced_word())
-

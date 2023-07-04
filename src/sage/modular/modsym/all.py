@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .element import set_modsym_print_mode
 

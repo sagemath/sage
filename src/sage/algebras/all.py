@@ -1,7 +1,6 @@
 """
 Algebras
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -21,17 +20,18 @@ from sage.misc.lazy_import import lazy_import
 
 import sage.algebras.catalog as algebras
 
-from .quantum_groups.all import *
 from .quatalg.all import *
+from .steenrod.all import *
+from .fusion_rings.all import *
+from .lie_algebras.all import *
+from .quantum_groups.all import *
+from .lie_conformal_algebras.all import *
 
 # Algebra base classes
 from .algebra import Algebra
 from .free_algebra import FreeAlgebra
 from .free_algebra_quotient import FreeAlgebraQuotient
 
-from .steenrod.all import *
-from .lie_algebras.all import *
-from .quantum_groups.all import *
 
 from .finite_dimensional_algebras.all import FiniteDimensionalAlgebra
 
@@ -65,5 +65,3 @@ lazy_import('sage.algebras.q_system', 'QSystem')
 lazy_import('sage.algebras.cluster_algebra', 'ClusterAlgebra')
 
 lazy_import('sage.algebras.yangian', 'Yangian')
-
-del absolute_import

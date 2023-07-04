@@ -1,9 +1,11 @@
-# distutils: libraries = gmp flint arb
+# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: depends = mag.h
 
 from sage.libs.arb.types cimport *
 from sage.libs.flint.types cimport fmpz_t, fmpq_t
 
-cdef extern from "mag.h":
+# mag.h
+cdef extern from "arb_wrap.h":
     void mag_init(mag_t x)
     void mag_clear(mag_t x)
     void mag_init_set(mag_t x, const mag_t y)

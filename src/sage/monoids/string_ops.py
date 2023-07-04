@@ -1,5 +1,4 @@
 "Utility functions on strings"
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
@@ -9,7 +8,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import RealField
+from sage.rings.real_mpfr import RealField
 from .string_monoid_element import StringMonoidElement
 
 def strip_encoding(S):

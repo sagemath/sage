@@ -1,5 +1,5 @@
 """
-The Cuspidal Subspace
+The cuspidal subspace
 
 EXAMPLES::
 
@@ -29,7 +29,6 @@ EXAMPLES::
     q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)
     ]
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>
@@ -38,10 +37,13 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #########################################################################
-from six.moves          import range
-from sage.rings.all     import QQ, Integer
-from sage.misc.all      import verbose, cached_method
-from sage.matrix.all    import Matrix, identity_matrix
+
+from sage.matrix.constructor import Matrix
+from sage.matrix.special import identity_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.verbose  import verbose
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
 
 from .submodule import ModularFormsSubmodule
 from . import vm_basis
@@ -85,6 +87,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             sage: S == loads(dumps(S))
             True
         """
+        from sage.misc.verbose import verbose
         verbose('creating cuspidal submodule of %s'%ambient_space)
         d = ambient_space._dim_cuspidal()
         V = ambient_space.module()
@@ -171,15 +174,16 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         A = self.ambient_module()
         return A.modular_symbols(sign).cuspidal_submodule()
 
-
     def change_ring(self, R):
         r"""
-        Change the base ring of self to R, when this makes sense. This differs
-        from :meth:`~sage.modular.modform.space.ModularFormsSpace.base_extend`
-        in that there may not be a canonical map from self to the new space, as
-        in the first example below. If this space has a character then this may
-        fail when the character cannot be defined over R, as in the second
-        example.
+        Change the base ring of ``self`` to ``R``, when this makes sense.
+
+        This differs from
+        :meth:`~sage.modular.modform.space.ModularFormsSpace.base_extend`
+        in that there may not be a canonical map from ``self`` to the new
+        space, as in the first example below. If this space has a
+        character then this may fail when the character cannot be
+        defined over ``R``, as in the second example.
 
         EXAMPLES::
 
@@ -233,7 +237,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
             prec = Integer(prec)
         if self.dimension() == 0:
             return []
-        M = self.modular_symbols(sign = 1)
+        M = self.modular_symbols(sign=1)
         return M.q_expansion_basis(prec)
 
     def _compute_hecke_matrix_prime(self, p):
@@ -242,7 +246,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
 
         EXAMPLES::
 
-            sage: C=CuspForms(38, 2)
+            sage: C = CuspForms(38, 2)
             sage: C._compute_hecke_matrix_prime(7)
             [-1  0  0  0]
             [ 0 -1  0  0]
@@ -289,8 +293,9 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
         symbs = self.modular_symbols(sign=1).new_subspace(p)
         bas = []
         for x in symbs.q_expansion_basis(self.sturm_bound()):
-                bas.append(self(x))
+            bas.append(self(x))
         return self.submodule(bas, check=False)
+
 
 class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
     r"""
@@ -313,6 +318,22 @@ class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
             prec = Integer(prec)
         return vm_basis.victor_miller_basis(self.weight(), prec,
                                             cusp_only=True, var='q')
+
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: A = ModularForms(1,12).cuspidal_submodule()
+            sage: pari.mfparams(A)
+            [1, 12, 1, 1, t - 1]
+            sage: pari.mfdim(A)
+            1
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 1)
+
 
 class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
     r"""
@@ -338,6 +359,7 @@ class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
         return [weight1.modular_ratio_to_prec(chi, f, prec) for f in
             weight1.hecke_stable_subspace(chi)]
 
+
 class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
     r"""
     Space of cusp forms of weight 1 for a GammaH group.
@@ -357,7 +379,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         A more elaborate example (two Galois-conjugate characters each giving a
         2-dimensional space)::
 
-            sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()
+            sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()  # long time
             [
             q - q^4 - q^6 + O(q^7),
             q^2 + O(q^7),
@@ -521,10 +543,27 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         t = self._transformation_matrix()
         return t * A * ~t
 
+
 class CuspidalSubmodule_g0_Q(CuspidalSubmodule_modsym_qexp):
     r"""
     Space of cusp forms for `\Gamma_0(N)` over `\QQ`.
     """
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: h = Newforms(37)[1]
+            sage: MF = h.parent()
+            sage: pari.mfparams(MF)
+            [37, 2, 1, 1, t - 1]
+            sage: pari.mfdim(MF)
+            2
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 1)
+
 
 class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
     r"""
@@ -648,7 +687,8 @@ def _convert_matrix_from_modsyms(symbs, T):
             basis.append(v)
             basis_images.append(X([ hecke_image_ls[m][i] for m in range(r) ]))
             Y = Ynew
-            if len(basis) == d: break
+            if len(basis) == d:
+                break
 
     # now we can compute the matrix acting on the echelonized space of mod forms
     # need to pass A as base ring since otherwise there are problems when the

@@ -77,7 +77,7 @@ cimported in Cython modules:
 
 - ``cdef size_t biseq_getitem_py(biseq_t S, mp_size_t index)``
 
-  Return ``S[index]`` as Python ``int`` or ``long``, without checking margins.
+  Return ``S[index]`` as Python ``int``, without checking margins.
 
 - ``cdef biseq_inititem(biseq_t S, mp_size_t index, size_t item)``
 
@@ -97,19 +97,18 @@ AUTHORS:
 - Simon King, Jeroen Demeyer (2014-10): initial version (:trac:`15820`)
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>
 #       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugennt.be>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_check, sig_on, sig_off
-include 'sage/data_structures/bitset.pxi'
+from sage.data_structures.bitset_base cimport *
 
 from cpython.int cimport PyInt_FromSize_t
 from cpython.slice cimport PySlice_GetIndicesEx
@@ -259,7 +258,7 @@ cdef inline bint biseq_startswith(biseq_t S1, biseq_t S2) except -1:
 
 cdef mp_size_t biseq_index(biseq_t S, size_t item, mp_size_t start) except -2:
     """
-    Returns the position in ``S`` of an item in ``S[start:]``, or -1 if
+    Return the position in ``S`` of an item in ``S[start:]``, or -1 if
     ``S[start:]`` does not contain the item.
 
     """
@@ -292,7 +291,7 @@ cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index):
 
 cdef biseq_getitem_py(biseq_t S, mp_size_t index):
     """
-    Get item ``S[index]`` as a Python ``int`` or ``long``, without
+    Get item ``S[index]`` as a Python ``int``, without
     checking margins.
 
     """
@@ -445,9 +444,11 @@ cdef mp_size_t biseq_startswith_tail(biseq_t S1, biseq_t S2, mp_size_t start) ex
 # behaves like a tuple
 
 from sage.rings.integer cimport smallInteger
+
+
 cdef class BoundedIntegerSequence:
     """
-    A sequence of non-negative uniformely bounded integers.
+    A sequence of non-negative uniformly bounded integers.
 
     INPUT:
 
@@ -586,7 +587,7 @@ cdef class BoundedIntegerSequence:
         sage: BoundedIntegerSequence(16, [2, 7, -20])
         Traceback (most recent call last):
         ...
-        OverflowError: can't convert negative value to size_t
+        OverflowError: can...t convert negative value to size_t
         sage: BoundedIntegerSequence(1, [0, 0, 0])
         <0, 0, 0>
         sage: BoundedIntegerSequence(1, [0, 1, 0])
@@ -768,7 +769,7 @@ cdef class BoundedIntegerSequence:
         """
         return self.data.length
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         A bounded integer sequence is nonzero if and only if its length is nonzero.
 
@@ -1080,16 +1081,16 @@ cdef class BoundedIntegerSequence:
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             True
-            sage: L0[-1] += 1
+            sage: L0[-1] = (L0[-1] + 1) % 27
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             False
-            sage: L0[-1] -= 1
-            sage: L0[0] += 1
+            sage: L0[-1] = (L0[-1] - 1) % 27
+            sage: L0[0] = (L0[0] + 1) % 27
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             False
-            sage: L0[0] -= 1
+            sage: L0[0] = (L0[0] - 1) % 27
 
         The bounds of the sequences must be compatible, or :meth:`startswith`
         returns ``False``::
@@ -1211,7 +1212,7 @@ cdef class BoundedIntegerSequence:
             sage: T+None
             Traceback (most recent call last):
             ...
-            TypeError: Cannot concatenate bounded integer sequence and None
+            TypeError: cannot concatenate bounded integer sequence and None
 
         TESTS:
 
@@ -1227,7 +1228,7 @@ cdef class BoundedIntegerSequence:
         """
         cdef BoundedIntegerSequence myself, right, out
         if other is None or self is None:
-            raise TypeError('Cannot concatenate bounded integer sequence and None')
+            raise TypeError('cannot concatenate bounded integer sequence and None')
         myself = self  # may result in a type error
         right = other  #  --"--
         if right.data.itembitsize != myself.data.itembitsize:
@@ -1238,9 +1239,9 @@ cdef class BoundedIntegerSequence:
 
     cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other):
         """
-        Returns ``self``'s maximal trailing sub-sequence that ``other`` starts with.
+        Return ``self``'s maximal trailing sub-sequence that ``other`` starts with.
 
-        Returns ``None`` if there is no overlap
+        Return ``None`` if there is no overlap.
 
         EXAMPLES::
 

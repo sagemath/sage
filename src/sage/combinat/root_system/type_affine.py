@@ -7,8 +7,6 @@ Root system data for affine Cartan types
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -53,7 +51,7 @@ class AmbientSpace(CombinatorialFreeModule):
         \delta,\delta\rangle=0` and similarly for the null coroot.
 
         In the current implementation, `\Lambda_0` and the null coroot
-        are identified:
+        are identified::
 
             sage: L = RootSystem(["A",3,1]).ambient_space()
             sage: Lambda = L.fundamental_weights()
@@ -349,7 +347,7 @@ class AmbientSpace(CombinatorialFreeModule):
             - :meth:`CartanType.col_annihilator`
             - :meth:`null_root`
         """
-        cartan_type  = self.cartan_type()
+        cartan_type = self.cartan_type()
         special_node = cartan_type.special_node()
         if i == special_node:
             return self(self._classical_alpha_0()) + self.monomial("delta")

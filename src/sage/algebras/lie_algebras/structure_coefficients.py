@@ -16,8 +16,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from six import iteritems
-
 from sage.misc.cachefunc import cached_method
 #from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.indexed_generators import (IndexedGenerators,
@@ -126,7 +124,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             try:
                 s_coeff = {(d[k[0]], d[k[1]]): [(d[x], y) for x,y in get_pairs(s_coeff[k])]
                            for k in s_coeff}
-            except KeyError:
+            except (KeyError, ValueError):
                 # At this point we assume they are given by the index set
                 pass
 
@@ -139,8 +137,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
             return AbelianLieAlgebra(R, names, index_set, **kwds)
 
-        return super(LieAlgebraWithStructureCoefficients, cls).__classcall__(
-            cls, R, s_coeff, names, index_set, **kwds)
+        return super().__classcall__(cls, R, s_coeff, names, index_set, **kwds)
 
     @staticmethod
     def _standardize_s_coeff(s_coeff, index_set):
@@ -347,7 +344,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             c = self.base_ring()(c)
         return self.element_class(self, c * self._M.basis()[self._index_to_pos[k]])
 
-    def from_vector(self, v):
+    def from_vector(self, v, order=None, coerce=True):
         """
         Return an element of ``self`` from the vector ``v``.
 
@@ -357,7 +354,9 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             sage: L.from_vector([1, 2, -2])
             x + 2*y - 2*z
         """
-        return self.element_class(self, self._M(v))
+        if coerce:
+            v = self._M(v)
+        return self.element_class(self, v)
 
     def some_elements(self):
         """
@@ -422,7 +421,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             """
             print_options = self.parent().print_options()
             pos_to_index = dict(enumerate(self.parent()._indices))
-            v = [(pos_to_index[k], c) for k, c in iteritems(self.value)]
+            v = [(pos_to_index[k], c) for k, c in self.value.items()]
             try:
                 v.sort(key=lambda monomial_coeff:
                             print_options['sorting_key'](monomial_coeff[0]),
@@ -430,4 +429,3 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             except Exception: # Sorting the output is a plus, but if we can't, no big deal
                 pass
             return v
-

@@ -36,7 +36,6 @@ AUTHORS:
 - Simon King (2011): Use Cython. Speedup of ``fix_to_pos``, cleaning documentation.
 
 """
-from __future__ import print_function
 
 from sage.misc.sageinspect import sage_getargspec
 
@@ -117,7 +116,7 @@ cdef class ArgumentFixer:
     """
     def __init__(self, f, classmethod = False):
         try:
-            arg_names, varargs, varkw, defaults = sage_getargspec(f)
+            arg_names, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = sage_getargspec(f)
         except AttributeError:
             # This error occurs if f is defined in a Cython file and the
             # source file has gone.

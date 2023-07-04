@@ -234,7 +234,7 @@ void dgs_bern_mp_clear(dgs_bern_mp_t *self);
 
 typedef struct {
   /**
-     Return 1 wuth probability `p`
+     Return 1 with probability `p`
   */
   double p;
 } dgs_bern_dp_t;

@@ -16,21 +16,22 @@ The basic command syntax is as follows::
     ...
     ======================================================================
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .constructor import random_matrix, Matrix
-from sage.rings.all import ZZ, QQ, GF
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.misc import cputime
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
-from sage.interfaces.all import magma
+from sage.interfaces.magma import magma
 
 verbose = False
 
 timeout = 60
 
-def report(F, title, systems = ['sage', 'magma'], **kwds):
+
+def report(F, title, systems=['sage', 'magma'], **kwds):
     """
     Run benchmarks with default arguments for each function in the list F.
 
@@ -150,7 +151,8 @@ t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -189,7 +191,8 @@ t := Cputime();
 K := CharacteristicPolynomial(A);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -228,7 +231,8 @@ t := Cputime();
 K := Rank(A);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -266,7 +270,8 @@ t := Cputime();
 K := Rank(A);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -306,7 +311,8 @@ t := Cputime();
 K := ElementaryDivisors(A);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -351,7 +357,8 @@ for z in [1..%s] do
 end for;
 s := Cputime(t);
 """%(n,min,max,times)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
@@ -397,7 +404,8 @@ for z in [1..%s] do
 end for;
 s := Cputime(t);
 """%(n,min,max,times)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
@@ -457,7 +465,8 @@ t := Cputime();
 d := Determinant(A);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -497,7 +506,8 @@ t := Cputime();
 d := Determinant(A);
 s := Cputime(t);
 """%(n,-num_bound, num_bound, den_bound)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -544,12 +554,12 @@ for z in [1..%s] do
 end for;
 s := Cputime(t);
 """%(n,min,max,times)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
         raise ValueError('unknown system "%s"'%system)
-
 
 
 #######################################################################
@@ -620,7 +630,8 @@ t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
 """%(n,p)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return magma.eval('s')
     else:
@@ -659,7 +670,8 @@ t := Cputime();
 K := CharacteristicPolynomial(A);
 s := Cputime(t);
 """%(n,p)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return magma.eval('s')
     else:
@@ -700,12 +712,12 @@ for z in [1..%s] do
 end for;
 s := Cputime(t);
 """%(n,p,p,times)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return magma.eval('s')
     else:
         raise ValueError('unknown system "%s"'%system)
-
 
 
 # Matrix multiplication over GF(p)
@@ -746,7 +758,8 @@ for z in [1..%s] do
 end for;
 s := Cputime(t);
 """%(n,p,times)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
@@ -783,7 +796,8 @@ t := Cputime();
 K := Rank(A);
 s := Cputime(t);
 """%(n,p)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -819,7 +833,8 @@ t := Cputime();
 K := Rank(A);
 s := Cputime(t);
 """%(n,p)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -856,7 +871,8 @@ t := Cputime();
 d := Determinant(A);
 s := Cputime(t);
 """%(n,p)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -918,7 +934,8 @@ t := Cputime();
 K := EchelonForm(A);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -957,7 +974,8 @@ t := Cputime();
 K := A^(-1);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -1003,7 +1021,8 @@ for z in [1..%s] do
 end for;
 s := Cputime(t);
 """%(n, A.name(), times)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
     else:
@@ -1040,7 +1059,8 @@ d := Determinant(h);
 s := Cputime(tinit);
 delete h;
 """%n
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
 
@@ -1074,7 +1094,8 @@ d := h^(-1);
 s := Cputime(tinit);
 delete h;
 """%n
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
 
@@ -1117,7 +1138,8 @@ def MatrixVector_QQ(n=1000,h=100,system='sage',times=1):
             end for;
             s := Cputime(t);
         """%(n,h,times)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -1165,7 +1187,8 @@ t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
 """%(n,min,max)
-        if verbose: print(code)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
@@ -1204,11 +1227,10 @@ A := RMatrixSpace(RealField(16), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-"""%(n,min,max)
-        if verbose: print(code)
+""" % (n, min, max)
+        if verbose:
+            print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
-
-
+        raise ValueError('unknown system "%s"' % system)

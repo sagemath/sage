@@ -1,0 +1,2 @@
+# This installs /usr/local/bin/python3 -> python3.9
+python3

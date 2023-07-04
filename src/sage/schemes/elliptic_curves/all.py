@@ -1,7 +1,6 @@
 """
 Exported elliptic curves functionality
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -27,14 +26,15 @@ from .constructor import (EllipticCurve,
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.schemes.elliptic_curves.jacobian', 'Jacobian')
 
-from .ell_rational_field import cremona_curves, cremona_optimal_curves
+lazy_import('sage.schemes.elliptic_curves.ell_rational_field',
+            ['cremona_curves', 'cremona_optimal_curves'])
 
 from .cm import ( cm_orders,
                  cm_j_invariants,
                  cm_j_invariants_and_orders,
                  hilbert_class_polynomial )
 
-from .ec_database import elliptic_curves
+lazy_import('sage.schemes.elliptic_curves.ec_database', 'elliptic_curves')
 
 from .kodaira_symbol import KodairaSymbol
 

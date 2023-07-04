@@ -1,8 +1,8 @@
 """
 The Steenrod algebra
 """
-from __future__ import absolute_import
-
 from .steenrod_algebra import SteenrodAlgebra, Sq
-from .steenrod_algebra_bases import steenrod_algebra_basis
-
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.algebras.steenrod.steenrod_algebra_bases',
+            'steenrod_algebra_basis',
+            deprecation=(32647, 'removed from namespace'))

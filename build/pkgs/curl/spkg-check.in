@@ -1,0 +1,8 @@
+# Do not run a test suite: see https://github.com/sagemath/sage/issues/30093.
+#
+# - The test suite takes a long time and can fail in minor ways.
+# - If some major aspect of curl fails, it only affects the build
+#   process of Sage, not the mathematical correctness of its results.
+# - If some minor aspect of curl fails, it won't affect anything about Sage.
+
+echo "We skip the test suite for curl: see https://github.com/sagemath/sage/issues/30093."

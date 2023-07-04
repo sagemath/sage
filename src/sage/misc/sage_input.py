@@ -107,7 +107,7 @@ preparser, ``-ZZ(5)/7 == -ZZ(5)/ZZ(7)``.::
 The ``int`` method on :class:`SageInputBuilder` returns a SIE for an
 integer that is always represented in the simple way, without coercions.
 (So, depending on the preparser mode, it might read in as an
-:class:`~sage.rings.integer.Integer`, an ``int``, or a ``long``.)::
+:class:`~sage.rings.integer.Integer` or an ``int``.)::
 
     sage: test_qq_formatter(qq_sage_input_v2)
     [-ZZ(5)/7, -ZZ(5)/7, -5/7, -5/7, ZZ(3)/1, ZZ(3)/1, 3/1, 3/1]
@@ -161,7 +161,7 @@ AUTHORS:
 - Vincent Delecroix (2015-02): documentation formatting
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carl Witty <Carl.Witty@gmail.com>
 #                     2015 Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -169,12 +169,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function, absolute_import
-
-from six import itervalues, iteritems, integer_types, string_types
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 def sage_input(x, preparse=True, verify=False, allow_locals=False):
@@ -244,7 +240,7 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
         sage: sage_input((3, lambda x: x))
         Traceback (most recent call last):
         ...
-        ValueError: Can't convert <function <lambda> at 0x...> to sage_input form
+        ValueError: cannot convert <function <lambda> at 0x...> to sage_input form
 
     But we can have :func:`sage_input` continue anyway, and return an input form
     for the rest of the expression, with ``allow_locals=True``.::
@@ -275,6 +271,7 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
             final_answer = SageInputAnswer(*ans_l)
 
     return final_answer
+
 
 class SageInputBuilder:
     r"""
@@ -395,24 +392,6 @@ class SageInputBuilder:
             sage: sage_input(-11r, preparse=None, verify=True)
             # Verified
             -int(11)
-            sage: sage_input(long(-5), verify=True)  # py2
-            # Verified
-            -long(5)
-            sage: sage_input(long(-7), preparse=False, verify=True)
-            # Verified
-            -7L
-            sage: sage_input(long(11), preparse=None, verify=True)  # py2
-            # Verified
-            long(11)
-            sage: sage_input(long(2^70), verify=True)
-            # Verified
-            1180591620717411303424r
-            sage: sage_input(-long(2^80), preparse=False, verify=True)
-            # Verified
-            -1208925819614629174706176
-            sage: sage_input(long(2^75), preparse=None, verify=True)  # py2
-            # Verified
-            long(37778931862957161709568)
             sage: sage_input(float(-infinity), preparse=True, verify=True)
             # Verified
             -float(infinity)
@@ -440,16 +419,16 @@ class SageInputBuilder:
             sage: sage_input('Icky chars: \0\n\t\b\'\"\200\300\234', verify=True)
             # Verified
             'Icky chars: \x00\n\t\x08\'"\x80\xc0\x9c'
-            sage: sage_input(u'unicode with spectral: \u1234\U00012345', verify=True)
+            sage: sage_input('unicode with spectral: \u1234\U00012345', verify=True)
             # Verified
-            u'unicode with spectral: \u1234\U00012345'
+            'unicode with spectral: \u1234\U00012345'
             sage: sage_input((2, 3.5, 'Hi'), verify=True)
             # Verified
             (2, 3.5, 'Hi')
             sage: sage_input(lambda x: x)
             Traceback (most recent call last):
             ...
-            ValueError: Can't convert <function <lambda> at 0x...> to sage_input form
+            ValueError: cannot convert <function <lambda> at 0x...> to sage_input form
             sage: sage_input(lambda x: x, allow_locals=True, verify=True)
             LOCALS:
               _sil1: <function <lambda> at 0x...>
@@ -464,10 +443,12 @@ class SageInputBuilder:
 
         if type(x) in self._cached_types:
             v = self._cache.get((parent(x), x))
-            if v is not None: return v
+            if v is not None:
+                return v
 
         v = self._id_cache.get(id(x))
-        if v is not None: return v[1]
+        if v is not None:
+            return v[1]
 
         if isinstance(x, SageInputExpression):
             return x
@@ -481,10 +462,7 @@ class SageInputBuilder:
         if isinstance(x, bool):
             return SIE_literal_stringrep(self, str(x))
 
-        if (isinstance(x, int) or
-                (isinstance(x, integer_types) and not isinstance(int(x), int))):
-            # For longs that don't fit in an int, we just use the int
-            # code; it will get extended to long automatically.
+        if isinstance(x, int):
             if self._preparse is True:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x) + 'r')
@@ -493,50 +471,35 @@ class SageInputBuilder:
             elif self._preparse is False:
                 return self.int(x)
             else:
-                tyname = 'int' if isinstance(x, int) else 'long'
                 if x < 0:
-                    return -self.name(tyname)(self.int(-x))
+                    return -self.name('int')(self.int(-x))
                 else:
-                    return self.name(tyname)(self.int(x))
-
-        if isinstance(x, integer_types):
-            # This must be a long that does fit in an int, so we need either
-            # long(x) or an 'L' suffix.
-            # With the current preparser, 1Lr does not work.
-            # 1rL does work; but that's just ugly, so I don't use it.
-            if self._preparse is False:
-                if x < 0:
-                    return -SIE_literal_stringrep(self, str(-x) + 'L')
-                else:
-                    return SIE_literal_stringrep(self, str(x) + 'L')
-            else:
-                if x < 0:
-                    return -self.name('long')(self.int(-x))
-                else:
-                    return self.name('long')(self.int(x))
+                    return self.name('int')(self.int(x))
 
         if isinstance(x, float):
             # floats could often have prettier output,
             # but I think they're rare enough in Sage that it's not
             # worth the effort.
-            from sage.all import RR, ZZ, infinity
-            if x == float(infinity):
+            from math import inf
+            if x == inf:
                 return self.name('float')(self.name('infinity'))
             if x != x:
                 return self.name('float')(self.name('NaN'))
-            if x == -float(infinity):
+            if x == -inf:
                 return -self.name('float')(self.name('infinity'))
             if self._preparse is False and float(str(x)) == x:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x))
                 else:
                     return SIE_literal_stringrep(self, str(x))
+            from sage.rings.real_mpfr import RR
+            from sage.rings.integer_ring import ZZ
             rrx = RR(x)
             if rrx in ZZ and abs(rrx) < (1 << 53):
                 return self.name('float')(self.int(ZZ(rrx)))
             return self.name('float')(RR(x))
 
-        if isinstance(x, string_types):
+        if isinstance(x, str):
             return SIE_literal_stringrep(self, repr(x))
 
         if isinstance(x, tuple):
@@ -555,7 +518,7 @@ class SageInputBuilder:
             self._locals[loc_name] = x
             return SIE_literal_stringrep(self, loc_name)
         else:
-            raise ValueError("Can't convert {} to sage_input form".format(x))
+            raise ValueError("cannot convert {} to sage_input form".format(x))
 
     def preparse(self):
         r"""
@@ -583,12 +546,12 @@ class SageInputBuilder:
         r"""
         Return a raw SIE from the integer ``n``
 
-        As it is raw, it may read back as a Sage Integer, a Python int or a
-        Python long, depending on its size and whether the preparser is enabled.
+        As it is raw, it may read back as a Sage Integer or a Python int,
+        depending on its size and whether the preparser is enabled.
 
         INPUT:
 
-        - ``n`` - a Sage Integer, a Python int or a Python long
+        - ``n`` -- a Sage Integer or a Python int
 
         EXAMPLES::
 
@@ -597,10 +560,6 @@ class SageInputBuilder:
             sage: sib = SageInputBuilder()
             sage: sib.result(sib.int(-3^50))
             -717897987691852588770249
-
-            sage: sib = SageInputBuilder()
-            sage: sib.result(sib.int(long(2^65)))
-            36893488147419103232
 
             sage: sib = SageInputBuilder()
             sage: sib.result(sib.int(-42r))
@@ -855,7 +814,7 @@ class SageInputBuilder:
         """
         if isinstance(entries, dict):
             entries = list(entries.items())
-        entries = [(self(key),self(val)) for (key,val) in entries]
+        entries = [(self(key), self(val)) for (key, val) in entries]
         return SIE_dict(self, entries)
 
     def getattr(self, sie, attr):
@@ -1053,9 +1012,9 @@ class SageInputBuilder:
             R.<y> = ZZ[]
             y
         """
-        if not parent in self._parent_gens:
+        if parent not in self._parent_gens:
             self(parent)
-            if not parent in self._parent_gens:
+            if parent not in self._parent_gens:
                 raise ValueError("{} did not register generators for sage_input".format(parent))
 
         gens = self._parent_gens[parent]
@@ -1117,7 +1076,7 @@ class SageInputBuilder:
                     neg = False
                     break
                 if isinstance(factor, SIE_literal_stringrep) and factor._sie_value == '1':
-                    factors[i:i+1] = []
+                    factors[i:i + 1] = []
                 else:
                     i += 1
             if len(factors) == 0:
@@ -1163,7 +1122,7 @@ class SageInputBuilder:
             while i < len(terms):
                 term = terms[i]
                 if isinstance(term, SIE_literal_stringrep) and term._sie_value == '0':
-                    terms[i:i+1] = []
+                    terms[i:i + 1] = []
                 else:
                     i += 1
             if len(terms) == 0:
@@ -1214,8 +1173,11 @@ class SageInputBuilder:
         else:
             return SageInputAnswer(sif._commands, sif.format(e, 0))
 
+
 # Python's precedence levels.  Hand-transcribed from section 5.14 of
-# the Python reference manual.
+# the Python 2 reference manual.  In the Python 3 reference manual
+# this is section 6.16.
+# See https://docs.python.org/3/reference/expressions.html
 _prec_lambda = 2
 _prec_or = 4
 _prec_and = 6
@@ -1238,7 +1200,8 @@ _prec_slicing = 38
 _prec_funcall = 40
 _prec_atomic = 42
 
-class SageInputExpression(object):
+
+class SageInputExpression():
     r"""
     Subclasses of this class represent expressions for :func:`sage_input`.
     \sage classes should define a \method{_sage_input_} method, which
@@ -1538,8 +1501,6 @@ class SageInputExpression(object):
         """
         return self._sie_binop('/', other)
 
-    __div__ = __truediv__
-
     def __add__(self, other):
         r"""
         Compute an expression tree for ``self + other``.
@@ -1601,6 +1562,20 @@ class SageInputExpression(object):
             {unop:- {atomic:3}}
         """
         return self._sie_unop('-')
+
+    def __pos__(self):
+        r"""
+        Compute an expression tree for ``+self``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.sage_input import SageInputBuilder
+            sage: sib = SageInputBuilder()
+            sage: sie = sib(3)
+            sage: +sie
+            {unop:+ {atomic:3}}
+        """
+        return self._sie_unop('+')
 
     def __invert__(self):
         r"""
@@ -1713,6 +1688,7 @@ class SageInputExpression(object):
         result, prec = self._sie_format(sif)
         return result
 
+
 class SIE_literal(SageInputExpression):
     r"""
     An abstract base class for ``literals`` (basically, values which
@@ -1755,6 +1731,7 @@ class SIE_literal(SageInputExpression):
         # and sometimes return false?  If some 50-digit integer occurs multiple
         # times in an expression, it might be better to do the replacement.
         return not self._sie_share
+
 
 class SIE_literal_stringrep(SIE_literal):
     r"""
@@ -1800,7 +1777,7 @@ class SIE_literal_stringrep(SIE_literal):
             sage: sib(3)._sie_value
             '3'
         """
-        super(SIE_literal_stringrep, self).__init__(sib)
+        super().__init__(sib)
         self._sie_value = str(n)
         self._sie_share = False
 
@@ -1839,6 +1816,7 @@ class SIE_literal_stringrep(SIE_literal):
         """
         return self._sie_value, _prec_atomic
 
+
 class SIE_call(SageInputExpression):
     r"""
     This class represents a function-call node in a :func:`sage_input`
@@ -1864,11 +1842,11 @@ class SIE_call(SageInputExpression):
 
         - ``func`` - a :class:`SageInputExpression` representing a function
 
-        - ``args`` - a list of :class:`SageInputExpression`s representing the
-          positional arguments
+        - ``args`` - a list of instances of :class:`SageInputExpression`
+          representing the positional arguments
 
-        - ``kwargs`` -- a dictionary mapping strings to
-          :class:`SageInputExpression`s representing the keyword arguments
+        - ``kwargs`` -- a dictionary mapping strings to instances of
+          :class:`SageInputExpression` representing the keyword arguments
 
         EXAMPLES::
 
@@ -1877,7 +1855,7 @@ class SIE_call(SageInputExpression):
             sage: sib = SageInputBuilder()
             sage: sie = sib('RealField')(53, rnd='RNDZ')
         """
-        super(SIE_call, self).__init__(sib)
+        super().__init__(sib)
         self._sie_func = func
         self._sie_args = args
         self._sie_kwargs = kwargs
@@ -1896,7 +1874,7 @@ class SIE_call(SageInputExpression):
         func = repr(self._sie_func)
         args = [repr(arg) for arg in self._sie_args]
         kwargs = sorted(k + '=' + repr(v)
-                        for k, v in iteritems(self._sie_kwargs))
+                        for k, v in self._sie_kwargs.items())
         all_args = ', '.join(args + kwargs)
         return "{call: %s(%s)}" % (func, all_args)
 
@@ -1915,7 +1893,7 @@ class SIE_call(SageInputExpression):
         """
         refs = self._sie_args[:]
         refs.append(self._sie_func)
-        refs.extend(itervalues(self._sie_kwargs))
+        refs.extend(self._sie_kwargs.values())
         return refs
 
     def _sie_format(self, sif):
@@ -1937,7 +1915,7 @@ class SIE_call(SageInputExpression):
         func = sif.format(self._sie_func, _prec_attribute)
         args = [sif.format(arg, 0) for arg in self._sie_args]
         kwargs = sorted(k + '=' + sif.format(v, 0)
-                        for k, v in iteritems(self._sie_kwargs))
+                        for k, v in self._sie_kwargs.items())
         all_args = ', '.join(args + kwargs)
         return ('%s(%s)' % (func, all_args), _prec_funcall)
 
@@ -1985,7 +1963,7 @@ class SIE_subscript(SageInputExpression):
             sage: sib.empty_subscript(sib.name('QQ'))
             {subscr: {atomic:QQ}[]}
         """
-        super(SIE_subscript, self).__init__(sib)
+        super().__init__(sib)
         self._sie_coll = coll
         self._sie_key = key
 
@@ -2050,6 +2028,7 @@ class SIE_subscript(SageInputExpression):
             key = sif.format(self._sie_key, 0)
         return '%s[%s]' % (coll, key), _prec_subscript
 
+
 class SIE_getattr(SageInputExpression):
     r"""
     This class represents a getattr node in a :func:`sage_input`
@@ -2084,7 +2063,7 @@ class SIE_getattr(SageInputExpression):
             sage: sib.name('QQbar').zeta(5)
             {call: {getattr: {atomic:QQbar}.zeta}({atomic:5})}
         """
-        super(SIE_getattr, self).__init__(sib)
+        super().__init__(sib)
         self._sie_obj = obj
         self._sie_attr = attr
 
@@ -2163,8 +2142,8 @@ class SIE_tuple(SageInputExpression):
 
         - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``values`` -- a list of :class:`SageInputExpression`s representing the
-          elements of this tuple
+        - ``values`` -- a list of instances of :class:`SageInputExpression`
+          representing the elements of this tuple
 
         - ``is_list`` -- is True if this class represents a list, False for a
           tuple
@@ -2179,7 +2158,7 @@ class SIE_tuple(SageInputExpression):
             sage: sib(["Hello", "world"])
             {list: ({atomic:'Hello'}, {atomic:'world'})}
         """
-        super(SIE_tuple, self).__init__(sib)
+        super().__init__(sib)
         self._sie_values = values
         self._sie_is_list = is_list
 
@@ -2248,6 +2227,7 @@ class SIE_tuple(SageInputExpression):
             else:
                 return '(%s)' % ', '.join(values), _prec_atomic
 
+
 class SIE_dict(SageInputExpression):
     r"""
     This class represents a dict node in a :func:`sage_input`
@@ -2272,7 +2252,7 @@ class SIE_dict(SageInputExpression):
 
         - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``entries`` -- a list of pairs of :class:`SageInputExpression`s
+        - ``entries`` -- a list of pairs of :class:`SageInputExpression`
           representing the entries of this dict
 
         EXAMPLES::
@@ -2285,7 +2265,7 @@ class SIE_dict(SageInputExpression):
             sage: sib.dict([(10, 'PS2'), (12, 'PS2'), (13, 'PS3')])
             {dict: {{atomic:10}:{atomic:'PS2'}, {atomic:12}:{atomic:'PS2'}, {atomic:13}:{atomic:'PS3'}}}
         """
-        super(SIE_dict, self).__init__(sib)
+        super().__init__(sib)
         self._sie_entries = entries
 
     def __repr__(self):
@@ -2375,9 +2355,8 @@ class SIE_binary(SageInputExpression):
             sage: sib = SageInputBuilder()
             sage: sib(3)*5
             {binop:* {atomic:3} {atomic:5}}
-
         """
-        super(SIE_binary, self).__init__(sib)
+        super().__init__(sib)
         self._sie_op = op
         self._sie_operands = (lhs, rhs)
 
@@ -2524,7 +2503,7 @@ class SIE_unary(SageInputExpression):
             sage: -sib(3)
             {unop:- {atomic:3}}
         """
-        super(SIE_unary, self).__init__(sib)
+        super().__init__(sib)
         self._sie_op = op
         self._sie_operand = operand
 
@@ -2593,6 +2572,16 @@ class SIE_unary(SageInputExpression):
             --x
             sage: sib.result(x-(-y))
             x - -y
+            sage: sib.result((+x)+y)
+            +x + y
+            sage: sib.result(x+(+y))
+            x + +y
+            sage: sib.result(+(x+y))
+            +(x + y)
+            sage: sib.result(+(+x))
+            ++x
+            sage: sib.result(x+(+y))
+            x + +y
 
         We assume that -(x*y) is always equal to (-x)*y.  Using this
         assumption, we print -(x*y) as -x*y, which parses as (-x)*y.::
@@ -2603,6 +2592,12 @@ class SIE_unary(SageInputExpression):
             -x*y
             sage: sib.result(x*(-y))
             x*-y
+
+        We do not do that for unary +, assuming that the user really
+        means to express something by using unary +::
+
+            sage: sib.result(+(x*y))
+            +(x*y)
         """
         op = self._sie_op
         fop = op
@@ -2612,12 +2607,15 @@ class SIE_unary(SageInputExpression):
             # (-a)*b.
             prec = _prec_muldiv
             rprec = _prec_negate
+        elif op == '+':
+            prec = _prec_negate
         elif op == '~':
             prec = _prec_bitnot
         else:
             raise ValueError('Unhandled op {} in SIE_unary'.format(op))
 
-        if rprec is None: rprec = prec
+        if rprec is None:
+            rprec = prec
 
         return '%s%s' % (fop, sif.format(self._sie_operand, prec)), rprec
 
@@ -2698,7 +2696,7 @@ class SIE_gens_constructor(SageInputExpression):
             ....:                      gens_syntax=sib.empty_subscript(qq))
             {constr_parent: {subscr: {atomic:QQ}[{atomic:'x'}]} with gens: ('x',)}
         """
-        super(SIE_gens_constructor, self).__init__(sib)
+        super().__init__(sib)
         self._sie_constr = constr
         self._sie_gen_names = gen_names
         self._sie_gens = None # will be overwritten from .parent_with_gens()
@@ -2916,7 +2914,7 @@ class SIE_gen(SageInputExpression):
             sage: sib.gen(ZZ['x']) # indirect doctest
             {gen:x {constr_parent: {subscr: {atomic:ZZ}[{atomic:'x'}]} with gens: ('x',)}}
         """
-        super(SIE_gen, self).__init__(sib)
+        super().__init__(sib)
         self._sie_parent = parent
         self._sie_preferred_varname = name
 
@@ -2967,7 +2965,7 @@ class SIE_gen(SageInputExpression):
             sage: sie._sie_parent._sie_assign_gens
             True
         """
-        super(SIE_gen, self)._sie_prepare(sif)
+        super()._sie_prepare(sif)
         self._sie_parent._sie_gens_referenced(sif)
 
     def _sie_format(self, sif):
@@ -3072,7 +3070,7 @@ class SIE_import_name(SageInputExpression):
             sage: sib.import_name('sage.foo', 'happy', 'sad')
             {import:sage.foo/happy as sad}
         """
-        super(SIE_import_name, self).__init__(sib)
+        super().__init__(sib)
         self._sie_formatted = False
         self._sie_module_name = module
         self._sie_object_name = name
@@ -3130,7 +3128,7 @@ class SIE_import_name(SageInputExpression):
             sage: sie._sie_requested_varname
             True
         """
-        super(SIE_import_name, self)._sie_prepare(sif)
+        super()._sie_prepare(sif)
         self._sie_require_varname(sif)
 
     def _sie_format(self, sif):
@@ -3200,7 +3198,7 @@ class SIE_assign(SageInputExpression):
             sage: sib.assign(sib.name('foo').x, sib.name('pi'))
             {assign: {getattr: {atomic:foo}.x} {atomic:pi}}
         """
-        super(SIE_assign, self).__init__(sib)
+        super().__init__(sib)
         self._sie_lhs = lhs
         self._sie_rhs = rhs
 
@@ -3394,7 +3392,8 @@ class SageInputFormatter:
             sage: sif._names, sif._dup_names
             ({'x', 'y'}, {'x': 0})
         """
-        if name is None: name = 'si'
+        if name is None:
+            name = 'si'
 
         if name in self._names:
             self._dup_names[name] = 0
@@ -3424,7 +3423,8 @@ class SageInputFormatter:
             'y'
             'z'
         """
-        if name is None: name = 'si'
+        if name is None:
+            name = 'si'
 
         if name in self._dup_names:
             next = self._dup_names[name] + 1
@@ -3603,5 +3603,5 @@ class SageInputAnswer(tuple):
 
         locals = self[2]
         locals_text = ''.join('  %s: %r\n' % (k, v)
-                              for k, v in iteritems(locals))
+                              for k, v in locals.items())
         return 'LOCALS:\n' + locals_text + self[0] + self[1]

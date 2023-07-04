@@ -37,6 +37,7 @@ cdef extern from "ntlwrap.h":
     zz_pX_c zz_pX_zero "zz_pX::zero"()
     void zz_pX_diff "diff"(zz_pX_c x, zz_pX_c a)
     void zz_pX_reverse "reverse"(zz_pX_c x, zz_pX_c a)
+    void zz_pX_reverse_hi "reverse"(zz_pX_c x, zz_pX_c a, long hi)
     void zz_pX_eval "eval" (zz_p_c fa, zz_pX_c f, zz_p_c a)
     void zz_pX_MakeMonic "MakeMonic"(zz_pX_c x)
 

@@ -96,8 +96,6 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.modular.abvar.torsion_point import TorsionPoint
 from sage.modules.module import Module
@@ -105,9 +103,12 @@ from sage.modules.free_module import is_FreeModule
 from sage.structure.gens_py import abelian_iterator
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp_method, richcmp
-from sage.rings.all import QQ, ZZ, QQbar, Integer
-from sage.arith.all import lcm
-from sage.misc.all import prod
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.qqbar import QQbar
+from sage.rings.rational_field import QQ
+from sage.arith.functions import lcm
+from sage.misc.misc_c import prod
 from sage.structure.element import coercion_model
 
 
@@ -460,7 +461,7 @@ class FiniteSubgroup(Module):
         """
         lattice = self.lattice().scale(right)
         return FiniteSubgroup_lattice(self.abelian_variety(), lattice,
-                                      field_of_definition = self.field_of_definition())
+                                field_of_definition=self.field_of_definition())
 
     def __rmul__(self, left):
         """
@@ -776,7 +777,7 @@ class FiniteSubgroup(Module):
             ...
             ValueError: object is immutable; please change a copy instead.
             sage: type(v[0])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         ::
 

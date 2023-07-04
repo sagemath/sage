@@ -1,0 +1,92 @@
+cd src
+
+# This is a POSIX (non-bash) compatible version of the same function
+# in the Gentoo cvxopt package. It's more general than it needs to
+# be right now because we may need to use the "L" and "I" modes in
+# the future to support system installations of e.g. suitesparse.
+#
+# The BLAS_LIB and LAPACK_LIB variables (among others) in cvxopt's
+# setup.py are passed in as colon-delimited strings. So, for example,
+# if your blas "l" flags are "-lblas -lcblas", then cvxopt wants
+# "blas;cblas" for BLAS_LIB.
+#
+# The following function takes a flag type ("l", "L", or "I") as its
+# first argument and a list of packages as its remaining arguments. It
+# outputs a list of libraries, library paths, or include paths,
+# respectively, for the given packages, retrieved using pkg-config and
+# deduplicated, in the appropriate format.
+#
+cvxopt_output() {
+    FLAGNAME="${1}"
+    shift
+    PACKAGES="${@}"
+
+    case "${FLAGNAME}" in
+	l) PKGCONFIG_MODE="--libs-only-l";;
+	L) PKGCONFIG_MODE="--libs-only-L";;
+	I) PKGCONFIG_MODE="--cflags-only-I";;
+	*) echo "invalid flag name: ${FLAGNAME}"; exit 1;;
+    esac
+
+    CVXOPT_OUTPUT=""
+    for PKGCONFIG_ITEM in $(pkg-config ${PKGCONFIG_MODE} ${PACKAGES}); do
+	# First strip off the leading "-l", "-L", or "-I", and replace
+	# it with a semicolon...
+	PKGCONFIG_ITEM=";${PKGCONFIG_ITEM#-${FLAGNAME}}"
+
+	# Now check to see if this element is already present in the
+	# list, and skip it if it is. This eliminates multiple entries
+	# from winding up in the list when multiple package arguments are
+	# passed to this function.
+	if [ "${CVXOPT_OUTPUT}" != "${CVXOPT_OUTPUT%${PKGCONFIG_ITEM}}" ]
+	then
+	    # It was already the last entry in the list, so skip it.
+	    continue
+	elif [ "${CVXOPT_OUTPUT}" != "${CVXOPT_OUTPUT%${PKGCONFIG_ITEM};*}" ]
+	then
+	    # It was an earlier entry in the list. These two cases are
+	    # separate to ensure that we can e.g. find ";m" at the end
+	    # of the list, but that we don't find ";metis" in the process.
+	    continue
+	fi
+
+	# It isn't in the list yet, so append it.
+	CVXOPT_OUTPUT="${CVXOPT_OUTPUT}${PKGCONFIG_ITEM}"
+    done
+
+    # Strip the leading ";" from ";foo;bar" before output.
+    echo "${CVXOPT_OUTPUT#;}"
+}
+
+# configure cvxopt by variables
+# Note that *_INC_DIR variables have to be non-empty.
+# Compilers don't like "-I ".
+export CVXOPT_BLAS_LIB="$(cvxopt_output l blas)"
+export CVXOPT_BLAS_LIB_DIR="$(pkg-config --variable=libdir blas)"
+export CVXOPT_LAPACK_LIB="$(cvxopt_output l lapack)"
+
+if test "x$SAGE_SUITESPARSE_PREFIX" != "x"; then
+   export CVXOPT_SUITESPARSE_LIB_DIR="${SAGE_SUITESPARSE_PREFIX}"
+   export CVXOPT_SUITESPARSE_INC_DIR="${SAGE_SUITESPARSE_PREFIX}/include"
+fi
+
+export CVXOPT_BUILD_GLPK=1
+export CVXOPT_GLPK_LIB_DIR="${SAGE_LOCAL}"
+export CVXOPT_GLPK_INC_DIR="${SAGE_LOCAL}/include"
+
+export CVXOPT_BUILD_GSL=1
+export CVXOPT_GSL_LIB_DIR="$(pkg-config --variable=libdir gsl)"
+export CVXOPT_GSL_INC_DIR="$(pkg-config --variable=includedir gsl)"
+
+sdh_pip_install .
+
+if [ "x$SAGE_SPKG_INSTALL_DOCS" = xyes ] ; then
+   cd doc
+   # checking to see if there is previously installed documentation.
+   if [ -d $SAGE_LOCAL/share/doc/cvxopt/html ] ; then
+      rm -rf $SAGE_LOCAL/share/doc/cvxopt/html
+   fi
+   mkdir -p "${SAGE_DESTDIR}${SAGE_LOCAL}/share/doc/cvxopt/html"
+   cp -r html/* "${SAGE_DESTDIR}${SAGE_LOCAL}/share/doc/cvxopt/html/"
+fi
+

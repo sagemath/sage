@@ -1,0 +1,11 @@
+#! /bin/sh
+set -e
+for infile in src/*.m4; do
+    if [ -f "$infile" ]; then
+        outfile="src/$(basename $infile .m4)"
+        if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+            echo "$0: installing $(pwd)/$outfile"
+        fi
+        m4 "$infile" > "$outfile"
+    fi
+done

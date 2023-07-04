@@ -28,25 +28,20 @@ pickling mechanism was implemented.
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
-
-include 'sage/data_structures/bitset.pxi'
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .matroid cimport Matroid
 from .set_system cimport SetSystem
 
-from copy import copy
-from itertools import combinations, permutations
-
+from sage.data_structures.bitset_base cimport *
 
 cdef class BasisExchangeMatroid(Matroid):
     r"""
@@ -141,7 +136,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``basis`` -- (default: ``None``) a subset of groundset.
         - ``rank`` -- (default: ``None``) an integer.
 
-        This initializer sets up a correspondance between elements of
+        This initializer sets up a correspondence between elements of
         ``groundset`` and ``range(len(groundset))``. ``BasisExchangeMatroid``
         uses this correspondence for encoding of subsets of the groundset as
         bitpacked sets of integers --- see ``__pack()`` and ``__unpack()``. In
@@ -242,7 +237,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_clear(I)
         for f in F:
-            bitset_add(I, self._idx[f])
+            bitset_add(I, <mp_bitcnt_t> self._idx[f])
 
     cdef __unpack(self, bitset_t I):
         """
@@ -1043,6 +1038,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: setprint(M.components())
             [{0, 1, 3, 4}, {2, 5}]
         """
+        cdef long i,j,e
         if not self._E:
             return SetSystem(self._E)
         cdef bitset_t *comp
@@ -1056,8 +1052,8 @@ cdef class BasisExchangeMatroid(Matroid):
             i=i+1
 
         cdef bitset_t active_rows
-        bitset_init(active_rows,self.full_rank()+1)
-        bitset_set_first_n(active_rows, self.full_rank())
+        bitset_init(active_rows, <mp_bitcnt_t> self.full_rank()+1)
+        bitset_set_first_n(active_rows, <mp_bitcnt_t> self.full_rank())
         i=0
         while i>=0:
             j = bitset_first(active_rows)
@@ -1065,7 +1061,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 if not bitset_are_disjoint(comp[i], comp[j]):
                     bitset_union(comp[i], comp[i], comp[j])
                     bitset_discard(active_rows, j)
-                j = bitset_next(active_rows, j+1) 
+                j = bitset_next(active_rows, j+1)
             i = bitset_next(active_rows, i+1)
 
         res = SetSystem(self._E)
@@ -1092,10 +1088,11 @@ cdef class BasisExchangeMatroid(Matroid):
             e = bitset_next(loops, e+1)
 
         bitset_free(loops)
-        bitset_free(loop)    
+        bitset_free(loop)
         bitset_free(active_rows)
         for i in xrange(self.full_rank()):
-            bitset_free(comp[i])           
+            bitset_free(comp[i])
+        sig_free(comp)
         return res
 
     cpdef _link(self, S, T):
@@ -1851,8 +1848,7 @@ cdef class BasisExchangeMatroid(Matroid):
             return NSC
         bitset_clear(self._input)
         bitset_set_first_n(self._input, self._matroid_rank)
-        cdef long e, f, corank
-        corank = self._groundset_size - self._matroid_rank
+        cdef long e, f
         repeat = True
         while repeat:
             if self.__is_independent(self._input):
@@ -2115,7 +2111,7 @@ cdef class BasisExchangeMatroid(Matroid):
         return EQ[0]
 
     cpdef _is_isomorphism(self, other, morphism):
-        """
+        r"""
         Version of is_isomorphism() that does no type checking.
 
         INPUT:
@@ -2174,7 +2170,7 @@ cdef class BasisExchangeMatroid(Matroid):
             bitset_clear(other._input)
             i = bitset_first(self._input)
             while i != -1:
-                bitset_add(other._input, morph[i])
+                bitset_add(other._input, <mp_bitcnt_t> morph[i])
                 i = bitset_next(self._input, i + 1)
             if self.__is_independent(self._input) != other.__is_independent(other._input):
                 return False
@@ -2183,7 +2179,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cpdef _isomorphism(self, other):
         """
-        Returns an isomorphism form ``self`` to ``other``, if one exists.
+        Return an isomorphism form ``self`` to ``other``, if one exists.
 
         Internal version that performs no checks on input.
 
@@ -2425,13 +2421,16 @@ cdef class BasisExchangeMatroid(Matroid):
             pointerX += 1
         return True
 
+
 cdef bint nxksrd(bitset_s* b, long n, long k, bint succ):
     """
-    Next size-k subset of a size-n set in a revolving-door sequence. It will
-    cycle through all such sets, returning each set exactly once. Each
-    successive set differs from the last in exactly one element.
+    Next size-k subset of a size-n set in a revolving-door sequence.
 
-    Returns ``True`` if there is a next set, ``False`` otherwise.
+    It will cycle through all such sets, returning each set exactly
+    once. Each successive set differs from the last in exactly one
+    element.
+
+    This returns ``True`` if there is a next set, ``False`` otherwise.
     """
     # next k-subset of n-set in a revolving-door sequence
     if n == k or k == 0:

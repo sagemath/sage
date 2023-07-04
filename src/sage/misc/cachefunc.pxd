@@ -3,7 +3,7 @@ from .function_mangling cimport ArgumentFixer
 cpdef dict_key(o)
 cpdef cache_key(o)
 
-cdef class CachedFunction(object):
+cdef class CachedFunction():
     cdef public str __name__
     cdef public str __module__
     cdef ArgumentFixer _argument_fixer
@@ -17,7 +17,7 @@ cdef class CachedFunction(object):
     cdef key
     cdef bint do_pickle
 
-cdef class CachedMethod(object):
+cdef class CachedMethod():
     cdef str _cache_name
     cdef public str __name__
     cdef public str __module__

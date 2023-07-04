@@ -1,0 +1,12 @@
+cd src/
+
+mkdir _build
+cd _build
+cmake ..  -DINSTALL_DIR="${SAGE_LOCAL}" \
+          -DPYTHON=python3 \
+          -DCORA=False
+
+sdh_make
+sdh_make b
+sdh_make install
+

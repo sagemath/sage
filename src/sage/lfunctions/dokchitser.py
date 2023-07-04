@@ -1,12 +1,5 @@
 """
-Dokchitser's L-functions Calculator
-
-AUTHORS:
-
-- Tim Dokchitser (2002): original PARI code and algorithm (and the
-  documentation below is based on Dokchitser's docs).
-
-- William Stein (2006-03-08): Sage interface
+Dokchitser's `L`-functions calculator
 
 .. TODO::
 
@@ -15,17 +8,24 @@ AUTHORS:
 
     - plug this code into number fields and modular forms code (elliptic
       curves are done).
+
+AUTHORS:
+
+- Tim Dokchitser (2002): original PARI code and algorithm (and the
+  documentation below is based on Dokchitser's docs).
+
+- William Stein (2006-03-08): Sage interface
+
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import, print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import copy
 import os
@@ -33,8 +33,10 @@ import re
 import string
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ComplexField, Integer
-from sage.misc.all import verbose, sage_eval, SAGE_TMP
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer import Integer
+from sage.misc.sage_eval import sage_eval
+from sage.misc.verbose import verbose
 import sage.interfaces.gp
 from sage.env import SAGE_EXTCODE
 
@@ -97,7 +99,7 @@ class Dokchitser(SageObject):
     We compute with the `L`-series of a rank `1` curve. ::
 
         sage: E = EllipticCurve('37a')
-        sage: L = E.lseries().dokchitser(); L
+        sage: L = E.lseries().dokchitser(algorithm='gp'); L
         Dokchitser L-function associated to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         sage: L(1)
         0.000000000000000
@@ -109,9 +111,8 @@ class Dokchitser(SageObject):
         48
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
-        sage: L.check_functional_equation()
-        6.11218974700000e-18                            # 32-bit
-        6.04442711160669e-18                            # 64-bit
+        sage: L.check_functional_equation()  # abs tol 1e-19
+        6.04442711160669e-18
 
     RANK 2 ELLIPTIC CURVE:
 
@@ -119,7 +120,7 @@ class Dokchitser(SageObject):
     `L`-series of a rank `2` elliptic curve. ::
 
         sage: E = EllipticCurve('389a')
-        sage: L = E.lseries().dokchitser()
+        sage: L = E.lseries().dokchitser(algorithm='gp')
         sage: L.num_coeffs()
         156
         sage: L.derivative(1,E.rank())
@@ -134,7 +135,7 @@ class Dokchitser(SageObject):
 
         sage: x = var('x')
         sage: K = NumberField(x**4 - x**2 - 1,'a')
-        sage: L = K.zeta_function()
+        sage: L = K.zeta_function(algorithm='gp')
         sage: L.conductor
         400
         sage: L.num_coeffs()
@@ -174,9 +175,11 @@ class Dokchitser(SageObject):
     """
 
     __gp = None
-    __globals = set()  # set of global variables defined in a run of the
-                       # computel.gp script that are replaced by indexed copies
-                       # in the computel.gp.template
+    __globals = set()
+    # set of global variables defined in a run of the
+    # computel.gp script that are replaced by indexed copies
+    # in the computel.gp.template
+
     __globals_re = None
     __instance = 0  # Monotonically increasing unique instance ID
     __n_instances = 0  # Number of currently allocated instances
@@ -185,15 +188,15 @@ class Dokchitser(SageObject):
     __init = False
 
     def __new__(cls, *args, **kwargs):
-        inst = super(Dokchitser, cls).__new__(cls, *args, **kwargs)
+        inst = super().__new__(cls, *args, **kwargs)
         inst.__instance = cls.__instance
         cls.__n_instances += 1
         cls.__instance += 1
         return inst
 
-    def __init__(self, conductor, gammaV, weight, eps, \
-                       poles=[], residues='automatic', prec=53,
-                       init=None):
+    def __init__(self, conductor, gammaV, weight, eps,
+                 poles=None, residues='automatic', prec=53,
+                 init=None):
         """
         Initialization of Dokchitser calculator EXAMPLES::
 
@@ -205,7 +208,7 @@ class Dokchitser(SageObject):
         self.gammaV = gammaV
         self.weight = weight
         self.eps = eps
-        self.poles = poles
+        self.poles = poles if poles is not None else []
         self.residues = residues
         self.prec = prec
         self.__CC = ComplexField(self.prec)
@@ -235,13 +238,12 @@ class Dokchitser(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('11a')
-            sage: L = E.lseries().dokchitser()
+            sage: L = E.lseries().dokchitser(algorithm='gp')
             sage: L(2)
             0.546048036215014
             sage: L.gp()
             PARI/GP interpreter
         """
-
         if self.__gp is None:
             self._instantiate_gp()
         elif self.__initialized:
@@ -251,14 +253,12 @@ class Dokchitser(SageObject):
 
         with open(self.__template_filename) as tf:
             template = string.Template(tf.read())
-        tmp_script = os.path.join(SAGE_TMP, 'computel_%s.gp' % self.__instance)
-        with open(tmp_script, 'w') as f:
-            f.write(template.substitute(i=str(self.__instance)))
 
-        try:
-            self.__gp.read(tmp_script)
-        finally:
-            os.unlink(tmp_script)
+        from tempfile import NamedTemporaryFile
+        with NamedTemporaryFile(suffix=".gp", mode="w+t") as f:
+            f.write(template.substitute(i=str(self.__instance)))
+            f.flush()
+            self.__gp.read(f.name)
 
         self._gp_eval('default(realprecision, %s)' % (self.prec // 3 + 2))
         self._gp_set_inst('conductor', self.conductor)
@@ -333,11 +333,12 @@ class Dokchitser(SageObject):
         try:
             t = self.gp().eval(s)
         except (RuntimeError, TypeError):
-            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
+            raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
         if not self.__init and '***' in t:
             # After init_coeffs is called, future calls to this method should
-            # return the full output for futher parsing
-            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
+            # return the full output for further parsing
+            raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
+        t = t.replace("  *** _^_: Warning: normalizing a series with 0 leading term.\n", "")
         return t
 
     def __check_init(self):
@@ -353,11 +354,11 @@ class Dokchitser(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('11a')
-            sage: L = E.lseries().dokchitser()
+            sage: L = E.lseries().dokchitser(algorithm='gp')
             sage: L.num_coeffs()
             26
             sage: E = EllipticCurve('5077a')
-            sage: L = E.lseries().dokchitser()
+            sage: L = E.lseries().dokchitser(algorithm='gp')
             sage: L.num_coeffs()
             568
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
@@ -501,7 +502,7 @@ class Dokchitser(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('5077a')
-            sage: L = E.lseries().dokchitser(100)
+            sage: L = E.lseries().dokchitser(100, algorithm='gp')
             sage: L(1)
             0.00000000000000000000000000000
             sage: L(1+I)
@@ -545,7 +546,7 @@ class Dokchitser(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a')
-            sage: L = E.lseries().dokchitser()
+            sage: L = E.lseries().dokchitser(algorithm='gp')
             sage: L.derivative(1,E.rank())
             1.51863300057685
         """
@@ -589,7 +590,7 @@ class Dokchitser(SageObject):
             sage: L.taylor_series(2, 3)
             1.64493406684823 - 0.937548254315844*z + 0.994640117149451*z^2 + O(z^3)
             sage: E = EllipticCurve('37a')
-            sage: L = E.lseries().dokchitser()
+            sage: L = E.lseries().dokchitser(algorithm='gp')
             sage: L.taylor_series(1)
             0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + 0.0161066468496401*z^4 + 0.0185955175398802*z^5 + O(z^6)
 
@@ -597,9 +598,9 @@ class Dokchitser(SageObject):
         precision. ::
 
             sage: E = EllipticCurve('389a')
-            sage: L = E.lseries().dokchitser(200)
+            sage: L = E.lseries().dokchitser(200, algorithm='gp')
             sage: L.taylor_series(1,3)
-            -9.094...e-82 + (5.1538...e-82)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
+            ...e-82 + (...e-82)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
         Check that :trac:`25402` is fixed::
 
@@ -669,9 +670,8 @@ class Dokchitser(SageObject):
         EXAMPLES::
 
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
-            sage: L.check_functional_equation()
-            -1.35525271600000e-20                        # 32-bit
-            -2.71050543121376e-20                        # 64-bit
+            sage: L.check_functional_equation()  # abs tol 1e-19
+            -2.71050543121376e-20
 
         If we choose the sign in functional equation for the
         `\zeta` function incorrectly, the functional equation

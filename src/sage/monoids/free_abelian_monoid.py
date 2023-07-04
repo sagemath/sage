@@ -53,8 +53,6 @@ lists of integer exponents.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
-from six import integer_types
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.category_object import normalize_names
@@ -62,7 +60,7 @@ from sage.structure.parent import Parent
 from sage.categories.monoids import Monoids
 from .free_abelian_monoid_element import FreeAbelianMonoidElement
 from sage.rings.integer import Integer
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.structure.factory import UniqueFactory
 
@@ -160,6 +158,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
         raise ValueError("names must be specified")
     return FreeAbelianMonoid_factory(index_set, names)
 
+
 def is_FreeAbelianMonoid(x):
     """
     Return True if `x` is a free abelian monoid.
@@ -193,10 +192,10 @@ class FreeAbelianMonoid_class(Parent):
             sage: F = FreeAbelianMonoid(6,'b')
             sage: TestSuite(F).run()
         """
-        if not isinstance(n, integer_types + (Integer,)):
-            raise TypeError("n (=%s) must be an integer"%n)
+        if not isinstance(n, (int, Integer)):
+            raise TypeError("n (=%s) must be an integer" % n)
         if n < 0:
-            raise ValueError("n (=%s) must be nonnegative"%n)
+            raise ValueError("n (=%s) must be nonnegative" % n)
         self.__ngens = int(n)
         assert names is not None
         Parent.__init__(self, names=names, category=Monoids().Commutative())
@@ -220,7 +219,6 @@ class FreeAbelianMonoid_class(Parent):
         if isinstance(x, FreeAbelianMonoidElement) and x.parent() == self:
             return x
         return self.element_class(self, x)
-
 
     def __contains__(self, x):
         """
@@ -264,7 +262,7 @@ class FreeAbelianMonoid_class(Parent):
         """
         n = self.__ngens
         if i < 0 or not i < n:
-            raise IndexError("Argument i (= %s) must be between 0 and %s."%(i, n-1))
+            raise IndexError(f"argument i (= {i}) must be between 0 and {n-1}")
         x = [ 0 for j in range(n) ]
         x[int(i)] = 1
         return self.element_class(self, x)
@@ -305,8 +303,7 @@ class FreeAbelianMonoid_class(Parent):
             +Infinity
         """
         if self.__ngens == 0:
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.one()
         from sage.rings.infinity import infinity
         return infinity
-

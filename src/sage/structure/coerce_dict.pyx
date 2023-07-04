@@ -36,7 +36,7 @@ references and resulted in a memory leak in the following example.
 However, this leak was fixed by :trac:`715`, using weak references::
 
     sage: K.<t> = GF(2^55)
-    sage: for i in range(50):
+    sage: for i in range(20):
     ....:     a = K.random_element()
     ....:     E = EllipticCurve(j=a)
     ....:     P = E.random_point()
@@ -61,8 +61,6 @@ However, this leak was fixed by :trac:`715`, using weak references::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import print_function, absolute_import
 
 cimport cython
 from cpython.object cimport *
@@ -290,7 +288,7 @@ cdef class MonoDict:
         sage: L[c] = 3
 
     The key is expected to be a unique object. Hence, the item stored for ``c``
-    can not be obtained by providing another equal string::
+    cannot be obtained by providing another equal string::
 
         sage: L[a]
         1
@@ -399,10 +397,6 @@ cdef class MonoDict:
         ....:     prev = newA
         sage: len(M)
         1000
-        sage: del a  # py2 -- does not appear to be an issue on Python 3
-        Exception RuntimeError: 'maximum recursion depth exceeded...' in <function remove at ...> ignored
-        sage: len(M) > 0  # py2
-        True
 
     Check that also in the presence of circular references, :class:`MonoDict`
     gets properly collected::
@@ -410,17 +404,18 @@ cdef class MonoDict:
         sage: import gc
         sage: def count_type(T):
         ....:     return len([c for c in gc.get_objects() if isinstance(c,T)])
-        sage: _ = gc.collect()
+        sage: gc.freeze()  # so that gc.collect() only deals with our trash
         sage: N = count_type(MonoDict)
         sage: for i in range(100):
         ....:     V = [MonoDict({"id":j+100*i}) for j in range(100)]
-        ....:     n= len(V)
-        ....:     for i in range(n): V[i][V[(i+1)%n]]=(i+1)%n
+        ....:     n = len(V)
+        ....:     for i in range(n): V[i][V[(i+1)%n]] = (i+1)%n
         ....:     del V
         ....:     _ = gc.collect()
         ....:     assert count_type(MonoDict) == N
         sage: count_type(MonoDict) == N
         True
+        sage: gc.unfreeze()
 
     AUTHORS:
 

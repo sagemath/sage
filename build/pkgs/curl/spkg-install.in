@@ -1,0 +1,12 @@
+cd src
+CURL_CONFIGURE="--with-openssl $CURL_CONFIGURE"
+
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    # Let's disable a bunch of stuff which might get linked.
+    # SSL/TLS still depends on the compilation environment.
+    CURL_CONFIGURE="--disable-ldap --disable-ldaps --disable-rtsp --disable-ares --disable-crypto-auth --without-libpsl --without-libssh2 --without-librtmp --without-libidn --without-nghttp2 --without-gssapi $CURL_CONFIGURE"
+fi
+
+sdh_configure $CURL_CONFIGURE
+sdh_make
+sdh_make_install

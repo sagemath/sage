@@ -34,18 +34,18 @@ Theorem 18).
 
 Kuperberg, Greg.  Kasteleyn Cokernels.  Electr. J. Comb. 9(1), 2002.
 
-TODO:
+.. TODO::
 
-The routine over the integers applies over general principal ideal
-domains.
+    The routine over the integers applies over general principal ideal
+    domains.
 
-WARNING:
+.. WARNING::
 
-This code is not a good candidate for conversion to Cython.  The
-majority of the execution time is spent adding multiples of
-columns and rows, which is already fast.  It would be better to
-devise a better algorithm, perhaps modular or based on a fast
-``smith_form`` implementation.
+    This code is not a good candidate for conversion to Cython.  The
+    majority of the execution time is spent adding multiples of
+    columns and rows, which is already fast.  It would be better to
+    devise a better algorithm, perhaps modular or based on a fast
+    ``smith_form`` implementation.
 
 AUTHOR:
 
@@ -59,10 +59,12 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.all import ZZ, Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import Infinity
+
 
 def _inplace_move_to_positive_pivot(G, row, col, B, pivot):
     r"""
@@ -134,6 +136,7 @@ def _inplace_move_to_positive_pivot(G, row, col, B, pivot):
         G.swap_rows(pivot, pivot+1)
         G.swap_columns(pivot, pivot+1)
 
+
 def symplectic_basis_over_field(M):
     r"""
     Find a symplectic basis for an anti-symmetric, alternating matrix
@@ -142,17 +145,17 @@ def symplectic_basis_over_field(M):
     Returns a pair (F, C) such that the rows of C form a symplectic
     basis for M and ``F = C * M * C.transpose()``.
 
-    Anti-symmetric means that $M = -M^t$.  Alternating means that the
-    diagonal of $M$ is identically zero.
+    Anti-symmetric means that `M = -M^t`.  Alternating means that the
+    diagonal of `M` is identically zero.
 
-    A symplectic basis is a basis of the form $e_1,
-    \ldots, e_j, f_1, \ldots f_j, z_1, \ldots, z_k$ such that
+    A symplectic basis is a basis of the form `e_1,
+    \ldots, e_j, f_1, \ldots f_j, z_1, \ldots, z_k` such that
 
-    * $z_i M v^t$ = 0 for all vectors $v$;
-    * $e_i M {e_j}^t = 0$ for all $i, j$;
-    * $f_i M {f_j}^t = 0$ for all $i, j$;
-    * $e_i M {f_i}^t = 1$ for all $i$;
-    * $e_i M {f_j}^t = 0$ for all $i$ not equal $j$.
+    * `z_i M v^t` = 0 for all vectors `v`;
+    * `e_i M {e_j}^t = 0` for all `i, j`;
+    * `f_i M {f_j}^t = 0` for all `i, j`;
+    * `e_i M {f_i}^t = 1` for all `i`;
+    * `e_i M {f_j}^t = 0` for all `i` not equal `j`.
 
     See the examples for a pictorial description of such a basis.
 
@@ -325,6 +328,7 @@ def symplectic_basis_over_field(M):
     F = C * M * C.transpose()
     return F, C
 
+
 def _smallest_element_position_or_None(E, pivot):
     r"""
     Return a tuple (row, col) such that E[row, col] is the smallest
@@ -359,6 +363,7 @@ def _smallest_element_position_or_None(E, pivot):
                 min = v
                 found = (j, i)
     return found
+
 
 def symplectic_basis_over_ZZ(M):
     r"""

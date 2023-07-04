@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-bootstrap-python
 
 from distutils.core import setup
 
@@ -12,7 +12,7 @@ setup(
         'sage_bootstrap.download',
         'sage_bootstrap.compat'
     ],
-    scripts=['bin/sage-package', 'bin/sage-download-file', 'bin/sage-system-python'],
+    scripts=['bin/sage-package', 'bin/sage-download-file', 'bin/sage-bootstrap-python'],
     version='1.0',
     url='https://www.sagemath.org',
 )

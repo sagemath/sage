@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Database of small combinatorial designs
 
@@ -43,17 +44,21 @@ REFERENCES:
   Chapman & Hall/CRC
   2012
 
+.. [Aschbacher71] \M. Aschbacher,
+  On collineation groups of symmetric block designs.
+  J. Combinatorial Theory Ser. A 11 (1971), pp. 272–281.
+
+.. [Hall71] \M. Hall, Jr.,
+  Combinatorial designs and groups.
+  Actes du Congrès International des Mathématiciens (Nice, 1970),
+  v.3, pp. 217–222. Gauthier-Villars, Paris, 1971.
+
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import
-from six import iteritems
-from six.moves import range, zip
-
+from __future__ import annotations
 from sage.combinat.designs.orthogonal_arrays import (OA_from_quasi_difference_matrix,
-                                                     OA_from_Vmt,
                                                      QDM_from_Vmt,
-                                                     OA_from_wider_OA,
                                                      OA_from_PBD,
                                                      OA_n_times_2_pow_c_from_matrix,
                                                      orthogonal_array)
@@ -300,8 +305,8 @@ MOLS_constructions = {
 }
 
 # Add this data to the module's doc
-LIST_OF_MOLS_CONSTRUCTIONS = ", ".join([":func:`{} MOLS of order {} <MOLS_{}_{}>`".format(k,n,n,k)
-                                        for n,(k,_) in MOLS_constructions.items()])
+LIST_OF_MOLS_CONSTRUCTIONS = ", ".join(":func:`{} MOLS of order {} <MOLS_{}_{}>`".format(k,n,n,k)
+                                       for n,(k,_) in MOLS_constructions.items())
 
 def OA_7_18():
     r"""
@@ -424,7 +429,7 @@ def OA_7_66():
     # base block of a (73,9,1) BIBD
     B = [0, 19, 26, 14, 63, 15, 32, 35, 65]
     # The corresponding BIBD
-    BIBD= [[(x+i)%73 for x in B] for i in range(73)]
+    BIBD = [[(x+i)%73 for x in B] for i in range(73)]
     # the first 7 elements of an oval
     #
     # (this is the only difference with the OA(7,68) construction)
@@ -464,7 +469,7 @@ def OA_7_68():
     # base block of a (73,9,1) BIBD
     B = [0, 19, 26, 14, 63, 15, 32, 35, 65]
     # The corresponding BIBD
-    BIBD= [[(x+i)%73 for x in B] for i in range(73)]
+    BIBD = [[(x+i)%73 for x in B] for i in range(73)]
     # the first 5 elements of an oval
     #
     # (this is the only difference with the OA(7,66) construction)
@@ -503,13 +508,13 @@ def OA_8_69():
     # base block of a (73,9,1) BIBD
     B = [1,2,4,8,16,32,37,55,64]
     # The corresponding BIBD
-    BIBD= [[(x+i)%73 for x in B] for i in range(73)]
+    BIBD = [[(x+i)%73 for x in B] for i in range(73)]
     oval = [72,71,69,65]
     # PBD minus the oval
     PBD = [[x for x in B if x not in oval] for B in BIBD]
 
     sets_of_size_seven = [R for R in PBD if len(R) == 7]
-    others             = [R for R in PBD if len(R) != 7]
+    others = [R for R in PBD if len(R) != 7]
 
     # 68, 27, and 52 are the only elements appearing twice in the rows of
     # sets_of_size_seven, and each row contains exactly one of them.
@@ -537,7 +542,6 @@ def OA_8_69():
         B.sort(key=lambda x: int(bool(x not in (68,27,52))))
         for BB in OA_8_7:
             OA.append([B[i] for i in BB])
-
 
     # Adding the  missing 0..0,1..1,... rows
     done = sum(O1,[])+sum(O2,[])
@@ -577,7 +581,7 @@ def OA_7_74():
     # base block of a (91,10,1) BIBD
     B = [0,1,3,9,27,81,61,49,56,77]
     # The corresponding BIBD
-    BIBD= [[(x+i)%91 for x in B] for i in range(91)]
+    BIBD = [[(x+i)%91 for x in B] for i in range(91)]
     # an oval
     oval = [(-x)%91 for x in B][-7:]
     # PBD minus the oval+B
@@ -616,7 +620,7 @@ def OA_8_76():
     # base block of a (91,10,1) BIBD
     B = [0,1,3,9,27,81,61,49,56,77]
     # The corresponding BIBD
-    BIBD= [[(x+i)%91 for x in B] for i in range(91)]
+    BIBD = [[(x+i)%91 for x in B] for i in range(91)]
     oval = [2,4,5,12,24]
     to_remove = oval + B
     # PBD minus the oval
@@ -624,7 +628,7 @@ def OA_8_76():
     PBD.remove([])
 
     sets_of_size_seven = [R for R in PBD if len(R) == 7]
-    others             = [R for R in PBD if len(R) != 7]
+    others = [R for R in PBD if len(R) != 7]
 
     # critical_points are the 10 elements appearing twice in the rows of the 10
     # sets_of_size_seven, and each row contains exactly two of them
@@ -773,7 +777,6 @@ def OA_9_120():
         sage: designs.orthogonal_arrays.is_available(9,120)
         True
     """
-    from .incidence_structures import IncidenceStructure
     RBIBD_120 = RBIBD_120_8_1()
     equiv = [RBIBD_120[i*15:(i+1)*15] for i in range(17)]
 
@@ -1041,7 +1044,7 @@ def OA_11_185():
 
 def OA_10_205():
     r"""
-    Return an OA(10,205)
+    Return an `OA(10,205)`.
 
     Julian R. Abel shared the following construction, which originally appeared
     in Theorem 8.7 of [Greig99]_, and can in Lemmas 5.14-5.16 of [ColDin01]_:
@@ -1474,13 +1477,13 @@ def OA_17_560():
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
     alpha = 5
-    beta  = 4
-    p     = 2
-    k     = 17
-    m     = 16
-    n     = p**alpha
+    beta = 4
+    p = 2
+    k = 17
+    m = 16
+    n = p**alpha
 
-    G = GF(p**alpha,prefix='x')
+    G = GF((p, alpha), prefix='x')
     G_set = sorted(G) # sorted by lexicographic order, G[1] = 1
     G_to_int = {v:i for i,v in enumerate(G_set)}
     # Builds an OA(n+1,n) whose last n-1 columns are
@@ -1655,8 +1658,8 @@ def OA_10_469():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_10_469
-        sage: OA = OA_10_469()
-        sage: is_orthogonal_array(OA,10,469,2)
+        sage: OA = OA_10_469()                  # long time
+        sage: is_orthogonal_array(OA,10,469,2)  # long time
         True
 
     The design is available from the general constructor::
@@ -1685,7 +1688,7 @@ def OA_10_469():
         blocks[len(B)].append(B)
 
     # Product of each symmetric design with the OA
-    for b_size,symmetric_design in iteritems(blocks):
+    for b_size,symmetric_design in blocks.items():
         matrix = _reorder_matrix(symmetric_design)
         OA.extend([[B[xx] for xx in R]
                    for R in incomplete_orthogonal_array(9,b_size,[1]*b_size)
@@ -2441,7 +2444,7 @@ def QDM_57_9_1_1_8():
     M = [[B[x] for x in R] for R in M] # replacing [0,..,8] by the elements of B
     M.append([0]*9)
 
-    return  G(57), M
+    return G(57), M
 
 # Quasi-difference matrices
 #
@@ -2453,7 +2456,7 @@ def QDM_57_9_1_1_8():
 #         }
 # }
 
-QDM = {}
+QDM: dict[tuple[int, int], dict] = {}
 for ((n,k,lmbda,mu,u),f) in [((19,6,1,1,1), QDM_19_6_1_1_1),
                              ((21,5,1,1,1), QDM_21_5_1_1_1),
                              ((21,6,1,1,5), QDM_21_6_1_1_5),
@@ -2695,7 +2698,7 @@ Vmt_vectors = {
     (12,413) : ((0,1,436,546,977,467,242,3695,682,483,3026,461,1334),     _ref_Abel_v_12_t),
 }
 # Translate all V(m,t) into (mt+1,m+2;1,0;t)-QDM constructors
-for (m,t),(vec,source) in iteritems(Vmt_vectors):
+for (m,t),(vec,source) in Vmt_vectors.items():
     n,k,lmbda,mu,u = (m*t+1,m+2,1,0,t)
     if not (n+u,lmbda) in QDM:
         QDM[n+u,lmbda] = {}
@@ -3153,7 +3156,6 @@ def DM_12_6_1():
       :doi:`10.1016/0012-365X(75)90040-0`,
       Discrete Mathematics, Volume 11, Issue 3, 1975, Pages 255-369.
     """
-    from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(2).cartesian_product(AdditiveCyclic(6))
     M = [[(0,0),(0,0),(0,0),(0,0),(0,0),(0,0)],
@@ -3691,9 +3693,8 @@ def DM_52_6_1():
 
         sage: _ = designs.difference_matrix(52,6)
     """
-    from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    F4  = FiniteField(4,'z')
+    F4 = FiniteField(4,'z')
     G13 = FiniteField(13)
     G = F4.cartesian_product(G13)
     z = F4('z')
@@ -3723,7 +3724,6 @@ def DM_52_6_1():
     Mb=[[(0,0)]*6]
 
     from itertools import product
-    p = lambda x,y : G(tuple([x*yy for yy in G(y)]))
 
     def t1(i,R):
         if i > 1:
@@ -3805,9 +3805,9 @@ def DM_56_8_1():
         sage: _ = designs.difference_matrix(56,8)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    F8  = FiniteField(8,'z')
-    F7  = FiniteField(7)
-    G   = F8.cartesian_product(F7)
+    F8 = FiniteField(8,'z')
+    F7 = FiniteField(7)
+    G = F8.cartesian_product(F7)
 
     w = F8.primitive_element()
     assert w**3 == w+1
@@ -3936,7 +3936,7 @@ def DM_75_8_1():
 
     F3 = FiniteField(3)
     F5 = FiniteField(5)
-    G  = cartesian_product((F3,F5,F5))
+    G = cartesian_product((F3,F5,F5))
 
     M = [
         [(2,0,0), (0,0,0), (0,0,0), (1,0,0), (0,0,0), (1,0,0), (1,0,0), (0,0,0)],
@@ -4121,7 +4121,7 @@ def RBIBD_120_8_1():
     BIBD = new_BIBD
 
     r = {v:i for i,v in enumerate(x for x in range(n) if x not in hyperoval)}
-    BIBD  = [[r[x] for x in B] for B in BIBD ]
+    BIBD = [[r[x] for x in B] for B in BIBD ]
     equiv = [[r[x] for x in B] for B in equiv]
 
     BIBD = IncidenceStructure(range(255),BIBD)
@@ -4205,7 +4205,7 @@ def BIBD_45_9_8(from_code=False):
          '7up5z9m9u', '7w7esu6fm', '7zmqtlrpd', '81tsbnzsw', '8kofgi1he', '8mhi35nc1', '9cv1pjiaw', '9d6ef1dah',
          '9dftsor9c', '9du8c1vcw', '9jr5vsnj4', 'a8b405mps', 'ajqhmxkj4', 'ax2xsvfic']
     B = [Integer(x, base=36) for x in B]
-    return [[i for i in range(45) if x&(1<<i)]
+    return [[i for i in range(45) if x & (1 << i)]
             for x in B]
 
 
@@ -4460,7 +4460,8 @@ def HigmanSimsDesign():
 
     The design is then obtained from the incidence structure produced by the
     blocks `A\in W_a` and `B\in W_b` whose intersection has cardinality 2. This
-    construction, due to M.Smith, can be found in [KY04]_ or in 10.A.(v) of [BvL84]_.
+    construction, due to M.Smith, can be found in [KY04]_ or in 10.A.(v) of
+    [BL1984]_.
 
     EXAMPLES::
 
@@ -4498,12 +4499,11 @@ def HigmanSimsDesign():
           if (b     in B and
               a not in B)]
 
-    H = [[i for i,A in enumerate(Wa) if len(A&B) != 2]
+    H = [[i for i, A in enumerate(Wa) if len(A & B) != 2]
          for B in Wb]
 
-    H = IncidenceStructure(H)
+    return IncidenceStructure(H)
 
-    return H
 
 def BIBD_196_6_1():
     r"""
@@ -4566,17 +4566,140 @@ def BIBD_201_6_1():
     bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
     return IncidenceStructure(bibd)._blocks
 
+def BIBD_79_13_2():
+    r"""
+    Return a symmetric `(79,13,2)`-BIBD.
+
+    The construction implemented is the one described in [Aschbacher71]_.
+    A typo in that paper was corrected in [Hall71]_.
+
+    .. NOTE::
+
+        A symmetric `(v,k,\lambda)` BIBD is a `(v,k,\lambda)` BIBD with `v` blocks.
+
+    EXAMPLES:
+
+        sage: from sage.combinat.designs.database import BIBD_79_13_2
+        sage: D = IncidenceStructure(BIBD_79_13_2())
+        sage: D.is_t_design(t=2, v=79, k=13, l=2)
+        True
+    """
+    from sage.libs.gap.libgap import libgap
+
+    g11 = libgap.Z(11)  # generator for GF(11)
+    one = g11**0
+    zero = 0*g11
+
+    X = libgap([[one, one], [zero, one]])
+    Y = libgap([[5*one, zero], [zero, 9*one]])
+    Z = libgap([[-one, zero], [zero, one]])
+
+    G = libgap.Group(X, Y, Z)
+    H1 = libgap.Group(X, Y)
+    H23 = libgap.Group(Y, Z)
+    H4 = libgap.Group(Z)
+
+    P1Action = G.FactorCosetAction(H1)
+    P23Action = G.FactorCosetAction(H23)
+    P4Action = G.FactorCosetAction(H4)
+
+    libgap.set_global("p1Act", P1Action)
+    libgap.set_global("p23Act", P23Action)
+    libgap.set_global("p4Act", P4Action)
+
+    action = libgap.function_factory("""function(pair, g)
+        local i, C, homs;
+        i := pair[1];
+        C := pair[2];
+        homs := [p1Act, p23Act, p23Act, p4Act];
+        return [i, C^(ImageElm(homs[i],g))];
+    end;""")
+
+    p1 = (1,1)
+    p2 = (2,1)
+    p3 = (3,1)
+    p4 = (4,1)
+
+    B1 = list(libgap.Orbit(H4, p1, action)) + list(libgap.Orbit(G, p2, action))
+    B2 = list(libgap.Orbit(H4, p1, action)) + list(libgap.Orbit(G, p3, action))
+    B3 = list(libgap([p1, p2, p3])) + list(libgap.Orbit(libgap.Group(Y), action(p4, X), action)) + list(libgap.Orbit(libgap.Group(Y), action(p4, X**4), action))
+    B4 = [action(p2, X**2), action(p2, X**-2), action(p3, X**5), action(p3, X**-5), p4,
+          action(p4, X * Y**2), action(p4, X**-1 * Y**2), action(p4, X*Y), action(p4, X**-1 * Y),
+          action(p4, X**5 * Y), action(p4, X**-5 * Y), action(p4, X**5 * Y**4), action(p4, X**-5 * Y**4)]
+
+    points = []
+    for i in range(1,5):
+        points += list(libgap.Orbit(G, (i,1), action))
+
+    permAction = libgap.Action(G, points, action)
+
+    baseBlocks = [libgap.Set(list(map(lambda p: libgap.Position(points, p), B))) for B in [B1, B2, B3, B4]]
+
+    B3Orbit = libgap.Orbit(permAction, baseBlocks[2], libgap.OnSets)
+    B4Orbit = libgap.Orbit(permAction, baseBlocks[3], libgap.OnSets)
+    blocks = baseBlocks[0:2] + list(B3Orbit) + list(B4Orbit)
+
+    # clear gap variables
+    libgap.unset_global("p1Act")
+    libgap.unset_global("p23Act")
+    libgap.unset_global("p4Act")
+    return [[int(t)-1 for t in y] for y in blocks]
+
+def BIBD_56_11_2():
+    r"""
+    Return a symmetric `(56,11,2)`-BIBD.
+
+    The construction implemented is given in [Hall71]_.
+
+    .. NOTE::
+
+        A symmetric `(v,k,\lambda)` BIBD is a `(v,k,\lambda)` BIBD with `v` blocks.
+
+    EXAMPLES:
+
+        sage: from sage.combinat.designs.database import BIBD_56_11_2
+        sage: D = IncidenceStructure(BIBD_56_11_2())
+        sage: D.is_t_design(t=2, v=56, k=11, l=2)
+        True
+    """
+    from sage.libs.gap.libgap import libgap
+    from .incidence_structures import IncidenceStructure
+
+    a = list(range(2,57)) + [50]
+    a[6] = 1
+    a[13] = 8
+    a[20] = 15
+    a[27] = 22
+    a[34] = 29
+    a[41] = 36
+    a[48] = 43
+
+    b = [1,8,27,36,20,14,42,41,29,52,24,30,55,22,26,21,10,40,23,53,
+         56,6,49,46,50,32,28,3,34,48,4,15,13,9,18,31,51,39,43,35,
+         2,54,38,25,45,11,37,12,19,44,47,17,5,7,33,16]
+
+    a = libgap.PermList(a)
+    b = libgap.PermList(b)
+    G = libgap.Group(a,b)
+
+    B = libgap.Set([1,12,19,23,30,37,45,47,48,49,51])
+
+    D = IncidenceStructure(libgap.Orbit(G, B, libgap.OnSets))
+    return D._blocks
+
 # Index of the BIBD constructions
 #
 # Associates to triple (v,k,lambda) a function that return a
 # (n,k,lambda)-BIBD family.
 #
 # This dictionary is used by designs.BalancedIncompleteBlockDesign
-
+# Note that the values are a list of blocks and not a design object
 BIBD_constructions = {
     ( 45,9,8): BIBD_45_9_8,
+    (56,11,2): BIBD_56_11_2,
     ( 66,6,1): BIBD_66_6_1,
     ( 76,6,1): BIBD_76_6_1,
+    (79,13,2): BIBD_79_13_2,
     ( 96,6,1): BIBD_96_6_1,
     (120,8,1): RBIBD_120_8_1,
     (106,6,1): BIBD_106_6_1,
@@ -4585,7 +4708,7 @@ BIBD_constructions = {
     (136,6,1): BIBD_136_6_1,
     (141,6,1): BIBD_141_6_1,
     (171,6,1): BIBD_171_6_1,
-    (176,50,14): HigmanSimsDesign,
+    (176,50,14): lambda : HigmanSimsDesign().blocks(),
     (196,6,1): BIBD_196_6_1,
     (201,6,1): BIBD_201_6_1,
 }
@@ -4885,13 +5008,13 @@ LIST_OF_EDS = "\n".join("    - `k = {}`: {}".format(
                         for k in sorted(EDS))
 
 __doc__ = __doc__.format(
-    LIST_OF_OA_CONSTRUCTIONS   = LIST_OF_OA_CONSTRUCTIONS,
+    LIST_OF_OA_CONSTRUCTIONS = LIST_OF_OA_CONSTRUCTIONS,
     LIST_OF_MOLS_CONSTRUCTIONS = LIST_OF_MOLS_CONSTRUCTIONS,
-    LIST_OF_VMT_VECTORS        = LIST_OF_VMT_VECTORS,
-    LIST_OF_BIBD               = LIST_OF_BIBD,
-    LIST_OF_DF                 = LIST_OF_DF,
-    LIST_OF_DM                 = LIST_OF_DM,
-    LIST_OF_QDM                = LIST_OF_QDM,
-    LIST_OF_EDS                = LIST_OF_EDS)
+    LIST_OF_VMT_VECTORS = LIST_OF_VMT_VECTORS,
+    LIST_OF_BIBD = LIST_OF_BIBD,
+    LIST_OF_DF = LIST_OF_DF,
+    LIST_OF_DM = LIST_OF_DM,
+    LIST_OF_QDM = LIST_OF_QDM,
+    LIST_OF_EDS = LIST_OF_EDS)
 del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD
 del PolynomialRing, ZZ, a,

@@ -12,7 +12,6 @@ EXAMPLES::
     sage: M.cuspidal_subspace()
     Cuspidal subspace of dimension 2 of Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>
@@ -105,14 +104,10 @@ class ModularFormsSubmodule(ModularFormsSpace,
              O(q^5)]
         """
         A = self.ambient_module()
-        return [A._q_expansion(element = f.element(), prec=prec) for f in self.basis()]
+        return [A._q_expansion(element=f.element(), prec=prec)
+                for f in self.basis()]
 
 
 # TODO
 class ModularFormsSubmoduleWithBasis(ModularFormsSubmodule):
     pass
-
-
-
-
-

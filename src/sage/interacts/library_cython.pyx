@@ -16,7 +16,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 
 cpdef julia(ff_j, z, int iterations):
@@ -40,9 +40,11 @@ cpdef julia(ff_j, z, int iterations):
         1.0 + 3.0*I
     """
     for i in range(iterations):
-         z = ff_j(z)
-         if z.abs() > 2: break
+        z = ff_j(z)
+        if z.abs() > 2:
+            break
     return z
+
 
 cpdef mandel(ff_m, z, int iterations):
     """
@@ -67,7 +69,8 @@ cpdef mandel(ff_m, z, int iterations):
     c = z
     for i in range(iterations):
         z = ff_m(z, c)
-        if z.abs() > 2: break
+        if z.abs() > 2:
+            break
     return z
 
 

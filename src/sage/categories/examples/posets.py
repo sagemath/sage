@@ -10,7 +10,7 @@ Examples of posets
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.all import Posets
+from sage.categories.posets import Posets
 from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.set import Set, Set_object_enumerated
 from sage.sets.positive_integers import PositiveIntegers
@@ -32,6 +32,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -63,7 +64,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
             <class 'sage.categories.examples.posets.FiniteSetsOrderedByInclusion_with_category'>
             sage: TestSuite(P).run()
         """
-        Parent.__init__(self, category = Posets())
+        Parent.__init__(self, category=Posets())
 
     def _repr_(self):
         r"""
@@ -145,7 +146,7 @@ class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
             <class 'sage.categories.examples.posets.PositiveIntegersOrderedByDivisibilityFacade_with_category'>
             sage: TestSuite(P).run()
         """
-        Parent.__init__(self, facade = (PositiveIntegers(),), category = Posets())
+        Parent.__init__(self, facade=(PositiveIntegers(),), category=Posets())
 
     def _repr_(self):
         r"""

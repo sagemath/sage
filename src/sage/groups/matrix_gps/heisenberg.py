@@ -16,13 +16,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
 from sage.categories.groups import Groups
 from sage.categories.rings import Rings
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from copy import copy
 
 class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
@@ -106,7 +106,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
                 raise ValueError("R must be a positive integer")
         elif R is not ZZ and R not in Rings().Finite():
             raise NotImplementedError("R must be a finite ring or ZZ")
-        return super(HeisenbergGroup, cls).__classcall__(cls, n, R)
+        return super().__classcall__(cls, n, R)
 
     def __init__(self, n=1, R=0):
         """
@@ -116,12 +116,19 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
 
             sage: H = groups.matrix.Heisenberg(n=2, R=5)
             sage: TestSuite(H).run()  # long time
+            sage: H.category()
+            Category of finitely generated finite enumerated groups
             sage: H = groups.matrix.Heisenberg(n=2, R=4)
             sage: TestSuite(H).run()  # long time
             sage: H = groups.matrix.Heisenberg(n=3)
             sage: TestSuite(H).run(max_runs=30, skip="_test_elements")  # long time
             sage: H = groups.matrix.Heisenberg(n=2, R=GF(4))
             sage: TestSuite(H).run()  # long time
+
+        TESTS::
+
+            sage: groups.matrix.Heisenberg(n=2, R=ZZ).category()
+            Category of finitely generated infinite enumerated groups
         """
         def elementary_matrix(i, j, val, MS):
             elm = copy(MS.one())
@@ -158,6 +165,8 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
         cat = Groups().FinitelyGenerated()
         if self._ring in Rings().Finite():
             cat = cat.Finite()
+        else:
+            cat = cat.Infinite()
 
         FinitelyGeneratedMatrixGroup_gap.__init__(self, ZZ(dim), self._ring,
                                                   gap_group, category=cat)
@@ -214,4 +223,3 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
             return ZZ(self._ring.cardinality() ** (2*self._n + 1))
 
     cardinality = order
-

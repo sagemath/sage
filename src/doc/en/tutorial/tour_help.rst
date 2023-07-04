@@ -94,12 +94,11 @@ question mark:
             [6 3 5 1 7 2 8 9 4]
             [4 9 1 8 5 6 7 2 3]
 
-Sage also provides 'Tab completion': type the first few letters of
-a function and then hit the tab key. For example, if you type ``ta``
-followed by ``TAB``, Sage will print
-``tachyon, tan, tanh,
-taylor``. This provides a good way to find
-the names of functions and other structures in Sage.
+Sage also provides 'Tab completion': type the first few letters of a
+function and then hit the :kbd:`Tab` key. For example, if you type
+``ta`` followed by :kbd:`Tab`, Sage will print ``tachyon, tan, tanh,
+taylor``. This provides a good way to find the names of functions and
+other structures in Sage.
 
 
 .. _section-functions:
@@ -255,13 +254,9 @@ and make a table of squares and cubes.
 
 The most basic data structure in Sage is the list, which is -- as
 the name suggests -- just a list of arbitrary objects. For example,
-the ``range`` command that we used creates a list (in python 2):
+using ``range``, the following command creates a list::
 
-::
-
-    sage: range(2,10)   # py2
-    [2, 3, 4, 5, 6, 7, 8, 9]
-    sage: list(range(2,10))   # py3
+    sage: list(range(2,10))
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 Here is a more complicated list:

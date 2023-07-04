@@ -14,7 +14,6 @@ REFERENCES:
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
 
 """
-from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -254,7 +253,7 @@ class FreeModuleHomset(Homset):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def __call__(self, *args, **kwds):
         r"""
@@ -382,8 +381,8 @@ class FreeModuleHomset(Homset):
                 basis = tensor.pick_a_basis()
                 tcomp = tensor.comp(basis)
                 fmodule = tensor.base_module()
-                mat = [[ tcomp[[i,j]] for j in fmodule.irange()] \
-                                                     for i in fmodule.irange()]
+                mat = [[ tcomp[[i,j]] for j in fmodule.irange()]
+                       for i in fmodule.irange()]
                 if isinstance(tensor, FreeModuleAutomorphism):
                     is_identity = tensor._is_identity
                 else:
@@ -403,7 +402,7 @@ class FreeModuleHomset(Homset):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) element.
+        Construct some (unnamed) element.
 
         EXAMPLES::
 
@@ -466,7 +465,6 @@ class FreeModuleHomset(Homset):
         return False
 
     #### End of methods required for any Parent
-
 
     #### Monoid methods (case of an endomorphism set) ####
 

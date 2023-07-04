@@ -9,7 +9,7 @@ How to call a C code (or a compiled library) from Sage ?
 If you have some C/C++ code that you would like to call from Sage for your own
 use, this document is for you.
 
-- Do you want to **contibute** to Sage by adding your interface to its code? The
+- Do you want to **contribute** to Sage by adding your interface to its code? The
   (more complex) instructions are `available here
   <http://doc.sagemath.org/html/en/developer/index.html#packaging-third-party-code>`_.
 
@@ -20,7 +20,7 @@ Calling "hello_world()" from hello.c
 
 Let us suppose that you have a file named ``~/my_dir/hello.c`` containing:
 
-.. code-block:: c
+.. CODE-BLOCK:: c
 
   #include <stdio.h>
 
@@ -32,7 +32,7 @@ In order to call this function from Sage, you must create a Cython file (i.e. a
 file whose extension is .pyx). Here, ``~/my_dir/hello_sage.pyx`` contains a
 header describing the signature of the function that you want to call:
 
-.. code-block:: cython
+.. CODE-BLOCK:: cython
 
   cdef extern from "hello.c":
       void hello_world()
@@ -61,7 +61,7 @@ whose purpose is to return the sum of two vectors as a third vector.
 
 **The C file** (``double_vector.c``)
 
-.. code-block:: c
+.. CODE-BLOCK:: c
 
   #include <string.h>
 
@@ -80,7 +80,7 @@ whose purpose is to return the sum of two vectors as a third vector.
 
 **The Cython file** (``double_vector_sage.pyx``)
 
-.. code-block:: cython
+.. CODE-BLOCK:: cython
 
   cdef extern from "double_vector.c":
       int * sum_of_two_vectors(int n, int * vec1, int * vec2)
@@ -122,7 +122,7 @@ Calling code from a compiled library
 The procedure is very similar again. For our purposes, we build a library from
 the file ``~/my_dir/hello.c``:
 
-.. code-block:: c
+.. CODE-BLOCK:: c
 
    #include <stdio.h>
 
@@ -132,11 +132,13 @@ the file ``~/my_dir/hello.c``:
 
 We also need a ``~/my_dir/hello.h`` header file:
 
-.. code-block:: c
+.. CODE-BLOCK:: c
 
    void hello_world();
 
-We can now **compile it** as a library::
+We can now **compile it** as a library:
+
+.. CODE-BLOCK:: shell-session
 
    [user@localhost ~/my_dir/] gcc -c -Wall -Werror -fpic hello.c
    [user@localhost ~/my_dir/] gcc -shared -o libhello.so hello.o
@@ -145,7 +147,7 @@ The only files that we need now are ``hello.h`` and ``libhello.so`` (you can
 remove the others if you like). We must now indicate the location of the ``.so``
 and ``.h`` files in the header of our ``~/my_dir/hello_sage.pyx`` file:
 
-.. code-block:: cython
+.. CODE-BLOCK:: cython
 
    # distutils: libraries = /home/username/my_dir/hello
 

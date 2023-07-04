@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -10,8 +10,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 # Utility functions for operating on the point_c struct.
@@ -23,6 +23,9 @@ cdef inline bint point_c_set(point_c* res, P) except -2:
 
 cdef inline bint point_c_eq(point_c P, point_c Q):
     return P.x == Q.x and P.y == Q.y and P.z == Q.z
+
+cdef inline bint point_c_isfinite(point_c P):
+    return math.isfinite(P.x) and math.isfinite(P.y) and math.isfinite(P.z)
 
 cdef inline int point_c_cmp(point_c P, point_c Q):
     """
@@ -98,6 +101,12 @@ cdef inline void point_c_cross(point_c* res, point_c P, point_c Q):
 
 cdef inline double point_c_len(point_c P):
     return math.sqrt(point_c_dot(P, P))
+
+cdef inline void point_c_middle(point_c* res, point_c P, point_c Q, double a):
+    cdef double b = 1 - a
+    res.x = b * P.x + a * Q.x
+    res.y = b * P.y + a * Q.y
+    res.z = b * P.z + a * Q.z
 
 cdef inline void point_c_transform(point_c* res, double* M, point_c P):
     """

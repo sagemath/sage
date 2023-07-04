@@ -11,8 +11,6 @@ Finite-Dimensional Algebras
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
-from six.moves import range
 
 from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
@@ -142,8 +140,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         names = normalize_names(n, names)
 
-        return super(FiniteDimensionalAlgebra, cls).__classcall__(cls, k, table,
-                             names, category=cat)
+        return super().__classcall__(cls, k, table,
+                                     names, category=cat)
 
     def __init__(self, k, table, names='e', category=None):
         """
@@ -251,7 +249,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         if category.is_subcategory(cat):
             from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_morphism import FiniteDimensionalAlgebraHomset
             return FiniteDimensionalAlgebraHomset(self, B, category=category)
-        return super(FiniteDimensionalAlgebra, self)._Hom_(B, category)
+        return super()._Hom_(B, category)
 
     def ngens(self):
         """
@@ -646,7 +644,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         return self(self.zero().vector().parent().random_element(*args, **kwargs))
 
-    def _is_valid_homomorphism_(self, other, im_gens):
+    def _is_valid_homomorphism_(self, other, im_gens, base_map=None):
         """
         TESTS::
 
@@ -679,11 +677,13 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         assert len(im_gens) == self.degree()
 
+        if base_map is None:
+            base_map = lambda x: x
         B = self.table()
         for i,gi in enumerate(im_gens):
             for j,gj in enumerate(im_gens):
                 eiej = B[j][i]
-                if (sum([other(im_gens[k]) * v for k,v in enumerate(eiej)])
+                if (sum([other(im_gens[k]) * base_map(v) for k,v in enumerate(eiej)])
                         != other(gi) * other(gj)):
                     return False
         return True
@@ -756,8 +756,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         if self.degree() == 0:
             raise ValueError("the zero algebra is not local")
-        if not(self.is_unitary() and self.is_commutative()
-               and (self._assume_associative or self.is_associative())):
+        if not (self.is_unitary() and self.is_commutative()
+                and (self._assume_associative or self.is_associative())):
             raise TypeError("algebra must be unitary, commutative and associative")
         gens = []
         for x in self.gens():
@@ -848,4 +848,3 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         P = self.primary_decomposition()
         return [f.inverse_image(f.codomain().maximal_ideal()) for f in P]
-

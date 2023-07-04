@@ -1,5 +1,5 @@
 r"""
-This file contains doctests of the article
+This file contains doctests of the article ::
 
     Automata and Transducers
     in the Computer Algebra System Sage
@@ -7,10 +7,12 @@ This file contains doctests of the article
 by Clemens Heuberger, Daniel Krenn, and Sara Kropf, :arxiv:`1404.7458`.
 
 IF IT BECOMES NECESSARY TO CHANGE ANY TESTS IN THIS FILE, THERE
-NEEDS TO BE A ONE-YEAR DEPRECATION PERIOD. ALSO, PLEASE INFORM
-    Clemens Heuberger <clemens.heuberger@aau.at>,
-    Daniel Krenn <devel@danielkrenn.at>, AND
-    Sara Kropf <sara.kropf@aau.at>
+NEEDS TO BE A ONE-YEAR DEPRECATION PERIOD. ALSO, PLEASE INFORM:
+
+- Clemens Heuberger <clemens.heuberger@aau.at>,
+- Daniel Krenn <devel@danielkrenn.at>, AND
+- Sara Kropf <sara.kropf@aau.at>
+
 IN THIS CASE REGARDING THE CHANGES!
 """
 
@@ -304,7 +306,7 @@ Sage example in fsm-in-sage.tex, line 806::
 
 Sage example in fsm-in-sage.tex, line 815::
 
-    sage: from six.moves import zip_longest
+    sage: from itertools import zip_longest
     sage: def final_minus(state1, state2):
     ....:     return [x - y for x, y in
     ....:         zip_longest(state1.final_word_out,
@@ -343,7 +345,6 @@ Sage example in fsm-in-sage.tex, line 854::
 Sage example in fsm-in-sage.tex, line 872::
 
     sage: sage.combinat.finite_state_machine.setup_latex_preamble()
-    sage: latex.mathjax_avoid_list('tikzpicture')
 
 
 Sage example in fsm-in-sage.tex, line 888::

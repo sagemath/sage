@@ -1,0 +1,7 @@
+pari
+pari-devel
+pari-elldata-small
+pari-galdata
+pari-galpol-small
+#pari-seadata-small
+pari-seadata

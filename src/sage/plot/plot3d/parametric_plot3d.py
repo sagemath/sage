@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Parametric Plots
+Parametric plots
 """
-from __future__ import absolute_import
 
 from .parametric_surface import ParametricSurface
 from .shapes2 import line3d
@@ -213,13 +212,6 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         def g(x,y): return x, y+sin(y), x**2 + y**2
         sphinx_plot(ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)), color=(c,cm)))
 
-    .. WARNING::
-
-        This kind of coloring using a colormap can be visualized
-        using Jmol, Tachyon (option ``viewer='tachyon'``) and
-        Canvas3D (option ``viewer='canvas3d'`` in the
-        notebook).
-
     We call the space curve function but with polynomials instead of
     symbolic variables.
 
@@ -416,15 +408,19 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_z = cos(u) / (1 + sqrt(2))
         sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color="green"))
 
-    Boy's surface (:wikipedia:`Boy's_surface` and https://mathcurve.com/surfaces/boy/boy.shtml)::
+    Boy's surface (:wikipedia:`Boy%27s_surface` and https://mathcurve.com/surfaces/boy/boy.shtml)::
 
         sage: u, v = var('u,v')
         sage: K = cos(u) / (sqrt(2) - cos(2*u)*sin(3*v))
         sage: f_x = K * (cos(u)*cos(2*v)+sqrt(2)*sin(u)*cos(v))
         sage: f_y = K * (cos(u)*sin(2*v)-sqrt(2)*sin(u)*sin(v))
         sage: f_z = 3 * K * cos(u)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-2*pi,2*pi), (v,0,pi),
-        ....:                   plot_points=[90,90], frame=False, color="orange") # long time -- about 30 seconds
+        sage: parametric_plot3d([f_x, f_y, f_z],      # long time
+        ....:                   (u,-2*pi,2*pi),
+        ....:                   (v,0,pi),
+        ....:                   plot_points=[90,90],
+        ....:                   frame=False,
+        ....:                   color="orange")
         Graphics3d Object
 
     .. PLOT::

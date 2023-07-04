@@ -149,7 +149,7 @@ Graphiques en trois dimensions
 ------------------------------
 
 Sage produit des graphes en trois dimensions en utilisant le package
-open source appelé [Jmol]_. En voici quelques exemples :
+open source appelé [ThreeJS]_. En voici quelques exemples :
 
 Le parapluie de Whitney tracé en jaune
 http://en.wikipedia.org/wiki/Whitney_umbrella:

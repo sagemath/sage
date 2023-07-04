@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Common Automata and Transducers (Finite State Machines Generators)
 
@@ -76,19 +77,19 @@ Functions and methods
 ---------------------
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014--2015 Clemens Heuberger <clemens.heuberger@aau.at>
 #                     2014--2015 Daniel Krenn <dev@danielkrenn.at>
 #                     2014 Sara Kropf <sara.kropf@aau.at>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
-#                http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import collections
+from collections import namedtuple
 import operator
 
 from sage.combinat.finite_state_machine import Automaton, Transducer
@@ -96,7 +97,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-class AutomatonGenerators(object):
+class AutomatonGenerators():
     r"""
     A collection of constructors for several common automata.
 
@@ -148,7 +149,6 @@ class AutomatonGenerators(object):
                          initial_states=[z],
                          final_states=[o])
 
-
     def AnyWord(self, input_alphabet):
         r"""
         Return an automaton recognizing any word of the given
@@ -192,7 +192,6 @@ class AutomatonGenerators(object):
                          initial_states=[z],
                          final_states=[z])
 
-
     def EmptyWord(self, input_alphabet=None):
         r"""
         Return an automaton recognizing the empty word.
@@ -223,7 +222,6 @@ class AutomatonGenerators(object):
         return Automaton(initial_states=[z],
                          final_states=[z],
                          input_alphabet=input_alphabet)
-
 
     def Word(self, word, input_alphabet=None):
         r"""
@@ -278,12 +276,11 @@ class AutomatonGenerators(object):
         letters = list(word)
         length = len(letters)
         from sage.rings.integer_ring import ZZ
-        return Automaton([(ZZ(i), ZZ(i+1), letter)
+        return Automaton([(ZZ(i), ZZ(i + 1), letter)
                           for i, letter in enumerate(letters)],
                          initial_states=[ZZ(0)],
                          final_states=[ZZ(length)],
                          input_alphabet=input_alphabet)
-
 
     def ContainsWord(self, word, input_alphabet):
         r"""
@@ -349,7 +346,7 @@ class AutomatonGenerators(object):
             final_states=[word])
 
 
-class TransducerGenerators(object):
+class TransducerGenerators():
     r"""
     A collection of constructors for several common transducers.
 
@@ -530,7 +527,6 @@ class TransducerGenerators(object):
             s.is_final = True
         return T
 
-
     def Wait(self, input_alphabet, threshold=1):
         r"""
         Writes ``False`` until reading the ``threshold``-th occurrence
@@ -573,7 +569,6 @@ class TransducerGenerators(object):
             s.is_final = True
 
         return T
-
 
     def map(self, f, input_alphabet):
         r"""
@@ -619,7 +614,6 @@ class TransducerGenerators(object):
                           input_alphabet=input_alphabet,
                           initial_states=[0],
                           final_states=[0])
-
 
     def operator(self, operator, input_alphabet, number_of_operands=2):
         r"""
@@ -703,7 +697,6 @@ class TransducerGenerators(object):
                           initial_states=[0],
                           final_states=[0])
 
-
     def all(self, input_alphabet, number_of_operands=2):
         r"""
         Returns a transducer which realizes logical ``and`` over the given
@@ -755,7 +748,6 @@ class TransducerGenerators(object):
         return self.operator(lambda *args: all(args),
                              input_alphabet, number_of_operands)
 
-
     def any(self, input_alphabet, number_of_operands=2):
         r"""
         Returns a transducer which realizes logical ``or`` over the given
@@ -806,7 +798,6 @@ class TransducerGenerators(object):
         """
         return self.operator(lambda *args: any(args),
                              input_alphabet, number_of_operands)
-
 
     def add(self, input_alphabet, number_of_operands=2):
         r"""
@@ -862,7 +853,6 @@ class TransducerGenerators(object):
                              input_alphabet,
                              number_of_operands=number_of_operands)
 
-
     def sub(self, input_alphabet):
         r"""
         Returns a transducer which realizes subtraction on pairs over
@@ -901,7 +891,6 @@ class TransducerGenerators(object):
             [0, -1, 1, 0]
         """
         return self.operator(operator.sub, input_alphabet)
-
 
     def weight(self, input_alphabet, zero=0):
         r"""
@@ -969,7 +958,6 @@ class TransducerGenerators(object):
                           initial_states=[0],
                           final_states=[0])
 
-
     def abs(self, input_alphabet):
         r"""
         Returns a transducer which realizes the letter-wise
@@ -1004,7 +992,6 @@ class TransducerGenerators(object):
         """
         return self.map(abs, input_alphabet)
 
-
     def GrayCode(self):
         """
         Returns a transducer converting the standard binary
@@ -1025,7 +1012,7 @@ class TransducerGenerators(object):
             sage: G = transducers.GrayCode()
             sage: G
             Transducer with 3 states
-            sage: for v in srange(0, 10):
+            sage: for v in srange(10):
             ....:     print("{} {}".format(v, G(v.digits(base=2))))
             0 []
             1 [1]
@@ -1057,10 +1044,7 @@ class TransducerGenerators(object):
                           final_states=[1],
                           with_final_word_out=[0])
 
-
-    RecursionRule = collections.namedtuple('RecursionRule',
-                                           ['K', 'r', 'k', 's', 't'])
-
+    RecursionRule = namedtuple('RecursionRule', ['K', 'r', 'k', 's', 't'])
 
     def _parse_recursion_equation_(self, equation, base, function, var,
                                    word_function=None, output_rings=[ZZ, QQ]):
@@ -1138,7 +1122,7 @@ class TransducerGenerators(object):
                 sage: transducers._parse_recursion_equation_(f(1/n) == f(n) + 3,
                 ....:     2, f, n)
                 Traceback (most recent call last):
-                ....:
+                ...
                 ValueError: 1/n is not a polynomial in n.
 
             ::
@@ -1257,7 +1241,7 @@ class TransducerGenerators(object):
             for ring in output_rings:
                 try:
                     return ring(output)
-                except (ValueError,TypeError):
+                except (ValueError, TypeError):
                     pass
             return output
 
@@ -1369,13 +1353,12 @@ class TransducerGenerators(object):
         assert equation == parsed_equation, \
             "Parsing of %s failed for unknown reasons." % (equation,)
 
-        rule = self.RecursionRule(K=K,r=r, k=k, s=s, t=to_list(t))
+        rule = self.RecursionRule(K=K, r=r, k=k, s=s, t=to_list(t))
         return rule
-
 
     def Recursion(self, recursions, base, function=None, var=None,
                   input_alphabet=None, word_function=None,
-                  is_zero=None,  output_rings=[ZZ, QQ]):
+                  is_zero=None, output_rings=[ZZ, QQ]):
         r"""
         Return a transducer realizing the given recursion when reading
         the digit expansion with base ``base``.
@@ -1401,7 +1384,7 @@ class TransducerGenerators(object):
 
         - ``base`` -- base of the digit expansion.
 
-        - ``function`` -- symbolic function ``f`` occuring in the
+        - ``function`` -- symbolic function ``f`` occurring in the
           recursions.
 
         - ``var`` -- symbolic variable.
@@ -1800,7 +1783,7 @@ class TransducerGenerators(object):
 
         if is_zero is None:
             is_zero = lambda x: not x
-        RuleRight = collections.namedtuple('Rule', ['k', 's', 't'])
+        RuleRight = namedtuple('Rule', ['k', 's', 't'])
         initial_values = {}
         rules = []
         if input_alphabet is None and base in ZZ:
@@ -1832,11 +1815,11 @@ class TransducerGenerators(object):
 
         for given_rule in rules:
             q, remainder = given_rule.r.quo_rem(base**given_rule.K)
-            rule=self.RecursionRule(K=given_rule.K,
-                                    r=remainder,
-                                    k=given_rule.k,
-                                    s=given_rule.s - base**given_rule.k*q,
-                                    t=given_rule.t)
+            rule = self.RecursionRule(K=given_rule.K,
+                                      r=remainder,
+                                      k=given_rule.k,
+                                      s=given_rule.s - base**given_rule.k * q,
+                                      t=given_rule.t)
             for m in range(max_K - rule.K + 1):
                 for ell in range(base**m):
                     R = rule.r + base**rule.K * ell
@@ -1990,7 +1973,7 @@ class TransducerGenerators(object):
         if missing_initial_values:
             raise ValueError(
                 "Missing initial values for %s." %
-                sorted(list(missing_initial_values)))
+                sorted(missing_initial_values))
 
         for cycle in recursion_digraph.all_simple_cycles():
             assert cycle[0] is cycle[-1]
@@ -2005,9 +1988,8 @@ class TransducerGenerators(object):
                     "Too many initial conditions, only give one of %s." %
                     cycle[1:])
             required_initial_values.update(intersection)
-            output_sum = sum([edge[2]
-                              for edge in recursion_digraph.\
-                                  outgoing_edge_iterator(cycle[1:])],
+            output_sum = sum([e[2]
+                for e in recursion_digraph.outgoing_edge_iterator(cycle[1:])],
                              [])
             if not is_zero(output_sum):
                 raise ValueError(
@@ -2020,7 +2002,7 @@ class TransducerGenerators(object):
         if superfluous_initial_values:
             raise ValueError(
                 "Superfluous initial values for %s." %
-                sorted(list(superfluous_initial_values)))
+                sorted(superfluous_initial_values))
 
         for state in T.iter_states():
             state.is_final = True

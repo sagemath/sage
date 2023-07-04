@@ -1,0 +1,12 @@
+# -*- mode: shell-script -*-
+
+# Force re-installation of gmp, mpir, mpfr and mpc with the system GCC.
+# We do this without actually uninstalling the package files.
+sage-spkg-uninstall --keep-files gmp
+sage-spkg-uninstall --keep-files mpir
+sage-spkg-uninstall --keep-files mpfr
+sage-spkg-uninstall --keep-files mpc
+
+# Force re-configuration: the next time that "make" is run, we need to rebuild
+# all packages (#24703) but we should not rebuild gcc (#19324)
+touch "$SAGE_ROOT/configure"

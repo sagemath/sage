@@ -12,7 +12,7 @@ EXAMPLES::
     sage: a
     10
     sage: type(a)
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
     sage: a*a
     100
     sage: timeit('a*a')   # random output
@@ -35,7 +35,7 @@ objects to GAP objects, for example strings to strings::
     sage: libgap('List([1..10], i->i^2)')
     "List([1..10], i->i^2)"
     sage: type(_)
-    <type 'sage.libs.gap.element.GapElement_String'>
+    <class 'sage.libs.gap.element.GapElement_String'>
 
 You can usually use the :meth:`~sage.libs.gap.element.GapElement.sage`
 method to convert the resulting GAP element back to its Sage
@@ -44,7 +44,7 @@ equivalent::
     sage: a.sage()
     10
     sage: type(_)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
     sage: libgap.eval('5/3 + 7*E(3)').sage()
     7*zeta3 + 5/3
@@ -93,7 +93,7 @@ can be used as follows::
     sage: lst = libgap([1,5,7]);  lst
     [ 1, 5, 7 ]
     sage: type(lst)
-    <type 'sage.libs.gap.element.GapElement_List'>
+    <class 'sage.libs.gap.element.GapElement_List'>
     sage: len(lst)
     3
     sage: lst[0]
@@ -101,7 +101,7 @@ can be used as follows::
     sage: [ x^2 for x in lst ]
     [1, 25, 49]
     sage: type(_[0])
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
 
 Note that you can access the elements of GAP ``List`` objects as you
 would expect from Python (with indexing starting at 0), but the
@@ -128,7 +128,7 @@ convert the entries into Sage objects, you should use the
 :meth:`~sage.libs.gap.element.GapElement.sage` method::
 
     sage: rec.sage()
-    {'Sym3': NotImplementedError('cannot construct equivalent Sage object',),
+    {'Sym3': NotImplementedError('cannot construct equivalent Sage object'...),
      'a': 123,
      'b': 456}
 
@@ -183,7 +183,7 @@ AUTHORS:
 #   Distributed under the terms of the GNU General Public License (GPL)
 #   as published by the Free Software Foundation; either version 2 of
 #   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
+#                   https://www.gnu.org/licenses/
 ###############################################################################
 
 
@@ -211,41 +211,17 @@ AUTHORS:
 #
 ##############################################################################
 
-from __future__ import print_function, absolute_import
-
-from pprint import pprint
+from pathlib import Path
 
 from .gap_includes cimport *
 from .util cimport *
 from .element cimport *
 
-from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
-from sage.structure.element cimport ModuleElement, RingElement, Vector
-from sage.rings.all import ZZ
+from sage.structure.element cimport Vector
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 from sage.misc.randstate cimport current_randstate
-from sage.misc.superseded import deprecated_function_alias, deprecation
-
-
-############################################################################
-### Debugging ##############################################################
-############################################################################
-
-
-cdef void report(Obj bag):
-    print(TNAM_OBJ(bag),  <int>SIZE_OBJ(bag))
-
-
-cdef void print_gasman_objects():
-    CallbackForAllBags(report)
-
-
-from sage.misc.lazy_import import is_during_startup
-if is_during_startup():
-    import sys, traceback
-    print('Importing libgap during startup!')
-    traceback.print_stack(None, None, sys.stdout)
 
 
 ############################################################################
@@ -321,6 +297,7 @@ class Gap(Parent):
             [ 0.333333, 0.8, 3. ]
 
         """
+        initialize()
         if isinstance(x, GapElement):
             return x
         elif isinstance(x, (list, tuple, Vector)):
@@ -334,12 +311,14 @@ class Gap(Parent):
             return make_GapElement_Integer(self, make_gap_integer(x))
         elif isinstance(x, basestring):
             return make_GapElement_String(self, make_gap_string(x))
+        elif isinstance(x, Path):
+            return make_GapElement_String(self, make_gap_string(str(x)))
         else:
             try:
                 return x._libgap_()
             except AttributeError:
                 pass
-            x = str(x._gap_init_())
+            x = str(x._libgap_init_())
             return make_any_gap_element(self, gap_eval(x))
 
     def _construct_matrix(self, M):
@@ -419,8 +398,9 @@ class Gap(Parent):
         cdef GapElement elem
 
         if not isinstance(gap_command, basestring):
-            gap_command = str(gap_command._gap_init_())
+            gap_command = str(gap_command._libgap_init_())
 
+        initialize()
         elem = make_any_gap_element(self, gap_eval(gap_command))
 
         # If the element is NULL just return None instead
@@ -428,6 +408,30 @@ class Gap(Parent):
             return None
 
         return elem
+
+    def load_package(self, pkg):
+        """
+        If loading fails, raise a RuntimeError exception.
+
+        TESTS::
+
+            sage: libgap.load_package("chevie")
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Error loading GAP package chevie. You may want to
+            install gap_packages SPKG.
+        """
+        load_package = self.function_factory('LoadPackage')
+        # Note: For some reason the default package loading error messages are
+        # controlled with InfoWarning and not InfoPackageLoading
+        prev_infolevel = libgap.InfoLevel(libgap.InfoWarning)
+        libgap.SetInfoLevel(libgap.InfoWarning, 0)
+        ret = load_package(pkg)
+        libgap.SetInfoLevel(libgap.InfoWarning, prev_infolevel)
+        if str(ret) == 'fail':
+            raise RuntimeError(f"Error loading GAP package {pkg}.  "
+                               f"You may want to install gap_packages SPKG.")
+        return ret
 
     @cached_method
     def function_factory(self, function_name):
@@ -454,6 +458,7 @@ class Gap(Parent):
             sage: libgap.function_factory('Print')
             <Gap function "Print">
         """
+        initialize()
         return make_GapElement_Function(self, gap_eval(function_name))
 
     def set_global(self, variable, value):
@@ -561,6 +566,7 @@ class Gap(Parent):
             1
         """
         from sage.libs.gap.context_managers import GlobalVariableContext
+        initialize()
         return GlobalVariableContext(variable, value)
 
     def set_seed(self, seed=None):
@@ -635,12 +641,10 @@ class Gap(Parent):
         EXAMPLES::
 
             sage: type(libgap)
-            <type 'sage.misc.lazy_import.LazyImport'>
+            <class 'sage.misc.lazy_import.LazyImport'>
             sage: type(libgap._get_object())
             <class 'sage.libs.gap.libgap.Gap'>
         """
-        initialize()
-        from sage.rings.integer_ring import ZZ
         Parent.__init__(self, base=ZZ)
 
     def __repr__(self):
@@ -691,19 +695,14 @@ class Gap(Parent):
             sage: libgap.List
             <Gap function "List">
             sage: libgap.GlobalRandomSource
-            <RandomSource in IsGlobalRandomSource>
+            <RandomSource in IsGAPRandomSource>
         """
         if name in dir(self.__class__):
             return getattr(self.__class__, name)
 
-        from sage.libs.gap.gap_functions import common_gap_functions
-        from sage.libs.gap.gap_globals import common_gap_globals
-        if name in common_gap_functions:
-            g = make_GapElement_Function(self, gap_eval(name))
-            assert g.is_function()
-        elif name in common_gap_globals:
-            g = make_any_gap_element(self, gap_eval(name))
-        else:
+        try:
+            g = self.eval(name)
+        except ValueError:
             raise AttributeError(f'No such attribute: {name}.')
 
         self.__dict__[name] = g
@@ -715,7 +714,7 @@ class Gap(Parent):
 
         This includes the total memory allocated by GAP as returned by
         ``libgap.eval('TotalMemoryAllocated()'), as well as garbage collection
-        / object count statistitics as returned by
+        / object count statistics as returned by
         ``libgap.eval('GasmanStatistics')``, and finally the total number of
         GAP objects held by Sage as :class:`~sage.libs.gap.element.GapElement`
         instances.
@@ -772,18 +771,6 @@ class Gap(Parent):
         """
         return len(get_owned_objects())
 
-    def mem(self):
-        """
-        Return information about GAP memory usage
-
-        This method is deprecated and is a no-op.  Use :meth:`Gap.show` to
-        display memory-usage and bag count statistics from GASMAN.
-        """
-
-        deprecation(22626, 'this functionality is not supported by GAP; use '
-                           'libgap.show() for GAP memory usage statistics')
-        return (0, 0, 0, 0, 0)
-
     def collect(self):
         """
         Manually run the garbage collector
@@ -794,6 +781,7 @@ class Gap(Parent):
             sage: del a
             sage: libgap.collect()
         """
+        initialize()
         rc = CollectBags(0, 1)
         if rc != 1:
             raise RuntimeError('Garbage collection failed.')

@@ -4,8 +4,6 @@ The unix cksum tool
 This is a weak checksum, only included for legacy reasons.
 """
 
-import sys
-
 # Fun table, e.g. http://www.nco.ncep.noaa.gov/pmb/codes/nwprod/util/sorc/wgrib2.cd/grib2/wgrib2/crc32.c
 
 crctab = [
@@ -60,10 +58,11 @@ crctab = [
     0x89b8fd09, 0x8d79e0be, 0x803ac667, 0x84fbdbd0, 0x9abc8bd5,
     0x9e7d9662, 0x933eb0bb, 0x97ffad0c, 0xafb010b1, 0xab710d06,
     0xa6322bdf, 0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03,
-    0xb1f740b4 ]
+    0xb1f740b4]
 
 
-UNSIGNED = lambda n: n & 0xffffffff
+def UNSIGNED(n):
+    return n & 0xffffffff
 
 
 class CksumAlgorithm(object):

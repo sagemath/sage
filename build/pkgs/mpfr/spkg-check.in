@@ -1,0 +1,9 @@
+# unset RM since it messes with libtool
+unset RM
+
+# We don't have to (again) set up CFLAGS etc. here, as 'configure' puts
+# them into the Makefiles.
+
+cd src
+
+$MAKE check

@@ -43,13 +43,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-
-from six.moves import range
 
 from sage.misc.cachefunc import cached_function, cached_method, cached_in_parent_method
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.interfaces.gap3 import gap3
 from sage.combinat.root_system.reflection_group_complex import ComplexReflectionGroup, IrreducibleComplexReflectionGroup
 from sage.misc.sage_eval import sage_eval
@@ -252,6 +249,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
         :func:`ReflectionGroup`
     """
+
     def __init__(self, W_types, index_set=None, hyperplane_index_set=None, reflection_index_set=None):
         r"""
         Initialize ``self``.
@@ -273,7 +271,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             cls = IrreducibleComplexReflectionGroup
         else:
             cls = ComplexReflectionGroup
-        cls.__init__(self, W_types, index_set            = index_set,
+        cls.__init__(self, W_types, index_set = index_set,
                                     hyperplane_index_set = hyperplane_index_set,
                                     reflection_index_set = reflection_index_set)
 
@@ -328,7 +326,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             sage: W = ReflectionGroup(["B",2])                          # optional - gap3
 
             sage: for w in W.iteration("breadth",True):                 # optional - gap3
-            ....:     print("%s %s"%(w, w._reduced_word))               # optional - gap3
+            ....:     print("%s %s"%(w, w._reduced_word))
             () []
             (1,3)(2,6)(5,7) [1]
             (1,5)(2,4)(6,8) [0]
@@ -407,11 +405,27 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
             sage: W = ReflectionGroup(['A',3], ['B',3])                 # optional - gap3
             sage: W.cartan_type()                                       # optional - gap3
-            A3xB3 relabelled by {1: 3, 2: 2, 3: 1}                      
+            A3xB3 relabelled by {1: 3, 2: 2, 3: 1}
+
+        TESTS:
+
+        Check that dihedral types are handled properly::
+
+            sage: W = ReflectionGroup(['I',3]); W                       # optional - gap3
+            Irreducible real reflection group of rank 2 and type A2
+
+            sage: W = ReflectionGroup(['I',4]); W                       # optional - gap3
+            Irreducible real reflection group of rank 2 and type C2
+
+            sage: W = ReflectionGroup(['I',5]); W                       # optional - gap3
+            Irreducible real reflection group of rank 2 and type I2(5)
         """
         if len(self._type) == 1:
             ct = self._type[0]
-            C = CartanType([ct['series'], ct['rank']])
+            if ct['series'] == "I":
+                C = CartanType([ct['series'], ct['bond']])
+            else:
+                C = CartanType([ct['series'], ct['rank']])
             CG = C.coxeter_diagram()
             G = self.coxeter_diagram()
             return C.relabel(CG.is_isomorphic(G, edge_labels=True, certificate=True)[1])
@@ -553,7 +567,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             sage: S = W.simple_reflections()                            # optional - gap3
             sage: N = W.fundamental_weights()                           # optional - gap3
             sage: for i in W.index_set():                               # optional - gap3
-            ....:     for j in W.index_set():                           # optional - gap3
+            ....:     for j in W.index_set():
             ....:         print("{} {} {} {}".format(i, j, N[i], N[i]*S[j].to_matrix()))
             1 1 (3/4, 1/2, 1/4) (-1/4, 1/2, 1/4)
             1 2 (3/4, 1/2, 1/4) (3/4, 1/2, 1/4)
@@ -595,7 +609,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
         EXAMPLES::
 
             sage: G = ReflectionGroup(['B',3])                          # optional - gap3
-            sage: sorted(G.coxeter_diagram().edges(labels=True))        # optional - gap3
+            sage: G.coxeter_diagram().edges(labels=True, sort=True)     # optional - gap3
             [(1, 2, 4), (2, 3, 3)]
         """
         from sage.graphs.graph import Graph
@@ -694,6 +708,88 @@ class RealReflectionGroup(ComplexReflectionGroup):
         """
         return self._index_set_inverse[i]
 
+    def bruhat_cone(self, x, y, side='upper', backend='cdd'):
+        r"""
+        Return the (upper or lower) Bruhat cone associated to the interval ``[x,y]``.
+
+        To a cover relation `v \prec w` in strong Bruhat order you can assign a positive
+        root `\beta` given by the unique reflection `s_\beta` such that `s_\beta v = w`.
+
+        The upper Bruhat cone of the interval `[x,y]` is the non-empty, polyhedral cone generated
+        by the roots corresponding to `x \prec a` for all atoms `a` in the interval.
+        The lower Bruhat cone of the interval `[x,y]` is the non-empty, polyhedral cone generated
+        by the roots corresponding to `c \prec y` for all coatoms `c` in the interval.
+
+        INPUT:
+
+        - ``x`` - an element in the group `W`
+        - ``y`` - an element in the group `W`
+        - ``side`` (default: ``'upper'``) -- must be one of the following:
+
+          * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
+          * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+
+        - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
+            sage: x = W.from_reduced_word([1])                          # optional - gap3
+            sage: y = W.w0                                              # optional - gap3
+            sage: W.bruhat_cone(x, y)                                   # optional - gap3
+            A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 2 rays
+
+            sage: W = ReflectionGroup(['E',6])                          # optional - gap3
+            sage: x = W.one()                                           # optional - gap3
+            sage: y = W.w0                                              # optional - gap3
+            sage: W.bruhat_cone(x, y, side='lower')                     # optional - gap3
+            A 6-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex and 6 rays
+
+        TESTS::
+
+            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
+            sage: x = W.one()                                           # optional - gap3
+            sage: y = W.w0                                              # optional - gap3
+            sage: W.bruhat_cone(x, y, side='nonsense')                  # optional - gap3
+            Traceback (most recent call last):
+            ...
+            ValueError: side must be either 'upper' or 'lower'
+
+        REFERENCES:
+
+        - [Dy1994]_
+        - [JS2021]_
+        """
+        if side == 'upper':
+            roots = [self.reflection_to_positive_root(x * r * x.inverse())
+                     for z, r in x.bruhat_upper_covers_reflections()
+                     if z.bruhat_le(y)]
+        elif side == 'lower':
+            roots = [self.reflection_to_positive_root(y * r * y.inverse())
+                     for z, r in y.bruhat_lower_covers_reflections()
+                     if x.bruhat_le(z)]
+        else:
+            raise ValueError("side must be either 'upper' or 'lower'")
+
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        if self.is_crystallographic():
+            return Polyhedron(vertices=[[0] * self.rank()],
+                              rays=roots,
+                              ambient_dim=self.rank(),
+                              backend=backend)
+        if backend == 'cdd':
+            from warnings import warn
+            warn("Using floating point numbers for roots of unity. This might cause numerical errors!")
+            from sage.rings.real_double import RDF as base_ring
+        else:
+            from sage.rings.qqbar import AA as base_ring
+
+        return Polyhedron(vertices=[[0] * self.rank()],
+                          rays=roots,
+                          ambient_dim=self.rank(),
+                          base_ring=base_ring,
+                          backend=backend)
+
     class Element(RealReflectionGroupElement, ComplexReflectionGroup.Element):
 
         @cached_in_parent_method
@@ -705,9 +801,9 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
                 sage: W = ReflectionGroup(['A',2])                      # optional - gap3
                 sage: for w in W:                                       # optional - gap3
-                ....:     rcr = w.right_coset_representatives()         # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(),              # optional - gap3
-                ....:                    [v.reduced_word() for v in rcr]))  # optional - gap3
+                ....:     rcr = w.right_coset_representatives()
+                ....:     print("%s %s"%(w.reduced_word(),
+                ....:                    [v.reduced_word() for v in rcr]))
                 [] [[], [2], [1], [2, 1], [1, 2], [1, 2, 1]]
                 [2] [[], [2], [1]]
                 [1] [[], [1], [1, 2]]
@@ -734,9 +830,9 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
                 sage: W = ReflectionGroup(['A',2])                      # optional - gap3
                 sage: for w in W:                                       # optional - gap3
-                ....:     lcr = w.left_coset_representatives()          # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(),              # optional - gap3
-                ....:                    [v.reduced_word() for v in lcr]))  # optional - gap3
+                ....:     lcr = w.left_coset_representatives()
+                ....:     print("%s %s"%(w.reduced_word(),
+                ....:                    [v.reduced_word() for v in lcr]))
                 [] [[], [2], [1], [1, 2], [2, 1], [1, 2, 1]]
                 [2] [[], [2], [1]]
                 [1] [[], [1], [2, 1]]

@@ -383,6 +383,7 @@ Sageを使ってモジュラー空間の次元，モジュラー・シンポル�
 
 ::
 
+    sage: from sage.modular.dims import dimension_cusp_forms
     sage: dimension_cusp_forms(Gamma0(11),2)
     1
     sage: dimension_cusp_forms(Gamma0(1),12)
@@ -423,7 +424,7 @@ Sageを使ってモジュラー空間の次元，モジュラー・シンポル�
      0 over Rational Field
     sage: ModularSymbols(Gamma1(11),2)
     Modular Symbols space of dimension 11 for Gamma_1(11) of weight 2 with
-    sign 0 and over Rational Field
+    sign 0 over Rational Field
 
 特性多項式と :math:`q` -展開を計算してみよう．
 

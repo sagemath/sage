@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 from sage.lfunctions.dokchitser import Dokchitser
@@ -16,7 +15,7 @@ class GrossZagierLseries(SageObject):
         `\QQ` and `A` is an ideal class in an imaginary quadratic number field.
 
         For the exact definition, in the more general setting of modular forms
-        instead of elliptic curves, see section IV of [GrossZagier]_.
+        instead of elliptic curves, see section IV of [GZ1986]_.
 
         INPUT:
 

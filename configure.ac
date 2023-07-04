@@ -28,31 +28,6 @@ AC_PREREQ([2.69])
 AC_DEFUN([SAGE_VERSION], m4_esyscmd_s([. src/bin/sage-version.sh && echo $SAGE_VERSION]))
 AC_INIT([Sage], SAGE_VERSION, [sage-devel@googlegroups.com])
 
-# The following needs to be immediately after calling AC_INIT
-#------------------------------------------------------------
-# We need to run this configure script with bash
-if test -z "$BASH_VERSION"
-then
-    CONFIG_SHELL=`command -v bash`
-    export CONFIG_SHELL
-    if $CONFIG_SHELL -c "exit 0"
-    then
-        exec $CONFIG_SHELL $0 "$@"
-    else
-        AC_MSG_NOTICE([The 'bash' shell is needed to build AC_PACKAGE_NAME])
-        AC_MSG_NOTICE([All modern systems will have the 'bash' shell installed somewhere])
-        if test -d /opt/OpenSource/bin
-        then
-           AC_MSG_NOTICE([On HP-UX you may try adding /opt/OpenSource/bin to your path])
-        fi
-        if test -d /opt/pware/bin
-        then
-           AC_MSG_NOTICE([On AIX you may try adding /opt/pware/bin to your path])
-        fi
-        AC_MSG_ERROR(['bash' not found])
-    fi
-fi
-
 
 AC_COPYRIGHT([GPL version 3])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -74,6 +49,14 @@ dnl Make sure the path to our own m4 macros is always properly set
 dnl and doesn't depend on how autoconf is called.
 AC_CONFIG_MACRO_DIR([m4])
 
+dnl The AC_LIB_RPATH macro comes from a Gnulib-provided file in m4/.
+dnl It defines, among other things, the $acl_shlibext variable that
+dnl contains the shared library extension for this system. We already use the
+dnl AM_ICONV macro from the same source (which ultimately calls AC_LIB_RPATH), and we
+dnl avoid involving libtool by using it to get the shared library extension.
+AC_LIB_RPATH
+AC_SUBST(SHLIBEXT, "${acl_shlibext}")
+
 #---------------------------------------------------------
 #
 # This is essentially the configure part of the old "install" file.
@@ -87,6 +70,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 # Assume current directory is SAGE_ROOT.
 SAGE_ROOT=`pwd -P`
+AC_SUBST(SAGE_ROOT)
 
 SAGE_LOCAL="$prefix"
 # The following line is necessary because the code below
@@ -94,12 +78,65 @@ SAGE_LOCAL="$prefix"
 # This is nonstandard.
 if test "$SAGE_LOCAL" = NONE; then
     SAGE_LOCAL=local
+    if test -x "$SAGE_LOCAL"/bin/python3; then
+        # Incremental build with an existing installation of python3 spkg
+        # in SAGE_LOCAL or venv in SAGE_LOCAL.  Keep old behavior.
+        SAGE_VENV_AUTO=no
+    else
+        SAGE_VENV_AUTO=yes
+    fi
+else
+    SAGE_VENV_AUTO=no
 fi
 SAGE_SRC="$SAGE_ROOT/src"
-SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
+
+AC_ARG_WITH([sage-venv],
+            [AS_HELP_STRING([--with-sage-venv={auto (default),yes,no,SAGE_VENV}],
+                            [put Python packages into an installation hierarchy separate from prefix])],
+            [SAGE_VENV="$withval"],
+            [SAGE_VENV="auto"])
+AC_SUBST([SAGE_VENV])
+
+AC_SUBST([SAGE_DOCS], ['${SAGE_LOCAL}'])dnl Quoted so that it is resolved at build time by shell/Makefile
 
 #---------------------------------------------------------
-AX_CHECK_ROOT([AC_MSG_ERROR([You cannot build Sage as root, switch to an unpriviledged user])], [])
+
+AC_ARG_ENABLE([build-as-root],
+              [AS_HELP_STRING([--enable-build-as-root],
+                              [allow building Sage as root (for use in containers)])],
+              [enable_build_as_root=$enableval],
+              [enable_build_as_root=no])
+if test "$enable_build_as_root" != yes; then
+   AX_CHECK_ROOT([AC_MSG_ERROR([You cannot build Sage as root, switch to an unprivileged user.  (If building in a container, use --enable-build-as-root.)])], [])
+fi
+
+AC_ARG_ENABLE([fat-binary],
+              [AS_HELP_STRING([--enable-fat-binary],
+                              [build binaries that will run on the widest range of target CPUs (but not relocatable)])],
+              [AC_SUBST(SAGE_FAT_BINARY, "yes")],
+              [])
+
+AC_ARG_VAR(SAGE_FAT_BINARY, set to "yes" to build binaries that will run on the widest range of target CPUs (but not relocatable))
+
+AC_ARG_ENABLE([debug],
+              [AS_HELP_STRING([--enable-debug={no|symbols|yes}],
+                              [controls debugging support: "no" debugging; debugging "symbols" (default); build debug version ("yes")])],
+              [AC_SUBST(SAGE_DEBUG, $enableval)],
+              [])
+
+AC_ARG_VAR(SAGE_DEBUG, controls debugging support: "no" debugging; debugging "symbols" (default); build debug version ("yes"))
+
+AC_ARG_ENABLE([editable],
+              [AS_HELP_STRING([--disable-editable],
+                              [do not use an editable install of the Sage library: changes to Python files will require "sage -b" to rebuild the Sage library])],
+              [AC_SUBST([SAGE_EDITABLE], [$enableval])],
+              [AC_SUBST([SAGE_EDITABLE], [yes])])
+
+AC_ARG_ENABLE([wheels],
+              [AS_HELP_STRING([--enable-wheels],
+                              [build wheels for the Sage library and update them on "sage -b"; if disabled, use "make wheels" to build wheels])],
+              [AC_SUBST([SAGE_WHEELS], [$enableval])],
+              [])
 
 # Check whether we are on a supported platform
 AC_CANONICAL_BUILD()
@@ -164,17 +201,8 @@ please join the sage-devel discussion list - see
 http://groups.google.com/group/sage-devel
 The Sage community would also appreciate any patches you submit]]);;
 
-*-*-freebsd*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on the FreeBSD operating system,
-which is not a supported platform for Sage yet, though
-developers are working on adding FreeBSD support. Things may or
-may not work. If you would like to help port Sage to FreeBSD,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
 # The following are all supported platforms.
+*-*-freebsd*);;
 *-*-linux*);;
 *-*-darwin*);;
 *-*-solaris*);;
@@ -226,7 +254,7 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG
+PKG_PROG_PKG_CONFIG([0.29])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -293,6 +321,14 @@ if test -z "$MAKE"; then
           [AC_MSG_ERROR([[found GNU make in $ac_cv_path_MAKE, but it's not the first "make" program in your PATH]])])
 fi
 
+# Check for system python
+AC_MSG_CHECKING([for Python])
+if SAGE_BOOTSTRAP_PYTHON=$(build/bin/sage-bootstrap-python -c "import sys; print(sys.executable)"); then
+    AC_MSG_RESULT([$SAGE_BOOTSTRAP_PYTHON])
+else
+    AC_MSG_ERROR([You do not have a suitable version of Python installed])
+fi
+
 # Check for Latex, the use of which is less important in Sage than
 # it used to be, as it was at one time required to build any documentation
 # but this is no longer so.
@@ -316,6 +352,19 @@ AX_PROG_PERL_VERSION([5.8.0],[],[
 ###############################################################################
 # Check C/C++/Fortran compilers
 ###############################################################################
+
+# Save compiler flags as configured by the user.
+# We have to redo this, because otherwise `AC_PROG_CC` will just overwrite them.
+AC_SUBST(CFLAGS, "$CFLAGS")
+AC_SUBST(CXXFLAGS, "$CXXFLAGS")
+AC_SUBST(FCFLAGS, "$FCFLAGS")
+AC_SUBST(F77FLAGS, "$F77FLAGS")
+AC_ARG_VAR(CFLAGS, C compiler flags)
+AC_ARG_VAR(CXXFLAGS, C compiler flags)
+AC_ARG_VAR(FCFLAGS, Fortran compiler flags)
+AC_ARG_VAR(F77CFLAGS, Fortran 77 compiler flags)
+
+SAGE_CHECK_CONDA_COMPILERS
 
 AC_PROG_CC()
 AC_PROG_CPP()
@@ -381,69 +430,6 @@ SAGE_CHECK_OSX_SUPPORTED()
 # Collect substitutions for build/make/Makefile.in
 ###############################################################################
 
-# Python version
-AC_MSG_CHECKING([Python version to install])
-AC_ARG_WITH([python],
-[AS_HELP_STRING([--with-python=2],
-    [build and use Python 2 (default)])]
-[AS_HELP_STRING([--with-python=3],
-    [build and use Python 3])])
-
-case "$with_python" in
-    2*) SAGE_PYTHON_VERSION=2;;
-    3*) SAGE_PYTHON_VERSION=3;;
-    "") SAGE_PYTHON_VERSION=2;;
-    *)
-        AC_MSG_ERROR([allowed values for --with-python are 2 and 3]);;
-esac
-
-AC_MSG_RESULT([$SAGE_PYTHON_VERSION])
-AC_SUBST(SAGE_PYTHON_VERSION)
-
-
-# Sage MP library
-AC_MSG_CHECKING([multiprecision library])
-AC_ARG_WITH([mp],
-[AS_HELP_STRING([--with-mp=mpir],
-    [use MPIR as multiprecision library (default)])]
-[AS_HELP_STRING([--with-mp=gmp],
-    [use GMP as multiprecision library])])
-
-case "$with_mp" in
-    MPIR|mpir) with_mp=MPIR;;
-    GMP|gmp) with_mp=GMP;;
-    "") with_mp=${SAGE_MP_LIBRARY:-MPIR};;
-    *)
-        AC_MSG_ERROR([allowed values for --with-mp are MPIR and GMP]) ;;
-esac
-
-AC_MSG_RESULT([$with_mp])
-
-if test $with_mp = MPIR; then
-    AC_SUBST([SAGE_MP_LIBRARY], [mpir])
-else
-    AC_SUBST([SAGE_MP_LIBRARY], [gmp])
-fi
-
-# BLAS library
-AC_MSG_CHECKING([BLAS library])
-AC_ARG_WITH([blas],
-[AS_HELP_STRING([--with-blas=openblas],
-    [use OpenBLAS as BLAS library (default)])]
-[AS_HELP_STRING([--with-blas=atlas],
-    [use ATLAS as BLAS library])],,
-    [with_blas=openblas]  # default
-)
-
-case "$with_blas" in
-    openblas) true;;
-    atlas) sage_spkg_install_openblas=no;;
-    *) AC_MSG_ERROR([allowed values for --with-blas are 'atlas' and 'openblas']);;
-esac
-
-AC_MSG_RESULT([$with_blas])
-AC_SUBST([SAGE_BLAS], [$with_blas])
-
 # $(TOOLCHAIN) variable containing prerequisites for the build
 SAGE_TOOLCHAIN=gcc
 if test "$SAGE_INSTALL_CCACHE" = yes ; then
@@ -451,39 +437,92 @@ if test "$SAGE_INSTALL_CCACHE" = yes ; then
 fi
 AC_SUBST([SAGE_TOOLCHAIN])
 
+AC_ARG_ENABLE([experimental-packages],
+  [AS_HELP_STRING([--enable-experimental-packages],
+    [allow installing experimental packages (default: no = ask for user confirmation for each package)])])
+AC_ARG_ENABLE([download-from-upstream-url],
+  [AS_HELP_STRING([--disable-download-from-upstream-url],
+    [disallow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])], [],
+    [AS_VAR_SET([enable_download_from_upstream_url], [yes])])
+
+SAGE_SPKG_OPTIONS=""
+AS_IF([test "x$enable_experimental_packages" = "xyes"], [
+  AS_VAR_APPEND([SAGE_SPKG_OPTIONS], [" -y"])
+])
+AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
+  AS_VAR_APPEND([SAGE_SPKG_OPTIONS], [" -o"])
+])
+AC_SUBST([SAGE_SPKG_OPTIONS])
+
+AC_ARG_ENABLE([sagelib],
+  AS_HELP_STRING([--disable-sage_conf],
+                 [disable build of the sage_conf package]), [
+    for pkg in sage_conf; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AC_ARG_ENABLE([cvxopt],
+  AS_HELP_STRING([--disable-cvxopt],
+                 [disable build of the cvxopt package and its prerequisite suitesparse]), [
+    for pkg in cvxopt suitesparse; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AC_ARG_ENABLE([notebook],
+  AS_HELP_STRING([--disable-notebook],
+                 [disable build of the Jupyter notebook and related packages]), [
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
+    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AC_ARG_ENABLE([r],
+  AS_HELP_STRING([--disable-r],
+                 [disable build of the R package and related packages]), [
+    for pkg in r rpy2 r_jupyter; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AC_ARG_ENABLE([doc],
+  AS_HELP_STRING([--disable-doc],
+                 [disable build of the Sage documentation and packages depending on it]), [
+    dnl Disable packages needed for docbuilding
+    for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport jupyter_sphinx furo sphinx_copybutton; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+    AS_VAR_IF([enableval], [no], [dnl Disable the docbuild by disabling the install tree for documentation
+        AS_VAR_SET([SAGE_DOCS], [])dnl
+    ])
+  ])
+
+AC_ARG_ENABLE([sagelib],
+  AS_HELP_STRING([--disable-sagelib],
+                 [disable build of the Sage library and packages depending on it]), [
+    for pkg in sagelib sage_docbuild sage_setup; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+dnl Packages that require a special override to use the SPKG
+dnl when the system package is not usable.
+AS_VAR_SET([sage_use_system_gcc], [force])
+
 SAGE_SPKG_COLLECT()
 
-# We need sage-env-config to exist before running this.
-# TODO: fix this in Trac #21524
-touch "$SAGE_SRC/bin/sage-env-config"
-
-SAGE_SCRIPTS='\
-'
-for file in "$SAGE_SRC/bin/"*; do
-    # Skip files with ".in" extension
-    ext=${file##*.}
-    if test "$ext" != in; then
-        SAGE_SCRIPTS+="    \$(SAGE_LOCAL)${file#$SAGE_SRC} \\"$'\n'
-    fi
-done
-
-AC_SUBST([SAGE_SCRIPTS])
-
-SAGE_EXTCODE='\
-'
-for file in `find "$SAGE_SRC"/ext -type f`; do
-    SAGE_EXTCODE+="    \$(SAGE_EXTCODE)${file#$SAGE_SRC/ext} \\"$'\n'
-done
-
-AC_SUBST([SAGE_EXTCODE])
-
-SAGE_MAKE_DEPS="$SAGE_ROOT/build/make/deps"
-AC_SUBST_FILE([SAGE_MAKE_DEPS])
-
-
 dnl AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile src/Makefile])
-AC_CONFIG_FILES([src/bin/sage-env-config])
+AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
+AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
+
+AC_CONFIG_FILES([pkgs/sage-conf/_sage_conf/_conf.py])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,
@@ -491,7 +530,8 @@ AC_CONFIG_COMMANDS(mkdirs,
         for d in "$SAGE_LOGS" "$SAGE_LOCAL" \
             "$SAGE_LOCAL/bin" "$SAGE_LOCAL/etc" \
             "$SAGE_LOCAL/include" "$SAGE_LOCAL/lib" \
-            "$SAGE_SHARE" "$SAGE_INST"; do
+            "$SAGE_LOCAL/lib/pkgconfig" \
+            "$SAGE_SHARE" "$SAGE_LOCAL/var/lib/sage/installed"; do
                 AC_MSG_NOTICE([creating directory $d])
                 mkdir -p "$d" || AC_MSG_ERROR(could not create $d)
         done
@@ -510,9 +550,33 @@ AC_CONFIG_COMMANDS(mkdirs,
         SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
         SAGE_LOCAL="$SAGE_LOCAL"
         SAGE_SHARE="$SAGE_LOCAL/share"
-        SAGE_INST="$SAGE_SPKG_INST"
     ])
 
+AC_CONFIG_COMMANDS(links, [
+    dnl Create links for the convenience of users
+    SYMLINK="${ac_top_build_prefix}prefix"
+    AS_IF([test -L "$SYMLINK" -o ! -e "$SYMLINK"], [
+        AC_MSG_NOTICE([creating convenience symlink $SYMLINK -> $SAGE_LOCAL])
+        rm -f "$SYMLINK"
+        ln -sf "$SAGE_LOCAL" "$SYMLINK"
+    ], [
+        AC_MSG_NOTICE([cannot create convenience symlink $SYMLINK -> $SAGE_LOCAL because the file exists and is not a symlink; this is harmless])
+    ])
+    SYMLINK="${ac_top_build_prefix}venv"
+    AS_IF([test -L "$SYMLINK" -o ! -e "$SYMLINK"], [
+        AC_MSG_NOTICE([creating convenience symlink $SYMLINK -> $SAGE_VENV])
+        rm -f "$SYMLINK"
+        ln -sf "$SAGE_VENV" "$SYMLINK"
+    ], [
+        AC_MSG_NOTICE([cannot create convenience symlink $SYMLINK -> $SAGE_VENV because the file exists and is not a symlink; this is harmless])
+    ])
+], [
+    SAGE_LOCAL="$SAGE_LOCAL"
+    eval SAGE_VENV="$SAGE_VENV"dnl eval so as to evaluate the embedded ${SAGE_LOCAL}
+])
+
 AC_OUTPUT()
+
+SAGE_SYSTEM_PACKAGE_NOTICE()
 
 dnl vim:syntax=m4

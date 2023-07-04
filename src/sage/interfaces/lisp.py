@@ -40,7 +40,6 @@ AUTHORS:
     -- William Stein (first version)
     -- William Stein (2007-06-20): significant improvements.
 """
-from __future__ import absolute_import
 
 ##########################################################################
 #
@@ -48,7 +47,7 @@ from __future__ import absolute_import
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
 
@@ -56,7 +55,8 @@ import random
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
 from sage.structure.element import RingElement, parent
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
 
 
 class Lisp(Expect):
@@ -74,28 +74,28 @@ class Lisp(Expect):
         Expect.__init__(self,
 
                         # The capitalized version of this is used for printing.
-                        name = 'Lisp',
+                        name='Lisp',
 
                         # This is regexp of the input prompt.  If you can change
                         # it to be very obfuscated that would be better.   Even
                         # better is to use sequence numbers.
-                        prompt = '> ',
+                        prompt='> ',
 
                         # This is the command that starts up your program
-                        command = "ecl",
+                        command="ecl",
 
                         server=server,
                         server_tmpdir=server_tmpdir,
-                        script_subdirectory = script_subdirectory,
+                        script_subdirectory=script_subdirectory,
 
                         # If this is true, then whenever the user presses Control-C to
                         # interrupt a calculation, the whole interface is restarted.
-                        restart_on_ctrlc = False,
+                        restart_on_ctrlc=False,
 
                         # If true, print out a message when starting
                         # up the command when you first send a command
                         # to this interface.
-                        verbose_start = False,
+                        verbose_start=False,
 
                         logfile=logfile,
 
@@ -220,7 +220,7 @@ class Lisp(Expect):
         """
         EXAMPLES::
 
-            sage: lisp.__reduce__()
+            sage: Lisp().__reduce__()
             (<function reduce_load_Lisp at 0x...>, ())
         """
         return reduce_load_Lisp, tuple([])
@@ -381,13 +381,13 @@ class Lisp(Expect):
         """
         args, kwds = self._convert_args_kwds(args, kwds)
         self._check_valid_function_name(function)
-        return self.new("(%s %s)"%(function, ",".join([s.name() for s in args])))
+        return self.new("(%s %s)" % (function, ",".join(s.name() for s in args)))
 
 
 # Inherit from RingElement to make __pow__ work
 @instancedoc
 class LispElement(RingElement, ExpectElement):
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         EXAMPLES::
 
@@ -411,13 +411,13 @@ class LispElement(RingElement, ExpectElement):
             other = P(other)
 
         if P.eval('(= %s %s)'%(self.name(), other.name())) == P._true_symbol():
-            return 0
+            return rich_to_bool(op, 0)
         elif P.eval('(< %s %s)'%(self.name(), other.name())) == P._true_symbol():
-            return -1
+            return rich_to_bool(op, -1)
         else:
-            return 1
+            return rich_to_bool(op, 1)
 
-    def bool(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -427,8 +427,12 @@ class LispElement(RingElement, ExpectElement):
             False
             sage: bool(lisp(2))
             True
+            sage: bool(lisp('T'))
+            True
+            sage: bool(lisp('NIL'))
+            False
         """
-        return self != 0
+        return self != 0 and repr(self) != 'NIL'
 
     def _add_(self, right):
         """
@@ -439,7 +443,7 @@ class LispElement(RingElement, ExpectElement):
             3
         """
         P = self._check_valid()
-        return P.new('(+ %s %s)'%(self._name, right._name))
+        return P.new('(+ %s %s)' % (self._name, right._name))
 
     def _sub_(self, right):
         """
@@ -521,11 +525,16 @@ def is_LispElement(x):
     EXAMPLES::
 
         sage: from sage.interfaces.lisp import is_LispElement
+        sage: is_LispElement(2)
+        doctest:...: DeprecationWarning: the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
         sage: is_LispElement(lisp(2))
         True
-        sage: is_LispElement(2)
-        False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead")
+
     return isinstance(x, LispElement)
 
 # An instance

@@ -1,0 +1,3 @@
+cd src
+# Configure and install
+sdh_pip_install .

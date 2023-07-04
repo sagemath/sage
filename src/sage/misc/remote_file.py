@@ -1,9 +1,9 @@
 "get_remote_file"
 
-from __future__ import absolute_import
 
 import os
-import sys
+from urllib.request import Request, urlopen
+from ssl import create_default_context as default_context
 
 
 def get_remote_file(filename, verbose=True):
@@ -22,12 +22,12 @@ def get_remote_file(filename, verbose=True):
 
     EXAMPLES::
 
-        sage: url = 'http://www.sagemath.org/files/loadtest.py'
+        sage: url = 'https://www.sagemath.org/files/loadtest.py'
         sage: g = get_remote_file(url, verbose=False)      # optional - internet
         sage: with open(g) as f: print(f.read())           # optional - internet
         print("hi from the net")
         <BLANKLINE>
-        print(2+3)
+        print(2 + 3)
 
     """
     if verbose:
@@ -38,19 +38,16 @@ def get_remote_file(filename, verbose=True):
     # IMPORTANT -- urllib takes a long time to load,
     # so do not import it in the module scope.
 
-    # import compatible with py2 and py3
-    from six.moves.urllib.request import Request, urlopen
-    req = Request(filename, headers={"User-Agent":"sage-doctest"})
+    req = Request(filename, headers={"User-Agent": "sage-doctest"})
 
     if verbose:
         print("Loading started")
 
-    content = urlopen(req, timeout=1)
-    with open(temp_name, 'w') as f:
+    content = urlopen(req, timeout=1, context=default_context())
+    with open(temp_name, 'wb') as f:
         f.write(content.read())
 
     if verbose:
         print("Loading ended")
 
     return temp_name
-

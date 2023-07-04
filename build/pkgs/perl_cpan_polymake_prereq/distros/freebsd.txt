@@ -1,0 +1,7 @@
+textproc/p5-XML-Writer
+textproc/p5-XML-LibXML
+textproc/p5-XML-LibXSLT
+devel/p5-File-Slurp
+converters/p5-JSON
+textproc/p5-SVG
+devel/p5-Term-ReadKey

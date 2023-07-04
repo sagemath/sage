@@ -1,0 +1,54 @@
+diff -urN a/config/acinclude.m4 b/config/acinclude.m4
+--- a/config/acinclude.m4	2019-12-10 13:27:51.000000000 +0100
++++ b/config/acinclude.m4	2020-09-17 23:27:26.165763845 +0200
+@@ -661,6 +661,7 @@
+ # remove anything that might look like compiler output to our "||" expression
+ rm -f conftest* a.out b.out a.exe a_out.exe
+ cat >conftest.c <<EOF
++#include <stdlib.h>
+ int
+ main ()
+ {
+@@ -699,6 +700,7 @@
+ AC_CACHE_CHECK([for build system executable suffix],
+                gf2x_cv_prog_exeext_for_build,
+ [cat >conftest.c <<EOF
++#include <stdlib.h>
+ int
+ main ()
+ {
+diff -urN a/configure b/configure
+--- a/configure	2019-12-10 14:09:24.000000000 +0100
++++ b/configure	2020-09-17 23:27:32.374048352 +0200
+@@ -17333,6 +17333,7 @@
+ # remove anything that might look like compiler output to our "||" expression
+ rm -f conftest* a.out b.out a.exe a_out.exe
+ cat >conftest.c <<EOF
++#include <stdlib.h>
+ int
+ main ()
+ {
+@@ -17365,6 +17366,7 @@
+ # remove anything that might look like compiler output to our "||" expression
+ rm -f conftest* a.out b.out a.exe a_out.exe
+ cat >conftest.c <<EOF
++#include <stdlib.h>
+ int
+ main ()
+ {
+@@ -17398,6 +17400,7 @@
+ # remove anything that might look like compiler output to our "||" expression
+ rm -f conftest* a.out b.out a.exe a_out.exe
+ cat >conftest.c <<EOF
++#include <stdlib.h>
+ int
+ main ()
+ {
+@@ -17441,6 +17444,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   cat >conftest.c <<EOF
++#include <stdlib.h>
+ int
+ main ()
+ {

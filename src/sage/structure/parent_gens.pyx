@@ -58,20 +58,16 @@ This example illustrates generators for a free module over `\ZZ`.
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005, 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import, print_function
-
-import sage.misc.defaults
-from sage.misc.latex import latex_variable_name
 from . import gens_py
 cimport sage.structure.parent as parent
 from sage.structure.coerce_dict cimport MonoDict
@@ -85,13 +81,14 @@ cdef inline check_old_coerce(parent.Parent p):
 
 cdef class ParentWithGens(ParentWithBase):
     # Derived class *must* call __init__ and set the base!
-    def __init__(self, base, names=None, normalize=True, category = None):
+    def __init__(self, base, names=None, normalize=True, category=None):
         """
         EXAMPLES::
 
+            sage: from sage.structure.parent_gens import ParentWithGens
             sage: class MyParent(ParentWithGens):
             ....:     def ngens(self): return 3
-            sage: P = MyParent(base = QQ, names = 'a,b,c', normalize = True, category = Groups())
+            sage: P = MyParent(base=QQ, names='a,b,c', normalize=True, category=Groups())
             sage: P.category()
             Category of groups
             sage: P._names
@@ -113,20 +110,15 @@ cdef class ParentWithGens(ParentWithBase):
         raise NotImplementedError("i-th generator not known.")
 
     def gens(self):
-       """
-       Return a tuple whose entries are the generators for this
-       object, in order.
-       """
-       cdef int i, n
-       if self._gens is not None:
-           return self._gens
-       else:
-           v = []
-           n = self.ngens()
-           for i from 0 <= i < n:
-               v.append(self.gen(i))
-           self._gens = tuple(v)
-           return self._gens
+        """
+        Return a tuple whose entries are the generators for this
+        object, in order.
+        """
+        cdef int i
+        if self._gens is not None:
+            return self._gens
+        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
+        return self._gens
 
     def _assign_names(self, names=None, normalize=True):
         """
@@ -207,21 +199,27 @@ cdef class ParentWithGens(ParentWithBase):
     # Morphisms of objects with generators
     #################################################################################
 
-    def hom(self, im_gens, codomain=None, check=True):
+    def hom(self, im_gens, codomain=None, base_map=None, category=None, check=True):
         r"""
         Return the unique homomorphism from self to codomain that
-        sends ``self.gens()`` to the entries of ``im_gens``.
+        sends ``self.gens()`` to the entries of ``im_gens``
+        and induces the map ``base_map`` on the base ring.
         Raises a TypeError if there is no such homomorphism.
 
         INPUT:
 
-        - ``im_gens`` - the images in the codomain of the generators of
+        - ``im_gens`` -- the images in the codomain of the generators of
           this object under the homomorphism
 
-        - ``codomain`` - the codomain of the homomorphism
+        - ``codomain`` -- the codomain of the homomorphism
 
-        - ``check`` - whether to verify that the images of generators extend
-          to define a map (using only canonical coercions).
+        - ``base_map`` -- a map from the base ring of the domain into something
+          that coerces into the codomain
+
+        - ``category`` -- the category of the resulting morphism
+
+        - ``check`` -- whether to verify that the images of generators extend
+          to define a map (using only canonical coercions)
 
         OUTPUT:
 
@@ -282,16 +280,37 @@ cdef class ParentWithGens(ParentWithBase):
             Traceback (most recent call last):
             ...
             TypeError: natural coercion morphism from Rational Field to Integer Ring not defined
+
+        You can specify a map on the base ring::
+
+            sage: k = GF(2)
+            sage: R.<a> = k[]
+            sage: l.<a> = k.extension(a^3 + a^2 + 1)
+            sage: R.<b> = l[]
+            sage: m.<b> = l.extension(b^2 + b + a)
+            sage: n.<z> = GF(2^6)
+            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
+            Ring morphism:
+              From: Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^3 with modulus b^2 + b + a
+              To:   Finite Field in z of size 2^6
+              Defn: b |--> z^4 + z^3 + 1
+                    with map of base ring
         """
         if self._element_constructor is not None:
-            return parent.Parent.hom(self, im_gens, codomain, check)
+            return parent.Parent.hom(self, im_gens, codomain, base_map=base_map, category=category, check=check)
         if isinstance(im_gens, parent.Parent):
             return self.Hom(im_gens).natural_map()
         if codomain is None:
             from sage.structure.all import Sequence
             im_gens = Sequence(im_gens)
             codomain = im_gens.universe()
-        return self.Hom(codomain)(im_gens, check=check)
+        kwds = {}
+        if check is not None:
+            kwds['check'] = check
+        if base_map is not None:
+            kwds['base_map'] = base_map
+        Hom_kwds = {} if category is None else {'category': category}
+        return self.Hom(codomain, **Hom_kwds)(im_gens, **kwds)
 
 
 cdef class localvars:
@@ -354,5 +373,3 @@ cdef class localvars:
 
     def __exit__(self, type, value, traceback):
         self._obj.__temporarily_change_names(self._orig[0], self._orig[1])
-
-

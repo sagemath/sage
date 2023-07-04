@@ -5,12 +5,11 @@ Function pickling
 
 REFERENCE: The python cookbook.
 """
-from __future__ import absolute_import
 
+import copyreg
+import pickle
+import sys
 import types
-import six
-from six.moves import copyreg
-from six.moves import cPickle
 
 
 def code_ctor(*args):
@@ -35,18 +34,28 @@ def reduce_code(co):
         sage: def foo(N): return N+1
         sage: sage.misc.fpickle.reduce_code(foo.__code__)
         (<cyfunction code_ctor at ...>, ...)
+
+    Test that the constructed code matches the original code::
+
+        sage: ctor, args = sage.misc.fpickle.reduce_code(foo.__code__)
+        sage: ctor(*args) == foo.__code__
+        True
     """
     if co.co_freevars or co.co_cellvars:
         raise ValueError("Cannot pickle code objects from closures")
 
-    if six.PY2:
-        co_args = (co.co_argcount,)
-    else:
-        co_args = (co.co_argcount, co.co_kwonlyargcount)
-
-    co_args += (co.co_nlocals, co.co_stacksize, co.co_flags, co.co_code,
+    co_args = (co.co_argcount,)
+    if sys.version_info.minor >= 8:
+        co_args += (co.co_posonlyargcount,)
+    co_args += (co.co_kwonlyargcount, co.co_nlocals,
+                co.co_stacksize, co.co_flags, co.co_code,
                 co.co_consts, co.co_names, co.co_varnames, co.co_filename,
-                co.co_name, co.co_firstlineno, co.co_lnotab)
+                co.co_name)
+    if sys.version_info.minor >= 11:
+        co_args += (co.co_qualname, co.co_firstlineno,
+                    co.co_linetable, co.co_exceptiontable)
+    else:
+        co_args += (co.co_firstlineno, co.co_lnotab)
 
     return (code_ctor, co_args)
 
@@ -80,7 +89,7 @@ def pickle_function(func):
         sage: h(10)
         11
     """
-    return cPickle.dumps(func.__code__)
+    return pickle.dumps(func.__code__)
 
 def unpickle_function(pickled):
     """
@@ -93,7 +102,7 @@ def unpickle_function(pickled):
         sage: unpickle_function(pickle_function(f))(3,5)
         15
     """
-    recovered = cPickle.loads(pickled)
+    recovered = pickle.loads(pickled)
     return types.FunctionType(recovered, globals())
 
 

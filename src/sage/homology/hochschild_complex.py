@@ -9,7 +9,7 @@ Hochschild Complexes
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.misc.cachefunc import cached_method
@@ -17,12 +17,11 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import ModuleElement, parent
 from sage.structure.richcmp import richcmp
-from sage.categories.category_types import ChainComplexes
+from sage.categories.chain_complexes import ChainComplexes
 from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.homology.chain_complex import ChainComplex, Chain_class
 
-from sage.misc.superseded import deprecated_function_alias
 
 class HochschildComplex(UniqueRepresentation, Parent):
     r"""
@@ -185,9 +184,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         """
         if d < 0:
             raise ValueError("only defined for non-negative degree")
-        return tensor([self._M] + [self._A]*d)
-
-    free_module = deprecated_function_alias(21386, module)
+        return tensor([self._M] + [self._A] * d)
 
     @cached_method
     def trivial_module(self):
@@ -272,6 +269,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         Fd = self.module(d-1)
         Fd1 = self.module(d)
         mone = -one
+
         def on_basis(k):
             p = self._M.monomial(k[0]) * self._A.monomial(k[1])
             ret = Fd._from_dict({(m,) + k[2:]: c for m,c in p}, remove_zeros=False)
@@ -284,6 +282,8 @@ class HochschildComplex(UniqueRepresentation, Parent):
                                            remove_zeros=False)
             return ret
         return Fd1.module_morphism(on_basis, codomain=Fd)
+
+    differential = boundary
 
     def coboundary(self, d):
         """
@@ -669,7 +669,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         def _add_(self, other):
             """
             Module addition
-            
+
             EXAMPLES::
 
                 sage: F.<x,y> = FreeAlgebra(ZZ)
@@ -751,4 +751,3 @@ class HochschildComplex(UniqueRepresentation, Parent):
                 True
             """
             return richcmp(self._vec, other._vec, op)
-

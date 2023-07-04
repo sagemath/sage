@@ -1,7 +1,6 @@
 """
-Number-Theoretic Functions
+Number-theoretic functions
 """
-
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -16,12 +15,13 @@ Number-Theoretic Functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 import sys
-import sage.rings.complex_field as complex_field
 
-from sage.rings.all import (ComplexField, ZZ, RR, RDF)
-from sage.rings.complex_number import is_ComplexNumber
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.real_double import RDF
+from sage.rings.complex_mpfr import ComplexField, is_ComplexNumber
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import (RealField, is_RealNumber)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
@@ -32,7 +32,6 @@ from sage.combinat.combinat import bernoulli_polynomial
 from .gamma import psi
 from .other import factorial
 
-CC = complex_field.ComplexField()
 I = CC.gen(0)
 
 
@@ -125,14 +124,35 @@ class Function_zeta(GinacFunction):
             sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)
             zeta(2*I*pi)
 
+        Check that :trac:`20102` is fixed::
+
+            sage: (zeta(x)^2).series(x==1, 1)
+            1*(x - 1)^(-2) + (2*euler_gamma)*(x - 1)^(-1)
+            + (euler_gamma^2 - 2*stieltjes(1)) + Order(x - 1)
+            sage: (zeta(x)^4).residue(x==1)
+            4/3*euler_gamma*(3*euler_gamma^2 - 2*stieltjes(1))
+            - 28/3*euler_gamma*stieltjes(1) + 2*stieltjes(2)
+
         Check that the right infinities are returned (:trac:`19439`)::
 
             sage: zeta(1.0)
             +infinity
             sage: zeta(SR(1.0))
             Infinity
+
+        Fixed conversion::
+
+            sage: zeta(3)._maple_init_()
+            'Zeta(3)'
+            sage: zeta(3)._maple_().sage()  # optional - maple
+            zeta(3)
         """
-        GinacFunction.__init__(self, 'zeta', conversions={'giac':'Zeta'})
+        GinacFunction.__init__(self, 'zeta',
+                               conversions={'giac': 'Zeta',
+                                            'maple': 'Zeta',
+                                            'sympy': 'zeta',
+                                            'mathematica': 'Zeta'})
+
 
 zeta = Function_zeta()
 
@@ -219,12 +239,14 @@ class Function_HurwitzZeta(BuiltinFunction):
             -1/5*x^5 + 1/2*x^4 - 1/3*x^3 + 1/30*x
             sage: hurwitz_zeta(3, 0.5)
             8.41439832211716
+            sage: hurwitz_zeta(0, x)
+            -x + 1/2
         """
         if x == 1:
             return zeta(s)
         if s in ZZ and s > 1:
             return ((-1) ** s) * psi(s - 1, x) / factorial(s - 1)
-        elif s in ZZ and s < 0:
+        elif s in ZZ and s <= 0:
             return -bernoulli_polynomial(x, -s + 1) / (-s + 1)
         else:
             return
@@ -336,8 +358,15 @@ class Function_zetaderiv(GinacFunction):
             sage: a = loads(dumps(zetaderiv(2,x)))
             sage: a.operator() == zetaderiv
             True
+
+            sage: b = RBF(3/2, 1e-10)
+            sage: zetaderiv(1, b, hold=True)
+            zetaderiv(1, [1.500000000 +/- 1.01e-10])
+            sage: zetaderiv(b, 1)
+            zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
-        GinacFunction.__init__(self, "zetaderiv", nargs=2)
+        GinacFunction.__init__(self, "zetaderiv", nargs=2,
+                               conversions=dict(maple="Zeta"))
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         r"""
@@ -350,6 +379,15 @@ class Function_zetaderiv(GinacFunction):
         """
         from mpmath import zeta
         return mpmath_utils.call(zeta, x, 1, n, parent=parent)
+
+    def _method_arguments(self, k, x, **args):
+        r"""
+        TESTS::
+
+            sage: zetaderiv(1, RBF(3/2, 0.0001))
+            [-3.93 +/- ...e-3]
+        """
+        return [x, k]
 
 zetaderiv = Function_zetaderiv()
 
@@ -406,7 +444,7 @@ def zeta_symmetric(s):
     if s == 1:  # deal with poles, hopefully
         return R(0.5)
 
-    return (s/2 + 1).gamma()   *    (s-1)   * (R.pi()**(-s/2))  *  s.zeta()
+    return (s/2 + 1).gamma() *    (s-1) * (R.pi()**(-s/2)) *  s.zeta()
 
 import math
 from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
@@ -493,7 +531,7 @@ class DickmanRho(BuiltinFunction):
             try:
                 x = RR(x)
             except (TypeError, ValueError):
-                return None #PrimitiveFunction.__call__(self, SR(x))
+                return None
         if x < 0:
             return x.parent()(0)
         elif x <= 1:

@@ -28,7 +28,7 @@ REFERENCE:
 
 from .data_structures cimport *
 from .double_coset cimport double_coset
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 
 def set_stab_py(generators, sett, relab=False):
@@ -685,7 +685,9 @@ cdef iterator *setup_set_gen(iterator *subset_gen, int degree, int max_size):
         bitset_clear(&empty_set.bits)
     return subset_iterator
 
-def sets_modulo_perm_group(list generators, int max_size, bint indicate_mem_err = 1):
+
+def sets_modulo_perm_group(list generators, int max_size,
+                           bint indicate_mem_err=1):
     r"""
     Given generators of a permutation group, list subsets up to permutations in
     the group.
@@ -852,9 +854,3 @@ def sets_modulo_perm_group(list generators, int max_size, bint indicate_mem_err 
         else:
             out_list.append(MemoryError())
     return out_list
-
-
-
-
-
-

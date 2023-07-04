@@ -1,8 +1,10 @@
 # distutils: libraries = flint
+# distutils: depends = flint/padic_poly.h
 
 from sage.libs.flint.types cimport *
 
-cdef extern from "flint/padic_poly.h":
+# flint/padic_poly.h
+cdef extern from "flint_wrap.h":
     #*  Helper functions  ********************************************************/
     long _fmpz_vec_ord_p(const fmpz *vec, long len, const fmpz_t p)
 

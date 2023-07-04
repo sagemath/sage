@@ -1,17 +1,18 @@
 """
 Coxeter Groups
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Nicolas Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.root_system.reflection_group_real import ReflectionGroup
 from sage.combinat.root_system.cartan_type import CartanType
+
 
 def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=None):
     """
@@ -59,8 +60,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
         [3 2 3 1]
 
         sage: W = CoxeterGroup(['H',3]); W
-        Finite Coxeter group over Number Field in a with
-        defining polynomial x^2 - 5 with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
@@ -81,16 +81,14 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
 
         sage: W = CoxeterGroup(["H",3], implementation="matrix")
         sage: W
-        Finite Coxeter group over Number Field in a with
-        defining polynomial x^2 - 5 with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
 
         sage: W = CoxeterGroup(["H",3], implementation="reflection")
         sage: W
-        Finite Coxeter group over Number Field in a with
-        defining polynomial x^2 - 5 with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
@@ -157,6 +155,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
         return ReflectionGroup(cartan_type, index_set=index_set)
 
     raise NotImplementedError("Coxeter group of type {} as {} group not implemented".format(cartan_type, implementation))
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.coxeter_group', 'CoxeterGroupAsPermutationGroup',  ReflectionGroup)

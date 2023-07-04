@@ -105,7 +105,6 @@ method for :class:`SteenrodAlgebra_generic
 <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic>` in
 :file:`steenrod_algebra.py`.
 """
-from __future__ import absolute_import, division
 
 #*****************************************************************************
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
@@ -164,10 +163,10 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
         [1 2 0]
     """
     from sage.matrix.constructor import matrix
-    from sage.rings.all import GF
+    from sage.rings.finite_rings.finite_field_constructor import GF
     from .steenrod_algebra import SteenrodAlgebra
     if generic == 'auto':
-        generic = False if p==2 else True
+        generic = p != 2
     if n == 0:
         return matrix(GF(p), 1, 1, [[1]])
     milnor_base = steenrod_algebra_basis(n,'milnor',p, generic=generic)
@@ -194,8 +193,9 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
 
     - ``p`` - positive prime number (optional, default 2)
 
-    OUTPUT: ``matrix`` - change-of-basis matrix, a square matrix over
-    GF(p)
+    OUTPUT:
+
+    ``matrix`` - change-of-basis matrix, a square matrix over GF(p)
 
     .. note::
 
@@ -338,7 +338,7 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     except TypeError:
         return ()
 
-    generic = kwds.get("generic", False if p==2 else True)
+    generic = kwds.get("generic", p != 2)
 
     basis_name = get_basis_name(basis, p, generic=generic)
     if basis_name.find('long') >= 0:
@@ -480,7 +480,7 @@ def xi_degrees(n,p=2, reverse=True):
         sage: sage.algebras.steenrod.steenrod_algebra_bases.xi_degrees(400,p=17)
         [307, 18, 1]
     """
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     if n <= 0:
         return []
     N = Integer(n*(p-1) + 1)
@@ -564,7 +564,7 @@ def milnor_basis(n, p=2, **kwds):
         sage: len(milnor_basis(240,7, profile=((),()), truncation_type=0))
         0
     """
-    generic = kwds.get('generic', False if p==2 else True)
+    generic = kwds.get('generic', p != 2)
 
     if n == 0:
         if not generic:
@@ -586,7 +586,7 @@ def milnor_basis(n, p=2, **kwds):
     if not generic:
         for mono in WeightedIntegerVectors(n, xi_degrees(n, reverse=False)):
             exponents = list(mono)
-            while len(exponents) > 0 and exponents[-1] == 0:
+            while exponents and exponents[-1] == 0:
                 exponents.pop(-1)
             # check profile:
             okay = True
@@ -613,9 +613,9 @@ def milnor_basis(n, p=2, **kwds):
                 P_result = []
             for mono in WeightedIntegerVectors(dim, xi_degrees(dim, p=p, reverse=False)):
                 p_mono = list(mono)
-                while len(p_mono) > 0 and p_mono[-1] == 0:
+                while p_mono and p_mono[-1] == 0:
                     p_mono.pop(-1)
-                if len(p_mono) > 0:
+                if p_mono:
                     P_result.append(p_mono)
             # now find the Q part of the basis element.
             # dimensions here are back to normal.
@@ -630,7 +630,7 @@ def milnor_basis(n, p=2, **kwds):
                     # with distinct parts.
                     for sigma in restricted_partitions(deg,
                                                        q_degrees_decrease,
-                                                       no_repeats = True):
+                                                       no_repeats=True):
                         index = 0
                         q_mono = []
                         for q in q_degrees:
@@ -702,7 +702,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
         sage: serre_cartan_basis(13, 3, bound=3)
         ((1, 3, 0),)
     """
-    generic = kwds.get('generic', False if p==2 else True )
+    generic = kwds.get('generic', p != 2)
 
     if n == 0:
         return ((),)
@@ -714,7 +714,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
             # This means that 2 last <= n - last, or 3 last <= n.
             result = [(n,)]
             for last in range(bound, 1+n//3):
-                for vec in serre_cartan_basis(n - last, bound = 2*last):
+                for vec in serre_cartan_basis(n - last, bound=2 * last):
                     new = vec + (last,)
                     result.append(new)
         else: # p odd
@@ -1023,14 +1023,14 @@ def atomic_basis_odd(n, basis, p, **kwds):
         elif basis.find('revz') >= 0:
             return (s+t,s)
 
-    generic = kwds.get('generic', False if p==2 else True )
+    generic = kwds.get('generic', p != 2)
     if n == 0:
         if not generic:
             return ((),)
         else:
             return (((), ()),)
 
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     from sage.rings.infinity import Infinity
     from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
     profile = kwds.get("profile", None)
@@ -1058,13 +1058,9 @@ def atomic_basis_odd(n, basis, p, **kwds):
                 # with distinct parts.
                 for sigma in restricted_partitions(deg,
                                                    q_degrees_decrease,
-                                                   no_repeats = True):
-                    index = 0
-                    q_mono = []
-                    for q in q_degrees:
-                        if q in sigma:
-                            q_mono.append(index)
-                        index += 1
+                                                   no_repeats=True):
+                    q_mono = [index for index, q in enumerate(q_degrees)
+                              if q in sigma]
                     # check profile:
                     okay = True
                     if profile is not None and profile != ((), ()):
@@ -1075,7 +1071,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
                                 okay = False
                                 break
 
-                        for ((s,t), exp) in p_mono:
+                        for ((s, t), _) in p_mono:
                             if ((len(profile[0]) > t-1 and profile[0][t-1] <= s)
                                 or (len(profile[0]) <= t-1 and trunc < Infinity)):
                                 okay = False
@@ -1086,6 +1082,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
                             p_mono = []
                         result.append((tuple(q_mono), tuple(p_mono)))
     return tuple(result)
+
 
 #############################################################################
 def steenrod_basis_error_check(dim, p, **kwds):
@@ -1117,8 +1114,8 @@ def steenrod_basis_error_check(dim, p, **kwds):
         sage: steenrod_basis_error_check(40,3) # long time
         sage: steenrod_basis_error_check(80,5) # long time
     """
-    import sage.misc.misc as misc
-    generic = kwds.get('generic', False if p==2 else True )
+    from sage.misc.verbose import verbose
+    generic = kwds.get('generic', p != 2)
 
     if not generic:
         bases = ('adem','woody', 'woodz', 'wall', 'arnona', 'arnonc',
@@ -1131,7 +1128,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     for i in range(dim):
         if i % 5 == 0:
-            misc.verbose("up to dimension %s"%i)
+            verbose("up to dimension %s"%i)
         milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,generic=generic))
         for B in bases:
             if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,generic=generic)):
@@ -1140,7 +1137,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
             if mat.nrows() != 0 and not mat.is_invertible():
                 print("%s invertibility problem in dim %s at p=%s" % (B, i, p))
 
-    misc.verbose("done checking, no profiles")
+    verbose("done checking, no profiles")
 
     bases = ('pst_rlex', 'pst_llex', 'pst_deg', 'pst_revz')
     if not generic:
@@ -1150,11 +1147,11 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     for i in range(dim):
         if i % 5 == 0:
-            misc.verbose("up to dimension %s"%i)
+            verbose("up to dimension %s"%i)
         for pro in profiles:
             milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,profile=pro,generic=generic))
             for B in bases:
                 if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,profile=pro,generic=generic)):
                     print("problem with milnor/%s in dimension %s with profile %s" % (B, i, pro))
 
-    misc.verbose("done checking with profiles")
+    verbose("done checking with profiles")

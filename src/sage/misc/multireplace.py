@@ -10,26 +10,31 @@
 #
 #  http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/81330
 #
-# There's more cool related code at the above site...
-#
 ##########################################################################
 
 
 import re
 
+
 #
 # The simplest, lambda-based implementation
 #
 
-def multiple_replace(dict, text):
+def multiple_replace(dic, text):
     """
     Replace in 'text' all occurrences of any key in the given
     dictionary by its corresponding value.  Returns the new string.
-    """
 
+    EXAMPLES::
+
+        sage: from sage.misc.multireplace import multiple_replace
+        sage: txt = "This monkey really likes the bananas."
+        sage: dic = {'monkey': 'penguin', 'bananas': 'fish'}
+        sage: multiple_replace(dic, txt)
+        'This penguin really likes the fish.'
+    """
     # Create a regular expression  from the dictionary keys
-    regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
+    regex = re.compile("(%s)" % "|".join(re.escape(k) for k in dic))
 
     # For each match, look-up corresponding value in dictionary
-    return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text)
-
+    return regex.sub(lambda mo: dic[mo.string[mo.start():mo.end()]], text)

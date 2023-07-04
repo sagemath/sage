@@ -1,11 +1,10 @@
 """
 all.py -- export of schemes to Sage
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -43,3 +42,6 @@ from .projective.all import *
 
 from .product_projective.all import *
 
+from .cyclic_covers.all import *
+
+from .berkovich.all import *

@@ -1,0 +1,1 @@
+libcurl-devel curl

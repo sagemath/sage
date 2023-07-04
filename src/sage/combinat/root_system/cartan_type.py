@@ -227,7 +227,7 @@ Now we get the desired Cartan matrix::
 
 Note that backward edges have been automatically added::
 
-    sage: g.edges()
+    sage: g.edges(sort=True)
     [(1, 2, 2), (1, 3, 1), (2, 1, 1), (2, 3, 1), (3, 1, 1), (3, 2, 1)]
 
 .. rubric:: Reducible Cartan types
@@ -465,7 +465,7 @@ this data.
 
 .. TODO:: Should those indexes come before the introduction?
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #
@@ -473,18 +473,13 @@ this data.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import, division
-
-from six.moves import range
-from six.moves.builtins import sorted
-from six import class_types, string_types
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
@@ -554,7 +549,7 @@ class CartanTypeFactory(SageObject):
             sage: CT.cartan_matrix()
             [ 2 -1]
             [-1  2]
-            sage: CT = CartanType(['A2'])   
+            sage: CT = CartanType(['A2'])
             sage: CT.is_irreducible()
             True
             sage: CartanType('A2')
@@ -600,7 +595,7 @@ class CartanTypeFactory(SageObject):
             return t
 
         from sage.rings.semirings.non_negative_integer_semiring import NN
-        if isinstance(t, string_types):
+        if isinstance(t, str):
             if "x" in t:
                 from . import type_reducible
                 return type_reducible.CartanType([CartanType(u) for u in t.split("x")])
@@ -617,7 +612,7 @@ class CartanTypeFactory(SageObject):
                 return CartanType([t[0], eval(t[1:])])
 
         t = list(t)
-        if isinstance(t[0], string_types) and t[1] in [Infinity, ZZ, NN]:
+        if isinstance(t[0], str) and t[1] in [Infinity, ZZ, NN]:
             letter, n = t[0], t[1]
             if letter == 'A':
                 from . import type_A_infinity
@@ -626,7 +621,7 @@ class CartanTypeFactory(SageObject):
                 else:
                     return type_A_infinity.CartanType(ZZ)
 
-        if isinstance(t[0], string_types) and t[1] in ZZ and t[1] >= 0:
+        if isinstance(t[0], str) and t[1] in ZZ and t[1] >= 0:
             letter, n = t[0], t[1]
             if len(t) == 2:
                 if letter == "A":
@@ -726,7 +721,7 @@ class CartanTypeFactory(SageObject):
                         return CartanType(["F", 4, 1]).dual()
             raise ValueError("%s is not a valid Cartan type" % t)
 
-        if isinstance(t[0], string_types) and isinstance(t[1], (list, tuple)):
+        if isinstance(t[0], str) and isinstance(t[1], (list, tuple)):
             letter, n = t[0], t[1]
             if len(t) == 2 and len(n) == 2:
                 from . import type_super_A
@@ -833,29 +828,29 @@ class CartanTypeFactory(SageObject):
              ['E', 6, 1], ['E', 7, 1], ['E', 8, 1], ['F', 4, 1], ['G', 2, 1], ['BC', 1, 2], ['BC', 5, 2],
              ['B', 5, 1]^*, ['C', 4, 1]^*, ['F', 4, 1]^*, ['G', 2, 1]^*, ['BC', 1, 2]^*, ['BC', 5, 2]^*]
         """
-        finite_crystallographic = \
-            [CartanType (t)       for t in [['A', 1], ['A', 5], ['B', 1], ['B', 5],
-                                            ['C', 1], ['C', 5], ['D', 2], ['D', 3], ['D', 5],
-                                            ["E", 6], ["E", 7], ["E", 8],
-                                            ["F", 4],
-                                            ["G", 2]]]
+        finite_crystallographic = [CartanType(t)
+            for t in [['A', 1], ['A', 5], ['B', 1], ['B', 5],
+                      ['C', 1], ['C', 5], ['D', 2], ['D', 3], ['D', 5],
+                      ["E", 6], ["E", 7], ["E", 8],
+                      ["F", 4],
+                      ["G", 2]]]
 
         # Support for hand constructed Dynkin diagrams as Cartan types is not yet ready enough for including an example here.
         # from sage.combinat.root_system.dynkin_diagram import DynkinDiagram_class
         # g = DynkinDiagram_class.an_instance()
         return finite_crystallographic + \
-            [CartanType(t)        for t in [["I", 5], ["H", 3], ["H", 4]]] + \
-            [t.affine()           for t in finite_crystallographic if t.is_irreducible()] + \
-            [CartanType(t)        for t in [["BC", 1, 2], ["BC", 5, 2]]] + \
+            [CartanType(t) for t in [["I", 5], ["H", 3], ["H", 4]]] + \
+            [t.affine() for t in finite_crystallographic if t.is_irreducible()] + \
+            [CartanType(t) for t in [["BC", 1, 2], ["BC", 5, 2]]] + \
             [CartanType(t).dual() for t in [["B", 5, 1], ["C", 4, 1], ["F", 4, 1], ["G", 2, 1],["BC", 1, 2], ["BC", 5, 2]]] #+ \
             # [ g ]
 
-    _colors = {1: 'blue',    -1: 'blue',
-               2: 'red',     -2: 'red',
-               3: 'green',   -3: 'green',
-               4: 'cyan',    -4: 'cyan',
+    _colors = {1: 'blue', -1: 'blue',
+               2: 'red', -2: 'red',
+               3: 'green', -3: 'green',
+               4: 'cyan', -4: 'cyan',
                5: 'magenta', -5: 'magenta',
-               6: 'yellow',  -6: 'yellow'}
+               6: 'yellow', -6: 'yellow'}
 
     @classmethod
     def color(cls, i):
@@ -929,7 +924,7 @@ class CartanTypeFactory(SageObject):
             D_{5}^{(2)}
 
         For type `A_{2n}^{(2)\dagger}`, the dual string/latex options are
-        automatically overriden::
+        automatically overridden::
 
             sage: dct = CartanType(['A',8,2]).dual(); dct
             ['A', 8, 2]^+
@@ -952,10 +947,10 @@ class CartanTypeFactory(SageObject):
                       alias=dict(BC="Stembridge", tilde="Stembridge", twisted="Kac"))
         dual_str = dict(default="*",
                       description='The string used for dual Cartan types when printing',
-                      checker=lambda char: isinstance(char, string_types))
+                      checker=lambda char: isinstance(char, str))
         dual_latex = dict(default="\\vee",
                         description='The latex used for dual CartanTypes when latexing',
-                        checker=lambda char: isinstance(char, string_types))
+                        checker=lambda char: isinstance(char, str))
         mark_special_node = dict(default="none",
                                description="Make the special nodes",
                                values=dict(none="no markup", latex="only in latex",
@@ -963,10 +958,10 @@ class CartanTypeFactory(SageObject):
                                case_sensitive=False)
         special_node_str = dict(default="@",
                               description="The string used to indicate which node is special when printing",
-                              checker=lambda char: isinstance(char, string_types))
+                              checker=lambda char: isinstance(char, str))
         marked_node_str = dict(default="X",
                              description="The string used to indicate a marked node when printing",
-                             checker=lambda char: isinstance(char, string_types))
+                             checker=lambda char: isinstance(char, str))
         latex_relabel = dict(default=True,
                            description="Indicate in the latex output if a Cartan type has been relabelled",
                            checker=lambda x: isinstance(x, bool))
@@ -978,7 +973,8 @@ class CartanTypeFactory(SageObject):
 CartanType = CartanTypeFactory()
 CartanType.__doc__ = __doc__
 
-class CartanType_abstract(object):
+
+class CartanType_abstract():
     r"""
     Abstract class for Cartan types
 
@@ -1036,7 +1032,7 @@ class CartanType_abstract(object):
         .. TODO:: Generalize to :class:`SageObject`?
         """
         from sage.structure.dynamic_class import dynamic_class
-        assert isinstance(classes, (tuple, class_types))
+        assert isinstance(classes, (tuple, type))
         if not isinstance(classes, tuple):
             classes = (classes,)
         bases = (self.__class__,) + classes
@@ -1155,13 +1151,13 @@ class CartanType_abstract(object):
 
             sage: CartanType(['B',3]).coxeter_diagram()
             Graph on 3 vertices
-            sage: CartanType(['A',3]).coxeter_diagram().edges()
+            sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 3)]
-            sage: CartanType(['B',3]).coxeter_diagram().edges()
+            sage: CartanType(['B',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4)]
-            sage: CartanType(['G',2]).coxeter_diagram().edges()
+            sage: CartanType(['G',2]).coxeter_diagram().edges(sort=True)
             [(1, 2, 6)]
-            sage: CartanType(['F',4]).coxeter_diagram().edges()
+            sage: CartanType(['F',4]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4), (3, 4, 3)]
         """
 
@@ -1529,6 +1525,7 @@ class CartanType_abstract(object):
 
     options = CartanType.options
 
+
 class CartanType_crystallographic(CartanType_abstract):
     """
     An abstract class for crystallographic Cartan types.
@@ -1636,7 +1633,6 @@ class CartanType_crystallographic(CartanType_abstract):
         from sage.combinat.root_system.cartan_matrix import CartanMatrix
         return CartanMatrix(self.dynkin_diagram())
 
-    @cached_method
     def coxeter_diagram(self):
         """
         Return the Coxeter diagram for ``self``.
@@ -1649,30 +1645,18 @@ class CartanType_crystallographic(CartanType_abstract):
 
             sage: CartanType(['A',3]).coxeter_diagram()
             Graph on 3 vertices
-            sage: CartanType(['A',3]).coxeter_diagram().edges()
+            sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 3)]
-            sage: CartanType(['B',3]).coxeter_diagram().edges()
+            sage: CartanType(['B',3]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4)]
-            sage: CartanType(['G',2]).coxeter_diagram().edges()
+            sage: CartanType(['G',2]).coxeter_diagram().edges(sort=True)
             [(1, 2, 6)]
-            sage: CartanType(['F',4]).coxeter_diagram().edges()
+            sage: CartanType(['F',4]).coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4), (3, 4, 3)]
-            sage: CartanType(['A',2,2]).coxeter_diagram().edges()
+            sage: CartanType(['A',2,2]).coxeter_diagram().edges(sort=True)
             [(0, 1, +Infinity)]
         """
-        from sage.rings.infinity import infinity
-        scalarproducts_to_order = { 0: 2,  1: 3,  2: 4,  3: 6, 4: infinity }
-        from sage.graphs.graph import Graph
-        coxeter_diagram = Graph(multiedges=False)
-        a = self.dynkin_diagram()
-        I = self.index_set()
-        coxeter_diagram.add_vertices(I)
-        for i in I:
-            for j in a.neighbors_out(i):
-                # avoid adding the edge twice
-                if not coxeter_diagram.has_edge(i,j):
-                    coxeter_diagram.add_edge(i,j, scalarproducts_to_order[a[i,j]*a[j,i]])
-        return coxeter_diagram
+        return self.dynkin_diagram().coxeter_diagram()
 
     def is_crystallographic(self):
         """
@@ -1752,7 +1736,7 @@ class CartanType_crystallographic(CartanType_abstract):
         n = m.nrows()
         M = matrix(ZZ, n, n*n, sparse = True)
         for (i,j) in m.nonzero_positions():
-            M[i, n * i + j]  = m[i,j]
+            M[i, n * i + j] = m[i,j]
             M[j, n * i + j] -= m[j,i]
         kern = M.integer_kernel()
         c = len(self.dynkin_diagram().connected_components())
@@ -1796,10 +1780,12 @@ class CartanType_crystallographic(CartanType_abstract):
             raise ValueError("the Dynkin diagram must be bipartite")
         return G.bipartite_sets()
 
+
 class CartanType_simply_laced(CartanType_crystallographic):
     """
     An abstract class for simply laced Cartan types.
     """
+
     def is_simply_laced(self):
         """
         Return whether ``self`` is simply laced, which is ``True``.
@@ -1834,10 +1820,12 @@ class CartanType_simply_laced(CartanType_crystallographic):
         """
         return self
 
+
 class CartanType_simple(CartanType_abstract):
     """
     An abstract class for simple Cartan types.
     """
+
     def is_irreducible(self):
         """
         Return whether ``self`` is irreducible, which is ``True``.
@@ -1849,10 +1837,12 @@ class CartanType_simple(CartanType_abstract):
         """
         return True
 
+
 class CartanType_finite(CartanType_abstract):
     """
     An abstract class for simple affine Cartan types.
     """
+
     def is_finite(self):
         """
         EXAMPLES::
@@ -1870,6 +1860,7 @@ class CartanType_finite(CartanType_abstract):
             False
         """
         return False
+
 
 class CartanType_affine(CartanType_simple, CartanType_crystallographic):
     """
@@ -1893,7 +1884,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         if (label == self.special_node()
                 and self.options('mark_special_node') in ['printing', 'both']):
             return self.options('special_node_str')
-        return super(CartanType_affine, self)._ascii_art_node(label)
+        return super()._ascii_art_node(label)
 
     def _latex_draw_node(self, x, y, label, position="below=4pt"):
         r"""
@@ -1914,7 +1905,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             fill = 'black'
         else:
             fill = 'white'
-        return super(CartanType_affine, self)._latex_draw_node(x, y, label, position, fill)
+        return super()._latex_draw_node(x, y, label, position, fill)
 
     def is_finite(self):
         """
@@ -2043,14 +2034,14 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         We check that :meth:`classical`,
         :meth:`sage.combinat.root_system.cartan_type.CartanType_crystallographic.dynkin_diagram`,
-        and :meth:`.special_node` are consistent::
+        and :meth:`special_node` are consistent::
 
             sage: for ct in CartanType.samples(affine = True):
             ....:     g1 = ct.classical().dynkin_diagram()
             ....:     g2 = ct.dynkin_diagram()
             ....:     g2.delete_vertex(ct.special_node())
-            ....:     assert sorted(g1.vertices()) == sorted(g2.vertices())
-            ....:     assert sorted(g1.edges()) == sorted(g2.edges())
+            ....:     assert g1.vertices(sort=True) == g2.vertices(sort=True)
+            ....:     assert g1.edges(sort=True) == g2.edges(sort=True)
 
         """
 
@@ -2211,12 +2202,15 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
     def translation_factors(self):
         r"""
-        Returns the translation factors for ``self``. Those are the
-        smallest factors `t_i` such that the translation by `t_i
-        \alpha_i` maps the fundamental polygon to another polygon in
-        the alcove picture.
+        Return the translation factors for ``self``.
 
-        OUTPUT: a dictionary from ``self.index_set()`` to `\ZZ`
+        Those are the smallest factors `t_i` such that the translation
+        by `t_i \alpha_i` maps the fundamental polygon to another
+        polygon in the alcove picture.
+
+        OUTPUT:
+
+        a dictionary from ``self.index_set()`` to `\ZZ`
         (or `\QQ` for affine type `BC`)
 
         Those coefficients are all `1` for dual untwisted, and in
@@ -2224,9 +2218,11 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         `c_i` coefficients (see :meth:`c`) for untwisted and dual
         thereof. See the discussion below for affine type `BC`.
 
-        Note: one usually realizes the alcove picture in the coweight
-        lattice, with translations by coroots; in that case, one will
-        use the translation factors for the dual Cartan type.
+        .. NOTE::
+
+            One usually realizes the alcove picture in the coweight
+            lattice, with translations by coroots; in that case, one will
+            use the translation factors for the dual Cartan type.
 
         FIXME: the current implementation assumes that the Cartan
         matrix is indexed by `[0,1,...]`, in the same order as the
@@ -2393,8 +2389,8 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             sage: C._test_dual_classical()
         """
         tester = self._tester(**options)
-        tester.assertTrue( self.classical().dual() == self.dual().classical() )
-        tester.assertTrue( self.special_node() == self.dual().special_node() )
+        tester.assertEqual(self.classical().dual(), self.dual().classical())
+        tester.assertEqual(self.special_node(), self.dual().special_node())
 
     def other_affinization(self):
         """
@@ -2423,6 +2419,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
 ##############################################################################
 # Concrete base classes
+
 
 class CartanType_standard(UniqueRepresentation, SageObject):
     # Technical methods
@@ -2488,6 +2485,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
          sage: ct1 != ct3
          True
     """
+
     def __init__(self, letter, n):
         """
         EXAMPLES::
@@ -2676,6 +2674,8 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
         return Family(d)
 
 ##########################################################################
+
+
 class CartanType_standard_affine(CartanType_standard, CartanType_affine):
     r"""
     A concrete class for affine simple Cartan types.
@@ -2845,10 +2845,13 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
         return self.letter
 
 ##########################################################################
+
+
 class CartanType_standard_untwisted_affine(CartanType_standard_affine):
     r"""
     A concrete class for the standard untwisted affine Cartan types.
     """
+
     def classical(self):
         r"""
         Return the classical Cartan type associated with ``self``.
@@ -2929,10 +2932,13 @@ class CartanType_standard_untwisted_affine(CartanType_standard_affine):
         return self.classical()._latex_()+"^{(1)}"
 
 ##########################################################################
+
+
 class CartanType_decorator(UniqueRepresentation, SageObject, CartanType_abstract):
     """
     Concrete base class for Cartan types that decorate another Cartan type.
     """
+
     def __init__(self, ct):
         """
         Initialize ``self``.
@@ -3006,6 +3012,8 @@ class CartanType_decorator(UniqueRepresentation, SageObject, CartanType_abstract
 
 ##############################################################################
 # Base concrete class for superalgebras
+
+
 class SuperCartanType_standard(UniqueRepresentation, SageObject):
     # Technical methods
     def _repr_(self, compact = False):
@@ -3055,7 +3063,9 @@ class SuperCartanType_standard(UniqueRepresentation, SageObject):
 
 ##############################################################################
 # For backward compatibility
-class CartanType_simple_finite(object):
+
+
+class CartanType_simple_finite():
     def __setstate__(self, dict):
         """
         Implements the unpickling of Cartan types pickled by Sage <= 4.0.
@@ -3066,10 +3076,10 @@ class CartanType_simple_finite(object):
 
             sage: pg_CartanType_simple_finite = unpickle_global('sage.combinat.root_system.cartan_type', 'CartanType_simple_finite')
             sage: si1 = unpickle_newobj(pg_CartanType_simple_finite, ())
-            sage: pg_unpickleModule = unpickle_global('twisted.persisted.styles', 'unpickleModule')
+            sage: from sage.misc.fpickle import unpickleModule
             sage: pg_make_integer = unpickle_global('sage.rings.integer', 'make_integer')
             sage: si2 = pg_make_integer('4')
-            sage: unpickle_build(si1, {'tools':pg_unpickleModule('sage.combinat.root_system.type_A'), 't':['A', si2], 'letter':'A', 'n':si2})
+            sage: unpickle_build(si1, {'tools':unpickleModule('sage.combinat.root_system.type_A'), 't':['A', si2], 'letter':'A', 'n':si2})
 
             sage: si1
             ['A', 4]
@@ -3086,9 +3096,3 @@ class CartanType_simple_finite(object):
         T = CartanType([dict['letter'], dict['n']])
         self.__class__ = T.__class__
         self.__dict__ = T.__dict__
-
-# deprecations from trac:18555
-from sage.misc.superseded import deprecated_function_alias
-CartanTypeFactory.global_options = deprecated_function_alias(18555, CartanTypeFactory.options)
-CartanTypeOptions = deprecated_function_alias(18555, CartanType.options)
-CartanType_abstract.global_options = deprecated_function_alias(18555, CartanType.options)

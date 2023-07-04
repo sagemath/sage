@@ -77,6 +77,8 @@ cdef class Module(Parent):
       module. If ``None``, then this is set to the category of modules/vector
       spaces over ``base``.
 
+    - ``names`` -- names of generators
+
     EXAMPLES::
 
         sage: from sage.modules.module import Module
@@ -111,7 +113,7 @@ cdef class Module(Parent):
         True
 
     """
-    def __init__(self, base, category=None):
+    def __init__(self, base, category=None, names=None):
         """
         Initialization.
 
@@ -120,13 +122,13 @@ cdef class Module(Parent):
             sage: from sage.modules.module import Module
             sage: M = Module(ZZ)
             sage: type(M)
-            <type 'sage.modules.module.Module'>
+            <class 'sage.modules.module.Module'>
 
         """
         from sage.categories.modules import Modules
         if category is None:
             category = Modules(base)
-        Parent.__init__(self, base=base, category=category)
+        Parent.__init__(self, base=base, category=category, names=names)
 
     cpdef _coerce_map_from_(self, M):
         """
@@ -252,7 +254,7 @@ cdef class Module(Parent):
             sage: M.endomorphism_ring()
             Set of Morphisms from <sage.modules.module.Module object at ...> to <sage.modules.module.Module object at ...> in Category of modules over Integer Ring
         """
-        from sage.categories.all import End
+        from sage.categories.homset import End
         return End(self)
 
 def is_Module(x):
@@ -300,5 +302,3 @@ def is_VectorSpace(x):
         return is_Module(x) and x.base_ring().is_field()
     except AttributeError:
         return False
-
-

@@ -15,7 +15,6 @@ Arcs of circles and ellipses
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.plot.colors import to_mpl_color
@@ -65,12 +64,12 @@ class Arc(GraphicPrimitive):
             True
             sage: A[0].r2 == 1
             True
-            sage: bool(A[0].angle == pi/4)
-            True
+            sage: A[0].angle
+            0.7853981633974483
             sage: bool(A[0].s1 == 0)
             True
-            sage: bool(A[0].s2 == pi)
-            True
+            sage: A[0].s2
+            3.141592653589793
 
         TESTS::
 
@@ -84,7 +83,7 @@ class Arc(GraphicPrimitive):
         self.r1 = float(r1)
         self.r2 = float(r2)
         if self.r1 <= 0 or self.r2 <= 0:
-            raise ValueError("the radii must be positive real numbers.")
+            raise ValueError("the radii must be positive real numbers")
 
         self.angle = float(angle)
         self.s1 = float(s1)
@@ -274,9 +273,9 @@ class Arc(GraphicPrimitive):
         p = patches.Arc((self.x, self.y),
                         2. * self.r1,
                         2. * self.r2,
-                        fmod(self.angle, 2 * pi) * (180. / pi),
-                        self.s1 * (180. / pi),
-                        self.s2 * (180. / pi))
+                        angle=fmod(self.angle, 2 * pi) * (180. / pi),
+                        theta1=self.s1 * (180. / pi),
+                        theta2=self.s2 * (180. / pi))
         return p
 
     def bezier_path(self):
@@ -304,6 +303,7 @@ class Arc(GraphicPrimitive):
         from matplotlib.path import Path
         import numpy as np
         ma = self._matplotlib_arc()
+
         def theta_stretch(theta, scale):
             theta = np.deg2rad(theta)
             x = np.cos(theta)
@@ -424,15 +424,27 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
         sage: arc((0,0), 1, sector=(pi/4,3*pi/4))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(arc((0,0), 1, sector=(pi/4,3*pi/4)))
+
     Plot an arc of an ellipse between the angles 0 and `\pi/2`::
 
         sage: arc((2,3), 2, 1, sector=(0,pi/2))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(arc((2,3), 2, 1, sector=(0,pi/2)))
+
     Plot an arc of a rotated ellipse between the angles 0 and `\pi/2`::
 
         sage: arc((2,3), 2, 1, angle=pi/5, sector=(0,pi/2))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(arc((2,3), 2, 1, angle=pi/5, sector=(0,pi/2)))
 
     Plot an arc of an ellipse in red with a dashed linestyle::
 
@@ -440,6 +452,10 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
         Graphics object consisting of 1 graphics primitive
         sage: arc((0,0), 2, 1, 0, (0,pi/2), linestyle="--", color="red")
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(arc((0,0), 2, 1, 0, (0,pi/2), linestyle="dashed", color="red"))
 
     The default aspect ratio for arcs is 1.0::
 

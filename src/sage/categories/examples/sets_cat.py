@@ -1,19 +1,19 @@
 """
 Examples of sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.categories.sets_cat import Sets
 from sage.rings.integer import Integer, IntegerWrapper
 from sage.rings.integer_ring import IntegerRing
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -44,7 +44,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         sage: x = P(13); x
         13
         sage: type(x)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: x.parent()
         Integer Ring
         sage: 13 in P
@@ -54,12 +54,13 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         sage: y = x+1; y
         14
         sage: type(y)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
         sage: TestSuite(P).run(verbose=True)
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -90,7 +91,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
             sage: P is Sets().example()
             True
         """
-        Parent.__init__(self, facade = IntegerRing(), category = Sets())
+        Parent.__init__(self, facade=IntegerRing(), category=Sets())
 
     def _repr_(self):
         """
@@ -148,9 +149,6 @@ class PrimeNumbers(UniqueRepresentation, Parent):
     element_class = Integer
 
 
-
-
-
 from sage.misc.abstract_method import abstract_method
 class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     """
@@ -159,7 +157,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     datastructure will then be constructed by inheriting from
     :class:`PrimeNumbers_Abstract`.
 
-    This is used by:
+    This is used by::
 
         sage: P = Sets().example("facade")
         sage: P = Sets().example("inherits")
@@ -171,7 +169,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
             sage: P = Sets().example("inherits")
         """
-        Parent.__init__(self, category = Sets())
+        Parent.__init__(self, category=Sets())
 
     def _repr_(self):
         """
@@ -218,22 +216,23 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
     @abstract_method
     def _from_integer_(self, i):
-       """
-       Fast construction of an element of self from an integer. No prime
-       checking is performed. To be defined.
+        """
+        Fast construction of an element of self from an integer.
 
-       EXAMPLES::
+        No prime checking is performed. To be defined.
+
+        EXAMPLES::
 
             sage: P = Sets().example("inherits")
             sage: P._from_integer_(13)
             13
-            sage: P._from_integer_(42)            # Don't do that at home kids!
+            sage: P._from_integer_(42)       # Do not do that at home kids!
             42
             sage: P(42)
             Traceback (most recent call last):
             ...
             ValueError: 42 is not a prime number
-       """
+        """
 
     def next(self, i):
         """
@@ -247,7 +246,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
             sage: x.parent()
             Set of prime numbers
         """
-        assert(i in self)
+        assert i in self
         return self._from_integer_((Integer(i) + 1).next_prime())
 
     def some_elements(self):
@@ -333,13 +332,13 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         sage: y = x+1; y
         14
         sage: type(y)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: y.parent()
         Integer Ring
         sage: type(P(13)+P(17))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: type(P(2)+P(3))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
         sage: z = P.next(x); z
         17
@@ -352,6 +351,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -383,11 +383,11 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
 
             sage: P = Sets().example("inherits")
             sage: type(P(13)+P(17))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(P(2)+P(3))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
-        super(PrimeNumbers_Inherits, self).__init__()
+        super().__init__()
         self._populate_coercion_lists_(embedding=IntegerRing())
 
     def __contains__(self, p):
@@ -466,7 +466,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         sage: y = x+1; y
         14
         sage: type(y)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
         sage: z = P.next(x); z
         17
@@ -493,7 +493,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
             sage: P(13) + 1 == 14
             True
         """
-        Parent.__init__(self, category = Sets())
+        Parent.__init__(self, category=Sets())
         from sage.rings.integer_ring import IntegerRing
         from sage.categories.homset import Hom
         self.mor = Hom(self, IntegerRing())(lambda z: z.value)
@@ -553,9 +553,6 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
             return IntRing(self.value)
 
 
-
-
-
 #*************************************************************************#
 class PrimeNumbers_Facade(PrimeNumbers_Abstract):
     r"""
@@ -577,7 +574,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         sage: x = P(13); x
         13
         sage: type(x)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: x.parent()
         Integer Ring
         sage: 13 in P
@@ -587,12 +584,12 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         sage: y = x+1; y
         14
         sage: type(y)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
         sage: z = P.next(x); z
         17
         sage: type(z)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: z.parent()
         Integer Ring
 
@@ -635,6 +632,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -661,7 +659,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
 
             sage: P = Sets().example("inherits")
         """
-        Parent.__init__(self, facade = IntegerRing(), category = Sets())
+        Parent.__init__(self, facade=IntegerRing(), category=Sets())
 
     def _repr_(self):
         """

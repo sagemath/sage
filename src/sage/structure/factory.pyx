@@ -53,7 +53,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import types
 
@@ -61,6 +60,7 @@ from .sage_object cimport SageObject
 
 cdef sage_version
 from sage.version import version as sage_version
+from sage.cpython.string cimport bytes_to_str
 
 sage_version = sage_version.split('.')
 for i in range(len(sage_version)):
@@ -196,7 +196,7 @@ cdef class UniqueFactory(SageObject):
     :class:`object`. The third allows attribute assignment and is derived
     from :class:`object`.  ::
 
-        sage: cython("cdef class C: pass")
+        sage: cython("cdef class C: pass")                                      # optional - sage.misc.cython
         sage: class D:
         ....:     def __init__(self, *args):
         ....:         self.t = args
@@ -214,7 +214,7 @@ cdef class UniqueFactory(SageObject):
     It is impossible to create an instance of ``C`` with our factory, since it
     does not allow weak references::
 
-        sage: F(1, impl='C')
+        sage: F(1, impl='C')                                                    # optional - sage.misc.cython
         Traceback (most recent call last):
         ...
         TypeError: cannot create weak reference to '....C' object
@@ -222,12 +222,14 @@ cdef class UniqueFactory(SageObject):
     Let us try again, with a Cython class that does allow weak
     references. Now, creation of an instance using the factory works::
 
-        sage: cython('''cdef class C:
+        sage: cython(                                                           # optional - sage.misc.cython
+        ....: '''
+        ....: cdef class C:
         ....:     cdef __weakref__
         ....: ''')
         ....:
-        sage: c = F(1, impl='C')
-        sage: isinstance(c, C)
+        sage: c = F(1, impl='C')                                                # optional - sage.misc.cython
+        sage: isinstance(c, C)                                                  # optional - sage.misc.cython
         True
 
     The cache is used when calling the factory again---even if it is suggested
@@ -235,16 +237,16 @@ cdef class UniqueFactory(SageObject):
     only considered an "extra argument" that does not count for the key.
     ::
 
-        sage: c is F(1, impl='C') is F(1, impl="D") is F(1)
+        sage: c is F(1, impl='C') is F(1, impl="D") is F(1)                     # optional - sage.misc.cython
         True
 
     However, pickling and unpickling does not use the cache. This is because
     the factory has tried to assign an attribute to the instance that provides
     information on the key used to create the instance, but failed::
 
-        sage: loads(dumps(c)) is c
+        sage: loads(dumps(c)) is c                                              # optional - sage.misc.cython
         False
-        sage: hasattr(c, '_factory_data')
+        sage: hasattr(c, '_factory_data')                                       # optional - sage.misc.cython
         False
 
     We have already seen that our factory will only take the requested
@@ -261,8 +263,8 @@ cdef class UniqueFactory(SageObject):
     even though the "factory data" are now available (this is not the case
     on Python 3 which *only* has new style classes)::
 
-        sage: loads(dumps(d)) is d  # py2
-        False
+        sage: loads(dumps(d)) is d
+        True
         sage: d._factory_data
         (<__main__.MyFactory object at ...>,
          (...),
@@ -395,8 +397,9 @@ cdef class UniqueFactory(SageObject):
         unhashable objects::
 
             sage: K.<u> = Qq(4)
-            sage: test_factory.get_object(3.0, (K(1), 'c'), {})  is test_factory.get_object(3.0, (K(1), 'c'), {})
+            sage: d = test_factory.get_object(3.0, (K(1), 'c'), {})   # optional - sage.rings.padics
             Making object (1 + O(2^20), 'c')
+            sage: d is test_factory.get_object(3.0, (K(1), 'c'), {})  # optional - sage.rings.padics
             True
 
         """
@@ -466,7 +469,7 @@ cdef class UniqueFactory(SageObject):
             sage: test_factory.create_key_and_extra_args(1, 2, key=5)
             ((1, 2), {})
             sage: GF.create_key_and_extra_args(3)
-            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None), {})
+            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None, True, False), {})
         """
         return self.create_key(*args, **kwds), {}
 
@@ -516,7 +519,7 @@ cdef class UniqueFactory(SageObject):
         method, but this was removed in :trac:`16934`::
 
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
-            (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True)
+            (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True, True, True)
             sage: K = GF.create_object(0, key); K
             Finite Field in k of size 3^3
             sage: GF.other_keys(key, K)
@@ -537,8 +540,9 @@ cdef class UniqueFactory(SageObject):
 
         EXAMPLES::
 
-            sage: V = FreeModule(ZZ, 5)
-            sage: factory, data = FreeModule.reduce_data(V)
+            sage: from sage.modules.free_module import FreeModuleFactory_with_standard_basis as F
+            sage: V = F(ZZ, 5)
+            sage: factory, data = F.reduce_data(V)
             sage: factory(*data)
             Ambient free module of rank 5 over the principal ideal domain Integer Ring
             sage: factory(*data) is V
@@ -588,7 +592,7 @@ def register_factory_unpickle(name, callable):
 
         sage: from sage.structure.factory import UniqueFactory, register_factory_unpickle
         sage: import __main__
-        sage: class OldStuff(object):
+        sage: class OldStuff():
         ....:     def __init__(self, n, **extras):
         ....:         self.n = n
         ....:     def __repr__(self):
@@ -634,8 +638,9 @@ def generic_factory_unpickle(factory, *args):
 
     EXAMPLES::
 
-        sage: V = FreeModule(ZZ, 5)
-        sage: func, data = FreeModule.reduce_data(V)
+        sage: from sage.modules.free_module import FreeModuleFactory_with_standard_basis as F
+        sage: V = F(ZZ, 5)
+        sage: func, data = F.reduce_data(V)
         sage: func is sage.structure.factory.generic_factory_unpickle
         True
         sage: sage.structure.factory.generic_factory_unpickle(*data) is V
@@ -658,7 +663,7 @@ def generic_factory_unpickle(factory, *args):
 
         sage: from sage.structure.factory import UniqueFactory
         sage: import __main__
-        sage: class OldStuff(object):
+        sage: class OldStuff():
         ....:     def __init__(self, n, **extras):
         ....:         self.n = n
         ....:     def __repr__(self):
@@ -746,6 +751,7 @@ def lookup_global(name):
         sage: lookup_global('sage.rings.all.ZZ')
         Integer Ring
     """
+    name = bytes_to_str(name, encoding='ASCII')
     try:
         return factory_unpickles[name]
     except KeyError:

@@ -1,12 +1,12 @@
 """
 Simplicial Sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 John H. Palmieri <palmieri at math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
@@ -15,7 +15,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.homsets import HomsetsCategory
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
-from sage.interfaces.gap import gap
+
 
 class SimplicialSets(Category_singleton):
     r"""
@@ -86,7 +86,7 @@ class SimplicialSets(Category_singleton):
 
             EXAMPLES::
 
-                sage: from sage.homology.simplicial_set import AbstractSimplex, SimplicialSet
+                sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
                 sage: v = AbstractSimplex(0)
                 sage: w = AbstractSimplex(0)
                 sage: e = AbstractSimplex(1)
@@ -110,7 +110,7 @@ class SimplicialSets(Category_singleton):
 
             EXAMPLES::
 
-                sage: from sage.homology.simplicial_set import AbstractSimplex, SimplicialSet
+                sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
                 sage: v = AbstractSimplex(0, name='v_0')
                 sage: w = AbstractSimplex(0, name='w_0')
                 sage: e = AbstractSimplex(1)
@@ -137,7 +137,7 @@ class SimplicialSets(Category_singleton):
                 ...
                 ValueError: the point is not a simplex in this simplicial set
             """
-            from sage.homology.simplicial_set import SimplicialSet
+            from sage.topology.simplicial_set import SimplicialSet
             if point.dimension() != 0:
                 raise ValueError('the "point" is not a zero-simplex')
             if point not in self._simplices:
@@ -159,7 +159,7 @@ class SimplicialSets(Category_singleton):
                         Simplicial set endomorphism of Torus
                           Defn: Identity map
                     """
-                    from sage.homology.simplicial_set_morphism import SimplicialSetMorphism
+                    from sage.topology.simplicial_set_morphism import SimplicialSetMorphism
                     return SimplicialSetMorphism(domain=self.domain(),
                                                  codomain=self.codomain(),
                                                  identity=True)
@@ -197,7 +197,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: from sage.homology.simplicial_set import AbstractSimplex, SimplicialSet
+                    sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
                     sage: v = AbstractSimplex(0, name='*')
                     sage: e = AbstractSimplex(1)
                     sage: S1 = SimplicialSet({e: (v, v)}, base_point=v)
@@ -221,7 +221,7 @@ class SimplicialSets(Category_singleton):
                 - ``domain`` -- optional, default ``None``. Use
                   this to specify a particular one-point space as
                   the domain. The default behavior is to use the
-                  :func:`sage.homology.simplicial_set.Point`
+                  :func:`sage.topology.simplicial_set.Point`
                   function to use a standard one-point space.
 
                 EXAMPLES::
@@ -251,13 +251,12 @@ class SimplicialSets(Category_singleton):
                       To:   Classifying space of Multiplicative Abelian group isomorphic to C5
                       Defn: Constant map at 1
                 """
-                from sage.homology.simplicial_set_examples import Point
+                from sage.topology.simplicial_set_examples import Point
                 if domain is None:
                     domain = Point()
                 else:
                     if len(domain._simplices) > 1:
                         raise ValueError('domain has more than one nondegenerate simplex')
-                src = domain.base_point()
                 target = self.base_point()
                 return domain.Hom(self).constant_map(point=target)
 
@@ -319,27 +318,49 @@ class SimplicialSets(Category_singleton):
                     sage: Sigma3 = groups.permutation.Symmetric(3)
                     sage: BSigma3 = Sigma3.nerve()
                     sage: pi = BSigma3.fundamental_group(); pi
-                    Finitely presented group < e0, e1 | e0^2, e1^3, (e0*e1^-1)^2 >
+                    Finitely presented group < e1, e2 | e2^2, e1^3, (e2*e1)^2 >
                     sage: pi.order()
                     6
                     sage: pi.is_abelian()
                     False
+
+                The sphere has a trivial fundamental group::
+
+                    sage: S2 = simplicial_sets.Sphere(2)
+                    sage: S2.fundamental_group()
+                    Finitely presented group <  |  >
                 """
                 # Import this here to prevent importing libgap upon startup.
                 from sage.groups.free_group import FreeGroup
-                skel = self.n_skeleton(2)
+                if not self.n_cells(1):
+                    return FreeGroup([]).quotient([])
+                FG = self._universal_cover_dict()[0]
+                if simplify:
+                    return FG.simplified()
+                else:
+                    return FG
 
+            def _universal_cover_dict(self):
+                r"""
+                Return the fundamental group and dictionary sending each edge to
+                the corresponding group element
+
+                TESTS::
+
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+                    sage: RP2._universal_cover_dict()
+                    (Finitely presented group < e | e^2 >, {f: e})
+                    sage: RP2.nondegenerate_simplices()
+                    [1, f, f * f]
+                """
+                from sage.groups.free_group import FreeGroup
+                skel = self.n_skeleton(2)
                 graph = skel.graph()
                 if not skel.is_connected():
                     graph = graph.subgraph(skel.base_point())
-
-                edges = [e[2] for e in graph.edges()]
+                edges = [e[2] for e in graph.edges(sort=False)]
                 spanning_tree = [e[2] for e in graph.min_spanning_tree()]
                 gens = [e for e in edges if e not in spanning_tree]
-
-                if not gens:
-                    return gap.TrivialGroup()
-
                 gens_dict = dict(zip(gens, range(len(gens))))
                 FG = FreeGroup(len(gens), 'e')
                 rels = []
@@ -357,10 +378,191 @@ class SimplicialSets(Category_singleton):
                             # sigma is not in the correct connected component.
                             z[i] = FG.one()
                     rels.append(z[0]*z[1].inverse()*z[2])
-                if simplify:
-                    return FG.quotient(rels).simplified()
-                else:
-                    return FG.quotient(rels)
+                G = FG.quotient(rels)
+                char = {g : G.gen(i) for i,g in enumerate(gens)}
+                for e in edges:
+                    if e not in gens:
+                        char[e] = G.one()
+                return (G, char)
+
+            def universal_cover_map(self):
+                r"""
+                Return the universal covering map of the simplicial set.
+
+                It requires the fundamental group to be finite.
+
+                EXAMPLES::
+
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+                    sage: phi = RP2.universal_cover_map()
+                    sage: phi
+                    Simplicial set morphism:
+                      From: Simplicial set with 6 non-degenerate simplices
+                      To:   RP^2
+                      Defn: [(1, 1), (1, e), (f, 1), (f, e), (f * f, 1), (f * f, e)] --> [1, 1, f, f, f * f, f * f]
+                    sage: phi.domain().face_data()
+                        {(1, 1): None,
+                         (1, e): None,
+                         (f, 1): ((1, e), (1, 1)),
+                         (f, e): ((1, 1), (1, e)),
+                         (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
+                         (f * f, e): ((f, 1), s_0 (1, e), (f, e))}
+
+                """
+                edges = self.n_cells(1)
+                if not edges:
+                    return self.identity()
+                G, char = self._universal_cover_dict()
+                return self.covering_map(char)
+
+            def covering_map(self, character):
+                r"""
+                Return the covering map associated to a character.
+
+                The character is represented by a dictionary that assigns an
+                element of a finite group to each nondegenerate 1-dimensional
+                cell. It should correspond to an epimorphism from the fundamental
+                group.
+
+                INPUT:
+
+                - ``character`` -- a dictionary
+
+
+                EXAMPLES::
+
+                    sage: S1 = simplicial_sets.Sphere(1)
+                    sage: W = S1.wedge(S1)
+                    sage: G = CyclicPermutationGroup(3)
+                    sage: a, b = W.n_cells(1)
+                    sage: C = W.covering_map({a : G.gen(0), b : G.one()})
+                    sage: C
+                    Simplicial set morphism:
+                      From: Simplicial set with 9 non-degenerate simplices
+                      To:   Wedge: (S^1 v S^1)
+                      Defn: [(*, ()), (*, (1,2,3)), (*, (1,3,2)), (sigma_1, ()), (sigma_1, ()), (sigma_1, (1,2,3)), (sigma_1, (1,2,3)), (sigma_1, (1,3,2)), (sigma_1, (1,3,2))] --> [*, *, *, sigma_1, sigma_1, sigma_1, sigma_1, sigma_1, sigma_1]
+                    sage: C.domain()
+                    Simplicial set with 9 non-degenerate simplices
+                    sage: C.domain().face_data()
+                    {(*, ()): None,
+                     (*, (1,2,3)): None,
+                     (*, (1,3,2)): None,
+                     (sigma_1, ()): ((*, (1,2,3)), (*, ())),
+                     (sigma_1, ()): ((*, ()), (*, ())),
+                     (sigma_1, (1,2,3)): ((*, (1,3,2)), (*, (1,2,3))),
+                     (sigma_1, (1,2,3)): ((*, (1,2,3)), (*, (1,2,3))),
+                     (sigma_1, (1,3,2)): ((*, ()), (*, (1,3,2))),
+                     (sigma_1, (1,3,2)): ((*, (1,3,2)), (*, (1,3,2)))}
+                """
+                from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
+                from sage.topology.simplicial_set_morphism import SimplicialSetMorphism
+                char = {a: b for (a, b) in character.items()}
+                G = list(char.values())[0].parent()
+                if not G.is_finite():
+                    raise NotImplementedError("can only compute universal covers of spaces with finite fundamental group")
+                cells_dict = {}
+                faces_dict = {}
+
+                for s in self.n_cells(0):
+                    for g in G:
+                        cell = AbstractSimplex(0, name="({}, {})".format(s, g))
+                        cells_dict[(s, g)] = cell
+                        char[s] = G.one()
+
+                for d in range(1, self.dimension() + 1):
+                    for s in self.n_cells(d):
+                        if s not in char.keys():
+                            if d == 1 and s.is_degenerate():
+                                char[s] = G.one()
+                            elif s.is_degenerate():
+                                if 0 in s.degeneracies():
+                                    char[s] = G.one()
+                                else:
+                                    char[s] = char[s.nondegenerate()]
+                            else:
+                                char[s] = char[self.face(s, d)]
+                        if s.is_nondegenerate():
+                            for g in G:
+                                cell = AbstractSimplex(d, name="({}, {})".format(s, g))
+                                cells_dict[(s, g)] = cell
+                                fd = []
+                                faces = self.faces(s)
+                                f0 = faces[0]
+                                for h in G:
+                                    if h == g*char[s]:
+                                        lifted = h
+                                        break
+                                grelems = [cells_dict[(f0.nondegenerate(), lifted)].apply_degeneracies(*f0.degeneracies())]
+                                for f in faces[1:]:
+                                    grelems.append(cells_dict[(f.nondegenerate(), g)].apply_degeneracies(*f.degeneracies()))
+                                faces_dict[cell] = grelems
+                cover = SimplicialSet(faces_dict, base_point=cells_dict[(self.base_point(), G.one())])
+                cover_map_data = {c : s[0] for (s,c) in cells_dict.items()}
+                return SimplicialSetMorphism(data = cover_map_data, domain = cover, codomain = self)
+
+            def cover(self, character):
+                r"""
+                Return the cover of the simplicial set associated to a character
+                of the fundamental group.
+
+                The character is represented by a dictionary, that assigns an
+                element of a finite group to each nondegenerate 1-dimensional
+                cell. It should correspond to an epimorphism from the fundamental
+                group.
+
+                INPUT:
+
+                - ``character`` -- a dictionary
+
+                EXAMPLES::
+
+                    sage: S1 = simplicial_sets.Sphere(1)
+                    sage: W = S1.wedge(S1)
+                    sage: G = CyclicPermutationGroup(3)
+                    sage: (a, b) = W.n_cells(1)
+                    sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2})
+                    sage: C.face_data()
+                    {(*, ()): None,
+                     (*, (1,2,3)): None,
+                     (*, (1,3,2)): None,
+                     (sigma_1, ()): ((*, (1,2,3)), (*, ())),
+                     (sigma_1, ()): ((*, (1,3,2)), (*, ())),
+                     (sigma_1, (1,2,3)): ((*, (1,3,2)), (*, (1,2,3))),
+                     (sigma_1, (1,2,3)): ((*, ()), (*, (1,2,3))),
+                     (sigma_1, (1,3,2)): ((*, ()), (*, (1,3,2))),
+                     (sigma_1, (1,3,2)): ((*, (1,2,3)), (*, (1,3,2)))}
+                    sage: C.homology(1)
+                    Z x Z x Z x Z
+                    sage: C.fundamental_group()
+                    Finitely presented group < e0, e1, e2, e3 |  >
+                """
+                return self.covering_map(character).domain()
+
+            def universal_cover(self):
+                r"""
+                Return the universal cover of the simplicial set.
+                The fundamental group must be finite in order to ensure that the
+                universal cover is a simplicial set of finite type.
+
+                EXAMPLES::
+
+                    sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
+                    sage: C = RP3.universal_cover()
+                    sage: C
+                    Simplicial set with 8 non-degenerate simplices
+                    sage: C.face_data()
+                    {(1, 1): None,
+                     (1, e): None,
+                     (f, 1): ((1, e), (1, 1)),
+                     (f, e): ((1, 1), (1, e)),
+                     (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
+                     (f * f, e): ((f, 1), s_0 (1, e), (f, e)),
+                     (f * f * f, 1): ((f * f, e), s_0 (f, 1), s_1 (f, 1), (f * f, 1)),
+                     (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e))}
+                    sage: C.fundamental_group()
+                    Finitely presented group <  |  >
+                """
+                return self.universal_cover_map().domain()
 
             def is_simply_connected(self):
                 """
@@ -487,7 +689,7 @@ class SimplicialSets(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: from sage.homology.simplicial_set import AbstractSimplex, SimplicialSet
+                        sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
                         sage: v = AbstractSimplex(0, name='v_0')
                         sage: w = AbstractSimplex(0, name='w_0')
                         sage: e = AbstractSimplex(1)
@@ -500,18 +702,18 @@ class SimplicialSets(Category_singleton):
                         sage: Z.is_pointed()
                         False
                     """
-                    from sage.homology.simplicial_set import SimplicialSet
+                    from sage.topology.simplicial_set import SimplicialSet
                     return SimplicialSet(self.face_data())
 
                 def fat_wedge(self, n):
                     """
-                    Return the $n$-th fat wedge of this pointed simplicial set.
+                    Return the `n`-th fat wedge of this pointed simplicial set.
 
-                    This is the subcomplex of the $n$-fold product `X^n`
+                    This is the subcomplex of the `n`-fold product `X^n`
                     consisting of those points in which at least one
-                    factor is the base point. Thus when $n=2$, this is the
-                    wedge of the simplicial set with itself, but when $n$
-                    is larger, the fat wedge is larger than the $n$-fold
+                    factor is the base point. Thus when `n=2`, this is the
+                    wedge of the simplicial set with itself, but when `n`
+                    is larger, the fat wedge is larger than the `n`-fold
                     wedge.
 
                     EXAMPLES::
@@ -526,7 +728,7 @@ class SimplicialSets(Category_singleton):
                         sage: S1.fat_wedge(4).homology()
                         {0: 0, 1: Z x Z x Z x Z, 2: Z^6, 3: Z x Z x Z x Z}
                     """
-                    from sage.homology.simplicial_set_examples import Point
+                    from sage.topology.simplicial_set_examples import Point
                     if n == 0:
                         return Point()
                     if n == 1:
@@ -557,6 +759,5 @@ class SimplicialSets(Category_singleton):
                         sage: X.homology(reduced=False)
                         {0: Z, 1: 0, 2: Z x Z, 3: Z}
                     """
-                    from sage.homology.simplicial_set_constructions import SmashProductOfSimplicialSets_finite
+                    from sage.topology.simplicial_set_constructions import SmashProductOfSimplicialSets_finite
                     return SmashProductOfSimplicialSets_finite((self,) + others)
-

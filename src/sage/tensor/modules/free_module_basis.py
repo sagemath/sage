@@ -30,14 +30,45 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import absolute_import
 
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.rings.integer_ring import ZZ
+from sage.sets.family import AbstractFamily
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.sage_object import SageObject
 
-class Basis_abstract(UniqueRepresentation, SageObject):
+class Basis_abstract(UniqueRepresentation, AbstractFamily):
     """
     Abstract base class for (dual) bases of free modules.
+
+    A basis is an :class:`~sage.sets.family.AbstractFamily`, hence like
+    :class:`collections.abc.Mapping` subclasses such as :class:`dict`, it is
+    an associative :class:`Container`, providing methods :meth:`keys`,
+    :meth:`values`, and :meth:`items`. Thus, ``e[i]`` returns the element
+    of the basis ``e`` indexed by the key ``i``. However, in contrast to
+    :class:`Mapping` subclasses, not the :meth:`keys` but the
+    :meth:`values` are considered the elements.
+
+    EXAMPLES:
+
+        sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
+        sage: e = M.basis('e'); e
+        Basis (e_1,e_2,e_3) on the Rank-3 free module M over the Integer Ring
+        sage: list(e)
+        [Element e_1 of the Rank-3 free module M over the Integer Ring,
+        Element e_2 of the Rank-3 free module M over the Integer Ring,
+        Element e_3 of the Rank-3 free module M over the Integer Ring]
+        sage: e.category()
+        Category of facade finite enumerated sets
+        sage: list(e.keys())
+        [1, 2, 3]
+        sage: list(e.values())
+        [Element e_1 of the Rank-3 free module M over the Integer Ring,
+        Element e_2 of the Rank-3 free module M over the Integer Ring,
+        Element e_3 of the Rank-3 free module M over the Integer Ring]
+        sage: list(e.items())
+        [(1, Element e_1 of the Rank-3 free module M over the Integer Ring),
+        (2, Element e_2 of the Rank-3 free module M over the Integer Ring),
+        (3, Element e_3 of the Rank-3 free module M over the Integer Ring)]
     """
     def __init__(self, fmodule, symbol, latex_symbol, indices, latex_indices):
         """
@@ -55,10 +86,59 @@ class Basis_abstract(UniqueRepresentation, SageObject):
         self._latex_symbol = latex_symbol
         self._indices = indices
         self._latex_indices = latex_indices
+        super().__init__(category=FiniteEnumeratedSets(), facade=fmodule)
+
+    def keys(self):
+        """
+        Return the keys (indices) of the family.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: list(e.keys())
+            [0, 1, 2]
+        """
+        return self._fmodule.irange()
+
+    def values(self):
+        """
+        Return the basis elements of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: list(e.values())
+            [Element e_0 of the Rank-3 free module M over the Integer Ring,
+            Element e_1 of the Rank-3 free module M over the Integer Ring,
+            Element e_2 of the Rank-3 free module M over the Integer Ring]
+        """
+        return self._vec
+
+    def _element_constructor_(self, x):
+        """
+        Test whether ``x`` is an element of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e(e[1])
+            Element e_1 of the Rank-3 free module M over the Integer Ring
+            sage: f = M.basis('f')
+            sage: e(f[1])
+            Traceback (most recent call last):
+            ...
+            ValueError: no common basis for the comparison
+        """
+        if x in self.values():
+            return x
+        raise ValueError(f'{x} is not in {self}')
 
     def __iter__(self):
         r"""
-        Return the list of basis elements of ``self``.
+        Return an iterator for the basis elements of ``self``.
 
         EXAMPLES::
 
@@ -84,15 +164,35 @@ class Basis_abstract(UniqueRepresentation, SageObject):
              Element e_2 of the Rank-3 free module M1 over the Integer Ring,
              Element e_3 of the Rank-3 free module M1 over the Integer Ring]
         """
-        for i in self._fmodule.irange():
-            yield self[i]
+        yield from self.values()
+
+    def _test_iter_len(self, **options):
+        r"""
+        Test that __iter__ and __len__ work correctly.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e._test_iter_len()
+
+        """
+        tester = self._tester(**options)
+        g = iter(self)
+        b = list(g)
+        for x in b:
+            tester.assertIn(x, self.free_module())
+        tester.assertEqual(len(b), len(self))
+        tester.assertEqual(len(b), self.free_module().rank())
 
     def __len__(self):
         r"""
         Return the basis length, i.e. the rank of the free module.
 
-        NB: the method ``__len__()`` is required for the basis to act as a
-        "frame" in the class :class:`~sage.tensor.modules.comp.Components`.
+        .. NOTE::
+
+            the method ``__len__()`` is required for the basis to act as a
+            "frame" in the class :class:`~sage.tensor.modules.comp.Components`.
 
         EXAMPLES::
 
@@ -104,6 +204,19 @@ class Basis_abstract(UniqueRepresentation, SageObject):
             3
         """
         return self._fmodule._rank
+
+    def cardinality(self):
+        r"""
+        Return the basis length, i.e. the rank of the free module.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e.cardinality()
+            3
+        """
+        return ZZ(self._fmodule._rank)
 
     def __getitem__(self, index):
         r"""
@@ -371,6 +484,10 @@ class FreeModuleCoBasis(Basis_abstract):
         sage: f[3](e[1]), f[3](e[2]), f[3](e[3])
         (0, 0, 1)
 
+    TESTS::
+
+        sage: TestSuite(f).run()
+
     """
     def __init__(self, basis, symbol, latex_symbol=None, indices=None,
                  latex_indices=None):
@@ -389,17 +506,38 @@ class FreeModuleCoBasis(Basis_abstract):
                                 indices, latex_indices)
         # The individual linear forms:
         vl = list()
-        for i in self._fmodule.irange():
-            v = self._fmodule.linear_form()
-            for j in self._fmodule.irange():
-                v.set_comp(basis)[j] = 0
-            v.set_comp(basis)[i] = 1
+        fmodule = self._fmodule
+        ring_one = fmodule._ring.one()
+        for i in fmodule.irange():
+            v = fmodule.linear_form()
+            v.set_comp(basis)[i] = ring_one
             vl.append(v)
         self._vec = tuple(vl)
         # The names:
         self.set_name(symbol, latex_symbol=latex_symbol, indices=indices,
                       latex_indices=latex_indices, index_position='up')
 
+    def _test_iter_len(self, **options):
+        r"""
+        Test that __iter__ and __len__ work correctly.
+
+        This method overrides ``Basis_abstract`` so that containment
+        of elements in the dual of ``self.free_module()`` is tested instead.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: f = e.dual_basis()
+            sage: f._test_iter_len()
+        """
+        tester = self._tester(**options)
+        g = iter(self)
+        b = list(g)
+        for x in b:
+            tester.assertIn(x, self.free_module().dual())
+        tester.assertEqual(len(b), len(self))
+        tester.assertEqual(len(b), self.free_module().rank())
 
     def _repr_(self):
         r"""
@@ -483,7 +621,7 @@ class FreeModuleBasis(Basis_abstract):
          Element e_1 of the Rank-3 free module M over the Integer Ring,
          Element e_2 of the Rank-3 free module M over the Integer Ring)
 
-    The LaTeX symbol can be set explicitely::
+    The LaTeX symbol can be set explicitly::
 
         sage: latex(e)
         \left(e_{0},e_{1},e_{2}\right)
@@ -520,6 +658,12 @@ class FreeModuleBasis(Basis_abstract):
         Element a of the Rank-3 free module M over the Integer Ring
         sage: g.dual_basis()[1]
         Linear form A on the Rank-3 free module M over the Integer Ring
+
+    TESTS::
+
+        sage: TestSuite(e).run()
+        sage: TestSuite(f).run()
+        sage: TestSuite(g).run()
 
     """
     # The following class attribute must be redefined by any derived class:
@@ -583,11 +727,10 @@ class FreeModuleBasis(Basis_abstract):
         fmodule._known_bases.append(self)
         # The individual vectors:
         vl = list()
+        ring_one = fmodule._ring.one()
         for i in fmodule.irange():
             v = fmodule.element_class(fmodule)
-            for j in fmodule.irange():
-                v.set_comp(self)[j] = fmodule._ring.zero()
-            v.set_comp(self)[i] = fmodule._ring.one()
+            v.set_comp(self)[i] = ring_one
             vl.append(v)
         self._vec = tuple(vl)
         # The names:
@@ -600,16 +743,17 @@ class FreeModuleBasis(Basis_abstract):
         # elements of all tensor modules constructed up to now (including the
         # base module itself, since it is considered as a type-(1,0) tensor
         # module):
-        for t in fmodule._tensor_modules.values():
-            t._zero_element._components[self] = t._zero_element._new_comp(self)
-                               # (since new components are initialized to zero)
-        # Initialization of the components w.r.t the current basis of the zero
-        # elements of all exterior powers of the module and its dual
-        # constructed up to now:
-        for t in fmodule._exterior_powers.values():
-            t._zero_element._components[self] = t._zero_element._new_comp(self)
-        for t in fmodule._dual_exterior_powers.values():
-            t._zero_element._components[self] = t._zero_element._new_comp(self)
+        for t in fmodule._all_modules:
+            t.zero()._add_comp_unsafe(self)
+            # (since new components are initialized to zero)
+        # Initialization of the components w.r.t. the current basis of the
+        # identity map of the general linear group:
+        if fmodule._general_linear_group is not None:
+            from .comp import KroneckerDelta
+            gl = fmodule._general_linear_group
+            gl.one()._components[self] = KroneckerDelta(fmodule._ring, self,
+                                    start_index=fmodule._sindex,
+                                    output_formatter=fmodule._output_formatter)
         # The dual basis:
         self._symbol_dual = symbol_dual
         self._latex_symbol_dual = latex_symbol_dual
@@ -703,6 +847,63 @@ class FreeModuleBasis(Basis_abstract):
                                latex_symbol_dual=latex_symbol_dual)
 
     ###### End of methods to be redefined by derived classes ######
+
+    def _init_from_family(self, family):
+        r"""
+        Identify ``self`` to a linearly independent spanning family of
+        module elements.
+
+        INPUT:
+
+        - ``family``: a family of elements of ``self.free_module()`` that are
+          linearly independent and spanning ``self.free_module()``
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M', start_index=1)
+            sage: e = M.basis('e')
+            sage: f1 = e[1] + e[2]
+            sage: f2 = e[1] - e[2]
+            sage: f = M.basis('f')
+            sage: f._init_from_family([f1, f2])
+            sage: (f[1], f[2]) == (f1, f2)
+            True
+            sage: f[1].display()
+            f_1 = e_1 + e_2
+            sage: f[2].display()
+            f_2 = e_1 - e_2
+            sage: e[1].display(f)
+            e_1 = 1/2 f_1 + 1/2 f_2
+            sage: e[2].display(f)
+            e_2 = 1/2 f_1 - 1/2 f_2
+
+        """
+        fmodule = self._fmodule
+        n = fmodule.rank()
+        if len(family) != n:
+            raise ValueError("the size of the family must be {}".format(n))
+        # Copy of the components of each element of the family:
+        for i, ff in enumerate(family):
+            if ff not in fmodule:
+                raise TypeError("{} is not an element of {}".format(ff,
+                                                                    fmodule))
+            vs = self._vec[i]
+            for basis, comp in ff._components.items():
+                vs._components[basis] = comp.copy()
+        # Automorphisms relating the family to previously defined bases are
+        # constructed from the components of the family elements and are
+        # registered as changes of basis to ``self``:
+        ff0 = family[0]
+        for basis in ff0._components:
+            try:
+                comps = [ff.components(basis) for ff in family]
+            except ValueError:
+                continue
+            aut = fmodule.automorphism()
+            mat = [[c[[i]] for c in comps] for i in fmodule.irange()]
+            aut.add_comp(basis)[:] = mat
+            aut.add_comp(self)[:] = mat
+            fmodule.set_change_of_basis(basis, self, aut)
 
     def module(self):
         r"""

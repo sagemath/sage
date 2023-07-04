@@ -89,7 +89,6 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #############################################################################
-from __future__ import print_function, absolute_import
 
 import os
 
@@ -98,7 +97,7 @@ from .expect import (Expect, ExpectElement, ExpectFunction,
 from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.env import DOT_SAGE
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj' % DOT_SAGE
 PROMPT = ">>"
@@ -119,19 +118,16 @@ class Mupad(ExtraTabCompletion, Expect):
             True
         """
         Expect.__init__(self,
-                        name = 'MuPAD',
-                        prompt = PROMPT,
+                        name='MuPAD',
+                        prompt=PROMPT,
                         # the -U SAGE=TRUE allows for MuPAD programs to test whether they are run from Sage
-                        command = "mupkern -P e -U SAGE=TRUE",
-                        script_subdirectory = script_subdirectory,
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        logfile = None)
-
-
-
+                        command="mupkern -P e -U SAGE=TRUE",
+                        script_subdirectory=script_subdirectory,
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        logfile=None)
 
     def _function_class(self):
         """
@@ -151,29 +147,27 @@ class Mupad(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
-            sage: mupad.__reduce__()
+            sage: Mupad().__reduce__()
             (<function reduce_load_mupad at 0x...>, ())
 
         """
         return reduce_load_mupad, tuple([])
 
     def _read_in_file_command(self, filename):
-        """
+        r"""
         EXAMPLES::
 
             sage: mupad._read_in_file_command('test')
             'read("test")'
 
             sage: filename = tmp_filename()
-            sage: f = open(filename, 'w')
-            sage: _ = f.write('x := 2;\n')
-            sage: f.close()
+            sage: with open(filename, 'w') as f:
+            ....:     _ = f.write('x := 2;\n')
             sage: mupad.read(filename)   # optional - MuPAD
             sage: mupad.get('x').strip() # optional - mupad
             '2'
-
         """
-        return 'read("%s")'%filename
+        return 'read("%s")' % filename
 
     def _quit_string(self):
         """
@@ -530,7 +524,6 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
         res = P.completions(self._name+"::", strip=True)
         return res if res != [] else P._tab_completion()
 
-
     def __call__(self, *args):
         """
         EXAMPLES::
@@ -696,4 +689,3 @@ def __doctest_cleanup():
     """
     import sage.interfaces.quit
     sage.interfaces.quit.expect_quitall()
-

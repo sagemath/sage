@@ -1,17 +1,15 @@
 r"""
 Decorate interface for parallel computation
 """
-from __future__ import print_function, absolute_import
-from six import integer_types
 
 import types
 
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 
 from .reference import parallel_iter as p_iter_reference
 from .use_fork import p_iter_fork
 from . import multiprocessing_sage
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 def normalize_input(a):
@@ -20,17 +18,17 @@ def normalize_input(a):
 
     - if already of that form, leave that way.
     - if ``a`` is a tuple make ``(a,{})``
-    - if ``a`` is a dict make ``(tuple([]),a)``
+    - if ``a`` is a dict make ``(tuple(),a)``
     - otherwise make ``((a,),{})``
 
     INPUT:
 
-     - ``a`` -- object
+    - ``a`` -- object
 
     OUTPUT:
 
-     - ``args`` -- tuple
-     - ``kwds`` -- dictionary
+    - ``args`` -- tuple
+    - ``kwds`` -- dictionary
 
     EXAMPLES::
 
@@ -43,17 +41,17 @@ def normalize_input(a):
         sage: sage.parallel.decorate.normalize_input( 5 )
         ((5,), {})
     """
-    if isinstance(a, tuple) and len(a) == 2 and isinstance(a[0],tuple) and isinstance(a[1],dict):
+    if isinstance(a, tuple) and len(a) == 2 and isinstance(a[0], tuple) and isinstance(a[1], dict):
         return a
     elif isinstance(a, tuple):
         return (a, {})
     elif isinstance(a, dict):
-        return (tuple([]), a)
+        return (tuple(), a)
     else:
         return ((a,), {})
 
 
-class Parallel(object):
+class Parallel():
     r"""
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
@@ -70,7 +68,7 @@ class Parallel(object):
 
         self.p_iter = None
 
-        if isinstance(p_iter, integer_types + (Integer,)):
+        if isinstance(p_iter, (int, Integer)):
             p_iter, ncpus = 'fork', p_iter
 
         if ncpus is None:
@@ -99,11 +97,11 @@ class Parallel(object):
 
         INPUT:
 
-         - ``f`` -- Python callable object or function
+        - ``f`` -- Python callable object or function
 
         OUTPUT:
 
-         - Decorated version of ``f``
+        - Decorated version of ``f``
 
         EXAMPLES::
 
@@ -123,7 +121,7 @@ class Parallel(object):
 
 
 @instancedoc
-class ParallelFunction(object):
+class ParallelFunction():
     """
     Class which parallelizes a function or class method.
     This is typically accessed indirectly through
@@ -133,8 +131,8 @@ class ParallelFunction(object):
         """
         .. note::
 
-           This is typically accessed indirectly through
-           :meth:`Parallel.__call__`.
+            This is typically accessed indirectly through
+            :meth:`Parallel.__call__`.
 
         INPUT:
 
@@ -161,13 +159,11 @@ class ParallelFunction(object):
             4
             sage: sorted(pf([2,3]))
             [(((2,), {}), 4), (((3,), {}), 9)]
-            """
-        if len(args) > 0 and isinstance(args[0], (list,
-types.GeneratorType)):
+        """
+        if len(args) > 0 and isinstance(args[0], (list, types.GeneratorType)):
             return self.parallel.p_iter(self.func, (normalize_input(a)
-for a in args[0]))
-        else:
-            return self.func(*args, **kwds)
+                                                    for a in args[0]))
+        return self.func(*args, **kwds)
 
     def __get__(self, instance, owner):
         """
@@ -176,7 +172,7 @@ for a in args[0]))
 
         .. note::
 
-           This is the key to fixing :trac:`11461`.
+            This is the key to fixing :trac:`11461`.
 
         EXAMPLES:
 
@@ -184,7 +180,7 @@ for a in args[0]))
         methods, classmethods, and staticmethods, for both the
         parallel and non-parallel versions::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     @parallel(2)
             ....:     def square(self, n):
             ....:         return n*n
@@ -219,14 +215,14 @@ for a in args[0]))
             [(((2,), {}), 4), (((3,), {}), 9)]
         """
         try:
-            #If this ParallelFunction object is accessed as an
-            #attribute of a class or instance, the underlying function
-            #should be "accessed" in the same way.
+            # If this ParallelFunction object is accessed as an
+            # attribute of a class or instance, the underlying function
+            # should be "accessed" in the same way.
             new_func = self.func.__get__(instance, owner)
         except AttributeError:
-            #This will happen if a non-function attribute is
-            #decorated.  For example, an expression that's an
-            #attribute of a class.
+            # This will happen if a non-function attribute is
+            # decorated.  For example, an expression that's an
+            # attribute of a class.
             new_func = self.func
         return ParallelFunction(self.parallel, new_func)
 
@@ -234,7 +230,7 @@ for a in args[0]))
         """
         Returns the argument specification for this object, which is
         just the argument specification for the underlying function.
-        See :module:`sage.misc.sageinspect` for more information on
+        See :mod:`sage.misc.sageinspect` for more information on
         this convention.
 
         EXAMPLES::
@@ -245,7 +241,8 @@ for a in args[0]))
             ....:     return x + y
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(p(f))
-            ArgSpec(args=['x', 'y'], varargs=None, keywords=None, defaults=None)
+            FullArgSpec(args=['x', 'y'], varargs=None, varkw=None, defaults=None,
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         from sage.misc.sageinspect import sage_getargspec
         return sage_getargspec(self.func)
@@ -254,7 +251,7 @@ for a in args[0]))
         """
         Returns the source code for this object, which is just the
         source code for the underlying function.  See
-        :module:`sage.misc.sageinspect` for more information on this
+        :mod:`sage.misc.sageinspect` for more information on this
         convention.
 
         EXAMPLES::
@@ -271,10 +268,10 @@ for a in args[0]))
         return sage_getsource(self.func)
 
     def _instancedoc_(self):
-        """
+        r"""
         Returns the docstring for this object, which is just the
         docstring for the underlying function.  See
-        :module:`sage.misc.sageinspect` for more information on this
+        :mod:`sage.misc.sageinspect` for more information on this
         convention.
 
         EXAMPLES::
@@ -385,7 +382,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     staticmethods.  Be sure to apply the parallel decorator after ("above")
     either the ``classmethod`` or ``staticmethod`` decorators::
 
-        sage: class Foo(object):
+        sage: class Foo():
         ....:     @parallel(2)
         ....:     def square(self, n):
         ....:         return n*n
@@ -415,8 +412,6 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     return Parallel(p_iter, ncpus, **kwds)
 
 
-
-
 ###################################################################
 # The @fork decorator -- evaluate a function with no side effects
 # in memory, so the only side effects (if any) are on disk.
@@ -431,7 +426,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 #   def f(...): ...
 ###################################################################
 
-class Fork(object):
+class Fork():
     """
     A ``fork`` decorator class.
     """
@@ -439,10 +434,10 @@ class Fork(object):
         """
         INPUT:
 
-         - ``timeout`` -- (default: 0) kill the subprocess after it has run this
-           many seconds (wall time), or if ``timeout`` is zero, do not kill it.
-         - ``verbose`` -- (default: ``False``) whether to print anything about
-           what the decorator does (e.g., killing the subprocess)
+        - ``timeout`` -- (default: 0) kill the subprocess after it has run this
+          many seconds (wall time), or if ``timeout`` is zero, do not kill it.
+        - ``verbose`` -- (default: ``False``) whether to print anything about
+          what the decorator does (e.g., killing the subprocess)
 
         EXAMPLES::
 
@@ -458,11 +453,11 @@ class Fork(object):
         """
         INPUT:
 
-         - ``f`` -- a function
+        - ``f`` -- a function
 
         OUTPUT:
 
-         - A decorated function.
+        - A decorated function.
 
         EXAMPLES::
 
@@ -475,24 +470,26 @@ class Fork(object):
         P = Parallel(p_iter='fork', ncpus=1, timeout=self.timeout,
                      verbose=self.verbose)
         g = P(f)
+
         def h(*args, **kwds):
             return list(g([(args, kwds)]))[0][1]
         return h
 
+
 def fork(f=None, timeout=0, verbose=False):
     """
-    Decorate a function so that when called it runs in a forked
-    subprocess.  This means that it won't have any in-memory
-    side effects on the parent Sage process.  The pexpect interfaces
-    are all reset.
+    Decorate a function so that when called it runs in a forked subprocess.
+
+    This means that it will not have any in-memory side effects on the
+    parent Sage process. The pexpect interfaces are all reset.
 
     INPUT:
 
-      - ``f`` -- a function
-      - ``timeout`` -- (default: 0) if positive, kill the subprocess after
-        this many seconds (wall time)
-      - ``verbose`` -- (default: ``False``) whether to print anything
-        about what the decorator does (e.g., killing the subprocess)
+    - ``f`` -- a function
+    - ``timeout`` -- (default: 0) if positive, kill the subprocess after
+      this many seconds (wall time)
+    - ``verbose`` -- (default: ``False``) whether to print anything
+      about what the decorator does (e.g., killing the subprocess)
 
     .. warning::
 
@@ -520,10 +517,10 @@ def fork(f=None, timeout=0, verbose=False):
         sage: a
         5
 
-    We use ``fork`` to make sure that the function terminates after one
-    second, no matter what::
+    We use ``fork`` to make sure that the function terminates after 100 ms,
+    no matter what::
 
-        sage: @fork(timeout=1, verbose=True)
+        sage: @fork(timeout=0.1, verbose=True)
         ....: def g(n, m): return factorial(n).ndigits() + m
         sage: g(5, m=5)
         8
@@ -557,10 +554,12 @@ def fork(f=None, timeout=0, verbose=False):
 
     We illustrate that segfaulting subprocesses are no trouble at all::
 
-        sage: cython('def f(): print(<char*>0)')
+        sage: cython('def f(): print(<char*>0)')                            # optional - sage.misc.cython
         sage: @fork
-        ....: def g(): f()
-        sage: print("this works"); g()
+        ....: def g():
+        ....:     os.environ["CYSIGNALS_CRASH_NDEBUG"]="yes" # skip enhanced backtrace (it is slow)
+        ....:     f()
+        sage: print("this works"); g()                                      # optional - sage.misc.cython
         this works...
         <BLANKLINE>
         ------------------------------------------------------------------------

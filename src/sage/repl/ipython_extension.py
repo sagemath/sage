@@ -35,18 +35,21 @@ We test that preparsing is off for ``%runfile``, on for ``%time``::
 
     sage: import os, re
     sage: from sage.repl.interpreter import get_test_shell
-    sage: from sage.misc.all import tmp_dir
+    sage: from sage.misc.temporary_file import tmp_dir
     sage: shell = get_test_shell()
     sage: TMP = tmp_dir()
+    sage: TMP = os.path.join(TMP, "12345", "temp")
+    sage: os.makedirs(TMP)
 
 The temporary directory should have a name of the form
 ``.../12345/...``, to demonstrate that file names are not
 preparsed when calling ``%runfile`` ::
 
-    sage: bool(re.search('/[0-9]+/', TMP))
+    sage: bool(re.search('/12345/', TMP))
     True
     sage: tmp = os.path.join(TMP, 'run_cell.py')
-    sage: f = open(tmp, 'w'); _ = f.write('a = 2\n'); f.close()
+    sage: with open(tmp, 'w') as f:
+    ....:     _ = f.write('a = 2\n')
     sage: shell.run_cell('%runfile '+tmp)
     sage: shell.run_cell('a')
     2
@@ -59,7 +62,6 @@ In contrast, input to the ``%time`` magic command is preparsed::
     2 * 3^3 * 11
     sage: shell.quit()
 """
-from __future__ import absolute_import
 
 from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
 
@@ -106,10 +108,11 @@ class SageMagics(Magics):
 
             sage: import os
             sage: from sage.repl.interpreter import get_test_shell
-            sage: from sage.misc.all import tmp_dir
+            sage: from sage.misc.temporary_file import tmp_dir
             sage: shell = get_test_shell()
             sage: tmp = os.path.join(tmp_dir(), 'run_cell.py')
-            sage: f = open(tmp, 'w'); _ = f.write('a = 2\n'); f.close()
+            sage: with open(tmp, 'w') as f:
+            ....:     _ = f.write('a = 2\n')
             sage: shell.run_cell('%runfile '+tmp)
             sage: shell.run_cell('a')
             2
@@ -129,30 +132,30 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
-            sage: import os
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: tmp = os.path.normpath(os.path.join(SAGE_TMP, 'run_cell.py'))
-            sage: f = open(tmp, 'w'); _ = f.write('a = 2\n'); f.close()
-            sage: shell.run_cell('%attach ' + tmp)
+            sage: from tempfile import NamedTemporaryFile as NTF
+            sage: with NTF(mode="w+t", suffix=".py", delete=False) as f:
+            ....:     _ = f.write('a = 2\n')
+            sage: shell.run_cell('%attach ' + f.name)
             sage: shell.run_cell('a')
             2
             sage: sleep(1)  # filesystem timestamp granularity
-            sage: f = open(tmp, 'w'); _ = f.write('a = 3\n'); f.close()
+            sage: with open(f.name, 'w') as f: _ = f.write('a = 3\n')
 
         Note that the doctests are never really at the command prompt, so
         we call the input hook manually::
 
             sage: shell.run_cell('from sage.repl.attach import reload_attached_files_if_modified')
             sage: shell.run_cell('reload_attached_files_if_modified()')
-            ### reloading attached file run_cell.py modified at ... ###
+            ### reloading attached file ... modified at ... ###
 
             sage: shell.run_cell('a')
             3
-            sage: shell.run_cell('detach(%r)'%tmp)
+            sage: shell.run_cell('detach(%r)' % f.name)
             sage: shell.run_cell('attached_files()')
             []
-            sage: os.remove(tmp)
+            sage: os.remove(f.name)
             sage: shell.quit()
         """
         return self.shell.ex(load_wrap(s, attach=True))
@@ -203,17 +206,17 @@ class SageMagics(Magics):
         A magic command to switch between simple display and ASCII art display.
 
         - ``args`` -- string.  See
-          :meth:`sage.misc.display_hook.DisplayHookBase.set_display`
+          :mod:`sage.repl.rich_output.preferences`
           for allowed values. If the mode is ``ascii_art``, it can
           optionally be followed by a width.
 
-        How to use: if you want activate the ASCII art mod::
+        How to use: if you want to activate the ASCII art mode::
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('%display ascii_art')
 
-        That means you don't have to use :func:`ascii_art` to get an ASCII art
+        That means you do not have to use :func:`ascii_art` to get an ASCII art
         output::
 
             sage: shell.run_cell("i = var('i')")
@@ -221,7 +224,7 @@ class SageMagics(Magics):
                  10       9       8       7       6       5       4      3      2
             100*x   + 81*x  + 64*x  + 49*x  + 36*x  + 25*x  + 16*x  + 9*x  + 4*x  + x
 
-        Then when you want return in 'textual mode'::
+        Then when you want to return to 'textual mode'::
 
             sage: shell.run_cell('%display text plain')
             sage: shell.run_cell('%display plain')        # shortcut for "text plain"
@@ -234,14 +237,14 @@ class SageMagics(Magics):
             sage: shell.run_cell('%display ascii_art')
             sage: shell.run_cell('StandardTableaux(4).list()')
             [
-            [                                                                  1  4
-            [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2
-            [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,
+            [                                                                  1  4    1  3
+            [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
+            [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,   4   ,
             <BLANKLINE>
-                               1 ]
-               1  3    1  2    2 ]
-               2       3       3 ]
-               4   ,   4   ,   4 ]
+                       1 ]
+               1  2    2 ]
+               3       3 ]
+               4   ,   4 ]
             sage: shell.run_cell('%display ascii_art 50')
             sage: shell.run_cell('StandardTableaux(4).list()')
             [
@@ -259,7 +262,7 @@ class SageMagics(Magics):
 
             sage: shell.run_cell('%display text latex')
             sage: shell.run_cell('1/2')
-            \newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{2}
+            1/2
 
         Switch back::
 
@@ -402,7 +405,7 @@ class SageMagics(Magics):
             ....: C END FILE FIB1.F
             ....: ''')
             sage: fib
-            <fortran object>
+            <fortran ...>
             sage: from numpy import array
             sage: a = array(range(10), dtype=float)
             sage: fib(a, 10)
@@ -413,7 +416,7 @@ class SageMagics(Magics):
         return fortran(cell)
 
 
-class SageCustomizations(object):
+class SageCustomizations():
 
     def __init__(self, shell=None):
         """
@@ -424,16 +427,17 @@ class SageCustomizations(object):
         self.auto_magics = SageMagics(shell)
         self.shell.register_magics(self.auto_magics)
 
-        import sage.misc.edit_module as edit_module
-        self.shell.set_hook('editor', edit_module.edit_devel)
+        self.shell.set_hook('editor', LazyImport("sage.misc.edit_module", "edit_devel"))
 
         self.init_inspector()
         self.init_line_transforms()
 
-        import sage.all # until sage's import hell is fixed
+        try:
+            import sage.all # until sage's import hell is fixed
+        except ImportError:
+            import sage.all__sagemath_repl
 
         self.shell.verbose_quit = True
-        self.set_quit_hook()
 
         self.register_interface_magics()
 
@@ -447,16 +451,6 @@ class SageCustomizations(object):
         from sage.repl.interface_magic import InterfaceMagic
         InterfaceMagic.register_all(self.shell)
 
-    def set_quit_hook(self):
-        """
-        Set the exit hook to cleanly exit Sage.
-        """
-        def quit():
-            import sage.all
-            sage.all.quit_sage(self.shell.verbose_quit)
-        import atexit
-        atexit.register(quit)
-
     @staticmethod
     def all_globals():
         """
@@ -469,7 +463,10 @@ class SageCustomizations(object):
             sage: SageCustomizations.all_globals()
             <module 'sage.all_cmdline' ...>
         """
-        from sage import all_cmdline
+        try:
+            from sage import all_cmdline
+        except ImportError:
+            from sage import all__sagemath_repl as all_cmdline
         return all_cmdline
 
     def init_environment(self):
@@ -505,13 +502,67 @@ class SageCustomizations(object):
     def init_line_transforms(self):
         """
         Set up transforms (like the preparser).
-        """
-        from .interpreter import (SagePreparseTransformer,
-                                 SagePromptTransformer)
 
-        for s in (self.shell.input_splitter, self.shell.input_transformer_manager):
-            s.physical_line_transforms.insert(1, SagePromptTransformer())
-            s.python_line_transforms.append(SagePreparseTransformer())
+        TESTS:
+
+        Check that :trac:`31951` is fixed::
+
+             sage: from IPython import get_ipython
+             sage: ip = get_ipython()
+             sage: ip.input_transformer_manager.check_complete('''  # indirect doctest
+             ....: for i in [1 .. 2]:
+             ....:     a = 2''')
+             ('incomplete', 2)
+             sage: ip.input_transformer_manager.check_complete('''
+             ....: def foo(L)
+             ....:     K.<a> = L''')
+             ('invalid', None)
+             sage: ip.input_transformer_manager.check_complete('''
+             ....: def foo(L):
+             ....:     K.<a> = L''')
+             ('incomplete', 4)
+             sage: ip.input_transformer_manager.check_complete('''
+             ....: def foo(L):
+             ....:     K.<a> = L''')
+             ('incomplete', 4)
+             sage: ip.input_transformer_manager.check_complete('''
+             ....: def foo(R):
+             ....:     a = R.0''')
+             ('incomplete', 4)
+             sage: ip.input_transformer_manager.check_complete('''
+             ....: def foo(a):
+             ....:     b = 2a''')
+             ('invalid', None)
+             sage: implicit_multiplication(True)
+             sage: ip.input_transformer_manager.check_complete('''
+             ....: def foo(a):
+             ....:     b = 2a''')
+             ('incomplete', 4)
+             sage: ip.input_transformer_manager.check_complete('''
+             ....: def foo():
+             ....:     f(x) = x^2''')
+             ('incomplete', 4)
+             sage: ip.input_transformer_manager.check_complete('''
+             ....: def foo():
+             ....:     2.factor()''')
+             ('incomplete', 4)
+        """
+        from IPython.core.inputtransformer2 import TransformerManager
+        from .interpreter import SagePromptTransformer, SagePreparseTransformer
+
+        self.shell.input_transformer_manager.cleanup_transforms.insert(1, SagePromptTransformer)
+        self.shell.input_transformers_post.append(SagePreparseTransformer)
+
+        # Create an input transformer that does Sage's special syntax in the first step.
+        # We append Sage's preparse to the cleanup step, so that ``check_complete`` recognizes
+        # Sage's special syntax.
+        # Behaviour is somewhat inconsistent, but the syntax is recognized as desired.
+        M = TransformerManager()
+        M.token_transformers = self.shell.input_transformer_manager.token_transformers
+        M.cleanup_transforms.insert(1, SagePromptTransformer)
+        M.cleanup_transforms.append(SagePreparseTransformer)
+        self.shell._check_complete_transformer = M
+        self.shell.input_transformer_manager.check_complete = M.check_complete
 
 
 class SageJupyterCustomizations(SageCustomizations):

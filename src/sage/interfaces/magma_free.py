@@ -34,9 +34,8 @@ def magma_free_eval(code, strip=True, columns=0):
         sage: magma_free("Factorization(9290348092384)")  # optional - internet
         [ <2, 5>, <290323377887, 1> ]
     """
-    # import compatible with py2 and py3
-    from six.moves.urllib.parse import urlencode
-    from six.moves import http_client as httplib
+    from urllib.parse import urlencode
+    from http import client as httplib
     from xml.dom.minidom import parseString
 
     server = "magma.maths.usyd.edu.au"

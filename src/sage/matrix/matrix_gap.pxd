@@ -1,6 +1,5 @@
 from .matrix_dense cimport Matrix_dense
 from sage.libs.gap.element cimport GapElement
-from sage.groups.libgap_wrapper cimport ElementLibGAP
 
 cdef class Matrix_gap(Matrix_dense):
     cdef GapElement _libgap

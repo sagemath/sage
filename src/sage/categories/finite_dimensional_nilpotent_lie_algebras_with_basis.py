@@ -16,7 +16,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.lie_algebras import LieAlgebras
@@ -102,28 +101,28 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
             We define the Heisenberg group::
 
                 sage: L = lie_algebras.Heisenberg(QQ, 1)
-                sage: G = L.lie_group('G'); G
+                sage: G = L.lie_group('G'); G                                       # optional - sage.symbolic
                 Lie group G of Heisenberg algebra of rank 1 over Rational Field
 
             We test multiplying elements of the group::
 
-                sage: p,q,z = L.basis()
-                sage: g = G.exp(p); g
+                sage: p,q,z = L.basis()                                             # optional - sage.symbolic
+                sage: g = G.exp(p); g                                               # optional - sage.symbolic
                 exp(p1)
-                sage: h = G.exp(q); h
+                sage: h = G.exp(q); h                                               # optional - sage.symbolic
                 exp(q1)
-                sage: g*h
+                sage: g*h                                                           # optional - sage.symbolic
                 exp(p1 + q1 + 1/2*z)
 
             We extend an element of the Lie algebra to a left-invariant
             vector field::
 
-                sage: X = G.left_invariant_extension(2*p + 3*q, name='X'); X
+                sage: X = G.left_invariant_extension(2*p + 3*q, name='X'); X        # optional - sage.symbolic
                 Vector field X on the Lie group G of Heisenberg algebra of rank 1 over Rational Field
-                sage: X.at(G.one()).display()
-                X = 2 d/dx_0 + 3 d/dx_1
-                sage: X.display()
-                X = 2 d/dx_0 + 3 d/dx_1 + (3/2*x_0 - x_1) d/dx_2
+                sage: X.at(G.one()).display()                                       # optional - sage.symbolic
+                X = 2 ∂/∂x_0 + 3 ∂/∂x_1
+                sage: X.display()                                                   # optional - sage.symbolic
+                X = 2 ∂/∂x_0 + 3 ∂/∂x_1 + (3/2*x_0 - x_1) ∂/∂x_2
 
             .. SEEALSO::
 
@@ -160,4 +159,3 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
                 True
             """
             return True
-

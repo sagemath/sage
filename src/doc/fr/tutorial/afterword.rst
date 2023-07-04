@@ -132,8 +132,6 @@ Aussi, Sage se comporte différemment de Python à plusieurs égards.
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)   # py2
-       0
 
 -  **Entiers longs :** Python possède nativement un support pour les entiers de
    précision arbitraire, en plus des int du langage C. Les entiers longs
@@ -180,9 +178,10 @@ calculs faits avec Sage en citant
 
 ::
 
-    [SAGE], SAGE Mathematical Software, Version 4.3, http://www.sagemath.org
+    [Sage] SageMath, the Sage Mathematics Software System (Version 8.7),
+           The Sage Developers, 2019, https://www.sagemath.org.
 
-dans votre bibliographie (en remplaçant 4.3 par la version de Sage que
+dans votre bibliographie (en remplaçant 8.7 par la version de Sage que
 vous avez utilisée). De plus, pensez à rechercher les composants de Sage
 que vous avez utilisés pour vos calculs, par exemple PARI, GAP, Singular,
 Maxima et citez également ces systèmes. Si vous vous demandez quel

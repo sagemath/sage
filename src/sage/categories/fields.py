@@ -2,7 +2,7 @@
 r"""
 Fields
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
@@ -10,8 +10,8 @@ Fields
 #                2012-2014 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.lazy_import import LazyImport
@@ -20,8 +20,8 @@ from sage.categories.category_singleton import Category_contains_method_by_paren
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.division_rings import DivisionRings
 
-import sage.rings.ring
 from sage.structure.element import coerce_binop
+
 
 class Fields(CategoryWithAxiom):
     """
@@ -77,7 +77,7 @@ class Fields(CategoryWithAxiom):
 
         This implementation will not be needed anymore once every
         field in Sage will be properly declared in the category
-        :class:`Fields`().
+        :class:`Fields() <Fields>`.
 
         Caveat: this should eventually be fixed::
 
@@ -119,6 +119,7 @@ class Fields(CategoryWithAxiom):
             0
 
         """
+        import sage.rings.ring
         try:
             return self._contains_helper(x) or sage.rings.ring._is_Field(x)
         except Exception:
@@ -141,8 +142,8 @@ class Fields(CategoryWithAxiom):
             sage: P.<x> = QQ[]
             sage: Q = P.quotient(x^2+2)
             sage: Q.category()
-            Category of commutative no zero divisors quotients
-            of algebras over Rational Field
+            Category of commutative no zero divisors quotients of algebras
+             over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
             sage: F._contains_helper(Q)
             False
@@ -304,13 +305,7 @@ class Fields(CategoryWithAxiom):
             ALGORITHM:
 
             This uses the extended Euclidean algorithm; see for example
-            [Cohen1996]_, Algorithm 3.2.2.
-
-            REFERENCES:
-
-            .. [Cohen1996] \H. Cohen, A Course in Computational Algebraic
-               Number Theory.  Graduate Texts in Mathematics 138.
-               Springer-Verlag, 1996.
+            [Coh1993]_, Algorithm 3.2.2.
 
             EXAMPLES::
 
@@ -401,7 +396,8 @@ class Fields(CategoryWithAxiom):
             """
             if self.characteristic() == 0:
                 return True
-            else: raise NotImplementedError
+            else:
+                raise NotImplementedError
 
         def _test_characteristic_fields(self, **options):
             """
@@ -479,7 +475,7 @@ class Fields(CategoryWithAxiom):
             if f.degree() == 0:
                 return Factorization([], unit=f[0])
             if self.characteristic() != 0:
-                raise NotImplementedError("square-free decomposition not implemented for this polynomial.")
+                raise NotImplementedError("square-free decomposition not implemented for this polynomial")
 
             factors = []
             cur = f
@@ -506,17 +502,36 @@ class Fields(CategoryWithAxiom):
 
             return Factorization(factors, unit=unit, sort=False)
 
-        def _pow_int(self, n):
+        def vector_space(self, *args, **kwds):
             r"""
-            Returns the vector space of dimension `n` over ``self``.
+            Gives an isomorphism of this field with a vector space over a subfield.
+
+            This method is an alias for ``free_module``, which may have more documentation.
+
+            INPUT:
+
+            - ``base`` -- a subfield or morphism into this field (defaults to the base field)
+
+            - ``basis`` -- a basis of the field as a vector space
+              over the subfield; if not given, one is chosen automatically
+
+            - ``map`` -- whether to return maps from and to the vector space
+
+            OUTPUT:
+
+            - ``V`` -- a vector space over ``base``
+            - ``from_V`` -- an isomorphism from ``V`` to this field
+            - ``to_V`` -- the inverse isomorphism from this field to ``V``
 
             EXAMPLES::
 
-                sage: QQ^4
-                Vector space of dimension 4 over Rational Field
+                sage: K.<a> = Qq(125)                                   # optional - sage.rings.padics
+                sage: V, fr, to = K.vector_space()                      # optional - sage.rings.padics
+                sage: v = V([1, 2, 3])                                  # optional - sage.rings.padics
+                sage: fr(v, 7)                                          # optional - sage.rings.padics
+                (3*a^2 + 2*a + 1) + O(5^7)
             """
-            from sage.modules.all import FreeModule
-            return FreeModule(self, n)
+            return self.free_module(*args, **kwds)
 
     class ElementMethods:
         def euclidean_degree(self):
@@ -534,7 +549,7 @@ class Fields(CategoryWithAxiom):
             """
             if self.is_zero():
                 raise ValueError("euclidean degree not defined for the zero element")
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.zero()
 
         def quo_rem(self, other):
@@ -600,7 +615,7 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(15.0,12.0)
                 3.00000000000000
 
-            But for others floating point numbers, the gcd is just `0.0` or `1.0`::
+            But for other floating point numbers, the gcd is just `0.0` or `1.0`::
 
                 sage: gcd(3.2, 2.18)
                 1.00000000000000

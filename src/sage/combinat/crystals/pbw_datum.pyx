@@ -11,7 +11,7 @@ AUTHORS:
 - Travis Scrimshaw (2016-06): simplified code and converted to Cython
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Dinakar Muthiah <muthiah at ualberta.ca>
 #                          Travis Scrimshaw <tscrimsh at umn.edu>
 #
@@ -19,9 +19,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 #from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -32,7 +31,7 @@ from sage.combinat.root_system.braid_move_calculator import BraidMoveCalculator
 
 cimport cython
 
-class PBWDatum(object):
+class PBWDatum():
     """
     Helper class which represents a PBW datum.
     """
@@ -184,7 +183,7 @@ class PBWDatum(object):
         return PBWDatum(self.parent, reversed_long_word, reversed_lusztig_datum)
 
 
-class PBWData(object): # UniqueRepresentation?
+class PBWData(): # UniqueRepresentation?
     """
     Helper class for the set of PBW data.
     """
@@ -284,7 +283,7 @@ class PBWData(object): # UniqueRepresentation?
 @cython.wraparound(False)
 cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig_datum):
     """
-    Return the lusztig datum obtained by applying tropical Plücker
+    Return the Lusztig datum obtained by applying tropical Plücker
     relations along ``enhanced_braid_chain`` starting with
     ``initial_lusztig_datum``.
 
@@ -462,7 +461,7 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
     # This likely could be done when performing chain_of_reduced_words
     # Things in here get called the most (about 50x more than enhance_braid_move_chain)
     for pos in range(1, len(braid_move_chain)):
-        # This gets the smallest continguous half-open interval [a, b)
+        # This gets the smallest contiguous half-open interval [a, b)
         # that contains the indices where current_word and previous_word differ.
         current_word = <tuple> (braid_move_chain[pos])
         for k in range(ell):
@@ -478,8 +477,7 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
                 last = k + 1
                 break
 
-        cartan_sub_matrix = (cartan_matrix[i,j], cartan_matrix[j,i])
-        output_list.append( ((first, last), cartan_sub_matrix) )
+        cartan_sub_matrix = (cartan_matrix[i, j], cartan_matrix[j, i])
+        output_list.append(((first, last), cartan_sub_matrix))
         previous_word = current_word
     return output_list
-

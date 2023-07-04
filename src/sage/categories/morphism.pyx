@@ -1,32 +1,45 @@
 """
 Morphisms
 
+This module defines the base classes of morphisms between objects of a given
+category.
+
+EXAMPLES:
+
+Typically, a morphism is defined by the images of the generators of the domain. ::
+
+    sage: X.<a, b> = ZZ[]
+    sage: Y.<c> = ZZ[]
+    sage: X.hom([c, c^2])
+    Ring morphism:
+      From: Multivariate Polynomial Ring in a, b over Integer Ring
+      To:   Univariate Polynomial Ring in c over Integer Ring
+      Defn: a |--> c
+            b |--> c^2
+
 AUTHORS:
 
-- William Stein: initial version
+- William Stein (2005): initial version
 
-- David Joyner (12-17-2005): added examples
+- David Joyner (2005-12-17): added examples
 
-- Robert Bradshaw (2007-06-25) Pyrexification
+- Robert Bradshaw (2007-06-25): Pyrexification
+
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport *
+
 from sage.misc.constant_function import ConstantFunction
-
-import operator
-
-
 
 from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
@@ -35,6 +48,7 @@ from sage.structure.parent cimport Parent
 
 def is_Morphism(x):
     return isinstance(x, Morphism)
+
 
 cdef class Morphism(Map):
 
@@ -266,11 +280,11 @@ cdef class Morphism(Map):
         Caveat: the registration of the coercion must be done before any
         other coercion is registered or discovered::
 
-            sage: phi = Hom(X, Y)(y)
+            sage: phi = Hom(X, Z)(z^2)
             sage: phi.register_as_coercion()
             Traceback (most recent call last):
             ...
-            AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring to Univariate Polynomial Ring in y over Integer Ring already registered or discovered
+            AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring to Univariate Polynomial Ring in z over Integer Ring already registered or discovered
 
         """
         self._codomain.register_coercion(self)
@@ -340,6 +354,20 @@ cdef class Morphism(Map):
             Traceback (most recent call last):
             ...
             NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'> and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
+
+        We check that :trac:`28617` is fixed::
+
+            sage: FF = GF(2^20)
+            sage: f = FF.frobenius_endomorphism()
+            sage: f == FF.frobenius_endomorphism()
+            True
+
+        and that :trac:`29632` is fixed::
+
+            sage: R.<x,y> = QuadraticField(-1)[]
+            sage: f = R.hom(R.gens(), R)
+            sage: f.is_identity()
+            True
         """
         if self is other:
             return rich_to_bool(op, 0)
@@ -362,13 +390,19 @@ cdef class Morphism(Map):
             # If so, we see the base as a ring of scalars and create new
             # gens by picking an element of the initial domain (e) and
             # multiplying it with the gens of the scalar ring.
+            #
+            # It is known that this way of comparing morphisms may give
+            # a mathematically wrong answer. See Issue #28617 and #31783.
             if e is not None and isinstance(e, ModuleElement):
-                gens = [(<ModuleElement>e)._lmul_(x) for x in gens]
-            for e in gens:
-                x = self(e)
-                y = other(e)
+                B = (<ModuleElement>e)._parent._base
+                gens = [e * B.coerce(x) for x in gens]
+            for g in gens:
+                x = self(g)
+                y = other(g)
                 if x != y:
                     return richcmp_not_equal(x, y, op)
+                if e is None and g:
+                    e = g
             # Check base
             base = domain._base
             if base is None or base is domain:
@@ -376,7 +410,7 @@ cdef class Morphism(Map):
             domain = <Parent?>base
         return rich_to_bool(op, 0)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return whether this morphism is not a zero morphism.
 
@@ -398,10 +432,7 @@ cdef class Morphism(Map):
         try:
             return self._is_nonzero()
         except Exception:
-            if PY_MAJOR_VERSION < 3:
-                return super(Morphism, self).__nonzero__()
-            else:
-                return super().__bool__()
+            return super().__bool__()
 
 
 cdef class FormalCoercionMorphism(Morphism):
@@ -438,24 +469,22 @@ cdef class IdentityMorphism(Morphism):
     cpdef Element _call_(self, x):
         return x
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}): 
-        if len(args) == 0 and len(kwds) == 0:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
+        if not args and not kwds:
             return x
         cdef Parent C = self._codomain
-        if C._element_init_pass_parent:
-            from sage.misc.superseded import deprecation
-            deprecation(26879, "_element_init_pass_parent=True is deprecated. This probably means that _element_constructor_ should be a method and not some other kind of callable")
-            return C._element_constructor(C, x, *args, **kwds)
-        else:
-            return C._element_constructor(x, *args, **kwds)
+        return C._element_constructor(x, *args, **kwds)
 
     def __mul__(left, right):
         if not isinstance(right, Map):
-            raise TypeError("right (=%s) must be a map to multiply it by %s"%(right, left))
+            raise TypeError(f"right (={right}) must be a map "
+                            f"to multiply it by {left}")
         if not isinstance(left, Map):
-            raise TypeError("left (=%s) must be a map to multiply it by %s"%(left, right))
+            raise TypeError(f"left (={left}) must be a map "
+                            f"to multiply it by {right}")
         if right.codomain() != left.domain():
-            raise TypeError("self (=%s) domain must equal right (=%s) codomain"%(left, right))
+            raise TypeError(f"self (={left}) domain must equal "
+                            f"right (={right}) codomain")
         if isinstance(left, IdentityMorphism):
             return right
         else:
@@ -604,7 +633,7 @@ cdef class SetMorphism(Morphism):
             sage: f._extra_slots_test()
             {'_codomain': Integer Ring,
              '_domain': Integer Ring,
-             '_function': <built-in function __abs__>,
+             '_function': <built-in function ...abs...>,
              '_is_coercion': False,
              '_repr_type_str': None}
         """

@@ -13,9 +13,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -26,7 +25,7 @@ from sage.categories.hopf_algebras import HopfAlgebras
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
@@ -59,9 +58,8 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
                 q = R(q)
         if q is None:
             q = LaurentPolynomialRing(R, 'q').gen()
-        return super(QuantumMatrixCoordinateAlgebra_abstract,
-                     cls).__classcall__(cls,
-                                        q=q, bar=bar, R=q.parent(), **kwds)
+        return super().__classcall__(cls,
+                                     q=q, bar=bar, R=q.parent(), **kwds)
 
     def __init__(self, gp_indices, n, q, bar, R, category, indices_key=None):
         """
@@ -239,9 +237,8 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
             raise ValueError("undefined for non-square quantum matrices")
         from sage.combinat.permutation import Permutations
         q = self._q
-        return self.sum(self.term(self._indices({(i, p(i)): 1 for i in range(1, self._n + 1)}),
-                                  (-q) ** p.length())
-                        for p in Permutations(self._n))
+        return self._from_dict({self._indices({(i, p(i)): 1 for i in range(1, self._n + 1)}):
+                               (-q) ** p.length() for p in Permutations(self._n)})
 
     def product_on_basis(self, a, b):
         """
@@ -274,7 +271,6 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
             return self.monomial(a * b)
         G = self._indices.monoid_generators()
         one = self.base_ring().one()
-        ret = self.zero()
         q = self._q
         qi = q ** -1
         monomial = b
@@ -505,9 +501,9 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         """
         if n is None:
             n = m
-        return super(QuantumMatrixCoordinateAlgebra, cls).__classcall__(cls, m=m, n=n,
-                                                                        q=q, bar=bar,
-                                                                        R=R)
+        return super().__classcall__(cls, m=m, n=n,
+                                     q=q, bar=bar,
+                                     R=R)
 
     def __init__(self, m, n, q, bar, R):
         """
@@ -517,6 +513,16 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
 
             sage: O = algebras.QuantumMatrixCoordinate(4)
             sage: TestSuite(O).run()
+
+            sage: O = algebras.QuantumMatrixCoordinate(10)
+            sage: O.variable_names()
+            ('x0101', ..., 'x1010')
+            sage: O = algebras.QuantumMatrixCoordinate(11,3)
+            sage: O.variable_names()
+            ('x011', ..., 'x113')
+            sage: O = algebras.QuantumMatrixCoordinate(3,11)
+            sage: O.variable_names()
+            ('x101', ..., 'x311')
         """
         gp_indices = [(i, j) for i in range(1, m + 1) for j in range(1, n + 1)]
 
@@ -528,7 +534,10 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         self._m = m
         QuantumMatrixCoordinateAlgebra_abstract.__init__(self, gp_indices, n, q, bar, R, cat)
         # Set the names
-        names = ['x{}{}'.format(*k) for k in gp_indices]
+        mb = len(str(m))
+        nb = len(str(n))
+        base = 'x{{:0>{}}}{{:0>{}}}'.format(mb,nb)
+        names = [base.format(*k) for k in gp_indices]
         self._assign_names(names)
 
     def _repr_(self):
@@ -709,12 +718,8 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
 
     REFERENCES:
 
-    .. [DD91] \R. Dipper and S. Donkin. *Quantum* `GL_n`.
-       Proc. London Math. Soc. (3) **63** (1991), no. 1, pp. 165-211.
-
-    .. [Karimipour93] Vahid Karimipour.
-       *Representations of the coordinate ring of* `GL_q(n)`.
-       (1993). :arxiv:`hep-th/9306058`.
+    - [DD1991]_
+    - [Kar1993]_
     """
     @staticmethod
     def __classcall_private__(cls, n, q=None, bar=None, R=None):
@@ -733,7 +738,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
             sage: O1 is O4
             False
         """
-        return super(QuantumGL, cls).__classcall__(cls, n=n, q=q, bar=bar, R=R)
+        return super().__classcall__(cls, n=n, q=q, bar=bar, R=R)
 
     def __init__(self, n, q, bar, R):
         """
@@ -872,7 +877,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
             c_exp += db.pop('c')
             b = I(db)
         # a and b contain no powers of c
-        p = super(QuantumGL, self).product_on_basis(a, b)
+        p = super().product_on_basis(a, b)
         if c_exp == 0:
             return p
         c = self._indices.monoid_generators()['c']

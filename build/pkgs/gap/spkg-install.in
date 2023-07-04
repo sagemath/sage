@@ -1,0 +1,69 @@
+###########################################
+## GAP
+###########################################
+
+cd src
+
+export CFLAGS=$CFLAGS_NON_NATIVE
+export CXXFLAGS=$CXXFLAGS_NON_NATIVE
+
+GAP_BUILD_ROOT="$(pwd)"
+GAP_ROOT="$SAGE_LOCAL/lib/gap"
+
+# Enable debug info if requested.
+# Note that -g3 allows you to use preprocessor macros in gdb which are widely used
+if [ "$SAGE_DEBUG" = yes ] ; then
+    export CFLAGS="-O0 -g3 -DDEBUG_MASTERPOINTERS -DDEBUG_GLOBAL_BAGS -DDEBUG_FUNCTIONS_BAGS $CFLAGS"
+fi
+
+# LDFLAGS hack below needed by Semigroups package
+sdh_configure $SAGE_CONFIGURE_GMP LDFLAGS="-pthread" --prefix=$SAGE_LOCAL
+sdh_make
+
+sdh_make_install
+# sdh_make install-headers install-libgap
+# The 'packagemanager' package expects this https://github.com/gap-packages/PackageManager/issues/105
+mkdir -p "$SAGE_LOCAL/lib/gap/bin"
+
+# Install only the minimal packages GAP needs to run
+sdh_install pkg/gapdoc pkg/primgrp pkg/smallgrp pkg/transgrp "$GAP_ROOT"/pkg
+
+# Install additional packages that are not strictly required, but that are
+# typically "expected" to be loaded: These are the default packages that are
+# autoloaded at GAP startup (via the PackagesToLoad UserPreference) with an
+# out-of-the-box GAP installation; see
+# https://github.com/sagemath/sage/issues/22626#comment:393 for discussion on this
+#
+# Also include atlasrep which is a dependency of tomlib
+sdh_install \
+    pkg/atlasrep \
+    pkg/autodoc \
+    pkg/autpgrp \
+    pkg/alnuth \
+    pkg/crisp \
+    pkg/ctbllib \
+    pkg/factint \
+    pkg/fga \
+    pkg/irredsol \
+    pkg/laguna \
+    pkg/packagemanager \
+    pkg/polenta \
+    pkg/polycyclic \
+    pkg/radiroot \
+    pkg/resclasses \
+    pkg/sophus \
+    pkg/tomlib \
+    pkg/utils \
+    "$GAP_ROOT"/pkg
+
+# TODO: This seems unnecessary--we are already installing all of doc/ to
+# GAP_ROOT, which is necessary for some functionality in GAP to work.  Do
+# we need this?  Maybe doc/gap could just be a symlink to gap/doc??
+if [[ "$SAGE_SPKG_INSTALL_DOCS" = yes ]]; then
+    # The (pre-built) HTML documentation is currently (GAP 4.6.3)
+    # included, so we don't have to /build/ it here.
+    # echo "Now building GAP's documentation..."
+    # <COMMAND TO BUILD THE [HTML] DOCUMENTATION>
+    echo "Now copying GAP's (HTML) documentation..."
+    sdh_install doc/ref doc/tut "$SAGE_SHARE/doc/gap/"
+fi

@@ -18,7 +18,7 @@ AUTHORS:
   of irreducible modules
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Eric Webster
 #       Copyright (C) 2011 Hugh Thomas <hugh.ross.thomas@gmail.com>
 #
@@ -26,9 +26,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 
@@ -42,11 +41,12 @@ from sage.combinat.permutation import Permutations
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
 from sage.combinat.tableau import SemistandardTableaux
-from sage.functions.other import binomial
+from sage.arith.misc import binomial
 from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 def _schur_I_nr_representatives(n, r):
@@ -240,7 +240,7 @@ class SchurAlgebra(CombinatorialFreeModule):
             raise ValueError("n (={}) must be a positive integer".format(n))
         if r not in ZZ or r < 0:
             raise ValueError("r (={}) must be a non-negative integer".format(r))
-        if not R in Rings.Commutative():
+        if R not in Rings.Commutative():
             raise ValueError("R (={}) must be a commutative ring".format(R))
 
         self._n = n
@@ -454,6 +454,19 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
         msg += " over {}"
         return msg.format(self._r, self._n, self.base_ring())
 
+    def construction(self):
+        """
+        Return ``None``.
+
+        There is no functorial construction for ``self``.
+
+        EXAMPLES::
+
+            sage: T = SchurTensorModule(QQ, 2, 3)
+            sage: T.construction()
+        """
+        return None
+
     def _monomial_product(self, xi, v):
         """
         Result of acting by the basis element ``xi`` of the corresponding
@@ -528,7 +541,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
 
             elif elt in P._schur:  # self_on_left is False
                 return P._schur_action(elt, self)
-            return super(SchurTensorModule.Element, self)._acted_upon_(elt, self_on_left)
+            return super()._acted_upon_(elt, self_on_left)
 
 
 def GL_irreducible_character(n, mu, KK):
@@ -581,11 +594,11 @@ def GL_irreducible_character(n, mu, KK):
     A = M._schur
     SGA = M._sga
 
-    #make ST the superstandard tableau of shape mu
+    # make ST the superstandard tableau of shape mu
     from sage.combinat.tableau import from_shape_and_word
     ST = from_shape_and_word(mu, list(range(1, r + 1)), convention='English')
 
-    #make ell the reading word of the highest weight tableau of shape mu
+    # make ell the reading word of the highest weight tableau of shape mu
     ell = [i + 1 for i, l in enumerate(mu) for dummy in range(l)]
 
     e = M.basis()[tuple(ell)]  # the element e_l
@@ -607,17 +620,17 @@ def GL_irreducible_character(n, mu, KK):
         y = A.basis()[schur_rep] * e  # M.action_by_Schur_alg(A.basis()[schur_rep], e)
         carter_lusztig.append(y.to_vector())
 
-    #Therefore, we now have carter_lusztig as a list giving the basis
-    #of `V_\mu`
+    # Therefore, we now have carter_lusztig as a list giving the basis
+    # of `V_\mu`
 
-    #We want to think of expressing this character as a sum of monomial
-    #symmetric functions.
+    # We want to think of expressing this character as a sum of monomial
+    # symmetric functions.
 
-    #We will determine a basis element for each m_\lambda in the
-    #character, and we want to keep track of them by \lambda.
+    # We will determine a basis element for each m_\lambda in the
+    # character, and we want to keep track of them by \lambda.
 
-    #That means that we only want to pick out the basis elements above for
-    #those semistandard words whose content is a partition.
+    # That means that we only want to pick out the basis elements above for
+    # those semistandard words whose content is a partition.
 
     contents = Partitions(r, max_length=n).list()
     # all partitions of r, length at most n
@@ -648,15 +661,15 @@ def GL_irreducible_character(n, mu, KK):
         except ValueError:
             pass
 
-    #There is an inner product on the Carter-Lusztig module V_\mu; its
-    #maximal submodule is exactly the kernel of the inner product.
+    # There is an inner product on the Carter-Lusztig module V_\mu; its
+    # maximal submodule is exactly the kernel of the inner product.
 
-    #Now, for each possible partition content, we look at the graded piece of
-    #that degree, and we record how these elements pair with each of the
-    #elements of carter_lusztig.
+    # Now, for each possible partition content, we look at the graded piece of
+    # that degree, and we record how these elements pair with each of the
+    # elements of carter_lusztig.
 
-    #The kernel of this pairing is the part of this graded piece which is
-    #not in the irreducible module for \mu.
+    # The kernel of this pairing is the part of this graded piece which is
+    # not in the irreducible module for \mu.
 
     length = len(carter_lusztig)
 

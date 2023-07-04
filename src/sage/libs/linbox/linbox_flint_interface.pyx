@@ -15,7 +15,7 @@ and C. Pernet. The functions available are:
 - ``void  linbox_fmpz_mat_minpoly(fmpz_poly_t mp, fmpz_mat_t A)``: set ``mp``
   to be the minimal polynomial of the square matrix ``A``
 
-- ``unsigned long linbox_fmpz_mat_rank(fmpz_mat_t A)``: return the rank of the
+- ``size_t linbox_fmpz_mat_rank(fmpz_mat_t A)``: return the rank of the
   matrix ``A``
 
 - ``void linbox_fmpz_mat_det(fmpz_t det, fmpz_mat_t A)``: set ``det`` to the
@@ -32,8 +32,6 @@ and C. Pernet. The functions available are:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import
 
 from sage.libs.gmp.types cimport mpz_t, mpz_srcptr, mpz_ptr
 from sage.libs.gmp.mpz cimport mpz_set
@@ -155,13 +153,13 @@ cdef void linbox_fmpz_mat_minpoly(fmpz_poly_t mp, fmpz_mat_t A):
     del m_A
 
 
-cdef unsigned long linbox_fmpz_mat_rank(fmpz_mat_t A):
+cdef size_t linbox_fmpz_mat_rank(fmpz_mat_t A):
     r"""
     Return the rank of A
     """
     cdef givaro.ZRing ZZ
     cdef linbox.DenseMatrix_integer * LBA
-    cdef unsigned long r = 0
+    cdef size_t r = 0
 
     LBA = new linbox.DenseMatrix_integer(ZZ, fmpz_mat_nrows(A), fmpz_mat_ncols(A))
     fmpz_mat_get_linbox(LBA[0], A)

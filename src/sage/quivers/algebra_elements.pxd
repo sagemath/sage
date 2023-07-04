@@ -1,14 +1,14 @@
 """
 Cython types for elements of path algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #     Copyright (C) 2015 Simon King <simon.king@uni-jena.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # This file declares the types. The implementation of the basic on these types
 # is in algebra_elements.pxi, the implementation of the Python class is in

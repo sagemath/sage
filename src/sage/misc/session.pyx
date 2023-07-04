@@ -12,43 +12,49 @@ verify that it is listed as a newly defined variable::
     sage: show_identifiers()
     ['w']
 
-We next save this session. We are using a file in ``SAGE_TMP``. We do this
-*for testing* only --- please do not do this, when you want to save your
-session permanently, since ``SAGE_TMP`` will be removed when leaving Sage!
+We next save this session. We are using a temporary directory to hold
+the session file but we do this *for testing only.* Please do not do
+this if you want to save your session permanently. Also note that
+the ``tempfile`` module weasels its way into the session::
 
 ::
 
-    sage: save_session(os.path.join(SAGE_TMP, 'session'))
+    sage: from tempfile import TemporaryDirectory
+    sage: d = TemporaryDirectory()
+    sage: save_session(os.path.join(d.name, 'session'))
 
 This saves a dictionary with ``w`` as one of the keys::
 
-    sage: z = load(os.path.join(SAGE_TMP, 'session'))
+    sage: z = load(os.path.join(d.name, 'session'))
     sage: list(z)
-    ['w']
+    ['d', 'w']
     sage: z['w']
     2/3
 
-Next we reset the session, verify this, and load the session back.::
+Next we reset all variables in the session except for the temporary
+directory name. We verify that the session is reset, and then load
+it back.::
 
+    sage: sage.misc.reset.EXCLUDE.add('d')
     sage: reset()
     sage: show_identifiers()
-    []
-    sage: load_session(os.path.join(SAGE_TMP, 'session'))
+    ['d']
+    sage: load_session(os.path.join(d.name, 'session'))
 
 Indeed ``w`` is now defined again.::
 
     sage: show_identifiers()
-    ['w']
+    ['d', 'w']
     sage: w
     2/3
 
-It is not needed to clean up the file created in the above code, since it
-resides in the directory ``SAGE_TMP``.
+Finally, we clean up the temporary directory::
+
+    sage: d.cleanup()
 
 AUTHOR:
 
 - William Stein
-
 """
 
 #############################################################################
@@ -57,18 +63,16 @@ AUTHOR:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 #############################################################################
-from __future__ import print_function, absolute_import
 
 # Standard python imports
+import builtins
 import os
 import types
 
 # We want the caller's locals, but locals() is emulated in Cython
-from six.moves import builtins
 cdef caller_locals = builtins.locals
 
 # Sage imports
-from .misc import embedded
 from sage.misc.persist import load, save, loads, dumps
 
 # This module-scope variables is used to save the
@@ -101,10 +105,12 @@ def init(state=None):
         sage: show_identifiers()
         []
     """
-    if state is None: state = caller_locals()  # use locals() by default
+    if state is None:
+        state = caller_locals()  # use locals() by default
     global state_at_init
     # Make a *copy* of the state dict, since it is mutable
     state_at_init = dict(state)
+
 
 def _is_new_var(x, v, hidden):
     """
@@ -218,6 +224,7 @@ def show_identifiers(hidden=False):
     # Ignore extra variables injected into the global namespace by the doctest
     # runner
     _none = object()
+
     def _in_extra_globals(name, val):
         return val == DocTestTask.extra_globals.get(name, _none)
 
@@ -237,10 +244,7 @@ def save_session(name='sage_session', verbose=False):
            saved. This failure is silent unless you set
            ``verbose=True``.
 
-        2. In the Sage notebook the session is saved both to the current
-           working cell and to the ``DATA`` directory.
-
-        3. One can still make sessions that can't be reloaded.  E.g., define
+        2. One can still make sessions that can't be reloaded.  E.g., define
            a class with::
 
                class Foo: pass
@@ -327,17 +331,6 @@ def save_session(name='sage_session', verbose=False):
                 print("Not saving {}: {}".format(k, msg))
             pass
     save(D, name)
-    if embedded():
-        # Also save D to the data directory if we're using the notebook.
-        # This is broken for now. Simply print some information to the user
-        # if the user does not save it in the DATA directory.
-        # save(D, '../../data/' + name)
-        if name.find('.sagenb/') <= 0 or name.find('/data/') <= 0:
-            print("To store the session in a common directory that the "
-                  "entire worksheet can access, save it using the command:\n"
-                  "save_session(DATA + '{0}')\n"
-                  "You can later load it by running in any cell:\n"
-                  "load_session(DATA + '{0}')".format(name.rsplit('/', 1)[-1]))
 
 
 def load_session(name='sage_session', verbose=False):
@@ -383,13 +376,6 @@ def load_session(name='sage_session', verbose=False):
     """
     state = caller_locals()
 
-    if embedded():
-        if not os.path.exists(name):
-            nm = '../../data/' + name
-            if not nm.endswith('.sobj'): nm += '.sobj'
-            if os.path.exists(nm):
-                name = nm
     D = load(name)
     for k, x in D.items():
         state[k] = x
-

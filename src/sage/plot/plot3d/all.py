@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .plot3d            import plot3d, cylindrical_plot3d, spherical_plot3d, Spherical, SphericalElevation, Cylindrical
 from .parametric_plot3d import parametric_plot3d

@@ -1,0 +1,11 @@
+bc
+binutils
+gcc
+libgomp-devel
+m4
+make
+perl
+pkg-config
+python3
+tar
+which

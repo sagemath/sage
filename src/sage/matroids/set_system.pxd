@@ -23,7 +23,7 @@ cdef class SetSystem:
     cdef SetSystem _groundset_partition(self, SetSystem P, list cnt)
     cdef long subset_characteristic(self, SetSystem P, long e)
     cdef subsets_partition(self, SetSystem P=*, E=*)
-    cdef _distinguish(self, v)
+    cdef _distinguish(self, Py_ssize_t v)
     cpdef is_connected(self)
 
     cdef initial_partition(self, SetSystem P=*, E=*)

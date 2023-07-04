@@ -1,5 +1,5 @@
 r"""
-Bijection classes for type `A_{2n}^{(2)}`.
+Bijection classes for type `A_{2n}^{(2)}`
 
 Part of the (internal) classes which runs the bijection between rigged
 configurations and KR tableaux of type `A_{2n}^{(2)}`.
@@ -38,6 +38,7 @@ TESTS::
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_C import KRTToRCBijectionTypeC
 from sage.combinat.rigged_configurations.bij_type_C import RCToKRTBijectionTypeC
+
 
 class KRTToRCBijectionTypeA2Even(KRTToRCBijectionTypeC):
     r"""
@@ -90,7 +91,7 @@ class KRTToRCBijectionTypeA2Even(KRTToRCBijectionTypeC):
             for a in range(pos_val - 1, n):
                 max_width = self.ret_rig_con[a].insert_cell(max_width)
                 case_S[a] = max_width
-    
+
             # Special case for n
             self._insert_cell_case_S(self.ret_rig_con[n-1])
 
@@ -118,6 +119,7 @@ class KRTToRCBijectionTypeA2Even(KRTToRCBijectionTypeC):
         elif tableau_height > 0:
             self._update_vacancy_nums(tableau_height - 1)
             self._update_partition_values(tableau_height - 1)
+
 
 class RCToKRTBijectionTypeA2Even(RCToKRTBijectionTypeC):
     r"""

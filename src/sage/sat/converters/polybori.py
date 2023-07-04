@@ -28,14 +28,12 @@ Classes and Methods
 ##############################################################################
 
 from random import Random
-from sage.rings.polynomial.pbori import if_then_else as ite
+from sage.rings.polynomial.pbori.pbori import if_then_else as ite
 from sage.rings.integer_ring import ZZ
 from sage.functions.other import ceil
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.combinat.permutation import Permutations
 from sage.sat.converters import ANF2CNFConverter
-
-import six
 
 
 class CNFEncoder(ANF2CNFConverter):
@@ -281,7 +279,7 @@ class CNFEncoder(ANF2CNFConverter):
         # any zero block of f+1
 
         blocks = self.zero_blocks(f + 1)
-        C = [{variable: 1 - value for variable, value in six.iteritems(b)}
+        C = [{variable: 1 - value for variable, value in b.items()}
              for b in blocks]
 
         def to_dimacs_index(v):
@@ -290,7 +288,7 @@ class CNFEncoder(ANF2CNFConverter):
         def clause(c):
             return [to_dimacs_index(variable)
                     if value == 1 else -to_dimacs_index(variable)
-                    for variable, value in six.iteritems(c)]
+                    for variable, value in c.items()]
 
         data = (clause(c) for c in C)
         for d in sorted(data):
@@ -414,11 +412,10 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``length`` - the number of variables
-        - ``equal_zero`` - should the sum be equal to zero?
+        - ``length`` -- the number of variables
+        - ``equal_zero`` -- should the sum be equal to zero?
 
         EXAMPLES::
-
 
             sage: from sage.sat.converters.polybori import CNFEncoder
             sage: from sage.sat.solvers.dimacs import DIMACS
@@ -431,13 +428,13 @@ class CNFEncoder(ANF2CNFConverter):
             [[1, -1, -1], [-1, 1, -1], [-1, -1, 1], [1, 1, 1]]
         """
         E = []
-        for num_negated in range(0, length+1) :
-            if (((num_negated % 2) ^ ((length+1) % 2)) == equal_zero) :
+        for num_negated in range(length + 1):
+            if (((num_negated % 2) ^ ((length + 1) % 2)) == equal_zero):
                 continue
             start = []
-            for i in range(num_negated) :
+            for i in range(num_negated):
                 start.append(1)
-            for i in range(length - num_negated) :
+            for i in range(length - num_negated):
                 start.append(-1)
             E.extend(Permutations(start))
         return E

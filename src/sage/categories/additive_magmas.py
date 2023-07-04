@@ -1,14 +1,12 @@
 r"""
-Additive Magmas
+Additive magmas
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
-import six
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.lazy_import import LazyImport
 from sage.misc.abstract_method import abstract_method
@@ -20,6 +18,7 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.homsets import HomsetsCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.categories.sets_cat import Sets
+
 
 class AdditiveMagmas(Category_singleton):
     """
@@ -221,7 +220,6 @@ class AdditiveMagmas(Category_singleton):
             if (self.summation != self.summation_from_element_class_add) and hasattr(self, "element_class") and hasattr(self.element_class, "_add_parent"):
                 self.element_class._add_ = self.element_class._add_parent
 
-
         def addition_table(self, names='letters', elements=None):
             r"""
             Return a table describing the addition operation.
@@ -280,7 +278,7 @@ class AdditiveMagmas(Category_singleton):
             has an addition defined.The default is to represent
             elements as lowercase ASCII letters.  ::
 
-                sage: R=IntegerModRing(5)
+                sage: R = IntegerModRing(5)
                 sage: R.addition_table()
                 +  a b c d e
                  +----------
@@ -295,8 +293,8 @@ class AdditiveMagmas(Category_singleton):
             representation of the elements of the set.  Requesting
             ``digits`` will include leading zeros as padding.  ::
 
-                sage: R=IntegerModRing(11)
-                sage: P=R.addition_table(names='elements')
+                sage: R = IntegerModRing(11)
+                sage: P = R.addition_table(names='elements')
                 sage: P
                  +   0  1  2  3  4  5  6  7  8  9 10
                   +---------------------------------
@@ -312,7 +310,7 @@ class AdditiveMagmas(Category_singleton):
                  9|  9 10  0  1  2  3  4  5  6  7  8
                 10| 10  0  1  2  3  4  5  6  7  8  9
 
-                sage: T=R.addition_table(names='digits')
+                sage: T = R.addition_table(names='digits')
                 sage: T
                 +  00 01 02 03 04 05 06 07 08 09 10
                   +---------------------------------
@@ -331,7 +329,7 @@ class AdditiveMagmas(Category_singleton):
             Specifying the elements in an alternative order can provide
             more insight into how the operation behaves.  ::
 
-                sage: S=IntegerModRing(7)
+                sage: S = IntegerModRing(7)
                 sage: elts = [0, 3, 6, 2, 5, 1, 4]
                 sage: S.addition_table(elements=elts)
                 +  a b c d e f g
@@ -352,7 +350,7 @@ class AdditiveMagmas(Category_singleton):
             the elements be represented with their usual string
             representation.  ::
 
-                sage: T=IntegerModRing(12)
+                sage: T = IntegerModRing(12)
                 sage: elts=[0, 3, 6, 9]
                 sage: T.addition_table(names='elements', elements=elts)
                 +  0 3 6 9
@@ -367,8 +365,8 @@ class AdditiveMagmas(Category_singleton):
             :class:`~sage.matrix.operation_table.OperationTable` for more
             comprehensive documentation. ::
 
-                sage: R=IntegerModRing(3)
-                sage: T=R.addition_table()
+                sage: R = IntegerModRing(3)
+                sage: T = R.addition_table()
                 sage: T.column_keys()
                 (0, 1, 2)
                 sage: sorted(T.translation().items())
@@ -390,7 +388,7 @@ class AdditiveMagmas(Category_singleton):
 
     class ElementMethods:
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def _add_(self, right):
             """
             Return the sum of ``self`` and ``right``.
@@ -478,16 +476,16 @@ class AdditiveMagmas(Category_singleton):
                     (1, x)
                     sage: e+e
                     (2, 0)
-                    sage: e=groups.misc.AdditiveCyclic(8)
-                    sage: x=e.cartesian_product(e)((e(1),e(2)))
+                    sage: e = groups.misc.AdditiveCyclic(8)
+                    sage: x = e.cartesian_product(e)((e(1),e(2)))
                     sage: x
                     (1, 2)
                     sage: 4*x
                     (4, 0)
                 """
                 return self.parent()._cartesian_product_of_elements(
-                    x+y for x,y in zip(self.cartesian_factors(),
-                                       right.cartesian_factors()))
+                    x + y for x, y in zip(self.cartesian_factors(),
+                                          right.cartesian_factors()))
 
     class Algebras(AlgebrasCategory):
 
@@ -518,10 +516,16 @@ class AdditiveMagmas(Category_singleton):
                 EXAMPLES::
 
                     sage: S = CommutativeAdditiveSemigroups().example(); S
-                    An example of a commutative monoid: the free commutative monoid generated by ('a', 'b', 'c', 'd')
+                    An example of a commutative semigroup: the free commutative semigroup generated by ('a', 'b', 'c', 'd')
                     sage: A = S.algebra(QQ)
                     sage: A.algebra_generators()
-                    Finite family {0: B[a], 1: B[b], 2: B[c], 3: B[d]}
+                    Family (B[a], B[b], B[c], B[d])
+
+                .. TODO::
+
+                    This doctest does not actually test this method,
+                    but rather the method of the same name for
+                    ``AdditiveSemigroups``. Find a better doctest!
                 """
                 return self.basis().keys().additive_semigroup_generators().map(self.monomial)
 
@@ -537,11 +541,17 @@ class AdditiveMagmas(Category_singleton):
                 EXAMPLES::
 
                     sage: S = CommutativeAdditiveSemigroups().example(); S
-                    An example of a commutative monoid: the free commutative monoid generated by ('a', 'b', 'c', 'd')
+                    An example of a commutative semigroup: the free commutative semigroup generated by ('a', 'b', 'c', 'd')
                     sage: A = S.algebra(QQ)
                     sage: a,b,c,d = A.algebra_generators()
-                    sage: a * b + b * d * c
-                    B[b + c + d] + B[a + b]
+                    sage: a * d * b
+                    B[a + b + d]
+
+                .. TODO::
+
+                    This doctest does not actually test this method,
+                    but rather the method of the same name for
+                    ``AdditiveSemigroups``. Find a better doctest!
                 """
                 return self.monomial(g1 + g2)
 
@@ -667,12 +677,12 @@ class AdditiveMagmas(Category_singleton):
                 # TODO: also call is_zero once it will work
                 tester.assertTrue(self.is_parent_of(zero))
                 for x in tester.some_elements():
-                    tester.assertTrue(x + zero == x)
+                    tester.assertEqual(x + zero, x)
                 # Check that zero is immutable if it looks like we can:
-                if hasattr(zero,"is_immutable"):
-                    tester.assertEqual(zero.is_immutable(),True)
-                if hasattr(zero,"is_mutable"):
-                    tester.assertEqual(zero.is_mutable(),False)
+                if hasattr(zero, "is_immutable"):
+                    tester.assertEqual(zero.is_immutable(), True)
+                if hasattr(zero, "is_mutable"):
+                    tester.assertEqual(zero.is_mutable(), False)
                 # Check that bool behave consistently on zero
                 tester.assertFalse(bool(self.zero()))
 
@@ -720,7 +730,7 @@ class AdditiveMagmas(Category_singleton):
 
                 TESTS:
 
-                We check that the method `is_empty` is inherited from this
+                We check that the method ``is_empty`` is inherited from this
                 category in both examples above::
 
                     sage: A.is_empty.__module__
@@ -769,10 +779,6 @@ class AdditiveMagmas(Category_singleton):
                     sage: bool(S.an_element())
                     True
                  """
-
-            if six.PY2:
-                __nonzero__ = __bool__
-                del __bool__
 
             def _test_nonzero_equal(self, **options):
                 r"""
@@ -1015,4 +1021,3 @@ class AdditiveMagmas(Category_singleton):
                         sage: A._test_zero()
                     """
                     return self.a_realization().zero()
-

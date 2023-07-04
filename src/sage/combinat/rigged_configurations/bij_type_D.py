@@ -38,6 +38,7 @@ TESTS::
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
 
+
 class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
@@ -410,10 +411,12 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
                 self.ret_rig_con[i].rigging[j] //= 2
                 self.ret_rig_con[i].vacancy_numbers[j] //= 2
 
+
 class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
     r"""
     Specific implementation of the bijection from rigged configurations to tensor products of KR tableaux for type `D_n^{(1)}`.
     """
+
     def run(self, verbose=False, build_graph=False):
         """
         Run the bijection from rigged configurations to tensor product of KR
@@ -508,7 +511,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
 
                     self.cur_dims[0][0] -= 1 # This takes care of the indexing
                     b = self.next_state(self.cur_dims[0][0])
-                    
+
                     # Corrections for spinor
                     if dim[0] == self.n and b == -self.n \
                       and self.cur_dims[0][0] == self.n - 1:
@@ -616,7 +619,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
                 end = ell[a]
                 if a < height:
                     end = len(self.cur_partitions[a])
-                for i in reversed(range(0, end)):
+                for i in reversed(range(end)):
                     if self.cur_partitions[a][i] >= last_size and \
                       self.cur_partitions[a].vacancy_numbers[i] == self.cur_partitions[a].rigging[i]:
                         ell[n + a] = i
@@ -766,4 +769,3 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
         n = self.n
         for i in range(len(self.cur_partitions[n-1]._list)):
             self.cur_partitions[n-1].vacancy_numbers[i] += 1
-

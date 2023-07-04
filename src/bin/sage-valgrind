@@ -1,11 +1,22 @@
 #!/usr/bin/env bash
 
+if [ -z $SAGE_EXTCODE ]; then
+    SAGE_EXTCODE=`${0/-valgrind} -c "from sage.env import SAGE_EXTCODE; print(SAGE_EXTCODE)"`
+fi
+
 SUPP=""
-if [ -f "$SAGE_EXTCODE/valgrind/python.supp" ]; then
-    SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/python.supp"
-else
+# Our python spkgs and also Debian install this file as python3.supp
+PYTHON_SUPP_FILENAME="python3.supp"
+for dir in "$SAGE_LOCAL/lib/valgrind" "/usr/local/lib/valgrind" "/usr/lib64/valgrind" "/usr/lib/valgrind" ; do
+    if [ -f "$dir"/"$PYTHON_SUPP_FILENAME" ]; then
+        SUPP=" --suppressions=$dir/$PYTHON_SUPP_FILENAME"
+        break
+    fi
+done
+if [ -z "$SUPP" ] ; then
     echo "Python suppressions not found (not installed?), skipping"
 fi
+
 SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/pyalloc.supp"
 SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/sage.supp"
 SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/sage-additional.supp"
@@ -19,4 +30,4 @@ else
     echo "Using default flags: $MEMCHECK_FLAGS"
 fi
 
-valgrind --tool=memcheck $MEMCHECK_FLAGS python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
+valgrind --tool=memcheck $MEMCHECK_FLAGS sage-ipython "$@" -i

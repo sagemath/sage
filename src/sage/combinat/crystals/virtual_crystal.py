@@ -23,14 +23,12 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-
-from __future__ import division
-
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.subcrystal import Subcrystal
 from sage.sets.family import Family
+
 
 class VirtualCrystal(Subcrystal):
     r"""
@@ -196,10 +194,11 @@ class VirtualCrystal(Subcrystal):
         if ambient in FiniteCrystals() or isinstance(contained, frozenset):
             category = category.Finite()
 
-        return super(Subcrystal, cls).__classcall__(cls, ambient, virtualization, scaling_factors,
-                                                    contained, tuple(generators), cartan_type,
-                                                    tuple(index_set), category)
- 
+        return super().__classcall__(cls, ambient, virtualization,
+                                     scaling_factors, contained,
+                                     tuple(generators), cartan_type,
+                                     tuple(index_set), category)
+
     def __init__(self, ambient, virtualization, scaling_factors,
                  contained, generators, cartan_type, index_set, category):
         """
@@ -298,6 +297,7 @@ class VirtualCrystal(Subcrystal):
         An element of a virtual (sub)crystal. Wraps an element in the
         ambient crystal.
         """
+
         def e(self, i):
             """
             Return `e_i` of ``self``.
@@ -416,4 +416,3 @@ class VirtualCrystal(Subcrystal):
                            for i in self.index_set())
 
 # TODO: implement a devirtualization map
-

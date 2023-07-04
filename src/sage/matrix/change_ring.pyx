@@ -1,7 +1,6 @@
 """
-Functions for changing the base ring of matrices quickly.
+Functions for changing the base ring of matrices quickly
 """
-from __future__ import absolute_import
 
 from .matrix_space import MatrixSpace
 from .matrix_real_double_dense cimport Matrix_real_double_dense
@@ -39,8 +38,5 @@ def integer_to_real_double_dense(Matrix_integer_dense A):
                                          S, None, None, None)
     for i from 0 <= i < A._nrows:
         for j from 0 <= j < A._ncols:
-            M.set_unsafe_double(i,j,A.get_unsafe_double(i,j))
+            M.set_unsafe_double(i, j, A.get_unsafe_double(i, j))
     return M
-
-
-

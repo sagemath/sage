@@ -14,8 +14,7 @@
 from __future__ import print_function, absolute_import
 
 from collections import defaultdict
-
-from six.moves import cStringIO as StringIO
+from io import StringIO
 
 from .memory import string_of_addr
 from .utils import je, indent_lines, reindent_lines as ri
@@ -75,7 +74,7 @@ class InterpreterGenerator(object):
             sage: from sage_setup.autogen.interpreters import *
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
-            sage: from six.moves import cStringIO as StringIO
+            sage: from io import StringIO
             sage: buff = StringIO()
             sage: instrs = dict([(ins.name, ins) for ins in interp.instr_descs])
             sage: gen.gen_code(instrs['div'], buff.write)
@@ -94,7 +93,6 @@ class InterpreterGenerator(object):
 
         d = instr_desc
         w = write
-        s = self._spec
 
         if d.uses_error_handler:
             self.uses_error_handler = True
@@ -174,7 +172,6 @@ class InterpreterGenerator(object):
         stack_offsets = defaultdict(int)
         for i in range(len(d.inputs)):
             (ch, addr, input_len) = d.inputs[i]
-            chst = ch.storage_type
             if ch.is_python_refcounted_stack() and not d.handles_own_decref:
                 if input_len is None:
                     w("        Py_DECREF(i%d);\n" % i)
@@ -265,7 +262,7 @@ class InterpreterGenerator(object):
             sage: from sage_setup.autogen.interpreters import *
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
-            sage: from six.moves import cStringIO as StringIO
+            sage: from io import StringIO
             sage: buff = StringIO()
             sage: gen.write_interpreter(buff.write)
             sage: print(buff.getvalue())
@@ -312,7 +309,7 @@ class InterpreterGenerator(object):
             sage: from sage_setup.autogen.interpreters import *
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
-            sage: from six.moves import cStringIO as StringIO
+            sage: from io import StringIO
             sage: buff = StringIO()
             sage: gen.write_wrapper(buff.write)
             sage: print(buff.getvalue())
@@ -481,7 +478,7 @@ class InterpreterGenerator(object):
             sage: from sage_setup.autogen.interpreters import *
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
-            sage: from six.moves import cStringIO as StringIO
+            sage: from io import StringIO
             sage: buff = StringIO()
             sage: gen.write_pxd(buff.write)
             sage: print(buff.getvalue())

@@ -5,15 +5,15 @@ AUTHORS:
 
  - Nicolas Borie  (2010-03): First release.
  - Florent Hivert (2010-03): Added a class factory + cardinality method.
- - Vincent Delecroix (2012-02): add methods rank/unrank, make it complient with
+ - Vincent Delecroix (2012-02): add methods rank/unrank, make it compliant with
    Python int.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -23,6 +23,7 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.infinity import Infinity, MinusInfinity, PlusInfinity
+
 
 class IntegerRange(UniqueRepresentation, Parent):
     r"""
@@ -221,9 +222,12 @@ class IntegerRange(UniqueRepresentation, Parent):
             ...
             TypeError: end must be Integer or Infinity, not <... 'sage.rings.real_mpfr.RealLiteral'>
         """
-        if isinstance(begin, int): begin = Integer(begin)
-        if isinstance(end, int): end = Integer(end)
-        if isinstance(step,int): step = Integer(step)
+        if isinstance(begin, int):
+            begin = Integer(begin)
+        if isinstance(end, int):
+            end = Integer(end)
+        if isinstance(step, int):
+            step = Integer(step)
 
         if end is None:
             end = begin
@@ -692,7 +696,7 @@ class IntegerRangeFromMiddle(IntegerRange):
         self._end = end
         self._step = step
         self._middle_point = middle_point
-        if not middle_point in self:
+        if middle_point not in self:
             raise ValueError("middle_point is not in the interval")
 
         if (begin != Infinity and begin != -Infinity) and \
@@ -760,8 +764,8 @@ class IntegerRangeFromMiddle(IntegerRange):
             ...
             LookupError: 1 not in Integer progression containing 0 with increment 10 and bounded with -Infinity and +Infinity
         """
-        if not elt in self:
-            raise LookupError('%r not in %r' % (elt,self))
+        if elt not in self:
+            raise LookupError('%r not in %r' % (elt, self))
         n = self._middle_point
         if (elt <= n and self._step > 0) or (elt >= n and self._step < 0):
             right = 2*n-elt+self._step

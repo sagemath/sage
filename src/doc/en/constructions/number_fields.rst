@@ -100,20 +100,17 @@ object:
     sage: K.class_number()
     2
     sage: K.class_group()
-    Class group of order 2 with structure C2 of Number Field in x with defining
-    polynomial x^2 + 15
+    Class group of order 2 with structure C2 of Number Field in x with defining polynomial x^2 + 15 with x = 3.872983346207417?*I
     sage: K = QuadraticField(401, 'x')
     sage: K.class_group()
-    Class group of order 5 with structure C5 of Number Field in x with defining
-    polynomial x^2 - 401
+    Class group of order 5 with structure C5 of Number Field in x with defining polynomial x^2 - 401 with x = 20.02498439450079?
     sage: K.class_number()
     5
     sage: K.discriminant()
     401
     sage: K = QuadraticField(-479, 'x')
     sage: K.class_group()
-    Class group of order 25 with structure C25 of Number Field in x with defining
-    polynomial x^2 + 479
+    Class group of order 25 with structure C25 of Number Field in x with defining polynomial x^2 + 479 with x = 21.88606862823929?*I
     sage: K.class_number()
     25
     sage: K.pari_polynomial()

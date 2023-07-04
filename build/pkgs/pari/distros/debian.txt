@@ -1,0 +1,9 @@
+pari-gp2c
+libpari-dev
+# #29319: cypari2 needs gphelp at installation time
+pari-doc
+# We add these data packages because they are checked by spkg-configure.m4
+pari-elldata
+pari-galdata
+pari-galpol
+pari-seadata

@@ -1,7 +1,6 @@
 """
 Generic dual bases symmetric functions
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -15,14 +14,15 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 import sage.combinat.partition
 import sage.data_structures.blas_dict as blas
 from . import classical
+
 
 class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
@@ -110,7 +110,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         TESTS:
 
-        Regression test for :trac:`12489`. This ticket improving
+        Regression test for :trac:`12489`. This issue improving
         equality test revealed that the conversion back from the dual
         basis did not strip cancelled terms from the dictionary::
 
@@ -148,14 +148,13 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             prefix = 'd_'+dual_basis.prefix()
 
         classical.SymmetricFunctionAlgebra_classical.__init__(self, self._sym,
-                                                              basis_name = basis_name,
-                                                              prefix = prefix)
+                                                              basis_name=basis_name,
+                                                              prefix=prefix)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
         category = sage.categories.all.ModulesWithBasis(self.base_ring())
-        self            .register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
+        self.register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
         self._dual_basis.register_coercion(SetMorphism(Hom(self, self._dual_basis, category), self._self_to_dual))
-
 
     def _dual_to_self(self, x):
         """
@@ -193,7 +192,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: h(m([2,1]) + 3*m[1,1,1])
             d_m[1, 1, 1] - d_m[2, 1]
         """
-        return self._element_class(self, dual = x)
+        return self._element_class(self, dual=x)
 
     def _self_to_dual(self, x):
         """
@@ -215,7 +214,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: h._self_to_dual(h([2,1]) + 3*h[1,1,1])
             21*m[1, 1, 1] + 11*m[2, 1] + 4*m[3]
 
-        This is for internal use only. Please use instead:
+        This is for internal use only. Please use instead::
 
             sage: m(h([2,1]) + 3*h[1,1,1])
             21*m[1, 1, 1] + 11*m[2, 1] + 4*m[3]
@@ -277,11 +276,11 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             Dual basis to Symmetric Functions over Rational Field in the monomial basis with respect to the Hall scalar product
         """
         if hasattr(self, "_basis"):
-            return super(SymmetricFunctionAlgebra_dual, self)._repr_()
+            return super()._repr_()
         if self._scalar_name:
-            return "Dual basis to %s"%self._dual_basis + " with respect to the " + self._scalar_name
+            return "Dual basis to %s" % self._dual_basis + " with respect to the " + self._scalar_name
         else:
-            return "Dual basis to %s"%self._dual_basis
+            return "Dual basis to %s" % self._dual_basis
 
     def _precompute(self, n):
         """
@@ -491,8 +490,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         else:
             return self._inverse_transition_matrices[n]*self._dual_basis.transition_matrix(basis, n)
 
-
-    def _multiply(self, left, right):
+    def product(self, left, right):
         """
         Return product of ``left`` and ``right``.
 
@@ -518,12 +516,10 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: b.dual()
             6*m[1, 1, 1, 1] + 4*m[2, 1, 1] + 3*m[2, 2] + 2*m[3, 1] + m[4]
         """
-
-        #Do the multiplication in the dual basis
-        #and then convert back to self.
+        # Do the multiplication in the dual basis
+        # and then convert back to self.
         eclass = left.__class__
-        d_product = left.dual()*right.dual()
-
+        d_product = left.dual() * right.dual()
         return eclass(self, dual=d_product)
 
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
@@ -540,6 +536,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         - ``dual`` -- self as an element of the dual basis.
         """
+
         def __init__(self, A, dictionary=None, dual=None):
             """
             Create an element of a dual basis.
@@ -592,7 +589,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
                 dual = parent._dual_basis._from_dict(dual_dict)
 
-
             if dictionary is None:
                 # We need to compute the monomial coefficients dictionary
                 dictionary = {}
@@ -614,7 +610,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             # Initialize self
             self._dual = dual
             classical.SymmetricFunctionAlgebra_classical.Element.__init__(self, A, dictionary)
-
 
         def dual(self):
             """
@@ -893,7 +888,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             """
             return self._dual.expand(n, alphabet)
 
+
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.dual', 'SymmetricFunctionAlgebraElement_dual',  SymmetricFunctionAlgebra_dual.Element)
-

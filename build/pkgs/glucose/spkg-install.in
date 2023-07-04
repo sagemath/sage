@@ -1,0 +1,25 @@
+cd src
+
+LFLAGS="${LDFLAGS} -Wall -lpthread"
+export LFLAGS
+
+cd simp
+sdh_make
+sdh_install glucose ${SAGE_LOCAL}/bin/
+cd ..
+
+# Possible license issue, see warning below and discussion on https://github.com/sagemath/sage/issues/26361
+cd parallel
+sdh_make
+sdh_install glucose-syrup ${SAGE_LOCAL}/bin/
+cd ..
+
+echo "WARNING: according to the license:
+
+  The parallel version of Glucose (all files modified since Glucose 3.0
+  releases, 2013) cannot be used in any competitive event (sat
+  competitions/evaluations) without the express permission of the authors
+  (Gilles Audemard / Laurent Simon). This is also the case for any competitive
+  event using Glucose Parallel as an embedded SAT engine (single core or not).
+"
+

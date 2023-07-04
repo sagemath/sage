@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -16,7 +23,7 @@ from sage.rings.integer cimport Integer
 
 zz_pContextDict = {}
 
-cdef class ntl_zz_pContext_class(object):
+cdef class ntl_zz_pContext_class():
     def __init__(self, long v):
         """
         EXAMPLES::
@@ -43,15 +50,21 @@ cdef class ntl_zz_pContext_class(object):
     def __cinit__(self, long v):
         if v > NTL_SP_BOUND:
             raise ValueError("Modulus (=%s) is too big" % v)
+        elif v < 2:
+            # Issue 13940: only moduli greater than one are supported.
+            raise ValueError("Modulus (=%s) is too small" % v)
+
         self.x = zz_pContext_c(v)
         zz_pContextDict[repr(v)] = self
         self.p = v
 
     def __reduce__(self):
         """
-        sage: c=ntl.zz_pContext(13)
-        sage: loads(dumps(c)) is c
-        True
+        EXAMPLES::
+
+            sage: c=ntl.zz_pContext(13)
+            sage: loads(dumps(c)) is c
+            True
         """
         return ntl_zz_pContext, (self.p,)
 
@@ -104,6 +117,14 @@ def ntl_zz_pContext( v ):
         Traceback (most recent call last):
         ...
         ValueError: Modulus (=10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) is too big
+        sage: f = ntl.zz_pContext(1)
+        Traceback (most recent call last):
+        ...
+        ValueError: Modulus (=1) is too small
+        sage: f = ntl.zz_pContext(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: Modulus (=0) is too small
     """
     if v > NTL_SP_BOUND:
         raise ValueError("Modulus (=%s) is too big" % v)

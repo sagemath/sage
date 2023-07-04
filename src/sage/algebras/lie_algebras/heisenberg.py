@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Heisenberg Algebras
 
@@ -139,6 +140,25 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
             return m
         return "%s_{%s}"%(m[0], m[1:]) # else it is of length at least 2
 
+    def _unicode_art_term(self, m):
+        r"""
+        Return a unicode art representation of the term indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: H = lie_algebras.Heisenberg(QQ, 10)
+            sage: H._unicode_art_term('p1')
+            p₁
+            sage: H._unicode_art_term('z')
+            z
+            sage: unicode_art(H.p(10))
+            p₁₀
+        """
+        from sage.typeset.unicode_art import unicode_art, unicode_subscript
+        if len(m) == 1:
+            return unicode_art(m)
+        return unicode_art(str(m[0]) + unicode_subscript(m[1:])) # else it is of length at least 2
+
     def step(self):
         r"""
         Return the nilpotency step of ``self``.
@@ -158,7 +178,7 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
     class Element(LieAlgebraElement):
         pass
 
-class HeisenbergAlgebra_fd(object):
+class HeisenbergAlgebra_fd():
     """
     Common methods for finite-dimensional Heisenberg algebras.
     """
@@ -308,7 +328,7 @@ class HeisenbergAlgebra_fd(object):
             if H._n <= self._n and self.base_ring().has_coerce_map_from(H.base_ring()):
                 return H.module_morphism(lambda i: self.basis()[i], codomain=self)
             return None # Otherwise no coercion
-        return super(HeisenbergAlgebra_fd, self)._coerce_map_from_(H)
+        return super()._coerce_map_from_(H)
 
 
 class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
@@ -462,8 +482,9 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
             sage: L.basis()[(12, 'p')]
             p12
         """
-        S = cartesian_product([PositiveIntegers(), ['p','q']])
+        S = cartesian_product([PositiveIntegers(), ['p', 'q']])
         I = DisjointUnionEnumeratedSets([Set(['z']), S])
+
         def basis_elt(x):
             if isinstance(x, str):
                 return self.monomial(x)
@@ -526,15 +547,16 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
         if isinstance(H, HeisenbergAlgebra_fd):
             if self.base_ring().has_coerce_map_from(H.base_ring()):
                 return H.module_morphism(self._from_fd_on_basis, codomain=self)
-            return None # Otherwise no coercion
+            return None  # Otherwise no coercion
         if isinstance(H, InfiniteHeisenbergAlgebra):
             if self.base_ring().has_coerce_map_from(H.base_ring()):
                 return lambda C,x: self._from_dict(x._monomial_coefficients, coerce=True)
-            return None # Otherwise no coercion
-        return super(InfiniteHeisenbergAlgebra, self)._coerce_map_from_(H)
+            return None  # Otherwise no coercion
+        return super()._coerce_map_from_(H)
+
 
 #######################################################
-## Finite rank Heisenberg algebra using matrices
+# Finite rank Heisenberg algebra using matrices
 
 class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
     r"""
@@ -775,4 +797,3 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
                 if entry:
                     d[mon] = entry
             return d
-

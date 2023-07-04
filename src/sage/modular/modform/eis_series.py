@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
 """
-Eisenstein Series
+Eisenstein series
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
-from six import integer_types
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.misc.all import verbose, cputime
-import sage.modular.dirichlet as dirichlet
+from sage.arith.functions import lcm
+from sage.arith.misc import bernoulli, divisors, is_squarefree
+from sage.misc.misc import cputime
 from sage.modular.arithgroup.congroup_gammaH import GammaH_class
-from sage.rings.all import Integer, CyclotomicField, ZZ, QQ
-from sage.arith.all import bernoulli, divisors, is_squarefree, lcm
+from sage.modular.dirichlet import DirichletGroup
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+
 from .eis_series_cython import eisenstein_series_poly, Ek_ZZ
 
-def eisenstein_series_qexp(k, prec = 10, K=QQ, var='q', normalization='linear'):
+
+def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
     r"""
     Return the `q`-expansion of the normalized weight `k` Eisenstein series on
-    `{\rm SL}_2(\ZZ)` to precision prec in the ring `K`. Three normalizations
+    `\SL_2(\ZZ)` to precision prec in the ring `K`. Three normalizations
     are available, depending on the parameter ``normalization``; the default
     normalization is the one for which the linear coefficient is 1.
 
@@ -121,8 +125,8 @@ def eisenstein_series_qexp(k, prec = 10, K=QQ, var='q', normalization='linear'):
     - David Loeffler (2012-03-15): add options for alternative normalizations
       (motivated by :trac:`12043`)
     """
-    ## we use this to prevent computation if it would fail anyway.
-    if k <= 0 or k % 2 == 1 :
+    # we use this to prevent computation if it would fail anyway.
+    if k <= 0 or k % 2 == 1:
         raise ValueError("k must be positive and even")
 
     a0 = - bernoulli(k) / (2*k)
@@ -214,19 +218,21 @@ def __find_eisen_chars(character, k):
         ((-1, 1), (1, 1), 9),
         ((-1, -1), (1, -1), 1)]
     """
+    from sage.misc.verbose import verbose
+
     N = character.modulus()
     if character.is_trivial():
-        if k%2 != 0:
+        if k % 2:
             return []
         char_inv = ~character
-        V = [(character, char_inv, t) for t in divisors(N) if t>1]
+        V = [(character, char_inv, t) for t in divisors(N) if t > 1]
         if k != 2:
-            V.insert(0,(character, char_inv, 1))
+            V.insert(0, (character, char_inv, 1))
         if is_squarefree(N):
             return V
         # Now include all pairs (chi,chi^(-1)) such that cond(chi)^2 divides N:
         # TODO: Optimize -- this is presumably way too hard work below.
-        G = dirichlet.DirichletGroup(N)
+        G = DirichletGroup(N)
         for chi in G:
             if not chi.is_trivial():
                 f = chi.conductor()
@@ -236,7 +242,6 @@ def __find_eisen_chars(character, k):
                     for t in divisors(N//(f**2)):
                         V.insert(0, (chi, chi_inv, t))
         return V
-
 
     eps = character
     if eps(-1) != (-1)**k:
@@ -297,7 +302,7 @@ def __find_eisen_chars_gammaH(N, H, k):
         [((1, 1), (-1, -1), 1), ((-1, 1), (1, -1), 1), ((1, -1), (-1, 1), 1), ((-1, -1), (1, 1), 1)]
     """
     params = []
-    for chi in dirichlet.DirichletGroup(N):
+    for chi in DirichletGroup(N):
         if all(chi(h) == 1 for h in H):
             params += __find_eisen_chars(chi, k)
     return params
@@ -338,7 +343,7 @@ def __find_eisen_chars_gamma1(N, k):
     """
     pairs = []
     s = (-1)**k
-    G = dirichlet.DirichletGroup(N)
+    G = DirichletGroup(N)
     E = list(G)
     parity = [c(-1) for c in E]
     for i in range(len(E)):
@@ -347,7 +352,8 @@ def __find_eisen_chars_gamma1(N, k):
                 chi, psi = __common_minimal_basering(E[i], E[j])
                 if k != 1:
                     pairs.append((chi, psi))
-                    if i!=j: pairs.append((psi,chi))
+                    if i != j:
+                        pairs.append((psi, chi))
                 else:
                     # if weight is 1 then (chi, psi) and (chi, psi) are the
                     # same form
@@ -360,24 +366,24 @@ def __find_eisen_chars_gamma1(N, k):
     #end if
 
     triples = []
-    D = divisors(N)
     for chi, psi in pairs:
         c_chi = chi.conductor()
         c_psi = psi.conductor()
-        D = divisors(N/(c_chi * c_psi))
-        if (k==2 and chi.is_trivial() and psi.is_trivial()):
+        D = divisors(N // (c_chi * c_psi))
+        if k == 2 and chi.is_trivial() and psi.is_trivial():
             D.remove(1)
         chi, psi = __common_minimal_basering(chi, psi)
         for t in D:
             triples.append((chi, psi, t))
     return triples
 
+
 def eisenstein_series_lseries(weight, prec=53,
                max_imaginary_part=0,
                max_asymp_coeffs=40):
     r"""
     Return the L-series of the weight `2k` Eisenstein series
-    on `\mathrm{SL}_2(\ZZ)`.
+    on `\SL_2(\ZZ)`.
 
     This actually returns an interface to Tim Dokchitser's program
     for computing with the L-series of the Eisenstein series
@@ -413,27 +419,28 @@ def eisenstein_series_lseries(weight, prec=53,
         sage: L(2)
         -5.0235535164599797471968418348135050804419155747868718371029
     """
-    f = eisenstein_series_qexp(weight,prec)
+    f = eisenstein_series_qexp(weight, prec)
     from sage.lfunctions.all import Dokchitser
     j = weight
-    L = Dokchitser(conductor = 1,
-                   gammaV = [0,1],
-                   weight = j,
-                   eps = (-1)**Integer(j/2),
-                   poles = [j],
+    L = Dokchitser(conductor=1,
+                   gammaV=[0, 1],
+                   weight=j,
+                   eps=(-1)**Integer(j // 2),
+                   poles=[j],
                    # Using a string for residues is a hack but it works well
                    # since this will make PARI/GP compute sqrt(pi) with the
                    # right precision.
-                   residues = '[sqrt(Pi)*(%s)]'%((-1)**Integer(j/2)*bernoulli(j)/j),
-                   prec = prec)
+                   residues='[sqrt(Pi)*(%s)]'%((-1)**Integer(j/2)*bernoulli(j)/j),
+                   prec=prec)
 
     s = 'coeff = %s;'%f.list()
-    L.init_coeffs('coeff[k+1]',pari_precode = s,
+    L.init_coeffs('coeff[k+1]',pari_precode=s,
                   max_imaginary_part=max_imaginary_part,
                   max_asymp_coeffs=max_asymp_coeffs)
     L.check_functional_equation()
     L.rename('L-series associated to the weight %s Eisenstein series %s on SL_2(Z)'%(j,f))
     return L
+
 
 def compute_eisenstein_params(character, k):
     r"""
@@ -484,7 +491,7 @@ def compute_eisenstein_params(character, k):
         sage: len(sage.modular.modform.eis_series.compute_eisenstein_params(GammaH(15, [4]), 3))
         8
     """
-    if isinstance(character, integer_types + (Integer,)):
+    if isinstance(character, (int, Integer)):
         return __find_eisen_chars_gamma1(character, k)
     elif isinstance(character, GammaH_class):
         return __find_eisen_chars_gammaH(character.level(), character._generators_for_H(), k)

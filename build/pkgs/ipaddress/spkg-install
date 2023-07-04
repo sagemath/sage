@@ -1,6 +1,0 @@
-if [ "$SAGE_PYTHON3" = yes ]; then
-    echo "Skipping ipaddress: it is not necessary for on Python 3.3+."
-    exit 0
-fi
-
-cd src && sdh_pip_install .

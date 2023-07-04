@@ -6,7 +6,7 @@ Shuffle product of words
     The module :mod:`sage.combinat.shuffle` contains a more general
     implementation of shuffle product.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
 #
@@ -19,17 +19,19 @@ Shuffle product of words
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.combinat.words.word import Word_class, Word
-from sage.combinat.combinat import CombinatorialClass
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.composition import Compositions_n, Compositions, Composition
-from sage.misc.lazy_import import lazy_import
+from sage.combinat.composition import Composition
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
-class ShuffleProduct_w1w2(CombinatorialClass):
-    def __init__(self, w1, w2):
+
+class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
+    def __init__(self, w1, w2, check=True):
         r"""
         The shuffle product of the two words ``w1`` and ``w2``.
 
@@ -52,26 +54,42 @@ class ShuffleProduct_w1w2(CombinatorialClass):
         all `w(I)` with `I` ranging over the `a`-element subsets of
         `\{1, 2, \cdots, a+b\}`.
 
+        INPUT:
+
+        - ``check`` -- boolean (default ``True``) whether to check that
+          all words in the shuffle product belong to the correct parent
+
         EXAMPLES::
 
             sage: from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
             sage: W = Words([1,2,3,4])
             sage: s = ShuffleProduct_w1w2(W([1,2]),W([3,4]))
-            sage: sorted(list(s))
-            [word: 1234, word: 1324, word: 1342, word: 3124, word: 3142, word: 3412]
+            sage: sorted(s)
+            [word: 1234, word: 1324, word: 1342, word: 3124,
+             word: 3142, word: 3412]
             sage: s == loads(dumps(s))
             True
+            sage: TestSuite(s).run()
 
             sage: s = ShuffleProduct_w1w2(W([1,4,3]),W([2]))
-            sage: sorted(list(s))
+            sage: sorted(s)
             [word: 1243, word: 1423, word: 1432, word: 2143]
 
             sage: s = ShuffleProduct_w1w2(W([1,4,3]),W([]))
-            sage: sorted(list(s))
+            sage: sorted(s)
             [word: 143]
+
+        TESTS::
+
+            sage: W = Words([1,2,3,4])
+            sage: s = ShuffleProduct_w1w2(W([1,2]), W([3,4]), check=False)
+            sage: len(list(s))
+            6
         """
         self._w1 = w1
         self._w2 = w2
+        self._check = bool(check)
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __repr__(self):
         """
@@ -82,7 +100,7 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: repr(ShuffleProduct_w1w2(W("ab"),W("cd")))
             'Shuffle product of word: ab and word: cd'
         """
-        return "Shuffle product of %s and %s"% (repr(self._w1), repr(self._w2))
+        return "Shuffle product of %s and %s" % (repr(self._w1), repr(self._w2))
 
     def __contains__(self, x):
         """
@@ -107,7 +125,6 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: x*w in w.shuffle(x)
             True
         """
-        from sage.combinat.words.word import Word
         if not isinstance(x, Word_class):
             return False
         if x.length() != self._w1.length() + self._w2.length():
@@ -121,7 +138,8 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             except IndexError:
                 return False
             if w1 and w2 and letter == w1[0] == w2[0]:
-                return Word(wx) in self._w1[1:].shuffle(self._w2) or Word(wx) in self._w1.shuffle(self._w2[1:])
+                return (Word(wx) in self._w1[1:].shuffle(self._w2) or
+                        Word(wx) in self._w1.shuffle(self._w2[1:]))
             if w1 and letter == w1[0]:
                 w1.pop(0)
             elif w2 and letter == w2[0]:
@@ -154,69 +172,9 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: S.cardinality()
             6
         """
-        return binomial(self._w1.length()+self._w2.length(), self._w1.length())
-
-    def _proc(self, vect):
-        """
-        Return the shuffle of ``w1`` with ``w2`` with 01-vector
-        ``vect``.
-
-        The 01-vector of a shuffle is a list of 0s and 1s whose
-        length is the sum of the lengths of ``w1`` and ``w2``,
-        and whose `k`-th entry is `1` if the `k`-th letter of
-        the shuffle is taken from ``w1`` and `0` if it is taken
-        from ``w2``.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
-            sage: w, u = map(Words("abcd"), ["ab", "cd"])
-            sage: S = ShuffleProduct_w1w2(w,u)
-            sage: S._proc([0,1,0,1])
-            word: cadb
-            sage: S._proc([1,1,0,0])
-            word: abcd
-
-            sage: I = Composition([1, 1])
-            sage: J = Composition([2])
-            sage: S = ShuffleProduct_w1w2(I, J)
-            sage: S._proc([1,0,1])
-            [1, 2, 1]
-
-        TESTS:
-
-        Sage is no longer confused by a too-restrictive parent
-        of `I` when shuffling two compositions `I` and `J`
-        (cf. :trac:`15131`)::
-
-            sage: I = Compositions(2)([1, 1])
-            sage: J = Composition([2])
-            sage: S = ShuffleProduct_w1w2(I, J)
-            sage: S._proc([1,0,1])
-            [1, 2, 1]
-            sage: S.list()
-            [[1, 1, 2], [1, 2, 1], [2, 1, 1]]
-        """
-        i1 = -1
-        i2 = -1
-        res = []
-        for v in vect:
-            if v == 1:
-                i1 += 1
-                res.append(self._w1[i1])
-            else:
-                i2 += 1
-                res.append(self._w2[i2])
-        try:
-            return self._w1.parent()(res)
-        except ValueError:
-            # Special situation: the parent of w1 is too
-            # restrictive to be cast on res.
-            if isinstance(self._w1, Composition):
-                return Composition(res)
-            elif isinstance(self._w1, Word_class):
-                return Word(res)
-            return res
+        len_w1 = self._w1.length()
+        len_w2 = self._w2.length()
+        return binomial(len_w1 + len_w2, len_w1)
 
     def __iter__(self):
         """
@@ -229,15 +187,50 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: w, u = map(Words("abcd"), ["ab", "cd"])
             sage: S = ShuffleProduct_w1w2(w,u)
             sage: S.list() #indirect test
-            [word: abcd, word: acbd, word: acdb, word: cabd, word: cadb, word: cdab]
+            [word: abcd, word: acbd, word: acdb, word: cabd,
+             word: cadb, word: cdab]
+
+            sage: I = Composition([1, 1])
+            sage: J = Composition([2])
+            sage: S = ShuffleProduct_w1w2(I, J)
+            sage: next(iter(S))
+            [1, 1, 2]
+
+        TESTS:
+
+        Sage is no longer confused by a too-restrictive parent of `I`
+        when shuffling compositions `I` and `J` (cf. :trac:`15131`)::
+
+            sage: I = Compositions(2)([1, 1])
+            sage: J = Composition([2])
+            sage: S = ShuffleProduct_w1w2(I, J)
+            sage: S.list()
+            [[1, 1, 2], [1, 2, 1], [2, 1, 1]]
         """
         n1 = len(self._w1)
         n2 = len(self._w2)
-        for iv in IntegerVectors(n1, n1+n2, max_part=1):
-            yield self._proc(iv)
+        w1_parent = self._w1.parent()
+        use_w1_parent = True
+        try:
+            w1_parent(list(self._w1) + list(self._w2), check=self._check)
+        except (ValueError, TypeError):
+            use_w1_parent = False
+            if isinstance(self._w1, Composition):
+                large_parent = Composition
+            elif isinstance(self._w1, Word_class):
+                large_parent = Word
+        for iv in IntegerVectors(n1, n1 + n2, max_part=1):
+            it1 = iter(self._w1)
+            it2 = iter(self._w2)
+            w = [next(it1) if v else next(it2) for v in iv]
+            if use_w1_parent:
+                yield w1_parent(w, check=self._check)
+            else:
+                yield large_parent(w)
+
 
 class ShuffleProduct_shifted(ShuffleProduct_w1w2):
-    def __init__(self, w1, w2):
+    def __init__(self, w1, w2, check=True):
         """
         Shifted shuffle product of ``w1`` with ``w2``.
 
@@ -248,6 +241,11 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
         Note that this class is meant to be used for words; it
         misbehaves when ``w1`` is a permutation or composition.
 
+        INPUT:
+
+        - ``check`` -- boolean (default ``True``) whether to check that
+          all words in the shuffle product belong to the correct parent
+
         EXAMPLES::
 
             sage: from sage.combinat.words.shuffle_product import ShuffleProduct_shifted
@@ -255,10 +253,17 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
             sage: S = ShuffleProduct_shifted(w,u)
             sage: S == loads(dumps(S))
             True
+
+        TESTS::
+
+            sage: w, u = Word([1,2]), Word([3,4])
+            sage: S = ShuffleProduct_shifted(w, u, check=False)
+            sage: len(list(S))
+            6
         """
         shift = w1.length()
-        shifted_w2 = w1.parent()([x + shift for x in w2])
-        ShuffleProduct_w1w2.__init__(self, w1, shifted_w2)
+        shifted_w2 = w1.parent()([x + shift for x in w2], check=check)
+        ShuffleProduct_w1w2.__init__(self, w1, shifted_w2, check)
 
     def __repr__(self):
         """
@@ -269,7 +274,4 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
             sage: ShuffleProduct_shifted(w,u).__repr__()
             'Shuffle product of word: 01 and word: 45'
         """
-        return "Shuffle product of %s and %s"% (repr(self._w1), repr(self._w2))
-
-lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping_r', deprecation=15597)
-lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping', deprecation=15597)
+        return "Shuffle product of %s and %s" % (repr(self._w1), repr(self._w2))

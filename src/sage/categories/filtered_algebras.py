@@ -59,4 +59,3 @@ class FilteredAlgebras(FilteredModulesCategory):
                  the universal enveloping algebra of
                  Lie algebra of RR^3 with cross product over Integer Ring
             """
-

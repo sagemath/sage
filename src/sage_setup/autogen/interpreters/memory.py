@@ -13,8 +13,6 @@
 
 from __future__ import print_function, absolute_import
 
-import six
-
 from .utils import je, reindent_lines as ri
 
 
@@ -36,7 +34,7 @@ def string_of_addr(a):
         sage: string_of_addr(42r)
         '42'
     """
-    if isinstance(a, six.integer_types):
+    if isinstance(a, int):
         return str(a)
     assert(isinstance(a, MemoryChunk))
     return '*%s++' % a.name
@@ -109,7 +107,7 @@ class MemoryChunk(object):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: mc.declare_class_members()
-            u'    cdef int _n_args\n    cdef mpfr_t* _args\n'
+            '    cdef int _n_args\n    cdef mpfr_t* _args\n'
         """
         return self.storage_type.declare_chunk_class_members(self.name)
 
@@ -176,7 +174,7 @@ class MemoryChunk(object):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_call_locals()
-            u'        cdef RealNumber retval = (self.domain)()\n'
+            '        cdef RealNumber retval = (self.domain)()\n'
         """
         return ""
 

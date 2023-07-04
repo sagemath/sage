@@ -1,7 +1,0 @@
-export CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
-
-cd src
-
-sdh_configure
-sdh_make
-sdh_make_install

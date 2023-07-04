@@ -16,12 +16,11 @@ Test of the :mod:`~sage.structure.factory` module
 #
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 from sage.structure.factory import UniqueFactory
 
 
-class A(object):
+class A():
     # something we can weakref
     pass
 

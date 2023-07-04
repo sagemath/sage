@@ -1,21 +1,21 @@
 r"""
 Examples of a finite dimensional Lie algebra with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from six import iteritems
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
-from sage.categories.all import LieAlgebras
+from sage.categories.lie_algebras import LieAlgebras
 from sage.modules.free_module import FreeModule
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.examples.lie_algebras import LieAlgebraFromAssociative as BaseExample
+
 
 class AbelianLieAlgebra(Parent, UniqueRepresentation):
     r"""
@@ -76,8 +76,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
         else:
             M = M.change_ring(R)
             n = M.dimension()
-        return super(AbelianLieAlgebra, cls).__classcall__(cls, R, n=n, M=M,
-                                                           ambient=ambient)
+        return super().__classcall__(cls, R, n=n, M=M, ambient=ambient)
 
     def __init__(self, R, n=None, M=None, ambient=None):
         """
@@ -219,7 +218,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             False
         """
         if not isinstance(A, AbelianLieAlgebra):
-            return super(AbelianLieAlgebra, self).is_ideal(A)
+            return super().is_ideal(A)
         if A == self or A == self._ambient:
             return True
         if self._ambient != A._ambient:
@@ -282,7 +281,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
         """
         return self._M
 
-    def from_vector(self, v):
+    def from_vector(self, v, order=None):
         """
         Return the element of ``self`` corresponding to the
         vector ``v`` in ``self.module()``.
@@ -318,7 +317,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                 [(0, 2), (2, -1)]
             """
             zero = self.parent().base_ring().zero()
-            for i, c in iteritems(self.value):
+            for i, c in self.value.items():
                 if c != zero:
                     yield (i, c)
 
@@ -368,9 +367,9 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             """
             UEA = self.parent().universal_enveloping_algebra()
             gens = UEA.gens()
-            return UEA.sum(c * gens[i] for i, c in iteritems(self.value))
+            return UEA.sum(c * gens[i] for i, c in self.value.items())
 
-        def to_vector(self):
+        def to_vector(self, order=None, sparse=False):
             """
             Return ``self`` as a vector in
             ``self.parent().module()``.
@@ -386,6 +385,8 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                 sage: elt.to_vector()
                 (2, 2, 3)
             """
+            if sparse:
+                return self.value.sparse_vector()
             return self.value
 
         def monomial_coefficients(self, copy=True):
@@ -403,4 +404,3 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             return self.value.monomial_coefficients(copy)
 
 Example = AbelianLieAlgebra
-

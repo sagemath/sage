@@ -1,5 +1,5 @@
 """
-p-Adic Extension Leaves
+`p`-adic Extension Leaves
 
 The final classes for extensions of Zp and Qp (ie classes that are not
 just designed to be inherited from).
@@ -8,7 +8,6 @@ AUTHORS:
 
 - David Roe
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
@@ -40,13 +39,13 @@ from .generic_nodes import pAdicCappedRelativeRingGeneric, \
 
 #from unramified_extension_absolute_element import UnramifiedExtensionAbsoluteElement
 #from unramified_extension_capped_relative_element import UnramifiedExtensionCappedRelativeElement
-#from unramified_extension_lazy_element import UnramifiedExtensionLazyElement
+#from unramified_extension_lazy_element import UnramifiedExtensionRelaxedElement
 #from eisenstein_extension_absolute_element import EisensteinExtensionAbsoluteElement
 #from eisenstein_extension_capped_relative_element import EisensteinExtensionCappedRelativeElement
-#from eisenstein_extension_lazy_element import EisensteinExtensionLazyElement
+#from eisenstein_extension_lazy_element import EisensteinExtensionRelaxedElement
 #from padic_general_extension_absolute_element import pAdicGeneralExtensionAbsoluteElement
 #from padic_general_extension_capped_relative_element import pAdicGeneralExtensionCappedRelativeElement
-#from padic_general_extension_lazy_element import pAdicGeneralExtensionLazyElement
+#from padic_general_extension_lazy_element import pAdicGeneralExtensionRelaxedElement
 
 from .padic_ZZ_pX_FM_element import pAdicZZpXFMElement
 from .padic_ZZ_pX_CR_element import pAdicZZpXCRElement
@@ -90,7 +89,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R.<a> = ZqCR(27,10000)
+        sage: R.<a> = ZqCR(27,1000)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
@@ -148,7 +147,7 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
     """
     TESTS::
 
-        sage: R.<a> = QqCR(27,10000)
+        sage: R.<a> = QqCR(27,1000)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
@@ -221,19 +220,20 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
               To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
         """
         if isinstance(R, UnramifiedExtensionRingCappedRelative) and R.fraction_field() is self:
-           from sage.rings.padics.qadic_flint_CR import pAdicCoercion_CR_frac_field
-           return pAdicCoercion_CR_frac_field(R, self)
+            from sage.rings.padics.qadic_flint_CR import pAdicCoercion_CR_frac_field
+            return pAdicCoercion_CR_frac_field(R, self)
         if isinstance(R, UnramifiedExtensionRingCappedAbsolute) and R.fraction_field() is self:
-           from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field
-           return pAdicCoercion_CA_frac_field(R, self)
+            from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field
+            return pAdicCoercion_CA_frac_field(R, self)
 
-        return super(UnramifiedExtensionFieldCappedRelative, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
+
 
 class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCappedAbsoluteRingGeneric):
     """
     TESTS::
 
-        sage: R.<a> = ZqCA(27,10000)
+        sage: R.<a> = ZqCA(27,1000)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
@@ -292,7 +292,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
     """
     TESTS::
 
-        sage: R.<a> = ZqFM(27,10000)
+        sage: R.<a> = ZqFM(27,1000)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4) # long time
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
@@ -479,7 +479,7 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R = Zp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
+        sage: R = Zp(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
         sage: W.<w> = R.ext(f)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
@@ -534,7 +534,7 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
     """
     TESTS::
 
-        sage: R = Qp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
+        sage: R = Qp(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
         sage: W.<w> = R.ext(f)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
@@ -590,7 +590,7 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R = ZpCA(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
+        sage: R = ZpCA(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
         sage: W.<w> = R.ext(f)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
@@ -645,7 +645,7 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
     """
     TESTS::
 
-        sage: R = ZpFM(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
+        sage: R = ZpFM(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
         sage: W.<w> = R.ext(f)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
@@ -686,8 +686,8 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
         """
         unram_prec = (prec + poly.degree() - 1) // poly.degree()
         ntl_poly = ntl_ZZ_pX([a.lift() for a in poly.list()], poly.base_ring().prime()**unram_prec)
-        shift_poly = ntl_ZZ_pX([a.lift() for a in shift_seed.list()], shift_seed.base_ring().prime()**unram_prec)
-        #print poly.base_ring().prime(), prec, poly.degree(), ntl_poly
+        shift_poly = ntl_ZZ_pX([a.lift() for a in shift_seed.list()],
+                               shift_seed.base_ring().prime()**unram_prec)
         # deal with prec not a multiple of e better.
         self.prime_pow = PowComputer_ext_maker(poly.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, ntl_poly, "FM", "e", shift_poly)
         self._shift_seed = shift_seed

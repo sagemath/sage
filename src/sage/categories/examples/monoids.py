@@ -1,7 +1,6 @@
 r"""
 Examples of monoids
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -12,7 +11,7 @@ from __future__ import absolute_import
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import Monoids
+from sage.categories.monoids import Monoids
 from .semigroups import FreeSemigroup
 from sage.sets.family import Family
 
@@ -53,6 +52,7 @@ class FreeMonoid(FreeSemigroup):
         running ._test_associativity() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -93,7 +93,7 @@ class FreeMonoid(FreeSemigroup):
 
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = Monoids())
+        Parent.__init__(self, category=Monoids())
 
     def _repr_(self):
         r"""

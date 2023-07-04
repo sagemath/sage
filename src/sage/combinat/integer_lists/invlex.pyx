@@ -28,8 +28,6 @@ limitations and lack of robustness w.r.t. input.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
-
 import builtins
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
@@ -518,7 +516,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     A variant is to specify a class for the elements. With the default
     element constructor, this class should take as input the parent
-    ``self`` and a list. 
+    ``self`` and a list.
 
     .. WARNING::
 
@@ -672,7 +670,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         [[3], [2, 1], [1, 2]]
         sage: [1,1,1] in I
         False
-        sage: I=IntegerListsLex(10, ceiling=[4], max_length=1, min_part=1)
+        sage: I = IntegerListsLex(10, ceiling=[4], max_length=1, min_part=1)
         sage: I.list()
         []
         sage: [4,6] in I
@@ -1107,7 +1105,7 @@ class IntegerListsLexIter(builtins.object):
       ``_current_list``: the range for each part.
 
     Furthermore, we assume that there is no obvious contradiction
-    in the contraints:
+    in the constraints:
 
     - ``self.backend.min_length <= self.backend.max_length``;
     - ``self.backend.min_slope <= self.backend.max_slope``
@@ -1217,9 +1215,9 @@ class IntegerListsLexIter(builtins.object):
         max_sum = self.backend.max_sum
         min_length = self.backend.min_length
         max_length = self.backend.max_length
-        if  self._j+1 >= max_length:
+        if self._j + 1 >= max_length:
             return False
-        if self._j+1 >= min_length and self._current_sum == max_sum:
+        if self._j + 1 >= min_length and self._current_sum == max_sum:
             # Cannot add trailing zeroes
             return False
 
@@ -1421,7 +1419,7 @@ class IntegerListsLexIter(builtins.object):
             sage: I._m_interval(1,2)
             (0, 2)
 
-        The second part is not bounded above, hence we can not
+        The second part is not bounded above, hence we cannot
         iterate lexicographically through all the elements::
 
             sage: IntegerListsLex(ceiling=[2,infinity,3], max_length=3).first()
@@ -1645,4 +1643,3 @@ class IntegerListsLexIter(builtins.object):
             k += 1
 
         return False
-

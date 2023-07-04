@@ -6,7 +6,7 @@
 HTML版とPDF版のどちらを読んでもいいし、Sageノートブックを経由することもできる(チュートリアル内容をSageから対話的に実行するには，ノートブックで ``Help``,  続けて ``Tutorial`` をクリックする)．
 
 Sageのかなりの部分がPythonを使って実装されているものの，このチュートリアルを読むについてはPythonの予備知識はいらない．
-いずれはPythonを勉強したくなるはずだが(とても面白い言語だ)，そんな場合のためには [PyT]_ や [Dive]_ などの優れた教材がフリーでたくさん用意されている．
+いずれはPythonを勉強したくなるはずだが(とても面白い言語だ)，そんな場合のためにはPythonビギナーズガイド [PyB]_ にリストがある優れた教材がフリーでたくさん用意されている．
 とにかく手っ取り早くSageを試してみたいだけなら、このチュートリアルがよい出発点になる．
 例えばこんな具合だ:
 
@@ -73,8 +73,8 @@ Sageを自分のコンピュータへインストールする手順について�
 
 
 SageTeXの利用に関する解説は
-``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/`` にある．
-``$SAGE_ROOT`` はSageがインストールされているディレクトリで，例えば ``/opt/sage-4.2.1`` などとなっているはずだ．
+``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/`` にある．
+``$SAGE_ROOT`` はSageがインストールされているディレクトリで，例えば ``/opt/sage-9.6`` などとなっているはずだ．
 
 
 
@@ -83,7 +83,8 @@ Sageの使いかた
 
 Sageを使うには以下のようなやり方がある．
 
-- **ノートブック グラフィカル インターフェイス:** レファレンスマニュアルのノートブックに関する節，および以下の :ref:`section-notebook` 節を参照．
+- **ノートブック グラフィカル インターフェイス:**  ``sage -n jupyter`` を実行する.
+  `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_ を読む.
 
 - **対話的コマンドライン:** :ref:`chapter-interactive_shell` 節を参照．
 

@@ -7,6 +7,7 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Joris Vankerschaver (2010): for the function :func:`is_atomic()`
+- Michael Jung (2020): extended usage of :func:`is_atomic()`
 
 """
 
@@ -19,11 +20,17 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import annotations
 
-import six
+from typing import TYPE_CHECKING
+
 from sage.structure.sage_object import SageObject
 
-def is_atomic(expression):
+if TYPE_CHECKING:
+    from sage.misc.latex import LatexExpr
+
+
+def is_atomic(expr, sep=['+', '-']):
     r"""
     Helper function to check whether some LaTeX expression is atomic.
 
@@ -31,15 +38,17 @@ def is_atomic(expression):
     :meth:`~sage.tensor.differential_form_element.DifferentialFormFormatter._is_atomic`
     of class
     :class:`~sage.tensor.differential_form_element.DifferentialFormFormatter`
-    written by Joris Vankerschaver (2010).
+    written by Joris Vankerschaver (2010) and modified by Michael Jung (2020).
 
     INPUT:
 
-    - ``expression`` -- string representing the expression (e.g. LaTeX string)
+    - ``expr`` -- string representing the expression (e.g. LaTeX string)
+    - ``sep`` -- (default: ``['+', '-']``) a list of strings representing the
+      operations (e.g. LaTeX strings)
 
     OUTPUT:
 
-    - ``True`` if additive operations are enclosed in parentheses and
+    - ``True`` if the operations are enclosed in parentheses and
       ``False`` otherwise.
 
     EXAMPLES::
@@ -52,16 +61,33 @@ def is_atomic(expression):
         sage: is_atomic("(2+x)")
         True
 
+    Moreover the separator can be changed::
+
+        sage: is_atomic("a*b", sep=['*'])
+        False
+        sage: is_atomic("(a*b)", sep=['*'])
+        True
+        sage: is_atomic("a mod b", sep=['mod'])
+        False
+        sage: is_atomic("(a mod b)", sep=['mod'])
+        True
+
     """
-    if not isinstance(expression, six.string_types):
+    if not isinstance(expr, str):
         raise TypeError("The argument must be a string")
+    if not isinstance(sep, list):
+        raise TypeError("the argument 'sep' must be a list")
+    elif any(not isinstance(s, str) for s in sep):
+        raise TypeError("the argument 'sep' must consist of strings")
     level = 0
-    for n, c in enumerate(expression):
+    for n, c in enumerate(expr):
         if c == '(':
             level += 1
+            continue
         elif c == ')':
             level -= 1
-        if c == '+' or c == '-':
+            continue
+        if any(expr[n:n + len(s)] == s for s in sep):
             if level == 0 and n > 0:
                 return False
     return True
@@ -76,7 +102,7 @@ def is_atomic_wedge_txt(expression):
     :meth:`~sage.tensor.differential_form_element.DifferentialFormFormatter._is_atomic`
     of class
     :class:`~sage.tensor.differential_form_element.DifferentialFormFormatter`
-    written by Joris Vankerschaver (2010).
+    written by Joris Vankerschaver (2010) and modified by Michael Jung (2020).
 
     INPUT:
 
@@ -92,28 +118,17 @@ def is_atomic_wedge_txt(expression):
         sage: from sage.tensor.modules.format_utilities import is_atomic_wedge_txt
         sage: is_atomic_wedge_txt("a")
         True
-        sage: is_atomic_wedge_txt(r"a/\b")
+        sage: is_atomic_wedge_txt(r"a∧b")
         False
-        sage: is_atomic_wedge_txt(r"(a/\b)")
+        sage: is_atomic_wedge_txt(r"(a∧b)")
         True
-        sage: is_atomic_wedge_txt(r"(a/\b)/\c")
+        sage: is_atomic_wedge_txt(r"(a∧b)∧c")
         False
-        sage: is_atomic_wedge_txt(r"(a/\b/\c)")
+        sage: is_atomic_wedge_txt(r"(a∧b∧c)")
         True
 
     """
-    if not isinstance(expression, six.string_types):
-        raise TypeError("The argument must be a string.")
-    level = 0
-    for n, c in enumerate(expression):
-        if c == '(':
-            level += 1
-        elif c == ')':
-            level -= 1
-        if c == '/' and expression[n+1:n+2] == '\\':
-            if level == 0 and n > 0:
-                return False
-    return True
+    return is_atomic(expression, sep=['∧'])
 
 
 def is_atomic_wedge_latex(expression):
@@ -125,7 +140,7 @@ def is_atomic_wedge_latex(expression):
     :meth:`~sage.tensor.differential_form_element.DifferentialFormFormatter._is_atomic`
     of class
     :class:`~sage.tensor.differential_form_element.DifferentialFormFormatter`
-    written by Joris Vankerschaver (2010).
+    written by Joris Vankerschaver (2010) and modified by Michael Jung (2020).
 
     INPUT:
 
@@ -159,18 +174,7 @@ def is_atomic_wedge_latex(expression):
         False
 
     """
-    if not isinstance(expression, six.string_types):
-        raise TypeError("The argument must be a string.")
-    level = 0
-    for n, c in enumerate(expression):
-        if c == '(':
-            level += 1
-        elif c == ')':
-            level -= 1
-        if c == '\\' and expression[n+1:n+6] == 'wedge':
-            if level == 0 and n > 0:
-                return False
-    return True
+    return is_atomic(expression, sep=['\\wedge'])
 
 
 def format_mul_txt(name1, operator, name2):
@@ -298,7 +302,7 @@ class FormattedExpansion(SageObject):
         \frac{x}{2}
 
     """
-    def  __init__(self, txt=None, latex=None):
+    def __init__(self, txt=None, latex=None):
         r"""
         TESTS::
 
@@ -325,7 +329,7 @@ class FormattedExpansion(SageObject):
         """
         return self._txt
 
-    def _latex_(self):
+    def _latex_(self) -> LatexExpr:
         r"""
         Return a LaTeX representation of ``self``.
 

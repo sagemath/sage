@@ -17,12 +17,12 @@ def _separate_channels(_data, _width, _nchannels):
     if width == 1:
         # handle the one byte case
 
-        for n from 0 <= n < l:
+        for n in range(l):
             channel_data[n % nchannels].append(ord(data[n])-127)
 
     elif width == 2:
         a = 32768
-        for n from 0 <= n < l:
+        for n in range(l):
             # compute the value as an integer
             x = <int> (data[2*n]) + 256 * <int>(data[2*n + 1])
             #x -= 65536*(x > a)

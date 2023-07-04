@@ -1,7 +1,6 @@
 """
-Finite Fields.
+Finite Fields
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2010 David Roe <roed@math.harvard.edu>

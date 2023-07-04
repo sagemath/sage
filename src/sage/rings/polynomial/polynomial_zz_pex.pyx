@@ -1,9 +1,16 @@
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 """
-Univariate Polynomials over GF(p^e) via NTL's ZZ_pEX.
+Univariate Polynomials over GF(p^e) via NTL's ZZ_pEX
 
 AUTHOR:
 
 - Yann Laigle-Chapuy (2010-01) initial implementation
+- Lorenz Panny (2023-01): :meth:`minpoly_mod`
 """
 
 from sage.rings.integer_ring import ZZ
@@ -15,6 +22,7 @@ from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
+from sage.libs.ntl.convert cimport ZZ_to_mpz
 
 # We need to define this stuff before including the templating stuff
 # to make sure the function get_cparent is found since it is used in
@@ -36,7 +44,7 @@ include "sage/libs/ntl/ntl_ZZ_pEX_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
-from sage.libs.all import pari
+from sage.libs.pari.all import pari
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 
 cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
@@ -44,6 +52,7 @@ cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
     cdef ZZ_pX_c c_pX
     cdef ZZ_p_c c_p
     cdef ZZ_c c_c
+    cdef Integer ans
 
     c_pX = ZZ_pE_to_ZZ_pX(x)
     d = ZZ_pX_deg(c_pX)
@@ -51,7 +60,9 @@ cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
         for 0 <= j <= d:
             c_p = ZZ_pX_coeff(c_pX, j)
             c_c = ZZ_p_rep(c_p)
-            L.append((<IntegerRing_class>ZZ)._coerce_ZZ(&c_c))
+            ans = Integer.__new__(Integer)
+            ZZ_to_mpz(ans.value, &c_c)
+            L.append(ans)
     return L
 
 
@@ -128,7 +139,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         if isinstance(x, Polynomial):
             x = x.list()
 
-        if isinstance(x, list) or isinstance(x, tuple):
+        if isinstance(x, (list, tuple)):
             Polynomial.__init__(self, parent, is_gen=is_gen)
             (<Polynomial_template>self)._cparent = get_cparent(parent)
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)
@@ -170,7 +181,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
     cpdef list list(self, bint copy=True):
         """
-        Returs the list of coefficients.
+        Return the list of coefficients.
 
         EXAMPLES::
 
@@ -181,7 +192,6 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             True
             sage: P.0.list()
             [0, 1]
-
         """
         cdef Py_ssize_t i
 
@@ -358,6 +368,50 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             raise ValueError("unknown algorithm")
         return res != 0
 
+    def minpoly_mod(self, other):
+        r"""
+        Compute the minimal polynomial of this polynomial modulo another
+        polynomial in the same ring.
+
+        ALGORITHM:
+
+        NTL's ``MinPolyMod()``, which uses Shoup's algorithm [Sho1999]_.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(101^2)[]
+            sage: f = x^17 + x^2 - 1
+            sage: (x^2).minpoly_mod(f)
+            x^17 + 100*x^2 + 2*x + 100
+
+        TESTS:
+
+        Random testing::
+
+            sage: p = random_prime(50)
+            sage: e = randrange(2,10)
+            sage: R.<x> = GF((p,e),'a')[]
+            sage: d = randrange(1,50)
+            sage: f = R.random_element(d)
+            sage: g = R.random_element((-1,5*d))
+            sage: poly = g.minpoly_mod(f)
+            sage: poly(R.quotient(f)(g))
+            0
+        """
+        self._parent._modulus.restore()
+
+        if other.parent() is not self._parent:
+            other = self._parent.coerce(other)
+
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        ZZ_pEX_MinPolyMod(r.x, (<Polynomial_ZZ_pEX>(self % other)).x, (<Polynomial_ZZ_pEX>other).x)
+        return r
+
     cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
@@ -434,4 +488,3 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             x^4 + x^3 + x
         """
         return self.shift(-n)
-

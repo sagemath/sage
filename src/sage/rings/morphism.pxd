@@ -14,12 +14,17 @@ cdef class RingMap_lift(RingMap):
 
 cdef class RingHomomorphism(RingMap):
     cdef Morphism _lift
+    cdef public dict __cached_methods
 
 cdef class RingHomomorphism_im_gens(RingHomomorphism):
-    cdef __im_gens
+    cdef _im_gens
+    cdef _base_map
 
 cdef class RingHomomorphism_from_base(RingHomomorphism):
-    cdef __underlying
+    cdef _underlying
+
+cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
+    cdef _morphism
 
 cdef class RingHomomorphism_cover(RingHomomorphism):
     pass

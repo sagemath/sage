@@ -1,0 +1,1 @@
+jupyter-jsmol >=2022.1.0

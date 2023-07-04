@@ -1,83 +1,91 @@
 r"""
-Brandt Modules
+Brandt modules
 
 Introduction
-============
+------------
 
-This tutorial outlines the construction of Brandt modules in Sage. The
-importance of this construction is that it provides us with a method
-to compute modular forms on `\Gamma_0(N)` as outlined in Pizer's paper
-[Piz1980]_. In fact there exists a non-canonical Hecke algebra isomorphism
-between the Brandt modules and a certain subspace of
-`S_{2}(\Gamma_0(pM))` which contains all the newforms.
+The construction of Brandt modules provides us with a method to
+compute modular forms, as outlined in Pizer's paper [Piz1980]_.
 
-The Brandt module is the free abelian group on right ideal classes of
-a quaternion order together with a natural Hecke action determined by
-Brandt matrices.
+Given a prime number `p` and a positive integer `M` with `p\nmid M`,
+the *Brandt module* `B(p, M)` is the free abelian group on right ideal
+classes of a quaternion order of level `pM` in the quaternion algebra
+ramified precisely at the places `p` and `\infty`. This Brandt module
+carries a natural Hecke action given by Brandt matrices. There exists
+a non-canonical Hecke algebra isomorphism between `B(p, M)` and a
+certain subspace of `S_{2}(\Gamma_0(pM))` containing the newforms.
 
 Quaternion Algebras
 -------------------
 
 A quaternion algebra over `\QQ` is a central simple algebra of
-dimension 4 over `\QQ`. Such an algebra `A` is said to be
-ramified at a place `v` of `\QQ` if and only if `A_v=A\otimes
-\QQ_v` is a division algebra. Otherwise `A` is said to be split
-at `v`.
+dimension 4 over `\QQ`. Such an algebra `A` is said to be ramified at
+a place `v` of `\QQ` if and only if `A \otimes \QQ_v` is a division
+algebra. Otherwise `A` is said to be split at `v`.
 
 ``A = QuaternionAlgebra(p)`` returns the quaternion algebra `A` over
 `\QQ` ramified precisely at the places `p` and `\infty`.
 
-``A = QuaternionAlgebra(k,a,b)`` returns a quaternion algebra with basis
-`\{1,i,j,j\}` over `\mathbb{K}` such that `i^2=a`, `j^2=b` and `ij=k.`
+``A = QuaternionAlgebra(a, b)`` returns the quaternion algebra `A`
+over `\QQ` with basis `\{1, i, j, k\}` such that `i^2 = a`, `j^2 = b`
+and `ij = -ji = k.`
 
-An order `R` in a quaternion algebra is a 4-dimensional lattice on `A`
-which is also a subring containing the identity.
+An order `R` in a quaternion algebra `A` over `\QQ` is a 4-dimensional
+lattice in `A` which is also a subring containing the identity.  A
+maximal order is one that is not properly contained in another order.
+
+A particularly important kind of orders are those that have a level;
+see Definition 1.2 in [Piz1980]_.  This is a positive integer `N` such
+that every prime that ramifies in `A` divides `N` to an odd power.
+The maximal orders are those that have level equal to the discriminant
+of `A`.
 
 ``R = A.maximal_order()`` returns a maximal order `R` in the quaternion
 algebra `A.`
 
-An Eichler order `\mathcal{O}` in a quaternion algebra is the
-intersection of two maximal orders. The level of `\mathcal{O}` is its
-index in any maximal order containing it.
+A right `\mathcal{O}`-ideal `I` is a lattice in `A` such that for
+every prime `p` there exists `a_p\in A_p^*` with `I_p =
+a_p\mathcal{O}_p`. Two right `\mathcal{O}`-ideals `I` and `J` are said
+to belong to the same class if `I=aJ` for some `a \in A^*`. Left
+`\mathcal{O}`-ideals are defined in a similar fashion.
 
-``O = A.order_of_level_N`` returns an Eichler order `\mathcal{O}` in `A`
-of level `N` where `p` does not divide `N`.
+The right order of `I` is the subring of `A` consisting of elements
+`a` with `Ia \subseteq I`.
 
+Brandt Modules
+--------------
 
-A right `\mathcal{O}`-ideal `I` is a lattice on `A` such that
-`I_p=a_p\mathcal{O}` (for some `a_p\in A_p^*`) for all `p<\infty`. Two
-right `\mathcal{O}`-ideals `I` and `J` are said to belong to the same
-class if `I=aJ` for some `a \in A^*`. (Left `\mathcal{O}`-ideals are
-defined in a similar fashion.)
+``B = BrandtModule(p, M=1)`` returns the Brandt module associated to
+the prime number `p` and the integer `M`, with `p` not dividing `M`.
 
-The right order of `I` is defined to be the set of elements in `A`
-which fix `I` under right multiplication.
+``A = B.quaternion_algebra()`` returns the quaternion algebra attached
+to `B`; this is the quaternion algebra over `\QQ` ramified exactly at
+`p` and `\infty`.
 
-``right_order(R, basis)`` returns the right ideal of `I` in `R` given a
-basis for the right ideal `I` contained in the maximal order `R.`
+``O = B.order_of_level_N()`` returns an order `\mathcal{O}` of level
+`N = pM` in `A`.
 
-``ideal_classes(self)`` returns a tuple of all right ideal classes in self
-which, for the purpose of constructing the Brandt module B(p,M), is
-taken to be an Eichler order of level M.
+``B.right_ideals()`` returns a tuple of representatives for all right
+ideal classes of `\mathcal{O}`.
 
 The implementation of this method is especially interesting. It
 depends on the construction of a Hecke module defined as a free
 abelian group on right ideal classes of a quaternion algebra with the
-following action
+following action:
 
 .. MATH::
 
     T_n[I] = \sum_{\phi} [J]
 
 where `(n,pM)=1` and the sum is over cyclic `\mathcal{O}`-module
-homomorphisms `\phi :I\rightarrow J` of degree `n` up to isomorphism
-of `J`. Equivalently one can sum over the inclusions of the submodules
-`J \rightarrow n^{-1}I`. The rough idea is to start with the trivial
-ideal class containing the order `\mathcal{O}` itself. Using the
-method ``cyclic_submodules(self, I, p)`` one computes `T_p([\mathcal{O}])`
-for some prime integer `p` not dividing the level of the order
-`\mathcal{O}`. Apply this method repeatedly and test for equivalence
-among resulting ideals. A theorem of Serre asserts that one gets a
+homomorphisms `\phi\colon I\rightarrow J` of degree `n` up to
+isomorphism of `J`. Equivalently one can sum over the inclusions of
+the submodules `J \rightarrow n^{-1}I`. The rough idea is to start
+with the trivial ideal class containing the order `\mathcal{O}`
+itself. Using the method ``cyclic_submodules(self, I, q)`` one then
+repeatedly computes `T_q([\mathcal{O}])` for some prime `q` not
+dividing the level of `\mathcal{O}` and tests for equivalence among
+the resulting ideals. A theorem of Serre asserts that one gets a
 complete set of ideal class representatives after a finite number of
 repetitions.
 
@@ -184,35 +192,40 @@ AUTHORS:
 - Gonzalo Tornaria
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-
-# imports
-from sage.misc.all import prod, verbose
-from sage.rings.all import Integer, ZZ, QQ, PolynomialRing, GF, CommutativeRing
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra, basis_for_quaternion_lattice
 from sage.algebras.quatalg.quaternion_algebra_cython import rational_matrix_from_rational_quaternions
-
-from sage.arith.all import gcd, factor, prime_divisors, kronecker, next_prime
-from sage.modular.hecke.all import (AmbientHeckeModule, HeckeSubmodule, HeckeModuleElement)
-from sage.modular.dirichlet import TrivialCharacter
-from sage.matrix.all  import MatrixSpace, matrix
-from sage.misc.mrange import cartesian_product_iterator
-from sage.structure.richcmp import richcmp, richcmp_method
+from sage.arith.misc import gcd, factor, prime_divisors, kronecker, next_prime
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.misc.verbose import verbose
+from sage.modular.dirichlet import TrivialCharacter
+from sage.modular.hecke.ambient_module import AmbientHeckeModule
+from sage.modular.hecke.element import HeckeModuleElement
+from sage.modular.hecke.submodule import HeckeSubmodule
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.ring import CommutativeRing
+from sage.structure.richcmp import richcmp, richcmp_method
 
-from copy import copy
 
 cache = {}
+
 
 def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
     """
@@ -281,7 +294,7 @@ def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
         raise NotImplementedError("Brandt modules currently only implemented when N is a prime")
     if M < 1:
         raise ValueError("M must be positive")
-    if gcd(M,N) != 1:
+    if M.gcd(N) != 1:
         raise ValueError("M must be coprime to N")
     if weight < 2:
         raise ValueError("weight must be at least 2")
@@ -327,12 +340,13 @@ def class_number(p, r, M):
     """
     N = M * p**r
     D = prime_divisors(M)
-    s = 0; t = 0
-    if N % 4 != 0:
-        s = (1 - kronecker(-4,p))/4 * prod(1 + kronecker(-4,q) for q in D)
-    if N % 9 != 0:
-        t = (1 - kronecker(-3,p))/3 * prod(1 + kronecker(-3,q) for q in D)
-    h = (N/Integer(12))*(1 - 1/p)*prod(1+1/q for q in D) + s + t
+    s = 0
+    t = 0
+    if N % 4:
+        s = (1 - kronecker(-4, p)) / 4 * prod(1 + kronecker(-4, q) for q in D)
+    if N % 9:
+        t = (1 - kronecker(-3, p)) / 3 * prod(1 + kronecker(-3, q) for q in D)
+    h = (N / Integer(12)) * (1 - 1 / p) * prod(1 + 1 / q for q in D) + s + t
     return Integer(h)
 
 
@@ -355,14 +369,14 @@ def maximal_order(A):
 
         sage: A = BrandtModule(17).quaternion_algebra()
         sage: sage.modular.quatalg.brandt.maximal_order(A)
-        Order of Quaternion Algebra (-17, -3) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, -1/3*j - 1/3*k, k)
+        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
 
         sage: A = QuaternionAlgebra(17,names='i,j,k')
         sage: A.maximal_order()
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
     """
-
     return A.maximal_order()
+
 
 def basis_for_left_ideal(R, gens):
     """
@@ -381,11 +395,11 @@ def basis_for_left_ideal(R, gens):
 
         sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i+j,i-j,2*k,A(3)])
-        [1/2 + 1/6*j + 2/3*k, 1/2*i + 1/2*k, 1/3*j + 1/3*k, k]
+        [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
-        [3/2 + 1/2*j + 2*k, 3/2*i + 3/2*k, j + k, 3*k]
+        [3/2 + 1/2*i + k, i + 2*k, 3/2*j + 3/2*k, 3*k]
     """
-    return basis_for_quaternion_lattice([b*g for b in R.basis() for g in gens])
+    return basis_for_quaternion_lattice([b * g for b in R.basis() for g in gens])
 
 
 def right_order(R, basis):
@@ -408,14 +422,14 @@ def right_order(R, basis):
 
         sage: B = BrandtModule(17); basis = sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), B.maximal_order().basis())
         sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        Order of Quaternion Algebra (-17, -3) with base ring Rational Field with basis (1/2 + 1/6*j + 2/3*k, 1/2*i + 1/2*k, 1/3*j + 1/3*k, k)
+        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
         sage: basis
-        [1/2 + 1/6*j + 2/3*k, 1/2*i + 1/2*k, 1/3*j + 1/3*k, k]
+        [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
 
         sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
         sage: basis = sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i*j-j])
         sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        Order of Quaternion Algebra (-17, -3) with base ring Rational Field with basis (1/2 + 1/2*i + 1/2*j + 17/2*k, i, j + 8*k, 9*k)
+        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
     """
     # Compute matrix of multiplication by each element of the basis.
     B = R.basis()
@@ -426,13 +440,13 @@ def right_order(R, basis):
     I = M([list(f) for f in basis])
 
     # psi = matrix of right multiplication on each basis element
-    psi = [M([list(f*x) for x in Z.basis()]) for f in basis]
+    psi = [M([list(f * x) for x in Z.basis()]) for f in basis]
 
     # invert them
     psi_inv = [x**(-1) for x in psi]
 
     # apply the four inverses to I
-    W = [I*x for x in psi_inv]
+    W = [I * x for x in psi_inv]
 
     # The right order is the intersection of the row span of the W with the row span of B.
     X = M([list(b) for b in B]).row_module(ZZ)
@@ -445,14 +459,14 @@ def right_order(R, basis):
 def quaternion_order_with_given_level(A, level):
     """
     Return an order in the quaternion algebra A with given level.
-    (Implemented only when the base field is the rational numbers.)
+
+    This is implemented only when the base field is the rational numbers.
 
     INPUT:
 
     - ``level`` -- The level of the order to be returned. Currently this
       is only implemented when the level is divisible by at
-      most one power of a prime that ramifies in this
-      quaternion algebra.
+      most one power of a prime that ramifies in this quaternion algebra.
 
     EXAMPLES::
 
@@ -473,20 +487,23 @@ def quaternion_order_with_given_level(A, level):
         raise NotImplementedError("Currently this algorithm only works when the quaternion algebra is only ramified at one finite prime.")
 
     # (The algorithm we use is similar to that in Magma (by David Kohel).)
-    # in the following magma code, M denotes is the level
+    # in the following magma code, M denotes the level
     level = abs(level)
     N = A.discriminant()
     N1 = gcd(level, N)
-    M1 = level / N1
+    M1 = level // N1
 
     O = maximal_order(A)
-    if 0 and N1 != 1: # we don't know why magma does the following, so we don't do it.
-        for p in A.ramified_primes():
-            if level % p**2 == 0:
-                raise NotImplementedError("Currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
+    # if N1 != 1:
+    #     # we do not know why magma does the following, so we do not do it.
+    #     for p in A.ramified_primes():
+    #         if not (level % p**2):
+    #             raise NotImplementedError("Currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
 
-        P = basis_for_left_ideal(O, [N1] + [x*y - y*x for x, y in cartesian_product_iterator([A.basis(), A.basis()]) ])
-        O = A.quaternion_order(P)
+    #     P = basis_for_left_ideal(O, [N1] + [x * y - y * x
+    #                                         for x in A.basis()
+    #                                         for y in A.basis()])
+    #     O = A.quaternion_order(P)
 
     fact = factor(M1)
     B = O.basis()
@@ -494,14 +511,17 @@ def quaternion_order_with_given_level(A, level):
     for (p, r) in fact:
         a = int(-p) // 2
         for v in GF(p)**4:
-            x = sum([int(v[i]+a)*B[i] for i in range(4)])
+            x = sum([int(v[i] + a) * B[i] for i in range(4)])
             D = x.reduced_trace()**2 - 4 * x.reduced_norm()
-            #x = O.random_element((-p/2).floor(), (p/2).ceil())
-            if kronecker(D, p) == 1: break
+            # x = O.random_element((-p/2).floor(), (p/2).ceil())
+            if kronecker(D, p) == 1:
+                break
         X = PolynomialRing(GF(p), 'x').gen()
         a = ZZ((X**2 - ZZ(x.reduced_trace()) * X + ZZ(x.reduced_norm())).roots()[0][0])
-        I = basis_for_left_ideal(O,  [p**r, (x-a)**r] )
-        O = right_order(O, I)       # right_order returns the RightOrder of I inside O, so we don't need to do another intersection
+        I = basis_for_left_ideal(O, [p**r, (x - a)**r])
+        O = right_order(O, I)
+        # right_order returns the RightOrder of I inside O, so we
+        # do not need to do another intersection
 
     return O
 
@@ -742,9 +762,9 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(7,5,2,ZZ)._repr_()
             'Brandt module of dimension 4 of level 7*5 of weight 2 over Integer Ring'
         """
-        aux = '' if self.__M == 1 else '*%s'%self.__M
-        return "Brandt module of dimension %s of level %s%s of weight %s over %s"%(
-            self.rank(), self.__N, aux, self.weight(), self.base_ring())
+        aux = '' if self.__M == 1 else '*%s' % self.__M
+        txt = "Brandt module of dimension %s of level %s%s of weight %s over %s"
+        return txt % (self.rank(), self.__N, aux, self.weight(), self.base_ring())
 
     def __richcmp__(self, other, op):
         r"""
@@ -783,26 +803,9 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(5).quaternion_algebra()
             Quaternion Algebra (-2, -5) with base ring Rational Field
             sage: BrandtModule(17).quaternion_algebra()
-            Quaternion Algebra (-17, -3) with base ring Rational Field
+            Quaternion Algebra (-3, -17) with base ring Rational Field
         """
-        p = self.N()
-        assert p.is_prime(), "we have only implemented the prime case"
-        if p == 2:
-            QA = -1
-            QB = -1
-        elif p % 4 == 3:
-            QA = -1
-            QB = -p
-        elif p % 8 == 5:
-            QA = -2
-            QB = -p
-        elif p % 8 == 1:
-            q = 3
-            while q % 4 != 3 or kronecker(p, q) != -1:
-                q = next_prime(q)
-            QA = -p
-            QB = -q
-        return QuaternionAlgebra(QQ, QA, QB)
+        return QuaternionAlgebra(self.N())
 
     @cached_method
     def maximal_order(self):
@@ -812,7 +815,7 @@ class BrandtModule_class(AmbientHeckeModule):
         EXAMPLES::
 
             sage: BrandtModule(17).maximal_order()
-            Order of Quaternion Algebra (-17, -3) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, -1/3*j - 1/3*k, k)
+            Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
             sage: BrandtModule(17).maximal_order() is BrandtModule(17).maximal_order()
             True
         """
@@ -821,7 +824,7 @@ class BrandtModule_class(AmbientHeckeModule):
     @cached_method
     def order_of_level_N(self):
         """
-        Return Eichler order of level `N = p^{2 r + 1} M` in the
+        Return an order of level `N = p^{2 r + 1} M` in the
         quaternion algebra.
 
         EXAMPLES::
@@ -873,7 +876,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         if not Integer(p).is_prime():
             raise ValueError("p must be a prime")
-        if self.level() % p == 0:
+        if not(self.level() % p):
             raise ValueError("p must be coprime to the level")
 
         R = self.order_of_level_N()
@@ -896,27 +899,30 @@ class BrandtModule_class(AmbientHeckeModule):
             d = R.free_module().basis_matrix().determinant()
             S = None
             for v in V:
-                if not v: continue
-                alpha = sum(Integer(v[i])*B[i] for i in range(4))
+                if not v:
+                    continue
+                alpha = sum(Integer(v[i]) * B[i] for i in range(4))
                 # If the quadratic polynomial over GF(p) given by
                 #      X^2  -  alpha.reduced_trace() * X  +  alpha.reduced_norm()
                 # is not irreducible, we try again with a new element.
                 if p == 2:
                     # special case p == 2, since there is a unique quadratic irreducible poly.
-                    if alpha.reduced_trace()%2 == 0 or alpha.reduced_norm()%2 == 0:
+                    if alpha.reduced_trace() % 2 == 0 or alpha.reduced_norm() % 2 == 0:
                         continue
                 else:
                     # check if the discriminant is a square -- if so, poly is reducible
-                    b = alpha.reduced_trace(); c = alpha.reduced_norm()
-                    if kronecker(b*b - 4*c, p) != -1:
+                    b = alpha.reduced_trace()
+                    c = alpha.reduced_norm()
+                    if kronecker(b * b - 4 * c, p) != -1:
                         continue
                 for w in V:
-                    if not w: continue
-                    beta = sum(Integer(w[i])*B[i] for i in range(4))
-                    v = [A(1), alpha, beta, alpha*beta]
+                    if not w:
+                        continue
+                    beta = sum(Integer(w[i]) * B[i] for i in range(4))
+                    v = [A(1), alpha, beta, alpha * beta]
                     M = rational_matrix_from_rational_quaternions(v)
                     e = M.determinant()
-                    if e and (d/e).valuation(p) == 0:
+                    if e and not((d / e).valuation(p)):
                         S = A.quaternion_order(v)
                         break
                 if S is not None:
@@ -931,8 +937,10 @@ class BrandtModule_class(AmbientHeckeModule):
         # Compute the matrix of right multiplication by alpha acting on
         # our fixed choice of basis for this ideal.
 
-        M_alpha = (matrix([(i*alpha).coefficient_tuple() for i in I.basis()]) * X).change_ring(GF(p)).change_ring(GF(p))
-        M_beta = (matrix([(i*beta).coefficient_tuple() for i in I.basis()]) * X).change_ring(GF(p)).change_ring(GF(p))
+        M_alpha = (matrix([(i * alpha).coefficient_tuple()
+                           for i in I.basis()]) * X).change_ring(GF(p))
+        M_beta = (matrix([(i * beta).coefficient_tuple()
+                          for i in I.basis()]) * X).change_ring(GF(p))
 
         # step 2: Find j such that if f=I[j], then mod 2 we have span(I[0],alpha*I[i])
         #         has trivial intersection with span(I[j],alpha*I[j]).
@@ -942,10 +950,10 @@ class BrandtModule_class(AmbientHeckeModule):
         # and I[0], I[1], I[2], I[3] correspond to the standard basis.
         #
         # We try each of the standard basis vectors.
-        W0 = V.span([V.gen(0), V.gen(0)*M_alpha])
+        W0 = V.span([V.gen(0), V.gen(0) * M_alpha])
         assert W0.dimension() == 2
         j = None
-        for i in range(1,4):
+        for i in range(1, 4):
             Wi = V.span([V.gen(i), V.gen(i) * M_alpha])
             if Wi.dimension() == 2 and W0.intersection(Wi).dimension() == 0:
                 j = i
@@ -957,24 +965,27 @@ class BrandtModule_class(AmbientHeckeModule):
         answer = []
         f = V.gen(0)
         g = V.gen(j)
-        M2_4 = MatrixSpace(GF(p),4)
-        M2_2 = MatrixSpace(QQ,2,4)
-        Yp = p*Y
-        from sage.algebras.quatalg.quaternion_algebra_cython import\
-             rational_quaternions_from_integral_matrix_and_denom
-        for v in [f + g*(a+b*M_alpha) for a in GF(p) for b in GF(p)] + [g]:
+        M2_4 = MatrixSpace(GF(p), 4)
+        M2_2 = MatrixSpace(QQ, 2, 4)
+        Yp = p * Y
+        from sage.algebras.quatalg.quaternion_algebra_cython import \
+            rational_quaternions_from_integral_matrix_and_denom
+        for v in [f + g * (a + b * M_alpha)
+                  for a in GF(p) for b in GF(p)] + [g]:
             v0 = v
-            v1 = v*M_alpha
-            v2 = v*M_beta
-            v3 = v1*M_beta
+            v1 = v * M_alpha
+            v2 = v * M_beta
+            v3 = v1 * M_beta
             W = M2_4([v0, v1, v2, v3], coerce=False)
             if W.rank() == 2:
-                gen_mat = Yp.stack(M2_2([v0.lift()*Y, v1.lift()*Y], coerce=False))
+                gen_mat = Yp.stack(M2_2([v0.lift() * Y, v1.lift() * Y],
+                                        coerce=False))
                 gen_mat, d = gen_mat._clear_denom()
                 H = gen_mat._hnf_pari(0, include_zero_rows=False)
                 gens = tuple(rational_quaternions_from_integral_matrix_and_denom(A, H, d))
-                answer.append( R.right_ideal(gens, check=False) )
-                if len(answer) == p+1: break
+                answer.append(R.right_ideal(gens, check=False))
+                if len(answer) == p + 1:
+                    break
         return answer
 
     def hecke_matrix(self, n, algorithm='default', sparse=False, B=None):
@@ -1017,14 +1028,14 @@ class BrandtModule_class(AmbientHeckeModule):
             [ 6  6]
             [ 2 10]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
             sage: B.hecke_matrix(19, algorithm='direct', B=2)
             [ 8 12]
             [ 4 16]
         """
         n = ZZ(n)
         if n <= 0:
-            raise IndexError("n must be positive.")
+            raise IndexError("n must be positive")
         if n not in self._hecke_matrices:
             if algorithm == 'default':
                 try:
@@ -1045,7 +1056,7 @@ class BrandtModule_class(AmbientHeckeModule):
             elif algorithm == 'brandt':
                 T = self._compute_hecke_matrix_brandt(n, sparse=sparse)
             else:
-                raise ValueError("unknown algorithm '%s'"%algorithm)
+                raise ValueError(f"unknown algorithm '{algorithm}'")
             T.set_immutable()
             self._hecke_matrices[n] = T
         return self._hecke_matrices[n]
@@ -1073,11 +1084,11 @@ class BrandtModule_class(AmbientHeckeModule):
             [1 0 2]
             [1 2 0]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: type(B._compute_hecke_matrix_prime(2,sparse=True))
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
         """
-        return self._compute_hecke_matrix_directly(n=p,B=B,sparse=sparse)
+        return self._compute_hecke_matrix_directly(n=p, B=B, sparse=sparse)
 
     def _compute_hecke_matrix_directly(self, n, B=None, sparse=False):
         """
@@ -1100,9 +1111,9 @@ class BrandtModule_class(AmbientHeckeModule):
             [1 0 2]
             [1 2 0]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: type(B._compute_hecke_matrix_directly(2,sparse=True))
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
 
         You can't compute the Hecke operator for n not coprime to the level using this function::
 
@@ -1144,7 +1155,7 @@ class BrandtModule_class(AmbientHeckeModule):
         if B is None:
             B = self.dimension() // 2 + 5
 
-        T = copy(matrix(self.base_ring(), self.dimension(), sparse=sparse))
+        T = matrix(self.base_ring(), self.dimension(), sparse=sparse)
         C = self.right_ideals()
         theta_dict = self._theta_dict(B)
         # I think the runtime of this algorithm is now dominated by
@@ -1153,21 +1164,21 @@ class BrandtModule_class(AmbientHeckeModule):
 
         # TODO: temporary!! -- it's not sufficiently *optimized* to be
         # sure this is best in these cases.
-        #d = lcm([a.denominator() for a in self.order_of_level_N().basis()])
-        #q = self._smallest_good_prime()
-        #if gcd(2*d*q,n) == 1:
-        #    use_fast_alg = True
-        #else:
-        #    use_fast_alg = False
+        # d = lcm([a.denominator() for a in self.order_of_level_N().basis()])
+        # q = self._smallest_good_prime()
+        # if gcd(2*d*q,n) == 1:
+        #     use_fast_alg = True
+        # else:
+        #     use_fast_alg = False
 
         use_fast_alg = False
 
         last_percent = 0
         for r in range(len(C)):
-            percent_done = 100*r//len(C)
+            percent_done = 100 * r // len(C)
             if percent_done != last_percent:
-                if percent_done%5 == 0:
-                    verbose("percent done: %s"%percent_done)
+                if not(percent_done % 5):
+                    verbose("percent done: %s" % percent_done)
                 last_percent = percent_done
             if use_fast_alg:
                 v = C[r].cyclic_right_subideals(n)
@@ -1177,11 +1188,11 @@ class BrandtModule_class(AmbientHeckeModule):
                 J_theta = tuple(J.theta_series_vector(B))
                 v = theta_dict[J_theta]
                 if len(v) == 1:
-                    T[r,v[0]] += 1
+                    T[r, v[0]] += 1
                 else:
                     for i in v:
                         if C[i].is_equivalent(J, 0):
-                            T[r,i] += 1
+                            T[r, i] += 1
                             break
         return T
 
@@ -1221,11 +1232,11 @@ class BrandtModule_class(AmbientHeckeModule):
         C = self.right_ideals()
         theta_dict = {}
         for i in range(len(C)):
-           I_theta = tuple(C[i].theta_series_vector(B))
-           if I_theta in theta_dict:
-               theta_dict[I_theta].append(i)
-           else:
-               theta_dict[I_theta] = [i]
+            I_theta = tuple(C[i].theta_series_vector(B))
+            if I_theta in theta_dict:
+                theta_dict[I_theta].append(i)
+            else:
+                theta_dict[I_theta] = [i]
         return theta_dict
 
     def _compute_hecke_matrix_brandt(self, n, sparse=False):
@@ -1241,7 +1252,7 @@ class BrandtModule_class(AmbientHeckeModule):
         INPUT:
 
         - n -- integer, coprime to level
-        - sparse -- bool (default: False); whether matrix should be sparse
+        - sparse -- bool (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1266,14 +1277,12 @@ class BrandtModule_class(AmbientHeckeModule):
         # do.
         B = self._brandt_series_vectors()
         if len(B[0][0]) <= n:
-            B = self._brandt_series_vectors(2*n+10)
+            B = self._brandt_series_vectors(2 * n + 10)
         m = len(B)
         K = self.base_ring()
-        Bmat = copy(matrix(K, m, m, sparse=sparse))
-        for i in range(m):
-            for j in range(m):
-                Bmat[i,j] = K(B[j][i][n])
-        return Bmat
+        return matrix(K, m, m, {(i, j): K(B[j][i][n])
+                                for i in range(m)
+                                for j in range(m)}, sparse=sparse)
 
     @cached_method
     def _smallest_good_prime(self):
@@ -1287,7 +1296,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         level = self.level()
         p = ZZ(2)
-        while level % p == 0:
+        while not(level % p):
             p = next_prime(p)
         return p
 
@@ -1320,13 +1329,13 @@ class BrandtModule_class(AmbientHeckeModule):
         p = self._smallest_good_prime()
         R = self.order_of_level_N()
         I = R.unit_ideal()
-        I = R.right_ideal([4*x for x in I.basis()])
+        I = R.right_ideal([4 * x for x in I.basis()])
 
         if B is None:
             B = self.dimension() // 2 + 5
 
         ideals = [I]
-        ideals_theta = { tuple(I.theta_series_vector(B)) : [I] }
+        ideals_theta = {tuple(I.theta_series_vector(B)): [I]}
         new_ideals = [I]
 
         newly_computed_ideals = []
@@ -1352,7 +1361,7 @@ class BrandtModule_class(AmbientHeckeModule):
                             ideals_theta[J_theta].append(J)
                         else:
                             ideals_theta[J_theta] = [J]
-                        verbose("found %s of %s ideals"%(len(ideals), self.dimension()), level=2)
+                        verbose("found %s of %s ideals" % (len(ideals), self.dimension()), level=2)
                         if len(ideals) >= self.dimension():
                             ideals = tuple(sorted(ideals))
                             self.__right_ideals = ideals
@@ -1442,14 +1451,15 @@ class BrandtModule_class(AmbientHeckeModule):
         elif prec < 2:
             raise ValueError("prec must be at least 2")
         L = self.right_ideals()
-        n = len(L)
-        if n == 0:
+        if not L:
             return [[]]
         try:
             if len(self.__brandt_series_vectors[0][0]) >= prec:
                 return self.__brandt_series_vectors
-        except AttributeError: pass
+        except AttributeError:
+            pass
 
+        n = len(L)
         # 1. Compute the theta series
         theta = [[I.theta_series_vector(prec) for I in x]
                  for x in self._ideal_products()]
@@ -1459,12 +1469,12 @@ class BrandtModule_class(AmbientHeckeModule):
 
         B = [[0 for _ in range(n)] for _ in range(n)]
 
-        # 3. Make the brandt matrix series
+        # 3. Make the Brandt matrix series
         for i in range(n):
-            B[i][i] = theta[i][i]/e[i]
+            B[i][i] = theta[i][i] / e[i]
             for j in range(i):
-                B[j][i] = theta[i][j]/e[j]
-                B[i][j] = theta[i][j]/e[i]
+                B[j][i] = theta[i][j] / e[j]
+                B[i][j] = theta[i][j] / e[i]
 
         self.__brandt_series_vectors = B
         return B
@@ -1508,9 +1518,10 @@ class BrandtModule_class(AmbientHeckeModule):
             [  1/6 + 2*t^2 + O(t^3)       1/6 + t + O(t^3)]
         """
         A = self._brandt_series_vectors(prec)
-        R = QQ[[var]]
+        R = PowerSeriesRing(QQ, var)
         n = len(A[0])
-        return matrix(R, n, n, [[R(x.list()[:prec],prec) for x in Y] for Y in A])
+        return matrix(R, n, n,
+                      [[R(x.list()[:prec], prec) for x in Y] for Y in A])
 
     @cached_method
     def eisenstein_subspace(self):
@@ -1518,8 +1529,10 @@ class BrandtModule_class(AmbientHeckeModule):
         Return the 1-dimensional subspace of ``self`` on which the Hecke
         operators `T_p` act as `p+1` for `p` coprime to the level.
 
-        NOTE: This function assumes that the base field has
-        characteristic 0.
+        .. NOTE::
+
+            This function assumes that the base field has
+            characteristic 0.
 
         EXAMPLES::
 
@@ -1542,15 +1555,15 @@ class BrandtModule_class(AmbientHeckeModule):
         p = Integer(2)
         N = self.level()
         while V.dimension() >= 2:
-            while N % p == 0:
+            while not(N % p):
                 p = p.next_prime()
             A = V.T(p) - (p + 1)
             V = A.kernel()
         return V
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
-        Returns whether ``self`` is cuspidal, i.e. has no Eisenstein part.
+        Return whether ``self`` is cuspidal, i.e. has no Eisenstein part.
 
         EXAMPLES::
 
@@ -1572,7 +1585,7 @@ class BrandtModule_class(AmbientHeckeModule):
         fixed choice of basis. The weight of an ideal class `[I]` is
         half the number of units of the right order `I`.
 
-        NOTE: The base ring must be `\QQ` or `\ZZ`.
+        .. NOTE:: The base ring must be `\QQ` or `\ZZ`.
 
         EXAMPLES::
 
@@ -1607,9 +1620,9 @@ class BrandtModule_class(AmbientHeckeModule):
         return tuple(a[1] / a[0] / 2 for a in thetas)
 
 
-#############################################################################
-# Benchmarking
-#############################################################################
+# ====================
+#     Benchmarking
+# ====================
 def benchmark_magma(levels, silent=False):
     """
     INPUT:
@@ -1638,10 +1651,10 @@ def benchmark_magma(levels, silent=False):
         ('magma', 97, 2, ...)
     """
     ans = []
-    from sage.interfaces.all import magma
+    from sage.interfaces.magma import magma
     for p, M in levels:
         t = magma.cputime()
-        magma.eval('HeckeOperator(BrandtModule(%s, %s),2)'%(p,M))
+        magma.eval('HeckeOperator(BrandtModule(%s, %s),2)' % (p, M))
         tm = magma.cputime(t)
         v = ('magma', p, M, tm)
         if not silent:
@@ -1677,11 +1690,11 @@ def benchmark_sage(levels, silent=False):
         ('sage', 43, 2, ...)
         ('sage', 97, 2, ...)
     """
-    from sage.misc.all import cputime
+    from sage.misc.misc import cputime
     ans = []
     for p, M in levels:
         t = cputime()
-        BrandtModule(p,M,use_cache=False).hecke_matrix(2)
+        BrandtModule(p, M, use_cache=False).hecke_matrix(2)
         tm = cputime(t)
         v = ('sage', p, M, tm)
         if not silent:

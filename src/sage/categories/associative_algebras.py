@@ -1,17 +1,17 @@
 r"""
 Associative algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.magmas import Magmas
 from sage.categories.magmatic_algebras import MagmaticAlgebras
+
 
 class AssociativeAlgebras(CategoryWithAxiom_over_base_ring):
     r"""

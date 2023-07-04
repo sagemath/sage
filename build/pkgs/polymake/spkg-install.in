@@ -1,0 +1,38 @@
+cd src
+
+more_configure_options=
+
+case $(uname) in
+    Darwin)
+        more_configure_options="$more_configure_options --without-fink"
+        # #21175/#29408: Set the ARCHFLAGS environment variable. This
+        # is to make sure that the output of perl -MExtUtils::Embed
+        # -e ldopts and perl -MExtUtils::Embed -e ccflags (picked up
+        # from system perl) do not contain -arch flags incompatible
+        # with our gcc.
+        export ARCHFLAGS=""
+        ;;
+esac
+
+# We disable SoPlex to avoid linking errors (#24905).
+
+# Since polymake v3.4, it does not find our lrs installation if we do not provide --with-lrs explicitly.
+if [ -x $SAGE_LOCAL/bin/lrs1 ]; then
+    more_configure_options="$more_configure_options --with-lrs=$SAGE_LOCAL"
+fi
+
+# Put these includes on the front, to avoid shadowing by installed headers
+# from a previous version. (polymake 4.8 puts these includes to the end.)
+export CXXFLAGS="-I$(pwd)/include/core-wrappers -I$(pwd)/include/core $CXXFLAGS"
+
+./configure --without-java \
+            --without-javaview \
+            --without-soplex \
+            --prefix="$SAGE_LOCAL" \
+            --exec-prefix="$SAGE_LOCAL" \
+            --includedir="$SAGE_LOCAL"/include \
+            --bindir="$SAGE_LOCAL"/bin \
+            --libdir="$SAGE_LOCAL"/lib \
+            $more_configure_options || sdh_die "Error configuring Polymake"
+ninja -C build/Opt -j${SAGE_NUM_THREADS}
+sdh_make_install

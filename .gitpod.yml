@@ -1,0 +1,57 @@
+# Use custom docker image. https://www.gitpod.io/docs/config-docker
+image:
+  file: docker/.gitpod.Dockerfile
+
+# Start up tasks. https://www.gitpod.io/docs/config-start-tasks/
+tasks:
+  - name: Setup
+    # Create conda environment, then configure and build sage
+    init: >-
+      ./bootstrap-conda
+      && mamba env create --file src/environment-dev.yml --prefix venv
+      && conda config --append envs_dirs $(pwd)
+      && conda activate $(pwd)/venv
+      && ./bootstrap
+      && ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX
+      && pip install --no-build-isolation -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
+      && pip install --no-build-isolation -v -v -e ./src
+    # Activate conda environment, set up Trac remote
+    # RestructuredText extension recommends python extension, although we have already installed it
+    # So disable the recommendation dialog
+    command: >-
+      echo "{\"restructuredtext.pythonRecommendation.disabled\": true}" > /workspace/.vscode-remote/data/Machine/settings.json
+      && conda config --append envs_dirs $(pwd)
+      && conda activate $(pwd)/venv
+      && ./.gitpod-setup-trac-remote.sh
+    env:
+      SAGE_NUM_THREADS: 8
+
+# Preinstalled VS Code extensions. https://www.gitpod.io/docs/vscode-extensions
+vscode:
+  extensions:
+    - ms-pyright.pyright
+    - ms-python.python
+    - trond-snekvik.simple-rst
+    - lextudio.restructuredtext
+    - streetsidesoftware.code-spell-checker
+    - ms-toolsai.jupyter
+    - ms-toolsai.jupyter-keymap
+    - ms-toolsai.jupyter-renderers
+
+# https://www.gitpod.io/docs/prebuilds#github-specific-configuration
+github:
+  prebuilds:
+    # enable for the default branch (defaults to true)
+    master: true
+    # enable for all branches in this repo (defaults to false)
+    branches: true
+    # enable for pull requests coming from this repo (defaults to true)
+    pullRequests: true
+    # enable for pull requests coming from forks (defaults to false)
+    pullRequestsFromForks: true
+    # add a check to pull requests (defaults to true)
+    addCheck: true
+    # add a "Review in Gitpod" button as a comment to pull requests (defaults to false)
+    addComment: true
+    # add a "Review in Gitpod" button to the pull request's description (defaults to false)
+    addBadge: true

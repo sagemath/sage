@@ -1,0 +1,2 @@
+libbrial-dev
+libbrial-groebner-dev

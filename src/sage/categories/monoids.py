@@ -1,7 +1,7 @@
 r"""
 Monoids
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
@@ -9,12 +9,10 @@ Monoids
 #                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.semigroups import Semigroups
 from sage.misc.lazy_import import LazyImport
@@ -67,8 +65,13 @@ class Monoids(CategoryWithAxiom):
         sage: x = S("aa")
         sage: x^0, x^1, x^2, x^3, x^4, x^5
         ('', 'aa', 'aaaa', 'aaaaaa', 'aaaaaaaa', 'aaaaaaaaaa')
-    """
 
+    Check for :trac:`31212`::
+
+        sage: R = IntegerModRing(15)
+        sage: R.submonoid([R.one()]).list()
+        [1]
+    """
     _base_category_class_and_axiom = (Semigroups, "Unital")
 
     Finite = LazyImport('sage.categories.finite_monoids', 'FiniteMonoids', at_startup=True)
@@ -80,7 +83,7 @@ class Monoids(CategoryWithAxiom):
         Return a free monoid on `n` generators or with the generators
         indexed by a set `I`.
 
-        A free monoid is constructed by specifing either:
+        A free monoid is constructed by specifying either:
 
         - the number of generators and/or the names of the generators
         - the indexing set for the generators
@@ -104,7 +107,7 @@ class Monoids(CategoryWithAxiom):
         """
         if names is not None:
             if isinstance(names, str):
-                from sage.rings.all import ZZ
+                from sage.rings.integer_ring import ZZ
                 if ',' not in names and index_set in ZZ:
                     names = [names + repr(i) for i in range(index_set)]
                 else:
@@ -155,6 +158,7 @@ class Monoids(CategoryWithAxiom):
                 sage: S.prod([S('a'), S('b')])
                 'ab'
             """
+            from sage.misc.misc_c import prod
             return prod(args, self.one())
 
         def _test_prod(self, **options):
@@ -182,12 +186,11 @@ class Monoids(CategoryWithAxiom):
                 sage: S._test_prod(elements = (S('a'), S('b')))
             """
             tester = self._tester(**options)
-            tester.assertTrue(self.prod([]) == self.one())
+            tester.assertEqual(self.prod([]), self.one())
             for x in tester.some_elements():
-                tester.assertTrue(self.prod([x]) == x)
-                tester.assertTrue(self.prod([x, x]) == x**2)
-                tester.assertTrue(self.prod([x, x, x]) == x**3)
-
+                tester.assertEqual(self.prod([x]), x)
+                tester.assertEqual(self.prod([x, x]), x**2)
+                tester.assertEqual(self.prod([x, x, x]), x**3)
 
         def submonoid(self, generators, category=None):
             r"""
@@ -226,12 +229,48 @@ class Monoids(CategoryWithAxiom):
                 sage: M2 = R.subsemigroup([R(3),R(5)], one=R.one())
                 sage: M2 is M
                 True
-
-
             """
             return self.subsemigroup(generators, one=self.one())
 
     class ElementMethods:
+        def _div_(left, right):
+            r"""
+            Default implementation of division, multiplying (on the right) by the inverse.
+
+            INPUT:
+
+            - ``left``, ``right`` -- two elements of the same unital monoid
+
+            .. SEEALSO:: :meth:`__div__`
+
+            EXAMPLES::
+
+                sage: G = FreeGroup(2)
+                sage: x0, x1 = G.group_generators()
+                sage: c1 = cartesian_product([x0, x1])
+                sage: c2 = cartesian_product([x1, x0])
+                sage: c1._div_(c2)
+                (x0*x1^-1, x1*x0^-1)
+
+            With this default implementation, division will fail as
+            soon as ``right`` is not invertible, even if ``right``
+            actually divides ``left``::
+
+                sage: x = cartesian_product([2, 0])
+                sage: y = cartesian_product([1, 1])
+                sage: x / y
+                (2, 0)
+                sage: y / x
+                Traceback (most recent call last):
+                ...
+                ZeroDivisionError: rational division by zero
+
+            TESTS::
+
+                sage: c1._div_.__module__
+                'sage.categories.monoids'
+            """
+            return left * ~right
 
         def is_one(self):
             r"""
@@ -315,6 +354,37 @@ class Monoids(CategoryWithAxiom):
                 l.append(x)
             return l
 
+        def __invert__(self):
+            r"""
+            Return the multiplicative inverse of ``self``.
+
+            There is no default implementation, to avoid conflict
+            with the default implementation of ``_div_``.
+
+            EXAMPLES::
+
+                sage: A = Matrix([[1, 0], [1, 1]])
+                sage: ~A
+                [ 1 0]
+                [-1 1]
+            """
+            raise NotImplementedError("please implement __invert__")
+
+        def inverse(self):
+            """
+            Return the multiplicative inverse of ``self``.
+
+            This is an alias for inversion, which can also be invoked
+            by ``~x`` for an element ``x``.
+
+            EXAMPLES::
+
+                sage: AA(sqrt(~2)).inverse()
+                1.414213562373095?
+            """
+            # Nota Bene: Element classes should implement ``__invert__`` only.
+            return self.__invert__()
+
     class Commutative(CategoryWithAxiom):
         r"""
         Category of commutative (abelian) monoids.
@@ -327,7 +397,7 @@ class Monoids(CategoryWithAxiom):
             Return a free abelian monoid on `n` generators or with
             the generators indexed by a set `I`.
 
-            A free monoid is constructed by specifing either:
+            A free monoid is constructed by specifying either:
 
             - the number of generators and/or the names of the generators, or
             - the indexing set for the generators.
@@ -351,7 +421,7 @@ class Monoids(CategoryWithAxiom):
             """
             if names is not None:
                 if isinstance(names, str):
-                    from sage.rings.all import ZZ
+                    from sage.rings.integer_ring import ZZ
                     if ',' not in names and index_set in ZZ:
                         names = [names + repr(i) for i in range(index_set)]
                     else:
@@ -412,16 +482,21 @@ class Monoids(CategoryWithAxiom):
 
         def extra_super_categories(self):
             """
+            The algebra of a monoid is a bialgebra and a monoid.
+
             EXAMPLES::
 
-                sage: Monoids().Algebras(QQ).extra_super_categories()
-                [Category of monoids]
+                sage: C = Monoids().Algebras(QQ)
+                sage: C.extra_super_categories()
+                [Category of bialgebras over Rational Field,
+                 Category of monoids]
                 sage: Monoids().Algebras(QQ).super_categories()
-                [Category of algebras with basis over Rational Field,
+                [Category of bialgebras with basis over Rational Field,
                  Category of semigroup algebras over Rational Field,
                  Category of unital magma algebras over Rational Field]
             """
-            return [Monoids()]
+            from sage.categories.bialgebras import Bialgebras
+            return [Bialgebras(self.base_ring()), Monoids()]
 
         class ParentMethods:
 
@@ -481,18 +556,17 @@ class Monoids(CategoryWithAxiom):
                     sage: Z12.semigroup_generators()
                     Family (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
                     sage: Z12.algebra(QQ).algebra_generators()
-                    Finite family {0: B[0], 1: B[1], 2: B[2], 3: B[3],  4: B[4],   5: B[5],
-                                   6: B[6], 7: B[7], 8: B[8], 9: B[9], 10: B[10], 11: B[11]}
+                    Family (B[0], B[1], B[2], B[3], B[4], B[5], B[6], B[7], B[8], B[9], B[10], B[11])
 
 
                     sage: GroupAlgebras(QQ).example(AlternatingGroup(10)).algebra_generators()
-                    Finite family {0: (8,9,10), 1: (1,2,3,4,5,6,7,8,9)}
+                    Family ((8,9,10), (1,2,3,4,5,6,7,8,9))
 
                     sage: A = DihedralGroup(3).algebra(QQ); A
                     Algebra of Dihedral group of order 6 as a permutation group
                      over Rational Field
                     sage: A.algebra_generators()
-                    Finite family {0: (1,2,3), 1: (1,3)}
+                    Family ((1,2,3), (1,3))
                 """
                 monoid = self.basis().keys()
                 try:
@@ -571,6 +645,7 @@ class Monoids(CategoryWithAxiom):
                 """
                 F = self.cartesian_factors()
                 ids = tuple(M.one() for M in F)
+
                 def lift(i, gen):
                     cur = list(ids)
                     cur[i] = gen
@@ -579,9 +654,11 @@ class Monoids(CategoryWithAxiom):
 
                 # Finitely generated
                 cat = FiniteEnumeratedSets()
-                if all(M.monoid_generators() in cat
-                       or isinstance(M.monoid_generators(), (tuple, list)) for M in F):
-                    ret = [lift(i, gen) for i,M in enumerate(F) for gen in M.monoid_generators()]
+                if all(M.monoid_generators() in cat or
+                       isinstance(M.monoid_generators(), (tuple, list))
+                       for M in F):
+                    ret = [lift(i, gen) for i, M in enumerate(F)
+                           for gen in M.monoid_generators()]
                     return Family(ret)
 
                 # Infinitely generated
@@ -590,6 +667,42 @@ class Monoids(CategoryWithAxiom):
                 from sage.categories.cartesian_product import cartesian_product
                 gens_prod = cartesian_product([Family(M.monoid_generators(),
                                                       lambda g: (i, g))
-                                               for i,M in enumerate(F)])
+                                               for i, M in enumerate(F)])
                 return Family(gens_prod, lift, name="gen")
 
+        class ElementMethods:
+            def multiplicative_order(self):
+                r"""
+                Return the multiplicative order of this element.
+
+                EXAMPLES::
+
+                    sage: G1 = SymmetricGroup(3)
+                    sage: G2 = SL(2,3)
+                    sage: G = cartesian_product([G1,G2])
+                    sage: G((G1.gen(0), G2.gen(1))).multiplicative_order()
+                    12
+                """
+                from sage.rings.infinity import Infinity
+                orders = [x.multiplicative_order() for x in self.cartesian_factors()]
+                if any(o is Infinity for o in orders):
+                    return Infinity
+                else:
+                    from sage.arith.functions import LCM_list
+                    return LCM_list(orders)
+
+            def __invert__(self):
+                """
+                Return the inverse.
+
+                EXAMPLES::
+
+                    sage: a1 = Permutation((4,2,1,3))
+                    sage: a2 = SL(2,3)([2,1,1,1])
+                    sage: h = cartesian_product([a1,a2])
+                    sage: ~h
+                    ([2, 4, 1, 3], [1 2]
+                    [2 2])
+                """
+                build = self.parent()._cartesian_product_of_elements
+                return build([x.__invert__() for x in self.cartesian_factors()])

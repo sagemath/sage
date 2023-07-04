@@ -156,12 +156,12 @@ r"""
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
-    sage: all([x*y == y*x for x in A for y in B])
+    sage: all(x*y == y*x for x in A for y in B)
     True
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
-    sage: T = sorted([x*y for x in A for y in B])
+    sage: T = sorted(x*y for x in A for y in B)
     sage: T
     [1, 5, 7, 11, 13, 17, 19, 23, 25, 29, 31, 35]
 

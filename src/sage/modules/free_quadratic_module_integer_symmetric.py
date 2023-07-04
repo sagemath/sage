@@ -13,9 +13,7 @@ EXAMPLES::
     sage: M = Matrix(ZZ, [[0,1], [1,0]])
     sage: IntegralLattice(M)
     Lattice of degree 2 and rank 2 over Integer Ring
-    Basis matrix:
-    [1 0]
-    [0 1]
+    Standard basis
     Inner product matrix:
     [0 1]
     [1 0]
@@ -31,10 +29,7 @@ ambient space and a basis::
     Basis matrix:
     [ 1 -1  0]
     [ 0  1 -1]
-    Inner product matrix:
-    [1 0 0]
-    [0 1 0]
-    [0 0 1]
+    Standard scalar product
 
     sage: L.gram_matrix()
     [ 2 -1]
@@ -64,7 +59,6 @@ from sage.modules.free_quadratic_module import FreeQuadraticModule_submodule_wit
 from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
 from sage.arith.misc import gcd
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.misc.cachefunc import cached_method
 
 ###############################################################################
@@ -88,7 +82,7 @@ def IntegralLattice(data, basis=None):
     - ``data`` -- can be one of the following:
 
       * a symmetric matrix over the rationals -- the inner product matrix
-      * an integer -- the dimension for a euclidian lattice
+      * an integer -- the dimension for an Euclidean lattice
       * a symmetric Cartan type or anything recognized by
         :class:`CartanMatrix` (see also
         :mod:`Cartan types <sage.combinat.root_system.cartan_type>`)
@@ -108,9 +102,7 @@ def IntegralLattice(data, basis=None):
         sage: H5 = Matrix(ZZ, 2, [2,1,1,-2])
         sage: IntegralLattice(H5)
         Lattice of degree 2 and rank 2 over Integer Ring
-        Basis matrix:
-        [1 0]
-        [0 1]
+        Standard basis
         Inner product matrix:
         [ 2  1]
         [ 1 -2]
@@ -125,20 +117,15 @@ def IntegralLattice(data, basis=None):
         [ 2  1]
         [ 1 -2]
 
-    We can define a Euclidian lattice just by its dimension::
+    We can define an Euclidean lattice just by its dimension::
 
         sage: IntegralLattice(3)
         Lattice of degree 3 and rank 3 over Integer Ring
-        Basis matrix:
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
-        Inner product matrix:
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
+        Standard basis
+        Standard scalar product
 
-    Here is an example of the `A_2` root lattice in Euclidian space::
+
+    Here is an example of the `A_2` root lattice in Euclidean space::
 
         sage: basis = Matrix([[1,-1,0], [0,1,-1]])
         sage: A2 = IntegralLattice(3, basis)
@@ -147,10 +134,7 @@ def IntegralLattice(data, basis=None):
         Basis matrix:
         [ 1 -1  0]
         [ 0  1 -1]
-        Inner product matrix:
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
+        Standard scalar product
         sage: A2.gram_matrix()
         [ 2 -1]
         [-1  2]
@@ -160,9 +144,7 @@ def IntegralLattice(data, basis=None):
         sage: L1 = IntegralLattice("U")
         sage: L1
         Lattice of degree 2 and rank 2 over Integer Ring
-        Basis matrix:
-        [1 0]
-        [0 1]
+        Standard basis
         Inner product matrix:
         [0 1]
         [1 0]
@@ -175,14 +157,7 @@ def IntegralLattice(data, basis=None):
 
         sage: IntegralLattice(["E", 7])
         Lattice of degree 7 and rank 7 over Integer Ring
-        Basis matrix:
-        [1 0 0 0 0 0 0]
-        [0 1 0 0 0 0 0]
-        [0 0 1 0 0 0 0]
-        [0 0 0 1 0 0 0]
-        [0 0 0 0 1 0 0]
-        [0 0 0 0 0 1 0]
-        [0 0 0 0 0 0 1]
+        Standard basis
         Inner product matrix:
         [ 2  0 -1  0  0  0  0]
         [ 0  2  0 -1  0  0  0]
@@ -193,29 +168,20 @@ def IntegralLattice(data, basis=None):
         [ 0  0  0  0  0 -1  2]
         sage: IntegralLattice(["A", 2])
         Lattice of degree 2 and rank 2 over Integer Ring
-        Basis matrix:
-        [1 0]
-        [0 1]
+        Standard basis
         Inner product matrix:
         [ 2 -1]
         [-1  2]
         sage: IntegralLattice("D3")
         Lattice of degree 3 and rank 3 over Integer Ring
-        Basis matrix:
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
+        Standard basis
         Inner product matrix:
         [ 2 -1 -1]
         [-1  2  0]
         [-1  0  2]
         sage: IntegralLattice(["D", 4])
         Lattice of degree 4 and rank 4 over Integer Ring
-        Basis matrix:
-        [1 0 0 0]
-        [0 1 0 0]
-        [0 0 1 0]
-        [0 0 0 1]
+        Standard basis
         Inner product matrix:
         [ 2 -1  0  0]
         [-1  2 -1 -1]
@@ -245,11 +211,7 @@ def IntegralLattice(data, basis=None):
         Lattice of degree 4 and rank 1 over Integer Ring
         Basis matrix:
         [1 1 1 1]
-        Inner product matrix:
-        [1 0 0 0]
-        [0 1 0 0]
-        [0 0 1 0]
-        [0 0 0 1]
+        Standard scalar product
         sage: IntegralLattice("A2", [[1,1]])
         Lattice of degree 2 and rank 1 over Integer Ring
         Basis matrix:
@@ -276,6 +238,7 @@ def IntegralLattice(data, basis=None):
     elif data == "U" or data == "H":
         inner_product_matrix = matrix([[0,1],[1,0]])
     else:
+        from sage.combinat.root_system.cartan_matrix import CartanMatrix
         inner_product_matrix = CartanMatrix(data)
     if basis is None:
         basis = matrix.identity(ZZ, inner_product_matrix.ncols())
@@ -347,11 +310,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
 
         sage: IntegralLatticeDirectSum([IntegralLattice("D4")])
         Lattice of degree 4 and rank 4 over Integer Ring
-        Basis matrix:
-        [1 0 0 0]
-        [0 1 0 0]
-        [0 0 1 0]
-        [0 0 0 1]
+        Standard basis
         Inner product matrix:
         [ 2 -1  0  0]
         [-1  2 -1 -1]
@@ -389,7 +348,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     basis = [matrix.block(1, 3, [matrix.zero(dims[i], sum_degree[i]),
                                  Lattices[i].basis_matrix(),
                                  matrix.zero(dims[i], sum_degree[-1] - sum_degree[i+1])
-                                ])  for i in range(N)]
+                                ]) for i in range(N)]
     basis_matrix = matrix.block(N, 1, basis)
     ipm = ambient.inner_product_matrix()
     direct_sum = FreeQuadraticModule_integer_symmetric(ambient=ambient,
@@ -402,6 +361,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     phi = [Lattices[i].hom(direct_sum.basis()[sum_dims[i]:sum_dims[i+1]])
            for i in range(N)]
     return [direct_sum, phi]
+
 
 def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
     r"""
@@ -447,8 +407,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
          [4], [Free module morphism defined by the matrix
           [2]
           Domain: Lattice of degree 1 and rank 1 over Integer Ring
-          Basis matrix:
-          [1]
+          Standard basis
           Inner product matrix:
           [4]
           Codomain: Lattice of degree 1 and rank 1 over Integer Ring
@@ -591,8 +550,8 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         sage: [L, phi] = IntegralLatticeGluing([L1, L2], [[f1, g1], [f2, 2 * g2]], True)
         sage: phi[0]
         Free module morphism defined by the matrix
-        [ 2  2 -1 -2]
-        [ 0  2  0 -1]
+        [ 2  2 -2 -1]
+        [ 0  2 -1  0]
         Domain: Lattice of degree 4 and rank 2 over Integer Ring
         Basis matrix:
         [1 1 0 0]
@@ -605,7 +564,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         Codomain: Lattice of degree 10 and rank 4 over Integer Ring
         Basis matrix:
         [ 1/2    0 -1/2    0    0  1/2    0    0  1/2  1/2]
-        [   0  1/2  1/2    0    0    0    0    0  1/2  1/2]
+        [   0  1/2  1/2    0    0  1/2    0    0    0    0]
         [   0    0    0    0    0    1    0    0    0    0]
         [   0    0    0    0    0    0    0    0    1    1]
         Inner product matrix:
@@ -739,23 +698,26 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: A2 = IntegralLattice("A2")
             sage: A2
             Lattice of degree 2 and rank 2 over Integer Ring
-            Basis matrix:
-            [1 0]
-            [0 1]
+            Standard basis
             Inner product matrix:
             [ 2 -1]
             [-1  2]
         """
+        s = ""
         if self.is_sparse():
-            s = "Sparse lattice of degree %s and rank %s over %s\n"%(
-                self.degree(), self.rank(), self.base_ring()) + \
-                "Basis matrix:\n%s\n" % self.basis_matrix() + \
-                "Inner product matrix:\n%s" % self.inner_product_matrix()
+            s += "Sparse lattice "
         else:
-            s = "Lattice of degree %s and rank %s over %s\n"%(
-                self.degree(), self.rank(), self.base_ring()) + \
-                "Basis matrix:\n%s\n" % self.basis_matrix() + \
-                "Inner product matrix:\n%s" % self.inner_product_matrix()
+            s += "Lattice "
+        s += "of degree %s and rank %s over %s\n" % (
+              self.degree(), self.rank(), self.base_ring())
+        if self.basis_matrix().is_one():
+            s += "Standard basis \n"
+        else:
+            s += "Basis matrix:\n%s\n" % self.basis_matrix()
+        if self.inner_product_matrix().is_one():
+            s += "Standard scalar product"
+        else:
+            s += "Inner product matrix:\n%s" % self.inner_product_matrix()
         return s
 
     @cached_method
@@ -765,7 +727,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: G = Matrix(ZZ,2,2,[-1,1,1,2])
+            sage: G = Matrix(ZZ, 2, 2, [-1,1,1,2])
             sage: L = IntegralLattice(G)
             sage: L.is_even()
             False
@@ -789,8 +751,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         EXAMPLES::
 
             sage: L = IntegralLattice("A2")
-            sage: Ldual=L.dual_lattice()
-            sage: Ldual
+            sage: Ldual = L.dual_lattice(); Ldual
             Free module of degree 2 and rank 2 over Integer Ring
             Echelon basis matrix:
             [1/3 2/3]
@@ -803,7 +764,6 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         """
         return self.span(self.gram_matrix().inverse()*self.basis_matrix())
 
-    @cached_method
     def discriminant_group(self, s=0):
         r"""
         Return the discriminant group `L^\vee / L` of this lattice.
@@ -819,12 +779,12 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: L = IntegralLattice(Matrix(ZZ,2,2,[2,1,1,-2])*2)
+            sage: L = IntegralLattice(Matrix(ZZ, 2, 2, [2,1,1,-2]) * 2)
             sage: L.discriminant_group()
             Finite quadratic module over Integer Ring with invariants (2, 10)
             Gram matrix of the quadratic form with values in Q/2Z:
             [  1 1/2]
-            [1/2 9/5]
+            [1/2 1/5]
             sage: L.discriminant_group(2)
             Finite quadratic module over Integer Ring with invariants (2, 2)
             Gram matrix of the quadratic form with values in Q/2Z:
@@ -833,7 +793,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L.discriminant_group(5)
             Finite quadratic module over Integer Ring with invariants (5,)
             Gram matrix of the quadratic form with values in Q/2Z:
-            [6/5]
+            [4/5]
 
         TESTS::
 
@@ -842,6 +802,20 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             Finite quadratic module over Integer Ring with invariants ()
             Gram matrix of the quadratic form with values in Q/2Z:
             []
+
+        Test that the memory leak in :trac:`31625` is fixed::
+
+            sage: import gc
+            sage: gc.freeze()
+            sage: L = IntegralLattice("A2")
+            sage: for k in range(1,500):  # long time
+            ....:     G = L.twist(k)
+            ....:     D = G.discriminant_group()
+            sage: tmp = gc.collect()
+            sage: tmp = gc.collect()
+            sage: len([a for a in gc.get_objects() if type(a)==type(L)])<=300
+            True
+            sage: gc.unfreeze()
         """
         from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
         D = TorsionQuadraticModule(self.dual_lattice(), self)
@@ -875,7 +849,6 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-
             sage: A2 = IntegralLattice("A2")
             sage: A2.signature_pair()
             (2, 0)
@@ -896,12 +869,8 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: A = IntegralLattice(1)
             sage: A.direct_sum(A)
             Lattice of degree 2 and rank 2 over Integer Ring
-            Basis matrix:
-            [1 0]
-            [0 1]
-            Inner product matrix:
-            [1 0]
-            [0 1]
+            Standard basis
+            Standard scalar product
         """
         IM = matrix.block_diagonal([self.inner_product_matrix(),
                                     M.inner_product_matrix()])
@@ -937,12 +906,12 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             True
             sage: U.is_primitive(L2)
             True
-            sage: U.is_primitive(L1+L2)
+            sage: U.is_primitive(L1 + L2)
             False
 
         We can also compute the index::
 
-            sage: (L1+L2).index_in(U)
+            sage: (L1 + L2).index_in(U)
             2
         """
         return (gcd((self/M).invariants()) == 0)
@@ -958,7 +927,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: H5 = Matrix(ZZ,2,[2,1,1,-2])
+            sage: H5 = Matrix(ZZ, 2, [2,1,1,-2])
             sage: L = IntegralLattice(H5)
             sage: S = L.span([vector([1,1])])
             sage: L.orthogonal_complement(S)
@@ -970,13 +939,11 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [ 1 -2]
 
             sage: L = IntegralLattice(2)
-            sage: L.orthogonal_complement([vector(ZZ,[1,0])])
+            sage: L.orthogonal_complement([vector(ZZ, [1,0])])
             Lattice of degree 2 and rank 1 over Integer Ring
             Basis matrix:
             [0 1]
-            Inner product matrix:
-            [1 0]
-            [0 1]
+            Standard scalar product
         """
         from sage.modules.free_module import FreeModule_generic
         if not isinstance(M,FreeModule_generic):
@@ -1001,8 +968,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         EXAMPLES::
 
             sage: U = IntegralLattice("U")
-            sage: S = U.sublattice([vector([1,1])])
-            sage: S
+            sage: S = U.sublattice([vector([1,1])]); S
             Lattice of degree 2 and rank 1 over Integer Ring
             Basis matrix:
             [1 1]
@@ -1037,7 +1003,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: L = IntegralLattice(Matrix(ZZ,2,2,[2,0,0,2]))
+            sage: L = IntegralLattice(Matrix(ZZ, 2, 2, [2,0,0,2]))
             sage: M = L.overlattice([vector([1,1])/2])
             sage: M.gram_matrix()
             [1 1]
@@ -1048,6 +1014,130 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             ambient=self.ambient_module(), basis=basis,
             inner_product_matrix=self.inner_product_matrix(),
             already_echelonized=False)
+
+    def maximal_overlattice(self, p=None):
+        r"""
+        Return a maximal even integral overlattice of this lattice.
+
+        INPUT:
+
+        - ``p`` -- (default:``None``) if given return an overlattice
+          `M` of this lattice `L` that is maximal at `p` and the
+          completions `M_q = L_q` are equal for all primes `q \neq p`.
+
+        If `p` is `2` or ``None``, then the lattice must be even.
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice("A4").twist(25*89)
+            sage: L.maximal_overlattice().determinant()
+            5
+            sage: L.maximal_overlattice(89).determinant().factor()
+            5^9
+            sage: L.maximal_overlattice(5).determinant().factor()
+            5 * 89^4
+
+        TESTS::
+
+            sage: L = IntegralLattice(matrix.diagonal([2,4,4,8]))
+            sage: L.maximal_overlattice().is_even()
+            True
+
+        """
+        # this code is somewhat slow but it works
+        # it might speed up things to use the algorithms given in
+        # https://arxiv.org/abs/1208.2481
+        # and trac:11940
+        if not self.is_even() and (p is None or p==2):
+            raise ValueError("this lattice must be even to admit an even overlattice")
+        from sage.rings.finite_rings.finite_field_constructor import GF
+        L = self
+        if p is None:
+            P = ZZ(self.determinant()).prime_factors()
+        else:
+            P = ZZ(p).prime_factors()
+        # even case
+        if 2 in P:
+            # create an isotropic subspace by rescaling
+            # the generators
+            D = L.discriminant_group(2)
+            isotropic = []
+            for b in D.gens():
+                e = b.additive_order()
+                v = e.valuation(2)
+                q = b.q().lift()
+                delta = (q*e) % 2
+                b = 2**(((e.valuation(2)+1)//2) + delta) * b.lift()
+                isotropic.append(b)
+            L = L.overlattice(isotropic)
+            D = L.discriminant_group()
+            # now L is of exponent at most 4.
+            if D.cardinality() > 512:
+                D = D.normal_form(partial=True)
+            isotropic = []
+            # extract an isotropic space spanned by
+            # a subset of the generators of D
+            i = 0
+            while i < len(D.gens()):
+                t = D.gens()[i]
+                if t.q() == 0 and all(t.b(g) == 0 for g in isotropic):
+                    isotropic.append(t)
+                i += 1
+            isotropic = [g.lift() for g in isotropic]
+            L = L.overlattice(isotropic)
+            D = L.discriminant_group(2)
+            # clean up whatever is left by brute force
+            while D.cardinality().valuation(2) > 1:
+                for t in D:
+                    if t != 0 and t.q() == 0:
+                        break
+                if t.q() != 0:
+                    # no isotropic vector left
+                    break
+                L = L.overlattice([t.lift()])
+                D = L.discriminant_group(2)
+        # odd case
+        for p in P:
+            if p == 2:
+                continue
+            # go squarefree
+            D = L.discriminant_group(p).normal_form()
+            isotropic = [p**((-b.q().lift().valuation(p)+1)//2) * b.lift() for b in D.gens()]
+            L = L.overlattice(isotropic)
+            # now the p-discriminant_group is a vector space
+            while True:
+                d = L.discriminant_group(p).gram_matrix_bilinear().det()
+                v = -d.valuation(p)
+                u = d.numerator()
+                if v <= 1 or (v == 2 and ZZ(-1).kronecker(p) != u.kronecker(p)):
+                    # the lattice is already maximal at p
+                    break
+                # diagonalize the gram matrix
+                D = L.discriminant_group(p).normal_form(partial=True)
+                gen = D.gens()
+                G = D.gram_matrix_quadratic().diagonal()
+                k = GF(p)
+                a = k(G[0].numerator())
+                b = k(G[1].numerator())
+                if (-b/a).is_square():
+                    # solve:  a*x^2 + b *y^2  = 0
+                    x = (-b/a).sqrt()
+                    y = 1
+                    t = ZZ(x)*gen[0] + ZZ(y)*gen[1]
+                else:
+                    # or solve a*x^2 + b*y^2 + c = 0
+                    # we know the rank is at least 3
+                    c = k(G[2].numerator())
+                    # brute force to find a suitable y
+                    # very fast
+                    for y in GF(p):
+                        x = (-c - b*y**2)/a
+                        if x.is_square():
+                            x = x.sqrt()
+                            break
+                    t = ZZ(x)*gen[0] + ZZ(y)*gen[1] + ZZ(1)*gen[2]
+                L = L.overlattice([t.lift()])
+        return L
 
     def orthogonal_group(self, gens=None, is_finite=None):
         """
@@ -1075,33 +1165,31 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         EXAMPLES::
 
             sage: A4 = IntegralLattice("A4")
-            sage: Aut = A4.orthogonal_group()
-            sage: Aut
-            Group of isometries with 5 generators (
-            [-1  0  0  0]  [0 0 0 1]  [-1 -1 -1  0]  [ 1  0  0  0]  [ 1  0  0  0]
-            [ 0 -1  0  0]  [0 0 1 0]  [ 0  0  0 -1]  [-1 -1 -1 -1]  [ 0  1  0  0]
-            [ 0  0 -1  0]  [0 1 0 0]  [ 0  0  1  1]  [ 0  0  0  1]  [ 0  0  1  1]
-            [ 0  0  0 -1], [1 0 0 0], [ 0  1  0  0], [ 0  0  1  0], [ 0  0  0 -1]
+            sage: Aut = A4.orthogonal_group(); Aut
+            Group of isometries with 4 generators (
+            [0 0 0 1]  [-1 -1 -1  0]  [ 1  0  0  0]  [ 1  0  0  0]
+            [0 0 1 0]  [ 0  0  0 -1]  [-1 -1 -1 -1]  [ 0  1  0  0]
+            [0 1 0 0]  [ 0  0  1  1]  [ 0  0  0  1]  [ 0  0  1  1]
+            [1 0 0 0], [ 0  1  0  0], [ 0  0  1  0], [ 0  0  0 -1]
             )
 
         The group acts from the right on the lattice and its discriminant group::
 
             sage: x = A4.an_element()
-            sage: g = Aut.an_element()
-            sage: g
-            [ 1  1  1  0]
-            [ 0  0 -1  0]
-            [ 0  0  1  1]
-            [ 0 -1 -1 -1]
+            sage: g = Aut.an_element(); g
+            [-1 -1 -1  0]
+            [ 0  0  1  0]
+            [ 0  0 -1 -1]
+            [ 0  1  1  1]
             sage: x*g
-            (1, 1, 1, 0)
-            sage: (x*g).parent()==A4
+            (-1, -1, -1, 0)
+            sage: (x*g).parent() == A4
             True
             sage: (g*x).parent()
             Vector space of dimension 4 over Rational Field
             sage: y = A4.discriminant_group().an_element()
             sage: y*g
-            (1)
+            (4)
 
         If the group is finite we can compute the usual things::
 
@@ -1115,17 +1203,17 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         The lattice can live in a larger ambient space::
 
-            sage: A2 = IntegralLattice(matrix.identity(3),Matrix(ZZ,2,3,[1,-1,0,0,1,-1]))
+            sage: A2 = IntegralLattice(matrix.identity(3), Matrix(ZZ, 2, 3, [1,-1,0,0,1,-1]))
             sage: A2.orthogonal_group()
-            Group of isometries with 3 generators (
-            [-1/3  2/3  2/3]  [ 2/3  2/3 -1/3]  [1 0 0]
-            [ 2/3 -1/3  2/3]  [ 2/3 -1/3  2/3]  [0 0 1]
-            [ 2/3  2/3 -1/3], [-1/3  2/3  2/3], [0 1 0]
+            Group of isometries with 2 generators (
+            [ 2/3  2/3 -1/3]  [1 0 0]
+            [ 2/3 -1/3  2/3]  [0 0 1]
+            [-1/3  2/3  2/3], [0 1 0]
             )
 
         It can be negative definite as well::
 
-            sage: A2m = IntegralLattice(-Matrix(ZZ,2,[2,1,1,2]))
+            sage: A2m = IntegralLattice(-Matrix(ZZ, 2, [2,1,1,2]))
             sage: G = A2m.orthogonal_group()
             sage: G.order()
             12
@@ -1133,16 +1221,17 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         If the lattice is indefinite, sage does not know how to compute generators.
         Can you teach it?::
 
-            sage: U = IntegralLattice(Matrix(ZZ,2,[0,1,1,0]))
+            sage: U = IntegralLattice(Matrix(ZZ, 2, [0,1,1,0]))
             sage: U.orthogonal_group()
             Traceback (most recent call last):
             ...
-            NotImplementedError: currently, we can only compute generators for orthogonal groups over definite lattices.
+            NotImplementedError: currently, we can only compute generators
+            for orthogonal groups over definite lattices.
 
         But we can define subgroups::
 
-            sage: S = IntegralLattice(Matrix(ZZ,2,[2, 3, 3, 2]))
-            sage: f = Matrix(ZZ,2,[0,1,-1,3])
+            sage: S = IntegralLattice(Matrix(ZZ, 2, [2, 3, 3, 2]))
+            sage: f = Matrix(ZZ, 2, [0,1,-1,3])
             sage: S.orthogonal_group([f])
             Group of isometries with 1 generator (
             [ 0  1]
@@ -1153,7 +1242,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         We can handle the trivial group::
 
-            sage: S = IntegralLattice(Matrix(ZZ,2,[2, 3, 3, 2]))
+            sage: S = IntegralLattice(Matrix(ZZ, 2, [2, 3, 3, 2]))
             sage: S.orthogonal_group([])
             Group of isometries with 1 generator (
             [1 0]
@@ -1165,16 +1254,16 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         sig = self.signature_pair()
         if gens is None:
             gens = []
-            if sig[1]==0 or sig[0]==0: #definite
+            if sig[1] == 0 or sig[0] == 0:  # definite
                 from sage.quadratic_forms.quadratic_form import QuadraticForm
                 is_finite = True
                 # Compute transformation matrix to the ambient module.
                 L = self.overlattice(self.ambient_module().gens())
                 Orthogonal = L.orthogonal_complement(self)
                 B = self.basis_matrix().stack(Orthogonal.basis_matrix())
-                if sig[0] == 0: #negative definite
+                if sig[0] == 0:  # negative definite
                     q = QuadraticForm(ZZ, -2*self.gram_matrix())
-                else:    # positve definite
+                else:  # positive definite
                     q = QuadraticForm(ZZ, 2*self.gram_matrix())
                 identity = matrix.identity(Orthogonal.rank())
                 for g in q.automorphism_group().gens():
@@ -1183,7 +1272,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
                     g = matrix.block_diagonal([g, identity])
                     g = B.inverse()*g*B
                     gens.append(g)
-            else: #indefinite
+            else:  # indefinite
                 raise NotImplementedError(
                     "currently, we can only compute generators "
                     "for orthogonal groups over definite lattices.")
@@ -1231,14 +1320,12 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         - ``other`` -- an integral lattice
         - ``discard_basis`` -- a boolean (default: ``False``). If ``True``, then the lattice
-                            returned is equipped with the standard basis.
+          returned is equipped with the standard basis.
 
         EXAMPLES::
 
             sage: L = IntegralLattice("D3", [[1,-1,0], [0,1,-1]])
-            sage: L1 = L.tensor_product(L)
-            sage: L2 = L.tensor_product(L, True)
-            sage: L1
+            sage: L1 = L.tensor_product(L); L1
             Lattice of degree 9 and rank 4 over Integer Ring
             Basis matrix:
             [ 1 -1  0 -1  1  0  0  0  0]
@@ -1260,13 +1347,9 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [-12  24   4  -8]
             [-12   4  24  -8]
             [  4  -8  -8  16]
-            sage: L2
+            sage: L2 = L.tensor_product(L, True); L2
             Lattice of degree 4 and rank 4 over Integer Ring
-            Basis matrix:
-            [1 0 0 0]
-            [0 1 0 0]
-            [0 0 1 0]
-            [0 0 0 1]
+            Standard basis
             Inner product matrix:
             [ 36 -12 -12   4]
             [-12  24   4  -8]
@@ -1288,6 +1371,147 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
                                                          basis=basis_matrix,
                                                          inner_product_matrix=ambient.inner_product_matrix())
 
+    @cached_method
+    def quadratic_form(self):
+        r"""
+        Return the quadratic form given by `q(x)=(x,x)`.
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice("A2")
+            sage: q = L.quadratic_form(); q
+            Quadratic form in 2 variables over Integer Ring with coefficients:
+            [ 2 -2 ]
+            [ * 2 ]
+        """
+        from sage.quadratic_forms.quadratic_form import QuadraticForm
+        return QuadraticForm(2 * self.gram_matrix())
+
+    @cached_method
+    def minimum(self):
+        r"""
+        Return the minimum of this lattice.
+
+        .. MATH::
+
+            \min\{x^2 | x \in L\setminus \{0\}\}
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice('A2')
+            sage: L.minimum()
+            2
+            sage: L.twist(-1).minimum()
+            -Infinity
+        """
+        p, n = self.signature_pair()
+        if self.rank() == 0:
+            raise ValueError("the empty set does not have a minimum")
+        if n != 0:
+            from sage.rings.infinity import MinusInfinity
+            return MinusInfinity()
+        mpari = self.gram_matrix().__pari__().qfminim(None, 0)[1]
+        return mpari
+
+    @cached_method
+    def maximum(self):
+        r"""
+        Return the maximum of this lattice.
+
+        .. MATH::
+
+            \max\{x^2 | x \in L\setminus \{0\}\}
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice('A2')
+            sage: L.maximum()
+            +Infinity
+            sage: L.twist(-1).maximum()
+            -2
+        """
+        if self.rank() == 0:
+            raise ValueError("the empty set does not have a maximum")
+        p, n = self.signature_pair()
+        if p != 0:
+            from sage.rings.infinity import PlusInfinity
+            return PlusInfinity()
+        mpari = (-self.gram_matrix()).__pari__().qfminim(None, 0)[1]
+        return -mpari
+
+    min = minimum
+    max = maximum
+
+    def LLL(self):
+        r"""
+        Return this lattice with an LLL reduced basis.
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice('A2')
+            sage: L.lll() == L
+            True
+            sage: G = matrix(ZZ, 3, [0,1,0, 1,0,0, 0,0,7])
+            sage: V = matrix(ZZ, 3, [-14,-15,-15, -4,1,16, -5,-5,-4])
+            sage: L = IntegralLattice(V * G * V.T)
+            sage: L.lll().gram_matrix()
+            [0 0 1]
+            [0 7 0]
+            [1 0 0]
+        """
+        p, n = self.signature_pair()
+        if p * n != 0:
+            from sage.env import SAGE_EXTCODE
+            from sage.interfaces.gp import gp
+            from sage.libs.pari import pari
+            m = self.gram_matrix().__pari__()
+            gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
+            m = gp.eval('qflllgram_indefgoon(%s)'%m)
+            # convert the output string to sage
+            G, U = pari(m).sage()
+            U = U.T
+        else:
+            e = 1
+            if n != 0:
+                e = -1
+            U = (e * self.gram_matrix().change_ring(ZZ)).LLL_gram().T
+        return self.sublattice(U * self.basis_matrix())
+
+    lll = LLL
+
+    def short_vectors(self, n, **kwargs):
+        r"""
+        Return the short vectors of length `< n`.
+
+        INPUT:
+
+        - ``n`` -- an integer
+        - further keyword arguments are passed on to
+          :meth:`sage.quadratic_forms.short_vector_list_up_to_length`.
+
+        OUTPUT:
+
+        - a list `L` where ``L[k]`` is the list of vectors of lengths `k`
+
+        EXAMPLES::
+
+            sage: A2 = IntegralLattice('A2')
+            sage: A2.short_vectors(3)
+            [[(0, 0)], [], [(1, 1), (-1, -1), (0, 1), (0, -1), (1, 0), (-1, 0)]]
+            sage: A2.short_vectors(3,up_to_sign_flag=True)
+            [[(0, 0)], [], [(1, 1), (0, 1), (1, 0)]]
+        """
+        p, m = self.signature_pair()
+        if p * m != 0:
+            raise NotImplementedError("the lattice has to be positive definite")
+        e = 2
+        if m != 0:
+            e = -2
+        from sage.quadratic_forms.quadratic_form import QuadraticForm
+        q = QuadraticForm(e * self.gram_matrix())
+        short = q.short_vector_list_up_to_length(n, *kwargs)
+        return [[self(v * self.basis_matrix()) for v in L] for L in short]
+
     def twist(self, s, discard_basis=False):
         r"""
         Return the lattice with inner product matrix scaled by ``s``.
@@ -1304,40 +1528,27 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice("A4")
             sage: L.twist(3)
             Lattice of degree 4 and rank 4 over Integer Ring
-            Basis matrix:
-            [1 0 0 0]
-            [0 1 0 0]
-            [0 0 1 0]
-            [0 0 0 1]
+            Standard basis
             Inner product matrix:
             [ 6 -3  0  0]
             [-3  6 -3  0]
             [ 0 -3  6 -3]
             [ 0  0 -3  6]
-            sage: L = IntegralLattice(3,[[2,1,0],[0,1,1]])
-            sage: L
+            sage: L = IntegralLattice(3, [[2,1,0], [0,1,1]]); L
             Lattice of degree 3 and rank 2 over Integer Ring
             Basis matrix:
             [2 1 0]
             [0 1 1]
-            Inner product matrix:
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
+            Standard scalar product
             sage: L.twist(1)
             Lattice of degree 3 and rank 2 over Integer Ring
             Basis matrix:
             [2 1 0]
             [0 1 1]
-            Inner product matrix:
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
+            Standard scalar product
             sage: L.twist(1, True)
             Lattice of degree 2 and rank 2 over Integer Ring
-            Basis matrix:
-            [1 0]
-            [0 1]
+            Standard basis
             Inner product matrix:
             [5 1]
             [1 2]
@@ -1355,3 +1566,72 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             inner_product_matrix = s * self.inner_product_matrix()
             ambient = FreeQuadraticModule(self.base_ring(), n, inner_product_matrix)
             return FreeQuadraticModule_integer_symmetric(ambient=ambient, basis=self.basis(), inner_product_matrix=inner_product_matrix)
+
+
+def local_modification(M, G, p, check=True):
+    r"""
+    Return a local modification of `M` that matches `G` at `p`.
+
+    INPUT:
+
+    - ``M`` -- a `\ZZ_p`-maximal lattice
+
+    - ``G`` -- the gram matrix of a lattice isomorphic to `M` over `\QQ_p`
+
+    - ``p`` -- a prime number
+
+    OUTPUT:
+
+    an integral lattice `M'` in the ambient space of `M` such that `M` and `M'` are locally equal at all
+    completions except at `p` where `M'` is locally equivalent to the lattice with gram matrix `G`
+
+    EXAMPLES::
+
+        sage: from sage.modules.free_quadratic_module_integer_symmetric import local_modification
+        sage: L = IntegralLattice("A3").twist(15)
+        sage: M = L.maximal_overlattice()
+        sage: for p in prime_divisors(L.determinant()):
+        ....:     M = local_modification(M, L.gram_matrix(), p)
+        sage: M.genus() == L.genus()
+        True
+        sage: L = IntegralLattice("D4").twist(3*4)
+        sage: M = L.maximal_overlattice()
+        sage: local_modification(M, L.gram_matrix(), 2)
+        Lattice of degree 4 and rank 4 over Integer Ring
+        Basis matrix:
+        [1/3   0 2/3 2/3]
+        [  0 1/3   0 2/3]
+        [  0   0   1   0]
+        [  0   0   0   1]
+        Inner product matrix:
+        [ 24 -12   0   0]
+        [-12  24 -12 -12]
+        [  0 -12  24   0]
+        [  0 -12   0  24]
+    """
+    from sage.quadratic_forms.genera.normal_form import p_adic_normal_form
+    from sage.quadratic_forms.genera.genus import Genus_Symbol_p_adic_ring,p_adic_symbol
+
+    # notation
+    d = G.inverse().denominator()
+    scale = d.valuation(p)
+    d = p**scale
+
+    L = IntegralLattice(G)
+    L_max = L.maximal_overlattice(p=p)
+
+    # invert the gerstein operations
+    _, U = p_adic_normal_form(L_max.gram_matrix(), p, precision=scale+3)
+    B = (~L_max.basis_matrix()).change_ring(ZZ)*~U.change_ring(ZZ)
+
+    _, UM = p_adic_normal_form(M.gram_matrix(), p, precision=scale+3)
+    B = B * UM.change_ring(ZZ) * M.basis_matrix()
+
+    # the local modification
+    S = M.sublattice(((M.span(B) & M) + d * M).gens())
+    # confirm result
+    if check:
+        s1 = Genus_Symbol_p_adic_ring(p, p_adic_symbol(S.gram_matrix(), p, scale))
+        s2 = Genus_Symbol_p_adic_ring(p, p_adic_symbol(G, p, scale))
+        assert s1 == s2, "oops"
+    return S

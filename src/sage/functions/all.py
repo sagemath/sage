@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from sage.misc.lazy_import import lazy_import
 
@@ -20,13 +19,13 @@ from .hyperbolic import ( tanh, sinh, cosh, coth, sech, csch,
 reciprocal_trig_functions = {'sec': cos, 'csc': sin, 'cot': tan, 'sech': cosh, 'csch': sinh, 'coth': tanh}
 
 
-from .other import ( ceil, floor, abs_symbolic, sqrt,
+from .other import ( ceil, floor, abs_symbolic, sqrt, real_nth_root,
                     arg, real_part, real, frac,
                     factorial, binomial,
                     imag_part, imag, imaginary, conjugate, cases,
                     complex_root_of)
-from .log import (exp, exp_polar, log, ln, polylog, dilog, lambert_w, harmonic_number)
 
+from .log import (exp, exp_polar, log, ln, polylog, dilog, lambert_w, harmonic_number)
 
 from .transcendental import (zeta, zetaderiv, zeta_symmetric, hurwitz_zeta,
                             dickman_rho, stieltjes)
@@ -49,17 +48,20 @@ from .jacobi import (jacobi, inverse_jacobi, jacobi_nd, jacobi_ns, jacobi_nc,
                     inverse_jacobi_cn, inverse_jacobi_cd, inverse_jacobi_cs)
 
 from .orthogonal_polys import (chebyshev_T,
-                              chebyshev_U,
-                              gen_laguerre,
-                              gen_legendre_P,
-                              gen_legendre_Q,
-                              hermite,
-                              jacobi_P,
-                              laguerre,
-                              legendre_P,
-                              legendre_Q,
-                              ultraspherical,
-                              gegenbauer)
+                               chebyshev_U,
+                               gen_laguerre,
+                               gen_legendre_P,
+                               gen_legendre_Q,
+                               hermite,
+                               jacobi_P,
+                               laguerre,
+                               legendre_P,
+                               legendre_Q,
+                               ultraspherical,
+                               gegenbauer,
+                               krawtchouk,
+                               meixner,
+                               hahn)
 
 from .spike_function import spike_function
 
@@ -85,3 +87,7 @@ from .hypergeometric import hypergeometric, hypergeometric_M, hypergeometric_U
 
 from .gamma import (gamma, psi, beta, log_gamma,
                     gamma_inc, gamma_inc_lower)
+
+Γ = gamma
+ψ = psi
+ζ = zeta

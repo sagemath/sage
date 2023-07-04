@@ -27,22 +27,21 @@ described throughout the file.
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #         Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.string cimport memcpy
-from sage.ext.memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
 from cysignals.signals cimport sig_on, sig_off
 
-cimport sage.combinat.permutation_cython
+# cimport sage.combinat.permutation_cython
 
 from sage.combinat.permutation_cython cimport next_swap, reset_swap
 
@@ -56,7 +55,8 @@ cdef inline int edge_map(int i):
     slippery.  This is the fastest way I could find to establish the
     correspondence `i <-> i + 1` if `i` is even.
     """
-    return i - 2 * ( i & 1) + 1
+    return i - 2 * (i & 1) + 1
+
 
 cdef class simple_connected_genus_backtracker:
     r"""
@@ -86,23 +86,22 @@ cdef class simple_connected_genus_backtracker:
 
         sage: import sage.graphs.genus
         sage: G = graphs.CompleteGraph(6)
-        sage: G = Graph(G, implementation='c_graph', sparse=False)
+        sage: G = Graph(G, sparse=False)
         sage: bt = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
         sage: bt.genus() #long time
         1
         sage: bt.genus(cutoff=1)
         1
         sage: G = graphs.PetersenGraph()
-        sage: G = Graph(G, implementation='c_graph', sparse=False)
+        sage: G = Graph(G, sparse=False)
         sage: bt = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
         sage: bt.genus()
         1
         sage: G = graphs.FlowerSnark()
-        sage: G = Graph(G, implementation='c_graph', sparse=False)
+        sage: G = Graph(G, sparse=False)
         sage: bt = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
         sage: bt.genus()
         2
-
     """
     cdef MemoryAllocator mem
     cdef int **vertex_darts
@@ -120,13 +119,12 @@ cdef class simple_connected_genus_backtracker:
         TESTS::
 
             sage: import sage.graphs.genus
-            sage: G = Graph(implementation='c_graph', sparse=False)  #indirect doctest
+            sage: G = Graph(sparse=False)  # indirect doctest
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
-            sage: G = Graph(graphs.CompleteGraph(4), implementation='c_graph', sparse=False)
+            sage: G = Graph(graphs.CompleteGraph(4), sparse=False)
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.genus()
             0
-
         """
         self.num_darts = G.num_arcs
         self.num_verts = G.num_verts
@@ -136,14 +134,14 @@ cdef class simple_connected_genus_backtracker:
 
         # Allocate arrays
         self.mem = MemoryAllocator()
-        self.degree       = <int *> self.mem.malloc(self.num_verts * sizeof(int))
-        self.face_map     = <int *> self.mem.malloc(self.num_darts * sizeof(int))
-        self.visited      = <int *> self.mem.malloc(self.num_darts * sizeof(int))
-        self.face_freeze  = <int *> self.mem.malloc(self.num_darts * sizeof(int))
+        self.degree = <int *> self.mem.malloc(self.num_verts * sizeof(int))
+        self.face_map = <int *> self.mem.malloc(self.num_darts * sizeof(int))
+        self.visited = <int *> self.mem.malloc(self.num_darts * sizeof(int))
+        self.face_freeze = <int *> self.mem.malloc(self.num_darts * sizeof(int))
         self.vertex_darts = <int **>self.mem.malloc(self.num_verts * sizeof(int *))
-        self.swappers     = <int **>self.mem.malloc(self.num_verts * sizeof(int *))
-        cdef int *w       = <int *> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
-        cdef int *s       = <int *> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
+        self.swappers = <int **>self.mem.malloc(self.num_verts * sizeof(int *))
+        cdef int *w = <int *> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
+        cdef int *s = <int *> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
 
         cdef int i, j, du, dv, u, v
 
@@ -174,7 +172,7 @@ cdef class simple_connected_genus_backtracker:
                     self.vertex_darts[v][dv] = i + 1
                     self.degree[u] += 1
                     dv += 1
-                    i  += 2
+                    i += 2
 
             self.degree[v] = dv
 
@@ -204,7 +202,6 @@ cdef class simple_connected_genus_backtracker:
 #            print(self.face_map[v], end="")
 #        print(']')
 
-
     cdef inline void freeze_face(self):
         """
         Quickly store the current face_map so we can recover
@@ -224,18 +221,18 @@ cdef class simple_connected_genus_backtracker:
         EXAMPLES::
 
             sage: import sage.graphs.genus
-            sage: G = Graph(graphs.CompleteGraph(5), implementation='c_graph', sparse=False)
+            sage: G = Graph(graphs.CompleteGraph(5), sparse=False)
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.genus(record_embedding=True)
             1
             sage: gb.get_embedding()
             {0: [1, 2, 3, 4], 1: [0, 2, 3, 4], 2: [0, 1, 4, 3], 3: [0, 2, 1, 4], 4: [0, 3, 1, 2]}
-            sage: G = Graph(implementation='c_graph', sparse=False)
+            sage: G = Graph(sparse=False)
             sage: G.add_edge(0,1)
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.get_embedding()
             {0: [1], 1: [0]}
-            sage: G = Graph(implementation='c_graph', sparse=False)
+            sage: G = Graph(sparse=False)
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.get_embedding()
             {}
@@ -301,7 +298,7 @@ cdef class simple_connected_genus_backtracker:
         return 1
 
     cdef void flip(self, int v, int i):
-        """
+        r"""
         This is where the real work happens. Once cycles have been counted for
         the initial face_map, we make small local changes, and look at their
         effect on the number of cycles.
@@ -385,14 +382,12 @@ cdef class simple_connected_genus_backtracker:
 
             self.num_cycles += (2 * k + 1 - j) % 4
 
-
         face_map[e0] = v2
         face_map[e1] = f2
         face_map[e2] = v1
 
         w[i] = v2
         w[i + 1] = v1
-
 
     cdef int count_cycles(self):
         """
@@ -412,7 +407,7 @@ cdef class simple_connected_genus_backtracker:
         Compute the minimal or maximal genus of self's graph.
 
         Note, this is a remarkably naive algorithm for a very difficult problem.
-        Most interesting cases will take millenia to finish, with the exception
+        Most interesting cases will take millennia to finish, with the exception
         of graphs with max degree 3.
 
         INPUT:
@@ -433,11 +428,10 @@ cdef class simple_connected_genus_backtracker:
 
             the minimal or maximal genus for self's graph.
 
-
         EXAMPLES::
 
             sage: import sage.graphs.genus
-            sage: G = Graph(graphs.CompleteGraph(5), implementation='c_graph', sparse=False)
+            sage: G = Graph(graphs.CompleteGraph(5), sparse=False)
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.genus(cutoff=2, record_embedding=True)
             2
@@ -448,7 +442,7 @@ cdef class simple_connected_genus_backtracker:
             True
             sage: gb.genus(style=2, cutoff=5)
             3
-            sage: G = Graph(implementation='c_graph', sparse=False)
+            sage: G = Graph(sparse=False)
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.genus()
             0
@@ -482,14 +476,13 @@ cdef class simple_connected_genus_backtracker:
         return next_swap(d, self.swappers[v], self.swappers[v] + d)
 
     cdef int genus_backtrack(self,
-                                 int cutoff,
-                                 bint record_embedding,
-                                 (int (*)(simple_connected_genus_backtracker,int,bint,int))check_embedding
-                                ):
+                             int cutoff,
+                             bint record_embedding,
+                             (int (*)(simple_connected_genus_backtracker, int, bint, int))check_embedding):
         """
         Here's the main backtracking routine.
 
-        We iterate over all all embeddings of self's graph by considering all
+        We iterate over all embeddings of self's graph by considering all
         cyclic orderings of `self.vertex_darts`.  We use the Steinhaus-
         Johnson-Trotter algorithm to enumerate these by walking over a poly-ary
         Gray code, and each time the Gray code would flip a bit, we apply the
@@ -614,7 +607,7 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
 
         G, vmap = G.relabel(inplace=False, return_map=True)
         backmap = {u: v for v, u in vmap.items()}
-        G = Graph(G, implementation='c_graph', sparse=False)
+        G = Graph(G, sparse=False)
         GG = simple_connected_genus_backtracker(G._backend.c_graph()[0])
 
         if minimal:
@@ -622,7 +615,7 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
             cutoff = 1
         else:
             style = 2
-            cutoff = 1 + (G.num_edges() - G.num_verts()) / 2 # rounding here is ok
+            cutoff = 1 + (G.num_edges() - G.num_verts()) / 2  # rounding here is ok
 
         g = GG.genus(style=style, cutoff=cutoff, record_embedding=set_embedding)
         if set_embedding:
@@ -632,4 +625,3 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
                 oE[backmap[v]] = [backmap[x] for x in E[v]]
             oG.set_embedding(oE)
         return g
-

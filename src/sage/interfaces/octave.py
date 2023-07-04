@@ -140,13 +140,14 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 import os
 from .expect import Expect, ExpectElement
 import pexpect
-from sage.misc.misc import verbose
-from sage.docs.instancedoc import instancedoc
+from sage.misc.verbose import verbose
+from sage.misc.instancedoc import instancedoc
+from sage.misc.temporary_file import tmp_filename
+from sage.cpython.string import bytes_to_str
 
 
 class Octave(Expect):
@@ -155,14 +156,17 @@ class Octave(Expect):
 
     EXAMPLES::
 
-        sage: octave.eval("a = [ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]")    # optional - octave
-        'a =\n\n 1 1 2\n 3 5 8\n 13 21 33\n\n'
-        sage: octave.eval("b = [ 1; 3; 13]")                         # optional - octave
-        'b =\n\n 1\n 3\n 13\n\n'
-        sage: octave.eval("c=a \\ b") # solves linear equation: a*c = b  # optional - octave; random output
-        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
-        sage: octave.eval("c")                                 # optional - octave; random output
-        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
+        sage: octave.eval("a = [ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]").strip()    # optional - octave
+        'a =\n\n 1 1 2\n 3 5 8\n 13 21 33'
+        sage: octave.eval("b = [ 1; 3; 13]").strip()                         # optional - octave
+        'b =\n\n 1\n 3\n 13'
+
+    The following solves the linear equation: a*c = b::
+
+        sage: octave.eval(r"c=a \ b").strip()          # optional - octave  # abs tol 0.01
+        'c =\n\n 1\n -0\n 0'
+        sage: octave.eval("c").strip()                 # optional - octave  # abs tol 0.01
+        'c =\n\n 1\n -0\n 0'
 
     TESTS:
 
@@ -186,19 +190,21 @@ class Octave(Expect):
             command = os.getenv('SAGE_OCTAVE_COMMAND') or 'octave-cli'
         if server is None:
             server = os.getenv('SAGE_OCTAVE_SERVER') or None
+        # Use a temporary workspace file.
+        workspace_file = tmp_filename()
         Expect.__init__(self,
-                        name = 'octave',
+                        name='octave',
                         # We want the prompt sequence to be unique to avoid confusion with syntax error messages containing >>>
-                        prompt = r'octave\:\d+> ',
+                        prompt=r'octave\:\d+> ',
                         # We don't want any pagination of output
-                        command = command + " --no-line-editing --silent --eval 'PS2(PS1());more off' --persist",
-                        maxread = maxread,
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        logfile = logfile,
+                        command=command + f" --no-line-editing --silent --eval 'PS2(PS1());more off; octave_core_file_name (\"{workspace_file}\")' --persist",
+                        maxread=maxread,
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        logfile=logfile,
                         eval_using_file_cutoff=100)
         self._seed = seed
 
@@ -225,7 +231,7 @@ class Octave(Expect):
         """
         EXAMPLES::
 
-            sage: octave.__reduce__()
+            sage: Octave().__reduce__()
             (<function reduce_load_Octave at 0x...>, ())
         """
         return reduce_load_Octave, tuple([])
@@ -297,7 +303,7 @@ class Octave(Expect):
             verbose("in = '%s'"%line,level=3)
             E.sendline(line)
             E.expect(self._prompt)
-            out = E.before
+            out = bytes_to_str(E.before)
             # debug
             verbose("out = '%s'"%out,level=3)
         except EOF:
@@ -322,10 +328,10 @@ class Octave(Expect):
             except pexpect.ExceptionPexpect as msg:
                 raise RuntimeError( "THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
             self._start()
-            raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)"%self)
+            raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)" % self)
         else:
-            self._expect.send('\003') # control-c
-            raise KeyboardInterrupt("Ctrl-c pressed while running %s"%self)
+            self._expect.send('\003')  # control-c
+            raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
 
     def quit(self, verbose=False):
         """
@@ -339,7 +345,7 @@ class Octave(Expect):
         # Don't bother, since it just hangs in some cases, and it
         # isn't necessary, since octave behaves well with respect
         # to signals.
-        if not self._expect is None:
+        if self._expect is not None:
             if verbose:
                 print("Exiting spawned %s process." % self)
         return
@@ -502,17 +508,17 @@ class Octave(Expect):
         m = A.nrows()
         if m != len(b):
             raise ValueError("dimensions of A and b must be compatible")
-        from sage.matrix.all import MatrixSpace
-        from sage.rings.all import QQ
+        from sage.matrix.matrix_space import MatrixSpace
+        from sage.rings.rational_field import QQ
         MS = MatrixSpace(QQ,m,1)
         b  = MS(list(b)) # converted b to a "column vector"
         sA = self.sage2octave_matrix_string(A)
         sb = self.sage2octave_matrix_string(b)
         self.eval("a = " + sA )
         self.eval("b = " + sb )
-        soln = octave.eval("c = a \\ b")
+        soln = octave.eval(r"c = a \ b")
         soln = soln.replace("\n\n ","[")
-        soln = soln.replace("\n\n","]")
+        soln = soln.rstrip() + "]"
         soln = soln.replace("\n",",")
         sol  = soln[3:]
         return eval(sol)
@@ -659,8 +665,6 @@ class OctaveElement(ExpectElement):
         """
         return str(self) != ' [](0x0)' and any(x != '0' for x in str(self).split())
 
-    __nonzero__ = __bool__
-
     def _matrix_(self, R=None):
         r"""
         Return Sage matrix from this octave element.
@@ -703,7 +707,7 @@ class OctaveElement(ExpectElement):
         if self.iscomplex():
             w = [[to_complex(x,R) for x in row] for row in w]
 
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         return MatrixSpace(R, nrows, ncols)(w)
 
     def _vector_(self, R=None):

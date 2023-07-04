@@ -402,6 +402,7 @@ spaces of modular forms. For example,
 
 ::
 
+    sage: from sage.modular.dims import dimension_cusp_forms
     sage: dimension_cusp_forms(Gamma0(11),2)
     1
     sage: dimension_cusp_forms(Gamma0(1),12)
@@ -442,7 +443,7 @@ We can also create spaces for :math:`\Gamma_0(N)` and
      0 over Rational Field
     sage: ModularSymbols(Gamma1(11),2)
     Modular Symbols space of dimension 11 for Gamma_1(11) of weight 2 with
-    sign 0 and over Rational Field
+    sign 0 over Rational Field
 
 Let's compute some characteristic polynomials and
 :math:`q`-expansions.

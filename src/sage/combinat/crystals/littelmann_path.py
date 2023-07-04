@@ -9,7 +9,7 @@ AUTHORS:
 - Travis Scrimshaw (2016): Implemented
   :class:`~sage.combinat.crystals.littelmann_path.InfinityCrystalOfLSPaths`
 """
-#****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 Mark Shimozono
 #                          Anne Schilling
 #
@@ -22,9 +22,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_in_parent_method, cached_method
 from sage.structure.unique_representation import UniqueRepresentation
@@ -41,7 +40,7 @@ from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.combinat.root_system.root_system import RootSystem
-from sage.functions.other import floor
+from sage.arith.misc import integer_floor as floor
 from sage.misc.latex import latex
 
 
@@ -148,10 +147,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
         """
         if cartan_type is not None:
             cartan_type, starting_weight = CartanType(starting_weight), cartan_type
-            if cartan_type.is_affine():
-                extended = True
-            else:
-                extended = False
+            extended = cartan_type.is_affine()
 
             R = RootSystem(cartan_type)
             P = R.weight_space(extended = extended)
@@ -166,7 +162,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             if starting_weight.parent() != starting_weight_parent:
                 raise ValueError("The passed parent is not equal to parent of the inputted weight!")
 
-        return super(CrystalOfLSPaths, cls).__classcall__(cls, starting_weight, starting_weight_parent = starting_weight_parent)
+        return super().__classcall__(cls, starting_weight, starting_weight_parent = starting_weight_parent)
 
     def __init__(self, starting_weight, starting_weight_parent):
         """
@@ -206,14 +202,14 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
         self.R = RootSystem(cartan_type)
         self.weight = starting_weight
         if not self.weight.parent().base_ring().has_coerce_map_from(QQ):
-             raise ValueError("Please use the weight space, rather than weight lattice for your weights")
+            raise ValueError("Please use the weight space, rather than weight lattice for your weights")
         self._cartan_type = cartan_type
-        self._name = "The crystal of LS paths of type %s and weight %s"%(cartan_type,starting_weight)
+        self._name = "The crystal of LS paths of type %s and weight %s" % (cartan_type,starting_weight)
         if cartan_type.is_affine():
-            if all(i>=0 for i in starting_weight.coefficients()):
-                Parent.__init__( self, category=(RegularCrystals(),
-                                                 HighestWeightCrystals(),
-                                                 InfiniteEnumeratedSets()) )
+            if all(i >= 0 for i in starting_weight.coefficients()):
+                Parent.__init__(self, category=(RegularCrystals(),
+                                                HighestWeightCrystals(),
+                                                InfiniteEnumeratedSets()))
             elif starting_weight.parent().is_extended():
                 Parent.__init__(self, category=(RegularCrystals(), InfiniteEnumeratedSets()))
             else:
@@ -309,12 +305,12 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 return self
             q = []
             curr = self.value[0]
-            for i in range(1,len(self.value)):
-                if positively_parallel_weights(curr,self.value[i]):
-                    curr = curr + self.value[i]
+            for v in self.value[1:]:
+                if positively_parallel_weights(curr, v):
+                    curr = curr + v
                 else:
                     q.append(curr)
-                    curr = self.value[i]
+                    curr = v
             q.append(curr)
             return self.parent()(tuple(q))
 
@@ -334,9 +330,9 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: b.split_step(0,1/3)
                 (1/3*Lambda[1] + 1/3*Lambda[2], 2/3*Lambda[1] + 2/3*Lambda[2])
             """
-            assert which_step in range(len(self.value))
+            assert 0 <= which_step <= len(self.value)
             v = self.value[which_step]
-            return self.parent()(self.value[:which_step]+tuple([r*v,(1-r)*v])+self.value[which_step+1:])
+            return self.parent()(self.value[:which_step] + (r*v,(1-r)*v) + self.value[which_step+1:])
 
         def reflect_step(self, which_step, i):
             r"""
@@ -352,7 +348,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 (2*Lambda[1] - Lambda[2],)
             """
             assert i in self.index_set()
-            assert which_step in range(len(self.value))
+            assert 0 <= which_step and which_step <= len(self.value)
             return self.parent()(self.value[:which_step]+tuple([self.value[which_step].simple_reflection(i)])+self.value[which_step+1:])
 
         def _string_data(self, i):
@@ -372,7 +368,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: b.f(1).f(2)._string_data(2)
                 ((0, -1, -1),)
             """
-            if len(self.value) == 0:
+            if not self.value:
                 return ()
             # get the i-th simple coroot
             alv = self.value[0].parent().alphacheck()[i]
@@ -382,10 +378,10 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             minima_pos = []
             ps = 0
             psmin = 0
-            for ix in range(len(steps)):
-                ps = ps + steps[ix]
+            for ix, step in enumerate(steps):
+                ps = ps + step
                 if ps < psmin:
-                    minima_pos.append((ix,ps,steps[ix]))
+                    minima_pos.append((ix,ps,step))
                     psmin = ps
             return tuple(minima_pos)
 
@@ -455,7 +451,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             assert i in self.index_set()
             data = self._string_data(i)
             # compute the minimum i-height M on the path
-            if len(data) == 0:
+            if not data:
                 M = 0
             else:
                 M = data[-1][1]
@@ -477,7 +473,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
 
             ix = len(data)-1
             while ix >= 0 and data[ix][1] < M + p:
-            # get the index of the current step to be processed
+                # get the index of the current step to be processed
                 j = data[ix][0]
                 # find the i-height where the current step might need to be split
                 if ix == 0:
@@ -513,10 +509,9 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 (-Lambda[1] + 1/2*Lambda[2], Lambda[1] - 1/2*Lambda[2]) (-Lambda[1] + 1/2*Lambda[2], Lambda[1] - 1/2*Lambda[2])
                 (-2*Lambda[1] + Lambda[2],) (2*Lambda[1] - Lambda[2],)
             """
-            if len(self.value) == 0:
+            if not self.value:
                 return self
-            dual_path = [-v for v in self.value]
-            dual_path.reverse()
+            dual_path = [-v for v in reversed(self.value)]
             return self.parent()(tuple(dual_path))
 
         def f(self, i, power=1, to_string_end=False, length_only=False):
@@ -623,7 +618,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
 
 
 #####################################################################
-## Projected level-zero
+# Projected level-zero
 
 
 class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
@@ -704,7 +699,8 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             raise ValueError("The weight should be in the non-extended weight lattice!")
         La = weight.parent().basis()
         weight = weight - weight.level() * La[0] / La[0].level()
-        return super(CrystalOfLSPaths, cls).__classcall__(cls, weight, starting_weight_parent = weight.parent())
+        return super().__classcall__(cls, weight,
+                                     starting_weight_parent=weight.parent())
 
     @cached_method
     def maximal_vector(self):
@@ -802,11 +798,12 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             True
         """
         if q is None:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             q = QQ['q'].gens()[0]
         #P0 = self.weight_lattice_realization().classical()
         P0 = RootSystem(self.cartan_type().classical()).weight_lattice()
         B = P0.algebra(q.parent())
+
         def weight(x):
             w = x.weight()
             return P0.sum(int(c)*P0.basis()[i] for i,c in w if i in P0.index_set())
@@ -911,9 +908,11 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
             .. MATH::
 
-                \pi(t) = \sum_{u'=1}^{u-1} (\sigma_{u'} - \sigma_{u'-1}) \nu_{u'} + (t-\sigma_{u-1}) \nu_{u}
+                \pi(t) = \sum_{u'=1}^{u-1} (\sigma_{u'} - \sigma_{u'-1}) \nu_{u'}
+                + (t-\sigma_{u-1}) \nu_{u}
 
-            for `0<\sigma_1<\sigma_2<\cdots<\sigma_s=1` and `\sigma_{u-1} \le t \le \sigma_{u}` and `1 \le u \le s`.
+            for `0 < \sigma_1 < \sigma_2 < \cdots < \sigma_s=1` and
+            `\sigma_{u-1} \le t \le \sigma_{u}` and `1 \le u \le s`.
             This method returns the tuple of `(\sigma_1,\ldots,\sigma_s)`.
 
             EXAMPLES::
@@ -948,17 +947,21 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
         @cached_in_parent_method
         def weyl_group_representation(self):
             r"""
-            Transforms the weights in the LS path ``self`` to elements in the Weyl group.
+            Transform the weights in the LS path ``self`` to elements
+            in the Weyl group.
 
             Each LS path can be written as the piecewise linear map:
 
             .. MATH::
 
-                \pi(t) = \sum_{u'=1}^{u-1} (\sigma_{u'} - \sigma_{u'-1}) \nu_{u'} + (t-\sigma_{u-1}) \nu_{u}
+                \pi(t) = \sum_{u'=1}^{u-1} (\sigma_{u'} - \sigma_{u'-1}) \nu_{u'}
+                + (t-\sigma_{u-1}) \nu_{u}
 
-            for `0<\sigma_1<\sigma_2<\cdots<\sigma_s=1` and `\sigma_{u-1} \le t \le \sigma_{u}` and `1 \le u \le s`.
-            Each weight `\nu_u` is also associated to a Weyl group element. This method returns the list
-            of Weyl group elements associated to the `\nu_u` for `1\le u\le s`.
+            for `0 < \sigma_1 < \sigma_2 < \cdots < \sigma_s = 1` and
+            `\sigma_{u-1} \le t \le \sigma_{u}` and `1 \le u \le s`.
+            Each weight `\nu_u` is also associated to a Weyl group element.
+            This method returns the list of Weyl group elements associated
+            to the `\nu_u` for `1\le u\le s`.
 
             EXAMPLES::
 
@@ -1138,8 +1141,11 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 Wd = WeylGroup(cartan_dual, prefix='s', implementation="permutation")
                 G = Wd.quantum_bruhat_graph(J)
                 Qd = RootSystem(cartan_dual).root_lattice()
-                dualize = lambda x: Qv.from_vector(x.to_vector())
+
+                def dualize(x):
+                    return Qv.from_vector(x.to_vector())
                 L = [Wd.from_reduced_word(x.reduced_word()) for x in L]
+
                 def stretch_short_root(a):
                     # stretches roots by translation factor
                     if ct.dual().type() == 'BC':
@@ -1162,15 +1168,15 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 else:
                     return s
             else:
-                s = sum((1-scalars[i])*c_weight.scalar( dualize (Qd.sum(stretch_short_root(root) for root in paths_labels[i])) ) for i in range(len(paths_labels)))
+                s = sum((1-scalars[i])*c_weight.scalar( dualize(Qd.sum(stretch_short_root(root) for root in paths_labels[i])) ) for i in range(len(paths_labels)))
                 if ct.dual().type() == 'BC':
-                    return s/2
+                    return s / 2
                 else:
                     return s
 
 
 #####################################################################
-## B(\infty)
+# B(\infty)
 
 
 class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
@@ -1202,7 +1208,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             True
         """
         cartan_type = CartanType(cartan_type)
-        return super(InfinityCrystalOfLSPaths, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """
@@ -1316,8 +1322,8 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: len(B.subcrystal(max_depth=7))
                 116
             """
-            ret = super(InfinityCrystalOfLSPaths.Element, self).e(i, power=power,
-                                                                  length_only=length_only)
+            ret = super().e(i, power=power,
+                            length_only=length_only)
             if ret is None:
                 return None
             if length_only:
@@ -1457,7 +1463,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
 
 
 #####################################################################
-## Helper functions
+# Helper functions
 
 
 def positively_parallel_weights(v, w):
@@ -1485,4 +1491,3 @@ def positively_parallel_weights(v, w):
         if v[i]*w[i] > 0 and v[i]*w == w[i]*v:
             return True
     return False
-

@@ -1,5 +1,5 @@
 r"""
-Modular Forms for `\Gamma_1(N)` and `\Gamma_H(N)` over `\QQ`
+Modular forms for `\Gamma_1(N)` and `\Gamma_H(N)` over `\QQ`
 
 EXAMPLES::
 
@@ -41,7 +41,6 @@ We check that :trac:`10453` is fixed::
     Modular Forms subspace of dimension 4 of Modular Forms space of dimension 5 for Congruence Subgroup Gamma1(3) of weight 12 over Rational Field
 
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -208,4 +207,3 @@ class ModularFormsAmbient_g1_Q(ModularFormsAmbient_gH_Q):
             Eisenstein subspace of dimension 12 of Modular Forms space of dimension 69 for Congruence Subgroup Gamma1(13) of weight 10 over Rational Field
         """
         return eisenstein_submodule.EisensteinSubmodule_g1_Q(self)
-

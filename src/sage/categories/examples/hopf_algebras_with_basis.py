@@ -1,5 +1,5 @@
 r"""
-Examples of algebras with basis
+Examples of Hopf algebras with basis
 """
 #*****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -10,13 +10,13 @@ Examples of algebras with basis
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
-from sage.categories.all import HopfAlgebrasWithBasis
+from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.categories.all import tensor
+from sage.categories.tensor import tensor
 
 class MyGroupAlgebra(CombinatorialFreeModule):
     r"""
-    An of a Hopf algebra with basis: the group algebra of a group
+    An example of a Hopf algebra with basis: the group algebra of a group
 
     This class illustrates a minimal implementation of a Hopf algebra with basis.
     """
@@ -32,7 +32,8 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: TestSuite(A).run()
         """
         self._group = G
-        CombinatorialFreeModule.__init__(self, R, G, category = HopfAlgebrasWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, G,
+                                         category=HopfAlgebrasWithBasis(R))
 
     def _repr_(self):
         """

@@ -75,7 +75,7 @@ The same holds for the group elements::
     sage: a.gap().Order()
     2
     sage: type(_)    # note that the above output is not a Sage integer
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
 
 You can use call syntax to replace the generators with a set of
 arbitrary ring elements. For example, take the free abelian group
@@ -118,15 +118,15 @@ AUTHOR:
 - Miguel Angel Marco Buzunariz
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Miguel Angel Marco Buzunariz <mmarco@unizar.es>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
@@ -134,15 +134,8 @@ from sage.groups.libgap_mixin import GroupMixinLibGAP
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
 from sage.misc.cachefunc import cached_method
 from sage.groups.free_group import FreeGroupElement
-
-from sage.structure.element import Element, MultiplicativeGroupElement
-from sage.interfaces.gap import gap
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
 from sage.functions.generalized import sign
 from sage.matrix.constructor import matrix
 from sage.categories.morphism import SetMorphism
@@ -153,9 +146,9 @@ class GroupMorphismWithGensImages(SetMorphism):
     Class used for morphisms from finitely presented groups to
     other groups. It just adds the images of the generators at the
     end of the representation.
-    
+
     EXAMPLES::
-    
+
         sage: F = FreeGroup(3)
         sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
         sage: H = AlternatingGroup(3)
@@ -173,9 +166,9 @@ class GroupMorphismWithGensImages(SetMorphism):
     def _repr_defn(self):
         r"""
         Return the part of the representation that includes the images of the generators.
-        
+
         EXAMPLES::
-        
+
             sage: F = FreeGroup(3)
             sage: G = F / [F([1,2,3,1,2,3]),F([1,1,1])]
             sage: H = AlternatingGroup(3)
@@ -184,11 +177,9 @@ class GroupMorphismWithGensImages(SetMorphism):
             sage: f = GroupMorphismWithGensImages(HS, lambda a: H.one())
             sage: f._repr_defn()
             'x0 |--> ()\nx1 |--> ()\nx2 |--> ()'
-
         """
-        D = self.domain()
-        return '\n'.join(['%s |--> %s'%(i, self(i)) for\
-                       i in D.gens()])
+        return '\n'.join(f'{i} |--> {self(i)}' for i in self.domain().gens())
+
 
 class FinitelyPresentedGroupElement(FreeGroupElement):
     """
@@ -372,7 +363,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
                 rel = rel(values)
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
-        return super(FinitelyPresentedGroupElement, self).__call__(values)
+        return super().__call__(values)
 
 
 def wrap_FpGroup(libgap_fpgroup):
@@ -404,7 +395,7 @@ def wrap_FpGroup(libgap_fpgroup):
         sage: P = F / libgap([ a_cubed ]);   P
         <fp group of size infinity on the generators [ a, b ]>
         sage: type(P)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
     Now wrap it::
 
@@ -421,7 +412,7 @@ def wrap_FpGroup(libgap_fpgroup):
     return FinitelyPresentedGroup(free_group, relations)
 
 
-class RewritingSystem(object):
+class RewritingSystem():
     """
     A class that wraps GAP's rewriting systems.
 
@@ -598,14 +589,14 @@ class RewritingSystem(object):
 
         EXAMPLES::
 
-            sage: F.<a,b>=FreeGroup()
-            sage: G=F/[a*a,b*b]
-            sage: k=G.rewriting_system()
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F/[a*a,b*b]
+            sage: k = G.rewriting_system()
             sage: k.gap()
             Knuth Bendix Rewriting System for Monoid( [ a, A, b, B ] ) with rules
-            [ [ a^2, <identity ...> ], [ a*A, <identity ...> ],
-              [ A*a, <identity ...> ], [ b^2, <identity ...> ],
-              [ b*B, <identity ...> ], [ B*b, <identity ...> ] ]
+            [ [ a*A, <identity ...> ], [ A*a, <identity ...> ],
+              [ b*B, <identity ...> ], [ B*b, <identity ...> ],
+              [ a^2, <identity ...> ], [ b^2, <identity ...> ] ]
         """
         return self._gap
 
@@ -744,6 +735,7 @@ class RewritingSystem(object):
         except ValueError:
             raise ValueError('could not make the system confluent')
 
+
 class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
     Group, ParentLibGAP):
     """
@@ -781,11 +773,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         sage: H.gap()
         <fp group on the generators [ x0, x1 ]>
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
     """
     Element = FinitelyPresentedGroupElement
 
-    def __init__(self, free_group, relations):
+    def __init__(self, free_group, relations, category=None):
         """
         The Python constructor.
 
@@ -810,9 +802,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         self._free_group = free_group
         self._relations = relations
         self._assign_names(free_group.variable_names())
-        parent_gap = free_group.gap() / libgap([ rel.gap() for rel in relations])
+        parent_gap = free_group.gap() / libgap([rel.gap() for rel in relations])
         ParentLibGAP.__init__(self, parent_gap)
-        Group.__init__(self)
+        Group.__init__(self, category=category)
 
     def _repr_(self):
         """
@@ -845,10 +837,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         TESTS::
 
-            sage: F=FreeGroup(4)
+            sage: F = FreeGroup(4)
             sage: F.inject_variables()
             Defining x0, x1, x2, x3
-            sage: G=F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
+            sage: G = F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
             sage: G._latex_()
             '\\langle x_{0}, x_{1}, x_{2}, x_{3} \\mid x_{0}\\cdot x_{2} , x_{3}\\cdot x_{1}\\cdot x_{3} , x_{2}\\cdot x_{1}\\cdot x_{2}\\rangle'
         """
@@ -1020,7 +1012,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         Calls GAP function ``DirectProduct``, which returns the direct
         product of a list of groups of any representation.
 
-        From [Joh1990]_ (pg 45, proposition 4): If `G`, `H` are groups
+        From [Joh1990]_ (p. 45, proposition 4): If `G`, `H` are groups
         presented by `\langle X \mid R \rangle` and `\langle Y \mid S \rangle`
         respectively, then their direct product has the presentation
         `\langle X, Y \mid R, S, [X, Y] \rangle` where `[X, Y]` denotes the
@@ -1207,7 +1199,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: D = C2.semidirect_product(C8, hom); D
             Finitely presented group < a, b | a^2, b^8, a^-1*b*a*b >
             sage: D = C2.semidirect_product(C8, hom, reduced=True); D
-            Finitely presented group < a, b | a^2, (a*b)^2, b^8 >
+            Finitely presented group < a, b | a^2, a*b*a*b, b^8 >
 
             sage: C3 = groups.presentation.Cyclic(3)
             sage: C4 = groups.presentation.Cyclic(4)
@@ -1270,7 +1262,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         if not isinstance(H, FinitelyPresentedGroup):
             raise TypeError("input must be a finitely presented group")
 
-        GAP_self = self.gap(); GAP_H = H.gap()
+        GAP_self = self.gap()
+        GAP_H = H.gap()
         auto_grp = libgap.AutomorphismGroup(H.gap())
         self_gens = [h.gap() for h in hom[0]]
         # construct image automorphisms in GAP
@@ -1396,7 +1389,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         Uses GAP.
         """
         I = self.gap().IsomorphismSimplifiedFpGroup()
-        domain = self
         codomain = wrap_FpGroup(I.Range())
         phi = lambda x: codomain(I.ImageElm(x.gap()))
         HS = self.Hom(codomain)
@@ -1433,49 +1425,51 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             Finitely presented group < e0 | e0^2 >
         """
         return self.simplification_isomorphism().codomain()
-    
+
     def epimorphisms(self, H):
         r"""
         Return the epimorphisms from `self` to `H`, up to automorphism of `H`.
-        
+
         INPUT:
-        
+
         - `H` -- Another group
-        
+
         EXAMPLES::
-        
+
             sage: F = FreeGroup(3)
             sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
             sage: H = AlternatingGroup(3)
             sage: G.epimorphisms(H)
             [Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> ()
                      x1 |--> (1,3,2)
-                     x2 |--> (1,2,3), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (1,2,3),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,3,2)
                      x1 |--> ()
-                     x2 |--> (1,2,3), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (1,2,3),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,3,2)
                      x1 |--> (1,2,3)
-                     x2 |--> (), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,2,3)
                      x1 |--> (1,2,3)
                      x2 |--> (1,2,3)]
 
         ALGORITHM:
-        
+
         Uses libgap's GQuotients function.
         """
         from sage.misc.misc_c import prod
-        from sage.functions.generalized import sign
         HomSpace = self.Hom(H)
         Gg = libgap(self)
         Hg = libgap(H)
@@ -1490,7 +1484,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             res.append(fhom)
         return res
 
-    def alexander_matrix(self, im_gens = None):
+    def alexander_matrix(self, im_gens=None):
         """
         Return the Alexander matrix of the group.
 
@@ -1556,11 +1550,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: G = F / [a^2,b^3,(a*b/a)^3,b*a*b*a]
             sage: k = G.rewriting_system()
             sage: k
-            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, (b*a)^2 >
+            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, b*a*b*a >
             with rules:
                 a^2    --->    1
                 b^3    --->    1
-                (b*a)^2    --->    1
+                b*a*b*a    --->    1
                 a*b^3*a^-1    --->    1
 
             sage: G([1,1,2,2,2])

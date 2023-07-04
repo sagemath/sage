@@ -9,14 +9,12 @@ objects (or know if they can be built) with :func:`difference_matrix`::
 Functions
 ---------
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
+from sage.arith.misc import divisors, is_prime_power
 from sage.misc.unknown import Unknown
 from sage.misc.cachefunc import cached_function
 from sage.categories.sets_cat import EmptySetError
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.arith.all import is_prime_power, divisors
 from .designs_pyx import is_difference_matrix
 from .database import DM as DM_constructions
 
@@ -66,8 +64,8 @@ def find_product_decomposition(g, k, lmbda=1):
             g2 = g//g1
             if g1 > g2:
                 break
-            if (difference_matrix(g1,k,lmbda1,existence=True) and
-                difference_matrix(g2,k,lmbda2,existence=True)):
+            if (difference_matrix(g1,k,lmbda1,existence=True) is True and
+                difference_matrix(g2,k,lmbda2,existence=True) is True):
                 return (g1,lmbda1),(g2,lmbda2)
 
     return False
@@ -234,8 +232,8 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
                 k = g
         elif existence:
             return True
-        F       = FiniteField(g,'x')
-        F_set   = list(F)
+        F = FiniteField(g,'x')
+        F_set = list(F)
         F_k_set = F_set[:k]
 
         G = F
@@ -245,7 +243,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
     # (find the max k such that there exists a DM)
     elif k is None:
         i = 2
-        while difference_matrix(g=g,k=i,lmbda=lmbda,existence=True):
+        while difference_matrix(g=g,k=i,lmbda=lmbda,existence=True) is True:
             i += 1
         return i-1
 

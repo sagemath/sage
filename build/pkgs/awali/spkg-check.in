@@ -1,0 +1,2 @@
+cd src/_build
+sdh_make_check

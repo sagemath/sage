@@ -1,5 +1,5 @@
 import ipywidgets as widgets
-from sage.misc.all import latex
+from sage.misc.latex import latex
 from sage.repl.rich_output.pretty_print import pretty_print
 from IPython.display import clear_output
 
@@ -27,7 +27,7 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
 
         sage: S = ClusterSeed(['A',4])
         sage: S.interact()   # indirect doctest
-        VBox(children=...
+        ...VBox(children=...
     """
     if kind not in ['seed', 'quiver']:
         raise ValueError('kind must be "seed" or "quiver"')
@@ -107,7 +107,7 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
     show_lastmutation.observe(refresh, 'value')
     which_plot.observe(refresh, 'value')
 
-    mut_buttons.on_displayed(refresh)
+    mut_buttons.on_widget_constructed(refresh)
 
     if kind == 'seed':
         top = widgets.HBox([show_seq, show_vars])

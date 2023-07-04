@@ -95,7 +95,7 @@ long order(long x, long p, mulmod_t pinv, const Factorisation& F)
    long m = p - 1;
 
    // try to remove factors from m until we can't remove any more
-   for (int i = 0; i < F.factors.size(); i++)
+   for (size_t i = 0; i < F.factors.size(); i++)
    {
       long q = F.factors[i];
 

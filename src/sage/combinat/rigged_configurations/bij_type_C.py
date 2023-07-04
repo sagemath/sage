@@ -1,5 +1,5 @@
 r"""
-Bijection classes for type `C_n^{(1)}`.
+Bijection classes for type `C_n^{(1)}`
 
 Part of the (internal) classes which runs the bijection between rigged
 configurations and KR tableaux of type `C_n^{(1)}`.
@@ -37,6 +37,7 @@ TESTS::
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
+
 
 class KRTToRCBijectionTypeC(KRTToRCBijectionTypeA):
     r"""
@@ -155,6 +156,7 @@ class KRTToRCBijectionTypeC(KRTToRCBijectionTypeA):
                 partition._list[j+1] += 1
                 partition.rigging[j+1] = None
                 return
+
 
 class RCToKRTBijectionTypeC(RCToKRTBijectionTypeA):
     r"""

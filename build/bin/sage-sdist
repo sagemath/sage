@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+########################################################
+# Build Sage source distribution
+# This script should not be invoked directly.
+# Use "sage --sdist" or "make dist".
+########################################################
+
+set -e
+
+CMD="${0##*/}"
+
+die () {
+    echo >&2 -e "$@"
+    exit 1
+}
+
+usage () {
+    echo "usage: $CMD [TMP_DIR]"
+}
+
+if [ $# -gt 1 ]; then
+    usage
+    die
+fi
+
+if [ -z "$SAGE_ROOT" ]; then
+    die "must be run from within a Sage environment, or with SAGE_ROOT provided"
+fi
+
+if [ -z "$SAGE_SRC" ]; then
+    die "must be run from within a Sage environment, or with SAGE_SRC provided"
+fi
+
+if [ "$#" -gt 0 ]; then
+    TMP_DIR="$1"
+else
+    TMP_DIR="$SAGE_ROOT/tmp"
+fi
+
+source "$SAGE_SRC/bin/sage-version.sh"
+echo "Sage version $SAGE_VERSION, release date $SAGE_RELEASE_DATE"
+
+TARGET="sage-$SAGE_VERSION"
+sage-clone-source "$SAGE_ROOT" "$TMP_DIR/$TARGET"
+
+# Download and copy all upstream tarballs
+cd "$SAGE_ROOT/build/make"
+export SAGE_SPKG_COPY_UPSTREAM="$TMP_DIR/$TARGET/upstream"
+$MAKE download-for-sdist
+
+# Create source .tar.gz
+cd "$TMP_DIR"
+echo "Creating dist/$TARGET.tar.gz ..."
+chmod -R go=rX "$TARGET"
+tar zcf "$TARGET".tar.gz "$TARGET"
+
+mkdir -p "$SAGE_ROOT"/dist
+
+rm -rf "$SAGE_ROOT/dist/$TARGET"
+
+echo "Moving final distribution file to $SAGE_ROOT/dist"
+
+mv "$TARGET" "$SAGE_ROOT"/dist/
+mv "$TARGET".* "$SAGE_ROOT"/dist/

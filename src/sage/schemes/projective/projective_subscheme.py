@@ -10,7 +10,7 @@ AUTHORS:
 - Ben Hutz (2013) refactoring
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #       Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
 #
@@ -19,17 +19,22 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.arith.misc import binomial
+
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
+
 from sage.matrix.constructor import matrix
-from sage.rings.all import ZZ
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
+
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_subscheme_field
 
 
 class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
@@ -55,7 +60,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
     EXAMPLES::
 
         sage: P.<x, y, z> = ProjectiveSpace(2, QQ)
-        sage: P.subscheme([x^2-y*z])
+        sage: P.subscheme([x^2 - y*z])
         Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
           x^2 - y*z
 
@@ -66,7 +71,6 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
           x^2 - y*z
     """
-
     def point(self, v, check=True):
         """
         Create a point on this projective subscheme.
@@ -83,7 +87,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         EXAMPLES::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: X = P2.subscheme([x-y,y-z])
+            sage: X = P2.subscheme([x - y, y - z])
             sage: X.point([1,1,1])
             (1 : 1 : 1)
 
@@ -97,7 +101,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: X = P.subscheme(x^2+2*y^2)
+            sage: X = P.subscheme(x^2 + 2*y^2)
             sage: X.point(infinity)
             Traceback (most recent call last):
             ...
@@ -106,7 +110,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
               x^2 + 2*y^2
         """
         from sage.rings.infinity import infinity
-        if v is infinity  or\
+        if v is infinity or\
           (isinstance(v, (list,tuple)) and len(v) == 1 and v[0] is infinity):
             if self.ambient_space().dimension_relative() > 1:
                 raise ValueError("%s not well defined in dimension > 1"%v)
@@ -138,21 +142,19 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         TESTS::
 
-            sage: P1.<x,y> = ProjectiveSpace(1,QQ)
-            sage: P2 = ProjectiveSpace(2,QQ)
+            sage: P1.<x,y> = ProjectiveSpace(1, QQ)
+            sage: P2 = ProjectiveSpace(2, QQ)
             sage: H12 = P1.Hom(P2)
-            sage: H12([x^2,x*y, y^2])    # indirect doctest
+            sage: H12([x^2, x*y, y^2])    # indirect doctest
             Scheme morphism:
               From: Projective Space of dimension 1 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : x*y : y^2)
-            sage: P1._morphism(H12, [x^2,x*y, y^2])
+              Defn: Defined on coordinates by sending (x : y) to (x^2 : x*y : y^2)
+            sage: P1._morphism(H12, [x^2, x*y, y^2])
             Scheme morphism:
               From: Projective Space of dimension 1 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : x*y : y^2)
+              Defn: Defined on coordinates by sending (x : y) to (x^2 : x*y : y^2)
         """
         return self.ambient_space()._morphism(*args, **kwds)
 
@@ -197,9 +199,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             self.__dimension = self.defining_ideal().dimension() - 1
             return self.__dimension
 
-    def affine_patch(self, i, AA = None):
+    def affine_patch(self, i, AA=None):
         r"""
         Return the `i^{th}` affine patch of this projective scheme.
+
         This is the intersection with this `i^{th}` affine patch of
         its ambient space.
 
@@ -227,31 +230,29 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
               Y^3*Z + Z^3 + Y
             sage: U.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              Y^3*Z + Z^3 + Y
-              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              X^3*Y + Y^3*Z + X*Z^3
-              Defn: Defined on coordinates by sending (Y, Z) to
-                    (1 : Y : Z)
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: Y^3*Z + Z^3 + Y
+              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field
+                    defined by: X^3*Y + Y^3*Z + X*Z^3
+              Defn: Defined on coordinates by sending (Y, Z) to (1 : Y : Z)
             sage: U.projective_embedding() is U.embedding_morphism()
             True
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(QQ,3)
-            sage: X = A.subscheme([x-y*z])
+            sage: A.<x,y,z> = AffineSpace(QQ, 3)
+            sage: X = A.subscheme([x - y*z])
             sage: Y = X.projective_embedding(1).codomain()
-            sage: Y.affine_patch(1,A).ambient_space() == A
+            sage: Y.affine_patch(1, A).ambient_space() == A
             True
 
         ::
 
-            sage: P.<u,v,w> = ProjectiveSpace(2,ZZ)
-            sage: S = P.subscheme([u^2-v*w])
+            sage: P.<u,v,w> = ProjectiveSpace(2, ZZ)
+            sage: S = P.subscheme([u^2 - v*w])
             sage: A.<x, y> = AffineSpace(2, ZZ)
             sage: S.affine_patch(1, A)
-            Closed subscheme of Affine Space of dimension 2 over Integer Ring
-            defined by:
+            Closed subscheme of Affine Space of dimension 2 over Integer Ring defined by:
               x^2 - y
         """
         i = int(i)   # implicit type checking
@@ -287,7 +288,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         Return the best affine patch of the ambient projective space.
 
         The "best" affine patch is where you end up dividing by the
-        homogeneous coordinate with the largest absolutue
+        homogeneous coordinate with the largest absolute
         value. Division by small numbers is numerically unstable.
 
         INPUT:
@@ -300,8 +301,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
-            sage: P.<x,y,z>= ProjectiveSpace(QQ,2)
-            sage: S = P.subscheme(x+2*y+3*z)
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: S = P.subscheme(x + 2*y + 3*z)
             sage: S._best_affine_patch(P.point([0,-3,2]))
             1
             sage: S._best_affine_patch([0,-3,2])
@@ -309,9 +310,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         TESTS::
 
-            sage: F = GF(3)
-            sage: P.<x,y,z>= ProjectiveSpace(F,2)
-            sage: S._best_affine_patch([0,1,2])
+            sage: F = GF(3)                                                             # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.finite_rings
+            sage: S._best_affine_patch([0,1,2])                                         # optional - sage.rings.finite_rings
             2
         """
         point = list(point)
@@ -352,8 +353,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
-            sage: P.<x,y,z>= ProjectiveSpace(QQ,2)
-            sage: S = P.subscheme(x+2*y+3*z)
+            sage: P.<x,y,z>= ProjectiveSpace(QQ, 2)
+            sage: S = P.subscheme(x + 2*y + 3*z)
             sage: s = S.point([0,-3,2]); s
             (0 : -3/2 : 1)
             sage: patch = S.neighborhood(s); patch
@@ -361,12 +362,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
               x + 3*z
             sage: patch.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x + 3*z
-              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              x + 2*y + 3*z
-              Defn: Defined on coordinates by sending (x, z) to
-                    (x : -3/2 : z + 1)
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x + 3*z
+              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field
+                    defined by: x + 2*y + 3*z
+              Defn: Defined on coordinates by sending (x, z) to (x : -3/2 : z + 1)
             sage: patch.embedding_center()
             (0, 0)
             sage: patch.embedding_morphism()([0,0])
@@ -410,8 +410,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2,QQ)
-            sage: cuspidal_curve = P2.subscheme([y^2*z-x^3])
+            sage: P2.<x,y,z> = ProjectiveSpace(2, QQ)
+            sage: cuspidal_curve = P2.subscheme([y^2*z - x^3])
             sage: cuspidal_curve
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               -x^3 + y^2*z
@@ -421,7 +421,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             False
             sage: cuspidal_curve.is_smooth()
             False
-            sage: P2.subscheme([y^2*z-x^3+z^3+1/10*x*y*z]).is_smooth()
+            sage: P2.subscheme([y^2*z - x^3 + z^3 + 1/10*x*y*z]).is_smooth()
             True
 
         TESTS::
@@ -430,7 +430,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: H.is_smooth()  # one of the few cases where the cone over the subvariety is smooth
             True
         """
-        if not point is None:
+        if point is not None:
             self._check_satisfies_equations(point)
             R = self.ambient_space().coordinate_ring()
             point_subs = dict(zip(R.gens(), point))
@@ -450,7 +450,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
     def orbit(self, f, N):
         r"""
-        Returns the orbit of this scheme by ``f``.
+        Return the orbit of this scheme by ``f``.
 
         If `N` is an integer it returns `[self,f(self),\ldots,f^N(self)]`.
         If `N` is a list or tuple `N=[m,k]` it returns `[f^m(self),\ldots,f^k(self)`].
@@ -468,26 +468,20 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         EXAMPLES::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([(x-2*y)^2,(x-2*z)^2,(x-2*w)^2,x^2])
-            sage: f.orbit(P.subscheme([x]),5)
+            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2, (x-2*w)^2, x^2])
+            sage: f.orbit(P.subscheme([x]), 5)
             [Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               x,
+              defined by: x,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               w,
+              defined by: w,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               z - w,
+              defined by: z - w,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               y - z,
+              defined by: y - z,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               x - y,
+              defined by: x - y,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-               x - w]
+              defined by: x - w]
 
         ::
 
@@ -495,8 +489,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: P1.<u,v> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(PS, P1)
             sage: f = H([x^2, y^2])
-            sage: X = PS.subscheme([x-y])
-            sage: X.orbit(f,2)
+            sage: X = PS.subscheme([x - y])
+            sage: X.orbit(f, 2)
             Traceback (most recent call last):
             ...
             TypeError: map must be a dynamical system for iteration
@@ -505,8 +499,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: PS.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: f = DynamicalSystem_projective([x^2, y^2, z^2])
-            sage: X = PS.subscheme([x-y])
-            sage: X.orbit(f,[-1,2])
+            sage: X = PS.subscheme([x - y])
+            sage: X.orbit(f, [-1,2])
             Traceback (most recent call last):
             ...
             TypeError: orbit bounds must be non-negative
@@ -521,7 +515,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         if N[0] < 0 or N[1] < 0:
             raise TypeError("orbit bounds must be non-negative")
         if N[0] > N[1]:
-            return([])
+            return []
 
         Q = self
         for i in range(1, N[0]+1):
@@ -531,7 +525,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         for i in range(N[0]+1, N[1]+1):
             Q = f(Q)
             Orb.append(Q)
-        return(Orb)
+        return Orb
 
     def nth_iterate(self, f, n):
         r"""
@@ -551,9 +545,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: f = DynamicalSystem_projective([y^2, z^2, x^2, w^2])
-            sage: f.nth_iterate(P.subscheme([x-w,y-z]), 3)
+            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)
             Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
+             defined by:
               y - z,
               x - w
 
@@ -561,8 +555,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: f = DynamicalSystem_projective([x^2, y^2, z^2])
-            sage: X = PS.subscheme([x-y])
-            sage: X.nth_iterate(f,-2)
+            sage: X = PS.subscheme([x - y])
+            sage: X.nth_iterate(f, -2)
             Traceback (most recent call last):
             ...
             TypeError: must be a forward orbit
@@ -570,11 +564,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         ::
 
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
-            sage: P2.<u,v,w>=ProjectiveSpace(QQ, 2)
+            sage: P2.<u,v,w> = ProjectiveSpace(QQ, 2)
             sage: H = Hom(PS, P2)
             sage: f = H([x^2, y^2, z^2])
-            sage: X = PS.subscheme([x-y])
-            sage: X.nth_iterate(f,2)
+            sage: X = PS.subscheme([x - y])
+            sage: X.nth_iterate(f, 2)
             Traceback (most recent call last):
             ...
             TypeError: map must be a dynamical system for iteration
@@ -583,8 +577,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: PS.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: f = DynamicalSystem_projective([x^2, y^2, z^2])
-            sage: X = PS.subscheme([x-y])
-            sage: X.nth_iterate(f,2.5)
+            sage: X = PS.subscheme([x - y])
+            sage: X.nth_iterate(f, 2.5)
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral RealNumber to Integer
@@ -594,16 +588,16 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             raise TypeError("must be a forward orbit")
         return self.orbit(f,[n,n+1])[0]
 
-    def _forward_image(self, f, check = True):
+    def _forward_image(self, f, check=True):
         r"""
         Compute the forward image of this subscheme by the morphism ``f``.
 
         The forward image is computed through elimination and ``f`` must be
         a morphism for this to be well defined.
-        In particular, let $X = V(h_1,\ldots, h_t)$ and define the ideal
-        $I = (h_1,\ldots,h_t,y_0-f_0(\bar{x}), \ldots, y_n-f_n(\bar{x}))$.
-        Then the elimination ideal $I_{n+1} = I \cap K[y_0,\ldots,y_n]$ is a homogeneous
-        ideal and $self(X) = V(I_{n+1})$.
+        In particular, let `X = V(h_1,\ldots, h_t)` and define the ideal
+        `I = (h_1,\ldots,h_t,y_0-f_0(\bar{x}), \ldots, y_n-f_n(\bar{x}))`.
+        Then the elimination ideal `I_{n+1} = I \cap K[y_0,\ldots,y_n]` is a homogeneous
+        ideal and `self(X) = V(I_{n+1})`.
 
         INPUT:
 
@@ -619,11 +613,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: PS.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: H = End(PS)
-            sage: f = H([x^2, y^2-2*z^2, z^2])
-            sage: X = PS.subscheme(y-2*z)
+            sage: f = H([x^2, y^2 - 2*z^2, z^2])
+            sage: X = PS.subscheme(y - 2*z)
             sage: X._forward_image(f)
             Closed subscheme of Projective Space of dimension 2 over Rational Field
-            defined by:
+             defined by:
               y - 2*z
 
         ::
@@ -632,10 +626,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: PS.<x,y,z,w> = ProjectiveSpace(ZZ, 3)
             sage: H = End(PS)
             sage: f = H([y^2, x^2, w^2, z^2])
-            sage: X = PS.subscheme([z^2+y*w, x-w])
+            sage: X = PS.subscheme([z^2 + y*w, x - w])
             sage: f(X)
             Closed subscheme of Projective Space of dimension 3 over Integer Ring
-            defined by:
+             defined by:
               y - z,
               x*z - w^2
 
@@ -644,10 +638,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: PS.<x,y,z,w> = ProjectiveSpace(CC, 3)
             sage: H = End(PS)
             sage: f = H([x^2 + y^2, y^2, z^2-y^2, w^2])
-            sage: X = PS.subscheme([z-2*w])
+            sage: X = PS.subscheme([z - 2*w])
             sage: f(X)
             Closed subscheme of Projective Space of dimension 3 over Complex Field
-            with 53 bits of precision defined by:
+             with 53 bits of precision defined by:
               y + z + (-4.00000000000000)*w
 
         ::
@@ -656,36 +650,35 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: P.<x,y,z> = ProjectiveSpace(FractionField(R), 2)
             sage: H = End(P)
             sage: f = H([x^2 + 2*y*z, t^2*y^2, z^2])
-            sage: f([t^2*y-z])
+            sage: f([t^2*y - z])
             Closed subscheme of Projective Space of dimension 2 over Fraction Field
-            of Univariate Polynomial Ring in t over Rational Field defined by:
-              y + (-1/t^2)*z
+             of Univariate Polynomial Ring in t over Rational Field defined by:
+              y - 1/(t^2)*z
 
         ::
 
             sage: set_verbose(-1)
-            sage: PS.<x,y,z> = ProjectiveSpace(Qp(3), 2)
-            sage: H = End(PS)
-            sage: f = H([x^2,2*y^2,z^2])
-            sage: X = PS.subscheme([2*x-y,z])
-            sage: f(X)
+            sage: PS.<x,y,z> = ProjectiveSpace(Qp(3), 2)                                # optional - sage.rings.padics
+            sage: H = End(PS)                                                           # optional - sage.rings.padics
+            sage: f = H([x^2, 2*y^2, z^2])                                              # optional - sage.rings.padics
+            sage: X = PS.subscheme([2*x - y, z])                                        # optional - sage.rings.padics
+            sage: f(X)                                                                  # optional - sage.rings.padics
             Closed subscheme of Projective Space of dimension 2 over 3-adic Field
-            with capped relative precision 20 defined by:
+             with capped relative precision 20 defined by:
               z,
-              x + (1 + 3^2 + 3^4 + 3^6 + 3^8 + 3^10 + 3^12 + 3^14 + 3^16 + 3^18 +
-            O(3^20))*y
+              x + (1 + 3^2 + 3^4 + 3^6 + 3^8 + 3^10 + 3^12 + 3^14 + 3^16 + 3^18 + O(3^20))*y
 
         ::
 
             sage: R.<y0,y1,y2,y3> = PolynomialRing(QQ)
             sage: P.<x,y,z> = ProjectiveSpace(FractionField(R), 2)
             sage: H = End(P)
-            sage: f = H([y0*x^2+y1*z^2, y2*y^2+y3*z^2, z^2])
+            sage: f = H([y0*x^2 + y1*z^2, y2*y^2 + y3*z^2, z^2])
             sage: X = P.subscheme(x*z)
             sage: X._forward_image(f)
             Closed subscheme of Projective Space of dimension 2 over Fraction Field
-            of Multivariate Polynomial Ring in y0, y1, y2, y3 over Rational Field
-            defined by:
+             of Multivariate Polynomial Ring in y0, y1, y2, y3 over Rational Field
+             defined by:
               x*z + (-y1)*z^2
 
             ::
@@ -693,11 +686,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: P5.<z0,z1,z2,z3,z4,z5> = ProjectiveSpace(QQ, 5)
             sage: H = Hom(P2, P5)
-            sage: f = H([x^2,x*y,x*z,y^2,y*z,z^2]) #Veronese map
+            sage: f = H([x^2, x*y, x*z, y^2, y*z, z^2])  # Veronese map
             sage: X = P2.subscheme([])
             sage: f(X)
             Closed subscheme of Projective Space of dimension 5 over Rational Field
-            defined by:
+             defined by:
               -z4^2 + z3*z5,
               -z2*z4 + z1*z5,
               -z2*z3 + z1*z4,
@@ -707,14 +700,14 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             ::
 
-            sage: P2.<x,y,z>=ProjectiveSpace(QQ, 2)
-            sage: P3.<u,v,w,t>=ProjectiveSpace(QQ, 3)
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: P3.<u,v,w,t> = ProjectiveSpace(QQ, 3)
             sage: H = Hom(P2, P3)
-            sage: X = P2.subscheme([x-y,x-z])
-            sage: f = H([x^2,y^2,z^2,x*y])
+            sage: X = P2.subscheme([x - y, x - z])
+            sage: f = H([x^2, y^2, z^2, x*y])
             sage: f(X)
             Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
+             defined by:
               w - t,
               v - t,
               u - t
@@ -723,9 +716,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: P1.<u,v> = ProjectiveSpace(QQ, 1)
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: H = Hom(P2,P1)
-            sage: f = H([x^2,y*z])
-            sage: X = P2.subscheme([x-y])
+            sage: H = Hom(P2, P1)
+            sage: f = H([x^2, y*z])
+            sage: X = P2.subscheme([x - y])
             sage: f(X)
             Traceback (most recent call last):
             ...
@@ -736,7 +729,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: H = End(PS)
             sage: f = H([x^3, x*y^2, x*z^2])
-            sage: X = PS.subscheme([x-y])
+            sage: X = PS.subscheme([x - y])
             sage: X._forward_image(f)
             Traceback (most recent call last):
             ...
@@ -746,7 +739,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: PS.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: P1.<u,v> = ProjectiveSpace(QQ, 1)
-            sage: Y = P1.subscheme([u-v])
+            sage: Y = P1.subscheme([u - v])
             sage: H = End(PS)
             sage: f = H([x^2, y^2, z^2])
             sage: Y._forward_image(f)
@@ -767,21 +760,21 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         m = CR_codom.ngens()
         #can't call eliminate if the base ring is polynomial so we do it ourselves
         #with a lex ordering
-        R = PolynomialRing(f.base_ring(), n+m, 'tempvar', order = 'lex')
+        R = PolynomialRing(f.base_ring(), n + m, 'tempvar', order='lex')
         Rvars = R.gens()[0 : n]
-        phi = CR_dom.hom(Rvars,R)
+        phi = CR_dom.hom(Rvars, R)
         zero = n*[0]
-        psi = R.hom(zero + list(CR_codom.gens()),CR_codom)
+        psi = R.hom(zero + list(CR_codom.gens()), CR_codom)
         #set up ideal
         L = R.ideal([phi(t) for t in self.defining_polynomials()] + [R.gen(n+i) - phi(f[i]) for i in range(m)])
-        G = L.groebner_basis() #eliminate
+        G = L.groebner_basis()  # eliminate
         newL = []
-        #get only the elimination ideal portion
-        for i in range (len(G) - 1, 0, -1):
+        # get only the elimination ideal portion
+        for i in range(len(G) - 1, 0, -1):
             v = G[i].variables()
             if all(Rvars[j] not in v for j in range(n)):
                 newL.append(psi(G[i]))
-        return(codom.subscheme(newL))
+        return codom.subscheme(newL)
 
     def preimage(self, f, k=1, check=True):
         r"""
@@ -800,27 +793,27 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         OUTPUT:
 
-        - a subscheme in the domain of ``f``.
+        a subscheme in the domain of ``f``
 
-        Examples::
+        EXAMPLES::
 
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: H = End(PS)
             sage: f = H([y^2, x^2, z^2])
-            sage: X = PS.subscheme([x-y])
+            sage: X = PS.subscheme([x - y])
             sage: X.preimage(f)
             Closed subscheme of Projective Space of dimension 2 over Integer Ring
-            defined by:
+             defined by:
               -x^2 + y^2
 
         ::
 
             sage: P.<x,y,z,w,t> = ProjectiveSpace(QQ, 4)
             sage: H = End(P)
-            sage: f = H([x^2-y^2, y^2, z^2, w^2, t^2+w^2])
-            sage: f.rational_preimages(P.subscheme([x-z, t^2, w-t]))
+            sage: f = H([x^2 - y^2, y^2, z^2, w^2, t^2 + w^2])
+            sage: f.rational_preimages(P.subscheme([x - z, t^2, w - t]))
             Closed subscheme of Projective Space of dimension 4 over Rational Field
-            defined by:
+             defined by:
               x^2 - y^2 - z^2,
               w^4 + 2*w^2*t^2 + t^4,
               -t^2
@@ -830,11 +823,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: P1.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P3.<u,v,w,t> = ProjectiveSpace(QQ, 3)
             sage: H = Hom(P1, P3)
-            sage: X = P3.subscheme([u-v, 2*u-w, u+t])
-            sage: f = H([x^2,y^2, x^2+y^2, x*y])
+            sage: X = P3.subscheme([u - v, 2*u - w, u + t])
+            sage: f = H([x^2, y^2, x^2 + y^2, x*y])
             sage: X.preimage(f)
             Closed subscheme of Projective Space of dimension 1 over Rational Field
-            defined by:
+             defined by:
               x^2 - y^2,
               x^2 - y^2,
               x^2 + x*y
@@ -844,7 +837,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: P1.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P3.<u,v,w,t> = ProjectiveSpace(QQ, 3)
             sage: H = Hom(P3, P1)
-            sage: X = P1.subscheme([x-y])
+            sage: X = P1.subscheme([x - y])
             sage: f = H([u^2, v^2])
             sage: X.preimage(f)
             Traceback (most recent call last):
@@ -856,7 +849,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: H = End(PS)
             sage: f = H([x^2, x^2, x^2])
-            sage: X = PS.subscheme([x-y])
+            sage: X = PS.subscheme([x - y])
             sage: X.preimage(f)
             Traceback (most recent call last):
             ...
@@ -866,7 +859,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: P1.<u,v> = ProjectiveSpace(ZZ, 1)
-            sage: Y = P1.subscheme([u^2-v^2])
+            sage: Y = P1.subscheme([u^2 - v^2])
             sage: H = End(PS)
             sage: f = H([x^2, y^2, z^2])
             sage: Y.preimage(f)
@@ -877,12 +870,12 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: Y = P.subscheme([x-y])
+            sage: Y = P.subscheme([x - y])
             sage: H = End(P)
             sage: f = H([x^2, y^2, z^2])
             sage: Y.preimage(f, k=2)
             Closed subscheme of Projective Space of dimension 2 over Rational Field
-            defined by:
+             defined by:
               x^4 - y^4
         """
         dom = f.domain()
@@ -894,7 +887,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                 raise TypeError("subscheme must be in ambient space of codomain")
             k = ZZ(k)
             if k <= 0:
-                raise ValueError("k (=%s) must be a positive integer"%(k))
+                raise ValueError("k (=%s) must be a positive integer" % (k))
             if k > 1 and not f.is_endomorphism():
                 raise TypeError("map must be an endomorphism")
         R = codom.coordinate_ring()
@@ -903,7 +896,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         else:
             F = f
         dict = {R.gen(i): F[i] for i in range(codom.dimension_relative()+1)}
-        return(dom.subscheme([t.subs(dict) for t in self.defining_polynomials()]))
+        return dom.subscheme([t.subs(dict) for t in self.defining_polynomials()])
 
     def dual(self):
         r"""
@@ -928,7 +921,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: I = R.ideal(x^2 + y^2 + z^2)
             sage: X = P.subscheme(I)
             sage: X.dual()
-            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+            Closed subscheme of Projective Space of dimension 2 over Rational Field
+             defined by:
               y0^2 + y1^2 + y2^2
 
         The dual of the twisted cubic curve in projective 3-space is a singular
@@ -942,7 +936,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: X = P.subscheme(I)
             sage: X.dual()
             Closed subscheme of Projective Space of dimension 3 over
-            Rational Field defined by:
+             Rational Field defined by:
               y2^2 - y1*y3,
               y1*y2 - y0*y3,
               y1^2 - y0*y2
@@ -956,20 +950,20 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         An example over a finite field::
 
-            sage: R = PolynomialRing(GF(61), 'a,b,c')
-            sage: P.<a, b, c> = ProjectiveSpace(2, R.base_ring())
-            sage: X = P.subscheme(R.ideal(a*a+2*b*b+3*c*c))
-            sage: X.dual()
+            sage: R = PolynomialRing(GF(61), 'a,b,c')                                   # optional - sage.rings.finite_rings
+            sage: P.<a, b, c> = ProjectiveSpace(2, R.base_ring())                       # optional - sage.rings.finite_rings
+            sage: X = P.subscheme(R.ideal(a*a + 2*b*b + 3*c*c))                         # optional - sage.rings.finite_rings
+            sage: X.dual()                                                              # optional - sage.rings.finite_rings
             Closed subscheme of Projective Space of dimension 2 over
-            Finite Field of size 61 defined by:
-            y0^2 - 30*y1^2 - 20*y2^2
+             Finite Field of size 61 defined by:
+              y0^2 - 30*y1^2 - 20*y2^2
 
         TESTS::
 
-            sage: R = PolynomialRing(Qp(3), 'a,b,c')
-            sage: P.<a, b, c> = ProjectiveSpace(2, R.base_ring())
-            sage: X = P.subscheme(R.ideal(a*a+2*b*b+3*c*c))
-            sage: X.dual()
+            sage: R = PolynomialRing(Qp(3), 'a,b,c')                                    # optional - sage.rings.padics
+            sage: P.<a, b, c> = ProjectiveSpace(2, R.base_ring())                       # optional - sage.rings.padics
+            sage: X = P.subscheme(R.ideal(a*a + 2*b*b + 3*c*c))                         # optional - sage.rings.padics
+            sage: X.dual()                                                              # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             NotImplementedError: base ring must be QQ or a finite field
@@ -977,7 +971,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         from sage.libs.singular.function_factory import ff
 
         K = self.base_ring()
-        if not(is_RationalField(K) or is_FiniteField(K)):
+        if not (is_RationalField(K) or isinstance(K, FiniteField)):
             raise NotImplementedError("base ring must be QQ or a finite field")
         I = self.defining_ideal()
         m = I.ngens()
@@ -1015,9 +1009,268 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         L = J_sat.elimination_ideal(z[0: n + 1] + (z[-1],))
         return Pd.subscheme(L.change_ring(Rd))
 
+    def degree(self):
+        r"""
+        Return the degree of this projective subscheme.
+
+        If `P(t) = a_{m}t^m + \ldots + a_{0}` is the Hilbert
+        polynomial of this subscheme, then the degree is `a_{m} m!`.
+
+        OUTPUT: Integer.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z,w,t,u> = ProjectiveSpace(QQ, 5)
+            sage: X = P.subscheme([x^7 + x*y*z*t^4 - u^7])
+            sage: X.degree()
+            7
+
+            sage: P.<x,y,z,w> = ProjectiveSpace(GF(13), 3)                              # optional - sage.rings.finite_rings
+            sage: X = P.subscheme([y^3 - w^3, x + 7*z])                                 # optional - sage.rings.finite_rings
+            sage: X.degree()                                                            # optional - sage.rings.finite_rings
+            3
+
+            sage: P.<x,y,z,w,u> = ProjectiveSpace(QQ, 4)
+            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])
+            sage: C.degree()
+            63
+        """
+        P = self.defining_ideal().hilbert_polynomial()
+        return P.leading_coefficient() * P.degree().factorial()
+
+    def intersection_multiplicity(self, X, P):
+        r"""
+        Return the intersection multiplicity of this subscheme and the subscheme ``X`` at the point ``P``.
+
+        This uses the intersection_multiplicity function for affine subschemes on affine patches of this subscheme
+        and ``X`` that contain ``P``.
+
+        INPUT:
+
+        - ``X`` -- subscheme in the same ambient space as this subscheme.
+
+        - ``P`` -- a point in the intersection of this subscheme with ``X``.
+
+        OUTPUT: An integer.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
+            sage: C = Curve([x^4 - z^2*y^2], P)                                         # optional - sage.rings.finite_rings
+            sage: D = Curve([y^4*z - x^5 - x^3*z^2], P)                                 # optional - sage.rings.finite_rings
+            sage: Q1 = P([0,1,0])                                                       # optional - sage.rings.finite_rings
+            sage: C.intersection_multiplicity(D, Q1)                                    # optional - sage.rings.finite_rings
+            4
+            sage: Q2 = P([0,0,1])                                                       # optional - sage.rings.finite_rings
+            sage: C.intersection_multiplicity(D, Q2)                                    # optional - sage.rings.finite_rings
+            6
+
+        ::
+
+            sage: R.<a> = QQ[]
+            sage: K.<b> = NumberField(a^4 + 1)                                          # optional - sage.rings.number_field
+            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                   # optional - sage.rings.number_field
+            sage: X = P.subscheme([x^2 + y^2 - z*w])                                    # optional - sage.rings.number_field
+            sage: Y = P.subscheme([y*z - x*w, z - w])                                   # optional - sage.rings.number_field
+            sage: Q1 = P([b^2,1,0,0])                                                   # optional - sage.rings.number_field
+            sage: X.intersection_multiplicity(Y, Q1)                                    # optional - sage.rings.number_field
+            1
+            sage: Q2 = P([1/2*b^3 - 1/2*b, 1/2*b^3 - 1/2*b, 1, 1])                      # optional - sage.rings.number_field
+            sage: X.intersection_multiplicity(Y, Q2)                                    # optional - sage.rings.number_field
+            1
+
+        ::
+
+            sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
+            sage: X = P.subscheme([x^2 - z^2, y^3 - w*x^2])
+            sage: Y = P.subscheme([w^2 - 2*x*y + z^2, y^2 - w^2])
+            sage: Q = P([1,1,-1,1])
+            sage: X.intersection_multiplicity(Y, Q)
+            Traceback (most recent call last):
+            ...
+            TypeError: the intersection of this subscheme and (=Closed subscheme of Affine Space of dimension 3
+            over Rational Field defined by: z^2 + w^2 - 2*y, y^2 - w^2)
+            must be proper and finite
+        """
+        try:
+            self.ambient_space()(P)
+        except TypeError:
+            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)"%(P,X))
+        # find an affine chart of the ambient space of this curve that contains P
+        n = self.ambient_space().dimension_relative()
+        for i in range(n + 1):
+            if P[i] != 0:
+                break
+        X1 = self.affine_patch(i)
+        X2 = X.affine_patch(i)
+        return X1.intersection_multiplicity(X2, X1(P.dehomogenize(i)))
+
+    def multiplicity(self, P):
+        r"""
+        Return the multiplicity of ``P`` on this subscheme.
+
+        This is computed as the multiplicity of the corresponding point on an affine patch of this subscheme
+        that contains ``P``. This subscheme must be defined over a field. An error is returned if ``P``
+        not a point on this subscheme.
+
+        INPUT:
+
+        - ``P`` -- a point on this subscheme.
+
+        OUTPUT:
+
+        An integer.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z,w,t> = ProjectiveSpace(QQ, 4)
+            sage: X = P.subscheme([y^2 - x*t, w^7 - t*w*x^5 - z^7])
+            sage: Q1 = P([0,0,1,1,1])
+            sage: X.multiplicity(Q1)
+            1
+            sage: Q2 = P([1,0,0,0,0])
+            sage: X.multiplicity(Q2)
+            3
+            sage: Q3 = P([0,0,0,0,1])
+            sage: X.multiplicity(Q3)
+            7
+
+        ::
+
+            sage: P.<x,y,z,w> = ProjectiveSpace(CC, 3)
+            sage: X = P.subscheme([z^5*x^2*w - y^8])
+            sage: Q = P([2,0,0,1])
+            sage: X.multiplicity(Q)
+            5
+
+        ::
+
+            sage: P.<x,y,z,w> = ProjectiveSpace(GF(29), 3)                              # optional - sage.rings.finite_rings
+            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)                         # optional - sage.rings.finite_rings
+            sage: Q = P([3,0,0,1])                                                      # optional - sage.rings.finite_rings
+            sage: C.multiplicity(Q)                                                     # optional - sage.rings.finite_rings
+            8
+        """
+        if self.base_ring() not in Fields():
+            raise TypeError("subscheme must be defined over a field")
+
+        # check whether P is a point on this subscheme
+        try:
+            P = self(P)
+        except TypeError:
+            raise TypeError("(=%s) is not a point on (=%s)" % (P,self))
+
+        # find an affine chart of the ambient space of self that contains P
+        i = 0
+        while P[i] == 0:
+            i += 1
+        X = self.affine_patch(i)
+        return X.multiplicity(X(P.dehomogenize(i)))
+
+    def veronese_embedding(self, d, CS=None, order='lex'):
+        r"""
+        Return the degree ``d`` Veronese embedding of this projective subscheme.
+
+        INPUT:
+
+        - ``d`` -- a positive integer.
+
+        - ``CS`` -- a projective ambient space to embed into. If the projective ambient space of this subscheme
+          is of dimension `N`, the dimension of ``CS`` must be `\binom{N + d}{d} - 1`. This is constructed if
+          not specified. Default: ``None``.
+
+        - ``order`` -- a monomial order to use to arrange the monomials defining the embedding. The monomials
+          will be arranged from greatest to least with respect to this order. Default: ``'lex'``.
+
+        OUTPUT:
+
+        - a scheme morphism from this subscheme to its image by the degree ``d`` Veronese embedding.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: L = P.subscheme([y - x])
+            sage: v = L.veronese_embedding(2)
+            sage: v
+            Scheme morphism:
+              From: Closed subscheme of Projective Space of dimension 2
+                    over Rational Field defined by: -x + y
+              To:   Closed subscheme of Projective Space of dimension 5
+                    over Rational Field defined by:
+                      -x4^2 + x3*x5,
+                      x2 - x4,
+                      x1 - x3,
+                      x0 - x3
+              Defn: Defined on coordinates by sending (x : y : z) to
+                    (x^2 : x*y : x*z : y^2 : y*z : z^2)
+            sage: v.codomain().degree()
+            2
+            sage: C = P.subscheme([y*z - x^2])
+            sage: C.veronese_embedding(2).codomain().degree()
+            4
+
+        twisted cubic::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<u,v,s,t> = ProjectiveSpace(QQ, 3)
+            sage: P.subscheme([]).veronese_embedding(3, Q)
+            Scheme morphism:
+              From: Closed subscheme of Projective Space of dimension 1
+                    over Rational Field defined by: (no polynomials)
+              To:   Closed subscheme of Projective Space of dimension 3
+                    over Rational Field defined by:
+                      -s^2 + v*t,
+                      -v*s + u*t,
+                      -v^2 + u*s
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^3 : x^2*y : x*y^2 : y^3)
+        """
+        # construct map between projective spaces
+        v = self.ambient_space().veronese_embedding(d, CS, order)
+        # return this map restricted to self and its image
+        return Hom(self, v(self))(v.defining_polynomials())
+
+
+class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_projective):
+    """
+    Algebraic subschemes of projective spaces defined over fields.
+    """
+    def _morphism(self, *args, **kwds):
+        r"""
+        Construct a morphism determined by action on points of ``self``.
+
+        For internal use only.
+
+        INPUT:
+
+        - same as for
+          :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`.
+
+        OUTPUT:
+
+        - :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`.
+
+        TESTS::
+
+            sage: P1.<x,y> = ProjectiveSpace(1, QQ)
+            sage: P2 = ProjectiveSpace(2, QQ)
+            sage: H12 = P1.Hom(P2)
+            sage: H12([x^2, x*y, y^2])    # indirect doctest
+            Scheme morphism:
+              From: Projective Space of dimension 1 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to (x^2 : x*y : y^2)
+            sage: P1._morphism(H12, [x^2, x*y, y^2])
+            Scheme morphism:
+              From: Projective Space of dimension 1 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to (x^2 : x*y : y^2)
+        """
+        return SchemeMorphism_polynomial_projective_subscheme_field(*args, **kwds)
+
     def Chow_form(self):
         r"""
-        Returns the Chow form associated to this subscheme.
+        Return the Chow form associated to this subscheme.
 
         For a `k`-dimensional subvariety of `\mathbb{P}^N` of degree `D`.
         The `(N-k-1)`-dimensional projective linear subspaces of `\mathbb{P}^N`
@@ -1036,58 +1289,45 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         the ambient projective space of `X`. The elimination ideal `I = J' \cap K[u_{ij}]`
         is a principal ideal, let `R` be its generator. The Chow form is obtained by
         writing `R` as a polynomial in Plucker coordinates (i.e. bracket polynomials).
-        [DalbecSturmfels]_.
+        [DS1994]_.
 
         OUTPUT: a homogeneous polynomial.
 
-        REFERENCES:
-
-        .. [DalbecSturmfels] J. Dalbec and B. Sturmfels. Invariant methods in discrete and computational geometry,
-           chapter Introduction to Chow forms, pages 37-58. Springer Netherlands, 1994.
-
         EXAMPLES::
 
-            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(17), 3)
-            sage: X = P.subscheme([x3+x1,x2-x0,x2-x3])
-            sage: X.Chow_form()
+            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(17), 3)                          # optional - sage.rings.finite_rings
+            sage: X = P.subscheme([x3 + x1, x2 - x0, x2 - x3])                          # optional - sage.rings.finite_rings
+            sage: X.Chow_form()                                                         # optional - sage.rings.finite_rings
             t0 - t1 + t2 + t3
 
         ::
 
-            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(QQ,3)
-            sage: X = P.subscheme([x3^2 -101*x1^2 - 3*x2*x0])
+            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(QQ, 3)
+            sage: X = P.subscheme([x3^2 - 101*x1^2 - 3*x2*x0])
             sage: X.Chow_form()
             t0^2 - 101*t2^2 - 3*t1*t3
 
         ::
 
-            sage: P.<x0,x1,x2,x3>=ProjectiveSpace(QQ,3)
-            sage: X = P.subscheme([x0*x2-x1^2, x0*x3-x1*x2, x1*x3-x2^2])
+            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(QQ, 3)
+            sage: X = P.subscheme([x0*x2 - x1^2, x0*x3 - x1*x2, x1*x3 - x2^2])
             sage: Ch = X.Chow_form(); Ch
             t2^3 + 2*t2^2*t3 + t2*t3^2 - 3*t1*t2*t4 - t1*t3*t4 + t0*t4^2 + t1^2*t5
             sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y
             Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-              x2^2*x3 - x1*x3^2,
-              -x2^3 + x0*x3^2,
-              -x2^2*x3 + x1*x3^2,
-              x1*x2*x3 - x0*x3^2,
-              3*x1*x2^2 - 3*x0*x2*x3,
-              -2*x1^2*x3 + 2*x0*x2*x3,
-              -3*x1^2*x2 + 3*x0*x1*x3,
-              x1^3 - x0^2*x3,
-              x2^3 - x1*x2*x3,
-              -3*x1*x2^2 + 2*x1^2*x3 + x0*x2*x3,
-              2*x0*x2^2 - 2*x0*x1*x3,
-              3*x1^2*x2 - 2*x0*x2^2 - x0*x1*x3,
-              -x0*x1*x2 + x0^2*x3,
-              -x0*x1^2 + x0^2*x2,
-              -x1^3 + x0*x1*x2,
-              x0*x1^2 - x0^2*x2
+             defined by:
+              x2^2*x3 - x1*x3^2,                    -x2^3 + x0*x3^2,
+              -x2^2*x3 + x1*x3^2,                   x1*x2*x3 - x0*x3^2,
+              3*x1*x2^2 - 3*x0*x2*x3,               -2*x1^2*x3 + 2*x0*x2*x3,
+              -3*x1^2*x2 + 3*x0*x1*x3,              x1^3 - x0^2*x3,
+              x2^3 - x1*x2*x3,                      -3*x1*x2^2 + 2*x1^2*x3 + x0*x2*x3,
+              2*x0*x2^2 - 2*x0*x1*x3,               3*x1^2*x2 - 2*x0*x2^2 - x0*x1*x3,
+              -x0*x1*x2 + x0^2*x3,                  -x0*x1^2 + x0^2*x2,
+              -x1^3 + x0*x1*x2,                     x0*x1^2 - x0^2*x2
             sage: I = Y.defining_ideal()
             sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]
-            Ideal (x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2) of Multivariate
-            Polynomial Ring in x0, x1, x2, x3 over Rational Field
+            Ideal (x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2)
+             of Multivariate Polynomial Ring in x0, x1, x2, x3 over Rational Field
         """
         I = self.defining_ideal()
         P = self.ambient_space()
@@ -1164,227 +1404,3 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         rel2 = rel + [CF]
         assert all(f in rel2 for f in CH.gens()), "did not find a principal generator"
         return alp(CF)
-
-    def degree(self):
-        r"""
-        Return the degree of this projective subscheme.
-
-        If `P(t) = a_{m}t^m + \ldots + a_{0}` is the Hilbert
-        polynomial of this subscheme, then the degree is `a_{m} m!`.
-
-        OUTPUT: Integer.
-
-        EXAMPLES::
-
-            sage: P.<x,y,z,w,t,u> = ProjectiveSpace(QQ, 5)
-            sage: X = P.subscheme([x^7 + x*y*z*t^4 - u^7])
-            sage: X.degree()
-            7
-
-            sage: P.<x,y,z,w> = ProjectiveSpace(GF(13), 3)
-            sage: X = P.subscheme([y^3 - w^3, x + 7*z])
-            sage: X.degree()
-            3
-
-            sage: P.<x,y,z,w,u> = ProjectiveSpace(QQ, 4)
-            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])
-            sage: C.degree()
-            63
-        """
-        P = self.defining_ideal().hilbert_polynomial()
-        return P.leading_coefficient() * P.degree().factorial()
-
-    def intersection_multiplicity(self, X, P):
-        r"""
-        Return the intersection multiplicity of this subscheme and the subscheme ``X`` at the point ``P``.
-
-        This uses the intersection_multiplicity function for affine subschemes on affine patches of this subscheme
-        and ``X`` that contain ``P``.
-
-        INPUT:
-
-        - ``X`` -- subscheme in the same ambient space as this subscheme.
-
-        - ``P`` -- a point in the intersection of this subscheme with ``X``.
-
-        OUTPUT: An integer.
-
-        EXAMPLES::
-
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
-            sage: C = Curve([x^4 - z^2*y^2], P)
-            sage: D = Curve([y^4*z - x^5 - x^3*z^2], P)
-            sage: Q1 = P([0,1,0])
-            sage: C.intersection_multiplicity(D, Q1)
-            4
-            sage: Q2 = P([0,0,1])
-            sage: C.intersection_multiplicity(D, Q2)
-            6
-
-        ::
-
-            sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^4 + 1)
-            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)
-            sage: X = P.subscheme([x^2 + y^2 - z*w])
-            sage: Y = P.subscheme([y*z - x*w, z - w])
-            sage: Q1 = P([b^2,1,0,0])
-            sage: X.intersection_multiplicity(Y, Q1)
-            1
-            sage: Q2 = P([1/2*b^3-1/2*b,1/2*b^3-1/2*b,1,1])
-            sage: X.intersection_multiplicity(Y, Q2)
-            1
-
-        ::
-
-            sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: X = P.subscheme([x^2 - z^2, y^3 - w*x^2])
-            sage: Y = P.subscheme([w^2 - 2*x*y + z^2, y^2 - w^2])
-            sage: Q = P([1,1,-1,1])
-            sage: X.intersection_multiplicity(Y, Q)
-            Traceback (most recent call last):
-            ...
-            TypeError: the intersection of this subscheme and (=Closed subscheme of Affine Space of dimension 3
-            over Rational Field defined by:
-              z^2 + w^2 - 2*y,
-              y^2 - w^2) must be proper and finite
-        """
-        try:
-            self.ambient_space()(P)
-        except TypeError:
-            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)"%(P,X))
-        # find an affine chart of the ambient space of this curve that contains P
-        n = self.ambient_space().dimension_relative()
-        for i in range(n + 1):
-            if P[i] != 0:
-                break
-        X1 = self.affine_patch(i)
-        X2 = X.affine_patch(i)
-        return X1.intersection_multiplicity(X2, X1(P.dehomogenize(i)))
-
-    def multiplicity(self, P):
-        r"""
-        Return the multiplicity of ``P`` on this subscheme.
-
-        This is computed as the multiplicity of the corresponding point on an affine patch of this subscheme
-        that contains ``P``. This subscheme must be defined over a field. An error is returned if ``P``
-        not a point on this subscheme.
-
-        INPUT:
-
-        - ``P`` -- a point on this subscheme.
-
-        OUTPUT:
-
-        An integer.
-
-        EXAMPLES::
-
-            sage: P.<x,y,z,w,t> = ProjectiveSpace(QQ, 4)
-            sage: X = P.subscheme([y^2 - x*t, w^7 - t*w*x^5 - z^7])
-            sage: Q1 = P([0,0,1,1,1])
-            sage: X.multiplicity(Q1)
-            1
-            sage: Q2 = P([1,0,0,0,0])
-            sage: X.multiplicity(Q2)
-            3
-            sage: Q3 = P([0,0,0,0,1])
-            sage: X.multiplicity(Q3)
-            7
-
-        ::
-
-            sage: P.<x,y,z,w> = ProjectiveSpace(CC, 3)
-            sage: X = P.subscheme([z^5*x^2*w - y^8])
-            sage: Q = P([2,0,0,1])
-            sage: X.multiplicity(Q)
-            5
-
-        ::
-
-            sage: P.<x,y,z,w> = ProjectiveSpace(GF(29), 3)
-            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)
-            sage: Q = P([3,0,0,1])
-            sage: C.multiplicity(Q)
-            8
-        """
-        if not self.base_ring() in Fields():
-            raise TypeError("subscheme must be defined over a field")
-
-        # check whether P is a point on this subscheme
-        try:
-            P = self(P)
-        except TypeError:
-            raise TypeError("(=%s) is not a point on (=%s)"%(P,self))
-
-        # find an affine chart of the ambient space of self that contains P
-        i = 0
-        while(P[i] == 0):
-            i = i + 1
-        X = self.affine_patch(i)
-        return X.multiplicity(X(P.dehomogenize(i)))
-
-    def veronese_embedding(self, d, CS=None, order='lex'):
-        r"""
-        Return the degree ``d`` Veronese embedding of this projective subscheme.
-
-        INPUT:
-
-        - ``d`` -- a positive integer.
-
-        - ``CS`` -- a projective ambient space to embed into. If the projective ambient space of this subscheme
-          is of dimension `N`, the dimension of ``CS`` must be `\binom{N + d}{d} - 1`. This is constructed if
-          not specified. Default: ``None``.
-
-        - ``order`` -- a monomial order to use to arrange the monomials defining the embedding. The monomials
-          will be arranged from greatest to least with respect to this order. Default: ``'lex'``.
-
-        OUTPUT:
-
-        - a scheme morphism from this subscheme to its image by the degree ``d`` Veronese embedding.
-
-        EXAMPLES::
-
-            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: L = P.subscheme([y - x])
-            sage: v = L.veronese_embedding(2)
-            sage: v
-            Scheme morphism:
-              From: Closed subscheme of Projective Space of dimension 2 over
-            Rational Field defined by:
-              -x + y
-              To:   Closed subscheme of Projective Space of dimension 5 over
-            Rational Field defined by:
-              -x4^2 + x3*x5,
-              x2 - x4,
-              x1 - x3,
-              x0 - x3
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (x^2 : x*y : x*z : y^2 : y*z : z^2)
-            sage: v.codomain().degree()
-            2
-            sage: C = P.subscheme([y*z - x^2])
-            sage: C.veronese_embedding(2).codomain().degree()
-            4
-
-        twisted cubic::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: Q.<u,v,s,t> = ProjectiveSpace(QQ, 3)
-            sage: P.subscheme([]).veronese_embedding(3, Q)
-            Scheme morphism:
-              From: Closed subscheme of Projective Space of dimension 1 over
-            Rational Field defined by:
-              (no polynomials)
-              To:   Closed subscheme of Projective Space of dimension 3 over
-            Rational Field defined by:
-              -s^2 + v*t,
-              -v*s + u*t,
-              -v^2 + u*s
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x^3 : x^2*y : x*y^2 : y^3)
-        """
-        # construct map between projective spaces
-        v = self.ambient_space().veronese_embedding(d, CS, order)
-        # return this map restricted to self and its image
-        return Hom(self, v(self))(v.defining_polynomials())

@@ -1,7 +1,6 @@
 """
 Examples of commutative additive monoids
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -11,7 +10,7 @@ from __future__ import absolute_import
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
-from sage.categories.all import CommutativeAdditiveMonoids
+from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
 from .commutative_additive_semigroups import FreeCommutativeAdditiveSemigroup
 
 class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
@@ -33,7 +32,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         sage: S.additive_semigroup_generators()
         Family (a, b, c, d)
 
-    with product rule given by $a \times b = a$ for all $a, b$::
+    with product rule given by `a \times b = a` for all `a, b`::
 
         sage: (a,b,c,d) = S.additive_semigroup_generators()
 
@@ -44,6 +43,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -84,7 +84,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
 
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = CommutativeAdditiveMonoids())
+        Parent.__init__(self, category=CommutativeAdditiveMonoids())
 
     def _repr_(self):
         r"""
@@ -112,7 +112,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         return self(())
 
     class Element(FreeCommutativeAdditiveSemigroup.Element):
-        def __bool__(self):
+        def __bool__(self) -> bool:
             """
             Check if ``self`` is not the zero of the monoid
 
@@ -126,6 +126,5 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
             """
             return any(x for x in self.value.values())
 
-        __nonzero__ = __bool__
 
 Example = FreeCommutativeAdditiveMonoid

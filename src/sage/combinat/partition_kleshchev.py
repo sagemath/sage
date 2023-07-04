@@ -36,7 +36,7 @@ representation of `L(\Lambda_0)` of `U_q(\widehat{\mathfrak{sl}}_p)`
 and their celebrated *LLT conjecture* said that decomposition matrices of
 the :class:`sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra` of
 the symmetric group should be computable using the canonical basis of
-`L(\Lambda_0)`. This was proved and generalised to all cyclolotimc Hecke
+`L(\Lambda_0)`. This was proved and generalised to all cyclotomic Hecke
 algebras of type `A` by Ariki [Ariki1996]_ and then further generalized
 to the graded setting by Brundan and Kleshchev [BK2009]_.
 
@@ -76,7 +76,6 @@ AUTHORS:
 
 - Andrew Mathas and Travis Scrimshaw (2018-05-1): Initial version
 """
-from __future__ import print_function, absolute_import
 
 from .partition import Partition, Partitions
 from .partition_tuple import PartitionTuple, PartitionTuples
@@ -84,7 +83,9 @@ from .partition_tuple import PartitionTuple, PartitionTuples
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.rings.all import NN, ZZ, IntegerModRing
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.cpython.getattr import getattr_from_other_class
 
 from collections import defaultdict
@@ -92,6 +93,8 @@ from collections import defaultdict
 #--------------------------------------------------
 # Kleshchev partition - element classes
 #--------------------------------------------------
+
+
 class KleshchevPartition(Partition):
     r"""
     Abstract base class for Kleshchev partitions. See
@@ -448,7 +451,7 @@ class KleshchevPartition(Partition):
         if self.size() == 0 or self.parent()._e == 0:
             return True
         KP = self.parent()
-        return super(KleshchevPartition, self).is_regular(KP._e, KP._multicharge)
+        return super().is_regular(KP._e, KP._multicharge)
 
     def is_restricted(self):
         r"""
@@ -474,7 +477,8 @@ class KleshchevPartition(Partition):
         if self.size() == 0 or self.parent()._e == 0:
             return True
         KP = self.parent()
-        return super(KleshchevPartition, self).is_restricted(KP._e, KP._multicharge)
+        return super().is_restricted(KP._e, KP._multicharge)
+
 
 class KleshchevPartitionTuple(PartitionTuple):
     r"""
@@ -855,10 +859,12 @@ class KleshchevPartitionTuple(PartitionTuple):
         KP = self.parent()
         return _is_restricted(self.to_list(), KP._multicharge, KP._convention)
 
-class KleshchevCrystalMixin(object):
+
+class KleshchevCrystalMixin():
     """
     Mixin class for the crystal structure of a Kleshchev partition.
     """
+
     def epsilon(self, i):
         r"""
         Return the Kashiwara crystal operator `\varepsilon_i` applied to ``self``.
@@ -962,10 +968,12 @@ class KleshchevCrystalMixin(object):
         return wt - WLR.sum(alpha[self.content(*c, multicharge=r)]
                             for c in self.cells())
 
+
 class KleshchevPartitionCrystal(KleshchevPartition, KleshchevCrystalMixin):
     """
     Kleshchev partition with the crystal structure.
     """
+
     def e(self, i):
         r"""
         Return the action of `e_i` on ``self``.
@@ -1021,10 +1029,12 @@ class KleshchevPartitionCrystal(KleshchevPartition, KleshchevCrystalMixin):
             mu[r] += 1
         return type(self)(P, mu)
 
+
 class KleshchevPartitionTupleCrystal(KleshchevPartitionTuple, KleshchevCrystalMixin):
     """
     Kleshchev partition tuple with the crystal structure.
     """
+
     def e(self, i):
         r"""
         Return the action of `e_i` on ``self``.
@@ -1283,7 +1293,8 @@ class KleshchevPartitions(PartitionTuples):
                 if self._level>1 and KPmu._convention[0] == self._convention[0]:
                     mu = mu[::-1]
 
-        return super(KleshchevPartitions, self)._element_constructor_(mu)
+        return super()._element_constructor_(mu)
+
 
 class KleshchevPartitions_all(KleshchevPartitions):
     r"""
@@ -1411,6 +1422,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
     - [TingleyLN]_
     - [Vazirani2002]_
     """
+
     def __init__(self, e, multicharge, convention):
         r"""
         Initializes ``self``.
@@ -1445,7 +1457,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
         else:
             self.Element = KleshchevPartitionTupleCrystal
 
-        super(KleshchevPartitions_all, self).__init__(category=cat)
+        super().__init__(category=cat)
         self._e = e   # for printing
         self._index_set = IntegerModRing(e)
         self._multicharge = multicharge
@@ -1625,6 +1637,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
     """
     Kleshchev partitions of a fixed size.
     """
+
     def __init__(self, e, multicharge=(0,), size=0, convention='RS'):
         r"""
         Initialize ``self``.
@@ -1672,7 +1685,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
             self._element_constructor_ = getattr_from_other_class(self, Partitions, '_element_constructor_')
         else:
             self.Element = KleshchevPartitionTuple
-        super(KleshchevPartitions_size, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._size = size
         # As lists do not take negative indices the case e=0 needs to be handled
         # differently. Rather than doing this we set e equal to a "really big"
@@ -1850,6 +1863,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
 # helper functions
 #--------------------------------------------------
 
+
 def _a_good_cell(kpt, multicharge, convention):
     """
     Return a good cell from ``kpt`` considered as a Kleshchev partition
@@ -1901,6 +1915,7 @@ def _a_good_cell(kpt, multicharge, convention):
     # finally return the result
     return ret
 
+
 def _is_regular(kpt, multicharge, convention):
     """
     Return ``True`` if ``kpt`` is a ``multicharge``-regular
@@ -1930,6 +1945,7 @@ def _is_regular(kpt, multicharge, convention):
             kpt[k][r] -= 1
         cell = _a_good_cell(kpt, multicharge, convention)
     return all(part == [] for part in kpt)
+
 
 def _is_restricted(kpt, multicharge, convention):
     """

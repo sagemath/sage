@@ -1,0 +1,10 @@
+cd src
+
+# Note: Not actually an autoconf-generated configure; doesn't support
+# all standard flags, so we can't use sdh_configure
+./configure --prefix="$SAGE_LOCAL" --disable-static \
+            $SAGE_CONFIGURE_GMP $SAGE_CONFIGURE_MPFR \
+            $SAGE_CONFIGURE_FLINT || \
+            sdh_die "Failed to configure deformation"
+sdh_make
+sdh_make_install

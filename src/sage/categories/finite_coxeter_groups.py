@@ -1,20 +1,19 @@
 r"""
 Finite Coxeter Groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009    Nicolas M. Thiery <nthiery at users.sf.net>
 #  Copyright (C) 2009    Nicolas Borie <nicolas dot borie at math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.rings.all import AA, UniversalCyclotomicField, QQbar, QQ
-from sage.rings.integer_ring import ZZ
+
 
 class FiniteCoxeterGroups(CategoryWithAxiom):
     r"""
@@ -62,7 +61,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         """
         Ambiguity resolution: the implementation of ``some_elements``
         is preferable to that of :class:`FiniteGroups`. The same holds
-        for ``__iter__``, although a breath first search would be more
+        for ``__iter__``, although a breadth first search would be more
         natural; at least this maintains backward compatibility after
         :trac:`13589`.
 
@@ -204,7 +203,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [len(WeylGroup(["A", n]).bruhat_poset().cover_relations()) for n in [1,2,3]]
                 [1, 8, 58]
 
-            .. todo::
+            .. TODO::
 
                 - Use the symmetric group in the examples (for nicer
                   output), and print the edges for a stronger test.
@@ -219,14 +218,14 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             Return the shard intersection order attached to `W`.
 
-            This is a lattice structure on `W`, introduced in [Reading]_. It
+            This is a lattice structure on `W`, introduced in [Rea2009]_. It
             contains the noncrossing partition lattice, as the induced lattice
             on the subset of `c`-sortable elements.
 
             The partial order is given by simultaneous inclusion of inversion sets
             and subgroups attached to every element.
 
-            The precise description used here can be found in [StThWi]_.
+            The precise description used here can be found in [STW2018]_.
 
             Another implementation for the symmetric groups is
             available as :func:`~sage.combinat.shard_order.shard_poset`.
@@ -246,14 +245,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 q^3 - 11*q^2 + 23*q - 13
                 sage: SH.f_polynomial()
                 34*q^3 + 22*q^2 + q
-
-            REFERENCES:
-
-            .. [Reading] Nathan Reading, *Noncrossing partitions and the shard
-               intersection order*, DMTCS Proceedings of FPSAC 2009, 745--756
-
-            .. [StThWi] Christian Stump, Hugh Thomas and Nathan Williams,
-               *Cataland: why the fuss?*, :arxiv:`1503.00710`
             """
             from sage.combinat.posets.lattices import LatticePoset
             data = {w: (frozenset(u.lift()
@@ -276,7 +267,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             This is a partial order on the elements of a finite
             Coxeter group `W`, which is distinct from the Bruhat
             order, the weak order and the shard intersection order. It
-            was defined in [BHZ05]_.
+            was defined in [BHZ2005]_.
 
             This partial order is not a lattice, as there is no unique
             maximal element. It can be succintly defined as follows.
@@ -302,12 +293,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 34*q^4 + 90*q^3 + 79*q^2 + 24*q + 1
                 sage: len(P.maximal_elements())
                 13
-
-            REFERENCE:
-
-            .. [BHZ05] \N. Bergeron, C. Hohlweg, and M. Zabrocki, *Posets
-               related to the Connectivity Set of Coxeter Groups*.
-               :arxiv:`math/0509271v3`
             """
             from sage.graphs.digraph import DiGraph
             from sage.combinat.posets.posets import Poset
@@ -361,13 +346,14 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.rings.qqbar import QQbar
             from sage.rings.integer_ring import ZZ
+
             def degrees_of_irreducible_component(I):
                 """Return the degrees for the irreducible component indexed by I"""
                 # A Coxeter element
                 s = self.simple_reflections()
                 c = self.prod(s[i] for i in I)
                 roots = c.matrix().change_ring(QQbar).charpoly().roots()
-                args = [(z.rational_argument(), m) for z, m in roots]
+                args = ((z.rational_argument(), m) for z, m in roots)
                 args = [(z if z >=0 else 1 + z, m) for z, m in args]
                 h = max(z.denominator() for z, m in args)
                 return tuple(sorted(ZZ(z * h + 1)
@@ -446,7 +432,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = WeylGroup(["A",2])
                 sage: P = W.weak_poset(side = "twosided")
                 sage: P.show()
-                sage: len(P.hasse_diagram().edges())
+                sage: len(P.hasse_diagram().edges(sort=False))
                 8
 
             This is the transitive closure of the union of left and
@@ -479,7 +465,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [len(WeylGroup(["A", n]).weak_poset(side = "left" ).cover_relations()) for n in [1,2,3]]
                 [1, 6, 36]
 
-            .. todo::
+            .. TODO::
 
                 - Use the symmetric group in the examples (for nicer
                   output), and print the edges for a stronger test.
@@ -489,11 +475,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             from sage.combinat.posets.posets import Poset
             from sage.combinat.posets.lattices import LatticePoset
             if side == "twosided":
-                covers = tuple([u, v] for u in self for v in u.upper_covers(side="left")+u.upper_covers(side="right") )
-                return Poset((self, covers), cover_relations = True, facade = facade)
-            else:
-                covers = tuple([u, v] for u in self for v in u.upper_covers(side=side) )
-                return LatticePoset((self, covers), cover_relations = True, facade = facade)
+                covers = tuple([u, v] for u in self for v in u.upper_covers(side="left") + u.upper_covers(side="right"))
+                return Poset((self, covers), cover_relations=True,
+                             facade=facade)
+            covers = tuple([u, v] for u in self for v in u.upper_covers(side=side))
+            return LatticePoset((self, covers), cover_relations=True,
+                                facade=facade)
 
         weak_lattice = weak_poset
 
@@ -554,7 +541,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             Return the `m`-Cambrian lattice on `m`-delta sequences.
 
-            See :arxiv:`1503.00710` and :arXiv:`math/0611106`.
+            See :arxiv:`1503.00710` and :arxiv:`math/0611106`.
 
             The `m`-delta sequences are certain `m`-colored minimal
             factorizations of `c` into reflections.
@@ -582,11 +569,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.combinat.posets.lattices import LatticePoset
             if hasattr(c, "reduced_word"):
-               c = c.reduced_word()
+                c = c.reduced_word()
             c = list(c)
 
             sorting_word = self.long_element().coxeter_sorting_word(c)
-            
+
             if on_roots:
                 if not hasattr(self.long_element(), "reflection_to_root"):
                     raise ValueError("The parameter 'on_root=True' needs "
@@ -755,9 +742,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             n = self.one().canonical_matrix().rank()
             weights = self.fundamental_weights()
             if point is None:
+                from sage.rings.integer_ring import ZZ
                 point = [ZZ.one()] * n
             v = sum(point[i-1] * weights[i] for i in weights.keys())
             from sage.geometry.polyhedron.constructor import Polyhedron
+            from sage.rings.qqbar import AA, QQbar
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             vertices = [v*w for w in self]
             if base_ring is None and v.base_ring() in [UniversalCyclotomicField(), QQbar]:
                 vertices = [v.change_ring(AA) for v in vertices]
@@ -839,11 +829,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: w.coxeter_knuth_neighbor(word)
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: This has only been implemented in finite type A so far!
+                NotImplementedError: this has only been implemented in finite type A so far
             """
             C = self.parent().cartan_type()
             if not C[0] == 'A':
-                raise NotImplementedError("This has only been implemented in finite type A so far!")
+                raise NotImplementedError("this has only been implemented in finite type A so far")
             d = []
             for i in range(2,len(w)):
                 v = [j for j in w]
@@ -875,13 +865,13 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = WeylGroup(['A',4], prefix='s')
                 sage: w = W.from_reduced_word([1,2,1,3,2])
                 sage: D = w.coxeter_knuth_graph()
-                sage: D.vertices()
+                sage: D.vertices(sort=True)
                 [(1, 2, 1, 3, 2),
                 (1, 2, 3, 1, 2),
                 (2, 1, 2, 3, 2),
                 (2, 1, 3, 2, 3),
                 (2, 3, 1, 2, 3)]
-                sage: D.edges()
+                sage: D.edges(sort=True)
                 [((1, 2, 1, 3, 2), (1, 2, 3, 1, 2), None),
                 ((1, 2, 1, 3, 2), (2, 1, 2, 3, 2), None),
                 ((2, 1, 2, 3, 2), (2, 1, 3, 2, 3), None),
@@ -889,9 +879,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
                 sage: w = W.from_reduced_word([1,3])
                 sage: D = w.coxeter_knuth_graph()
-                sage: D.vertices()
+                sage: D.vertices(sort=True)
                 [(1, 3), (3, 1)]
-                sage: D.edges()
+                sage: D.edges(sort=False)
                 []
 
             TESTS::
@@ -901,9 +891,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: w.coxeter_knuth_graph()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: This has only been implemented in finite type A so far!
+                NotImplementedError: this has only been implemented in finite type A so far
             """
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             R = [tuple(v) for v in self.reduced_words()]
             G = Graph()
             G.add_vertices(R)

@@ -37,6 +37,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         running ._test_associativity() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -69,9 +70,8 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(S).run()
-
         """
-        Parent.__init__(self, facade = ZZ, category = Monoids())
+        Parent.__init__(self, facade=ZZ, category=Monoids())
 
     def _repr_(self):
         r"""
@@ -138,6 +138,7 @@ class IntegersCompletion(UniqueRepresentation, Parent):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -168,12 +169,11 @@ class IntegersCompletion(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(S).run()
-
         """
         # We can't use InfinityRing, because this ring contains 3
-        # elements besides +-infinity. We can't use Set either for the
+        # elements besides +-infinity. We can not use Set either for the
         # moment, because Set([1,2])(1) raises an error
-        Parent.__init__(self, facade = (ZZ, FiniteEnumeratedSet([-infinity, +infinity])), category = Sets())
+        Parent.__init__(self, facade=(ZZ, FiniteEnumeratedSet([-infinity, +infinity])), category=Sets())
 
     def _repr_(self):
         r"""
@@ -181,7 +181,5 @@ class IntegersCompletion(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: S = Sets().Facade().example()   # indirect doctest
-
         """
         return "An example of a facade set: the integers completed by +-infinity"
-

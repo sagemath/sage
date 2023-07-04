@@ -1,0 +1,108 @@
+name: Build & Test
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+    # Allow to run manually
+    inputs:
+      platform:
+        description: 'Platform'
+        required: true
+        default: 'ubuntu-focal-standard'
+      docker_tag:
+        description: 'Docker tag'
+        required: true
+        default: 'dev'
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v3
+
+      - name: Prepare
+        id: prepare
+        run: |
+          # Install test tools.
+          if apt-get update && apt-get install -y git python3-venv; then
+             # Debian-specific temporary code:
+             # Installation of python3-venv can be removed as soon as a
+             # base image with a release including #33822 is available
+             :
+          else
+             export PATH="build/bin:$PATH"
+             eval $(sage-print-system-package-command auto update)
+             eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
+          fi
+          # Reuse built SAGE_LOCAL contained in the Docker image 
+          ./bootstrap
+          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
+      
+      - name: Build and test modularized distributions
+        if: always() && steps.prepare.outcome == 'success'
+        run: make V=0 tox && make pypi-wheels
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Set up node to install pyright
+        if: always() && steps.prepare.outcome == 'success'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '12'
+
+      - name: Install pyright
+        if: always() && steps.prepare.outcome == 'success'
+        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
+        run: npm install -g pyright@1.1.232
+
+      - name: Static code check with pyright
+        if: always() && steps.prepare.outcome == 'success'
+        run: pyright    
+      
+      - name: Build
+        id: build
+        if: always() && steps.prepare.outcome == 'success'
+        run: make build
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Pytest
+        if: contains(github.ref, 'pytest')
+        run: |
+          ../sage -python -m pip install coverage pytest-xdist
+          ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
+        working-directory: ./src
+        env:
+          # Increase the length of the lines in the "short summary"
+          COLUMNS: 120
+
+      - name: Test
+        if: always() && steps.build.outcome == 'success'
+        run: |
+          ../sage -python -m pip install coverage
+          ../sage -python -m coverage run ./bin/sage-runtests --all -p2
+        working-directory: ./src
+
+      - name: Prepare coverage results
+        if: always() && steps.build.outcome == 'success'
+        run: |
+          ./venv/bin/python3 -m coverage combine src/.coverage/
+          ./venv/bin/python3 -m coverage xml
+          find . -name *coverage*
+      
+      - name: Upload coverage to codecov
+        if: always() && steps.build.outcome == 'success'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml

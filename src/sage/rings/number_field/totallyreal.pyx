@@ -1,4 +1,4 @@
-"""
+r"""
 Enumeration of Primitive Totally Real Fields
 
 This module contains functions for enumerating all primitive
@@ -12,15 +12,15 @@ case using relative extensions.
 Algorithm
 ---------
 
-We use Hunter's algorithm ([Cohen2000]_, Section 9.3) with modifications
-due to Takeuchi [Takeuchi1999]_ and the author [Voight2008]_.
+We use Hunter's algorithm ([Coh2000]_, Section 9.3) with modifications
+due to Takeuchi [Tak1999]_ and the author [Voi2008]_.
 
 We enumerate polynomials `f(x) = x^n + a_{n-1} x^{n-1} + \dots + a_0`.
 Hunter's theorem gives bounds on `a_{n-1}` and `a_{n-2}`; then given
 `a_{n-1}` and `a_{n-2}`, one can recursively compute bounds on `a_{n-3},
 \dots, a_0`, using the fact that the polynomial is totally real by
 looking at the zeros of successive derivatives and applying
-Rolle's theorem. See [Takeuchi1999]_ for more details.
+Rolle's theorem. See [Tak1999]_ for more details.
 
 Examples
 --------
@@ -65,22 +65,7 @@ Next, we compute all totally real quintic fields of discriminant `\le 10^5`::
 
 We see that there are 9 such fields (up to isomorphism!).
 
-References
-----------
-
-.. [Cohen2000] Henri Cohen, Advanced topics in computational number
-   theory, Graduate Texts in Mathematics, vol. 193,
-   Springer-Verlag, New York, 2000.
-
-.. [Martinet1980] Jacques Martinet, Petits discriminants des corps de nombres, Journ. Arithm. 1980,
-   Cambridge Univ. Press, 1982, 151--193.
-
-.. [Takeuchi1999] Kisao Takeuchi, Totally real algebraic number fields of
-   degree 9 with small discriminant, Saitama Math. J.
-   17 (1999), 63--85 (2000).
-
-.. [Voight2008] John Voight, Enumeration of totally real number fields of bounded root
-   discriminant, Lect. Notes in Comp. Sci. 5011 (2008).
+See also [Mar1980]_.
 
 Authors
 -------
@@ -106,8 +91,6 @@ Authors
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cysignals.memory cimport check_calloc, sig_free
 
 import math
@@ -122,7 +105,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.misc.misc import cputime
 
 from sage.rings.number_field.totallyreal_data import tr_data, int_has_small_square_divisor
@@ -155,8 +139,9 @@ cpdef double odlyzko_bound_totallyreal(int n):
 
     - John Voight (2007-09-03)
 
-    NOTES:
-    The values are calculated by Martinet [Martinet1980]_.
+    .. NOTE::
+
+        The values are calculated by Martinet [Mar1980]_.
     """
 
     if n <= 10:
@@ -253,7 +238,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         sage: enumerate_totallyreal_fields_prim(2, 10)
         [[5, x^2 - x - 1], [8, x^2 - 2]]
         sage: type(enumerate_totallyreal_fields_prim(2, 10)[0][1])
-        <type 'cypari2.gen.Gen'>
+        <class 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_prim(2, 10, return_pari_objects=False)[0][0].parent()
         Integer Ring
         sage: enumerate_totallyreal_fields_prim(2, 10, return_pari_objects=False)[0][1].parent()
@@ -510,25 +495,25 @@ def weed_fields(S, Py_ssize_t lenS=0):
         lenS = len(S)
     i = 0
     if not lenS:
-       return lenS
+        return lenS
     n = len(S[0][1])-1
     while i < lenS-1:
-       j = i+1
-       while j < lenS and S[i][0] == S[j][0]:
-           if S[i][1].nfisisom(S[j][1]):
-               # Keep the one with a smallest T_2
-               T_2i = S[i][1][n-1]**2 - 2*S[i][1][n-2]
-               T_2j = S[j][1][n-1]**2 - 2*S[j][1][n-2]
-               if T_2i <= T_2j:
-                   S.pop(j)
-                   lenS -= 1
-               else:
-                   t = S.pop(j)
-                   S.pop(i)
-                   S.insert(i, t)
-                   lenS -= 1
-           else:
-               j += 1
-       i += 1
+        j = i+1
+        while j < lenS and S[i][0] == S[j][0]:
+            if S[i][1].nfisisom(S[j][1]):
+                # Keep the one with a smallest T_2
+                T_2i = S[i][1][n-1]**2 - 2*S[i][1][n-2]
+                T_2j = S[j][1][n-1]**2 - 2*S[j][1][n-2]
+                if T_2i <= T_2j:
+                    S.pop(j)
+                    lenS -= 1
+                else:
+                    t = S.pop(j)
+                    S.pop(i)
+                    S.insert(i, t)
+                    lenS -= 1
+            else:
+                j += 1
+        i += 1
 
     return lenS

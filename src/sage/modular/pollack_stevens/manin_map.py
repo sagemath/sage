@@ -42,9 +42,6 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
-from six import itervalues, iteritems
-from six.moves import range
 
 from sage.rings.continued_fraction import convergents
 from .sigma0 import Sigma0
@@ -164,7 +161,7 @@ def unimod_matrices_from_infty(r, s):
         return []
 
 
-class ManinMap(object):
+class ManinMap():
     r"""
     Map from a set of right coset representatives of `\Gamma_0(N)` in
     `SL_2(\ZZ)` to a coefficient module that satisfies the Manin
@@ -370,7 +367,7 @@ class ManinMap(object):
             38
         """
         for B in self._manin.reps():
-            if not B in self._dict:
+            if B not in self._dict:
                 self._dict[B] = self._compute_image_from_gens(B)
 
     def __add__(self, right):
@@ -405,7 +402,7 @@ class ManinMap(object):
         D = {}
         sd = self._dict
         rd = right._dict
-        for ky, val in iteritems(sd):
+        for ky, val in sd.items():
             if ky in rd:
                 D[ky] = val + rd[ky]
         return self.__class__(self._codomain, self._manin, D, check=False)
@@ -442,7 +439,7 @@ class ManinMap(object):
         D = {}
         sd = self._dict
         rd = right._dict
-        for ky, val in iteritems(sd):
+        for ky, val in sd.items():
             if ky in rd:
                 D[ky] = val - rd[ky]
         return self.__class__(self._codomain, self._manin, D, check=False)
@@ -480,7 +477,7 @@ class ManinMap(object):
             return self._right_action(right)
 
         D = {}
-        for ky, val in iteritems(self._dict):
+        for ky, val in self._dict.items():
             D[ky] = val * right
         return self.__class__(self._codomain, self._manin, D, check=False)
 
@@ -614,7 +611,7 @@ class ManinMap(object):
         sd = self._dict
         if codomain is None:
             codomain = self._codomain
-        for ky, val in iteritems(sd):
+        for ky, val in sd.items():
             if to_moments:
                 D[ky] = codomain([f(val.moment(a))
                                   for a in range(val.precision_absolute())])
@@ -712,7 +709,7 @@ class ManinMap(object):
             (1 + O(11^2), 2 + O(11))
         """
         sd = self._dict
-        for val in itervalues(sd):
+        for val in sd.values():
             val.normalize()
         return self
 
@@ -738,7 +735,7 @@ class ManinMap(object):
             1 + O(11^2)
         """
         D = {}
-        for ky, val in iteritems(self._dict):
+        for ky, val in self._dict.items():
             D[ky] = val.reduce_precision(M)
         return self.__class__(self._codomain, self._manin, D, check=False)
 
@@ -760,12 +757,12 @@ class ManinMap(object):
             Sym^0 Z_11^2
         """
         D = {}
-        for ky, val in iteritems(self._dict):
+        for ky, val in self._dict.items():
             D[ky] = val.specialize(*args)
         return self.__class__(self._codomain.specialize(*args), self._manin,
                               D, check=False)
 
-    def hecke(self, ell, algorithm = 'prep'):
+    def hecke(self, ell, algorithm='prep'):
         r"""
         Return the image of this Manin map under the Hecke operator `T_{\ell}`.
 
@@ -799,7 +796,7 @@ class ManinMap(object):
         M = self._manin
 
         if algorithm == 'prep':
-            ## psi will denote self | T_ell
+            # psi will denote self | T_ell
             psi = {}
             for g in M.gens():
                 psi_g = sum((self[h] * A for h, A in M.prep_hecke_on_gen_list(ell, g)), self._codomain(0))

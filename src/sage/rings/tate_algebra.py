@@ -19,7 +19,7 @@ for which the quantity
 goes to infinity when the multi-index `(i_1,\dots,i_n)` goes to infinity.
 
 These series converge on the closed disc defined by the inequalities
-`\val(x_i) \geq -v_i` for all `i \in \{1,\dots,n\}`. The `v_i`'s are
+`\operatorname{val}(x_i) \geq -v_i` for all `i \in \{1,\dots,n\}`. The `v_i`'s are
 then the logarithms of the radii of convergence of the series in the
 above Tate algebra; the will be called the log radii of convergence.
 
@@ -127,7 +127,7 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 from sage.structure.factory import UniqueFactory
@@ -163,7 +163,7 @@ class TateAlgebraFactory(UniqueFactory):
 
     .. MATH::
 
-        `\text{val}(a_{i_1,\dots,i_n}) - (i_1 v_1 + \cdots + i_n v_n)`
+        \operatorname{val}(a_{i_1,\dots,i_n}) - (i_1 v_1 + \cdots + i_n v_n)
 
     tends to infinity as `i_1,\dots,i_n` go towards infinity.
 
@@ -239,11 +239,10 @@ class TateAlgebraFactory(UniqueFactory):
     AUTHORS:
 
     - Xavier Caruso, Thibaut Verron (2018-09)
-
     """
     def create_key(self, base, prec=None, log_radii=ZZ(0), names=None, order='degrevlex'):
         """
-        Create a key from the input paramaters.
+        Create a key from the input parameters.
 
         INPUT:
 
@@ -251,7 +250,7 @@ class TateAlgebraFactory(UniqueFactory):
 
         - ``prec`` -- an integer or ``None`` (default: ``None``)
 
-        - ``log_radii`` -- an integer or a list or a tuple of integers 
+        - ``log_radii`` -- an integer or a list or a tuple of integers
           (default: ``0``)
 
         - ``names`` -- names of the indeterminates
@@ -682,7 +681,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
         elts = [ self(self._field.uniformizer()) ] + list(self.gens())
         elts.append(prod(elts))
         return elts
-
 
 
 # Tate algebras
@@ -1148,7 +1146,7 @@ class TateAlgebra_generic(CommutativeAlgebra):
         """
         Return the precision cap of this Tate algebra.
 
-        NOTE::
+        .. NOTE::
 
             The precision cap is the truncation precision
             used for arithmetic operations computed by
@@ -1275,8 +1273,8 @@ class TateAlgebra_generic(CommutativeAlgebra):
             gens = [ self.element_class(self, g) for g in self._integer_ring._gens ]
         return self.element_class(self, polring.random_element(degree, terms)(*gens), prec)
 
-    def is_integral_domain(self):
-        """
+    def is_integral_domain(self, proof=True):
+        r"""
         Return ``True`` since any Tate algebra is an integral domain.
 
         EXAMPLES::
@@ -1285,5 +1283,13 @@ class TateAlgebra_generic(CommutativeAlgebra):
             sage: A.is_integral_domain()
             True
 
+        TESTS:
+
+        Check that :trac:`34372` is fixed::
+
+            sage: A.<x,y> = TateAlgebra(Zp(3))
+            sage: R.<a,b> = PolynomialRing(A)
+            sage: R.is_integral_domain(proof=True)
+            True
         """
         return True

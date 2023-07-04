@@ -41,7 +41,6 @@ representing the elements of the spin crystal by sequences of signs
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-from __future__ import print_function
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.memory cimport sig_malloc, sig_free
@@ -749,6 +748,5 @@ cdef class Spin_crystal_type_D_element(Spin):
         if i < 1 or i > self._n:
             raise ValueError("i is not in the index set")
         if i == self._n:
-            return not self._value[i-1] and not self._value[i-2]
-        return self._value[i] and not self._value[i-1]
-
+            return not self._value[i - 1] and not self._value[i - 2]
+        return self._value[i] and not self._value[i - 1]

@@ -3,15 +3,15 @@
 Test sage-download-file commandline utility
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import unittest
@@ -22,7 +22,6 @@ import logging
 
 from sage_bootstrap.env import SAGE_DISTFILES
 from sage_bootstrap.download.mirror_list import MIRRORLIST_FILENAME
-from sage_bootstrap.util import is_url
 from sage_bootstrap.package import Package
 from test.capture import CapturedLog
 
@@ -59,7 +58,7 @@ class SagePackageTestCase(unittest.TestCase):
         log.debug(u'stdout="{}", stderr="{}"'.format(stdout, stderr))
         rc = proc.returncode
         return (rc, stdout, stderr)
-    
+
     def test_config(self):
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'config')
         # Prints nothing to stderr
@@ -109,7 +108,7 @@ class SagePackageTestCase(unittest.TestCase):
 
     def test_download(self):
         pkg = Package('configure')
-        with CapturedLog() as log:
+        with CapturedLog() as _:
             pkg.tarball.download()
         rc, stdout, stderr = self.run_command(EXECUTABLE, 'download', pkg.name)
         # Prints info to stderr
@@ -141,7 +140,7 @@ class SagePackageTestCase(unittest.TestCase):
         # Prints to stdout
         self.assertEqual(
             stdout.rstrip(),
-            'Checksum of {0} unchanged'.format(pkg.tarball_filename))
+            'Checksum of {0} (tarball {1}) unchanged'.format(pkg.name, pkg.tarball_filename))
 
     def test_create(self):
         tmp = tempfile.mkdtemp()
@@ -168,10 +167,9 @@ class SagePackageTestCase(unittest.TestCase):
         with open(os.path.join(tmp, 'build', 'pkgs', 'foo', 'checksums.ini')) as f:
             self.assertEqual(
                 f.read(),
-                'tarball=Foo-VERSION.tgz\n' + 
+                'tarball=Foo-VERSION.tgz\n' +
                 'sha1=15d0e36e27c69bc758231f8e9add837f40a40cd0\n' +
                 'md5=bc62fed5e35f31aeea2af95c00473d4d\n' +
                 'cksum=1436769867\n'
             )
         shutil.rmtree(tmp)
-        

@@ -1,4 +1,4 @@
-from sage.ext.memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
 from sage.graphs.generic_graph_pyx cimport GenericGraph_pyx
 
 ctypedef struct _LinkedListNode:

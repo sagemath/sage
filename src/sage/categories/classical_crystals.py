@@ -41,6 +41,7 @@ class ClassicalCrystals(Category_singleton):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -106,10 +107,9 @@ class ClassicalCrystals(Category_singleton):
         """
         return None
 
-
     class ParentMethods:
 
-        def demazure_character(self, w, f = None):
+        def demazure_character(self, w, f=None):
             r"""
             Return the Demazure character associated to ``w``.
 
@@ -180,7 +180,7 @@ class ClassicalCrystals(Category_singleton):
             u = self.algebra(ZZ).sum_of_monomials(self.module_generators)
             u = self.demazure_operator(u, word)
             if f is None:
-                from sage.symbolic.all import SR as P
+                from sage.symbolic.ring import SR as P
                 x = [P.var('x%s' % (i+1)) for i in range(n)]
                 # TODO: use P.linear_combination when PolynomialRing will be a ModulesWithBasis
                 return sum((coeff*prod((x[i]**(c.weight()[i]) for i in range(n)), P.one()) for c, coeff in u), P.zero())
@@ -265,6 +265,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_an_element() . . . pass
                 running ._test_cardinality() . . . pass
                 running ._test_category() . . . pass
+                running ._test_construction() . . . pass
                 running ._test_elements() . . .
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
@@ -293,6 +294,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_an_element() . . . pass
                 running ._test_cardinality() . . . pass
                 running ._test_category() . . . pass
+                running ._test_construction() . . . pass
                 running ._test_elements() . . .
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
@@ -346,6 +348,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_an_element() . . . pass
                 running ._test_cardinality() . . . pass
                 running ._test_category() . . . pass
+                running ._test_construction() . . . pass
                 running ._test_elements() . . .
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
@@ -391,10 +394,10 @@ class ClassicalCrystals(Category_singleton):
             """
             tester = self._tester(**options)
             S = list(self)
-            SS  = list(Crystals().parent_class.__iter__(self))
-            tester.assertTrue( len(S) == len(SS) )
-            tester.assertTrue( len(S) == len(set(S)))
-            tester.assertTrue( set(S) == set(SS) )
+            SS = list(Crystals().parent_class.__iter__(self))
+            tester.assertEqual(len(S), len(SS))
+            tester.assertEqual(len(S), len(set(S)))
+            tester.assertEqual(set(S), set(SS))
 
         def cardinality(self):
             r"""
@@ -474,4 +477,3 @@ class ClassicalCrystals(Category_singleton):
                 [Category of classical crystals]
             """
             return [self.base_category()]
-

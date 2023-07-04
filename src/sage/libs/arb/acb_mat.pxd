@@ -1,6 +1,9 @@
-from sage.libs.arb.types cimport acb_t, acb_mat_t, acb_poly_t
+# distutils: depends = acb_mat.h
 
-cdef extern from "acb_mat.h":
+from sage.libs.arb.types cimport acb_t, acb_ptr, acb_srcptr, acb_mat_t, acb_poly_t, mag_t
+
+# acb_mat.h
+cdef extern from "arb_wrap.h":
     unsigned int acb_mat_nrows(acb_mat_t mat)
     unsigned int acb_mat_ncols(acb_mat_t mat)
     acb_t acb_mat_entry(acb_mat_t mat, unsigned long i, unsigned long j)
@@ -46,3 +49,13 @@ cdef extern from "acb_mat.h":
     void acb_mat_exp_taylor_sum(acb_mat_t S, const acb_mat_t A, long N, long prec)
     void acb_mat_exp(acb_mat_t B, const acb_mat_t A, long prec)
     void acb_mat_trace(acb_t trace, const acb_mat_t mat, long prec)
+    void acb_mat_get_mid(acb_mat_t B, const acb_mat_t A)
+    void acb_mat_add_error_mag(acb_mat_t mat, const mag_t err)
+    int acb_mat_approx_eig_qr(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, const mag_t tol, long maxiter, long prec)
+    void acb_mat_eig_global_enclosure(mag_t eps, const acb_mat_t A, acb_srcptr E, const acb_mat_t R, long prec)
+    void acb_mat_eig_enclosure_rump(acb_t lam, acb_mat_t J, acb_mat_t R, const acb_mat_t A, const acb_t lambda_approx, const acb_mat_t R_approx, long prec)
+    int acb_mat_eig_simple_rump(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, long prec)
+    int acb_mat_eig_simple_vdhoeven_mourrain(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, long prec)
+    int acb_mat_eig_simple(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, long prec)
+    int acb_mat_eig_multiple_rump(acb_ptr E, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, long prec)
+    int acb_mat_eig_multiple(acb_ptr E, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, long prec)

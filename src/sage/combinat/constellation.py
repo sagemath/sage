@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Constellations
 
@@ -39,7 +40,7 @@ EXAMPLES::
 
 # ****************************************************************************
 #       Copyright (C) 2015-2016 Vincent Delecroix <20100.delecroix@gmail.com>
-#                               Frederic Chapoton <fchapoton2@gmail.com>
+#                               Frédéric Chapoton <fchapoton2@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,10 +48,7 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from six.moves import range
-from six import integer_types
-
+from itertools import repeat
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -185,6 +183,7 @@ class Constellation_class(Element):
     A constellation or a tuple of permutations `(g_0,g_1,...,g_k)`
     such that the product `g_0 g_1 ... g_k` is the identity.
     """
+
     def __init__(self, parent, g, connected, mutable, check):
         r"""
         TESTS::
@@ -220,12 +219,11 @@ class Constellation_class(Element):
         EXAMPLES::
 
             sage: c = Constellation(([0,2,1],[2,1,0],[1,2,0]), mutable=False)
-            sage: c.__hash__()
-            5481133608926415725  # 64-bit
-            511937389  # 32-bit
+            sage: hash(c) == hash(tuple(c._g))
+            True
         """
         if self._mutable:
-            raise ValueError("can not hash mutable constellation")
+            raise ValueError("cannot hash mutable constellation")
         return hash(tuple(self._g))
 
     def set_immutable(self):
@@ -483,7 +481,7 @@ class Constellation_class(Element):
         for mm in m:
             mm.sort()
         m.sort()
-        g = [[] for _ in range(len(m))]
+        g = [[] for _ in repeat(None, len(m))]
         m_inv = [None] * self.degree()
         for t, mt in enumerate(m):
             for i, mti in enumerate(mt):
@@ -560,7 +558,7 @@ class Constellation_class(Element):
             sage: c = Constellation([[1,0,2],[2,1,0],[0,2,1],None])
             sage: d = Constellation([[2,1,0],[0,2,1],[1,0,2],None])
             sage: answer, mapping = c.is_isomorphic(d,return_map=True)
-            sage: print(answer)
+            sage: answer
             True
             sage: c.relabel(mapping) == d
             True
@@ -778,7 +776,7 @@ class Constellation_class(Element):
 
         # compute canonical labels
         if not self.is_connected():
-            raise ValueError("No canonical labels implemented for"
+            raise ValueError("no canonical labels implemented for"
                              " non connected constellation")
 
         # get the permutations on {0, 1, ..., d-1}
@@ -1115,7 +1113,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
         else:
             raise ValueError("at most one permutation can be None")
 
-        g = [self._sym(_) for _ in g]
+        g = [self._sym(w) for w in g]
 
         if i is not None:
             h = self._sym.one()
@@ -1225,7 +1223,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
             sage: [x.profile() for x in O[2]]
             [([2, 1], [2, 1], [3]), ([2, 1], [3], [2, 1]), ([3], [2, 1], [2, 1])]
         """
-        return [g.vertices() for g in self.braid_group_action()]
+        return [g.vertices(sort=True) for g in self.braid_group_action()]
 
 
 class Constellations_p(UniqueRepresentation, Parent):
@@ -1266,7 +1264,7 @@ class Constellations_p(UniqueRepresentation, Parent):
         sage: c1 = p1.conjugacy_class_size()
         sage: c2 = p2.conjugacy_class_size()
         sage: c3 = p3.conjugacy_class_size()
-        sage: print(c1 * c2 * c3 / factorial(4)**2 * s)
+        sage: c1 * c2 * c3 / factorial(4)**2 * s
         1
 
     The number obtained above is up to isomorphism. And we can check::
@@ -1274,6 +1272,7 @@ class Constellations_p(UniqueRepresentation, Parent):
         sage: len(C.isomorphism_representatives())
         1
     """
+
     def __init__(self, profile, domain=None, connected=True):
         r"""
         OPTIONS:
@@ -1508,7 +1507,7 @@ def perms_sym_init(g, sym=None):
 
     if sym is None:
         domain = set().union(*[perm_sym_domain(gg) for gg in g])
-        if all(isinstance(s, (Integer,) + integer_types) and s > 0
+        if all(isinstance(s, (int, Integer)) and s > 0
                for s in domain):
             domain = max(domain)
         else:
@@ -1586,7 +1585,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
 
     k = 0
     mapping = [None] * n
-    waiting = [[] for i in range(len(y))]
+    waiting = [[] for _ in repeat(None, len(y))]
 
     while k < n:
         if verbose:

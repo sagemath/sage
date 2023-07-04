@@ -110,6 +110,15 @@ cdef extern from "ntlwrap.h":
         long NumCols()
         void SetDims(long, long)
 
+    cdef cppclass mat_ZZ_p_c "mat_ZZ_p":
+        bint operator==(mat_ZZ_p_c)
+        bint operator!=(mat_ZZ_p_c)
+        void SetDims(long nrows, long ncols)
+        long NumRows()
+        long NumCols()
+        ZZ_p_c get(long i, long j)
+        void put(long i, long j, ZZ_p_c &a)
+
     cdef cppclass mat_GF2_c "mat_GF2":
         bint operator==(mat_GF2_c)
         bint operator!=(mat_GF2_c)

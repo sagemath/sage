@@ -19,7 +19,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from . import sfa
 import sage.libs.lrcalc.lrcalc as lrcalc
@@ -58,7 +57,7 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
 
     .. [ChariKleber2000] Vyjayanthi Chari and Michael Kleber.
        *Symmetric functions and representations of quantum affine algebras*.
-       :arXiv:`math/0011161v1`
+       :arxiv:`math/0011161v1`
 
     .. [KoikeTerada1987] \K. Koike, I. Terada, *Young-diagrammatic methods for
        the representation theory of the classical groups of type Bn, Cn, Dn*.
@@ -166,6 +165,7 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
         sage: sp.one().counit()
         1
     """
+
     def __init__(self, Sym):
         """
         Initialize ``self``.
@@ -250,4 +250,3 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
                                             for nu in Partitions(j) )
                                  for j in range(n//2+1) # // 2 for vertical dominoes
                                  for mu in Partitions(n-2*j) })
-

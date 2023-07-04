@@ -143,21 +143,22 @@ Augmentations are described originally in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Chapter 4 of [Rüt2014]_.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import islice
 
 from .inductive_valuation import _lift_to_maximal_precision
 from .inductive_valuation import FinalInductiveValuation, NonFinalInductiveValuation, FiniteInductiveValuation, InfiniteInductiveValuation, InductiveValuation
 
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import infinity, QQ
+from sage.rings.infinity import infinity
+from sage.rings.rational_field import QQ
 from sage.structure.factory import UniqueFactory
 
 
@@ -212,7 +213,7 @@ class AugmentedValuationFactory(UniqueFactory):
             if not is_key:
                 raise ValueError(reason)
             if mu <= base_valuation(phi):
-                raise ValueError("the value of the key polynomial must strictly increase but `%s` does not exceed `%s`."%(mu, base_valuation(phi)))
+                raise ValueError("the value of the key polynomial must strictly increase but `%s` does not exceed `%s`." % (mu, base_valuation(phi)))
             if not isinstance(base_valuation, InductiveValuation):
                 raise TypeError("base_valuation must be inductive")
 
@@ -250,13 +251,15 @@ class AugmentedValuationFactory(UniqueFactory):
         else:
             return parent.__make_element_class__(InfiniteAugmentedValuation)(parent, base_valuation, phi, mu)
 
+
 AugmentedValuation = AugmentedValuationFactory("sage.rings.valuation.augmented_valuation.AugmentedValuation")
+
 
 class AugmentedValuation_base(InductiveValuation):
     r"""
     An augmented valuation is a discrete valuation on a polynomial ring. It
     extends another discrete valuation `v` by setting the valuation of a
-    polynomial `f` to the minumum of `v(f_i)i\mu` when writing `f=\sum_i
+    polynomial `f` to the minimum of `v(f_i)i\mu` when writing `f=\sum_i
     f_i\phi^i`.
 
     INPUT:
@@ -358,7 +361,7 @@ class AugmentedValuation_base(InductiveValuation):
         """
         if reciprocal:
             ret = self._base_valuation.element_with_valuation(s)
-            residue = self.reduce(ret*self._base_valuation.element_with_valuation(-s), check=False)
+            residue = self.reduce(ret * self._base_valuation.element_with_valuation(-s), check=False)
             assert residue.is_constant()
             ret *= self.lift(~(residue[0]))
         else:
@@ -404,7 +407,7 @@ class AugmentedValuation_base(InductiveValuation):
 
         """
         if s not in self.value_group():
-            raise ValueError("s must be in the value group of the valuation but %r is not in %r."%(s, self.value_group()))
+            raise ValueError("s must be in the value group of the valuation but %r is not in %r." % (s, self.value_group()))
         error = s
 
         ret = self.domain().one()
@@ -430,8 +433,8 @@ class AugmentedValuation_base(InductiveValuation):
         """
         vals = self.augmentation_chain()
         vals.reverse()
-        vals = [ "v(%s) = %s"%(v._phi, v._mu) if isinstance(v, AugmentedValuation_base) else str(v) for v in vals ]
-        return "[ %s ]"%", ".join(vals)
+        vals = ["v(%s) = %s" % (v._phi, v._mu) if isinstance(v, AugmentedValuation_base) else str(v) for v in vals]
+        return "[ %s ]" % ", ".join(vals)
 
     def augmentation_chain(self):
         r"""
@@ -484,7 +487,7 @@ class AugmentedValuation_base(InductiveValuation):
 
         """
         R = self._base_valuation.equivalence_unit(-self._base_valuation(self._phi))
-        F = self._base_valuation.reduce(self._phi*R, check=False).monic()
+        F = self._base_valuation.reduce(self._phi * R, check=False).monic()
         assert F.is_irreducible()
         return F
 
@@ -554,7 +557,7 @@ class AugmentedValuation_base(InductiveValuation):
             return [self]
 
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        if is_PolynomialRing(ring): # univariate
+        if is_PolynomialRing(ring):  # univariate
             base_valuations = self._base_valuation.extensions(ring)
             phi = self.phi().change_ring(ring.base_ring())
 
@@ -569,11 +572,11 @@ class AugmentedValuation_base(InductiveValuation):
                         # self(phi) = self._mu, i.e., w(phi) = w(unit) + sum e_i * w(f_i) where
                         # the sum runs over all the factors in the equivalence decomposition of phi
                         # Solving for mu gives
-                        mu = (self._mu - v(F.unit()) - sum([ee*v(ff) for ff,ee in F if ff != f])) / e
+                        mu = (self._mu - v(F.unit()) - sum([ee * v(ff) for ff, ee in F if ff != f])) / e
                         ret.append(AugmentedValuation(v, f, mu))
             return ret
 
-        return super(AugmentedValuation_base, self).extensions(ring)
+        return super().extensions(ring)
 
     def restriction(self, ring):
         r"""
@@ -588,16 +591,15 @@ class AugmentedValuation_base(InductiveValuation):
 
             sage: w.restriction(QQ['x'])
             [ Gauss valuation induced by 2-adic valuation, v(x^2 + x + 1) = 1 ]
-
         """
         if ring.is_subring(self.domain()):
             base = self._base_valuation.restriction(ring)
             if ring.is_subring(self.domain().base_ring()):
                 return base
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-            if is_PolynomialRing(ring): # univariate
+            if is_PolynomialRing(ring):  # univariate
                 return base.augmentation(self.phi().change_ring(ring.base_ring()), self._mu)
-        return super(AugmentedValuation_base, self).restriction(ring)
+        return super().restriction(ring)
 
     def uniformizer(self):
         r"""
@@ -687,7 +689,7 @@ class AugmentedValuation_base(InductiveValuation):
             else:
                 return False
 
-        return super(AugmentedValuation_base, self)._ge_(other)
+        return super()._ge_(other)
 
     def is_trivial(self):
         r"""
@@ -721,8 +723,8 @@ class AugmentedValuation_base(InductiveValuation):
 
         """
         if scalar in QQ and scalar > 0 and scalar != 1:
-            return self._base_valuation.scale(scalar).augmentation(self.phi(), scalar*self._mu)
-        return super(AugmentedValuation_base, self).scale(scalar)
+            return self._base_valuation.scale(scalar).augmentation(self.phi(), scalar * self._mu)
+        return super().scale(scalar)
 
     def _residue_ring_generator_name(self):
         r"""
@@ -818,7 +820,7 @@ class AugmentedValuation_base(InductiveValuation):
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         if is_PolynomialRing(ring) and ring.variable_name() == self.domain().variable_name():
             return self._base_valuation.change_domain(ring).augmentation(self.phi().change_ring(ring.base_ring()), self._mu, check=False)
-        return super(AugmentedValuation_base, self).change_domain(ring)
+        return super().change_domain(ring)
 
 
 class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
@@ -1083,6 +1085,18 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             sage: w.lift(w.residue_ring().gen())
             (1 + O(2^10))*x
 
+        TESTS:
+
+        Verify that :trac:`30305` has been resolved::
+
+            sage: R.<T> = QQ[]
+            sage: K.<zeta> = NumberField(T^2 + T + 1)
+            sage: R.<x> = K[]
+            sage: v0 = GaussValuation(R, valuations.TrivialValuation(K))
+            sage: v = v0.augmentation(x^2 + x + 2, 1)
+            sage: v.lift(v.reduce(x)) == x
+            True
+
         """
         F = self.residue_ring().coerce(F)
 
@@ -1095,11 +1109,15 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         # We only have to do that if psi is non-trivial
         if self.psi().degree() > 1:
             from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
-            from sage.rings.function_field.element import FunctionFieldElement_polymod
+            from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
+            from sage.rings.number_field.number_field_element import NumberFieldElement_relative
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             if isinstance(F, PolynomialQuotientRingElement):
                 G = F.lift()
             elif isinstance(F, FunctionFieldElement_polymod):
                 G = F.element()
+            elif isinstance(F, NumberFieldElement_relative):
+                G = PolynomialRing(F.base_ring(), 'x')(list(F))
             else:
                 G = F.polynomial()
             assert(G(self._residue_field_generator()) == F)
@@ -1271,7 +1289,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         if coefficients is None:
             coefficients = self.coefficients(f)
             if degree_bound is not None:
-                from itertools import islice
                 coefficients = islice(coefficients, 0, tau*degree_bound + 1, 1)
         coefficients = list(coefficients)
 
@@ -1281,11 +1298,11 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
         # rewrite as sum of f_i phi^{i tau}, i.e., drop the coefficients that
         # can have no influence on the reduction
-        for i,c in enumerate(coefficients):
+        for i, c in enumerate(coefficients):
             if i % tau != 0:
                 if check:
                     v = self._base_valuation(c) + i*self._mu
-                    assert v != 0 # this can not happen for an augmented valuation
+                    assert v != 0  # this can not happen for an augmented valuation
                     if v < 0:
                         raise ValueError("f must not have negative valuation")
             else:
@@ -1311,7 +1328,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         C = [self._base_valuation.reduce(c, check=False)(self._residue_field_generator())
              if valuations[i] is not infinity
              else self._base_valuation.residue_ring().zero()
-             for i,c in enumerate(coefficients)]
+             for i, c in enumerate(coefficients)]
 
         # reduce the Q'^i phi^i
         return self.residue_ring()(C)
@@ -1428,16 +1445,18 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         # in the last step of reduce, the f_iQ^i are reduced, and evaluated at
         # the generator of the residue field
         # here, we undo this:
-        coeffs = [ R0(c if self.psi().degree()==1 else list(c._vector_() if hasattr(c, '_vector_') else c.list()))
-                   for c in F.coefficients(sparse=False) ]
-        coeffs = [ self._base_valuation.lift(c) for c in coeffs ]
+        coeffs = [R0(c if self.psi().degree() == 1
+                     else list(c._vector_() if hasattr(c, '_vector_')
+                               else c.list()))
+                  for c in F.coefficients(sparse=False)]
+        coeffs = [self._base_valuation.lift(c) for c in coeffs]
         # now the coefficients correspond to the expansion with (f_iQ^i)(Q^{-1} phi)^i
 
         # now we undo the factors of Q^i (the if else is necessary to handle the case when mu is infinity, i.e., when _Q_reciprocal() is undefined)
-        coeffs = [ (c if i == 0 else c*self._Q_reciprocal(i)).map_coefficients(_lift_to_maximal_precision)
-                   for i,c in enumerate(coeffs) ]
+        coeffs = [(c if i == 0 else c*self._Q_reciprocal(i)).map_coefficients(_lift_to_maximal_precision)
+                  for i, c in enumerate(coeffs)]
         # reduce the coefficients mod phi; the part that exceeds phi has no effect on the reduction of the coefficient
-        coeffs = [ next(self.coefficients(c)) for c in coeffs ]
+        coeffs = [next(self.coefficients(c)) for c in coeffs]
 
         if report_coefficients:
             return coeffs
@@ -1521,7 +1540,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
             return self.phi()
 
         coefficients = self.lift(F, report_coefficients=True)[:-1]
-        coefficients = [c*self._Q(F.degree()) for i,c in enumerate(coefficients)] + [self.domain().one()]
+        coefficients = [c * self._Q(F.degree()) for i, c in enumerate(coefficients)] + [self.domain().one()]
         if len(coefficients) >= 2:
             # In the phi-adic development, the second-highest coefficient could
             # spill over into the highest coefficient (which is a constant one)
@@ -1582,7 +1601,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         ret = self._pow(self._Q_reciprocal(1), e, error=v*e, effective_degree=0)
 
         assert self.is_equivalence_unit(ret)
-        # esentially this checks that the reduction of Q'*phi^tau is the
+        # essentially this checks that the reduction of Q'*phi^tau is the
         # generator of the residue field
         assert self._base_valuation.reduce(self._Q(e)*ret)(self._residue_field_generator()).is_one()
 
@@ -1704,7 +1723,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         if call_error:
             lowest_valuation = infinity
-        for i,c in enumerate(coefficients or self.coefficients(f)):
+        for i, c in enumerate(coefficients or self.coefficients(f)):
             if call_error:
                 if lowest_valuation is not infinity:
                     v = self._base_valuation.lower_bound(c)
@@ -1784,7 +1803,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         if effective_degree is not None:
             if (QQ(f.degree()) / self.phi().degree()).ceil() > effective_degree:
-                from itertools import islice
                 f = self.domain().change_ring(self.domain())(list(islice(self.coefficients(f), 0, int(effective_degree) + 1, 1)))(self.phi())
 
         if f.degree() < self.phi().degree():
@@ -1807,7 +1825,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
             return self.domain().change_ring(self.domain())([
                     0 if valuations[i] > error
                     else self._base_valuation.simplify(c, error=error-i*self._mu, force=force, phiadic=True)
-                    for (i,c) in enumerate(coefficients)])(self.phi())
+                    for (i, c) in enumerate(coefficients)])(self.phi())
         else:
             # We iterate through the coefficients of the polynomial (in the
             # usual x-adic way) starting from the leading coefficient and try
@@ -1816,7 +1834,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
             # speed up the surrounding calls drastically.
             for i in range(f.degree(), -1, -1):
                 j = i // self.phi().degree()
-                from itertools import islice
+
                 coefficients = list(islice(f.list(), int(j * self.phi().degree()),
                                            int(i) + 1))
                 g = self.domain()(coefficients)
@@ -1857,11 +1875,11 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
         if self.phi() == self.domain().gen():
             constant_valuation = self.restriction(f.base_ring())
             ret = infinity
-            for i,c in enumerate(f.coefficients(sparse=False)):
+            for i, c in enumerate(f.coefficients(sparse=False)):
                 v = constant_valuation.lower_bound(c)
                 if v is infinity:
                     continue
-                v += i*self._mu
+                v += i * self._mu
                 if ret is infinity or v < ret:
                     ret = v
             return ret
@@ -1932,14 +1950,13 @@ class FinalFiniteAugmentedValuation(FiniteAugmentedValuation, FinalAugmentedValu
 class NonFinalFiniteAugmentedValuation(FiniteAugmentedValuation, NonFinalAugmentedValuation):
     r"""
     An augmented valuation which is discrete, i.e., which assigns a finite
-    valuation to its last key polynomial, and which can be augmented furter.
+    valuation to its last key polynomial, and which can be augmented further.
 
     EXAMPLES::
 
         sage: R.<x> = QQ[]
         sage: v = GaussValuation(R, QQ.valuation(2))
         sage: w = v.augmentation(x, 1)
-
     """
     def __init__(self, parent, v, phi, mu):
         r"""

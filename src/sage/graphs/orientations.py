@@ -66,6 +66,12 @@ def strong_orientations_iterator(G):
         Works only for simple graphs (no multiple edges).
         To avoid symmetries an orientation of an arbitrary edge is fixed.
 
+    .. SEEALSO::
+
+        - :meth:`~Graph.orientations`
+        - :meth:`~Graph.strong_orientation`
+        - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+        - :meth:`~sage.graphs.orientations.random_orientation`
 
     EXAMPLES:
 
@@ -118,12 +124,12 @@ def strong_orientations_iterator(G):
     if G.order() < 3 or not G.is_biconnected():
         return
 
-    V = G.vertices()
-    Dg = DiGraph([G.vertices(), G.edges()], pos=G.get_pos())
+    V = G.vertices(sort=False)
+    Dg = DiGraph([V, G.edges(sort=False)], pos=G.get_pos())
 
     # compute an arbitrary spanning tree of the undirected graph
     te = G.min_spanning_tree()
-    treeEdges = [(u,v) for u,v,_ in te]
+    treeEdges = [(u, v) for u, v, _ in te]
     tree_edges_set = set(treeEdges)
     A = [edge for edge in G.edge_iterator(labels=False) if edge not in tree_edges_set]
 
@@ -145,11 +151,11 @@ def strong_orientations_iterator(G):
     i = 0
 
     # the orientation of one edge is fixed so we consider one edge less
-    nr = 2**(len(A)-1)
+    nr = 2**(len(A) - 1)
     while i < nr:
         word = (i >> 1) ^ i
         bitChanged = word ^ previousWord
-        
+
         bit = 0
         while bitChanged > 1:
             bitChanged >>= 1
@@ -196,7 +202,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
         sage: from sage.graphs.orientations import _strong_orientations_of_a_mixed_graph
         sage: g = graphs.CycleGraph(5)
         sage: Dg = DiGraph(g) # all edges of g will be doubly oriented
-        sage: it = _strong_orientations_of_a_mixed_graph(Dg, g.vertices(), g.edges(labels=False))
+        sage: it = _strong_orientations_of_a_mixed_graph(Dg, list(g), list(g.edges(labels=False, sort=False)))
         sage: len(list(it)) # there are two orientations of this multigraph
         2
     """
@@ -274,12 +280,15 @@ def random_orientation(G):
     .. SEEALSO::
 
         - :meth:`~Graph.orientations`
+        - :meth:`~Graph.strong_orientation`
+        - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+        - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
 
-    D = DiGraph(data=[G.vertices(), []],
+    D = DiGraph(data=[G.vertices(sort=False), []],
                 format='vertices_and_edges',
                 multiedges=G.allows_multiple_edges(),
                 loops=G.allows_loops(),
@@ -291,7 +300,7 @@ def random_orientation(G):
 
     from sage.misc.prandom import getrandbits
     rbits = getrandbits(G.size())
-    for u,v,l in G.edge_iterator():
+    for u, v, l in G.edge_iterator():
         if rbits % 2:
             D.add_edge(u, v, l)
         else:

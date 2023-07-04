@@ -1,0 +1,50 @@
+/*** EXAMPLE: Shintani's zeta-function                              ***/
+/*** v1.3, December 2013, questions to tim.dokchitser@bristol.ac.uk ***/
+/***                                                                ***/
+/*** type \rex-shin or read("ex-shin") at pari prompt to run this   ***/
+
+read("computel");                 \\ read the ComputeL package
+                                  \\ and set the default values
+default(realprecision,19);        \\ set working precision; used throughout
+                                  \\ larger precision needs more coefficients
+
+                            \\ initialize L-function parameters
+GlobalC   = 1/2/sqrt(Pi);   \\ Global coefficient in front of L(s)
+conductor = 432;            \\ exponential factor
+gammaV    = [0,1,-1/6,1/6]; \\ list of gamma-factors
+weight    = 1;              \\ L(s)=sgn*L(weight-s)
+sgn       = 1;              \\ sign in the functional equation
+Lpoles    = [1/6,1];        \\ ``half'' of the poles of L(s)
+{Lresidues =                \\ and residues in there
+  [zeta(2/3)*2^(3/2)*3^(-1/4)*Pi^(-1/3)*gamma(1/3)/GlobalC,   \\ in s=1/6
+   gamma(1/12)*gamma(-1/12)/sqrt(3)/12/GlobalC];}             \\ in s=1
+  \\ note: can also set Lresidues=automatic, checkfeq()
+  \\ will then determine them to decent precision
+
+\\ First 400 Coefficients
+
+{c1=[1/3,1,1,1,1,1,1,4/3,1,1,1,1,1,1,1,2,1,3,1,1,1,1,1,2,5/3,1,1,1,1,1,1,2,1,3,
+    1,1,1,1,1,2,2,1,1,1,1,1,1,2,1,3,1,1,1,2,1,2,1,1,3,1,1,1,2,2,1,3,1,1,1,1,1,
+    4,1,3,1,1,1,1,1,2,1,3,1,1,5/3,1,1,2,1,1,1,1,1,1,2,2,1,3,1,1,1,1,1,2,1,1,1,
+    2,1,1,1,2,3,3,3,1,1,1,1,2,1,1,1,1,1,3,1,10/3,3,3,1,1,1,1,1,4,1,1,1,1,1,1,
+    1,2,1,3,1,1,2,1,1,2,1,1,1,1,1,3,1,4,3,4,1,1,1,1,3,2,1,1,1,1,1,1,1,2,1,3,1,
+    3,5/3,1,1,2,1,1,1,1,1,1,1,2,1,3,1,3,1,1,1,4];
+c2=[1,1,1,1,1,1,1,2,1,1,3,1,2,3,3,2,1,1,1,1,1,3,1,2,1,1,1,1,3,3,1,2,1,1,1,3,1,
+    3,1,2,3,1,3,1,1,3,1,2,3,3,1,3,3,4,1,4,1,3,1,1,1,3,1,2,1,1,4,1,3,3,1,2,3,1,
+    1,3,1,3,1,2,1,1,1,1,1,3,3,4,1,3,1,1,1,3,1,4,1,1,3,3,1,3,3,2,3,3,1,4,1,3,1,
+    2,1,1,3,1,1,3,3,4,4,3,3,1,1,3,3,4,1,1,1,1,1,3,1,2,3,1,3,1,3,3,1,6,1,1,1,1,
+    1,3,1,4,3,1,1,1,3,3,1,2,1,4,3,1,3,3,3,2,3,1,2,1,1,3,4,2,1,3,1,1,1,3,3,6,1,
+    1,2,1,3,3,1,2,1,1,1,1,1,3,1,6];}
+a(n) = if(n%4>2,c2[n\2]/sqrt(3),if(n%4>1,0,if(n%4>0,c1[n\2+1],c1[n/2]+c2[n/2]/sqrt(3))));
+coefgrow(n) = n^(1/3);  \\ approx. growth of the coefficients in general
+
+initLdata("a(k)");      \\ Initialized L-series with coefficients a(k)
+                        \\ actually uses cflength()=352 coeffs
+
+print("EXAMPLE: L(s)=Shintani's zeta function");
+print("         with ",default(realprecision)," digits precision");
+print("Verifying functional equation. Error: ",errprint(checkfeq()));
+print("L(2)     = ",L(2));
+print(" (check) = ",L(2,1.1));
+print("L(3)     = ",L(3));
+print(" (check) = ",L(3,1.1));

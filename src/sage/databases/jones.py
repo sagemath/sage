@@ -50,7 +50,7 @@ List all fields in the database ramified at 101::
 """
 
 #*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -68,15 +68,17 @@ List all fields in the database ramified at 101::
 
 import os
 
-from sage.rings.all import NumberField, RationalField, PolynomialRing
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.rational_field import RationalField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.misc import powerset
 from sage.env import SAGE_SHARE
 
 from sage.misc.persist import load, save
 
-from sage.misc.package import PackageNotFoundError
+from sage.features.databases import DatabaseJones
 
-JONESDATA = os.path.join(SAGE_SHARE, 'jones')
+JONESDATA = os.path.join(SAGE_SHARE, 'jones')  # should match the filename set in DatabaseJones
 
 
 def sortkey(K):
@@ -108,7 +110,8 @@ class JonesDatabase:
         while filename[j].isalpha() or filename[j] in [".", "_"]:
             j -= 1
         S = sorted([eval(z) for z in filename[i:j + 1].split("-")])
-        data = open(path + "/" + filename).read()
+        with open(path + "/" + filename) as f:
+            data = f.read()
         data = data.replace("^", "**")
         x = PolynomialRing(RationalField(), 'x').gen()  # used next line
         v = eval(data)
@@ -144,10 +147,9 @@ class JonesDatabase:
 
         This takes about 5 seconds.
         """
-        from sage.misc.misc import sage_makedirs
         x = PolynomialRing(RationalField(), 'x').gen()
         self.root = {}
-        self.root[tuple([])] = [x - 1]
+        self.root[tuple()] = [x - 1]
         if not os.path.exists(path):
             raise IOError("Path %s does not exist." % path)
         for X in os.listdir(path):
@@ -157,7 +159,7 @@ class JonesDatabase:
                 for Y in os.listdir(Z):
                     if Y[-3:] == ".gp":
                         self._load(Z, Y)
-        sage_makedirs(JONESDATA)
+        os.makedirs(JONESDATA, exist_ok=True)
         save(self.root, JONESDATA + "/jones.sobj")
 
     def unramified_outside(self, S, d=None, var='a'):
@@ -225,10 +227,7 @@ class JonesDatabase:
             ValueError: S must be a list of primes
         """
         if self.root is None:
-            if os.path.exists(JONESDATA + "/jones.sobj"):
-                self.root = load(JONESDATA + "/jones.sobj")
-            else:
-                raise PackageNotFoundError("database_jones_numfield")
+            self.root = load(DatabaseJones().absolute_filename())
         try:
             S = list(S)
         except TypeError:

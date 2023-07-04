@@ -6,6 +6,12 @@ computer with a command line interface that runs when you give the ``math``
 command. The interface lets you send certain Sage objects to Mathematica,
 run Mathematica functions, import certain Mathematica expressions to Sage,
 or any combination of the above.
+The Sage command::
+
+    sage: print(mathematica._install_hints())
+    ...
+
+prints more information on Mathematica installation.
 
 To send a Sage object ``sobj`` to Mathematica, call ``mathematica(sobj)``.
 This exports the Sage object to Mathematica and returns a new Sage object
@@ -172,8 +178,8 @@ We find the `x` such that `e^x - 3x = 0`.
 
 ::
 
-    sage: e = mathematica('Exp[x] - 3x == 0') # optional - mathematica
-    sage: e.FindRoot(['x', 2])                # optional - mathematica
+    sage: eqn = mathematica('Exp[x] - 3x == 0') # optional - mathematica
+    sage: eqn.FindRoot(['x', 2])                # optional - mathematica
     {x -> 1.512134551657842}
 
 Note that this agrees with what the PARI interpreter gp produces::
@@ -232,7 +238,7 @@ We factor an integer::
     sage: F[4]                               # optional - mathematica
     {541, 1}
 
-Mathematica's ECM package is no longer available. 
+Mathematica's ECM package is no longer available.
 
 Long Input
 ----------
@@ -297,7 +303,7 @@ If you want to convert more complicated Mathematica expressions, you can
 instead call ``mobj._sage_()`` and supply a translation dictionary::
 
     sage: m = mathematica('NewFn[x]')       # optional - mathematica
-    sage: m._sage_(locals={'NewFn': sin})   # optional - mathematica
+    sage: m._sage_(locals={('NewFn', 1): sin})   # optional - mathematica
     sin(x)
 
 For more details, see the documentation for ``._sage_()``.
@@ -308,7 +314,7 @@ OTHER Examples::
     sage: def math_bessel_K(nu,x):
     ....:     return mathematica(nu).BesselK(x).N(20)
     sage: math_bessel_K(2,I)                      # optional - mathematica
-    -2.5928861754911969782 + 0.1804899720669620266 I
+    -2.59288617549119697817 + 0.18048997206696202663*I
 
 ::
 
@@ -322,14 +328,14 @@ OTHER Examples::
     sage: slist2[0].parent()                    # optional - mathematica
     Mathematica
     sage: slist3 = mlist.sage(); slist3         # optional - mathematica
-    [[1, 2], 3.0, I + 4]
+    [[1, 2], 3.00000000000000, I + 4]
 
 ::
 
     sage: mathematica('10.^80')     # optional - mathematica
     1.*^80
     sage: mathematica('10.^80').sage()  # optional - mathematica
-    1e+80
+    1.00000000000000e80
 
 AUTHORS:
 
@@ -339,9 +345,72 @@ AUTHORS:
 
 - Felix Lawrence (2009-08-21): Added support for importing Mathematica lists
   and floats with exponents.
+
+TESTS:
+
+Check that numerical approximations via Mathematica's `N[]` function work
+correctly (:trac:`18888`, :trac:`28907`)::
+
+    sage: mathematica('Pi/2').N(10)           # optional -- mathematica
+    1.5707963268
+    sage: mathematica('Pi').N(10)             # optional -- mathematica
+    3.1415926536
+    sage: mathematica('Pi').N(50)             # optional -- mathematica
+    3.14159265358979323846264338327950288419716939937511
+    sage: str(mathematica('Pi*x^2-1/2').N())  # optional -- mathematica
+                    2
+    -0.5 + 3.14159 x
+
+Check that Mathematica's `E` exponential symbol is correctly backtranslated
+as Sage's `e` (:trac:`29833`)::
+
+    sage: x = var('x')
+    sage: (e^x)._mathematica_().sage()  # optional -- mathematica
+    e^x
+    sage: exp(x)._mathematica_().sage() # optional -- mathematica
+    e^x
+
+Check that all trig/hyperbolic functions and their reciprocals are correctly
+translated to Mathematica (:trac:`34087`)::
+
+    sage: x=var('x')                               # optional - mathematica
+    sage: FL=[sin, cos, tan, csc, sec, cot,        # optional - mathematica
+    ....:     sinh, cosh, tanh, csch, sech, coth]
+    sage: IFL=[arcsin, arccos, arctan, arccsc,     # optional - mathematica
+    ....:      arcsec, arccot, arcsinh, arccosh,
+    ....:      arctanh, arccsch, arcsech, arccoth]
+    sage: [mathematica.TrigToExp(u(x)).sage()      # optional - mathematica
+    ....:  for u in FL]
+    [-1/2*I*e^(I*x) + 1/2*I*e^(-I*x),
+     1/2*e^(I*x) + 1/2*e^(-I*x),
+     (-I*e^(I*x) + I*e^(-I*x))/(e^(I*x) + e^(-I*x)),
+     2*I/(e^(I*x) - e^(-I*x)),
+     2/(e^(I*x) + e^(-I*x)),
+     -(-I*e^(I*x) - I*e^(-I*x))/(e^(I*x) - e^(-I*x)),
+     -1/2*e^(-x) + 1/2*e^x,
+     1/2*e^(-x) + 1/2*e^x,
+     -e^(-x)/(e^(-x) + e^x) + e^x/(e^(-x) + e^x),
+     -2/(e^(-x) - e^x),
+     2/(e^(-x) + e^x),
+     -(e^(-x) + e^x)/(e^(-x) - e^x)]
+    sage: [mathematica.TrigToExp(u(x)).sage()      # optional - mathematica
+    ....:  for u in IFL]
+    [-I*log(I*x + sqrt(-x^2 + 1)),
+     1/2*pi + I*log(I*x + sqrt(-x^2 + 1)),
+     -1/2*I*log(I*x + 1) + 1/2*I*log(-I*x + 1),
+     -I*log(sqrt(-1/x^2 + 1) + I/x),
+     1/2*pi + I*log(sqrt(-1/x^2 + 1) + I/x),
+     -1/2*I*log(I/x + 1) + 1/2*I*log(-I/x + 1),
+     log(x + sqrt(x^2 + 1)),
+     log(sqrt(x + 1)*sqrt(x - 1) + x),
+     1/2*log(x + 1) - 1/2*log(-x + 1),
+     log(sqrt(1/x^2 + 1) + 1/x),
+     log(sqrt(1/x + 1)*sqrt(1/x - 1) + 1/x),
+     1/2*log(1/x + 1) - 1/2*log(-1/x + 1)]
+
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -353,9 +422,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
@@ -365,7 +433,8 @@ from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
                                     FunctionElement)
 from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
 
 
 def clean_output(s):
@@ -373,9 +442,10 @@ def clean_output(s):
         return ''
     i = s.find('Out[')
     j = i + s[i:].find('=')
-    s = s[:i] + ' '*(j+1-i) + s[j+1:]
-    s = s.replace('\\\n','')
+    s = s[:i] + ' ' * (j + 1 - i) + s[j + 1:]
+    s = s.replace('\\\n', '')
     return s.strip('\n')
+
 
 def _un_camel(name):
     """
@@ -383,14 +453,14 @@ def _un_camel(name):
 
     EXAMPLES::
 
-    sage: sage.interfaces.mathematica._un_camel('CamelCase')
-    'camel_case'
-    sage: sage.interfaces.mathematica._un_camel('EllipticE')
-    'elliptic_e'
-    sage: sage.interfaces.mathematica._un_camel('FindRoot')
-    'find_root'
-    sage: sage.interfaces.mathematica._un_camel('GCD')
-    'gcd'
+        sage: sage.interfaces.mathematica._un_camel('CamelCase')
+        'camel_case'
+        sage: sage.interfaces.mathematica._un_camel('EllipticE')
+        'elliptic_e'
+        sage: sage.interfaces.mathematica._un_camel('FindRoot')
+        'find_root'
+        sage: sage.interfaces.mathematica._un_camel('GCD')
+        'gcd'
     """
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
@@ -402,6 +472,14 @@ class Mathematica(ExtraTabCompletion, Expect):
     """
     def __init__(self, maxread=None, script_subdirectory=None, logfile=None, server=None,
                  server_tmpdir=None, command=None, verbose_start=False):
+        r"""
+        TESTS:
+
+        Test that :trac:`28075` is fixed::
+
+            sage: repr(mathematica.eval("Print[1]; Print[2]; Print[3]"))  # optional - mathematica
+            '1\n2\n3'
+        """
         # We use -rawterm to get a raw text interface in Mathematica 9 or later.
         # This works around the following issues of Mathematica 9 or later
         # (tested with Mathematica 11.0.1 for Mac OS X x86 (64-bit))
@@ -426,18 +504,19 @@ class Mathematica(ExtraTabCompletion, Expect):
         else:
             command = 'sh -c "stty -echo; {}"'.format(command)
         Expect.__init__(self,
-                        name = 'mathematica',
-                        command = command,
-                        prompt = 'In[[0-9]+]:=',
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        verbose_start = verbose_start,
+                        name='mathematica',
+                        terminal_echo=False,
+                        command=command,
+                        prompt=r'In\[[0-9]+\]:= ',
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        script_subdirectory=script_subdirectory,
+                        verbose_start=verbose_start,
                         logfile=logfile,
                         eval_using_file_cutoff=eval_using_file_cutoff)
 
     def _read_in_file_command(self, filename):
-        return '<<"%s"'%filename
+        return '<<"%s"' % filename
 
     def _keyboard_interrupt(self):
         print("Interrupting %s..." % self)
@@ -464,14 +543,33 @@ remote connection to a server running Mathematica -- for hints, type
     print(mathematica._install_hints_ssh())
 
 
-  (1) You might have to buy Mathematica (http://www.wolfram.com/).
+  (1) You might have to buy Mathematica (https://www.wolfram.com/), or
+  install a currently (Feb 2022) free for personal use Wolfram Engine
+  (https://www.wolfram.com/engine/).
 
-  (2) * LINUX: The math script comes standard with your Mathematica install.
+  (2) * LINUX: The math script usually comes standard with your Mathematica install.
+        However, on some systems it may be called wolfram,
+        or, in case of Wolfram Engine, wolframengine, while math is absent.
+        In this case, assuming wolfram, respectively, wolframengine,
+        is in your PATH,
+          (a) create a file called math (in your PATH):
+              #!/bin/sh
+              /usr/bin/env wolfram $@
 
-      * APPLE OS X:
+        respectively,
+          (a') create a file called math (in your PATH):
+              #!/bin/sh
+              /usr/bin/env wolframengine $@
+
+          (b) Make the file executable.
+                chmod +x math
+
+      * Apple macOS: for Mathematica,
           (a) create a file called math (in your PATH):
               #!/bin/sh
               /Applications/Mathematica.app/Contents/MacOS/MathKernel $@
+
+          (a') for Wolfram Engine, follow the Linux step (a') above.
 
           The path in the above script must be modified if you installed
           Mathematica elsewhere or installed an old version of
@@ -482,32 +580,29 @@ remote connection to a server running Mathematica -- for hints, type
 
       * WINDOWS:
 
-        Install Mathematica for Linux into the VMware virtual machine (sorry,
-        that's the only way at present).
+        Install Mathematica for Linux into the VMware virtual machine, or in
+        a WSL/WSL2 Linux installation with Sage installed there (sorry,
+        that's the only ways at present).
 """
 
-##         The following only works with Sage for Cygwin (not colinux).
-##         Note that Sage colinux is the preferred way to run Sage in Windows,
-##         and I do not know how to use Mathematica from colinux Sage (unless
-##         you install Mathematica-for-linux into the colinux machine, which
-##         is possible).
+#          The following only works with Sage for Cygwin.
 
-##         Create a file named "math", which you place in the Sage root
-##         directory.  The file contained a single line, which was the
-##         path to the mathematica math.exe file.  In my case, this might be:
+#          Create a file named "math", which you place in the Sage root
+#          directory.  The file contained a single line, which was the
+#          path to the mathematica math.exe file.  In my case, this might be:
 
-##         C:/Program Files/Wolfram Research/Mathematica/4.0/math.exe
+#          C:/Program Files/Wolfram Research/Mathematica/4.0/math.exe
 
-##         The key points are
-##         1) there is a file named "math.exe", and it will generally be
-##            located in a place analogous to the above (depending on where
-##            Mathematica has been installed).  This file is used only for
-##            launching the kernel with a text-based interface.
-##         2) a cygwin batch file must be created which executes this file,
-##            which means using forward slashes rather than back slashes,
-##            and probably surrounding everything in quotes
-##         3) this cygwin batch file must be on the path for Sage (placing
-##            it in <SAGE_LOCAL>/bin/ is an easy way to ensure this).
+#          The key points are
+#          1) there is a file named "math.exe", and it will generally be
+#             located in a place analogous to the above (depending on where
+#             Mathematica has been installed).  This file is used only for
+#             launching the kernel with a text-based interface.
+#          2) a cygwin batch file must be created which executes this file,
+#             which means using forward slashes rather than back slashes,
+#             and probably surrounding everything in quotes
+#          3) this cygwin batch file must be on the path for Sage (placing
+#             it in <SAGE_LOCAL>/bin/ is an easy way to ensure this).
 
     def eval(self, code, strip=True, **kwds):
         s = Expect.eval(self, code, **kwds)
@@ -516,24 +611,14 @@ remote connection to a server running Mathematica -- for hints, type
         else:
             return AsciiArtString(s)
 
-    #def _keyboard_interrupt(self):
-    #    print("Keyboard interrupt pressed; trying to recover.")
-    #    E = self.expect()
-    #    E.sendline(chr(3))
-    #    E.sendline('a')
-    #    E.expect(':= ')
-    #    raise KeyboardInterrupt, "Ctrl-c pressed while running Mathematica command"
-
-
     def set(self, var, value):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s=%s;'%(var,value)
-        #out = self.eval(cmd)
+        cmd = '%s=%s;' % (var, value)
         out = self._eval_line(cmd, allow_use_file=True)
         if len(out) > 8:
-            raise TypeError("Error executing code in Mathematica\nCODE:\n\t%s\nMathematica ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Mathematica\nCODE:\n\t%s\nMathematica ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var, ascii_art=False):
         """
@@ -547,16 +632,9 @@ remote connection to a server running Mathematica -- for hints, type
         """
         if ascii_art:
             return self.eval(var, strip=True)
-        else:
-            return self.eval('InputForm[%s, NumberMarks->False]'%var, strip=True)
+        return self.eval('InputForm[%s, NumberMarks->False]' % var, strip=True)
 
-    #def clear(self, var):
-    #    """
-    #    Clear the variable named var.
-    #    """
-    #    self.eval('Clear[%s]'%var)
-
-    def _eval_line(self, line,  allow_use_file=True, wait_for_prompt=True, restart_if_needed=False):
+    def _eval_line(self, line, allow_use_file=True, wait_for_prompt=True, restart_if_needed=False):
         s = Expect._eval_line(self, line,
              allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt)
         return str(s).strip('\n')
@@ -570,7 +648,7 @@ remote connection to a server running Mathematica -- for hints, type
             sage: mathematica._function_call_string('Sin', ['x'], [])
             'Sin[x]'
         """
-        return "%s[%s]"%(function, ",".join(args))
+        return "%s[%s]" % (function, ",".join(args))
 
     def _left_list_delim(self):
         return "{"
@@ -597,13 +675,13 @@ remote connection to a server running Mathematica -- for hints, type
             sage: mathematica('Directory[]')      # optional - mathematica
             "/"
         """
-        self.eval('SetDirectory["%s"]'%dir)
+        self.eval('SetDirectory["%s"]' % dir)
 
     def _true_symbol(self):
-        return '         True'
+        return 'True'
 
     def _false_symbol(self):
-        return '         False'
+        return 'False'
 
     def _equality_symbol(self):
         return '=='
@@ -639,11 +717,10 @@ remote connection to a server running Mathematica -- for hints, type
 
     def _tab_completion(self):
         a = self.eval('Names["*"]')
-        return a.replace('$','').replace('\n \n>','').replace(',','').replace('}','').replace('{','').split()
-
+        return a.replace('$', '').replace('\n \n>', '').replace(',', '').replace('}', '').replace('{', '').split()
 
     def help(self, cmd):
-        return self.eval('? %s'%cmd)
+        return self.eval('? %s' % cmd)
 
     def __getattr__(self, attrname):
         if attrname[:1] == "_":
@@ -654,7 +731,7 @@ remote connection to a server running Mathematica -- for hints, type
 @instancedoc
 class MathematicaElement(ExpectElement):
     def __getitem__(self, n):
-        return self.parent().new('%s[[%s]]'%(self._name, n))
+        return self.parent().new('%s[[%s]]' % (self._name, n))
 
     def __getattr__(self, attrname):
         self._check_valid()
@@ -664,18 +741,18 @@ class MathematicaElement(ExpectElement):
 
     def __float__(self, precision=16):
         P = self.parent()
-        return float(P.eval('N[%s,%s]'%(self.name(),precision)))
+        return float(P.eval('N[%s,%s]' % (self.name(), precision)))
 
     def _reduce(self):
-        return self.parent().eval('InputForm[%s]'%self.name())
+        return self.parent().eval('InputForm[%s]' % self.name()).strip()
 
     def __reduce__(self):
         return reduce_load, (self._reduce(), )
 
     def _latex_(self):
-        z = self.parent().eval('TeXForm[%s]'%self.name())
+        z = self.parent().eval('TeXForm[%s]' % self.name())
         i = z.find('=')
-        return z[i+1:].strip()
+        return z[i + 1:].strip()
 
     def _repr_(self):
         P = self.parent()
@@ -687,17 +764,20 @@ class MathematicaElement(ExpectElement):
 
         This method works successfully when Mathematica returns a result
         or list of results that consist only of:
+
         - numbers, i.e. integers, floats, complex numbers;
         - functions and named constants also present in Sage, where:
             - Sage knows how to translate the function or constant's name
-            from Mathematica's naming scheme, or
+              from Mathematica's naming scheme, or
             - you provide a translation dictionary `locals`, or
             - the Sage name for the function or constant is simply the
-             Mathematica name in lower case;
-        - symbolic variables whose names don't pathologically overlap with
+              Mathematica name in lower case;
+
+        - symbolic variables whose names do not pathologically overlap with
           objects already defined in Sage.
 
         This method will not work when Mathematica's output includes:
+
         - strings;
         - functions unknown to Sage that are not specified in `locals`;
         - Mathematica functions with different parameters/parameter order to
@@ -711,7 +791,7 @@ class MathematicaElement(ExpectElement):
 
             sage: m = mathematica('{{1., 4}, Pi, 3.2e100, I}')  # optional - mathematica
             sage: s = m.sage(); s       # optional - mathematica
-            [[1.0, 4], pi, 3.2*e100, I]
+            [[1.00000000000000, 4], pi, 3.20000000000000*e100, I]
             sage: s[1].n()              # optional - mathematica
             3.14159265358979
             sage: s[3]^2                # optional - mathematica
@@ -732,7 +812,7 @@ class MathematicaElement(ExpectElement):
         ::
 
             sage: m = mathematica('NewFn[x]')       # optional - mathematica
-            sage: m._sage_(locals={'NewFn': sin})   # optional - mathematica
+            sage: m._sage_(locals={('NewFn', 1): sin})   # optional - mathematica
             sin(x)
 
         ::
@@ -759,8 +839,19 @@ class MathematicaElement(ExpectElement):
           sage.calculus.calculus.symbolic_expression_from_string() for greater
           compatibility, while still supporting conversion of symbolic
           expressions.
+
+        TESTS:
+
+        Check that :trac:`28814` is fixed::
+
+            sage: mathematica('Exp[1000.0]').sage()  # optional - mathematica
+            1.97007111401700e434
+            sage: mathematica('1/Exp[1000.0]').sage()  # optional - mathematica
+            5.07595889754950e-435
+            sage: mathematica(RealField(100)(1/3)).sage()  # optional - mathematica
+            0.3333333333333333333333333333335
         """
-        from sage.libs.pynac.pynac import symbol_table
+        from sage.symbolic.expression import symbol_table
         from sage.symbolic.constants import constants_name_table as constants
         from sage.calculus.calculus import symbolic_expression_from_string
         from sage.calculus.calculus import _find_func as find_func
@@ -774,8 +865,8 @@ class MathematicaElement(ExpectElement):
         # Find all the mathematica functions, constants and symbolic variables
         # present in `res`.  Convert MMA functions and constants to their
         # Sage equivalents (if possible), using `locals` and
-        # `sage.libs.pynac.pynac.symbol_table['mathematica']` as translation
-        # dictionaries.  If a MMA function or constant is not either
+        # `sage.symbolic.pynac.symbol_table['mathematica']` as translation
+        # dictionaries.  If a MMA function or constant is not in either
         # dictionary, then we use a variety of tactics listed in `autotrans`.
         # If a MMA variable is not in any dictionary, then create an
         # identically named Sage equivalent.
@@ -786,10 +877,9 @@ class MathematicaElement(ExpectElement):
         lsymbols.update(locals)
 
         # Strategies for translating unknown functions/constants:
-        autotrans = [   str.lower,      # Try it in lower case
-                        _un_camel,    # Convert `CamelCase` to `camel_case`
-                        lambda x: x     # Try the original name
-                    ]
+        autotrans = [str.lower,      # Try it in lower case
+                     _un_camel,    # Convert `CamelCase` to `camel_case`
+                     lambda x: x]     # Try the original name
 
         # Find the MMA funcs/vars/constants - they start with a letter.
         # Exclude exponents (e.g. 'e8' from 4.e8)
@@ -803,7 +893,7 @@ class MathematicaElement(ExpectElement):
             # in `autotrans` and check if the function exists in Sage
             elif m.end() < len(res) and res[m.end()] == '(':
                 for t in autotrans:
-                    f = find_func(t(m.group()), create_when_missing = False)
+                    f = find_func(t(m.group()), create_when_missing=False)
                     if f is not None:
                         lsymbols[m.group()] = f
                         break
@@ -842,7 +932,7 @@ class MathematicaElement(ExpectElement):
         AUTHORS:
         - Felix Lawrence (2009-08-21)
         """
-        return self.Length()
+        return int(self.Length())
 
     @cached_method
     def _is_graphics(self):
@@ -883,7 +973,8 @@ class MathematicaElement(ExpectElement):
         if not self._is_graphics():
             raise ValueError('mathematica expression is not graphics')
         filename = os.path.abspath(filename)
-        s = 'Export["%s", %s, ImageSize->%s]'%(filename, self.name(), ImageSize)
+        s = 'Export["%s", %s, ImageSize->%s]' % (filename, self.name(),
+                                                 ImageSize)
         P.eval(s)
 
     def _rich_repr_(self, display_manager, **kwds):
@@ -940,12 +1031,16 @@ class MathematicaElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
-            sage: show(P)                                        # optional - mathematica
-            sage: P.show(ImageSize=800)                          # optional - mathematica
             sage: Q = mathematica('Sin[x Cos[y]]/Sqrt[1-x^2]')   # optional - mathematica
             sage: show(Q)                                        # optional - mathematica
-            <html><script type="math/tex">\frac{\sin (x \cos (y))}{\sqrt{1-x^2}}</script></html>
+            Sin[x*Cos[y]]/Sqrt[1 - x^2]
+
+        The following example starts a Mathematica frontend to do the rendering
+        (:trac:`28819`)::
+
+            sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
+            sage: show(P)                                        # optional - mathematica mathematicafrontend
+            sage: P.show(ImageSize=800)                          # optional - mathematica mathematicafrontend
         """
         from sage.repl.rich_output import get_display_manager
         dm = get_display_manager()
@@ -954,50 +1049,35 @@ class MathematicaElement(ExpectElement):
     def str(self):
         return str(self)
 
-    def _cmp_(self, other):
-        #if not (isinstance(other, ExpectElement) and other.parent() is self.parent()):
-        #    return coerce.cmp(self, other)
+    def _richcmp_(self, other, op):
         P = self.parent()
-        if P.eval("%s < %s"%(self.name(), other.name())).strip() == 'True':
-            return -1
-        elif P.eval("%s > %s"%(self.name(), other.name())).strip() == 'True':
-            return 1
-        elif P.eval("%s == %s"%(self.name(), other.name())).strip() == 'True':
-            return 0
-        else:
-            return -1  # everything is supposed to be comparable in Python, so we define
-                       # the comparison thus when no comparable in interfaced system.
+        if P.eval("%s < %s" % (self.name(), other.name())).strip() == 'True':
+            return rich_to_bool(op, -1)
+        elif P.eval("%s > %s" % (self.name(), other.name())).strip() == 'True':
+            return rich_to_bool(op, 1)
+        elif P.eval("%s == %s" % (self.name(), other.name())).strip() == 'True':
+            return rich_to_bool(op, 0)
+        return NotImplemented
 
-    def N(self, precision=None):
-        r"""
-        Numerical approximation by calling Mathematica's `N[]`
-
-        Calling Mathematica's `N[]` function, with optional precision in decimal digits.
-        Unlike Sage's `n()`, `N()` can be applied to symbolic Mathematica objects.
-
-        A workaround for :trac:`18888` backtick issue, stripped away by `get()`,
-        is included.
-
-        .. note::
-
-            The base class way up the hierarchy defines an `N` (modeled
-            after Mathematica's)  which overwrites the Mathematica one,
-            and doesn't work at all. We restore it here.
+    def __bool__(self):
+        """
+        Return whether this Mathematica element is not identical to ``False``.
 
         EXAMPLES::
 
-            sage: mathematica('Pi/2').N(10)        # optional -- mathematica
-            1.570796327
-            sage: mathematica('Pi').N(50)          # optional -- mathematica
-            3.1415926535897932384626433832795028841971693993751
-            sage: mathematica('Pi*x^2-1/2').N()    # optional -- mathematica
-                            2
-            -0.5 + 3.14159 x
+            sage: bool(mathematica(True))  # optional - mathematica
+            True
+            sage: bool(mathematica(False))  # optional - mathematica
+            False
+
+        In Mathematica, `0` cannot be used to express falsity::
+
+            sage: bool(mathematica(0))  # optional - mathematica
+            True
         """
-        P = self.parent()
-        if precision is None:
-            return P.eval('N[%s]'%self.name())
-        return P.eval('N[%s,%s]'%(self.name(),precision))
+        P = self._check_valid()
+        cmd = '%s===%s' % (self._name, P._false_symbol())
+        return P.eval(cmd).strip() != P._true_symbol()
 
     def n(self, *args, **kwargs):
         r"""
@@ -1036,6 +1116,7 @@ class MathematicaFunctionElement(FunctionElement):
 # An instance
 mathematica = Mathematica()
 
+
 def reduce_load(X):
     return mathematica(X)
 
@@ -1050,3 +1131,235 @@ def mathematica_console(readline=True):
     else:
         os.system('math-readline')
         return
+
+
+# some tools for online interface
+
+def request_wolfram_alpha(input, verbose=False):
+    r"""
+    Request Wolfram Alpha website.
+
+    INPUT:
+
+    - ``input`` -- string
+    - ``verbose`` -- bool (default: ``False``)
+
+    OUTPUT:
+
+    json
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.mathematica import request_wolfram_alpha
+        sage: page_data = request_wolfram_alpha('integrate Sin[x]')      # optional internet
+        sage: [str(a) for a in sorted(page_data.keys())]                 # optional internet
+        ['queryresult']
+        sage: [str(a) for a in sorted(page_data['queryresult'].keys())]  # optional internet
+        ['datatypes',
+         'encryptedEvaluatedExpression',
+         'encryptedParsedExpression',
+         'error',
+         'host',
+         'id',
+         'inputstring',
+         'numpods',
+         'parsetimedout',
+         'parsetiming',
+         'pods',
+         'recalculate',
+         'related',
+         'server',
+         'sponsorCategories',
+         'success',
+         'timedout',
+         'timedoutpods',
+         'timing',
+         'version']
+    """
+    from urllib.parse import urlencode
+    from urllib.request import Request, build_opener, HTTPCookieProcessor, HTTPSHandler
+    import json
+    from http.cookiejar import CookieJar
+    from ssl import create_default_context as default_context
+
+    # we need cookies for this...
+    cj = CookieJar()
+    opener = build_opener(HTTPCookieProcessor(cj),
+                          HTTPSHandler(context=default_context()))
+    # build initial query for code
+    req = Request("https://www.wolframalpha.com/input/api/v1/code")
+    resp = opener.open(req)
+    # the website returns JSON containing the code
+    page_data = json.loads(resp.read().decode("utf-8"))
+    if not ("code" in page_data):
+        raise ValueError("Wolfram did not return a code")
+    proxy_code = page_data['code']
+    if verbose:
+        print("Code: {}".format(proxy_code))
+        print("Cookies: {}".format(cj))
+    # now we can make a request
+    # some parameters documented here:
+    #   https://products.wolframalpha.com/api/documentation/#parameter-reference
+    # the following are the parameters used by the website
+    params = {
+        'assumptionsversion': '2',
+        'async': 'true',
+        'banners': 'raw',
+        'debuggingdata': 'false',
+        'format': 'image,plaintext,imagemap,sound,minput,moutput',
+        'formattimeout': '8',
+        'input': input,
+        'output': 'JSON',
+        'parsetimeout': '5',
+        'podinfosasync': 'true',
+        'proxycode': proxy_code,
+        'recalcscheme': 'parallel',
+        'sbsdetails': 'true',
+        'scantimeout': '0.5',
+        'sponsorcategories': 'true',
+        'statemethod': 'deploybutton',
+        'storesubpodexprs': 'true'}
+    # # we can also change some parameters
+    # params = {
+    #     'assumptionsversion': '2',
+    #     'banners': 'raw',
+    #     'format': 'minput,moutput',
+    #     'formattimeout': '8',
+    #     'input': input,
+    #     'output': 'JSON',
+    #     'parsetimeout': '5',
+    #     'proxycode': proxy_code,
+    #     'scantimeout': '0.5',
+    #     'storesubpodexprs': 'true'
+    # }
+    params = urlencode(params)
+    url = "https://www.wolframalpha.com/input/json.jsp?%s" % params
+    req = Request(url)
+    req.add_header('Referer', "https://www.wolframalpha.com/input/")  # seems important
+    resp = opener.open(req)
+    # the website returns JSON containing the code
+    return json.loads(resp.read().decode("utf-8"))
+
+
+def parse_moutput_from_json(page_data, verbose=False):
+    r"""
+    Return the list of outputs found in the json (with key ``'moutput'``)
+
+    INPUT:
+
+    - ``page_data`` -- json obtained from Wolfram Alpha
+    - ``verbose`` -- bool (default: ``False``)
+
+    OUTPUT:
+
+    list of unicode strings
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.mathematica import request_wolfram_alpha
+        sage: from sage.interfaces.mathematica import parse_moutput_from_json
+        sage: page_data = request_wolfram_alpha('integrate Sin[x]') # optional internet
+        sage: parse_moutput_from_json(page_data)                    # optional internet
+        ['-Cos[x]']
+
+    ::
+
+        sage: page_data = request_wolfram_alpha('Sin[x]')           # optional internet
+        sage: L = parse_moutput_from_json(page_data)                # optional internet
+        sage: sorted(L)                                             # optional internet
+        ['-Cos[x]', '{x == 0}', '{x == Pi C[1], Element[C[1], Integers]}']
+
+    TESTS::
+
+        sage: page_data = request_wolfram_alpha('Integrate(Sin[z], y)')  # optional internet
+        sage: parse_moutput_from_json(page_data)                         # optional internet
+        Traceback (most recent call last):
+        ...
+        ValueError: asking wolframalpha.com was not successful
+    """
+    queryresult = page_data['queryresult']
+    if not queryresult['success']:
+        raise ValueError('asking wolframalpha.com was not successful')
+    if 'pods' not in queryresult:
+        raise ValueError('json object contains no pods')
+    pods = queryresult['pods']
+    if verbose:
+        print("  Query successful: {}".format(queryresult['success']))
+        print("  Number of results: {}".format(len(pods)))
+    L = []
+    for i, result in enumerate(pods):
+        if verbose:
+            print("  Result #{}".format(i))
+            print("    Title: {}".format(result['title']))
+        if 'subpods' not in result:
+            continue
+        subpods = result['subpods']
+        for j, subpod in enumerate(subpods):
+            if verbose:
+                print("    Subpod #{}".format(j))
+                if 'minput' in subpod.keys():
+                    print("      MInput: {}".format(subpod['minput']))
+                if 'moutput' in subpod.keys():
+                    print("      MOutput: {}".format(subpod['moutput']))
+            if 'moutput' in subpod.keys():
+                L.append(subpod['moutput'])
+    return L
+
+
+def symbolic_expression_from_mathematica_string(mexpr):
+    r"""
+    Translate a mathematica string into a symbolic expression
+
+    INPUT:
+
+    - ``mexpr`` -- string
+
+    OUTPUT:
+
+    symbolic expression
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.mathematica import symbolic_expression_from_mathematica_string
+        sage: symbolic_expression_from_mathematica_string('-Cos[x]')
+        -cos(x)
+    """
+    from sage.symbolic.expression import symbol_table
+    from sage.symbolic.constants import constants_name_table as constants
+    from sage.calculus.calculus import symbolic_expression_from_string
+    from sage.calculus.calculus import _find_func as find_func
+
+    expr = mexpr.replace('\n', ' ').replace('\r', '')
+    expr = expr.replace('[', '(').replace(']', ')')
+    expr = expr.replace('{', '[').replace('}', ']')
+    lsymbols = symbol_table['mathematica'].copy()
+    lsymbols_names_only = [s[0] for s in lsymbols]
+    autotrans = [lambda x:x.lower(),      # Try it in lower case
+                 _un_camel,      # Convert `CamelCase` to `camel_case`
+                 lambda x: x]     # Try the original name
+    # Find the MMA funcs/vars/constants - they start with a letter.
+    # Exclude exponents (e.g. 'e8' from 4.e8)
+    p = re.compile(r'(?<!\.)[a-zA-Z]\w*')
+
+    for m in p.finditer(expr):
+        # If the function, variable or constant is already in the
+        # translation dictionary, then just move on.
+        if m.group() in lsymbols_names_only:
+            pass
+        # Now try to translate all other functions -- try each strategy
+        # in `autotrans` and check if the function exists in Sage
+        elif m.end() < len(expr) and expr[m.end()] == '(':
+            for t in autotrans:
+                f = find_func(t(m.group()), create_when_missing=False)
+                if f is not None:
+                    lsymbols[(m.group(), f.number_of_arguments())] = f
+                    break
+            else:
+                raise NotImplementedError("Don't know a Sage equivalent for Mathematica function '%s'." % m.group())
+        # Check if Sage has an equivalent constant
+        else:
+            for t in autotrans:
+                if t(m.group()) in constants:
+                    lsymbols[(m.group(), 0)] = constants[t(m.group())]
+                    break
+    return symbolic_expression_from_string(expr, lsymbols, accept_sequence=True)

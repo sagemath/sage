@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 r"""
 Examples of graded modules with basis
 """
-#*****************************************************************************
-#  Copyright (C) 2013 Frederic Chapoton <fchapoton2@gmail.com>
+# ****************************************************************************
+#  Copyright (C) 2013 Frédéric Chapoton <fchapoton2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
 from sage.categories.filtered_modules_with_basis import FilteredModulesWithBasis
@@ -130,7 +131,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
             sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))
             10
             sage: type(A.degree_on_basis(Partition((1,1))))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return t.size()
 

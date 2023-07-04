@@ -16,7 +16,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -433,6 +432,7 @@ class QuantumGroupRepresentations(Category_module):
             ac = ct.root_system().weight_lattice().simple_coroots()
             q = self.q()
             from sage.algebras.quantum_groups.q_numbers import q_factorial
+
             def apply_e(d, elt):
                 for i in d:
                     elt = elt.e(i)
@@ -527,4 +527,3 @@ class QuantumGroupRepresentations(Category_module):
                 q
             """
             return self._q
-

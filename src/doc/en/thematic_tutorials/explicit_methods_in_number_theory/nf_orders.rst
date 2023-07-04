@@ -135,7 +135,7 @@ Next we create the univariate polynomial ring :math:`R = K[X]`.  In
 Sage, we do this by typing ``R.<X> = K[]``. Here ``R.<X>`` means
 "create the object :math:`R` with generator :math:`X`" and ``K[]``
 means a "polynomial ring over :math:`K`", where the generator is named
-based on the aformentioned :math:`X` (to create a polynomial ring in
+based on the aforementioned :math:`X` (to create a polynomial ring in
 two variables :math:`X,Y` simply replace ``R.<X>`` by ``R.<X,Y>``).
 
 .. link
@@ -144,8 +144,7 @@ two variables :math:`X,Y` simply replace ``R.<X>`` by ``R.<X,Y>``).
 
     sage: R.<X> = K[]
     sage: R
-    Univariate Polynomial Ring in X over Number Field in sqrt2
-    with defining polynomial x^2 - 2
+    Univariate Polynomial Ring in X over Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
 
 Now we can make a polynomial over the number field
 :math:`K=\QQ(\sqrt{2})`, and construct the extension of

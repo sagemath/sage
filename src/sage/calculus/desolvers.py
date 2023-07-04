@@ -71,18 +71,17 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##########################################################################
-from __future__ import division
 
 import shutil
 import os
 
 from sage.interfaces.maxima import Maxima
-from sage.plot.all import line
-from sage.symbolic.expression import is_SymbolicEquation
-from sage.symbolic.ring import is_SymbolicVariable
-from sage.calculus.functional import diff
+from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import N
 from sage.rings.real_mpfr import RealField
+from sage.structure.element import Expression
+
+from .functional import diff
 
 
 maxima = Maxima()
@@ -542,7 +541,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
         sage: forget()
         sage: y = function('y')(x)
         sage: desolve(diff(y, x) == sqrt(abs(y)), dvar=y, ivar=x)
-        sqrt(-y(x))*(sgn(y(x)) - 1) + (sgn(y(x)) + 1)*sqrt(y(x)) == _C + x
+        integrate(1/sqrt(abs(y(x))), y(x)) == _C + x
 
     AUTHORS:
 
@@ -550,9 +549,9 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
     - Robert Bradshaw (10-2008)
     - Robert Marik (10-2009)
     """
-    if is_SymbolicEquation(de):
+    if isinstance(de, Expression) and de.is_relational():
         de = de.lhs() - de.rhs()
-    if is_SymbolicVariable(dvar):
+    if isinstance(dvar, Expression) and dvar.is_symbol():
         raise ValueError("You have to declare dependent variable as a function evaluated at the independent variable, eg. y=function('y')(x)")
     # for backwards compatibility
     if isinstance(dvar, list):
@@ -574,6 +573,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
     dvar_str=P(dvar.operator()).str()
     ivar_str=P(ivar).str()
     de00 = de00.str()
+
     def sanitize_var(exprs):
         return exprs.replace("'"+dvar_str+"("+ivar_str+")",dvar_str)
     de0 = sanitize_var(de00)
@@ -599,8 +599,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
     if show_method:
         maxima_method=P("method")
 
-    if (ics is not None):
-        if not is_SymbolicEquation(soln.sage()):
+    if ics is not None:
+        if not (isinstance(soln.sage(), Expression) and soln.sage().is_relational()):
             if not show_method:
                 maxima_method=P("method")
             raise NotImplementedError("Unable to use initial condition for this equation (%s)."%(str(maxima_method).strip()))
@@ -648,8 +648,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
             if str(soln).strip() == 'false':
                 raise NotImplementedError("Maxima was unable to solve this BVP. Remove the initial condition to get the general solution.")
 
-    soln=soln.sage()
-    if is_SymbolicEquation(soln) and soln.lhs() == dvar:
+    soln = soln.sage()
+    if isinstance(soln, Expression) and soln.is_relational() and soln.lhs() == dvar:
         # Remark: Here we do not check that the right hand side does not depend on dvar.
         # This probably will not happen for solutions obtained via ode2, anyway.
         soln = soln.rhs()
@@ -682,7 +682,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
 ##         sage: de = lambda y: diff(y,x,x) - 2*diff(y,x) + y
 ##         sage: desolve_laplace(de(f(x)),[f,x])
 ##          #x*%e^x*(?%at('diff('f(x),x,1),x=0))-'f(0)*x*%e^x+'f(0)*%e^x
-##         sage: desolve_laplace(de(f(x)),[f,x],[0,1,2])  ## IC option does not work
+##         sage: desolve_laplace(de(f(x)),[f,x],[0,1,2])  # IC option does not work
 ##          #x*%e^x*(?%at('diff('f(x),x,1),x=0))-'f(0)*x*%e^x+'f(0)*%e^x
 
 ##     AUTHOR: David Joyner (1st version 1-2006, 8-2007)
@@ -795,9 +795,9 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     #return maxima(cmd).rhs()._maxima_init_()
 
     ## verbatim copy from desolve - begin
-    if is_SymbolicEquation(de):
+    if isinstance(de, Expression) and de.is_relational():
         de = de.lhs() - de.rhs()
-    if is_SymbolicVariable(dvar):
+    if isinstance(dvar, Expression) and dvar.is_symbol():
         raise ValueError("You have to declare dependent variable as a function evaluated at the independent variable, eg. y=function('y')(x)")
     # for backwards compatibility
     if isinstance(dvar, list):
@@ -811,6 +811,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     ## verbatim copy from desolve - end
 
     dvar_str = str(dvar)
+
     def sanitize_var(exprs):  # 'y(x) -> y(x)
         return exprs.replace("'"+dvar_str,dvar_str)
     de0=de._maxima_()
@@ -934,6 +935,16 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
         ...
         ValueError: Initial conditions aren't complete: number of vars is different from number of dependent variables. Got ics = [1, 1], vars = [x1(t), x2(t)]
 
+    Check that :trac:`9825` is fixed::
+
+        sage: t = var('t')
+        sage: x1, x2=function("x1, x2")
+        sage: de1=x1(t).diff(t)==-3*(x2(t)-1)
+        sage: de2=x2(t).diff(t)==1
+        sage: Sol=desolve_system([de1, de2],[x1(t),x2(t)],ivar=t) ; Sol
+        [x1(t) == -3/2*t^2 - 3*t*x2(0) + 3*t + x1(0), x2(t) == t + x2(0)]
+
+
     AUTHORS:
 
     - Robert Bradshaw (10-2008)
@@ -947,7 +958,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
         return desolve_laplace(des[0], vars[0], ics=ics, ivar=ivar)
     ivars = set([])
     for i, de in enumerate(des):
-        if not is_SymbolicEquation(de):
+        if not (isinstance(de, Expression) and de.is_relational()):
             des[i] = de == 0
         ivars = ivars.union(set(de.variables()))
     if ivar is None:
@@ -1054,7 +1065,8 @@ def eulers_method(f,x0,y0,h,x1,algorithm="table"):
     if algorithm=="table":
         print("%10s %20s %25s"%("x","y","h*f(x,y)"))
     n=int((1.0)*(x1-x0)/h)
-    x00=x0; y00=y0
+    x00 = x0
+    y00 = y0
     soln = [[x00,y00]]
     for i in range(n+1):
         if algorithm=="table":
@@ -1152,9 +1164,11 @@ def eulers_method_2x2(f,g, t0, x0, y0, h, t1,algorithm="table"):
     """
     if algorithm=="table":
         print("%10s %20s %25s %20s %20s"%("t", "x","h*f(t,x,y)","y", "h*g(t,x,y)"))
-    n=int((1.0)*(t1-t0)/h)
-    t00 = t0; x00 = x0; y00 = y0
-    soln = [[t00,x00,y00]]
+    n = int((1.0)*(t1-t0)/h)
+    t00 = t0
+    x00 = x0
+    y00 = y0
+    soln = [[t00, x00, y00]]
     for i in range(n+1):
         if algorithm=="table":
             print("%10r %20r %25r %20r %20r"%(t00,x00,h*f(t00,x00,y00),y00,h*g(t00,x00,y00)))
@@ -1191,6 +1205,8 @@ def eulers_method_2x2_plot(f,g, t0, x0, y0, h, t1):
         sage: f = lambda z : z[2]; g = lambda z : -sin(z[1])
         sage: P = eulers_method_2x2_plot(f,g, 0.0, 0.75, 0.0, 0.1, 1.0)
     """
+    from sage.plot.line import line
+
     n = int((1.0)*(t1-t0)/h)
     t00 = t0
     x00 = x0
@@ -1243,13 +1259,13 @@ def desolve_rk4_determine_bounds(ics,end_points=None):
 
     """
     if end_points is None:
-        return((ics[0],ics[0]+10))
-    if not isinstance(end_points,list):
-        end_points=[end_points]
-    if len(end_points)==1:
-        return (min(ics[0],end_points[0]),max(ics[0],end_points[0]))
+        return ics[0], ics[0] + 10
+    if not isinstance(end_points, list):
+        end_points = [end_points]
+    if len(end_points) == 1:
+        return min(ics[0], end_points[0]), max(ics[0], end_points[0])
     else:
-        return (min(ics[0],end_points[0]),max(ics[0],end_points[1]))
+        return min(ics[0], end_points[0]), max(ics[0], end_points[1])
 
 
 def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output='list', **kwds):
@@ -1339,6 +1355,9 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
     if ics is None:
         raise ValueError("No initial conditions, specify with ics=[x0,y0].")
 
+    if output not in ['list', 'plot', 'slope_field']:
+        raise ValueError("Option output should be 'list', 'plot' or 'slope_field'.")
+
     if ivar is None:
         ivars = de.variables()
         ivars = [t for t in ivars if t != dvar]
@@ -1346,61 +1365,65 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
             raise ValueError("Unable to determine independent variable, please specify.")
         ivar = ivars[0]
 
-    if not is_SymbolicVariable(dvar):
+    step=abs(step)
+
+    def desolve_rk4_inner(de, dvar):
+        de0=de._maxima_()
+        maxima("load('dynamics)")
+        lower_bound,upper_bound=desolve_rk4_determine_bounds(ics,end_points)
+        sol_1, sol_2 = [],[]
+        if lower_bound<ics[0]:
+            cmd="rk(%s,%s,%s,[%s,%s,%s,%s])\
+            "%(de0.str(),'_SAGE_VAR_'+str(dvar),str(ics[1]),'_SAGE_VAR_'+str(ivar),str(ics[0]),lower_bound,-step)
+            sol_1=maxima(cmd).sage()
+            sol_1.pop(0)
+            sol_1.reverse()
+        if upper_bound>ics[0]:
+            cmd="rk(%s,%s,%s,[%s,%s,%s,%s])\
+            "%(de0.str(),'_SAGE_VAR_'+str(dvar),str(ics[1]),'_SAGE_VAR_'+str(ivar),str(ics[0]),upper_bound,step)
+            sol_2=maxima(cmd).sage()
+            sol_2.pop(0)
+        sol=sol_1
+        sol.extend([[ics[0],ics[1]]])
+        sol.extend(sol_2)
+
+        if output == 'list':
+            return sol
+        from sage.plot.plot import list_plot
+        from sage.plot.plot_field import plot_slope_field
+        R = list_plot(sol, plotjoined=True, **kwds)
+        if output == 'plot':
+            return R
+        if output == 'slope_field':
+            XMIN = sol[0][0]
+            YMIN = sol[0][1]
+            XMAX = XMIN
+            YMAX = YMIN
+            for s, t in sol:
+                if s > XMAX:
+                    XMAX = s
+                if s < XMIN:
+                    XMIN = s
+                if t > YMAX:
+                    YMAX = t
+                if t < YMIN:
+                    YMIN = t
+            return plot_slope_field(de, (ivar,XMIN,XMAX), (dvar,YMIN,YMAX))+R
+
+    if not (isinstance(dvar, Expression) and dvar.is_symbol()):
         from sage.symbolic.ring import SR
         from sage.calculus.all import diff
         from sage.symbolic.relation import solve
-        if is_SymbolicEquation(de):
+        if isinstance(de, Expression) and de.is_relational():
             de = de.lhs() - de.rhs()
-        dummy_dvar = SR.var('dummy_dvar')
         # consider to add warning if the solution is not unique
         de=solve(de,diff(dvar,ivar),solution_dict=True)
         if len(de) != 1:
             raise NotImplementedError("Sorry, cannot find explicit formula for right-hand side of the ODE.")
-        de=de[0][diff(dvar,ivar)].subs(dvar==dummy_dvar)
+        with SR.temp_var() as dummy_dvar:
+            return desolve_rk4_inner(de[0][diff(dvar,ivar)].subs({dvar:dummy_dvar}), dummy_dvar)
     else:
-        dummy_dvar=dvar
-
-    step=abs(step)
-    de0=de._maxima_()
-    maxima("load('dynamics)")
-    lower_bound,upper_bound=desolve_rk4_determine_bounds(ics,end_points)
-    sol_1, sol_2 = [],[]
-    if lower_bound<ics[0]:
-        cmd="rk(%s,%s,%s,[%s,%s,%s,%s])\
-        "%(de0.str(),'_SAGE_VAR_'+str(dummy_dvar),str(ics[1]),'_SAGE_VAR_'+str(ivar),str(ics[0]),lower_bound,-step)
-        sol_1=maxima(cmd).sage()
-        sol_1.pop(0)
-        sol_1.reverse()
-    if upper_bound>ics[0]:
-        cmd="rk(%s,%s,%s,[%s,%s,%s,%s])\
-        "%(de0.str(),'_SAGE_VAR_'+str(dummy_dvar),str(ics[1]),'_SAGE_VAR_'+str(ivar),str(ics[0]),upper_bound,step)
-        sol_2=maxima(cmd).sage()
-        sol_2.pop(0)
-    sol=sol_1
-    sol.extend([[ics[0],ics[1]]])
-    sol.extend(sol_2)
-
-    if output=='list':
-        return sol
-    from sage.plot.plot import list_plot
-    from sage.plot.plot_field import plot_slope_field
-    R = list_plot(sol,plotjoined=True,**kwds)
-    if output=='plot':
-        return R
-    if output=='slope_field':
-        XMIN=sol[0][0]
-        YMIN=sol[0][1]
-        XMAX=XMIN
-        YMAX=YMIN
-        for s,t in sol:
-            if s>XMAX:XMAX=s
-            if s<XMIN:XMIN=s
-            if t>YMAX:YMAX=t
-            if t<YMIN:YMIN=t
-        return plot_slope_field(de,(ivar,XMIN,XMAX),(dummy_dvar,YMIN,YMAX))+R
-
-    raise ValueError("Option output should be 'list', 'plot' or 'slope_field'.")
+        return desolve_rk4_inner(de, dvar)
 
 def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1):
     r"""
@@ -1527,8 +1550,8 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
     - ``ivar`` -- independent variable, optional.
 
-    - ``compute_jac`` -- boolean. If True, the Jacobian of des is computed and
-      used during the integration of Stiff Systems. Default value is False.
+    - ``compute_jac`` -- boolean. If True, the Jacobian of ``des`` is computed and
+      used during the integration of stiff systems. Default value is False.
 
     Other Parameters (taken from the documentation of odeint function from `scipy.integrate module.
     <https://docs.scipy.org/doc/scipy/reference/integrate.html#module-scipy.integrate>`_)
@@ -1605,7 +1628,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         sage: ics=[0,1,1]
         sage: sol=desolve_odeint(lorenz,ics,times,[x,y,z],rtol=1e-13,atol=1e-14)
 
-    One-dimensional Stiff system::
+    One-dimensional stiff system::
 
         sage: y= var('y')
         sage: epsilon=0.01
@@ -1616,7 +1639,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         sage: p=points(zip(t,sol))
         sage: p.show()
 
-    Another Stiff system with some optional parameters with no
+    Another stiff system with some optional parameters with no
     default value::
 
         sage: y1,y2,y3=var('y1,y2,y3')
@@ -1638,73 +1661,71 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     from sage.ext.fast_eval import fast_float
     from sage.calculus.functions import jacobian
 
-    if ivar is None:
-        if len(dvars)==0 or len(dvars)==1:
-            if len(dvars)==1:
-                des=des[0]
-                dvars=dvars[0]
-            all_vars = set(des.variables())
+    def desolve_odeint_inner(ivar):
+        # one-dimensional systems:
+        if len(dvars) == 1:
+            assert len(des) == 1
+            dvar = dvars[0]
+            de = des[0]
+            func = fast_float(de, dvar, ivar)
+            if not compute_jac:
+                Dfun = None
+            else:
+                J = diff(de, dvar)
+                J = fast_float(J, dvar, ivar)
+
+                def Dfun(y, t):
+                    return [J(y, t)]
+
+        # n-dimensional systems:
         else:
-            all_vars = set([])
+            desc = []
+            variabs = dvars[:]
+            variabs.append(ivar)
             for de in des:
-                all_vars.update(set(de.variables()))
-        if is_SymbolicVariable(dvars):
-            ivars = all_vars - set([dvars])
-        else:
-            ivars = all_vars - set(dvars)
+                desc.append(fast_float(de, *variabs))
 
-        if len(ivars)==1:
-            ivar = ivars.pop()
-        elif not ivars:
-            try:
-                safe_names = [ 't_' + str(dvar) for dvar in dvars ]
-            except TypeError:  # not iterable
-                safe_names = [ 't_' + str(dvars) ]
-            from sage.symbolic.ring import SR
-            ivar = [SR.var(name) for name in safe_names]
-        else:
-            raise ValueError("Unable to determine independent variable, please specify.")
-
-    # one-dimensional systems:
-    if is_SymbolicVariable(dvars):
-        func = fast_float(des,dvars,ivar)
-        if not compute_jac:
-            Dfun=None
-        else:
-            J = diff(des,dvars)
-            J = fast_float(J,dvars,ivar)
-            Dfun = lambda y,t: [J(y,t)]
-
-    # n-dimensional systems:
-    else:
-        desc = []
-        variabs = dvars[:]
-        variabs.append(ivar)
-        for de in des:
-            desc.append(fast_float(de,*variabs))
-
-        def func(y,t):
-            v = list(y[:])
-            v.append(t)
-            return [dec(*v) for dec in desc]
-
-        if not compute_jac:
-            Dfun=None
-        else:
-            J = jacobian(des,dvars)
-            J = [list(v) for v in J]
-            J = fast_float(J,*variabs)
-            def Dfun(y,t):
+            def func(y, t):
                 v = list(y[:])
                 v.append(t)
-                return [[element(*v) for element in row] for row in J]
+                return [dec(*v) for dec in desc]
 
+            if not compute_jac:
+                Dfun = None
+            else:
+                J = jacobian(des, dvars)
+                J = [list(v) for v in J]
+                J = fast_float(J, *variabs)
 
-    sol=odeint(func, ics, times, args=args, Dfun=Dfun, rtol=rtol, atol=atol,
-        tcrit=tcrit, h0=h0, hmax=hmax, hmin=hmin, ixpr=ixpr, mxstep=mxstep,
-        mxhnil=mxhnil, mxordn=mxordn, mxords=mxords, printmessg=printmessg)
+                def Dfun(y, t):
+                    v = list(y[:])
+                    v.append(t)
+                    return [[element(*v) for element in row] for row in J]
 
-    return sol
+        sol=odeint(func, ics, times, args=args, Dfun=Dfun, rtol=rtol, atol=atol,
+            tcrit=tcrit, h0=h0, hmax=hmax, hmin=hmin, ixpr=ixpr, mxstep=mxstep,
+            mxhnil=mxhnil, mxordn=mxordn, mxords=mxords, printmessg=printmessg)
+        return sol
+
+    if isinstance(dvars, Expression) and dvars.is_symbol():
+        dvars = [dvars]
+
+    if not isinstance(des, (list, tuple)):
+        des = [des]
+
+    if ivar is None:
+        all_vars = set().union(*[de.variables() for de in des])
+        ivars = all_vars - set(dvars)
+
+        if len(ivars)==1:
+            return desolve_odeint_inner(next(iter(ivars)))
+        elif not ivars:
+            from sage.symbolic.ring import SR
+            with SR.temp_var() as ivar:
+                return desolve_odeint_inner(ivar)
+        else:
+            raise ValueError("Unable to determine independent variable, please specify.")
+    return desolve_odeint_inner(ivar)
 
 def desolve_mintides(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-16):
     r"""
@@ -1829,7 +1850,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
 
     EXAMPLES:
 
-    We integrate the Lorenz equations with Salztman values for the parameters
+    We integrate the Lorenz equations with Saltzman values for the parameters
     along 10 periodic orbits with 100 digits of precision::
 
         sage: var('t,x,y,z')
@@ -1842,7 +1863,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
         sage: y0 = -19.5787519424517955388380414460095588661142400534276438649791334295426354746147526415973165506704676171
         sage: z0 = 27
         sage: T = 15.586522107161747275678702092126960705284805489972439358895215783190198756258880854355851082660142374
-        sage: sol = desolve_tides_mpfr(f, [x0, y0, z0],0 , T, T, 1e-100, 1e-100, 100) # optional - tides
+        sage: sol = desolve_tides_mpfr(f, [x0, y0, z0], 0, T, T, 1e-100, 1e-100, 100) # optional - tides
         sage: sol # optional -tides # abs tol 1e-50
         [[0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
         -13.7636106821342005250144010543616538641008648540923684535378642921202827747268115852940239346395038,
@@ -1863,16 +1884,10 @@ def desolve_tides_mpfr(f, ics, initial, final, delta,  tolrel=1e-16, tolabs=1e-1
 
         This requires the package tides.
 
-
     REFERENCES:
 
-    .. [ABBR1] \A. Abad, R. Barrio, F. Blesa, M. Rodriguez. Algorithm 924. *ACM
-       Transactions on Mathematical Software* , *39* (1), 1-28.
-
-    .. [ABBR2] \A. Abad, R. Barrio, F. Blesa, M. Rodriguez.
-      `TIDES tutorial: Integrating ODEs by using the Taylor Series Method.
-      <http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm>`_
-
+    - [ABBR2011]_
+    - [ABBR2012]_
     """
     import subprocess
     if subprocess.call('command -v gcc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE):

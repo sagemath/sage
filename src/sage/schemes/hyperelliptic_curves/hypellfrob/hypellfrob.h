@@ -26,10 +26,37 @@
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 #include <NTL/mat_ZZ.h>
+#include <vector>
 
 
 namespace hypellfrob {
 
+
+/*
+
+Let M(x) be the matrix M0 + x*M1; this is a matrix of linear polys in x.
+Let M(a, b) = M(a + 1) M(a + 2) ... M(b). This function evaluates the products
+M(a[i], b[i]) for some sequence of intervals
+  a[0] < b[0] <= a[1] < b[1] <= ... <= a[n-1] < b[n-1].
+
+The intervals are supplied in "target", simply as the list
+  a[0], b[0], a[1], b[1], ...
+
+There are three possible underlying implementations:
+   * ntl_interval_products (ZZ_p version),
+   * ntl_interval_products (zz_p version)
+This function is a wrapper which takes ZZ_p input, calls one of the two
+above implementations depending on the size of the current ZZ_p modulus, and
+produces output in ZZ_p format.
+
+PRECONDITIONS:
+   Let d = b[n-1] - a[0]. Then 2, 3, ... 1 + floor(sqrt(d)) must all be
+   invertible.
+
+*/
+void hypellfrob_interval_products_wrapper(NTL::mat_ZZ_p& output,
+                               const NTL::mat_ZZ_p& M0, const NTL::mat_ZZ_p& M1,
+                               const std::vector<NTL::ZZ>& target);
 
 /*
 Computes frobenius matrix for given p, to precision p^N, for the
@@ -47,8 +74,7 @@ RETURN VALUE:
        will not check that p is prime. That's up to you.)
 
 */
-int matrix(NTL::mat_ZZ& output, const NTL::ZZ& p, int N, const NTL::ZZX& Q,
-           int force_ntl = 0);
+int matrix(NTL::mat_ZZ& output, const NTL::ZZ& p, int N, const NTL::ZZX& Q);
 
 
 };

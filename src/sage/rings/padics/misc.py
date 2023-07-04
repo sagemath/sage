@@ -25,12 +25,11 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
-from six.moves.builtins import min as python_min
-from six.moves.builtins import max as python_max
-from six.moves.builtins import range, zip
 from sage.rings.infinity import infinity
+
+python_min = min
+python_max = max
 
 def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
     r"""
@@ -122,7 +121,7 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
           for prime finite fields
     """
     from sage.rings.padics.factory import Zp
-    from sage.rings.all import PolynomialRing
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
     q = p**f
     a = a % (q-1)
@@ -138,7 +137,7 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
             a = (a*p) % (q-1)
     s = sum(a.digits(base=p))
     if factored:
-        return(s, out)
+        return s, out
     X = PolynomialRing(R, name='X').gen()
     pi = R.ext(X**(p - 1) + p, names='pi').gen()
     out *= pi**s
@@ -207,7 +206,8 @@ def precprint(prec_type, prec_cap, p):
              'floating-point':'with floating precision %s'%prec_cap,
              'fixed-mod':'of fixed modulus %s^%s'%(p, prec_cap),
              'lattice-cap':'with lattice-cap precision',
-             'lattice-float':'with lattice-float precision'}
+             'lattice-float':'with lattice-float precision',
+             'relaxed':'handled with relaxed arithmetics'}
     return precD[prec_type]
 
 def trim_zeros(L):

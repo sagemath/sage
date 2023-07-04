@@ -104,11 +104,19 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             False
             sage: None in NN
             False
+            sage: QQbar(sqrt(2)) in NN
+            False
+            sage: RIF(1,2) in NN
+            False
+            sage: QQbar(2) in NN
+            True
+            sage: RIF(2) in NN
+            True
         """
         try:
             i = Integer(elt)
-            return  i >= Integer(0) and i == elt
-        except TypeError:
+            return i >= Integer(0) and i == elt
+        except (TypeError, ValueError):
             return False
 
     def _element_constructor_(self, i):
@@ -214,3 +222,18 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             100
         """
         return self.from_integer(rnk)
+
+    def _sympy_(self):
+        r"""
+        Return the SymPy set ``Naturals0``.
+
+        EXAMPLES::
+
+            sage: NN = NonNegativeIntegers()
+            sage: NN._sympy_()
+            Naturals0
+        """
+        from sympy import Naturals0
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return Naturals0

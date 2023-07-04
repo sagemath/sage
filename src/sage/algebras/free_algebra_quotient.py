@@ -43,7 +43,7 @@ Test comparison by equality::
     False
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -55,14 +55,15 @@ Test comparison by equality::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.modules.free_module import FreeModule
-from sage.algebras.algebra import Algebra
+from sage.rings.ring import Algebra
 from sage.algebras.free_algebra import is_FreeAlgebra
 from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientElement
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
     @staticmethod
@@ -82,18 +83,20 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             M = M.parent()(M)
             M.set_immutable()
             new_mats.append(M)
-        return super(FreeAlgebraQuotient, cls).__classcall__(cls, A, tuple(mons),
-                                                  tuple(new_mats), tuple(names))
+        return super().__classcall__(cls, A, tuple(mons),
+                                     tuple(new_mats), tuple(names))
 
     Element = FreeAlgebraQuotientElement
+
     def __init__(self, A, mons, mats, names):
         """
-        Returns a quotient algebra defined via the action of a free algebra
-        A on a (finitely generated) free module. The input for the quotient
-        algebra is a list of monomials (in the underlying monoid for A)
-        which form a free basis for the module of A, and a list of
-        matrices, which give the action of the free generators of A on this
-        monomial basis.
+        Return a quotient algebra defined via the action of a free algebra
+        A on a (finitely generated) free module.
+
+        The input for the quotient algebra is a list of monomials (in
+        the underlying monoid for A) which form a free basis for the
+        module of A, and a list of matrices, which give the action of
+        the free generators of A on this monomial basis.
 
         EXAMPLES:
 
@@ -140,18 +143,16 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
 
         """
         if not is_FreeAlgebra(A):
-            raise TypeError("Argument A must be an algebra.")
+            raise TypeError("argument A must be an algebra")
         R = A.base_ring()
-#        if not R.is_field():  # TODO: why?
-#            raise TypeError, "Base ring of argument A must be a field."
         n = A.ngens()
         assert n == len(mats)
         self.__free_algebra = A
         self.__ngens = n
         self.__dim = len(mons)
-        self.__module = FreeModule(R,self.__dim)
+        self.__module = FreeModule(R, self.__dim)
         self.__matrix_action = mats
-        self.__monomial_basis = mons # elements of free monoid
+        self.__monomial_basis = mons  # elements of free monoid
         Algebra.__init__(self, R, names, normalize=True)
 
     def _element_constructor_(self, x):
@@ -159,7 +160,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
         EXAMPLES::
 
             sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
-            sage: H._element_constructor_(i) is i
+            sage: H(i) is i
             True
             sage: a = H._element_constructor_(1); a
             1
@@ -168,11 +169,9 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: a = H._element_constructor_([1,2,3,4]); a
             1 + 2*i + 3*j + 4*k
         """
-        if isinstance(x, FreeAlgebraQuotientElement) and x.parent() is self:
-            return x
-        return self.element_class(self,x)
+        return self.element_class(self, x)
 
-    def _coerce_map_from_(self,S):
+    def _coerce_map_from_(self, S):
         """
         EXAMPLES::
 
@@ -184,7 +183,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: H._coerce_map_from_(GF(7))
             False
         """
-        return S==self or self.__free_algebra.has_coerce_map_from(S)
+        return S == self or self.__free_algebra.has_coerce_map_from(S)
 
     def _repr_(self):
         """
@@ -198,7 +197,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
         n = self.__ngens
         r = self.__module.dimension()
         x = self.variable_names()
-        return "Free algebra quotient on %s generators %s and dimension %s over %s"%(n,x,r,R)
+        return "Free algebra quotient on %s generators %s and dimension %s over %s" % (n, x, r, R)
 
     def gen(self, i):
         """
@@ -217,22 +216,21 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: H.gen(3)
             Traceback (most recent call last):
             ...
-            IndexError: Argument i (= 3) must be between 0 and 2.
+            IndexError: argument i (= 3) must be between 0 and 2
 
         Negative indexing into the generators is not supported::
 
             sage: H.gen(-1)
             Traceback (most recent call last):
             ...
-            IndexError: Argument i (= -1) must be between 0 and 2.
+            IndexError: argument i (= -1) must be between 0 and 2
         """
         n = self.__ngens
         if i < 0 or not i < n:
-            raise IndexError("Argument i (= %s) must be between 0 and %s."%(i, n-1))
+            raise IndexError("argument i (= %s) must be between 0 and %s" % (i, n - 1))
         R = self.base_ring()
         F = self.__free_algebra.monoid()
-        n = self.__ngens
-        return self.element_class(self,{F.gen(i):R(1)})
+        return self.element_class(self, {F.gen(i): R.one()})
 
     def ngens(self):
         """
@@ -297,6 +295,8 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
         """
         The free module of the algebra.
 
+        EXAMPLES::
+
             sage: H = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0]; H
             Free algebra quotient on 3 generators ('i', 'j', 'k') and dimension 4 over Rational Field
             sage: H.module()
@@ -333,11 +333,13 @@ def hamilton_quatalg(R):
     constructed as a free algebra quotient.
 
     INPUT:
-        - R -- a commutative ring
+
+    - R -- a commutative ring
 
     OUTPUT:
-        - Q -- quaternion algebra
-        - gens -- generators for Q
+
+    - Q -- quaternion algebra
+    - gens -- generators for Q
 
     EXAMPLES::
 
@@ -357,13 +359,14 @@ def hamilton_quatalg(R):
     """
     n = 3
     from sage.algebras.free_algebra import FreeAlgebra
-    from sage.matrix.all import MatrixSpace
+    from sage.matrix.matrix_space import MatrixSpace
     A = FreeAlgebra(R, n, 'i')
     F = A.monoid()
     i, j, k = F.gens()
-    mons = [ F(1), i, j, k ]
-    M = MatrixSpace(R,4)
-    mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]),  M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]),  M([0,0,0,1, 0,0,-1,0, 0,1,0,0, -1,0,0,0]) ]
-    H3 = FreeAlgebraQuotient(A,mons,mats, names=('i','j','k'))
+    mons = [F(1), i, j, k]
+    M = MatrixSpace(R, 4)
+    mats = [M([0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0]),
+            M([0, 0, 1, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, -1, 0, 0]),
+            M([0, 0, 0, 1, 0, 0, -1, 0, 0, 1, 0, 0, -1, 0, 0, 0])]
+    H3 = FreeAlgebraQuotient(A, mons, mats, names=('i', 'j', 'k'))
     return H3, H3.gens()
-

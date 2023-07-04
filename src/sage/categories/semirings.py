@@ -1,7 +1,6 @@
 r"""
 Semirngs
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #
@@ -49,4 +48,3 @@ class Semirings(CategoryWithAxiom):
         sage: TestSuite(Semirings()).run()
     """
     _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, "Unital")
-

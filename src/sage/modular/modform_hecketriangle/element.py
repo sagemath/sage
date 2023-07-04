@@ -6,7 +6,6 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -64,14 +63,14 @@ class FormsElement(FormsRingElement):
             sage: ss_el.parent()
             Subspace of dimension 1 of ModularForms(n=5, k=20/3, ep=1) over Integer Ring
         """
-        super(FormsElement, self).__init__(parent, rat)
+        super().__init__(parent, rat)
 
         if self.AT(["quasi"]) >= self._analytic_type:
             pass
         elif not (self.is_homogeneous() and
                   self._weight == parent.weight() and
                   self._ep == parent.ep()):
-                raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
+            raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
 
         from .subspace import SubSpaceForms
         if isinstance(parent, SubSpaceForms) and (parent._module is not None):
@@ -111,7 +110,7 @@ class FormsElement(FormsRingElement):
             sage: latex(QuasiModularForms(n=infinity, k=8, ep=1)(x*(x-y^2)))
             -E_{4} f_{i}^{2} + E_{4}^{2}
         """
-        return super(FormsElement, self)._latex_()
+        return super()._latex_()
 
     def coordinate_vector(self):
         r"""
@@ -285,9 +284,9 @@ class FormsElement(FormsRingElement):
             sage: L(10).n(53)
             -23.9781792831...
         """
-        from sage.rings.all import ZZ
-        from sage.symbolic.all import pi
-        from sage.functions.other import sqrt
+        from sage.rings.integer_ring import ZZ
+        from sage.symbolic.constants import pi
+        from sage.misc.functional import sqrt
         from sage.lfunctions.dokchitser import Dokchitser
 
         if (not (self.is_modular() and self.is_holomorphic()) or self.weight() == 0):

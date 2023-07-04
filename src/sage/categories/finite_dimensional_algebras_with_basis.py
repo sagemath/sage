@@ -32,7 +32,6 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.algebras import Algebras
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.tensor import TensorProductsCategory
-from sage.matrix.constructor import Matrix
 
 class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     r"""
@@ -314,7 +313,6 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             result.rename("Semisimple quotient of {}".format(self))
             return result
 
-
         @cached_method
         def center_basis(self):
             r"""
@@ -485,15 +483,15 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A = Z12.algebra(QQ)
                 sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
                 sage: sorted(idempotents, key=str)
-                [-1/2*B[8] + 1/2*B[4],
-                 -B[0] + 1/2*B[8] + 1/2*B[4],
-                 -B[0] + 1/2*B[9] + 1/2*B[3],
+                [-B[0] + 1/2*B[4] + 1/2*B[8],
+                 1/2*B[4] - 1/2*B[8],
+                 1/2*B[9] + 1/2*B[3] - B[0],
                  1/2*B[9] - 1/2*B[3],
-                 1/4*B[1] + 1/2*B[3] + 1/4*B[5] - 1/4*B[7] - 1/2*B[9] - 1/4*B[11],
                  1/4*B[1] + 1/4*B[11] - 1/4*B[5] - 1/4*B[7],
-                 1/4*B[1] - 1/2*B[4] - 1/4*B[5] + 1/4*B[7] + 1/2*B[8] - 1/4*B[11],
-                 B[0],
-                 B[0] + 1/4*B[1] - 1/2*B[3] - 1/2*B[4] + 1/4*B[5] + 1/4*B[7] - 1/2*B[8] - 1/2*B[9] + 1/4*B[11]]
+                 1/4*B[1] - 1/2*B[9] + 1/4*B[5] - 1/4*B[7] + 1/2*B[3] - 1/4*B[11],
+                 1/4*B[1] - 1/2*B[9] - 1/2*B[3] + 1/4*B[11] + 1/4*B[5] + 1/4*B[7] + B[0] - 1/2*B[4] - 1/2*B[8],
+                 1/4*B[1] - 1/4*B[5] + 1/4*B[7] - 1/4*B[11] - 1/2*B[4] + 1/2*B[8],
+                 B[0]]
                 sage: sum(idempotents) == 1
                 True
                 sage: all(e*e == e for e in idempotents)
@@ -691,6 +689,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [0 0 0 1 0 1 1 0]
                 [0 0 0 0 0 0 0 1]
             """
+            from sage.matrix.constructor import Matrix
             from sage.rings.integer_ring import ZZ
             A_quo = self.semisimple_quotient()
             idempotents_quo = A_quo.central_orthogonal_idempotents()
@@ -699,9 +698,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                           for e in idempotents_quo]
             # Orthogonal idempotents
             idempotents = self.orthogonal_idempotents_central_mod_radical()
-            def C(i,j):
+
+            def C(i, j):
                 summand = self.peirce_summand(idempotents[i], idempotents[j])
-                return summand.dimension() / (dim_simples[i]*dim_simples[j])
+                return summand.dimension() / (dim_simples[i] * dim_simples[j])
             m = Matrix(ZZ, len(idempotents), C)
             m.set_immutable()
             return m
@@ -817,7 +817,6 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             return self.submodule([self.from_vector(v) for v in ideal.basis()],
                                   already_echelonized=True)
-
 
         def peirce_decomposition(self, idempotents=None, check=True):
             r"""
@@ -953,7 +952,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Here are some more counterexamples:
 
             1. Some orthogonal elements summing to `1` but not being
-            idempotent::
+               idempotent::
 
                 sage: class PQAlgebra(CombinatorialFreeModule):
                 ....:     def __init__(self, F, p):
@@ -977,7 +976,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))
                 False
 
-            For comparison::
+               For comparison::
 
                 sage: A = PQAlgebra(QQ, x**2 - x); y = A.x()
                 sage: a, b = y, 1-y
@@ -1085,6 +1084,99 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         _matrix_ = to_matrix  # For temporary backward compatibility
         on_left_matrix = to_matrix
+
+        def __invert__(self):
+            r"""
+            Return the inverse of ``self`` if it exists, and
+            otherwise raise an error.
+
+            .. WARNING::
+
+                This always returns the inverse or fails on elements
+                that are not invertible when the base ring is a field.
+                In other cases, it may fail to find an inverse even
+                if one exists if we cannot solve a linear system of
+                equations over (the fraction field of) the base ring.
+
+            EXAMPLES::
+
+                sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+                sage: P = Permutation
+                sage: a = 3 * QS3(P([1,2,3])) + QS3(P([1,3,2])) + QS3(P([2,1,3]))
+                sage: b = ~a; b
+                9/20*[1, 2, 3] - 7/40*[1, 3, 2] - 7/40*[2, 1, 3]
+                 + 3/40*[2, 3, 1] + 3/40*[3, 1, 2] - 1/20*[3, 2, 1]
+                sage: a * b
+                [1, 2, 3]
+                sage: ~b == a
+                True
+
+                sage: a = 3 * QS3.one()
+                sage: b = ~a
+                sage: b * a == QS3.one()
+                True
+                sage: b == 1/3 * QS3.one()
+                True
+                sage: ~b == a
+                True
+
+                sage: R.<t> = QQ[]
+                sage: RS3 = SymmetricGroupAlgebra(R, 3)
+                sage: a = RS3(P([1,2,3])) - RS3(P([1,3,2])) + RS3(P([2,1,3])); ~a
+                -1/2*[1, 3, 2] + 1/2*[2, 1, 3] + 1/2*[2, 3, 1] + 1/2*[3, 1, 2]
+
+            Some examples on elements that do not have an inverse::
+
+                sage: c = 2 * QS3(P([1,2,3])) + QS3(P([1,3,2])) + QS3(P([2,1,3]))
+                sage: ~c
+                Traceback (most recent call last):
+                ...
+                ValueError: cannot invert self (= 2*[1, 2, 3] + [1, 3, 2] + [2, 1, 3])
+
+                sage: ZS3 = SymmetricGroupAlgebra(ZZ, 3)
+                sage: aZ = 3 * ZS3(P([1,2,3])) + ZS3(P([1,3,2])) + ZS3(P([2,1,3]))
+                sage: ~aZ
+                Traceback (most recent call last):
+                ...
+                ValueError: cannot invert self (= 3*[1, 2, 3] + [1, 3, 2] + [2, 1, 3])
+                sage: x = 2 * ZS3.one()
+                sage: ~x
+                Traceback (most recent call last):
+                ...
+                ValueError: cannot invert self (= 2*[1, 2, 3])
+
+            TESTS:
+
+            An algebra that does not define ``one_basis()``::
+
+                sage: I = DescentAlgebra(QQ, 3).I()
+                sage: a = 3 * I.one()
+                sage: ~a == 1/3 * I.one()
+                True
+            """
+            alg = self.parent()
+            R = alg.base_ring()
+            ob = None
+            try:
+                ob = alg.one_basis()
+            except (AttributeError, TypeError, ValueError):
+                pass
+            if ob is not None:
+                mc = self.monomial_coefficients(copy=False)
+                if len(mc) == 1 and ob in mc:
+                    try:
+                        return alg.term(ob, R(~mc[ob]))
+                    except (ValueError, TypeError):
+                        raise ValueError("cannot invert self (= %s)" % self)
+
+            e = alg.one().to_vector()
+            A = self.to_matrix()
+            try:
+                inv = A.solve_right(e)
+                inv.change_ring(R)
+                return alg.from_vector(inv)
+            except (ValueError, TypeError):
+                raise ValueError("cannot invert self (= %s)" % self)
 
     class Cellular(CategoryWithAxiom_over_base_ring):
         r"""
@@ -1436,12 +1528,15 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                           + 7/48*[2, 1] # [3, 1, 2] + 49/48*[2, 1] # [3, 2, 1])
                     """
                     if self.cellular_basis() is self:
-                        M = x.monomial_coefficients(copy=False)
-                        return self._from_dict({(i[0], i[2], i[1]): M[i] for i in M},
-                                               remove_zeros=False)
-                    on_basis = lambda i: self._tensor_of_elements([
-                                                    A.basis()[i[j]].cellular_involution()
-                                                    for j,A in enumerate(self._sets)])
+                        def func(x):
+                            M = x.monomial_coefficients(copy=False)
+                            return self._from_dict({(i[0], i[2], i[1]): M[i] for i in M},
+                                                   remove_zeros=False)
+                        return self.module_morphism(function=func, codomain=self)
+
+                    def on_basis(i):
+                        return self._tensor_of_elements([A.basis()[i[j]].cellular_involution()
+                                                         for j, A in enumerate(self._sets)])
                     return self.module_morphism(on_basis, codomain=self)
 
                 @cached_method
@@ -1460,17 +1555,18 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                         True
                     """
                     C = [A.cellular_basis() for A in self._sets]
-                    elts = [C[j](self._sets[j].basis()[ij]) for j,ij in enumerate(i)]
+                    elts = [C[j](self._sets[j].basis()[ij]) for j, ij in enumerate(i)]
                     from sage.categories.tensor import tensor
                     T = tensor(C)
                     temp = T._tensor_of_elements(elts)
                     B = self.cellular_basis()
                     M = temp.monomial_coefficients(copy=False)
+
                     def convert_index(i):
                         mu = []
                         s = []
                         t = []
-                        for a,b,c in i:
+                        for a, b, c in i:
                             mu.append(a)
                             s.append(b)
                             t.append(c)
@@ -1522,5 +1618,3 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 'sage.categories.finite_dimensional_algebras_with_basis'
             """
             return self._with_axiom('Cellular')
-
-

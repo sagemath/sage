@@ -59,7 +59,6 @@ class will by default also be used as keys for the cache::
     ....:         self.b = b
     ....:     def __repr__(self):
     ....:         return "C(%s, %s)"%(self.a, self.b)
-    ....:
     sage: a = C(1)
     sage: a is C(1)
     True
@@ -180,12 +179,11 @@ preprocessing::
     sage: class WrongUsage(CachedRepresentation):
     ....:     @staticmethod
     ....:     def __classcall__(cls, n):
-    ....:         return super(WrongUsage,cls).__classcall__(cls, n^2)
+    ....:         return super().__classcall__(cls, n^2)
     ....:     def __init__(self, n):
     ....:         self.n = n
     ....:     def __repr__(self):
     ....:         return "Something(%d)"%self.n
-    ....:
     sage: import __main__
     sage: __main__.WrongUsage = WrongUsage # This is only needed in doctests
     sage: w = WrongUsage(3); w
@@ -207,12 +205,11 @@ where it won't mess with the cache::
     sage: class BetterUsage(CachedRepresentation):
     ....:     @staticmethod
     ....:     def __classcall__(cls, n):
-    ....:         return super(BetterUsage, cls).__classcall__(cls, abs(n))
+    ....:         return super().__classcall__(cls, abs(n))
     ....:     def __init__(self, n):
     ....:         self.n = n^2
     ....:     def __repr__(self):
     ....:         return "SomethingElse(%d)"%self.n
-    ....:
     sage: __main__.BetterUsage = BetterUsage # This is only needed in doctests
     sage: b = BetterUsage(3); b
     SomethingElse(9)
@@ -245,26 +242,22 @@ sub-class (in contrast to a ``__classcall_private__`` method!).  ::
     ....:         self.n = n
     ....:     def __repr__(self):
     ....:         return "C(%d, 0)"%self.n
-    ....:
     sage: class C1(C):
     ....:     def __repr__(self):
     ....:         return "C1(%d)"%self.n
-    ....:
     sage: class C2(C):
     ....:     @staticmethod
     ....:     def __classcall__(cls, n, implementation=0):
     ....:         if implementation:
-    ....:             return super(C2, cls).__classcall__(cls, (n,)*implementation)
-    ....:         return super(C2, cls).__classcall__(cls, n)
+    ....:             return super().__classcall__(cls, (n,)*implementation)
+    ....:         return super().__classcall__(cls, n)
     ....:     def __init__(self, t):
     ....:         self.t = t
     ....:     def __repr__(self):
     ....:         return "C2(%s)"%repr(self.t)
-    ....:
     sage: class C2b(C2):
     ....:     def __repr__(self):
     ....:         return "C2b(%s)"%repr(self.t)
-    ....:
     sage: __main__.C2 = C2      # not needed in an interactive session
     sage: __main__.C2b = C2b
 
@@ -333,12 +326,11 @@ For creating a cached representation using a factory, one has to
 
 An example::
 
-    sage: class C(object):
+    sage: class C():
     ....:     def __init__(self, t):
     ....:         self.t = t
     ....:     def __repr__(self):
     ....:         return "C%s"%repr(self.t)
-    ....:
     sage: from sage.structure.factory import UniqueFactory
     sage: class MyFactory(UniqueFactory):
     ....:     def create_key(self, n, m=None):
@@ -348,7 +340,6 @@ An example::
     ....:     def create_object(self, version, key, **extra_args):
     ....:         # We ignore version and extra_args
     ....:         return C(key)
-    ....:
 
 Now, we define an instance of the factory, stating that it can be found under
 the name ``"F"`` in the ``__main__`` module. By consequence, pickling works::
@@ -544,7 +535,7 @@ accordingly, for example by inheriting from
 :class:`~sage.misc.fast_methods.WithEqualityById`.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>
 #  Copyright (C) 2013 Simon A. King <simon.king at uni-jena.de>
 #
@@ -558,16 +549,14 @@ accordingly, for example by inheriting from
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
-from __future__ import print_function
+# *****************************************************************************
 
-from sage.misc import six
 from sage.misc.cachefunc import weak_cached_function
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.fast_methods import WithEqualityById
 
 
-class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
+class CachedRepresentation(metaclass=ClasscallMetaclass):
     """
     Classes derived from CachedRepresentation inherit a weak cache for their
     instances.
@@ -596,7 +585,6 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
         sage: class MyClass(CachedRepresentation):
         ....:     # all the rest as usual
         ....:     pass
-
 
     We start with a simple class whose constructor takes a single
     value as argument (TODO: find a more meaningful example)::
@@ -652,11 +640,10 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
         ....:     @staticmethod
         ....:     def __classcall__(cls, iterable):
         ....:         t = tuple(iterable)
-        ....:         return super(MyClass2, cls).__classcall__(cls, t)
+        ....:         return super().__classcall__(cls, t)
         ....:
         ....:     def __init__(self, value):
         ....:         self.value = value
-        ....:
         sage: x = MyClass2([1,2,3])
         sage: y = MyClass2(tuple([1,2,3]))
         sage: z = MyClass2(i for i in [1,2,3])
@@ -672,7 +659,6 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
         sage: class MyClass3(CachedRepresentation):
         ....:     def __init__(self, value = 3):
         ....:         self.value = value
-        ....:
         sage: MyClass3(3) is MyClass3()
         False
 
@@ -681,11 +667,10 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
         sage: class MyClass3(UniqueRepresentation):
         ....:     @staticmethod
         ....:     def __classcall__(cls, value = 3):
-        ....:         return super(MyClass3, cls).__classcall__(cls, value)
+        ....:         return super().__classcall__(cls, value)
         ....:
         ....:     def __init__(self, value):
         ....:         self.value = value
-        ....:
         sage: MyClass3(3) is MyClass3()
         True
 
@@ -731,12 +716,11 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
         sage: class WrongUsage(CachedRepresentation):
         ....:     @staticmethod
         ....:     def __classcall__(cls, n):
-        ....:         return super(WrongUsage,cls).__classcall__(cls, n^2)
+        ....:         return super().__classcall__(cls, n^2)
         ....:     def __init__(self, n):
         ....:         self.n = n
         ....:     def __repr__(self):
         ....:         return "Something(%d)"%self.n
-        ....:
         sage: import __main__
         sage: __main__.WrongUsage = WrongUsage # This is only needed in doctests
         sage: w = WrongUsage(3); w
@@ -758,12 +742,11 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
         sage: class BetterUsage(CachedRepresentation):
         ....:     @staticmethod
         ....:     def __classcall__(cls, n):
-        ....:         return super(BetterUsage, cls).__classcall__(cls, abs(n))
+        ....:         return super().__classcall__(cls, abs(n))
         ....:     def __init__(self, n):
         ....:         self.n = n^2
         ....:     def __repr__(self):
         ....:         return "SomethingElse(%d)"%self.n
-        ....:
         sage: __main__.BetterUsage = BetterUsage # This is only needed in doctests
         sage: b = BetterUsage(3); b
         SomethingElse(9)
@@ -887,7 +870,6 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
             ....:
             ....:     def __reduce__(self):
             ....:         return (MyClass3, (self.value,))
-            ....:
             sage: import __main__; __main__.MyClass3 = MyClass3  # Fake MyClass3 being defined in a python module
             sage: x = MyClass3(1)
             sage: loads(dumps(x)) is x
@@ -901,10 +883,9 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
     older pickles can still be reasonably unpickled. Let us create a
     (new style) class, and pickle one of its instances::
 
-        sage: class MyClass4(object):
+        sage: class MyClass4():
         ....:     def __init__(self, value):
         ....:         self.value = value
-        ....:
         sage: import __main__; __main__.MyClass4 = MyClass4  # Fake MyClass4 being defined in a python module
         sage: pickle = dumps(MyClass4(1))
 
@@ -984,7 +965,6 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
         ....:     def __init__(self, value):
         ....:         print("initializing object")
         ....:         self.value = value
-        ....:
 
     Let us create an object twice::
 
@@ -1048,7 +1028,7 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
             sage: class B(A):
             ....:     @staticmethod
             ....:     def __classcall__(cls, *args, **kwds):
-            ....:          return super(B,cls).__classcall__(cls,*args,**kwds)
+            ....:          return super().__classcall__(cls,*args,**kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1081,7 +1061,7 @@ class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
             ....:     @staticmethod
             ....:     def __classcall_private__(cls, *args, **kwds):
             ....:         print("Private B")
-            ....:         return super(B,cls).__classcall__(cls,*args,**kwds)
+            ....:         return super().__classcall__(cls,*args,**kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1238,14 +1218,10 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
 
     This nice behaviour is not available when one just uses a factory::
 
-        sage: isinstance(GF(7), GF)  # py2
+        sage: isinstance(GF(7), GF)
         Traceback (most recent call last):
         ...
-        TypeError: isinstance() arg 2 must be a class, type, or tuple of classes and types
-        sage: isinstance(GF(7), GF)  # py3
-        Traceback (most recent call last):
-        ...
-        TypeError: isinstance() arg 2 must be a type or tuple of types
+        TypeError: isinstance() arg 2 must be a type...
 
         sage: isinstance(GF, sage.structure.factory.UniqueFactory)
         True
@@ -1339,6 +1315,5 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
 
         sage: class bla(UniqueRepresentation, SageObject):
         ....:     pass
-        ....:
         sage: b = bla()
     """

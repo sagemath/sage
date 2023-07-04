@@ -26,14 +26,19 @@ REFERENCES:
 
 .. SEEALSO::
 
-    There are also tables of link and knot invariants at
-    http://www.indiana.edu/~knotinfo/
-    and http://www.indiana.edu/~linkinfo/.
+    There are also tables of link and knot invariants at web-pages
+    `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
+    `LinkInfo <https://linkinfo.sitehost.iu.edu>`__. These can be
+    used inside Sage after installing the optional package
+    ``database_knotinfo`` (type ``sage -i database_knotinfo`` in a command shell,
+    see :mod:`~sage.knots.knotinfo`).
 
 AUTHORS:
 
 - Miguel Angel Marco Buzunariz
 - Amit Jamadagni
+- Sebastian Oehms (October 2020, add :meth:`get_knotinfo` and :meth:`is_isotopic`)
+- Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
 """
 
 # ****************************************************************************
@@ -44,12 +49,9 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
+#
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
-
-import six
-from six.moves import range
 
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
@@ -277,7 +279,7 @@ class Link(SageObject):
     """
 
     def __init__(self, data):
-        """
+        r"""
         Initialize ``self``.
 
         TESTS::
@@ -309,25 +311,50 @@ class Link(SageObject):
             ...
             ValueError: invalid PD code: each segment must appear twice
 
+        Segments in PD code must be labelled by positive integers::
+
+            sage: code = [(2, 5, 3, 0), (4, 1, 5, 2), (0, 3, 1, 4)]
+            sage: Knot(code)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid PD code: segment label 0 not allowed
+
             sage: L = Link(5)
             Traceback (most recent call last):
             ...
             ValueError: invalid input: data must be either a list or a braid
+
+        Verify that :trac:`29692` is fixed::
+
+            sage: B = BraidGroup(5)
+            sage: L = Link(B([3,4,3,-4]))
+            sage: L
+            Link with 1 component represented by 4 crossings
+            sage: L.braid()
+            s0*s1*s0*s1^-1
+
+        PD code can be a list of 4-tuples::
+
+            sage: code = [(2, 5, 3, 6), (4, 1, 5, 2), (6, 3, 1, 4)]
+            sage: K = Knot(code); K.alexander_polynomial()
+            t^-1 - 1 + t
         """
         if isinstance(data, list):
+            # either oriented Gauss or PD code
             if len(data) != 2 or not all(isinstance(i, list) for i in data[0]):
-                for i in data:
-                    if len(i) != 4:
-                        raise ValueError("invalid PD code: crossings must be represented by four segments")
-                    else:
-                        flat = flatten(data)
-                        if any(flat.count(i) != 2 for i in set(flat)):
-                            raise ValueError("invalid PD code: each segment must appear twice")
-                self._pd_code = data
+                # PD code
+                if any(len(i) != 4 for i in data):
+                    raise ValueError("invalid PD code: crossings must be represented by four segments")
+                flat = flatten(data)
+                if 0 in flat:
+                    raise ValueError("invalid PD code: segment label 0 not allowed")
+                if any(flat.count(i) != 2 for i in set(flat)):
+                    raise ValueError("invalid PD code: each segment must appear twice")
+                self._pd_code = [list(vertex) for vertex in data]
                 self._oriented_gauss_code = None
                 self._braid = None
-
             else:
+                # oriented Gauss code
                 flat = flatten(data[0])
                 if flat:
                     a, b = max(flat), min(flat)
@@ -341,34 +368,24 @@ class Link(SageObject):
             from sage.groups.braid import Braid, BraidGroup
             if isinstance(data, Braid):
                 # Remove all unused strands
-                support = sorted(set(abs(x) for x in data.Tietze()))
-                i = 0
-                cur = 1
-                while i < len(support):
-                    if support[i] == cur:
-                        cur += 1
-                        i += 1
-                    elif support[i] == cur + 1:
-                        support.insert(i, cur+1)
-                        cur += 2
-                        i += 2
-                    else:
-                        cur = support[i]
-                        i += 1
+                support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
                 d = {}
-                for i,s in enumerate(support):
-                    d[s] = i+1
-                    d[-s] = -i-1
+                for i, s in enumerate(support):
+                    d[s] = i + 1
+                    d[-s] = -i - 1
                 if not support:
                     B = BraidGroup(2)
                 else:
-                    B = BraidGroup(len(support)+1)
+                    B = BraidGroup(len(support))
                 self._braid = B([d[x] for x in data.Tietze()])
                 self._oriented_gauss_code = None
                 self._pd_code = None
 
             else:
                 raise ValueError("invalid input: data must be either a list or a braid")
+
+        self._mirror  = None  # set on invocation of :meth:`mirror_image`
+        self._reverse = None  # set on invocation of :meth:`reverse`
 
     def arcs(self, presentation='pd'):
         r"""
@@ -430,14 +447,14 @@ class Link(SageObject):
         elif presentation == 'gauss_code':
             res = []
             for comp in self.gauss_code():
-                if not any(i<0 for i in comp):
+                if not any(i < 0 for i in comp):
                     res.append(comp)
                 else:
                     rescom = []
                     par = []
                     for i in comp:
                         par.append(i)
-                        if i<0:
+                        if i < 0:
                             rescom.append(copy(par))
                             par = [i]
                     rescom[0] = par + rescom[0]
@@ -513,7 +530,7 @@ class Link(SageObject):
             return F.quotient(rels)
 
     def _repr_(self):
-        """
+        r"""
         Return a string representation.
 
         OUTPUT: string representation
@@ -537,7 +554,7 @@ class Link(SageObject):
         return 'Link with {} component{} represented by {} crossings'.format(number_of_components, plural, pd_len)
 
     def __eq__(self, other):
-        """
+        r"""
         Check equality.
 
         TESTS::
@@ -562,7 +579,7 @@ class Link(SageObject):
         return self.braid() == other.braid()
 
     def __hash__(self):
-        """
+        r"""
         Return the hash of ``self``.
 
         EXAMPLES::
@@ -574,7 +591,7 @@ class Link(SageObject):
         return hash(self.braid())
 
     def __ne__(self, other):
-        """
+        r"""
         Check inequality.
 
         TESTS::
@@ -591,10 +608,16 @@ class Link(SageObject):
         return not self.__eq__(other)
 
     def braid(self):
-        """
+        r"""
         Return a braid representation of ``self``.
 
         OUTPUT: an element in the braid group
+
+        .. WARNING::
+
+            For the unknot with no crossings, this returns the identity
+            of the braid group with 2 strands because this disregards
+            strands with no crossings.
 
         EXAMPLES::
 
@@ -636,7 +659,7 @@ class Link(SageObject):
             n1 = b1.parent().strands()
             n2 = b2.parent().strands()
             t1 = list(b1.Tietze())
-            t2 = [sign(x)*(abs(x) + n1) for x in b2.Tietze()]
+            t2 = [sign(x) * (abs(x) + n1) for x in b2.Tietze()]
             B = BraidGroup(n1 + n2)
             self._braid = B(t1 + t2)
             return self._braid
@@ -651,16 +674,16 @@ class Link(SageObject):
         newedge = max(flatten(pd_code)) + 1
         for region in self.regions():
             n = len(region)
-            for i in range(n-1):
+            for i in range(n - 1):
                 a = region[i]
                 seifcirca = [x for x in seifert_circles if abs(a) in x]
-                for j in range(i+1,n):
+                for j in range(i + 1, n):
                     b = region[j]
                     seifcircb = [x for x in seifert_circles if abs(b) in x]
                     if seifcirca != seifcircb and sign(a) == sign(b):
                         tails, heads = self._directions_of_edges()
 
-                        newPD = deepcopy(pd_code)
+                        newPD = [list(vertex) for vertex in pd_code]
                         if sign(a) == 1:
                             C1 = newPD[newPD.index(heads[a])]
                             C1[C1.index(a)] = newedge + 1
@@ -802,7 +825,7 @@ class Link(SageObject):
             tails[C[2]] = C
             a = C[2]
             D = C
-            while not a in heads:
+            while a not in heads:
                 next_crossing = [x for x in pd_code if a in x and x != D]
                 if not next_crossing:
                     heads[a] = D
@@ -826,7 +849,7 @@ class Link(SageObject):
                 if a in x:
                     D = x
                     break
-            while not a in heads:
+            while a not in heads:
                 tails[a] = D
                 for x in pd_code:
                     if a in x and x != D:
@@ -1028,12 +1051,14 @@ class Link(SageObject):
             G = Graph()
             for j, cr in enumerate(crossings):
                 n = nmax + j
-                if not v[j]: # For negative crossings, we go from undercrossings to the left
+                if not v[j]:
+                    # For negative crossings, we go from undercrossings to the left
                     G.add_edge((cr[3], cr[0], n), cr[0])
                     G.add_edge((cr[3], cr[0], n), cr[3])
                     G.add_edge((cr[1], cr[2], n), cr[2])
                     G.add_edge((cr[1], cr[2], n), cr[1])
-                else: # positive crossings, from undercrossing to the right
+                else:
+                    # positive crossings, from undercrossing to the right
                     G.add_edge((cr[0], cr[1], n), cr[0])
                     G.add_edge((cr[0], cr[1], n), cr[1])
                     G.add_edge((cr[2], cr[3], n), cr[2])
@@ -1044,10 +1069,10 @@ class Link(SageObject):
             jmin = writhe + iindex - len(sm)
             jmax = writhe + iindex + len(sm)
             smoothings.append((tuple(v), sm, iindex, jmin, jmax))
-        states = [] # we got all the smoothings, now find all the states
+        states = []  # we got all the smoothings, now find all the states
         for sm in smoothings:
             for k in range(len(sm[1])+1):
-                for circpos in combinations(sorted(sm[1]), k): # Add each state
+                for circpos in combinations(sorted(sm[1]), k):  # Add each state
                     circneg = sm[1].difference(circpos)
                     j = writhe + sm[2] + len(circpos) - len(circneg)
                     states.append((sm[0], tuple(sorted(circneg)), tuple(circpos), sm[2], j))
@@ -1089,7 +1114,7 @@ class Link(SageObject):
         ncross = len(crossings)
         states = [(_0, set(_1), set(_2), _3, _4)
                   for (_0, _1, _2, _3, _4) in self._enhanced_states()]
-        bases = {} # arrange them by (i,j)
+        bases = {}  # arrange them by (i,j)
         for st in states:
             i, j = st[3], st[4]
             if j == height:
@@ -1109,7 +1134,7 @@ class Link(SageObject):
                         difs = [index for index,value in enumerate(V1[0]) if value != V20[index]]
                         if len(difs) == 1 and not (V2[2].intersection(V1[1]) or V2[1].intersection(V1[2])):
                             m[ii,jj] = (-1)**sum(V2[0][x] for x in range(difs[0]+1, ncross))
-                            #Here we have the matrix constructed, now we have to put it in the dictionary of complexes
+                            # Here we have the matrix constructed, now we have to put it in the dictionary of complexes
             else:
                 m = matrix(ring, len(bases[(i,j)]), 0)
             complexes[i] = m.transpose()
@@ -1161,7 +1186,42 @@ class Link(SageObject):
             sage: K = Link(b)
             sage: K.khovanov_homology(degree = 2)
             {2: {2: 0}, 4: {2: Z}, 6: {2: Z}}
+
+        TESTS:
+
+        Check that :trac:`31001` is fixed::
+
+            sage: L = Link([])
+            sage: L.khovanov_homology()
+            {-1: {0: Z}, 1: {0: Z}}
+            sage: L.khovanov_homology(height=-1)
+            {-1: {0: Z}}
+            sage: L.khovanov_homology(height=0)
+            {}
+            sage: L.khovanov_homology(QQ, height=1)
+            {1: {0: Vector space of dimension 1 over Rational Field}}
+            sage: L.khovanov_homology(GF(2), degree=0)
+            {-1: {0: Vector space of dimension 1 over Finite Field of size 2},
+             1: {0: Vector space of dimension 1 over Finite Field of size 2}}
+            sage: L.khovanov_homology(degree=1)
+            {}
+            sage: L.khovanov_homology(degree=0, height=1)
+            {1: {0: Z}}
+            sage: L.khovanov_homology(degree=1, height=1)
+            {}
         """
+        if not self.pd_code():  # special case for the unknot with no crossings
+            from sage.homology.homology_group import HomologyGroup
+            homs = {-1: {0: HomologyGroup(1, ring, [0])},
+                    1: {0: HomologyGroup(1, ring, [0])}}
+            if height is not None:
+                if height not in homs:
+                    return {}
+                homs = {height: homs[height]}
+            if degree is not None:
+                homs = {ht: {degree: homs[ht][degree]} for ht in homs if degree in homs[ht]}
+            return homs
+
         if height is not None:
             heights = [height]
         else:
@@ -1174,7 +1234,7 @@ class Link(SageObject):
         return homologies
 
     def oriented_gauss_code(self):
-        """
+        r"""
         Return the oriented Gauss code of ``self``.
 
         The oriented Gauss code has two parts:
@@ -1261,7 +1321,7 @@ class Link(SageObject):
         return self._oriented_gauss_code
 
     def pd_code(self):
-        """
+        r"""
         Return the planar diagram code of ``self``.
 
         The planar diagram is returned in the following format.
@@ -1340,7 +1400,7 @@ class Link(SageObject):
             else:
                 crossing_dic = {}
 
-            pd = list(six.itervalues(crossing_dic))
+            pd = list(crossing_dic.values())
             self._pd_code = pd
             return self._pd_code
 
@@ -1369,7 +1429,7 @@ class Link(SageObject):
         raise AssertionError("invalid state")
 
     def gauss_code(self):
-        """
+        r"""
         Return the Gauss code of ``self``.
 
         The Gauss code is generated by the following procedure:
@@ -1396,7 +1456,7 @@ class Link(SageObject):
         return self.oriented_gauss_code()[0]
 
     def dowker_notation(self):
-        """
+        r"""
         Return the Dowker notation of ``self``.
 
         Similar to the PD code we number the components, so every crossing
@@ -1430,7 +1490,7 @@ class Link(SageObject):
         return dn
 
     def _braid_word_components(self):
-        """
+        r"""
         Return the disjoint braid components, if any, else return the braid
         of ``self``.
 
@@ -1479,7 +1539,7 @@ class Link(SageObject):
         return tuple([a for a in x if a])
 
     def _braid_word_components_vector(self):
-        """
+        r"""
         The list from the :meth:`_braid_word_components` is flattened to
         give out the vector form.
 
@@ -1546,7 +1606,7 @@ class Link(SageObject):
 
     @cached_method
     def seifert_matrix(self):
-        """
+        r"""
         Return the Seifert matrix associated with ``self``.
 
         ALGORITHM:
@@ -1577,45 +1637,31 @@ class Link(SageObject):
         """
         x = self._braid_word_components_vector()
         h = self._homology_generators()
-        hl = len(h)
-        A = matrix(ZZ, hl, hl)
         indices = [i for i, hi in enumerate(h) if hi]
-        for i in indices:
+        N = len(indices)
+        A = matrix(ZZ, N, N, 0)
+        for ni, i in enumerate(indices):
             hi = h[i]
-            for j in range(i, hl):
-                if i == j:
-                    A[i, j] = -(x[i] + x[hi]).sign()
-                elif hi > h[j]:
-                    A[i, j] = 0
-                    A[j, i] = 0
-                elif hi < j:
-                    A[i, j] = 0
-                    A[j, i] = 0
-                elif hi == j:
+            A[ni, ni] = -(x[i] + x[hi]).sign()
+            for nj in range(ni + 1, N):
+                j = indices[nj]
+                if hi > h[j] or hi < j:
+                    continue
+                if hi == j:
                     if x[j] > 0:
-                        A[i, j] = 0
-                        A[j, i] = 1
+                        A[nj, ni] = 1
                     else:
-                        A[i, j] = -1
-                        A[j, i] = 0
-                elif abs(abs(x[i]) - abs(x[j])) > 1:
-                    A[i, j] = 0
+                        A[ni, nj] = -1
                 elif abs(x[i]) - abs(x[j]) == 1:
-                    A[i, j] = 0
-                    A[j, i] = -1
+                    A[nj, ni] = -1
                 elif abs(x[j]) - abs(x[i]) == 1:
-                    A[i, j] = 1
-                    A[j, i] = 0
-                else:  # for debugging
-                    A[i, j] = 2
-                    A[j, i] = 2
-        A = A.matrix_from_rows_and_columns(indices, indices)
+                    A[ni, nj] = 1
         A.set_immutable()
         return A
 
     @cached_method
     def number_of_components(self):
-        """
+        r"""
         Return the number of connected components of ``self``.
 
         OUTPUT: number of connected components
@@ -1648,7 +1694,7 @@ class Link(SageObject):
         return G.connected_components_number()
 
     def is_knot(self):
-        """
+        r"""
         Return ``True`` if ``self`` is a knot.
 
         Every knot is a link but the converse is not true.
@@ -1667,7 +1713,7 @@ class Link(SageObject):
         return self.number_of_components() == 1
 
     def genus(self):
-        """
+        r"""
         Return the genus of ``self``.
 
         EXAMPLES::
@@ -1720,7 +1766,7 @@ class Link(SageObject):
         return sum(g, ZZ.zero())
 
     def signature(self):
-        """
+        r"""
         Return the signature of ``self``.
 
         This is defined as the signature of the symmetric matrix
@@ -1767,9 +1813,9 @@ class Link(SageObject):
              (1 - \omega) V + (1 - \omega^{-1}) V^{t},
 
         where `V` is the :meth:`Seifert matrix <seifert_matrix>`,
-        as explained on page 122 of [Livi1993]_.
+        as explained on page 122 of [Liv1993]_.
 
-        According to [Conway2018]_, this is also known as the
+        According to [Con2018]_, this is also known as the
         Levine-Tristram signature, the equivariant signature or the
         Tristram-Levine signature.
 
@@ -1782,15 +1828,6 @@ class Link(SageObject):
             sage: omega = QQbar.zeta(3)
             sage: K.omega_signature(omega)
             -2
-
-        REFERENCES:
-
-        .. [Livi1993] Charles Livingston, *Knot Theory*, Carus Mathematical
-           Monographs, number 24.
-
-        .. [Conway2018] Anthony Conway, *Notes On The Levine-Tristram
-           Signature Function*, July 2018
-           http://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf
         """
         from sage.rings.qqbar import QQbar
         omega = QQbar(omega)
@@ -1799,7 +1836,7 @@ class Link(SageObject):
         return ZZ.sum(j.real().sign() for j in m.eigenvalues())
 
     def alexander_polynomial(self, var='t'):
-        """
+        r"""
         Return the Alexander polynomial of ``self``.
 
         INPUT:
@@ -1859,6 +1896,8 @@ class Link(SageObject):
             sage: L = Link(B([-2, 4, 1, 6, 1, 4]))
             sage: L.alexander_polynomial()
             0
+
+        .. SEEALSO:: :meth:`conway_polynomial`
         """
         R = LaurentPolynomialRing(ZZ, var)
         # The Alexander polynomial of disjoint links are defined to be 0
@@ -1867,13 +1906,121 @@ class Link(SageObject):
         t = R.gen()
         seifert_matrix = self.seifert_matrix()
         f = (seifert_matrix - t * seifert_matrix.transpose()).determinant()
+        # could we use a charpoly here ? or faster determinant ?
         if f != 0:
             exp = f.exponents()
             return t ** ((-max(exp) - min(exp)) // 2) * f
         return f
 
-    def determinant(self):
+    def conway_polynomial(self):
         """
+        Return the Conway polynomial of ``self``.
+
+        This is closely related to the Alexander polynomial.
+
+        See :wikipedia:`Alexander_polynomial` for the definition.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(3)
+            sage: L = Link(B([1, -2, 1, -2]))
+            sage: L.conway_polynomial()
+            -t^2 + 1
+            sage: Link([[1, 5, 2, 4], [3, 9, 4, 8], [5, 1, 6, 10],
+            ....:       [7, 3, 8, 2], [9, 7, 10, 6]])
+            Link with 1 component represented by 5 crossings
+            sage: _.conway_polynomial()
+            2*t^2 + 1
+            sage: B = BraidGroup(4)
+            sage: L = Link(B([1,3]))
+            sage: L.conway_polynomial()
+            0
+
+        .. SEEALSO:: :meth:`alexander_polynomial`
+        """
+        alex = self.alexander_polynomial()
+        L = alex.parent()
+        R = L.polynomial_ring()
+        if alex == 0:
+            return R.zero()
+
+        t = L.gen()
+        alex = alex(t**2)
+        exp = alex.exponents()
+        alex = t**((-max(exp) - min(exp)) // 2) * alex
+
+        conway = R.zero()
+        t_poly = R.gen()
+        binom = t - ~t
+        while alex:
+            M = max(alex.exponents())
+            coeff = alex[M]
+            alex -= coeff * binom**M
+            conway += coeff * t_poly**M
+        return conway
+
+    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ):
+        r"""
+        Return the Khovanov polynomial of ``self``.
+
+        This is the Poincaré polynomial of the Khovanov homology.
+
+        INPUT:
+
+        - ``var1`` -- (default: ``'q'``) the first variable. Its exponents
+          give the (torsion free) rank of the height of Khovanov homology
+        - ``var2`` -- (default: ``'t'``) the second variable. Its exponents
+          give the (torsion free) rank of the degree of Khovanov homology
+        - ``base_ring`` -- (default: ``ZZ``) the ring of the polynomial's
+          coefficients
+
+        OUTPUT:
+
+        A two variate Laurent Polynomial over the ``base_ring``, more precisely an
+        instance of :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`.
+
+        EXAMPLES::
+
+            sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
+            sage: K.khovanov_polynomial()
+            q^-1 + q^-3 + q^-5*t^-2 + q^-9*t^-3
+            sage: K.khovanov_polynomial(base_ring=GF(2))
+            q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2 + q^-9*t^-3
+
+        The figure eight knot::
+
+            sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
+            sage: L.khovanov_polynomial(var1='p')
+            p^5*t^2 + p*t + p + p^-1 + p^-1*t^-1 + p^-5*t^-2
+            sage: L.khovanov_polynomial(var1='p', var2='s', base_ring=GF(4))
+            p^5*s^2 + p^3*s^2 + p*s + p + p^-1 + p^-1*s^-1 + p^-3*s^-1 + p^-5*s^-2
+
+        The Hopf link::
+
+            sage: B = BraidGroup(2)
+            sage: b = B([1, 1])
+            sage: K = Link(b)
+            sage: K.khovanov_polynomial()
+            q^6*t^2 + q^4*t^2 + q^2 + 1
+
+        .. SEEALSO:: :meth:`khovanov_homology`
+        """
+        L = LaurentPolynomialRing(base_ring, [var1, var2])
+        ch = base_ring.characteristic()
+        coeff = {}
+        kh = self.khovanov_homology()
+        from sage.rings.infinity import infinity
+        for h in kh:
+            for d in kh[h]:
+                H = kh[h][d]
+                gens = [g for g in H.gens() if g.order() == infinity or ch.divides(g.order())]
+                l = len(gens)
+                if l:
+                    coeff[(h,d)]=l
+        return L(coeff)
+
+    def determinant(self):
+        r"""
         Return the determinant of ``self``.
 
         EXAMPLES::
@@ -1889,30 +2036,44 @@ class Link(SageObject):
             sage: L = Link(B([1]*16 + [2,1,2,1,2,2,2,2,2,2,2,1,2,1,2,-1,2,-2]))
             sage: L.determinant()
             65
+            sage: B = BraidGroup(3)
+            sage: Link(B([1, 2, 1, 1, 2])).determinant()
+            4
 
         TESTS::
 
+            sage: B = BraidGroup(3)
             sage: Link(B([1, 2, 1, -2, -1])).determinant()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: determinant implemented only for knots
-        """
-        if self.is_knot():
-            a = self.alexander_polynomial()
-            return Integer(abs(a(-1)))
+            0
 
-        raise NotImplementedError("determinant implemented only for knots")
+        REFERENCES:
+
+        - Definition 6.6.3 in [Cro2004]_
+        """
+        V = self.seifert_matrix()
+        m = V + V.transpose()
+        return Integer(abs(m.det()))
 
     def is_alternating(self):
-        """
-        Return ``True`` if the given knot diagram is alternating else
-        returns ``False``.
+        r"""
+        Return whether the given knot diagram is alternating.
 
         Alternating diagram implies every overcross is followed by an
         undercross or the vice-versa.
 
         We look at the Gauss code if the sign is alternating, ``True``
         is returned else the knot is not alternating ``False`` is returned.
+
+        .. WARNING::
+
+            This does not check if a knot admits an alternating diagram
+            or not. Thus, this term is used differently than in some of
+            the literature, such as in Hoste-Thistlethwaite table.
+
+        .. NOTE::
+
+            Links with more than one component are considered to not
+            be alternating (knots) even when such a diagram exists.
 
         EXAMPLES::
 
@@ -1932,10 +2093,32 @@ class Link(SageObject):
             sage: L = Link(B([-1,2,-1,2]))
             sage: L.is_alternating()
             True
+
+        We give the `5_2` knot with an alternating diagram and a
+        non-alternating diagram::
+
+            sage: K5_2 = Link([[1, 4, 2, 5], [3, 8, 4, 9], [5, 10, 6, 1],
+            ....:              [7, 2, 8, 3], [9, 6, 10, 7]])
+            sage: K5_2.is_alternating()
+            True
+
+            sage: K5_2b = Link(K5_2.braid())
+            sage: K5_2b.is_alternating()
+            False
+
+        TESTS:
+
+        Check that :trac:`31001` is fixed::
+
+            sage: L = Knot([])
+            sage: L.is_alternating()
+            True
         """
         if not self.is_knot():
             return False
         x = self.gauss_code()
+        if not x:
+            return True
         s = [Integer(i).sign() for i in x[0]]
         return (s == [(-1) ** (i + 1) for i in range(len(x[0]))]
                 or s == [(-1) ** i for i in range(len(x[0]))])
@@ -1971,7 +2154,7 @@ class Link(SageObject):
         return orientation
 
     def seifert_circles(self):
-        """
+        r"""
         Return the Seifert circles from the link diagram of ``self``.
 
         Seifert circles are the circles obtained by smoothing all crossings
@@ -2014,7 +2197,7 @@ class Link(SageObject):
         result = []
         # detect looped segments. They must be their own seifert circles
         for a in available_segments:
-            if any(C.count(a)>1 for C in self.pd_code()):
+            if any(C.count(a) > 1 for C in self.pd_code()):
                 result.append([a])
         # remove the looped segments from the available
         for a in result:
@@ -2027,7 +2210,7 @@ class Link(SageObject):
             else:
                 C = heads[a]
                 par = []
-                while not a in par:
+                while a not in par:
                     par.append(a)
                     posnext = C[(C.index(a) + 1) % 4]
                     if tails[posnext] == C and not [posnext] in result:
@@ -2041,7 +2224,7 @@ class Link(SageObject):
         return result
 
     def regions(self):
-        """
+        r"""
         Return the regions from the link diagram of ``self``.
 
         Regions are obtained always turning left at each crossing.
@@ -2090,13 +2273,14 @@ class Link(SageObject):
         if len(self._isolated_components()) != 1:
             raise NotImplementedError("can only have one isolated component")
         pd = self.pd_code()
-        tails, heads = self._directions_of_edges()
-        available_edges = set(flatten(pd))
         if len(pd) == 1:
             if pd[0][0] == pd[0][1]:
                 return [[-pd[0][2]], [pd[0][0]], [pd[0][2], -pd[0][0]]]
             else:
                 return [[pd[0][2]], [-pd[0][0]], [-pd[0][2], pd[0][0]]]
+
+        tails, heads = self._directions_of_edges()
+        available_edges = set(flatten(pd))
 
         loops = [i for i in available_edges if heads[i] == tails[i]]
         available_edges = available_edges.union({-i for i in available_edges})
@@ -2115,7 +2299,7 @@ class Link(SageObject):
         while available_edges:
             edge = available_edges.pop()
             region = []
-            while not edge in region:
+            while edge not in region:
                 region.append(edge)
                 if edge > 0:
                     cros = heads[edge]
@@ -2139,6 +2323,7 @@ class Link(SageObject):
             regions.append(region)
         return regions
 
+    @cached_method
     def mirror_image(self):
         r"""
         Return the mirror image of ``self``.
@@ -2188,9 +2373,23 @@ class Link(SageObject):
             K = Link([[[1,-2,3,-1,2,-3]],[1,1,1]])
             K2 = K.mirror_image()
             sphinx_plot(K2.plot())
+
+        TESTS:
+
+        check that :trac:`30997` is fixed::
+
+            sage: L = Link([[6, 2, 7, 1], [5, 13, 6, 12], [8, 3, 9, 4],
+            ....:           [2, 13, 3, 14], [14, 8, 15, 7], [11, 17, 12, 16],
+            ....:           [9, 18, 10, 11], [17, 10, 18, 5], [4, 16, 1, 15]]) # L9n25{0}{0} from KnotInfo
+            sage: Lmm = L.mirror_image().mirror_image()
+            sage: L == Lmm
+            True
         """
         # Use the braid information if it is the shortest version
         #   of what we have already computed
+        if self._mirror:
+            return self._mirror
+
         if self._braid:
             lb = len(self._braid.Tietze())
 
@@ -2205,14 +2404,70 @@ class Link(SageObject):
                 logc = float('inf')
 
             if lb <= logc and lb <= lpd:
-                return type(self)(~self._braid)
+                self._mirror = type(self)(self._braid.mirror_image())
+                self._mirror._mirror = self
+                return self._mirror
 
         # Otherwise we fallback to the PD code
         pd = [[a[0], a[3], a[2], a[1]] for a in self.pd_code()]
-        return type(self)(pd)
+        self._mirror = type(self)(pd)
+        self._mirror._mirror = self
+        return self._mirror
+
+    def reverse(self):
+        r"""
+        Return the reverse of ``self``. This is the link obtained from ``self``
+        by reverting the orientation on all components.
+
+        EXAMPLES::
+
+           sage: K3 = Knot([[5, 2, 4, 1], [3, 6, 2, 5], [1, 4, 6, 3]])
+           sage: K3r = K3.reverse(); K3r.pd_code()
+           [[4, 1, 5, 2], [2, 5, 3, 6], [6, 3, 1, 4]]
+           sage: K3 == K3r
+           True
+
+        a non reversable knot::
+
+           sage: K8_17 = Knot([[6, 2, 7, 1], [14, 8, 15, 7], [8, 3, 9, 4],
+           ....:               [2, 13, 3, 14], [12, 5, 13, 6], [4, 9, 5, 10],
+           ....:               [16, 12, 1, 11], [10, 16, 11, 15]])
+           sage: K8_17r = K8_17.reverse()
+           sage: b = K8_17.braid(); b
+           s0^2*s1^-1*(s1^-1*s0)^2*s1^-1
+           sage: br = K8_17r.braid(); br
+           s0^-1*s1*s0^-2*s1^2*s0^-1*s1
+           sage: b.is_conjugated(br)
+           False
+           sage: b == br.reverse()
+           False
+           sage: b.is_conjugated(br.reverse())
+           True
+           sage: K8_17b = Link(b)
+           sage: K8_17br = K8_17b.reverse()
+           sage: bbr = K8_17br.braid(); bbr
+           (s1^-1*s0)^2*s1^-2*s0^2
+           sage: br == bbr
+           False
+           sage: br.is_conjugated(bbr)
+           True
+        """
+        if self._reverse:
+            return self._reverse
+
+        if self._braid:
+            self._reverse = type(self)(self._braid.reverse())
+            self._reverse._reverse = self
+            return self._reverse
+
+        # Otherwise we fallback to the PD code
+        pd = [[a[2], a[3], a[0], a[1]] for a in self.pd_code()]
+        self._reverse = type(self)(pd)
+        self._reverse._reverse = self
+        return self._reverse
 
     def writhe(self):
-        """
+        r"""
         Return the writhe of ``self``.
 
         EXAMPLES::
@@ -2284,7 +2539,7 @@ class Link(SageObject):
         If ``skein_normalization`` if ``False``, this returns an element
         in the symbolic ring as the Jones polynomial of the link might
         have fractional powers when the link is not a knot. Otherwise the
-        result is a Laurant polynomial in ``variab``.
+        result is a Laurent polynomial in ``variab``.
 
         EXAMPLES:
 
@@ -2377,6 +2632,8 @@ class Link(SageObject):
             1
             sage: b.jones_polynomial()
             -sqrt(t) - 1/sqrt(t)
+            sage: L.jones_polynomial()
+            1
             sage: L.jones_polynomial(algorithm='statesum')
             1
 
@@ -2390,12 +2647,17 @@ class Link(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: bad value of algorithm
+
+        Check that :trac:`31001` is fixed::
+
+            sage: L.jones_polynomial()
+            1
         """
         if algorithm == 'statesum':
             poly = self._bracket()
             t = poly.parent().gens()[0]
             writhe = self.writhe()
-            jones = (poly * (-t)**(-3 * writhe))
+            jones = poly * (-t)**(-3 * writhe)
             # Switch to the variable A to have the result agree with the output
             # of the jonesrep algorithm
             A = LaurentPolynomialRing(ZZ, 'A').gen()
@@ -2412,7 +2674,14 @@ class Link(SageObject):
                 # We force the result to be in the symbolic ring because of the expand
                 return jones(SR(variab)**(ZZ(1)/ZZ(4))).expand()
         elif algorithm == 'jonesrep':
-            return self.braid().jones_polynomial(variab, skein_normalization)
+            braid = self.braid()
+            # Special case for the trivial knot with no crossings
+            if not braid.Tietze():
+                if skein_normalization:
+                    return LaurentPolynomialRing(ZZ, 'A').one()
+                else:
+                    return SR.one()
+            return braid.jones_polynomial(variab, skein_normalization)
 
         raise ValueError("bad value of algorithm")
 
@@ -2445,7 +2714,7 @@ class Link(SageObject):
                 return -t**3
 
         cross = pd_code[0]
-        rest = deepcopy(pd_code[1:])
+        rest = [list(vertex) for vertex in pd_code[1:]]
         [a, b, c, d] = cross
         if a == b and c == d and len(rest) > 0:
             return (~t + t**(-5)) * Link(rest)._bracket()
@@ -2472,7 +2741,7 @@ class Link(SageObject):
                     cross[cross.index(b)] = a
             return -t**(-3) * Link(rest)._bracket()
         else:
-            rest_2 = deepcopy(rest)
+            rest_2 = [list(vertex) for vertex in rest]
             for cross in rest:
                 if d in cross:
                     cross[cross.index(d)] = a
@@ -2485,6 +2754,7 @@ class Link(SageObject):
                     cross[cross.index(b)] = a
             return t * Link(rest)._bracket() + ~t * Link(rest_2)._bracket()
 
+    @cached_method
     def _isolated_components(self):
         r"""
         Return the PD codes of the isolated components of ``self``.
@@ -2501,7 +2771,7 @@ class Link(SageObject):
         G = Graph()
         for c in self.pd_code():
             G.add_vertex(tuple(c))
-        V = G.vertices()
+        V = G.vertices(sort=True)
         setV = [set(c) for c in V]
         for i in range(len(V) - 1):
             for j in range(i + 1, len(V)):
@@ -2510,7 +2780,8 @@ class Link(SageObject):
         return [[list(i) for i in j]
                 for j in G.connected_components(sort=False)]
 
-    def homfly_polynomial(self, var1='L', var2='M', normalization='lm'):
+    @cached_method
+    def homfly_polynomial(self, var1=None, var2=None, normalization='lm'):
         r"""
         Return the HOMFLY polynomial of ``self``.
 
@@ -2520,8 +2791,10 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``var1`` -- (default: ``'L'``) the first variable
-        - ``var2`` -- (default: ``'M'``) the second variable
+        - ``var1`` -- (default: ``'L'``) the first variable. If ``normalization``
+          is set to ``az`` resp. ``vz`` the default is ``a`` resp. ``v``
+        - ``var2`` -- (default: ``'M'``) the second variable. If ``normalization``
+          is set to ``az`` resp. ``vz`` the default is ``z``
         - ``normalization`` -- (default: ``lm``) the system of coordinates
           and can be one of the following:
 
@@ -2530,6 +2803,9 @@ class Link(SageObject):
 
           * ``'az'`` -- corresponding to the Skein relation
             `a\cdot P(K _+) - a^{-1}\cdot P(K _-) = z  \cdot P(K _0)`
+
+          * ``'vz'`` -- corresponding to the Skein relation
+            `v^{-1}\cdot P(K _+) - v\cdot P(K _-) = z  \cdot P(K _0)`
 
           where `P(K _+)`, `P(K _-)` and `P(K _0)` represent the HOMFLY
           polynomials of three links that vary only in one crossing;
@@ -2542,7 +2818,10 @@ class Link(SageObject):
         .. NOTE::
 
             Use the ``'az'`` normalization to agree with the data
-            in [KnotAtlas]_ and http://www.indiana.edu/~knotinfo/.
+            in [KnotAtlas]_
+
+            Use the ``'vz'`` normalization to agree with the data
+            `KnotInfo <http://www.indiana.edu/~knotinfo/>`__.
 
         EXAMPLES:
 
@@ -2567,7 +2846,7 @@ class Link(SageObject):
             sage: L.homfly_polynomial()
             L^3*M^-1 - L*M + L*M^-1
             sage: L = Link([[1,4,2,3], [4,1,3,2]])
-            sage: L.homfly_polynomial('a', 'z', 'az')
+            sage: L.homfly_polynomial(normalization='az')
             a^3*z^-1 - a*z - a*z^-1
 
         The figure-eight knot::
@@ -2585,6 +2864,13 @@ class Link(SageObject):
             ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
             sage: L.homfly_polynomial()
             1
+
+        Comparison with KnotInfo::
+
+            sage: KI, m = K.get_knotinfo(); KI, m
+             (<KnotInfo.K5_1: '5_1'>, False)
+            sage: K.homfly_polynomial(normalization='vz') == KI.homfly_polynomial()
+            True
 
         The knot `9_6`::
 
@@ -2607,30 +2893,57 @@ class Link(SageObject):
             -L*M^-1 - L^-1*M^-1
             sage: L.homfly_polynomial()
             -L*M^-1 - L^-1*M^-1
-            sage: L.homfly_polynomial('a', 'z', 'az')
+            sage: L.homfly_polynomial(normalization='az')
             a*z^-1 - a^-1*z^-1
-            sage: L2.homfly_polynomial('a', 'z', 'az')
-            a*z^-1 - a^-1*z^-1
+            sage: L2.homfly_polynomial('α', 'ζ', 'az')
+            α*ζ^-1 - α^-1*ζ^-1
+            sage: L.homfly_polynomial(normalization='vz')
+            -v*z^-1 + v^-1*z^-1
+            sage: L2.homfly_polynomial('ν', 'ζ', 'vz')
+            -ν*ζ^-1 + ν^-1*ζ^-1
+
+        Check that :trac:`30346` is fixed::
+
+            sage: L = Link([])
+            sage: L.homfly_polynomial()
+            1
 
         REFERENCES:
 
         - :wikipedia:`HOMFLY_polynomial`
         - http://mathworld.wolfram.com/HOMFLYPolynomial.html
         """
+        if not var1:
+            if normalization == 'az':
+                var1 = 'a'
+            elif normalization == 'vz':
+                var1 = 'v'
+            else:
+                var1 = 'L'
+        if not var2:
+            if normalization == 'lm':
+                var2 = 'M'
+            else:
+                var2 = 'z'
+
         L = LaurentPolynomialRing(ZZ, [var1, var2])
         if len(self._isolated_components()) > 1:
             if normalization == 'lm':
                 fact = L({(1, -1):-1, (-1, -1):-1})
             elif normalization == 'az':
                 fact = L({(1, -1):1, (-1, -1):-1})
+            elif normalization == 'vz':
+                fact = L({(1, -1):-1, (-1, -1):1})
             else:
-                raise ValueError('normalization must be either `lm` or `az`')
+                raise ValueError('normalization must be either `lm`, `az` or `vz`')
             fact = fact ** (len(self._isolated_components())-1)
             for i in self._isolated_components():
                 fact = fact * Link(i).homfly_polynomial(var1, var2, normalization)
             return fact
         s = '{}'.format(self.number_of_components())
         ogc = self.oriented_gauss_code()
+        if not ogc[0]:
+            return L.one()
         for comp in ogc[0]:
             s += ' {}'.format(len(comp))
             for cr in comp:
@@ -2652,10 +2965,189 @@ class Link(SageObject):
                 return L(auxdic)
             else:
                 return -L(auxdic)
+        elif normalization == 'vz':
+            h_az = self.homfly_polynomial(var1=var1, var2=var2, normalization='az')
+            a, z = h_az.parent().gens()
+            v = ~a
+            return h_az.subs({a:v})
         else:
-            raise ValueError('normalization must be either `lm` or `az`')
+            raise ValueError('normalization must be either `lm`, `az` or `vz`')
 
-    def plot(self, gap=0.1, component_gap=0.5, solver=None, **kwargs):
+    def links_gould_polynomial(self, varnames='t0, t1'):
+        r"""
+        Return the Links-Gould polynomial of ``self``. See [MW2012]_, section 3
+        and references given there. See also the docstring of
+        :meth:`~sage.groups.braid.Braid.links_gould_polynomial`.
+
+        INPUT:
+
+        - ``varnames`` -- string (default ``t0, t1``)
+
+        OUTPUT:
+
+        A Laurent polynomial in the given variable names.
+
+        EXAMPLES::
+
+            sage: Hopf = Link([[1, 4, 2, 3], [4, 1, 3, 2]])
+            sage: Hopf.links_gould_polynomial()
+            -1 + t1^-1 + t0^-1 - t0^-1*t1^-1
+        """
+        return self.braid().links_gould_polynomial(varnames=varnames)
+
+    def _coloring_matrix(self, n):
+        r"""
+        Return the coloring matrix of ``self``.
+
+        The coloring matrix is a matrix over a prime field
+        whose right kernel gives the colorings of the diagram.
+
+        INPUT:
+
+        - ``n`` -- the number of colors to consider
+
+        If ``n`` is not a prime number, it is replaced by the smallest
+        prime number that is larger than ``n``.
+
+        OUTPUT:
+
+        a matrix over the smallest prime field with cardinality
+        larger than or equal to ``n``.
+
+        EXAMPLES::
+
+            sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
+            sage: K._coloring_matrix(3)
+            [2 2 2]
+            [2 2 2]
+            [2 2 2]
+            sage: K8 = Knot([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
+            sage: K8._coloring_matrix(4)
+            [2 0 4 4]
+            [4 4 2 0]
+            [0 4 4 2]
+            [4 2 0 4]
+
+        REFERENCES:
+
+        - :wikipedia:`Fox_n-coloring`
+        """
+        from sage.arith.misc import next_prime
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField
+        p = next_prime(n - 1)
+        F = FiniteField(p)
+        arcs = self.arcs(presentation='pd')
+        di = len(arcs)
+        M = matrix(F, di, di)
+        crossings = self.pd_code()
+        for i in range(di):
+            crossing = crossings[i]
+            for j in range(di):
+                arc = arcs[j]
+                if crossing[1] in arc:
+                    M[i, j] += 2
+                if crossing[0] in arc:
+                    M[i, j] -= 1
+                if crossing[2] in arc:
+                    M[i, j] -= 1
+        return M
+
+    def is_colorable(self, n):
+        r"""
+        Return whether the link is ``n``-colorable.
+
+        A link is ``n``-colorable if its arcs can be painted with
+        ``n`` colours, labeled from ``0`` to ``n - 1``, in such a way
+        that at any crossing, the average of the indices of the
+        undercrossings equals twice the index of the overcrossing.
+
+        INPUT:
+
+        - ``n`` -- the number of colors to consider
+
+        If ``n`` is not a prime number, it is replaced by the smallest
+        prime number that is larger than ``n``.
+
+        EXAMPLES:
+
+        We show that the trefoil knot is 3-colorable::
+
+            sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
+            sage: K.is_colorable(3)
+            True
+
+        But the figure eight knot is not::
+
+            sage: K8 = Link([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
+            sage: K8.is_colorable(3)
+            False
+
+        REFERENCES:
+
+        - :wikipedia:`Fox_n-coloring`
+
+        - Chapter 3 of [Liv1993]_
+
+        .. SEEALSO:: :meth:`colorings`
+        """
+        return self._coloring_matrix(n).nullity() > 1
+
+    def colorings(self, n):
+        r"""
+        Return the ``n``-colorings of ``self``.
+
+        INPUT:
+
+        - ``n`` -- the number of colors to consider
+
+        If ``n`` is not a prime number, it is replaced by the smallest
+        prime number that is larger than ``n``.
+
+        OUTPUT:
+
+        a list with the colorings. Each coloring is represented as
+        a dictionary that maps a tuple of the edges forming each arc
+        (as in the PD code) to the index of the corresponding color.
+
+        EXAMPLES::
+
+            sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
+            sage: K.colorings(3)
+            [{(1, 2): 0, (3, 4): 1, (5, 6): 2},
+             {(1, 2): 0, (3, 4): 2, (5, 6): 1},
+             {(1, 2): 1, (3, 4): 0, (5, 6): 2},
+             {(1, 2): 1, (3, 4): 2, (5, 6): 0},
+             {(1, 2): 2, (3, 4): 0, (5, 6): 1},
+             {(1, 2): 2, (3, 4): 1, (5, 6): 0}]
+            sage: K.pd_code()
+            [[4, 1, 5, 2], [2, 5, 3, 6], [6, 3, 1, 4]]
+            sage: K.arcs('pd')
+            [[1, 2], [3, 4], [5, 6]]
+
+        REFERENCES:
+
+        - :wikipedia:`Fox_n-coloring`
+
+        - Chapter 3 of [Liv1993]_
+
+        .. SEEALSO:: :meth:`is_colorable`
+        """
+        from sage.arith.misc import next_prime
+        p = next_prime(n-1)
+        M = self._coloring_matrix(n)
+        K = M.right_kernel()
+        res = set([])
+        arcs = self.arcs('pd')
+        for coloring in K:
+            colors = sorted(set(coloring))
+            if len(colors) == p:
+                colors = {b: a for a, b in enumerate(colors)}
+                res.add(tuple(colors[c] for c in coloring))
+        return [{tuple(arc): col for arc, col in zip(arcs, c)}
+                for c in sorted(res)]
+
+    def plot(self, gap=0.1, component_gap=0.5, solver=None,
+             color='blue', **kwargs):
         r"""
         Plot ``self``.
 
@@ -2669,6 +3161,9 @@ class Link(SageObject):
 
         - ``solver`` -- the linear solver to use, see
           :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+
+        - ``color`` -- (default: 'blue') a color or a coloring (as returned
+          by :meth:`colorings`.
 
         The usual keywords for plots can be used here too.
 
@@ -2795,6 +3290,23 @@ class Link(SageObject):
             L = Link([[[-1,2,-3,1,-2,3], [4,-5,6,-4,5,-6]], [1,1,1,1,1,1]])
             sphinx_plot(L.plot())
 
+        If a coloring is passed, the different arcs are plotted with
+        the corresponding colors::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1,2,3,1,2,-1,-3,2,3])
+            sage: L = Link(b)
+            sage: L.plot(color=L.colorings(3)[0])
+            Graphics object consisting of ... graphics primitives
+
+        .. PLOT::
+            :width: 300 px
+
+            B = BraidGroup(4)
+            b = B([1, 2, 3, 1, 2, -1, -3, 2, 3])
+            L = Link(b)
+            sphinx_plot(L.plot(color=L.colorings(3)[0]))
+
         TESTS:
 
         Check that :trac:`20315` is fixed::
@@ -2802,13 +3314,23 @@ class Link(SageObject):
             sage: L = Link([[2,1,4,5], [5,6,7,3], [6,4,1,9], [9,2,3,7]])
             sage: L.plot(solver='GLPK')
             Graphics object consisting of ... graphics primitives
-            sage: L.plot(solver='Coin')    # optional - cbc
+            sage: L.plot(solver='Coin')    # optional - sage_numerical_backends_coin
             Graphics object consisting of ... graphics primitives
             sage: L.plot(solver='CPLEX')   # optional - CPLEX
             Graphics object consisting of ... graphics primitives
             sage: L.plot(solver='Gurobi')  # optional - Gurobi
             Graphics object consisting of ... graphics primitives
         """
+        if type(color) is not dict:
+            coloring = {int(i): color for i in set(flatten(self.pd_code()))}
+        else:
+            from sage.plot.colors import rainbow
+            ncolors = len(set(color.values()))
+            arcs = self.arcs()
+            if len(color) != len(arcs):
+                raise ValueError("Number of entries in the color vector must match the number of arcs")
+            rainb = rainbow(ncolors)
+            coloring = {int(i): rainb[color[tuple(j)]] for j in arcs for i in j}
         comp = self._isolated_components()
         # Handle isolated components individually
         if len(comp) > 1:
@@ -2827,11 +3349,9 @@ class Link(SageObject):
                     P.xdata = [p + xtra for p in P.xdata]
             return P1 + P2
 
-        if not 'color' in kwargs:
-            kwargs['color'] = 'blue'
-        if not 'axes' in kwargs:
+        if 'axes' not in kwargs:
             kwargs['axes'] = False
-        if not 'aspect_ratio' in kwargs:
+        if 'aspect_ratio' not in kwargs:
             kwargs['aspect_ratio'] = 1
 
         from sage.plot.line import line
@@ -2840,7 +3360,7 @@ class Link(SageObject):
 
         # Special case for the unknot
         if not self.pd_code():
-            return circle((0,0), ZZ(1)/ZZ(2), **kwargs)
+            return circle((0,0), ZZ(1)/ZZ(2), color=color, **kwargs)
 
         # The idea is the same followed in spherogram, but using MLP instead of
         # network flows.
@@ -2870,10 +3390,9 @@ class Link(SageObject):
         MLP.set_objective(MLP.sum(v.values()))
         MLP.solve()
         # we store the result in a vector s packing right bends as negative left ones
-        s = list(range(len(edges)))
-        values = MLP.get_values(v)
-        for i in range(len(edges)):
-            s[i] = int(values[2*i] - values[2*i + 1])
+        values = MLP.get_values(v, convert=ZZ, tolerance=1e-3)
+        s = [values[2*i] - values[2*i + 1]
+             for i in range(len(edges))]
         # segments represents the different parts of the previous edges after bending
         segments = {e: [(e,i) for i in range(abs(s[edges.index(e)])+1)] for e in edges}
         pieces = {tuple(i): [i] for j in segments.values() for i in j}
@@ -2890,7 +3409,7 @@ class Link(SageObject):
                     rev = segments[-e][1:]
                     rev.reverse()
                     sig = sign(s[edges.index(-e)])
-                    nregion+=[[a, -sig] for a in rev]
+                    nregion += [[a, -sig] for a in rev]
                     nregion.append([segments[-e][0], 1])
             nregions.append(nregion)
         N = max(segments) + 1
@@ -2990,6 +3509,7 @@ class Link(SageObject):
                     i += 1
             c = cross_keys[i]
             e = c[j]
+            kwargs['color'] = coloring[e]
             used_edges.append(e)
             direction = (crossings[c][2] - c.index(e)) % 4
             orien = self.orientation()[self.pd_code().index(list(c))]
@@ -3017,8 +3537,8 @@ class Link(SageObject):
                     y1 = y0
                 elif direction == 3:
                     x1 = x0
-                    y1 = y0 -l
-                im.append(([[x0,y0],[x1,y1]], l, direction))
+                    y1 = y0 - l
+                im.append(([[x0, y0], [x1, y1]], l, direction))
                 direction = (direction + turn) % 4
                 x0 = x1
                 y0 = y1
@@ -3065,7 +3585,7 @@ class Link(SageObject):
                         elif b[1] > a[1]:
                             e = [b[0], b[1] - 1]
                         elif b[1] < a[1]:
-                            e = [b[0] , b[1] + 1]
+                            e = [b[0], b[1] + 1]
                         l += line((p, e), **kwargs)
                         p = e
                     if im[c+1][1] == 1 and c < len(im) - 2:
@@ -3091,3 +3611,597 @@ class Link(SageObject):
             image += l
             ims += sum(line(a[0], **kwargs) for a in im)
         return image
+
+    def _markov_move_cmp(self, braid):
+        r"""
+        Return whether ``self`` can be transformed to the closure of ``braid``
+        by a sequence of Markov moves.
+
+        More precisely it is checked whether the braid of ``self`` is conjugated
+        to the given braid in the following sense. If both braids have the same
+        number of strands it is checked if they are conjugated to each other in
+        their common braid group (Markov move I).  If the number of strands differs,
+        the braid having less strands is extended by Markov moves II (appendening
+        the largest generator or its inverse recursively) until a common braid
+        group can be achieved, where conjugation is tested.
+
+        Be aware, that a negative result does not ensure that ``self`` is not
+        isotopic to the closure of ``braid``.
+
+        EXAMPLES::
+
+            sage: b = BraidGroup(4)((1, 2, -3, 2, 2, 2, 2, 2, 2, -1, 2, 3, 2))
+            sage: L = Link([[2, 1, 4, 5], [5, 4, 6, 7], [7, 6, 8, 9], [9, 8, 10, 11],
+            ....:           [11, 10, 12, 13], [13, 12, 14, 15], [15, 14, 16, 17],
+            ....:           [3, 17, 18, 19], [16, 1, 21, 18], [19, 21, 2, 3]])
+            sage: L._markov_move_cmp(b)  # both are isotopic to ``9_3``
+            True
+            sage: bL = L.braid(); bL
+            s0^7*s1*s0^-1*s1
+            sage: Lb = Link(b); Lb
+            Link with 1 component represented by 13 crossings
+            sage: Lb._markov_move_cmp(bL)
+            True
+            sage: L == Lb
+            False
+            sage: b.strands() > bL.strands()
+            True
+
+        REFERENCES:
+
+        - :wikipedia:`Markov_theorem`
+        """
+        sb      = self.braid()
+        sb_ind  = sb.strands()
+
+        ob      = braid
+        ob_ind  = ob.strands()
+
+        if sb_ind == ob_ind:
+            return sb.is_conjugated(ob)
+
+        if sb_ind > ob_ind:
+            # if the braid of self has more strands we have to perfom
+            # Markov II moves
+            B = sb.parent()
+            g = B.gen(ob_ind-1)
+            ob = B(ob)
+            if sb_ind > ob_ind+1:
+                # proceed by recursion
+                res = self._markov_move_cmp(ob*g)
+                if not res:
+                    res = self._markov_move_cmp(ob*~g)
+            else:
+                res = sb.is_conjugated(ob*g)
+                if not res:
+                    res = sb.is_conjugated(ob*~g)
+            return res
+        else:
+            L = Link(ob)
+            return L._markov_move_cmp(sb)
+
+    @cached_method
+    def _knotinfo_matching_list(self):
+        r"""
+        Return a list of links from the KnotInfo and LinkInfo databases which match
+        the properties of ``self`` as much as possible.
+
+        OUTPUT:
+
+        A tuple ``(l, proved)`` where ``l`` is the matching list and ``proved`` a boolean
+        telling if the entries of ``l`` are checked to be isotopic to self or not.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import KnotInfo
+            sage: KnotInfo.L5a1_0.inject()
+            Defining L5a1_0
+            sage: L5a1_0.link()._knotinfo_matching_list()
+            ([<KnotInfo.L5a1_0: 'L5a1{0}'>], True)
+            sage: Link(L5a1_0.braid())._knotinfo_matching_list()
+            ([<KnotInfo.L5a1_0: 'L5a1{0}'>, <KnotInfo.L5a1_1: 'L5a1{1}'>], True)
+
+        Care is needed for links having non irreducible HOMFLY-PT polynomials::
+
+            sage: k4_1 = KnotInfo.K4_1.link()
+            sage: k5_2 = KnotInfo.K5_2.link()
+            sage: k = k4_1.connected_sum(k5_2)
+            sage: k._knotinfo_matching_list()   # optional - database_knotinfo
+            ([<KnotInfo.K9_12: '9_12'>], False)
+
+        """
+        from sage.knots.knotinfo import KnotInfoSeries
+        cr  = len(self.pd_code())
+        co  = self.number_of_components()
+
+        # set the limits for the KnotInfoSeries
+        if cr > 11 and co > 1:
+            cr = 11
+        if cr > 12:
+            cr = 12
+
+        Hp  = self.homfly_polynomial(normalization='vz')
+
+        det = None
+        if cr > 6:
+            # for larger crossing numbers the KnotInfoSeries become very
+            # large, as well. For better performance we restrict the cached
+            # lists by the determinant and number of components.
+            #
+            # Since :meth:`determinant` is not implemented for proper links
+            # we have to go back to the roots.
+            ap = self.alexander_polynomial()
+            det = Integer(abs(ap(-1)))
+
+        is_knot = self.is_knot()
+        if is_knot and cr < 11:
+            S = KnotInfoSeries(cr, True, None)
+            l = S.lower_list(oriented=True, comp=co, det=det, homfly=Hp)
+        else:
+            # the result of :meth:`is_alternating` depends on the specific
+            # diagram of the link. For example ``K11a_2`` is an alternating
+            # knot but ``Link(KnotInfo.K11a_2.braid()).is_alternating()``
+            # gives ``False``. Therefore, we have to take both series
+            # into consideration.
+            Sa = KnotInfoSeries(cr, is_knot, True)
+            Sn = KnotInfoSeries(cr, is_knot, False)
+            la = Sa.lower_list(oriented=True, comp=co, det=det, homfly=Hp)
+            ln = Sn.lower_list(oriented=True, comp=co, det=det, homfly=Hp)
+            l = sorted(list(set(la + ln)))
+
+        pdm = [[a[0], a[3], a[2], a[1]] for a in self.pd_code() ]
+        br  = self.braid()
+        br_ind = br.strands()
+
+        res = []
+        for L in l:
+            if L.pd_notation() == pdm:
+                # note that KnotInfo pd_notation works counter clockwise. Therefore,
+                # to compensate this we compare with the mirrored pd_code. See also,
+                # docstring of :meth:`link` of :class:`~sage.knots.knotinfo.KnotInfoBase`.
+                return [L], True  # pd_notation is unique in the KnotInfo database
+
+            if L.braid_index() <= br_ind:
+                if self._markov_move_cmp(L.braid()):
+                    res.append(L)
+
+        if res:
+            if len(res) > 1 or res[0].is_unique():
+                return res, True
+        return l, False
+
+    def get_knotinfo(self, mirror_version=True, unique=True):
+        r"""
+        Identify this link as an item of the KnotInfo database (if possible).
+
+        INPUT:
+
+        - ``mirror_version`` -- boolean (default is ``True``). If set to ``False``
+          the result of the method will be just the instance of :class:`~sage.knots.knotinfo.KnotInfoBase`
+          (by default the result is a tuple of the instance and a boolean, see
+          explanation of the output below)
+
+        - ``unique`` -- boolean (default is ``True``). This only affects the case
+          where a unique identification is not possible. If set to ``False`` you
+          can obtain a matching list (see explanation of the output below)
+
+        OUTPUT:
+
+        A tuple ``(K, m)`` where ``K`` is an instance of :class:`~sage.knots.knotinfo.KnotInfoBase`
+        and ``m`` a boolean (for chiral links) telling if ``self`` corresponds
+        to the mirrored version of ``K`` or not. The value of ``m`` is ``None``
+        for amphicheiral links and ``?`` if it cannot be determined uniquely
+        and the keyword option ``unique=False`` is given.
+
+        For proper links, if the orientation mutant cannot be uniquely determined,
+        K will be a series of links gathering all links having the same unoriented
+        name, that is an instance of :class:`~sage.knots.knotinfo.KnotInfoSeries`.
+
+        If ``mirror_version`` is set to ``False`` then the result is just ``K``
+        (that is: ``m`` is suppressed).
+
+        If it is not possible to determine a unique result a ``NotImplementedError``
+        will be raised. To avoid this you can set ``unique`` to ``False``. You
+        will get a list of matching candidates instead.
+
+        .. NOTE::
+
+            The identification of proper links may fail to be unique due to the
+            following fact: In opposite to the database for knots, there are pairs
+            of oriented mutants of an unoriented link which are isotopic to each
+            other. For example ``L5a1_0`` and ``L5a1_1`` is such a pair.
+
+            This is because all combinatorial possible oriented mutants are
+            listed with individual names regardless whether they are pairwise
+            non isotopic or not. In such a case the identification is not
+            unique and therefore a series of the links will be returned which
+            gathers all having the same unoriented name.
+
+            To obtain the individual oriented links being isotopic to ``self``
+            use the keyword ``unique`` (see the examples for ``L2a1_1`` and
+            ``L5a1_0`` below).
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import KnotInfo
+            sage: L = Link([[4,2,5,1], [10,3,11,4], [5,16,6,17], [7,12,8,13],
+            ....:           [18,9,19,10], [2,11,3,12], [13,20,14,21], [15,6,16,7],
+            ....:           [22,18,1,17], [8,19,9,20], [21,14,22,15]])
+            sage: L.get_knotinfo()           # optional - database_knotinfo
+            (<KnotInfo.K11n_121: '11n_121'>, True)
+
+            sage: K = KnotInfo.K10_25        # optional - database_knotinfo
+            sage: l = K.link()               # optional - database_knotinfo
+            sage: l.get_knotinfo()           # optional - database_knotinfo
+            (<KnotInfo.K10_25: '10_25'>, False)
+
+        Knots with more than 12 and proper links having more than 11 crossings
+        cannot be identified. In addition non prime links or even links whose
+        HOMFLY-PT polynomial is not irreducible cannot be identified::
+
+            sage: b, = BraidGroup(2).gens()
+            sage: Link(b**13).get_knotinfo()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: this knot having more than 12 crossings cannot be determined
+
+            sage: Link([[1, 5, 2, 4], [3, 1, 4, 8], [5, 3, 6, 2], [6, 9, 7, 10], [10, 7, 9, 8]])
+            Link with 2 components represented by 5 crossings
+            sage: _.get_knotinfo()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: this (possibly non prime) link cannot be determined
+
+        Lets identify the monster unknot::
+
+            sage: L = Link([[3,1,2,4], [8,9,1,7], [5,6,7,3], [4,18,6,5],
+            ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
+            ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
+            sage: L.get_knotinfo()
+            (<KnotInfo.K0_1: '0_1'>, None)
+
+        Usage of option ``mirror_version``::
+
+            sage: L.get_knotinfo(mirror_version=False) == KnotInfo.K0_1
+            True
+
+        Usage of option ``unique``::
+
+            sage: l = K.link(K.items.gauss_notation)  # optional - database_knotinfo
+            sage: l.get_knotinfo()                    # optional - database_knotinfo
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: this link cannot be uniquely determined
+            use keyword argument `unique` to obtain more details
+
+            sage: l.get_knotinfo(unique=False)        # optional - database_knotinfo
+            [(<KnotInfo.K10_25: '10_25'>, False), (<KnotInfo.K10_56: '10_56'>, False)]
+
+            sage: k11  = KnotInfo.K11n_82.link()      # optional - database_knotinfo
+            sage: k11m = k11.mirror_image()           # optional - database_knotinfo
+            sage: k11mr = k11m.reverse()              # optional - database_knotinfo
+            sage: k11mr.get_knotinfo()                # optional - database_knotinfo
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: mirror type of this link cannot be uniquely determined
+            use keyword argument `unique` to obtain more details
+
+            sage: k11mr.get_knotinfo(unique=False)    # optional - database_knotinfo
+            [(<KnotInfo.K11n_82: '11n_82'>, '?')]
+
+            sage: t = (1, -2, 1, 1, -2, 1, -2, -2)
+            sage: l8 = Link(BraidGroup(3)(t))
+            sage: l8.get_knotinfo()                   # optional - database_knotinfo
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: this link cannot be uniquely determined
+            use keyword argument `unique` to obtain more details
+
+            sage: l8.get_knotinfo(unique=False)       # optional - database_knotinfo
+            [(<KnotInfo.L8a19_0_0: 'L8a19{0,0}'>, None),
+             (<KnotInfo.L8a19_1_1: 'L8a19{1,1}'>, None)]
+
+            sage: t = (2, -3, -3, -2, 3, 3, -2, 3, 1, -2, -2, 1)
+            sage: l12 = Link(BraidGroup(5)(t))
+            sage: l12.get_knotinfo()                  # optional - database_knotinfo
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: this link having more than 11 crossings cannot be uniquely determined
+            use keyword argument `unique` to obtain more details
+
+            sage: l12.get_knotinfo(unique=False)      # optional - database_knotinfo
+            [(<KnotInfo.L10n36_0: 'L10n36{0}'>, '?'),
+             (<KnotInfo.L10n36_1: 'L10n36{1}'>, None),
+             (<KnotInfo.L10n59_0: 'L10n59{0}'>, None),
+             (<KnotInfo.L10n59_1: 'L10n59{1}'>, None)]
+
+        Furthermore, if the result is a complete  series of oriented links having
+        the same unoriented name (according to the note above) the option can be
+        used to achieve more detailed information::
+
+            sage: L2a1 = Link(b**2)
+            sage: L2a1.get_knotinfo()
+            (Series of links L2a1, None)
+            sage: L2a1.get_knotinfo(unique=False)
+            [(<KnotInfo.L2a1_0: 'L2a1{0}'>, True), (<KnotInfo.L2a1_1: 'L2a1{1}'>, False)]
+
+            sage: KnotInfo.L5a1_0.inject()
+            Defining L5a1_0
+            sage: l5 = Link(L5a1_0.braid())
+            sage: l5.get_knotinfo()
+            (Series of links L5a1, False)
+            sage: _[0].inject()
+            Defining L5a1
+            sage: list(L5a1)
+            [<KnotInfo.L5a1_0: 'L5a1{0}'>, <KnotInfo.L5a1_1: 'L5a1{1}'>]
+            sage: l5.get_knotinfo(unique=False)
+            [(<KnotInfo.L5a1_0: 'L5a1{0}'>, False), (<KnotInfo.L5a1_1: 'L5a1{1}'>, False)]
+
+        Clarifying the series around the Perko pair (:wikipedia:`Perko_pair`)::
+
+            sage: for i in range(160, 166):           # optional - database_knotinfo
+            ....:     K = Knots().from_table(10, i)
+            ....:     print('%s_%s' %(10, i), '--->', K.get_knotinfo())
+            10_160 ---> (<KnotInfo.K10_160: '10_160'>, False)
+            10_161 ---> (<KnotInfo.K10_161: '10_161'>, True)
+            10_162 ---> (<KnotInfo.K10_162: '10_162'>, False)
+            10_163 ---> (<KnotInfo.K10_163: '10_163'>, False)
+            10_164 ---> (<KnotInfo.K10_164: '10_164'>, False)
+            10_165 ---> (<KnotInfo.K10_165: '10_165'>, True)
+
+        Clarifying ther Perko series against `SnapPy
+        <https://snappy.math.uic.edu/index.html>`__::
+
+            sage: import snappy                    # optional - snappy
+            Plink failed to import tkinter.
+
+            sage: from sage.knots.knotinfo import KnotInfoSeries
+            sage: KnotInfoSeries(10, True, True)   # optional - database_knotinfo
+            Series of knots K10
+            sage: _.inject()                       # optional - database_knotinfo
+            Defining K10
+            sage: for i in range(160, 166):        # optional - database_knotinfo snappy
+            ....:     K = K10(i)
+            ....:     k = K.link(K.items.name, snappy=True)
+            ....:     print(k, '--->', k.sage_link().get_knotinfo())
+            <Link 10_160: 1 comp; 10 cross> ---> (<KnotInfo.K10_160: '10_160'>, False)
+            <Link 10_161: 1 comp; 10 cross> ---> (<KnotInfo.K10_161: '10_161'>, True)
+            <Link 10_162: 1 comp; 10 cross> ---> (<KnotInfo.K10_161: '10_161'>, False)
+            <Link 10_163: 1 comp; 10 cross> ---> (<KnotInfo.K10_162: '10_162'>, False)
+            <Link 10_164: 1 comp; 10 cross> ---> (<KnotInfo.K10_163: '10_163'>, False)
+            <Link 10_165: 1 comp; 10 cross> ---> (<KnotInfo.K10_164: '10_164'>, False)
+
+            sage: snappy.Link('10_166')            # optional - snappy
+            <Link 10_166: 1 comp; 10 cross>
+            sage: _.sage_link().get_knotinfo()     # optional - database_knotinfo snappy
+            (<KnotInfo.K10_165: '10_165'>, True)
+
+        Another pair of confusion (see the corresponding `Warning
+        <http://katlas.math.toronto.edu/wiki/10_86>`__)::
+
+           sage: Ks10_86 = snappy.Link('10_86')     # optional - snappy
+           sage: Ks10_83 = snappy.Link('10_83')     # optional - snappy
+           sage: Ks10_86.sage_link().get_knotinfo() # optional - snappy
+           (<KnotInfo.K10_83: '10_83'>, True)
+           sage: Ks10_83.sage_link().get_knotinfo() # optional - snappy
+           (<KnotInfo.K10_86: '10_86'>, False)
+
+        TESTS::
+
+            sage: L = KnotInfo.L10a171_1_1_0         # optional - database_knotinfo
+            sage: l = L.link(L.items.braid_notation) # optional - database_knotinfo
+            sage: l.get_knotinfo(unique=False)       # optional - database_knotinfo
+            [(<KnotInfo.L10a171_0_1_0: 'L10a171{0,1,0}'>, True),
+             (<KnotInfo.L10a171_1_0_1: 'L10a171{1,0,1}'>, True),
+             (<KnotInfo.L10a171_1_1_0: 'L10a171{1,1,0}'>, False),
+             (<KnotInfo.L10a171_1_1_1: 'L10a171{1,1,1}'>, False)]
+        """
+        # ToDo: extension to non prime links in which case an element of the monoid
+        # over :class:`KnotInfo` should be returned
+
+        non_unique_hint = '\nuse keyword argument `unique` to obtain more details'
+
+        def answer(L):
+            r"""
+            Return a single item of the KnotInfo database according to the keyword
+            arguments ``mirror_version``.
+            """
+            if not mirror_version:
+                return L
+
+            chiral = True
+            ach = L.is_amphicheiral()
+            achp = L.is_amphicheiral(positive=True)
+            if ach is None and achp is None:
+                if unique:
+                    raise NotImplementedError('this link cannot be uniquely determined (unknown chirality)%s' %non_unique_hint)
+            elif L.is_amphicheiral() or L.is_amphicheiral(positive=True):
+                chiral = False
+
+            if not chiral:
+                mirrored = None
+            elif proved_m and not proved_s and L in lm:
+                mirrored = True
+            elif proved_s and not proved_m and L in l:
+                mirrored = False
+            else:
+                # nothing proved
+                if L in ls and L in lm:
+                    # In case of a chiral link this means that the HOMFLY-PT
+                    # polynomial does not distinguish mirror images (see the above
+                    # example ``k11m``).
+                    if unique:
+                        raise NotImplementedError('mirror type of this link cannot be uniquely determined%s' %non_unique_hint)
+                    mirrored = '?'
+                elif L in lm:
+                    mirrored = True
+                else:
+                    mirrored = False
+
+            return L, mirrored
+
+        def answer_unori(S):
+            r"""
+            Return a series of oriented links having the same unoriented name
+            according to the keyword ``mirror_version``.
+            """
+            if not mirror_version:
+                return S
+
+            mirrored = [answer(L)[1] for L in S]
+            if all(mirrored):
+                # all matching links are mirrored to self
+                return S, True
+            if any(i == '?' for i in mirrored):
+                # unknown chirality for a matching link
+                return S, '?'
+            if any(i is None for i in mirrored):
+                # an amphicheiral link matches
+                return S, None
+            if not any(mirrored):
+                # no matching link is mirrored to self
+                return S, False
+            # finally both mirror types match
+            return S, None
+
+        def answer_list(l):
+            r"""
+            Return a list of items of the KnotInfo database according to the keyword
+            argument ``unique``.
+            """
+            if not unique:
+                return sorted([answer(L) for L in l])
+
+            if len(l) == 1:
+                return answer(l[0])
+
+            if not l[0].is_knot():
+                S = l[0].series(oriented=True)
+                if set(list(S)) == set(l):
+                    return answer_unori(S)
+
+            raise NotImplementedError('this link cannot be uniquely determined%s' %non_unique_hint)
+
+        self_m = self.mirror_image()
+        ls, proved_s = self._knotinfo_matching_list()
+        lm, proved_m = self_m._knotinfo_matching_list()
+        l = list(set(ls + lm))
+
+        if l and not unique:
+            return answer_list(l)
+
+        if proved_s and proved_m:
+            return answer_list(l)
+
+        if proved_s:
+            return answer_list(ls)
+
+        if proved_m:
+            return answer_list(lm)
+
+        # here we come if we cannot be sure about the found result
+
+        uniq_txt = ('', '')
+        if l:
+            uniq_txt = (' uniquely', non_unique_hint)
+
+        cr = len(self.pd_code())
+        if self.is_knot() and cr > 12:
+            # we cannot not be sure if this link is recorded in the KnotInfo database
+            raise NotImplementedError('this knot having more than 12 crossings cannot be%s determined%s' %uniq_txt)
+
+        if not self.is_knot() and cr > 11:
+            # we cannot not be sure if this link is recorded in the KnotInfo database
+            raise NotImplementedError('this link having more than 11 crossings cannot be%s determined%s' %uniq_txt)
+
+        H = self.homfly_polynomial(normalization='vz')
+
+        if sum(exp for f, exp in H.factor()) > 1:
+            # we cannot be sure if this is a prime link (see the example for the connected
+            # sum of K4_1 and K5_2 in the doctest of :meth:`_knotinfo_matching_list`)
+            raise NotImplementedError('this (possibly non prime) link cannot be%s determined%s' %uniq_txt)
+
+        if not l:
+            from sage.features.databases import DatabaseKnotInfo
+            DatabaseKnotInfo().require()
+            return l
+
+        return answer_list(l)
+
+    def is_isotopic(self, other):
+        r"""
+        Check whether ``self`` is isotopic to ``other``.
+
+        INPUT:
+
+        - ``other`` -- another instance of :class:`Link`
+
+        EXAMPLES::
+
+            sage: l1 = Link([[2, 9, 3, 10], [4, 13, 5, 14], [6, 11, 7, 12],
+            ....:            [8, 1, 9, 2], [10, 7, 11, 8], [12, 5, 13, 6],
+            ....:            [14, 3, 1, 4]])
+            sage: l2 = Link([[1, 8, 2, 9], [9, 2, 10, 3], [3, 14, 4, 1],
+            ....:            [13, 4, 14, 5], [5, 12, 6, 13], [11, 6, 12, 7],
+            ....:            [7, 10, 8, 11]])
+            sage: l1.is_isotopic(l2)
+            True
+
+            sage: l3 = l2.mirror_image()
+            sage: l1.is_isotopic(l3)
+            False
+
+            sage: from sage.knots.knotinfo import KnotInfo
+            sage: L = KnotInfo.L7a7_0_0             # optional - database_knotinfo
+            sage: L.series(oriented=True).inject()  # optional - database_knotinfo
+            Defining L7a7
+            sage: L == L7a7(0)                      # optional - database_knotinfo
+            True
+            sage: l = L.link()                      # optional - database_knotinfo
+            sage: l.is_isotopic(L7a7(1).link())     # optional - database_knotinfo
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: comparison not possible!
+            sage: l.is_isotopic(L7a7(2).link())     # optional - database_knotinfo
+            True
+            sage: l.is_isotopic(L7a7(3).link())     # optional - database_knotinfo
+            False
+        """
+        from sage.misc.verbose import verbose
+        if not isinstance(other, Link):
+            verbose('other is not a link')
+            return False
+
+        if self == other:
+            # surely isotopic
+            verbose('identified by representation')
+            return True
+
+        if self.homfly_polynomial() != other.homfly_polynomial():
+            # surely non isotopic
+            verbose('different Homfly-PT polynomials')
+            return False
+
+        if self._markov_move_cmp(other.braid()):
+            # surely isotopic
+            verbose('identified via Markov moves')
+            return True
+
+        try:
+            ki, m = self.get_knotinfo()
+            verbose('KnotInfo self: %s mirrored %s' % (ki, m))
+            try:
+                if ki.is_unique():
+                    try:
+                        kio = other.get_knotinfo()
+                        verbose('KnotInfo other: %s mirrored %s' % kio)
+                        return (ki, m) == kio
+                    except NotImplementedError:
+                        pass
+            except AttributeError:
+                # ki is a series
+                pass
+        except NotImplementedError:
+            pass
+
+        raise NotImplementedError('comparison not possible!')

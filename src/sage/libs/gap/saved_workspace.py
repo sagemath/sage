@@ -8,7 +8,7 @@ workspaces.
 
 import os
 import glob
-from sage.env import GAP_ROOT_DIR
+from sage.env import GAP_LIB_DIR
 from sage.interfaces.gap_workspace import gap_workspace_file
 
 
@@ -31,7 +31,7 @@ def timestamp():
     """
     libgap_dir = os.path.dirname(__file__)
     libgap_files = glob.glob(os.path.join(libgap_dir, '*'))
-    gap_packages = glob.glob(os.path.join(GAP_ROOT_DIR, 'pkg', '*'))
+    gap_packages = glob.glob(os.path.join(GAP_LIB_DIR, 'pkg', '*'))
     files = libgap_files + gap_packages
     if len(files) == 0:
         print('Unable to find LibGAP files.')

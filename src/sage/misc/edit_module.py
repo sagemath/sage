@@ -33,7 +33,6 @@ then the system will use that if no template has been set explicitly.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 import sage.misc.sageinspect
 import os
@@ -76,8 +75,8 @@ def file_and_line(obj):
     EXAMPLES::
 
         sage: import sage.misc.edit_module as edit_module
-        sage: edit_module.file_and_line(sage)
-        ('...sage/__init__.py', 0)
+        sage: edit_module.file_and_line(sage.cpython)
+        ('...sage/cpython/__init__.py', 0)
 
     The following tests against a bug that was fixed in :trac:`11298`::
 

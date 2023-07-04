@@ -39,7 +39,6 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 # This contains both the parent and element classes. These should be split if
 #   the classes grow larger.
@@ -63,6 +62,7 @@ from sage.combinat.crystals.kirillov_reshetikhin import horizontal_dominoes_remo
 from sage.combinat.partition import Partition
 from sage.combinat.tableau import Tableau
 
+
 class KirillovReshetikhinTableaux(CrystalOfWords):
     r"""
     Kirillov-Reshetikhin tableaux.
@@ -74,8 +74,9 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
     (inverse) filling map.
 
     Whenever `B^{r,s} \cong B(s\Lambda_r)` as a classical crystal (which is
-    the case for `B^{r,s}` in type `A_n^{(1)}`, `B^{n,s}` in type `C_n^{(1)}` and `D_{n+1}^{(2)}`,
-    `B^{n,s}` and `B^{n-1,s}` in type `D_n^{(1)}`) then the filling map is trivial.
+    the case for `B^{r,s}` in type `A_n^{(1)}`, `B^{n,s}` in type `C_n^{(1)}`
+    and `D_{n+1}^{(2)}`, `B^{n,s}` and `B^{n-1,s}` in type `D_n^{(1)}`) then
+    the filling map is trivial.
 
     For `B^{r,s}` in:
 
@@ -130,10 +131,10 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         be classified by how the special node `0` connects with the
         corresponding classical diagram.
 
-    The classical crystal stucture is given by the usual Kashiwara-Nakashima
+    The classical crystal structure is given by the usual Kashiwara-Nakashima
     tableaux rules. That is to embed this into `B(\Lambda_1)^{\otimes n s}`
     by using the reading word and then applying the classical crystal
-    operator. The affine crystal stucture is given by converting to
+    operator. The affine crystal structure is given by converting to
     the corresponding KR crystal element, performing the affine crystal
     operator, and pulling back to a KR tableau.
 
@@ -568,6 +569,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         """
         return self._r
 
+
 class KRTableauxRectangle(KirillovReshetikhinTableaux):
     r"""
     Kirillov-Reshetkhin tableaux `B^{r,s}` whose module generator is a single
@@ -585,6 +587,7 @@ class KRTableauxRectangle(KirillovReshetikhinTableaux):
         sage: KRT = crystals.KirillovReshetikhin(['C', 3, 1], 3, 2, model='KR')
         sage: TestSuite(KRT).run() # long time
     """
+
     def _build_module_generators(self):
         r"""
         Build the module generators.
@@ -625,6 +628,7 @@ class KRTableauxRectangle(KirillovReshetikhinTableaux):
         f_str = reversed(krc.lift().to_highest_weight()[1])
         return self.module_generators[0].f_string(f_str)
 
+
 class KRTableauxTypeVertical(KirillovReshetikhinTableaux):
     r"""
     Kirillov-Reshetkihn tableaux `B^{r,s}` of type:
@@ -642,6 +646,7 @@ class KRTableauxTypeVertical(KirillovReshetikhinTableaux):
         sage: KRT = crystals.KirillovReshetikhin(['A', 5, 2], 2, 2, model='KR')
         sage: TestSuite(KRT).run() # long time
     """
+
     def _fill(self, weight):
         r"""
         Return the highest weight KR tableau of weight ``weight``.
@@ -754,6 +759,7 @@ class KRTableauxTypeVertical(KirillovReshetikhinTableaux):
         f_str = reversed(lifted.to_highest_weight()[1])
         return self._fill(weight).f_string(f_str)
 
+
 class KRTableauxTypeHorizonal(KirillovReshetikhinTableaux):
     r"""
     Kirillov-Reshetikhin tableaux `B^{r,s}` of type:
@@ -768,6 +774,7 @@ class KRTableauxTypeHorizonal(KirillovReshetikhinTableaux):
         sage: KRT = crystals.KirillovReshetikhin(CartanType(['A', 4, 2]).dual(), 2, 2, model='KR')
         sage: TestSuite(KRT).run()
     """
+
     def _fill(self, shape):
         r"""
         Return the highest weight KR tableau of weight ``shape``.
@@ -847,6 +854,7 @@ class KRTableauxTypeHorizonal(KirillovReshetikhinTableaux):
         f_str = reversed(lifted.to_highest_weight()[1])
         return self._fill(shape).f_string(f_str)
 
+
 class KRTableauxTypeBox(KRTableauxTypeVertical):
     r"""
     Kirillov-Reshetikhin tableaux `B^{r,s}` of type:
@@ -864,6 +872,7 @@ class KRTableauxTypeBox(KRTableauxTypeVertical):
         sage: KRT = crystals.KirillovReshetikhin(['D', 4, 3], 1, 2, model='KR')
         sage: TestSuite(KRT).run() # long time
     """
+
     def _fill(self, weight):
         r"""
         Return the highest weight KR tableau of weight ``weight``.
@@ -951,6 +960,7 @@ class KRTableauxTypeBox(KRTableauxTypeVertical):
         """
         return tuple(self._fill(weight) for weight in partitions_in_box(self._s, self._r))
 
+
 class KRTableauxSpin(KRTableauxRectangle):
     r"""
     Kirillov-Reshetikhin tableaux `B^{r,s}` of type `D_n^{(1)}` with
@@ -963,6 +973,7 @@ class KRTableauxSpin(KRTableauxRectangle):
         sage: KRT = crystals.KirillovReshetikhin(['D', 4, 1], 4, 2, model='KR')
         sage: TestSuite(KRT).run()
     """
+
     def _build_module_generators(self):
         r"""
         Build the module generators.
@@ -989,6 +1000,7 @@ class KRTableauxSpin(KRTableauxRectangle):
 
         return (self.element_class(self, [self.letters(x) for x in flatten(tableau)]),)
 
+
 class KRTableauxBn(KRTableauxTypeHorizonal):
     """
     Kirillov-Reshetkhin tableaux `B^{n,s}` of type `B_n^{(1)}`.
@@ -998,6 +1010,7 @@ class KRTableauxBn(KRTableauxTypeHorizonal):
         sage: KRT = crystals.KirillovReshetikhin(['B', 2, 1], 2, 3, model='KR')
         sage: TestSuite(KRT).run()
     """
+
     def _build_module_generators(self):
         """
         Build the module generators.
@@ -1040,6 +1053,7 @@ class KRTableauxBn(KRTableauxTypeHorizonal):
                 return x.f_string(f_str)
         raise ValueError("no matching highest weight element found")
 
+
 class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
     r"""
     A Kirillov-Reshetikhin tableau.
@@ -1049,6 +1063,7 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
     and
     :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.TensorProductOfKirillovReshetikhinTableaux`.
     """
+
     def __init__(self, parent, list, **options):
         r"""
         Initialize ``self``.
@@ -1061,7 +1076,7 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
             sage: TestSuite(elt).run()
         """
         # Make sure we are a list of letters
-        if list != [] and not isinstance(list[0], (parent.letters.element_class, EmptyLetter)):
+        if list and not isinstance(list[0], (parent.letters.element_class, EmptyLetter)):
             list = [parent.letters(x) for x in list]
         TensorProductOfRegularCrystalsElement.__init__(self, parent, list)
 
@@ -1459,7 +1474,9 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
         """
         return self.lusztig_involution().left_split().lusztig_involution()
 
+
 KirillovReshetikhinTableaux.Element = KirillovReshetikhinTableauxElement
+
 
 class KRTableauxSpinElement(KirillovReshetikhinTableauxElement):
     r"""
@@ -1470,6 +1487,7 @@ class KRTableauxSpinElement(KirillovReshetikhinTableauxElement):
     respectively for all `i \neq 0`. We do this so our columns are full
     width (as opposed to half width and/or uses a `\pm` representation).
     """
+
     def e(self, i):
         r"""
         Calculate the action of `e_i` on ``self``.
@@ -1650,8 +1668,10 @@ class KRTableauxSpinElement(KirillovReshetikhinTableauxElement):
             WLR = F.ambient_space()
         return sum((self[j].weight() for j in range(len(self))), WLR.zero()) / 2
 
+
 KRTableauxBn.Element = KRTableauxSpinElement
 KRTableauxSpin.Element = KRTableauxSpinElement
+
 
 class KRTableauxDTwistedSpin(KRTableauxRectangle):
     r"""
@@ -1668,11 +1688,13 @@ class KRTableauxDTwistedSpin(KRTableauxRectangle):
     """
     Element = KRTableauxSpinElement
 
+
 class KRTableauxTypeFromRCElement(KirillovReshetikhinTableauxElement):
     r"""
     A Kirillov-Reshetikhin tableau constructed from rigged configurations
     under the bijection `\Phi`.
     """
+
     def e(self, i):
         """
         Perform the action of `e_i` on ``self``.
@@ -1787,6 +1809,7 @@ class KRTableauxTypeFromRC(KirillovReshetikhinTableaux):
         non-trivial multiplicities of classical components, so
         :meth:`classical_decomposition` does not work.
     """
+
     def __init__(self, cartan_type, r, s):
         r"""
         Initialize ``self``.
@@ -1876,4 +1899,3 @@ class KRTableauxTypeFromRC(KirillovReshetikhinTableaux):
         return len(self.module_generators[0]) // self._s
 
     Element = KRTableauxTypeFromRCElement
-

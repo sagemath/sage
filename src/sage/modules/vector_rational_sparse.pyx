@@ -149,6 +149,15 @@ cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     mpq_set(ans, v.entries[m])
     return 0
 
+cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n):
+    """
+    Return if the ``n``-th entry of the sparse vector ``v`` is zero.
+
+    This is meant for internal use only. If ``n`` is not valid, then
+    this might lead to a segfault.
+    """
+    return binary_search0(v.positions, v.num_nonzero, n) == -1
+
 cdef object mpq_vector_to_list(mpq_vector* v):
     """
     Returns a Python list of 2-tuples (i,x), where x=v[i] runs
@@ -285,7 +294,8 @@ cdef int add_mpq_vector_init(mpq_vector* sum,
 
     # 1. Allocate memory:
     nz = v.num_nonzero + w.num_nonzero
-    if nz > v.degree: nz = v.degree
+    if nz > v.degree:
+        nz = v.degree
     mpq_vector_init(z, v.degree, nz)
     # 2. Merge entries
     i = 0  # index into entries of v
@@ -399,4 +409,3 @@ cdef int mpq_vector_cmp(mpq_vector* v, mpq_vector* w):
         elif c > 0:
             return 1
     return 0
-

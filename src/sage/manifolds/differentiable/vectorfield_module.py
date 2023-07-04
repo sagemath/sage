@@ -27,27 +27,41 @@ REFERENCES:
 
 """
 
-#******************************************************************************
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
-#       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
-#       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
+# ******************************************************************************
+#       Copyright (C) 2015-2021 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#                     2015      Michal Bejger <bejger@camk.edu.pl>
+#                     2016      Travis Scrimshaw <tscrimsh@umn.edu>
+#                     2018      Florentin Jaffredo
+#                     2019      Hans Fotsing Tetsing
+#                     2020      Michael Jung
+#                     2020-2022 Matthias Koeppe
+#                     2021-2022 Tobias Diez
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#******************************************************************************
+# ******************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
 from sage.categories.modules import Modules
+from sage.manifolds.differentiable.vectorfield import VectorField, VectorFieldParal
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
-from sage.manifolds.differentiable.vectorfield import (VectorField,
-                                                       VectorFieldParal)
+from sage.tensor.modules.reflexive_module import ReflexiveModule_base
 
-class VectorFieldModule(UniqueRepresentation, Parent):
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_map import DiffMap
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
+
+
+class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
     r"""
     Module of vector fields along a differentiable manifold `U`
     with values on a differentiable manifold `M`, via a differentiable
@@ -181,7 +195,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
     """
     Element = VectorField
 
-    def __init__(self, domain, dest_map=None):
+    def __init__(self, domain: DifferentiableManifold, dest_map: Optional[DiffMap] = None):
         r"""
         Construct the module of vector fields taking values on a (a priori)
         non-parallelizable differentiable manifold.
@@ -244,6 +258,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         # exterior_power and dual_exterior_power
         self._exterior_powers = {1: self}
         self._dual_exterior_powers = {}
+        self._general_linear_group = None
 
     #### Parent methods
 
@@ -262,13 +277,17 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             sage: v = XM([-x,y], frame=c_xy.frame(), name='v'); v
             Vector field v on the 2-dimensional differentiable manifold M
             sage: v.display()
-            v = -x d/dx + y d/dy
+            v = -x ∂/∂x + y ∂/∂y
             sage: XM(0) is XM.zero()
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, VectorField):
             if (self._domain.is_subset(comp._domain)
                    and self._ambient_domain.is_subset(comp._ambient_domain)):
@@ -276,8 +295,12 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             else:
                 raise ValueError("cannot convert the {} ".format(comp) +
                                  "to a vector field in {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
+        # standard construction
         resu = self.element_class(self, name=name, latex_name=latex_name)
-        if comp != []:
+        if comp:
             resu.set_comp(frame)[:] = comp
         return resu
 
@@ -297,15 +320,13 @@ class VectorFieldModule(UniqueRepresentation, Parent):
 
         """
         resu = self.element_class(self)
-        # Non-trivial open covers of the domain:
-        open_covers = self._domain.open_covers()[1:]  # the open cover 0
-                                                      # is trivial
-        if open_covers != []:
-            oc = open_covers[0]  # the first non-trivial open cover is selected
+        for oc in self._domain.open_covers(trivial=False):
+            # the first non-trivial open cover is selected
             for dom in oc:
                 vmodule_dom = dom.vector_field_module(
                                          dest_map=self._dest_map.restrict(dom))
                 resu.set_restriction(vmodule_dom._an_element_())
+            return resu
         return resu
 
     def _coerce_map_from_(self, other):
@@ -375,11 +396,11 @@ class VectorFieldModule(UniqueRepresentation, Parent):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r"\text{" + str(self) + r"}"
         else:
-           return self._latex_name
+            return self._latex_name
 
-    def domain(self):
+    def domain(self) -> DifferentiableManifold:
         r"""
         Return the domain of the vector fields in this module.
 
@@ -408,7 +429,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         """
         return self._domain
 
-    def ambient_domain(self):
+    def ambient_domain(self) -> DifferentiableManifold:
         r"""
         Return the manifold in which the vector fields of this module take
         their values.
@@ -486,7 +507,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         """
         return self._dest_map
 
-    def tensor_module(self, k, l):
+    def tensor_module(self, k, l, *, sym=None, antisym=None):
         r"""
         Return the module of type-`(k,l)` tensors on ``self``.
 
@@ -532,11 +553,16 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.tensorfield_module import \
+        if sym or antisym:
+            raise NotImplementedError
+        try:
+            return self._tensor_modules[(k,l)]
+        except KeyError:
+            from sage.manifolds.differentiable.tensorfield_module import \
                                                               TensorFieldModule
-        if (k,l) not in self._tensor_modules:
-            self._tensor_modules[(k,l)] = TensorFieldModule(self, (k,l))
-        return self._tensor_modules[(k,l)]
+            T = TensorFieldModule(self, (k,l))
+            self._tensor_modules[(k,l)] = T
+            return T
 
     def exterior_power(self, p):
         r"""
@@ -585,13 +611,17 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.multivector_module import \
+        try:
+            return self._exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            else:
+                from sage.manifolds.differentiable.multivector_module import \
                                                               MultivectorModule
-        if p == 0:
-            return self._ring
-        if p not in self._exterior_powers:
-            self._exterior_powers[p] = MultivectorModule(self, p)
-        return self._exterior_powers[p]
+                L = MultivectorModule(self, p)
+            self._exterior_powers[p] = L
+            return L
 
     def dual_exterior_power(self, p):
         r"""
@@ -639,13 +669,17 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.diff_form_module import \
+        try:
+            return self._dual_exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            else:
+                from sage.manifolds.differentiable.diff_form_module import \
                                                                  DiffFormModule
-        if p == 0:
-            return self._ring
-        if p not in self._dual_exterior_powers:
-            self._dual_exterior_powers[p] = DiffFormModule(self, p)
-        return self._dual_exterior_powers[p]
+                L = DiffFormModule(self, p)
+            self._dual_exterior_powers[p] = L
+        return L
 
     def dual(self):
         r"""
@@ -692,12 +726,14 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.automorphismfield_group import \
-                                                         AutomorphismFieldGroup
-        return AutomorphismFieldGroup(self)
+        if self._general_linear_group is None:
+            from sage.manifolds.differentiable.automorphismfield_group import \
+                                                          AutomorphismFieldGroup
+            self._general_linear_group = AutomorphismFieldGroup(self)
+        return self._general_linear_group
 
-    def tensor(self, tensor_type, name=None, latex_name=None, sym=None,
-               antisym=None, specific_type=None):
+    def _tensor(self, tensor_type, name=None, latex_name=None, sym=None,
+                antisym=None, specific_type=None):
         r"""
         Construct a tensor on ``self``.
 
@@ -741,10 +777,6 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             sage: XM.tensor((1,2), name='t')
             Tensor field t of type (1,2) on the 2-dimensional differentiable
              manifold M
-            sage: XM.tensor((1,0), name='a')
-            Vector field a on the 2-dimensional differentiable manifold M
-            sage: XM.tensor((0,2), name='a', antisym=(0,1))
-            2-form a on the 2-dimensional differentiable manifold M
 
         .. SEEALSO::
 
@@ -754,9 +786,12 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         """
         from sage.manifolds.differentiable.automorphismfield import \
                                                        AutomorphismField
-        from sage.manifolds.differentiable.metric import \
-                                                  PseudoRiemannianMetric
-        if tensor_type==(1,0):
+        from sage.manifolds.differentiable.metric import (PseudoRiemannianMetric,
+                                                          DegenerateMetric)
+        from sage.tensor.modules.comp import CompWithSym
+        sym, antisym = CompWithSym._canonicalize_sym_antisym(
+            tensor_type[0] + tensor_type[1], sym, antisym)
+        if tensor_type == (1,0):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
         elif tensor_type == (0,1):
@@ -766,38 +801,101 @@ class VectorFieldModule(UniqueRepresentation, Parent):
                 return self.automorphism(name=name,
                                          latex_name=latex_name)
         elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple or a
-                # range object; it is converted to a 1-item list:
-                antisym = [tuple(antisym)]
-            if isinstance(antisym, list):
-                antisym0 = antisym[0]
-            else:
-                antisym0 = antisym
-            if len(antisym0) == tensor_type[1]:
+            if len(antisym[0]) == tensor_type[1]:
                 return self.alternating_form(tensor_type[1], name=name,
                                              latex_name=latex_name)
         elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple or a
-                # range object; it is converted to a 1-item list:
-                antisym = [tuple(antisym)]
-            if isinstance(antisym, list):
-                antisym0 = antisym[0]
-            else:
-                antisym0 = antisym
-            if len(antisym0) == tensor_type[0]:
+            if len(antisym[0]) == tensor_type[0]:
                 return self.alternating_contravariant_tensor(
-                                              tensor_type[0], name=name,
-                                              latex_name=latex_name)
-        elif tensor_type==(0,2) and specific_type is not None:
+                    tensor_type[0], name=name, latex_name=latex_name)
+        elif tensor_type == (0,2) and specific_type is not None:
             if issubclass(specific_type, PseudoRiemannianMetric):
                 return self.metric(name, latex_name=latex_name)
                 # NB: the signature is not treated
+            if issubclass(specific_type, DegenerateMetric):
+                sign = self._domain._dim
+                return self.metric(name, latex_name=latex_name,
+                                   signature=(0, sign-1, 1))
         # Generic case
-        return self.tensor_module(*tensor_type).element_class(self,
-                        tensor_type, name=name, latex_name=latex_name,
-                        sym=sym, antisym=antisym)
+        return self.tensor_module(*tensor_type).element_class(
+            self, tensor_type, name=name, latex_name=latex_name,
+            sym=sym, antisym=antisym)
+
+    def tensor(self, *args, **kwds):
+        r"""
+        Construct a tensor field on the domain of ``self`` or a tensor product of ``self`` with other modules.
+
+        If ``args`` consist of other parents, just delegate to :meth:`tensor_product`.
+
+        Otherwise, construct a tensor (i.e., a tensor field on the domain of
+        the vector field module) from the following input.
+
+        INPUT:
+
+        - ``tensor_type`` -- pair (k,l) with k being the contravariant rank
+          and l the covariant rank
+        - ``name`` -- (string; default: ``None``) name given to the tensor
+        - ``latex_name`` -- (string; default: ``None``) LaTeX symbol to denote
+          the tensor; if none is provided, the LaTeX symbol is set to ``name``
+        - ``sym`` -- (default: ``None``) a symmetry or a list of symmetries
+          among the tensor arguments: each symmetry is described by a tuple
+          containing the positions of the involved arguments, with the
+          convention position=0 for the first argument; for instance:
+
+          * ``sym=(0,1)`` for a symmetry between the 1st and 2nd arguments
+          * ``sym=[(0,2),(1,3,4)]`` for a symmetry between the 1st and 3rd
+            arguments and a symmetry between the 2nd, 4th and 5th arguments
+
+        - ``antisym`` -- (default: ``None``) antisymmetry or list of
+          antisymmetries among the arguments, with the same convention
+          as for ``sym``
+        - ``specific_type`` -- (default: ``None``) specific subclass of
+          :class:`~sage.manifolds.differentiable.tensorfield.TensorField` for
+          the output
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.tensorfield.TensorField`
+          representing the tensor defined on the vector field module with the
+          provided characteristics
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: XM = M.vector_field_module()
+            sage: XM.tensor((1,2), name='t')
+            Tensor field t of type (1,2) on the 2-dimensional differentiable
+             manifold M
+            sage: XM.tensor((1,0), name='a')
+            Vector field a on the 2-dimensional differentiable manifold M
+            sage: XM.tensor((0,2), name='a', antisym=(0,1))
+            2-form a on the 2-dimensional differentiable manifold M
+
+        Delegation to :meth:`tensor_product`::
+
+            sage: M = Manifold(2, 'M')
+            sage: XM = M.vector_field_module()
+            sage: XM.tensor(XM)
+            Module T^(2,0)(M) of type-(2,0) tensors fields on the 2-dimensional differentiable manifold M
+            sage: XM.tensor(XM, XM.dual(), XM)
+            Module T^(3,1)(M) of type-(3,1) tensors fields on the 2-dimensional differentiable manifold M
+            sage: XM.tensor(XM).tensor(XM.dual().tensor(XM.dual()))
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'TensorFieldModule_with_category' object has no attribute '_basis_sym'
+
+        .. SEEALSO::
+
+            :class:`~sage.manifolds.differentiable.tensorfield.TensorField`
+            for more examples and documentation.
+        """
+        # Until https://github.com/sagemath/sage/issues/30373 is done,
+        # TensorProductFunctor._functor_name is "tensor", so this method
+        # also needs to double as the tensor product construction
+        if isinstance(args[0], Parent):
+            return self.tensor_product(*args, **kwds)
+        return self._tensor(*args, **kwds)
 
     def alternating_contravariant_tensor(self, degree, name=None,
                                          latex_name=None):
@@ -976,7 +1074,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
                                        name=name, latex_name=latex_name)
 
     @cached_method
-    def identity_map(self, name='Id', latex_name=None):
+    def identity_map(self):
         r"""
         Construct the identity map on the vector field module.
 
@@ -984,34 +1082,33 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         of tangent-space identity maps along the differentiable manifold
         `U` over which the vector field module is defined.
 
-        INPUT:
-
-        - ``name`` -- (string; default: ``'Id'``) name given to the
-          identity map
-        - ``latex_name`` -- (string; optional) LaTeX symbol to denote
-          the identity map;  if none is provided, the LaTeX symbol is
-          set to ``'\mathrm{Id}'`` if ``name`` is ``'Id'`` and
-          to ``name`` otherwise
-
         OUTPUT:
 
         - instance of
           :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Get the identity map on a vector field module::
 
             sage: M = Manifold(2, 'M')
             sage: XM = M.vector_field_module()
-            sage: XM.identity_map()
+            sage: Id = XM.identity_map(); Id
             Field of tangent-space identity maps on the 2-dimensional
              differentiable manifold M
 
+        If the identity should be renamed, one has to create a copy::
+
+            sage: Id.set_name('1')
+            Traceback (most recent call last):
+            ...
+            ValueError: the name of an immutable element cannot be changed
+            sage: one = Id.copy('1'); one
+            Field of tangent-space automorphisms 1 on the 2-dimensional
+             differentiable manifold M
+
         """
-        resu = self.general_linear_group().one()
-        if latex_name is None:
-            latex_name = name
-        resu.set_name(name=name, latex_name=latex_name)
-        return resu
+        return self.general_linear_group().one()
 
     @cached_method
     def zero(self):
@@ -1026,20 +1123,23 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             sage: XM.zero()
             Vector field zero on the 2-dimensional differentiable
              manifold M
+
         """
-        elt = self.element_class(self, name='zero', latex_name='0')
+        zero = self.element_class(self, name='zero', latex_name='0')
         for frame in self._domain._frames:
             if self._dest_map.restrict(frame._domain) == frame._dest_map:
-                elt.add_comp(frame)
+                zero.add_comp(frame)
                 # (since new components are initialized to zero)
-        return elt
+        zero._is_zero = True  # This element is certainly zero
+        zero.set_immutable()
+        return zero
 
-    def metric(self, name, signature=None, latex_name=None):
+    def metric(self, name: str, signature: Optional[int] = None, latex_name: Optional[str] = None):
         r"""
-        Construct a pseudo-Riemannian metric (nondegenerate symmetric bilinear
+        Construct a metric (symmetric bilinear
         form) on the current vector field module.
 
-        A pseudo-Riemannian metric of the vector field module is actually a
+        A metric of the vector field module is actually a
         field of tangent-space non-degenerate symmetric bilinear forms along
         the manifold `U` on which the vector field module is defined.
 
@@ -1075,9 +1175,89 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             for more documentation.
 
         """
+        # signature:
+        ndim = self._ambient_domain.dimension()
+        try:
+            for elt in signature:
+                if (elt<0) or (not isinstance(elt, (int, Integer))):
+                    raise ValueError("{} must be a positive integer".format(elt))
+                if elt > ndim:
+                    raise ValueError("{} must be less than {}".format(elt,ndim))
+                sign = signature[0]+signature[1]+signature[2]
+                if sign!=ndim:
+                    raise ValueError("{} is different from the dimension".format(sign)+
+                                        " of the manifold, who is {}".format(ndim))
+            if signature[2]!=0:
+                from sage.manifolds.differentiable.metric import DegenerateMetric
+                return DegenerateMetric(self, name, signature=signature,
+                                        latex_name=latex_name)
+        except TypeError:
+            pass
+        if signature is None:
+            signature = (ndim,0)
+        if isinstance(signature, (Integer, int)):
+            if (signature+ndim)%2 == 1:
+                if ndim%2 == 0:
+                    raise ValueError("the metric signature must be even")
+                else:
+                    raise ValueError("the metric signature must be odd")
+            signature = (int((ndim+signature)/2), int((ndim-signature)/2))
         from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
-        return PseudoRiemannianMetric(self, name, signature=signature,
+        return PseudoRiemannianMetric(self, name, signature=signature[0]-signature[1],
                                       latex_name=latex_name)
+
+    def symplectic_form(
+        self, name: Optional[str] = None, latex_name: Optional[str] = None
+    ):
+        r"""
+        Construct a symplectic form on the current vector field module.
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticForm`
+
+        EXAMPLES:
+
+        Symplectic form on the 2-sphere::
+
+            sage: M = manifolds.Sphere(2, coordinates='stereographic')
+            sage: XM = M.vector_field_module()
+            sage: omega = XM.symplectic_form(name='omega', latex_name=r'\omega')
+            sage: omega
+            Symplectic form omega on the 2-sphere S^2 of radius 1 smoothly
+             embedded in the Euclidean space E^3
+
+        """
+        from sage.manifolds.differentiable.symplectic_form import SymplecticForm
+
+        return SymplecticForm(self, name, latex_name)
+
+    def poisson_tensor(
+        self, name: Optional[str] = None, latex_name: Optional[str] = None
+    ):
+        r"""
+        Construct a Poisson tensor on the current vector field module.
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.poisson_tensor.PoissonTensorField`
+
+        EXAMPLES:
+
+        Poisson tensor on the 2-sphere::
+
+            sage: M = manifolds.Sphere(2, coordinates='stereographic')
+            sage: XM = M.vector_field_module()
+            sage: varpi = XM.poisson_tensor(name='varpi', latex_name=r'\varpi')
+            sage: varpi
+            2-vector field varpi on the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3
+
+        """
+        from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+
+        return PoissonTensorField(self, name, latex_name)
 
 
 #******************************************************************************
@@ -1162,13 +1342,13 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     Some elements::
 
         sage: XM.an_element().display()
-        2 d/dx + 2 d/dy
+        2 ∂/∂x + 2 ∂/∂y
         sage: XM.zero().display()
         zero = 0
         sage: v = XM([-y,x]) ; v
         Vector field on the 2-dimensional differentiable manifold R^2
         sage: v.display()
-        -y d/dx + x d/dy
+        -y ∂/∂x + x ∂/∂y
 
     An example of module of vector fields with a destination map `\Phi`
     different from the identity map, namely a mapping
@@ -1181,8 +1361,8 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         Differentiable map Phi from the 1-dimensional differentiable manifold
          I to the 2-dimensional differentiable manifold R^2
         sage: Phi.display()
-        Phi: I --> R^2
-           t |--> (x, y) = (cos(t), sin(t))
+        Phi: I → R^2
+           t ↦ (x, y) = (cos(t), sin(t))
         sage: XIM = I.vector_field_module(dest_map=Phi) ; XIM
         Free module X(I,Phi) of vector fields along the 1-dimensional
          differentiable manifold I mapped into the 2-dimensional differentiable
@@ -1201,18 +1381,18 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     A basis of it is induced by the coordinate vector frame of `\RR^2`::
 
         sage: XIM.bases()
-        [Vector frame (I, (d/dx,d/dy)) with values on the 2-dimensional
+        [Vector frame (I, (∂/∂x,∂/∂y)) with values on the 2-dimensional
          differentiable manifold R^2]
 
     Some elements of this module::
 
         sage: XIM.an_element().display()
-        2 d/dx + 2 d/dy
+        2 ∂/∂x + 2 ∂/∂y
         sage: v = XIM([t, t^2]) ; v
         Vector field along the 1-dimensional differentiable manifold I with
          values on the 2-dimensional differentiable manifold R^2
         sage: v.display()
-        t d/dx + t^2 d/dy
+        t ∂/∂x + t^2 ∂/∂y
 
     The test suite is passed::
 
@@ -1230,7 +1410,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     We have then::
 
         sage: XJM.default_basis()
-        Vector frame (J, (d/dx,d/dy)) with values on the 2-dimensional
+        Vector frame (J, (∂/∂x,∂/∂y)) with values on the 2-dimensional
          differentiable manifold R^2
         sage: XJM.default_basis() is XIM.default_basis().restrict(J)
         True
@@ -1239,7 +1419,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
          differentiable manifold I with values on the 2-dimensional
          differentiable manifold R^2
         sage: v.restrict(J).display()
-        t d/dx + t^2 d/dy
+        t ∂/∂x + t^2 ∂/∂y
 
     Let us now consider the module of vector fields on the circle `S^1`; we
     start by constructing the `S^1` manifold::
@@ -1262,7 +1442,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     coincide, as we can check explicitly::
 
         sage: c_t.frame()[0].display(c_u.frame().restrict(W))
-        d/dt = d/du
+        ∂/∂t = ∂/∂u
 
     Therefore, we can extend `\partial/\partial t` to all `V` and hence to all
     `S^1`, to form a vector field on `S^1` whose components w.r.t. both
@@ -1274,9 +1454,9 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         sage: V.set_change_of_frame(e.restrict(V), c_u.frame(),
         ....:                       V.tangent_identity_field())
         sage: e[0].display(c_t.frame())
-        e_0 = d/dt
+        e_0 = ∂/∂t
         sage: e[0].display(c_u.frame())
-        e_0 = d/du
+        e_0 = ∂/∂u
 
     Equipped with the frame `e`, the manifold `S^1` is manifestly
     parallelizable::
@@ -1392,7 +1572,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
                     # basis is added to the restrictions of bases on a larger
                     # domain
-                    for dom in domain._supersets:
+                    for dom in domain.open_supersets():
                         if dom is not domain:
                             for supbase in dom._frames:
                                 if (supbase.domain() is dom and
@@ -1413,13 +1593,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                                 basis._subframes.update(subframe._subframes)
                                 basis._restrictions.update(subframe._restrictions)
 
-        # Initialization of the components of the zero element:
-        zero = self.zero()
-        for frame in self._domain._frames:
-            if frame._dest_map == self._dest_map:
-                zero.add_comp(frame) # since new components are
-                                     # initialized to zero
-
     #### Parent methods
 
     def _element_constructor_(self, comp=[], basis=None, name=None,
@@ -1435,13 +1608,17 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             sage: v = XM([-y,x], name='v'); v
             Vector field v on the 2-dimensional differentiable manifold M
             sage: v.display()
-            v = -y d/dx + x d/dy
+            v = -y ∂/∂x + x ∂/∂y
             sage: XM(0) is XM.zero()
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, VectorField):
             if (self._domain.is_subset(comp._domain)
                    and self._ambient_domain.is_subset(comp._ambient_domain)):
@@ -1449,9 +1626,13 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             else:
                 raise ValueError("cannot convert the {}".format(comp) +
                                  "to a vector field in {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
+        # standard construction
         resu = self.element_class(self, name=name, latex_name=latex_name)
-        if comp != []:
-            resu.set_comp(basis)[:] = comp
+        if comp:
+            resu.set_comp(basis=basis)[:] = comp
         return resu
 
     # Rem: _an_element_ is declared in the superclass FiniteRankFreeModule
@@ -1512,7 +1693,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                            " mapped into the {}".format(self._ambient_domain)
         return description
 
-    def domain(self):
+    def domain(self) -> DifferentiableManifold:
         r"""
         Return the domain of the vector fields in ``self``.
 
@@ -1543,7 +1724,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         """
         return self._domain
 
-    def ambient_domain(self):
+    def ambient_domain(self) -> DifferentiableManifold:
         r"""
         Return the manifold in which the vector fields of ``self``
         take their values.
@@ -1575,7 +1756,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         """
         return self._ambient_domain
 
-    def destination_map(self):
+    def destination_map(self) -> DiffMap:
         r"""
         Return the differential map associated to ``self``.
 
@@ -1624,7 +1805,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         """
         return self._dest_map
 
-    def tensor_module(self, k, l):
+    def tensor_module(self, k, l, *, sym=None, antisym=None):
         r"""
         Return the free module of all tensors of type `(k, l)` defined
         on ``self``.
@@ -1673,11 +1854,21 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.tensorfield_module import \
+        if sym or antisym:
+            raise NotImplementedError
+        try:
+            return self._tensor_modules[(k,l)]
+        except KeyError:
+            if (k, l) == (1, 0):
+                T = self
+            elif (k, l) == (0, 1):
+                T = self.dual()
+            else:
+                from sage.manifolds.differentiable.tensorfield_module import \
                                                           TensorFieldFreeModule
-        if (k,l) not in self._tensor_modules:
-            self._tensor_modules[(k,l)] = TensorFieldFreeModule(self, (k,l))
-        return self._tensor_modules[(k,l)]
+                T = TensorFieldFreeModule(self, (k,l))
+            self._tensor_modules[(k,l)] = T
+            return T
 
     def exterior_power(self, p):
         r"""
@@ -1727,13 +1918,19 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.multivector_module import \
+        try:
+            return self._exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            elif p == 1:
+                L = self
+            else:
+                from sage.manifolds.differentiable.multivector_module import \
                                                           MultivectorFreeModule
-        if p == 0:
-            return self._ring
-        if p not in self._exterior_powers:
-            self._exterior_powers[p] = MultivectorFreeModule(self, p)
-        return self._exterior_powers[p]
+                L = MultivectorFreeModule(self, p)
+            self._exterior_powers[p] = L
+            return L
 
     def dual_exterior_power(self, p):
         r"""
@@ -1765,8 +1962,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             Free module Omega^2(M) of 2-forms on the 2-dimensional
              differentiable manifold M
             sage: XM.dual_exterior_power(1)
-            Free module Omega^1(M) of 1-forms on the 2-dimensional
-             differentiable manifold M
+            Free module Omega^1(M) of 1-forms on the 2-dimensional differentiable manifold M
             sage: XM.dual_exterior_power(1) is XM.dual()
             True
             sage: XM.dual_exterior_power(0)
@@ -1781,13 +1977,21 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.diff_form_module import \
+        try:
+            return self._dual_exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            elif p == 1:
+                from sage.manifolds.differentiable.diff_form_module import \
+                                                      VectorFieldDualFreeModule
+                L = VectorFieldDualFreeModule(self)
+            else:
+                from sage.manifolds.differentiable.diff_form_module import \
                                                       DiffFormFreeModule
-        if p == 0:
-            return self._ring
-        if p not in self._dual_exterior_powers:
-            self._dual_exterior_powers[p] = DiffFormFreeModule(self, p)
-        return self._dual_exterior_powers[p]
+                L = DiffFormFreeModule(self, p)
+            self._dual_exterior_powers[p] = L
+            return L
 
     def general_linear_group(self):
         r"""
@@ -1903,7 +2107,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                            symbol_dual=symbol_dual,
                            latex_symbol_dual=latex_symbol_dual)
 
-    def tensor(self, tensor_type, name=None, latex_name=None, sym=None,
+    def _tensor(self, tensor_type, name=None, latex_name=None, sym=None,
                antisym=None, specific_type=None):
         r"""
         Construct a tensor on ``self``.
@@ -1965,8 +2169,11 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         """
         from sage.manifolds.differentiable.automorphismfield import (
                               AutomorphismField, AutomorphismFieldParal)
-        from sage.manifolds.differentiable.metric import \
-                                                  PseudoRiemannianMetric
+        from sage.manifolds.differentiable.metric import (PseudoRiemannianMetric,
+                                                          DegenerateMetric)
+        from sage.tensor.modules.comp import CompWithSym
+        sym, antisym = CompWithSym._canonicalize_sym_antisym(
+            tensor_type[0] + tensor_type[1], sym, antisym)
         if tensor_type == (1,0):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
@@ -1977,38 +2184,25 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                           (AutomorphismField, AutomorphismFieldParal)):
                 return self.automorphism(name=name, latex_name=latex_name)
         elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple or a
-                # range object; it is converted to a 1-item list:
-                antisym = [tuple(antisym)]
-            if isinstance(antisym, list):
-                antisym0 = antisym[0]
-            else:
-                antisym0 = antisym
-            if len(antisym0) == tensor_type[1]:
+            if len(antisym[0]) == tensor_type[1]:
                 return self.alternating_form(tensor_type[1], name=name,
                                              latex_name=latex_name)
         elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple or a
-                # range object; it is converted to a 1-item list:
-                antisym = [tuple(antisym)]
-            if isinstance(antisym, list):
-                antisym0 = antisym[0]
-            else:
-                antisym0 = antisym
-            if len(antisym0) == tensor_type[0]:
+            if len(antisym[0]) == tensor_type[0]:
                 return self.alternating_contravariant_tensor(
-                                              tensor_type[0], name=name,
-                                              latex_name=latex_name)
-        elif tensor_type==(0,2) and specific_type is not None:
+                    tensor_type[0], name=name, latex_name=latex_name)
+        elif tensor_type == (0,2) and specific_type is not None:
             if issubclass(specific_type, PseudoRiemannianMetric):
                 return self.metric(name, latex_name=latex_name)
                 # NB: the signature is not treated
+            if issubclass(specific_type, DegenerateMetric):
+                sign = self._domain._dim
+                return self.metric(name, latex_name=latex_name,
+                                   signature=(0, sign-1, 1))
         # Generic case
-        return self.tensor_module(*tensor_type).element_class(self,
-                        tensor_type, name=name, latex_name=latex_name,
-                        sym=sym, antisym=antisym)
+        return self.tensor_module(*tensor_type).element_class(
+            self, tensor_type, name=name, latex_name=latex_name,
+            sym=sym, antisym=antisym)
 
     def tensor_from_comp(self, tensor_type, comp, name=None,
                          latex_name=None):
@@ -2052,7 +2246,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             Tensor field t of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: t.display()
-            t = (x + 1) d/dx*dx - y d/dx*dy + x*y d/dy*dx + (-y^2 + 2) d/dy*dy
+            t = (x + 1) ∂/∂x⊗dx - y ∂/∂x⊗dy + x*y ∂/∂y⊗dx + (-y^2 + 2) ∂/∂y⊗dy
 
         The same set of components transformed into a type-`(0,2)`
         tensor field::
@@ -2061,24 +2255,24 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             Tensor field t of type (0,2) on the 2-dimensional differentiable
              manifold M
             sage: t.display()
-            t = (x + 1) dx*dx - y dx*dy + x*y dy*dx + (-y^2 + 2) dy*dy
+            t = (x + 1) dx⊗dx - y dx⊗dy + x*y dy⊗dx + (-y^2 + 2) dy⊗dy
 
         """
         from sage.tensor.modules.comp import (CompWithSym, CompFullyAntiSym)
 
         # 0/ Compatibility checks:
         if comp._ring is not self._ring:
-             raise ValueError("the components are not defined on the " +
-                              "same ring as the module")
+            raise ValueError("the components are not defined on the "
+                             "same ring as the module")
         if comp._frame not in self._known_bases:
-            raise ValueError("the components are not defined on a " +
+            raise ValueError("the components are not defined on a "
                              "basis of the module")
         if comp._nid != tensor_type[0] + tensor_type[1]:
-            raise ValueError("number of component indices not " +
+            raise ValueError("number of component indices not "
                              "compatible with the tensor type")
         #
         # 1/ Construction of the tensor:
-        if tensor_type == (1,0):
+        if tensor_type == (1, 0):
             resu = self.element_class(self, name=name,
                                       latex_name=latex_name)
         elif tensor_type == (0,1):
@@ -2116,7 +2310,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         INPUT:
 
         - ``name`` -- string (default: ``None``); name given to the
-          symmetric bilinear bilinear form
+          symmetric bilinear form
         - ``latex_name`` -- string (default: ``None``); LaTeX symbol to
           denote the symmetric bilinear form; if ``None``, the LaTeX
           symbol is set to ``name``
@@ -2189,7 +2383,81 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more documentation.
 
         """
-        from sage.manifolds.differentiable.metric import \
-                                                    PseudoRiemannianMetricParal
-        return PseudoRiemannianMetricParal(self, name, signature=signature,
+        ndim = self._ambient_domain.dimension()
+        try:
+            for elt in signature:
+                if (elt<0) or (not isinstance(elt, (int, Integer))):
+                    raise ValueError("{} must be a positive integer".format(elt))
+            sign = signature[0]+signature[1]+signature[2]
+            if sign!=ndim:
+                raise ValueError("{} is different from the dimension".format(sign)+
+                                        " of the manifold, who is {}".format(ndim))
+            if signature[2]!=0:
+                from sage.manifolds.differentiable.metric import DegenerateMetricParal
+                return DegenerateMetricParal(self, name, signature=signature,
+                                             latex_name=latex_name)
+        except TypeError:
+            pass
+        if signature is None:
+            signature = (ndim,0)
+        if isinstance(signature, (Integer, int)):
+            if (signature+ndim)%2 == 1:
+                if ndim%2 == 0:
+                    raise ValueError("the metric signature must be even")
+                else:
+                    raise ValueError("the metric signature must be odd")
+            signature = (int((ndim+signature)/2), int((ndim-signature)/2))
+        from sage.manifolds.differentiable.metric import PseudoRiemannianMetricParal
+        return PseudoRiemannianMetricParal(self, name,
+                                           signature=signature[0]-signature[1],
                                            latex_name=latex_name)
+
+    def symplectic_form(
+        self, name: Optional[str] = None, latex_name: Optional[str] = None
+    ):
+        r"""
+        Construct a symplectic form on the current vector field module.
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticFormParal`
+
+        EXAMPLES:
+
+        Standard symplectic form on `\RR^2`::
+
+            sage: M.<q, p> = EuclideanSpace(2)
+            sage: omega = M.vector_field_module().symplectic_form('omega', r'\omega')
+            sage: omega.set_comp()[1,2] = -1
+            sage: omega.display()
+            omega = -dq∧dp
+        """
+        from sage.manifolds.differentiable.symplectic_form import SymplecticFormParal
+
+        return SymplecticFormParal(self, name, latex_name)
+
+    def poisson_tensor(
+        self, name: Optional[str] = None, latex_name: Optional[str] = None
+    ):
+        r"""
+        Construct a Poisson tensor on the current vector field module.
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.poisson_tensor.PoissonTensorFieldParal`
+
+        EXAMPLES:
+
+        Standard Poisson tensor on `\RR^2`::
+
+            sage: M.<q, p> = EuclideanSpace(2)
+            sage: poisson = M.vector_field_module().poisson_tensor('varpi')
+            sage: poisson.set_comp()[1,2] = -1
+            sage: poisson.display()
+            varpi = -e_q∧e_p
+        """
+        from sage.manifolds.differentiable.poisson_tensor import PoissonTensorFieldParal
+
+        return PoissonTensorFieldParal(self, name, latex_name)

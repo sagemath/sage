@@ -62,28 +62,24 @@ TESTS::
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-include 'sage/data_structures/bitset.pxi'
-
+from sage.data_structures.bitset_base cimport *
 from sage.structure.richcmp cimport rich_to_bool
 from .matroid cimport Matroid
 from .basis_exchange_matroid cimport BasisExchangeMatroid
 from .set_system cimport SetSystem
 from cpython.object cimport Py_EQ, Py_NE
 
-from sage.arith.all import binomial
-
-from itertools import permutations, combinations
+from itertools import combinations
 
 # class of general matroids, represented by their list of bases
 
@@ -163,6 +159,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         """
         cdef SetSystem NB
         cdef long i
+        cdef mp_bitcnt_t bc
 
         if isinstance(M, BasisMatroid):
             BasisExchangeMatroid.__init__(self, groundset=(<BasisMatroid>M)._E, rank=(<BasisMatroid>M)._matroid_rank)
@@ -234,7 +231,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                 for B in nonbases:
                     b = frozenset(B)
                     if len(b) != self._matroid_rank:
-                        raise ValueError("nonbasis has wrong cardinalty.")
+                        raise ValueError("nonbasis has wrong cardinality")
                     if not b.issubset(self._groundset):
                         raise ValueError("nonbasis is not a subset of the groundset")
                     self.__pack(self._b, b)
@@ -246,8 +243,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         self.reset_current_basis()
 
     def __dealloc__(self):
-            bitset_free(self._b)
-            bitset_free(self._bb)
+        bitset_free(self._b)
+        bitset_free(self._bb)
 
     # Sage special functions
     def _repr_(self):
@@ -685,7 +682,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if self._bases_invariant_var is not None:
             return self._bases_invariant_var
         cdef long i, j
-        cdef bitset_t bb_comp
         cdef list bc
         cdef dict bi
         bc = [0 for i in xrange(len(self))]
@@ -913,7 +909,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             bitset_clear(b2)
             j = bitset_first(self._b)
             while j != -1:
-                bitset_add(b2, morph[j])
+                bitset_add(b2, <mp_bitcnt_t> morph[j])
                 j = bitset_next(self._b, j + 1)
             if bitset_in((<BasisMatroid>other)._bb, set_to_index(b2)):
                 bitset_free(b2)
@@ -976,7 +972,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             Internal version that does no input checking.
 
         EXAMPLES::
-        
+
             sage: from sage.matroids.advanced import *
             sage: M = BasisMatroid(matroids.Wheel(3))
             sage: N = BasisMatroid(matroids.CompleteGraphic(4))
@@ -997,7 +993,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if self.full_rank() != other.full_rank():
             return None
         if self.full_rank() == 0:
-            return {self.groundset_list()[i]: other.groundset_list()[i] for i in xrange(len(self))}        
+            return {self.groundset_list()[i]: other.groundset_list()[i] for i in xrange(len(self))}
         if self.bases_count() != other.bases_count():
             return None
 
@@ -1037,7 +1033,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                 return morphism
 
         return self.nonbases()._isomorphism(other.nonbases(), PS, PO)
-        
+
     cpdef _is_isomorphic(self, other, certificate=False):
         """
         Return if this matroid is isomorphic to the given matroid.
@@ -1184,7 +1180,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         N.rename(getattr(self, '__custom_name'))
         return N
 
-    def __deepcopy__(self, memo={}):
+    def __deepcopy__(self, memo=None):
         """
         Create a deep copy.
 
@@ -1202,6 +1198,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M.groundset() is N.groundset()
             False
         """
+        if memo is None:
+            memo = {}
         N = BasisMatroid(M=self)
         N.rename(getattr(self, '__custom_name'))
         return N
@@ -1281,8 +1279,9 @@ cdef long set_to_index(bitset_t S):
         s = bitset_next(S, s + 1)
     return index
 
+
 cdef  index_to_set(bitset_t S, long index, long k, long n):
-    """
+    r"""
     Compute the k-subset of `\{0, ..., n-1\}` of rank index
     """
     bitset_clear(S)

@@ -23,7 +23,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 
 from sage.categories.algebras import Algebras
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.family import Family
@@ -149,7 +149,7 @@ class QSystem(CombinatorialFreeModule):
             raise ValueError("the Cartan type is not tamely-laced")
         if twisted and not cartan_type.is_affine() and not cartan_type.is_untwisted_affine():
             raise ValueError("the Cartan type must be of twisted type")
-        return super(QSystem, cls).__classcall__(cls, base_ring, cartan_type, level, twisted)
+        return super().__classcall__(cls, base_ring, cartan_type, level, twisted)
 
     def __init__(self, base_ring, cartan_type, level, twisted):
         """
@@ -213,6 +213,7 @@ class QSystem(CombinatorialFreeModule):
         """
         if len(t) == 0:
             return '1'
+
         def repr_gen(x):
             ret = 'Q^({})[{}]'.format(*(x[0]))
             if x[1] > 1:
@@ -234,6 +235,7 @@ class QSystem(CombinatorialFreeModule):
         """
         if len(t) == 0:
             return '1'
+
         def repr_gen(x):
             ret = 'Q^{{({})}}_{{{}}}'.format(*(x[0]))
             if x[1] > 1:
@@ -263,16 +265,14 @@ class QSystem(CombinatorialFreeModule):
                 ret += AsciiArt(['*'], baseline=0)
             else:
                 first = False
-            a,m = k
+            a, m = k
             var = AsciiArt([" ({})".format(a),
                             "Q{}".format(m)],
                            baseline=0)
-            #print var
-            #print " "*(len(str(m))+1) + "({})".format(a) + '\n' + "Q{}".format(m)
             if exp > 1:
-                var = (AsciiArt(['(','('], baseline=0) + var
+                var = (AsciiArt(['(', '('], baseline=0) + var
                        + AsciiArt([')', ')'], baseline=0))
-                var = AsciiArt([" "*len(var) + str(exp)], baseline=-1) * var
+                var = AsciiArt([" " * len(var) + str(exp)], baseline=-1) * var
             ret += var
         return ret
 
@@ -286,26 +286,17 @@ class QSystem(CombinatorialFreeModule):
             sage: unicode_art(Q.an_element())
             1 + 2*Q₁⁽¹⁾ + (Q₁⁽¹⁾)²(Q₁⁽²⁾)²(Q₁⁽³⁾)³ + 3*Q₁⁽²⁾
         """
-        from sage.typeset.unicode_art import UnicodeArt
+        from sage.typeset.unicode_art import UnicodeArt, unicode_subscript, unicode_superscript
         if t == self.one_basis():
             return UnicodeArt(["1"])
-
-        subs = {'0': u'₀', '1': u'₁', '2': u'₂', '3': u'₃', '4': u'₄',
-                '5': u'₅', '6': u'₆', '7': u'₇', '8': u'₈', '9': u'₉'}
-        sups = {'0': u'⁰', '1': u'¹', '2': u'²', '3': u'³', '4': u'⁴',
-                '5': u'⁵', '6': u'⁶', '7': u'⁷', '8': u'⁸', '9': u'⁹'}
-        def to_super(x):
-            return u''.join(sups[i] for i in str(x))
-        def to_sub(x):
-            return u''.join(subs[i] for i in str(x))
 
         ret = UnicodeArt("")
         for k, exp in t._sorted_items():
             a,m = k
-            var = UnicodeArt([u"Q" + to_sub(m) + u'⁽' + to_super(a) + u'⁾'], baseline=0)
+            var = UnicodeArt([u"Q" + unicode_subscript(m) + u'⁽' + unicode_superscript(a) + u'⁾'], baseline=0)
             if exp > 1:
                 var = (UnicodeArt([u'('], baseline=0) + var
-                       + UnicodeArt([u')' + to_super(exp)], baseline=0))
+                       + UnicodeArt([u')' + unicode_superscript(exp)], baseline=0))
             ret += var
         return ret
 
@@ -613,4 +604,3 @@ def is_tamely_laced(ct):
     I = ct.index_set()
     return all(-cm[j,i] == 1 and d[i] == 1
                for i in I for j in I if cm[i,j] < -1)
-

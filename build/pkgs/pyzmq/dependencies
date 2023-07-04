@@ -1,5 +1,4 @@
-$(PYTHON) cython zeromq | setuptools pip
+$(PYTHON) cython zeromq | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

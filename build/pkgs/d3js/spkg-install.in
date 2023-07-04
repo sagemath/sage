@@ -1,0 +1,7 @@
+TARGET="${SAGE_SHARE}/d3js"
+if [ ! -d "${TARGET}" ]; then
+   mkdir "${TARGET}"
+fi
+
+cp 'src/d3.min.js' "${TARGET}/"
+

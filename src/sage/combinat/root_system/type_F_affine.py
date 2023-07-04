@@ -9,10 +9,10 @@ Root system data for (untwisted) type F affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .cartan_type import CartanType_standard_untwisted_affine
+
+
 class CartanType(CartanType_standard_untwisted_affine):
     def __init__(self):
         """
@@ -60,7 +60,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             O---O---O=>=O---O
             0   1   2   3   4
             F4~
-            sage: sorted(f.edges())
+            sage: f.edges(sort=True)
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
 
         """
@@ -131,4 +131,3 @@ class CartanType(CartanType_standard_untwisted_affine):
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         return CartanTypeFolded(self, ['E', 6, 1], [[0], [2], [4], [3, 5], [1, 6]])
-

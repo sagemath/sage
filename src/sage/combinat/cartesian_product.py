@@ -1,7 +1,7 @@
 r"""
 Cartesian Products
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,99 +13,16 @@ Cartesian Products
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
-
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.sets.set_from_iterator import EnumeratedSetFromIterator
 
-from inspect import isgenerator
 import sage.misc.prandom as rnd
 from sage.misc.mrange import xmrange_iter, _is_finite, _len
-from .combinat import CombinatorialClass
 from .ranker import unrank
 from sage.rings.infinity import infinity
-
-
-def CartesianProduct(*iters):
-    """
-    This is deprecated. Use :obj:`cartesian_product` instead.
-
-    EXAMPLES::
-
-        sage: cp = CartesianProduct([1,2], [3,4]); cp
-        doctest:...: DeprecationWarning: CartesianProduct is deprecated. Use
-        cartesian_product instead
-        See http://trac.sagemath.org/18411 for details.
-        The Cartesian product of ({1, 2}, {3, 4})
-        sage: cp.list()
-        [(1, 3), (1, 4), (2, 3), (2, 4)]
-
-    Note that you must not use a generator-type object that is
-    returned by a function (using "yield"). They cannot be copied or
-    rewound (you cannot jump back to the beginning), but this is
-    necessary to construct the Cartesian product::
-
-        sage: def a(n): yield 1*n; yield 2*n
-        sage: def b(): yield 'a'; yield 'b'
-        sage: CartesianProduct(a(3), b()).list()
-        Traceback (most recent call last):
-        ...
-        ValueError: generators are not allowed, see the
-        documentation (type "CartesianProduct?") for a workaround
-
-    The usage of iterable is also deprecated, so the following will no longer be
-    supported::
-
-        sage: from sage.combinat.misc import IterableFunctionCall
-        sage: C = CartesianProduct(IterableFunctionCall(a, 3), IterableFunctionCall(b))
-        doctest:...: DeprecationWarning: Usage of IterableFunctionCall in
-        CartesianProduct is deprecated. You can use EnumeratedSetFromIterator
-        (in sage.sets.set_from_iterator) instead.
-        See http://trac.sagemath.org/18411 for details.
-        sage: list(C)
-        doctest:...: UserWarning: Sage is not able to determine whether the
-        factors of this Cartesian product are finite. The lexicographic ordering
-        might not go through all elements.
-        [(3, 'a'), (3, 'b'), (6, 'a'), (6, 'b')]
-
-    You might use
-    :class:`~sage.sets.set_from_iterator.EnumeratedSetFromIterator` for that
-    purpose.::
-
-        sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-        sage: A = EnumeratedSetFromIterator(a, (3,), category=FiniteEnumeratedSets())
-        sage: B = EnumeratedSetFromIterator(b, category=FiniteEnumeratedSets())
-        sage: C = cartesian_product([A, B])
-        sage: C.list()
-        [(3, 'a'), (3, 'b'), (6, 'a'), (6, 'b')]
-    """
-    if any(isgenerator(i) for i in iters):
-        raise ValueError('generators are not allowed, see the documentation '+
-                         '(type "CartesianProduct?") for a workaround')
-
-    from sage.misc.superseded import deprecation
-    deprecation(18411, "CartesianProduct is deprecated. Use cartesian_product instead")
-
-    from sage.combinat.misc import IterableFunctionCall
-    deprecate_ifc = False
-    iiters = []
-    for a in iters:
-        if isinstance(a, IterableFunctionCall):
-            deprecate_ifc = True
-            iiters.append(EnumeratedSetFromIterator(a.f, a.args, a.kwargs))
-        else:
-            iiters.append(a)
-    iters = tuple(iiters)
-
-    if deprecate_ifc:
-        deprecation(18411, """Usage of IterableFunctionCall in CartesianProduct is deprecated. You can use EnumeratedSetFromIterator (in sage.sets.set_from_iterator) instead.""")
-
-    from sage.categories.cartesian_product import cartesian_product
-    return cartesian_product(iters)
 
 
 class CartesianProduct_iters(EnumeratedSetFromIterator):
@@ -140,7 +57,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         sage: c = cartesian_product([F1, F2, F3])
 
         sage: type(C.an_element())
-        <... 'list'>
+        <class 'list'>
         sage: type(c.an_element())
         <class 'sage.sets.cartesian_product.CartesianProduct_with_category.element_class'>
 
@@ -157,6 +74,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         sage: elt.parent() is c
         True
     """
+
     def __init__(self, *iters):
         """
         TESTS::
@@ -181,8 +99,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         category = EnumeratedSets()
         try:
             category = category.Finite() if self.is_finite() else category.Infinite()
-        except ValueError: # Unable to determine if it is finite or not
+        except ValueError:  # Unable to determine if it is finite or not
             pass
+
         def iterfunc():
             # we can not use self.__iterate__ directly because
             # that leads to an infinite recursion in __eq__
@@ -223,7 +142,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
         TESTS::
 
-            sage: cp = cartesian_product([[1,2],range(0,9)])
+            sage: cp = cartesian_product([[1,2],range(9)])
             sage: loads(dumps(cp)) == cp
             True
         """
@@ -287,7 +206,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: len(C)
             Traceback (most recent call last):
             ...
-            TypeError: cardinality does not fit into a Python int.
+            TypeError: cardinality does not fit into a Python int
             sage: C = CartesianProduct_iters(ZZ, [])
             sage: len(C)
             0
@@ -355,11 +274,11 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: CartesianProduct_iters(4,4).is_finite()
             Traceback (most recent call last):
             ...
-            ValueError: Unable to determine whether this product is finite
+            ValueError: unable to determine whether this product is finite
         """
         finites = [_is_finite(L, fallback=None) for L in self.iters]
         if any(f is None for f in finites):
-            raise ValueError("Unable to determine whether this product is finite")
+            raise ValueError("unable to determine whether this product is finite")
         if all(f is True for f in finites):
             return True
         lens = [_len(L) for L in self.iters]
@@ -401,16 +320,17 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         if x != 0:
             raise IndexError("x larger than the size of the Cartesian Product")
         positions.reverse()
-        return [unrank(L, i) for L,i in zip(self.iters, positions)]
+        return [unrank(L, i) for L, i in zip(self.iters, positions)]
 
     def random_element(self):
         r"""
-        Returns a random element from the Cartesian product of \*iters.
+        Return a random element from the Cartesian product of \*iters.
 
         EXAMPLES::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-            sage: CartesianProduct_iters('dog', 'cat').random_element()
-            ['d', 'a']
+            sage: c = CartesianProduct_iters('dog', 'cat').random_element()
+            sage: c in CartesianProduct_iters('dog', 'cat')
+            True
         """
-        return [rnd.choice(_) for _ in self.iters]
+        return [rnd.choice(w) for w in self.iters]

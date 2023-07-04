@@ -53,14 +53,16 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
 * The type :class:`bool` (*booleans*) has two values: ``True`` and ``False``. The
   boolean operators are denoted by their names ``or``, ``and``, ``not``.
 
-* The Python types :class:`int` and :class:`long` are used to
+* The Python type :class:`int` is used to
   represent integers of limited size. To handle arbitrary large
   integers with exact arithmetic, Sage uses its own type named
   :class:`Integer`.
 
 * A *list* is a data structure which groups values. It is constructed using
   brackets as in ``[1, 3, 4]``. The :func:`range` function creates integer
-  lists. One can also create lists using *list comprehension*::
+  lists. One can also create lists using *list comprehension*:
+
+  .. CODE-BLOCK:: python
 
       [ <expr> for <name> in <iterable> (if <condition>) ]
 
@@ -95,7 +97,9 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
 
 * A *dictionary* is an association table, which associates values to
   keys. Keys must be hashable. One creates dictionaries using the
-  constructor :class:`dict`, or using the syntax::
+  constructor :class:`dict`, or using the syntax:
+
+  .. CODE-BLOCK:: python
 
       {key1 : value1, key2 : value2 ...}
 
@@ -127,7 +131,9 @@ instructions block. Blocks are delimited solely by means of
 indentation. Most of the time a new block is introduced by
 ``:``. Python has the following control structures:
 
-* Conditional instruction::
+* Conditional instruction:
+
+  .. CODE-BLOCK:: python
 
      if <condition>:
          <instruction sequence>
@@ -136,18 +142,22 @@ indentation. Most of the time a new block is introduced by
      [else:
          <instruction sequence>]
 
-* Inside expression exclusively, one can write::
+* Inside expression exclusively, one can write:
+
+  .. CODE-BLOCK:: python
 
    <value> if <condition> else <value>
 
-* Iterative instructions::
+* Iterative instructions:
+
+  .. CODE-BLOCK:: python
 
      for <name> in <iterable>:
          <instruction sequence>
      [else:
          <instruction sequence>]
 
-  ::
+  .. CODE-BLOCK:: python
 
      while <condition>:
          <instruction sequence>
@@ -162,7 +172,9 @@ indentation. Most of the time a new block is introduced by
 * An iterable is an object which can be iterated through. Iterable
   types include lists, tuples, dictionaries, and strings.
 
-* An error (also called exception) is raised by::
+* An error (also called exception) is raised by:
+
+  .. CODE-BLOCK:: python
 
      raise <ErrorType> [, error message]
 
@@ -179,14 +191,18 @@ Functions
     doesn't make sense to do mathematical manipulation such as
     additions or derivations on Python functions.
 
-One defines a function using the keyword ``def`` as::
+One defines a function using the keyword ``def`` as:
+
+.. CODE-BLOCK:: python
 
     def <name>(<argument list>):
          <instruction sequence>
 
 The result of the function is given by the instruction
 ``return``. Very short functions can be created anonymously using
-``lambda`` (remark that there is no instruction ``return`` here)::
+``lambda`` (remark that there is no instruction ``return`` here):
+
+.. CODE-BLOCK:: python
 
     lambda <arguments>: <expression>
 
@@ -230,7 +246,9 @@ Creating Lists II: range
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :func:`range` function provides an easy way to construct a list of
-integers. Here is the documentation of the :func:`range` function::
+integers. Here is the documentation of the :func:`range` function:
+
+.. CODE-BLOCK:: text
 
     range([start,] stop[, step]) -> list of integers
 
@@ -275,7 +293,7 @@ Creating Lists III: list comprehensions
 
 **Example** We already know how to create the list `[1, 2, \dots, 16]`::
 
-    sage: range(1,17)   # py2
+    sage: list(range(1,17))
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 Using a *list comprehension*, we can now create the list
@@ -777,7 +795,7 @@ repeated runs on the same computer. However, Sage sort the dictionary
 entries by key when printing the dictionary specifically to make the
 docstrings more reproducible. However, the Python methods ``keys()``
 and ``values()`` do not sort for you. If you want your output to be
-reproducable, then you have to sort it first just like in the examples
+reproducible, then you have to sort it first just like in the examples
 below::
 
     sage: d = {10 : 'newvalue', 20: 'newervalue', 3: 14, 0.5:(1,2,3)}
@@ -815,7 +833,9 @@ below::
 Create a dictionary whose keys are the vertices of the above directed graph,
 and whose values are the lists of the vertices that it points to. For
 instance, the vertex 1 points to the vertices 2 and 3, so the dictionary will
-look like::
+look like:
+
+.. CODE-BLOCK:: python
 
     d = { ..., 1:[2,3], ... }
 
@@ -1012,22 +1032,22 @@ included:
 
 ::
 
-    sage: range(4)  # py2
+    sage: list(range(4))
     [0, 1, 2, 3]
 
 ::
 
-    sage: range(1, 5)  # py2
+    sage: list(range(1, 5))
     [1, 2, 3, 4]
 
 ::
 
-    sage: range(1, 11, 2)  # py2
+    sage: list(range(1, 11, 2))
     [1, 3, 5, 7, 9]
 
 ::
 
-    sage: range(10, 0, -1)  # py2
+    sage: list(range(10, 0, -1))
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 ::
@@ -1163,7 +1183,7 @@ a list comprehension.
 
         sage: # edit here
 
-#.  The first `n` odd integers::
+#.  The first `n` odd positive integers::
 
         sage: # edit here
 
@@ -1172,7 +1192,7 @@ a list comprehension.
 
         sage: # edit here
 
-#.  The first `n` integers between `1` and `n` that are neither
+#.  The first `n` positive integers that are neither
     divisible by `2` nor by `3` nor by `5`::
 
        sage: # edit here

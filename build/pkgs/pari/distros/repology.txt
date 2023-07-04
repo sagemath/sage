@@ -1,0 +1,9 @@
+pari
+pari-gp
+pari-data
+pari-elldata
+pari-galdata
+pari-galpol
+pari-nftables
+pari-seadata
+pari-seadata-big

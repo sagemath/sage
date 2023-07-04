@@ -6,7 +6,7 @@ Logging can be customized using the ``SAGE_BOOTSTRAP`` environment
 variable. It is a comma-separated list of ``key:value`` pairs. They
 are not case sensitive. Valid pairs are:
 
-* ``log:[level]``, where ``[level]`` is one of 
+* ``log:[level]``, where ``[level]`` is one of
 
     * ``debug``
     * ``info``
@@ -18,20 +18,19 @@ are not case sensitive. Valid pairs are:
 """
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import sys
 import os
-import logging
 
 
 LOG_LEVELS = (
@@ -43,8 +42,6 @@ LOG_LEVELS = (
 )
 
 
-
-
 class Configuration(object):
 
     _initialized = False
@@ -52,7 +49,7 @@ class Configuration(object):
     log = 'info'
 
     interactive = os.isatty(sys.stdout.fileno())
-    
+
     def __init__(self):
         if not Configuration._initialized:
             Configuration._init_from_environ()

@@ -19,16 +19,6 @@
 #include <polybori/orderings/pbori_order.h>
 #include <polybori/pbori_defs.h>
 
-// M4RI
-#ifdef __cplusplus
-extern "C" {
-#endif //__cplusplus
-#define PACKED 1
-#include "m4ri/m4ri.h"
-#ifdef __cplusplus
-}
-#endif //__cplusplus
-
 #include <sstream>
 #include <vector>
 

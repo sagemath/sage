@@ -1,0 +1,4 @@
+nbconvert
+python:nbconvert
+jupyter-nbconvert
+python:jupyter-nbconvert

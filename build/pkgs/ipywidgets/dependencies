@@ -1,5 +1,4 @@
-$(PYTHON) widgetsnbextension | pip
+$(PYTHON) widgetsnbextension jupyterlab_widgets | $(PYTHON_TOOLCHAIN) ipykernel ipython traitlets
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

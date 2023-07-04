@@ -1,0 +1,8 @@
+$(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/nauty-$(vers_nauty)
+
+----------
+All lines of this file are ignored except the first.
+
+Adding the above instead of "nauty" makes sure that the dependency is not replaced
+by ".dummy".  In this way, libnauty delegates building to nauty when
+libnauty appears as a dependency (of normaliz).

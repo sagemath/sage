@@ -41,7 +41,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: M.<a> = QQ[sqrt(2)+sqrt(3)]; M
-    Number Field in a with defining polynomial x^4 - 10*x^2 + 1
+    Number Field in a with defining polynomial x^4 - 10*x^2 + 1 with a = 3.146264369941973?
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

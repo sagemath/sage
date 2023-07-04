@@ -41,20 +41,19 @@ following are the inequalities and equations::
     [-----]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.geometry.polyhedron.double_description import StandardAlgorithm as Algorithm
 
 # Compare with PPL if the base ring is QQ. Can be left enabled since
@@ -161,7 +160,7 @@ class Hrep2Vrep(PivotedInequalities):
 
         - ``dim`` -- integer. The ambient space dimension.
 
-        - ``inequalities`` -- list of inequalities. Each inequalitiy
+        - ``inequalities`` -- list of inequalities. Each inequality
           is given as constant term, ``dim`` coefficients.
 
         - ``equations`` -- list of equations. Same notation as for
@@ -196,12 +195,16 @@ class Hrep2Vrep(PivotedInequalities):
             [0||0 1]
             sage: Hrep2Vrep(QQ, 2, [(-1,0,0)], [])   # empty
             []
-            sage: Hrep2Vrep(QQ, 2, [], [])   # empty
-            []
+            sage: Hrep2Vrep(QQ, 2, [], [])   # universe
+            [0||1 0]
+            [0||0 1]
         """
-        super(Hrep2Vrep, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
         inequalities = [list(x) for x in inequalities]
         equations = [list(x) for x in equations]
+        if not inequalities and not equations:
+            # Adding a trivial inequality, so that the ambient dimension is passed to the algorithm.
+            inequalities = [[self.base_ring.one()] + [self.base_ring.zero()] * self.dim]
         A = self._init_Vrep(inequalities, equations)
         DD = Algorithm(A).run()
         self._extract_Vrep(DD)
@@ -337,7 +340,7 @@ class Hrep2Vrep(PivotedInequalities):
         from sage.matrix.constructor import block_matrix
 
         def make_matrix(rows):
-             return matrix(self.base_ring, len(rows), self.dim, rows).transpose()
+            return matrix(self.base_ring, len(rows), self.dim, rows).transpose()
         V = make_matrix(self.vertices)
         R = make_matrix(self.rays)
         L = make_matrix(self.lines)
@@ -360,7 +363,7 @@ class Hrep2Vrep(PivotedInequalities):
             sage: H = Hrep2Vrep(QQ, 1, [(1,2)], [])
             sage: H.verify([(1,2)], [])
         """
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         from sage.geometry.polyhedron.constructor import Polyhedron
         if self.base_ring is not QQ:
             return
@@ -439,12 +442,20 @@ class Vrep2Hrep(PivotedInequalities):
             sage: Vrep2Hrep(QQ, 2, [(-1/2,0)], [], [(1,-2/3), (1,0)])
             []
         """
-        super(Vrep2Hrep, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
         if rays or lines:
             assert len(vertices) > 0
-        A = self._init_Vrep(vertices, rays, lines)
-        DD = Algorithm(A).run()
-        self._extract_Hrep(DD)
+        if not vertices and not rays and not lines:
+            # The algorithm does not work, as the ambient dimension cannot be passed.
+            # Manually setting a single equality in this case.
+            one = self.base_ring.one()
+            zero = self.base_ring.zero()
+            self.equations = [[one] + [zero]*self.dim]
+            self.inequalities = []
+        else:
+            A = self._init_Vrep(vertices, rays, lines)
+            DD = Algorithm(A).run()
+            self._extract_Hrep(DD)
         if VERIFY_RESULT:
             self.verify(vertices, rays, lines)
 
@@ -497,10 +508,11 @@ class Vrep2Hrep(PivotedInequalities):
             sage: V2H._extract_Hrep(DD)
         """
         zero = self.base_ring.zero()
+
         def is_trivial(ray):
             # trivial Hrep output 1 >= 0
             return ray[0] > zero and all(r == zero for r in ray[1:])
-        ieqs = [self._unpivot_ray(_) for _ in DD.R]
+        ieqs = (self._unpivot_ray(ra) for ra in DD.R)
         self.inequalities = [r for r in ieqs if not is_trivial(r)]
         self.equations = self._linear_subspace.matrix().rows()
 
@@ -547,14 +559,13 @@ class Vrep2Hrep(PivotedInequalities):
             sage: V2H = Vrep2Hrep(QQ, 2, vertices, rays, lines)
             sage: V2H.verify(vertices, rays, lines)
         """
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         from sage.geometry.polyhedron.constructor import Polyhedron
         if self.base_ring is not QQ:
             return
         P = Polyhedron(vertices=vertices, rays=rays, lines=lines,
                        base_ring=QQ, ambient_dim=self.dim)
-        trivial = [self.base_ring.one()] + [self.base_ring.zero()] * self.dim   # always true equation
-        Q = Polyhedron(ieqs=self.inequalities + [trivial], eqns=self.equations,
+        Q = Polyhedron(ieqs=self.inequalities, eqns=self.equations,
                        base_ring=QQ, ambient_dim=self.dim)
         if not P == Q:
             print('incorrect!', P, Q)

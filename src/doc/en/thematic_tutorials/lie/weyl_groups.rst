@@ -83,15 +83,22 @@ construct a list (e.g., using the ``list`` function) or use the method
 
     sage: W = WeylGroup("B3",prefix="s")
     sage: ref = W.reflections(); ref
-    Finite family {(1, -1, 0): s1, (0, 1, -1): s2, (0, 0, 1): s3, (0, 1, 1): s3*s2*s3, (0, 1, 0): s2*s3*s2, (1, 0, -1): s1*s2*s1, (1, 0, 1): s3*s1*s2*s3*s1, (1, 0, 0): s1*s2*s3*s2*s1, (1, 1, 0): s2*s3*s1*s2*s3*s1*s2}
+    Finite family {(1, -1, 0): s1, (0, 1, -1): s2, ...}
     sage: [a1,a2,a3] = W.domain().simple_roots()
     sage: a1+a2+a3
     (1, 0, 0)
     sage: ref[a1+a2+a3]
     s1*s2*s3*s2*s1
-    sage: list(ref)
-    [s1, s2, s3, s3*s2*s3, s2*s3*s2, s1*s2*s1, s3*s1*s2*s3*s1,
-     s1*s2*s3*s2*s1, s2*s3*s1*s2*s3*s1*s2]
+    sage: sorted(ref)
+    [s1*s2*s3*s2*s1,
+     s2*s3*s1*s2*s3*s1*s2,
+     s3*s1*s2*s3*s1,
+     s1*s2*s1,
+     s1,
+     s2*s3*s2,
+     s3*s2*s3,
+     s2,
+     s3]
 
 If instead you want a family whose keys are the reflections
 and whose values are the roots, you may use the inverse family::
@@ -132,12 +139,12 @@ string, which you can print::
     X.1      1  1  1  1  1  1  1  1  1  1  1  1  1
     X.2      1 -1  1  1 -1  1  1 -1 -1 -1  1  1  1
     X.3      2  .  2 -1  .  2  2  .  .  . -1  2  2
-    X.4      3 -1 -1  .  1 -1  3 -1  1 -1  . -1  3
-    X.5      3 -1 -1  .  1  3 -1 -1 -1  1  . -1  3
-    X.6      3  1 -1  . -1 -1  3  1 -1  1  . -1  3
-    X.7      3  1 -1  . -1  3 -1  1  1 -1  . -1  3
-    X.8      3 -1  3  . -1 -1 -1 -1  1  1  . -1  3
-    X.9      3  1  3  .  1 -1 -1  1 -1 -1  . -1  3
+    X.4      3 -1 -1  .  1  3 -1 -1 -1  1  . -1  3
+    X.5      3  1 -1  . -1  3 -1  1  1 -1  . -1  3
+    X.6      3 -1  3  . -1 -1 -1 -1  1  1  . -1  3
+    X.7      3 -1 -1  .  1 -1  3 -1  1 -1  . -1  3
+    X.8      3  1  3  .  1 -1 -1  1 -1 -1  . -1  3
+    X.9      3  1 -1  . -1 -1  3  1 -1  1  . -1  3
     X.10     4 -2  . -1  .  .  .  2  .  .  1  . -4
     X.11     4  2  . -1  .  .  . -2  .  .  1  . -4
     X.12     6  . -2  .  . -2 -2  .  .  .  .  2  6
@@ -274,7 +281,9 @@ the Bruhat interval `[u,v]` to itself, then this gives an explicit
 bijection between the elements of odd and even length in `[u,v]`.
 
 Let us search for such reflections. Put the following commands in a
-file and load the file::
+file and load the file:
+
+.. CODE-BLOCK:: python
 
     W = WeylGroup("A3",prefix="s")
     [s1,s2,s3] = W.simple_reflections()

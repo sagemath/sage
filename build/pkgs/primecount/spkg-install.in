@@ -1,0 +1,41 @@
+cd src
+
+# Trac #33054: primecount needs "-std=gnu++..."
+# so it gains access to 128-bit integers for full functionality.
+CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-std=c++/-std=gnu++/g")
+export CXXFLAGS
+
+primc_config(){
+echo "Configuring primecount: building primesieve $1"
+# Trac #33082: WITH_POPCNT=OFF fixes the flawed logic in primecount 7.1
+# build system that appends -mpopcnt to the compiler flags whenever
+# the compiler supports it.  (Note that with gcc, WITH_POPCNT=OFF
+# does NOT actually disable use of the popcount intrinsics.)
+
+# Without CMAKE_NO_SYSTEM_FROM_IMPORTED=ON, cmake uses -isystem for
+# the primesieve include directory. But when that is SAGE_LOCAL, per
+# https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html, "If a
+# standard system include directory, or a directory specified with
+# -isystem, is also specified with -I, the -I option is ignored. The
+# directory is still searched but as a system directory at its normal
+# position in the system include chain."
+# Thus this will cause system includes take precedence over SAGE_LOCAL/include.
+# In particular, an old system package primesieve will take precedence
+# over primesieve in SAGE_LOCAL.
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON \
+          -DBUILD_STATIC_LIBS=OFF \
+          -DBUILD_SHARED_LIBS=ON \
+          -DBUILD_TESTS=ON \
+          -DBUILD_LIBPRIMESIEVE=$1 \
+          -DCMAKE_FIND_ROOT_PATH=$SAGE_LOCAL/lib/cmake \
+          -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH \
+          -DCMAKE_INSTALL_PREFIX=$SAGE_LOCAL \
+          -DWITH_POPCNT=OFF \
+          && sdh_make_install
+}
+
+# we try to use the external primesieve first, and if
+# cmake cannot find it, we build a vendored copy
+
+(primc_config OFF) || primc_config ON

@@ -23,11 +23,9 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-
-from six.moves import range
 
 from sage.combinat.crystals.tensor_product import TensorProductOfRegularCrystalsElement
+
 
 class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
     """
@@ -112,6 +110,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         sage: T.to_rigged_configuration().to_tensor_product_of_kirillov_reshetikhin_tableaux()
         [[2], [3]] (X) [[1]] (X) [[-1]] (X) [[1]]
     """
+
     def __init__(self, parent, list=[[]], **options):
         r"""
         Construct a TensorProductOfKirillovReshetikhinTableauxElement.
@@ -219,7 +218,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         EXAMPLES::
 
             sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['D',4,1], [[2,2]])
-            sage: elt = KRT(pathlist=[[3,2,-1,1]]); elt            
+            sage: elt = KRT(pathlist=[[3,2,-1,1]]); elt
             [[2, 1], [3, -1]]
             sage: elt.classical_weight()
             (0, 1, 1, 0)
@@ -427,4 +426,3 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         """
         TP = self.parent().tensor_product_of_kirillov_reshetikhin_crystals()
         return TP(*[x.to_kirillov_reshetikhin_crystal() for x in self])
-

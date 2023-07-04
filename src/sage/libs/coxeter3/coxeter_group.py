@@ -8,7 +8,6 @@ Coxeter Groups implemented with Coxeter3
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
 from sage.libs.coxeter3.coxeter import get_CoxGroup, CoxGroupElement
 from sage.misc.cachefunc import cached_method
@@ -16,8 +15,10 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.richcmp import richcmp
-from sage.categories.all import CoxeterGroups
+from sage.categories.coxeter_groups import CoxeterGroups
 from sage.structure.parent import Parent
+
+from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -32,11 +33,13 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: from sage.libs.coxeter3.coxeter_group import CoxeterGroup # optional - coxeter3
             sage: CoxeterGroup(['B',2])                                     # optional - coxeter3
             Coxeter group of type ['B', 2] implemented by Coxeter3
+            sage: CoxeterGroup(CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1})) # optional - coxeter3
+            Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1} implemented by Coxeter3
 
         """
-        from sage.combinat.all import CartanType
+        from sage.combinat.root_system.cartan_type import CartanType
         ct = CartanType(cartan_type)
-        return super(CoxeterGroup, cls).__classcall__(cls, ct, *args, **options)
+        return super().__classcall__(cls, ct, *args, **options)
 
     def __init__(self, cartan_type):
         """
@@ -155,12 +158,26 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')   # optional - coxeter3
             sage: s = W.simple_reflections()                                            # optional - coxeter3
             sage: s[2]*s[1]*s[2]                                          # optional - coxeter3
-            [2, 1, 2]
+            [1, 2, 1]
         """
-        from sage.combinat.family import Family
+        from sage.sets.family import Family
         return Family(self.index_set(), lambda i: self.element_class(self, [i]))
 
     gens = simple_reflections
+
+    def from_reduced_word(self, w):
+        """
+        Return an element of ``self`` from its (reduced) word.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')  # optional - coxeter3
+            sage: W.from_reduced_word([1, 3])                            # optional - coxeter3
+            [1, 3]
+            sage: W.from_reduced_word([3, 1])                            # optional - coxeter3
+            [1, 3]
+        """
+        return self.element_class(self, w)
 
     def rank(self):
         """
@@ -213,13 +230,15 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')    # optional - coxeter3
-            sage: W.coxeter_matrix()                                       # optional - coxeter3
+            sage: m = W.coxeter_matrix(); m                                # optional - coxeter3
             [1 3 2]
             [3 1 3]
             [2 3 1]
+            sage: m.index_set() == W.index_set()                           # optional - coxeter3
+            True
 
         """
-        return self._coxgroup.coxeter_matrix()
+        return CoxeterMatrix(self._coxgroup.coxeter_matrix(), self.index_set())
 
     def root_system(self):
         """
@@ -250,19 +269,21 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         return self.element_class(self, [])
 
     def m(self, i, j):
-        """
-        Return the entry in the Coxeter matrix between the generator
-        with label ``i`` and the generator with label ``j``.
+        r"""
+        This is deprecated, use ``self.coxeter_matrix()[i,j]`` instead.
 
-        EXAMPLES::
+        TESTS::
 
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')   # optional - coxeter3
-            sage: W.m(1,1)                                                # optional - coxeter3
+            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3') # optional - coxeter3
+            sage: W.m(1, 1)                                             # optional - coxeter3
+            doctest:warning...:
+            DeprecationWarning: the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.
+            See https://github.com/sagemath/sage/issues/30237 for details.
             1
-            sage: W.m(1,0)                                                # optional - coxeter3
-            2
         """
-        return self.coxeter_matrix()[i-1,j-1]
+        from sage.misc.superseded import deprecation
+        deprecation(30237, "the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.")
+        return self.coxeter_matrix()[i,j]
 
     def kazhdan_lusztig_polynomial(self, u, v, constant_term_one=True):
         r"""
@@ -386,7 +407,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')                     # optional - coxeter3
             sage: type(W.parabolic_kazhdan_lusztig_polynomial([2],[],[1]))                  # optional - coxeter3
-            <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
+            <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
         """
         u = self(u)
         v = self(v)
@@ -412,9 +433,21 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')    # optional - coxeter3
                 sage: W([2,1,2])                                               # optional - coxeter3
                 [1, 2, 1]
+
+            Check that :trac:`32266` is fixed::
+
+                sage: A3 = CoxeterGroup('A3', implementation='coxeter3')       # optional - coxeter3
+                sage: s1,s2,s3 = A3.simple_reflections()                       # optional - coxeter3
+                sage: s1*s3                                                    # optional - coxeter3
+                [1, 3]
+                sage: s3*s1                                                    # optional - coxeter3
+                [1, 3]
+                sage: s3*s1 == s1*s3                                           # optional - coxeter3
+                True
             """
             if not isinstance(x, CoxGroupElement):
                 x = CoxGroupElement(parent._coxgroup, x).reduced()
+            x = x.normal_form()
             ElementWrapper.__init__(self, parent, x)
 
         def __iter__(self):
@@ -439,7 +472,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 sage: W = CoxeterGroup(['B', 3], implementation='coxeter3')  # optional - coxeter3
                 sage: w = W([1,2,3])                                         # optional - coxeter3
                 sage: w.coatoms()                                            # optional - coxeter3
-                [[2, 3], [1, 3], [1, 2]]
+                [[2, 3], [3, 1], [1, 2]]
             """
             W = self.parent()
             return [W(w) for w in self.value.coatoms()]
@@ -520,6 +553,8 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 sage: s[1]._mul_(s[1])                                        # optional - coxeter3
                 []
                 sage: s[1]*s[2]*s[1]                                          # optional - coxeter3
+                [1, 2, 1]
+                sage: s[2]*s[1]*s[2]                                          # optional - coxeter3
                 [1, 2, 1]
             """
             return self.__class__(self.parent(), self.value * y.value)
@@ -673,7 +708,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                     exponent = self.action(exponent)
 
                     monomial = 1
-                    for s, c in iteritems(exponent.monomial_coefficients()):
+                    for s, c in exponent.monomial_coefficients().items():
                         monomial *= Q_gens[basis_to_order[s]]**int(c)
 
                     result += monomial

@@ -1,11 +1,12 @@
-from sage.structure.element import Element, CommutativeAlgebraElement
+from sage.structure.element import Element
 from sage.structure.element cimport Element, CommutativeAlgebraElement, ModuleElement
 from sage.structure.parent cimport Parent
 from sage.rings.integer cimport Integer
+from .commutative_polynomial cimport CommutativePolynomial
 from .polynomial_compiled cimport CompiledPolynomialFunction
 
 
-cdef class Polynomial(CommutativeAlgebraElement):
+cdef class Polynomial(CommutativePolynomial):
     cdef Polynomial _new_generic(self, list coeffs)
     cdef char _is_gen
     cdef CompiledPolynomialFunction _compiled
@@ -18,9 +19,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
     cpdef _mul_generic(self, right)
     cdef _square_generic(self)
 
-    cpdef bint is_zero(self)
-    cpdef bint is_one(self)
-    cpdef bint is_term(self)
+    cpdef bint is_zero(self) except -1
+    cpdef bint is_one(self) except -1
+    cpdef bint is_term(self) except -1
 
     cpdef dict _mpoly_dict_recursive(self, tuple variables=*, base_ring=*)
 
@@ -58,4 +59,6 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
 cpdef is_Polynomial(f)
 cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec)
 cpdef list _dict_to_list(dict x, zero)
+
+cpdef bint polynomial_is_variable(x)
 

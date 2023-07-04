@@ -1,0 +1,2 @@
+libsqlite3-devel
+sqlite3

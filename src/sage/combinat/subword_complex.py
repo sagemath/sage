@@ -90,7 +90,7 @@ real space::
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
     sage: S.brick_polytope()
-    doctest:...: RuntimeWarning: the polytope is build with rational vertices
+    doctest:...: RuntimeWarning: the polytope is built with rational vertices
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
 
 AUTHORS:
@@ -111,15 +111,12 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-# python3
-from __future__ import division, print_function
-from six.moves import range
-
+from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.homology.simplicial_complex import SimplicialComplex, Simplex
+from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 from sage.categories.simplicial_complexes import SimplicialComplexes
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.cone import Cone
@@ -178,14 +175,14 @@ class SubwordComplexFacet(Simplex, Element):
             sage: SC([1,3])                                             # optional - gap3
             Traceback (most recent call last):
             ...
-            ValueError: The given iterable [1, 3] is not a facet of the Subword complex of type ['A', 2] for Q = (1, 2, 1, 2, 1) and pi = [1, 2, 1]
+            ValueError: the given iterable [1, 3] is not a facet of the Subword complex of type ['A', 2] for Q = (1, 2, 1, 2, 1) and pi = [1, 2, 1]
 
             sage: W = ReflectionGroup(['A',2])                          # optional - gap3
             sage: SC = SubwordComplex([1,2,1,2,1], W.w0)                # optional - gap3
             sage: TestSuite(SC).run()                                   # optional - gap3
         """
         if facet_test and positions not in parent:
-            raise ValueError("The given iterable %s is not a facet of the %s" % (positions, parent))
+            raise ValueError("the given iterable %s is not a facet of the %s" % (positions, parent))
         Simplex.__init__(self, sorted(positions))
         Element.__init__(self, parent)
         self._extended_root_conf_indices = None
@@ -714,7 +711,7 @@ class SubwordComplexFacet(Simplex, Element):
             ((2, 3), 3)
         """
         S = self.parent()
-        F = set(list(self))
+        F = set(self)
         R = list(self._extended_root_configuration_indices())
         j = _flip_c(self.parent().group(), F, R, i)  # F and R are changed here
         new_facet = S.element_class(self.parent(), F)
@@ -726,7 +723,7 @@ class SubwordComplexFacet(Simplex, Element):
 
     # plot and show
 
-    def plot(self, list_colors=[], labels=[], thickness=3, fontsize=14,
+    def plot(self, list_colors=None, labels=[], thickness=3, fontsize=14,
              shift=(0, 0), compact=False, roots=True, **args):
         r"""
         In type `A` or `B`, plot a pseudoline arrangement representing
@@ -771,7 +768,7 @@ class SubwordComplexFacet(Simplex, Element):
             sage: Q = c.reduced_word()*2 + W.w0.coxeter_sorting_word(c) # optional - gap3
             sage: SC = SubwordComplex(Q, W.w0)                          # optional - gap3
             sage: F = SC[15]; F.plot()                                  # optional - gap3
-            Graphics object consisting of 52 graphics primitives
+            Graphics object consisting of 53 graphics primitives
 
         TESTS::
 
@@ -782,7 +779,7 @@ class SubwordComplexFacet(Simplex, Element):
             sage: F = SC[1]; F.plot()                                   # optional - gap3
             Traceback (most recent call last):
             ...
-            ValueError: Plotting is currently only implemented for irreducibles types A, B, and C.
+            ValueError: plotting is currently only implemented for irreducibles types A, B, and C.
 
             sage: W = CoxeterGroup(CoxeterMatrix((['A',2],['A',2])))
             sage: c = W.from_reduced_word([1,2,3,4])
@@ -791,7 +788,7 @@ class SubwordComplexFacet(Simplex, Element):
             sage: F = SC[1]; F.plot()
             Traceback (most recent call last):
             ...
-            ValueError: Plotting is currently only implemented for irreducibles types A, B, and C.
+            ValueError: plotting is currently only implemented for irreducibles types A, B, and C.
 
         REFERENCES: [PilStu]_
         """
@@ -802,7 +799,7 @@ class SubwordComplexFacet(Simplex, Element):
         W = S.group()
         n = W.rank()
 
-        error_msg = "Plotting is currently only implemented for irreducibles types A, B, and C."
+        error_msg = "plotting is currently only implemented for irreducibles types A, B, and C."
         if S._cartan_type is not None:
             cartan_type = S._cartan_type
             type = cartan_type.type()
@@ -839,7 +836,6 @@ class SubwordComplexFacet(Simplex, Element):
         from sage.combinat.permutation import Permutation
 
         # get properties
-        x = 1
         if type == 'A':
             last = n
         else:
@@ -849,7 +845,7 @@ class SubwordComplexFacet(Simplex, Element):
 
         # list the pseudolines to be drawn
         pseudolines = [[(shift[0], shift[1] + i), .5] for i in range(last + 1)]
-        pseudolines_type_B = [[] for i in range(last + 1)]
+        pseudolines_type_B = [[] for _ in repeat(None, last + 1)]
         contact_points = []
         root_labels = []
         pseudoline_labels = []
@@ -861,7 +857,7 @@ class SubwordComplexFacet(Simplex, Element):
             extended_root_conf = self.extended_root_configuration()
         for position in range(len(Q)):
             y = index_set.index(Q[position])
-            if type in ['B','C'] and y == 0:
+            if type in ['B', 'C'] and y == 0:
                 pseudoline = permutation(1) - 1
                 x = pseudolines[pseudoline].pop()
                 if compact:
@@ -881,7 +877,7 @@ class SubwordComplexFacet(Simplex, Element):
                     root_labels.append((extended_root_conf[position],
                                         (shift[0] + x + .25, shift[1] - .2)))
             else:
-                if type in ['B','C']:
+                if type in ['B', 'C']:
                     y -= 1
                 pseudoline1 = permutation(y + 1) - 1
                 pseudoline2 = permutation(y + 2) - 1
@@ -922,6 +918,8 @@ class SubwordComplexFacet(Simplex, Element):
                                            "top")]
 
         # transform list to real lines
+        if list_colors is None:
+            list_colors = []
         list_colors += ['red', 'blue', 'green', 'orange', 'yellow', 'purple']
         list_colors += list(colors)
         thickness = max(thickness, 2)
@@ -935,7 +933,7 @@ class SubwordComplexFacet(Simplex, Element):
                                             shift[1] + permutation.inverse()(pseudoline + 1) - 1))
             L += line(pseudolines[pseudoline], color=list_colors[pseudoline],
                       thickness=thickness)
-            if type in ['B','C']:
+            if type in ['B', 'C']:
                 L += line(pseudolines_type_B[pseudoline],
                           color=list_colors[pseudoline],
                           thickness=thickness, linestyle="--")
@@ -1061,7 +1059,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             True
         """
         Q = tuple(Q)
-        return super(SubwordComplex, cls).__classcall__(cls, Q, w, algorithm=algorithm)
+        return super().__classcall__(cls, Q, w, algorithm=algorithm)
 
     def __init__(self, Q, w, algorithm="inductive"):
         r"""
@@ -1117,7 +1115,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         W = w.parent()
         I = W.index_set()
         if not all(i in I for i in Q):
-            raise ValueError("All elements in Q = %s must be contained in the index set %s" % (Q, I))
+            raise ValueError("all elements in Q = %s must be contained in the index set %s" % (Q, I))
         self._Q = Q
         self._pi = w
         if algorithm == "inductive":
@@ -1125,10 +1123,10 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         elif algorithm == "greedy":
             Fs, Rs = _greedy_flip_algorithm(Q, w)
         else:
-            raise ValueError("The optional argument algorithm can be "
+            raise ValueError("the optional argument algorithm can be "
                              "either inductive or greedy")
-        if Fs == []:
-            raise ValueError("The word %s does not contain a reduced expression for %s" % (Q, w.reduced_word()))
+        if not Fs:
+            raise ValueError("the word %s does not contain a reduced expression for %s" % (Q, w.reduced_word()))
         cat = SimplicialComplexes().Finite().Enumerated()
         SimplicialComplex.__init__(self, maximal_faces=Fs,
                                    maximality_check=False,
@@ -1198,7 +1196,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: F = SC([1,2]); F
             (1, 2)
         """
-        if hasattr(F,"parent") and F.parent() is self:
+        if hasattr(F, "parent") and F.parent() is self:
             return F
         return self.element_class(self, F, facet_test=facet_test)
 
@@ -1244,7 +1242,8 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         W = self.group()
         Q = self.word()
-        if not all(i in list(range(len(Q))) for i in F):
+        r = range(len(Q))
+        if not all(i in r for i in F):
             return False
         return W.from_reduced_word(Qi for i, Qi in enumerate(Q) if i not in F) == self.pi()
 
@@ -1291,7 +1290,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             ['A', 2]
         """
         if self._cartan_type is None:
-            raise ValueError("No Cartan type defined for {}".format(self._W))
+            raise ValueError("no Cartan type defined for {}".format(self._W))
         else:
             return self._cartan_type
 
@@ -1411,7 +1410,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             (3, 4)
         """
         return self.element_class(self, _greedy_facet(self.word(),
-                                                       self.pi(), side=side))
+                                                      self.pi(), side=side))
 
     # topological properties
 
@@ -1531,7 +1530,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: SC.is_root_independent()
             True
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         M = matrix(self.greedy_facet(side="negative").root_configuration())
         return M.rank() == max(M.ncols(), M.nrows())
 
@@ -1691,13 +1690,13 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex
         """
         G = self.group()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if G.coxeter_matrix().is_crystallographic():
             min_sum = [[QQ(v) for v in F.extended_weight_configuration()[i]] for F in self]
         else:
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             from warnings import warn
-            warn("the polytope is build with rational vertices", RuntimeWarning)
+            warn("the polytope is built with rational vertices", RuntimeWarning)
             min_sum = [[QQ(CC(v)) for v in F.extended_weight_configuration()[i]] for F in self]
         return Polyhedron(min_sum)
 
@@ -1738,17 +1737,19 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: c = W.index_set(); Q = c + tuple(W.w0.coxeter_sorting_word(c))    # optional - gap3
             sage: SC = SubwordComplex(Q,W.w0)                           # optional - gap3
             sage: SC.brick_polytope()                                   # optional - gap3
+            doctest:...:
+            RuntimeWarning: the polytope is built with rational vertices
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
         """
         BV = self.brick_vectors(coefficients=coefficients)
         G = self.group()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if G.coxeter_matrix().is_crystallographic():
             BV = [[QQ(v) for v in V] for V in BV]
         else:
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             from warnings import warn
-            warn("the polytope is build with rational vertices", RuntimeWarning)
+            warn("the polytope is built with rational vertices", RuntimeWarning)
             BV = [[QQ(CC(v).real()) for v in V] for V in BV]
         return Polyhedron(BV)
 
@@ -1912,6 +1913,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             cov = [(a, b) for a, b in cov if a in Fs and b in Fs]
         return Poset(((), cov), facade=True)
 
+
 def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
     r"""
     Return the (positive or negative) *greedy facet* of the subword
@@ -1952,7 +1954,7 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
         Q = Q[::-1]
         w = w.inverse()
     else:
-        raise ValueError("The optional argument side is not positive "
+        raise ValueError("the optional argument side is not positive "
                          "or negative")
 
     if n is None:
@@ -1973,15 +1975,14 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
     else:
         X = []
 
-    if X == []:
+    if not X:
         X = _greedy_facet(Q, w, n=n, pos=pos + 1, l=l, elems=elems + [pos])
 
     if side == "positive":
         X = [n - 1 - i for i in X]
-        Q = Q[::-1]
-        w = w.inverse()
 
     return set(X)
+
 
 def _extended_root_configuration_indices(W, Q, F):
     """
@@ -2019,10 +2020,12 @@ def _extended_root_configuration_indices(W, Q, F):
     V_roots = []
     pi = W.one()
     for i, wi in enumerate(Q):
-        V_roots.append(pi.action_on_root_indices(W.simple_root_index(wi),side="left"))
+        V_roots.append(pi.action_on_root_indices(W.simple_root_index(wi),
+                                                 side="left"))
         if i not in F:
             pi = pi.apply_simple_reflection_right(wi)
     return V_roots
+
 
 def _greedy_flip_algorithm(Q, w):
     """
@@ -2067,7 +2070,7 @@ def _greedy_flip_algorithm(Q, w):
     extended_root_conf_indices_list = [R]
     flip_to_ancestors = [-1]
     next_index = 0
-    while flip_to_ancestors != []:
+    while flip_to_ancestors:
         has_new_child = False
         for i in sorted(F):
             if (not has_new_child) and (i >= next_index):

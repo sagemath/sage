@@ -99,7 +99,7 @@ To expand in variables, one can specify a finite size alphabet `x_1, x_2,
 The usual methods on free modules are available such as coefficients,
 degrees, and the support::
 
-    sage: z=3*M[1,2]+M[3]^2; z
+    sage: z = 3*M[1,2]+M[3]^2; z
     3*M[1, 2] + 2*M[3, 3] + M[6]
 
     sage: z.coefficient([1,2])
@@ -111,7 +111,7 @@ degrees, and the support::
     sage: sorted(z.coefficients())
     [1, 2, 3]
 
-    sage: sorted(z.monomials(), key=lambda x: x.support())
+    sage: sorted(z.monomials(), key=lambda x: tuple(x.support()))
     [M[1, 2], M[3, 3], M[6]]
 
     sage: z.monomial_coefficients()
@@ -132,7 +132,7 @@ leads to an error (this is due to the semantics of python)::
     sage: M[]
     Traceback (most recent call last):
     ...
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
 
 Working with symmetric functions

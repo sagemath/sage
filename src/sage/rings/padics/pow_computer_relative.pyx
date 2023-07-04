@@ -1,3 +1,9 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 # -*- coding: utf-8 -*-
 r"""
 A ``PowComputer`` for relative extensions
@@ -21,7 +27,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -29,9 +34,8 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.libs.gmp.mpz cimport mpz_init, mpz_clear, mpz_pow_ui
 
 from cpython.object cimport Py_EQ, Py_NE
-from sage.structure.richcmp cimport richcmp_not_equal
 from sage.rings.integer cimport Integer
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 
 cdef class PowComputer_relative(PowComputer_class):

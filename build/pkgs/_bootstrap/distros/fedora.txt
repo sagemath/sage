@@ -1,0 +1,4 @@
+# Packages needed for ./bootstrap
+autoconf automake libtool
+# Fedora 26 needs:
+pkg-config

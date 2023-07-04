@@ -1,3 +1,4 @@
+# distutils: libraries = gmp
 """
 Enumeration of Totally Real Fields
 
@@ -23,12 +24,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from libc.math cimport sqrt
 from cysignals.memory cimport sig_malloc, sig_free
 
-from sage.arith.all import binomial, gcd
+from sage.arith.misc import binomial
+from sage.arith.misc import GCD as gcd
 from sage.libs.gmp.mpz cimport *
 from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -86,16 +86,7 @@ def hermite_constant(n):
 
     .. NOTE::
 
-        The upper bounds used can be found in [CS]_ and [CE]_.
-
-    REFERENCES:
-
-    .. [CE] Henry Cohn and Noam Elkies, New upper bounds on sphere
-       packings I, Ann. Math. 157 (2003), 689--714.
-
-    .. [CS] \J.H. Conway and N.J.A. Sloane, Sphere packings, lattices
-       and groups, 3rd. ed., Grundlehren der Mathematischen
-       Wissenschaften, vol. 290, Springer-Verlag, New York, 1999.
+        The upper bounds used can be found in [CS1999]_ and [CE2003]_.
 
     AUTHORS:
 
@@ -574,7 +565,7 @@ cdef class tr_data:
             self.beta[(k+1)*(n+1)+(n-k-1)] = self.b_upper
 
             # Now to really initialize gnk.
-            gnk = [0] + [binomial(j,k+1)*a[j] for j in range (k+2,n+1)]
+            gnk = [0] + [binomial(j,k+1)*a[j] for j in range(k + 2, n + 1)]
             for i from 0 <= i < n-k:
                 self.gnk[(k+1)*n+i] = gnk[i]
         else:
@@ -730,7 +721,7 @@ cdef class tr_data:
         # Recall k == n-1 implies iteration is complete.
         while k < n-1:
             # maxoutflag flags a required abort along the way
-            maxoutflag = 0;
+            maxoutflag = 0
 
             # Recall k == -1 means all coefficients are good to go.
             while k >= 0 and (not haltk or k >= haltk):
@@ -788,7 +779,7 @@ cdef class tr_data:
                     if verbose:
                         print(" ", end="")
                         for i from 0 <= i < n-k-1:
-                             print('%.2f' % self.beta[k * np1 + 1 + i], end="")
+                            print('%.2f' % self.beta[k * np1 + 1 + i], end="")
                         print("")
 
                     for i from 0 <= i < n-k-1:

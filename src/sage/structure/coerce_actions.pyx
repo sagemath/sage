@@ -11,7 +11,6 @@ Coerce actions
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import operator
 
@@ -64,7 +63,7 @@ cdef class GenericAction(Action):
             sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True)
             Traceback (most recent call last):
             ...
-            NotImplementedError: action for <type 'sage.structure.coerce_actions.GenericAction'> not implemented
+            NotImplementedError: action for <class 'sage.structure.coerce_actions.GenericAction'> not implemented
 
         This will break if we tried to use it::
 
@@ -98,10 +97,10 @@ cdef class GenericAction(Action):
             sage: A.codomain()
             Set P^1(QQ) of all cusps
 
-            sage: S3 = SymmetricGroup(3)
-            sage: QQxyz = QQ['x,y,z']
-            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)
-            sage: A.codomain()
+            sage: S3 = SymmetricGroup(3)                                                # optional - sage.groups
+            sage: QQxyz = QQ['x,y,z']                                                   # optional - sage.groups
+            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)       # optional - sage.groups
+            sage: A.codomain()                                                          # optional - sage.groups
             Multivariate Polynomial Ring in x, y, z over Rational Field
 
         """
@@ -119,15 +118,15 @@ cdef class ActOnAction(GenericAction):
         """
         TESTS::
 
-            sage: G = SymmetricGroup(3)
-            sage: R.<x,y,z> = QQ[]
-            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)
-            sage: A(x^2 + y - z, G((1,2)))
+            sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
+            sage: R.<x,y,z> = QQ[]                                                      # optional - sage.groups
+            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)            # optional - sage.groups
+            sage: A(x^2 + y - z, G((1,2)))                                              # optional - sage.groups
             y^2 + x - z
-            sage: A(x+2*y+3*z, G((1,3,2)))
+            sage: A(x+2*y+3*z, G((1,3,2)))                                              # optional - sage.groups
             2*x + 3*y + z
 
-            sage: type(A)
+            sage: type(A)                                                               # optional - sage.groups
             <... 'sage.structure.coerce_actions.ActOnAction'>
         """
         return (<Element>g)._act_on_(x, self._is_left)
@@ -156,7 +155,7 @@ cdef class ActedUponAction(GenericAction):
 
 def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
     r"""
-    Returns an action of X on Y or Y on X as defined by elements X, if any.
+    Return an action of X on Y as defined by elements of X, if any.
 
     EXAMPLES:
 
@@ -194,6 +193,8 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
         RuntimeError: an_element() for <__main__.MyParent object at ...> returned None
     """
     cdef Element x
+
+    # sample elements x and y
     if X_el is None or (parent(X_el) is not X):
         x = an_element(X)
     else:
@@ -209,21 +210,24 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
             raise RuntimeError("an_element() for %s returned None" % Y)
         else:
             return # don't know how to make elements of this type...
+
+    # element x defining _lmul_ or _rmul_
     if isinstance(x, ModuleElement) and isinstance(y, Element):
-        # Elements defining _lmul_ and _rmul_
         try:
             return (RightModuleAction if X_on_left else LeftModuleAction)(Y, X, y, x)
         except CoercionException as msg:
             _record_exception()
+
+    # element x defining _act_on_
     try:
-        # Elements defining _act_on_
         if x._act_on_(y, X_on_left) is not None:
             return ActOnAction(X, Y, X_on_left, False)
     except CoercionException:
         _record_exception()
+
+    # element x defining _acted_upon_
     if isinstance(Y, Parent):
         try:
-            # Elements defining _acted_upon_
             if x._acted_upon_(y, X_on_left) is not None:
                 return ActedUponAction(Y, X, not X_on_left, False)
         except CoercionException:
@@ -253,7 +257,7 @@ cdef class ModuleAction(Action):
     By default, the sample elements of ``S`` and ``G`` are obtained from
     :meth:`~sage.structure.parent.Parent.an_element`, which relies on the
     implementation of an ``_an_element_()`` method. This is not always
-    awailable. But usually, the action is only needed when one already
+    available. But usually, the action is only needed when one already
     *has* two elements. Hence, by :trac:`14249`, the coercion model will
     pass these two elements to the :class:`ModuleAction` constructor.
 
@@ -361,6 +365,19 @@ cdef class ModuleAction(Action):
             # In particular we will raise an error if res is None
             raise CoercionException("Result is None or has wrong parent.")
 
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: A = ZZ['x'].get_action(QQ, self_on_left=False, op=operator.mul)
+            sage: loads(dumps(A)) is not None
+            True
+        """
+        return (type(self), (self.G, self.underlying_set()))
 
     def _repr_name_(self):
         """
@@ -652,6 +669,23 @@ cdef class IntegerAction(Action):
             Z = Set_PythonType(Z)
         super().__init__(Z, S, is_left, op)
 
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: from sage.structure.coerce_actions import IntegerMulAction
+            sage: act = IntegerMulAction(ZZ, CDF)
+            sage: loads(dumps(act)) is not None
+            True
+        """
+        # All base classes must take the signature
+        #   (Z, S, is_left)
+        return (type(self), (self.G, self.underlying_set(), self._is_left))
+
     def __invert__(self):
         """
         EXAMPLES::
@@ -736,7 +770,7 @@ cdef class IntegerMulAction(IntegerAction):
 
         Check that large multiplications can be interrupted::
 
-            sage: alarm(0.5); (2^(10^6)) * P
+            sage: alarm(0.001); 2^(10^7) * P
             Traceback (most recent call last):
             ...
             AlarmInterrupt
@@ -890,7 +924,7 @@ cdef inline fast_mul(a, n):
 
 cdef inline fast_mul_long(a, long s):
     # It's important to change the signed s to an unsigned n,
-    # since -LONG_MIN = LONG_MIN.  See Trac #17844.
+    # since -LONG_MIN = LONG_MIN.  See Issue #17844.
     cdef unsigned long n
     if s < 0:
         n = -s

@@ -5,7 +5,6 @@ These are reference implementations of basic parallel
 primitives. These are not actually parallel, but work the same way.
 They are good for testing.
 """
-from __future__ import print_function, absolute_import
 
 from sage.misc.prandom import shuffle
 
@@ -30,7 +29,7 @@ def parallel_iter(f, inputs):
     EXAMPLES::
 
         sage: def f(N,M=10): return N*M
-        sage: inputs = [((2,3),{}),  (tuple([]), {'M':5,'N':3}), ((2,),{})]
+        sage: inputs = [((2,3),{}),  (tuple(), {'M':5,'N':3}), ((2,),{})]
         sage: set_random_seed(0)
         sage: for a, val in sage.parallel.reference.parallel_iter(f, inputs):
         ....:     print((a, val))

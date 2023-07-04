@@ -10,8 +10,7 @@ A parity-check code of dimension `k` over `F_q` is the set:
 
 REFERENCE:
 
-    .. [W88] Codes and Cryptography, Dominic Welsh, Oxford Sciences
-             Publications, 1988
+- [Wel1988]_
 """
 
 # *****************************************************************************
@@ -78,9 +77,9 @@ class ParityCheckCode(AbstractLinearCode):
             raise ValueError("dimension must be an integer")
 
         self._dimension = dimension
-        super(ParityCheckCode, self).__init__(
-            base_field, dimension + 1, "ParityCheckCodeGeneratorMatrixEncoder",
-            "Syndrome")
+        super().__init__(base_field, dimension + 1,
+                         "ParityCheckCodeGeneratorMatrixEncoder",
+                         "Syndrome")
 
     def __eq__(self, other):
         r"""
@@ -178,7 +177,7 @@ class ParityCheckCodeGeneratorMatrixEncoder(LinearCodeGeneratorMatrixEncoder):
         """
         if not isinstance(code, ParityCheckCode):
             raise ValueError("code has to be a parity-check code")
-        super(ParityCheckCodeGeneratorMatrixEncoder, self).__init__(code)
+        super().__init__(code)
 
     def generator_matrix(self):
         r"""
@@ -242,7 +241,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
         """
         if not isinstance(code, ParityCheckCode):
             raise ValueError("code has to be a parity-check code")
-        super(ParityCheckCodeStraightforwardEncoder, self).__init__(code)
+        super().__init__(code)
 
     def _repr_(self):
         r"""

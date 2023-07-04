@@ -22,17 +22,12 @@ EXAMPLES: We illustrate each of the calculus functional functions.
     a
     sage: taylor(a*sin(x)/x, x, 0, 4)
     1/120*a*x^4 - 1/6*a*x^2 + a
-    sage: expand( (x-a)^3 )
+    sage: expand((x - a)^3)
     -a^3 + 3*a^2*x - 3*a*x^2 + x^3
-    sage: laplace( e^(x+a), x, a)
-    e^a/(a - 1)
-    sage: inverse_laplace( e^a/(a-1), x, a)
-    ilt(e^a/(a - 1), x, a)
 """
-from __future__ import absolute_import
 
-from .calculus import SR
-from sage.symbolic.expression import Expression
+from sage.structure.element import Expression
+
 
 def simplify(f):
     r"""
@@ -54,7 +49,7 @@ def simplify(f):
         return f
 
 def derivative(f, *args, **kwds):
-    """
+    r"""
     The derivative of `f`.
 
     Repeated differentiation is supported by the syntax given in the
@@ -126,12 +121,33 @@ def derivative(f, *args, **kwds):
         80*u^3*v^3
         sage: derivative(f, [u, v, v])
         80*u^3*v^3
+
+    We differentiate a scalar field on a manifold::
+
+        sage: M = Manifold(2, 'M')
+        sage: X.<x,y> = M.chart()
+        sage: f = M.scalar_field(x^2*y, name='f')
+        sage: derivative(f)
+        1-form df on the 2-dimensional differentiable manifold M
+        sage: derivative(f).display()
+        df = 2*x*y dx + x^2 dy
+
+    We differentiate a differentiable form, getting its exterior derivative::
+
+        sage: a = M.one_form(-y, x, name='a'); a.display()
+        a = -y dx + x dy
+        sage: derivative(a)
+        2-form da on the 2-dimensional differentiable manifold M
+        sage: derivative(a).display()
+        da = 2 dx∧dy
+
     """
     try:
         return f.derivative(*args, **kwds)
     except AttributeError:
         pass
     if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
         f = SR(f)
     return f.derivative(*args, **kwds)
 
@@ -207,12 +223,12 @@ def integral(f, *args, **kwds):
         0
         sage: restore('x,y')   # restore the symbolic variables x and y
 
-    Sage is unable to do anything with the following integral::
+    Sage is now (:trac:`27958`) able to compute the following integral::
 
-        sage: integral( exp(-x^2)*log(x), x )
-        integrate(e^(-x^2)*log(x), x)
+        sage: integral(exp(-x^2)*log(x), x)  # long time
+        1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
 
-    Note, however, that::
+    and its value::
 
         sage: integral( exp(-x^2)*ln(x), x, 0, oo)
         -1/4*sqrt(pi)*(euler_gamma + 2*log(2))
@@ -222,10 +238,10 @@ def integral(f, *args, **kwds):
         sage: integral( ln(x)/x, x, 1, 2)
         1/2*log(2)^2
 
-    Sage can't do this elliptic integral (yet)::
+    Sage cannot do this elliptic integral (yet)::
 
         sage: integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)
-        integrate(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)
+        integrate(1/(sqrt(2*t^2 + 1)*sqrt(t^2 - 2)), t, 2, 3)
 
     A double integral::
 
@@ -261,7 +277,7 @@ def integral(f, *args, **kwds):
 
     ::
 
-        sage: [float(h(i)) for i in range(5)] #random
+        sage: [float(h(x=i)) for i in range(5)] #random
 
         [0.0,
          -1.1102230246251565e-16,
@@ -279,6 +295,7 @@ def integral(f, *args, **kwds):
         pass
 
     if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
         f = SR(f)
     return f.integral(*args, **kwds)
 
@@ -332,6 +349,7 @@ def limit(f, dir=None, taylor=False, **argv):
         -limit((erf(x) - 1)*e^(x^2), x, +Infinity)
     """
     if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
         f = SR(f)
     return f.limit(dir=dir, taylor=taylor, **argv)
 
@@ -375,6 +393,7 @@ def taylor(f, *args):
         (x - 1)*(y + 1)^3 - 3*(x - 1)*(y + 1)^2 + (y + 1)^3 + 3*(x - 1)*(y + 1) - 3*(y + 1)^2 - x + 3*y + 3
     """
     if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
         f = SR(f)
     return f.taylor(*args)
 

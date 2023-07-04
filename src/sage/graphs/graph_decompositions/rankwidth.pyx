@@ -1,16 +1,17 @@
 # cython: binding=True
+# distutils: libraries = rw
 r"""
 Rank Decompositions of graphs
 
-This modules wraps a C code from Philipp Klaus Krause computing a an optimal
-rank-decomposition [RWKlause]_.
+This module wraps C code from Philipp Klaus Krause computing an optimal
+rank-decomposition.
 
 **Definitions :**
 
 Given a graph `G` and a subset `S\subseteq V(G)` of vertices, the *rank-width*
 of `S` in `G`, denoted `rw_G(S)`, is equal to the rank in `GF(2)` of the `|S|
 \times (|V|-|S|)` matrix of the adjacencies between the vertices of `S` and
-`V\backslash S`. By definition, `rw_G(S)` is qual to `rw_G(\overline S)` where
+`V\backslash S`. By definition, `rw_G(S)` is equal to `rw_G(\overline S)` where
 `\overline S` is the complement of `S` in `V(G)`.
 
 A *rank-decomposition* of `G` is a tree whose `n` leaves are the elements of
@@ -28,15 +29,15 @@ achieving the minimal *rank-width*.
 
 **RW -- The original source code :**
 
-RW [RWKlause]_ is a program that calculates rank-width and
-rank-decompositions. It is based on ideas from :
+RW is a program that calculates rank-width and
+rank-decompositions. It is based on ideas from:
 
-    * "Computing rank-width exactly" by Sang-il Oum [Oum]_
+    * "Computing rank-width exactly" by Sang-il Oum [Oum2009]_
     * "Sopra una formula numerica" by Ernesto Pascal
     * "Generation of a Vector from the Lexicographical Index" by B.P. Buckles
-      and M. Lybanon [BL]_
+      and M. Lybanon [BL1977]_
     * "Fast additions on masked integers" by Michael D. Adams and David S. Wise
-      [AW]_
+      [AW2006]_
 
 **OUTPUT:**
 
@@ -65,7 +66,7 @@ from the smaller of the two and its complement.
     sage: tree.has_edge(u,v)
     True
     sage: m = min(u,v)
-    sage: bipartition = (m, Set(g.vertices()) - m)
+    sage: bipartition = (m, Set(g.vertices(sort=False)) - m)
     sage: bipartition
     ({8, 9}, {0, 1, 2, 3, 4, 5, 6, 7})
 
@@ -86,49 +87,22 @@ EXAMPLES::
 
 AUTHORS:
 
-- Philipp Klaus Krause : Implementation of the C algorithm [RWKlause]_
+- Philipp Klaus Krause : Implementation of the C algorithm
 - Nathann Cohen : Interface with Sage and documentation
-
-REFERENCES:
-
-  .. [RWKlause] Philipp Klaus Krause -- rw v0.2
-    http://pholia.tdi.informatik.uni-frankfurt.de/~philipp/software/rw.shtml
-
-  .. [Oum] Sang-il Oum
-    Computing rank-width exactly
-    Information Processing Letters, 2008
-    vol. 109, n. 13, p. 745--748
-    Elsevier
-    http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf
-
-  .. [BL] Buckles, B.P. and Lybanon, M.
-    Algorithm 515: generation of a vector from the lexicographical index
-    ACM Transactions on Mathematical Software (TOMS), 1977
-    vol. 3, n. 2, pages 180--182
-    ACM
-
-  .. [AW] Adams, M.D. and Wise, D.S.
-    Fast additions on masked integers
-    ACM SIGPLAN Notices, 2006
-    vol. 41, n.5, pages 39--45
-    ACM
-    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.1801&rep=rep1&type=pdf
 
 Methods
 -------
 """
 
-#*****************************************************************************
-#       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gail.com>
+# ****************************************************************************
+#       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport *
@@ -137,6 +111,7 @@ from libc.string cimport memset
 
 cdef list id_to_vertices
 cdef dict vertices_to_id
+
 
 def rank_decomposition(G, verbose=False):
     r"""
@@ -224,6 +199,7 @@ def rank_decomposition(G, verbose=False):
 
     return (rank_width, g)
 
+
 cdef int sage_graph_to_matrix(G):
     r"""
     Convert the given Sage graph as an adjacency matrix.
@@ -250,7 +226,7 @@ cdef int sage_graph_to_matrix(G):
     vertices_to_id = {v: i for i, v in enumerate(id_to_vertices)}
 
     # Filling the matrix
-    for u,v in G.edge_iterator(labels=False):
+    for u, v in G.edge_iterator(labels=False):
         if u == v:
             continue
         set_am(vertices_to_id[u], vertices_to_id[v], 1)
@@ -258,8 +234,10 @@ cdef int sage_graph_to_matrix(G):
     # All is fine.
     return 0
 
+
 cdef uint_fast32_t bitmask(int i):
     return (1ul << i)
+
 
 cdef void set_am(int i, int j, int val):
     r"""
@@ -275,6 +253,7 @@ cdef void set_am(int i, int j, int val):
     if val:
         adjacency_matrix[i] |= bitmask(j)
         adjacency_matrix[j] |= bitmask(i)
+
 
 cdef void print_rank_dec(subset_t s, int l):
     r"""
@@ -293,6 +272,7 @@ cdef void print_rank_dec(subset_t s, int l):
         return
     print_rank_dec(cslots[s], l + 1)
     print_rank_dec(s & ~cslots[s], l + 1)
+
 
 def mkgraph(int num_vertices):
     r"""
@@ -339,6 +319,7 @@ def mkgraph(int num_vertices):
 
     sig_free(tab)
     return g
+
 
 cdef bitset_to_vertex_set(subset_t s):
     """

@@ -6,7 +6,7 @@ EXAMPLES:
 
 Extensions of valuations over finite field extensions `L=K[x]/(G)` are realized
 through an infinite valuation on `K[x]` which maps `G` to infinity::
-    
+
     sage: K.<x> = FunctionField(QQ)
     sage: R.<y> = K[]
     sage: L.<y> = K.extension(y^2 - x)
@@ -23,15 +23,14 @@ AUTHORS:
 - Julian Rüth (2016-11-10): initial version
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .valuation import DiscreteValuation, DiscretePseudoValuation
 from sage.misc.abstract_method import abstract_method
@@ -82,7 +81,7 @@ class MappedValuation_base(DiscretePseudoValuation):
         """
         DiscretePseudoValuation.__init__(self, parent)
 
-        self._base_valuation = base_valuation 
+        self._base_valuation = base_valuation
 
     @abstract_method
     def _repr_(self):
@@ -235,7 +234,7 @@ class MappedValuation_base(DiscretePseudoValuation):
         Produce an element which differs from ``x`` by an element of
         valuation strictly greater than the valuation of ``x`` (or strictly
         greater than ``error`` if set.)
-        
+
         If ``force`` is not set, then expensive simplifications may be avoided.
 
         EXAMPLES::
@@ -254,7 +253,7 @@ class MappedValuation_base(DiscretePseudoValuation):
             y + x^32
 
         In this case the simplification can be forced but this should not
-        happen as a default as the recersive simplification can be quite
+        happen as a default as the recursive simplification can be quite
         costly::
 
             sage: w.simplify(y + x^32, force=True)
@@ -421,18 +420,18 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
     def __init__(self, parent, base_valuation):
         r"""
         TESTS::
-    
+
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-    
+
             sage: v = K.valuation(0)
             sage: w = v.extension(L)
             sage: from sage.rings.valuation.mapped_valuation import FiniteExtensionFromInfiniteValuation
             sage: isinstance(w, FiniteExtensionFromInfiniteValuation)
             True
             sage: TestSuite(w).run() # long time
-    
+
         """
         MappedValuation_base.__init__(self, parent, base_valuation)
         DiscreteValuation.__init__(self, parent)
@@ -473,7 +472,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         """
         if ring.is_subring(self._base_valuation.domain().base()):
             return self._base_valuation.restriction(ring)
-        return super(FiniteExtensionFromInfiniteValuation, self).restriction(ring)
+        return super().restriction(ring)
 
     def _weakly_separating_element(self, other):
         r"""
@@ -497,7 +496,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         """
         if isinstance(other, FiniteExtensionFromInfiniteValuation):
             return self.domain()(self._base_valuation._weakly_separating_element(other._base_valuation))
-        super(FiniteExtensionFromInfiniteValuation, self)._weakly_separating_element(other)
+        super()._weakly_separating_element(other)
 
     def _relative_size(self, x):
         r"""
@@ -511,7 +510,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         coefficients is going to lead to a significant shrinking of the
         coefficients of ``x``.
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: K = QQ
             sage: R.<t> = K[]
@@ -663,8 +662,8 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
             augmentations = self._base_valuation._initial_approximation.augmentation_chain()[::-1]
             unique_approximant = None
             for l in range(len(augmentations)):
-                if len([a for a in approximants if a[:l+1] == augmentations[:l+1]]) == 1:
-                    unique_approximant = augmentations[:l+1]
+                if len([a for a in approximants if a[:l + 1] == augmentations[:l + 1]]) == 1:
+                    unique_approximant = augmentations[:l + 1]
                     break
             assert(unique_approximant is not None)
             if unique_approximant[0].is_gauss_valuation():
@@ -672,5 +671,5 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
             if len(unique_approximant) == 1:
                 return repr(unique_approximant[0])
             from .augmented_valuation import AugmentedValuation_base
-            return "[ %s ]-adic valuation"%(", ".join("v(%r) = %r"%(v._phi, v._mu) if (isinstance(v, AugmentedValuation_base) and v.domain() == self._base_valuation.domain()) else repr(v) for v in unique_approximant))
-        return "%s-adic valuation"%(self._base_valuation)
+            return "[ %s ]-adic valuation" % (", ".join("v(%r) = %r" % (v._phi, v._mu) if (isinstance(v, AugmentedValuation_base) and v.domain() == self._base_valuation.domain()) else repr(v) for v in unique_approximant))
+        return "%s-adic valuation" % (self._base_valuation)

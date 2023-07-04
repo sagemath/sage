@@ -1,3 +1,6 @@
 SAGE_SPKG_CONFIGURE([zeromq], [
-    AX_ZMQ([4.2.5], [], [sage_spkg_install_zeromq=yes])
+    dnl Trac #31624: Avoid C++ ABI issues
+    SAGE_SPKG_DEPCHECK([gcc], [
+        AX_ZMQ([4.2.5], [], [sage_spkg_install_zeromq=yes])
+    ])
 ])

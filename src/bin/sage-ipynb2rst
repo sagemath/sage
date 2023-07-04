@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ -z $SAGE_EXTCODE ]; then
+    SAGE_EXTCODE=`${0/-ipynb2rst} -c "from sage.env import SAGE_EXTCODE; print(SAGE_EXTCODE)"`
+fi
+
 fail () {
     echo "ERROR: ${1}" 1>&2
     exit 1

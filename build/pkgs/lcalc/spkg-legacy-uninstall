@@ -1,1 +1,2 @@
+#! /usr/bin/env bash
 rm -fr "$SAGE_LOCAL"/include/libLfunction

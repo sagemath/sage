@@ -1,9 +1,0 @@
-# Exit on error
-set -e
-
-cd gcc-build
-sdh_make_install
-
-# The spkg still installs a minimal C compiler that needs to be removed
-# so it doesn't conflict with the configured C compiler.
-rm "$SAGE_DESTDIR_LOCAL"/bin/gcc "$SAGE_DESTDIR_LOCAL"/bin/cpp

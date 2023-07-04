@@ -7,12 +7,7 @@ Based on speaklater: https://github.com/mitsuhiko/speaklater.
 A lazy string is an object that behaves almost exactly like a string
 but where the value is not computed until needed.  To define a lazy
 string you specify a function that produces a string together with the
-appropriate arguments for that function.  Sage uses lazy strings in
-:mod:`sage.misc.misc` so that the filenames for SAGE_TMP (which
-depends on the pid of the process running Sage) are not computed when
-importing the Sage library.  This means that when the doctesting code
-imports the Sage library and then forks, the variable SAGE_TMP depends
-on the new pid rather than the old one.
+appropriate arguments for that function.
 
 EXAMPLES::
 
@@ -61,7 +56,6 @@ Note that the function is recomputed each time::
 #THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 #(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from __future__ import print_function, absolute_import
 
 from cpython.object cimport PyObject_Call, PyObject_RichCompare
 
@@ -115,12 +109,9 @@ def lazy_string(f, *args, **kwargs):
         sage: s == 'this is a test'
         determining string representation
         True
-        sage: unicode(s)  # py2
-        determining string representation
-        u'this is a test'
-
     """
     return _LazyString(f, args, kwargs)
+
 
 def _make_lazy_string(ftype, fpickle, args, kwargs):
     """
@@ -140,7 +131,7 @@ def _make_lazy_string(ftype, fpickle, args, kwargs):
         f = fpickle
     return _LazyString(f, args, kwargs)
 
-cdef class _LazyString(object):
+cdef class _LazyString():
     """
     Lazy class for strings created by a function call or a format string.
 
@@ -188,12 +179,7 @@ cdef class _LazyString(object):
         sage: s == 'this is a test'
         determining string representation
         True
-        sage: unicode(s)  # py2
-        determining string representation
-        u'this is a test'
-
     """
-
     def __init__(self, f, args, kwargs):
         """
         INPUT:
@@ -212,8 +198,6 @@ cdef class _LazyString(object):
             l'laziness5'
             sage: lazy_string("This is %s", ZZ)
             l'This is Integer Ring'
-            sage: lazy_string(u"This is %s", ZZ)
-            lu'This is Integer Ring'
         """
         self.func = f
         self.args = <tuple?>args
@@ -259,7 +243,7 @@ cdef class _LazyString(object):
         """
         return key in self.val()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -333,25 +317,16 @@ cdef class _LazyString(object):
         :pep:`519` and
         https://docs.python.org/3/library/os.html#os.fspath
 
-        Test :trac:`24046`::
-
-            sage: from sage.misc.misc import SAGE_TMP
-            sage: tmp = os.path.join(SAGE_TMP, 'hello')
-            sage: _ = os.path.exists(tmp)
-        """
-        return str(self)
-
-    def __unicode__(self):
-        """
         EXAMPLES::
 
             sage: from sage.misc.lazy_string import lazy_string
-            sage: f = lambda: "laziness"
+            sage: f = lambda: "/dev/null"
             sage: s = lazy_string(f)
-            sage: unicode(s)  # indirect doctest py2 only
-            u'laziness'
+            sage: os.fspath(s)
+            '/dev/null'
+
         """
-        return unicode(self.val())
+        return str(self)
 
     def __add__(self, other):
         """

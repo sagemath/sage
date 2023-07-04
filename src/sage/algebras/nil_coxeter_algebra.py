@@ -44,7 +44,7 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
         u[0,1,2,3] + 2*u[0] + 3*u[1] + 1
     """
 
-    def __init__(self, W, base_ring = QQ, prefix='u'):
+    def __init__(self, W, base_ring=QQ, prefix='u'):
         r"""
         Initiate the affine nil-Coxeter algebra corresponding to the Weyl
         group `W` over the base ring.
@@ -65,18 +65,16 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
         self._base_ring = base_ring
         self._cartan_type = W.cartan_type()
         H = IwahoriHeckeAlgebra(W, 0, 0, base_ring=base_ring)
-        super(IwahoriHeckeAlgebra.T,self).__init__(H, prefix=prefix)
+        super(IwahoriHeckeAlgebra.T, self).__init__(H, prefix=prefix)
 
     def _repr_(self):
         r"""
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: NilCoxeterAlgebra(WeylGroup(['A',3,1])) # indirect doctest
             The Nil-Coxeter Algebra of Type A3~ over Rational Field
-
         """
-
-        return "The Nil-Coxeter Algebra of Type %s over %s"%(self._cartan_type._repr_(compact=True), self.base_ring())
+        return "The Nil-Coxeter Algebra of Type %s over %s" % (self._cartan_type._repr_(compact=True), self.base_ring())
 
     def homogeneous_generator_noncommutative_variables(self, r):
         r"""

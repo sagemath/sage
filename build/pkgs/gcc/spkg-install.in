@@ -1,0 +1,17 @@
+# If we are building gcc ourselves, usually the system compiler isn't suitable.
+export CFLAGS=$CFLAGS_NON_NATIVE
+export CXXFLAGS=$CXXFLAGS_NON_NATIVE
+
+# First, install any custom binaries or headers we created for macOS
+# workarounds
+for dir in bin include; do
+    if [ -d $dir ]; then
+        sdh_install $dir/* "$SAGE_LOCAL/$dir"
+    fi
+done
+
+. ./set-library-path
+
+# Install gcc
+cd gcc-build
+sdh_make_install

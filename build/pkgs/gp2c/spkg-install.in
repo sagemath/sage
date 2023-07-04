@@ -1,0 +1,4 @@
+cd src
+sdh_configure --with-paricfg=$SAGE_PARI_CFG
+sdh_make
+sdh_make_install

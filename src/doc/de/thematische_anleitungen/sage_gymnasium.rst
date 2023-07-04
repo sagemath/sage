@@ -315,13 +315,13 @@ Ausdruck::
     sage: var('x')
     x
     sage: type(x*2)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Auch eine Funktion (siehe unten) ist ein symbolischer Ausdruck::
 
     sage: f(x) = x + 1
     sage: type(f)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Benutzen wir jedoch eine Variable, um etwas zu speichern und nicht als symbolischen
 Parameter, so ist ein Ausdruck, welcher sie enthält, nicht mehr ein symbolischer
@@ -329,7 +329,7 @@ Ausdruck::
 
     sage: x = 3
     sage: type(x*2)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
 Terme können auch in Variablen gespeichert werden. Dazu benutzen wir
 wie bei Zahlenwerten den Operator ``=`` für die Zuordnung::
@@ -531,7 +531,7 @@ auf dem Intervall `[a, b]` hat, finden wir eine numerische Approximation dieser 
 mit ``find_root(f == 0, a, b)``. Nun wollen wir also die Lösung der obigen Gleichung finden::
 
   sage: f(x) = 2/x^(1/2) - 1/(x^2)
-  sage: find_root(f, 0.5, 5)
+  sage: find_root(f, 0.5, 5)  # abs tol 1e-12
   0.6299605249475858
 
 Funktionen
@@ -665,14 +665,14 @@ Option auf ``True`` stellen, werden die Linien nicht mehr dargestellt::
 
     sage: f(x)=(x^2 +1)/(x^2-1)
     sage: plot(f, xmin=-2, xmax=2, ymin=-10, ymax = 10, detect_poles=True)
-    Graphics object consisting of 4 graphics primitives
+    Graphics object consisting of 3 graphics primitives
 
 Möchten wir hingegen die vertikalen Asymptoten trotzdem darstellen, aber nicht in derselben
 Farbe wie den Funktionsgraphen, können wir die Option ``detect_poles`` auf ``"show"`` stellen::
 
     sage: f(x)=(x^2 +1)/(x^2-1)
     sage: plot(f, xmin=-2, xmax=2, ymin=-10, ymax = 10, detect_poles="show")
-    Graphics object consisting of 6 graphics primitives
+    Graphics object consisting of 5 graphics primitives
 
 Logarithmen
 ===========

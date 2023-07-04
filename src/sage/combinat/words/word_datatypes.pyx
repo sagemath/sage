@@ -11,13 +11,12 @@ Datatypes for finite words
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cpython.object cimport Py_EQ, Py_NE
 from itertools import islice
 
 
-cdef class WordDatatype(object):
+cdef class WordDatatype():
     r"""
     The generic WordDatatype class.
 
@@ -270,11 +269,11 @@ cdef class WordDatatype_list(WordDatatype):
         if isinstance(other, WordDatatype_list):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_list, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__
 
-    def count(self, a):
+    def number_of_letter_occurrences(self, a):
         r"""
         Returns the number of occurrences of the letter ``a`` in the word
         ``self``.
@@ -290,12 +289,16 @@ cdef class WordDatatype_list(WordDatatype):
         EXAMPLES::
 
             sage: w = Word([0,1,1,0,1])
-            sage: w.count(0)
+            sage: w.number_of_letter_occurrences(0)
             2
-            sage: w.count(1)
+            sage: w.number_of_letter_occurrences(1)
             3
-            sage: w.count(2)
+            sage: w.number_of_letter_occurrences(2)
             0
+
+        .. SEEALSO::
+
+            :meth:`sage.combinat.words.finite_word.FiniteWord_class.number_of_factor_occurrences`
 
         """
         return self._data.count(a)
@@ -440,7 +443,6 @@ cdef class WordDatatype_str(WordDatatype):
             True
             sage: w._has_factor_naive('bab')
             False
-
         """
         if isinstance(w, WordDatatype_str):
             return w._data in self._data
@@ -484,7 +486,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(sub, str):
             return self._data.find(sub, start, end)
         else:
-            return super(WordDatatype_str, self).find(sub, start, end)
+            return super().find(sub, start, end)
 
     def rfind(self, sub, start=0, end=None):
         r"""
@@ -522,7 +524,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(sub, str):
             return self._data.rfind(sub, start, end)
         else:
-            return super(WordDatatype_str, self).rfind(sub, start, end)
+            return super().rfind(sub, start, end)
 
     def __len__(self):
         r"""
@@ -604,11 +606,11 @@ cdef class WordDatatype_str(WordDatatype):
         if isinstance(other, WordDatatype_str):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_str, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__
 
-    def count(self, letter):
+    def number_of_letter_occurrences(self, letter):
         r"""
         Count the number of occurrences of ``letter``.
 
@@ -623,15 +625,27 @@ cdef class WordDatatype_str(WordDatatype):
         EXAMPLES::
 
             sage: w = Word("abbabaabababa")
-            sage: w.count('a')
+            sage: w.number_of_letter_occurrences('a')
             7
-            sage: w.count('b')
+            sage: w.number_of_letter_occurrences('b')
             6
-            sage: w.count('c')
+            sage: w.number_of_letter_occurrences('c')
             0
 
+        ::
+
+            sage: w.number_of_letter_occurrences('abb')
+            0
+
+        .. SEEALSO::
+
+            :meth:`sage.combinat.words.finite_word.FiniteWord_class.number_of_factor_occurrences`
+
         """
-        return self._data.count(letter)
+        if len(letter) == 1:
+            return self._data.count(letter)
+        else:
+            return 0
 
     def split(self, sep=None, maxsplit=None):
         r"""
@@ -689,19 +703,18 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w.split(Word(['p','a','p','a']))
             Traceback (most recent call last):
             ...
-            ValueError: the separator must be a string.
+            ValueError: the separator must be a string
         """
         if sep is None or isinstance(sep, str):
             pass
         elif isinstance(sep, WordDatatype_str):
             sep = sep._data
         else:
-            raise ValueError("the separator must be a string.")
-
+            raise ValueError("the separator must be a string")
         if maxsplit is None:
-            return [self._parent(z) for z in self._data.split(sep)]
-        else:
-            return [self._parent(z) for z in self._data.split(sep, maxsplit)]
+            maxsplit = -1
+        return [self._parent(z) for z in self._data.split(sep=sep,
+                                                          maxsplit=maxsplit)]
 
     def partition(self, sep):
         r"""
@@ -741,13 +754,13 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w.partition(Word(['p','a','p','a']))
             Traceback (most recent call last):
             ...
-            ValueError: the separator must be a string.
+            ValueError: the separator must be a string
         """
         if isinstance(sep, str):
             return [self._parent(z) for z in self._data.partition(sep)]
         elif isinstance(sep, WordDatatype_str):
             return [self._parent(z) for z in self._data.partition(sep._data)]
-        raise ValueError("the separator must be a string.")
+        raise ValueError("the separator must be a string")
 
     def is_suffix(self, other):
         r"""
@@ -788,7 +801,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(other, str):
             return other.endswith(self._data)
         else:
-            return super(WordDatatype_str, self).is_suffix(other)
+            return super().is_suffix(other)
 
     def has_suffix(self, other):
         """
@@ -820,7 +833,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(other, str):
             return self._data.endswith(other)
         else:
-            return super(WordDatatype_str, self).has_suffix(other)
+            return super().has_suffix(other)
 
     def is_prefix(self, other):
         r"""
@@ -861,7 +874,7 @@ cdef class WordDatatype_str(WordDatatype):
         if isinstance(other ,str):
             return other.startswith(self._data)
         else:
-            return super(WordDatatype_str, self).is_prefix(other)
+            return super().is_prefix(other)
 
     def has_prefix(self, other):
         r"""
@@ -902,7 +915,7 @@ cdef class WordDatatype_str(WordDatatype):
         if isinstance(other, str):
             return self._data.startswith(other)
         else:
-            return super(WordDatatype_str, self).has_prefix(other)
+            return super().has_prefix(other)
 
 cdef class WordDatatype_tuple(WordDatatype):
     r"""
@@ -1106,7 +1119,6 @@ cdef class WordDatatype_tuple(WordDatatype):
         if isinstance(other, WordDatatype_tuple):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_tuple, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__
-

@@ -13,7 +13,7 @@ and repeat. Every 500 iterations the error estimates from the
 processes are collected using Gather. you can compare the output of
 this with the solver we wrote in the section on f2py.
 
-::
+.. CODE-BLOCK:: python
 
     from mpi4py import MPI
     import numpy
@@ -24,7 +24,7 @@ this with the solver we wrote in the section on f2py.
     root=0
     dx=1.0/(num_points-1)
     from numpy import r_
-    j=numpy.complex(0,1)
+    j=complex(0,1)
     rows_per_process=num_points/size
     max_iter=5000
     num_iter=0
@@ -118,13 +118,13 @@ this with the solver we wrote in the section on f2py.
         print(num_iter)
         print(sol)
 
-For small grid sizes this will be slower than a straightforward
-serial implementation, this is because there is overhead from the
+For small grid sizes, this will be slower than a straightforward
+serial implementation. This is because there is overhead from the
 communication, and for small grids the interprocess communication
 takes more time than just doing the iteration. However, on a
 1000x1000 grid I find that using 4 processors, the parallel version
 takes only 6 seconds while the serial version we wrote earlier
 takes 20 seconds.
 
-Excercise: Rewrite the above using f2py, so that each process 
+Exercise: Rewrite the above using f2py, so that each process 
 compiles a fortran function and uses that, how fast can you get this?

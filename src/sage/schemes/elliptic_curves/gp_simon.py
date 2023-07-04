@@ -1,9 +1,7 @@
 """
 Denis Simon's PARI scripts
 """
-from __future__ import absolute_import
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,15 +13,16 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent_gens import localvars
 
 from sage.interfaces.gp import Gp
 from sage.misc.sage_eval import sage_eval
 from sage.misc.randstate import current_randstate
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 gp = None
@@ -50,14 +49,14 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
     .. NOTE::
 
-       Users should instead run E.simon_two_descent()
+        Users should instead run E.simon_two_descent()
 
     EXAMPLES::
 
         sage: import sage.schemes.elliptic_curves.gp_simon
         sage: E=EllipticCurve('389a1')
         sage: sage.schemes.elliptic_curves.gp_simon.simon_two_descent(E)
-        (2, 2, [(1 : 0 : 1), (-11/9 : 28/27 : 1)])
+        (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
 
     TESTS::
 
@@ -85,7 +84,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
         sage: K.<w> = NumberField(x^2-x-232)
         sage: E = EllipticCurve([2-w,18+3*w,209+9*w,2581+175*w,852-55*w])
-        sage: E.simon_two_descent()
+        sage: E.simon_two_descent()  # long time
         (0, 2, [])
     """
     init()
@@ -98,9 +97,9 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
     # fails when K is a number field whose generator is called 'x'.
     # It also deals with relative number fields.
     E_orig = E
-    if not K is QQ:
+    if K is not QQ:
         K = K_orig.absolute_field('a')
-        from_K,to_K = K.structure()
+        from_K, to_K = K.structure()
         E = E_orig.change_ring(to_K)
         known_points = [P.change_ring(to_K) for P in known_points]
         # Simon's program requires that this name be y.
@@ -115,10 +114,10 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         from_K = lambda x: x
         to_K = lambda x: x
 
-    # The block below mimicks the defaults in Simon's scripts, and needs to be changed
+    # The block below mimics the defaults in Simon's scripts, and needs to be changed
     # when these are updated.
     if K is QQ:
-        cmd = 'ellrank(%s, %s);' % (list(E.ainvs()), [P.__pari__() for P in known_points])
+        cmd = 'ellQ_ellrank(%s, %s);' % (list(E.ainvs()), [P.__pari__() for P in known_points])
         if lim1 is None:
             lim1 = 5
         if lim3 is None:
@@ -145,7 +144,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
     if verbose > 0:
         print(s)
     v = gp.eval('ans')
-    if v=='ans': # then the call to ellrank() or bnfellrank() failed
+    if v=='ans': # then the call to ellQ_ellrank() or bnfellrank() failed
         raise RuntimeError("An error occurred while running Simon's 2-descent program")
     if verbose >= 2:
         print("v = %s" % v)

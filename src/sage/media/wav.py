@@ -23,20 +23,27 @@ AUTHORS:
 - Bobby Moretti and Gonzalo Tornaria (2007-07-01): First version
 - William Stein (2007-07-03): add more
 - Bobby Moretti (2007-07-03): add doctests
+
+This module (and all of ``sage.media``) is deprecated.
+
+EXAMPLES::
+
+    sage: import sage.media
+    doctest:warning...
+    DeprecationWarning: the package sage.media is deprecated
+    See https://github.com/sagemath/sage/issues/12673 for details.
 """
-from __future__ import print_function
-from __future__ import absolute_import
-from six.moves import range
 
 import math
 import os
 import wave
 
-from sage.plot.plot import list_plot
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.plot", "list_plot")
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.misc.html import html
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 
 class Wave(SageObject):
@@ -63,8 +70,8 @@ class Wave(SageObject):
 
     Indexing:
 
-        Getting the $n$th item in a Wave object will give you the value
-        of the $n$th frame.
+        Getting the `n`-th item in a Wave object will give you the value
+        of the `n`-th frame.
     """
     def __init__(self, data=None, **kwds):
         if data is not None:
@@ -95,18 +102,17 @@ class Wave(SageObject):
         else:
             raise ValueError("Must give a filename")
 
-
     def save(self, filename='sage.wav'):
         r"""
         Save this wave file to disk, either as a Sage sobj or as a .wav file.
 
         INPUT:
-            filename -- the path of the file to save. If filename ends
-                        with 'wav', then save as a wave file,
-                        otherwise, save a Sage object.
 
-            If no input is given, save the file as 'sage.wav'.
+        filename -- the path of the file to save. If filename ends
+                    with 'wav', then save as a wave file,
+                    otherwise, save a Sage object.
 
+        If no input is given, save the file as 'sage.wav'.
         """
         if not filename.endswith('.wav'):
             SageObject.save(self, filename)
@@ -139,69 +145,76 @@ class Wave(SageObject):
         Get the data from a given channel.
 
         INPUT:
-            n -- the channel number to get
+
+        n -- the channel number to get
 
         OUTPUT:
-            A list of signed ints, each containing the value of a frame.
+
+        A list of signed ints, each containing the value of a frame.
         """
         return self._channel_data[n]
 
-
     def getnchannels(self):
         """
-        Returns the number of channels in this wave object.
+        Return the number of channels in this wave object.
 
         OUTPUT:
-            The number of channels in this wave file.
+
+        The number of channels in this wave file.
         """
         return self._nchannels
 
     def getsampwidth(self):
         """
-        Returns the number of bytes per sample in this wave object.
+        Return the number of bytes per sample in this wave object.
 
         OUTPUT:
-            The number of bytes in each sample.
+
+        The number of bytes in each sample.
         """
         return self._width
 
     def getframerate(self):
         """
-        Returns the number of frames per second in this wave object.
+        Return the number of frames per second in this wave object.
 
         OUTPUT:
-            The frame rate of this sound file.
+
+        The frame rate of this sound file.
         """
         return self._framerate
 
     def getnframes(self):
         """
-        The total number of frames in this wave object.
+        Return the total number of frames in this wave object.
 
         OUTPUT:
-            The number of frames in this WAV.
+
+        The number of frames in this WAV.
         """
         return self._nframes
 
     def readframes(self, n):
         """
-        Reads out the raw data for the first $n$ frames of this wave
-        object.
+        Read out the raw data for the first `n` frames of this wave object.
 
         INPUT:
-            n -- the number of frames to return
+
+        n -- the number of frames to return
 
         OUTPUT:
-            A list of bytes (in string form) representing the raw wav data.
+
+        A list of bytes (in string form) representing the raw wav data.
         """
         return self._bytes[:self._nframes * self._width]
 
     def getlength(self):
         """
-        Returns the length of this file (in seconds).
+        Return the length of this file (in seconds).
 
         OUTPUT:
-            The running time of the entire WAV object.
+
+        The running time of the entire WAV object.
         """
         return float(self._nframes) / (self._nchannels * float(self._framerate))
 
@@ -283,9 +296,8 @@ class Wave(SageObject):
 
         a plot object that can be shown.
         """
-
-        domain = self.domain(npoints = npoints)
-        values = self.values(npoints=npoints, channel = channel)
+        domain = self.domain(npoints=npoints)
+        values = self.values(npoints=npoints, channel=channel)
         points = zip(domain, values)
 
         L = list_plot(points, plotjoined=plotjoined, **kwds)
@@ -322,9 +334,10 @@ class Wave(SageObject):
 
     def __getitem__(self, i):
         """
-        Returns the `i`-th frame of data in the wave, in the form of a string,
+        Return the `i`-th frame of data in the wave, in the form of a string,
         if `i` is an integer.
-        Returns a slice of self if `i` is a slice.
+
+        Return a slice of self if `i` is a slice.
         """
         if isinstance(i, slice):
             start, stop, step = i.indices(self._nframes)
@@ -335,15 +348,17 @@ class Wave(SageObject):
 
     def slice_seconds(self, start, stop):
         """
-        Slices the wave from start to stop.
+        Slice the wave from start to stop.
 
         INPUT:
-            start -- the time index from which to begin the slice (in seconds)
-            stop -- the time index from which to end the slice (in seconds)
+
+        start -- the time index from which to begin the slice (in seconds)
+        stop -- the time index from which to end the slice (in seconds)
 
         OUTPUT:
-            A Wave object whose data is this object's data,
-            sliced between the given time indices
+
+        A Wave object whose data is this object's data,
+        sliced between the given time indices
         """
         start = int(start*self.getframerate())
         stop = int(stop*self.getframerate())
@@ -356,13 +371,13 @@ class Wave(SageObject):
         channels_sliced = [self._channel_data[i][start:stop] for i in range(self._nchannels)]
         print(stop - start)
 
-        return Wave(nchannels = self._nchannels,
-                    width = self._width,
-                    framerate = self._framerate,
-                    bytes = self._bytes[start:stop],
-                    nframes = stop - start,
-                    channel_data = channels_sliced,
-                    name = self._name)
+        return Wave(nchannels=self._nchannels,
+                    width=self._width,
+                    framerate=self._framerate,
+                    bytes=self._bytes[start:stop],
+                    nframes=stop - start,
+                    channel_data=channels_sliced,
+                    name=self._name)
 
     def __copy__(self):
         return self._copy(0, self._nframes)
@@ -383,5 +398,5 @@ class Wave(SageObject):
         i = k.inv_fft()
         conv = self.__copy__()
         conv.set_values(list(i))
-        conv._name = "convolution of %s and %s"%(self._name, right._name)
+        conv._name = "convolution of %s and %s" % (self._name, right._name)
         return conv

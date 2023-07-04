@@ -1,7 +1,6 @@
 """
 Jacobian of a hyperelliptic curve of genus 2
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -29,4 +28,3 @@ class HyperellipticJacobian_g2(jacobian_generic.HyperellipticJacobian_generic):
             return self._kummer_surface
         except AttributeError:
             return kummer_surface.KummerSurface(self)
-

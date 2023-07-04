@@ -2,10 +2,11 @@ Monoids
 =======
 
 Sage supports free monoids and free abelian monoids in any
-finite number of indeterminates.
+finite number of indeterminates, as well as free partially
+commutative monoids (trace monoids).
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/monoids/monoid
    sage/monoids/free_monoid
@@ -18,5 +19,6 @@ finite number of indeterminates.
    sage/monoids/string_ops
    sage/monoids/hecke_monoid
    sage/monoids/automatic_semigroup
+   sage/monoids/trace_monoid
 
 .. include:: ../footer.txt

@@ -1,5 +1,4 @@
-#include "libLfunction/L.h"
-
+#include "lcalc/L.h"
 int *new_ints(int l)
 {
     return new int[l];
@@ -45,7 +44,7 @@ void testL(L_function<Complex> *L)
 {
     int i;
     cout << "number of coefficients " << L->number_of_dirichlet_coefficients << endl;
-    cout << "dirichlet coeffs"<< endl;
+    cout << "Dirichlet coeffs"<< endl;
     for (i=0;i< min(30, L->number_of_dirichlet_coefficients +1); i++)
         cout << L->dirichlet_coefficient[i]<<endl;
     cout << "Q " << L->Q << endl;
@@ -63,4 +62,3 @@ void testL(L_function<Complex> *L)
     cout << "Value at 1"  << L->value(1.0) <<endl;
     cout << "Value at .5+I"  << L->value(.5+I) <<endl;
 }
-

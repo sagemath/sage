@@ -36,7 +36,6 @@ add them and multiply them with scalars::
     sage: m-m
     0*x + 0*y + 0*z + 0
 """
-from six.moves import zip
 
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
@@ -89,7 +88,7 @@ class LinearExpression(ModuleElement):
 
             sage: TestSuite(linear).run()
         """
-        super(LinearExpression, self).__init__(parent)
+        super().__init__(parent)
         self._coeffs = coefficients
         self._const = constant
         if check:
@@ -384,9 +383,8 @@ class LinearExpression(ModuleElement):
 
             sage: from sage.geometry.linear_expression import LinearExpressionModule
             sage: L.<x> = LinearExpressionModule(QQ)
-            sage: hash(L([0,1]))
-            3430019387558 # 64-bit
-            -1659481946   # 32-bit
+            sage: hash(L([0,1])) == hash((1,))
+            True
         """
         return hash(self._coeffs) ^ hash(self._const)
 
@@ -442,7 +440,7 @@ class LinearExpression(ModuleElement):
             9
             sage: ex([1,1])    # syntactic sugar
             9
-            sage: ex([pi, e])
+            sage: ex([pi, e])                                           # optional - sage.symbolic
             2*pi + 3*e + 4
         """
         try:
@@ -492,7 +490,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: TestSuite(L).run()
         """
         from sage.categories.modules import Modules
-        super(LinearExpressionModule, self).__init__(base_ring, category=Modules(base_ring).WithBasis().FiniteDimensional())
+        super().__init__(base_ring, category=Modules(base_ring).WithBasis().FiniteDimensional())
         self._names = names
 
     @cached_method
@@ -654,8 +652,8 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
 
             sage: from sage.geometry.linear_expression import LinearExpressionModule
             sage: L.<x,y,z> = LinearExpressionModule(QQ)
-            sage: L.random_element()
-            -1/2*x - 1/95*y + 1/2*z - 12
+            sage: L.random_element() in L
+            True
         """
         A = self.ambient_module().random_element()
         b = self.base_ring().random_element()
@@ -687,7 +685,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: M.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
         """
-        from sage.modules.all import FreeModule
+        from sage.modules.free_module import FreeModule
         return FreeModule(self.base_ring(), self.ngens())
 
     @cached_method
@@ -716,7 +714,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: M.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
         """
-        from sage.modules.all import VectorSpace
+        from sage.modules.free_module import VectorSpace
         field = self.base_ring().fraction_field()
         return VectorSpace(field, self.ngens())
 
@@ -748,7 +746,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
                 self.base().has_coerce_map_from(P.base())
         except AttributeError:
             pass
-        return super(LinearExpressionModule, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _repr_(self):
         """

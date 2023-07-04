@@ -1,0 +1,30 @@
+# -*- mode: shell-script -*-
+
+# #27907: Symlink crt1.o and friends where gcc can find it.
+if [ -n "$SAGE_CRTI_DIR" ]; then
+   INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
+   LIBGCC=$(dirname -- $("$SAGE_LOCAL"/bin/gcc -print-libgcc-file-name))
+   echo "Installing symlinks to crt files."
+   echo "# Remove symlinks created by spkg-postinst" >> "$INSTALLED_SCRIPTS_DEST"/spkg-postrm
+   for f in "$SAGE_CRTI_DIR"/*crt?.o; do
+       if [ -r $f -a ! -r "$LIBGCC"/$f ]; then
+          ln -s $f "$LIBGCC"
+          fb=`basename $f`
+          echo "rm -f \"$LIBGCC\"/$fb" >> "$INSTALLED_SCRIPTS_DEST"/spkg-postrm
+       fi
+   done
+fi
+
+# Force re-installation of gmp, mpir, mpfr and mpc with the GCC that we
+# just built. This is needed in particular because gmp/mpir was first
+# built without C++ support.
+# We do this without actually uninstalling the package files because they
+# are still required for GCC to run and rebuild the packages.
+sage-spkg-uninstall --keep-files gmp
+sage-spkg-uninstall --keep-files mpir
+sage-spkg-uninstall --keep-files mpfr
+sage-spkg-uninstall --keep-files mpc
+
+# Force re-configuration: the next time that "make" is run, we need to rebuild
+# all packages (#24703) but we should not rebuild gcc (#19324)
+touch "$SAGE_ROOT/configure"

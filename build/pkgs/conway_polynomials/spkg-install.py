@@ -1,5 +1,5 @@
 import os
-from six.moves import cPickle as pickle
+import pickle
 
 SAGE_SHARE = os.getenv('SAGE_SHARE')
 install_root = os.path.join(SAGE_SHARE, 'conway_polynomials')

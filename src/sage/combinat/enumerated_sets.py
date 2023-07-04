@@ -1,6 +1,5 @@
 """
 Enumerated sets and combinatorial objects
-=========================================
 
 .. TODO:: Proofread / point to the main classes rather than the modules
 
@@ -42,7 +41,7 @@ Words
 - :class:`Words`
 - :ref:`sage.combinat.subword`
 - :ref:`sage.combinat.necklace`
-- :ref:`sage.combinat.lyndon_word`
+- :ref:`sage.combinat.words.lyndon_word`
 - :ref:`sage.combinat.dyck_word`
 - :ref:`sage.combinat.debruijn_sequence`
 - :ref:`sage.combinat.shuffle`
@@ -132,7 +131,7 @@ Backtracking solvers and generic enumerated sets
 - :ref:`sage.combinat.tiling`
 - :ref:`sage.combinat.dlx`
 - :ref:`sage.combinat.matrices.dlxcpp`
-- :ref:`sage.combinat.species`
+- :ref:`sage.combinat.species.all`
 - :class:`~sage.combinat.integer_lists.IntegerListsLex`
 - :class:`~sage.combinat.integer_vectors_mod_permgroup.IntegerVectorsModPermutationGroup`
 

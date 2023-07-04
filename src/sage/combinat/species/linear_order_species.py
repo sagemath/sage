@@ -1,7 +1,6 @@
 """
 Linear-order Species
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -18,7 +17,6 @@ from __future__ import absolute_import
 #*****************************************************************************
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
-from .generating_series import _integers_from
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.species.misc import accept_size
 
@@ -43,7 +41,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: F = species.LinearOrderSpecies()
-            sage: a = F.structures(["a", "b", "c"]).random_element(); a
+            sage: a = F.structures(["a", "b", "c"])[0]; a
             ['a', 'b', 'c']
             sage: p = PermutationGroupElement((1,2))
             sage: a.transport(p)
@@ -60,12 +58,12 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: F = species.LinearOrderSpecies()
-            sage: a = F.structures(["a", "b", "c"]).random_element(); a
+            sage: a = F.structures(["a", "b", "c"])[0]; a
             ['a', 'b', 'c']
             sage: a.automorphism_group()
             Symmetric group of order 1! as a permutation group
         """
-        from sage.groups.all import SymmetricGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         return SymmetricGroup(1)
 
 
@@ -88,7 +86,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: L = species.LinearOrderSpecies()
-            sage: L.generating_series().coefficients(5)
+            sage: L.generating_series()[0:5]
             [1, 1, 1, 1, 1]
 
             sage: L = species.LinearOrderSpecies()
@@ -124,7 +122,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         yield structure_class(self, labels, range(1, len(labels)+1))
 
-    def _gs_list(self, base_ring):
+    def _gs_list(self, base_ring, n):
         r"""
         The generating series for the species of linear orders is
         `\frac{1}{1-x}`.
@@ -133,12 +131,12 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: L = species.LinearOrderSpecies()
             sage: g = L.generating_series()
-            sage: g.coefficients(10)
+            sage: g[0:10]
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
-        return [base_ring(1)]
+        return base_ring.one()
 
-    def _itgs_list(self, base_ring):
+    def _itgs_list(self, base_ring, n):
         r"""
         The isomorphism type generating series is given by
         `\frac{1}{1-x}`.
@@ -147,25 +145,24 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: L = species.LinearOrderSpecies()
             sage: g = L.isotype_generating_series()
-            sage: g.coefficients(10)
+            sage: g[0:10]
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
-        return [base_ring(1)]
+        return base_ring.one()
 
-
-    def _cis_iterator(self, base_ring):
+    def _cis_callable(self, base_ring, n):
         """
         EXAMPLES::
 
             sage: L = species.LinearOrderSpecies()
             sage: g = L.cycle_index_series()
-            sage: g.coefficients(5)
+            sage: g[0:5]
             [p[], p[1], p[1, 1], p[1, 1, 1], p[1, 1, 1, 1]]
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         p = SymmetricFunctions(base_ring).power()
-        for n in _integers_from(0):
-            yield p([1]*n)
+        return p([1]*n)
+
 
 #Backward compatibility
 LinearOrderSpecies_class = LinearOrderSpecies

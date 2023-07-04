@@ -1,7 +1,6 @@
 r"""
 Semisimple Algebras
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2011-2015 Nicolas M. Thiery <nthiery at users.sf.net>
 #

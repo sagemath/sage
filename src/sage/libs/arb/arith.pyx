@@ -46,7 +46,7 @@ def bernoulli(n):
         sage: bernoulli(-1)
         Traceback (most recent call last):
         ...
-        OverflowError: can't convert negative value to mp_limb_t
+        OverflowError: can...t convert negative value to mp_limb_t
     """
     cdef ulong i = n
     cdef Rational q = <Rational>Rational.__new__(Rational)
@@ -56,6 +56,7 @@ def bernoulli(n):
     fmpq_get_mpq(q.value, x)
     fmpq_clear(x)
     return q
+
 
 def hilbert_class_polynomial(D):
     """
@@ -82,4 +83,3 @@ def hilbert_class_polynomial(D):
     poly = PolynomialRing(ZZ, "x", implementation="FLINT")()
     acb_modular_hilbert_class_poly(poly.__poly, n)
     return poly
-
