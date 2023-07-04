@@ -19,7 +19,7 @@ destination = "sage/libs/mpmath/_vendor/"
 requirements = "vendor.txt"
 namespace = "sage.libs.mpmath._vendor"
 
-protected-files = ["vendor.txt", "__init__.py"]
+protected-files = ["vendor.txt", "__init__.py", "nodoctest.py"]
 patches-dir = "vendoring_patches"
 
 [tool.vendoring.transformations]
