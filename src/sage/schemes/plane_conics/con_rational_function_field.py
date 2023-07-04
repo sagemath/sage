@@ -198,38 +198,6 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             Fraction Field of Univariate Polynomial Ring in u over Rational
             Field with modulus v^2 - u^3 - 1
 
-        ``has_rational_point`` fails for some conics over function fields
-        over finite fields, due to :trac:`20003`::
-
-            sage: K.<t> = PolynomialRing(GF(7))
-            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
-            ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
-            sage: C.has_rational_point()                                                # needs sage.libs.singular
-            Traceback (most recent call last):
-            ...
-            TypeError: self (=Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate
-                    Polynomial Ring in t over Finite Field of size 7 defined by
-                    (-2*t^2 - 3)*x^2 + (-t^3 + 3*t^2 - 2*t - 2)/(t + 3)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate
-                    Polynomial Ring in t over Finite Field of size 7 defined by
-                    (-2*t^2 - 3)*x^2 + (t^2 + 3*t + 3)*x*y + (-2*t^2 - 2)*y^2 + (-t^2 + 3*t + 2)*x*z + (-3*t + 3)*y*z + (-3*t^2 + t - 2)*z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + (2*t - 2)/(t + 3)*y + (3*t^4 + 2*t^3 - 2*t^2 - 2*t + 3)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z
-                     : y + (-t^3 - t^2 + 3*t - 1)/(t^3 - 3*t^2 + 2*t + 2)*z : z))
-            domain must equal right (=Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate
-                    Polynomial Ring in t over Finite Field of size 7 defined by
-                    (-2*t^3 - t^2 + 3*t + 3)*x^2 + (t - 3)*y^2 + (-t^7 + 2*t^5 + t^4 + 2*t^3 + 3*t^2 - t - 1)*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate
-                    Polynomial Ring in t over Finite Field of size 7 defined by
-                    -2/(t^3 - 3*t^2 + 2*t + 2)*x^2 + 1/(t^3 + 3*t^2 - 2*t + 1)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^9 - 2*t^8 + t^7 - t^6 + 3*t^5 - 3*t^3 + t^2 - 2*t + 3)*z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    ((t^3 - 3*t^2 + 2*t + 2)*x : (t^2 - 2)*y : (t^5 - 3*t^4 + t^2 + 3*t + 3)*z))
-            codomain
-
-
-
         TESTS::
 
             sage: K.<t> = FractionField(PolynomialRing(QQ, 't'))
@@ -250,6 +218,16 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: C.has_rational_point(point=True)  # long time (4 seconds)             # needs sage.libs.singular
             (True,
              ((-2/117*t^8 + 304/1053*t^7 + 40/117*t^6 - 1/27*t^5 - 110/351*t^4 - 2/195*t^3 + 11/351*t^2 + 1/117)/(t^4 + 2/39*t^3 + 4/117*t^2 + 2/39*t + 14/39) : -5/3*t^4 + 19*t^3 : 1))
+
+        ``has_rational_point`` used to fail for some conics over function fields
+        over finite fields, due to :trac:`20003`::
+
+            sage: K.<t> = PolynomialRing(GF(7))
+            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
+            ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
+            sage: C.has_rational_point()
+            True
+
         """
         from .constructor import Conic
 
