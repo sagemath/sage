@@ -155,7 +155,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         b = max(s_1, s_2)
 
     import scipy.optimize
-    brentqRes = scipy.optimize.brentq(f, a, b,
+    g = lambda x: float(f(x))
+    brentqRes = scipy.optimize.brentq(g, a, b,
                                  full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
     # A check following :trac:`4942`, to ensure we actually found a root
     # Maybe should use a different tolerance here?
