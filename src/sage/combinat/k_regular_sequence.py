@@ -677,7 +677,9 @@ class kRegularSequence(RecognizableSeries):
     def _mul_(self, other):
         r"""
         Return the product of this `k`-regular sequence with ``other``,
-        where the multiplication is convolution.
+        where the multiplication is convolution of power series.
+
+        The operator `*` is mapped to :meth:`convolution`.
 
         INPUT:
 
@@ -699,14 +701,28 @@ class kRegularSequence(RecognizableSeries):
             ....:          vector([1, 0]), vector([1, 1]))
             sage: E
             2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+
+        We can build the convolution (in the sense of power-series) of `E` by
+        itself via::
+
+            sage: E.convolution(E)
+            2-regular sequence 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, ...
+
+        This is the same as using multiplication operator::
+
             sage: E * E
             2-regular sequence 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, ...
+
+        Building :meth:`partial_sums` can also be seen as a convolution::
 
             sage: o = Seq2.one_hadamard()
             sage: E * o
             2-regular sequence 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, ...
             sage: E * o == E.partial_sums(include_n=True)
             True
+
+        TESTS::
+
             sage: E * o == o * E
             True
         """
@@ -757,6 +773,8 @@ class kRegularSequence(RecognizableSeries):
             vector(list(right) + (2*len(list(right)))*[0]))
 
         return result
+
+    convolution = _mul_
 
     @minimize_result
     def partial_sums(self, include_n=False):
