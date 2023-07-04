@@ -1497,7 +1497,7 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
             for x in domain.n_cells(n):
                 edges.extend([[(x,-1), (f(x),i)] for (i,f) in enumerate(maps)])
             G = Graph([vertices, edges], format='vertices_and_edges')
-            data[n] = [set(_) for _ in G.connected_components()]
+            data[n] = [set(_) for _ in G.connected_components(sort=False)]
         # data is now a dictionary indexed by dimension, and data[n]
         # consists of sets of n-simplices of the domain and the
         # codomains, each set an equivalence class of n-simplices

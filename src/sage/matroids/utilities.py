@@ -391,8 +391,8 @@ def spanning_forest(M):
         G.add_edge(x + m, y)
     T = []
     # find spanning tree in each component
-    for component in G.connected_components():
-        spanning_tree = kruskal(G.subgraph(component))
+    for component in G.connected_components_subgraphs():
+        spanning_tree = kruskal(component)
         for (x, y, z) in spanning_tree:
             if x < m:
                 t = x
@@ -543,9 +543,9 @@ def lift_cross_ratios(A, lift_map=None):
         [0 6 3 6 0]
         sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)                          # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
         sage: Z                                                                         # optional - sage.graphs sage.rings.finite_rings sage.rings.number_field
-        [ 1  0  1  1  1]
-        [ 1  1  0  0  z]
-        [ 0 -1  z  1  0]
+        [     1      0      1      1      1]
+        [-z + 1      1      0      0      1]
+        [     0     -1      1 -z + 1      0]
         sage: M = LinearMatroid(reduced_matrix=A)                                       # optional - sage.graphs sage.rings.finite_rings
         sage: sorted(M.cross_ratios())                                                  # optional - sage.graphs sage.rings.finite_rings
         [3, 5]
@@ -568,8 +568,8 @@ def lift_cross_ratios(A, lift_map=None):
     G = Graph([((r, 0), (c, 1), (r, c)) for r, c in A.nonzero_positions()])
     # write the entries of (a scaled version of) A as products of cross ratios of A
     T = set()
-    for C in G.connected_components():
-        T.update(G.subgraph(C).min_spanning_tree())
+    for C in G.connected_components_subgraphs():
+        T.update(C.min_spanning_tree())
     # - fix a tree of the support graph G to units (= empty dict, product of 0 terms)
     F = {entry[2]: dict() for entry in T}
     W = set(G.edge_iterator()) - set(T)

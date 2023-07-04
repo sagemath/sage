@@ -6104,8 +6104,8 @@ cdef class Matroid(SageObject):
         entries = [(e, f, (e, f)) for e in basis for f in self._fundamental_cocircuit(basis, e).difference([e])]
         G = Graph(entries)
         T = set()
-        for C in G.connected_components():
-            T.update(G.subgraph(C).min_spanning_tree())
+        for C in G.connected_components_subgraphs():
+            T.update(C.min_spanning_tree())
         for edge in T:
             e,f = edge[2]
             A.set(bdx[e],idx[f], 1)
