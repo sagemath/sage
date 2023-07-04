@@ -168,6 +168,7 @@ explicit calls to Maxima or other systems.
 ::
 
     sage: # (YES) Factorize  x^4-3*x^2+1 in the field of rational numbers extended by roots of  x^2-x-1.
+    sage: x = polygen(ZZ, 'x')
     sage: k.< a> = NumberField(x^2 - x -1)
     sage: R.< y> = k[]
     sage: f = y^4 - 3*y^2 + 1
@@ -226,16 +227,16 @@ explicit calls to Maxima or other systems.
     sage: # Maxima doesn't solve inequalities
     sage: # (but some Maxima packages do):
     sage: eqn = abs(x-1) > 2
-    sage: eqn
-                                    abs(x - 1) > 2
+    sage: eqn.solve(x)
+    [[x < -1], [3 < x]]
 
 ::
 
     sage: # (NO) Solve the inequality (x-1)*...*(x-5)<0.
     sage: eqn = prod(x-i for i in range(1,5 +1)) < 0
     sage: # but don't know how to solve
-    sage: eqn
-    (x - 1)*(x - 2)*(x - 3)*(x - 4)*(x - 5) < 0
+    sage: eqn.solve(x)
+    [[x < 1], [x > 2, x < 3], [x > 4, x < 5]]
 
 ::
 

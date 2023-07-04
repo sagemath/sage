@@ -677,7 +677,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``circular`` -- (default:``False``) if ``True``, the
+        - ``circular`` -- (default: ``False``) if ``True``, the
           circular plot is chosen, otherwise >>spring<< is used.
 
         - ``directed`` -- (default: ``True``) if ``True``, the
@@ -686,8 +686,8 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: QMT = QuiverMutationType(['A',5])
-            sage: pl = QMT.plot()
-            sage: pl = QMT.plot(circular=True)
+            sage: pl = QMT.plot()                                                       # optional - sage.plot sage.symbolic
+            sage: pl = QMT.plot(circular=True)                                          # optional - sage.plot sage.symbolic
         """
         return self.standard_quiver().plot(circular=circular, directed=directed)
 
@@ -783,7 +783,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: mut_type = QuiverMutationType( ['A',5] ); mut_type
+            sage: mut_type = QuiverMutationType(['A',5]); mut_type
             ['A', 5]
             sage: mut_type.b_matrix()
             [ 0  1  0  0  0]

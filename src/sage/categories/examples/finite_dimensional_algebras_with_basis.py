@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 r"""
 Example of a finite dimensional algebra with basis
 """

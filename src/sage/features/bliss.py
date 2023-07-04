@@ -35,7 +35,7 @@ sig_off()
 
 class BlissLibrary(CythonFeature):
     r"""
-    A :class:`~sage.features.Feature` which describes whether the Bliss library is
+    A :class:`~sage.features.Feature` which describes whether the :ref:`Bliss library <spkg_bliss>` is
     present and functional.
 
     EXAMPLES::

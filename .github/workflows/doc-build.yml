@@ -19,30 +19,97 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Prepare
+      - name: Update system packages
         run: |
-          apt-get update && apt-get install -y zip
-          # Reuse built SAGE_LOCAL contained in the Docker image
-          ./bootstrap
-          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-download-from-upstream-url
+          apt-get update && apt-get install -y git zip
 
-      - name: Build
-        run: make doc-html
+      - name: Add prebuilt tree as a worktree
+        id: worktree
+        run: |
+          set -ex
+          git config --global user.email "ci-sage@example.com"
+          git config --global user.name "Build & Test workflow"
+          git config --global --add safe.directory $(pwd)
+          # If actions/checkout downloaded our source tree using the GitHub REST API
+          # instead of with git (because do not have git installed in our image),
+          # we first make the source tree a repo.
+          if [ ! -d .git ]; then git init && git add -A && git commit --quiet -m "new"; fi
+          # Tag this state of the source tree "new". This is what we want to build and test.
+          git tag -f new
+          # Our container image contains a source tree in /sage with a full build of Sage.
+          # But /sage is not a git repository.
+          # We make /sage a worktree whose index is at tag "new".
+          # We then commit the current sources and set the tag "old". (This keeps all mtimes unchanged.)
+          # Then we update worktree and index with "git reset --hard new".
+          # (This keeps mtimes of unchanged files unchanged and mtimes of changed files newer than unchanged files.)
+          # Finally we reset the index to "old". (This keeps all mtimes unchanged.)
+          # The changed files now show up as uncommitted changes.
+          git worktree add --detach worktree-image
+          rm -rf /sage/.git && mv worktree-image/.git /sage/
+          rm -rf worktree-image && ln -s /sage worktree-image
+          if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
+          (cd worktree-image && git add -A && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old)
+          # Keep track of changes to built HTML
+          new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
+
+      - name: Incremental build
+        id: incremental
+        run: |
+          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
+          ./bootstrap && make build
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Build (fallback to non-incremental)
+        id: build
+        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+        run: |
+          set -ex
+          make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Build docs
+        id: docbuild
+        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        # Always non-incremental because of the concern that
+        # incremental docbuild may introduce broken links (inter-file references) though build succeeds
+        run: |
+          set -ex
+          mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
+          make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage
+          mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
+          ./config.status && make doc-html
+        working-directory: ./worktree-image
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
       - name: Copy docs
+        id: copy
+        if: always() && steps.docbuild.outcome == 'success'
         run: |
+          set -ex
+          mkdir -p ./docs
+          # Create changelog
+          echo '## Preview of CHANGES.html'
+          (cd /sage/local/share/doc/sage/html/en && git diff --name-only) | tee ./docs/CHANGES.txt
+          (cd /sage/local/share/doc/sage/html/en && git diff; rm -rf .git) > ./docs/html.diff
+          echo '## Preview of html.diff'; head -n 400 ./docs/html.diff
+          (echo '<p><a href="html.diff">HTML diff</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them
-          mkdir -p ./docs
           cp -r -L /sage/local/share/doc/sage/html/en/* ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
 
       - name: Upload docs
+        if: always() && steps.copy.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: docs
