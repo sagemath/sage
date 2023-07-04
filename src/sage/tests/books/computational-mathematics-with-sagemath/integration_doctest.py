@@ -128,28 +128,28 @@ Sage example in ./integration.tex, line 766::
 
 Sage example in ./integration.tex, line 785::
 
-  sage: import sage.libs.mpmath
-  sage: sage.libs.mpmath.all.mp.prec = 53
-  sage: sage.libs.mpmath.all.quad(lambda x: sage.libs.mpmath.all.sin(sage.libs.mpmath.all.sin(x)), [0, 1])
+  sage: import sage.libs.mpmath.all as mpmath
+  sage: mpmath.mp.prec = 53
+  sage: mpmath.quad(lambda x: mpmath.sin(mpmath.sin(x)), [0, 1])
   mpf('0.43060610312069059')
 
 Sage example in ./integration.tex, line 795::
 
-  sage: a = RDF(pi); b = sage.libs.mpmath.all.mpf(a); b
+  sage: a = RDF(pi); b = mpmath.mpf(a); b
   mpf('3.1415926535897931')
   sage: c = RDF(b); c
   3.141592653589793
 
 Sage example in ./integration.tex, line 824::
 
-  sage: sage.libs.mpmath.all.mp.prec = 113
-  sage: sage.libs.mpmath.all.quad(lambda x: sage.libs.mpmath.all.sin(sage.libs.mpmath.all.sin(x)), [0, 1])
+  sage: mpmath.mp.prec = 113
+  sage: mpmath.quad(lambda x: mpmath.sin(mpmath.sin(x)), [0, 1])
   mpf('0.430606103120690604912377355248465809')
 
 Sage example in ./integration.tex, line 846::
 
   sage: f(x) = sin(sin(x))
-  sage: sage.libs.mpmath.all.quad(f, [0, 1])
+  sage: mpmath.quad(f, [0, 1])
   Traceback (most recent call last):
   ...
   TypeError: no canonical coercion from <class 'sage.libs.mpmath.ext_main.mpf'> to ...
@@ -157,21 +157,21 @@ Sage example in ./integration.tex, line 846::
 Sage example in ./integration.tex, line 866::
 
   sage: g(x) = max_symbolic(sin(x), cos(x))
-  sage: sage.libs.mpmath.all.mp.prec = 100
-  sage: sage.libs.mpmath.all.quadts(lambda x: g(N(x, 100)), [0, 1])
+  sage: mpmath.mp.prec = 100
+  sage: mpmath.quadts(lambda x: g(N(x, 100)), [0, 1])
   mpf('0.873912416263035435957979086252')
 
 Sage example in ./integration.tex, line 878::
 
-  sage: sage.libs.mpmath.all.mp.prec = 170
-  sage: sage.libs.mpmath.all.quadts(lambda x: g(N(x, 190)), [0, 1])
+  sage: mpmath.mp.prec = 170
+  sage: mpmath.quadts(lambda x: g(N(x, 190)), [0, 1])
   mpf('0.87391090757400975205393005981962476344054148354188794')
   sage: N(sqrt(2) - cos(1), 100)
   0.87391125650495533140075211677
 
 Sage example in ./integration.tex, line 892::
 
-  sage: sage.libs.mpmath.all.quadts(lambda x: g(N(x, 170)), [0, sage.libs.mpmath.all.pi / 4, 1])
+  sage: mpmath.quadts(lambda x: g(N(x, 170)), [0, mpmath.pi / 4, 1])
   mpf('0.87391125650495533140075211676672147483736145475902551')
 
 Sage example in ./integration.tex, line 979::
@@ -200,16 +200,16 @@ Sage example in ./integration.tex, line 1008::
 
 Sage example in ./integration.tex, line 1016::
 
-  sage: f = lambda y: RDF(sage.libs.mpmath.all.quad(lambda x: sage.libs.mpmath.all.exp(y*mpmath.sin(x)), \
+  sage: f = lambda y: RDF(mpmath.quad(lambda x: mpmath.exp(y*mpmath.mpmath.sin(x)), \
                                       [0, sqrt(y)]))
   sage: numerical_integral(f, 0, 1) # abs tol 2e-16
   (0.8606791942204567, 6.301207561187562e-07)
 
 Sage example in ./integration.tex, line 1027::
 
-  sage: sage.libs.mpmath.all.mp.dps = 60
-  sage: f = lambda x, y: sage.libs.mpmath.all.exp(y*sage.libs.mpmath.all.sin(x))
-  sage: sage.libs.mpmath.all.quad(f, [0,1], [0,1])
+  sage: mpmath.mp.dps = 60
+  sage: f = lambda x, y: mpmath.exp(y*mpmath.sin(x))
+  sage: mpmath.quad(f, [0,1], [0,1])
   mpf('1.28392205755238471754385917646324675741664250325189751108716305')
 
 Sage example in ./integration.tex, line 1044::
@@ -258,12 +258,11 @@ Sage example in ./integration.tex, line 1363::
 
 Sage example in ./integration.tex, line 1399::
 
-  sage: import sage.libs.mpmath
-  sage: sage.libs.mpmath.all.mp.prec = 53
-  sage: sol = sage.libs.mpmath.all.odefun(lambda t, y: y, 0, 1)
+  sage: mpmath.mp.prec = 53
+  sage: sol = mpmath.odefun(lambda t, y: y, 0, 1)
   sage: sol(1)
   mpf('2.7182818284590451')
-  sage: sage.libs.mpmath.all.mp.prec = 100
+  sage: mpmath.mp.prec = 100
   sage: sol(1)
   mpf('2.7182818284590452353602874802307')
   sage: N(exp(1), 100)
@@ -271,8 +270,8 @@ Sage example in ./integration.tex, line 1399::
 
 Sage example in ./integration.tex, line 1436::
 
-  sage: sage.libs.mpmath.all.mp.prec = 53
-  sage: f = sage.libs.mpmath.all.odefun(lambda t, y: [-y[1], y[0]], 0, [1, 0])
+  sage: mpmath.mp.prec = 53
+  sage: f = mpmath.odefun(lambda t, y: [-y[1], y[0]], 0, [1, 0])
   sage: f(3)
   [mpf('-0.98999249660044542'), mpf('0.14112000805986721')]
   sage: (cos(3.), sin(3.))
@@ -280,11 +279,11 @@ Sage example in ./integration.tex, line 1436::
 
 Sage example in ./integration.tex, line 1497::
 
-  sage: sage.libs.mpmath.all.mp.prec = 10
-  sage: sol = sage.libs.mpmath.all.odefun(lambda t, y: y, 0, 1)
+  sage: mpmath.mp.prec = 10
+  sage: sol = mpmath.odefun(lambda t, y: y, 0, 1)
   sage: sol(1)
   mpf('2.7148')
-  sage: sage.libs.mpmath.all.mp.prec = 100
+  sage: mpmath.prec = 100
   sage: sol(1)
   mpf('2.7135204235459511323824699502438')
 
