@@ -379,8 +379,8 @@ class kRegularSequence(RecognizableSeries):
         TESTS::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
-            ....:      left=vector([0, 1]), right=vector([1, 0]))  # indirect doctest
+            sage: Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),  # indirect doctest
+            ....:      left=vector([0, 1]), right=vector([1, 0]))
             Traceback (most recent call last):
             ...
             DegeneratedSequenceError: degenerated sequence: mu[0]*right != right.
@@ -555,8 +555,8 @@ class kRegularSequence(RecognizableSeries):
         TESTS::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: Seq2((Matrix([[3, 0], [2, 1]]), Matrix([[2, 1], [0, 3]])),
-            ....:          left=vector([1, 0]), right=vector([0, 1])).minimized()  # indirect doctest
+            sage: Seq2((Matrix([[3, 0], [2, 1]]), Matrix([[2, 1], [0, 3]])),  # indirect doctest
+            ....:          left=vector([1, 0]), right=vector([0, 1])).minimized()
             2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
         """
         return self.transposed(allow_degenerated_sequence=True)._minimized_left_().transposed(allow_degenerated_sequence=True)
