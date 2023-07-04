@@ -16,7 +16,8 @@ from functools import reduce  # in order to keep reduce in python3
 
 from sage.misc.all__sagemath_objects       import *
 from sage.structure.all  import *
-from sage.arith.power    import generic_power as power
+# Partial
+from sage.arith.all__sagemath_objects import *
 from sage.categories.all__sagemath_objects import *
 
 from sage.cpython.all    import *
