@@ -895,7 +895,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                     dg_tmp = DiGraph( dg )
                     dg_tmp.delete_vertices( c1 )
 
-                    components = dg_tmp.connected_components()
+                    components = dg_tmp.connected_components(sort=False)
                     # if not len(components) == 2:
                     if len(components) != 2:
                         return _false_return(4)
@@ -937,7 +937,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                     else:
                         c2.reverse()
                         dg_tmp.delete_edge( tuple( c2 ) )
-                    components = dg_tmp.connected_components()
+                    components = dg_tmp.connected_components(sort=False)
                     if len(components) != 2:
                         return _false_return(7)
                     else:
@@ -1189,7 +1189,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
             edge = long_cycle[0][0]
             sg = DiGraph( dg )
             sg. delete_vertices(edge)
-            connected_components = sg.connected_components()
+            connected_components = sg.connected_components(sort=False)
             cycle = []
             if connected_components:
                 cycle.append( ( edge[0], edge[1], len( connected_components[0] ) + 1 ) )
@@ -1199,7 +1199,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
             for edge in tmp:
                 sg = DiGraph( dg )
                 sg. delete_vertices(edge)
-                connected_components = sg.connected_components()
+                connected_components = sg.connected_components(sort=False)
                 if len( connected_components ) == 2:
                     #if len( list_intersection( [ connected_components[0], list_substract( long_cycle[0], [edge] )[0] ] ) ) > 0:
                     if len( set(connected_components[0]).intersection( set(long_cycle[0]).difference([edge]).pop() ) ) > 0:

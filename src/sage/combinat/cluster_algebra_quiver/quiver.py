@@ -1004,7 +1004,7 @@ class ClusterQuiver(SageObject):
 
             # checking the type for each connected component
             mutation_type = []
-            connected_components = sorted(dg.connected_components())
+            connected_components = sorted(dg.connected_components(sort=False))
             for component in connected_components:
                 # constructing the digraph for this component
                 dg_component = dg.subgraph( component )
@@ -1154,7 +1154,7 @@ class ClusterQuiver(SageObject):
             if dg.is_connected():
                 Q._mutation_type = self._mutation_type
             else:
-                CC = sorted( self._digraph.connected_components() )
+                CC = sorted(self._digraph.connected_components(sort=False))
                 CC_new = sorted(zip([sorted(iso[i] for i in L) for L in CC],
                                     range(len(CC))))
                 comp_iso = [L[1] for L in CC_new]
