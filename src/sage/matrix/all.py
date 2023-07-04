@@ -5,4 +5,3 @@ from .constructor import (matrix, Matrix, column_matrix, random_matrix,
                          block_diagonal_matrix, jordan_block, zero_matrix,
                          ones_matrix, elementary_matrix, companion_matrix)
 Mat = MatrixSpace
-lazy_import('sage.matrix.joint_spectral_radius', 'joint_spectral_radius')

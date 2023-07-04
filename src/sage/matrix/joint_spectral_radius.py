@@ -76,6 +76,8 @@ def joint_spectral_radius(S, delta=None, norm=None,
 
     EXAMPLES::
 
+        sage: from sage.matrix.joint_spectral_radius import joint_spectral_radius
+
         sage: import logging
         sage: logging.basicConfig()
         sage: logger = logging.getLogger('sage.matrix.joint_spectral_radius')
