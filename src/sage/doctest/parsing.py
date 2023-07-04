@@ -1024,6 +1024,7 @@ class SageDocTestParser(doctest.DocTestParser):
                 optional_tags = set(optional_tags)
                 if is_persistent:
                     persistent_optional_tags = optional_tags
+                    persistent_optional_tags.update(self.file_optional_tags)
                     continue
                 optional_tags.update(persistent_optional_tags)
                 item.optional_tags = frozenset(optional_tags)
