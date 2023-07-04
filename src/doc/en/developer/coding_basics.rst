@@ -1249,6 +1249,7 @@ framework. Here is a comprehensive list:
             sage: a = AA(2).sqrt()  # needs sage.rings.number_field
             sage: b = sqrt(3)       # needs sage.symbolic
             sage: a + AA(b)         # needs sage.rings.number_field sage.symbolic
+            3.146264369941973?
 
   .. NOTE::
 
