@@ -895,7 +895,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
     Element = kRegularSequence
 
     @classmethod
-    def __normalize__(cls, k, coefficient_ring, **kwds):
+    def __normalize__(cls, k,
+                      coefficient_ring,
+                      category=None,
+                      **kwds):
         r"""
         Normalizes the input in order to ensure a unique
         representation.
@@ -906,13 +909,17 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: Seq2.category()
-            Category of modules over Integer Ring
+            Category of algebras over Integer Ring
             sage: Seq2.alphabet()
             {0, 1}
         """
         from sage.arith.srange import srange
+        from sage.categories.algebras import Algebras
+        category = category or Algebras(coefficient_ring)
         nargs = super().__normalize__(coefficient_ring,
-                                      alphabet=srange(k), **kwds)
+                                      alphabet=srange(k),
+                                      category=category,
+                                      **kwds)
         return (k,) + nargs
 
     def __init__(self, k, *args, **kwds):
