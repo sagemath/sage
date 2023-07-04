@@ -75,14 +75,13 @@ from sage.data_structures.all import *
 
 from sage.rings.all      import *
 
-from sage.all__sagemath_combinat import *
-
 from sage.algebras.all   import *
 
 from sage.all__sagemath_schemes import *
 from sage.all__sagemath_graphs import *
 from sage.all__sagemath_groups import *
 from sage.all__sagemath_polyhedra import *
+from sage.all__sagemath_combinat import *       # Must appear after other all__... imports so that sage.combinat.all.Posets wins over sage.categories.all.Posets
 
 from sage.databases.all  import *
 from sage.sets.all       import *
