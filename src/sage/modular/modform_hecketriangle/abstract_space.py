@@ -16,6 +16,7 @@ AUTHORS:
 # ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
