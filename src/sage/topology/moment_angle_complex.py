@@ -15,11 +15,10 @@ and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`, or a 1-sphere other
 .. NOTE::
 
     The mentioned union is not a disjoint union of topological spaces. The unit disks
-    and the unit spheres are considered subsets of `\mathbb{C}`, so the union is just
-    a normal union of subsets of `\mathbb{C}^n`.
+    and the unit spheres are considered subsets of `\CC`, so the union is just
+    a normal union of subsets of `\CC^n`.
 
 .. MATH::
-   :nowrap:
 
     Y_{v_i} =
     \begin{cases}
@@ -122,6 +121,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         EXAMPLES::
 
+        <Lots and lots of examples>
         """
         if not isinstance(simplicial_complex, SimplicialComplex):
             simplicial_complex = SimplicialComplex(simplicial_complex, is_mutable=True)
@@ -159,6 +159,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         EXAMPLES::
 
+        <Lots and lots of examples>
         """
         return isinstance(other, MomentAngleComplex) and self._simplicial_complex.__eq__(other._simplicial_complex)
 
@@ -170,6 +171,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         EXAMPLES::
 
+        <Lots and lots of examples>
         """
         return not self.__eq__(other)
 
@@ -179,6 +181,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         EXAMPLES::
 
+        <Lots and lots of examples>
         """
         return "Moment angle complex over a " + self._simplicial_complex._repr_().lower()
 
@@ -188,6 +191,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         EXAMPLES::
 
+        <Lots and lots of examples>
         """
         if self._constructed:
             return
@@ -219,6 +223,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         EXAMPLES::
 
+        <Lots and lots of examples>
         """
         if not self._constructed:
             raise ValueError("the moment-angle complex is not constructed")
@@ -236,6 +241,7 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
         EXAMPLES::
 
+        <Lots and lots of examples>
         """
         from sage.graphs.graph import Graph
         from sage.graphs.generic_graph import GenericGraph
