@@ -1043,9 +1043,11 @@ class RecognizableSeries(ModuleElement):
             T = M.transpose()
             T.set_immutable()
             return T
-        return self.parent()(self.mu.map(tr),
-                             left=self.right,
-                             right=self.left)
+
+        P = self.parent()
+        return P.element_class(P, self.mu.map(tr),
+                               left=self.right,
+                               right=self.left)
 
     @cached_method
     def minimized(self):
@@ -1887,11 +1889,15 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                          for i, _ in enumerate(self.alphabet())),
                     vector([z, e]), right=vector([e, z]))
 
-    def some_elements(self):
+    def some_elements(self, **kwds):
         r"""
         Return some elements of this recognizable series space.
 
         See :class:`TestSuite` for a typical use case.
+
+        INPUT:
+
+        - ``kwds`` are passed on to the element constructor
 
         OUTPUT:
 
@@ -1929,7 +1935,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
                 LR = list(islice(elements_V, 2))
                 if len(mu) != k or len(LR) != 2:
                     break
-                yield self(mu, *LR)
+                yield self(mu, *LR, **kwds)
 
     @cached_method
     def _zero_(self):
