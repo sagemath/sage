@@ -935,6 +935,15 @@ written.
   Sage does not know about the function ``AA()`` by default, so it needs to be
   imported before it is tested. Hence the first line in the example.
 
+  All blocks within the same docstring are linked: Variables set
+  in a doctest keep their values for the remaining doctests within the
+  same docstring. It is good practice to use different variable names for different
+  values, as it makes the data flow in the examples easier to understand
+  for human readers.  (It also makes the data flow analysis in the
+  Sage doctester more precise.)  In particular, when unrelated examples
+  appear in the same docstring, do not use the same variable name
+  for both examples.
+
 - **Preparsing:** As in Sage's console, `4/3` returns `4/3` and not
   `1.3333333333333333` as in Python 3.8. Testing occurs with full Sage
   preparsing of input within the standard Sage shell environment, as
