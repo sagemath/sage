@@ -1121,7 +1121,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         if isinstance(globs, RecordingDict):
             globs.start()
         example.sequence_number = len(self.history)
-        example.warnings = []
+        if not hasattr(example, 'warnings'):
+            example.warnings = []
         self.history.append(example)
         timer = Timer().start()
         try:
