@@ -41,31 +41,34 @@ AUTHORS:
 from copy import copy
 from collections import deque
 
-from sage.rings.integer import Integer
+from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra
+from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminant
+from sage.graphs.graph import Graph
+from sage.interfaces.magma import magma
+from sage.libs.pari.all import pari
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.structure.sage_object import SageObject
-from sage.rings.all import ZZ, Zmod, QQ
-from sage.misc.latex import latex
-from sage.rings.padics.precision_error import PrecisionError
-from sage.misc.misc_c import prod
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
-from sage.arith.all import gcd, xgcd, kronecker_symbol, fundamental_discriminant
-from sage.rings.padics.all import Qp, Zp
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.algebras.quatalg.all import QuaternionAlgebra
-from sage.quadratic_forms.all import QuadraticForm
-from sage.graphs.all import Graph
-from sage.libs.all import pari
-from sage.interfaces.all import magma
-from sage.plot.colors import rainbow
-from sage.rings.number_field.all import NumberField
-from sage.modular.arithgroup.all import Gamma0
+from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.modular.dirichlet import DirichletGroup
-from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
+from sage.modular.arithgroup.all import Gamma0
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor
+from sage.modular.dirichlet import DirichletGroup
+lazy_import("sage.plot.colors", "rainbow")
+from sage.quadratic_forms.quadratic_form import QuadraticForm
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.padics.factory import Qp, Zp
+from sage.rings.padics.precision_error import PrecisionError
+from sage.rings.rational_field import QQ
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class DoubleCosetReduction(SageObject):
@@ -1431,7 +1434,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: BruhatTitsQuotient(3,17) is BruhatTitsQuotient(3,17,1)
             True
         """
-        return super(BruhatTitsQuotient, cls).__classcall__(cls, p, Nminus, Nplus,
+        return super().__classcall__(cls, p, Nminus, Nplus,
                character, use_magma, seed, magma_session)
 
     def __init__(self, p, Nminus, Nplus=1, character=None,
@@ -2322,7 +2325,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             OrdMax = self.get_maximal_order(magma=True)
 
             OBasis = Ord.Basis()
-            verbose('Calling magma: pMatrixRing, args = %s' % [OrdMax, self._p])
+            verbose(f'Calling magma: pMatrixRing, args = [{OrdMax}, {self._p}]')
             M, f, rho = self._magma.function_call('pMatrixRing', args=[OrdMax, self._p], params={'Precision': 2000}, nvals=3)
             v = [f.Image(OBasis[i]) for i in [1, 2, 3, 4]]
 
@@ -2386,7 +2389,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 success = False
                 found = False
                 while not found:
-                    verbose('Calling magma: pMatrixRing, args = %s' % [OrdMax, l])
+                    verbose(f'Calling magma: pMatrixRing, args = [{OrdMax}, {l}]')
                     M, f, rho = self._magma.function_call('pMatrixRing', args=[OrdMax, l], params={'Precision': 20}, nvals=3)
                     v = [f.Image(OBasis[i]) for i in [1, 2, 3, 4]]
                     if all(Qp(l, 5)(v[kk][2, 1].sage()).valuation() >= 1 for kk in range(4)) and not all(Qp(l, 5)(v[kk][2, 1].sage()).valuation() >= 2 for kk in range(4)):
@@ -2597,7 +2600,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X=BruhatTitsQuotient(3,2)
+            sage: X = BruhatTitsQuotient(3,2)
             sage: s = X.get_edge_stabilizers()
             sage: len(s) == X.get_num_ordered_edges()/2
             True
@@ -2631,7 +2634,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X=BruhatTitsQuotient(3,5)
+            sage: X = BruhatTitsQuotient(3,5)
             sage: s = X.get_stabilizers()
             sage: len(s) == X.get_num_ordered_edges()
             True
@@ -3180,7 +3183,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         except KeyError:
             pass
         chain, v = self._BT.find_path(v1, self.get_vertex_dict())
-        while len(chain):
+        while chain:
             v0 = chain.pop()
             V = [e.target for e in v.leaving_edges]
             g, v = self._find_equivalent_vertex(v0, V)
@@ -3606,7 +3609,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - Cameron Franc (2012-02-20)
         - Marc Masdeu
         """
-        nontorsion_generators = set([])
+        nontorsion_generators = set()
         genus = self.genus()
         num_verts = 0
         num_edges = 0

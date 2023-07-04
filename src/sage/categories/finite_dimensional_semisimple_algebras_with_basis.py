@@ -105,7 +105,6 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             return tuple([x.lift()
                           for x in self.center().central_orthogonal_idempotents()])
 
-
     class Commutative(CategoryWithAxiom_over_base_ring):
 
         class ParentMethods:
@@ -257,4 +256,3 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 """
                 return tuple([(e.leading_coefficient()/(e*e).leading_coefficient())*e
                               for e in self._orthogonal_decomposition()])
-

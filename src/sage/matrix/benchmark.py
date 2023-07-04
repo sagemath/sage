@@ -24,13 +24,14 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.misc import cputime
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
-from sage.interfaces.all import magma
+from sage.interfaces.magma import magma
 
 verbose = False
 
 timeout = 60
 
-def report(F, title, systems = ['sage', 'magma'], **kwds):
+
+def report(F, title, systems=['sage', 'magma'], **kwds):
     """
     Run benchmarks with default arguments for each function in the list F.
 
@@ -561,7 +562,6 @@ s := Cputime(t);
         raise ValueError('unknown system "%s"'%system)
 
 
-
 #######################################################################
 # Dense Benchmarks over GF(p), for small p.
 #######################################################################
@@ -718,7 +718,6 @@ s := Cputime(t);
         return magma.eval('s')
     else:
         raise ValueError('unknown system "%s"'%system)
-
 
 
 # Matrix multiplication over GF(p)
@@ -1228,12 +1227,10 @@ A := RMatrixSpace(RealField(16), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-"""%(n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
     else:
-        raise ValueError('unknown system "%s"'%system)
-
-
+        raise ValueError('unknown system "%s"' % system)

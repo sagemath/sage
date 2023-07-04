@@ -52,10 +52,11 @@ Functions
 
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
-from .design_catalog import transversal_design
-from sage.arith.all import binomial, is_prime_power
+from .design_catalog import transversal_design  # type:ignore
+from sage.arith.misc import binomial, is_prime_power
 from .group_divisible_designs import GroupDivisibleDesign
 from .designs_pyx import is_pairwise_balanced_design
+
 
 def biplane(n, existence=False):
     r"""
@@ -259,7 +260,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
             return False
         raise EmptySetError("There exists no ({},{},{})-BIBD".format(v, k, lambd))
 
-    # Non-esistence by BRC Theoerem
+    # Non-existence by BRC Theorem
     if BruckRyserChowla_check(v, k, lambd) is False:
         if existence:
             return False
@@ -331,7 +332,6 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
                     return True
                 else:
                     return BIBD(B.ground_set(), B.blocks(), k=k, lambd=1, copy=False)
-
 
     if ( (k+lambd)*(k+lambd-1) == lambd*(v+k+lambd-1) and
          balanced_incomplete_block_design(v+k+lambd, k+lambd, lambd, existence=True) is True):
@@ -660,7 +660,6 @@ def BIBD_from_TD(v,k,existence=False):
     return BIBD
 
 
-
 def BIBD_from_difference_family(G, D, lambd=None, check=True):
     r"""
     Return the BIBD associated to the difference family ``D`` on the group ``G``.
@@ -721,10 +720,10 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
     identity, mul, inv = group_law(G)
     bibd = []
     Gset = set(G)
-    p_to_i = {g:i for i,g in enumerate(Gset)}
+    p_to_i = {g: i for i, g in enumerate(Gset)}
     for b in D:
-        b = [G(_) for _ in b]
-        S = block_stabilizer(G,b)
+        b = [G(w) for w in b]
+        S = block_stabilizer(G, b)
         GG = Gset.copy()
         while GG:
             g = GG.pop()
@@ -773,8 +772,8 @@ def v_4_1_BIBD(v, check=True):
 
         sage: from sage.combinat.designs.bibd import v_4_1_BIBD  # long time
         sage: for n in range(13,100):                            # long time
-        ....:    if n%12 in [1,4]:                               # long time
-        ....:       _ = v_4_1_BIBD(n, check = True)              # long time
+        ....:    if n%12 in [1,4]:
+        ....:       _ = v_4_1_BIBD(n, check = True)
 
     TESTS:
 
@@ -788,8 +787,8 @@ def v_4_1_BIBD(v, check=True):
     Check some larger `(v,4,1)`-BIBD (see :trac:`17557`)::
 
         sage: for v in range(400):                                      # long time
-        ....:     if v%12 in [1,4]:                                     # long time
-        ....:         _ = designs.balanced_incomplete_block_design(v,4) # long time
+        ....:     if v%12 in [1,4]:
+        ....:         _ = designs.balanced_incomplete_block_design(v,4)
     """
     k = 4
     if v == 0:
@@ -839,7 +838,8 @@ def v_4_1_BIBD(v, check=True):
 
     return bibd
 
-def BIBD_from_PBD(PBD,v,k,check=True,base_cases={}):
+
+def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
     r"""
     Return a `(v,k,1)`-BIBD from a `(r,K)`-PBD where `r=(v-1)/(k-1)`.
 
@@ -867,6 +867,8 @@ def BIBD_from_PBD(PBD,v,k,check=True,base_cases={}):
         sage: PBD = PBD_4_5_8_9_12(17)
         sage: bibd = is_pairwise_balanced_design(BIBD_from_PBD(PBD,52,4),52,[4])
     """
+    if base_cases is None:
+        base_cases = {}
     r = (v-1) // (k-1)
     bibd = []
     for X in PBD:
@@ -958,7 +960,7 @@ def PBD_4_5_8_9_12(v, check=True):
         sage: for v in (0,1,4,5,8,9,12,13,16,17,20,21,24,25):
         ....:     _ = PBD_4_5_8_9_12(v)
     """
-    if not v%4 in [0,1]:
+    if v % 4 not in [0, 1]:
         raise ValueError
     if v <= 1:
         PBD = []
@@ -1193,7 +1195,7 @@ def _get_r_s_t_u(v):
     s = r//150
     x = r%150
 
-    if   x == 0:
+    if x == 0:
         t,u = 30*s-5,  25
     elif x == 1:
         t,u = 30*s-5,  26
@@ -1260,7 +1262,7 @@ def BIBD_5q_5_for_q_prime_power(q):
 
         sage: from sage.combinat.designs.bibd import BIBD_5q_5_for_q_prime_power
         sage: for q in [25, 45, 65, 85, 125, 145, 185, 205, 305, 405, 605]: # long time
-        ....:     _ = BIBD_5q_5_for_q_prime_power(q/5)                      # long time
+        ....:     _ = BIBD_5q_5_for_q_prime_power(q/5)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
@@ -1370,15 +1372,15 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
     from sage.libs.gap.libgap import libgap
     from sage.matrix.constructor import Matrix
 
-    K   = GF(q,'a')
+    K = GF(q,'a')
     one = K.one()
 
     # An irreducible quadratic form over K[X,Y]
     GO = libgap.GeneralOrthogonalGroup(-1,2,q)
-    M  = libgap.InvariantQuadraticForm(GO)['matrix']
-    M  = Matrix(M)
-    M  = M.change_ring(K)
-    Q  = lambda xx,yy : M[0,0]*xx**2+(M[0,1]+M[1,0])*xx*yy+M[1,1]*yy**2
+    M = libgap.InvariantQuadraticForm(GO)['matrix']
+    M = Matrix(M)
+    M = M.change_ring(K)
+    Q = lambda xx,yy : M[0,0]*xx**2+(M[0,1]+M[1,0])*xx*yy+M[1,1]*yy**2
 
     # Here, the additive subgroup H (of order n) of K mentioned in
     # [Denniston69] is the set of all elements of K of degree < log_n

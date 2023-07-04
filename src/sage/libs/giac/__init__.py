@@ -199,7 +199,6 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         sage: I = ideal([P.random_element(3,7) for j in range(5)])
         sage: B1 = gb_giac(I.gens(),1e-16) # long time (1s)
         ...
-        If successful..., error probability is less than 1e-16 ...
         sage: sage.structure.proof.all.polynomial(True)
         sage: B2 = gb_giac(I.gens()) # long time (4s)
         <BLANKLINE>

@@ -16,7 +16,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ, QQ, infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
 
 from sage.categories.functor                     import Functor
 from sage.categories.pushout                     import ConstructionFunctor

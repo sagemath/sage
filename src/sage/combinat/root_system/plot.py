@@ -809,13 +809,14 @@ from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.structure.element import parent
 from sage.modules.free_module_element import vector
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.combinat.root_system.cartan_type import CartanType
 lazy_import("sage.combinat.root_system.root_lattice_realizations",
             "RootLatticeRealizations")
 
 
-class PlotOptions(object):
+class PlotOptions():
     r"""
     A class for plotting options for root lattice realizations.
 
@@ -827,6 +828,7 @@ class PlotOptions(object):
         - :ref:`sage.combinat.root_system.plot` for a tutorial on root
           system plotting
     """
+
     def __init__(self, space,
                  projection=True,
                  bounding_box=3,
@@ -845,7 +847,7 @@ class PlotOptions(object):
             2
             sage: options._projections
             [Weight space over the Rational Field of the Root system of type ['B', 2],
-             <bound method WeightSpace_with_category._plot_projection of Weight space over the Rational Field of the Root system of type ['B', 2]>]
+             <bound method RootLatticeRealizations.ParentMethods._plot_projection of Weight space over the Rational Field of the Root system of type ['B', 2]>]
 
             sage: L = RootSystem(['B',2,1]).ambient_space()
             sage: options = L.plot_parse_options()
@@ -853,24 +855,24 @@ class PlotOptions(object):
             2
             sage: options._projections
             [Ambient space of the Root system of type ['B', 2],
-             <bound method AmbientSpace_with_category._plot_projection of Ambient space of the Root system of type ['B', 2]>]
+             <bound method RootLatticeRealizations.ParentMethods._plot_projection of Ambient space of the Root system of type ['B', 2]>]
 
             sage: options = L.plot_parse_options(affine=True)
             sage: options.dimension
             2
             sage: options._projections
             [Ambient space of the Root system of type ['B', 2],
-             <bound method AmbientSpace_with_category._plot_projection of Ambient space of the Root system of type ['B', 2]>]
+             <bound method RootLatticeRealizations.ParentMethods._plot_projection of Ambient space of the Root system of type ['B', 2]>]
 
             sage: options = L.plot_parse_options(affine=False)
             sage: options._projections
-            [<bound method AmbientSpace_with_category._plot_projection of Ambient space of the Root system of type ['B', 2, 1]>]
+            [<bound method AmbientSpace._plot_projection of Ambient space of the Root system of type ['B', 2, 1]>]
             sage: options.dimension
             3
 
             sage: options = L.plot_parse_options(affine=False, projection='barycentric')
             sage: options._projections
-            [<bound method AmbientSpace_with_category._plot_projection_barycentric of Ambient space of the Root system of type ['B', 2, 1]>]
+            [<bound method RootLatticeRealizations.ParentMethods._plot_projection_barycentric of Ambient space of the Root system of type ['B', 2, 1]>]
             sage: options.dimension
             3
         """
@@ -1025,7 +1027,7 @@ class PlotOptions(object):
             sage: options.index_of_object(30)
             sage: options.index_of_object("bla")
         """
-        if parent(i) in RootLatticeRealizations and  len(i) == 1 and i.leading_coefficient().is_one():
+        if parent(i) in RootLatticeRealizations and len(i) == 1 and i.leading_coefficient().is_one():
             i = i.leading_support()
         if i in self.space.cartan_type().index_set():
             return i
@@ -1391,8 +1393,8 @@ class PlotOptions(object):
         if self.level:
             old_rays = rays
             vertices = [self.intersection_at_level_1(ray) for ray in old_rays if ray.level() > 0]
-            rays     = [ray for ray in old_rays if ray.level() == 0]
-            rays    += [vertex - self.intersection_at_level_1(ray) for ray in old_rays if ray.level() < 0 for vertex in vertices]
+            rays = [ray for ray in old_rays if ray.level() == 0]
+            rays += [vertex - self.intersection_at_level_1(ray) for ray in old_rays if ray.level() < 0 for vertex in vertices]
         else:
             vertices = []
 
@@ -1484,9 +1486,9 @@ class PlotOptions(object):
         vectors = matrix([b.scalar(coroot) for b in L.basis()]).right_kernel().basis()
         basis = [L.from_vector(v) for v in vectors]
         if self.dimension == 3: # LaTeX labels not yet supported in 3D
-            text_label = "H_%s$"%(str(label))
+            text_label = "H_%s$" % (str(label))
         else:
-            text_label = "$H_{%s}$"%(latex(label))
+            text_label = "$H_{%s}$" % (latex(label))
         return self.cone(lines = basis, color = self.color(label), label=text_label,
                          as_polyhedron=as_polyhedron)
 
@@ -1573,7 +1575,7 @@ def barycentric_projection_matrix(n, angle=0):
 
     """
     from sage.matrix.constructor import matrix
-    from sage.functions.other import sqrt
+    from sage.misc.functional import sqrt
     n = ZZ(n)
     if n == 0:
         return matrix(QQ, 0, 1)

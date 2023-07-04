@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Graph Plotting
+Graph plotting
 
 *(For LaTeX drawings of graphs, see the* :mod:`~sage.graphs.graph_latex` *module.)*
 
@@ -126,10 +126,12 @@ previously::
 # ****************************************************************************
 
 from collections import defaultdict
-from math import sqrt, cos, sin, acos, atan, pi
+from math import sqrt, cos, sin, atan, pi
 from sage.structure.sage_object import SageObject
-from sage.plot.all import (
-    Graphics, scatter_plot, bezier_path, line, arrow, text, arc, circle)
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", [
+    "Graphics", "scatter_plot", "bezier_path", "line", "arrow", "text", "circle"])
+
 
 layout_options = {
     'layout':
@@ -175,7 +177,11 @@ graphplot_options.update({
     'pos':
         'The position dictionary of vertices.',
     'vertex_labels':
-        'Whether or not to draw vertex labels.',
+        'Vertex labels to draw. This can be ``True``/``False`` to indicate '
+        'whether to print the vertex string representation of not, '
+        'a dictionary keyed by vertices and associating to each vertex '
+        'a label string, or a function taking as input a vertex and returning '
+        'a label string.',
     'vertex_color':
         'Default color for vertices not listed '
         'in vertex_colors dictionary.',
@@ -255,6 +261,7 @@ DEFAULT_PLOT_OPTIONS = {
     'edge_labels_background'    : 'white'
     }
 
+
 class GraphPlot(SageObject):
     def __init__(self, graph, options):
         """
@@ -297,7 +304,7 @@ class GraphPlot(SageObject):
         self._plot_components = {}
         self._nodelist = list(graph)
         self._graph = graph
-        self._options = options # contains both plot and show options
+        self._options = options  # contains both plot and show options
         self._arcs = self._graph.has_multiple_edges(to_undirected=True)
         self._loops = self._graph.has_loops()
         self._arcdigraph = self._graph.is_directed() and self._arcs
@@ -382,7 +389,7 @@ class GraphPlot(SageObject):
         self._pos = self._graph.layout(**self._options)
         # Make sure the positions are floats (trac #10124)
         self._pos = {k: (float(v[0]), float(v[1]))
-                         for k, v in self._pos.items()}
+                     for k, v in self._pos.items()}
 
     def set_vertices(self, **vertex_options):
         """
@@ -429,6 +436,54 @@ class GraphPlot(SageObject):
             GP.set_vertices(talk=True)
             GP.set_vertices(vertex_color='green', vertex_shape='^')
             sphinx_plot(GP)
+
+        Vertex labels are flexible::
+
+            sage: g = graphs.PathGraph(4)
+            sage: g.plot(vertex_labels=False)
+            Graphics object consisting of 4 graphics primitives
+
+        .. PLOT::
+
+            g = graphs.PathGraph(4)
+            P = g.graphplot(vertex_labels=False)
+            sphinx_plot(P)
+
+        ::
+
+            sage: g = graphs.PathGraph(4)
+            sage: g.plot(vertex_labels=True)
+            Graphics object consisting of 8 graphics primitives
+
+        .. PLOT::
+
+            g = graphs.PathGraph(4)
+            P = g.graphplot(vertex_labels=True)
+            sphinx_plot(P)
+
+        ::
+
+            sage: g = graphs.PathGraph(4)
+            sage: g.plot(vertex_labels=dict(zip(g, ['+', '-', '/', '*'])))
+            Graphics object consisting of 8 graphics primitives
+
+        .. PLOT::
+
+            g = graphs.PathGraph(4)
+            P = g.graphplot(vertex_labels=dict(zip(g, ['+', '-', '/', '*'])))
+            sphinx_plot(P)
+
+        ::
+
+            sage: g = graphs.PathGraph(4)
+            sage: g.plot(vertex_labels=lambda x: str(x % 2))
+            Graphics object consisting of 8 graphics primitives
+
+        .. PLOT::
+
+            g = graphs.PathGraph(4)
+            P = g.graphplot(vertex_labels=lambda x: str(x % 2))
+            sphinx_plot(P)
         """
         # Handle base vertex options
         voptions = {}
@@ -456,9 +511,9 @@ class GraphPlot(SageObject):
             if self._options['partition'] is not None:
                 from sage.plot.colors import rainbow
                 partition = self._options['partition']
-                l = len(partition)
-                R = rainbow(l)
-                vertex_colors = {R[i]: partition[i] for i in range(l)}
+                length = len(partition)
+                R = rainbow(length)
+                vertex_colors = {R[i]: partition[i] for i in range(length)}
             elif not vertex_colors:
                 vertex_colors = vertex_color
         else:
@@ -481,7 +536,7 @@ class GraphPlot(SageObject):
             if self._arcdigraph:
                 self._plot_components['vertices'] = [
                     circle(p, self._vertex_radius, fill=True, clip=False,
-                            edgecolor='black', facecolor=vertex_colors)
+                           edgecolor='black', facecolor=vertex_colors)
                     for p in pos]
             else:
                 self._plot_components['vertices'] = (
@@ -503,18 +558,24 @@ class GraphPlot(SageObject):
             if self._arcdigraph:
                 self._plot_components['vertices'] = [
                     circle(p, self._vertex_radius, fill=True, clip=False,
-                            facecolor=colors[i], edgecolor='black')
+                           facecolor=colors[i], edgecolor='black')
                     for i, p in enumerate(pos)]
             else:
                 self._plot_components['vertices'] = scatter_plot(
                     pos, facecolor=colors, clip=False, **voptions)
 
-        if self._options['vertex_labels']:
-            self._plot_components['vertex_labels'] = []
+        vlabels = self._options['vertex_labels']
+        if vlabels:
+            if vlabels is True:
+                vfun = str
+            elif isinstance(vlabels, dict):
+                def vfun(x):
+                    return vlabels.get(x, "")
+            else:
+                vfun = vlabels
             # TODO: allow text options
-            for v in self._nodelist:
-                self._plot_components['vertex_labels'].append(
-                    text(str(v), self._pos[v], rgbcolor=(0, 0, 0), zorder=8))
+            self._plot_components['vertex_labels'] = [text(vfun(v), self._pos[v], color='black', zorder=8)
+                                                      for v in self._nodelist]
 
     def set_edges(self, **edge_options):
         """
@@ -618,7 +679,7 @@ class GraphPlot(SageObject):
             sage: test_graphs = graphs.FruchtGraph(), graphs.BullGraph()
             sage: tol = 0.001
             sage: for G in test_graphs:
-            ....:     E = G.edges()
+            ....:     E = G.edges(sort=True)
             ....:     for e0, e1, elab in E:
             ....:         G.set_edge_label(e0, e1, '%d %d' % (e0, e1))
             ....:     gp = G.graphplot(save_pos=True, edge_labels=True)
@@ -631,13 +692,13 @@ class GraphPlot(SageObject):
             ....:         m = sum(vector((vx[v], vy[v])) for v in (v0, v1))/2
             ....:         assert (vector((x, y)) - m).norm() < tol
 
-        Ticket :trac:`24051` is fixed::
+        Issue :trac:`24051` is fixed::
 
             sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
             sage: G.plot(edge_colors={"red": [(1, 0)]})
             Graphics object consisting of 5 graphics primitives
 
-        Ticket :trac:`31542` is fixed::
+        Issue :trac:`31542` is fixed::
 
             sage: s = 'ABCCCCDABCDABCDA'
             sage: g = DiGraph({}, loops=True, multiedges=True)
@@ -741,7 +802,7 @@ class GraphPlot(SageObject):
             dist = self._options['dist'] * 2
             min_loop_size = self._options['loop_size']
             max_dist = self._options['max_dist']
-            from sage.functions.all import sqrt
+            from sage.misc.functional import sqrt
             for a, b in tmp:
                 if a == b:
                     # Multiple loops need varying loop radius starting at
@@ -766,7 +827,7 @@ class GraphPlot(SageObject):
                         loop_size += loop_size_increment
                 elif len(edges_to_draw[a, b]) > 1:
                     # Multi-edge
-                    local_labels = edges_to_draw.pop((a,b))
+                    local_labels = edges_to_draw.pop((a, b))
 
                     # Compute perpendicular bisector
                     p1 = self._pos[a]
@@ -774,28 +835,48 @@ class GraphPlot(SageObject):
                     m = ((p1[0] + p2[0])/2., (p1[1] + p2[1])/2.)  # midpoint
                     if not p1[1] == p2[1]:
                         s = (p1[0] - p2[0])/(p2[1] - p1[1])  # perp slope
-                        y = lambda x: s*(x - m[0]) + m[1]  # perp bisector line
+
+                        def y(x):
+                            return s*(x - m[0]) + m[1]  # perp bisector line
 
                         # f, g are functions to determine x-values of point
                         # on line y at distance d from point m (on each side)
-                        f = lambda d: sqrt(d**2/(1. + s**2)) + m[0]
-                        g = lambda d: -sqrt(d**2/(1. + s**2)) + m[0]
+                        def f(d):
+                            return sqrt(d**2/(1. + s**2)) + m[0]
+
+                        def g(d):
+                            return -sqrt(d**2/(1. + s**2)) + m[0]
 
                         odd_x = f
                         even_x = g
                         if p1[0] == p2[0]:
-                            odd_y = lambda d: m[1]
+                            def odd_y(d):
+                                return m[1]
+
                             even_y = odd_y
                         else:
-                            odd_y = lambda x: y(f(x))
-                            even_y = lambda x: y(g(x))
+                            def odd_y(x):
+                                return y(f(x))
+
+                            def even_y(x):
+                                return y(g(x))
                     else:
-                        odd_x = lambda d: m[0]
+                        def odd_x(d):
+                            return m[0]
+
                         even_x = odd_x
-                        odd_y = lambda d: m[1] + d
-                        even_y = lambda d: m[1] - d
-                    odd_xy = lambda d: (odd_x(d), odd_y(d))
-                    even_xy = lambda d: (even_x(d), even_y(d))
+
+                        def odd_y(d):
+                            return m[1] + d
+
+                        def even_y(d):
+                            return m[1] - d
+
+                    def odd_xy(d):
+                        return (odd_x(d), odd_y(d))
+
+                    def even_xy(d):
+                        return (even_x(d), even_y(d))
 
                     # We now have the control points for each Bezier curve
                     # in terms of distance parameter d.
@@ -847,7 +928,7 @@ class GraphPlot(SageObject):
                         edges_to_draw[a, b] = [local_labels[-1]]
 
         is_directed = self._graph.is_directed()
-        for a,b in edges_to_draw:
+        for a, b in edges_to_draw:
             if self._arcdigraph:
                 ph = self._polar_hack_for_multidigraph
                 C, D = ph(self._pos[a], self._pos[b], self._vertex_radius)
@@ -886,7 +967,7 @@ class GraphPlot(SageObject):
         """
         Helper function to quickly compute the two points of intersection
         of a line segment from ``A`` to ``B`` (provided as xy pairs) and
-        circles centered at ``A`` and ``B``, both with radius ``VR``. 
+        circles centered at ``A`` and ``B``, both with radius ``VR``.
         Returns a pair of xy pairs representing the two points.
 
         EXAMPLES::
@@ -1039,14 +1120,14 @@ class GraphPlot(SageObject):
         ::
 
             sage: G = graphs.HeawoodGraph().copy(sparse=True)
-            sage: for u, v, l in G.edges():
+            sage: for u, v, l in G.edges(sort=True):
             ....:     G.set_edge_label(u, v, f'({u},{v})')
             sage: G.graphplot(edge_labels=True).show()
 
         .. PLOT::
 
             G = graphs.HeawoodGraph().copy(sparse=True)
-            for u, v, l in G.edges():
+            for u, v, l in G.edges(sort=True):
                 G.set_edge_label(u, v, f'({u},{v})')
             sphinx_plot(G.graphplot(edge_labels=True))
 
@@ -1058,7 +1139,7 @@ class GraphPlot(SageObject):
             ....:     9: [10, 13], 10: [11], 11: [12, 18], 12: [16, 13],
             ....:     13: [14], 14: [15], 15: [16], 16: [17], 17: [18],
             ....:     18: [19], 19: []})
-            sage: for u, v, l in D.edges():
+            sage: for u, v, l in D.edges(sort=True):
             ....:     D.set_edge_label(u, v, f'({u},{v})')
             sage: D.graphplot(edge_labels=True, layout='circular').show()
 
@@ -1070,7 +1151,7 @@ class GraphPlot(SageObject):
                 9: [10, 13], 10: [11], 11: [12, 18], 12: [16, 13],
                 13: [14], 14: [15], 15: [16], 16: [17], 17: [18],
                 18: [19], 19: []})
-            for u, v, l in D.edges():
+            for u, v, l in D.edges(sort=True):
                 D.set_edge_label(u, v, f'({u},{v})')
             sphinx_plot(D.graphplot(edge_labels=True, layout='circular'))
 
@@ -1082,7 +1163,7 @@ class GraphPlot(SageObject):
             sage: edge_colors = {}
             sage: for i in range(5):
             ....:     edge_colors[R[i]] = []
-            sage: for u, v, l in C.edges():
+            sage: for u, v, l in C.edges(sort=True):
             ....:     for i in range(5):
             ....:         if u[i] != v[i]:
             ....:             edge_colors[R[i]].append((u, v, l))
@@ -1097,7 +1178,7 @@ class GraphPlot(SageObject):
             edge_colors = {}
             for i in range(5):
                 edge_colors[R[i]] = []
-            for u, v, l in C.edges():
+            for u, v, l in C.edges(sort=True):
                 for i in range(5):
                     if u[i] != v[i]:
                         edge_colors[R[i]].append((u, v, l))
@@ -1458,7 +1539,7 @@ class GraphPlot(SageObject):
                     pos[p] = x, y
                 else:
                     x = sum([pos[c][0] for c in cp]) / float(len(cp))
-                    pos[p] = x,y
+                    pos[p] = x, y
                     ox = obstruction[y]
                     if x < ox:
                         slide(p, ox - x)

@@ -25,15 +25,6 @@ Author: Pocoo Team <http://pocoo.org>
 
 Homepage: http://jinja.pocoo.org/
 
-Dependencies
-------------
-
--  Python (>= 2.4)
--  setuptools (or distribute)
--  Pygments (according to 'spkg/standard/deps')
--  docutils (dito, as a note only)
-
-
 Special Update/Build Instructions
 ---------------------------------
 

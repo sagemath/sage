@@ -18,7 +18,7 @@ algorithms. Combinatorics covers a much wider domain (partial orders,
 representation theory, …) for which we only give a few pointers
 towards the possibilities offered by ``Sage``.
 
-.. todo:: Add link to some thematic tutorial on graphs
+.. TODO:: Add link to some thematic tutorial on graphs
 
 A characteristic of computational combinatorics is the profusion of
 types of objects and sets that one wants to manipulate. It would be
@@ -310,7 +310,7 @@ or calculate, more or less instantaneously, the 100-th coefficient::
 
 It is unfortunate to have to recalculate everything if at some point we
 wanted the 101-st coefficient. Lazy power series (see
-:mod:`sage.combinat.species.series`) come into their own here, in that
+:mod:`sage.rings.lazy_series_ring`) come into their own here, in that
 one can define them from a system of equations without solving it, and,
 in particular, without needing a closed form for the answer. We begin by
 defining the ring of lazy power series::
@@ -320,8 +320,7 @@ defining the ring of lazy power series::
 Then we create a “free” power series, which we name, and which we then
 define by a recursive equation::
 
-    sage: C = L()
-    sage: C._name = 'C'
+    sage: C = L.undefined(valuation=1)
     sage: C.define( z + C * C )
 
 ::
@@ -455,7 +454,7 @@ ring `R= \QQ(x)[y]/ (P)`::
 
 Note: ``ybar`` is the name of the variable `y` in the quotient ring.
 
-.. todo:: add link to some tutorial on quotient rings
+.. TODO:: add link to some tutorial on quotient rings
 
 We continue the calculation of this fraction in `R`::
 
@@ -503,10 +502,9 @@ or, more legibly,
 It is trivial to verify this equation on the closed form::
 
     sage: Cf = sage.symbolic.function_factory.function('C')
-    sage: equadiff.substitute_function(Cf, s0)
-    doctest:...: DeprecationWarning:...
+    sage: equadiff.substitute_function(Cf, s0.function(z))
     (4*z - 1)/sqrt(-4*z + 1) + sqrt(-4*z + 1) == 0
-    sage: bool(equadiff.substitute_function(Cf, s0))
+    sage: bool(equadiff.substitute_function(Cf, s0.function(z)))
     True
 
 .. On veut non seulement remplacer les occurrences de C(z), mais
@@ -1142,7 +1140,7 @@ Alternatively, we could construct an iterator on the counter-examples::
     possible, hide the result first and try to guess it before
     launching the command.
 
-    .. todo:: hide the results by default
+    .. TODO:: hide the results by default
 
     .. warning:: it will be necessary to interrupt the execution of some of the commands
 
@@ -1244,9 +1242,6 @@ are in the ``itertools`` library, which can be imported by::
 
     sage: import itertools
 
-The behaviour of this library has changed a lot between Python 2 and
-Python 3. What follows is mostly written for Python 2.
-
 We will demonstrate some applications, taking as a starting point the
 permutations of `3`::
 
@@ -1269,12 +1264,12 @@ or select only the elements in positions 2, 3, and 4 (analogue of
 
 To apply a function to all the elements, one can do::
 
-    sage: list(z.cycle_type() for z in Permutations(3))
+    sage: [z.cycle_type() for z in Permutations(3)]
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
 
 and similarly to select the elements satisfying a certain condition::
 
-    sage: list(z for z in Permutations(3) if z.has_pattern([1,2]))
+    sage: [z for z in Permutations(3) if z.has_pattern([1,2])]
     [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
 
 Implementation of new iterators
@@ -1676,7 +1671,7 @@ combinatorial species::
 We begin by redefining the complete binary trees; to do so, we stipulate
 the recurrence relation directly on the sets::
 
-    sage: BT = CombinatorialSpecies()
+    sage: BT = CombinatorialSpecies(min=1)
     sage: Leaf =  SingletonSpecies()
     sage: BT.define( Leaf + (BT*BT) )
 
@@ -1701,7 +1696,7 @@ desired display capabilities.
 We recover the generating function for the Catalan numbers::
 
     sage: g = BT.isotype_generating_series(); g
-    x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + O(x^6)
+    z + z^2 + 2*z^3 + 5*z^4 + 14*z^5 + 42*z^6 + 132*z^7 + O(z^8)
 
 which is returned in the form of a lazy power series::
 
@@ -1719,7 +1714,7 @@ consecutive “`1`”s. They admit a natural recursive definition::
 
 The Fibonacci sequence is easily recognized here, hence the name::
 
-    sage: L = FW.isotype_generating_series().coefficients(15); L
+    sage: L = FW.isotype_generating_series()[:15]; L
     [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987]
 
 ::
@@ -1846,7 +1841,7 @@ REFERENCES:
 
    .. [CMS2012] Alexandre Casamayou, Nathann Cohen, Guillaume Connan, Thierry Dumont, Laurent Fousse, François Maltey, Matthias Meulien, Marc Mezzarobba, Clément Pernet, Nicolas M. Thiéry, Paul Zimmermann
          *Calcul Mathématique avec Sage*
-         http://sagebook.gforge.inria.fr/
+         https://www.sagemath.org/sagebook/french.html
 
 .. [1]
    Or at least that should be the case; there are still many corners to

@@ -1,8 +1,7 @@
 cd src
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX="$SAGE_LOCAL" \
-      -DCMAKE_PREFIX_PATH="$SAGE_LOCAL" \
+sdh_cmake -DCMAKE_PREFIX_PATH="$SAGE_LOCAL" \
       -DWITH_SYMENGINE_THREAD_SAFE=yes \
       -DWITH_ECM=yes \
       -DWITH_FLINT=yes \

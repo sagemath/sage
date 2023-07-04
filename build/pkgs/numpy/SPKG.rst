@@ -16,17 +16,6 @@ Upstream Contact
 -  Fernando Perez
 -  Brian Granger
 
-Dependencies
-------------
-
--  GNU patch
--  Python
--  Lapack
--  Blas
--  Atlas
--  Fortran
-
-
 Special Update/Build Instructions
 ---------------------------------
 

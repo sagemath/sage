@@ -192,6 +192,8 @@ REFERENCES:
 
 from sage.manifolds.differentiable.pseudo_riemannian import \
     PseudoRiemannianManifold
+from sage.manifolds.differentiable.degenerate import \
+    DegenerateManifold
 from sage.manifolds.differentiable.differentiable_submanifold import \
     DifferentiableSubmanifold
 from sage.rings.infinity import infinity
@@ -221,8 +223,8 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
     - ``ambient`` -- (default: ``None``) pseudo-Riemannian manifold `M` in
       which the submanifold is embedded (or immersed). If ``None``, it is set
       to ``self``
-    - ``metric_name`` -- (default: ``'g'``) string; name (symbol) given to the
-      submanifold's metric
+    - ``metric_name`` -- (default: ``None``) string; name (symbol) given to the
+      metric; if ``None``, ``'gamma'`` is used
     - ``signature`` -- (default: ``None``) signature `S` of the metric as a
       single integer: `S = n_+ - n_-`, where `n_+` (resp. `n_-`) is the
       number of positive terms (resp. number of negative terms) in any
@@ -236,7 +238,8 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to
       denote the submanifold; if none is provided, it is set to ``name``
     - ``metric_latex_name`` -- (default: ``None``) string; LaTeX symbol to
-      denote the metric; if none is provided, it is set to ``metric_name``
+      denote the metric; if none is provided, it is set to ``metric_name`` if
+      the latter is not ``None`` and to ``r'\gamma'`` otherwise
     - ``start_index`` -- (default: 0) integer; lower value of the range of
       indices used for "indexed objects" on the submanifold, e.g. coordinates
       in a chart
@@ -300,10 +303,10 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         :mod:`~sage.manifolds.differentiable.differentiable_submanifold`
 
    """
-    def __init__(self, n, name, ambient=None, metric_name='g', signature=None,
-                 base_manifold=None, diff_degree=infinity, latex_name=None,
-                 metric_latex_name=None, start_index=0, category=None,
-                 unique_tag=None):
+    def __init__(self, n, name, ambient=None, metric_name=None,
+                 signature=None, base_manifold=None, diff_degree=infinity,
+                 latex_name=None, metric_latex_name=None, start_index=0,
+                 category=None, unique_tag=None):
         r"""
         Construct a pseudo-Riemannian submanifold.
 
@@ -337,6 +340,9 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
              5-dimensional pseudo-Riemannian manifold M
 
         """
+        if metric_name is None:
+            metric_name = 'gamma'
+            metric_latex_name = r'\gamma'
         PseudoRiemannianManifold.__init__(self, n, name=name,
                                           metric_name=metric_name,
                                           signature=signature,
@@ -346,6 +352,9 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
                                           metric_latex_name=metric_latex_name,
                                           start_index=start_index,
                                           category=category)
+        if not (ambient is None
+                or isinstance(ambient, (PseudoRiemannianManifold, DegenerateManifold))):
+            raise TypeError("ambient must be a pseudo-Riemannian manifold")
         self._init_immersion(ambient=ambient)
         self._difft = None
         self._gradt = None
@@ -513,7 +522,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         A sphere embedded in Euclidean space::
 
             sage: M.<x,y,z> = EuclideanSpace()
-            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure='Riemannian')
             sage: C.<th,ph> = N.chart(r'th:(0,pi):\theta ph:(-pi,pi):\phi')
             sage: r = var('r', domain='real')
             sage: assume(r>0)
@@ -535,15 +544,104 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             [          r^2             0]
             [            0 r^2*sin(th)^2]
 
+        By default, the first fundamental form is named ``gamma``, but this
+        can be customized by means of the argument ``metric_name`` when
+        declaring the submanifold::
+
+            sage: P = Manifold(1, 'P', ambient=M, structure='Riemannian',
+            ....:              metric_name='g')
+            sage: CP.<t> = P.chart()
+            sage: F = P.diff_map(M, [t, 2*t, 3*t])
+            sage: P.set_embedding(F)
+            sage: P.induced_metric()
+            Riemannian metric g on the 1-dimensional Riemannian submanifold P
+             embedded in the Euclidean space E^3
+            sage: P.induced_metric().display()
+            g = 14 dt⊗dt
+
         """
         if self._first_fundamental_form is None:
-            self._first_fundamental_form = self.metric()
+            self._first_fundamental_form = super().metric()
             self._first_fundamental_form.set(
                                self._immersion.pullback(self.ambient_metric()))
-            self._first_fundamental_form.set_name("gamma", r"\gamma")
         return self._first_fundamental_form
 
     induced_metric = first_fundamental_form
+
+    def metric(self, name=None, signature=None, latex_name=None,
+               dest_map=None):
+        r"""
+        Return the induced metric (first fundamental form) or define a new
+        metric tensor on the submanifold.
+
+        A new (uninitialized) metric is returned only if the argument ``name``
+        is provided and differs from the metric name declared at the
+        construction of the submanifold; otherwise, the first fundamental
+        form is returned.
+
+        INPUT:
+
+        - ``name`` -- (default: ``None``) name given to the metric; if ``name``
+          is ``None`` or equals the metric name declared when constructing
+          the submanifold, the first fundamental form is returned (see
+          :meth:`first_fundamental_form`)
+        - ``signature`` -- (default: ``None``; ignored if ``name`` is ``None``)
+          signature `S` of the metric as a single integer: `S = n_+ - n_-`,
+          where `n_+` (resp. `n_-`) is the number of positive terms (resp.
+          number of negative terms) in any diagonal writing of the metric
+          components; if ``signature`` is not provided, `S` is set to the
+          submanifold's dimension (Riemannian signature)
+        - ``latex_name`` -- (default: ``None``; ignored if ``name`` is ``None``)
+          LaTeX symbol to denote the metric; if ``None``, it is formed from
+          ``name``
+        - ``dest_map`` -- (default: ``None``; ignored if ``name`` is ``None``)
+          instance of
+          class :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
+          representing the destination map `\Phi:\ U \rightarrow M`, where `U`
+          is the current submanifold; if ``None``, the identity map is assumed
+          (case of a metric tensor field *on* `U`)
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
+
+        EXAMPLES:
+
+        Induced metric on a straight line of the Euclidean plane::
+
+            sage: M.<x,y> = EuclideanSpace()
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian')
+            sage: CN.<t> = N.chart()
+            sage: F = N.diff_map(M, [t, 2*t])
+            sage: N.set_embedding(F)
+            sage: N.metric()
+            Riemannian metric gamma on the 1-dimensional Riemannian
+             submanifold N embedded in the Euclidean plane E^2
+            sage: N.metric().display()
+            gamma = 5 dt⊗dt
+
+        Setting the argument ``name`` to that declared while constructing
+        the submanifold (default = ``'gamma'``) yields the same result::
+
+            sage: N.metric(name='gamma') is N.metric()
+            True
+
+        while using a different name allows one to define a new metric on the
+        submanifold::
+
+            sage: h = N.metric(name='h'); h
+            Riemannian metric h on the 1-dimensional Riemannian submanifold N
+             embedded in the Euclidean plane E^2
+            sage: h[0, 0] = 1  # initialization
+            sage: h.display()
+            h = dt⊗dt
+
+        """
+        if name is None or name == self._metric_name:
+            return self.first_fundamental_form()
+        return super().metric(name=name, signature=signature,
+                              latex_name=latex_name, dest_map=dest_map)
 
     @cached_method
     def difft(self):
@@ -1075,7 +1173,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
                         g.restrict(chart.domain()).contract(pf[j]) *
                         self.scalar_field({chart: k.comp(chart.frame())[:][i, j]})
                         for i in range(self._dim) for j in range(self._dim))
-                    gam_rst._sym = [(0, 1)]
+                    gam_rst._sym = ((0, 1),)
                     self._ambient_second_fundamental_form.set_restriction(gam_rst)
 
                 charts = iter(self.top_charts())
@@ -1162,7 +1260,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
                              + " hypersurfaces")
         if self._second_fundamental_form is None:
             resu = self.vector_field_module().tensor((0, 2), name='K',
-                                                     sym=[(0, 1)])
+                                                      sym=[(0, 1)])
             if self._dim_foliation != 0:
                 inverse_subs = {v: k for k, v in self._subs[0].items()}
                 asff = self.ambient_second_fundamental_form()

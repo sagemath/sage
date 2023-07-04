@@ -40,11 +40,17 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 from sage.structure.element import (CommutativeAlgebraElement,
                                     ModuleElementWithMutability)
 from sage.symbolic.expression import Expression
 from sage.manifolds.chart_func import ChartFunction
 from sage.misc.cachefunc import cached_method
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.format_utilities import FormattedExpansion
+    from sage.manifolds.chart import Chart
 
 class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
     r"""
@@ -211,7 +217,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         sage: f.expr(c_uv)
         (u^2 + v^2)/(u^2 + v^2 + 1)
         sage: type(f.expr(c_uv))
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     The method :meth:`coord_function` returns instead a function of the
     chart coordinates, i.e. an instance of
@@ -1100,6 +1106,9 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         sage: TestSuite(zer).run()
 
     """
+
+    _name: Optional[str]
+
     def __init__(self, parent, coord_expression=None, chart=None, name=None,
                  latex_name=None):
         r"""
@@ -1309,7 +1318,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         """
         return all(func.is_trivial_one() for func in self._express.values())
 
-    # TODO: Remove this method as soon as ticket #28629 is solved?
+    # TODO: Remove this method as soon as issue #28629 is solved?
     def is_unit(self):
         r"""
         Return ``True`` iff ``self`` is not trivially zero in at least one of
@@ -1495,7 +1504,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             sage: X.<x,y> = M.chart()
             sage: f = M.scalar_field({X: x+y})
             sage: f._latex_()
-            '\\mbox{Scalar field on the 2-dimensional topological manifold M}'
+            '\\text{Scalar field on the 2-dimensional topological manifold M}'
             sage: f = M.scalar_field({X: x+y}, name='f')
             sage: f._latex_()
             'f'
@@ -1507,9 +1516,9 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def set_name(self, name=None, latex_name=None):
         r"""
@@ -1844,7 +1853,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         backend used for coordinate computations::
 
             sage: type(f.expr())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: M.set_calculus_method('sympy')
             sage: type(f.expr())
             <class 'sympy.core.mul.Mul'>
@@ -1975,7 +1984,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         if chart is None:
             chart = self._domain._def_chart
         self._express[chart] = chart.function(coord_expression)
-        self._is_zero = False # a priori
+        self._is_zero = False  # a priori
         self._del_derived()
 
     def add_expr_by_continuation(self, chart, subdomain):
@@ -2092,7 +2101,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             self._express[chart.restrict(intersection)] = expr
         self._is_zero = False  # a priori
 
-    def display(self, chart=None):
+    def display(self, chart: Optional[Chart]=None) -> FormattedExpansion:
         r"""
         Display the expression of the scalar field in a given chart.
 
@@ -2145,7 +2154,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             f: M → ℝ
             on U: (x, y) ↦ y^2
             sage: latex(f.display())
-            \begin{array}{llcl} f:& M & \longrightarrow & \mathbb{R} \\ \mbox{on}\ U : & \left(x, y\right) & \longmapsto & y^{2} \end{array}
+            \begin{array}{llcl} f:& M & \longrightarrow & \mathbb{R} \\ \text{on}\ U : & \left(x, y\right) & \longmapsto & y^{2} \end{array}
 
         """
         from sage.misc.latex import latex
@@ -2172,7 +2181,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
                 result._latex += " & "
             else:
                 result._txt += "on " + chart.domain()._name + ": "
-                result._latex += r"\mbox{on}\ " + latex(chart.domain()) \
+                result._latex += r"\text{on}\ " + latex(chart.domain()) \
                                  + r": & "
             result._txt += repr(coords) + " " + unicode_mapsto + " " \
                            + repr(expression) + "\n"
@@ -2647,7 +2656,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         if self._latex_name is not None:
             result._latex_name = '-' + self._latex_name
         return result
-
 
     #########  CommutativeAlgebraElement arithmetic operators ########
 
@@ -3640,6 +3648,35 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             resu._express[chart] = func.arctanh()
         return resu
 
+    def __abs__(self):
+        r"""
+        Absolute value of the scalar field.
+
+        OUTPUT:
+
+        - the scalar field `\mathrm{Abs}\, f`, where `f` is the current
+          scalar field
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: f = M.scalar_field({X: x*y}, name='f', latex_name=r"\Phi")
+            sage: g = abs(f) ; g
+            Scalar field abs(f) on the 2-dimensional topological manifold M
+            sage: latex(g)
+            \,\mathrm{abs}\left(\Phi\right)
+            sage: g.display()
+            abs(f): M → ℝ
+               (x, y) ↦ abs(x)*abs(y)
+
+        """
+        name, latex_name = self._function_name("abs", r"\,\mathrm{abs}")
+        resu = type(self)(self.parent(), name=name, latex_name=latex_name)
+        for chart, func in self._express.items():
+            resu._express[chart] = func.abs()
+        return resu
+
     def set_calc_order(self, symbol, order, truncate=False):
         r"""
         Trigger a power series expansion with respect to a small parameter in
@@ -3754,4 +3791,3 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             raise ValueError('element must be immutable in order to be '
                              'hashable')
         return hash((type(self).__name__, self._domain))
-

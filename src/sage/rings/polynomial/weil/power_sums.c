@@ -621,7 +621,7 @@ int set_range_from_power_sums(ps_static_data_t *st_data,
    */
   if (fmpz_is_zero(modulus)) {
     if ((fmpz_sgn(lower) > 0) || (fmpz_sgn(upper) < 0) ||
-	!_fmpz_poly_all_real_roots(tpol, k, tpol2, st_data->force_squarefree,
+	!_fmpz_poly_all_real_roots(tpol, k+1, tpol2, st_data->force_squarefree,
 				   NULL, NULL)) return(0);
     fmpz_zero(lower);
     fmpz_zero(upper);

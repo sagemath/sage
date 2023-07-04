@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN) ipywidgets matplotlib ipykernel jupyter_packaging $(findstring jupyterlab,$(OPTIONAL_INSTALLED_PACKAGES))
+$(PYTHON) ipywidgets matplotlib ipykernel | $(PYTHON_TOOLCHAIN)  jupyter_packaging
 
 ----------
 All lines of this file are ignored except the first.

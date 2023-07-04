@@ -148,7 +148,7 @@ latex_operators = [('&', '\\wedge '),
                    ('->', '\\rightarrow ')]
 
 
-class BooleanFormula(object):
+class BooleanFormula():
     """
     Boolean formulas.
 

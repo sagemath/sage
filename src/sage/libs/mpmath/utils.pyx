@@ -14,7 +14,6 @@ from sage.structure.element cimport Element
 from sage.libs.mpfr cimport *
 from sage.libs.gmp.all cimport *
 
-from sage.rings.complex_mpfr import ComplexField
 from sage.rings.real_mpfr cimport RealField
 
 cpdef int bitcount(n):
@@ -129,7 +128,7 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
     res = PY_NEW(Integer)
     if shift > 0:
         if rnd == 'n':
-            if mpz_tstbit(man.value, shift-1) and (mpz_tstbit(man.value, shift)\
+            if mpz_tstbit(man.value, shift-1) and (mpz_tstbit(man.value, shift)
                 or (mpz_scan1(man.value, 0) < (shift-1))):
                 mpz_cdiv_q_2exp(res.value, man.value, shift)
             else:
@@ -272,6 +271,7 @@ def mpmath_to_sage(x, prec):
         mpfr_from_mpfval(y.value, x._mpf_)
         return y
     elif hasattr(x, "_mpc_"):
+        from sage.rings.complex_mpfr import ComplexField
         z = ComplexField(prec)(0)
         re, im = x._mpc_
         mpfr_from_mpfval(z.__re, re)
@@ -331,9 +331,10 @@ def sage_to_mpmath(x, prec):
             if isinstance(x, ComplexNumber):
                 return x._mpmath_()
             else:
+                from sage.rings.complex_mpfr import ComplexField
                 x = ComplexField(prec)(x)
                 return x._mpmath_()
-    if isinstance(x, tuple) or isinstance(x, list):
+    if isinstance(x, (tuple, list)):
         return type(x)([sage_to_mpmath(v, prec) for v in x])
     if isinstance(x, dict):
         return dict([(k, sage_to_mpmath(v, prec)) for (k, v) in x.items()])
@@ -402,11 +403,11 @@ def call(func, *args, **kwargs):
         sage: a.call(a.polylog, 2, 1/2, parent=CC)
         0.582240526465012
         sage: type(_)
-        <type 'sage.rings.complex_mpfr.ComplexNumber'>
+        <class 'sage.rings.complex_mpfr.ComplexNumber'>
         sage: a.call(a.polylog, 2, 1/2, parent=RDF)
         0.5822405264650125
         sage: type(_)
-        <type 'sage.rings.real_double.RealDoubleElement'>
+        <class 'sage.rings.real_double...RealDoubleElement...'>
 
     Check that :trac:`11885` is fixed::
 

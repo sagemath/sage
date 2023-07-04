@@ -4,5 +4,15 @@ requests: An HTTP library for Python
 Description
 -----------
 
-Requests is the only Non-GMO HTTP library for Python, safe for human
-consumption.
+Python HTTP for Humans.
+
+License
+-------
+
+Apache 2.0
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/requests/
+

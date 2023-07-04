@@ -25,7 +25,6 @@ Dependencies
 - Setuptools
 - hypothesis
 - memory-profiler
-- psutil
 - pyperform
 - pytest
 - Sphinx

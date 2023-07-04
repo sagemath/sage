@@ -51,7 +51,7 @@ from sage.misc.prandom import randint
 import sage.schemes.elliptic_curves.constructor as elliptic
 from .sql_db import SQLDatabase, verify_column
 from sage.features.databases import DatabaseCremona
-from sage.misc.all import walltime
+from sage.misc.misc import walltime
 
 import re
 import string
@@ -669,7 +669,7 @@ class MiniCremonaDatabase(SQLDatabase):
         """
         self.name = name
         name = name.replace(' ', '_')
-        db_path = DatabaseCremona(name=name).absolute_path()
+        db_path = DatabaseCremona(name=name).absolute_filename()
         if build:
             if read_only:
                 raise RuntimeError('The database must not be read_only.')
@@ -1696,16 +1696,16 @@ def CremonaDatabase(name=None,mini=None,set_global=None):
 
     Verify that :trac:`12341` has been resolved::
 
-        sage: c = CremonaDatabase('should not exist',mini=True)
+        sage: c = CremonaDatabase('should not exist', mini=True)
         Traceback (most recent call last):
         ...
-        FeatureNotPresentError: Cremona's database of elliptic curves is not available.
+        FeatureNotPresentError: database_should_not_exist_ellcurve is not available.
         '...db' not found in any of [...]
         ...Further installation instructions might be available at https://github.com/JohnCremona/ecdata.
         sage: c = CremonaDatabase('should not exist',mini=False)
         Traceback (most recent call last):
         ...
-        FeatureNotPresentError: Cremona's database of elliptic curves is not available.
+        FeatureNotPresentError: database_should_not_exist_ellcurve is not available.
         '...db' not found in any of [...]
         ...Further installation instructions might be available at https://github.com/JohnCremona/ecdata.
     """

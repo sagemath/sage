@@ -1,3 +1,6 @@
+"""
+Mobile posets
+"""
 # ****************************************************************************
 #       Copyright (C) 2020 Stefan Grosser <stefan.grosser1@gmail.com>
 #
@@ -140,7 +143,7 @@ class MobilePoset(FinitePoset):
             sage: M._anchor
             (4, 3)
         """
-        ribbon = list(map(lambda x: self._element_to_vertex(x), self._ribbon))
+        ribbon = [self._element_to_vertex(x) for x in self._ribbon]
         H = self._hasse_diagram
         R = H.subgraph(ribbon)
 
@@ -195,7 +198,7 @@ class MobilePoset(FinitePoset):
 
         if G.is_path():
             # Check if there is a anchor by seeing if there is more than one acyclic path to the next max
-            ends = max_elmt_graph.vertices(degree=1)
+            ends = max_elmt_graph.vertices(sort=True, degree=1)
             # Form ribbon
             ribbon = G.shortest_path(ends[0], ends[1])
             for end_count, end in enumerate(ends):
@@ -212,8 +215,8 @@ class MobilePoset(FinitePoset):
         # Then check if the edge going to a max element is down from the degree 3 vertex
         # Arbitrarily choose between ones with just 1
 
-        ends = max_elmt_graph.vertices(degree=1)
-        deg3 = max_elmt_graph.vertices(degree=3)[0]
+        ends = max_elmt_graph.vertices(sort=True, degree=1)
+        deg3 = max_elmt_graph.vertices(sort=True, degree=3)[0]
 
         anchoredEnd = None
         for end in ends:

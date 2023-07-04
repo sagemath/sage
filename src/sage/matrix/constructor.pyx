@@ -584,7 +584,7 @@ def matrix(*args, **kwds):
     Test a simple ``_matrix_`` method. Note that we are ignoring
     ``base`` which is inefficient but allowed::
 
-        sage: class MatrixTest(object):
+        sage: class MatrixTest():
         ....:     def _matrix_(self, base=None):
         ....:         return matrix(ZZ, 2, 2, [1,2,3,4])
         sage: e = MatrixTest()

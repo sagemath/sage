@@ -30,7 +30,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.categories.realizations import Category_realization_of_parent
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
@@ -400,6 +400,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         sage: TestSuite(complete).run()
 
     """
+
     def __init__(self, R):
         r"""
         TESTS::
@@ -502,6 +503,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: R in N.Bases()
             True
         """
+
         def super_categories(self):
             r"""
             Return the super categories of the category of bases of the
@@ -1644,7 +1646,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: R=NonCommutativeSymmetricFunctions(QQ).R()
+                    sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                     sage: R[2,1].to_symmetric_group_algebra()
                     [1, 3, 2] + [2, 3, 1]
                     sage: R([]).to_symmetric_group_algebra()
@@ -2017,6 +2019,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: N.Ribbon() in N.MultiplicativeBases()
             False
         """
+
         def super_categories(self):
             r"""
             Return the super categories of the category of multiplicative
@@ -2224,7 +2227,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: S=NonCommutativeSymmetricFunctions(QQ).S()
+                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
                     sage: S.antipode
                     Generic endomorphism of Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
                 """
@@ -2245,13 +2248,13 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: S=NonCommutativeSymmetricFunctions(QQ).S()
+                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
                     sage: S.coproduct
                     Generic morphism:
                       From: Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
                       To:   Non-Commutative Symmetric Functions over the Rational Field in the Complete basis # Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
                 """
-                from sage.categories.all import tensor
+                from sage.categories.tensor import tensor
                 if hasattr(self, "coproduct_on_generators"):
                     return self.algebra_morphism(self.coproduct_on_generators, codomain = tensor([self, self]))
                 else:
@@ -2290,6 +2293,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: N.Ribbon() in N.MultiplicativeBasesOnGroupLikeElements()
             False
         """
+
         def super_categories(self):
             r"""
             Return the super categories of the category of multiplicative
@@ -2496,7 +2500,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 if i < 1:
                     raise ValueError("Not a positive integer: {}".format(i))
                 x = self.algebra_generators()[i]
-                from sage.categories.all import tensor
+                from sage.categories.tensor import tensor
                 return tensor([self.one(), x]) + tensor([x, self.one()])
 
     class Ribbon(CombinatorialFreeModule, BindableClass):
@@ -2535,6 +2539,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: NCSF.R()
             Non-Commutative Symmetric Functions over the Rational Field in the Ribbon basis
         """
+
         def __init__(self, NCSF):
             r"""
             EXAMPLES::
@@ -2585,7 +2590,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: R=NonCommutativeSymmetricFunctions(QQ).ribbon()
+                sage: R = NonCommutativeSymmetricFunctions(QQ).ribbon()
                 sage: R.dual()
                 Quasisymmetric functions over the Rational Field in the Fundamental basis
             """
@@ -2683,7 +2688,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: R=NonCommutativeSymmetricFunctions(QQ).R()
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                 sage: R.to_symmetric_function_on_basis(Composition([3,1,1]))
                 s[3, 1, 1]
                 sage: R.to_symmetric_function_on_basis(Composition([4,2,1]))
@@ -2960,6 +2965,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: NCSF.S()
             Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
         """
+
         def __init__(self, NCSF):
             r"""
             EXAMPLES::
@@ -3039,7 +3045,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: S=NonCommutativeSymmetricFunctions(QQ).complete()
+                sage: S = NonCommutativeSymmetricFunctions(QQ).complete()
                 sage: S.to_symmetric_function_on_basis([2,1,3])
                 h[3, 2, 1]
                 sage: S.to_symmetric_function_on_basis([])
@@ -3097,7 +3103,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: S=NonCommutativeSymmetricFunctions(QQ).S()
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()
                 sage: S._to_symmetric_group_algebra_on_basis(Composition([1,2]))
                 [1, 2, 3] + [2, 1, 3] + [3, 1, 2]
                 sage: S._to_symmetric_group_algebra_on_basis(Composition([]))
@@ -3119,6 +3125,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             An element in the Complete basis.
             """
+
             def psi_involution(self):
                 r"""
                 Return the image of the noncommutative symmetric function
@@ -3227,6 +3234,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: NCSF.L()
             Non-Commutative Symmetric Functions over the Rational Field in the Elementary basis
         """
+
         def __init__(self, NCSF):
             r"""
             EXAMPLES::
@@ -3642,6 +3650,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: test_psi(4)
             True
         """
+
         def __init__(self, NCSF):
             r"""
             TESTS:
@@ -3794,8 +3803,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: all( psi_int_test(i) for i in range(4) )
                 True
                 sage: psi_int_test(4)   # long time
-                True
-                sage: psi_int_test(5)   # long time
                 True
             """
             # The algorithm used here is described in
@@ -4089,6 +4096,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: Phi.an_element()
             2*Phi[] + 2*Phi[1] + 3*Phi[1, 1]
         """
+
         def __init__(self, NCSF):
             r"""
             TESTS:
@@ -4712,7 +4720,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: I=NonCommutativeSymmetricFunctions(QQ).I()
+                sage: I = NonCommutativeSymmetricFunctions(QQ).I()
                 sage: I._H([2,0,1])
                 S[2, 1]
                 sage: I._H([2,0,1,-1])
@@ -4743,7 +4751,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: I=NonCommutativeSymmetricFunctions(QQ).I()
+                sage: I = NonCommutativeSymmetricFunctions(QQ).I()
                 sage: I._to_complete_on_basis(Composition([]))
                 S[]
                 sage: I._to_complete_on_basis(Composition([2,1,3]))
@@ -4777,7 +4785,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: I=NonCommutativeSymmetricFunctions(QQ).I()
+                sage: I = NonCommutativeSymmetricFunctions(QQ).I()
                 sage: I._from_complete_on_basis(Composition([]))
                 I[]
                 sage: I._from_complete_on_basis(Composition([2,1,3]))
@@ -4802,7 +4810,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: I=NonCommutativeSymmetricFunctions(QQ).Immaculate()
+                sage: I = NonCommutativeSymmetricFunctions(QQ).Immaculate()
                 sage: I.dual()
                 Quasisymmetric functions over the Rational Field in the dualImmaculate
                 basis
@@ -4813,6 +4821,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             An element in the Immaculate basis.
             """
+
             def bernstein_creation_operator(self, n):
                 r"""
                 Return the image of ``self`` under the `n`-th Bernstein
@@ -5013,7 +5022,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 return (matrix([[]]), [])
             CO = compositions_order(n)
             # ZZ is faster than over QQ for inverting a matrix
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             MS = MatrixSpace(ZZ, len(CO))
             return (MS([[number_of_SSRCT(al,be) for be in CO] for al in CO]).inverse(),
                     CO)
@@ -5353,6 +5362,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
         for all `n \geq 0`.
         """
+
         def __init__(self, NCSF):
             r"""
             EXAMPLES::
@@ -5528,6 +5538,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             \sigma_1 = exp(Z_1) exp(Z_2/2) exp(Z_3/3) \cdots exp(Z_n/n) \cdots.
         """
+
         def __init__(self, NCSF):
             r"""
             EXAMPLES::

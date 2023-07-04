@@ -11,24 +11,6 @@ A BCH code over `F` with designed distance `\delta` is a cyclic code whose
 codewords `c(x) \in F[x]` satisfy `c(\alpha^{a}) = 0`, for all integers `a` in
 the arithmetic sequence `b, b + \ell, b + 2 \times \ell, \dots, b + (\delta -
 2) \times \ell`.
-
-TESTS:
-
-This class uses the following experimental feature:
-:class:`sage.coding.relative_finite_field_extension.RelativeFiniteFieldExtension`.
-This test block is here only to trigger the experimental warning so it does not
-interferes with doctests::
-
-    sage: from sage.coding.relative_finite_field_extension import *
-    sage: Fqm.<aa> = GF(16)
-    sage: Fq.<a> = GF(4)
-    sage: RelativeFiniteFieldExtension(Fqm, Fq)
-    doctest:...: FutureWarning: This class/method/function is marked as
-    experimental. It, its functionality or its interface might change without a
-    formal deprecation.
-    See http://trac.sagemath.org/20284 for details.
-    Relative field extension between Finite Field in aa of size 2^4 and Finite
-    Field in a of size 2^2
 """
 # *****************************************************************************
 #       Copyright (C) 2016 David Lucas <david.lucas@inria.fr>
@@ -45,8 +27,8 @@ from copy import copy
 from sage.modules.free_module_element import vector
 from sage.misc.misc_c import prod
 from sage.categories.fields import Fields
-from sage.arith.all import gcd
-from sage.rings.all import Zmod
+from sage.arith.misc import gcd
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Zmod
 
 from .cyclic_code import CyclicCode
 from .grs_code import GeneralizedReedSolomonCode
@@ -136,7 +118,7 @@ class BCHCode(CyclicCode):
         if not (0 < designed_distance <= length):
             raise ValueError("designed_distance must belong to [1, n]")
 
-        if base_field not in Fields or not base_field.is_finite():
+        if base_field not in Fields() or not base_field.is_finite():
             raise ValueError("base_field has to be a finite field")
 
         q = base_field.cardinality()
@@ -148,8 +130,8 @@ class BCHCode(CyclicCode):
         D = [(offset + jump_size * i) % length
              for i in range(designed_distance - 1)]
 
-        super(BCHCode, self).__init__(field=base_field, length=length,
-                                      D=D, primitive_root=primitive_root)
+        super().__init__(field=base_field, length=length,
+                         D=D, primitive_root=primitive_root)
         self._default_decoder_name = "UnderlyingGRS"
         self._jump_size = jump_size
         self._offset = offset
@@ -300,8 +282,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
         self._grs_code = code.bch_to_grs()
         self._grs_decoder = self._grs_code.decoder(grs_decoder, **kwargs)
         self._decoder_type = copy(self._grs_decoder.decoder_type())
-        super(BCHUnderlyingGRSDecoder, self).__init__(
-            code, code.ambient_space(), "Vector")
+        super().__init__(code, code.ambient_space(), "Vector")
 
     def _repr_(self):
         r"""
@@ -411,9 +392,8 @@ class BCHUnderlyingGRSDecoder(Decoder):
             sage: y in D.grs_code()
             True
         """
-        mapping = self.code().field_embedding().embedding()
-        a = map(mapping, c)
-        return vector(a)
+        phi = self.code().field_embedding()
+        return vector([phi(x) for x in c])
 
     def grs_word_to_bch(self, c):
         r"""
@@ -431,9 +411,8 @@ class BCHUnderlyingGRSDecoder(Decoder):
             (0, a, 1, a, 0, 1, 1, 1, a, 0, 0, a + 1, a, 0, 1)
         """
         C = self.code()
-        FE = C.field_embedding()
-        a = map(FE.cast_into_relative_field, c)
-        return vector(a)
+        sec = C.field_embedding().section()
+        return vector([sec(x) for x in c])
 
     def decode_to_code(self, y):
         r"""

@@ -15,9 +15,8 @@ Interface to LattE integrale programs
 from sage.cpython.string import str_to_bytes, bytes_to_str
 
 from subprocess import Popen, PIPE
-from sage.misc.misc import SAGE_TMP
 from sage.rings.integer import Integer
-from sage.features.latte import Latte
+from sage.features.latte import Latte_count, Latte_integrate
 
 
 def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False, raw_output=False, verbose=False, **kwds):
@@ -95,7 +94,7 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         sage: n = count(cddin, cdd=True, verbose=True, raw_output=True)  # optional - latte_int
         This is LattE integrale ...
         ...
-        Invocation: count '--redundancy-check=none' --cdd /dev/stdin
+        Invocation: ...count '--redundancy-check=none' --cdd /dev/stdin
         ...
         Total Unimodular Cones: ...
         Maximum number of simplicial cones in memory at once: ...
@@ -122,12 +121,9 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         ...
         The polyhedron is unbounded.
     """
-    # Check that LattE is present
-    Latte().require()
-
     arg = str_to_bytes(arg)
 
-    args = ['count']
+    args = [Latte_count().absolute_filename()]
     if ehrhart_polynomial and multivariate_generating_function:
         raise ValueError
     if ehrhart_polynomial:
@@ -159,10 +155,13 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
 
     # The cwd argument is needed because latte
     # always produces diagnostic output files.
+    import tempfile
+    tempd = tempfile.TemporaryDirectory()
+
     latte_proc = Popen(args,
                        stdin=PIPE, stdout=PIPE,
                        stderr=(None if verbose else PIPE),
-                       cwd=str(SAGE_TMP))
+                       cwd=tempd.name)
 
     ans, err = latte_proc.communicate(arg)
     if err:
@@ -177,19 +176,26 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
 
     ans = bytes_to_str(ans)
 
+    # There's an error handler below that uses the numOfLatticePoints
+    # file created by latte, so we can't cleanup() the temporary
+    # directory here. Instead we have to clean it up before the
+    # (several) return statements.
     if ehrhart_polynomial:
         ans = ans.splitlines()[-2]
         if raw_output:
+            tempd.cleanup()
             return ans
         else:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             from sage.rings.rational_field import QQ
             R = PolynomialRing(QQ, 't')
+            tempd.cleanup()
             return R(ans)
     elif multivariate_generating_function:
         with open(filename + '.rat') as f:
             ans = f.read()
         if raw_output:
+            tempd.cleanup()
             return ans
         else:
             raise NotImplementedError("there is no Sage object to handle multivariate series from LattE, use raw_output=True")
@@ -199,12 +205,14 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         if not ans:
             # opening a file is slow (30e-6s), so we read the file
             # numOfLatticePoints only in case of a IndexError above
-            with open(SAGE_TMP+'/numOfLatticePoints', 'r') as f:
+            with open(tempd.name+'/numOfLatticePoints', 'r') as f:
                 ans = f.read()
 
         if raw_output:
+            tempd.cleanup()
             return ans
         else:
+            tempd.cleanup()
             return Integer(ans)
 
 
@@ -274,7 +282,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         sage: ans = integrate(cddin, f, cdd=True, verbose=True, raw_output=True)  # optional - latte_int
         This is LattE integrale ...
         ...
-        Invocation: integrate --valuation=integrate --triangulate --redundancy-check=none --cdd --monomials=... /dev/stdin
+        Invocation: ...integrate --valuation=integrate --triangulate --redundancy-check=none --cdd --monomials=... /dev/stdin
         ...
 
     Testing triangulate algorithm::
@@ -316,7 +324,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         sage: ans = integrate(cddin, cdd=True, raw_output=True, verbose=True)  # optional - latte_int
         This is LattE integrale ...
         ...
-        Invocation: integrate --valuation=volume --triangulate --redundancy-check=none --cdd /dev/stdin
+        Invocation: ...integrate --valuation=volume --triangulate --redundancy-check=none --cdd /dev/stdin
         ...
 
     Testing the runtime error::
@@ -330,31 +338,28 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         ...
         determinant: nonsquare matrix
     """
-    # Check that LattE is present
-    Latte().require()
-
     arg = str_to_bytes(arg)
 
     from sage.rings.rational import Rational
 
-    args = ['integrate']
+    args = [Latte_integrate().absolute_filename()]
 
-    got_polynomial = True if polynomial is not None else False
+    got_polynomial = bool(polynomial is not None)
 
     if got_polynomial:
         args.append('--valuation=integrate')
     else:
         args.append('--valuation=volume')
 
-    if algorithm=='triangulate':
+    if algorithm == 'triangulate':
         args.append('--triangulate')
-    elif algorithm=='cone-decompose':
+    elif algorithm == 'cone-decompose':
         args.append('--cone-decompose')
 
     if 'redundancy_check' not in kwds:
         args.append('--redundancy-check=none')
 
-    for key,value in kwds.items():
+    for key, value in kwds.items():
         if value is None or value is False:
             continue
 
@@ -382,10 +387,13 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     # The cwd argument is needed because latte
     # always produces diagnostic output files.
+    import tempfile
+    tempd = tempfile.TemporaryDirectory()
+
     latte_proc = Popen(args,
                        stdin=PIPE, stdout=PIPE,
                        stderr=(None if verbose else PIPE),
-                       cwd=str(SAGE_TMP))
+                       cwd=tempd.name)
 
     ans, err = latte_proc.communicate(arg)
     if err:
@@ -401,9 +409,10 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     ans = bytes_to_str(ans)
     ans = ans.splitlines()
     ans = ans[-5].split()
-    assert(ans[0]=='Answer:')
+    assert ans[0] == 'Answer:'
     ans = ans[1]
 
+    tempd.cleanup()
     if raw_output:
         return ans
     else:

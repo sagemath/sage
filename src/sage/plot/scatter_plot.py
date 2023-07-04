@@ -1,12 +1,13 @@
 """
-Scatter Plots
+Scatter plots
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
 #                     2009 Emily Kirkman
+#                     2022 Javier Honrubia <jhonrubia6@alumno.uned.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -18,9 +19,10 @@ Scatter Plots
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options
+
 
 class ScatterPlot(GraphicPrimitive):
     """
@@ -91,12 +93,12 @@ class ScatterPlot(GraphicPrimitive):
         """
         return {'markersize': 'the size of the markers.',
                 'marker': 'What shape to plot the points. See the documentation of plot() for the full list of markers.',
-                'alpha':'How transparent the marker border is.',
-                'rgbcolor':'The color as an RGB tuple.',
-                'hue':'The color given as a hue.',
-                'facecolor':'The color of the marker face.',
-                'edgecolor':'The color of the marker border.',
-                'zorder':'The layer level in which to draw.',
+                'alpha': 'How transparent the marker border is.',
+                'rgbcolor': 'The color as an RGB tuple.',
+                'hue': 'The color given as a hue.',
+                'facecolor': 'The color of the marker face.',
+                'edgecolor': 'The color of the marker border.',
+                'zorder': 'The layer level in which to draw.',
                 'clip': 'Whether or not to clip.'}
 
     def _repr_(self):
@@ -110,7 +112,7 @@ class ScatterPlot(GraphicPrimitive):
             sage: ScatterPlot(numpy.array([0,1,2]), numpy.array([3.5,2,5.1]), {})
             Scatter plot graphics primitive on 3 data points
         """
-        return 'Scatter plot graphics primitive on %s data points'%len(self.xdata)
+        return 'Scatter plot graphics primitive on %s data points' % len(self.xdata)
 
     def _render_on_subplot(self, subplot):
         """
@@ -130,11 +132,12 @@ class ScatterPlot(GraphicPrimitive):
         """
         options = self.options()
         p = subplot.scatter(self.xdata, self.ydata, alpha=options['alpha'],
-                zorder=options['zorder'], marker=options['marker'],
-                s=options['markersize'], facecolors=options['facecolor'],
-                edgecolors=options['edgecolor'], clip_on=options['clip'])
+                            zorder=options['zorder'], marker=options['marker'],
+                            s=options['markersize'], facecolors=options['facecolor'],
+                            edgecolors=options['edgecolor'], clip_on=options['clip'])
         if not options['clip']:
-            self._bbox_extra_artists=[p]
+            self._bbox_extra_artists = [p]
+
 
 @options(alpha=1, markersize=50, marker='o', zorder=5, facecolor='#fec7b8', edgecolor='black', clip=True, aspect_ratio='automatic')
 def scatter_plot(datalist, **options):
@@ -165,11 +168,23 @@ def scatter_plot(datalist, **options):
         sage: scatter_plot([[0,1],[2,2],[4.3,1.1]], marker='s')
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        from sage.plot.scatter_plot import ScatterPlot
+        S = scatter_plot([[0,1],[2,2],[4.3,1.1]], marker='s')
+        sphinx_plot(S)
+
     Extra options will get passed on to :meth:`~Graphics.show`, as long as they are valid::
 
         sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green', ymax=100)
         Graphics object consisting of 1 graphics primitive
         sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent
+
+    .. PLOT::
+
+        from sage.plot.scatter_plot import ScatterPlot
+        S = scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green', ymax=100)
+        sphinx_plot(S)
     """
     import numpy
     from sage.plot.all import Graphics
@@ -177,7 +192,7 @@ def scatter_plot(datalist, **options):
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))
     data = numpy.array(datalist, dtype='float')
     if len(data) != 0:
-        xdata = data[:,0]
-        ydata = data[:,1]
+        xdata = data[:, 0]
+        ydata = data[:, 1]
         g.add_primitive(ScatterPlot(xdata, ydata, options=options))
     return g

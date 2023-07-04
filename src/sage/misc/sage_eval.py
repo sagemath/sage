@@ -1,17 +1,16 @@
 r"""
 Evaluating a String in Sage
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from copy import copy
 import sage.repl.preparse as preparser
+
 
 def sage_eval(source, locals=None, cmds='', preparse=True):
     r"""
@@ -23,10 +22,10 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     INPUT:
 
 
-    -  ``source`` - a string or object with a _sage_
+    -  ``source`` - a string or object with a ``_sage_``
        method
 
-    -  ``locals`` - evaluate in namespace of sage.all plus
+    -  ``locals`` - evaluate in namespace of :mod:`sage.all` plus
        the locals dictionary
 
     -  ``cmds`` - string; sequence of commands to be run
@@ -60,10 +59,10 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         x^2 + 1
 
     This example illustrates that evaluation occurs in the context of
-    ``from sage.all import *``. Even though bernoulli has
+    ``from sage.all import *``. Even though ``bernoulli`` has
     been redefined in the local scope, when calling
-    ``sage_eval`` the default value meaning of bernoulli
-    is used. Likewise for QQ below.
+    :func:`sage_eval` the default value meaning of :func:`bernoulli`
+    is used. Likewise for ``QQ`` below.
 
     ::
 
@@ -90,9 +89,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     ::
 
         sage: x = 5
-        sage: eval('4/3 + x', {'x': 25})  # py2
-        26
-        sage: eval('4//3 + x', {'x': 25})  # py3
+        sage: eval('4//3 + x', {'x': 25})
         26
         sage: sage_eval('4/3 + x',  locals={'x': 25})
         79/3
@@ -128,7 +125,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         sage: vars['rt2']
         1.41421356237310
 
-    This example illustrates how ``sage_eval`` can be
+    This example illustrates how :mod:`sage_eval` can be
     useful when evaluating the output of other computer algebra
     systems.
 
@@ -147,8 +144,8 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         RuntimeError: Use ** for exponentiation, not '^', which means xor
         in Python, and has the wrong precedence.
 
-    Here you can see eval simply will not work but
-    ``sage_eval`` will.
+    Here you can see that :func:`eval` simply will not work but
+    :func:`sage_eval` will.
 
     TESTS:
 
@@ -171,7 +168,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
          File "<string>", line 1
             $x = $y[Integer(3)] # Does Perl syntax work?
             ^
-        SyntaxError: invalid syntax
+        SyntaxError: invalid ...
     """
     if isinstance(source, (list, tuple)):
         cmds = source[0]
@@ -186,7 +183,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         locals = {}
 
     import sage.all
-    if len(cmds):
+    if cmds:
         cmd_seq = cmds + '\n_sage_eval_returnval_ = ' + source
         if preparse:
             cmd_seq = preparser.preparse_file(cmd_seq)
@@ -194,37 +191,36 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         if preparse:
             source = preparser.preparse(source)
 
-    if len(cmds):
+    if cmds:
         exec(cmd_seq, sage.all.__dict__, locals)
         return locals['_sage_eval_returnval_']
     else:
         return eval(source, sage.all.__dict__, locals)
 
 
-
 def sageobj(x, vars=None):
     """
-    Return a native Sage object associated to x, if possible and
+    Return a native Sage object associated to ``x``, if possible and
     implemented.
 
-    If the object has an _sage_ method it is called and the value is
-    returned. Otherwise str is called on the object, and all preparsing
+    If the object has a ``_sage_`` method it is called and the value is
+    returned. Otherwise, :func:`str` is called on the object, and all preparsing
     is applied and the resulting expression is evaluated in the context
     of ``from sage.all import *``. To evaluate the
-    expression with certain variables set, use the vars argument, which
+    expression with certain variables set, use the ``vars`` argument, which
     should be a dictionary.
 
     EXAMPLES::
 
         sage: type(sageobj(gp('34/56')))
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
         sage: n = 5/2
         sage: sageobj(n) is n
         True
         sage: k = sageobj('Z(8^3/1)', {'Z':ZZ}); k
         512
         sage: type(k)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     This illustrates interfaces::
 
@@ -234,14 +230,14 @@ def sageobj(x, vars=None):
         sage: f._sage_()
         2/3
         sage: type(f._sage_())
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
         sage: a = gap(939393/2433)
         sage: a._sage_()
         313131/811
         sage: type(a._sage_())
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
     """
     try:
-       return x._sage_()
+        return x._sage_()
     except (TypeError, NotImplementedError, AttributeError):
-       return sage_eval(str(x), vars)
+        return sage_eval(str(x), vars)

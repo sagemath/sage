@@ -8,7 +8,7 @@ schedule as described in [BKLPPRSV2007]_. PRESENT is an example of an
 SP-network and consists of 31 rounds. The block length is 64 bits and two key
 lengths of 80 and 128 bits are supported.
 
-Note, this implementation is ment for experimental and educational usage only,
+This implementation is meant for experimental and educational usage only,
 do not use it in production code!
 
 EXAMPLES:
@@ -838,7 +838,7 @@ class PRESENT_KS(SageObject):
         Computes the sub key for round ``r`` derived from initial master key.
 
         The key schedule object has to have been initialised with the
-        `master_key` argument.
+        ``master_key`` argument.
 
         INPUT:
 
@@ -860,7 +860,7 @@ class PRESENT_KS(SageObject):
     def __iter__(self):
         """
         Iterate over the ``self._rounds + 1`` PRESENT round keys, derived from
-        `master_key`
+        ``master_key``.
 
         EXAMPLES::
 

@@ -78,9 +78,9 @@ Check that Cython source code appears in tracebacks::
     dummy line
     ...
     ZeroDivisionError...Traceback (most recent call last)
-    <ipython-input-...> in <module>...
+    ...
     ----> 1 Integer(1)/Integer(0)
-    .../sage/rings/integer.pyx in sage.rings.integer.Integer...div...
+    .../sage/rings/integer.pyx... in sage.rings.integer.Integer...div...
     ...
     -> ...                  raise ZeroDivisionError("rational division by zero")
        ....:            x = <Rational> Rational.__new__(Rational)
@@ -185,7 +185,7 @@ def preparser(on=True):
 ##############################
 # Sage[Terminal]InteractiveShell
 ##############################
-class SageShellOverride(object):
+class SageShellOverride():
     """
     Mixin to override methods in IPython's [Terminal]InteractiveShell
     classes.
@@ -213,8 +213,6 @@ class SageShellOverride(object):
         """
         Run a system command.
 
-        This is equivalent to the sage-native-execute shell script.
-
         EXAMPLES::
 
             sage: from sage.repl.interpreter import get_test_shell
@@ -231,7 +229,7 @@ class SageShellOverride(object):
             0
             sage: shell.quit()
         """
-        return super(SageShellOverride, self).system_raw(cmd)
+        return super().system_raw(cmd)
 
 
 class SageNotebookInteractiveShell(SageShellOverride, InteractiveShell):
@@ -389,7 +387,7 @@ class SageTestShell(SageShellOverride, TerminalInteractiveShell):
             True
             sage: shell.quit()
         """
-        super(SageTestShell, self).run_cell(*args, **kwds)
+        super().run_cell(*args, **kwds)
 
 
 ###################################################################
@@ -419,12 +417,12 @@ def SagePreparseTransformer(lines):
         sage: preparse(bad_syntax)
         Traceback (most recent call last):
         ...
-        SyntaxError: Mismatched ']'
+        SyntaxError: mismatched ']'
         sage: from sage.repl.interpreter import get_test_shell
         sage: shell = get_test_shell()
         sage: shell.run_cell(bad_syntax)
-          File "<string>", line unknown
-        SyntaxError: Mismatched ']'
+          File...<string>...
+        SyntaxError: mismatched ']'
         <BLANKLINE>
         sage: shell.quit()
 
@@ -482,7 +480,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: ift._sage_import_re.findall('sage(a) + maxima(b)')
             ['sage(', 'maxima(']
         """
-        super(InterfaceShellTransformer, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
         self.temporary_objects = set()
         self._sage_import_re = re.compile(r'(?:sage|%s)\('
                                           % self.shell.interface.name())
@@ -697,22 +695,22 @@ class SageCrashHandler(IPAppCrashHandler):
             sage: sch = SageCrashHandler(app); sch
             <sage.repl.interpreter.SageCrashHandler object at 0x...>
             sage: sorted(sch.info.items())
-            [('app_name', u'Sage'),
-             ('bug_tracker', 'http://trac.sagemath.org'),
+            [('app_name', 'Sage'),
+             ('bug_tracker', 'https://github.com/sagemath/sage/issues'),
              ('contact_email', 'sage-support@googlegroups.com'),
              ('contact_name', 'sage-support'),
-             ('crash_report_fname', u'Crash_report_Sage.txt')]
+             ('crash_report_fname', 'Crash_report_Sage.txt')]
         """
         contact_name = 'sage-support'
         contact_email = 'sage-support@googlegroups.com'
-        bug_tracker = 'http://trac.sagemath.org'
+        bug_tracker = 'https://github.com/sagemath/sage/issues'
         CrashHandler.__init__(self,
             app, contact_name, contact_email, bug_tracker, show_crash_traceback=True)
         self.crash_report_fname = 'Sage_crash_report.txt'
 
 
 class SageTerminalApp(TerminalIPythonApp):
-    name = u'Sage'
+    name = 'Sage'
     crash_handler_class = SageCrashHandler
 
     test_shell = Bool(False, help='Whether the shell is a test shell')
@@ -741,7 +739,7 @@ class SageTerminalApp(TerminalIPythonApp):
             sage: SageTerminalApp().load_config_file()
             sage: os.environ['IPYTHONDIR'] = IPYTHONDIR
         """
-        super(SageTerminalApp, self).load_config_file(*args, **kwds)
+        super().load_config_file(*args, **kwds)
         newconfig = sage_ipython_config.default()
         # merge in the config loaded from file
         newconfig.merge(self.config)

@@ -1,0 +1,7 @@
+$(SAGERUNTIME) sympy elliptic_curves jmol
+
+To build SageTeX, you just need Python, but to test (SAGE_CHECK=yes)
+SageTeX, you actually need to run Sage, produce plots,...
+
+----------
+All lines of this file are ignored except the first.

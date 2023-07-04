@@ -1,13 +1,13 @@
 r"""
 Optimized low-level binary code representation
 
-Some computations with linear binary codes. Fix a basis for $GF(2)^n$.
-A linear binary code is a linear subspace of $GF(2)^n$, together with
-this choice of basis. A permutation $g \in S_n$ of the fixed basis
-gives rise to a permutation of the vectors, or words, in $GF(2)^n$,
-sending $(w_i)$ to $(w_{g(i)})$. The permutation automorphism group of
-the code $C$ is the set of permutations of the basis that bijectively
-map $C$ to itself. Note that if $g$ is such a permutation, then
+Some computations with linear binary codes. Fix a basis for `GF(2)^n`.
+A linear binary code is a linear subspace of `GF(2)^n`, together with
+this choice of basis. A permutation `g \in S_n` of the fixed basis
+gives rise to a permutation of the vectors, or words, in `GF(2)^n`,
+sending `(w_i)` to `(w_{g(i)})`. The permutation automorphism group of
+the code `C` is the set of permutations of the basis that bijectively
+map `C` to itself. Note that if `g` is such a permutation, then
 
 .. MATH::
 
@@ -15,7 +15,7 @@ map $C$ to itself. Note that if $g$ is such a permutation, then
 
 Over other fields, it is also required that the map be linear, which
 as per above boils down to scalar multiplication. However, over
-$GF(2),$ the only scalars are 0 and 1, so the linearity condition has
+`GF(2),` the only scalars are 0 and 1, so the linearity condition has
 trivial effect.
 
 AUTHOR:
@@ -279,7 +279,7 @@ def test_word_perms(t_limit=5.0):
 cdef WordPermutation *create_word_perm(object list_perm):
     r"""
     Create a word permutation from a Python list permutation L, i.e. such that
-    $i \mapsto L[i]$.
+    `i \mapsto L[i]`.
     """
     cdef int i, j, parity, comb, words_per_chunk, num_chunks = 1
     cdef codeword *images_i
@@ -426,7 +426,7 @@ cdef WordPermutation *create_id_word_perm(int degree):
 
 cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation *h):
     r"""
-    Create the composition of word permutations $g \circ h$.
+    Create the composition of word permutations `g \circ h`.
     """
     cdef int i, j, parity, comb, words_per_chunk, num_chunks = 1
     cdef codeword *images_i
@@ -477,7 +477,7 @@ cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation 
 
 cdef WordPermutation *create_inv_word_perm(WordPermutation *g):
     r"""
-    Create the inverse $g^{-1}$ of the word permutation of $g$.
+    Create the inverse `g^{-1}` of the word permutation of `g`.
     """
     cdef int i, j
     cdef int *array = <int *> sig_malloc( g.degree * sizeof(int) )
@@ -516,8 +516,9 @@ cdef codeword permute_word_by_wp(WordPermutation *wp, codeword word):
         image += images[i][(word >> i*chunk_size) & gate]
     return image
 
+
 def test_expand_to_ortho_basis(B=None):
-    """
+    r"""
     This function is written in pure C for speed, and is tested from this
     function.
 
@@ -527,9 +528,9 @@ def test_expand_to_ortho_basis(B=None):
 
     OUTPUT:
 
-    An array of codewords which represent the expansion of a basis for $B$ to a
-    basis for $(B^\prime)^\perp$, where $B^\prime = B$ if the all-ones vector 1
-    is in $B$, otherwise $B^\prime = \text{span}(B,1)$ (note that this guarantees
+    An array of codewords which represent the expansion of a basis for `B` to a
+    basis for `(B^\prime)^\perp`, where `B^\prime = B` if the all-ones vector 1
+    is in `B`, otherwise `B^\prime = \text{span}(B,1)` (note that this guarantees
     that all the vectors in the span of the output have even weight).
 
     TESTS::
@@ -579,9 +580,9 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
 
     OUTPUT:
 
-    An array of codewords which represent the expansion of a basis for $B$ to a
-    basis for $(B^\prime)^\perp$, where $B^\prime = B$ if the all-ones vector 1
-    is in $B$, otherwise $B^\prime = \text{span}(B,1)$ (note that this guarantees
+    An array of codewords which represent the expansion of a basis for `B` to a
+    basis for `(B^\prime)^\perp`, where `B^\prime = B` if the all-ones vector 1
+    is in `B`, otherwise `B^\prime = \text{span}(B,1)` (note that this guarantees
     that all the vectors in the span of the output have even weight).
     """
     # assumes B is already in standard form
@@ -776,7 +777,8 @@ cdef class BinaryCode:
             self.nwords = 2 * other_nwords
             nrows = self.nrows
             nwords = self.nwords
-        else: raise NotImplementedError("!")
+        else:
+            raise NotImplementedError
 
         if self.nrows >= self.radix or self.ncols > self.radix:
             raise NotImplementedError("Columns and rows are stored as ints. This code is too big.")
@@ -3926,7 +3928,7 @@ cdef class BinaryCodeClassifier:
 
             sage: soc_iter = codes.databases.self_orthogonal_binary_codes(12, 6, 4)
             sage: L = list(soc_iter)
-            sage: for n in range(0, 13):
+            sage: for n in range(13):
             ....:   s = 'n=%2d : '%n
             ....:   for k in range(1,7):
             ....:       s += '%3d '%len([C for C in L if C.length() == n and C.dimension() == k])
@@ -4088,10 +4090,10 @@ cdef class BinaryCodeClassifier:
                     for j from 0 <= j < B.nrows:
                         temp_basis[j] = permute_word_by_wp(can_lab_inv, temp_basis[j])
                     from sage.matrix.constructor import matrix
-                    from sage.rings.all import ZZ
+                    from sage.rings.integer_ring import ZZ
                     from sage.groups.perm_gps.permgroup import PermutationGroup
                     from sage.groups.perm_gps.constructor import PermutationGroupElement
-                    from sage.interfaces.gap import gap
+                    from sage.libs.gap.libgap import libgap
                     rs = []
                     for i from 0 <= i < B.nrows:
                         r = []
@@ -4101,8 +4103,8 @@ cdef class BinaryCodeClassifier:
                     m = BinaryCode(matrix(ZZ, rs))
 
                     m_aut_gp_gens, m_labeling, m_size, m_base = self._aut_gp_and_can_label(m)
-                    from sage.arith.all import factorial
-                    if True:#size*factorial(n-B.ncols) == m_size:
+                    from sage.arith.misc import factorial
+                    if True:  # size*factorial(n-B.ncols) == m_size:
 
                         if len(m_aut_gp_gens) == 0:
                             aut_m = PermutationGroup([()])
@@ -4110,17 +4112,13 @@ cdef class BinaryCodeClassifier:
                             aut_m = PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in m_aut_gp_gens])
 
                         if len(aug_aut_gp_gens) == 0:
-                            aut_B_aug = PermutationGroup([()])
+                            aut_B_aug = libgap(PermutationGroup([()]))
                         else:
-                            aut_B_aug = PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in aug_aut_gp_gens])
-                        H = aut_m._gap_(gap).Intersection2(aut_B_aug._gap_(gap))
-                        rt_transversal = list(gap('List(RightTransversal( %s,%s ));'\
-                          %(str(aut_B_aug.__interface[gap]),str(H))))
-                        rt_transversal = [PermutationGroupElement(g) for g in rt_transversal if str(g) != '()']
-                        rt_transversal = [[a-1 for a in g.domain()] for g in rt_transversal]
-                        rt_transversal = [g + list(xrange(len(g), n))
-                                          for g in rt_transversal]
+                            aut_B_aug = libgap(PermutationGroup([PermutationGroupElement([a+1 for a in g]) for g in aug_aut_gp_gens]))
+                        H = libgap(aut_m).Intersection2(aut_B_aug)
+                        rt_transversal = [[int(a) - 1 for a in g.ListPerm(n)] for g in aut_B_aug.RightTransversal(H) if not g.IsOne()]
                         rt_transversal.append(list(xrange(n)))
+
                         bingo2 = 0
                         for coset_rep in rt_transversal:
                             hwp = create_word_perm(coset_rep)
@@ -4180,6 +4178,3 @@ cdef class BinaryCodeClassifier:
         sig_free(ortho_basis)
         sig_free(temp_basis)
         return output
-
-
-

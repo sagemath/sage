@@ -73,8 +73,8 @@ Sageを自分のコンピュータへインストールする手順について�
 
 
 SageTeXの利用に関する解説は
-``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/`` にある．
-``$SAGE_ROOT`` はSageがインストールされているディレクトリで，例えば ``/opt/sage-4.2.1`` などとなっているはずだ．
+``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/`` にある．
+``$SAGE_ROOT`` はSageがインストールされているディレクトリで，例えば ``/opt/sage-9.6`` などとなっているはずだ．
 
 
 
@@ -83,7 +83,7 @@ Sageの使いかた
 
 Sageを使うには以下のようなやり方がある．
 
-- **ノートブック グラフィカル インターフェイス:**  `sage -n jupyter` を起動します。
+- **ノートブック グラフィカル インターフェイス:**  ``sage -n jupyter`` を実行する.
   `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_ を読む.
 
 - **対話的コマンドライン:** :ref:`chapter-interactive_shell` 節を参照．

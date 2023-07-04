@@ -392,12 +392,12 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 sage: J = JordanAlgebra(F)
                 sage: a,b,c = map(J, F.gens())
                 sage: latex(a + 2*b - c)
-                x_{0} + 2x_{1} - x_{2}
+                x_{0} + 2 x_{1} - x_{2}
             """
             from sage.misc.latex import latex
             return latex(self._x)
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             """
             Return if ``self`` is non-zero.
 
@@ -410,8 +410,6 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 True
             """
             return bool(self._x)
-
-        __nonzero__ = __bool__
 
         def __eq__(self, other):
             """
@@ -817,7 +815,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             from sage.misc.latex import latex
             return "{} + {}".format(latex(self._s), latex(self._v))
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             """
             Return if ``self`` is non-zero.
 
@@ -833,8 +831,6 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
                 True
             """
             return bool(self._s) or bool(self._v)
-
-        __nonzero__ = __bool__
 
         def __eq__(self, other):
             """
@@ -1056,4 +1052,3 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
                 True
             """
             return self.__class__(self.parent(), self._s, -self._v)
-

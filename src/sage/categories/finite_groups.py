@@ -133,10 +133,10 @@ class FiniteGroups(CategoryWithAxiom):
                 connecting_set = self.group_generators()
             else:
                 for g in connecting_set:
-                    if not g in self:
-                        raise RuntimeError("Each element of the connecting set must be in the group!")
+                    if g not in self:
+                        raise RuntimeError("each element of the connecting set must be in the group")
                 connecting_set = [self(g) for g in connecting_set]
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             arrows = {}
             for x in self:
                 arrows[x] = {}
@@ -212,7 +212,7 @@ class FiniteGroups(CategoryWithAxiom):
             """
             from sage.categories.fields import Fields
             K = self.base_ring()
-            if (K in Fields) and K.characteristic() == 0:
+            if K in Fields() and K.characteristic() == 0:
                 from sage.categories.algebras import Algebras
                 return [Algebras(self.base_ring()).Semisimple()]
             else:
@@ -253,4 +253,3 @@ class FiniteGroups(CategoryWithAxiom):
                     and hasattr(group, "cardinality")
                     and group.cardinality() % base_ring.characteristic() != 0):
                     self._refine_category_(self.category().Semisimple())
-

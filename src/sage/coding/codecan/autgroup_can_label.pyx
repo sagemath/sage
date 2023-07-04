@@ -73,10 +73,10 @@ columns do share the same coloring::
     sage: A = [a.get_perm() for a in P.get_autom_gens()]
     sage: H = SymmetricGroup(21).subgroup(A)
     sage: H.orbits()
-    [[1],
-     [2],
-     [3, 5, 4],
-     [6, 19, 16, 9, 21, 10, 8, 15, 14, 11, 20, 13, 12, 7, 17, 18]]
+    ((1,),
+     (2,),
+     (3, 5, 4),
+     (6, 19, 16, 21, 9, 10, 15, 8, 20, 11, 14, 13, 7, 12, 18, 17))
 
 We can also restrict the group action to linear isometries::
 
@@ -101,7 +101,7 @@ and to the action of the symmetric group only::
 
 from sage.coding.codecan.codecan import PartitionRefinementLinearCode
 from sage.combinat.permutation import Permutation
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 
 
 def _cyclic_shift(n, p):

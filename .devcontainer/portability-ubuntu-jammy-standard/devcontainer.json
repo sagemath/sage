@@ -1,0 +1,22 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "Ubuntu jammy",
+    "build": {
+        "dockerfile": "portability-Dockerfile",
+        // See tox.ini for definitions
+        "args": {
+            "SYSTEM_FACTOR": "ubuntu-jammy",
+            "PACKAGE_FACTOR": "standard",
+            "DOCKER_TARGET": "with-targets",
+            "DOCKER_TAG": "dev"
+        }
+    },
+    "containerEnv": {
+        "MAKE": "make -j4"
+    },
+    "onCreateCommand": ".devcontainer/onCreate.sh",
+    "updateContentCommand": ".devcontainer/portability-updateContent.sh",
+    "extensions": [
+        "ms-python.python"
+    ]
+}

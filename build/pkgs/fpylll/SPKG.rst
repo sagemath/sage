@@ -16,11 +16,3 @@ Upstream Contact
 ----------------
 
 https://github.com/fplll/fpylll
-
-Dependencies
-------------
-
--  Cython
--  fplll
--  Sage (optional)
--  NumPy (optional)

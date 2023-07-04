@@ -28,6 +28,10 @@ def frobenius_unram(self, arithmetic=True):
         sage: a
         a + O(5^3)
 
+        sage: R.<a> = Zq(5^4,3)
+        sage: a.frobenius(arithmetic=False)
+        (3*a^3 + 3*a^2 + a) + (a^3 + 4*a^2 + a + 4)*5 + (3*a^2 + 2*a + 3)*5^2 + O(5^3)
+
         sage: K.<a> = Qq(7^3,4)
         sage: b = (a+1)/7
         sage: c = b.frobenius(); c
@@ -42,13 +46,22 @@ def frobenius_unram(self, arithmetic=True):
         Traceback (most recent call last):
         ...
         NotImplementedError: Frobenius automorphism only implemented for unramified extensions
+
+    TESTS::
+
+    We check that :trac:`23575` is resolved:
+
+        sage: x = R.random_element()
+        sage: x.frobenius(arithmetic=false).frobenius() == x
+        True
+
     """
     if self == 0:
         return self
     R = self.parent()
     p = R.prime()
     a = R.gen()
-    frob_a = R._frob_gen()
+    frob_a = R._frob_gen(arithmetic)
     ppow = self.valuation()
     unit = self.unit_part()
     coefs = unit.expansion()

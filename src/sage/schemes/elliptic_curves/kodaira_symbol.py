@@ -82,9 +82,9 @@ class KodairaSymbol_class(SageObject):
         INPUT:
 
         - ``symbol`` (string or integer) -- The string should be a
-           standard string representation (e.g. III*) of a Kodaira
-           symbol, which will be parsed.  Alternatively, use the PARI
-           encoding of Kodaira symbols as integers.
+          standard string representation (e.g. III*) of a Kodaira
+          symbol, which will be parsed.  Alternatively, use the PARI
+          encoding of Kodaira symbols as integers.
 
         EXAMPLES::
 

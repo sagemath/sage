@@ -21,11 +21,13 @@ AUTHOR:
 - William Stein (2008)
 """
 
-from sage.rings.all import RDF, CDF, Integer
-from sage.modules.all import vector
+from sage.rings.real_double import RDF
+from sage.rings.complex_double import CDF
+from sage.rings.integer import Integer
+from sage.modules.free_module_element import vector
 I = CDF.gen()
 
-from .time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 
 cdef extern from "math.h":
     double exp(double)
@@ -71,6 +73,8 @@ def stationary_gaussian_simulation(s, N, n=1):
 
         sage: set_random_seed(0)
         sage: sim = finance.stationary_gaussian_simulation(s, N)[0]
+        doctest:warning...
+        DeprecationWarning: the package sage.finance is deprecated...
 
     Note that indeed the autocovariance sequence approximates ``s`` well::
 

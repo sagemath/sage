@@ -79,7 +79,7 @@ if [ -n "$SAGE_SILENT_BUILD" -a ${use_prefix} = true ]; then
     status=$?
     if [[ $status != 0 ]]; then
         echo "  [$logname] error installing, exit status $status. End of log file:"
-        tail -n 40 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
+        tail -n 72 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
         echo "  [$logname] Full log file: $logfile"
     else
         echo "  [$logname] successfully installed."

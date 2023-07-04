@@ -5,7 +5,7 @@ TESTS::
 
     sage: R.<a,b> = QQ[]
     sage: m = matrix(R,2,[0,a,b,b^2])
-    sage: TestSuite(m).run()
+    sage: TestSuite(m).run(skip="_test_minpoly")
 """
 
 cimport sage.matrix.matrix as matrix
@@ -33,7 +33,7 @@ cdef class Matrix_dense(matrix.Matrix):
             A.subdivide(*self.subdivisions())
         return A
 
-    cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
         self.set_unsafe(i, j, value)
 
     def _pickle(self):

@@ -1,5 +1,5 @@
 r"""
-Congruence arithmetic subgroups of `{\rm SL}_2(\ZZ)`
+Congruence arithmetic subgroups of `\SL_2(\ZZ)`
 
 Sage can compute extensively with the standard congruence subgroups
 `\Gamma_0(N)`, `\Gamma_1(N)`, and `\Gamma_H(N)`.
@@ -21,12 +21,14 @@ AUTHORS:
 #
 ################################################################################
 
-from sage.rings.all import QQ, ZZ, Zmod
-from sage.arith.all import gcd
-from sage.sets.set import Set
-from sage.groups.matrix_gps.all import MatrixGroup
+from sage.arith.misc import gcd
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.misc_c import prod
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.sets.set import Set
+
 from .arithgroup_generic import ArithmeticSubgroup
 
 
@@ -85,7 +87,9 @@ def CongruenceSubgroup_constructor(*args):
         ...
         TypeError: Ring of definition must be Z / NZ for some N
     """
+    from sage.groups.matrix_gps.finitely_generated import MatrixGroup
     from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
+
     if is_MatrixGroup(args[0]):
         G = args[0]
 
@@ -374,6 +378,8 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         if self.is_even():
             return self
         else:
+            from sage.groups.matrix_gps.finitely_generated import MatrixGroup
+
             G = self.image_mod_n()
             H = MatrixGroup([ g.matrix() for g in G.gens()] + [G.matrix_space()(-1)])
             return CongruenceSubgroup_constructor(H)
@@ -587,7 +593,9 @@ def _minimize_level(G):
         sage: sage.modular.arithgroup.congroup_generic._minimize_level(G)
         3
     """
+    from sage.groups.matrix_gps.finitely_generated import MatrixGroup
     from .congroup_gamma import Gamma_constructor as Gamma
+
     Glist = list(G)
     N = G.base_ring().characteristic()
     i = Gamma(N).index()

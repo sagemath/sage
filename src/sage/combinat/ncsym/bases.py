@@ -18,7 +18,9 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.realizations import Category_realization_of_parent
-from sage.categories.all import ModulesWithBasis, tensor, Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.tensor import tensor
+from sage.categories.homset import Hom
 from sage.combinat.set_partition import SetPartition, SetPartitions
 from sage.combinat.free_module import CombinatorialFreeModule
 
@@ -27,6 +29,7 @@ class NCSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     """
     Abstract base class for a basis of `NCSym` or its dual.
     """
+
     def _element_constructor_(self, x):
         """
         Construct an element of ``self``.
@@ -45,7 +48,7 @@ class NCSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         """
         if isinstance(x, (list, tuple)):
             x = SetPartition(x)
-        return super(NCSymBasis_abstract, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
 
 class NCSymOrNCSymDualBases(Category_realization_of_parent):
@@ -53,6 +56,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
     Base category for the category of bases of symmetric functions
     in non-commuting variables or its Hopf dual for the common code.
     """
+
     def super_categories(self):
         r"""
         Return the super categories of bases of (the Hopf dual of) the
@@ -340,6 +344,7 @@ class NCSymBases(Category_realization_of_parent):
         sage: NCSymBases(NCSym)
         Category of bases of symmetric functions in non-commuting variables over the Rational Field
     """
+
     def super_categories(self):
         r"""
         Return the super categories of bases of the Hopf dual of the
@@ -741,6 +746,7 @@ class MultiplicativeNCSymBases(Category_realization_of_parent):
         sage: MultiplicativeNCSymBases(NCSym)
         Category of multiplicative bases of symmetric functions in non-commuting variables over the Rational Field
     """
+
     def super_categories(self):
         r"""
         Return the super categories of bases of the Hopf dual of the
@@ -845,6 +851,7 @@ class NCSymDualBases(Category_realization_of_parent):
         sage: NCSymDualBases(DNCSym)
         Category of bases of dual symmetric functions in non-commuting variables over the Rational Field
     """
+
     def super_categories(self):
         r"""
         Return the super categories of bases of the Hopf dual of the

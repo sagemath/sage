@@ -453,10 +453,14 @@ class MultiGraphics(WithEqualityById, SageObject):
             # depending on the file extension.
             # PGF is handled by a different backend
             if ext == '.pgf':
-                from sage.misc.sage_ostools import have_program
-                latex_implementations = [i for i in ["xelatex", "pdflatex",
-                                                     "lualatex"]
-                                         if have_program(i)]
+                from sage.features.latex import xelatex,pdflatex,lualatex
+                latex_implementations = []
+                if xelatex().is_present():
+                    latex_implementations.append('xelatex')
+                if pdflatex().is_present():
+                    latex_implementations.append('pdflatex')
+                if lualatex().is_present():
+                    latex_implementations.append('lualatex')
                 if not latex_implementations:
                     raise ValueError("Matplotlib requires either xelatex, "
                                      "lualatex, or pdflatex.")
@@ -1038,7 +1042,7 @@ class GraphicsArray(MultiGraphics):
     as a flattened list of graphics objects, not as an array. For instance,
     ``G[0, 1]`` throws an error::
 
-        sage: G[0, 1]  # py3 (error message is slightly different with Python 2)
+        sage: G[0, 1]
         Traceback (most recent call last):
         ...
         TypeError: list indices must be integers or slices, not tuple
@@ -1203,7 +1207,7 @@ class GraphicsArray(MultiGraphics):
             sage: fig = Figure()
             sage: ax1 = G._add_subplot(fig, 0)
             sage: type(ax1)
-            <class 'matplotlib.axes._subplots.AxesSubplot'>
+            <class 'matplotlib.axes...'>
             sage: ax2 = G._add_subplot(fig, 1)
             sage: fig.get_axes() == [ax1, ax2]
             True

@@ -275,7 +275,7 @@ cdef class ElementWrapper(Element):
         Check that elements of equal-but-not-identical parents compare
         properly (see :trac:`19488`)::
 
-            sage: from sage.misc.nested_class_test import TestParent4
+            sage: from sage.misc.test_nested_class import TestParent4
             sage: P = TestParent4()
             sage: Q = TestParent4()
             sage: P == Q
@@ -418,8 +418,8 @@ cdef class ElementWrapper(Element):
             sage: o4.__class__
             <class '__main__.bla'>
         """
-        # Note : copy(super(ElementWrapper, self)) does not work.
-        res = super(ElementWrapper, self).__copy__()
+        # Note : copy(super()) does not work.
+        res = super().__copy__()
         res.value = copy(self.value)
         return res
 
@@ -485,7 +485,7 @@ class ElementWrapperTester(ElementWrapper):
             [n=0, value=[]]
         """
         from sage.categories.sets_cat import Sets
-        super(ElementWrapperTester, self).__init__(Sets().example("facade"), [])
+        super().__init__(Sets().example("facade"), [])
         self.n = 0
 
     def append(self, x):

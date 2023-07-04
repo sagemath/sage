@@ -49,7 +49,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
             Category of finite dimensional super hopf algebras with basis over Integer Ring
         """
         axioms = axiom_whitelist.intersection(category.axioms())
-        C = super(SuperModulesCategory, cls).default_super_categories(category, *args)
+        C = super().default_super_categories(category, *args)
         return C._with_axioms(axioms)
 
     def __init__(self, base_category):
@@ -70,7 +70,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
             sage: HopfAlgebrasWithBasis(QQ).Super().base_ring()
             Rational Field
         """
-        super(SuperModulesCategory, self).__init__(base_category, base_category.base_ring())
+        super().__init__(base_category, base_category.base_ring())
 
     _functor_category = "Super"
 
@@ -158,7 +158,7 @@ class SuperModules(SuperModulesCategory):
         from sage.categories.modules import Modules
         from sage.categories.fields import Fields
         base_ring = self.base_ring()
-        if base_ring in Fields:
+        if base_ring in Fields():
             return [Modules(base_ring)]
         else:
             return []
@@ -223,4 +223,3 @@ class SuperModules(SuperModulesCategory):
                 False
             """
             return self.is_even_odd() == 1
-

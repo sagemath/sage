@@ -148,5 +148,3 @@ class GaloisGroup_GF(GaloisGroup_cyc):
             g = self.permutation_group()(x)
             n = g(1) - 1
         return self.element_class(self, [n])
-
-

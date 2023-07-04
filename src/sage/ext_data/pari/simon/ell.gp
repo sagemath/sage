@@ -1360,32 +1360,32 @@ if( DEBUGLEVEL_ell >= 4, print("    fact = ",fact));
       if( test,
         aux = 1;
         for( i = 1, l,
-	  if( (f = fact[i,2]>>1) &&
-	       !(fact[i,1][1]%2) && !nfissquaremodpodd(nf,aa,fact[i,1]),
-	    aux=idealmul(nf,aux,idealpow(nf,fact[i,1],f))));
+          if( (f = fact[i,2]>>1) &&
+               !(fact[i,1][1]%2) && !nfissquaremodpodd(nf,aa,fact[i,1]),
+            aux=idealmul(nf,aux,idealpow(nf,fact[i,1],f))));
         if( aux != 1,
-	  test = 0;
-	  alpha = nfbasistoalg(nf,idealappr(nf,idealinv(nf,aux)));
+          test = 0;
+          alpha = nfbasistoalg(nf,idealappr(nf,idealinv(nf,aux)));
           alpha2 = alpha^2;
           bb *= alpha2; nb *= abs(norm(alpha2));
           mat[,3] *= alpha));
       if( test,
-	maxnbiter = 1<<l;
-	sq = vector(l,i,nfsqrtmodpq(nf,aa,fact[i,1],fact[i,2]));
+        maxnbiter = 1<<l;
+        sq = vector(l,i,nfsqrtmodpq(nf,aa,fact[i,1],fact[i,2]));
         l = #sq;
 if( DEBUGLEVEL_ell >= 4,
   print("    sq = ",sq);
   print("    fact = ",fact);
   print("    l = ",l));
         if( l > 1, 
-	  idbb = idealhnf(nf,bb);
-	  rem = nfchinese(nf,idbb,fact));
+          idbb = idealhnf(nf,bb);
+          rem = nfchinese(nf,idbb,fact));
         test = 1; nbiter = 1;
         while( test && nbiter <= maxnbiter,
-	  if( l > 1,
-	    mask = nbiter; xx = 0;
-	    for( i = 1, l,
-	      if( mask%2, xx += rem[i]*sq[i], xx -= rem[i]*sq[i] ); mask >>= 1)
+          if( l > 1,
+            mask = nbiter; xx = 0;
+            for( i = 1, l,
+              if( mask%2, xx += rem[i]*sq[i], xx -= rem[i]*sq[i] ); mask >>= 1)
           , 
             test = 0; xx = sq[1]);
           xx = mynfeltmod(nf,xx,bb);
@@ -1503,7 +1503,7 @@ if( DEBUGLEVEL_ell >= 4, print("    end of bnfredquartique"));
 \\ si bigflag !=0 alors on applique bnfredquartique.
 \\ si flag3 ==1 alors on utilise bnfqfsolve2 (equation aux normes) pour resoudre Legendre
 \\ aut est une liste d'automorphismes connus de bnf
-\\ (ca peut aider a factoriser certains discriminiants).
+\\ (ca peut aider a factoriser certains discriminants).
 \\ ell est de la forme y^2=x^3+A*x^2+B*x+C
 \\ ie ell=[0,A,0,B,C], avec A,B et C entiers.
 \\
@@ -1715,7 +1715,7 @@ if( DEBUGLEVEL_ell >= 2, print(lift(vec)));
           vec[3] = vec[3]*denc;
           vec = (mattr^(-1))*vec;
           vec /= content(lift(vec));
-          z1 = (vec[3]*ttheta+vec[2])*ttheta+vec[1];		
+          z1 = (vec[3]*ttheta+vec[2])*ttheta+vec[1];
 if( DEBUGLEVEL_ell >= 3, print("   z1 = ",z1));
           zc *= z1^2;
 if( DEBUGLEVEL_ell >= 2, print("  zc*z1^2 = ",zc));

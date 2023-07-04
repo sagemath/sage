@@ -183,4 +183,3 @@ class SuperModulesWithBasis(SuperModulesCategory):
             return self.parent().sum_of_terms((i, c)
                                               for (i, c) in self
                                               if even_odd(i) == 1)
-

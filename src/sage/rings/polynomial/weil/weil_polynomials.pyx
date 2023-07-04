@@ -83,7 +83,7 @@ cdef class dfs_manager:
     """
     Data structure to manage depth-first search.
 
-    Such a structure is created and managed by an instance of `WeilPolynomials_iter`. 
+    Such a structure is created and managed by an instance of `WeilPolynomials_iter`.
     There is generally no need for a user to manipulate it directly.
     """
     cdef int d
@@ -367,22 +367,6 @@ class WeilPolynomials_iter():
                 raise StopIteration
         return self.pol(self.ans.pop())
 
-    def next(self): # For Python2 backward compatibility
-        r"""
-        Step the iterator forward.
-
-        Included for Python2 backward compatibility.
-
-        EXAMPLES::
-
-            sage: from sage.rings.polynomial.weil.weil_polynomials import WeilPolynomials
-            sage: w = WeilPolynomials(10,1,sign=1,lead=[3,1,1])
-            sage: it = iter(w)
-            sage: next(it)
-            3*x^10 + x^9 + x^8 + 7*x^7 + 5*x^6 + 2*x^5 + 5*x^4 + 7*x^3 + x^2 + x + 3
-        """
-        return self.__next__()
-
     def node_count(self):
         r"""
         Return the number of terminal nodes found in the tree, excluding
@@ -440,15 +424,15 @@ class WeilPolynomials():
 
     - ``node_limit`` -- integer (default ``None``)
 
-        If set, imposes an upper bound on the number of terminal nodes during the search 
+        If set, imposes an upper bound on the number of terminal nodes during the search
         (will raise a ``RuntimeError`` if exceeded).
 
     - ``parallel`` -- boolean (default ``False``), whether to use multiple processes
 
-        If set, will raise an error unless this file was compiled with OpenMP support 
+        If set, will raise an error unless this file was compiled with OpenMP support
         (see instructions at the top of :mod:`sage.rings.polynomial.weil.weil_polynomials`).
 
-    - ``squarefree`` -- boolean (default ``False``), 
+    - ``squarefree`` -- boolean (default ``False``),
 
         If set, only squarefree polynomials will be returned.
 
@@ -542,11 +526,17 @@ class WeilPolynomials():
 
     Test that :trac:`31809` is resolved::
 
-        sage: from sage.rings.polynomial.weil.weil_polynomials import WeilPolynomials 
-        sage: foo = list(WeilPolynomials(12, 3, lead=(1,0,9,2,46), squarefree=False)) 
+        sage: from sage.rings.polynomial.weil.weil_polynomials import WeilPolynomials
+        sage: foo = list(WeilPolynomials(12, 3, lead=(1,0,9,2,46), squarefree=False))
         sage: bar = list(WeilPolynomials(12, 3, lead=(1,0,9,2,46), squarefree=True))
-        sage: bar == [f for f in foo if f.is_squarefree()]                              
+        sage: bar == [f for f in foo if f.is_squarefree()]
         True
+
+    Test that :trac:`32348` is resolved::
+
+        sage: list(WeilPolynomials(10, 2, lead=(1,-3,5,-5,5,-5)))
+        [x^10 - 3*x^9 + 5*x^8 - 5*x^7 + 5*x^6 - 5*x^5 + 10*x^4 - 20*x^3 + 40*x^2 - 48*x + 32]
+
 
     """
     def __init__(self, d, q, sign=1, lead=1, node_limit=None, parallel=False, squarefree=False, polring=None):
@@ -595,4 +585,3 @@ class WeilPolynomials():
             158
         """
         return self.w.node_count()
-

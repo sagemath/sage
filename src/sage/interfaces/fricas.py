@@ -198,25 +198,23 @@ FriCAS does some limits right::
 
 import re
 import os
+
+import sage.interfaces.abc
+
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.interfaces.expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from sage.misc.misc import SAGE_TMP_INTERFACE
 from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.infinity import infinity
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.libs.pynac.pynac', ['symbol_table', 'register_symbol'])
+lazy_import('sage.symbolic.expression', ['symbol_table', 'register_symbol'])
 lazy_import('sage.calculus.var', ['var', 'function'])
 lazy_import('sage.symbolic.constants', ['I', 'e', 'pi'])
 
 FRICAS_CONSTANTS = {'%i': I,
                     '%e': e,
-                    '%pi': pi,
-                    'infinity': infinity,
-                    'plusInfinity': infinity,
-                    'minusInfinity': -infinity}
+                    '%pi': pi}
 
 FRICAS_SINGLE_LINE_START = 3  # where output starts when it fits next to the line number
 FRICAS_MULTI_LINE_START = 2   # and when it doesn't
@@ -260,6 +258,7 @@ FRICAS_HELPER_CODE = (
 FRICAS_LINENUMBER_OFF_CODE = ")lisp (setf |$IOindex| NIL)"
 FRICAS_FIRST_PROMPT = r"\(1\) -> "
 FRICAS_LINENUMBER_OFF_PROMPT = r"\(NIL\) -> "
+
 
 class FriCAS(ExtraTabCompletion, Expect):
     """
@@ -369,13 +368,15 @@ http://fricas.sourceforge.net.
             sage: a.is_running()                                                # optional - fricas
             False
 
-        TESTS::
+        TESTS:
 
-            sage: import psutil                                                 # optional - fricas
-            sage: p = fricas.pid(); pr = psutil.Process(p); pr                  # optional - fricas
-            <psutil.Process(pid=..., name='FRICASsys') at ...>
-            sage: pr.children()                                                 # optional - fricas
-            []
+        Ensure that a new process is started after ``quit()``::
+
+            sage: p = fricas.pid()     # optional - fricas
+            sage: fricas.quit()        # optional - fricas
+            sage: fricas.pid() == p    # optional - fricas
+            False
+
         """
         return ')quit'
 
@@ -477,18 +478,6 @@ http://fricas.sourceforge.net.
 
         return ')read %s )quiet' % filename
 
-    def _local_tmpfile(self):
-        """
-        Return a local tmpfile ending with ".input" used to buffer long
-        command lines sent to FriCAS.
-
-        """
-        try:
-            return self.__local_tmpfile
-        except AttributeError:
-            self.__local_tmpfile = os.path.join(SAGE_TMP_INTERFACE, 'tmp' + str(self.pid()) + '.input')
-            return self.__local_tmpfile
-
     def _remote_tmpfile(self):
         """
         Return a remote tmpfile ending with ".input" used to buffer long
@@ -582,16 +571,20 @@ http://fricas.sourceforge.net.
 
         This method is called from :meth:`_start`, to work around a
         circular import problem involving ``pi``.
-
         """
         from sage.calculus.functional import diff
         from sage.functions.log import dilog, lambert_w
-        from sage.functions.trig import sin, cos, tan, cot, sec, csc
+        from sage.functions.trig import sin, cos, tan, cot, sec, csc, asin
         from sage.functions.hyperbolic import tanh, sinh, cosh, coth, sech, csch
         from sage.functions.other import abs
         from sage.functions.gamma import gamma
+        from sage.functions.special import elliptic_e, elliptic_f
         from sage.misc.functional import symbolic_sum, symbolic_prod
-        register_symbol(pi, {'fricas': 'pi'}) # pi is also a function in fricas
+        from sage.rings.infinity import infinity
+        register_symbol(pi, {'fricas': 'pi'}, 0)  # %pi::INFORM is %pi, but (pi) also exists
+        register_symbol(lambda: infinity, {'fricas': 'infinity'}, 0)  # %infinity::INFORM is (infinity)
+        register_symbol(lambda: infinity, {'fricas': 'plusInfinity'}, 0)  # %plusInfinity::INFORM is (plusInfinity)
+        register_symbol(lambda: -infinity, {'fricas': 'minusInfinity'}, 0)  # %minusInfinity::INFORM is (minusInfinity)
         register_symbol(cos, {'fricas': 'cos'})
         register_symbol(sin, {'fricas': 'sin'})
         register_symbol(tan, {'fricas': 'tan'})
@@ -604,23 +597,26 @@ http://fricas.sourceforge.net.
         register_symbol(coth, {'fricas': 'coth'})
         register_symbol(sech, {'fricas': 'sech'})
         register_symbol(csch, {'fricas': 'csch'})
-        register_symbol(gamma, {'fricas': 'Gamma'})
-        register_symbol(lambda x, y: x + y, {'fricas': '+'})
-        register_symbol(lambda x, y: x - y, {'fricas': '-'})
-        register_symbol(lambda x, y: x * y, {'fricas': '*'})
-        register_symbol(lambda x, y: x / y, {'fricas': '/'})
-        register_symbol(lambda x, y: x ** y, {'fricas': '^'})
-        register_symbol(lambda f, x: diff(f, x), {'fricas': 'D'})
-        register_symbol(lambda x, y: x + y * I, {'fricas': 'complex'})
-        register_symbol(lambda x: dilog(1 - x), {'fricas': 'dilog'})
-        register_symbol(lambda z: lambert_w(z), {'fricas': 'lambertW'})
-        register_symbol(abs, {'fricas': 'abs'})
+        register_symbol(gamma, {'fricas': 'Gamma'}, 1)
+        register_symbol(gamma, {'fricas': 'Gamma'}, 2)
+        register_symbol(lambda x, y: elliptic_e(asin(x), y), {'fricas': 'ellipticE'}, 2)
+        register_symbol(lambda x, y: elliptic_f(asin(x), y), {'fricas': 'ellipticF'}, 2)
+        register_symbol(lambda x, y: x + y, {'fricas': '+'}, 2)
+        register_symbol(lambda x, y: x - y, {'fricas': '-'}, 2)
+        register_symbol(lambda x, y: x * y, {'fricas': '*'}, 2)
+        register_symbol(lambda x, y: x / y, {'fricas': '/'}, 2)
+        register_symbol(lambda x, y: x ** y, {'fricas': '^'}, 2)
+        register_symbol(lambda f, x: diff(f, x), {'fricas': 'D'}, 2)
+        register_symbol(lambda x, y: x + y * I, {'fricas': 'complex'}, 2)
+        register_symbol(lambda x: dilog(1 - x), {'fricas': 'dilog'}, 1)
+        register_symbol(lambda z: lambert_w(z), {'fricas': 'lambertW'}, 1)
+        register_symbol(abs, {'fricas': 'abs'}, 1)
         # construct occurs in the InputForm of hypergeometricF
-        register_symbol(lambda *x: x, {'fricas': 'construct'})
+        register_symbol(lambda *x: x, {'fricas': 'construct'}, -1)
         # the following is a hack to deal with
         # integrate(sin((x^2+1)/x),x)::INFORM giving
         # (integral (sin (/ (+ (^ x 2) 1) x)) (:: x Symbol))
-        register_symbol(lambda x, y: x, {'fricas': '::'})
+        register_symbol(lambda x, y: x, {'fricas': '::'}, 2)
 
         def _convert_eval(f, a, b):
             # it might be that FriCAS also returns a two-argument
@@ -628,7 +624,7 @@ http://fricas.sourceforge.net.
             # in which case this function needs to be adapted
             return f.subs({a: b})
 
-        register_symbol(_convert_eval, {'fricas': 'eval'})
+        register_symbol(_convert_eval, {'fricas': 'eval'}, 3)
 
         def _convert_sum(x, y):
             v, seg = y.operands()
@@ -640,15 +636,14 @@ http://fricas.sourceforge.net.
             a, b = seg.operands()
             return symbolic_prod(x, v, a, b)
 
-        register_symbol(_convert_sum, {'fricas': 'sum'})
-        register_symbol(_convert_prod, {'fricas': 'product'})
+        register_symbol(_convert_sum, {'fricas': 'sum'}, 2)
+        register_symbol(_convert_prod, {'fricas': 'product'}, 2)
 
         def explicitly_not_implemented(*args):
             raise NotImplementedError("the translation of the FriCAS Expression '%s' to sage is not yet implemented" % args)
 
-        register_symbol(lambda *args: explicitly_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'})
-        register_symbol(lambda *args: explicitly_not_implemented("rootOfRec"), {'fricas': 'rootOfRec'})
-
+        register_symbol(lambda *args: explicitly_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'}, 2)
+        register_symbol(lambda *args: explicitly_not_implemented("rootOfRec"), {'fricas': 'rootOfRec'}, 2)
 
     def set(self, var, value):
         """
@@ -716,7 +711,7 @@ http://fricas.sourceforge.net.
         We test that strings are returned properly::
 
             sage: r = fricas.get_string('concat([concat(string(i)," ") for i in 0..299])')   # optional - fricas
-            sage: r == " ".join([str(i) for i in range(300)]) + ' '                          # optional - fricas
+            sage: r == " ".join(str(i) for i in range(300)) + ' '                          # optional - fricas
             True
 
             sage: fricas.get_string('concat([string(1) for i in 1..5])') == "1"*5            # optional - fricas
@@ -895,10 +890,10 @@ http://fricas.sourceforge.net.
         """
         EXAMPLES::
 
-            sage: fricas.__reduce__()                                           # optional - fricas
+            sage: FriCAS().__reduce__()
             (<function reduce_load_fricas at 0x...>, ())
-            sage: f, args = _                                                   # optional - fricas
-            sage: f(*args)                                                      # optional - fricas
+            sage: f, args = _
+            sage: f(*args)
             FriCAS
         """
         return reduce_load_fricas, tuple([])
@@ -1002,7 +997,7 @@ http://fricas.sourceforge.net.
 
 
 @instancedoc
-class FriCASElement(ExpectElement):
+class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
     """
     Instances of this class represent objects in FriCAS.
 
@@ -1100,7 +1095,7 @@ class FriCASElement(ExpectElement):
                 raise
             else:
                 n += l
-                if not(0 <= n < l):
+                if not (0 <= n < l):
                     raise IndexError("index out of range")
         # use "elt" instead of "." here because then the error
         # message is clearer
@@ -1143,8 +1138,6 @@ class FriCASElement(ExpectElement):
         P = self._check_valid()
         return not P.new("zero?(%s)" % self._name).sage()
 
-    __nonzero__ = __bool__
-
     def __float__(self):
         """
         TESTS::
@@ -1183,13 +1176,13 @@ class FriCASElement(ExpectElement):
         EXAMPLES::
 
             sage: latex(fricas("sin(x+y)/exp(z)*log(1+%e)"))                    # optional - fricas
-            {{\log \left( {{e+1}} \right)} \  {\sin \left( {{y+x}} \right)}} \over {{e} ^{z}}
+            \frac{{{\log \left( {{e+1}} \right)} \  {\sin \left( {{y+x}} \right)}}}{{{e} ^{z}}}
 
             sage: latex(fricas("matrix([[1,2],[3,4]])"))                        # optional - fricas
             \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4\end{array} \right]
 
             sage: latex(fricas("integrate(sin(x+1/x),x)"))                      # optional - fricas
-            \int ^{\displaystyle x} {{\sin \left( {{{{{ \%O} ^{2}}+1} \over  \%O}} \right)} \  {d \%O}}
+            \int ^{\displaystyle x} {{\sin \left( {{\frac{{{{ \%...} ^{2}}+1}}{ \%...}}} \right)} \  {d \%...}}
         """
         replacements = [(r'\sp ', '^'),
                         (r'\sp{', '^{'),
@@ -1223,7 +1216,9 @@ class FriCASElement(ExpectElement):
             sage: fricas(0)._get_sage_type(m)                                   # optional - fricas
             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Algebraic Field
         """
-        from sage.rings.all import QQbar, RDF, PolynomialRing
+        from sage.rings.qqbar import QQbar
+        from sage.rings.real_double import RDF
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.fraction_field import FractionField
         from sage.rings.finite_rings.integer_mod_ring import Integers
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1308,7 +1303,7 @@ class FriCASElement(ExpectElement):
             sage: FriCASElement._parse_and_eval('(a "(b c)")')
             Traceback (most recent call last):
             ...
-            TypeError: cannot coerce arguments: no canonical coercion from <type 'str'> to Symbolic Ring
+            TypeError: cannot coerce arguments: no canonical coercion from <class 'str'> to Symbolic Ring
 
         """
         a = start
@@ -1354,13 +1349,23 @@ class FriCASElement(ExpectElement):
         assert s[a] == FriCASElement._LEFTBRACKET
         a += 1
         # the first element of a list must be a function call
-        fun, a = FriCASElement._parse_other(s, start=a, make_fun=True)
+        fun_string, a = FriCASElement._parse_other(s, start=a, make_fun=True)
         a += 1
+        # now parse the arguments
         args = []
         while s[a] != FriCASElement._RIGHTBRACKET:
             e, a = FriCASElement._parse_and_eval(s, start=a)
             args.append(e)
             a += 1
+        # then lookup for the function with the given number of arguments
+        try:
+            fun = symbol_table["fricas"][(fun_string, len(args))]
+        except KeyError:
+            try:
+                # to handle the case of "construct"
+                fun = symbol_table["fricas"][(fun_string, -1)]
+            except KeyError:
+                fun = function(fun_string)
         return fun(*args), a
 
     @staticmethod
@@ -1413,10 +1418,7 @@ class FriCASElement(ExpectElement):
 
         e = s[start:a]
         if make_fun:
-            try:
-                e = symbol_table["fricas"][e]
-            except KeyError:
-                e = function(e)
+            pass
         else:
             try:
                 e = ZZ(e)
@@ -1561,7 +1563,7 @@ class FriCASElement(ExpectElement):
             sage: psi(1.0)
             -0.577215664901533
             sage: fricas.polygamma(1, 1.0)                                      # optional - fricas
-            1.6449340668482269
+            1.644934066848226...
             sage: psi(1, 1).n()
             1.64493406684823
 
@@ -1725,11 +1727,12 @@ class FriCASElement(ExpectElement):
                 rootOf[y] = x
             return y
 
-        register_symbol(convert_rootOf, {'fricas': 'rootOf'})
+        register_symbol(convert_rootOf, {'fricas': 'rootOf'}, 2)
 
         ex, _ = FriCASElement._parse_and_eval(fricas_InputForm)
         # postprocessing of rootOf
-        from sage.rings.all import QQbar, PolynomialRing
+        from sage.rings.qqbar import QQbar
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         while rootOf:
             for var, poly in rootOf.items():
                 pvars = poly.variables()
@@ -1925,7 +1928,9 @@ class FriCASElement(ExpectElement):
             <BLANKLINE>
                Cannot convert the value from type Any to InputForm .
         """
-        from sage.rings.all import PolynomialRing, RDF, I
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.real_double import RDF
+        from sage.rings.imaginary_unit import I
         from sage.rings.real_mpfr import RealField
         from sage.symbolic.ring import SR
         from sage.matrix.constructor import matrix
@@ -2106,12 +2111,17 @@ def is_FriCASElement(x):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import is_FriCASElement               # optional - fricas
+        sage: from sage.interfaces.fricas import is_FriCASElement
+        sage: is_FriCASElement(2)
+        doctest:...: DeprecationWarning: the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
         sage: is_FriCASElement(fricas(2))                                       # optional - fricas
         True
-        sage: is_FriCASElement(2)                                               # optional - fricas
-        False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead")
+
     return isinstance(x, FriCASElement)
 
 
@@ -2120,13 +2130,12 @@ fricas = FriCAS()
 
 def reduce_load_fricas():
     """
-    Return the FriCAS interface object defined in
-    :sage.interfaces.fricas.
+    Return the FriCAS interface object defined in :mod:`sage.interfaces.fricas`.
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import reduce_load_fricas             # optional - fricas
-        sage: reduce_load_fricas()                                              # optional - fricas
+        sage: from sage.interfaces.fricas import reduce_load_fricas
+        sage: reduce_load_fricas()
         FriCAS
     """
     return fricas

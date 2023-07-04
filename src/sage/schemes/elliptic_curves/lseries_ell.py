@@ -4,9 +4,9 @@
 
 AUTHORS:
 
-- Simon Spicer (2014-08-15) - Added LFunctionZeroSum class interface method
+- Simon Spicer (2014-08-15): Added LFunctionZeroSum class interface method
 
-- Jeroen Demeyer (2013-10-17) - Compute L series with arbitrary precision
+- Jeroen Demeyer (2013-10-17): Compute L series with arbitrary precision
   instead of floats.
 
 - William Stein et al. (2005 and later)
@@ -23,7 +23,8 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import RealField, RationalField
+from sage.rings.real_mpfr import RealField
+from sage.rings.rational_field import RationalField
 from math import sqrt, log, ceil
 import sage.functions.exp_integral as exp_integral
 from sage.misc.verbose import verbose
@@ -41,7 +42,8 @@ class Lseries_ell(SageObject):
         EXAMPLES::
 
             sage: EllipticCurve([1..5]).lseries()
-            Complex L-series of the Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+            Complex L-series of the Elliptic Curve
+             defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
         """
         self.__E = E
 
@@ -125,11 +127,11 @@ class Lseries_ell(SageObject):
         If algorithm is "pari", this returns instead an interface to Pari's
         own general implementation of L-functions.
 
-        .. note::
+        .. NOTE::
 
-           If algorithm='magma', then the precision is in digits rather
-           than bits and the object returned is a Magma L-series, which has
-           different functionality from the Sage L-series.
+            If algorithm='magma', then the precision is in digits rather
+            than bits and the object returned is a Magma L-series, which has
+            different functionality from the Sage L-series.
 
         EXAMPLES::
 
@@ -149,7 +151,7 @@ class Lseries_ell(SageObject):
             sage: L = e.lseries().dokchitser(15, algorithm='gp')
             Traceback (most recent call last):
             ...
-            RuntimeError: Unable to create L-series, due to precision or other limits in PARI.
+            RuntimeError: unable to create L-series, due to precision or other limits in PARI
 
         Using the "pari" algorithm::
 
@@ -162,7 +164,7 @@ class Lseries_ell(SageObject):
             algorithm = 'pari'
 
         if algorithm == 'magma':
-            from sage.interfaces.all import magma
+            from sage.interfaces.magma import magma
             return magma(self.__E).LSeries(Precision=prec)
 
         if algorithm == 'pari':
@@ -210,9 +212,9 @@ class Lseries_ell(SageObject):
 
         OUTPUT:
 
-        -   string -- real number to prec digits of precision as a string.
+        - (string) -- real number to ``prec`` digits of precision as a string.
 
-        .. note::
+        .. NOTE::
 
             Before using this function for the first time for
             a given ``n``, you may have to type ``sympow('-new_data <n>')``,
@@ -299,8 +301,7 @@ class Lseries_ell(SageObject):
             sage: point([(1,x) for x in a])             # graph  (long time)
             Graphics object consisting of 1 graphics primitive
 
-        AUTHOR:
-            -- Uses Rubinstein's L-functions calculator.
+        AUTHORS: Uses Rubinstein's L-functions calculator.
         """
         from sage.lfunctions.lcalc import lcalc
         return lcalc.zeros(n, L=self.__E)
@@ -319,7 +320,7 @@ class Lseries_ell(SageObject):
 
         OUTPUT:
 
-        -   list of pairs ``(zero, S(T))``.
+        - list of pairs ``(zero, S(T))``.
 
         Rubinstein writes: The first column outputs the imaginary part
         of the zero, the second column a quantity related to ``S(T)`` (it
@@ -342,7 +343,7 @@ class Lseries_ell(SageObject):
         equally-spaced sample points along the line from `s_0` to
         `s_1` in the complex plane.
 
-        .. note::
+        .. NOTE::
 
             The `L`-series is normalized so that the center of the
             critical strip is 1.
@@ -367,7 +368,6 @@ class Lseries_ell(SageObject):
              (0.300000000 + 8.00000000*I, -0.886341185 - 0.422640337*I),
              (0.200000000 + 12.0000000*I, -3.50558936 - 0.108531690*I),
              (0.100000000 + 16.0000000*I, -3.87043288 - 1.88049411*I)]
-
         """
         from sage.lfunctions.lcalc import lcalc
         return lcalc.values_along_line(s0-RationalField()('1/2'),
@@ -379,7 +379,7 @@ class Lseries_ell(SageObject):
         Return values of `L(E, s, \chi_d)` for each quadratic
         character `\chi_d` for `d_{\min} \leq d \leq d_{\max}`.
 
-        .. note::
+        .. NOTE::
 
             The L-series is normalized so that the center of the
             critical strip is 1.
@@ -400,8 +400,22 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve('37a')
             sage: vals = E.lseries().twist_values(1, -12, -4)
-            sage: vals  # abs tol 1e-15
-            [(-11, 1.47824342), (-8, 8.9590946e-18), (-7, 1.85307619), (-4, 2.45138938)]
+            sage: vals[0][0]
+            -11
+            sage: vals[0][1] # abs tol 1e-8
+            1.47824342 + 0.0*I
+            sage: vals[1][0]
+            -8
+            sage: vals[1][1] # abs tol 1e-8
+            0.0 + 0.0*I
+            sage: vals[2][0]
+            -7
+            sage: vals[2][1] # abs tol 1e-8
+            1.85307619 + 0.0*I
+            sage: vals[3][0]
+            -4
+            sage: vals[3][1] # abs tol 1e-8
+            2.45138938 + 0.0*I
             sage: F = E.quadratic_twist(-8)
             sage: F.rank()
             1
@@ -418,7 +432,7 @@ class Lseries_ell(SageObject):
         `L(E,s,\chi_d)` for each quadratic character `\chi_d` with
         `d_{\min} \leq d \leq d_{\max}`.
 
-        .. note::
+        .. NOTE::
 
             The L-series is normalized so that the center of the
             critical strip is 1.
@@ -433,8 +447,8 @@ class Lseries_ell(SageObject):
 
         OUTPUT:
 
-        -   dict -- keys are the discriminants `d`, and
-                    values are list of corresponding zeros.
+        - dict -- keys are the discriminants `d`, and
+                  values are list of corresponding zeros.
 
         EXAMPLES::
 
@@ -467,7 +481,7 @@ class Lseries_ell(SageObject):
         approximation for `L(E,1)` and ``err`` is a bound on the error
         in the approximation.
 
-        This function is disjoint from the PARI ``elllseries``
+        This function is disjoint from the PARI :pari:`elllseries`
         command, which is for a similar purpose.  To use that command
         (via the PARI C library), simply type
         ``E.pari_mincurve().elllseries(1)``.
@@ -789,7 +803,7 @@ class Lseries_ell(SageObject):
             sage: E.lseries().L1_vanishes()
             False
 
-        AUTHOR: William Stein, 2005-04-20.
+        AUTHORS: William Stein, 2005-04-20.
         """
         return self.L_ratio() == 0
 
@@ -841,7 +855,7 @@ class Lseries_ell(SageObject):
         paper to determine a provably correct bound (assuming Manin
         constant is <= 2) so that we can determine whether `L(E,1) = 0`.
 
-        AUTHOR: William Stein, 2005-04-20.
+        AUTHORS: William Stein, 2005-04-20.
         """
         if not self.__E.is_minimal():
             return self.__E.minimal_model().lseries().L_ratio()
@@ -922,7 +936,8 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve("5077a")
             sage: E.lseries().zero_sums()
-            Zero sum estimator for L-function attached to Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
+            Zero sum estimator for L-function attached to
+             Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
         """
         from sage.lfunctions.zero_sums import LFunctionZeroSum
         return LFunctionZeroSum(self.__E, N=N)

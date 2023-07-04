@@ -39,11 +39,13 @@ from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_C import KRTToRCBijectionTypeC
 from sage.combinat.rigged_configurations.bij_type_C import RCToKRTBijectionTypeC
 
+
 class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
     configurations for type `B_n^{(1)}`.
     """
+
     def run(self, verbose=False):
         """
         Run the bijection from a tensor product of KR tableaux to a rigged
@@ -536,11 +538,13 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
             self._update_vacancy_nums(tableau_height - 1)
             self._update_partition_values(tableau_height - 1)
 
+
 class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
     r"""
     Specific implementation of the bijection from rigged configurations to
     tensor products of KR tableaux for type `B_n^{(1)}`.
     """
+
     def run(self, verbose=False, build_graph=False):
         """
         Run the bijection from rigged configurations to tensor product of KR
@@ -590,7 +594,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                 from sage.combinat.rigged_configurations.bij_type_A2_odd import RCToKRTBijectionTypeA2Odd
                 from sage.combinat.rigged_configurations.rigged_configurations import RiggedConfigurations
                 from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition, RiggedPartitionTypeB
-        
+
                 # Convert to a type A_{2n-1}^{(2)} RC
                 RC = RiggedConfigurations(['A', 2*self.n-1, 2], self.cur_dims)
                 if verbose:
@@ -868,7 +872,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
         else:
             row_num_next = None
             row_num_bar_next = None
-            
+
         self._update_vacancy_numbers(n - 2)
         if row_num is not None:
             self.cur_partitions[n-2].rigging[row_num] = self.cur_partitions[n-2].vacancy_numbers[row_num]
@@ -892,4 +896,3 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                 self.cur_partitions[n-1].rigging[j-1] = vac_num - 1
 
         return(b)
-

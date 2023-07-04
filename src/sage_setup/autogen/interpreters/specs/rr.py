@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -6,11 +6,8 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function, absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .base import StackInterpreter
 from .python import MemoryChunkPyConstant
 from ..instructions import (params_gen, instr_funcall_1arg_mpfr,
@@ -50,7 +47,7 @@ class MemoryChunkRRRetval(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_call_locals()
-            u'        cdef RealNumber retval = (self.domain)()\n'
+            '        cdef RealNumber retval = (self.domain)()\n'
         """
         return je(ri(8,
             """
@@ -81,7 +78,7 @@ class MemoryChunkRRRetval(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.pass_argument()
-            u'retval.value'
+            'retval.value'
         """
         return je("""{{ myself.name }}.value""", myself=self)
 

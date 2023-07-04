@@ -2,60 +2,54 @@
 
 .. _chapter-git-background:
 
-===================
-Tips and References
-===================
+=======================
+Git Tips and References
+=======================
 
-This chapter contains additional material about the git revision
-control system. It is not necessary if you stick with the Sage
-development scripts. See :ref:`chapter-git-setup` for the minimal
+This chapter contains additional material about the Git revision
+control system.  See :ref:`chapter-git-setup` for the minimal
 steps needed for Sage development.
-
-
-
-
 
 
 .. _section-git-configuration:
 
-Configuration Tips
+Configuration tips
 ==================
 
-Your personal git configurations are saved in the ``~/.gitconfig``
+Your personal Git configurations are saved in the ``~/.gitconfig``
 file in your home directory. Here is an example:
 
 .. CODE-BLOCK:: text
 
     [user]
-        name = Your Name
-        email = you@yourdomain.example.com
+        name = Alice Adventure
+        email = alice@wonderland.com
 
     [core]
         editor = emacs
 
-You can edit this file directly or you can use git to make changes for
+You can edit this file directly or you can use Git to make changes for
 you::
 
-    [user@localhost ~] git config --global user.name "Your Name"
-    [user@localhost ~] git config --global user.email you@yourdomain.example.com
-    [user@localhost ~] git config --global core.editor vim
-
+    [alice@localhost ~]$ git config --global user.name "Alice Adventure"
+    [alice@localhost ~]$ git config --global user.email alice@wonderland.com
+    [alice@localhost ~]$ git config --global core.editor vim
 
 
 Aliases
 -------
 
-Aliases are personal shortcuts for git commands. For example, you
+Aliases are personal shortcuts for Git commands. For example, you
 might want to be able to shorten ``git checkout`` to ``git co``.  Or
 you may want to alias ``git diff --color-words`` (which gives a nicely
 formatted output of the diff) to ``git wdiff``. You can do this with::
 
-    [user@localhost ~] git config --global alias.ci "commit -a"
-    [user@localhost ~] git config --global alias.co checkout
-    [user@localhost ~] git config --global alias.st "status -a"
-    [user@localhost ~] git config --global alias.stat "status -a"
-    [user@localhost ~] git config --global alias.br branch
-    [user@localhost ~] git config --global alias.wdiff "diff --color-words"
+    [alice@localhost ~]$ git config --global alias.ci "commit -a"
+    [alice@localhost ~]$ git config --global alias.co checkout
+    [alice@localhost ~]$ git config --global alias.st "status -a"
+    [alice@localhost ~]$ git config --global alias.stat "status -a"
+    [alice@localhost ~]$ git config --global alias.br branch
+    [alice@localhost ~]$ git config --global alias.wdiff "diff --color-words"
 
 The above commands will create an ``alias`` section in your ``.gitconfig``
 file with contents like this:
@@ -76,9 +70,10 @@ Editor
 
 To set the editor to use for editing commit messages, you can use::
 
-    [user@localhost ~] git config --global core.editor vim
+    [alice@localhost ~]$ git config --global core.editor vim
 
-or set the `EDITOR` environment variable.
+or set the ``EDITOR`` environment variable.
+
 
 Merging
 -------
@@ -92,24 +87,24 @@ To enforce summaries when doing merges (``~/.gitconfig`` file again):
 
 Or from the command line::
 
-    [user@localhost ~] git config --global merge.log true
+    [alice@localhost ~]$ git config --global merge.log true
 
 
 .. _section-fancy-log:
 
-Fancy Log Output
+Fancy log output
 ----------------
 
-Here is an alias to get a fancy log output; it should go in the
+Here is an alias to get a fancy log output. It should go in the
 ``alias`` section of your ``.gitconfig`` file:
 
 .. CODE-BLOCK:: text
 
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)[%an]%Creset' --abbrev-commit --date=relative
 
-Using this ``lg`` alias gives you the changelog with a colored ascii graph::
+Using this ``lg`` alias gives you the changelog with a colored ASCII graph::
 
-    [user@localhost ~] git lg
+    [alice@localhost ~]$ git lg
     * 6d8e1ee - (HEAD, origin/my-fancy-feature, my-fancy-feature) NF - a fancy file (45 minutes ago) [Matthew Brett]
     *   d304a73 - (origin/placeholder, placeholder) Merge pull request #48 from hhuuggoo/master (2 weeks ago) [Jonathan Terhorst]
     |\
@@ -130,30 +125,24 @@ Using this ``lg`` alias gives you the changelog with a colored ascii graph::
 
 .. _section-git-tutorials:
 
-
-Tutorials and Summaries
+Tutorials and summaries
 =======================
 
 There are many, many tutorials and command summaries available online.
 
 Beginner
 --------
-* `Try Git <https://try.github.io/levels/1/challenges/1>`_ is an entry-level
-  tutorial you can do in your browser.  If you are unfamiliar with revision
-  control, you will want to pay close attention to the "Advice" section toward
-  the bottom.
+
+* `gittutorial <https://git-scm.com/docs/gittutorial>`_ is an introductory tutorial
+  from Git project.
 
 * `Git magic
   <http://www-cs-students.stanford.edu/~blynn/gitmagic/index.html>`_
   is an extended introduction with intermediate detail.
 
-* The `git parable
+* The `Git parable
   <http://tom.preston-werner.com/2009/05/19/the-git-parable.html>`_ is
-  an easy read explaining the concepts behind git.
-
-* `Git foundation
-  <http://matthew-brett.github.com/pydagogue/foundation.html>`_
-  expands on the `git parable`_.
+  an easy read explaining the concepts behind Git.
 
 * Although it also contains more advanced material about branches and
   detached head and the like, the visual summaries of merging and branches
@@ -163,75 +152,55 @@ Beginner
 
 Advanced
 --------
-* `Github help <http://help.github.com>`_ has an excellent series of
+
+* `GitHub help <http://help.github.com>`_ has an excellent series of
   how-to guides.
 
-* The `pro git book <http://git-scm.com/book>`_ is a good in-depth book on git.
+* The `pro Git book <http://git-scm.com/book>`_ is a good in-depth book on Git.
 
-* `Github Training <http://training.github.com>`_ has an excellent series
+* `Github Training Kit <http://training.github.com>`_ has an excellent series
   of tutorials as well as videos and screencasts.
-
-* The `git tutorial <http://schacon.github.com/git/gittutorial.html>`_.
 
 * `Git ready <http://www.gitready.com/>`_ is a nice series of
   tutorials.
 
-* `Fernando Perez' git page
-  <http://www.fperez.org/py4science/git.html>`_ contains many links
-  and tips.
-
-* A good but technical page on `git concepts
+* A good but technical page on `Git concepts
   <http://www.eecs.harvard.edu/~cduan/technical/git/>`_
 
-* `Git svn crash course <http://git-scm.com/course/svn.html>`_: git
-  for those of us used to `subversion
-  <http://subversion.tigris.org/>`_
 
-Summaries/Cheat Sheets
-----------------------
-* A `git cheat sheet <http://github.com/guides/git-cheat-sheet>`_ is a
-  page giving summaries of common commands.
-
-* The `git user manual
-  <http://schacon.github.com/git/user-manual.html>`_.
-
-
-
-Git Best Practices
+Git best practices
 ==================
 
-There are many ways of working with git; here are some posts on the
+There are many ways of working with Git. Here are some posts on the
 rules of thumb that other projects have come up with:
 
-* Linus Torvalds on `git management
-  <https://web.archive.org/web/20120511084711/http://kerneltrap.org/Linux/Git_Management>`_
+* Linus Torvalds on `Git management
+  <https://web.archive.org/web/20120511084711/http://kerneltrap.org/Linux/Git_Management>`_.
 
-* Linus Torvalds on `linux git workflow
+* Linus Torvalds on `Git workflow
   <http://www.mail-archive.com/dri-devel@lists.sourceforge.net/msg39091.html>`_. Summary:
-  use the git tools to make the history of your edits as clean as
+  use the Git tools to make the history of your edits as clean as
   possible; merge from upstream edits as little as possible in
   branches where you are doing active development.
 
 
-Manual Pages Online
+Manual pages online
 ===================
 
 You can get these on your own machine with (e.g) ``git help push`` or
 (same thing) ``git push --help``, but, for convenience, here are the
 online manual pages for some common commands:
 
-* `git add <http://schacon.github.com/git/git-add.html>`_
-* `git branch <http://schacon.github.com/git/git-branch.html>`_
-* `git checkout <http://schacon.github.com/git/git-checkout.html>`_
-* `git clone <http://schacon.github.com/git/git-clone.html>`_
-* `git commit <http://schacon.github.com/git/git-commit.html>`_
-* `git config <http://schacon.github.com/git/git-config.html>`_
-* `git diff <http://schacon.github.com/git/git-diff.html>`_
-* `git log <http://schacon.github.com/git/git-log.html>`_
-* `git pull <http://schacon.github.com/git/git-pull.html>`_
-* `git push <http://schacon.github.com/git/git-push.html>`_
-* `git remote <http://schacon.github.com/git/git-remote.html>`_
-* `git status <http://schacon.github.com/git/git-status.html>`_
-
-
+* `git add <https://git-scm.com/docs/git-add>`_
+* `git branch <https://git-scm.com/docs/git-branch.html>`_
+* `git checkout <https://git-scm.com/docs/git-checkout.html>`_
+* `git clone <https://git-scm.com/docs/git-clone.html>`_
+* `git commit <https://git-scm.com/docs/git-commit.html>`_
+* `git config <https://git-scm.com/docs/git-config.html>`_
+* `git diff <https://git-scm.com/docs/git-diff.html>`_
+* `git log <https://git-scm.com/docs/git-log.html>`_
+* `git pull <https://git-scm.com/docs/git-pull.html>`_
+* `git push <https://git-scm.com/docs/git-push.html>`_
+* `git remote <https://git-scm.com/docs/git-remote.html>`_
+* `git status <https://git-scm.com/docs/git-status.html>`_
 

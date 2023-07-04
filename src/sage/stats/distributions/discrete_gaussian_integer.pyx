@@ -219,16 +219,16 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm="uniform+online")
-            Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 0
+            Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 0.000000
             sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm="uniform+table")
-            Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 0
+            Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 0.000000
             sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm="uniform+logtable")
-            Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 0
+            Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 0.000000
 
         Note that ``"sigma2+logtable"`` adjusts `σ`::
 
             sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm="sigma2+logtable")
-            Discrete Gaussian sampler over the Integers with sigma = 3.397287 and c = 0
+            Discrete Gaussian sampler over the Integers with sigma = 3.397287 and c = 0.000000
 
         TESTS:
 
@@ -491,6 +491,6 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: repr(DiscreteGaussianDistributionIntegerSampler(3.0, 2))
-            'Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 2'
+            'Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 2.000000'
         """
-        return "Discrete Gaussian sampler over the Integers with sigma = %f and c = %d"%(self.sigma, self.c)
+        return f"Discrete Gaussian sampler over the Integers with sigma = {self.sigma:.6f} and c = {self.c:.6f}"

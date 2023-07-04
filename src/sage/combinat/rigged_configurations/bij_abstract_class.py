@@ -35,6 +35,7 @@ AUTHORS:
 from copy import deepcopy
 from sage.misc.abstract_method import abstract_method
 
+
 class KRTToRCBijectionAbstract:
     """
     Root abstract class for the bijection from KR tableaux to rigged configurations.
@@ -214,7 +215,7 @@ class KRTToRCBijectionAbstract:
 
             sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['A', 4, 1], [[2,1]])
             sage: from sage.combinat.rigged_configurations.bij_abstract_class import KRTToRCBijectionAbstract
-            sage: bijection = KRTToRCBijectionAbstract(KRT(pathlist=[[3,2]]))  
+            sage: bijection = KRTToRCBijectionAbstract(KRT(pathlist=[[3,2]]))
             sage: bijection._update_vacancy_nums(2)
         """
         # Check to make sure we have a valid index (currently removed)
@@ -289,6 +290,7 @@ class KRTToRCBijectionAbstract:
             2
         """
         return r + 1
+
 
 class RCToKRTBijectionAbstract:
     """
@@ -542,4 +544,3 @@ class RCToKRTBijectionAbstract:
             1
         """
         return r - 1
-

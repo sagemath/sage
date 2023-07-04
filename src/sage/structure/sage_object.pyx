@@ -217,7 +217,9 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.ascii_art.ascii_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: ascii_art(integral(exp(x+x^2)/(x+1), x))
+            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))
+            ...
+            sage: result
               /
              |
              |   2
@@ -358,18 +360,18 @@ cdef class SageObject:
         modified to return ``True`` for objects which might behave differently
         in some computations::
 
-            sage: K.<a> = Qq(9)
-            sage: b = a + O(3)
-            sage: c = a + 3
-            sage: b
+            sage: K.<a> = Qq(9)                                             # optional - sage.rings.padics
+            sage: b = a + O(3)                                              # optional - sage.rings.padics
+            sage: c = a + 3                                                 # optional - sage.rings.padics
+            sage: b                                                         # optional - sage.rings.padics
             a + O(3)
-            sage: c
+            sage: c                                                         # optional - sage.rings.padics
             a + 3 + O(3^20)
-            sage: b == c
+            sage: b == c                                                    # optional - sage.rings.padics
             True
-            sage: b == a
+            sage: b == a                                                    # optional - sage.rings.padics
             True
-            sage: c == a
+            sage: c == a                                                    # optional - sage.rings.padics
             False
 
         If such objects defined a non-trivial hash function, this would break
@@ -377,20 +379,20 @@ cdef class SageObject:
         caches. This can be achieved by defining an appropriate
         ``_cache_key``::
 
-            sage: hash(b)
+            sage: hash(b)                                                   # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
             sage: @cached_method
             ....: def f(x): return x==a
-            sage: f(b)
+            sage: f(b)                                                      # optional - sage.rings.padics
             True
-            sage: f(c) # if b and c were hashable, this would return True
+            sage: f(c) # if b and c were hashable, this would return True   # optional - sage.rings.padics
             False
 
-            sage: b._cache_key()
+            sage: b._cache_key()                                            # optional - sage.rings.padics
             (..., ((0, 1),), 0, 1)
-            sage: c._cache_key()
+            sage: c._cache_key()                                            # optional - sage.rings.padics
             (..., ((0, 1), (1,)), 0, 20)
 
         An implementation must make sure that for elements ``a`` and ``b``,
@@ -398,9 +400,9 @@ cdef class SageObject:
         In practice this means that the ``_cache_key`` should always include
         the parent as its first argument::
 
-            sage: S.<a> = Qq(4)
-            sage: d = a + O(2)
-            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included
+            sage: S.<a> = Qq(4)                                             # optional - sage.rings.padics
+            sage: d = a + O(2)                                              # optional - sage.rings.padics
+            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included    # optional - sage.rings.padics
             False
 
         """
@@ -421,9 +423,12 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: f = x^3 + 5
-            sage: f.save(os.path.join(SAGE_TMP, 'file'))
-            sage: load(os.path.join(SAGE_TMP, 'file.sobj'))
+            sage: x = SR.var("x")                  # optional - sage.symbolic
+            sage: f = x^3 + 5                      # optional - sage.symbolic
+            sage: from tempfile import NamedTemporaryFile  # optional - sage.symbolic
+            sage: with NamedTemporaryFile(suffix=".sobj") as t:  # optional - sage.symbolic
+            ....:     f.save(t.name)
+            ....:     load(t.name)
             x^3 + 5
         """
         if filename is None:
@@ -503,15 +508,16 @@ cdef class SageObject:
             sage: CC._test_category()
             Traceback (most recent call last):
             ...
-            AssertionError: False is not true
+            AssertionError: 3 is not an instance of
+            <class 'sage.categories.category.Category'>
         """
         from sage.categories.category import Category
         from sage.categories.objects import Objects
         tester = self._tester(**options)
         category = self.category()
-        tester.assertTrue(isinstance(category, Category))
+        tester.assertIsInstance(category, Category)
         tester.assertTrue(category.is_subcategory(Objects()))
-        tester.assertTrue(self in category)
+        tester.assertIn(self, category)
 
     def parent(self):
         """
@@ -519,10 +525,10 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t
+            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t            # optional - sage.symbolic
             log(sqrt(2) + 1) + log(sqrt(2) - 1)
-            sage: u = t.maxima_methods()
-            sage: u.parent()
+            sage: u = t.maxima_methods()                                # optional - sage.symbolic
+            sage: u.parent()                                            # optional - sage.symbolic
             <class 'sage.symbolic.maxima_wrapper.MaximaWrapper'>
         """
         return type(self)
@@ -643,7 +649,7 @@ cdef class SageObject:
         remote Sage session, and get it back.
         """
         tester = self._tester(**options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         tester.assertEqual(loads(dumps(self)), self)
 
     #############################################################################
@@ -882,6 +888,14 @@ cdef class SageObject:
         I = sage.interfaces.mathematica.mathematica
         return self._interface_init_(I)
 
+    def _mathics_(self, G=None):
+        if G is None:
+            import sage.interfaces.mathics
+            G = sage.interfaces.mathics.mathics
+        return self._interface_(G)
+
+    _mathics_init_ = _mathematica_init_
+
     def _octave_(self, G=None):
         if G is None:
             import sage.interfaces.octave
@@ -923,13 +937,13 @@ cdef class SageObject:
         I = sage.interfaces.r.r
         return self._interface_init_(I)
 
-    def _singular_(self, G=None, have_ring=False):
+    def _singular_(self, G=None):
         if G is None:
             import sage.interfaces.singular
             G = sage.interfaces.singular.singular
         return self._interface_(G)
 
-    def _singular_init_(self, have_ring=False):
+    def _singular_init_(self):
         import sage.interfaces.singular
         I = sage.interfaces.singular.singular
         return self._interface_init_(I)

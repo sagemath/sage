@@ -5,7 +5,7 @@ from .pbori import VariableBlock
 from .PyPolyBoRi import (Ring, Polynomial, VariableFactory, Variable)
 
 
-class Block(object):
+class Block():
     r"""
     The block class represents a block of variables
     <var_name>(start_index,...,start_index+size-1), it is the preferred
@@ -42,7 +42,7 @@ class Block(object):
         context[self.var_name] = var_func
 
 
-class AlternatingBlock(object):
+class AlternatingBlock():
     r"""
     The Alternating Block class is used for doing tricky variable
     schemes,where base names vary, e.g.
@@ -62,7 +62,7 @@ class AlternatingBlock(object):
             for n in var_names:
                 names.append(n + "(" + str(i) + ")")
         self.indices = indices
-        self.index2pos = dict([(v, k) for (k, v) in enumerate(indices)])
+        self.index2pos = {v: k for k, v in enumerate(indices)}
         self.names = names
 
     def __len__(self):
@@ -77,7 +77,7 @@ class AlternatingBlock(object):
     def register(self, start, context):
         def gen_var_func(var_pos):
 
-            class var_factory(object):
+            class var_factory():
                 def __init__(self, ring, index2pos, size):
                     self.ring = ring
                     self.index2pos = index2pos
@@ -119,7 +119,7 @@ class AdderBlock(AlternatingBlock):
         self.adder_bits = adder_bits
 
     def register(self, start, context):
-        super(AdderBlock, self).register(start, context)
+        super().register(start, context)
         a = context[self.input1]
         b = context[self.input2]
         self.s = shift(context[self.sums], self.start_index)
@@ -149,7 +149,7 @@ class AdderBlock(AlternatingBlock):
             equations.append(self.c(i) + self.carries_polys[i])
 
 
-class HigherOrderBlock(object):
+class HigherOrderBlock():
     r"""
     HigherOrderBlocks are multidimensional blocks of variables.
 
@@ -175,7 +175,7 @@ class HigherOrderBlock(object):
         if reverse:
             cart.reverse()
         self.cart = cart
-        self.cart2index = dict([(v, k) for (k, v) in enumerate(cart)])
+        self.cart2index = {v: k for k, v in enumerate(cart)}
         self.var_name = var_name
         self.names = [var_name + str(c) for c in cart]
 
@@ -195,7 +195,7 @@ class HigherOrderBlock(object):
         context[self.var_name] = var_func
 
 
-class InOutBlock(object):
+class InOutBlock():
     def __init__(self, out_size, in_size, output="out", input="in",
                  in_start_index=0, out_start_index=0,
                  out_reverse=False, in_reverse=False):
@@ -211,10 +211,9 @@ class InOutBlock(object):
         return chain(self.output, self.input)
 
     def __getitem__(self, i):
-        if (i < len(self.output)):
+        if i < len(self.output):
             return self.output[i]
-        else:
-            return self.input[i - len(self.output)]
+        return self.input[i - len(self.output)]
 
     def __len__(self):
         return len(self.output) + len(self.input)
@@ -227,7 +226,7 @@ class InOutBlock(object):
         self.in_vars = shift(context[self.input.var_name], self.in_start_index)
 
 
-class MultiBlock(object):
+class MultiBlock():
     def __init__(self, sizes=None, var_names=["v"],
                  start_indices=[], reverses=None):
         if reverses is None:
@@ -263,11 +262,11 @@ class MultiBlock(object):
             start_indices[idx]) for idx in range(len(self.blocks))]
 
 
-class PrefixedDictProxy(object):
+class PrefixedDictProxy():
     """docstring for PrefixedDictProxy"""
 
     def __init__(self, wrapped, prefix):
-        super(PrefixedDictProxy, self).__init__()
+        super().__init__()
         self.wrapped = wrapped
         self.prefix = prefix
 
@@ -282,7 +281,7 @@ class PrefixedDictProxy(object):
         self.wrapped[self.prefix + k] = v
 
 
-class MacroBlock(object):
+class MacroBlock():
     def __init__(self, prefix):
 
         self.prefix = prefix
@@ -328,7 +327,7 @@ class MacroBlock(object):
         equations += self.connections
 
 
-class IfThen(object):
+class IfThen():
     def __init__(self, ifpart, thenpart, supposed_to_be_valid=True):
         self.ifpart = [Polynomial(p) for p in ifpart]
         self.thenpart = [Polynomial(p) for p in thenpart]

@@ -1,2 +1,0 @@
-pcre-devel
-pcre2-devel

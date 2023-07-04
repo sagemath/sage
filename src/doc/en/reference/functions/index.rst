@@ -8,7 +8,7 @@ Built-in Functions
 ==================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/functions/log
    sage/functions/trig

@@ -15,7 +15,7 @@ from sage.misc.flatten import flatten
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.misc.functional import is_even, is_odd
 
 
@@ -1009,6 +1009,7 @@ class BranchingRule(SageObject):
     """
     A class for branching rules.
     """
+
     def __init__(self, R, S, f, name="default", intermediate_types=[],
                  intermediate_names=[]):
         """
@@ -1949,6 +1950,7 @@ def branching_rule(Rtype, Stype, rule="default"):
                                  lambda x: [x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7],-(x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7])], "vii")
         raise ValueError("Wrong source Cartan Type for rule %s" % rule)
     raise ValueError("Rule not found")
+
 
 get_branching_rule = branching_rule
 

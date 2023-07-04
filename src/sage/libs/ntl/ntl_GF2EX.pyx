@@ -41,7 +41,7 @@ from .ntl_GF2E cimport ntl_GF2E
 #
 ##############################################################################
 
-cdef class ntl_GF2EX(object):
+cdef class ntl_GF2EX():
     r"""
     Minimal wrapper of NTL's GF2EX class.
     """

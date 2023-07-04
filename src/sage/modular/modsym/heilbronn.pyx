@@ -34,7 +34,7 @@ cdef extern from "<math.h>":
     float roundf(float x)
 
 cimport sage.modular.modsym.p1list as p1list
-from . import  p1list
+from . import p1list
 cdef p1list.export export
 export = p1list.export()
 
@@ -211,7 +211,7 @@ cdef class Heilbronn:
         sig_off()
 
     cdef apply_to_polypart(self, fmpz_poly_t* ans, int i, int k):
-        """
+        r"""
         INPUT:
 
         -  ``ans`` - fmpz_poly_t\*; pre-allocated an
@@ -402,7 +402,11 @@ cdef class HeilbronnCremona(Heilbronn):
                 a = -b
                 b = c
                 x3 = q*x2 - x1
-                x1 = x2; x2 = x3; y3 = q*y2 - y1; y1 = y2; y2 = y3
+                x1 = x2
+                x2 = x3
+                y3 = q*y2 - y1
+                y1 = y2
+                y2 = y3
                 list_append4(L, x1,x2, y1,y2)
         self.length = L.i/4
         sig_off()
@@ -551,8 +555,8 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
     # Create a zero dense matrix over QQ with len(indices) rows
     # and #P^1(N) columns.
     cdef Matrix_rational_dense T
-    from sage.matrix.all import matrix
-    from sage.rings.all import QQ
+    from sage.matrix.constructor import matrix
+    from sage.rings.rational_field import QQ
     T = matrix(QQ, len(indices), len(P1), sparse=False)
     original_base_ring = R.base_ring()
     if original_base_ring != QQ:
@@ -573,9 +577,11 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)
@@ -588,8 +594,8 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
 
             # Now fill in row i of the matrix T.
             if k != -1:
-                 # The following line is just a dangerous direct way to do: T[i,k] += 1
-                 T._add_ui_unsafe_assuming_int(i,k,1)
+                # The following line is just a dangerous direct way to do: T[i,k] += 1
+                T._add_ui_unsafe_assuming_int(i, k, 1)
 
         # Free a and b
         sig_free(a)
@@ -672,7 +678,7 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
     """
     cdef p1list.P1List P1 = p1list.P1List(N)
 
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     K = chi.base_ring()
 
     if K == QQ:
@@ -684,7 +690,7 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
     # Create a zero dense matrix over K with len(indices) rows
     # and #P^1(N) columns.
     cdef Matrix_cyclo_dense T
-    from sage.matrix.all import matrix
+    from sage.matrix.constructor import matrix
     T = matrix(K, len(indices), len(P1), sparse=False)
 
     cdef Py_ssize_t i, j
@@ -708,9 +714,11 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)
@@ -720,16 +728,17 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
             P1.index_and_scalar(a[j], b[j], &k, &scalar)
             # Now fill in row i of the matrix T.
             if k != -1:
-                 # The following line is just a dangerous direct way to do: T[i,k] += chi(scalar)
-                 # T[i,k] += chi(scalar)
-                 # This code makes assumptions about the internal structure
-                 # of matrices over cyclotomic fields.  It's nasty, but it
-                 # is exactly what is needed to get a solid 100 or more
-                 # times speedup.
-                 scalar %= N
-                 if scalar < 0: scalar += N
-                 # Note that the next line totally dominates the runtime of this whole function.
-                 T._matrix._add_col_j_of_A_to_col_i_of_self(i * T._ncols + k, chi_vals, scalar)
+                # The following line is just a dangerous direct way to do: T[i,k] += chi(scalar)
+                # T[i,k] += chi(scalar)
+                # This code makes assumptions about the internal structure
+                # of matrices over cyclotomic fields.  It's nasty, but it
+                # is exactly what is needed to get a solid 100 or more
+                # times speedup.
+                scalar %= N
+                if scalar < 0:
+                    scalar += N
+                # Note that the next line totally dominates the runtime of this whole function.
+                T._matrix._add_col_j_of_A_to_col_i_of_self(i * T._ncols + k, chi_vals, scalar)
 
         # Free a and b
         sig_free(a)
@@ -771,14 +780,14 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
         (0, -2, 0, 2, -2, -1)
     """
     cdef p1list.P1List P1 = p1list.P1List(N)
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     if chi.base_ring() != QQ:
         raise TypeError("character must takes values in QQ")
 
     # Create a zero dense matrix over QQ with len(indices) rows
     # and #P^1(N) columns.
     cdef Matrix_rational_dense T
-    from sage.matrix.all import matrix
+    from sage.matrix.constructor import matrix
     T = matrix(QQ, len(indices), len(P1), sparse=False)
 
     if R.base_ring() != QQ:
@@ -797,29 +806,34 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     # are the values of the character chi.
     _chivals = chi.values()
     cdef int *chi_vals = <int*>sig_malloc(sizeof(int)*len(_chivals))
-    if not chi_vals: raise MemoryError
+    if not chi_vals:
+        raise MemoryError
     for i in range(len(_chivals)):
         chi_vals[i] = _chivals[i]
 
     for i, n in enumerate(indices):
         H = HeilbronnCremona(n) if is_prime(n) else HeilbronnMerel(n)
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         H.apply_only(u, v, N, a, b)
         for j in range(H.length):
             P1.index_and_scalar(a[j], b[j], &k, &scalar)
             if k != -1:
-                 # This is just T[i,k] += chi(scalar)
-                 scalar %= N
-                 if scalar < 0: scalar += N
-                 if chi_vals[scalar] > 0:
-                     T._add_ui_unsafe_assuming_int(i, k, 1)
-                 elif chi_vals[scalar] < 0:
-                     T._sub_ui_unsafe_assuming_int(i, k, 1)
-        sig_free(a); sig_free(b)
+                # This is just T[i,k] += chi(scalar)
+                scalar %= N
+                if scalar < 0:
+                    scalar += N
+                if chi_vals[scalar] > 0:
+                    T._add_ui_unsafe_assuming_int(i, k, 1)
+                elif chi_vals[scalar] < 0:
+                    T._sub_ui_unsafe_assuming_int(i, k, 1)
+        sig_free(a)
+        sig_free(b)
 
     sig_free(chi_vals)
     return T * R
@@ -868,8 +882,8 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
     # So we create a zero dense matrix over QQ with len(indices) rows
     # and #P^1(N) * (k-1) columns.
     cdef Matrix_rational_dense T
-    from sage.matrix.all import matrix
-    from sage.rings.all import QQ
+    from sage.matrix.constructor import matrix
+    from sage.rings.rational_field import QQ
     T = matrix(QQ, len(indices), len(P1)*(k-1), sparse=False)
 
     if R.base_ring() != QQ:
@@ -890,9 +904,11 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)

@@ -11,7 +11,7 @@ Examples of finite Weyl groups
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import FiniteWeylGroups
+from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.structure.unique_representation import UniqueRepresentation
 
 class SymmetricGroup(UniqueRepresentation, Parent):
@@ -72,7 +72,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         sage: TestSuite(S).run()
     """
 
-    def __init__(self, n = 4):
+    def __init__(self, n=4):
         """
         EXAMPLES::
 

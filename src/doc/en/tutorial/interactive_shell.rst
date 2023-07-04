@@ -13,8 +13,8 @@ Sage, you get output similar to the following:
 .. CODE-BLOCK:: text
 
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
 
@@ -173,8 +173,8 @@ file).
 
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
@@ -192,8 +192,8 @@ file).
     Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
@@ -465,7 +465,7 @@ for a complete list of exceptions). For example,
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------
@@ -488,7 +488,7 @@ execution stack. For example,
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
 
     ipdb>
@@ -549,7 +549,7 @@ You can also use the following more concise notation:
     sage: V = QQ^3
 
 Then it is easy to list all member functions for :math:`V` using tab
-completion. Just type ``V.``, then type the ``[tab key]`` key on your
+completion. Just type ``V.``, then type the :kbd:`Tab` key on your
 keyboard:
 
 .. skip
@@ -567,7 +567,7 @@ keyboard:
     ...
     V.zero_vector
 
-If you type the first few letters of a function, then ``[tab key]``,
+If you type the first few letters of a function, then the :kbd:`Tab` key,
 you get only functions that begin as indicated.
 
 .. skip
@@ -597,7 +597,7 @@ followed by ? for the documentation for that function.
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive

@@ -28,17 +28,14 @@ Development supported by NSF award No. 0702939.
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.decorators import options
-from sage.plot.all import list_plot, Graphics
 
-from sage.ext.fast_eval import fast_callable
+from sage.ext.fast_callable import fast_callable
 
-from sage.rings.all import CDF
+from sage.rings.complex_double import CDF
 
 from sage.arith.srange import srange
 
 from sage.calculus.interpolation import spline
-
-from sage.plot.complex_plot import ComplexPlot
 
 from sage.calculus.integration import numerical_integral
 
@@ -751,6 +748,8 @@ cdef class Riemann_Map:
             sage: m.plot_boundaries(plotjoined=False, rgbcolor=[0,0,1], thickness=6)
             Graphics object consisting of 1 graphics primitive
         """
+        from sage.plot.all import list_plot
+
         plots = list(range(self.B))
         for k in xrange(self.B):
             # This conditional should be eliminated when the thickness/pointsize
@@ -938,6 +937,9 @@ cdef class Riemann_Map:
             sage: m = Riemann_Map([z1,z2,z3],[z1p,z2p,z3p],0,ncorners=4) # long time
             sage: p = m.plot_spiderweb(withcolor=True,plot_points=500, thickness = 2.0, min_mag=0.1) # long time
         """
+        from sage.plot.complex_plot import ComplexPlot
+        from sage.plot.all import list_plot, Graphics
+
         cdef int k, i
         if self.exterior:
             raise ValueError(
@@ -1048,6 +1050,9 @@ cdef class Riemann_Map:
             sage: m.plot_colored()
             Graphics object consisting of 1 graphics primitive
         """
+        from sage.plot.complex_plot import ComplexPlot
+        from sage.plot.all import Graphics
+
         z_values, xmin, xmax, ymin, ymax = self.compute_on_grid(plot_range,
             plot_points)
         g = Graphics()
@@ -1401,7 +1406,7 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
         sage: m = Riemann_Map([f], [fp],0,200)
         sage: s = spline(m.get_theta_points())
         sage: test_pt = uniform(0,2*pi)
-        sage: s(test_pt) - analytic_boundary(test_pt,20, .3) < 10^-4
+        sage: s(test_pt) - analytic_boundary(test_pt,20, .3) < 10^-3
         True
     """
     cdef FLOAT_T i

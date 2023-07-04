@@ -44,7 +44,7 @@ from sage.categories.integral_domains import IntegralDomains
 
 from sage.rings.ring cimport CommutativeRing
 from sage.rings.ring import is_Ring
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+import sage.rings.abc
 from sage.rings.integer_ring import is_IntegerRing
 
 import sage.modules.free_module
@@ -78,7 +78,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         [1.0 2.0 3.0]
         [4.0 5.0 6.0]
         sage: type(a)
-        <type 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
+        <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
         sage: parent(a)
         Full MatrixSpace of 2 by 3 dense matrices over Complex Double Field
 
@@ -112,7 +112,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: import sage.matrix.matrix0
             sage: A = sage.matrix.matrix0.Matrix(MatrixSpace(QQ,2))
             sage: type(A)
-            <type 'sage.matrix.matrix0.Matrix'>
+            <class 'sage.matrix.matrix0.Matrix'>
         """
         P = <Parent?>parent
         self._parent = P
@@ -204,7 +204,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t i, j
 
         x = self.fetch('list')
-        if not x is None:
+        if x is not None:
             return x
         x = []
         for i from 0 <= i < self._nrows:
@@ -247,6 +247,22 @@ cdef class Matrix(sage.structure.element.Matrix):
         return self._dict()
 
     monomial_coefficients = dict
+
+    def items(self):
+        r"""
+        Return an iterable of ``((i,j), value)`` elements.
+
+        This may (but is not guaranteed to) suppress zero values.
+
+        EXAMPLES::
+
+            sage: a = matrix(QQ['x,y'], 2, range(6), sparse=True); a
+            [0 1 2]
+            [3 4 5]
+            sage: list(a.items())
+            [((0, 1), 1), ((0, 2), 2), ((1, 0), 3), ((1, 1), 4), ((1, 2), 5)]
+        """
+        return self._dict().items()
 
     def _dict(self):
         """
@@ -293,7 +309,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [   3    4   10]
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j
@@ -521,11 +537,22 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError("this must be defined in the derived type.")
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
         Might/should be optimized for derived type.
+
+        TESTS::
+
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
+            ....:     def __bool__(self):
+            ....:         raise ValueError
+            sage: mat = matrix(1,1,MyAlgebraicNumber(1))
+            sage: bool(mat)
+            Traceback (most recent call last):
+            ...
+            ValueError
         """
         if self.get_unsafe(i, j):
             return 0
@@ -885,11 +912,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: M = MatrixSpace(GF(2), 3, 3, implementation='generic')
             sage: m = M(range(9))
             sage: type(m)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: parent(m)
             Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 2 (using Matrix_generic_dense)
             sage: type(m[:2,:2])
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: parent(m[:2,:2])
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 2 (using Matrix_generic_dense)
         """
@@ -1434,7 +1461,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             row_list = normalize_index(row_index, nrows)
             row_list_len = len(row_list)
             if row_list_len==0:
-               return
+                return
 
         if single_row and single_col and not no_col_index:
             self.set_unsafe(row, col, self._coerce_element(value))
@@ -1656,13 +1683,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: a=matrix([[1,2],[3,4]])
+            sage: a = matrix([[1,2],[3,4]])
             sage: a._test_change_ring()
-
         """
         tester = self._tester(**options)
         # Test to make sure the returned matrix is a copy
-        tester.assertTrue(self.change_ring(self.base_ring()) is not self)
+        tester.assertIsNot(self.change_ring(self.base_ring()), self)
 
     def _matrix_(self, R=None):
         """
@@ -2292,7 +2318,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Functions
     ###################################################
     def act_on_polynomial(self, f):
-        """
+        r"""
         Return the polynomial f(self\*x).
 
         INPUT:
@@ -2358,7 +2384,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Arithmetic
     ###################################################
     def commutator(self, other):
-        """
+        r"""
         Return the commutator self\*other - other\*self.
 
         EXAMPLES::
@@ -3933,18 +3959,22 @@ cdef class Matrix(sage.structure.element.Matrix):
                     return False
         return True
 
-    def _is_hermitian(self, skew = False):
+    def _is_hermitian(self, skew, tolerance):
         r"""
-        Return ``True`` if the matrix is (skew-)Hermitian.
+        Return ``True`` if the matrix is (skew-)Hermitian up to the
+        entry-wise ``tolerance``.
 
-        For internal purposes. This function is used in `is_hermitian`
-        and `is_skew_hermitian` functions.
+        For internal purposes. This function is used to implement both
+        the :meth:`is_hermitian` and :meth:`is_skew_hermitian` methods.
 
         INPUT:
 
-        - ``skew`` - default: ``False`` - Specifies the type of the
-          test. Set to ``True`` to check whether the matrix is
-          skew-Hermitian.
+        - ``skew`` - boolean (default: ``False``); Set to ``True`` to
+          check if the matrix is skew-Hermitian instead of Hermitian.
+
+        - ``tolerance`` - a real number; the maximum difference we'll
+          tolerate between entries of the given matrix and its conjugate-
+          transpose.
 
         OUTPUT:
 
@@ -3955,16 +3985,6 @@ cdef class Matrix(sage.structure.element.Matrix):
         ring (such as for integers), then the :meth:`is_(skew_)symmetric`
         method is equivalent and faster.
 
-        This routine is for matrices over exact rings and so may not
-        work properly for matrices over ``RR`` or ``CC``.  For
-        matrices with approximate entries, the rings of
-        double-precision floating-point numbers, ``RDF`` and ``CDF``,
-        are a better choice since the
-        :meth:`sage.matrix.matrix_double_dense.Matrix_double_dense.is_(skew_)hermitian`
-        method has a tolerance parameter.  This provides control over
-        allowing for minor discrepancies between entries when checking
-        equality.
-
         The result is cached.
 
         EXAMPLES::
@@ -3972,60 +3992,61 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A = matrix(QQbar, [[ 1 + I,  1 - 6*I, -1 - I],
             ....:                    [-3 - I,     -4*I,     -2],
             ....:                    [-1 + I, -2 - 8*I,  2 + I]])
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             False
             sage: B = A*A.conjugate_transpose()
-            sage: B._is_hermitian()
+            sage: B._is_hermitian(skew=False, tolerance=0)
             True
 
         Sage has several fields besides the entire complex numbers
-        where conjugation is non-trivial. ::
+        where conjugation is non-trivial::
 
             sage: F.<b> = QuadraticField(-7)
             sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],
             ....:                [-2*b - 3, -3*b + 2,   -2*b],
             ....:                [   b + 1,        0,     -2]])
-            sage: C._is_hermitian()
+            sage: C._is_hermitian(skew=False, tolerance=0)
             False
             sage: C = C*C.conjugate_transpose()
-            sage: C._is_hermitian()
+            sage: C._is_hermitian(skew=False, tolerance=0)
             True
 
         A matrix that is nearly Hermitian, but for a non-real
-        diagonal entry. ::
+        diagonal entry::
 
             sage: A = matrix(QQbar, [[    2,   2-I, 1+4*I],
             ....:                    [  2+I,   3+I, 2-6*I],
             ....:                    [1-4*I, 2+6*I,     5]])
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             False
             sage: A[1,1] = 132
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             True
 
-        Rectangular matrices are never Hermitian. ::
+        Rectangular matrices are never Hermitian::
 
             sage: A = matrix(QQbar, 3, 4)
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             False
 
-        A square, empty matrix is trivially Hermitian. ::
+        A square, empty matrix is trivially Hermitian::
 
             sage: A = matrix(QQ, 0, 0)
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             True
 
-        A matrix that is skew-Hermitian. ::
+        A matrix that is skew-Hermitian::
             sage: A = matrix(QQbar, [[-I, 2+I], [-2+I, 0]])
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             False
-            sage: A._is_hermitian(skew = True)
+            sage: A._is_hermitian(skew=True, tolerance=0)
             True
         """
-        key = 'skew_hermitian' if skew else 'hermitian'
-        h = self.fetch(key)
-        if not h is None:
-            return h
+        key = ("_is_hermitian", skew, tolerance)
+
+        cached = self.fetch(key)
+        if cached is not None:
+            return cached
         if not self.is_square():
             self.cache(key, False)
             return False
@@ -4033,18 +4054,56 @@ cdef class Matrix(sage.structure.element.Matrix):
             self.cache(key, True)
             return True
 
-        s = -1 if skew else 1
+        s = 1
+        if skew:
+            s = -1
+
+        tolerance = self.base_ring()(tolerance)
+        cdef bint tolerance_is_zero = tolerance.is_zero()
         cdef Py_ssize_t i,j
-        hermitian = True
-        for i in range(self._nrows):
-            for j in range(i+1):
-                if self.get_unsafe(i,j) != s*self.get_unsafe(j,i).conjugate():
-                    hermitian = False
-                    break
-            if not hermitian:
-                break
-        self.cache(key, hermitian)
-        return hermitian
+
+        if self.is_sparse_c():
+            # The dense algorithm checks all of the on-or-below-diagonal
+            # entries, of which there are (n^2 + n)/2. If the matrix
+            # is sparse, however, we can get away with checking only
+            # the non-zero positions. This will be faster if the matrix
+            # is truly sparse (if there are not so many of those positions)
+            # even after taking numerical issues into account.
+            #
+            # We access this list of entries directly, without making a
+            # copy, so it's important that we don't modify it.
+            entries = self._nonzero_positions_by_row(copy=False)
+        else:
+            entries = ( (i,j) for i in range(self._nrows)
+                              for j in range(i+1) )
+
+        for (i,j) in entries:
+            entry_a = self.get_unsafe(i,j)
+            entry_b = s*self.get_unsafe(j,i).conjugate()
+
+            if tolerance_is_zero:
+                # When the tolerance is exactly zero, as will
+                # usually be the case for exact rings, testing for
+                # literal equality provides a simple answer to the
+                # question of how we should test against the
+                # tolerance in rings such as finite fields and
+                # polynomials where abs/norm support is spotty and
+                # an ordering may not be intelligently defined.
+                if entry_a != entry_b:
+                    self.cache(key, False)
+                    return False
+            else:
+                d = entry_a - entry_b
+                # sqrt() can have a different parent, and doesn't
+                # preserve order in e.g. finite fields, so we
+                # square both sides of the usual test here.
+                if (d*d.conjugate()) > tolerance**2:
+                    self.cache(key, False)
+                    return False
+
+        self.cache(key, True)
+        return True
+
 
     def is_hermitian(self):
         r"""
@@ -4118,7 +4177,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A.is_hermitian()
             True
         """
-        return self._is_hermitian(skew = False)
+        return self._is_hermitian(skew=False, tolerance=0)
 
     def is_skew_hermitian(self):
         r"""
@@ -4176,7 +4235,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A.is_skew_hermitian()
             True
         """
-        return self._is_hermitian(skew = True)
+        return self._is_hermitian(skew=True, tolerance=0)
 
     def is_skew_symmetric(self):
         """
@@ -4553,7 +4612,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             (0, 1)
         """
         x = self.fetch('pivots')
-        if not x is None: return tuple(x)
+        if x is not None:
+            return tuple(x)
         self.echelon_form()
         x = self.fetch('pivots')
         if x is None:
@@ -4591,10 +4651,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:                 [8*x^2 + 12*x + 15,  8*x^2 + 9*x + 16] ])
             sage: m.rank()
             2
-
         """
         x = self.fetch('rank')
-        if not x is None: return x
+        if x is not None:
+            return x
         if self._nrows == 0 or self._ncols == 0:
             return 0
         r = len(self.pivots())
@@ -4622,12 +4682,13 @@ cdef class Matrix(sage.structure.element.Matrix):
             (2,)
         """
         x = self.fetch('nonpivots')
-        if not x is None: return tuple(x)
+        if x is not None:
+            return tuple(x)
 
         X = set(self.pivots())
         np = []
         for j in xrange(self.ncols()):
-            if not (j in X):
+            if j not in X:
                 np.append(j)
         np = tuple(np)
         self.cache('nonpivots',np)
@@ -4687,16 +4748,16 @@ cdef class Matrix(sage.structure.element.Matrix):
             [(0, 0), (1, 1)]
         """
         x = self.fetch('nonzero_positions')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
         cdef Py_ssize_t i, j
         nzp = []
         for i from 0 <= i < self._nrows:
-           for j from 0 <= j < self._ncols:
-                if not self.get_is_zero_unsafe(i,j):
-                    nzp.append((i,j))
+            for j from 0 <= j < self._ncols:
+                if not self.get_is_zero_unsafe(i, j):
+                    nzp.append((i, j))
         self.cache('nonzero_positions', nzp)
         if copy:
             return list(nzp)
@@ -4718,7 +4779,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [(0, 0), (1, 0), (1, 1), (0, 2)]
         """
         x = self.fetch('nonzero_positions_by_column')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
@@ -4830,7 +4891,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: B.multiplicative_order()
             1
 
-            sage: E = MatrixSpace(GF(11^2,'e'),5).random_element()
+            sage: M = MatrixSpace(GF(11^2,'e'),5)
+            sage: E = M.random_element()
+            sage: while E.det() == 0:
+            ....:     E = M.random_element()
             sage: (E^E.multiplicative_order()).is_one()
             True
 
@@ -4935,9 +4999,9 @@ cdef class Matrix(sage.structure.element.Matrix):
             fac = o1.factor()
             S = sum((pi - 1) * pi**(ei - 1) for pi, ei in fac)
             if fac[0] == (2, 1):
-               impossible_order = not(S <= n + 1)
+                impossible_order = not(S <= n + 1)
             else:
-               impossible_order = not(S <= n)
+                impossible_order = not(S <= n)
             if impossible_order:
                 return Infinity
 
@@ -4958,7 +5022,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Arithmetic
     ###################################################
     cdef _vector_times_matrix_(self, Vector v):
-        """
+        r"""
         Return the vector times matrix product.
 
         INPUT:
@@ -5006,8 +5070,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             (1 + O(5^5), O(5))
 
         """
-        M = sage.modules.free_module.FreeModule(self._base_ring, self.ncols(), sparse=self.is_sparse())
-        if self.nrows() != v.degree():
+        M = self.row_ambient_module()
+        if self._nrows != v._degree:
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
         cdef Py_ssize_t i
         return sum([v[i] * self.row(i, from_list=True)
@@ -5040,8 +5104,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             (1 + O(5^5), O(5))
 
         """
-        M = sage.modules.free_module.FreeModule(self._base_ring, self.nrows(), sparse=self.is_sparse())
-        if self.ncols() != v.degree():
+        M = self.column_ambient_module()
+        if self._ncols != v._degree:
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
         cdef Py_ssize_t i
         return sum([self.column(i, from_list=True) * v[i]
@@ -5563,13 +5627,13 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: m = matrix(Zmod(49),2,[2,1,3,3])
             sage: type(m)
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: ~m
             [ 1 16]
             [48 17]
             sage: m = matrix(Zmod(2^100),2,[2,1,3,3])
             sage: type(m)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: (~m)*m
             [1 0]
             [0 1]
@@ -5749,7 +5813,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         R = self.base_ring()
         if algorithm is None and R in _Fields:
             return ~self
-        elif algorithm is None and is_IntegerModRing(R):
+        elif algorithm is None and isinstance(R, sage.rings.abc.IntegerModRing):
             # Finite fields are handled above.
             # This is "easy" in that we either get an error or
             # the right answer. Note that of course there
@@ -5832,7 +5896,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [ 2*k + 2 -2*k - 1]
             [ 2*k + 1     -2*k]
         """
-        from sage.symbolic.expression import Expression
+        from sage.structure.element import Expression
 
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
@@ -6004,7 +6068,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError  # this is defined in the derived classes
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -6077,7 +6141,7 @@ def set_max_rows(n):
         sage: from sage.matrix.matrix0 import set_max_rows
         sage: set_max_rows(20)
         doctest:...: DeprecationWarning: 'set_max_rows' is replaced by 'matrix.options.max_rows'
-        See https://trac.sagemath.org/30552 for details.
+        See https://github.com/sagemath/sage/issues/30552 for details.
 
     """
     from sage.misc.superseded import deprecation
@@ -6094,7 +6158,7 @@ def set_max_cols(n):
         sage: from sage.matrix.matrix0 import set_max_cols
         sage: set_max_cols(50)
         doctest:...: DeprecationWarning: 'set_max_cols' is replaced by 'matrix.options.max_cols'
-        See https://trac.sagemath.org/30552 for details.
+        See https://github.com/sagemath/sage/issues/30552 for details.
 
     """
     from sage.misc.superseded import deprecation

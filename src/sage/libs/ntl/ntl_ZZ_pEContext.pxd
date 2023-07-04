@@ -9,7 +9,7 @@ cdef struct ZZ_pEContext_ptrs:
     ZZ_pContext_c *zzpc
 
 
-cdef class ntl_ZZ_pEContext_class(object):
+cdef class ntl_ZZ_pEContext_class():
     cdef ZZ_pEContext_ptrs ptrs
     cdef ZZ_pEContext_c x
     cdef ntl_ZZ_pContext_class pc

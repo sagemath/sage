@@ -173,7 +173,7 @@ cdef class FMElement(pAdicTemplateElement):
 
             sage: a = ZpFM(5)(-3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
             sage: loads(dumps(a)) == a
             True
         """
@@ -565,7 +565,7 @@ cdef class FMElement(pAdicTemplateElement):
         cdef long val = self.valuation_c()
         return mpz_cmp_si((<Integer>absprec).value, val) <= 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if this element is distinguishable from zero.
 
@@ -795,7 +795,7 @@ cdef class FMElement(pAdicTemplateElement):
             sage: R(0).unit_part()
             0
             sage: type(R(5).unit_part())
-            <type 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
             sage: R = ZpFM(5, 5); a = R(75); a.unit_part()
             3
         """
@@ -890,7 +890,7 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
         EXAMPLES::
 
             sage: f = ZpFM(5).coerce_map_from(ZZ); type(f)
-            <type 'sage.rings.padics.padic_fixed_mod_element.pAdicCoercion_ZZ_FM'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.pAdicCoercion_ZZ_FM'>
         """
         RingHomomorphism.__init__(self, ZZ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -972,7 +972,7 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
 
             sage: R = ZpFM(5,4)
             sage: type(R(10,2))
-            <type 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
             sage: R(30,2)
             5 + 5^2
             sage: R(30,3,1)
@@ -1030,7 +1030,7 @@ cdef class pAdicConvert_FM_ZZ(RingMap):
         EXAMPLES::
 
             sage: f = ZpFM(5).coerce_map_from(ZZ).section(); type(f)
-            <type 'sage.rings.padics.padic_fixed_mod_element.pAdicConvert_FM_ZZ'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.pAdicConvert_FM_ZZ'>
             sage: f.category()
             Category of homsets of sets
         """
@@ -1075,7 +1075,7 @@ cdef class pAdicConvert_QQ_FM(Morphism):
         EXAMPLES::
 
             sage: f = ZpFM(5).convert_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_fixed_mod_element.pAdicConvert_QQ_FM'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.pAdicConvert_QQ_FM'>
         """
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
         self._zero = R.element_class(R, 0)
@@ -1154,7 +1154,7 @@ cdef class pAdicConvert_QQ_FM(Morphism):
 
             sage: R = ZpFM(5,4)
             sage: type(R(1/7,2))
-            <type 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.pAdicFixedModElement'>
             sage: R(1/7,2)
             3 + 3*5 + 2*5^3
             sage: R(1/7,3,1)
@@ -1201,7 +1201,7 @@ cdef class pAdicCoercion_FM_frac_field(RingHomomorphism):
             sage: R.<a> = ZqFM(27)
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R); type(f)
-            <type 'sage.rings.padics.qadic_flint_FM.pAdicCoercion_FM_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_FM.pAdicCoercion_FM_frac_field'>
         """
         RingHomomorphism.__init__(self, R.Hom(K))
         self._zero = K(0)
@@ -1408,7 +1408,7 @@ cdef class pAdicConvert_FM_frac_field(Morphism):
             sage: R.<a> = ZqFM(27)
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); type(f)
-            <type 'sage.rings.padics.qadic_flint_FM.pAdicConvert_FM_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_FM.pAdicConvert_FM_frac_field'>
         """
         Morphism.__init__(self, Hom(K, R, SetsWithPartialMaps()))
         self._zero = R(0)
@@ -1426,7 +1426,8 @@ cdef class pAdicConvert_FM_frac_field(Morphism):
             a
         """
         cdef FPElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         if x.ordp >= self._zero.prime_pow.ram_prec_cap:
             return self._zero
         cdef FMElement ans = self._zero._new_c()
@@ -1470,7 +1471,8 @@ cdef class pAdicConvert_FM_frac_field(Morphism):
         """
         cdef long aprec, rprec
         cdef FPElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         if x.ordp >= self._zero.prime_pow.ram_prec_cap:
             return self._zero
         cdef FMElement ans = self._zero._new_c()

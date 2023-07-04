@@ -2,15 +2,15 @@
 Utilities for subprocess management
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import errno
 import signal
@@ -24,7 +24,7 @@ from cysignals.pselect import PSelecter
 from cysignals.pysignals import changesignal
 
 
-cdef class ContainChildren(object):
+cdef class ContainChildren():
     """
     Context manager which will ensure that all forked child processes
     will be forced to exit if they try to exit the context.
@@ -163,7 +163,7 @@ cdef class ContainChildren(object):
             if exc[0] is not None:  # Exception was raised
                 exitcode = self.exceptcode
                 if not self.silent:
-                    sys.stderr.write("Exception raised by child process with pid=%s:\n"%pid)
+                    sys.stderr.write("Exception raised by child process with pid=%s:\n" % pid)
                     import traceback
                     traceback.print_exception(*exc)
             sys.stdout.flush()
@@ -202,8 +202,7 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
         sage: cmd = [sys.executable, '-c', 'import sys; print("y")\n'
         ....:                              'sys.stdout.flush()\n'
         ....:                              'while True: pass']
-        sage: sp = Popen(cmd, stdout=PIPE)  # py2
-        sage: sp = Popen(cmd, stdout=PIPE, encoding='ascii')  # py3
+        sage: sp = Popen(cmd, stdout=PIPE, encoding='ascii')
         sage: with terminate(sp, interval=0.2):
         ....:     print(sp.stdout.readline())
         y
@@ -219,8 +218,7 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
         ....:          'signal(SIGTERM, SIG_IGN)\n' \
         ....:          'print("y"); sys.stdout.flush()\n' \
         ....:          'while True: pass'
-        sage: sp = Popen(cmd, stdout=PIPE)  # py2
-        sage: sp = Popen(cmd, stdout=PIPE, encoding='ascii')  # py3
+        sage: sp = Popen(cmd, stdout=PIPE, encoding='ascii')
         sage: with terminate(sp, interval=0.2):
         ....:     print(sp.stdout.readline())
         y
@@ -247,9 +245,7 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
         sage: t = walltime() - t0
         sage: t <= 4.0 or t
         True
-
     """
-
     try:
         yield sp
     finally:

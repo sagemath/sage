@@ -22,7 +22,3 @@ Upstream Contact
 - https://python-pillow.org/
 - Homepage: http://python-imaging.github.io/
 
-Dependencies
-------------
-
--  Python

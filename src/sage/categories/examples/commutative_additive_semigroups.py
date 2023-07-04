@@ -12,7 +12,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.all import CommutativeAdditiveSemigroups
+from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
 from sage.sets.family import Family
 
 class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
@@ -34,7 +34,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         sage: S.additive_semigroup_generators()
         Family (a, b, c, d)
 
-    with product rule given by $a \times b = a$ for all $a, b$::
+    with product rule given by `a \times b = a` for all `a, b`::
 
         sage: (a,b,c,d) = S.additive_semigroup_generators()
 
@@ -81,10 +81,9 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(M).run()
-
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = CommutativeAdditiveSemigroups())
+        Parent.__init__(self, category=CommutativeAdditiveSemigroups())
 
     def _repr_(self):
         r"""

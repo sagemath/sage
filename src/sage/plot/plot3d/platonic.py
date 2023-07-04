@@ -1,5 +1,5 @@
 r"""
-Platonic Solids
+Platonic solids
 
 EXAMPLES: The five platonic solids in a row:
 
@@ -65,7 +65,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 from sage.matrix.constructor import matrix
 from sage.misc.decorators import rename_keyword
 from .shapes import Box, ColorCube
@@ -144,12 +144,12 @@ def prep(G, center, size, kwds):
         sage: octahedron(center=(2,0,0),size=2,color='red')
         Graphics3d Object
     """
+    kwds['threejs_flat_shading'] = True
+    G._set_extra_kwds(kwds)
     if size != 1:
         G = G.scale(size)
     if center != (0, 0, 0):
         G = G.translate(center)
-    kwds['threejs_flat_shading'] = True
-    G._set_extra_kwds(kwds)
     return G
 
 @rename_keyword(alpha='opacity')
@@ -386,12 +386,12 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
 
         sage: cube(center=(10, 10, 10), size=0.5).bounding_box()
         ((9.75, 9.75, 9.75), (10.25, 10.25, 10.25))
-        
+
     AUTHORS:
 
     - William Stein
     """
-    if isinstance(color, (list, tuple)) and len(color) > 0 and isinstance(color[0], (list,tuple,str)):
+    if isinstance(color, (list, tuple)) and len(color) > 0 and isinstance(color[0], (list, tuple, str)):
         B = ColorCube(size=[0.5,0.5,0.5], colors=color, **kwds)
     else:
         if color is not None:

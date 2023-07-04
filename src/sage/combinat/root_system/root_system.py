@@ -2,9 +2,9 @@ r"""
 Root systems
 ============
 
-See :ref:`sage.combinat.root_system` for an overview.
+See :ref:`sage.combinat.root_system.all` for an overview.
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,
 #                               Justin Walker <justin at mac.com>
 #                     2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -12,14 +12,15 @@ See :ref:`sage.combinat.root_system` for an overview.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 # Design largely inspired from MuPAD-Combinat
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from .cartan_type import CartanType
-from sage.rings.all import ZZ, QQ
-from sage.misc.all import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.misc.cachefunc import cached_method
 from .root_space import RootSpace
 from .weight_space import WeightSpace
 
@@ -310,7 +311,7 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(["B",3], as_dual_of=None) is RootSystem("B3")
             True
         """
-        return super(RootSystem, cls).__classcall__(cls, CartanType(cartan_type), as_dual_of)
+        return super().__classcall__(cls, CartanType(cartan_type), as_dual_of)
 
     def __init__(self, cartan_type, as_dual_of=None):
         """
@@ -336,7 +337,6 @@ class RootSystem(UniqueRepresentation, SageObject):
         else:
             self.dual_side = True
             self.dual = as_dual_of
-
 
     def _test_root_lattice_realizations(self, **options):
         """
@@ -373,9 +373,9 @@ class RootSystem(UniqueRepresentation, SageObject):
             Dual of root system of type ['B', 3]
         """
         if self.dual_side:
-            return "Dual of root system of type %s"%self.dual.cartan_type()
+            return "Dual of root system of type %s" % self.dual.cartan_type()
         else:
-            return "Root system of type %s"%self.cartan_type()
+            return "Root system of type %s" % self.cartan_type()
 
     def cartan_type(self):
         """
@@ -506,7 +506,7 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: Phi.cover_relations()
             [[alpha[2], alpha[1] + alpha[2]], [alpha[1], alpha[1] + alpha[2]], [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
         """
-        return self.root_lattice().root_poset(restricted=restricted,facade=facade)
+        return self.root_lattice().root_poset(restricted=restricted, facade=facade)
 
     def coroot_lattice(self):
         """
@@ -615,7 +615,6 @@ class RootSystem(UniqueRepresentation, SageObject):
             Extended coweight space over the Rational Field of the Root system of type ['A', 3, 1]
         """
         return self.dual.weight_space(base_ring, extended = extended)
-
 
     def ambient_lattice(self):
         r"""

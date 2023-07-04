@@ -1,12 +1,18 @@
-appnope: Disable App Nap on OS X
-================================
+appnope: Disable App Nap on macOS >= 10.9
+=========================================
 
 Description
 -----------
 
-Disable App Nap on OS X 10.9
+Disable App Nap on macOS >= 10.9
+
+License
+-------
+
+BSD
 
 Upstream Contact
 ----------------
 
-https://github.com/minrk/appnope
+https://pypi.org/project/appnope/
+

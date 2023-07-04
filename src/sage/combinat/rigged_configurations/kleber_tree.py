@@ -71,7 +71,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.features import FeatureNotPresentError
 from sage.rings.integer import Integer
 
@@ -90,8 +90,9 @@ from sage.graphs.dot2tex_utils import have_dot2tex
 # Latex method for viewing the trees #
 ######################################
 
+
 def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=white', style_line=None,
-               hspace=2.5, vspace=-2.5, start=[0.,0.], rpos=[0.,0.], node_id=0, node_prefix='T',
+               hspace=2.5, vspace=-2.5, start=None, rpos=None, node_id=0, node_prefix='T',
                edge_labels=True, use_vector_notation=False):
     r"""
     Return the tikz latex for drawing the Kleber tree.
@@ -116,6 +117,10 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
         \draw (T0) to node[sloped,above]{\tiny $\alpha_{1} + \alpha_{2} + \alpha_{3}$} (T00);
         \end{tikzpicture}
     """
+    if start is None:
+        start = [0., 0.]
+    if rpos is None:
+        rpos = [0., 0.]
     draw_point = lambda point: '(%.3f, %.3f)'%(point[0],point[1])
     if not tree_node.children:
         r = ''
@@ -195,6 +200,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
 # Kleber tree nodes #
 #####################
 
+
 class KleberTreeNode(Element):
     r"""
     A node in the Kleber tree.
@@ -214,6 +220,7 @@ class KleberTreeNode(Element):
     - ``dominant_root`` -- The dominating root
     - ``parent_node``   -- (default:None) The parent node of this node
     """
+
     def __init__(self, parent_obj, node_weight, dominant_root, parent_node=None):
         r"""
         Initialize the tree node.
@@ -490,6 +497,7 @@ class KleberTreeNode(Element):
 #######################
 # Kleber tree classes #
 #######################
+
 
 class KleberTree(UniqueRepresentation, Parent):
     r"""
@@ -1313,6 +1321,7 @@ class VirtualKleberTree(KleberTree):
         """
         return KleberTree(self._folded_ct.folding_of(), self.B)
 
+
 class KleberTreeTypeA2Even(VirtualKleberTree):
     r"""
     Kleber tree for types `A_{2n}^{(2)}` and `A_{2n}^{(2)\dagger}`.
@@ -1466,4 +1475,3 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
             Kleber tree node with weight [0, 0, 0] and upwards edge root [1, 2, 1]
         """
         return KleberTree.depth_first_iter(self)
-

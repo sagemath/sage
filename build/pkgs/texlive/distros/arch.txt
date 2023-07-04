@@ -1,0 +1,4 @@
+texlive-core
+texlive-latexextra
+texlive-langjapanese
+texlive-langcyrillic

@@ -2,7 +2,7 @@ Modular Symbols
 ===============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/modsym/modsym
 
@@ -36,7 +36,7 @@ Overconvergent modular symbols
 ----------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/pollack_stevens/space
    sage/modular/pollack_stevens/distributions

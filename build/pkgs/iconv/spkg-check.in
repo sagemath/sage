@@ -7,7 +7,7 @@ SunOS)
     # We must test iconv, but on Solaris some tests will always fail.
     echo "If you see 3 core dumps, don't be too alarmed."
     echo "This is a known Solaris bug and can safely be ignored. See"
-    echo "    http://trac.sagemath.org/sage_trac/ticket/8270"
+    echo "    https://github.com/sagemath/sage/issues/8270"
     echo "It will probably be fixed in later releases of Solaris 10,"
     echo "and was fixed in build 66 of OpenSolaris:"
     echo "    http://bugs.opensolaris.org/bugdatabase/view_bug.do?bug_id=6550204"

@@ -15,17 +15,18 @@ Partition/Diagram Algebras
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .combinat import catalan_number
-from sage.combinat.free_module import CombinatorialFreeModule
+from sage.arith.misc import binomial, factorial
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.combinat.combinat import catalan_number
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.permutation import Permutations
 from sage.combinat.set_partition import SetPartition, SetPartitions, SetPartitions_set
-from sage.sets.set import Set, Set_generic
-from sage.graphs.graph import Graph
-from sage.arith.all import factorial, binomial
-from .permutation import Permutations
-from sage.rings.all import ZZ, QQ
-from .subset import Subsets
+from sage.combinat.subset import Subsets
 from sage.functions.all import ceil
+from sage.graphs.graph import Graph
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.sets.set import Set, Set_generic
 
 
 def _int_or_half_int(k):
@@ -74,6 +75,7 @@ class SetPartitionsXkElement(SetPartition):
     An element for the classes of ``SetPartitionXk`` where ``X`` is some
     letter.
     """
+
     def check(self):
         """
         Check to make sure this is a set partition.
@@ -1793,9 +1795,9 @@ def to_graph(sp):
         sage: g = pa.to_graph( pa.to_set_partition([[1,-2],[2,-1]])); g
         Graph on 4 vertices
 
-        sage: g.vertices() #random
+        sage: g.vertices(sort=False) #random
         [1, 2, -2, -1]
-        sage: g.edges() #random
+        sage: g.edges(sort=False) #random
         [(1, -2, None), (2, -1, None)]
     """
     g = Graph()
@@ -1830,9 +1832,9 @@ def pair_to_graph(sp1, sp2):
 
     ::
 
-        sage: g.vertices() #random
+        sage: g.vertices(sort=False) #random
         [(1, 2), (-1, 1), (-2, 2), (-1, 2), (-2, 1), (2, 1), (2, 2), (1, 1)]
-        sage: g.edges() #random
+        sage: g.edges(sort=False) #random
         [((1, 2), (-1, 1), None),
          ((1, 2), (-2, 2), None),
          ((-1, 1), (2, 1), None),
@@ -1847,9 +1849,9 @@ def pair_to_graph(sp1, sp2):
         sage: g = pa.pair_to_graph( sp3, sp4 ); g
         Graph on 8 vertices
 
-        sage: g.vertices()
+        sage: g.vertices(sort=True)
         [(-2, 1), (-2, 2), (-1, 1), (-1, 2), (1, 1), (1, 2), (2, 1), (2, 2)]
-        sage: g.edges()
+        sage: g.edges(sort=True)
         [((-2, 1), (2, 2), None), ((-1, 1), (1, 1), None),
          ((-1, 1), (1, 2), None)]
     """

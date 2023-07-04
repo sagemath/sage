@@ -37,7 +37,7 @@ class POVRay:
 
         outfile = os.path.abspath(os.path.expanduser(outfile))
 
-        if not('W' in kwargs and 'H' in kwargs):
+        if not ('W' in kwargs and 'H' in kwargs):
             return "You must specify a width and height."
 
         cmd = "povray -D +FP +I%s +O%s " % (pov_file, outfile)

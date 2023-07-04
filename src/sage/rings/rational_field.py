@@ -92,8 +92,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 'sage' to a rational
-        sage: QQ(u'-5/7')
-        -5/7
 
     Conversion from the reals to the rationals is done by default using
     continued fractions.
@@ -173,7 +171,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: Q('49/7')
             7
             sage: type(Q('49/7'))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: a = Q('19/374'); a
             19/374
             sage: b = Q('17/371'); b
@@ -265,7 +263,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         if key == 'element_is_atomic':
             return True
-        return super(RationalField, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def _latex_(self):
         r"""
@@ -287,7 +285,7 @@ class RationalField(Singleton, number_field_base.NumberField):
            sage: loads(dumps(QQ)) is QQ
            True
         """
-        return RationalField, tuple([])
+        return RationalField, tuple()
 
     def __len__(self):
         """
@@ -385,7 +383,6 @@ class RationalField(Singleton, number_field_base.NumberField):
                 from sage.structure.coerce_maps import CallableConvertMap
                 return CallableConvertMap(S, self, lambda x: x._value, parent_as_first_arg=False)
 
-
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Check to see if the map into ``codomain`` determined by ``im_gens`` is
@@ -403,7 +400,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             False
         """
         try:
-            return im_gens[0] == codomain._coerce_(self.gen(0))
+            return im_gens[0] == codomain.coerce(self.gen(0))
         except TypeError:
             return False
 
@@ -454,7 +451,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         elif isinstance(I, Ideal_generic) and I.base_ring() is ZZ:
             return QmodnZ(I.gen())
         else:
-            return super(RationalField, self).__truediv__(I)
+            return super().__truediv__(I)
 
     def range_by_height(self, start, end=None):
         r"""
@@ -542,7 +539,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         if B < 2:
             return
 
-        from sage.arith.all import primes
+        from sage.arith.misc import primes
         for p in primes(B+1):
             yield p
 
@@ -679,20 +676,20 @@ class RationalField(Singleton, number_field_base.NumberField):
               To:   Complex Field with 200 bits of precision
               Defn: 1 |--> 1.0000000000000000000000000000000000000000000000000000000000]
         """
-        import sage.rings.all
         from sage.rings.infinity import Infinity
         if prec is None:
-            R = sage.rings.all.RR
-            C = sage.rings.all.CC
+            from sage.rings.real_mpfr import RR as R
+            from sage.rings.cc import CC as C
         elif prec == 53:
-            R = sage.rings.all.RDF
-            C = sage.rings.all.CDF
+            from sage.rings.real_double import RDF as R
+            from sage.rings.complex_double import CDF as C
         elif prec == Infinity:
-            R = sage.rings.all.AA
-            C = sage.rings.all.QQbar
+            from sage.rings.qqbar import AA as R, QQbar as C
         else:
-            R = sage.rings.all.RealField(prec)
-            C = sage.rings.all.ComplexField(prec)
+            from sage.rings.real_mpfr import RealField
+            from sage.rings.complex_mpfr import ComplexField
+            R = RealField(prec)
+            C = ComplexField(prec)
         domain = C if all_complex else R
         return [self.hom([domain(1)])]
 
@@ -845,7 +842,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         for i in range(len(S)):
             if S[i] == self.places()[0]:
                 S[i] = -1
-        if not b in self:
+        if b not in self:
             raise TypeError("second argument must be a rational number")
         b = self(b)
         if b == 0:
@@ -893,7 +890,6 @@ class RationalField(Singleton, number_field_base.NumberField):
             v = [(1-hilbert_symbol(x, b, p))//2 for p in P]
             return V(v)
 
-
         M = matrix(GF(2), [phi(p) for p in P+[-1]])
         # We search through all the primes
         for q in Primes():
@@ -913,7 +909,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         a = self.prod([Pq[i]**ZZ(l[i]) for i in range(l.degree())])
         if check:
             assert phi(a) == v, "oops"
-        return  a
+        return a
 
     def gens(self):
         r"""
@@ -1072,7 +1068,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: a^3
             -5
         """
-        from sage.rings.number_field.all import NumberField
+        from sage.rings.number_field.number_field import NumberField
         return NumberField(poly, names=names, **kwds)
 
     def algebraic_closure(self):
@@ -1084,7 +1080,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ.algebraic_closure()
             Algebraic Field
         """
-        from sage.rings.all import QQbar
+        from sage.rings.qqbar import QQbar
         return QQbar
 
     def order(self):
@@ -1103,7 +1099,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         r"""
         Return a defining polynomial of `\QQ`, as for other number fields.
 
-        This is is also aliased to :meth:`self.defining_polynomial()`
+        This is also aliased to :meth:`self.defining_polynomial()`
         and :meth:`self.absolute_polynomial()`.
 
         EXAMPLES::
@@ -1196,26 +1192,31 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.random_element()
-            -4
-            sage: QQ.random_element()
-            0
-            sage: QQ.random_element()
-            -1/2
+            sage: QQ.random_element().parent() is QQ
+            True
+            sage: while QQ.random_element() != 0:
+            ....:     pass
+            sage: while QQ.random_element() != -1/2:
+            ....:     pass
 
         In the following example, the resulting numbers range from
         -5/1 to 5/1 (both inclusive),
         while the smallest possible positive value is 1/10::
 
-            sage: QQ.random_element(5, 10)
-            -2/7
+            sage: q = QQ.random_element(5, 10)
+            sage: -5/1 <= q <= 5/1
+            True
+            sage: q.denominator() <= 10
+            True
+            sage: q.numerator() <= 5
+            True
 
         Extra positional or keyword arguments are passed through::
 
-            sage: QQ.random_element(distribution='1/n')
-            0
-            sage: QQ.random_element(distribution='1/n')
-            -1
+            sage: QQ.random_element(distribution='1/n').parent() is QQ
+            True
+            sage: QQ.random_element(distribution='1/n').parent() is QQ
+            True
         """
         global ZZ
         if ZZ is None:
@@ -1268,7 +1269,6 @@ class RationalField(Singleton, number_field_base.NumberField):
             return Rational(-1)
         else:
             raise ValueError("no n-th root of unity in rational field")
-
 
     def selmer_generators(self, S, m, proof=True, orders=False):
         r"""
@@ -1369,7 +1369,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         KSgens, ords = self.selmer_generators(S=S, m=m, proof=proof, orders=True)
         one = self.one()
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         from itertools import product
         for ev in product(*[range(o) for o in ords]):
             yield prod((p**e for p,e in zip(KSgens, ev)), one)
@@ -1402,7 +1402,7 @@ class RationalField(Singleton, number_field_base.NumberField):
           abstract vector space ``QSp``.
 
         The group `\QQ(S,p)` is the finite subgroup of
-        `\QQ^*/(\QQ^*)^p$ consisting of elements whose valuation at
+        `\QQ^*/(\QQ^*)^p` consisting of elements whose valuation at
         all primes not in `S` is a multiple of `p`.  It contains the
         subgroup of those `a\in \QQ^*` such that
         `\QQ(\sqrt[p]{a})/\QQ` is unramified at all primes of `\QQ`
@@ -1481,9 +1481,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ.quadratic_defect(5, 5)
             1
         """
-        from sage.rings.all import Infinity
+        from sage.rings.infinity import Infinity
         from sage.arith.misc import legendre_symbol
-        if not a in self:
+        if a not in self:
             raise TypeError(str(a) + " must be an element of " + str(self))
         if p.parent() == ZZ.ideal_monoid():
             p = p.gen()
@@ -1572,7 +1572,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: polymake(QQ)    #optional - polymake # indirect doctest
+            sage: polymake(QQ)    #optional - jupymake # indirect doctest
             Rational
 
         """

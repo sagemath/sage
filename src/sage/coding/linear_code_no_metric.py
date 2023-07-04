@@ -1,5 +1,5 @@
 r"""
-Generic structures for linear codes of any metirc
+Generic structures for linear codes of any metric
 
 Class supporting methods available for linear codes over any metric (Hamming,
 rank).
@@ -33,7 +33,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     - inherit from AbstractLinearCodeNoMetric
 
     - call AbstractCode ``__init__`` method in the subclass constructor.
-      Example: ``super(SubclassName, self).__init__(length, "EncoderName",
+      Example: ``super().__init__(length, "EncoderName",
       "DecoderName", "metric")``.
 
     - add the following two lines on the class level::
@@ -179,18 +179,18 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         if not base_field.is_field():
             raise ValueError("'base_field' must be a field (and {} is not one)".format(base_field))
-        if not default_encoder_name in self._registered_encoders:
+        if default_encoder_name not in self._registered_encoders:
             raise ValueError("You must set a valid encoder as default encoder for this code, by filling in the dictionary of registered encoders")
-        if not default_decoder_name in self._registered_decoders:
+        if default_decoder_name not in self._registered_decoders:
             raise ValueError("You must set a valid decoder as default decoder for this code, by filling in the dictionary of registered decoders")
 
-        #if not self.dimension() <= length:
-        #    raise ValueError("The dimension of the code can be at most its length, {}".format(length))
+        # if not self.dimension() <= length:
+        #     raise ValueError("The dimension of the code can be at most its length, {}".format(length))
 
-        super(AbstractLinearCodeNoMetric, self).__init__(length, default_encoder_name, default_decoder_name, metric)
+        super().__init__(length, default_encoder_name, default_decoder_name, metric)
         cat = Modules(base_field).FiniteDimensional().WithBasis().Finite()
         facade_for = VectorSpace(base_field, self._length)
-        self.Element = type(facade_for.an_element()) #for when we made this a non-facade parent
+        self.Element = type(facade_for.an_element())  # for when we made this a non-facade parent
         Parent.__init__(self, base=base_field, facade=facade_for, category=cat)
 
     def base_field(self):
@@ -265,9 +265,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             False
         """
         # Fail without computing the generator matrix if possible:
-        if not (isinstance(other, AbstractLinearCodeNoMetric)\
-                and self.length() == other.length()\
-                and self.dimension() == other.dimension()\
+        if not (isinstance(other, AbstractLinearCodeNoMetric)
+                and self.length() == other.length()
+                and self.dimension() == other.dimension()
                 and self.base_ring() == other.base_ring()):
             return False
         # Check that basis elements of `other` are all in `self.`
@@ -276,10 +276,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # This implementation may avoid linear algebra altogether, if `self`
         # implements an efficient way to obtain a parity check matrix, and in
         # the worst case does only one system solving.
-        for c in other.gens():
-            if not (c in self):
-                return False
-        return True
+        return all(c in self for c in other.gens())
 
     def __ne__(self, other):
         r"""
@@ -322,11 +319,11 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             ....:     _registered_encoders = {}
             ....:     _registered_decoders = {}
             ....:     def __init__(self):
-            ....:         super(MonkeyCode, self).__init__(GF(5), 10, "Monkey", "Syndrome")
+            ....:         super().__init__(GF(5), 10, "Monkey", "Syndrome")
             ....:
             sage: class MonkeyEncoder(Encoder):
             ....:     def __init__(self, code):
-            ....:         super(MonkeyEncoder, self).__init__(C)
+            ....:         super().__init__(C)
             ....:     @cached_method
             ....:     def generator_matrix(self):
             ....:         G = identity_matrix(GF(5), 5).augment(matrix(GF(5), 5, 7))
@@ -509,7 +506,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: vector((1, 0, 0, 0, 0, 1/2, 1)) in C # indirect doctest
             False
         """
-        if not v in self.ambient_space() or len(v) != self.length():
+        if v not in self.ambient_space() or len(v) != self.length():
             return False
         return self.syndrome(v) == 0
 
@@ -538,7 +535,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             [1 2 0 1]
             [0 0 1 2]
 
-        Specific systematic positions can also be requested:
+        Specific systematic positions can also be requested::
 
             sage: C.systematic_generator_matrix(systematic_positions=[3,2])
             [1 2 0 1]
@@ -753,10 +750,12 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
            ``[(i*a^0 +(p-1)*a^1 +...+ (p-1)*a^(m-1))*G[0] for i in range(p)]``
         4. Then, we move to G[1]:
            ``[i*a^0 * G[0] + a^0*G[1] for i in range(p)]``,
-         and so on.
-         Hence the `i`-th element can be obtained by the p-adic expansion
-         of `i` as ``[i_0, i_1, ...,i_{m-1}, i_m, i_{m+1}, ..., i_{km-1}].``
-         The element that is generated is:
+
+        and so on.
+        Hence the `i`-th element can be obtained by the p-adic expansion
+        of `i` as ``[i_0, i_1, ...,i_{m-1}, i_m, i_{m+1}, ..., i_{km-1}].``
+
+        The element that is generated is:
 
         .. MATH::
 
@@ -943,7 +942,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             True
         """
         if not hasattr(self, "_generic_constructor"):
-          raise NotImplementedError("Generic constructor not set for the class of codes")
+            raise NotImplementedError("Generic constructor not set for the class of codes")
         G = copy(self.generator_matrix())
         G.permute_columns(p)
         return self._generic_constructor(G)
@@ -966,10 +965,10 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             [21, 3] linear code over GF(4)
         """
         if not hasattr(self, "_generic_constructor"):
-          raise NotImplementedError("Generic constructor not set for the class of codes")
+            raise NotImplementedError("Generic constructor not set for the class of codes")
         return self._generic_constructor(self.parity_check_matrix())
 
-    def is_self_dual(self):
+    def is_self_dual(self) -> bool:
         """
         Return ``True`` if the code is self-dual (in the usual Hamming inner
         product) and ``False`` otherwise.
@@ -1134,7 +1133,7 @@ class LinearCodeSystematicEncoder(Encoder):
             sage: E
             Systematic encoder for [7, 4] linear code over GF(2)
         """
-        super(LinearCodeSystematicEncoder, self).__init__(code)
+        super().__init__(code)
         self._systematic_positions = tuple(systematic_positions) if systematic_positions else None
         if systematic_positions:
             # Test that systematic_positions consists of integers in the right
@@ -1145,7 +1144,6 @@ class LinearCodeSystematicEncoder(Encoder):
                 raise ValueError("systematic positions must be a tuple of distinct integers in the range 0 to n-1 where n is the length of the code")
             # Test that the systematic positions are an information set
             self.generator_matrix()
-
 
     def __eq__(self, other):
         r"""
@@ -1296,13 +1294,13 @@ class LinearCodeSystematicEncoder(Encoder):
         n = self.code().length()
         systematic_positions = self.systematic_positions()
         k = len(systematic_positions)
-        lp = [ None ]*n
-        for (i,j) in zip(range(k), systematic_positions):
+        lp = [None] * n
+        for (i, j) in zip(range(k), systematic_positions):
             lp[i] = j
         j = k
         set_sys_pos = set(systematic_positions)
         for i in range(n):
-            if not i in set_sys_pos:
+            if i not in set_sys_pos:
                 lp[j] = i
                 j += 1
         from sage.combinat.permutation import Permutation

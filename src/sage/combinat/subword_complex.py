@@ -90,7 +90,7 @@ real space::
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
     sage: S.brick_polytope()
-    doctest:...: RuntimeWarning: the polytope is build with rational vertices
+    doctest:...: RuntimeWarning: the polytope is built with rational vertices
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
 
 AUTHORS:
@@ -111,7 +111,7 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
@@ -768,7 +768,7 @@ class SubwordComplexFacet(Simplex, Element):
             sage: Q = c.reduced_word()*2 + W.w0.coxeter_sorting_word(c) # optional - gap3
             sage: SC = SubwordComplex(Q, W.w0)                          # optional - gap3
             sage: F = SC[15]; F.plot()                                  # optional - gap3
-            Graphics object consisting of 52 graphics primitives
+            Graphics object consisting of 53 graphics primitives
 
         TESTS::
 
@@ -845,7 +845,7 @@ class SubwordComplexFacet(Simplex, Element):
 
         # list the pseudolines to be drawn
         pseudolines = [[(shift[0], shift[1] + i), .5] for i in range(last + 1)]
-        pseudolines_type_B = [[] for i in range(last + 1)]
+        pseudolines_type_B = [[] for _ in repeat(None, last + 1)]
         contact_points = []
         root_labels = []
         pseudoline_labels = []
@@ -1059,7 +1059,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             True
         """
         Q = tuple(Q)
-        return super(SubwordComplex, cls).__classcall__(cls, Q, w, algorithm=algorithm)
+        return super().__classcall__(cls, Q, w, algorithm=algorithm)
 
     def __init__(self, Q, w, algorithm="inductive"):
         r"""
@@ -1242,7 +1242,8 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         W = self.group()
         Q = self.word()
-        if not all(i in list(range(len(Q))) for i in F):
+        r = range(len(Q))
+        if not all(i in r for i in F):
             return False
         return W.from_reduced_word(Qi for i, Qi in enumerate(Q) if i not in F) == self.pi()
 
@@ -1529,7 +1530,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: SC.is_root_independent()
             True
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         M = matrix(self.greedy_facet(side="negative").root_configuration())
         return M.rank() == max(M.ncols(), M.nrows())
 
@@ -1689,13 +1690,13 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex
         """
         G = self.group()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if G.coxeter_matrix().is_crystallographic():
             min_sum = [[QQ(v) for v in F.extended_weight_configuration()[i]] for F in self]
         else:
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             from warnings import warn
-            warn("the polytope is build with rational vertices", RuntimeWarning)
+            warn("the polytope is built with rational vertices", RuntimeWarning)
             min_sum = [[QQ(CC(v)) for v in F.extended_weight_configuration()[i]] for F in self]
         return Polyhedron(min_sum)
 
@@ -1736,17 +1737,19 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: c = W.index_set(); Q = c + tuple(W.w0.coxeter_sorting_word(c))    # optional - gap3
             sage: SC = SubwordComplex(Q,W.w0)                           # optional - gap3
             sage: SC.brick_polytope()                                   # optional - gap3
+            doctest:...:
+            RuntimeWarning: the polytope is built with rational vertices
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
         """
         BV = self.brick_vectors(coefficients=coefficients)
         G = self.group()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if G.coxeter_matrix().is_crystallographic():
             BV = [[QQ(v) for v in V] for V in BV]
         else:
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             from warnings import warn
-            warn("the polytope is build with rational vertices", RuntimeWarning)
+            warn("the polytope is built with rational vertices", RuntimeWarning)
             BV = [[QQ(CC(v).real()) for v in V] for V in BV]
         return Polyhedron(BV)
 

@@ -42,7 +42,7 @@ class Algebras(AlgebrasCategory):
                 sage: RootSystem(["A",2,1]).ambient_space().algebra(QQ) # indirect doctest
                 Algebra of the Ambient space of the Root system of type ['A', 2, 1] over Rational Field
             """
-            return "Algebra of the %s over %s"%(self.basis().keys(),self.base_ring())
+            return "Algebra of the %s over %s" % (self.basis().keys(), self.base_ring())
 
         def some_elements(self):
             r"""
@@ -202,9 +202,8 @@ class Algebras(AlgebrasCategory):
                 raise ValueError("the weight does not have an integral scalar product with the coroot")
             alphai = P.simple_root(i)
             if n >= 0:
-                return  self.sum_of_monomials(weight-j*alphai for j in range(n + 1))
-            else:
-                return -self.sum_of_monomials(weight-j*alphai for j in range(n+1,0))
+                return self.sum_of_monomials(weight-j*alphai for j in range(n + 1))
+            return -self.sum_of_monomials(weight-j*alphai for j in range(n + 1, 0))
 
         def demazure_operators(self):
             r"""
@@ -316,7 +315,6 @@ class Algebras(AlgebrasCategory):
                     result = pi[i](x)
                     tester.assertEqual(result * (self.one()-emalphai),
                                        x - emalphai * x.map_support(s[i]))
-
 
         def demazure_lusztig_operator_on_basis(self, weight, i, q1, q2, convention="antidominant"):
             r"""
@@ -581,7 +579,6 @@ class Algebras(AlgebrasCategory):
             T_on_basis = functools.partial(self.demazure_lusztig_operator_on_basis,
                                            q1 = q1, q2 = q2, convention = convention)
             return HeckeAlgebraRepresentation(self, T_on_basis, self.cartan_type(), q1, q2, side="left")
-
 
         def demazure_lusztig_operator_on_classical_on_basis(self, weight, i, q, q1, q2, convention="antidominant"):
             r"""
@@ -848,6 +845,7 @@ class Algebras(AlgebrasCategory):
             translation = A0.monomial(-L0.simple_root(j)/a0)
             Tv = T[v]
             Tinv = T.Tw_inverse(v+(j,))
+
             def T0_check(weight):
                 return -q1*q2*Tinv( translation * Tv(A0.monomial(weight)))
             # For debugging purposes
@@ -1168,13 +1166,15 @@ class Algebras(AlgebrasCategory):
             TESTS::
 
                 sage: type(p.expand(F.gens()))
-                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <class 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
 
                 sage: p = KL.zero()
                 sage: p.expand(F.gens())
                 0
                 sage: type(p.expand(F.gens()))
-                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <class 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
             """
             codomain = alphabet[0].parent()
-            return codomain.sum( c * prod(X**int(n) for X,n in zip(alphabet,vector(m))) for m,c in self)
+            return codomain.sum(c * prod(X**int(n)
+                                         for X, n in zip(alphabet, vector(m)))
+                                for m, c in self)

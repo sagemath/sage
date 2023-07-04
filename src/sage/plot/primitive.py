@@ -56,7 +56,6 @@ class GraphicPrimitive(WithEqualityById, SageObject):
         """
         self._options = options
 
-
     def _allowed_options(self):
         """
         Return the allowed options for a graphics primitive.
@@ -182,18 +181,18 @@ class GraphicPrimitive(WithEqualityById, SageObject):
             t = False
             K = list(A) + ['xmin', 'xmax', 'ymin', 'ymax', 'axes']
             for k in O.keys():
-                if not k in K:
+                if k not in K:
                     do_verify = False
-                    verbose("WARNING: Ignoring option '%s'=%s"%(k,O[k]), level=0)
+                    verbose("WARNING: Ignoring option '%s'=%s" % (k, O[k]),
+                            level=0)
                     t = True
             if t:
-                s = "\nThe allowed options for %s are:\n"%self
+                s = "\nThe allowed options for %s are:\n" % self
                 K.sort()
                 for k in K:
                     if k in A:
-                        s += "    %-15s%-60s\n"%(k,A[k])
+                        s += "    %-15s%-60s\n" % (k, A[k])
                 verbose(s, level=0)
-
 
         if 'hue' in O:
             t = O['hue']
@@ -214,7 +213,6 @@ class GraphicPrimitive(WithEqualityById, SageObject):
             'Graphics primitive'
         """
         return "Graphics primitive"
-
 
 
 class GraphicPrimitive_xydata(GraphicPrimitive):
@@ -246,8 +244,6 @@ class GraphicPrimitive_xydata(GraphicPrimitive):
             100.0
             sage: d['xmax']
             120.0
-
         """
         from sage.plot.plot import minmax_data
         return minmax_data(self.xdata, self.ydata, dict=True)
-

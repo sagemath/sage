@@ -18,12 +18,6 @@ Upstream Contact
 
 -  http://www.zlib.net/
 
-Dependencies
-------------
-
--  None
-
-
 Special Update/Build Instructions
 ---------------------------------
 

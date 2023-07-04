@@ -234,7 +234,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         if not self:
             return "."
         else:
-            return super(BinaryTree, self)._repr_()
+            return super()._repr_()
 
     def _ascii_art_(self):
         r"""
@@ -723,11 +723,11 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t1 = BinaryTree([[], [[], None]])
             sage: t1.graph()
             Digraph on 9 vertices
-            sage: t1.graph().edges()
+            sage: t1.graph().edges(sort=True)
             [(0, 1, None), (0, 4, None), (1, 2, None), (1, 3, None), (4, 5, None), (4, 8, None), (5, 6, None), (5, 7, None)]
             sage: t1.graph(with_leaves=False)
             Digraph on 4 vertices
-            sage: t1.graph(with_leaves=False).edges()
+            sage: t1.graph(with_leaves=False).edges(sort=True)
             [(0, 1, None), (0, 2, None), (2, 3, None)]
 
             sage: t1 = BinaryTree()
@@ -744,7 +744,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t1 = BinaryTree([[], [[], []]])
             sage: t1.graph(with_leaves=False)
             Digraph on 5 vertices
-            sage: t1.graph(with_leaves=False).edges()
+            sage: t1.graph(with_leaves=False).edges(sort=True)
             [(0, 1, None), (0, 2, None), (2, 3, None), (2, 4, None)]
         """
         from sage.graphs.graph import DiGraph
@@ -1518,7 +1518,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             children = [child.as_ordered_tree(with_leaves) for child in self]
         else:
             if not self:
-                raise ValueError("The empty binary tree cannot be made into an ordered tree with with_leaves = False")
+                raise ValueError("the empty binary tree cannot be made into an ordered tree with with_leaves = False")
             children = [child.as_ordered_tree(with_leaves) for child in self if not child.is_empty()]
         if self in LabelledBinaryTrees():
             from sage.combinat.ordered_tree import LabelledOrderedTree
@@ -1916,7 +1916,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         Here is a less trivial implementation of this::
 
             sage: from sage.sets.finite_set_map_cy import fibers
-            sage: from sage.misc.all import attrcall
             sage: def baxter(n):
             ....:     f = fibers(lambda t: tuple(t.canopee()),
             ....:                   BinaryTrees(n))
@@ -2717,7 +2716,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             return tn
 
         L = self.comb('left')
-        if len(L):
+        if L:
             tn[0] += 1
             for h in L:
                 tw = BinaryTree([None, h]).twisting_number()
@@ -2725,7 +2724,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                 tn[1] += tw[1]
 
         R = self.comb('right')
-        if len(R):
+        if R:
             tn[1] += 1
             for l in R:
                 tw = BinaryTree([l, None]).twisting_number()
@@ -4125,7 +4124,7 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
             sage: B()
             .
         """
-        return super(BinaryTrees, self).__call__(x, *args, **keywords)
+        return super().__call__(x, *args, **keywords)
 
     def unlabelled_trees(self):
         """
@@ -4180,6 +4179,7 @@ class BinaryTrees_size(BinaryTrees):
         sage: from sage.combinat.binary_tree import BinaryTrees_size
         sage: for i in range(6): TestSuite(BinaryTrees_size(i)).run()
     """
+
     def __init__(self, size):
         """
         TESTS::
@@ -4191,8 +4191,8 @@ class BinaryTrees_size(BinaryTrees):
             sage: S is BinaryTrees(3)
             True
         """
-        super(BinaryTrees_size, self).__init__(facade=BinaryTrees_all(),
-                                               category=FiniteEnumeratedSets())
+        super().__init__(facade=BinaryTrees_all(),
+                         category=FiniteEnumeratedSets())
         self._size = size
 
     def _repr_(self):
@@ -4319,6 +4319,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
     """
     All full binary trees.
     """
+
     def __init__(self):
         """
         TESTS::
@@ -4416,6 +4417,7 @@ class FullBinaryTrees_size(BinaryTrees):
     """
     Full binary trees of a fixed size (number of nodes).
     """
+
     def __init__(self, size):
         r"""
         TESTS::
@@ -4424,8 +4426,8 @@ class FullBinaryTrees_size(BinaryTrees):
             sage: for i in range(1,6):
             ....:     TestSuite(BinaryTrees(2*i-1, full=True)).run()
         """
-        super(FullBinaryTrees_size, self).__init__(facade=BinaryTrees_all(),
-                                                   category=FiniteEnumeratedSets())
+        super().__init__(facade=BinaryTrees_all(),
+                         category=FiniteEnumeratedSets())
         self._size = size
 
     def _repr_(self):
@@ -5158,6 +5160,7 @@ class LabelledBinaryTrees(LabelledOrderedTrees):
     This is a parent stub to serve as a factory class for trees with various
     labels constraints.
     """
+
     def _repr_(self):
         """
         TESTS::

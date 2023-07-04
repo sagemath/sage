@@ -1,0 +1,25 @@
+From 5546fba822d4816eb27c94964b96caa69989b846 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Sun, 17 Apr 2022 12:20:55 -0700
+Subject: [PATCH] src/global.cc: Do not send SIGINT to process 1
+
+---
+ src/global.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/global.cc b/src/global.cc
+index c343aea..87e4575 100755
+--- a/src/global.cc
++++ b/src/global.cc
+@@ -3762,7 +3762,7 @@ extern "C" void Sleep(unsigned int miliSecond);
+   void ctrl_c_signal_handler(int signum){
+     ctrl_c=true;
+ #if !defined KHICAS && !defined NSPIRE_NEWLIB && !defined WIN32 && !defined BESTA_OS && !defined NSPIRE && !defined FXCG && !defined POCKETCAS && !defined __MINGW_H
+-    if (child_id)
++    if (child_id && child_id != 1)
+       kill(child_id,SIGINT);
+ #endif
+ #if defined HAVE_SIGNAL_H && !defined HAVE_NO_SIGNAL_H
+-- 
+2.35.1
+

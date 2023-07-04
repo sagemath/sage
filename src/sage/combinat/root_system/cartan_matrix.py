@@ -8,7 +8,7 @@ AUTHORS:
 - Christian Stump, Travis Scrimshaw (2013-04-13): Created :class:`CartanMatrix`.
 - Ben Salisbury (2018-08-07): Added Borcherds-Cartan matrices.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2012,2013 Travis Scrimshaw <tscrim at ucdavis.edu>,
 #       Copyright (C) 2013 Christian Stump,
@@ -23,8 +23,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
@@ -34,7 +34,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
 from sage.misc.misc import powerset
 from sage.matrix.matrix_integer_sparse import Matrix_integer_sparse
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 from sage.combinat.root_system.root_system import RootSystem
 from sage.sets.family import Family
@@ -460,7 +460,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
                 gens[i] = pi
             return S.subgroup( gens[i] for i in gens )
 
-        raise ValueError("The reflection group is only available as a matrix group or as a permutation group.")
+        raise ValueError("the reflection group is only available as a matrix group or as a permutation group")
 
     def symmetrizer(self):
         """
@@ -489,8 +489,8 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
         iset = self.index_set()
         # The result from is_symmetrizable needs to be scaled
         # to integer coefficients
-        from sage.arith.all import LCM
-        from sage.rings.all import QQ
+        from sage.arith.functions import lcm as LCM
+        from sage.rings.rational_field import QQ
         scalar = LCM([QQ(x).denominator() for x in sym])
         return Family( {iset[i]: ZZ(val*scalar) for i, val in enumerate(sym)} )
 
@@ -903,6 +903,65 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
         # consider the empty matrix to be indecomposable
         return comp_num <= 1
 
+    @cached_method
+    def coxeter_matrix(self):
+        r"""
+        Return the Coxeter matrix for ``self``.
+
+        .. SEEALSO:: :meth:`CartanType_abstract.coxeter_matrix`
+
+        EXAMPLES::
+
+            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
+            sage: cm.coxeter_matrix()
+            [ 1 -1  2]
+            [-1  1  3]
+            [ 2  3  1]
+            sage: ct = CartanType([['A',2,2], ['B',3]])
+            sage: ct.coxeter_matrix()
+            [ 1 -1  2  2  2]
+            [-1  1  2  2  2]
+            [ 2  2  1  3  2]
+            [ 2  2  3  1  4]
+            [ 2  2  2  4  1]
+            sage: ct.cartan_matrix().coxeter_matrix() == ct.coxeter_matrix()
+            True
+        """
+        scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
+        from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
+        I = self.index_set()
+        n = len(I)
+        M = matrix.identity(ZZ, n)
+        for i in range(n):
+            for j in range(i+1,n):
+                val = self[i,j] * self[j,i]
+                val = scalarproducts_to_order.get(val, -1)
+                M[i,j] = val
+                M[j,i] = val
+        return CoxeterMatrix(M, index_set=self.index_set(), cartan_type=self)
+
+    @cached_method
+    def coxeter_diagram(self):
+        r"""
+        Construct the Coxeter diagram of ``self``.
+
+        .. SEEALSO:: :meth:`CartanType_abstract.coxeter_diagram`
+
+        EXAMPLES::
+
+            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
+            sage: G = cm.coxeter_diagram(); G
+            Graph on 3 vertices
+            sage: G.edges(sort=True)
+            [(0, 1, +Infinity), (1, 2, 3)]
+            sage: ct = CartanType([['A',2,2], ['B',3]])
+            sage: ct.coxeter_diagram()
+            Graph on 5 vertices
+            sage: ct.cartan_matrix().coxeter_diagram() == ct.coxeter_diagram()
+            True
+        """
+        return self.coxeter_matrix().coxeter_graph()
+
     def principal_submatrices(self, proper=False):
         """
         Return a list of all principal submatrices of ``self``.
@@ -955,6 +1014,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
         subgraphs = self.dynkin_diagram().connected_components_subgraphs()
         return tuple(CartanMatrix(subg._matrix_().rows()) for subg in subgraphs)
 
+
 def is_borcherds_cartan_matrix(M):
     """
     Return ``True`` if ``M`` is an even, integral Borcherds-Cartan matrix.
@@ -995,6 +1055,7 @@ def is_borcherds_cartan_matrix(M):
                 return False
     return True
 
+
 def is_generalized_cartan_matrix(M):
     """
     Return ``True`` if ``M`` is a generalized Cartan matrix. For a definition
@@ -1023,6 +1084,7 @@ def is_generalized_cartan_matrix(M):
         return False
     n = M.ncols()
     return all(M[i,i] == 2 for i in range(n))
+
 
 def find_cartan_type_from_matrix(CM):
     r"""
@@ -1105,4 +1167,3 @@ def find_cartan_type_from_matrix(CM):
             return None
 
     return CartanType(types)
-

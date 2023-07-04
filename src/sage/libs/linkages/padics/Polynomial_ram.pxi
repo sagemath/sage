@@ -319,7 +319,8 @@ _expansion_zero = []
 
 # the expansion_mode enum is defined in padic_template_element_header.pxi
 cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
-    if mode == teichmuller_mode: raise NotImplementedError
+    if mode == teichmuller_mode:
+        raise NotImplementedError
     # This is not very efficient, but there's no clear better way.
     # We assume this is only called on two-step extensions (for more general
     # extensions, convert to the absolute field).

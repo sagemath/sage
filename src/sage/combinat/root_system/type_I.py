@@ -9,6 +9,8 @@ Root system data for type I
 #*****************************************************************************
 
 from .cartan_type import CartanType_standard_finite, CartanType_simple
+
+
 class CartanType(CartanType_standard_finite, CartanType_simple):
     def __init__(self, n):
         """
@@ -84,7 +86,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
             sage: ct = CartanType(['I', 4])
             sage: ct.coxeter_diagram()
             Graph on 2 vertices
-            sage: ct.coxeter_diagram().edges()
+            sage: ct.coxeter_diagram().edges(sort=True)
             [(1, 2, 4)]
             sage: ct.coxeter_matrix()
             [1 4]
@@ -105,4 +107,3 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
             12
         """
         return self.n
-

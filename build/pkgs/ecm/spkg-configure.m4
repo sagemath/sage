@@ -1,12 +1,6 @@
 SAGE_SPKG_CONFIGURE([ecm], [
     m4_pushdef([SAGE_ECM_MINVER],[7.0.4])
-    AC_REQUIRE([SAGE_SPKG_CONFIGURE_GMP])
-    AC_MSG_CHECKING([installing gmp/mpir? ])
-    if test x$sage_spkg_install_mpir = xyes -o x$sage_spkg_install_gmp = xyes; then
-        AC_MSG_RESULT([yes; install ecm as well])
-        sage_spkg_install_ecm=yes
-    else
-        AC_MSG_RESULT([no. ])
+    SAGE_SPKG_DEPCHECK([gmp], [
         AC_CHECK_HEADER(ecm.h, [
             AX_ABSOLUTE_HEADER([ecm.h])
             if test x$gl_cv_absolute_ecm_h = x; then
@@ -38,6 +32,6 @@ SAGE_SPKG_CONFIGURE([ecm], [
             AS_IF([test -z "$ac_cv_ECM"], [sage_spkg_install_ecm=yes])
             AS_IF([test -z "$ac_cv_ECMBIN"], [sage_spkg_install_ecm=yes])
         ], [sage_spkg_install_ecm=yes])
-    fi
+    ])
     m4_popdef([SAGE_ECM_MINVER])
 ])

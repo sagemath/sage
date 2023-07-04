@@ -46,6 +46,21 @@ Lattice polyhedra
    sage/geometry/polyhedron/palp_database
    sage/geometry/polyhedron/ppl_lattice_polygon
    sage/geometry/polyhedron/ppl_lattice_polytope
+   sage/geometry/polyhedron/generating_function
+
+Combinatorial Polyhedra
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/geometry/polyhedron/combinatorial_polyhedron/base
+   sage/geometry/polyhedron/combinatorial_polyhedron/combinatorial_face
+   sage/geometry/polyhedron/combinatorial_polyhedron/polyhedron_face_lattice
+   sage/geometry/polyhedron/combinatorial_polyhedron/face_iterator
+   sage/geometry/polyhedron/combinatorial_polyhedron/list_of_faces
+   sage/geometry/polyhedron/combinatorial_polyhedron/conversions
+
 
 Polyhedral complexes
 ~~~~~~~~~~~~~~~~~~~~
@@ -76,6 +91,14 @@ Base classes for polyhedra
 .. toctree::
    :maxdepth: 1
 
+   sage/geometry/polyhedron/base0
+   sage/geometry/polyhedron/base1
+   sage/geometry/polyhedron/base2
+   sage/geometry/polyhedron/base3
+   sage/geometry/polyhedron/base4
+   sage/geometry/polyhedron/base5
+   sage/geometry/polyhedron/base6
+   sage/geometry/polyhedron/base7
    sage/geometry/polyhedron/base
    sage/geometry/polyhedron/base_QQ
    sage/geometry/polyhedron/base_ZZ
@@ -88,7 +111,9 @@ Backends for Polyhedra
    :maxdepth: 1
 
    sage/geometry/polyhedron/backend_cdd
+   sage/geometry/polyhedron/backend_cdd_rdf
    sage/geometry/polyhedron/backend_field
+   sage/geometry/polyhedron/backend_number_field
    sage/geometry/polyhedron/backend_normaliz
    sage/geometry/polyhedron/backend_polymake
    sage/geometry/polyhedron/backend_ppl
@@ -113,6 +138,7 @@ Miscellaneous
 .. toctree::
    :maxdepth: 1
 
+   sage/geometry/abc
    sage/geometry/convex_set
    sage/geometry/linear_expression
    sage/geometry/newton_polygon

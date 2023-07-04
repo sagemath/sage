@@ -1,0 +1,4 @@
+$(MP_LIBRARY) flint mpfr
+
+----------
+All lines of this file are ignored except the first.

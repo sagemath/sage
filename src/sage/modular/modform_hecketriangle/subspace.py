@@ -7,16 +7,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from sage.rings.all import ZZ
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.modules.module import Module
 from sage.structure.unique_representation import UniqueRepresentation
@@ -84,7 +82,7 @@ def ModularFormsSubSpace(*args, **kwargs):
 
     generators = []
     for arg in args:
-        if isinstance(arg, list) or isinstance(arg, tuple):
+        if isinstance(arg, (list, tuple)):
             generators += arg
         else:
             generators.append(arg)
@@ -132,11 +130,10 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: SubSpaceForms(MF, [MF.Delta().as_ring_element(), MF.gen(0)]) == SubSpaceForms(ambient_space, basis)
             True
         """
-
         (ambient_space, basis) = canonical_parameters(ambient_space, basis, check)
 
         # we return check=True to ensure only one cached instance
-        return super(SubSpaceForms,cls).__classcall__(cls, ambient_space=ambient_space, basis=basis, check=True)
+        return super().__classcall__(cls, ambient_space=ambient_space, basis=basis, check=True)
 
     def __init__(self, ambient_space, basis, check):
         r"""
@@ -291,8 +288,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: subspace.contains_coeff_ring()
             False
         """
-
-        return (super(SubSpaceForms, self).contains_coeff_ring() and self.dimension()==ZZ(1))
+        return (super().contains_coeff_ring() and self.dimension() == 1)
 
     @cached_method
     def basis(self):
@@ -309,7 +305,6 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: subspace.basis()[0].parent() == MF
             True
         """
-
         return self._basis
 
     @cached_method
@@ -425,4 +420,3 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         return self._module.coordinate_vector(self.ambient_coordinate_vector(v))
-

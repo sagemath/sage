@@ -170,7 +170,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 from bisect import bisect_left, bisect_right
 from sage.structure.element import is_Matrix
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 
 
@@ -202,6 +202,7 @@ class Rule(UniqueRepresentation):
     e.g., the case of Hecke insertion, in which a letter bumped
     into a row may change a different row).
     """
+
     def to_pairs(self, obj1=None, obj2=None, check=True):
         r"""
         Given a valid input for the RSK algorithm, such as
@@ -530,6 +531,7 @@ class RuleRSK(Rule):
         sage: RSK_inverse(p, q, insertion=RSK.rules.RSK)
         [[1, 2, 3, 3], [2, 1, 2, 2]]
     """
+
     def insertion(self, j, r):
         r"""
         Insert the letter ``j`` from the second row of the biword
@@ -613,9 +615,8 @@ class RuleRSK(Rule):
                 raise TypeError("p must be standard to have a valid permutation as output")
             from sage.combinat.permutation import Permutation
             return Permutation(reversed(lower_row))
-        else:
-            return super(RuleRSK, self)._backward_format_output(lower_row, upper_row, output,
-                                                                p_is_standard, q_is_standard)
+        return super()._backward_format_output(lower_row, upper_row, output,
+                                               p_is_standard, q_is_standard)
 
 
 class RuleEG(Rule):
@@ -701,6 +702,7 @@ class RuleEG(Rule):
         ....:     for wd in p.reduced_words())
         True
     """
+
     def insertion(self, j, r):
         r"""
         Insert the letter ``j`` from the second row of the biword
@@ -798,8 +800,8 @@ class RuleEG(Rule):
             from sage.combinat.permutation import Permutations
             return Permutations(n).from_reduced_word(list(lower_row))
         else:
-            return super(RuleEG, self)._backward_format_output(lower_row, upper_row, output,
-                                                               p_is_standard, q_is_standard)
+            return super()._backward_format_output(lower_row, upper_row, output,
+                                                   p_is_standard, q_is_standard)
 
 
 class RuleHecke(Rule):
@@ -867,6 +869,7 @@ class RuleHecke(Rule):
         sage: wp == w
         True
     """
+
     def forward_rule(self, obj1, obj2, check_standard=False):
         r"""
         Return a pair of tableaux obtained by applying Hecke
@@ -1307,6 +1310,7 @@ class RuleDualRSK(Rule):
         ...
         ValueError: p(=[[1, 2, 3]]) and q(=[[1, 2]]) must have the same shape
     """
+
     def to_pairs(self, obj1=None, obj2=None, check=True):
         r"""
         Given a valid input for the dual RSK algorithm, such as
@@ -1483,8 +1487,8 @@ class RuleDualRSK(Rule):
             from sage.combinat.permutation import Permutation
             return Permutation(reversed(lower_row))
         else:
-            return super(RuleDualRSK, self)._backward_format_output(lower_row, upper_row, output,
-                                                                    p_is_standard, q_is_standard)
+            return super()._backward_format_output(lower_row, upper_row, output,
+                                                   p_is_standard, q_is_standard)
 
     def _forward_format_output(self, p, q, check_standard):
         r"""
@@ -1687,6 +1691,7 @@ class RuleCoRSK(RuleRSK):
         ...
         ValueError: invalid strict cobiword
     """
+
     def to_pairs(self, obj1=None, obj2=None, check=True):
         r"""
         Given a valid input for the coRSK algorithm, such as
@@ -1888,14 +1893,14 @@ class RuleSuperRSK(RuleRSK):
     * The input (in terms of biwords) is no longer an arbitrary biword,
       but rather a restricted super biword (i.e., a pair of two lists
       `[a_1, a_2, \ldots, a_n]` and `[b_1, b_2, \ldots, b_n]` that
-      contains entries with even and odd parity and pairs with mixed 
+      contains entries with even and odd parity and pairs with mixed
       parity entries do not repeat).
 
     * The output still consists of two tableaux `(P, Q)` of equal
       shapes, but rather than both of them being semistandard, now
       they are semistandard super tableaux.
 
-    * The main difference is in the way bumping works. Instead of having 
+    * The main difference is in the way bumping works. Instead of having
       only row bumping super RSK uses `\epsilon`-insertion, a combination
       of classical RSK bumping along the rows and a dual RSK like bumping
       (i.e. when a number `k_i` is inserted into the `i`-th row of `P`, it
@@ -1912,7 +1917,7 @@ class RuleSuperRSK(RuleRSK):
         [[[1, 3], [3']], [[1, 2], [3]]]
         sage: RSK([1, 3, "3p", "2p"], insertion='superRSK')
         [[[1, 3', 3], [2']], [[1', 1, 2'], [2]]]
-        sage: RSK(["1p", "2p", 2, 2, "3p", "3p", 3, 3], 
+        sage: RSK(["1p", "2p", 2, 2, "3p", "3p", 3, 3],
         ....:     ["1p", 1, "2p", 2, "3p", "3p", "3p", 3], insertion='superRSK')
         [[[1', 2, 3', 3], [1, 3'], [2'], [3']], [[1', 2, 3', 3], [2', 3'], [2], [3]]]
         sage: P = SemistandardSuperTableau([[1, '3p', 3], ['2p']])
@@ -1922,7 +1927,7 @@ class RuleSuperRSK(RuleRSK):
 
     We apply super RSK on Example 5.1 in [Muth2019]_::
 
-        sage: P,Q = RSK(["1p", "2p", 2, 2, "3p", "3p", 3, 3], 
+        sage: P,Q = RSK(["1p", "2p", 2, 2, "3p", "3p", 3, 3],
         ....:           ["3p", 1, 2, 3, "3p", "3p", "2p", "1p"], insertion='superRSK')
         sage: (P, Q)
         ([[1', 2', 3', 3], [1, 2, 3'], [3']], [[1', 2, 2, 3'], [2', 3, 3], [3']])
@@ -1935,7 +1940,7 @@ class RuleSuperRSK(RuleRSK):
 
     Example 6.1 in [Muth2019]_::
 
-        sage: P,Q = RSK(["1p", "2p", 2, 2, "3p", "3p", 3, 3], 
+        sage: P,Q = RSK(["1p", "2p", 2, 2, "3p", "3p", 3, 3],
         ....:           ["3p", 1, 2, 3, "3p", "3p", "2p", "1p"], insertion='superRSK')
         sage: ascii_art((P, Q))
         (  1' 2' 3'  3   1'  2  2 3' )
@@ -1944,7 +1949,7 @@ class RuleSuperRSK(RuleRSK):
         sage: RSK_inverse(P, Q, insertion=RSK.rules.superRSK)
         [[1', 2', 2, 2, 3', 3', 3, 3], [3', 1, 2, 3, 3', 3', 2', 1']]
 
-        sage: P,Q = RSK(["1p", 1, "2p", 2, "3p", "3p", "3p", 3], 
+        sage: P,Q = RSK(["1p", 1, "2p", 2, "3p", "3p", "3p", 3],
         ....:           [3, "2p", 3, 2, "3p", "3p", "1p", 2], insertion='superRSK')
         sage: ascii_art((P, Q))
         (  1'  2  2 3'   1' 2' 3'  3 )
@@ -1960,7 +1965,7 @@ class RuleSuperRSK(RuleRSK):
         sage: RSK_inverse(P, Q, insertion=RSK.rules.superRSK)
         [[1, 2, 2, 2], [2, 1, 2, 3]]
 
-    When applied to two tableaux with only even parity elements, reverse super 
+    When applied to two tableaux with only even parity elements, reverse super
     RSK insertion behaves identically to the usual reversel RSK insertion::
 
         sage: t1 = Tableau([[1, 2, 5], [3], [4]])
@@ -1985,7 +1990,7 @@ class RuleSuperRSK(RuleRSK):
     different types of inputs/outputs::
 
         sage: from sage.combinat.shifted_primed_tableau import PrimedEntry
-        sage: RSK_inverse(SemistandardSuperTableau([]), 
+        sage: RSK_inverse(SemistandardSuperTableau([]),
         ....:             SemistandardSuperTableau([]), insertion=RSK.rules.superRSK)
         [[], []]
         sage: f = lambda p: RSK_inverse(*RSK(p, insertion=RSK.rules.superRSK),
@@ -2002,20 +2007,21 @@ class RuleSuperRSK(RuleRSK):
 
     Checking that tableaux should be of same shape::
 
-        sage: RSK_inverse(SemistandardSuperTableau([[1, 2, 3]]), 
-        ....:             SemistandardSuperTableau([[1, 2]]), 
+        sage: RSK_inverse(SemistandardSuperTableau([[1, 2, 3]]),
+        ....:             SemistandardSuperTableau([[1, 2]]),
         ....:             insertion=RSK.rules.superRSK)
         Traceback (most recent call last):
         ...
         ValueError: p(=[[1, 2, 3]]) and q(=[[1, 2]]) must have the same shape
     """
+
     def to_pairs(self, obj1=None, obj2=None, check=True):
         r"""
         Given a valid input for the super RSK algorithm, such as
         two `n`-tuples ``obj1`` `= [a_1, a_2, \ldots, a_n]`
         and ``obj2`` `= [b_1, b_2, \ldots, b_n]` forming a restricted
-        super biword (i.e., entries with even and odd parity and no 
-        repetition of corresponding pairs with mixed parity entries) 
+        super biword (i.e., entries with even and odd parity and no
+        repetition of corresponding pairs with mixed parity entries)
         return the array `[(a_1, b_1), (a_2, b_2), \ldots, (a_n, b_n)]`.
 
         INPUT:
@@ -2059,7 +2065,7 @@ class RuleSuperRSK(RuleRSK):
                     raise ValueError("the two arrays must be the same length")
                 mixed_parity = []
                 # Check it is a restricted superbiword: that is,
-                # the entries can have even or odd parity, but repetition of 
+                # the entries can have even or odd parity, but repetition of
                 # the pairs of corresponding entries of obj1
                 # and obj2 with mixed-parity is not allowed
                 for t, b in zip(obj1, obj2):
@@ -2239,8 +2245,8 @@ class RuleSuperRSK(RuleRSK):
     def insertion(self, j, r, epsilon=0):
         r"""
         Insert the letter ``j`` from the second row of the biword
-        into the row ``r`` using dual RSK insertion or classical 
-        Schensted insertion depending on the value of ``epsilon``, 
+        into the row ``r`` using dual RSK insertion or classical
+        Schensted insertion depending on the value of ``epsilon``,
         if there is bumping to be done.
 
         The row `r` is modified in place if bumping occurs. The bumped-out
@@ -2289,15 +2295,15 @@ class RuleSuperRSK(RuleRSK):
 
             sage: from sage.combinat.rsk import RuleSuperRSK
             sage: isinstance(RuleSuperRSK()._forward_format_output(
-            ....:           [['1p', 1, '2p']], [['1p', '1', '2p']], True)[0], 
+            ....:           [['1p', 1, '2p']], [['1p', '1', '2p']], True)[0],
             ....:           StandardSuperTableau)
             True
             sage: isinstance(RuleSuperRSK()._forward_format_output(
-            ....:                   [[1, '2p', 3]], [[1, 2, 3]], False)[0], 
+            ....:                   [[1, '2p', 3]], [[1, 2, 3]], False)[0],
             ....:                   SemistandardSuperTableau)
             True
             sage: isinstance(RuleSuperRSK()._forward_format_output(
-            ....:                       [[1, 1, 3]], [[1, 2, 3]], True)[0], 
+            ....:                       [[1, 1, 3]], [[1, 2, 3]], True)[0],
             ....:                       SemistandardSuperTableau)
             True
         """
@@ -2401,7 +2407,7 @@ class RuleSuperRSK(RuleRSK):
     def reverse_insertion(self, x, row, epsilon=0):
         r"""
         Reverse bump the row ``row`` of the current insertion tableau
-        with the number ``x`` using dual RSK insertion or classical 
+        with the number ``x`` using dual RSK insertion or classical
         Schensted insertion depending on the value of `epsilon`.
 
         The row ``row`` is modified in place. The bumped-out entry
@@ -2442,7 +2448,7 @@ class RuleSuperRSK(RuleRSK):
         x, row[y_pos] = row[y_pos], x
         return x, y_pos
 
-    def _backward_format_output(self, lower_row, upper_row, output, 
+    def _backward_format_output(self, lower_row, upper_row, output,
                                 q_is_standard):
         r"""
         Return the final output of the ``RSK_inverse`` correspondence
@@ -2459,19 +2465,19 @@ class RuleSuperRSK(RuleRSK):
 
             sage: from sage.combinat.rsk import RuleSuperRSK
             sage: from sage.combinat.shifted_primed_tableau import PrimedEntry
-            sage: RuleSuperRSK()._backward_format_output([PrimedEntry('1p'), 
-            ....:       PrimedEntry(1), PrimedEntry('3p'), PrimedEntry(9)], 
-            ....:       [PrimedEntry(1), PrimedEntry('2p'), PrimedEntry('3p'), 
+            sage: RuleSuperRSK()._backward_format_output([PrimedEntry('1p'),
+            ....:       PrimedEntry(1), PrimedEntry('3p'), PrimedEntry(9)],
+            ....:       [PrimedEntry(1), PrimedEntry('2p'), PrimedEntry('3p'),
             ....:       PrimedEntry(4)], 'array', False)
             [[4, 3', 2', 1], [9, 3', 1, 1']]
-            sage: RuleSuperRSK()._backward_format_output([PrimedEntry(1), 
-            ....:       PrimedEntry('2p'), PrimedEntry('3p'), PrimedEntry(4)], 
-            ....:       [PrimedEntry('1p'), PrimedEntry(1), PrimedEntry('2p'), 
+            sage: RuleSuperRSK()._backward_format_output([PrimedEntry(1),
+            ....:       PrimedEntry('2p'), PrimedEntry('3p'), PrimedEntry(4)],
+            ....:       [PrimedEntry('1p'), PrimedEntry(1), PrimedEntry('2p'),
             ....:       PrimedEntry(2)], 'word', True)
             word: 4,3',2',1
-            sage: RuleSuperRSK()._backward_format_output([PrimedEntry(1), 
-            ....:       PrimedEntry(2), PrimedEntry(3), PrimedEntry(4)], 
-            ....:       [PrimedEntry('1p'), PrimedEntry(1), PrimedEntry('2p'), 
+            sage: RuleSuperRSK()._backward_format_output([PrimedEntry(1),
+            ....:       PrimedEntry(2), PrimedEntry(3), PrimedEntry(4)],
+            ....:       [PrimedEntry('1p'), PrimedEntry(1), PrimedEntry('2p'),
             ....:       PrimedEntry(2)], 'word', True)
             word: 4321
         """
@@ -2580,7 +2586,7 @@ class RuleStar(Rule):
         ....:                  for T in SemistandardTableaux(shape, max_entry=4)
         ....:                      if fc(row_reading(T.conjugate()))]
         sage: Checks = []
-        sage: for T in FC_tabs:
+        sage: for T in FC_tabs:  # long time
         ....:    shape = T.shape().conjugate()
         ....:    P = T.conjugate()
         ....:    Checks += [all((P,Q) == tuple(RSK(*RSK_inverse(P, Q,
@@ -2590,7 +2596,7 @@ class RuleStar(Rule):
         sage: all(Checks)
         True
         sage: Checks = []
-        sage: for T in FC_tabs:
+        sage: for T in FC_tabs:  # long time
         ....:    shape = T.shape().conjugate()
         ....:    P = T.conjugate()
         ....:    Checks += [all((P,Q) == tuple(RSK(RSK_inverse(P, Q,
@@ -2645,6 +2651,7 @@ class RuleStar(Rule):
         ....:          insertion='Star', output='word') for w in words)])
         True
     """
+
     def forward_rule(self, obj1, obj2=None, check_braid=True):
         r"""
         Return a pair of tableaux obtained by applying forward insertion
@@ -2959,7 +2966,8 @@ class RuleStar(Rule):
                 df.append([])
             return DecreasingHeckeFactorization(df)
 
-class InsertionRules(object):
+
+class InsertionRules():
     r"""
     Catalog of rules for RSK-like insertion algorithms.
     """
@@ -2972,6 +2980,7 @@ class InsertionRules(object):
     Star = RuleStar
 
 #####################################################################
+
 
 def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False, **options):
     r"""
@@ -3062,9 +3071,9 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
       - ``RSK.rules.Hecke`` (or ``'hecke'``) -- Hecke insertion (only
         guaranteed for generalized permutations whose top row is strictly
         increasing) (:class:`~sage.combinat.rsk.RuleHecke`)
-      - ``RSK.rules.dualRSK`` (or ``'dualRSK'``) -- Dual RSK insertion 
+      - ``RSK.rules.dualRSK`` (or ``'dualRSK'``) -- Dual RSK insertion
         (only for strict biwords) (:class:`~sage.combinat.rsk.RuleDualRSK`)
-      - ``RSK.rules.coRSK`` (or ``'coRSK'``) -- CoRSK insertion (only 
+      - ``RSK.rules.coRSK`` (or ``'coRSK'``) -- CoRSK insertion (only
         for strict cobiwords) (:class:`~sage.combinat.rsk.RuleCoRSK`)
       - ``RSK.rules.superRSK`` (or ``'super'``) -- Super RSK insertion (only for
         restricted super biwords) (:class:`~sage.combinat.rsk.RuleSuperRSK`)
@@ -3181,6 +3190,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
 robinson_schensted_knuth = RSK
 RSK.rules = InsertionRules
 
+
 def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
     r"""
     Return the generalized permutation corresponding to the pair of
@@ -3221,9 +3231,9 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
       - ``RSK.rules.Hecke`` (or ``'hecke'``) -- Hecke insertion (only
         guaranteed for generalized permutations whose top row is strictly
         increasing) (:class:`~sage.combinat.rsk.RuleHecke`)
-      - ``RSK.rules.dualRSK`` (or ``'dualRSK'``) -- Dual RSK insertion 
+      - ``RSK.rules.dualRSK`` (or ``'dualRSK'``) -- Dual RSK insertion
         (only for strict biwords) (:class:`~sage.combinat.rsk.RuleDualRSK`)
-      - ``RSK.rules.coRSK`` (or ``'coRSK'``) -- CoRSK insertion (only 
+      - ``RSK.rules.coRSK`` (or ``'coRSK'``) -- CoRSK insertion (only
         for strict cobiwords) (:class:`~sage.combinat.rsk.RuleCoRSK`)
       - ``RSK.rules.superRSK`` (or ``'super'``) -- Super RSK insertion (only for
         restricted super biwords) (:class:`~sage.combinat.rsk.RuleSuperRSK`)
@@ -3368,10 +3378,11 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
         raise TypeError("the insertion must be an instance of Rule")
 
     if p.shape() != q.shape():
-        raise ValueError("p(=%s) and q(=%s) must have the same shape" %(p, q))
+        raise ValueError(f"p(={p}) and q(={q}) must have the same shape")
 
     answer = rule.backward_rule(p, q, output)
     return answer
+
 
 robinson_schensted_knuth_inverse = RSK_inverse
 
@@ -3414,4 +3425,3 @@ def to_matrix(t, b):
         else:
             entries[pos] = 1
     return matrix(entries, sparse=True)
-

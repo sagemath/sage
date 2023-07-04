@@ -18,10 +18,11 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 
 
-class BraidMoveCalculator(object):
+class BraidMoveCalculator():
     """
     Helper class to compute braid moves.
     """
+
     def __init__(self, coxeter_group):
         """
         Initialize ``self``.

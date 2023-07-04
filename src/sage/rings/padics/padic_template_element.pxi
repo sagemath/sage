@@ -11,8 +11,7 @@ AUTHORS:
 
 - David Roe -- initial version (2012-3-1)
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -20,8 +19,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.int cimport *
 
@@ -30,13 +29,16 @@ import sage.rings.finite_rings.integer_mod
 from cypari2.types cimport *
 from cypari2.gen cimport Gen as pari_gen
 from sage.libs.pari.convert_gmp cimport INT_to_mpz
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.padics.common_conversion cimport get_ordp, get_preccap
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
 from sage.rings.rational import Rational
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.misc import trim_zeros
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import canonical_coercion
+
 import itertools
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
@@ -73,6 +75,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         sage: Zp(17)(17^3, 8, 4)
         17^3 + O(17^7)
+
     """
     def __init__(self, parent, x, absprec=infinity, relprec=infinity):
         """
@@ -89,7 +92,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             sage: a = Zp(5)(1/2,3); a
             3 + 2*5 + 2*5^2 + O(5^3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: TestSuite(a).run()
 
         TESTS::
@@ -107,12 +110,19 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             ...
             TypeError: p does not divide modulus 9
 
+        ::
+
+            sage: Zp(2)(Zp(5)(1))
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion between padics when prime numbers differ
+
         """
         self.prime_pow = <PowComputer_?>parent.prime_pow
         pAdicGenericElement.__init__(self, parent)
         cdef long val, xprec
         cdef GEN pari_tmp
-        if isinstance(x, (int, long)):
+        if isinstance(x, int):
             x = Integer(x)
         elif isinstance(x, pari_gen):
             pari_tmp = (<pari_gen>x).g
@@ -122,6 +132,8 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             elif typ(pari_tmp) == t_FRAC:
                 x = Rational(x)
         elif isinstance(x, pAdicGenericElement):
+            if self.prime_pow.prime != x.parent().prime():
+                raise TypeError("no conversion between padics when prime numbers differ")
             if not ((<pAdicGenericElement>x)._is_base_elt(self.prime_pow.prime) or x.parent() is self.parent()):
                 if x.parent().modulus().change_ring(self.base_ring()) == self.parent().modulus():
                     x = x.polynomial().change_ring(self.base_ring()).list()
@@ -135,7 +147,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
             if not Integer(self.prime_pow.prime).divides(x.parent().order()):
                 raise TypeError("p does not divide modulus %s"%x.parent().order())
-        elif sage.rings.finite_rings.element_base.is_FiniteFieldElement(x):
+        elif isinstance(x, Element) and isinstance(x.parent(), FiniteField):
             k = self.parent().residue_field()
             if not k.has_coerce_map_from(x.parent()):
                 raise NotImplementedError("conversion from finite fields which do not embed into the residue field not implemented")
@@ -146,7 +158,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                 x = x + [k.prime_subfield().zero()] * (k.degree() - len(x))
         elif isinstance(x, (Integer, Rational, list, tuple)):
             pass
-        elif sage.rings.polynomial.polynomial_element.is_Polynomial(x) and x.variable_name() == self.parent().variable_name():
+        elif isinstance(x, Polynomial) and x.variable_name() == self.parent().variable_name():
             x = x.list()
         else:
             x = Rational(x)
@@ -731,7 +743,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         if field and absprec != 1:
             raise ValueError("field keyword may only be set at precision 1")
         if absprec == 0:
-            from sage.rings.all import IntegerModRing
+            from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
             return IntegerModRing(1).zero()
         elif absprec == 1:
             parent = R.residue_field()
@@ -766,7 +778,7 @@ cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowCompute
     cdef Integer right, p = prime_pow.prime
     cdef long exp_val
     cdef bint isbase
-    if isinstance(_right, (int, long)):
+    if isinstance(_right, int):
         _right = Integer(_right)
     if isinstance(_right, Integer):
         right = <Integer> _right
@@ -870,7 +882,7 @@ cdef _zero(expansion_mode mode, teich_ring):
     else:
         return _expansion_zero
 
-cdef class ExpansionIter(object):
+cdef class ExpansionIter():
     """
     An iterator over a `p`-adic expansion.
 
@@ -888,7 +900,7 @@ cdef class ExpansionIter(object):
         sage: E = Zp(5,4)(373).expansion()
         sage: I = iter(E) # indirect doctest
         sage: type(I)
-        <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
+        <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
     """
     cdef pAdicTemplateElement elt
     cdef celement tmp
@@ -999,7 +1011,7 @@ cdef class ExpansionIter(object):
         else:
             return cexpansion_next(self.curvalue, self.mode, self.curpower, pp)
 
-cdef class ExpansionIterable(object):
+cdef class ExpansionIterable():
     r"""
     An iterable storing a `p`-adic expansion of an element.
 
@@ -1021,7 +1033,7 @@ cdef class ExpansionIterable(object):
 
         sage: E = Zp(5,4)(373).expansion() # indirect doctest
         sage: type(E)
-        <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIterable'>
+        <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIterable'>
     """
     cdef pAdicTemplateElement elt
     cdef celement tmp
@@ -1076,13 +1088,13 @@ cdef class ExpansionIterable(object):
 
             sage: E = Zp(5,4)(373).expansion()
             sage: type(iter(E))
-            <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
+            <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
             sage: E = Zp(5,4)(373).expansion(start_val=-1)
             sage: type(iter(E))
-            <type 'itertools.chain'>
+            <class 'itertools.chain'>
             sage: E = Zp(5,4)(373).expansion(start_val=1)
             sage: type(iter(E))
-            <type 'itertools.islice'>
+            <class 'itertools.islice'>
         """
         cdef ExpansionIter expansion = ExpansionIter(self.elt, self.prec, self.mode)
         if self.val_shift == 0:

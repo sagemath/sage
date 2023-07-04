@@ -8,8 +8,8 @@ implements evaluation AG codes and differential AG codes as Goppa defined in
 
 EXAMPLES::
 
-    sage: F.<a> = GF(4)
-    sage: P.<x,y> = AffineSpace(F, 2);
+    sage: k.<a> = GF(4)
+    sage: A.<x,y> = AffineSpace(k, 2)
     sage: C = Curve(y^2 + y - x^3)
     sage: F = C.function_field()
     sage: pls = F.places()
@@ -72,6 +72,7 @@ AUTHORS:
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.function_field.place import FunctionFieldPlace
 
 from .linear_code import (AbstractLinearCode,
                           LinearCodeGeneratorMatrixEncoder,
@@ -97,8 +98,8 @@ class AGCode(AbstractLinearCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -123,16 +124,22 @@ class EvaluationAGCode(AGCode):
 
     - ``G`` -- a divisor whose support is disjoint from ``pls``
 
+    If ``G`` is a place, then it is regarded as a prime divisor.
+
     EXAMPLES::
 
-        sage: F.<a> = GF(4)
-        sage: P.<x,y> = AffineSpace(F, 2);
+        sage: k.<a> = GF(4)
+        sage: A.<x,y> = AffineSpace(k, 2)
         sage: C = Curve(y^2 + y - x^3)
         sage: F = C.function_field()
         sage: pls = F.places()
         sage: Q, = C.places_at_infinity()
         sage: pls.remove(Q)
         sage: G = 5*Q
+        sage: codes.EvaluationAGCode(pls, G)
+        [8, 5] evaluation AG code over GF(4)
+
+        sage: G = F.get_place(5)
         sage: codes.EvaluationAGCode(pls, G)
         [8, 5] evaluation AG code over GF(4)
     """
@@ -145,8 +152,8 @@ class EvaluationAGCode(AGCode):
 
         TESTS::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -156,6 +163,9 @@ class EvaluationAGCode(AGCode):
             sage: code = codes.EvaluationAGCode(pls, G)
             sage: TestSuite(code).run()
         """
+        if issubclass(type(G), FunctionFieldPlace):
+            G = G.divisor()  # place is converted to a prime divisor
+
         F = G.parent().function_field()
         K = F.constant_base_field()
         n = len(pls)
@@ -197,8 +207,8 @@ class EvaluationAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -221,8 +231,8 @@ class EvaluationAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -240,8 +250,8 @@ class EvaluationAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -259,8 +269,8 @@ class EvaluationAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -279,8 +289,8 @@ class EvaluationAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -302,8 +312,8 @@ class EvaluationAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -325,8 +335,8 @@ class EvaluationAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -353,17 +363,24 @@ class DifferentialAGCode(AGCode):
 
     - ``G`` -- a divisor whose support is disjoint from ``pls``
 
+    If ``G`` is a place, then it is regarded as a prime divisor.
+
     EXAMPLES::
 
-        sage: F.<a> = GF(4)
-        sage: A2.<x,y> = AffineSpace(F, 2)
-        sage: C = A2.curve(y^3 + y - x^4)
+        sage: k.<a> = GF(4)
+        sage: A.<x,y> = AffineSpace(k, 2)
+        sage: C = A.curve(y^3 + y - x^4)
         sage: Q = C.places_at_infinity()[0]
         sage: O = C([0,0]).place()
         sage: pls = [p for p in C.places() if p not in [O, Q]]
         sage: G = -O + 3*Q
         sage: codes.DifferentialAGCode(pls, -O + Q)
         [3, 2] differential AG code over GF(4)
+
+        sage: F = C.function_field()
+        sage: G = F.get_place(1)
+        sage: codes.DifferentialAGCode(pls, G)
+        [3, 1] differential AG code over GF(4)
     """
     _registered_encoders = {}
     _registered_decoders = {}
@@ -374,8 +391,8 @@ class DifferentialAGCode(AGCode):
 
         TESTS::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -384,6 +401,9 @@ class DifferentialAGCode(AGCode):
             sage: code = codes.DifferentialAGCode(pls, 3*Q)
             sage: TestSuite(code).run()
         """
+        if issubclass(type(G), FunctionFieldPlace):
+            G = G.divisor()  # place is converted to a prime divisor
+
         F = G.parent().function_field()
         K = F.constant_base_field()
         n = len(pls)
@@ -424,8 +444,8 @@ class DifferentialAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -452,8 +472,8 @@ class DifferentialAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -471,8 +491,8 @@ class DifferentialAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -490,8 +510,8 @@ class DifferentialAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -510,8 +530,8 @@ class DifferentialAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -533,8 +553,8 @@ class DifferentialAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()
@@ -558,8 +578,8 @@ class DifferentialAGCode(AGCode):
 
         EXAMPLES::
 
-            sage: F.<a> = GF(4)
-            sage: P.<x,y> = AffineSpace(F, 2);
+            sage: k.<a> = GF(4)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: C = Curve(y^2 + y - x^3)
             sage: F = C.function_field()
             sage: pls = F.places()

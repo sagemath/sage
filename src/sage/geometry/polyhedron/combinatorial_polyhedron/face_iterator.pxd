@@ -1,15 +1,20 @@
 cimport cython
-from memory_allocator           cimport MemoryAllocator
 from sage.structure.sage_object cimport SageObject
 from .list_of_faces             cimport ListOfFaces
 from .face_data_structure       cimport face_t
 from .face_list_data_structure  cimport face_list_t
 from .combinatorial_face        cimport CombinatorialFace
 
+cdef enum FaceStatus:
+    NOT_INITIALIZED
+    INITIALIZED
+    IGNORE_SUBSETS
+    ONLY_VISIT_SUBSETS
+
 cdef struct iter_s:
     bint dual                  # if 1, then iterate over dual Polyhedron
     face_t face                # the current face of the iterator
-    int face_status            # 0 not initialized, 1 initialized, 2 added to visited_all, 3 only visit subsets
+    FaceStatus face_status
     size_t *atom_rep           # a place where atom-representaion of face will be stored
     size_t *coatom_rep         # a place where coatom-representaion of face will be stored
     int current_dimension      # dimension of current face, dual dimension if ``dual``
@@ -54,7 +59,6 @@ ctypedef iter_s iter_t[1]
 cdef class FaceIterator_base(SageObject):
     cdef iter_t structure
     cdef readonly bint dual         # if 1, then iterate over dual Polyhedron
-    cdef MemoryAllocator _mem
 
     # some copies from ``CombinatorialPolyhedron``
     cdef tuple _Vrep, _facet_names, _equations

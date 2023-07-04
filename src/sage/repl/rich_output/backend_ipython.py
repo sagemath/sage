@@ -142,6 +142,7 @@ class BackendIPythonCommandline(BackendIPython):
             sage: backend = BackendIPythonCommandline()
             sage: backend.default_preferences()
             Display preferences:
+            * align_latex is not specified
             * graphics is not specified
             * supplemental_plot = never
             * text is not specified
@@ -226,7 +227,7 @@ class BackendIPythonCommandline(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: backend.displayhook(plain_text, plain_text)
-            ({u'text/plain': u'Example plain text output'}, {})
+            ({'text/plain': 'Example plain text output'}, {})
 
         TESTS:
 
@@ -234,11 +235,11 @@ class BackendIPythonCommandline(BackendIPython):
 
             sage: class Foo(sage.structure.sage_object.SageObject):
             ....:     def _rich_repr_(self, dm):
-            ....:         return dm.types.OutputPlainText(u'Motörhead')
+            ....:         return dm.types.OutputPlainText('Motörhead')
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: dm.displayhook(Foo())
-            ({u'text/plain': u'Mot\xf6rhead'}, {})
+            ({'text/plain': 'Mot\xf6rhead'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
             return ({'text/plain': rich_output.text.get_str()}, {})
@@ -303,7 +304,7 @@ class BackendIPythonCommandline(BackendIPython):
             Example plain text output
         """
         formatdata, metadata = self.displayhook(plain_text, rich_output)
-        print(formatdata[u'text/plain'])
+        print(formatdata['text/plain'])
 
     def launch_viewer(self, image_file, plain_text):
         """
@@ -419,6 +420,7 @@ class BackendIPythonCommandline(BackendIPython):
 
         if sys.platform == 'cygwin':
             import cygwin
+
             def normpath(p):
                 return 'file:///' + cygwin.cygpath(p, 'w').replace('\\', '/')
             script = normpath(script)
@@ -528,7 +530,7 @@ class BackendIPythonNotebook(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
             sage: backend.displayhook(plain_text, plain_text)
-            ({u'text/plain': u'Example plain text output'}, {})
+            ({'text/plain': 'Example plain text output'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
             return ({'text/plain': rich_output.text.get_str()}, {})

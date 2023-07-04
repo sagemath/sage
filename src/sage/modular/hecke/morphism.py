@@ -86,7 +86,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         ...
         TypeError: Incompatible composition of morphisms: domain of left morphism must be codomain of right.
     """
-    def __init__(self, parent, A, name=''):
+    def __init__(self, parent, A, name='', side="left"):
         """
         INPUT:
 
@@ -113,7 +113,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         if not isinstance(name, str):
             raise TypeError("name must be a string")
         self.__name = name
-        MatrixMorphism.__init__(self, parent, A)
+        MatrixMorphism.__init__(self, parent, A, side)
 
     def name(self, new=None):
         r"""
@@ -152,4 +152,3 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
                 name, self.matrix(), misc.strunc(self.domain()), misc.strunc(self.codomain()))
 
 # __mul__ method removed by David Loeffler 2009-04-14 as it is an exact duplicate of sage.modules.matrix_morphism.__mul__
-

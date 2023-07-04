@@ -118,7 +118,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         mpz_vector_get_entry(x.value, &self._matrix[i], j)
         return x
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -219,7 +219,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         be dangerous if you change entries of the returned dict.
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j, k
@@ -311,10 +311,9 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 1 0 0 0 0 1 0]
             sage: M._nonzero_positions_by_row()
             [(0, 3), (1, 1), (1, 6)]
-
         """
         x = self.fetch('nonzero_positions')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
@@ -343,10 +342,9 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 1 0 0 0 0 1 0]
             sage: M._nonzero_positions_by_column()
             [(1, 1), (0, 3), (1, 6)]
-
         """
         x = self.fetch('nonzero_positions_by_column')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
@@ -1132,7 +1130,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             ....:         x, d = m._solve_vector_linbox(b, algorithm=algo)
             ....:         assert m * x == d * b
         """
-        Vin = self._column_ambient_module().dense_module()
+        Vin = self.column_ambient_module(base_ring=None, sparse=False)
         v = Vin(v)
 
         if self._nrows == 0 or self._ncols == 0:
@@ -1165,7 +1163,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             linbox.solve(res[0], D, A[0], b[0], linbox.Method.Blackbox())
         sig_off()
 
-        Vout = self._row_ambient_module().dense_module()
+        Vout = self.row_ambient_module(base_ring=None, sparse=False)
         res_sage = new_sage_vector_integer_dense(Vout, res[0])
         cdef Integer d = PY_NEW(Integer)
         mpz_set(d.value, D.get_mpz_const())

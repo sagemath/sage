@@ -13,9 +13,10 @@ from sage.sets.family import Family
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import Monoids
+from sage.categories.monoids import Monoids
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+
 
 class IntegerModMonoid(UniqueRepresentation, Parent):
     r"""
@@ -63,7 +64,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, n = 12):
+    def __init__(self, n=12):
         r"""
         EXAMPLES::
 
@@ -73,7 +74,6 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(M).run()
-
         """
         self.n = n
         Parent.__init__(self, category=Monoids().Finite().FinitelyGenerated())

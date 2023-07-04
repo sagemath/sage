@@ -19,12 +19,6 @@ Upstream Contact
 
 https://pypi.org/project/defusedxml/
 
-Dependencies
-------------
-
--  pip
-
-
 Special Update/Build Instructions
 ---------------------------------
 

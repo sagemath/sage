@@ -18,7 +18,3 @@ Upstream Contact
 - Author: Paul McGuire
 - Home page: http://pyparsing.wikispaces.com
 
-Dependencies
-------------
-
-Python

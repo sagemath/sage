@@ -32,9 +32,7 @@ Sage example in ./sol/mpoly.tex, line 116::
 
   sage: R.<x,y,z> = QQ[]
   sage: J = R.ideal(x^2*y*z-18, x*y^3*z-24, x*y*z^4-6)
-  sage: J.variety(AA) # py2
-  [{x: 3, z: 1, y: 2}]
-  sage: J.variety(AA) # py3
+  sage: J.variety(AA)
   [{z: 1, y: 2, x: 3}]
 
 Sage example in ./sol/mpoly.tex, line 124::
@@ -116,4 +114,3 @@ Sage example in ./sol/mpoly.tex, line 278::
   1/16*u^2*v^2 - 3/8*u^2*v + 7/16*u^2 + 1/8*v^2 - 1/8*v - 1/8
 
 """
-

@@ -11,6 +11,7 @@ performances of a piece of code. For more general information on profiling, see
 
 .. contents:: Table of contents
    :depth: 2
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 How long does it take? %time and %timeit
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

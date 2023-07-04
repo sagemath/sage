@@ -1,4 +1,4 @@
-cdef class _LazyString(object):
+cdef class _LazyString():
     cdef func
     cdef args
     cdef kwargs

@@ -1,0 +1,150 @@
+From 5db4eaf19fa460bdd7bd9556631836bc6692c16c Mon Sep 17 00:00:00 2001
+From: Michael Orlitzky <michael@orlitzky.com>
+Date: Wed, 18 Aug 2021 08:20:09 -0400
+Subject: [PATCH 1/1] */*: make the SINGULAR variable boolean.
+
+The "SINGULAR" variable (optionally defined in qepcadrc) is supposed
+to tell QEPCAD where Singular lives. But, the only thing it's used for
+is launching "Singular", for which it is much much simpler to just
+assume that it lives in the $PATH.
+
+This commit changes the SINGULAR variable from a path (string) to a
+boolean (yes). When its value is "yes", Singular will be assumed to
+live in $PATH, and QEPCAD will try to launch it as
+"Singular". Otherwise, Singular will not be used.
+---
+ README                    | 12 ++++--------
+ default.qepcadrc          |  2 +-
+ source/db/SINGULAR.c      |  8 +++-----
+ source/db/SINGULAR.h      |  2 +-
+ source/main/BEGINQEPCAD.c | 14 +++++++-------
+ source/main/qepcadcls.h   |  2 +-
+ 6 files changed, 17 insertions(+), 23 deletions(-)
+
+diff --git a/README b/README
+index f14c087..f2eaf3a 100644
+--- a/README
++++ b/README
+@@ -27,17 +27,13 @@ Using Singular as a Computer Algebra Server
+ -------------------------------------------
+ QEPCAD B allows you to run Singular to farm out some computations
+ that might not be as fast in Saclib, like multivariate polynomial
+-factorization, and to provide Groebner Basis computation, which 
++factorization, and to provide Groebner Basis computation, which
+ is not available in Saclib.  When Singular is installed on your
+-system, add the line
++system (and belongs to your $PATH), add the line
+ 
+-  SINGULAR <full-path-for-singular-binary-directory>
++  SINGULAR yes
+ 
+-to the default.qepcadrc file.  For example:
+-
+-  SINGULAR /usr/lib/Singular/3-0-0/ix86-Linux
+-
+-might be right for you.
++to the default.qepcadrc file.
+ 
+ Making CAD2D
+ -------------
+diff --git a/default.qepcadrc b/default.qepcadrc
+index d307bb6..f1cc944 100644
+--- a/default.qepcadrc
++++ b/default.qepcadrc
+@@ -5,4 +5,4 @@
+ # so that it gets used for some computer algebra
+ # computations is the only feature.
+ #####################################################
+-# SINGULAR /usr/bin
++# SINGULAR yes
+diff --git a/source/db/SINGULAR.c b/source/db/SINGULAR.c
+index f94c4b1..42cab28 100644
+--- a/source/db/SINGULAR.c
++++ b/source/db/SINGULAR.c
+@@ -5,10 +5,8 @@
+ using namespace std;
+ 
+ 
+-SingularServer::SingularServer(string SingularBase)
++SingularServer::SingularServer()
+ {
+-  string SingularCall = SingularBase + "/Singular";
+-  
+   // Fork
+   childpid = fork();
+   if (childpid == -1) { perror("Failed to fork!"); exit(1); }
+@@ -29,8 +27,8 @@ SingularServer::SingularServer(string SingularBase)
+     // End:   Just for debug!!
+ 
+ 
+-    execlp(SingularCall.c_str(),
+-	   SingularCall.c_str(),
++    execlp("Singular",
++	   "Singular",
+ 	   "-q",
+ 	   "--no-warn",
+ 	   "--min-time=0.001",
+diff --git a/source/db/SINGULAR.h b/source/db/SINGULAR.h
+index d7512e2..e7111b9 100644
+--- a/source/db/SINGULAR.h
++++ b/source/db/SINGULAR.h
+@@ -17,7 +17,7 @@ public:
+   UnnamedPipe intoSingular, outofSingular;
+   pid_t childpid;
+   
+-  SingularServer(string SingluarBase); // give path to Singular
++  SingularServer();
+   ~SingularServer();
+   void kill() { ::kill(childpid,SIGKILL); }
+   
+diff --git a/source/main/BEGINQEPCAD.c b/source/main/BEGINQEPCAD.c
+index bdfac84..9999400 100644
+--- a/source/main/BEGINQEPCAD.c
++++ b/source/main/BEGINQEPCAD.c
+@@ -113,14 +113,14 @@ void BEGINQEPCAD(int &argc, char**& argv)
+   INITSYS();
+   
+   /* Launch CA Servers and set up CA Policy */
+-  if (GVContext->SingularPath == "")
+-    GVCAP = new OriginalPolicy;
+-  else
+-  {
+-    pair<string,CAServer*> tp(string("Singular"),new SingularServer(GVContext->SingularPath));
++  if (GVContext->Singular == "yes") {
++    pair<string,CAServer*> tp(string("Singular"),new SingularServer());
+     GVSB.insert(tp);
+     GVCAP = new SingSacPolicy;
+   }
++  else {
++    GVCAP = new OriginalPolicy;
++  }
+ 
+ }
+ 
+@@ -138,8 +138,8 @@ void QEPCAD_ProcessRC(int argc, char **argv)
+     if (!(sin >> name)) { continue; }
+     if (name == "SINGULAR")
+     {      
+-      if (!(sin >> tmp)) { cerr << "Error reading SINGULAR path in " << rcFileName << "!" << endl; }
+-      else { GVContext->SingularPath = tmp; }
++      if (!(sin >> tmp)) { cerr << "Error reading SINGULAR value in " << rcFileName << "!" << endl; }
++      else { GVContext->Singular = tmp; }
+     }
+   }
+ }
+diff --git a/source/main/qepcadcls.h b/source/main/qepcadcls.h
+index c014589..29f87e9 100644
+--- a/source/main/qepcadcls.h
++++ b/source/main/qepcadcls.h
+@@ -8,7 +8,7 @@
+ class QEPCADContext
+ {
+ public:
+-  string SingularPath;
++  string Singular;
+ };
+ extern QEPCADContext* GVContext;
+ 
+-- 
+2.31.1
+

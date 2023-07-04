@@ -22,7 +22,7 @@ Simple manipulations; numbers and vectors
 
 The simplest data structure in R is the numeric vector which
 consists of an ordered collection of numbers.  To create a
-vector named $x$ using the R interface in Sage, you pass the
+vector named `x` using the R interface in Sage, you pass the
 R interpreter object a list or tuple of numbers::
 
     sage: x = r([10.4,5.6,3.1,6.4,21.7]); x  # optional - rpy2
@@ -36,16 +36,16 @@ invert operator or by doing 1/x::
     sage: 1/x  # optional - rpy2
     [1] 0.09615385 0.17857143 0.32258065 0.15625000 0.04608295
 
-The following assignment creates a vector $y$ with 11 entries which
-consists of two copies of $x$ with a 0 in between::
+The following assignment creates a vector `y` with 11 entries which
+consists of two copies of `x` with a 0 in between::
 
     sage: y = r([x,0,x]); y  # optional - rpy2
     [1] 10.4  5.6  3.1  6.4 21.7  0.0 10.4  5.6  3.1  6.4 21.7
 
 Vector Arithmetic
 
-The following command generates a new vector $v$ of length 11 constructed
-by adding together (element by element) $2x$ repeated 2.2 times, $y$
+The following command generates a new vector `v` of length 11 constructed
+by adding together (element by element) `2x` repeated 2.2 times, `y`
 repeated just once, and 1 repeated 11 times::
 
     sage: v = 2*x+y+1; v  # optional - rpy2
@@ -270,7 +270,7 @@ from sage.env import DOT_SAGE
 import re
 from sage.structure.element import parent
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 # see the _lazy_init for some reasoning behind the lazy imports
 from sage.misc.lazy_import import lazy_import
@@ -297,13 +297,12 @@ def _setup_r_to_sage_converter():
     Set up a the converter used to convert from rpy2's
     representation of R objects to the one sage expects.
 
-    EXAMPLES::
+    EXAMPLES:
 
-    Test
-
-    Simple numeric values are represented as vectors in R. So `1` would actually
-    be an array of length 1. We convert all vectors of length 1 to simple values,
-    whether or not they "originally" were simple values or not:
+    Simple numeric values are represented as vectors in R. So `1`
+    would actually be an array of length 1. We convert all vectors of
+    length 1 to simple values, whether or not they "originally" were
+    simple values or not::
 
         sage: r([42]).sage()  # optional - rpy2
         42
@@ -314,13 +313,13 @@ def _setup_r_to_sage_converter():
         sage: r('c("foo")').sage()  # optional - rpy2
         'foo'
 
-    Arrays of length greater than one are treated normally:
+    Arrays of length greater than one are treated normally::
 
         sage: r([42, 43]).sage()  # optional - rpy2
         [42, 43]
 
     We also convert all numeric values to integers if that is possible without
-    loss of precision:
+    loss of precision::
 
         sage: type(r([1.0]).sage()) == int  # optional - rpy2
         True
@@ -328,13 +327,13 @@ def _setup_r_to_sage_converter():
         sage: r([1.0, 42.5]).sage()  # optional - rpy2
         [1, 42.5]
 
-    Matrices are converted to sage matrices:
+    Matrices are converted to sage matrices::
 
         sage: r('matrix(c(2,4,3,1,5,7), nrow=2, ncol=3)').sage()  # optional - rpy2
         [2 3 5]
         [4 1 7]
 
-    More complex r structures are represented by dictionaries:
+    More complex r structures are represented by dictionaries::
 
         sage: r.summary(1).sage()  # optional - rpy2
         {'DATA': [1, 1, 1, 1, 1, 1],
@@ -344,8 +343,8 @@ def _setup_r_to_sage_converter():
         sage: r.options(width="60").sage()  # optional - rpy2
         {'DATA': {'width': 60}, '_Names': 'width'}
 
-    The conversion can handle "not a number", infintiy, imaginary values and
-    missing values:
+    The conversion can handle "not a number", infinity, imaginary values and
+    missing values::
 
         sage: r(-17).sqrt().sage()  # optional - rpy2
         nan
@@ -356,8 +355,7 @@ def _setup_r_to_sage_converter():
         sage: inf = r('Inf'); inf.sage()  # optional - rpy2
         inf
 
-
-    Character Vectors are represented by regular python arrays:
+    Character Vectors are represented by regular python arrays::
 
         sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs.sage()  # optional - rpy2
         ['X1', 'Y2', 'X3', 'Y4', 'X5', 'Y6', 'X7', 'Y8', 'X9', 'Y10']
@@ -478,13 +476,12 @@ class R(ExtraTabCompletion, Interface):
             sage: r == loads(dumps(r))  # optional - rpy2
             True
         """
-
         Interface.__init__(
                 self,
-                name = 'r', # The capitalized version of this is used for printing.
+                name='r', # The capitalized version of this is used for printing.
         )
         self._seed = seed
-        self._initialized = False # done lazily
+        self._initialized = False  # done lazily
 
     def _lazy_init(self):
         """
@@ -503,9 +500,9 @@ class R(ExtraTabCompletion, Interface):
         the blas implementation that is used.
         For details, see https://bitbucket.org/rpy2/rpy2/issues/491.
 
-        TESTS::
+        TESTS:
 
-        Initialization happens on eval:
+        Initialization happens on eval::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -515,7 +512,7 @@ class R(ExtraTabCompletion, Interface):
              sage: my_r._initialized  # optional - rpy2
              True
 
-        And on package import:
+        And on package import::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -524,7 +521,7 @@ class R(ExtraTabCompletion, Interface):
              sage: my_r._initialized  # optional - rpy2
              True
 
-        And when fetching help pages:
+        And when fetching help pages::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -726,7 +723,6 @@ class R(ExtraTabCompletion, Interface):
             if attrname[:1] == "_":
                 raise AttributeError("Attribute {} is not allowed to start with an underscore.".format(attrname))
             return RFunction(self, attrname)
-
 
     def _read_in_file_command(self, filename):
         r"""
@@ -1257,12 +1253,17 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES:
 
-        This example saves a plot to the standard R output, usually
-        a filename like ``Rplot001.png`` - from the command line, in
-        the current directory, and in the cell directory in the notebook::
+        This example saves a plot to the standard R output, usually a
+        filename like ``Rplot001.png`` - from the command line, in the
+        current directory, and in the cell directory in the
+        notebook. We use a temporary directory in this example while
+        doctesting this example, but you should use something
+        persistent in your own code::
 
-            sage: d=r.setwd('"%s"'%SAGE_TMP)    # for doctesting only; ignore if you are trying this  # optional - rpy2
-            sage: r.plot("1:10")                # optional -- rgraphics  # optional - rpy2
+            sage: from tempfile import TemporaryDirectory
+            sage: with TemporaryDirectory() as d: # optional - rpy2, rgraphics
+            ....:     _ = r.setwd(d)
+            ....:     r.plot("1:10")
             null device
                       1
 
@@ -1321,7 +1322,6 @@ class R(ExtraTabCompletion, Interface):
         """
         self._lazy_init()
         return str(robjects.r(code)).rstrip()
-
 
     def _r_to_sage_name(self, s):
         """
@@ -1386,6 +1386,7 @@ class R(ExtraTabCompletion, Interface):
         INPUT:
 
         - s -- a string
+
         OUTPUT: RFunction -- the R function that in R has name s
 
         EXAMPLES::
@@ -1603,9 +1604,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
             sage: bool(r(1))  # optional - rpy2
             True
         """
-        return "FALSE" in repr(self==0)
-
-    __nonzero__ = __bool__
+        return "FALSE" in repr(self == 0)
 
     def _comparison(self, other, symbol):
         """
@@ -1800,7 +1799,6 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         with localconverter(P._r_to_sage_converter) as cv:
             parsed = robjects.r(self.name())
             return parsed
-
 
     def _latex_(self):
         r"""
@@ -2000,10 +1998,15 @@ def is_RElement(x):
 
         sage: from sage.interfaces.r import is_RElement  # optional - rpy2
         sage: is_RElement(2)  # optional - rpy2
+        doctest:...: DeprecationWarning: the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_RElement(r(2))  # optional - rpy2
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead")
+
     return isinstance(x, RElement)
 
 # An instance of R
@@ -2056,13 +2059,14 @@ def r_version():
     """
     return r.version()
 
+
 class HelpExpression(str):
     """
     Used to improve printing of output of r.help.
     """
     def __repr__(self):
-        """
-        Return string representation of self.
+        r"""
+        Return string representation of ``self``.
 
         OUTPUT: string
 
@@ -2077,4 +2081,3 @@ class HelpExpression(str):
             R!
         """
         return str(self)
-

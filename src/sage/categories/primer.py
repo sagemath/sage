@@ -1,8 +1,9 @@
 r"""
-Elements, parents, and categories in Sage: a (draft of) primer
+Elements, parents, and categories in Sage: a primer
 
 .. contents::
-    :depth: 2
+   :depth: 2
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Abstract
 ========
@@ -80,8 +81,8 @@ Some challenges
       sage: GL(2,2).cardinality()
       6
 
-      sage: A=random_matrix(ZZ,6,3,x=7)
-      sage: L=LatticePolytope(A.rows())
+      sage: A = random_matrix(ZZ,6,3,x=7)
+      sage: L = LatticePolytope(A.rows())
       sage: L.npoints()                # oops!   # random
       37
 
@@ -97,7 +98,7 @@ Some challenges
 
   ::
 
-      sage: m=random_matrix(QQ, 4, algorithm='echelonizable', rank=3, upper_bound=60)
+      sage: m = random_matrix(QQ, 4, algorithm='echelonizable', rank=3, upper_bound=60)
       sage: m^8 == m*m*m*m*m*m*m*m == ((m^2)^2)^2
       True
 
@@ -398,18 +399,18 @@ classes. For example, an integer in Sage is an instance of the class
 
     sage: i = 12
     sage: type(i)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
 Applying an operation is generally done by *calling a method*::
 
     sage: i.factor()
     2^2 * 3
 
-    sage: x = var('x')
-    sage: p = 6*x^2 + 12*x + 6
-    sage: type(p)
-    <type 'sage.symbolic.expression.Expression'>
-    sage: p.factor()
+    sage: x = var('x')                                      # optional - sage.symbolic
+    sage: p = 6*x^2 + 12*x + 6                              # optional - sage.symbolic
+    sage: type(p)                                           # optional - sage.symbolic
+    <class 'sage.symbolic.expression.Expression'>
+    sage: p.factor()                                        # optional - sage.symbolic
     6*(x + 1)^2
 
     sage: R.<x> = PolynomialRing(QQ, sparse=True)
@@ -421,7 +422,7 @@ Applying an operation is generally done by *calling a method*::
 
     sage: pZ = ZZ['x'] ( p )
     sage: type(pZ)
-    <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
+    <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
     sage: pZ.factor()
     2 * 3 * (x + 1)^2
 
@@ -439,12 +440,12 @@ done by introspection::
 For plain Python methods, one can also just ask in which module they
 are implemented::
 
-    sage: i._pow_.__module__  # not tested (Trac #24275)
+    sage: i._pow_.__module__  # not tested (Issue #24275)
     'sage.categories.semigroups'
 
     sage: pQ._mul_.__module__
     'sage.rings.polynomial.polynomial_element_generic'
-    sage: pQ._pow_.__module__  # not tested (Trac #24275)
+    sage: pQ._pow_.__module__  # not tested (Issue #24275)
     'sage.categories.semigroups'
 
 We see that integers and polynomials have each their own
@@ -523,12 +524,12 @@ group `G` is an instance of the following class::
 
     sage: G = GL(2,ZZ)
     sage: type(G)
-    <class 'sage.groups.matrix_gps.linear.LinearMatrixGroup_gap_with_category'>
+    <class 'sage.groups.matrix_gps.linear_gap.LinearMatrixGroup_gap_with_category'>
 
 Here is a piece of the hierarchy of classes above it::
 
     sage: for cls in G.__class__.mro(): print(cls)
-    <class 'sage.groups.matrix_gps.linear.LinearMatrixGroup_gap_with_category'>
+    <class 'sage.groups.matrix_gps.linear_gap.LinearMatrixGroup_gap_with_category'>
     ...
     <class 'sage.categories.groups.Groups.parent_class'>
     <class 'sage.categories.monoids.Monoids.parent_class'>
@@ -949,7 +950,7 @@ what to do, ask your parent); it's also a speed critical method::
     sage: x._mul_??                             # not tested
     sage: x._mul_.__module__
     'sage.categories.coercion_methods'
-    sage: x._mul_.__func__ is Magmas.ElementMethods._mul_parent  # py3
+    sage: x._mul_.__func__ is Magmas.ElementMethods._mul_parent
     True
 
 ``product`` is a mathematical method implemented by the parent::
@@ -1152,7 +1153,7 @@ code, the product method is put in the nested class
     reveal some glitches in their implementation, in particular around
     class naming and introspection. Sage currently works around the
     more annoying ones but some remain visible. See
-    e.g. :mod:`sage.misc.nested_class_test`.
+    e.g. :mod:`sage.misc.test_nested_class`.
 
 
 Let us now look at the categories of ``C``::

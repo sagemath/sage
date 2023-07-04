@@ -48,10 +48,10 @@ are also available directly using the catalogue of posets, as follows::
 # ****************************************************************************
 from __future__ import annotations
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
-from sage.arith.all import gcd
+from sage.arith.misc import gcd
 
 
-def paths_in_triangle(i, j, a, b) -> list:
+def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
     r"""
     Return all Dyck paths from `(0,0)` to `(i,j)` in the `(a \times
     b)`-rectangle.
@@ -101,7 +101,7 @@ def paths_in_triangle(i, j, a, b) -> list:
     return [u + tuple([0]) for u in paths_in_triangle(i - 1, j, a, b)]
 
 
-def swap(p, i, m=1) -> tuple:
+def swap(p, i, m=1) -> tuple[int, ...]:
     r"""
     Perform a covering move in the `(a,b)`-Tamari lattice of parameter `m`.
 
@@ -160,7 +160,7 @@ def swap(p, i, m=1) -> tuple:
     return tuple(q)
 
 
-def GeneralizedTamariLattice(a, b, m=1, check=True) -> LatticePoset:
+def GeneralizedTamariLattice(a, b, m=1, check=True):
     r"""
     Return the `(a,b)`-Tamari lattice of parameter `m`.
 
@@ -227,7 +227,7 @@ def GeneralizedTamariLattice(a, b, m=1, check=True) -> LatticePoset:
                          for p in paths_in_triangle(a, b, a, b)}, check=check)
 
 
-def TamariLattice(n, m=1) -> LatticePoset:
+def TamariLattice(n, m=1):
     r"""
     Return the `n`-th Tamari lattice.
 
@@ -269,7 +269,7 @@ def TamariLattice(n, m=1) -> LatticePoset:
 # a variation : the Dexter meet-semilattices
 
 
-def swap_dexter(p, i) -> list:
+def swap_dexter(p, i) -> list[tuple[int, ...]]:
     r"""
     Perform covering moves in the `(a,b)`-Dexter posets.
 
@@ -340,7 +340,7 @@ def swap_dexter(p, i) -> list:
     return resu
 
 
-def DexterSemilattice(n) -> MeetSemilattice:
+def DexterSemilattice(n):
     r"""
     Return the `n`-th Dexter meet-semilattice.
 

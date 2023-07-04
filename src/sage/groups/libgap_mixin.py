@@ -18,7 +18,7 @@ from sage.misc.cachefunc import cached_method
 from sage.groups.class_function import ClassFunction_libgap
 from sage.groups.libgap_wrapper import ElementLibGAP
 
-class GroupMixinLibGAP(object):
+class GroupMixinLibGAP():
     def __contains__(self, elt):
         r"""
         TESTS::
@@ -545,7 +545,7 @@ class GroupMixinLibGAP(object):
             [ 1  1 -1]
             [ 2 -1  0]
             [ 1  1  1]
-            sage: MatrixGroup(SymmetricGroup(5)).character_table()
+            sage: MatrixGroup(SymmetricGroup(5)).character_table()  # long time
             [ 1 -1 -1  1 -1  1  1]
             [ 4  0  1 -1 -2  1  0]
             [ 5  1 -1  0 -1 -1  1]
@@ -558,18 +558,18 @@ class GroupMixinLibGAP(object):
         #how gap handles these groups.
         G    = self._gap_()
         cl   = self.conjugacy_classes()
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         n    = Integer(len(cl))
         irrG = G.Irr()
         ct   = [[irrG[i][j] for j in range(n)] for i in range(n)]
 
-        from sage.rings.all import CyclotomicField
+        from sage.rings.number_field.number_field import CyclotomicField
         e = irrG.Flat().Conductor()
         K = CyclotomicField(e)
         ct = [[K(x) for x in v] for v in ct]
 
         # Finally return the result as a matrix.
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         MS = MatrixSpace(K, n)
         return MS(ct)
 
@@ -752,7 +752,7 @@ class GroupMixinLibGAP(object):
             True
             sage: F.is_isomorphic(H)
             True
-            sage: F==G, G==H, F==H
+            sage: F == G, G == H, F == H
             (False, False, False)
         """
         return self.gap().IsomorphismGroups(H.gap()) != libgap.fail

@@ -1,0 +1,105 @@
+--- a/dietz/solver/loadsave.h	2008-01-04 01:26:59.000000000 -0700
++++ b/dietz/solver/loadsave.h	2020-10-29 13:37:36.572336636 -0600
+@@ -5,6 +5,7 @@
+  */
+ 
+ // includes
++#include <cstdio>
+ #include "cubex.h"
+ 
+ // declarations
+--- a/dik/cube.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/cube.c	2020-10-29 14:06:39.068036061 -0600
+@@ -1,3 +1,6 @@
++#include <stdlib.h>
++#include <string.h>
++
+ #include "globals.h"
+ 
+ static void def_cube();
+--- a/dik/phase1.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/phase1.c	2020-10-29 14:05:25.003138776 -0600
+@@ -1,3 +1,5 @@
++#include <stdlib.h>
++
+ #include "globals.h"
+ 
+ #include "trans/twist.a"
+--- a/dik/phase2.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/phase2.c	2020-10-29 14:06:56.700011614 -0600
+@@ -1,3 +1,5 @@
++#include <stdlib.h>
++
+ #include "globals.h"
+ 
+ #define SUBGROUP
+--- a/dik/rancube.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/rancube.c	2020-10-29 13:38:13.420290757 -0600
+@@ -1,3 +1,4 @@
++#include <stdio.h>
+ #include <sys/types.h>
+ #include <sys/time.h>
+ 
+--- a/dik/setcube.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/setcube.c	2020-10-29 14:02:57.859342978 -0600
+@@ -1,4 +1,6 @@
+ #include "globals.h"
++#include <stdlib.h>
++#include <string.h>
+ 
+ static char corners[8][3][3] = {
+     {"ULB", "BUL", "LBU"},
+--- a/dik/size222.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/size222.c	2020-10-29 14:04:17.795232090 -0600
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+ #define NOMAX
+ #include "trans/perm7.a"
+--- a/dik/size333c.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/size333c.c	2020-10-29 14:08:00.179923599 -0600
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+ #define EQUIV
+ #define NOMAX
+--- a/dik/sizedom.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/sizedom.c	2020-10-29 14:09:01.083839153 -0600
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+ #define SUBGROUP
+ #define EQUIV
+--- a/dik/sizekoc1.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/sizekoc1.c	2020-10-29 14:08:30.875881036 -0600
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+ #define EQUIV
+ #define NOMAX
+--- a/dik/sizekoc2.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/sizekoc2.c	2020-10-29 14:09:36.163790512 -0600
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+ #define EQUIV
+ #define NOMAX
+--- a/dik/sizesquare.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/sizesquare.c	2020-10-29 14:04:55.483179784 -0600
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+ #define NOMAX
+ #include "trans/perm4.a"

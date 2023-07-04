@@ -35,7 +35,7 @@ from sage.graphs.digraph import DiGraph
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.structure.list_clone import ClonableArray
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.matrix.constructor import matrix
 
 
@@ -97,7 +97,7 @@ class LinearExtensionOfPoset(ClonableArray,
         - ``linear_extension`` -- a list of elements of ``poset``
         - ``poset`` -- a finite poset
 
-        .. todo:: check whether this method is still useful
+        .. TODO:: check whether this method is still useful
 
         TESTS::
 
@@ -250,6 +250,65 @@ class LinearExtensionOfPoset(ClonableArray,
                 for u in P.upper_covers(self[i]):
                     if all(l in self[:i + 1] for l in P.lower_covers(u)):
                         return False
+        return True
+
+    def is_supergreedy(self):
+        r"""
+        Return ``True`` if the linear extension is supergreedy.
+
+        A linear extension of a poset `P` with elements `\{x_1,x_2,...,x_t\}`
+        is *super greedy*, if it can be obtained using the following
+        algorithm: choose `x_1` to be a minimal element of `P`;
+        suppose `X = \{x_1,...,x_i\}` have been chosen; let `M` be
+        the set of minimal elements of `P\setminus X`. If there is an element
+        of `M` which covers an element `x_j` in `X`, then let `x_{i+1}`
+        be one of these such that `j` is maximal; otherwise, choose `x_{i+1}`
+        to be any element of `M`.
+
+        Informally, a linear extension is supergreedy if it "always
+        goes up and receedes the least"; in other words, supergreedy
+        linear extensions are depth-first linear extensions.
+        For more details see [KTZ1987]_.
+
+        EXAMPLES::
+
+            sage: X = [0,1,2,3,4,5,6]
+            sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
+            sage: P = Poset((X,Y), cover_relations = True, facade=False)
+            sage: for l in P.linear_extensions():
+            ....:     if l.is_supergreedy():
+            ....:         print(l)
+            [1, 4, 3, 0, 5, 6, 2]
+            [0, 1, 4, 3, 5, 6, 2]
+            [0, 1, 5, 4, 3, 6, 2]
+
+            sage: Q = posets.PentagonPoset()
+            sage: for l in Q.linear_extensions():
+            ....:     if not l.is_supergreedy():
+            ....:         print(l)
+            [0, 2, 1, 3, 4]
+
+        TESTS::
+
+            sage: T = Poset()
+            sage: T.linear_extensions()[0].is_supergreedy()
+            True
+        """
+        H = self.poset().hasse_diagram()
+        L = sources = H.sources()
+        linext = []
+        for e in self:
+            if e not in L:
+                return False
+            linext.append(e)
+            for y in reversed(linext):
+                L = [x for x in H.neighbor_out_iterator(y)
+                     if x not in linext
+                     and all(low in linext for low in H.neighbor_in_iterator(x))]
+                if L:
+                    break
+            else:
+                L = sources = [x for x in sources if x not in linext]
         return True
 
     def tau(self, i):
@@ -453,7 +512,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: L is LinearExtensionsOfPoset(P,facade=False)
             True
         """
-        return super(LinearExtensionsOfPoset, cls).__classcall__(cls, poset, facade=facade)
+        return super().__classcall__(cls, poset, facade=facade)
 
     def __init__(self, poset, facade):
         """
@@ -641,7 +700,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
         """
         if not self._is_facade:
-            return super(LinearExtensionsOfPoset, self).__contains__(obj)
+            return super().__contains__(obj)
         return (isinstance(obj, (list, tuple)) and
                 self.poset().is_linear_extension(obj))
 
@@ -654,7 +713,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         - ``action`` -- 'promotion' or 'tau' (default: 'promotion')
         - ``labeling`` -- 'identity' or 'source' (default: 'identity')
 
-        .. todo::
+        .. TODO::
 
             - generalize this feature by accepting a family of operators as input
             - move up in some appropriate category
@@ -671,9 +730,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: L = P.linear_extensions()
             sage: G = L.markov_chain_digraph(); G
             Looped multi-digraph on 5 vertices
-            sage: sorted(G.vertices(), key = repr)
+            sage: G.vertices(sort=True, key=repr)
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
-            sage: sorted(G.edges(), key = repr)
+            sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 4), ([1, 2, 3, 4], [1, 2, 4, 3], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3),
             ([1, 2, 3, 4], [2, 1, 4, 3], 1), ([1, 2, 4, 3], [1, 2, 3, 4], 3), ([1, 2, 4, 3], [1, 2, 4, 3], 4),
             ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 3, 4], 1), ([1, 4, 2, 3], [1, 2, 3, 4], 1),
@@ -683,9 +742,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             ([2, 1, 4, 3], [2, 1, 3, 4], 3), ([2, 1, 4, 3], [2, 1, 4, 3], 4)]
 
             sage: G = L.markov_chain_digraph(labeling = 'source')
-            sage: sorted(G.vertices(), key = repr)
+            sage: G.vertices(sort=True, key=repr)
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
-            sage: sorted(G.edges(), key = repr)
+            sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 4), ([1, 2, 3, 4], [1, 2, 4, 3], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3),
             ([1, 2, 3, 4], [2, 1, 4, 3], 1), ([1, 2, 4, 3], [1, 2, 3, 4], 4), ([1, 2, 4, 3], [1, 2, 4, 3], 3),
             ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 3, 4], 1), ([1, 4, 2, 3], [1, 2, 3, 4], 1),
@@ -703,9 +762,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: G = L.markov_chain_digraph(action='tau'); G
             Looped multi-digraph on 5 vertices
-            sage: sorted(G.vertices(), key = repr)
+            sage: G.vertices(sort=True, key=repr)
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
-            sage: sorted(G.edges(), key = repr)
+            sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3), ([1, 2, 3, 4], [2, 1, 3, 4], 1),
             ([1, 2, 4, 3], [1, 2, 3, 4], 3), ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 4, 3], 1),
             ([1, 4, 2, 3], [1, 2, 4, 3], 2), ([1, 4, 2, 3], [1, 4, 2, 3], 1), ([1, 4, 2, 3], [1, 4, 2, 3], 3),
@@ -855,6 +914,7 @@ class LinearExtensionsOfPosetWithHooks(LinearExtensionsOfPoset):
     Linear extensions such that the poset has well-defined
     hook lengths (i.e., d-complete).
     """
+
     def cardinality(self):
         r"""
         Count the number of linear extensions using a hook-length formula.
@@ -879,6 +939,7 @@ class LinearExtensionsOfForest(LinearExtensionsOfPoset):
     r"""
     Linear extensions such that the poset is a forest.
     """
+
     def cardinality(self):
         r"""
         Use Atkinson's algorithm to compute the number of linear extensions.
@@ -902,6 +963,7 @@ class LinearExtensionsOfMobile(LinearExtensionsOfPoset):
     r"""
     Linear extensions for a mobile poset.
     """
+
     def cardinality(self):
         r"""
         Return the number of linear extensions by using the determinant

@@ -16,21 +16,21 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, infinity, LaurentSeries, O
-from sage.functions.all import exp
-from sage.rings.number_field.number_field import QuadraticField
-from sage.symbolic.all import pi
-
-from sage.structure.parent_gens import localvars
-from sage.structure.richcmp import op_NE, op_EQ
-from sage.structure.element import CommutativeAlgebraElement
-from sage.structure.unique_representation import UniqueRepresentation
-
-from sage.modules.free_module_element import vector
+from sage.functions.log import exp
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
-
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.modules.free_module_element import vector
+from sage.rings.big_oh import O
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring_element import LaurentSeries
+from sage.rings.number_field.number_field import QuadraticField
+from sage.structure.element import CommutativeAlgebraElement
+from sage.structure.parent_gens import localvars
+from sage.structure.richcmp import op_NE, op_EQ
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.symbolic.constants import pi
 
 from .constructor import rational_type, FormsSpace, FormsRing
 from .series_constructor import MFSeriesConstructor
@@ -64,11 +64,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.rat().parent()
             Fraction Field of Multivariate Polynomial Ring in x, y, z, d over Integer Ring
         """
-
         rat = parent.rat_field()(rat)
         # rat.reduce() <- maybe add this for the nonexact case
 
-        return super(FormsRingElement,cls).__classcall__(cls, parent, rat)
+        return super().__classcall__(cls, parent, rat)
 
     def __init__(self, parent, rat):
         r"""
@@ -121,16 +120,14 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.parent()
             QuasiModularFormsRing(n=+Infinity) over Integer Ring
         """
-
         self._rat = rat
         (elem, homo, self._weight, self._ep, self._analytic_type) = rational_type(rat, parent.hecke_n(), parent.base_ring())
 
-        if not (
-            elem and\
-            self._analytic_type <= parent.analytic_type() ):
-                raise ValueError("{} does not correspond to an element of the {}.".format(rat, parent))
+        if not (elem and
+                self._analytic_type <= parent.analytic_type()):
+            raise ValueError("{} does not correspond to an element of the {}.".format(rat, parent))
 
-        super(FormsRingElement, self).__init__(parent)
+        super().__init__(parent)
 
     # Unfortunately the polynomial ring does not give unique
     # representations of elements (with respect to ==)
@@ -1044,7 +1041,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiMeromorphicModularFormsRing
             sage: MR = QuasiMeromorphicModularFormsRing(n=8, red_hom=True)
             sage: (X,Y,Z,dX,dY,dZ) = MR.diff_alg().gens()
-            sage: n=MR.hecke_n()
+            sage: n = MR.hecke_n()
             sage: mul_op = 4/(n-2)*X*dX + 2*n/(n-2)*Y*dY + 2*Z*dZ
             sage: der_op = MR._derivative_op()
             sage: ser_op = MR._serre_derivative_op()
@@ -1103,14 +1100,14 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         L = op.monomials()
         new_rat = 0
         for mon in L:
-            mon_summand  = self._rat
-            mon_summand  = mon_summand.derivative(x,mon.degree(dX))
-            mon_summand  = mon_summand.derivative(y,mon.degree(dY))
-            mon_summand  = mon_summand.derivative(z,mon.degree(dZ))
+            mon_summand = self._rat
+            mon_summand = mon_summand.derivative(x,mon.degree(dX))
+            mon_summand = mon_summand.derivative(y,mon.degree(dY))
+            mon_summand = mon_summand.derivative(z,mon.degree(dZ))
             mon_summand *= x**(mon.degree(X))
             mon_summand *= y**(mon.degree(Y))
             mon_summand *= z**(mon.degree(Z))
-            new_rat     += op.monomial_coefficient(mon)*mon_summand
+            new_rat += op.monomial_coefficient(mon)*mon_summand
         res = self.parent().rat_field()(new_rat)
         if (new_parent is None):
             new_parent = self.parent().extend_type(["quasi", "mero"], ring=True)
@@ -1349,12 +1346,12 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             return infinity
 
         if (self.is_homogeneous() and self.is_modular()):
-            rat       = self.parent().rat_field()(self._rat)
-            R         = self.parent().pol_ring()
+            rat = self.parent().rat_field()(self._rat)
+            R = self.parent().pol_ring()
             numerator = R(rat.numerator())
-            denom     = R(rat.denominator())
+            denom = R(rat.denominator())
             (x,y,z,d) = R.gens()
-            n         = self.hecke_n()
+            n = self.hecke_n()
 
             if (tau == i):
                 f_pol = y
@@ -1381,17 +1378,17 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             # Also numerator /= f_pol doesn't seem to return an element of R for non-exact rings...
             try:
                 while (f_pol.divides(numerator)):
-                    numerator  = numerator.quo_rem(f_pol)[0]
+                    numerator = numerator.quo_rem(f_pol)[0]
                     #numerator /= f_pol
-                    numerator  = R(numerator)
+                    numerator = R(numerator)
                     order_f += 1
             except TypeError:
                 pass
             try:
                 while (f_pol.divides(denom)):
-                    denom      = denom.quo_rem(f_pol)[0]
+                    denom = denom.quo_rem(f_pol)[0]
                     #denom     /= f_pol
-                    denom      = R(denom)
+                    denom = R(denom)
                     order_f -= 1
             except TypeError:
                 pass
@@ -1401,12 +1398,12 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             if (tau != infinity):
                 raise NotImplementedError("Only the order at infinity is supported for non-homogeneous or quasi forms!")
 
-            num_val   = prec_num_bound   = 1 #(self.parent()._prec/ZZ(2)).ceil()
+            num_val = prec_num_bound = 1 #(self.parent()._prec/ZZ(2)).ceil()
             denom_val = prec_denom_bound = 1 #(self.parent()._prec/ZZ(2)).ceil()
 
             while (num_val >= prec_num_bound):
-                prec_num_bound   *= 2
-                num_val   = self.numerator().q_expansion(prec=prec_num_bound, fix_prec=True).valuation()
+                prec_num_bound *= 2
+                num_val = self.numerator().q_expansion(prec=prec_num_bound, fix_prec=True).valuation()
             while (denom_val >= prec_denom_bound):
                 prec_denom_bound *= 2
                 denom_val = self.denominator().q_expansion(prec=prec_denom_bound, fix_prec=True).valuation()
@@ -1460,7 +1457,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: ModularFormsRing(n=7)(x+1).reduce(force=True).parent()
             ModularFormsRing(n=7) over Integer Ring
 
-            sage: y=var("y")
+            sage: y = var("y")
             sage: ModularFormsRing(n=infinity)(x-y^2).reduce(force=True)
             64*q - 512*q^2 + 1792*q^3 - 4096*q^4 + O(q^5)
         """
@@ -1491,7 +1488,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.reduced_parent()
             ModularFormsRing(n=3) over Integer Ring
 
-            sage: y=var("y")
+            sage: y = var("y")
             sage: QuasiMeromorphicModularFormsRing(n=infinity)(x-y^2).reduced_parent()
             ModularForms(n=+Infinity, k=4, ep=1) over Integer Ring
             sage: QuasiMeromorphicModularFormsRing(n=infinity)(x*(x-y^2)).reduced_parent()
@@ -1545,10 +1542,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: J_inv._q_expansion_cached(prec=5, fix_d=True, subs_d=None, d_num_prec=53, fix_prec=False) == J_inv.q_expansion_fixed_d()
             True
         """
-
         if not fix_prec:
-            #if (prec <1):
-            #    print "Warning: non-positive precision!"
             if ((not self.is_zero()) and prec <= self.order_at(infinity)):
                 from warnings import warn
                 warn("precision too low to determine any coefficient!")
@@ -1569,10 +1563,12 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             X = SC.E4_ZZ().base_extend(formal_d.parent())
         else:
             X = SC.f_rho_ZZ().base_extend(formal_d.parent())
-        Y  = SC.f_i_ZZ().base_extend(formal_d.parent())
+        Y = SC.f_i_ZZ().base_extend(formal_d.parent())
 
         if (self.parent().is_modular()):
-            qexp = self._rat.subs(x=X, y=Y, d=formal_d)
+            # z does not appear in self._rat but we need to specialize it for
+            # the evaluation to land in the correct parent
+            qexp = self._rat.subs(x=X, y=Y, z=0, d=formal_d)
         else:
             Z = SC.E2_ZZ().base_extend(formal_d.parent())
             qexp = self._rat.subs(x=X, y=Y, z=Z, d=formal_d)
@@ -2149,7 +2145,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
         if (tau in HyperbolicPlane()):
-           tau = tau.to_model('UHP').coordinates()
+            tau = tau.to_model('UHP').coordinates()
 
         if (prec is None):
             prec = self.parent().default_prec()
@@ -2158,14 +2154,12 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         # In case the order is known
         try:
-            if (check or\
-                    tau == infinity or\
-                    tau == i or\
-                    tau == self.group().rho() or\
+            if (check or tau == infinity or tau == i or
+                    tau == self.group().rho() or
                     tau == -self.group().rho().conjugate()):
                 order_tau = self.order_at(tau)
 
-                if (order_tau > 0):
+                if order_tau > 0:
                     return ZZ(0)
                 elif (order_tau < 0):
                     return infinity
@@ -2175,12 +2169,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             pass
 
         # The general case
-        num_prec = max(\
-            ZZ(getattr(tau,'prec',lambda: num_prec)()),\
-            num_prec\
-        )
+        num_prec = max(ZZ(getattr(tau, 'prec', lambda: num_prec)()), num_prec)
+
         tau = tau.n(num_prec)
-        (x,y,z,d) = self.parent().rat_field().gens()
+        (x, y, z, d) = self.parent().rat_field().gens()
 
         if (self.is_homogeneous() and self.is_modular()):
             q_exp = self.q_expansion_fixed_d(prec=prec, d_num_prec=num_prec)
@@ -2201,9 +2193,9 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
                 E2_cor_term = 4 * self.group().lam() / (2*pi*i).n(num_prec) * self.hecke_n() / (self.hecke_n()-2) * A.c() * (A.c()*w + A.d())
             return E2_wvalue*aut_factor + E2_cor_term
         else:
-            f_i   = self.parent().graded_ring().f_i()
-            E2    = self.parent().graded_ring().E2()
-            dval  = self.parent().group().dvalue().n(num_prec)
+            f_i = self.parent().graded_ring().f_i()
+            E2 = self.parent().graded_ring().E2()
+            dval = self.parent().group().dvalue().n(num_prec)
             if (self.hecke_n() == infinity):
                 E4 = self.parent().graded_ring().E4()
                 return self._rat.subs(x=E4(tau), y=f_i(tau), z=E2(tau), d=dval)

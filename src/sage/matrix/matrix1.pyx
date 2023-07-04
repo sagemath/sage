@@ -404,12 +404,12 @@ cdef class Matrix(Matrix0):
         EXAMPLES::
 
             sage: M = matrix(ZZ,2,range(4))
-            sage: polymake(M)                   # optional - polymake
+            sage: polymake(M)                   # optional - jupymake
             0 1
             2 3
             sage: K.<sqrt5> = QuadraticField(5)
             sage: M = matrix(K, [[1, 2], [sqrt5, 3]])
-            sage: polymake(M)                   # optional - polymake
+            sage: polymake(M)                   # optional - jupymake
             1 2
             0+1r5 3
         """
@@ -421,7 +421,7 @@ cdef class Matrix(Matrix0):
         Tries to coerce this matrix to a singular matrix.
         """
         if singular is None:
-            from sage.interfaces.all import singular as singular_default
+            from sage.interfaces.singular import singular as singular_default
             singular = singular_default
         try:
             self.base_ring()._singular_(singular)
@@ -842,6 +842,119 @@ cdef class Matrix(Matrix0):
     #############################################################################################
     # rows, columns, sparse_rows, sparse_columns, dense_rows, dense_columns, row, column
     #############################################################################################
+    cpdef row_ambient_module(self, base_ring=None, sparse=None):
+        r"""
+        Return the free module that contains the rows of the matrix.
+
+        EXAMPLES::
+
+            sage: M = matrix(Zmod(5), 2, 3)
+            sage: M.row_ambient_module()
+            Vector space of dimension 3 over Ring of integers modulo 5
+            sage: M.row(1).parent() == M.row_ambient_module()
+            True
+
+            sage: M = Matrix(ZZ, 3, 4)
+            sage: M.row_ambient_module()
+            Ambient free module of rank 4 over the principal ideal domain Integer Ring
+            sage: M.row_ambient_module(QQ)
+            Vector space of dimension 4 over Rational Field
+
+            sage: M = Matrix(QQ, 4, 5)
+            sage: M.row_ambient_module()
+            Vector space of dimension 5 over Rational Field
+            sage: M.row_ambient_module(ZZ)
+            Ambient free module of rank 5 over the principal ideal domain Integer Ring
+        """
+        if base_ring is not None or sparse is not None:
+            if base_ring is None:
+                base_ring = self._base_ring
+            if sparse is None:
+                sparse = self.is_sparse_c()
+            if base_ring is self._base_ring and sparse == self.is_sparse_c():
+                return self.row_ambient_module()
+            return sage.modules.free_module.FreeModule(base_ring, self._ncols, sparse=sparse)
+
+        x = self.fetch('row_ambient_module')
+        if x is not None:
+            return x
+        x = sage.modules.free_module.FreeModule(self._base_ring, self._ncols,
+                                                sparse=self.is_sparse_c())
+        self.cache('row_ambient_module', x)
+        return x
+
+    def _row_ambient_module(self, base_ring=None):
+        r"""
+        TESTS::
+
+            sage: M = matrix(Zmod(5), 2, 3)
+            sage: M._row_ambient_module()
+            doctest:warning
+            ...
+            DeprecationWarning: the method _row_ambient_module is deprecated use row_ambient_module (without underscore) instead
+            See https://github.com/sagemath/sage/issues/32984 for details.
+            Vector space of dimension 3 over Ring of integers modulo 5
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(32984, 'the method _row_ambient_module is deprecated use row_ambient_module (without underscore) instead')
+        return self.row_ambient_module(base_ring)
+
+    cpdef column_ambient_module(self, base_ring=None, sparse=None):
+        r"""
+        Return the free module that contains the columns of the matrix.
+
+        EXAMPLES::
+
+            sage: M = matrix(Zmod(5), 2, 3)
+            sage: M.column_ambient_module()
+            Vector space of dimension 2 over Ring of integers modulo 5
+            sage: M.column(1).parent() == M.column_ambient_module()
+            True
+
+            sage: M = Matrix(ZZ, 3, 4)
+            sage: M.column_ambient_module()
+            Ambient free module of rank 3 over the principal ideal domain Integer Ring
+            sage: M.column_ambient_module(QQ)
+            Vector space of dimension 3 over Rational Field
+
+            sage: M = Matrix(QQ, 4, 5)
+            sage: M.column_ambient_module()
+            Vector space of dimension 4 over Rational Field
+            sage: M.column_ambient_module(ZZ)
+            Ambient free module of rank 4 over the principal ideal domain Integer Ring
+        """
+        if base_ring is not None or sparse is not None:
+            if base_ring is None:
+                base_ring = self._base_ring
+            if sparse is None:
+                sparse = self.is_sparse_c()
+            if base_ring is self._base_ring and sparse == self.is_sparse_c():
+                return self.column_ambient_module()
+            return sage.modules.free_module.FreeModule(base_ring, self._nrows, sparse=sparse)
+
+        x = self.fetch('column_ambient_module')
+        if x is not None:
+            return x
+        x = sage.modules.free_module.FreeModule(self._base_ring, self._nrows,
+                                                sparse=self.is_sparse_c())
+        self.cache('column_ambient_module', x)
+        return x
+
+    def _column_ambient_module(self):
+        r"""
+        TESTS::
+
+            sage: M = matrix(Zmod(5), 2, 3)
+            sage: M._column_ambient_module()
+            doctest:warning
+            ...
+            DeprecationWarning: the method _column_ambient_module is deprecated use column_ambient_module (without underscore) instead
+            See https://github.com/sagemath/sage/issues/32984 for details.
+            Vector space of dimension 2 over Ring of integers modulo 5
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(32984, 'the method _column_ambient_module is deprecated use column_ambient_module (without underscore) instead')
+        return self.column_ambient_module()
 
     def columns(self, copy=True):
         r"""
@@ -1286,8 +1399,7 @@ cdef class Matrix(Matrix0):
         if from_list:
             return self.columns(copy=False)[i]
         cdef Py_ssize_t j
-        V = sage.modules.free_module.FreeModule(self._base_ring,
-                                     self._nrows, sparse=self.is_sparse())
+        V = self.column_ambient_module()
         tmp = [self.get_unsafe(j, i) for j in range(self._nrows)]
         return V(tmp, coerce=False, copy=False, check=False)
 
@@ -1344,8 +1456,7 @@ cdef class Matrix(Matrix0):
         if from_list:
             return self.rows(copy=False)[i]
         cdef Py_ssize_t j
-        V = sage.modules.free_module.FreeModule(self._base_ring,
-                                      self._ncols, sparse=self.is_sparse())
+        V = self.row_ambient_module()
         tmp = [self.get_unsafe(i,j) for j in range(self._ncols)]
         return V(tmp, coerce=False, copy=False, check=False)
 
@@ -2393,16 +2504,15 @@ cdef class Matrix(Matrix0):
             :meth:`get_is_zero_unsafe` for derived matrix classes.
         """
         if ring is None:
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             ring = ZZ
 
-        cdef object zero = ring.zero()
         cdef object one = ring.one()
         cdef Py_ssize_t i, j
 
         from sage.matrix.matrix_space import MatrixSpace
         MZ = MatrixSpace(ring, self._nrows, self._ncols, sparse=False)
-        cdef Matrix M =  MZ(zero, None, None)  # initialize with zeros
+        cdef Matrix M = MZ(ring.zero())
 
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
@@ -2644,11 +2754,10 @@ cdef class Matrix(Matrix0):
         """
         if (sparse is None or self.is_sparse() == sparse):
             if self._nrows == nrows and self._ncols == ncols:
-                return self._parent(entries=entries, coerce=coerce, copy=copy)
+                return self._parent(entries, coerce=coerce, copy=copy)
             elif self._nrows == ncols and self._ncols == nrows:
-                return self._parent.transposed(entries=entries, coerce=coerce, copy=copy)
-        return self.matrix_space(nrows, ncols, sparse)(entries=entries,
-                                             coerce=coerce, copy=copy)
+                return self._parent.transposed(entries, coerce=coerce, copy=copy)
+        return self.matrix_space(nrows, ncols, sparse)(entries, coerce=coerce, copy=copy)
 
     def block_sum(self, Matrix other):
         """

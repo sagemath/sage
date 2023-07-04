@@ -104,14 +104,10 @@ class ModularFormsSubmodule(ModularFormsSpace,
              O(q^5)]
         """
         A = self.ambient_module()
-        return [A._q_expansion(element = f.element(), prec=prec) for f in self.basis()]
+        return [A._q_expansion(element=f.element(), prec=prec)
+                for f in self.basis()]
 
 
 # TODO
 class ModularFormsSubmoduleWithBasis(ModularFormsSubmodule):
     pass
-
-
-
-
-

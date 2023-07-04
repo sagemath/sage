@@ -25,7 +25,7 @@ import sage.repl.preparse
 
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.persist import dumps, load
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class Sage(ExtraTabCompletion, Expect):
@@ -159,7 +159,8 @@ class Sage(ExtraTabCompletion, Expect):
         if python:
             command = 'python -u'
             prompt = re.compile(b'>>> ')
-            init_code.append('from sage.all import *')
+            environment = 'sage.all'
+            init_code.append(f'from {environment} import *')
         else:
             command = ' '.join([
                 'sage-ipython',

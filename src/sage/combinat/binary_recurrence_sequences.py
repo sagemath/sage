@@ -37,7 +37,7 @@ EXAMPLES::
     sage: T.pthpowers(7,10**30)
     Traceback (most recent call last):
     ...
-    ValueError: The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers.
+    ValueError: the degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers
 
 
 AUTHORS:
@@ -65,9 +65,10 @@ from sage.rings.number_field.number_field import QuadraticField
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
-from sage.arith.all import lcm, next_prime, is_prime, next_prime_power, legendre_symbol
+from sage.arith.functions import lcm
+from sage.arith.misc import is_prime, next_prime, next_prime_power, legendre_symbol
 from sage.functions.log import log
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 
 
 class BinaryRecurrenceSequence(SageObject):
@@ -105,7 +106,6 @@ class BinaryRecurrenceSequence(SageObject):
     """
 
     def __init__(self, b, c, u0=0, u1=1):
-
         """
         See :class:`BinaryRecurrenceSequence` for full documentation.
 
@@ -415,9 +415,7 @@ class BinaryRecurrenceSequence(SageObject):
             #the identity mod p is of order (p^{e-1})^4.  So we compute the period mod p^e by successively
             #multiplying the period mod p by powers of p.
 
-            for i in Fac:
-                p = i[0]
-                e = i[1]
+            for p, e in Fac:
                 #first compute the period mod p
                 if p in self._period_dict:
                     perp = self._period_dict[p]
@@ -549,7 +547,7 @@ class BinaryRecurrenceSequence(SageObject):
             sage: T.pthpowers(7,10**30)
             Traceback (most recent call last):
             ...
-            ValueError: The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers.
+            ValueError: the degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers
 
             sage: L = BinaryRecurrenceSequence(4,0,2,2)
             sage: [L(i).factor() for i in range(10)]
@@ -587,7 +585,7 @@ class BinaryRecurrenceSequence(SageObject):
                     return [0]
                 return []
             else:
-                raise ValueError("The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers.")
+                raise ValueError("the degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers")
 
         #If the sequence is degenerate without being geometric or quasigeometric, there
         #may be many ``p`` th powers or no ``p`` th powers.
@@ -614,7 +612,7 @@ class BinaryRecurrenceSequence(SageObject):
                 #This linear equation represents a pth power iff A is a pth power mod B.
 
                 if _is_p_power_mod(A, p, B):
-                    raise ValueError("The degenerate binary recurrence sequence has many pth powers.")
+                    raise ValueError("the degenerate binary recurrence sequence has many pth powers")
             return []
 
         #We find ``p`` th powers using an elementary sieve.  Term `u_n` is a ``p`` th
@@ -832,7 +830,6 @@ def _goodness(n, R, p):
 
 
 def _next_good_prime(p, R, qq, patience, qqold):
-
     """
     Find the next prime `\\ell` which is good by ``qq`` but not by ``qqold``, 1 mod ``p``, and for which
     ``b^2+4*c`` is a square mod `\\ell`, for the sequence ``R`` if it is possible in runtime patience.
@@ -1035,7 +1032,6 @@ def _is_p_power_mod(a, p, N):
 
 
 def _estimated_time(M2, M1, length, p):
-
     """
     Find the estimated time to extend congruences mod M1 to consistent congruences mod M2.
 

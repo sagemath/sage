@@ -23,17 +23,27 @@ AUTHORS:
 - Bobby Moretti and Gonzalo Tornaria (2007-07-01): First version
 - William Stein (2007-07-03): add more
 - Bobby Moretti (2007-07-03): add doctests
+
+This module (and all of ``sage.media``) is deprecated.
+
+EXAMPLES::
+
+    sage: import sage.media
+    doctest:warning...
+    DeprecationWarning: the package sage.media is deprecated
+    See https://github.com/sagemath/sage/issues/12673 for details.
 """
 
 import math
 import os
 import wave
 
-from sage.plot.plot import list_plot
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.plot", "list_plot")
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.misc.html import html
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 
 class Wave(SageObject):
@@ -60,8 +70,8 @@ class Wave(SageObject):
 
     Indexing:
 
-        Getting the $n$th item in a Wave object will give you the value
-        of the $n$th frame.
+        Getting the `n`-th item in a Wave object will give you the value
+        of the `n`-th frame.
     """
     def __init__(self, data=None, **kwds):
         if data is not None:
@@ -91,7 +101,6 @@ class Wave(SageObject):
                 raise KeyError(msg + " invalid input to Wave initializer")
         else:
             raise ValueError("Must give a filename")
-
 
     def save(self, filename='sage.wav'):
         r"""
@@ -187,7 +196,7 @@ class Wave(SageObject):
 
     def readframes(self, n):
         """
-        Read out the raw data for the first $n$ frames of this wave object.
+        Read out the raw data for the first `n` frames of this wave object.
 
         INPUT:
 
@@ -287,9 +296,8 @@ class Wave(SageObject):
 
         a plot object that can be shown.
         """
-
-        domain = self.domain(npoints = npoints)
-        values = self.values(npoints=npoints, channel = channel)
+        domain = self.domain(npoints=npoints)
+        values = self.values(npoints=npoints, channel=channel)
         points = zip(domain, values)
 
         L = list_plot(points, plotjoined=plotjoined, **kwds)
@@ -363,13 +371,13 @@ class Wave(SageObject):
         channels_sliced = [self._channel_data[i][start:stop] for i in range(self._nchannels)]
         print(stop - start)
 
-        return Wave(nchannels = self._nchannels,
-                    width = self._width,
-                    framerate = self._framerate,
-                    bytes = self._bytes[start:stop],
-                    nframes = stop - start,
-                    channel_data = channels_sliced,
-                    name = self._name)
+        return Wave(nchannels=self._nchannels,
+                    width=self._width,
+                    framerate=self._framerate,
+                    bytes=self._bytes[start:stop],
+                    nframes=stop - start,
+                    channel_data=channels_sliced,
+                    name=self._name)
 
     def __copy__(self):
         return self._copy(0, self._nframes)

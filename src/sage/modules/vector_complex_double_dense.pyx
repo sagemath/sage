@@ -1,5 +1,5 @@
 r"""
-Dense complex double vectors using a NumPy backend.
+Dense complex double vectors using a NumPy backend
 
 EXAMPLES::
 
@@ -7,7 +7,7 @@ EXAMPLES::
     sage: v
     (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: type(v)
-    <type 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
+    <class 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
     sage: parent(v)
     Vector space of dimension 3 over Complex Double Field
     sage: v[0] = 5
@@ -113,5 +113,3 @@ def unpickle_v1(parent, entries, degree, is_mutable=None):
     if is_mutable is not None:
         v._is_immutable = not is_mutable
     return v
-
-

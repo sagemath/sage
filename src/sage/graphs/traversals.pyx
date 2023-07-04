@@ -2,7 +2,7 @@
 # cython: binding=True
 # distutils: language = c++
 r"""
-Graph traversals.
+Graph traversals
 
 **This module implements the following graph traversals**
 
@@ -105,6 +105,7 @@ def _is_valid_lex_BFS_order(G, L):
                     continue
                 return False
     return True
+
 
 cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred):
     r"""
@@ -354,7 +355,6 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     Computed orderings are valid::
 
         sage: from sage.graphs.traversals import _is_valid_lex_BFS_order
-        sage: set_random_seed()
         sage: G = graphs.RandomChordalGraph(15)
         sage: v0 = ZZ.random_element(G.order())
         sage: L = G.lex_BFS(initial_vertex=v0, algorithm="fast")
@@ -476,6 +476,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         return sigma, g
     else:
         return sigma
+
 
 def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     r"""
@@ -650,6 +651,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     else:
         return value
 
+
 def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     r"""
     Perform a lexicographic depth first search (LexDFS) on the graph.
@@ -822,6 +824,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     else:
         return value
+
 
 def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     r"""
@@ -997,6 +1000,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     else:
         return value
 
+
 def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorithm=None):
     r"""
     Return an ordering of the vertices according the LexM graph traversal.
@@ -1052,12 +1056,12 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
         sage: ord = g.lex_M(algorithm='lex_M_fast')
         sage: len(ord) == g.order()
         True
-        sage: set(ord) == set(g.vertices())
+        sage: set(ord) == set(g.vertices(sort=False))
         True
         sage: ord = g.lex_M(algorithm='lex_M_slow')
         sage: len(ord) == g.order()
         True
-        sage: set(ord) == set(g.vertices())
+        sage: set(ord) == set(g.vertices(sort=False))
         True
 
     Both algorithms produce a valid LexM ordering `\alpha` (i.e the neighbors of
@@ -1147,6 +1151,7 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
         if labels:
             raise ValueError("'{}' cannot return labels assigned to vertices".format(algorithm))
         return lex_M_fast(self, triangulation=triangulation, initial_vertex=initial_vertex)
+
 
 def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
     r"""
@@ -1439,7 +1444,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
     cdef dict reach
 
     k = 2
-    for i in range(n-1, -1, -1):
+    for i in range(n - 1, -1, -1):
 
         # Select: pick an unnumbered vertex v with label(v)==k and assign it
         # number i
@@ -1496,12 +1501,12 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
 
         if unnumbered_vertices:
             # Sort: sort unnumbered vertices by label(w) value
-            order = sorted( (label[w], w) for w in unnumbered_vertices )
+            order = sorted((label[w], w) for w in unnumbered_vertices)
 
             # Reassign labels as integers from 2 to k, redefining k appropriately
             k = 2
-            l,_ = order[0]
-            for ll,w in order:
+            l, _ = order[0]
+            for ll, w in order:
                 if l != ll:
                     l = ll
                     k += 2
@@ -1732,7 +1737,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     if tree:
         D = DiGraph([int_to_vertex, [(int_to_vertex[i], int_to_vertex[pred[i]])
-                                         for i in range(N) if pred[i] != i]],
+                                     for i in range(N) if pred[i] != i]],
                     format="vertices_and_edges")
         return alpha, D
 
@@ -1748,6 +1753,7 @@ cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u):
     alpha[new_pos_u], alpha[alpha_inv[u]] = u, v
     alpha_inv[u], alpha_inv[v] = alpha_inv[v], alpha_inv[u]
     return v
+
 
 cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_vertex,
                                                 int* alpha, int* alpha_inv, list F, bint* X):
@@ -1900,6 +1906,7 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_ve
                         reach[i].push_back(v)
 
     reach.clear()
+
 
 def maximum_cardinality_search_M(G, initial_vertex=None):
     r"""

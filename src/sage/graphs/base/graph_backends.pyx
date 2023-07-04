@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Backends for Sage (di)graphs.
+Backends for Sage (di)graphs
 
 This module implements :class:`GenericGraphBackend` (the base class for
 backends).
@@ -47,7 +47,6 @@ For an overview of graph data structures in sage, see
 Classes and methods
 -------------------
 """
-
 # ****************************************************************************
 #       Copyright (C) 2008 Robert L. Miller <rlmillster@gmail.com>
 #                     2018 Julian Rüth <julian.rueth@fsfe.org>
@@ -58,8 +57,7 @@ Classes and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from .c_graph cimport CGraphBackend, CGraph
+from .c_graph cimport CGraphBackend
 
 
 cdef class GenericGraphBackend(SageObject):
@@ -740,22 +738,23 @@ cdef class GenericGraphBackend(SageObject):
             else:
                 raise Exception
             multiedges = (<CGraphBackend> self)._multiple_edges
-            directed   = (<CGraphBackend> self)._directed
-            loops      = (<CGraphBackend> self)._loops
+            directed = (<CGraphBackend> self)._directed
+            loops = (<CGraphBackend> self)._loops
         else:
             raise Exception
 
         # Vertices and edges
         vertices = list(self.iterator_verts(None))
         if directed:
-            edges    = list(self.iterator_out_edges(vertices, True))
+            edges = list(self.iterator_out_edges(vertices, True))
         else:
-            edges    = list(self.iterator_edges(vertices, True))
+            edges = list(self.iterator_edges(vertices, True))
 
         return (unpickle_graph_backend,
                 (directed, vertices, edges,
                  {'loops': loops,
                   'multiedges': multiedges}))
+
 
 def unpickle_graph_backend(directed, vertices, edges, kwds):
     r"""

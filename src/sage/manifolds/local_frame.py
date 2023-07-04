@@ -162,19 +162,20 @@ Let us check the components of `f` with respect to the frame `e`::
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2013-2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2019 Michael Jung <micjung@uni-potsdam.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.tensor.modules.free_module_basis import (FreeModuleBasis,
                                                    FreeModuleCoBasis)
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+
 
 class LocalCoFrame(FreeModuleCoBasis):
     r"""
@@ -331,7 +332,7 @@ class LocalCoFrame(FreeModuleCoBasis):
             Dual basis (e^1,e^2) on the Fiber of E at Point p on the
             2-dimensional topological manifold M
             sage: type(e_dual_p)
-            <class 'sage.tensor.modules.free_module_basis.FreeModuleCoBasis'>
+            <class 'sage.tensor.modules.free_module_basis.FreeModuleCoBasis_with_category'>
             sage: e_dual_p[1]
             Linear form e^1 on the Fiber of E at Point p on the 2-dimensional
              topological manifold M
@@ -398,10 +399,10 @@ class LocalCoFrame(FreeModuleCoBasis):
             \left(E|_{M}, \left(e^{\xi},e^{\zeta}\right)\right)
 
         """
-        super(LocalCoFrame, self).set_name(symbol, latex_symbol=latex_symbol,
-                                      indices=indices,
-                                      latex_indices=latex_indices,
-                                      index_position=index_position)
+        super().set_name(symbol, latex_symbol=latex_symbol,
+                         indices=indices,
+                         latex_indices=latex_indices,
+                         index_position=index_position)
         if include_domain:
             # Redefinition of the name and the LaTeX name to include the domain
             self._name = "({}|_{}, {})".format(self._vbundle._name,
@@ -597,12 +598,12 @@ class LocalFrame(FreeModuleBasis):
             symbol_dual = tuple(symbol_dual)
         if isinstance(latex_symbol_dual, list):
             latex_symbol_dual = tuple(latex_symbol_dual)
-        return super(LocalFrame, cls).__classcall__(cls, section_module,
-                                        symbol, latex_symbol=latex_symbol,
-                                        indices=indices,
-                                        latex_indices=latex_indices,
-                                        symbol_dual=symbol_dual,
-                                        latex_symbol_dual=latex_symbol_dual)
+        return super().__classcall__(cls, section_module,
+                                     symbol, latex_symbol=latex_symbol,
+                                     indices=indices,
+                                     latex_indices=latex_indices,
+                                     symbol_dual=symbol_dual,
+                                     latex_symbol_dual=latex_symbol_dual)
 
     def __init__(self, section_module, symbol, latex_symbol=None, indices=None,
                  latex_indices=None, symbol_dual=None, latex_symbol_dual=None):
@@ -1045,7 +1046,7 @@ class LocalFrame(FreeModuleBasis):
             Basis (e_0,e_1) on the Fiber of E at Point p on the 2-dimensional
              topological manifold M
             sage: type(ep)
-            <class 'sage.tensor.modules.free_module_basis.FreeModuleBasis'>
+            <class 'sage.tensor.modules.free_module_basis.FreeModuleBasis_with_category'>
             sage: ep[0]
             Vector e_0 in the fiber of E at Point p on the 2-dimensional
              topological manifold M
@@ -1239,10 +1240,10 @@ class LocalFrame(FreeModuleBasis):
             \left(E|_{M}, \left(E_{\alpha},E_{\beta}\right)\right)
 
         """
-        super(LocalFrame, self).set_name(symbol, latex_symbol=latex_symbol,
-                                          indices=indices,
-                                          latex_indices=latex_indices,
-                                          index_position=index_position)
+        super().set_name(symbol, latex_symbol=latex_symbol,
+                         indices=indices,
+                         latex_indices=latex_indices,
+                         index_position=index_position)
         if include_domain:
             # Redefinition of the name and the LaTeX name to include the domain
             self._name = "({}|_{}, {})".format(self._vbundle._name,

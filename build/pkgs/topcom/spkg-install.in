@@ -1,4 +1,9 @@
 cd src
+
+# Avoid running autotools. Patch no_vendor_cddlib.patch makes changes
+# both to input and output.
+touch configure Makefile.in
+
 ./configure \
     --prefix="$SAGE_LOCAL" \
     --libdir="$SAGE_LOCAL/lib" \

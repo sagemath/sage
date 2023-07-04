@@ -236,14 +236,13 @@ class SymmetricIdeal(Ideal_generic):
             Symmetric Ideal (x_1^2 + x_1, x_2 - x_1) of Infinite polynomial ring in x over Rational Field
             sage: x[2]^2 + x[3] in I # indirect doctest
             True
-
         """
         try:
             return self.reduce(p) == 0
         except Exception:
             return False
 
-    def __mul__ (self, other):
+    def __mul__(self, other):
         """
         Product of two symmetric ideals.
 
@@ -915,7 +914,7 @@ class SymmetricIdeal(Ideal_generic):
         OUT = self.symmetrisation(tailreduce=tailreduce,report=report,use_full_group=use_full_group)
         if not (report is None):
             print("Symmetrisation done")
-        VarList = set([])
+        VarList = set()
         for P in OUT.gens():
             if P._p!=0:
                 if P.is_unit():
@@ -932,7 +931,7 @@ class SymmetricIdeal(Ideal_generic):
             if hasattr(PARENT,'_P'):
                 CommonR = PARENT._P
             else:
-                VarList = set([])
+                VarList = set()
                 for P in OUT.gens():
                     if P._p!=0:
                         if P.is_unit():
@@ -943,7 +942,7 @@ class SymmetricIdeal(Ideal_generic):
                 CommonR = PolynomialRing(PARENT._base, VarList, order=PARENT._order)
 
             try: # working around one libsingular bug and one libsingular oddity
-                DenseIdeal = [CommonR(P._p) if ((CommonR is P._p.parent()) or CommonR.ngens()!=P._p.parent().ngens()) else CommonR(repr(P._p))  for P in OUT.gens()]*CommonR
+                DenseIdeal = [CommonR(P._p) if ((CommonR is P._p.parent()) or CommonR.ngens()!=P._p.parent().ngens()) else CommonR(repr(P._p)) for P in OUT.gens()]*CommonR
             except Exception:
                 if report is not None:
                     print("working around a libsingular bug")

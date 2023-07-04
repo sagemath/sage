@@ -10,7 +10,9 @@ structure of a graded algebra. See :class:`MixedFormAlgebra` for details.
 
 This algebra is endowed with a natural chain complex structure induced by the
 exterior derivative. The corresponding homology is called *de Rham cohomology*.
-See :class:`DeRhamCohomologyRing` for details.
+See
+:class:`~sage.manifolds.differentiable.de_rham_cohomology.DeRhamCohomologyRing`
+for details.
 
 AUTHORS:
 
@@ -75,7 +77,9 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             \xrightarrow{\mathrm{d}_{n}} 0.
 
     The induced cohomology is called *de Rham cohomology*, see
-    :meth:`cohomology` or :class:`DeRhamCohomologyRing` respectively.
+    :meth:`cohomology` or
+    :class:`~sage.manifolds.differentiable.de_rham_cohomology.DeRhamCohomologyRing`
+    respectively.
 
     INPUT:
 

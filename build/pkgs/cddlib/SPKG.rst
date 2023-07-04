@@ -31,8 +31,3 @@ Upstream Contact
 ----------------
 
 https://github.com/cddlib/cddlib
-
-Dependencies
-------------
-
--  gmp (or its fork mpir)

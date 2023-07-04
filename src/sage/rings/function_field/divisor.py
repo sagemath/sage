@@ -1,3 +1,5 @@
+# sage.doctest: optional - sage.rings.finite_rings               (because all doctests use finite fields)
+# sage.doctest: optional - sage.rings.function_field    (because almost all doctests use function field extensions)
 """
 Divisors of function fields
 
@@ -38,7 +40,8 @@ AUTHORS:
 
 """
 #*****************************************************************************
-#       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
+#       Copyright (C) 2016-2022 Kwankyu Lee <ekwankyu@gmail.com>
+#                     2019      Brent Baccala
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -51,7 +54,7 @@ import random
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -456,11 +459,80 @@ class FunctionFieldDivisor(ModuleElement):
             sage: D.multiplicity(p2)
             -3
         """
-        if not place in self._data:
-            return 0
+        if place not in self._data:
+            return Integer(0)
         return self._data[place]
 
     valuation = multiplicity
+
+    def is_effective(self):
+        """
+        Return ``True`` if this divisor has non-negative multiplicity at all
+        places.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1, p2 = L.places()[:2]
+            sage: D = 2*p1 + 3*p2
+            sage: D.is_effective()
+            True
+            sage: E = D - 4*p2
+            sage: E.is_effective()
+            False
+        """
+        data = self._data
+        return all(data[place] >= 0 for place in data)
+
+    def numerator(self):
+        """
+        Return the numerator part of the divisor.
+
+        The numerator of a divisor is the positive part of the divisor.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1,p2 = L.places()[:2]
+            sage: D = 2*p1 - 3*p2
+            sage: D.numerator()
+            2*Place (1/x, 1/x^3*y^2 + 1/x)
+        """
+        divisor_group = self.parent()
+        data = self._data
+        d = {}
+        for place in data:
+            m = data[place]
+            if m > 0:
+                d[place] = m
+        return divisor_group.element_class(self.parent(), d)
+
+    def denominator(self):
+        """
+        Return the denominator part of the divisor.
+
+        The denominator of a divisor is the negative of the negative part of
+        the divisor.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1,p2 = L.places()[:2]
+            sage: D = 2*p1 - 3*p2
+            sage: D.denominator()
+            3*Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
+        """
+        divisor_group = self.parent()
+        data = self._data
+        d = {}
+        for place in data:
+            m = data[place]
+            if m < 0:
+                d[place] = -m
+        return divisor_group.element_class(self.parent(), d)
 
     def degree(self):
         """
@@ -966,7 +1038,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         if x == 0:
             return self.element_class(self, {})
-        raise ValueError
+        raise ValueError(f"cannot construct a divisor from {x}")
 
     def _coerce_map_from_(self, S):
         """
@@ -987,7 +1059,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
              + Place (x^2 + 4*x + 1, y)
         """
         if isinstance(S, PlaceSet):
-            func =  lambda place: prime_divisor(self._field, place)
+            func = lambda place: prime_divisor(self._field, place)
             return SetMorphism(Hom(S,self), func)
 
     def function_field(self):

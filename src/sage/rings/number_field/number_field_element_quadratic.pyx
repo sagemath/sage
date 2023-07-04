@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 Optimized Quadratic Number Field Elements
 
 This file defines a Cython class ``NumberFieldElement_quadratic`` to speed up
@@ -23,16 +23,15 @@ AUTHORS:
     The ``_new()`` method should be overridden in this class to copy the ``D``
     and ``standard_embedding`` attributes
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 include "sage/libs/ntl/decl.pxi"
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
@@ -49,6 +48,7 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.mpfi cimport *
 
 
+from sage.structure.parent cimport Parent
 from sage.structure.parent_base cimport ParentWithBase
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool_sgn
@@ -172,7 +172,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: F.<a> = QuadraticField(-7)
             sage: c = a + 7
             sage: type(c) # indirect doctest
-            <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic_sqrt'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic_sqrt'>
         """
         self.D = parent._D
         cdef Integer a, b, denom
@@ -313,12 +313,12 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         EXAMPLES::
 
             sage: K.<sqrt5> = QuadraticField(5)
-            sage: polymake(3+2*sqrt5)                 # optional - polymake
+            sage: polymake(3+2*sqrt5)                 # optional - jupymake
             3+2r5
-            sage: polymake(2**100/7 - 2*sqrt5/3**50)  # optional - polymake
+            sage: polymake(2**100/7 - 2*sqrt5/3**50)  # optional - jupymake
             1267650600228229401496703205376/7-2/717897987691852588770249r5
             sage: K.<i> = QuadraticField(-1)
-            sage: polymake(i)                         # optional - polymake
+            sage: polymake(i)                         # optional - jupymake
             Traceback (most recent call last):
             ...
             TypeError: Negative values for the root of the extension ... Bad Thing...
@@ -330,9 +330,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - x -1, 'a', embedding=(1-AA(5).sqrt())/2)
             sage: L = NumberField(x^2 - x -1, 'a', embedding=(1+AA(5).sqrt())/2)
-            sage: polymake(K.gen())  # optional - polymake
+            sage: polymake(K.gen())  # optional - jupymake
             1/2-1/2r5
-            sage: polymake(L.gen())  # optional - polymake
+            sage: polymake(L.gen())  # optional - jupymake
             1/2+1/2r5
         """
         cdef Integer a = Integer.__new__(Integer)
@@ -349,30 +349,52 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             mpz_set(denom.value, self.denom)
             return "new QuadraticExtension({}, {}, {})".format(a/denom, b/denom, self.D)
 
-    def __copy__(self):
+    cpdef _copy_for_parent(self, Parent parent):
         r"""
-        Returns a new copy of self.
+        Return a copy of ``self`` with the parent replaced by ``parent``.
 
-        TESTS::
+        EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: b = a + 3
-            sage: c = b.__copy__()
-            sage: b
-            a + 3
-            sage: c
-            a + 3
-            sage: b is c
-            False
-            sage: b == c
+            sage: K.<a> = QuadraticField(3)
+            sage: L.<b> = K.change_names()
+            sage: La = a._copy_for_parent(L)
+            sage: La.parent() is L
+            True
+            sage: La == b
             True
         """
         cdef NumberFieldElement_quadratic x = <NumberFieldElement_quadratic>self._new()
         mpz_set(x.a, self.a)
         mpz_set(x.b, self.b)
         mpz_set(x.denom, self.denom)
+        x._set_parent(parent)
         return x
 
+    def __copy__(self):
+        r"""
+        TESTS::
+
+            sage: K.<a> = QuadraticField(-3)
+            sage: b = a + 3
+            sage: c = b.__copy__()
+            sage: b is c
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(self, memo):
+        r"""
+        TESTS::
+
+            sage: K.<a> = QuadraticField(-3)
+            sage: b = a + 3
+            sage: c = deepcopy(b)
+            sage: b is c
+            True
+        """
+        # immutable
+        return self
 
     def __cinit__(self):
         r"""
@@ -1532,7 +1554,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (3*a-2)/7 * b
             1
 
-        This fixes ticket :trac:`9357`::
+        This fixes issue :trac:`9357`::
 
             sage: K.<a> = NumberField(x^2+1)
             sage: d = K(0)
@@ -1611,7 +1633,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 #################################################################################
 
     def __hash__(self):
-        """
+        r"""
         Return hash of this number field element.
 
         For elements in `\ZZ` or `\QQ` the hash coincides with the one in the
@@ -1639,7 +1661,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         h += 42082631 * mpz_pythonhash(self.b)
         return h
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Check whether this element is not zero.
 
@@ -1996,10 +2018,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         mpq_canonicalize(res.value)
         return res
 
-
     def norm(self, K=None):
-        """
-        Return the norm of self. If the second argument is None, this is the
+        r"""
+        Return the norm of ``self``.
+
+        If the second argument is ``None``, this is the
         norm down to `\QQ`. Otherwise, return the norm down to K (which had
         better be either `\QQ` or this number field).
 
@@ -2106,9 +2129,15 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         # D = 1 mod 4
         return mpz_fdiv_ui(self.D.value, 4) == 1
 
-    def charpoly(self, var='x'):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         The characteristic polynomial of this element over `\QQ`.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
 
         EXAMPLES::
 
@@ -2124,15 +2153,16 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         R = QQ[var]
         return R([self.norm(), -self.trace(), 1])
 
-    def minpoly(self, var='x'):
+    def minpoly(self, var='x', algorithm=None):
         r"""
         The minimal polynomial of this element over `\QQ`.
 
         INPUT:
 
-        -  ``var`` -- the minimal polynomial is defined over a polynomial ring
-           in a variable with this name. If not specified this defaults to
-           ``x``.
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements: and ignored
+
 
         EXAMPLES::
 
@@ -2589,7 +2619,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             sage: OK.<y> = EquationOrder(x^2 + 5)
             sage: v = OK.1 # indirect doctest
             sage: type(v)
-            <type 'sage.rings.number_field.number_field_element_quadratic.OrderElement_quadratic'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.OrderElement_quadratic'>
         """
         K = order.number_field()
         NumberFieldElement_quadratic.__init__(self, K, f)
@@ -2628,10 +2658,17 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         """
         return ZZ(NumberFieldElement_quadratic.trace(self))
 
-    def charpoly(self, var='x'):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         The characteristic polynomial of this element, which is over `\ZZ`
         because this element is an algebraic integer.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
 
         EXAMPLES::
 
@@ -2648,9 +2685,16 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         R = ZZ[var]
         return R([self.norm(), -self.trace(), 1])
 
-    def minpoly(self, var='x'):
+    def minpoly(self, var='x', algorithm=None):
         r"""
         The minimal polynomial of this element over `\ZZ`.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
 
         EXAMPLES::
 
@@ -2855,14 +2899,14 @@ cdef class Z_to_quadratic_field_element(Morphism):
             sage: K.<a> = QuadraticField(3)
             sage: phi = K.coerce_map_from(ZZ) # indirect doctest
             sage: type(phi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
             sage: phi == loads(dumps(phi)) # todo: comparison not implemented
             True
 
             sage: R.<b> = CyclotomicField(6)
             sage: psi = R.coerce_map_from(ZZ) # indirect doctest
             sage: type(psi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
             sage: psi == loads(dumps(psi)) # todo: comparison not implemented
             True
         """
@@ -2957,14 +3001,14 @@ cdef class Q_to_quadratic_field_element(Morphism):
             sage: K.<a> = QuadraticField(3)
             sage: phi = K.coerce_map_from(QQ) # indirect doctest
             sage: type(phi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
             sage: phi == loads(dumps(phi))  # todo: comparison not implemented
             True
 
             sage: R.<b> = CyclotomicField(6)
             sage: psi = R.coerce_map_from(QQ)
             sage: type(psi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
             sage: psi == loads(dumps(psi))  # todo: comparison not implemented
             True
         """
@@ -3051,4 +3095,3 @@ cpdef bint is_sqrt_disc(Rational ad, Rational bd):
     mpz_clear(denom)
 
     return ret
-

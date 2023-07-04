@@ -1,6 +1,9 @@
 SAGE_SPKG_CONFIGURE([lrslib], [
+    dnl Although lrs and lrsnash binaries are the only interfaces to lrslib that
+    dnl sagelib uses, the optional polymake package uses lrslib as a library, so
+    dnl the following DEPCHECK is needed.
     dnl System lrslib may already be 7.x, which may be compiled with FLINT
-    SAGE_SPKG_DEPCHECK([gmp mpir flint], [
+    SAGE_SPKG_DEPCHECK([gmp flint], [
         AC_CHECK_PROGS([LRSNASH], [lrsnash])
         AS_IF([test -z "$LRSNASH"], [
             sage_spkg_install_lrslib=yes

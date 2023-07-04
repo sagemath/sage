@@ -4,3 +4,4 @@ XML::LibXSLT
 File::Slurp
 JSON
 SVG
+Term::ReadKey

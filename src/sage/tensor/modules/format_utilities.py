@@ -20,8 +20,15 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from sage.structure.sage_object import SageObject
+
+if TYPE_CHECKING:
+    from sage.misc.latex import LatexExpr
+
 
 def is_atomic(expr, sep=['+', '-']):
     r"""
@@ -295,7 +302,7 @@ class FormattedExpansion(SageObject):
         \frac{x}{2}
 
     """
-    def  __init__(self, txt=None, latex=None):
+    def __init__(self, txt=None, latex=None):
         r"""
         TESTS::
 
@@ -322,7 +329,7 @@ class FormattedExpansion(SageObject):
         """
         return self._txt
 
-    def _latex_(self):
+    def _latex_(self) -> LatexExpr:
         r"""
         Return a LaTeX representation of ``self``.
 

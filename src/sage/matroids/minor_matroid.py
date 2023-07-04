@@ -132,8 +132,8 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),
-            ....:                  contractions=set(), deletions=set(['g']))  # indirect doctest
+            sage: M = MinorMatroid(matroids.named_matroids.Fano(),            # indirect doctest
+            ....:                  contractions=set(), deletions=set(['g']))
             sage: M.is_isomorphic(matroids.Wheel(3))
             True
         """
@@ -225,9 +225,7 @@ class MinorMatroid(Matroid):
             sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: X = M._max_independent(set(['a', 'd', 'e', 'g']))
-            sage: sorted(X) # py2
-            ['a', 'd', 'e']
-            sage: sorted(X) # py3 # random
+            sage: sorted(X) # random
             ['a', 'd', 'e']
             sage: M.is_independent(X)
             True
@@ -279,9 +277,7 @@ class MinorMatroid(Matroid):
             sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: X = M._max_coindependent(set(['a', 'd', 'e', 'g']))
-            sage: sorted(X) # py2
-            ['d', 'g']
-            sage: sorted(X) # py3 random
+            sage: sorted(X) # random
             ['d', 'g']
             sage: M.is_coindependent(X)
             True

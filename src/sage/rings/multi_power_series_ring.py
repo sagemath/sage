@@ -163,7 +163,7 @@ Coercion from symbolic ring::
     sage: S = PowerSeriesRing(GF(11),2,'x,y'); S
     Multivariate Power Series Ring in x, y over Finite Field of size 11
     sage: type(x)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
     sage: type(S(x))
     <class 'sage.rings.multi_power_series_ring.MPowerSeriesRing_generic_with_category.element_class'>
 
@@ -205,7 +205,7 @@ AUTHORS:
 
 
 from sage.rings.ring import CommutativeRing
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
@@ -296,9 +296,9 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             True
 
         """
-        order = TermOrder(order,num_gens)
-        return super(MPowerSeriesRing_generic,cls).__classcall__(cls, base_ring, num_gens, name_list,
-                 order, default_prec, sparse)
+        order = TermOrder(order, num_gens)
+        return super().__classcall__(cls, base_ring, num_gens, name_list,
+                                     order, default_prec, sparse)
 
     def __init__(self, base_ring, num_gens, name_list,
                  order='negdeglex', default_prec=10, sparse=False):
@@ -563,8 +563,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return PowerSeriesRing(R, names = self.variable_names(), default_prec = self.default_prec())
 
-
-
     def remove_var(self, *var):
         """
         Remove given variable or sequence of variables from self.
@@ -652,9 +650,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             False
             sage: g1.parent() == R
             True
-
         """
-
         P = f.parent()
         if is_MPolynomialRing(P) or is_MPowerSeriesRing(P) \
                or is_PolynomialRing(P) or is_PowerSeriesRing(P):
@@ -662,7 +658,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
                 if self.has_coerce_map_from(P.base_ring()):
                     return self(f)
         else:
-            return self._coerce_try(f,[self.base_ring()])
+            return self(self.base_ring().coerce(f))
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -821,8 +817,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         return self._poly_ring().has_coerce_map_from(P)
 
-
-    def _element_constructor_(self,f,prec=None):
+    def _element_constructor_(self, f, prec=None):
         """
         TESTS::
 
@@ -1085,6 +1080,3 @@ def unpickle_multi_power_series_ring_v0(base_ring, num_gens, names, order, defau
         True
     """
     return PowerSeriesRing(base_ring, num_gens=num_gens, names=names, order=order, default_prec=default_prec, sparse=sparse)
-
-
-

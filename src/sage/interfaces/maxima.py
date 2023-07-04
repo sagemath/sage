@@ -148,12 +148,12 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
     sage: f = maxima('(x + 3*y + x^2*y)^3')
     sage: f.expand()
-    x^6*y^3+9*x^4*y^3+27*x^2*y^3+27*y^3+3*x^5*y^2+18*x^3*y^2+27*x*y^2+3*x^4*y+9*x^2*y+x^3
+    x^6*y^3+9*x^4*y^3+27*x^2*y^3+27*y^3+3*x^5*y^2+18*x^3*y^2+27*x*y^2 +3*x^4*y+9*x^2*y+x^3
     sage: f.subst('x=5/z')
     (5/z+(25*y)/z^2+3*y)^3
     sage: g = f.subst('x=5/z')
     sage: h = g.ratsimp(); h
-    (27*y^3*z^6+135*y^2*z^5+(675*y^3+225*y)*z^4+(2250*y^2+125)*z^3+(5625*y^3+1875*y)*z^2+9375*y^2*z+15625*y^3)/z^6
+    (27*y^3*z^6+135*y^2*z^5+(675*y^3+225*y)*z^4+(2250*y^2+125)*z^3 +(5625*y^3+1875*y)*z^2+9375*y^2*z+15625*y^3) /z^6
     sage: h.factor()
     (3*y*z^2+5*z+25*y)^3/z^6
 
@@ -161,14 +161,15 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
     sage: eqn = maxima(['a+b*c=1', 'b-a*c=0', 'a+b=5'])
     sage: s = eqn.solve('[a,b,c]'); s
-    [[a=-(sqrt(79)*%i-11)/4,b=(sqrt(79)*%i+9)/4,c=(sqrt(79)*%i+1)/10],[a=(sqrt(79)*%i+11)/4,b=-(sqrt(79)*%i-9)/4,c=-(sqrt(79)*%i-1)/10]]
+    [[a = -(sqrt(79)*%i-11)/4,b = (sqrt(79)*%i+9)/4, c = (sqrt(79)*%i+1)/10], [a = (sqrt(79)*%i+11)/4,b = -(sqrt(79)*%i-9)/4, c = -(sqrt(79)*%i-1)/10]]
 
 Here is an example of solving an algebraic equation::
 
     sage: maxima('x^2+y^2=1').solve('y')
-    [y=-sqrt(1-x^2),y=sqrt(1-x^2)]
+    [y = -sqrt(1-x^2),y = sqrt(1-x^2)]
     sage: maxima('x^2 + y^2 = (x^2 - y^2)/sqrt(x^2 + y^2)').solve('y')
-    [y=-sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2),y=sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2)]
+    [y = -sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2), y = sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2)]
+
 
 You can even nicely typeset the solution in latex::
 
@@ -197,9 +198,9 @@ and use preview instead?)
     sage: f = maxima('x^3 * %e^(k*x) * sin(w*x)'); f
     x^3*%e^(k*x)*sin(w*x)
     sage: f.diff('x')
-    k*x^3*%e^(k*x)*sin(w*x)+3*x^2*%e^(k*x)*sin(w*x)+w*x^3*%e^(k*x)*cos(w*x)
+    k*x^3*%e^(k*x)*sin(w*x)+3*x^2*%e^(k*x)*sin(w*x)+w*x^3*%e^(k*x) *cos(w*x)
     sage: f.integrate('x')
-    (((k*w^6+3*k^3*w^4+3*k^5*w^2+k^7)*x^3+(3*w^6+3*k^2*w^4-3*k^4*w^2-3*k^6)*x^2+((-18*k*w^4)-12*k^3*w^2+6*k^5)*x-6*w^4+36*k^2*w^2-6*k^4)*%e^(k*x)*sin(w*x)+(((-w^7)-3*k^2*w^5-3*k^4*w^3-k^6*w)*x^3+(6*k*w^5+12*k^3*w^3+6*k^5*w)*x^2+(6*w^5-12*k^2*w^3-18*k^4*w)*x-24*k*w^3+24*k^3*w)*%e^(k*x)*cos(w*x))/(w^8+4*k^2*w^6+6*k^4*w^4+4*k^6*w^2+k^8)
+    (((k*w^6+3*k^3*w^4+3*k^5*w^2+k^7)*x^3 +(3*w^6+3*k^2*w^4-3*k^4*w^2-3*k^6)*x^2+((-18*k*w^4)-12*k^3*w^2+6*k^5)*x-6*w^4 +36*k^2*w^2-6*k^4) *%e^(k*x)*sin(w*x) +(((-w^7)-3*k^2*w^5-3*k^4*w^3-k^6*w)*x^3 +(6*k*w^5+12*k^3*w^3+6*k^5*w)*x^2+(6*w^5-12*k^2*w^3-18*k^4*w)*x-24*k*w^3 +24*k^3*w) *%e^(k*x)*cos(w*x)) /(w^8+4*k^2*w^6+6*k^4*w^4+4*k^6*w^2+k^8)
 
 ::
 
@@ -270,7 +271,7 @@ We illustrate Laplace transforms::
 
     sage: _ = maxima.eval("f(t) := t^5*exp(t)*sin(t)")
     sage: maxima("laplace(f(t),t,s)")
-    (360*(2*s-2))/(s^2-2*s+2)^4-(480*(2*s-2)^3)/(s^2-2*s+2)^5+(120*(2*s-2)^5)/(s^2-2*s+2)^6
+    (360*(2*s-2))/(s^2-2*s+2)^4-(480*(2*s-2)^3)/(s^2-2*s+2)^5 +(120*(2*s-2)^5)/(s^2-2*s+2)^6
     sage: print(maxima("laplace(f(t),t,s)"))
                                              3                 5
                360 (2 s - 2)    480 (2 s - 2)     120 (2 s - 2)
@@ -286,7 +287,7 @@ We illustrate Laplace transforms::
 ::
 
     sage: maxima("laplace(diff(x(t),t,2),t,s)")
-    (-%at('diff(x(t),t,1),t=0))+s^2*'laplace(x(t),t,s)-x(0)*s
+    (-%at('diff(x(t),t,1),t = 0))+s^2*'laplace(x(t),t,s)-x(0)*s
 
 It is difficult to read some of these without the 2d
 representation::
@@ -460,6 +461,16 @@ Test that conversion of symbolic functions with latex names works (:trac:`31047`
     sage: test.operator()._latex_() == 'C_+'
     True
 
+Test that the output is parseable (:trac:`31796`)::
+
+    sage: foo = maxima('a and (b or c)') ; foo
+    a and (b or c)
+    sage: bar = maxima(foo) ; bar
+    a and (b or c)
+    sage: bar == foo
+    True
+
+
 """
 
 #*****************************************************************************
@@ -485,7 +496,6 @@ import shlex
 from random import randrange
 
 from sage.env import MAXIMA
-from sage.misc.misc import ECL_TMP
 
 from .expect import (Expect, ExpectElement, gc_disabled)
 
@@ -493,7 +503,7 @@ from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
                              MaximaAbstractElement,
                              MaximaAbstractFunctionElement,
                              MaximaAbstractElementFunction)
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 # Thanks to the MRO for multiple inheritance used by the Sage's Python,
@@ -556,15 +566,14 @@ class Maxima(MaximaAbstract, Expect):
 
         MaximaAbstract.__init__(self,"maxima")
         Expect.__init__(self,
-                        name = 'maxima',
-                        prompt = r'\(\%i[0-9]+\) ',
-                        command = '{0} -p {1}'.format(MAXIMA, shlex.quote(STARTUP)),
-                        env = {'TMPDIR': str(ECL_TMP)},
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        init_code = init_code,
-                        logfile = logfile,
+                        name='maxima',
+                        prompt=r'\(\%i[0-9]+\) ',
+                        command='{0} -p {1}'.format(MAXIMA, shlex.quote(STARTUP)),
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        init_code=init_code,
+                        logfile=logfile,
                         eval_using_file_cutoff=eval_using_file_cutoff)
         # Must match what is in the file sage-maxima.lisp
         self._display_prompt = '<sage-display>'
@@ -681,9 +690,9 @@ class Maxima(MaximaAbstract, Expect):
             before integral or limit evaluation, for example):
             Is a positive or negative?
             sage: maxima.assume('a>0')
-            [a>0]
+            [a > 0]
             sage: maxima('integrate(1/(x^3*(a+b*x)^(1/3)),x)')
-            (-(b^2*log((b*x+a)^(2/3)+a^(1/3)*(b*x+a)^(1/3)+a^(2/3)))/(9*a^(7/3)))+(2*b^2*atan((2*(b*x+a)^(1/3)+a^(1/3))/(sqrt(3)*a^(1/3))))/(3^(3/2)*a^(7/3))+(2*b^2*log((b*x+a)^(1/3)-a^(1/3)))/(9*a^(7/3))+(4*b^2*(b*x+a)^(5/3)-7*a*b^2*(b*x+a)^(2/3))/(6*a^2*(b*x+a)^2-12*a^3*(b*x+a)+6*a^4)
+            (-(b^2*log((b*x+a)^(2/3)+a^(1/3)*(b*x+a)^(1/3)+a^(2/3)))/(9*a^(7/3))) +(2*b^2*atan((2*(b*x+a)^(1/3)+a^(1/3))/(sqrt(3)*a^(1/3))))/(3^(3/2)*a^(7/3)) +(2*b^2*log((b*x+a)^(1/3)-a^(1/3)))/(9*a^(7/3)) +(4*b^2*(b*x+a)^(5/3)-7*a*b^2*(b*x+a)^(2/3)) /(6*a^2*(b*x+a)^2-12*a^3*(b*x+a)+6*a^4)
             sage: maxima('integrate(x^n,x)')
             Traceback (most recent call last):
             ...
@@ -692,11 +701,11 @@ class Maxima(MaximaAbstract, Expect):
             integral or limit evaluation, for example):
             Is n equal to -1?
             sage: maxima.assume('n+1>0')
-            [n>-1]
+            [n > -1]
             sage: maxima('integrate(x^n,x)')
             x^(n+1)/(n+1)
             sage: maxima.forget([fact for fact in maxima.facts()])
-            [[a>0,n>-1]]
+            [[a > 0,n > -1]]
             sage: maxima.facts()
             []
             sage: var('a')
@@ -814,7 +823,7 @@ class Maxima(MaximaAbstract, Expect):
         m = r.search(out)
         if m is not None:
             out = out[m.end():]
-        return re.sub(r'\s+', '', out)
+        return re.sub(r'\s+', ' ', out).rstrip()
 
     def _synchronize(self):
         """
@@ -847,13 +856,13 @@ class Maxima(MaximaAbstract, Expect):
         # The 0; *is* necessary... it comes up in certain rare cases
         # that are revealed by extensive testing.
         # Don't delete it. -- william stein
-        cmd = '''0;sconcat("%s",(%s+1));\n'''%(marker,r)
+        cmd = '''0;sconcat("%s",(%s+1));\n''' % (marker, r)
         self._sendstr(cmd)
         try:
             try:
                 self._expect_expr(timeout=0.5)
-                if not s in self._before():
-                    self._expect_expr(s,timeout=0.5)
+                if s not in self._before():
+                    self._expect_expr(s, timeout=0.5)
                     self._expect_expr(timeout=0.5)
             except pexpect.TIMEOUT:
                 # Don't call self._interrupt() here, as that might send multiple
@@ -861,7 +870,7 @@ class Maxima(MaximaAbstract, Expect):
                 # process one interrupt (7.5 seconds on an idle system, but up
                 # to a minute on a loaded system) and gets confused by multiple
                 # interrupts.  Instead, send just one interrupt and wait.
-                # See Trac #9361.
+                # See Issue #9361.
                 self._sendstr(chr(3))
                 self._expect_expr(timeout=120)
         except pexpect.EOF:
@@ -944,7 +953,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         r = self._error_re
         m = r.search(out)
-        if not m is None:
+        if m is not None:
             self._error_msg(cmd, out)
 
     def _error_msg(self, cmd, out):
@@ -1033,9 +1042,9 @@ class Maxima(MaximaAbstract, Expect):
             'xxxxx'
         """
         try:
-            self._expect.send('kill(%s)$'%var)
+            self._expect.send('kill(%s)$' % var)
         except (TypeError, AttributeError):
-             pass
+            pass
 
     def get(self, var):
         """
@@ -1047,8 +1056,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.get('xxxxx')
             '2'
         """
-        s = self._eval_line('%s;'%var)
-        return s
+        return self._eval_line('%s;' % var)
 
     def _function_class(self):
         """
@@ -1117,17 +1125,22 @@ class Maxima(MaximaAbstract, Expect):
 
 def is_MaximaElement(x):
     """
-    Returns True if x is of type MaximaElement.
+    Returns True if ``x`` is of type :class:`MaximaElement`.
 
     EXAMPLES::
 
         sage: from sage.interfaces.maxima import is_MaximaElement
+        sage: is_MaximaElement(1)
+        doctest:...: DeprecationWarning: the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
         sage: m = maxima(1)
         sage: is_MaximaElement(m)
         True
-        sage: is_MaximaElement(1)
-        False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead")
+
     return isinstance(x, MaximaElement)
 
 
@@ -1245,8 +1258,8 @@ class MaximaElementFunction(MaximaElement, MaximaAbstractElementFunction):
 
 
 # An instance
-maxima = Maxima(init_code = ['display2d : false',
-                'domain : complex', 'keepfloat : true'],
+maxima = Maxima(init_code=['display2d : false',
+                           'domain : complex', 'keepfloat : true'],
                 script_subdirectory=None)
 
 

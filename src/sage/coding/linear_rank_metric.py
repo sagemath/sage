@@ -86,7 +86,7 @@ Further references
 ------------------
 
 Read more about
-`rank metric and Gabidulin codes <https://en.wikipedia.org/wiki/Rank_error-correcting_code>`_
+:wikipedia:`rank metric and Gabidulin codes <Rank_error-correcting_code>`
 
 AUTHORS:
 
@@ -472,7 +472,8 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
         self._sub_field = sub_field
 
         self._generic_constructor = LinearRankMetricCode
-        super(AbstractLinearRankMetricCode, self).__init__(base_field, length, default_encoder_name, default_decoder_name, "rank")
+        super().__init__(base_field, length, default_encoder_name,
+                         default_decoder_name, "rank")
 
     def sub_field(self):
         r"""
@@ -694,12 +695,12 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
 
         try:
             gen_basis = None
-            if hasattr(generator,"nrows"): # generator matrix case
+            if hasattr(generator, "nrows"):  # generator matrix case
                 if generator.rank() < generator.nrows():
                     gen_basis = generator.row_space().basis()
             else:
-                gen_basis = generator.basis() # vector space etc. case
-            if not gen_basis is None:
+                gen_basis = generator.basis()  # vector space etc. case
+            if gen_basis is not None:
                 from sage.matrix.constructor import matrix
                 generator = matrix(base_field, gen_basis)
                 if generator.nrows() == 0:
@@ -710,7 +711,8 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
 
         self._generator_matrix = generator
         self._length = generator.ncols()
-        super(LinearRankMetricCode, self).__init__(base_field, sub_field, self._length, "GeneratorMatrix", "NearestNeighbor", basis)
+        super().__init__(base_field, sub_field, self._length,
+                         "GeneratorMatrix", "NearestNeighbor", basis)
 
     def _repr_(self):
         r"""
@@ -768,7 +770,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         if encoder_name is None or encoder_name == 'GeneratorMatrix':
             g = self._generator_matrix
         else:
-            g = super(LinearRankMetricCode, self).generator_matrix(encoder_name, **kwargs)
+            g = super().generator_matrix(encoder_name, **kwargs)
         g.set_immutable()
         return g
 
@@ -796,8 +798,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
             sage: D
             Nearest neighbor decoder for [3, 2] linear rank metric code over GF(64)/GF(4)
         """
-        super(LinearRankMetricCodeNearestNeighborDecoder, self).__init__(code, code.ambient_space(), \
-                code._default_encoder_name)
+        super().__init__(code, code.ambient_space(), code._default_encoder_name)
 
     def __eq__(self, other):
         r"""

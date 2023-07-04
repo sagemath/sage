@@ -314,7 +314,7 @@ http://docs.python.org/library/ for a complete list. ::
 
         sage: e = Integer(9)
         sage: type(e)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: e.__dict__
         Traceback (most recent call last):
         ...
@@ -322,7 +322,7 @@ http://docs.python.org/library/ for a complete list. ::
 
         sage: id4 = SymmetricGroup(4).one()
         sage: type(id4)
-        <type 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement'>
+        <class 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement'>
         sage: id4.__dict__
         Traceback (most recent call last):
         ...
@@ -374,7 +374,7 @@ An example: glass of beverage in a restaurant
 
 Let's write a small class about glasses in a restaurant::
 
-    sage: class Glass(object):
+    sage: class Glass():
     ....:     def __init__(self, size):
     ....:         assert size > 0
     ....:         self._size = float(size)  # an attribute
@@ -474,7 +474,7 @@ the common behavior and then reuses the methods from this class.
 We first write a small class ''AbstractDish'' which implements the
 "clean-dirty-wash" behavior::
 
-    sage: class AbstractDish(object):
+    sage: class AbstractDish():
     ....:     def __init__(self):
     ....:         self._clean = True
     ....:     def is_clean(self):
@@ -604,7 +604,7 @@ Solutions to the exercises
 
 1. Here is a solution to the first exercise::
 
-    sage: class Glass(object):
+    sage: class Glass():
     ....:     def __init__(self, size):
     ....:         assert size > 0
     ....:         self._size = float(size)
@@ -686,7 +686,7 @@ Solutions to the exercises
 
 #. Here is the solution to the second exercice::
 
-    sage: class AbstractDish(object):
+    sage: class AbstractDish():
     ....:     def __init__(self):
     ....:         self._clean = True
     ....:     def is_clean(self):

@@ -1,0 +1,118 @@
+From 68c90c14ae3e779b88a513195cc89db599d10efb Mon Sep 17 00:00:00 2001
+From: Isuru Fernando <isuruf@gmail.com>
+Date: Fri, 1 Oct 2021 19:25:07 -0700
+Subject: [PATCH] Fix getting string representation of sage objects
+
+---
+ symengine/lib/pywrapper.cpp         | 17 ++++++-----------
+ symengine/lib/symengine_wrapper.pyx |  9 ++++++---
+ symengine/tests/test_sage.py        | 10 +++-------
+ symengine/tests/test_sympy_conv.py  |  1 +
+ 4 files changed, 16 insertions(+), 21 deletions(-)
+
+diff --git a/symengine/lib/pywrapper.cpp b/symengine/lib/pywrapper.cpp
+index ca7b7c1..c321ea3 100644
+--- a/symengine/lib/pywrapper.cpp
++++ b/symengine/lib/pywrapper.cpp
+@@ -175,17 +175,12 @@ RCP<const Number> PyNumber::eval(long bits) const {
+ }
+ 
+ std::string PyNumber::__str__() const {
+-    PyObject* temp;
+-    std::string str;
+-#if PY_MAJOR_VERSION > 2
+-    temp = PyUnicode_AsUTF8String(pyobject_);
+-    str = std::string(PyBytes_AsString(temp));
+-#else
+-    temp = PyObject_Str(pyobject_);
+-    str = std::string(PyString_AsString(temp));
+-#endif
+-    Py_XDECREF(temp);
+-    return str;
++    Py_ssize_t size;
++    PyObject *pystr = PyObject_Str(pyobject_);
++    const char* data = PyUnicode_AsUTF8AndSize(pystr, &size);
++    std::string result = std::string(data, size);
++    Py_XDECREF(pystr);
++    return result;
+ }
+ 
+ // PyFunctionClass
+diff --git a/symengine/lib/symengine_wrapper.pyx b/symengine/lib/symengine_wrapper.pyx
+index d178afe..d18c058 100644
+--- a/symengine/lib/symengine_wrapper.pyx
++++ b/symengine/lib/symengine_wrapper.pyx
+@@ -2690,7 +2690,7 @@ class FunctionSymbol(Function):
+     def _sage_(self):
+         import sage.all as sage
+         name = self.get_name()
+-        return sage.function(name, *self.args_as_sage())
++        return sage.function(name)(*self.args_as_sage())
+ 
+     def func(self, *values):
+         name = self.get_name()
+@@ -2711,7 +2711,7 @@ cdef rcp_const_basic pynumber_to_symengine(PyObject* o1):
+ 
+ cdef PyObject* symengine_to_sage(rcp_const_basic o1):
+     import sage.all as sage
+-    t = sage.SR(c2py(o1)._sage_())
++    t = c2py(o1)._sage_()
+     Py_XINCREF(<PyObject*>t)
+     return <PyObject*>(t)
+ 
+@@ -2765,7 +2765,10 @@ cdef class PyNumber(Number):
+ 
+     def _sage_(self):
+         import sage.all as sage
+-        return sage.SR(self.pyobject())
++        res = self.pyobject()
++        if hasattr(res, '_sage_'):
++            return res._sage_()
++        return res
+ 
+     def pyobject(self):
+         return <object>deref(symengine.rcp_static_cast_PyNumber(self.thisptr)).get_py_object()
+diff --git a/symengine/tests/test_sage.py b/symengine/tests/test_sage.py
+index 3b994ab..e364bd6 100644
+--- a/symengine/tests/test_sage.py
++++ b/symengine/tests/test_sage.py
+@@ -66,9 +66,9 @@ def test_sage_conversions():
+     assert cos(x1)._sage_() == sage.cos(x)
+     assert cos(x1) == sympify(sage.cos(x))
+ 
+-    assert function_symbol('f', x1, y1)._sage_() == sage.function('f', x, y)
++    assert function_symbol('f', x1, y1)._sage_() == sage.function('f')(x, y)
+     assert (function_symbol('f', 2 * x1, x1 + y1).diff(x1)._sage_() ==
+-            sage.function('f', 2 * x, x + y).diff(x))
++            sage.function('f')(2 * x, x + y).diff(x))
+ 
+     assert LambertW(x1) == LambertW(x)
+     assert LambertW(x1)._sage_() == sage.lambert_w(x)
+@@ -142,11 +142,7 @@ def test_sage_conversions():
+     b = b + 8
+     assert isinstance(b, PyNumber)
+     assert b._sage_() == a
+-
+-    a = a + x
+-    b = b + x
+-    assert isinstance(b, Add)
+-    assert b._sage_() == a
++    assert str(a) == str(b)
+ 
+     # Sage Function
+     e = x1 + wrap_sage_function(sage.log_gamma(x))
+diff --git a/symengine/tests/test_sympy_conv.py b/symengine/tests/test_sympy_conv.py
+index 3f8b152..ee070a8 100644
+--- a/symengine/tests/test_sympy_conv.py
++++ b/symengine/tests/test_sympy_conv.py
+@@ -760,6 +760,7 @@ def test_pynumber():
+     assert isinstance(b, PyNumber)
+     assert b == a                  # Check equality via SymEngine
+     assert a == b                  # Check equality via SymPy
++    assert str(a) == str(b)
+ 
+     a = 1 - a
+     b = 1 - b
+-- 
+2.7.4
+

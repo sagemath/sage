@@ -38,9 +38,9 @@ from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix
 
 from sage.misc.decorators import options
 from sage.matrix.constructor import matrix
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.integer import Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 # edges of a fpl in terms of the six vertex possible configurations
 R = (1, 0)
@@ -59,6 +59,7 @@ FPL_turns = (
  ({U: U, D: D}, {R: D, U: L}, {U: R, L: D}, {L: L, R: R}, {R: U, D: L}, {L: U, D: R}), # even
  ({L: L, R: R}, {L: U, D: R}, {R: U, D: L}, {U: U, D: D}, {U: R, L: D}, {R: D, U: L})  # odd
  )
+
 
 def _make_color_list(n, colors=None,  color_map=None, randomize=False):
     r"""
@@ -88,10 +89,10 @@ def _make_color_list(n, colors=None,  color_map=None, randomize=False):
 
     elif color_map:
         from matplotlib import cm
-        if not color_map in cm.datad:
+        if color_map not in cm.datad:
             raise ValueError('unknown color map %s' % color_map)
         cmap = cm.__dict__[color_map]
-        colors = [cmap(i/float(n-1))[:3] for i in range(n)]
+        colors = [cmap(i / float(n - 1))[:3] for i in range(n)]
 
     if colors and randomize:
         from sage.misc.prandom import shuffle
@@ -467,7 +468,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl = FullyPackedLoop((1, 2, 3))
         Traceback (most recent call last):
         ...
-        ValueError: The alternating sign matrices must be square
+        ValueError: the alternating sign matrices must be square
 
         sage: SVM = SixVertexModel(3)[0]
         sage: FullyPackedLoop(SVM)
@@ -734,7 +735,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             [ 0  1  0  0]
         """
         return self._six_vertex_model.to_alternating_sign_matrix()
-
 
     @options(link=True, loop=True, loop_fill=False)
     def plot(self, **options):
@@ -1220,6 +1220,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self._six_vertex_model
 
+
 class FullyPackedLoops(Parent, UniqueRepresentation):
     r"""
     Class of all fully packed loops on an  `n \times n` grid.
@@ -1257,6 +1258,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         ....:     == FullyPackedLoops(n).cardinality() for n in range(1, 7))
         True
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.

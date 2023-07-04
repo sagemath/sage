@@ -4,8 +4,21 @@ gfortran: Fortran compiler from the GNU Compiler Collection
 Description
 -----------
 
-The GNU Compiler Collection, including the C, C++ and Fortran compiler.
-This particular package is meant to only make gfortran available.
+This package represents the required Fortran compiler.
+
+Officially we support ``gfortran`` from `GNU Compiler Collection (GCC)
+<https://gcc.gnu.org/>`_.  It has also been reported that using ``flang``
+(from LLVM) might work.
+
+You can pass the names of compilers to use to ``./configure`` using
+the environment variables :envvar:`CC`, :envvar:`CXX`, and
+:envvar:`FC`, for C, C++, and Fortran compilers, respectively.
+
+For example, if your C compiler is ``clang``, your C++ compiler is
+``clang++``, and your Fortran compiler is ``flang``, then you would
+need to run::
+
+    $ ./configure CC=clang CXX=clang++ FC=flang
 
 License
 -------
@@ -17,15 +30,6 @@ Upstream Contact
 ----------------
 
 http://gcc.gnu.org/
-
-Dependencies
-------------
-
--  zlib
--  MPIR
--  MPFR
--  MPC
-
 
 Special Update/Build Instructions
 ---------------------------------

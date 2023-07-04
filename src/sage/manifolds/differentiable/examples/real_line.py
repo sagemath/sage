@@ -123,7 +123,7 @@ class OpenInterval(DifferentiableManifold):
         t
         sage: t = I.canonical_coordinate()
         sage: type(t)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     However, it can be obtained in the same step as the interval construction
     by means of the shortcut ``I.<names>``::
@@ -132,7 +132,7 @@ class OpenInterval(DifferentiableManifold):
         sage: t
         t
         sage: type(t)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     The trick is performed by the Sage preparser::
 
@@ -320,10 +320,10 @@ class OpenInterval(DifferentiableManifold):
             coordinate = None
             names = None
             start_index = 0
-        return super(cls, OpenInterval).__classcall__(cls, lower, upper,
-                          ambient_interval=ambient_interval, name=name,
-                          latex_name=latex_name, coordinate=coordinate,
-                          names=names, start_index=start_index)
+        return super().__classcall__(cls, lower, upper,
+                                     ambient_interval=ambient_interval, name=name,
+                                     latex_name=latex_name, coordinate=coordinate,
+                                     names=names, start_index=start_index)
 
     def __init__(self, lower, upper, ambient_interval=None,
                  name=None, latex_name=None,
@@ -495,9 +495,9 @@ class OpenInterval(DifferentiableManifold):
         """
         if coords in SR:
             coords = (coords,)
-        return super(OpenInterval, self)._element_constructor_(coords=coords,
-                                 chart=chart, name=name, latex_name=latex_name,
-                                 check_coords=check_coords)
+        return super()._element_constructor_(coords=coords,
+                                             chart=chart, name=name, latex_name=latex_name,
+                                             check_coords=check_coords)
 
     def _Hom_(self, other, category=None):
         r"""
@@ -577,7 +577,7 @@ class OpenInterval(DifferentiableManifold):
             sage: I.canonical_coordinate()
             t
             sage: type(I.canonical_coordinate())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: I.canonical_coordinate().is_real()
             True
 
@@ -777,7 +777,7 @@ class RealLine(OpenInterval):
         t
         sage: t = R.canonical_coordinate()
         sage: type(t)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     However, it can be obtained in the same step as the real line construction
     by means of the shortcut ``R.<names>``::
@@ -786,7 +786,7 @@ class RealLine(OpenInterval):
         sage: t
         t
         sage: type(t)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     The trick is performed by Sage preparser::
 
@@ -879,10 +879,10 @@ class RealLine(OpenInterval):
             True
 
         """
-        return super(cls, RealLine).__classcall__(cls, name=name,
-                                           latex_name=latex_name,
-                                           coordinate=coordinate,
-                                           names=names, start_index=start_index)
+        return super().__classcall__(cls, name=name,
+                                     latex_name=latex_name,
+                                     coordinate=coordinate,
+                                     names=names, start_index=start_index)
 
     def __init__(self, name=unicode_mathbbR, latex_name=r'\Bold{R}',
                  coordinate=None, names=None, start_index=0):
@@ -918,4 +918,3 @@ class RealLine(OpenInterval):
 
         """
         return "Real number line " + self._name
-

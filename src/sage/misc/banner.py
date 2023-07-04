@@ -67,13 +67,21 @@ def banner_text(full=True):
     a(u"│ %-66s │\n" % 'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version))
     a(u'└' + bars + u'┘')
     pre = version_dict()['prerelease']
-    if pre:
+    try:
+        import sage.all
+        have_sage_all = True
+    except ImportError:
+        have_sage_all = False
+    if pre or not have_sage_all:
         red_in = '\033[31m'
         red_out = '\033[0m'
         bars2 = bars.replace(u'─', u'━')
         a('\n')
         a(red_in + u'┏' + bars2 + u'┓' + '\n')
-        a(u"┃ %-66s ┃\n" % 'Warning: this is a prerelease version, and it may be unstable.')
+        if pre:
+            a(u"┃ %-66s ┃\n" % 'Warning: this is a prerelease version, and it may be unstable.')
+        if not have_sage_all:
+            a(u"┃ %-66s ┃\n" % 'Warning: sage.all is not available; this is a limited REPL.')
         a(u'┗' + bars2 + u'┛' + red_out)
     return u''.join(s)
 

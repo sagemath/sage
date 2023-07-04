@@ -550,7 +550,7 @@ class TermOrder(SageObject):
         """
         Translate old pickled TermOrder objects.
 
-        See Trac :trac:`11316`.
+        See Issue :issue:`11316`.
 
         EXAMPLES::
 
@@ -706,7 +706,7 @@ class TermOrder(SageObject):
             name = name.lower()
         else:
             try:
-                if not isinstance(name, (tuple,list)):
+                if not isinstance(name, (tuple, list)):
                     name = name.list() # name may be a matrix
                 name = tuple(name)
             except Exception:
@@ -766,7 +766,8 @@ class TermOrder(SageObject):
             self._macaulay2_str = "{" + ",".join(macaulay2_str) + "}"
             self._magma_str = "" # Magma does not support block order
             self._blocks = tuple(blocks)
-        elif isinstance(name, str) and not (isinstance(n, tuple) or isinstance(n,list)): # string representation of simple or block orders
+        elif isinstance(name, str) and not isinstance(n, (tuple, list)):
+            # string representation of simple or block orders
             if force:
                 self._length = n
                 self._name = name
@@ -817,7 +818,8 @@ class TermOrder(SageObject):
                     if n and length != n:
                         raise ValueError("term order length does not match the number of generators")
                     self.__copy(TermOrder('block', blocks))
-        elif isinstance(name, str) and (isinstance(n, tuple) or isinstance(n,list)): # weighted degree term orders
+        elif isinstance(name, str) and isinstance(n, (tuple, list)):
+            # weighted degree term orders
             if name not in print_name_mapping.keys() and name not in singular_name_mapping.values() and not force:
                 raise ValueError("unknown term order {!r}".format(name))
             weights = tuple(int(w) for w in n) # n is a tuple of weights
@@ -1788,7 +1790,7 @@ class TermOrder(SageObject):
         TESTS:
 
         The 'degneglex' ordering is somehow special: SINGULAR handles it
-        using an extra weight vector block.
+        using an extra weight vector block. ::
 
             sage: T = TermOrder("degneglex", 2)
             sage: P = PolynomialRing(QQ,2, names='x', order=T)
@@ -2079,9 +2081,12 @@ class TermOrder(SageObject):
             sage: T = TermOrder('degneglex', 3)
             sage: T.is_global()
             True
+            sage: T = TermOrder('invlex', 3)
+            sage: T.is_global()
+            True
         """
         if self.name() in ('lex', 'degrevlex', 'deglex', 'degneglex',
-                           'wdegrevlex', 'wdeglex'):
+                           'wdegrevlex', 'wdeglex', 'invlex'):
             return True
         elif self.name() == 'block':
             return all(t.is_global() for t in self.blocks())
@@ -2216,7 +2221,7 @@ def termorder_from_singular(S):
         sage: PolynomialRing(QQ, 'x,y', order='degneglex')('x^2')._singular_().sage()
         x^2
     """
-    from sage.all import ZZ
+    from sage.rings.integer_ring import ZZ
     singular = S
     T = singular('ringlist(basering)[3]')
     order = []

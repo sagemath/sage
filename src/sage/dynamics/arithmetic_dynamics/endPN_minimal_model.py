@@ -25,7 +25,7 @@ REFERENCES: [BM2012]_, [Mol2015]_
 from sage.functions.hyperbolic import cosh
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer_ring import ZZ
@@ -34,7 +34,7 @@ from sage.rings.polynomial.binary_form_reduce import covariant_z0, epsinv
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.symbolic.constants import e
-from sage.arith.all import gcd
+from sage.arith.misc import gcd
 from copy import copy
 
 def bCheck(c, v, p, b):
@@ -548,7 +548,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
     z = aff_map.domain().gen(0)
     Res = mp.resultant()
 
-    ##### because of how the bound is compute in lemma 3.3
+    # because of how the bound is compute in lemma 3.3
     from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
     h = f - z*g
     A = AffineSpace(BR, 1, h.parent().variable_name())
@@ -1034,14 +1034,14 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         # binary insertion to maintain list of points left to consider
         N = len(pts)
         if N == 0:
-          return [item]
+            return [item]
         elif N == 1:
             if item[index] > pts[0][index]:
-                pts.insert(0,item)
+                pts.insert(0, item)
             else:
                 pts.append(item)
             return pts
-        else: # binary insertion
+        else:  # binary insertion
             left = 1
             right = N
             mid = (left + right) // 2  # these are ints so this is .floor()
@@ -1083,8 +1083,8 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
                 gn = g.nth_iterate_map(n)
                 pts_poly = y*gn[0] - x*gn[1]
             d = ZZ(pts_poly.degree())
-            max_mult = max([ex for p,ex in pts_poly.factor()])
-        assert(n<=4), "n > 4, failed to find usable poly"
+            max_mult = max([ex for _, ex in pts_poly.factor()])
+        assert (n <= 4), "n > 4, failed to find usable poly"
 
         R = get_bound_dynamical(pts_poly, g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
         # search starts in fundamental domain
@@ -1121,14 +1121,14 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
             G, g, v, rep, M, D, label = pts.pop()
             # apply ST and keep z, Sz
             if D > R:
-                break #all remaining pts are too far away
+                break  # all remaining pts are too far away
             # check if it is smaller. If so, we can improve the bound
             count += 1
             new_size = e**g.global_height(prec=prec)
             if new_size < current_size:
-                current_min = [G ,g, v, rep, M, coshdelta(v)]
+                current_min = [G, g, v, rep, M, coshdelta(v)]
                 current_size = new_size
-                if new_size == 1: # early exit
+                if new_size == 1:  # early exit
                     return [current_min[1], current_min[4]]
                 new_R = get_bound_dynamical(G, g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
                 if new_R < R:
@@ -1156,4 +1156,3 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
                 pts = insert_item(pts, new_pt, 5)
 
     return [current_min[1], current_min[4]]
-

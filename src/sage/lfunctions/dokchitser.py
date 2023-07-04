@@ -1,12 +1,5 @@
 """
-Dokchitser's L-functions Calculator
-
-AUTHORS:
-
-- Tim Dokchitser (2002): original PARI code and algorithm (and the
-  documentation below is based on Dokchitser's docs).
-
-- William Stein (2006-03-08): Sage interface
+Dokchitser's `L`-functions calculator
 
 .. TODO::
 
@@ -15,6 +8,14 @@ AUTHORS:
 
     - plug this code into number fields and modular forms code (elliptic
       curves are done).
+
+AUTHORS:
+
+- Tim Dokchitser (2002): original PARI code and algorithm (and the
+  documentation below is based on Dokchitser's docs).
+
+- William Stein (2006-03-08): Sage interface
+
 """
 
 # ****************************************************************************
@@ -32,8 +33,9 @@ import re
 import string
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ComplexField, Integer
-from sage.misc.all import sage_eval, SAGE_TMP
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer import Integer
+from sage.misc.sage_eval import sage_eval
 from sage.misc.verbose import verbose
 import sage.interfaces.gp
 from sage.env import SAGE_EXTCODE
@@ -186,7 +188,7 @@ class Dokchitser(SageObject):
     __init = False
 
     def __new__(cls, *args, **kwargs):
-        inst = super(Dokchitser, cls).__new__(cls, *args, **kwargs)
+        inst = super().__new__(cls, *args, **kwargs)
         inst.__instance = cls.__instance
         cls.__n_instances += 1
         cls.__instance += 1
@@ -251,14 +253,12 @@ class Dokchitser(SageObject):
 
         with open(self.__template_filename) as tf:
             template = string.Template(tf.read())
-        tmp_script = os.path.join(SAGE_TMP, 'computel_%s.gp' % self.__instance)
-        with open(tmp_script, 'w') as f:
-            f.write(template.substitute(i=str(self.__instance)))
 
-        try:
-            self.__gp.read(tmp_script)
-        finally:
-            os.unlink(tmp_script)
+        from tempfile import NamedTemporaryFile
+        with NamedTemporaryFile(suffix=".gp", mode="w+t") as f:
+            f.write(template.substitute(i=str(self.__instance)))
+            f.flush()
+            self.__gp.read(f.name)
 
         self._gp_eval('default(realprecision, %s)' % (self.prec // 3 + 2))
         self._gp_set_inst('conductor', self.conductor)
@@ -333,11 +333,12 @@ class Dokchitser(SageObject):
         try:
             t = self.gp().eval(s)
         except (RuntimeError, TypeError):
-            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
+            raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
         if not self.__init and '***' in t:
             # After init_coeffs is called, future calls to this method should
             # return the full output for further parsing
-            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
+            raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
+        t = t.replace("  *** _^_: Warning: normalizing a series with 0 leading term.\n", "")
         return t
 
     def __check_init(self):

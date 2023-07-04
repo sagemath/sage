@@ -4,7 +4,8 @@ Invariant modules
 
 # ****************************************************************************
 #       Copyright (C) 2021 Trevor K. Karn <karnx018 at umn.edu>
-#                          Travis Scrimshaw
+#                     2021 Travis Scrimshaw
+#                     2022 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +21,7 @@ from sage.categories.finitely_generated_semigroups import FinitelyGeneratedSemig
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.sets.family import Family
 from sage.matrix.constructor import Matrix
+
 
 class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
     r"""
@@ -64,7 +66,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
         sage: [I.lift(b) for b in I.basis()]
         [M[1] + M[2] + M[3]]
-    
+
     The we could also have the action be a right-action, instead of the
     default left-action::
 
@@ -109,7 +111,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
         sage: M = algebras.Exterior(QQ, 'x', 3)
         sage: def cyclic_ext_action(g, m):
         ....:     # cyclically permute generators
-        ....:     return M.prod([M.monomial((g(j+1)-1,)) for j in m])
+        ....:     return M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m])
 
     If you care about being able to exploit the algebra structure of the
     exterior algebra (i.e. if you want to multiply elements together), you
@@ -205,7 +207,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
         Extend when `M` does not have a basis and `S` is a permutation
         group using:
 
-        - https://arxiv.org/abs/0812.3082
+        - :arxiv:`0812.3082`
         - https://www.dmtcs.org/pdfpapers/dmAA0123.pdf
     """
     def __init__(self, M, S, action=operator.mul, side='left', *args, **kwargs):
@@ -262,9 +264,29 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
                          category=category,
                          *args, **kwargs)
 
+    def construction(self):
+        r"""
+        Return the functorial construction of ``self``.
+
+        EXAMPLES::
+
+            sage: G = CyclicPermutationGroup(3)
+            sage: R = G.regular_representation(); R
+            Left Regular Representation of Cyclic group of order 3 as a permutation group over Integer Ring
+            sage: I = R.invariant_module()
+            sage: I.construction()
+            (EquivariantSubobjectConstructionFunctor,
+            Left Regular Representation of Cyclic group of order 3 as a permutation group over Integer Ring)
+        """
+        from sage.categories.pushout import EquivariantSubobjectConstructionFunctor
+        return (EquivariantSubobjectConstructionFunctor(self._semigroup,
+                                                        self._action,
+                                                        self._side),
+                self.ambient())
+
     def _repr_(self):
         r"""
-        Return a string representaion of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -398,7 +420,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
                 sage: G = CyclicPermutationGroup(3); G.rename('G')
                 sage: M = algebras.Exterior(QQ, 'x', 3)
-                sage: def on_basis(g,m): return M.prod([M.monomial((g(j+1)-1,)) for j in m])  # cyclically permute generators
+                sage: def on_basis(g,m): return M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
                 sage: R = Representation(G, M, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional(), side='right')
                 sage: I = R.invariant_module(); I.rename('I')
                 sage: B = I.basis()
@@ -466,7 +488,6 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
                 sage: g = G.an_element(); g
                 (1,2,3)
                 sage: M = CombinatorialFreeModule(QQ, [1,2,3])
-                sage: E = algebras.Exterior(QQ, 'x', 3)
                 sage: from sage.modules.with_basis.representation import Representation
                 sage: R = Representation(G, M, lambda g,x: M.monomial(g(x)))
                 sage: I = R.invariant_module()
@@ -480,7 +501,8 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
                 [2*B[0], 2*B[0], 2*B[0]]
 
 
-                sage: def on_basis(g,m): return E.prod([E.monomial((g(j+1)-1,)) for j in m])  # cyclically permute generators
+                sage: E = algebras.Exterior(QQ, 'x', 3)
+                sage: def on_basis(g,m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
                 sage: R = Representation(G, E, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional())
                 sage: I = R.invariant_module()
                 sage: B = I.basis()
@@ -528,7 +550,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
                 sage: [b._acted_upon_(G((1,3,2)), self_on_left=True) for b in I.basis()]
                 [B[0]]
 
-                sage: def on_basis(g,m): return E.prod([E.monomial((g(j+1)-1,)) for j in m])  # cyclically permute generators
+                sage: def on_basis(g,m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
                 sage: R = Representation(G, E, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional(), side='right')
                 sage: I = R.invariant_module()
                 sage: B = I.basis()
@@ -545,6 +567,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
             if scalar in self.parent()._semigroup and self_on_left == (self.parent()._side == 'right'):
                 return self
             return super()._acted_upon_(scalar, self_on_left)
+
 
 class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
     r"""
@@ -686,7 +709,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         sage: G = SymmetricGroup(3); G.rename('S3')
         sage: E = algebras.Exterior(QQ, 'x', 3); E.rename('E')
-        sage: def action(g,m): return E.prod([E.monomial((g(j+1)-1,)) for j in m])
+        sage: def action(g,m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])
         sage: from sage.modules.with_basis.representation import Representation
         sage: EA = Representation(G, E, action, category=Algebras(QQ).WithBasis().FiniteDimensional())
         sage: T = EA.twisted_invariant_module([2,0,-1])
@@ -803,9 +826,8 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
                 return M.invariant_module(G, action_on_basis=action_on_basis)
             return M.invariant_module(G, action=action)
 
-        return super(FiniteDimensionalTwistedInvariantModule,
-                    cls).__classcall__(cls, M, G, chi, action=operator.mul,
-                                       side='left', **kwargs)
+        return super().__classcall__(cls, M, G, chi, action=operator.mul,
+                                     side='left', **kwargs)
 
     def __init__(self, M, G, chi, action=operator.mul, side='left', **kwargs):
         r"""
@@ -878,7 +900,9 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         # Give the kernel of the map `\pi(x)-x` to determine when `x` lies
         # within the isotypic component of `R`.
-        def proj_difference(g,x): return self._project_ambient(x)-x
+
+        def proj_difference(g, x):
+            return self._project_ambient(x) - x
 
         basis = M.annihilator_basis(M.basis(),
                                     action=proj_difference,
@@ -1049,4 +1073,3 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             if scalar in P._group and self_on_left == (P._side == 'right'):
                 return P.retract(scalar * P.lift(self))
             return super()._acted_upon_(scalar, self_on_left)
-

@@ -1,1 +1,1 @@
-isl15-devel
+isl-devel

@@ -46,7 +46,9 @@ class ChainComplexes(Category_module):
             [Category of modules over Ring of integers modulo 9]
 
         """
-        from sage.categories.all import Fields, Modules, VectorSpaces
+        from sage.categories.fields import Fields
+        from sage.categories.modules import Modules
+        from sage.categories.vector_spaces import VectorSpaces
         base_ring = self.base_ring()
         if base_ring in Fields():
             return [VectorSpaces(base_ring)]
@@ -121,12 +123,11 @@ class ChainComplexes(Category_module):
 
             EXAMPLES::
 
-                sage: E3 = EuclideanSpace(3)
-                sage: C = E3.de_rham_complex()
-                sage: one = C.homology().one()
-                sage: C.lift_from_homology(one)
+                sage: E3 = EuclideanSpace(3)                    # optional - sage.symbolic
+                sage: C = E3.de_rham_complex()                  # optional - sage.symbolic
+                sage: one = C.homology().one()                  # optional - sage.symbolic
+                sage: C.lift_from_homology(one)                 # optional - sage.symbolic
                 Mixed differential form one on the Euclidean space E^3
-
             """
 
         def reduce_to_homology(self, x, n=None):
@@ -142,12 +143,11 @@ class ChainComplexes(Category_module):
 
             EXAMPLES::
 
-                sage: E3 = EuclideanSpace(3)
-                sage: C = E3.de_rham_complex()
-                sage: one = C.one()
-                sage: C.reduce_to_homology(one)
+                sage: E3 = EuclideanSpace(3)                    # optional - sage.symbolic
+                sage: C = E3.de_rham_complex()                  # optional - sage.symbolic
+                sage: one = C.one()                             # optional - sage.symbolic
+                sage: C.reduce_to_homology(one)                 # optional - sage.symbolic
                 [one]
-
             """
             try:
                 # try coercion
@@ -237,19 +237,18 @@ class HomologyFunctor(Functor):
         r"""
         Apply ``self`` to a chain map.
 
-        TESTS:
+        TESTS::
 
-            sage: E3 = EuclideanSpace(3)
-            sage: C = E3.de_rham_complex()
-            sage: id = Hom(C, C).identity()
-            sage: H = HomologyFunctor(ChainComplexes(SR))
-            sage: id_star = H(id); id_star
+            sage: E3 = EuclideanSpace(3)                        # optional - sage.symbolic
+            sage: C = E3.de_rham_complex()                      # optional - sage.symbolic
+            sage: id = Hom(C, C).identity()                     # optional - sage.symbolic
+            sage: H = HomologyFunctor(ChainComplexes(SR))       # optional - sage.symbolic
+            sage: id_star = H(id); id_star                      # optional - sage.symbolic
             Generic endomorphism of De Rham cohomology ring on the
              Euclidean space E^3
-            sage: one = H(C).one()
-            sage: id_star(one)
+            sage: one = H(C).one()                              # optional - sage.symbolic
+            sage: id_star(one)                                  # optional - sage.symbolic
             [one]
-
         """
         from .morphism import SetMorphism
         from .homset import Hom

@@ -56,7 +56,7 @@ class DegeneracyMap(morphism.HeckeModuleMorphism_matrix):
         sage: d = M.degeneracy_map(11,2)
         Traceback (most recent call last):
         ...
-        ValueError: The level of self (=33) must be a divisor or multiple of level (=11), and t (=2) must be a divisor of the quotient.
+        ValueError: the level of self (=33) must be a divisor or multiple of level (=11) and t (=2) must be a divisor of the quotient
 
     Degeneracy maps can also go from lower level to higher level::
 

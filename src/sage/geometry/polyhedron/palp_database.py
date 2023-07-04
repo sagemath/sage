@@ -1,3 +1,4 @@
+# sage.doctest: optional - polytopes_db palp
 """
 Access the PALP database(s) of reflexive lattice polytopes
 
@@ -33,7 +34,8 @@ import os
 from subprocess import Popen, PIPE
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
+from sage.features.palp import PalpExecutable
 
 from sage.interfaces.process import terminate
 
@@ -88,7 +90,7 @@ class PALPreader(SageObject):
         [-1, -1]
         in Ambient free module of rank 2 over the principal ideal domain Integer Ring
         sage: type(_)
-        <type 'sage.geometry.point_collection.PointCollection'>
+        <class 'sage.geometry.point_collection.PointCollection'>
     """
 
     def __init__(self, dim, data_basename=None, output='Polyhedron'):
@@ -133,7 +135,7 @@ class PALPreader(SageObject):
             <...Popen...>
         """
 
-        return Popen(["class.x", "-b2a", "-di", self._data_basename],
+        return Popen([PalpExecutable("class").absolute_filename(), "-b2a", "-di", self._data_basename],
                      stdout=PIPE, encoding='utf-8', errors='surrogateescape')
 
     def _read_vertices(self, stdout, rows, cols):
@@ -425,7 +427,7 @@ class Reflexive4dHodge(PALPreader):
 
             sage: from sage.geometry.polyhedron.palp_database import Reflexive4dHodge
             sage: Reflexive4dHodge(1,101)  # optional - polytopes_db_4d
-            <class 'sage.geometry.polyhedron.palp_database.Reflexive4dHodge'>
+            <sage.geometry.polyhedron.palp_database.Reflexive4dHodge object at ...>
         """
         dim = 4
         if data_basename is None:
@@ -458,7 +460,7 @@ class Reflexive4dHodge(PALPreader):
             <...Popen...>
         """
 
-        return Popen(['class-4d.x', '-He',
+        return Popen([PalpExecutable('class-4d').absolute_filename(), '-He',
                       'H{}:{}L100000000'.format(self._h21, self._h11),
                       '-di', self._data_basename], stdout=PIPE,
                      encoding='utf-8', errors='surrogateescape')

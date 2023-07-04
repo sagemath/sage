@@ -34,9 +34,9 @@ Built-in matroids
 
 For built-in matroids, do the following:
 
-* Within a Sage session, type ``matroids.`` (Do not press "Enter", and do not
-  forget the final period ".")
-* Hit "tab".
+* Within a Sage session, type ``matroids.`` (Do not press :kbd:`Enter`,
+  and do not forget the final period ".")
+* Hit :kbd:`Tab`.
 
 You will see a list of methods which will construct matroids. For example::
 
@@ -103,10 +103,12 @@ Functions
 
 from itertools import combinations
 from sage.matrix.constructor import Matrix
-from sage.graphs.all import Graph
+from sage.graphs.graph import Graph
 from sage.structure.element import is_Matrix
-from sage.rings.all import ZZ, QQ
-from sage.categories.all import Fields, Rings
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.categories.fields import Fields
+from sage.categories.rings import Rings
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -139,9 +141,9 @@ def Matroid(groundset=None, data=None, **kwds):
     There are two main entry points to Sage's matroid functionality. For
     built-in matroids, do the following:
 
-    * Within a Sage session, type "matroids." (Do not press "Enter", and do
+    * Within a Sage session, type "matroids." (Do not press :kbd:`Enter`, and do
       not forget the final period ".")
-    * Hit "tab".
+    * Hit :kbd:`Tab`.
 
     You will see a list of methods which will construct matroids. For
     example::
@@ -322,9 +324,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M = Matroid('abcd', circuits=['ab', 'acd'])
             sage: M.is_valid()
             True
-            sage: [sorted(C) for C in M.circuits()] # py2
-            [['a']]
-            sage: [sorted(C) for C in M.circuits()] # py3 random
+            sage: [sorted(C) for C in M.circuits()] # random
             [['a']]
 
 
@@ -361,7 +361,7 @@ def Matroid(groundset=None, data=None, **kwds):
             [0, 1, 2, 3]
 
         The GraphicMatroid object forces its graph to be connected. If a
-        disconnected graph is used as input, it will connect the components.
+        disconnected graph is used as input, it will connect the components::
 
             sage: G1 = graphs.CycleGraph(3); G2 = graphs.DiamondGraph()
             sage: G = G1.disjoint_union(G2)
@@ -608,11 +608,7 @@ def Matroid(groundset=None, data=None, **kwds):
             False
             sage: M.is_isomorphic(N)
             True
-            sage: Matrix(N) # py2
-            [1 0 0 1 1 0]
-            [0 1 0 1 1 1]
-            [0 0 1 0 1 1]
-            sage: Matrix(N) # py3 random
+            sage: Matrix(N) # random
             [1 0 0 1 1 0]
             [0 1 0 1 1 1]
             [0 0 1 0 1 1]
@@ -663,19 +659,19 @@ def Matroid(groundset=None, data=None, **kwds):
         sage: Matroid("abc", bases=["abc"], foo="bar")
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'foo'
+        TypeError: ...Matroid() got an unexpected keyword argument 'foo'
         sage: Matroid(data=["x"], matrix=Matrix(1,1))
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'matrix'
+        TypeError: ...Matroid() got an unexpected keyword argument 'matrix'
         sage: Matroid(bases=["x"], matrix=Matrix(1,1))
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'matrix'
+        TypeError: ...Matroid() got an unexpected keyword argument 'matrix'
         sage: Matroid(Matrix(1,1), ring=ZZ, field=QQ)
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'ring'
+        TypeError: ...Matroid() got an unexpected keyword argument 'ring'
         sage: Matroid(rank_function=lambda X: len(X))
         Traceback (most recent call last):
         ...
@@ -692,11 +688,11 @@ def Matroid(groundset=None, data=None, **kwds):
     base_ring = None
     if 'field' in kwds:
         base_ring = kwds.pop('field')
-        if check and base_ring not in Fields:
+        if check and base_ring not in Fields():
             raise TypeError("{} is not a field".format(base_ring))
     elif 'ring' in kwds:
         base_ring = kwds.pop('ring')
-        if check and base_ring not in Rings:
+        if check and base_ring not in Rings():
             raise TypeError("{} is not a ring".format(base_ring))
 
     # "key" is the kind of data we got
@@ -799,7 +795,7 @@ def Matroid(groundset=None, data=None, **kwds):
             # NOTE: we are not using Sage's built-in method because
             # 1) we would need to fix the loops anyway
             # 2) Sage will sort the columns, making it impossible to keep labels!
-            V = G.vertices()
+            V = G.vertices(sort=True)
             n = G.num_verts()
             A = Matrix(ZZ, n, m, 0)
             mm = 0

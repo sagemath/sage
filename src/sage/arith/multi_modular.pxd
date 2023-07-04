@@ -1,7 +1,7 @@
 from sage.ext.mod_int cimport *
 from sage.libs.gmp.types cimport mpz_t
 
-cdef class MultiModularBasis_base(object):
+cdef class MultiModularBasis_base():
     cdef int      n
     cdef mod_int* moduli
     cdef mpz_t*   partial_products

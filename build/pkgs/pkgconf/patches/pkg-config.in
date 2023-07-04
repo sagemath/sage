@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
-
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "This script requires that SAGE_LOCAL is set."
-    exit 1
-fi  
-
 if [ -z "$PKG_CONFIG_PATH" ]; then
-    export PKG_CONFIG_PATH="$SAGE_LOCAL/lib/pkgconfig:$SAGE_LOCAL/share/pkgconfig"
+    export PKG_CONFIG_PATH="SAGE_LOCAL/lib/pkgconfig:SAGE_LOCAL/share/pkgconfig"
 else
-    export PKG_CONFIG_PATH="$SAGE_LOCAL/lib/pkgconfig:$SAGE_LOCAL/share/pkgconfig:$PKG_CONFIG_PATH"
+    export PKG_CONFIG_PATH="SAGE_LOCAL/lib/pkgconfig:SAGE_LOCAL/share/pkgconfig:$PKG_CONFIG_PATH"
 fi
 
 dnl Launch system pkg-config or our own pkgconf
 define(NEWLINE,`
 ')
 define(PKG_CONFIG_COMMAND, translit(esyscmd(`command -v pkg-config'), NEWLINE))
-exec ifelse(sysval, `0', PKG_CONFIG_COMMAND, `"$SAGE_LOCAL/bin/pkgconf" --keep-system-libs --keep-system-cflags') "$@"
+exec ifelse(sysval, `0', PKG_CONFIG_COMMAND, `"SAGE_LOCAL/bin/pkgconf" --keep-system-libs --keep-system-cflags') "$@"

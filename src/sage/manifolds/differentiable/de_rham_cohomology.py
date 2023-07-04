@@ -49,10 +49,12 @@ AUTHORS:
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
-from sage.structure.element import RingElement
-from sage.categories.rings import Rings
+from sage.structure.element import AlgebraElement
+from sage.categories.algebras import Algebras
+from .characteristic_cohomology_class import (CharacteristicCohomologyClassRing,
+                                              CharacteristicCohomologyClassRingElement)
 
-class DeRhamCohomologyClass(RingElement):
+class DeRhamCohomologyClass(AlgebraElement):
     r"""
     Define a cohomology class in the de Rham cohomology ring.
 
@@ -241,6 +243,23 @@ class DeRhamCohomologyClass(RingElement):
         """
         return self.parent()(self.representative().wedge(other.representative()))
 
+    def _rmul_(self, scalar):
+        r"""
+        Multiplication with a scalar.
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: C = M.de_rham_complex()
+            sage: H = C.cohomology()
+            sage: omega = M.diff_form(1, [1,1], name='omega')
+            sage: 1/2*H(omega)
+            [1/2∧omega]
+
+        """
+        return self.parent(scalar * self.representative())
+
     def _sub_(self, other):
         r"""
         Subtraction of two cohomology classes.
@@ -362,7 +381,8 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
             ....:                       '_test_elements_neq'])  # equality not fully supported yet
 
         """
-        Parent.__init__(self, category=Rings())
+        base_field = de_rham_complex.base_ring()
+        Parent.__init__(self, base=base_field, category=Algebras(base_field))
         self._de_rham_complex = self._module = de_rham_complex
         self._manifold = de_rham_complex._domain
 
@@ -394,12 +414,44 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
              differentiable manifold M must be a closed form
 
         """
-        if x not in self._module:
+        if isinstance(x, CharacteristicCohomologyClassRingElement):
+            x = x.representative()
+        elif x not in self._module:
             raise TypeError(f"{x} must be an element of {self._module}")
         x = self._module(x)
         if x.derivative() != 0:
             raise ValueError(f"{x} must be a closed form")
         return self.element_class(self, x)
+
+    def _coerce_map_from_(self, other):
+        r"""
+        Determine whether coercion to ``self`` exists from other parent.
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: C = M.de_rham_complex()
+            sage: H = C.cohomology()
+            sage: H.has_coerce_map_from(QQ)
+            True
+
+        ::
+
+            sage: M = Manifold(4, 'M')
+            sage: C = M.de_rham_complex()
+            sage: H = C.cohomology()
+            sage: TM = M.tangent_bundle()
+            sage: C = TM.characteristic_cohomology_class_ring(); C
+            Algebra of characteristic cohomology classes of the Tangent bundle
+             TM over the 4-dimensional differentiable manifold M
+            sage: H.has_coerce_map_from(C)
+            True
+
+        """
+        if isinstance(other, CharacteristicCohomologyClassRing):
+            # TODO: we need to be careful if manifolds have boundary!
+            return other._vbundle._base_space == self._manifold
+        return super()._coerce_map_from_(other)
 
     def _repr_(self):
         r"""

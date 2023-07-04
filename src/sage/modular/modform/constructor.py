@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Creating Spaces of Modular Forms
+Creating spaces of modular forms
 
 EXAMPLES::
 
@@ -83,10 +83,10 @@ def canonical_parameters(group, level, weight, base_ring):
         sage: v = canonical_parameters(5, 5, int(7), ZZ); v
         (5, Congruence Subgroup Gamma0(5), 7, Integer Ring)
         sage: type(v[0]), type(v[1]), type(v[2]), type(v[3])
-        (<type 'sage.rings.integer.Integer'>,
+        (<class 'sage.rings.integer.Integer'>,
          <class 'sage.modular.arithgroup.congroup_gamma0.Gamma0_class_with_category'>,
-         <type 'sage.rings.integer.Integer'>,
-         <type 'sage.rings.integer_ring.IntegerRing_class'>)
+         <class 'sage.rings.integer.Integer'>,
+         <class 'sage.rings.integer_ring.IntegerRing_class'>)
         sage: canonical_parameters( 5, 7, 7, ZZ )
         Traceback (most recent call last):
         ...
@@ -153,12 +153,13 @@ def ModularForms_clear_cache():
     global _cache
     _cache = {}
 
-def ModularForms(group  = 1,
-                 weight = 2,
-                 base_ring = None,
+
+def ModularForms(group=1,
+                 weight=2,
+                 base_ring=None,
                  eis_only=False,
-                 use_cache = True,
-                 prec = defaults.DEFAULT_PRECISION):
+                 use_cache=True,
+                 prec=defaults.DEFAULT_PRECISION):
     r"""
     Create an ambient space of modular forms.
 
@@ -313,10 +314,10 @@ def ModularForms(group  = 1,
         raise ValueError("eis_only parameter only valid in weight 1")
 
     if use_cache and key in _cache:
-         M = _cache[key]()
-         if not (M is None):
-             M.set_precision(prec)
-             return M
+        M = _cache[key]()
+        if not (M is None):
+            M.set_precision(prec)
+            return M
 
     (level, group, weight, base_ring, eis_only) = key
 
@@ -346,8 +347,8 @@ def ModularForms(group  = 1,
         eps = eps.minimize_base_ring()
         if eps.is_trivial():
             return ModularForms(eps.modulus(), weight, base_ring,
-                                use_cache = use_cache,
-                                prec = prec)
+                                use_cache=use_cache,
+                                prec=prec)
         M = ModularFormsAmbient_eps(eps, weight, eis_only=eis_only)
         if base_ring != eps.base_ring():
             M = M.base_extend(base_ring) # ambient_R.ModularFormsAmbient_R(M, base_ring)
@@ -360,11 +361,11 @@ def ModularForms(group  = 1,
     return M
 
 
-def CuspForms(group  = 1,
-              weight = 2,
-              base_ring = None,
-              use_cache = True,
-              prec = defaults.DEFAULT_PRECISION):
+def CuspForms(group=1,
+              weight=2,
+              base_ring=None,
+              use_cache=True,
+              prec=defaults.DEFAULT_PRECISION):
     """
     Create a space of cuspidal modular forms.
 
@@ -380,13 +381,13 @@ def CuspForms(group  = 1,
                         use_cache=use_cache, prec=prec).cuspidal_submodule()
 
 
-def EisensteinForms(group  = 1,
-              weight = 2,
-              base_ring = None,
-              use_cache = True,
-              prec = defaults.DEFAULT_PRECISION):
+def EisensteinForms(group=1,
+              weight=2,
+              base_ring=None,
+              use_cache=True,
+              prec=defaults.DEFAULT_PRECISION):
     """
-    Create a space of eisenstein modular forms.
+    Create a space of Eisenstein modular forms.
 
     See the documentation for the ModularForms command for a
     description of the input parameters.
@@ -396,13 +397,12 @@ def EisensteinForms(group  = 1,
         sage: EisensteinForms(11,2)
         Eisenstein subspace of dimension 1 of Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
     """
-    if weight==1:
+    if weight == 1:
         return ModularForms(group, weight, base_ring,
                         use_cache=use_cache, eis_only=True, prec=prec).eisenstein_submodule()
     else:
         return ModularForms(group, weight, base_ring,
                         use_cache=use_cache, prec=prec).eisenstein_submodule()
-
 
 
 def Newforms(group, weight=2, base_ring=None, names=None):

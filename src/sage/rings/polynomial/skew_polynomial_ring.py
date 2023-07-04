@@ -1,5 +1,5 @@
 r"""
-Skew Univariate Polynomial Rings
+Univariate skew polynomial rings
 
 This module provides the
 :class:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing`.
@@ -124,7 +124,7 @@ def _minimal_vanishing_polynomial(R, eval_pts):
         sage: b = _minimal_vanishing_polynomial(S, eval_pts); b
         doctest:...: FutureWarning: This class/method/function is marked as experimental.
          It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/13215 for details.
+        See https://github.com/sagemath/sage/issues/13215 for details.
         x^3 + 4
     """
     l = len(eval_pts)
@@ -807,7 +807,7 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
     def _new_retraction_map(self, seed=None):
         r"""
         Create a retraction map from the ring of coefficient
-        of this skew polynomial ring to its fixed subfield under 
+        of this skew polynomial ring to its fixed subfield under
         the twisting morphism
 
         This is an internal function used in factorization.
@@ -860,11 +860,11 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
         (see also :meth:`_new_retraction_map`)
 
         This is an internal function used in factorization.
-        
+
         INPUT:
 
         - ``newmap`` -- a boolean (default: ``False``); whether we
-          first create and use a new retraction map 
+          first create and use a new retraction map
 
         - ``seed`` -- an element of the base ring or ``None`` (default:
           ``None``); if given, first create a new random retraction map
@@ -892,11 +892,10 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
 
         We can specify a seed::
 
-            sage: S._retraction(a^2, seed=a)
+            sage: S._retraction(a^2, seed=a)  # random
             10
         """
         # Better to return the retraction map but more difficult
         if newmap or seed is not None or self._matrix_retraction is None:
             self._new_retraction_map()
         return (self._matrix_retraction*self.base_ring()(x)._vector_())[0]
-

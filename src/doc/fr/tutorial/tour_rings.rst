@@ -73,13 +73,14 @@ Passons maintenant à quelques éléments d'arithmétique.
     Rational Field
     sage: 2/3 + 0.1       # coercition automatique avant addition
     0.766666666666667
-    sage: 0.1 + 2/3       # les règles de coercition sont symétriques en SAGE
+    sage: 0.1 + 2/3       # les règles de coercition sont symétriques en Sage
     0.766666666666667
 
 Il y a une subtilité dans la définition des nombres complexes. Comme
 mentionné ci-dessus, le symbole  ``i`` représente une racine carrée de
-:math:`-1`, mais il s'agit d'une racine carrée *formelle* de :math:`-1`.
-L'appel ``CC(i)`` renvoie la racine carrée complexe de :math:`-1`.
+:math:`-1`, mais il s'agit d'une racine carrée *formelle* de :math:`-1`,
+comme élément d'un corps de nombres quadratique. L'appel ``CC(i)`` renvoie
+la racine carrée de :math:`-1` comme nombre complexe en virgule flottante.
 
 .. link
 

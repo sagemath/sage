@@ -24,9 +24,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from collections.abc import Iterable
 from sage.matrix.constructor import Matrix
-from sage.rings.all import ZZ, QQ, GF
-from sage.graphs.all import BipartiteGraph, Graph
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.graphs.graph import Graph
+from sage.graphs.bipartite_graph import BipartiteGraph
 from sage.structure.all import SageObject
 from sage.graphs.spanning_tree import kruskal
 from operator import itemgetter
@@ -62,9 +66,7 @@ def setprint(X):
 
         sage: from sage.matroids.advanced import setprint
         sage: L = [{1, 2, 3}, {1, 2, 4}, {2, 3, 4}, {4, 1, 3}]
-        sage: print(L)  # py2
-        [set([1, 2, 3]), set([1, 2, 4]), set([2, 3, 4]), set([1, 3, 4])]
-        sage: print(L)  # py3
+        sage: print(L)
         [{1, 2, 3}, {1, 2, 4}, {2, 3, 4}, {1, 3, 4}]
         sage: setprint(L)
         [{1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4}]
@@ -121,7 +123,7 @@ def setprint_s(X, toplevel=False):
         sage: setprint_s(X, toplevel=True)
         'abcd'
     """
-    if isinstance(X, frozenset) or isinstance(X, set):
+    if isinstance(X, (frozenset, set)):
         return '{' + ', '.join(sorted(setprint_s(x) for x in X)) + '}'
     elif isinstance(X, dict):
         return '{' + ', '.join(sorted(setprint_s(key) + ': ' + setprint_s(val)
@@ -131,7 +133,7 @@ def setprint_s(X, toplevel=False):
             return X
         else:
             return "'" + X + "'"
-    elif hasattr(X, '__iter__') and not isinstance(X, SageObject):
+    elif isinstance(X, Iterable) and not isinstance(X, SageObject):
         return '[' + ', '.join(sorted(setprint_s(x) for x in X)) + ']'
     else:
         return repr(X)
@@ -538,11 +540,7 @@ def lift_cross_ratios(A, lift_map=None):
         [6 1 0 0 1]
         [0 6 3 6 0]
         sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)
-        sage: Z # py2
-        [ 1  0  1  1  1]
-        [ 1  1  0  0  z]
-        [ 0  1 -z -1  0]
-        sage: Z # py3
+        sage: Z
         [ 1  0  1  1  1]
         [ 1  1  0  0  z]
         [ 0 -1  z  1  0]

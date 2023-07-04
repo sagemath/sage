@@ -59,4 +59,4 @@ class QuotientsCategory(RegressiveCovariantConstructionCategory):
             sage: sage.categories.quotients.QuotientsCategory.default_super_categories(Groups())
             Join of Category of groups and Category of subquotients of monoids and Category of quotients of semigroups
         """
-        return Category.join([category.Subquotients(), super(QuotientsCategory, cls).default_super_categories(category)])
+        return Category.join([category.Subquotients(), super().default_super_categories(category)])

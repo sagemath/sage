@@ -22,6 +22,7 @@ from sage.combinat.tableau import Tableaux
 # When using bar should be replaced by '|' or ''.
 lr_macro = Template(r'\def\lr#1{\multicolumn{1}{$bar@{\hspace{.6ex}}c@{\hspace{.6ex}}$bar}{\raisebox{-.3ex}{$$#1$$}}}')
 
+
 def tex_from_array(array, with_lines=True):
     r"""
     Return a latex string for a two dimensional array of partition, composition or skew composition shape
@@ -288,7 +289,9 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     # function end_line which puts in the required \cline's.
     if with_lines:
         # last position of None in each row
-        nones=[1 if not None in row else 1+len(row)-row[::-1].index(None) for row in array]
+        nones = [1 if None not in row else 1 + len(row) - row[::-1].index(None)
+                 for row in array]
+
         def end_line(r):
             # in a slightly unpythonic way, we label the lines as 0, 1, ..., len(array)
             if r==0:
@@ -504,4 +507,3 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
             return output.translate(tr)
         else:
             return output
-

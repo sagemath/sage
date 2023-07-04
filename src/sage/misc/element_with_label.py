@@ -15,7 +15,7 @@ with vertex labels.
 from sage.misc.latex import latex
 
 
-class ElementWithLabel(object):
+class ElementWithLabel():
     """
     Auxiliary class for showing/viewing :class:`Poset`s with
     non-injective labelings.

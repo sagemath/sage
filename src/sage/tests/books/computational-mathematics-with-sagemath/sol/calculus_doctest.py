@@ -263,4 +263,3 @@ Sage example in ./sol/calculus.tex, line 708::
   True
 
 """
-

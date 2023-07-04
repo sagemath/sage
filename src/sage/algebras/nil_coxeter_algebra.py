@@ -44,7 +44,7 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
         u[0,1,2,3] + 2*u[0] + 3*u[1] + 1
     """
 
-    def __init__(self, W, base_ring = QQ, prefix='u'):
+    def __init__(self, W, base_ring=QQ, prefix='u'):
         r"""
         Initiate the affine nil-Coxeter algebra corresponding to the Weyl
         group `W` over the base ring.

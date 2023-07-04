@@ -28,7 +28,7 @@ from sage.categories.poor_man_map import PoorManMap
 from sage.categories.sets_cat import Sets
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.sets.family import Family
 
 
@@ -143,6 +143,7 @@ class IndexedMonoidElement(MonoidElement):
             ascii_art_gen = lambda m: P._ascii_art_generator(m[0])
         else:
             pref = AsciiArt([P.prefix()])
+
             def ascii_art_gen(m):
                 if m[1] != 1:
                     r = (AsciiArt([" " * len(pref)]) + ascii_art(m[1]))
@@ -667,8 +668,8 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
         if isinstance(latex_bracket, list):
             kwds['latex_bracket'] = tuple(latex_bracket)
 
-        return super(IndexedMonoid, cls).__classcall__(cls, indices, prefix,
-                                                       names=names, **kwds)
+        return super().__classcall__(cls, indices, prefix,
+                                     names=names, **kwds)
 
     def __init__(self, indices, prefix, category=None, names=None, **kwds):
         """
@@ -1001,7 +1002,6 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
         if x not in self._indices:
             raise IndexError("{} is not in the index set".format(x))
         try:
-            return self.element_class(self, {self._indices(x):1})
-        except (TypeError, NotImplementedError): # Backup (e.g., if it is a string)
-            return self.element_class(self, {x:1})
-
+            return self.element_class(self, {self._indices(x): 1})
+        except (TypeError, NotImplementedError):  # Backup (e.g., if it is a string)
+            return self.element_class(self, {x: 1})

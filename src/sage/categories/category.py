@@ -153,7 +153,7 @@ class Category(UniqueRepresentation, SageObject):
 
     This is achieved as follows::
 
-        sage: from sage.categories.all import Category
+        sage: from sage.categories.category import Category
         sage: class EuclideanDomains(Category):
         ....:     # operations on the category itself
         ....:     def super_categories(self):
@@ -201,7 +201,7 @@ class Category(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: from sage.categories.all import Category
+        sage: from sage.categories.category import Category
         sage: from sage.misc.lazy_attribute import lazy_attribute
         sage: class As (Category):
         ....:     def super_categories(self):
@@ -338,7 +338,7 @@ class Category(UniqueRepresentation, SageObject):
         ....:         Parent.__init__(self, category=Ds())
         ....:     def g(self):
         ....:         return "myparent"
-        ....:     class Element(object):
+        ....:     class Element():
         ....:         pass
         sage: D = myparent()
         sage: D.__class__
@@ -348,9 +348,9 @@ class Category(UniqueRepresentation, SageObject):
         sage: D.__class__.mro()
         [<class '__main__.myparent_with_category'>,
         <class '__main__.myparent'>,
-        <type 'sage.structure.parent.Parent'>,
-        <type 'sage.structure.category_object.CategoryObject'>,
-        <type 'sage.structure.sage_object.SageObject'>,
+        <class 'sage.structure.parent.Parent'>,
+        <class 'sage.structure.category_object.CategoryObject'>,
+        <class 'sage.structure.sage_object.SageObject'>,
         <class '__main__.Ds.parent_class'>,
         <class '__main__.Cs.parent_class'>,
         <class '__main__.Bs.parent_class'>,
@@ -444,7 +444,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         if isinstance(cls, DynamicMetaclass):
             cls = cls.__base__
-        return super(Category, cls).__classcall__(cls, *args, **options)
+        return super().__classcall__(cls, *args, **options)
 
     def __init__(self, s=None):
         """
@@ -474,7 +474,7 @@ class Category(UniqueRepresentation, SageObject):
         assert s is None
         self.__class__ = dynamic_class("{}_with_category".format(self.__class__.__name__),
                                        (self.__class__, self.subcategory_class, ),
-                                       cache = False, reduction = None,
+                                       cache=False, reduction=None,
                                        doccls=self.__class__)
 
     @lazy_attribute
@@ -870,7 +870,7 @@ class Category(UniqueRepresentation, SageObject):
                                            for cat in self._super_categories] +
                                           [self._super_categories],
                                           category_sort_key)
-        if not sorted(result, key = category_sort_key, reverse=True) == result:
+        if not sorted(result, key=category_sort_key, reverse=True) == result:
             warn("Inconsistent sorting results for all super categories of {}".format(
                  self.__class__))
         self._super_categories_for_classes = bases
@@ -1009,7 +1009,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Rings()._super_categories
             [Category of rngs, Category of semirings]
         """
-        return sorted(_flatten_categories(self.super_categories(),JoinCategory), key = category_sort_key, reverse=True)
+        return sorted(_flatten_categories(self.super_categories(), JoinCategory), key=category_sort_key, reverse=True)
 
     @lazy_attribute
     def _super_categories_for_classes(self):
@@ -1392,7 +1392,7 @@ class Category(UniqueRepresentation, SageObject):
             method resolution order of the parent and element
             classes. This method checks this.
 
-        .. todo:: currently, this won't work for hom categories.
+        .. TODO:: currently, this won't work for hom categories.
 
         EXAMPLES::
 
@@ -1469,7 +1469,6 @@ class Category(UniqueRepresentation, SageObject):
             tester.assertTrue(isinstance(self.element_class, type))
 
     _cmp_key = _cmp_key
-
 
     ##########################################################################
     # Construction of the associated abstract classes for parents, elements, ...
@@ -1561,7 +1560,7 @@ class Category(UniqueRepresentation, SageObject):
             ....:     ParentMethods = 1
             ....:     class ElementMethods(A):
             ....:         pass
-            ....:     class MorphismMethods(object):
+            ....:     class MorphismMethods():
             ....:         pass
             sage: C = BrokenCategory()
             sage: C._make_named_class("parent_class",   "ParentMethods")
@@ -1597,10 +1596,9 @@ class Category(UniqueRepresentation, SageObject):
         else:
             reduction = None
         return dynamic_class(class_name,
-                             tuple(getattr(cat,name) for cat in self._super_categories_for_classes),
-                             method_provider_cls, prepend_cls_bases = False, doccls = doccls,
-                             reduction = reduction, cache = cache)
-
+                             tuple(getattr(cat, name) for cat in self._super_categories_for_classes),
+                             method_provider_cls, prepend_cls_bases=False,
+                             doccls=doccls, reduction=reduction, cache=cache)
 
     @lazy_attribute
     def subcategory_class(self):
@@ -1765,16 +1763,12 @@ class Category(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: Algebras(QQ).required_methods() # py2
-            {'element': {'optional': ['_add_', '_mul_'], 'required': ['__nonzero__']},
-             'parent': {'optional': ['algebra_generators'], 'required': ['__contains__']}}
-            sage: Algebras(QQ).required_methods() # py3
+            sage: Algebras(QQ).required_methods()
             {'element': {'optional': ['_add_', '_mul_'], 'required': ['__bool__']},
              'parent': {'optional': ['algebra_generators'], 'required': ['__contains__']}}
         """
-        return { "parent"  : abstract_methods_of_class(self.parent_class),
-                 "element" : abstract_methods_of_class(self.element_class) }
-
+        return {"parent": abstract_methods_of_class(self.parent_class),
+                "element": abstract_methods_of_class(self.element_class)}
 
     # Operations on the lattice of categories
     def is_subcategory(self, c):
@@ -1826,7 +1820,7 @@ class Category(UniqueRepresentation, SageObject):
             return c in self._set_of_super_categories
         return subcat_hook
 
-    def or_subcategory(self, category = None, join = False):
+    def or_subcategory(self, category=None, join=False):
         """
         Return ``category`` or ``self`` if ``category`` is ``None``.
 
@@ -1891,11 +1885,10 @@ class Category(UniqueRepresentation, SageObject):
             sage: Algebras(QQ)._is_subclass(ModulesWithBasis)
             False
         """
-        assert( isinstance(c, Category) or (issubclass(c.__class__, type) and issubclass(c, Category)) )
+        assert (isinstance(c, Category) or (issubclass(c.__class__, type) and issubclass(c, Category)))
         if isinstance(c, Category):
             return self.is_subcategory(c)
-        else:
-            return any(isinstance(cat, c) for cat in self._all_super_categories)
+        return any(isinstance(cat, c) for cat in self._all_super_categories)
 
     @cached_method
     def _meet_(self, other):
@@ -2035,7 +2028,7 @@ class Category(UniqueRepresentation, SageObject):
              Category of finite additive groups)
             sage: HopfAlgebras(QQ)._with_axiom_as_tuple('FiniteDimensional')
             (Category of hopf algebras over Rational Field,
-             Category of finite dimensional modules over Rational Field)
+             Category of finite dimensional vector spaces over Rational Field)
         """
         if axiom in self.axioms():
             return (self, )
@@ -2241,7 +2234,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. NOTE::
 
-            The auxiliary function `_flatten_categories` used in the test
+            The auxiliary function ``_flatten_categories`` used in the test
             below expects a second argument, which is a type such that
             instances of that type will be replaced by its super
             categories. Usually, this type is :class:`JoinCategory`.
@@ -2622,7 +2615,8 @@ def category_sample():
                  for cls in sage.categories.all.__dict__.values()
                  if isinstance(cls, type) and issubclass(cls, Category) and cls not in abstract_classes_for_categories)
 
-def category_graph(categories = None):
+
+def category_graph(categories=None):
     """
     Return the graph of the categories in Sage.
 
@@ -2643,7 +2637,7 @@ def category_graph(categories = None):
     EXAMPLES::
 
         sage: G = sage.categories.category.category_graph(categories = [Groups()])
-        sage: G.vertices()
+        sage: G.vertices(sort=True)
         ['groups', 'inverse unital magmas', 'magmas', 'monoids', 'objects',
          'semigroups', 'sets', 'sets with partial maps', 'unital magmas']
         sage: G.plot()
@@ -2711,7 +2705,7 @@ class CategoryWithParameters(Category):
     .. automethod:: Category._make_named_class
     """
 
-    def _make_named_class(self, name, method_provider, cache = False, **options):
+    def _make_named_class(self, name, method_provider, cache=False, **options):
         """
         Return the parent/element/... class of ``self``.
 
@@ -2821,7 +2815,6 @@ class CategoryWithParameters(Category):
                                             cache=cache, **options)
         self._make_named_class_cache[key] = result
         return result
-
 
     @abstract_method
     def _make_named_class_key(self, name):
@@ -2958,8 +2951,8 @@ class JoinCategory(CategoryWithParameters):
             sage: TestSuite(C).run()
 
         """
-        assert(len(super_categories) >= 2)
-        assert(all(not isinstance(category, JoinCategory) for category in super_categories))
+        assert len(super_categories) >= 2
+        assert all(not isinstance(category, JoinCategory) for category in super_categories)
         # Use __super_categories to not overwrite the lazy attribute Category._super_categories
         # Maybe this would not be needed if the flattening/sorting is does consistently?
         self.__super_categories = list(super_categories)
@@ -3219,7 +3212,7 @@ class JoinCategory(CategoryWithParameters):
         from sage.categories.category_with_axiom import CategoryWithAxiom
         return CategoryWithAxiom._repr_object_names_static(self._without_axioms(named=True), self.axioms())
 
-    def _repr_(self, as_join = False):
+    def _repr_(self, as_join=False):
         """
         Print representation.
 
@@ -3261,10 +3254,7 @@ class JoinCategory(CategoryWithParameters):
         """
         if not as_join:
             try:
-                return super(JoinCategory, self)._repr_()
+                return super()._repr_()
             except ValueError:
                 pass
         return "Join of " + " and ".join(str(cat) for cat in self._super_categories)
-
-
-

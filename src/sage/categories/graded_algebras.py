@@ -81,4 +81,3 @@ class GradedAlgebras(GradedModulesCategory):
             Meaning: a signed tensor product of algebras is an algebra
             """
             return [self.base_category()]
-

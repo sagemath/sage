@@ -10,14 +10,14 @@ Authors:
 - Peleg Michaeli
 - Vincent Delecroix
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from cysignals.signals cimport sig_on, sig_off
@@ -29,6 +29,7 @@ from sage.graphs.base.static_dense_graph cimport dense_graph_init
 
 from sage.rings.infinity import Infinity
 from sage.rings.rational_field import QQ
+
 
 def cheeger_constant(g):
     r"""
@@ -96,7 +97,7 @@ def cheeger_constant(g):
     elif g.num_verts() == 1:
         return Infinity
     elif not g.is_connected():
-        return QQ((0,1))
+        return QQ((0, 1))
 
     cdef short_digraph sd         # a copy of the graph g
     cdef int * subgraph           # vertices of the subgraph (stack)
@@ -174,6 +175,7 @@ def cheeger_constant(g):
         sig_free(bitsubgraph)
         sig_off()
 
+
 def edge_isoperimetric_number(g):
     r"""
     Return the edge-isoperimetric number of the graph.
@@ -231,21 +233,21 @@ def edge_isoperimetric_number(g):
     elif g.num_verts() == 1:
         return Infinity
     elif not g.is_connected():
-        return QQ((0,1))
+        return QQ((0, 1))
 
     cdef short_digraph sd           # a copy of the graph g
     cdef int * subgraph           # vertices of the subgraph (stack)
     cdef int * bitsubgraph        # vertices of the subgraph (bit array of +1 (in) or -1 (not in))
     cdef int k = 0                  # number of vertices in subgraph
     cdef unsigned long vol = 0      # number of edges in the subgraph
-    cdef unsigned long boundary = 0 # number of edges in the boundary
+    cdef unsigned long boundary = 0  # number of edges in the boundary
     cdef int u = 0                  # current vertex
     cdef int i
 
     init_short_digraph(sd, g)
 
-    cdef unsigned long bmin = sd.neighbors[1] - sd.neighbors[0] # value of boundary for the min
-    cdef unsigned long vmin = 1     # value of the volume for the min
+    cdef unsigned long bmin = sd.neighbors[1] - sd.neighbors[0]  # value of boundary for the min
+    cdef unsigned long vmin = 1  # value of the volume for the min
 
     subgraph = <int *> check_malloc(sd.n * sizeof(int))
     bitsubgraph = <int *> check_malloc(sd.n * sizeof(int))
@@ -312,6 +314,7 @@ def edge_isoperimetric_number(g):
         sig_free(subgraph)
         sig_free(bitsubgraph)
 
+
 def vertex_isoperimetric_number(g):
     r"""
     Return the vertex-isoperimetric number of the graph.
@@ -351,7 +354,7 @@ def vertex_isoperimetric_number(g):
         sage: G.vertex_isoperimetric_number()
         2/3
         sage: G.allow_multiple_edges(True)
-        sage: G.add_edges(G.edges())
+        sage: G.add_edges(G.edges(sort=False))
         sage: G.vertex_isoperimetric_number()
         2/3
 
@@ -386,11 +389,11 @@ def vertex_isoperimetric_number(g):
     binary_matrix_init(stack, 3 * (n / 2) + 4, n)
 
     cdef bitset_t candidates = stack.rows[3 * (n / 2) + 3]
-    cdef bitset_t left     # vertices not yet explored
-    cdef bitset_t current  # vertices in the current subset
-    cdef bitset_t boundary # union of neighbors of vertices in current subset
+    cdef bitset_t left      # vertices not yet explored
+    cdef bitset_t current   # vertices in the current subset
+    cdef bitset_t boundary  # union of neighbors of vertices in current subset
 
-    cdef int l = 0
+    cdef int level = 0
     cdef int p = n
     cdef int q = 0
     cdef int c, b, v
@@ -400,12 +403,12 @@ def vertex_isoperimetric_number(g):
         bitset_clear(stack.rows[v])
     bitset_complement(stack.rows[0], stack.rows[0])
 
-    while l >= 0:
+    while level >= 0:
 
         # We take the values at the top of the stack
-        left = stack.rows[l]
-        current = stack.rows[l + 1]
-        boundary = stack.rows[l + 2]
+        left = stack.rows[level]
+        current = stack.rows[level + 1]
+        boundary = stack.rows[level + 2]
 
         if bitset_isempty(current):
             bitset_copy(candidates, left)
@@ -414,7 +417,7 @@ def vertex_isoperimetric_number(g):
 
         if bitset_isempty(candidates):
             # We decrease l to pop the stack
-            l -= 3
+            level -= 3
 
             # If the current set if non empty, we update the lower bound
             c = bitset_len(current)
@@ -436,11 +439,11 @@ def vertex_isoperimetric_number(g):
 
             if bitset_len(current) < k:
                 # We continue with v in the subset current
-                l += 3
-                bitset_copy(stack.rows[l], left)
-                bitset_copy(stack.rows[l + 1], current)
-                bitset_add(stack.rows[l + 1], v)
-                bitset_union(stack.rows[l + 2], boundary, DG.rows[v])
+                level += 3
+                bitset_copy(stack.rows[level], left)
+                bitset_copy(stack.rows[level + 1], current)
+                bitset_add(stack.rows[level + 1], v)
+                bitset_union(stack.rows[level + 2], boundary, DG.rows[v])
 
     binary_matrix_free(stack)
     binary_matrix_free(DG)

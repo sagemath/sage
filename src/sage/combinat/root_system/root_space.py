@@ -1,15 +1,14 @@
 """
 Root lattices and root spaces
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 from .root_lattice_realizations import RootLatticeRealizations
 import functools
@@ -180,12 +179,12 @@ class RootSpace(CombinatorialFreeModule):
                 ...
                 ValueError: alpha[1] + alpha[2] + 3/2*alpha[3] does not have integral coefficients
 
-        .. todo:: generalize diagonal module morphisms to implement this
+        .. TODO:: generalize diagonal module morphisms to implement this
         """
         try:
-            return self.root_system.root_lattice().sum_of_terms( (i, ZZ(c)) for (i,c) in x)
+            return self.root_system.root_lattice().sum_of_terms((i, ZZ(c)) for i, c in x)
         except TypeError:
-            raise ValueError("%s does not have integral coefficients"%x)
+            raise ValueError("%s does not have integral coefficients" % x)
 
     @cached_method
     def _to_classical_on_basis(self, i):
@@ -226,9 +225,11 @@ class RootSpace(CombinatorialFreeModule):
         else:
             L = self.cartan_type().root_system().ambient_space()
             basis = L.simple_roots()
+
         def basis_value(basis, i):
             return basis[i]
         return self.module_morphism(on_basis = functools.partial(basis_value, basis) , codomain=L)
+
 
 class RootSpaceElement(CombinatorialFreeModule.Element):
     def scalar(self, lambdacheck):
@@ -399,7 +400,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
         if not self.parent().cartan_type().is_finite():
             raise NotImplementedError("Only implemented for finite Cartan type")
         if not self.is_positive_root():
-            raise ValueError("%s is not in the positive cone of roots"%(self))
+            raise ValueError(f"{self} is not in the positive cone of roots")
         coroots = self.parent().coroot_lattice().positive_roots_by_height(increasing=False)
         for beta in coroots:
             if beta.quantum_root():
@@ -459,5 +460,6 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         """
         return self.parent().to_ambient_space_morphism()(self)
+
 
 RootSpace.Element = RootSpaceElement

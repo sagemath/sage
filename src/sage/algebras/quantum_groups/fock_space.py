@@ -25,7 +25,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field import FractionField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -336,7 +336,7 @@ class FockSpace(Parent, UniqueRepresentation):
         multicharge = tuple(M(e) for e in multicharge)
         if truncated is not None:
             return FockSpaceTruncated(n, truncated, q, base_ring)
-        return super(FockSpace, cls).__classcall__(cls, n, multicharge, q, base_ring)
+        return super().__classcall__(cls, n, multicharge, q, base_ring)
 
     def __init__(self, n, multicharge, q, base_ring):
         r"""
@@ -744,6 +744,7 @@ class FockSpace(Parent, UniqueRepresentation):
                     |[2, 1], [1], [1]>
                 """
                 P = self.parent()
+
                 def N_left(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(x, y))
                             - sum(1 for y in P._removable(la, i) if P._above(x, y)))
@@ -839,6 +840,7 @@ class FockSpace(Parent, UniqueRepresentation):
                      + q^2*|[3, 1], [1, 1, 1], [5, 2, 2]>
                 """
                 P = self.parent()
+
                 def N_right(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
@@ -1352,9 +1354,8 @@ class FockSpace(Parent, UniqueRepresentation):
                 return fock.sum_of_terms((fock._indices([[]]*k + list(pt)), c) for pt,c in cur)
 
             cur = R.A()._A_to_fock_basis(la)
-            s = cur.support()
-            s.sort() # Sort lex, which respects dominance order
-            s.pop() # Remove the largest
+            s = sorted(cur.support())  # Sort lex, which respects dominance order
+            s.pop()  # Remove the largest
 
             q = R._q
             while s:
@@ -1674,7 +1675,7 @@ class FockSpaceTruncated(FockSpace):
             base_ring = q.parent()
         base_ring = FractionField(base_ring)
         q = base_ring(q)
-        return super(FockSpace, cls).__classcall__(cls, n, k, q, base_ring)
+        return super().__classcall__(cls, n, k, q, base_ring)
 
     def __init__(self, n, k, q, base_ring):
         r"""
@@ -1798,6 +1799,7 @@ class FockSpaceTruncated(FockSpace):
                     |5> + |3, 2> + 2*q*|3, 1, 1> + q^2*|2, 2, 1>
                 """
                 P = self.parent()
+
                 def N_right(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
@@ -2173,6 +2175,7 @@ class FockSpaceTruncated(FockSpace):
                 if len(la) == k:
                     x = la[-1]
                     mu = _Partitions([p - x for p in la])
+
                     def add_cols(nu):
                         return _Partitions([ v + x for v in list(nu) + [0]*(k - len(nu)) ])
                     return fock.sum_of_terms((add_cols(nu), c) for nu,c in self._G_to_fock_basis(mu))
@@ -2185,9 +2188,8 @@ class FockSpaceTruncated(FockSpace):
 
             # Perform the triangular reduction
             cur = self.realization_of().A(algorithm)._A_to_fock_basis(la)
-            s = cur.support()
-            s.sort() # Sort lex, which respects dominance order
-            s.pop() # Remove the largest
+            s = sorted(cur.support())  # Sort lex, which respects dominance order
+            s.pop()  # Remove the largest
 
             q = self.realization_of()._q
             while s:

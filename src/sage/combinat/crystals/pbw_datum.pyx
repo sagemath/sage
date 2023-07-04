@@ -31,7 +31,7 @@ from sage.combinat.root_system.braid_move_calculator import BraidMoveCalculator
 
 cimport cython
 
-class PBWDatum(object):
+class PBWDatum():
     """
     Helper class which represents a PBW datum.
     """
@@ -183,7 +183,7 @@ class PBWDatum(object):
         return PBWDatum(self.parent, reversed_long_word, reversed_lusztig_datum)
 
 
-class PBWData(object): # UniqueRepresentation?
+class PBWData(): # UniqueRepresentation?
     """
     Helper class for the set of PBW data.
     """
@@ -477,8 +477,7 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
                 last = k + 1
                 break
 
-        cartan_sub_matrix = (cartan_matrix[i,j], cartan_matrix[j,i])
-        output_list.append( ((first, last), cartan_sub_matrix) )
+        cartan_sub_matrix = (cartan_matrix[i, j], cartan_matrix[j, i])
+        output_list.append(((first, last), cartan_sub_matrix))
         previous_word = current_word
     return output_list
-

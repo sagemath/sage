@@ -14,7 +14,7 @@ cdef class PowComputer_(PowComputer_flint_unram):
 
             sage: R.<a> = ZqCA(125)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.qadic_flint_CA.PowComputer_'>
+            <class 'sage.rings.padics.qadic_flint_CA.PowComputer_'>
             sage: R.prime_pow._prec_type
             'capped-abs'
         """
@@ -27,8 +27,8 @@ cdef class qAdicCappedAbsoluteElement(CAElement):
     norm = norm_unram
 
     def matrix_mod_pn(self):
-        """
-        Returns the matrix of right multiplication by the element on
+        r"""
+        Return the matrix of right multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are

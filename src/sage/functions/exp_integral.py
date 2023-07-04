@@ -1,5 +1,5 @@
 r"""
-Exponential Integrals
+Exponential integrals
 
 AUTHORS:
 
@@ -55,7 +55,7 @@ from sage.libs.mpmath import utils as mpmath_utils
 mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
 
 from sage.rings.real_mpfr import RealField
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.functions.log import exp, log
 from sage.functions.trig import sin, cos
 from sage.functions.hyperbolic import sinh, cosh
@@ -335,7 +335,6 @@ class Function_exp_integral_e1(BuiltinFunction):
         """
         import mpmath
         return mpmath_utils_call(mpmath.e1, z, parent=parent)
-
 
     def _print_latex_(self, z):
         r"""
@@ -1312,7 +1311,7 @@ Chi = cosh_integral = Function_cosh_integral()
 
 ###################################################################
 # Code below here was moved from sage/functions/transcendental.py
-# This occurred as part of Trac #11143.
+# This occurred as part of Issue #11143.
 ###################################################################
 
 # This class has a name which is not specific enough
@@ -1497,7 +1496,7 @@ def exponential_integral_1(x, n=0):
         ....:     n = 2^ZZ.random_element(14)
         ....:     x = exponential_integral_1(a, n)
         ....:     y = exponential_integral_1(S(a), n)
-        ....:     c = RDF(2 * max(1.0, y[0]))
+        ....:     c = RDF(4 * max(1.0, y[0]))
         ....:     for i in range(n):
         ....:         e = float(abs(S(x[i]) - y[i]) << prec)
         ....:         if e >= c:

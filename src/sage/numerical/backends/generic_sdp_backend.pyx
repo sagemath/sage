@@ -39,7 +39,7 @@ cdef class GenericSDPBackend:
             sage: GenericSDPBackend().base_ring()
             Real Double Field
         """
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return RDF
 
     cpdef zero(self):
@@ -717,13 +717,12 @@ cpdef GenericSDPBackend get_solver(solver=None, base_ring=None):
         sage: from sage.numerical.backends.generic_sdp_backend import GenericSDPBackend
         sage: class MockSDPBackend(GenericSDPBackend):
         ....:     def solve(self):
-        ....:         raise RuntimeError("SDP is too slow!")
+        ....:         raise RuntimeError("SDP is too slow")
         sage: P = SemidefiniteProgram(solver=MockSDPBackend)
         sage: P.solve()
         Traceback (most recent call last):
         ...
-        RuntimeError: SDP is too slow!
-
+        RuntimeError: SDP is too slow
     """
     if solver is None:
         solver = default_sdp_solver()

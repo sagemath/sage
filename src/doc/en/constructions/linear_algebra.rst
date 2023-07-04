@@ -278,7 +278,7 @@ Another approach is to use the interface with Maxima:
     sage: A = maxima("matrix ([1, -4], [1, -1])")
     sage: eig = A.eigenvectors()
     sage: eig
-    [[[-sqrt(3)*%i,sqrt(3)*%i],[1,1]],[[[1,(sqrt(3)*%i+1)/4]],[[1,-(sqrt(3)*%i-1)/4]]]]
+    [[[-sqrt(3)*%i,sqrt(3)*%i],[1,1]], [[[1,(sqrt(3)*%i+1)/4]],[[1,-(sqrt(3)*%i-1)/4]]]]
 
 This tells us that :math:`\vec{v}_1 = [1,(\sqrt{3}i + 1)/4]` is
 an eigenvector of :math:`\lambda_1 = - \sqrt{3}i` (which occurs

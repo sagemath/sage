@@ -1,2 +1,0 @@
-# libgap
-from . import all

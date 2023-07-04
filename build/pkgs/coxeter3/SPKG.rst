@@ -37,12 +37,6 @@ Alas, Fokko Ducloux passed away in 2006.
 
 http://math.univ-lyon1.fr/~ducloux/du_Cloux.html
 
-Dependencies
-------------
-
-None
-
-
 Special Update/Build Instructions
 ---------------------------------
 

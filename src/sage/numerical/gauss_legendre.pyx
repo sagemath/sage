@@ -51,8 +51,7 @@ from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_function
 from sage.rings.real_mpfr cimport RealNumber, RealField_class
 
-@cached_function
-def nodes(degree, prec):
+def nodes_uncached(degree, prec):
     r"""
     Compute the integration nodes and weights for the Gauss-Legendre quadrature
     scheme
@@ -64,7 +63,7 @@ def nodes(degree, prec):
 
      - ``degree`` -- integer. The number of nodes. Must be 3 or even.
 
-     - ``prec`` -- integer (minimal value 53). Binary precision with which the 
+     - ``prec`` -- integer (minimal value 53). Binary precision with which the
        nodes and weights are computed.
 
     OUTPUT:
@@ -78,8 +77,8 @@ def nodes(degree, prec):
     a derivative of a Legendre polynomial isn't particularly numerically stable, so the results
     from this routine are actually more accurate than what the values the closed formula produces)::
 
-        sage: from sage.numerical.gauss_legendre import nodes
-        sage: L1 = nodes(24, 53)
+        sage: from sage.numerical.gauss_legendre import nodes_uncached
+        sage: L1 = nodes_uncached(24, 53)
         sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))
         sage: Pdif = P.diff()
         sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)
@@ -90,14 +89,14 @@ def nodes(degree, prec):
 
     TESTS::
 
-        sage: from sage.numerical.gauss_legendre import nodes
-        sage: nodes(1,100)
+        sage: from sage.numerical.gauss_legendre import nodes_uncached
+        sage: nodes_uncached(1,100)
         Traceback (most recent call last):
         ...
         ValueError: degree=1 not supported (degree must be 3 or even)
 
-        sage: from sage.numerical.gauss_legendre import nodes
-        sage: nodes(3,100)
+        sage: from sage.numerical.gauss_legendre import nodes_uncached
+        sage: nodes_uncached(3,100)
         [(0.11270166537925831148207346002, 0.27777777777777777777777777778),
          (0.50000000000000000000000000000, 0.44444444444444444444444444444),
          (0.88729833462074168851792653998, 0.27777777777777777777777777778)]
@@ -109,7 +108,7 @@ def nodes(degree, prec):
         performance.
     """
     cdef long j,j1,n
-    cdef RealNumber r,t1,t2,t3,t4,a,w
+    cdef RealNumber r,t1,t2,t4,a,w
     cdef mpfr_t u,v
     cdef RealField_class R
     if prec < 53:
@@ -161,10 +160,63 @@ def nodes(degree, prec):
     mpfr_clear(v)
     return nodes
 
+@cached_function
+def nodes(degree, prec):
+    r"""
+    Compute the integration nodes and weights for the Gauss-Legendre quadrature
+    scheme, caching the output
+
+    Works by calling ``nodes_uncached``.
+
+    INPUT:
+
+     - ``degree`` -- integer. The number of nodes. Must be 3 or even.
+
+     - ``prec`` -- integer (minimal value 53). Binary precision with which the
+       nodes and weights are computed.
+
+    OUTPUT:
+
+    A list of (node, weight) pairs.
+
+    EXAMPLES:
+
+    The nodes for the Gauss-Legendre scheme are roots of Legendre polynomials.
+    The weights can be computed by a straightforward formula (note that evaluating
+    a derivative of a Legendre polynomial isn't particularly numerically stable, so the results
+    from this routine are actually more accurate than what the values the closed formula produces)::
+
+        sage: from sage.numerical.gauss_legendre import nodes
+        sage: L1 = nodes(24, 53)
+        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))
+        sage: Pdif = P.diff()
+        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)
+        ....:        for r, _ in RR['x'](P).roots()]
+        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9
+        ....:      for a, b in zip(L1, L2))
+        True
+
+    TESTS::
+
+        sage: from sage.numerical.gauss_legendre import nodes
+        sage: nodes(1,100)
+        Traceback (most recent call last):
+        ...
+        ValueError: degree=1 not supported (degree must be 3 or even)
+
+        sage: from sage.numerical.gauss_legendre import nodes
+        sage: nodes(3,100)
+        [(0.11270166537925831148207346002, 0.27777777777777777777777777778),
+         (0.50000000000000000000000000000, 0.44444444444444444444444444444),
+         (0.88729833462074168851792653998, 0.27777777777777777777777777778)]
+
+    """
+    return nodes_uncached(degree, prec)
+
 def estimate_error(results, prec, epsilon):
     r"""
     Routine to estimate the error in a list of quadrature approximations.
-    
+
     The method used is based on Borwein, Bailey, and Girgensohn. As mentioned in
     mpmath: Although not very conservative, this method seems to be very robust in
     practice.
@@ -174,7 +226,7 @@ def estimate_error(results, prec, epsilon):
     of the maximum norm of the error in the last approximation.
 
     INPUT:
-    
+
      - ``results`` -- list. List of approximations to estimate the error from. Should be at least length 2.
 
      - ``prec`` -- integer. Binary precision at which computations are happening.
@@ -219,10 +271,10 @@ def integrate_vector_N(f, prec, N=3):
     Integrate a one-argument vector-valued function numerically using Gauss-Legendre,
     setting the number of nodes.
 
-    This function uses the Gauss-Legendre quadrature scheme to approximate the 
+    This function uses the Gauss-Legendre quadrature scheme to approximate the
     integral `\int_0^1 f(t) \, dt`. It is different from ``integrate_vector``
     by using a specific number of nodes rather than targeting a specified error
-    bound on the result. 
+    bound on the result.
 
     INPUT:
 
@@ -232,9 +284,9 @@ def integrate_vector_N(f, prec, N=3):
 
      - ``N`` -- integer (default: 3). Number of nodes to use.
 
-     OUTPUT: 
+     OUTPUT:
 
-     Vector approximating value of the integral. 
+     Vector approximating value of the integral.
 
      EXAMPLES::
 
@@ -248,12 +300,15 @@ def integrate_vector_N(f, prec, N=3):
 
     .. NOTE::
 
-        The nodes and weights are calculated in the real field with ``prec`` 
-        bits of precision. If the the vector space in which ``f`` takes values
+        The nodes and weights are calculated in the real field with ``prec``
+        bits of precision. If the vector space in which ``f`` takes values
         is over a field which is incompatible with this field (e.g. a finite
-        field) then a TypeError occurs. 
+        field) then a TypeError occurs.
     """
-    nodelist = nodes(N, prec)
+    # We use nodes_uncached, because caching takes up memory, and numerics in
+    # Bruin-DisneyHogg-Gao suggest that caching provides little benefit in the
+    # use in the Riemann surfaces module.
+    nodelist = nodes_uncached(N, prec)
     I = nodelist[0][1]*f(nodelist[0][0])
     for i in range(1,len(nodelist)):
         I += nodelist[i][1]*f(nodelist[i][0])
@@ -311,13 +366,16 @@ def integrate_vector(f, prec, epsilon=None):
     if epsilon is None:
         epsilon = Rout(2)**(-prec+3)
     while True:
-        nodelist = nodes(degree,prec)
+        # We use nodes, because if this function is being called
+        # multiple times, then it will always go through the same degree
+        # values, so it will be very useful, approximately halving the runtime
+        nodelist = nodes(degree, prec)
         I = nodelist[0][1]*f(nodelist[0][0])
         for i in range(1,len(nodelist)):
             I += nodelist[i][1]*f(nodelist[i][0])
         results.append(I)
         if degree > 3:
-            err = estimate_error(results,prec,epsilon)
+            err = estimate_error(results, prec, epsilon)
             if err <= epsilon:
                 return I
         #double the degree to double expected precision

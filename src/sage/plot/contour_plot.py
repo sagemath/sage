@@ -1,5 +1,5 @@
 """
-Contour Plots
+Contour plots
 """
 # ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
@@ -131,7 +131,7 @@ class ContourPlot(GraphicPrimitive):
 
     def _repr_(self):
         """
-        String representation of ContourPlot primitive.
+        String representation of ``ContourPlot`` primitive.
 
         EXAMPLES::
 
@@ -330,6 +330,14 @@ def contour_plot(f, xrange, yrange, **options):
     -  ``region`` - (default: None) If region is given, it must be a function
         of two variables. Only segments of the surface where region(x,y)
         returns a number >0 will be included in the plot.
+
+    .. WARNING::
+
+        Due to an implementation detail in matplotlib, single-contour
+        plots whose data all lie on one side of the sole contour may
+        not be plotted correctly. We attempt to detect this situation
+        and to produce something better than an empty plot when it
+        happens; a ``UserWarning`` is emitted in that case.
 
     EXAMPLES:
 
@@ -664,7 +672,7 @@ def contour_plot(f, xrange, yrange, **options):
 
     We can add a colorbar as well::
 
-        sage: f(x, y)=x^2-y^2
+        sage: f(x, y) = x^2 + y^2
         sage: contour_plot(f, (x,-3,3), (y,-3,3), colorbar=True)
         Graphics object consisting of 1 graphics primitive
 
@@ -814,6 +822,43 @@ def contour_plot(f, xrange, yrange, **options):
         g = contour_plot(f, (-pi,pi), (-pi,pi), fill=False, axes=True)
         sphinx_plot(g)
 
+    If you are plotting a sole contour and if all of your data lie on
+    one side of it, then (as part of :trac:`21042`) a heuristic may be
+    used to improve the result; in that case, a warning is emitted::
+
+        sage: contour_plot(lambda x,y: abs(x^2-y^2), (-1,1), (-1,1),
+        ....:              contours=[0], fill=False, cmap=['blue'])
+        ...
+        UserWarning: pathological contour plot of a function whose values
+        all lie on one side of the sole contour; we are adding more plot
+        points and perturbing your function values.
+        Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            g = contour_plot(lambda x,y: abs(x**2-y**2), (-1,1), (-1,1),
+                             contours=[0], fill=False, cmap=['blue'])
+        sphinx_plot(g)
+
+    Constant functions (with a single contour) can be plotted as well;
+    this was not possible before :trac:`21042`::
+
+        sage: contour_plot(lambda x,y: 0, (-1,1), (-1,1),
+        ....:              contours=[0], fill=False, cmap=['blue'])
+        ...Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            g = contour_plot(lambda x,y: 0, (-1,1), (-1,1),
+                             contours=[0], fill=False, cmap=['blue'])
+        sphinx_plot(g)
+
     TESTS:
 
     To check that :trac:`5221` is fixed, note that this has three curves, not
@@ -827,8 +872,14 @@ def contour_plot(f, xrange, yrange, **options):
     Check that :trac:`18074` is fixed::
 
         sage: contour_plot(0, (0,1), (0,1))
-        ... UserWarning: No contour levels were found within the data range.
+        ...Graphics object consisting of 1 graphics primitive
+
+    Domain points in :trac:`11648` with complex output are now skipped::
+
+        sage: x,y = SR.var('x,y', domain='real')
+        sage: contour_plot(log(x) + log(y), (-1, 5), (-1, 5))
         Graphics object consisting of 1 graphics primitive
+
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
@@ -838,12 +889,125 @@ def contour_plot(f, xrange, yrange, **options):
 
     F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                        options['plot_points'])
-    g = F[0]
+    h = F[0]
     xrange, yrange = [r[:2] for r in ranges]
 
-    xy_data_array = [[g(x, y) for x in xsrange(*ranges[0],
+    xy_data_array = [[h(x, y) for x in xsrange(*ranges[0],
                                                include_endpoint=True)]
                      for y in xsrange(*ranges[1], include_endpoint=True)]
+
+    g = Graphics()
+
+    # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
+    # Otherwise matplotlib complains.
+    scale = options.get('scale', None)
+    if isinstance(scale, (list, tuple)):
+        scale = scale[0]
+    if scale in ('semilogy', 'semilogx'):
+        options['aspect_ratio'] = 'automatic'
+
+    g._set_extra_kwds(Graphics._extract_kwds_for_show(options,
+                                                      ignore=['xmin', 'xmax']))
+
+    # Was a single contour level explicitly given? If "contours" is
+    # the integer 1, then there will be a single level, but we can't
+    # know what it is because it's determined within matplotlib's
+    # "contour" or "contourf" function. So we punt in that case. If
+    # there's a single contour and fill=True, we fall through to let
+    # matplotlib complain that "Filled contours require at least 2
+    # levels."
+    if (isinstance(options["contours"], (list, tuple))
+        and len(options["contours"]) == 1
+        and options.get("fill") is False):
+        # When there's only one level (say, zero), matplotlib doesn't
+        # handle it well. If all of the data lie on one side of that
+        # level -- for example, if f(x,y) >= 0 for all x,y -- then it
+        # will fail to plot the points where f(x,y) == 0. This is
+        # especially catastrophic for implicit_plot(), which tries to
+        # do just that. Here we handle that special case: if there's
+        # only one level, and if all of the data lie on one side of
+        # it, we perturb the data a bit so that they don't. The resulting
+        # plots don't look great, but they're not empty, which is an
+        # improvement.
+        import numpy as np
+        dx = ranges[0][2]
+        dy = ranges[1][2]
+        z0 = options["contours"][0]
+
+        # This works OK for the examples in the doctests, but basing
+        # it off the plot scale rather than how fast the function
+        # changes can never be truly satisfactory.
+        tol = max(dx, dy) / 4.0
+        xy_data_array = np.ma.asarray(xy_data_array, dtype=float)
+
+        # Special case for constant functions. This is needed because
+        # otherwise the forthcoming perturbation trick will take values
+        # like 0,0,0... and perturb them to -tol, -tol, -tol... which
+        # doesn't work for the same reason 0,0,0... doesn't work.
+        if np.all(np.abs(xy_data_array - z0) <= tol):
+            # Up to our tolerance, this is the const_z0 function.
+            # ...make it actually the const_z0 function.
+            xy_data_array.fill(z0)
+
+            # We're going to set fill=True in a momemt, so we need to
+            # prepend an entry to the cmap so that the user's original
+            # cmap winds up in the right place.
+            if "cmap" in options:
+                if isinstance(options["cmap"], (list, tuple)):
+                    oldcmap = options["cmap"][0]
+                else:
+                    oldcmap = options["cmap"]
+            else:
+                # The docs promise this as the default.
+                oldcmap = "gray"
+
+            # Trick matplotlib into plotting all of the points (minus
+            # those masked) by using a single, filled contour that
+            # covers the entire plotting surface.
+            options["cmap"] = ["white", oldcmap]
+            options["contours"] = (z0 - 1, z0)
+            options["fill"] = True
+        else:
+            # The "c" constant is set to plus/minus one to handle both
+            # of the "all values greater than z0" and "all values less
+            # than z0" cases at once.
+            c = 1
+            if np.all(xy_data_array <= z0):
+                xy_data_array *= -1
+                c = -1
+            # Now we check if (a) all of the data lie on one side of
+            # z0, and (b) if perturbing the data will actually help by
+            # moving anything across z0.
+            if (np.all(xy_data_array >= z0) and
+                np.any(xy_data_array - z0 < tol)):
+
+                from warnings import warn
+                warn("pathological contour plot of a function whose "
+                     "values all lie on one side of the sole contour; "
+                     "we are adding more plot points and perturbing "
+                     "your function values.")
+
+                # The choice of "4" here is not based on much of anything.
+                # It works well enough for the examples in the doctests.
+                if not isinstance(options["plot_points"], (list, tuple)):
+                    options["plot_points"] = (options["plot_points"],
+                                              options["plot_points"])
+                    options["plot_points"] = (options["plot_points"][0] * 4,
+                                              options["plot_points"][1] * 4)
+
+                # Re-plot with more points...
+                F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
+                                                   options['plot_points'])
+                h = F[0]
+                xrange, yrange = [r[:2] for r in ranges]
+
+                # ...and a function whose values are shifted towards
+                # z0 by "tol".
+                xy_data_array = [[h(x, y) - c * tol
+                                  for x in xsrange(*ranges[0],
+                                                   include_endpoint=True)]
+                                 for y in xsrange(*ranges[1],
+                                                  include_endpoint=True)]
 
     if region is not None:
         import numpy
@@ -861,19 +1025,8 @@ def contour_plot(f, xrange, yrange, **options):
 
         xy_data_array[mask] = numpy.ma.masked
 
-    g = Graphics()
-
-    # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
-    # Otherwise matplotlib complains.
-    scale = options.get('scale', None)
-    if isinstance(scale, (list, tuple)):
-        scale = scale[0]
-    if scale in ('semilogy', 'semilogx'):
-        options['aspect_ratio'] = 'automatic'
-
-    g._set_extra_kwds(Graphics._extract_kwds_for_show(options,
-                                                      ignore=['xmin', 'xmax']))
     g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, options))
+
     return g
 
 
@@ -944,6 +1097,14 @@ def implicit_plot(f, xrange, yrange, **options):
       to logarithmic scale. The ``"linear"`` scale is the default value
       when :class:`~sage.plot.graphics.Graphics` is initialized.
 
+    .. WARNING::
+
+        Due to an implementation detail in matplotlib, implicit plots
+        whose data are all nonpositive or nonnegative may not be
+        plotted correctly. We attempt to detect this situation and to
+        produce something better than an empty plot when it happens; a
+        ``UserWarning`` is emitted in that case.
+
     EXAMPLES:
 
     A simple circle with a radius of 2. Note that
@@ -1000,8 +1161,9 @@ def implicit_plot(f, xrange, yrange, **options):
 
     The same circle with different line and fill colors::
 
-        sage: implicit_plot(f, (-3,3), (-3,3), color='red', fill=True, fillcolor='green',
-        ....:                                  plot_points=500) # long time
+        sage: implicit_plot(f, (-3,3), (-3,3), color='red',  # long time
+        ....:               fill=True, fillcolor='green',
+        ....:               plot_points=500)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -1146,8 +1308,8 @@ def implicit_plot(f, xrange, yrange, **options):
     symbolic expression the user should increase the number of plot points to
     avoid artifacts::
 
-        sage: implicit_plot(lambda x, y: x^2 + y^2 - 2, (x,-3,3), (y,-3,3),
-        ....:               fill=True, plot_points=500) # long time
+        sage: implicit_plot(lambda x, y: x^2 + y^2 - 2, (x,-3,3),  # long time
+        ....:               (y,-3,3), fill=True, plot_points=500)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -1188,8 +1350,8 @@ def implicit_plot(f, xrange, yrange, **options):
         ...
         ValueError: only one of color or rgbcolor should be specified
     """
-    from sage.symbolic.expression import is_SymbolicEquation
-    if is_SymbolicEquation(f):
+    from sage.structure.element import Expression
+    if isinstance(f, Expression) and f.is_relational():
         if f.operator() != operator.eq:
             raise ValueError("input to implicit plot must be function "
                              "or equation")
@@ -1210,8 +1372,8 @@ def implicit_plot(f, xrange, yrange, **options):
         options.pop('contours', None)
         incol = options.pop('fillcolor', 'blue')
         bordercol = options.pop('cmap', [None])[0]
-        from sage.symbolic.expression import is_Expression
-        if not is_Expression(f):
+        from sage.structure.element import Expression
+        if not isinstance(f, Expression):
             return region_plot(lambda x, y: f(x, y) < 0, xrange, yrange,
                                borderwidth=linewidths, borderstyle=linestyles,
                                incol=incol, bordercol=bordercol,
@@ -1492,7 +1654,7 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
-    from sage.symbolic.expression import is_Expression
+    from sage.structure.element import Expression
     from warnings import warn
     import numpy
 
@@ -1500,10 +1662,10 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
         f = [f]
 
     feqs = [equify(g) for g in f
-            if is_Expression(g) and g.operator() is operator.eq
+            if isinstance(g, Expression) and g.operator() is operator.eq
             and not equify(g).is_zero()]
     f = [equify(g) for g in f
-         if not (is_Expression(g) and g.operator() is operator.eq)]
+         if not (isinstance(g, Expression) and g.operator() is operator.eq)]
     neqs = len(feqs)
     if neqs > 1:
         warn("There are at least 2 equations; "
@@ -1613,8 +1775,8 @@ def equify(f):
         -1
     """
     from sage.calculus.all import symbolic_expression
-    from sage.symbolic.expression import is_Expression
-    if not is_Expression(f):
+    from sage.structure.element import Expression
+    if not isinstance(f, Expression):
         return lambda x, y: -1 if f(x, y) else 1
 
     op = f.operator()

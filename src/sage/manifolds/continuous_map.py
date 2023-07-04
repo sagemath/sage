@@ -505,9 +505,9 @@ class ContinuousMap(Morphism):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     #
     # Hash and equality
@@ -1119,7 +1119,7 @@ class ContinuousMap(Morphism):
 
             sage: latex(Phi.display(c_xy, c_cart))
             \begin{array}{llcl} \Phi:& S^2 & \longrightarrow & \RR^3
-             \\ \mbox{on}\ U : & \left(x, y\right) & \longmapsto
+             \\ \text{on}\ U : & \left(x, y\right) & \longmapsto
              & \left(X, Y, Z\right) = \left(\frac{2 \, x}{x^{2} + y^{2} + 1},
                \frac{2 \, y}{x^{2} + y^{2} + 1},
                \frac{x^{2} + y^{2} - 1}{x^{2} + y^{2} + 1}\right)
@@ -1176,7 +1176,7 @@ class ContinuousMap(Morphism):
              2*y/(x**2 + y**2 + 1), (x**2 + y**2 - 1)/(x**2 + y**2 + 1))
             sage: latex(Phi.display(c_xy, c_cart))
             \begin{array}{llcl} \Phi:& S^2 & \longrightarrow & \RR^3
-             \\ \mbox{on}\ U : & \left(x, y\right) & \longmapsto
+             \\ \text{on}\ U : & \left(x, y\right) & \longmapsto
              & \left(X, Y, Z\right) = \left(\frac{2 x}{x^{2} + y^{2} + 1},
                \frac{2 y}{x^{2} + y^{2} + 1},
                \frac{x^{2} + y^{2} - 1}{x^{2} + y^{2} + 1}\right)
@@ -1212,7 +1212,7 @@ class ContinuousMap(Morphism):
                 result._latex += ' & '
             else:
                 result._txt += 'on ' + chart1._domain._name + ': '
-                result._latex += r'\mbox{on}\ ' + latex(chart1._domain) + \
+                result._latex += r'\text{on}\ ' + latex(chart1._domain) + \
                                 r': & '
             result._txt += repr(coords1) + ' ' + unicode_mapsto + ' '
             result._latex += latex(coords1) + r'& \longmapsto & '
@@ -1357,8 +1357,7 @@ class ContinuousMap(Morphism):
             sage: Phi.coord_functions(c_uv, c_xyz)
             Coordinate functions (u*v, u/v, u + v) on the Chart (M, (u, v))
             sage: Phi.coord_functions(c_UV, c_xyz)
-            Coordinate functions (-U**2/4 + V**2/4, -(U + V)/(U - V), V)
-             on the Chart (M, (U, V))
+            Coordinate functions (-U**2/4 + V**2/4, (-U - V)/(U - V), V) on the Chart (M, (U, V))
             sage: Phi.coord_functions(c_UV, c_XYZ)
             Coordinate functions ((-U**3 + U**2*V + U*V**2 + 2*U*V + 6*U - V**3
              - 2*V**2 + 6*V)/(2*(U - V)), (U**3/4 - U**2*V/4 - U*V**2/4 + U*V
@@ -1503,7 +1502,7 @@ class ContinuousMap(Morphism):
             sage: Phi.expr()  # equivalent to above since 'uv' and 'xyz' are default charts
             (u*v, u/v, u + v)
             sage: type(Phi.expr()[0])
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         Expressions in other charts::
 

@@ -1,2 +1,2 @@
 cd src
-python3 setup.py
+pytest tests.py

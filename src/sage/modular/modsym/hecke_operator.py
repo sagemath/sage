@@ -13,7 +13,7 @@ Sparse action of Hecke operators
 ##########################################################################
 
 import sage.modular.hecke.hecke_operator
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 from . import heilbronn
 
 

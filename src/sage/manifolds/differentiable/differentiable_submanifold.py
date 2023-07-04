@@ -189,6 +189,9 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
                                         latex_name=latex_name,
                                         start_index=start_index,
                                         category=category)
+        if not (ambient is None
+                or isinstance(ambient, DifferentiableManifold)):
+            raise TypeError("ambient must be a differentiable manifold")
         self._init_immersion(ambient=ambient)
 
     def _repr_(self):

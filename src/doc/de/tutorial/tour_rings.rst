@@ -71,9 +71,10 @@ um den ursprünglichen komplexen Wert der Variable ``i`` zu erhalten.
 
 Es ist noch eine Feinheit beim Definieren von komplexen Zahlen zu
 beachten: Wie oben erwähnt wurde, stellt das Symbol ``i`` eine
-Quadratwurzel von `-1` dar, es ist jedoch eine *formale* oder
-*symbolische* Quadratwurzel von `-1`.  Das Aufrufen von ``CC(i)`` oder
-``CC.0``, gibt die *komplexe* Quadratwurzel von  `-1` zurück. ::
+Quadratwurzel von `-1` dar, es ist jedoch eine *formale* Quadratwurzel
+von `-1`, jedoch eine algebraische Zahl.  Das Aufrufen von ``CC(i)``
+oder ``CC.0`` oder ``CC.gen(0)``, gibt die *komplexe* Quadratwurzel
+von `-1` zurück. ::
 
     sage: i = CC(i)       # komplexe Gleitkommazahl
     sage: i == CC.0
@@ -96,7 +97,7 @@ Quadratwurzel von `-1` dar, es ist jedoch eine *formale* oder
     Rational Field
     sage: 2/3 + 0.1       # automatische Umwandlung vor der Addition
     0.766666666666667
-    sage: 0.1 + 2/3       # Umwandlungsregeln sind symmetrisch in SAGE
+    sage: 0.1 + 2/3       # Umwandlungsregeln sind symmetrisch in Sage
     0.766666666666667
 
 Hier sind weitere Beispiele von Ringen in Sage. Wie oben angemerkt,

@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #       Copyright (C) 2007 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
@@ -18,8 +18,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.ext.cplusplus cimport ccrepr
 
@@ -71,9 +71,9 @@ def ntl_GF2E_random(ntl_GF2EContext_class ctx):
     r.x = GF2E_random()
     return r
 
-cdef class ntl_GF2E(object):
+cdef class ntl_GF2E():
     r"""
-    The \\class{GF2E} represents a finite extension field over GF(2)
+    The :class:`GF2E` represents a finite extension field over GF(2)
     using NTL. Elements are represented as polynomials over GF(2)
     modulo a modulus.
 
@@ -164,6 +164,8 @@ cdef class ntl_GF2E(object):
 
     def __reduce__(self):
         """
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext( ntl.GF2X([1,1,0,1,1,0,0,0,1]) )
             sage: a = ntl.GF2E(ntl.ZZ_pX([1,1,3],2), ctx)
             sage: loads(dumps(a)) == a
@@ -403,7 +405,7 @@ cdef class ntl_GF2E(object):
             sage: a.rep()
             [1 0 0 0 0 0 1 1]
             sage: type(a.rep())
-            <type 'sage.libs.ntl.ntl_GF2X.ntl_GF2X'>
+            <class 'sage.libs.ntl.ntl_GF2X.ntl_GF2X'>
         """
         cdef ntl_GF2X x = ntl_GF2X.__new__(ntl_GF2X)
         x.x = GF2E_rep(self.x)
@@ -439,17 +441,20 @@ cdef class ntl_GF2E(object):
         return l
 
     def _sage_(ntl_GF2E self, k=None):
-        """
-        Returns a \class{FiniteFieldElement} representation
-        of this element. If a \class{FiniteField} k is provided
-        it is constructed in this field if possible. A \class{FiniteField}
-        will be constructed if none is provided.
+        r"""
+        Return a :class:`FiniteFieldElement` representation of this element.
+
+        If a :class:`FiniteField` `k` is provided, it is constructed
+        in this field if possible. A :class:`FiniteField` will be
+        constructed if none is provided.
 
         INPUT:
-            k     -- optional GF(2**deg)
+
+        - `k` -- (optional) a field `\GF{2^d}`
 
         OUTPUT:
-            FiniteFieldElement over k
+
+        :class:`FiniteFieldElement` over `k`
 
         EXAMPLES::
 

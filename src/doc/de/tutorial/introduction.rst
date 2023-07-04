@@ -98,16 +98,16 @@ Hier geben wir nur ein paar Kommentare ab.
    einzige Datei in ein Verzeichnis kopieren, welches TeX durchsucht.
 
    Die Dokumentation für SageTeX befindet sich in
-   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, wobei
+   ``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, wobei
    "``$SAGE_ROOT``" auf das Verzeichnis zeigt, in welches Sie Sage
-   installiert haben, zum Beispiel ``/opt/sage-4.2.1``.
+   installiert haben, zum Beispiel ``/opt/sage-9.6``.
 
 Wie man Sage benutzen kann
 ==========================
 
 Sie können Sage auf verschiedene Weise benutzen.
 
--  **graphisches Notebook-Interface:** rufen Sie `sage -n jupyter` auf; lesen Sie
+-  **graphisches Notebook-Interface:** rufen Sie ``sage -n jupyter`` auf; lesen Sie
    `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
 
 -  **interaktive Kommandozeile:** lesen Sie :ref:`chapter-interactive_shell`,

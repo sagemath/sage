@@ -256,7 +256,7 @@ bool is_element_general::is_member(const SL2Z& m) const {
   PyObject* arg = convert_to_SL2Z(m);
   PyObject* tuple = PyTuple_New(1);
   PyTuple_SetItem(tuple, 0, arg);
-  PyObject *result = PyEval_CallObject(method, tuple);
+  PyObject *result = PyObject_CallObject(method, tuple);
   Py_DECREF(tuple);
   if( not PyBool_Check(result) ) {
     cerr << "__contains__ does not return bool." << endl;

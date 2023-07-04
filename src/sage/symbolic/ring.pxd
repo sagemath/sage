@@ -1,7 +1,4 @@
-from sage.symbolic.expression cimport Expression
-from sage.rings.ring cimport CommutativeRing
+cimport sage.rings.abc
 
-cdef class SymbolicRing(CommutativeRing):
+cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
     cdef public dict symbols
-
-    cpdef Expression symbol(self, name=*, latex_name=*, domain=*)

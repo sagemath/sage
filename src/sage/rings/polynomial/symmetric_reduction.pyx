@@ -1,4 +1,4 @@
-"""
+r"""
 Symmetric Reduction of Infinite Polynomials
 
 :class:`~sage.rings.polynomial.symmetric_reduction.SymmetricReductionStrategy`
@@ -102,7 +102,7 @@ Symmetric Reduction Strategy is created::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Simon King <king@mathematik.nuigalway.ie>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -114,9 +114,8 @@ Symmetric Reduction Strategy is created::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import copy
 import operator
 import sys

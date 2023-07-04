@@ -35,7 +35,27 @@ TESTS::
 """
 
 # ****************************************************************************
-#       Copyright (C) 2004,2005,2006 Joshua Kantor <kantor.jm@gmail.com>
+#       Copyright (C) 2004-2006 Joshua Kantor <kantor.jm@gmail.com>
+#       Copyright (C) 2008      Georg S. Weber
+#       Copyright (C) 2008-2011 Mike Hansen
+#       Copyright (C) 2008-2012 Jason Grout
+#       Copyright (C) 2009      Dag Sverre Seljebotn
+#       Copyright (C) 2009      Yann Laigle-Chapuy
+#       Copyright (C) 2009-2010 Florent Hivert
+#       Copyright (C) 2010-2012 Rob Beezer
+#       Copyright (C) 2011      Martin Raum
+#       Copyright (C) 2011-2012 J. H. Palmieri
+#       Copyright (C) 2011-2014 André Apitzsch
+#       Copyright (C) 2011-2018 Jeroen Demeyer
+#       Copyright (C) 2012      Kenneth Smith
+#       Copyright (C) 2016-2019 Frédéric Chapoton
+#       Copyright (C) 2017      Kiran Kedlaya
+#       Copyright (C) 2019      Chaman Agrawal
+#       Copyright (C) 2019-2021 Markus Wageringel
+#       Copyright (C) 2020      Michael Orlitzky
+#       Copyright (C) 2020      Victor Santos
+#       Copyright (C) 2021      Jonathan Kliem
+#       Copyright (C) 2021      Travis Scrimshaw
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -48,15 +68,9 @@ import math
 import sage.rings.real_double
 import sage.rings.complex_double
 
-from .matrix cimport Matrix
-from .args cimport MatrixArgs_init
-from sage.structure.coerce cimport coercion_model
-from sage.structure.element import is_Matrix
-from sage.structure.element cimport ModuleElement,Vector
+from sage.structure.element cimport Vector
 from .constructor import matrix
 cimport sage.structure.element
-from .matrix_space import MatrixSpace
-from sage.misc.decorators import rename_keyword
 
 cimport numpy as cnumpy
 
@@ -67,7 +81,7 @@ scipy = None
 cnumpy.import_array()
 
 
-cdef class Matrix_double_dense(Matrix_dense):
+cdef class Matrix_double_dense(Matrix_numpy_dense):
     """
     Base class for matrices over the Real Double Field and the Complex
     Double Field.  These are supposed to be fast matrix operations
@@ -111,26 +125,6 @@ cdef class Matrix_double_dense(Matrix_dense):
         6694819972852100501  # 64-bit
         1829383573           # 32-bit
     """
-    def __create_matrix__(self):
-        """
-        Create a new uninitialized numpy matrix to hold the data for the class.
-
-        This function assumes that self._numpy_dtypeint and
-        self._nrows and self._ncols have already been initialized.
-
-        EXAMPLES:
-
-        In this example, we throw away the current matrix and make a
-        new uninitialized matrix representing the data for the class::
-
-            sage: a = matrix(RDF, 3, range(9))
-            sage: a.__create_matrix__()
-        """
-        cdef cnumpy.npy_intp dims[2]
-        dims[0] = self._nrows
-        dims[1] = self._ncols
-        self._matrix_numpy = cnumpy.PyArray_SimpleNew(2, dims, self._numpy_dtypeint)
-        return
 
     def LU_valid(self):
         r"""
@@ -146,133 +140,6 @@ cdef class Matrix_double_dense(Matrix_dense):
             True
         """
         return self.fetch('PLU_factors') is not None
-
-    def __init__(self, parent, entries=None, copy=None, bint coerce=True):
-        r"""
-        Fill the matrix with entries.
-
-        The numpy matrix must have already been allocated.
-
-        INPUT:
-
-        - ``parent`` -- a matrix space over ``RDF``
-
-        - ``entries`` -- see :func:`matrix`
-
-        - ``copy`` -- ignored (for backwards compatibility)
-
-        - ``coerce`` -- if ``True`` (the default), convert elements to the
-          base ring before passing them to NumPy. If ``False``, pass the
-          elements to NumPy as given.
-
-        EXAMPLES::
-
-            sage: matrix(RDF,3,range(9))
-            [0.0 1.0 2.0]
-            [3.0 4.0 5.0]
-            [6.0 7.0 8.0]
-            sage: matrix(CDF,3,3,2)
-            [2.0 0.0 0.0]
-            [0.0 2.0 0.0]
-            [0.0 0.0 2.0]
-
-        TESTS::
-
-            sage: matrix(RDF,3,0)
-            []
-            sage: matrix(RDF,3,3,0)
-            [0.0 0.0 0.0]
-            [0.0 0.0 0.0]
-            [0.0 0.0 0.0]
-            sage: matrix(RDF,3,3,1)
-            [1.0 0.0 0.0]
-            [0.0 1.0 0.0]
-            [0.0 0.0 1.0]
-            sage: matrix(RDF,3,3,2)
-            [2.0 0.0 0.0]
-            [0.0 2.0 0.0]
-            [0.0 0.0 2.0]
-            sage: matrix(CDF,3,0)
-            []
-            sage: matrix(CDF,3,3,0)
-            [0.0 0.0 0.0]
-            [0.0 0.0 0.0]
-            [0.0 0.0 0.0]
-            sage: matrix(CDF,3,3,1)
-            [1.0 0.0 0.0]
-            [0.0 1.0 0.0]
-            [0.0 0.0 1.0]
-            sage: matrix(CDF,3,3,range(9))
-            [0.0 1.0 2.0]
-            [3.0 4.0 5.0]
-            [6.0 7.0 8.0]
-            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])
-            [        0.0 1.0 + 1.0*I]
-            [2.0 + 2.0*I 3.0 + 3.0*I]
-        """
-        ma = MatrixArgs_init(parent, entries)
-        cdef long i, j
-        it = ma.iter(coerce)
-        for i in range(ma.nrows):
-            for j in range(ma.ncols):
-                self.set_unsafe(i, j, next(it))
-
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object value):
-        """
-        Set the (i,j) entry to value without any bounds checking,
-        mutability checking, etc.
-        """
-        # We assume that Py_ssize_t is the same as cnumpy.npy_intp
-
-        # We must patch the ndarrayobject.h file so that the SETITEM
-        # macro does not have a semicolon at the end for this to work.
-        # Cython wraps the macro in a function that converts the
-        # returned int to a python object, which leads to compilation
-        # errors because after preprocessing you get something that
-        # looks like "););".  This is bug
-        # http://scipy.org/scipy/numpy/ticket/918
-
-        # We call the self._python_dtype function on the value since
-        # numpy does not know how to deal with complex numbers other
-        # than the built-in complex number type.
-        cdef int status
-        status = cnumpy.PyArray_SETITEM(self._matrix_numpy,
-                        cnumpy.PyArray_GETPTR2(self._matrix_numpy, i, j),
-                        self._python_dtype(value))
-        #TODO: Throw an error if status == -1
-
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
-        """
-        Get the (i,j) entry without any bounds checking, etc.
-        """
-        # We assume that Py_ssize_t is the same as cnumpy.npy_intp
-        return self._sage_dtype(cnumpy.PyArray_GETITEM(self._matrix_numpy,
-                                                cnumpy.PyArray_GETPTR2(self._matrix_numpy, i, j)))
-
-    cdef Matrix_double_dense _new(self, int nrows=-1, int ncols=-1):
-        """
-        Return a new uninitialized matrix with same parent as ``self``.
-
-        INPUT:
-
-        - nrows -- (default self._nrows) number of rows in returned matrix
-        - ncols -- (default self._ncols) number of columns in returned matrix
-
-        """
-        cdef Matrix_double_dense m
-        if nrows == -1 and ncols == -1:
-            nrows = self._nrows
-            ncols = self._ncols
-            parent = self._parent
-        else:
-            if nrows == -1:
-                nrows = self._nrows
-            if ncols == -1:
-                ncols = self._ncols
-            parent = self.matrix_space(nrows, ncols)
-        m = self.__class__.__new__(self.__class__, parent, None, None, None)
-        return m
-
 
     ########################################################################
     # LEVEL 2 functionality
@@ -422,7 +289,7 @@ cdef class Matrix_double_dense(Matrix_dense):
         Note that if this matrix is (nearly) singular, finding
         its inverse will not help much and will give slightly different
         answers on similar platforms depending on the hardware
-        and tuning options given to ATLAS::
+        and other factors::
 
             sage: A = matrix(RDF,3,range(1,10));A
             [1.0 2.0 3.0]
@@ -441,7 +308,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             ...
             ArithmeticError: self must be a square matrix
         """
-# see trac ticket 4502 --- there is an issue with the "#random" pragma that needs to be fixed
+# see github issue 4502 --- there is an issue with the "#random" pragma that needs to be fixed
 #                          as for the mathematical side, scipy v0.7 is expected to fix the invertibility failures
 #
 #            sage: A = Matrix(RDF, [[1, 0], [0, 0]])
@@ -479,43 +346,6 @@ cdef class Matrix_double_dense(Matrix_dense):
         except LinAlgError:
             raise ZeroDivisionError("input matrix must be nonsingular")
         return M
-
-    def __copy__(self):
-        r"""
-        Return a new copy of this matrix.
-
-        EXAMPLES::
-
-            sage: a = matrix(RDF,1,3, [1,2,-3])
-            sage: a
-            [ 1.0  2.0 -3.0]
-            sage: b = a.__copy__()
-            sage: b
-            [ 1.0  2.0 -3.0]
-            sage: b is a
-            False
-            sage: b == a
-            True
-            sage: b[0,0] = 3
-            sage: a[0,0] # note that a hasn't changed
-            1.0
-
-        ::
-
-            sage: copy(MatrixSpace(RDF,0,0,sparse=False).zero_matrix())
-            []
-        """
-        if self._nrows == 0 or self._ncols == 0:
-            # Create a brand new empty matrix. This is needed to prevent a
-            # recursive loop: a copy of zero_matrix is asked otherwise.
-            return self.__class__(self.parent(), [], self._nrows, self._ncols)
-
-        cdef Matrix_double_dense A
-        A = self._new(self._nrows, self._ncols)
-        A._matrix_numpy = self._matrix_numpy.copy()
-        if self._subdivisions is not None:
-            A.subdivide(*self.subdivisions())
-        return A
 
 
     # def _list(self):
@@ -859,7 +689,7 @@ cdef class Matrix_double_dense(Matrix_dense):
                 p = sage.rings.integer.Integer(p)
             except TypeError:
                 raise ValueError("matrix norm 'p' must be +/- infinity, 'frob' or an integer, not %s" % p)
-            if not p in [-2,-1,1,2]:
+            if p not in [-2, -1, 1, 2]:
                 raise ValueError("matrix norm integer values of 'p' must be -2, -1, 1 or 2, not %s" % p)
         return sage.rings.real_double.RDF(numpy.linalg.norm(self._matrix_numpy, ord=p))
 
@@ -1109,9 +939,9 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         Below example illustrates the change in behaviour of ``LU()``. ::
 
-            sage: m == P*L*U
+            sage: (m - P*L*U).norm() < 1e-14
             True
-            sage: P*m == L*U
+            sage: (P*m - L*U).norm() < 1e-14
             False
 
         :trac:`10839` made this routine available for rectangular matrices.  ::
@@ -1201,7 +1031,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             return P, L, U
 
         PLU = self.fetch('PLU_factors')
-        if not PLU is None:
+        if PLU is not None:
             return PLU
         if scipy is None:
             import scipy
@@ -1278,7 +1108,7 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         OUTPUT:
 
-        Default output for a square matrix of size $n$ is a list of $n$
+        Default output for a square matrix of size `n` is a list of `n`
         eigenvalues from the complex double field,
         :class:`~sage.rings.complex_double.CDF`.  If the ``'symmetric'``
         or ``'hermitian'`` algorithms are chosen, the returned eigenvalues
@@ -1290,11 +1120,11 @@ cdef class Matrix_double_dense(Matrix_dense):
         where each pair is an eigenvalue followed by its multiplicity.
         The eigenvalue reported is the mean of the eigenvalues computed,
         and these eigenvalues are contained in an interval (or disk) whose
-        radius is less than ``5*tol`` for $n < 10,000$ in the worst case.
+        radius is less than ``5*tol`` for `n < 10,000` in the worst case.
 
-        More precisely, for an $n\times n$ matrix, the diameter of the
+        More precisely, for an `n\times n` matrix, the diameter of the
         interval containing similar eigenvalues could be as large as sum
-        of the reciprocals of the first $n$ integers times ``tol``.
+        of the reciprocals of the first `n` integers times ``tol``.
 
         .. WARNING::
 
@@ -1441,7 +1271,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             sage: ev = A.eigenvalues('symmetric', 1e-13)
             doctest:...: DeprecationWarning: "algorithm" and "tol" should be used
             as keyword argument only
-            See https://trac.sagemath.org/29243 for details.
+            See https://github.com/sagemath/sage/issues/29243 for details.
             sage: ev  # tol 1e-13
             [(-2.0, 4), (1.0, 5), (3.0, 1)]
             sage: A.eigenvalues('symmetric', 1e-13, tol=1e-12)
@@ -1471,7 +1301,7 @@ cdef class Matrix_double_dense(Matrix_dense):
                 tol = algorithm
             algorithm = other
             other = None
-        if not algorithm in ['default', 'symmetric', 'hermitian']:
+        if algorithm not in ['default', 'symmetric', 'hermitian']:
             msg = "algorithm must be 'default', 'symmetric', or 'hermitian', not {0}"
             raise ValueError(msg.format(algorithm))
         if not self.is_square():
@@ -1994,48 +1824,6 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         return sage.rings.real_double.RDF(sum(numpy.log(abs(numpy.diag(U._matrix_numpy)))))
 
-    def transpose(self):
-        """
-        Return the transpose of this matrix, without changing self.
-
-        EXAMPLES::
-
-            sage: m = matrix(RDF,2,3,range(6)); m
-            [0.0 1.0 2.0]
-            [3.0 4.0 5.0]
-            sage: m2 = m.transpose()
-            sage: m[0,0] = 2
-            sage: m2           #note that m2 hasn't changed
-            [0.0 3.0]
-            [1.0 4.0]
-            [2.0 5.0]
-
-        ``.T`` is a convenient shortcut for the transpose::
-
-            sage: m.T
-            [2.0 3.0]
-            [1.0 4.0]
-            [2.0 5.0]
-
-            sage: m = matrix(RDF,0,3); m
-            []
-            sage: m.transpose()
-            []
-            sage: m.transpose().parent()
-            Full MatrixSpace of 3 by 0 dense matrices over Real Double Field
-
-        """
-        if self._nrows == 0 or self._ncols == 0:
-            return self.new_matrix(self._ncols, self._nrows)
-
-        cdef Matrix_double_dense trans
-        trans = self._new(self._ncols, self._nrows)
-        trans._matrix_numpy = self._matrix_numpy.transpose().copy()
-        if self._subdivisions is not None:
-            row_divs, col_divs = self.subdivisions()
-            trans.subdivide(col_divs, row_divs)
-        return trans
-
     def conjugate(self):
         r"""
         Return the conjugate of this matrix, i.e. the matrix whose entries are
@@ -2087,7 +1875,7 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         OUTPUT:
 
-        - U, S, V -- immutable matrices such that $A = U*S*V.conj().transpose()$
+        - U, S, V -- immutable matrices such that `A = U*S*V.conj().transpose()`
           where U and V are orthogonal and S is zero off of the diagonal.
 
         Note that if self is m-by-n, then the dimensions of the
@@ -2409,55 +2197,6 @@ cdef class Matrix_double_dense(Matrix_dense):
             self.cache('QR_factors', QR)
         return QR
 
-    def is_symmetric(self, tol = 1e-12):
-        """
-        Return whether this matrix is symmetric, to the given tolerance.
-
-        EXAMPLES::
-
-            sage: m = matrix(RDF,2,2,range(4)); m
-            [0.0 1.0]
-            [2.0 3.0]
-            sage: m.is_symmetric()
-            False
-            sage: m[1,0] = 1.1; m
-            [0.0 1.0]
-            [1.1 3.0]
-            sage: m.is_symmetric()
-            False
-
-        The tolerance inequality is strict:
-            sage: m.is_symmetric(tol=0.1)
-            False
-            sage: m.is_symmetric(tol=0.11)
-            True
-
-        TESTS:
-
-        Complex entries are supported (:trac:`27831`).  ::
-
-            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])
-            sage: a.is_symmetric()
-            False
-        """
-        cdef Py_ssize_t i, j
-        tol = float(tol)
-        key = 'symmetric_%s'%tol
-        b = self.fetch(key)
-        if not b is None:
-            return b
-        if self._nrows != self._ncols:
-            self.cache(key, False)
-            return False
-        b = True
-        for i from 0 < i < self._nrows:
-            for j from 0 <= j < i:
-                if abs(self.get_unsafe(i,j) - self.get_unsafe(j,i)) > tol:
-                    b = False
-                    break
-        self.cache(key, b)
-        return b
-
     def is_unitary(self, tol=1e-12, algorithm='orthonormal'):
         r"""
         Return ``True`` if the columns of the matrix are an orthonormal basis.
@@ -2608,11 +2347,11 @@ cdef class Matrix_double_dense(Matrix_dense):
             raise TypeError('tolerance must be a real number, not {0}'.format(tol))
         if tol <= 0:
             raise ValueError('tolerance must be positive, not {0}'.format(tol))
-        if not algorithm in ['naive', 'orthonormal']:
+        if algorithm not in ['naive', 'orthonormal']:
             raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
         key = 'unitary_{0}_{1}'.format(algorithm, tol)
         b = self.fetch(key)
-        if not b is None:
+        if b is not None:
             return b
         if not self.is_square():
             self.cache(key, False)
@@ -2648,43 +2387,7 @@ cdef class Matrix_double_dense(Matrix_dense):
         self.cache(key, unitary)
         return unitary
 
-    def _is_lower_triangular(self, tol):
-        r"""
-        Return ``True`` if the entries above the diagonal are all zero.
-
-        INPUT:
-
-        - ``tol`` -  the largest value of the absolute value of the
-          difference between two matrix entries for which they will
-          still be considered equal.
-
-        OUTPUT:
-
-        Returns ``True`` if each entry above the diagonal (entries
-        with a row index less than the column index) is zero.
-
-        EXAMPLES::
-
-            sage: A = matrix(RDF, [[ 2.0, 0.0,  0.0],
-            ....:                  [ 1.0, 3.0,  0.0],
-            ....:                  [-4.0, 2.0, -1.0]])
-            sage: A._is_lower_triangular(1.0e-17)
-            True
-            sage: A[1,2] = 10^-13
-            sage: A._is_lower_triangular(1.0e-14)
-            False
-        """
-        global numpy
-        if numpy is None:
-            import numpy
-        cdef Py_ssize_t i, j
-        for i in range(self._nrows):
-            for j in range(i+1, self._ncols):
-                if abs(self.get_unsafe(i,j)) > tol:
-                    return False
-        return True
-
-    def _is_hermitian(self, tol = 1e-12, algorithm='orthonormal', skew=False):
+    def _is_hermitian_orthonormal(self, tol = 1e-12, skew=False):
         r"""
         Return ``True`` if the matrix is (skew-)Hermitian.
 
@@ -2696,10 +2399,6 @@ cdef class Matrix_double_dense(Matrix_dense):
         - ``tol`` - default: ``1e-12`` - the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
-
-        - ``algorithm`` - default: 'orthonormal' - set to 'orthonormal'
-          for a stable procedure and set to 'naive' for a fast
-          procedure.
 
         - ``skew`` - default: ``False`` - Specifies the type of the
           test. Set to ``True`` to check whether the matrix is
@@ -2719,107 +2418,55 @@ cdef class Matrix_double_dense(Matrix_dense):
         to be equal if there is a slight difference due to round-off
         and other imprecisions.
 
-        The result is cached, on a per-tolerance and per-algorithm basis.
+        The result is cached, on a per-tolerance basis.
 
         ALGORITHMS:
-
-        The naive algorithm simply compares corresponding entries on either
-        side of the diagonal (and on the diagonal itself) to see if they are
-        (skew-)conjugates, with equality controlled by the tolerance parameter.
 
         The orthonormal algorithm first computes a Schur decomposition
         (via the :meth:`schur` method) and checks that the result is a
         diagonal matrix with real entries.
-
-        So the naive algorithm can finish quickly for a matrix that is not
-        skew-Hermitian, while the orthonormal algorithm will always compute a
-        Schur decomposition before going through a similar check of the matrix
-        entry-by-entry.
 
         EXAMPLES::
 
             sage: A = matrix(CDF, [[ 1 + I,  1 - 6*I, -1 - I],
             ....:                  [-3 - I,     -4*I,     -2],
             ....:                  [-1 + I, -2 - 8*I,  2 + I]])
-            sage: A._is_hermitian(algorithm='orthonormal')
-            False
-            sage: A._is_hermitian(algorithm='naive')
+            sage: A._is_hermitian_orthonormal()
             False
             sage: B = A*A.conjugate_transpose()
-            sage: B._is_hermitian(algorithm='orthonormal')
-            True
-            sage: B._is_hermitian(algorithm='naive')
+            sage: B._is_hermitian_orthonormal()
             True
 
         A matrix that is nearly Hermitian, but for one non-real
-        diagonal entry. ::
+        diagonal entry::
 
             sage: A = matrix(CDF, [[    2,   2-I, 1+4*I],
             ....:                  [  2+I,   3+I, 2-6*I],
             ....:                  [1-4*I, 2+6*I,     5]])
-            sage: A._is_hermitian(algorithm='orthonormal')
+            sage: A._is_hermitian_orthonormal()
             False
             sage: A[1,1] = 132
-            sage: A._is_hermitian(algorithm='orthonormal')
+            sage: A._is_hermitian_orthonormal()
             True
 
-        We get a unitary matrix from the SVD routine and use this
-        numerical matrix to create a matrix that should be Hermitian
-        (indeed it should be the identity matrix), but with some
-        imprecision.  We use this to illustrate that if the tolerance
-        is set too small, then we can be too strict about the equality
-        of entries and may achieve the wrong result (depending on
-        the system)::
-
-            sage: A = matrix(CDF, [[ 1 + I,  1 - 6*I, -1 - I],
-            ....:                  [-3 - I,     -4*I,     -2],
-            ....:                  [-1 + I, -2 - 8*I,  2 + I]])
-            sage: U, _, _ = A.SVD()
-            sage: B=U*U.conjugate_transpose()
-            sage: B._is_hermitian(algorithm='naive')
-            True
-            sage: B._is_hermitian(algorithm='naive', tol=1.0e-17)  # random
-            False
-            sage: B._is_hermitian(algorithm='naive', tol=1.0e-15)
-            True
-
-        A square, empty matrix is trivially Hermitian.  ::
+        A square, empty matrix is trivially Hermitian::
 
             sage: A = matrix(RDF, 0, 0)
-            sage: A._is_hermitian()
+            sage: A._is_hermitian_orthonormal()
             True
 
-        Rectangular matrices are never Hermitian, no matter which
-        algorithm is requested.  ::
+        Rectangular matrices are never Hermitian::
 
             sage: A = matrix(CDF, 3, 4)
-            sage: A._is_hermitian()
+            sage: A._is_hermitian_orthonormal()
             False
 
-        A matrix that is skew-Hermitian. ::
+        A matrix that is skew-Hermitian::
             sage: A = matrix(CDF, [[-I, 2.0+I], [-2.0+I, 0.0]])
-            sage: A._is_hermitian()
+            sage: A._is_hermitian_orthonormal()
             False
-            sage: A._is_hermitian(skew = True)
+            sage: A._is_hermitian_orthonormal(skew=True)
             True
-
-        TESTS:
-
-        The tolerance must be strictly positive.  ::
-
-            sage: A = matrix(RDF, 2, range(4))
-            sage: A._is_hermitian(tol = -3.1)
-            Traceback (most recent call last):
-            ...
-            ValueError: tolerance must be positive, not -3.1
-
-        The ``algorithm`` keyword gets checked.  ::
-
-            sage: A = matrix(RDF, 2, range(4))
-            sage: A._is_hermitian(algorithm='junk')
-            Traceback (most recent call last):
-            ...
-            ValueError: algorithm must be 'naive' or 'orthonormal', not junk
 
         AUTHOR:
 
@@ -2829,15 +2476,10 @@ cdef class Matrix_double_dense(Matrix_dense):
         import sage.rings.complex_double
         global numpy
         tol = float(tol)
-        if tol <= 0:
-            raise ValueError('tolerance must be positive, not {0}'.format(tol))
-        if not algorithm in ['naive', 'orthonormal']:
-            raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
-        k = 'skew_hermitian' if skew else 'hermitian'
-        key = '{0}_{1}_{2}'.format(k, algorithm, tol)
+        key = ("_is_hermitian_orthonormal", tol, skew)
         h = self.fetch(key)
-        if not h is None:
+        if h is not None:
             return h
         if not self.is_square():
             self.cache(key, False)
@@ -2851,28 +2493,19 @@ cdef class Matrix_double_dense(Matrix_dense):
         cdef Matrix_double_dense T
         # A matrix M is skew-hermitian iff I*M is hermitian
         T = self.__mul__(1j) if skew else self.__copy__()
-        if algorithm == 'orthonormal':
-            # Schur decomposition over CDF will be diagonal and real iff Hermitian
-            _, T = T.schur(base_ring=sage.rings.complex_double.CDF)
-            hermitian = T._is_lower_triangular(tol)
-            if hermitian:
-                for i in range(T._nrows):
-                    if abs(T.get_unsafe(i,i).imag()) > tol:
-                        hermitian = False
-                        break
-        elif algorithm == 'naive':
-            hermitian = True
+
+        # Schur decomposition over CDF will be diagonal and real iff Hermitian
+        _, T = T.schur(base_ring=sage.rings.complex_double.CDF)
+        hermitian = T._is_lower_triangular(tol)
+        if hermitian:
             for i in range(T._nrows):
-                for j in range(i+1):
-                    if abs(T.get_unsafe(i,j) - T.get_unsafe(j,i).conjugate()) > tol:
-                        hermitian = False
-                        break
-                if not hermitian:
+                if abs(T.get_unsafe(i,i).imag()) > tol:
+                    hermitian = False
                     break
         self.cache(key, hermitian)
         return hermitian
 
-    def is_hermitian(self, tol = 1e-12, algorithm = 'orthonormal'):
+    def is_hermitian(self, tol = 1e-12, algorithm = "naive"):
         r"""
         Return ``True`` if the matrix is equal to its conjugate-transpose.
 
@@ -2882,9 +2515,8 @@ cdef class Matrix_double_dense(Matrix_dense):
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` - default: 'orthonormal' - set to 'orthonormal'
-          for a stable procedure and set to 'naive' for a fast
-          procedure.
+        - ``algorithm`` -- string (default: "naive"); either "naive"
+          or "orthonormal"
 
         OUTPUT:
 
@@ -2978,14 +2610,6 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         TESTS:
 
-        The tolerance must be strictly positive. ::
-
-            sage: A = matrix(RDF, 2, range(4))
-            sage: A.is_hermitian(tol = -3.1)
-            Traceback (most recent call last):
-            ...
-            ValueError: tolerance must be positive, not -3.1
-
         The ``algorithm`` keyword gets checked. ::
 
             sage: A = matrix(RDF, 2, range(4))
@@ -2998,7 +2622,12 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         - Rob Beezer (2011-03-30)
         """
-        return self._is_hermitian(tol=tol, algorithm=algorithm, skew=False)
+        if algorithm == "naive":
+            return super()._is_hermitian(skew=False, tolerance=tol)
+        elif algorithm == "orthonormal":
+            return self._is_hermitian_orthonormal(tol=tol, skew=False)
+        else:
+            raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
     def is_skew_hermitian(self, tol = 1e-12, algorithm = 'orthonormal'):
         r"""
@@ -3101,14 +2730,6 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         TESTS:
 
-        The tolerance must be strictly positive.  ::
-
-            sage: A = matrix(RDF, 2, range(4))
-            sage: A.is_skew_hermitian(tol = -3.1)
-            Traceback (most recent call last):
-            ...
-            ValueError: tolerance must be positive, not -3.1
-
         The ``algorithm`` keyword gets checked.  ::
 
             sage: A = matrix(RDF, 2, range(4))
@@ -3122,7 +2743,12 @@ cdef class Matrix_double_dense(Matrix_dense):
         - Rob Beezer (2011-03-30)
 
         """
-        return self._is_hermitian(tol=tol, algorithm=algorithm, skew=True)
+        if algorithm == "naive":
+            return super()._is_hermitian(skew=True, tolerance=tol)
+        elif algorithm == "orthonormal":
+            return self._is_hermitian_orthonormal(tol=tol, skew=True)
+        else:
+            raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
     def is_normal(self, tol=1e-12, algorithm='orthonormal'):
         r"""
@@ -3279,12 +2905,12 @@ cdef class Matrix_double_dense(Matrix_dense):
         tol = float(tol)
         if tol <= 0:
             raise ValueError('tolerance must be positive, not {0}'.format(tol))
-        if not algorithm in ['naive', 'orthonormal']:
+        if algorithm not in ['naive', 'orthonormal']:
             raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
         key = 'normal_{0}_{1}'.format(algorithm, tol)
         b = self.fetch(key)
-        if not b is None:
+        if b is not None:
             return b
         if not self.is_square():
             self.cache(key, False)
@@ -3574,7 +3200,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             raise ValueError('Schur decomposition requires a square matrix, not a {0} x {1} matrix'.format(self.nrows(), self.ncols()))
         if base_ring is None:
             base_ring = self.base_ring()
-        if not base_ring in [RDF, CDF]:
+        if base_ring not in [RDF, CDF]:
             raise ValueError('base ring of Schur decomposition matrices must be RDF or CDF, not {0}'.format(base_ring))
 
         if self.base_ring() != base_ring:
@@ -3588,7 +3214,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             format = 'real'
 
         schur = self.fetch('schur_factors_' + format)
-        if not schur is None:
+        if schur is not None:
             return schur
         if scipy is None:
             import scipy
@@ -3642,7 +3268,7 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         EXAMPLES:
 
-        A real matrix that is symmetric and positive definite.  ::
+        A real matrix that is symmetric, Hermitian, and positive definite::
 
             sage: M = matrix(RDF,[[ 1,  1,    1,     1,     1],
             ....:                 [ 1,  5,   31,   121,   341],
@@ -3650,6 +3276,8 @@ cdef class Matrix_double_dense(Matrix_dense):
             ....:                 [ 1,121, 1555,  7381, 22621],
             ....:                 [ 1,341, 4681, 22621, 69905]])
             sage: M.is_symmetric()
+            True
+            sage: M.is_hermitian()
             True
             sage: L = M.cholesky()
             sage: L.round(6).zero_at(10^-10)
@@ -3725,13 +3353,23 @@ cdef class Matrix_double_dense(Matrix_dense):
             sage: A.cholesky()
             []
 
-        The Cholesky factorization is only defined for square matrices.  ::
+        The Cholesky factorization is only defined for Hermitian (in
+        particular, square) matrices::
 
             sage: A = matrix(RDF, 4, 5, range(20))
             sage: A.cholesky()
             Traceback (most recent call last):
             ...
-            ValueError: Cholesky decomposition requires a square matrix, not a 4 x 5 matrix
+            ValueError: matrix is not Hermitian
+
+        ::
+
+            sage: A = matrix(CDF, [[1+I]])
+            sage: A.cholesky()
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is not Hermitian
+
         """
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
@@ -3739,31 +3377,32 @@ cdef class Matrix_double_dense(Matrix_dense):
         cdef Matrix_double_dense L
         cache_cholesky = 'cholesky'
         cache_posdef = 'positive_definite'
+        L = self.fetch(cache_cholesky)
+        if L is not None:
+            return L
 
-        if not self.is_square():
-            msg = "Cholesky decomposition requires a square matrix, not a {0} x {1} matrix"
+        if not self.is_hermitian():
             self.cache(cache_posdef, False)
-            raise ValueError(msg.format(self.nrows(), self.ncols()))
+            raise ValueError("matrix is not Hermitian")
+
         if self._nrows == 0:   # special case
             self.cache(cache_posdef, True)
-            return self.__copy__()
-
-        L = self.fetch(cache_cholesky)
-        if L is None:
-            L = self._new()
-            global scipy
-            if scipy is None:
-                import scipy
-            import scipy.linalg
-            from numpy.linalg import LinAlgError
-            try:
-                L._matrix_numpy = scipy.linalg.cholesky(self._matrix_numpy, lower=1)
-            except LinAlgError:
-                self.cache(cache_posdef, False)
-                raise ValueError("matrix is not positive definite")
+            L = self.__copy__()
             L.set_immutable()
-            self.cache(cache_cholesky, L)
-            self.cache(cache_posdef, True)
+            return L
+
+        L = self._new()
+        from scipy.linalg import cholesky
+        from numpy.linalg import LinAlgError
+        try:
+            L._matrix_numpy = cholesky(self._matrix_numpy, lower=1)
+        except LinAlgError:
+            self.cache(cache_posdef, False)
+            raise ValueError("matrix is not positive definite")
+        L.set_immutable()
+        self.cache(cache_cholesky, L)
+        self.cache(cache_posdef, True)
+
         return L
 
     def is_positive_definite(self):
@@ -3893,10 +3532,16 @@ cdef class Matrix_double_dense(Matrix_dense):
             sage: R.is_positive_definite()
             False
 
-        A non-Hermitian matrix will never be positive definite.  ::
+        A non-Hermitian matrix will never be positive definite::
 
             sage: T = matrix(CDF, 8, 8, range(64))
             sage: T.is_positive_definite()
+            False
+
+        ::
+
+            sage: A = matrix(CDF, [[1+I]])
+            sage: A.is_positive_definite()
             False
 
         AUTHOR:
@@ -3915,20 +3560,20 @@ cdef class Matrix_double_dense(Matrix_dense):
 
     cdef _vector_times_matrix_(self,Vector v):
         if self._nrows == 0 or self._ncols == 0:
-            return self._row_ambient_module().zero_vector()
+            return self.row_ambient_module().zero_vector()
         global numpy
         if numpy is None:
             import numpy
 
         v_numpy = numpy.array([self._python_dtype(i) for i in v])
 
-        M = self._row_ambient_module()
+        M = self.row_ambient_module()
         ans = numpy.dot(v_numpy,self._matrix_numpy)
         return M(ans)
 
     cdef _matrix_times_vector_(self,Vector v):
         if self._nrows == 0 or self._ncols == 0:
-            return self._column_ambient_module().zero_vector()
+            return self.column_ambient_module().zero_vector()
 
         global numpy
         if numpy is None:
@@ -3936,91 +3581,9 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         v_numpy = numpy.array([self._python_dtype(i) for i in v], dtype=self._numpy_dtype)
 
-        M = self._column_ambient_module()
+        M = self.column_ambient_module()
         ans = numpy.dot(self._matrix_numpy, v_numpy)
         return M(ans)
-
-    def numpy(self, dtype=None):
-        """
-        This method returns a copy of the matrix as a numpy array. It
-        uses the numpy C/api so is very fast.
-
-        INPUT:
-
-        - ``dtype`` - The desired data-type for the array. If not given,
-          then the type will be determined as the minimum type required
-          to hold the objects in the sequence.
-
-        EXAMPLES::
-
-            sage: m = matrix(RDF,[[1,2],[3,4]])
-            sage: n = m.numpy()
-            sage: import numpy
-            sage: numpy.linalg.eig(n)
-            (array([-0.37228132,  5.37228132]), array([[-0.82456484, -0.41597356],
-                   [ 0.56576746, -0.90937671]]))
-            sage: m = matrix(RDF, 2, range(6)); m
-            [0.0 1.0 2.0]
-            [3.0 4.0 5.0]
-            sage: m.numpy()
-            array([[0., 1., 2.],
-                   [3., 4., 5.]])
-
-        Alternatively, numpy automatically calls this function (via
-        the magic :meth:`__array__` method) to convert Sage matrices
-        to numpy arrays::
-
-            sage: import numpy
-            sage: m = matrix(RDF, 2, range(6)); m
-            [0.0 1.0 2.0]
-            [3.0 4.0 5.0]
-            sage: numpy.array(m)
-            array([[0., 1., 2.],
-                   [3., 4., 5.]])
-            sage: numpy.array(m).dtype
-            dtype('float64')
-            sage: m = matrix(CDF, 2, range(6)); m
-            [0.0 1.0 2.0]
-            [3.0 4.0 5.0]
-            sage: numpy.array(m)
-            array([[0.+0.j, 1.+0.j, 2.+0.j],
-                   [3.+0.j, 4.+0.j, 5.+0.j]])
-            sage: numpy.array(m).dtype
-            dtype('complex128')
-
-        TESTS::
-
-            sage: m = matrix(RDF,0,5,[]); m
-            []
-            sage: m.numpy()
-            array([], shape=(0, 5), dtype=float64)
-            sage: m = matrix(RDF,5,0,[]); m
-            []
-            sage: m.numpy()
-            array([], shape=(5, 0), dtype=float64)
-        """
-        import numpy as np
-        if dtype is None or self._numpy_dtype == np.dtype(dtype):
-            return self._matrix_numpy.copy()
-        else:
-            return Matrix_dense.numpy(self, dtype=dtype)
-
-    def _replace_self_with_numpy(self,numpy_matrix):
-        """
-
-        EXAMPLES::
-
-            sage: import numpy
-            sage: a = numpy.array([[1,2],[3,4]], 'float64')
-            sage: m = matrix(RDF,2,2,0)
-            sage: m._replace_self_with_numpy(a)
-            sage: m
-            [1.0 2.0]
-            [3.0 4.0]
-        """
-        if (<object>self._matrix_numpy).shape != (<object>numpy_matrix).shape:
-            raise ValueError("matrix shapes are not the same")
-        self._matrix_numpy = numpy_matrix.astype(self._numpy_dtype)
 
     def _replace_self_with_numpy32(self,numpy_matrix):
         """
@@ -4041,7 +3604,7 @@ cdef class Matrix_double_dense(Matrix_dense):
     def _hadamard_row_bound(self):
         r"""
         Return an integer n such that the absolute value of the
-        determinant of this matrix is at most $10^n$.
+        determinant of this matrix is at most `10^n`.
 
         EXAMPLES::
 
@@ -4076,7 +3639,7 @@ cdef class Matrix_double_dense(Matrix_dense):
             sage: A = matrix(RDF, 2, [1,2,3,4]); A
             [1.0 2.0]
             [3.0 4.0]
-            sage: A.exp()  # tol 1e-15
+            sage: A.exp()  # tol 1e-14
             [51.968956198705044  74.73656456700327]
             [112.10484685050491 164.07380304920997]
             sage: A = matrix(CDF, 2, [1,2+I,3*I,4]); A
@@ -4089,7 +3652,7 @@ cdef class Matrix_double_dense(Matrix_dense):
         TESTS::
 
             sage: A = matrix(RDF, 2, [1,2,3,4])
-            sage: A.exp()   # tol 1e-15
+            sage: A.exp()   # tol 1e-14
             [51.968956198705044  74.73656456700327]
             [112.10484685050491 164.07380304920997]
 

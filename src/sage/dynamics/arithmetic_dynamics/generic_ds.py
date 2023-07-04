@@ -33,7 +33,7 @@ from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.schemes.affine.affine_space import is_AffineSpace
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.qqbar import AlgebraicField_common
 from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
 from sage.rings.rational_field import QQ
@@ -142,7 +142,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         sage: DynamicalSystem([GF(5)(3)*x^2, K(t)*y^2])
         Dynamical System of Projective Space of dimension 1 over Finite Field in t of size 5^2
           Defn: Defined on coordinates by sending (x : y) to
-                (-2*x^2 : (t)*y^2)
+                (-2*x^2 : t*y^2)
     """
 
     @staticmethod
@@ -160,7 +160,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         """
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             domain = morphism_or_polys.domain()
-        if not domain is None:
+        if domain is not None:
             if is_AffineSpace(domain) or isinstance(domain, AlgebraicScheme_subscheme_affine):
                 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
                 return DynamicalSystem_affine(morphism_or_polys, domain)
@@ -401,7 +401,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         space = ds.domain().ambient_space()
         K = ds.base_ring()
         if space.dimension() != 1:
-            raise ValueError('Ambient space of dynamical system must be either the affine line or projective line')
+            raise ValueError('ambient space of dynamical system must be either the affine line or projective line')
         if isinstance(K, (AlgebraicClosureFiniteField_generic, AlgebraicField_common)):
             if return_embedding:
                 return (K, K.hom(K))
@@ -416,7 +416,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             CR = CR.ring()
         x = CR.gen(0)
         poly = (g*CR(f).derivative(x) - f*CR(g).derivative(x)).univariate_polynomial()
-        if is_FiniteField(ds.base_ring()):
+        if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
         else:
             K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
@@ -536,7 +536,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             fn = ds.nth_iterate_map(n)
             f,g = fn[0].numerator(), fn[0].denominator()
             poly = (f - g*x).univariate_polynomial()
-        if is_FiniteField(ds.base_ring()):
+        if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
         else:
             K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
@@ -630,7 +630,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             #want the polynomial ring not the fraction field
             CR = CR.ring()
         poly = (f*point[1] - g*CR(point[0])).univariate_polynomial()
-        if is_FiniteField(ds.base_ring()):
+        if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
         else:
             K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
@@ -640,7 +640,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
                 N = K
             if N.absolute_degree() == 1:
                 if return_embedding:
-                    return (QQ,ds.base_ring().embeddings(QQ)[0])
+                    return (QQ, ds.base_ring().embeddings(QQ)[0])
                 else:
                     return QQ
             else:

@@ -98,7 +98,7 @@ class JSMolHtml(SageObject):
           instance. The 3-d scene to show.
 
         - ``path_to_jsmol`` -- string (optional, default is
-          ``'/nbextensions/jupyter_jsmol/jsmol'``). The path (relative or absolute)
+          ``'/nbextensions/jupyter-jsmol/jsmol'``). The path (relative or absolute)
           where ``JSmol.min.js`` is served on the web server.
 
         - ``width`` -- integer or string (optional, default:
@@ -121,7 +121,7 @@ class JSMolHtml(SageObject):
         self._jmol = jmol
         self._zip = zipfile.ZipFile(io.BytesIO(self._jmol.scene_zip.get()))
         if path_to_jsmol is None:
-            self._path = os.path.join('/', 'nbextensions', 'jupyter_jsmol', 'jsmol')
+            self._path = os.path.join('/', 'nbextensions', 'jupyter-jsmol', 'jsmol')
         else:
             self._path = path_to_jsmol
         self._width = width
@@ -259,13 +259,9 @@ class JSMolHtml(SageObject):
             </iframe>
         """
         escaped_inner_html = self.inner_html().replace('"', '&quot;')
-        iframe = IFRAME_TEMPLATE.format(
-            script=self.js_script(),
-            width=self._width,
-            height=self._height,
-            escaped_inner_html=escaped_inner_html,
-        )
-        return iframe
+        return IFRAME_TEMPLATE.format(width=self._width,
+                                      height=self._height,
+                                      escaped_inner_html=escaped_inner_html)
 
     def outer_html(self):
         """

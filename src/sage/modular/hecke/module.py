@@ -12,20 +12,21 @@ Hecke modules
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ, QQ, CommutativeRing
-import sage.arith.all as arith
-from sage.misc.verbose import verbose
-import sage.modules.module
-from sage.structure.all import Sequence
-import sage.matrix.matrix_space as matrix_space
-
 import sage.misc.prandom as random
+
+from sage.arith.misc import is_prime, factor, prime_divisors, gcd, primes, valuation, GCD, next_prime
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.verbose import verbose
+from sage.modules.free_module import FreeModule
+from sage.modules.module import Module
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.ring import CommutativeRing
+from sage.structure.sequence import Sequence
 
 from . import algebra
 from . import element
 from . import hecke_operator
-
-from sage.modules.all import FreeModule
 
 
 def is_HeckeModule(x):
@@ -45,7 +46,7 @@ def is_HeckeModule(x):
     return isinstance(x, HeckeModule_generic)
 
 
-class HeckeModule_generic(sage.modules.module.Module):
+class HeckeModule_generic(Module):
     r"""
     A very general base class for Hecke modules.
 
@@ -84,7 +85,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         else:
             assert category.is_subcategory(default_category), "%s is not a subcategory of %s" % (category, default_category)
 
-        sage.modules.module.Module.__init__(self, base_ring, category=category)
+        Module.__init__(self, base_ring, category=category)
 
         level = ZZ(level)
         if level <= 0:
@@ -105,7 +106,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         if not self._is_category_initialized():
             from sage.categories.hecke_modules import HeckeModules
             self._init_category_(HeckeModules(state['_base']))
-        sage.modules.module.Module.__setstate__(self, state)
+        Module.__setstate__(self, state)
 
     def __hash__(self):
         r"""
@@ -139,7 +140,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         """
         # convert input arguments to int's.
         p, r = (int(p), int(r))
-        if not arith.is_prime(p):
+        if not is_prime(p):
             raise ArithmeticError("p must be a prime")
         # T_{p^r} := T_p * T_{p^{r-1}} - eps(p)p^{k-1} T_{p^{r-2}}.
         pow = p**(r - 1)
@@ -210,13 +211,13 @@ class HeckeModule_generic(sage.modules.module.Module):
         if n < 1:
             raise ValueError("Hecke operator T_%s is not defined." % n)
         if n == 1:
-            Mat = matrix_space.MatrixSpace(self.base_ring(), self.rank())
+            Mat = MatrixSpace(self.base_ring(), self.rank())
             return Mat(1)
 
-        if arith.is_prime(n):
+        if is_prime(n):
             return self._compute_hecke_matrix_prime(n, **kwds)
 
-        F = arith.factor(n)
+        F = factor(n)
         if len(F) == 1:  # nontrivial prime power case
             return self._compute_hecke_matrix_prime_power(F[0][0], F[0][1], **kwds)
 
@@ -389,7 +390,7 @@ class HeckeModule_generic(sage.modules.module.Module):
         # dividing the level
         verbose("Determining if Hecke module is full.")
         N = self.level()
-        for p in arith.prime_divisors(N):
+        for p in prime_divisors(N):
             if not self.is_hecke_invariant(p):
                 self._is_full_hecke_module = False
                 return False
@@ -420,7 +421,7 @@ class HeckeModule_generic(sage.modules.module.Module):
             sage: [n for n in range(1,12) if S.is_hecke_invariant(n)]
             [1, 3, 5, 7, 9, 11]
         """
-        if arith.gcd(n, self.level()) == 1:
+        if gcd(n, self.level()) == 1:
             return True
         if self.is_ambient():
             return True
@@ -627,8 +628,8 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def _hecke_image_of_ith_basis_vector(self, n, i):
         r"""
-        Return `T_n(e_i)`, where `e_i` is the
-        `i`th basis vector of the ambient space.
+        Return `T_n(e_i)`, where `e_i` is the `i`-th basis vector
+        of the ambient space.
 
         EXAMPLES::
 
@@ -684,7 +685,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         verbose("Determining if free module is Hecke equivariant.")
         bound = self.hecke_bound()
-        for p in arith.primes(bound + 1):
+        for p in primes(bound + 1):
             try:
                 self.T(p).matrix().restrict(submodule, check=True)
             except ArithmeticError:
@@ -843,8 +844,8 @@ class HeckeModule_free_module(HeckeModule_generic):
             raise ArithmeticError("d (=%s) must be a divisor of the level (=%s)" % (d, self.level()))
 
         N = self.level()
-        for p, e in arith.factor(d):
-            v = arith.valuation(N, p)
+        for p, e in factor(d):
+            v = valuation(N, p)
             if e < v:
                 d *= p**(v - e)
         d = int(d)
@@ -1004,8 +1005,8 @@ class HeckeModule_free_module(HeckeModule_generic):
         while U and p <= bound:
             verbose(mesg="p=%s" % p, t=time)
             if anemic:
-                while arith.GCD(p, self.level()) != 1:
-                    p = arith.next_prime(p)
+                while GCD(p, self.level()) != 1:
+                    p = next_prime(p)
             verbose("Decomposition using p=%s" % p)
             t = T.hecke_operator(p).matrix()
             Uprime = []
@@ -1027,7 +1028,7 @@ class HeckeModule_free_module(HeckeModule_generic):
                     else:
                         Uprime.append(W)
             # end for
-            p = arith.next_prime(p)
+            p = next_prime(p)
             U = Uprime
         # end while
         for i in range(len(U)):
@@ -1137,7 +1138,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             f = t.charpoly('x')
             if f.is_irreducible():
                 break
-            p = arith.next_prime(p)
+            p = next_prime(p)
             t += random.choice([-2, -1, 1, 2]) * self.dual_hecke_matrix(p)
 
         # Write down the eigenvector.
@@ -1289,7 +1290,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         ev = self.__eigenvalues
 
-        if n == 1 or arith.is_prime(n):
+        if n == 1 or is_prime(n):
             Tn_e = self._eigen_nonzero_element(n)
             an = self._element_eigenvalue(Tn_e, name=name)
             _dict_set(ev, n, name, an)
@@ -1300,7 +1301,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         # non-prime n and doing some big sum (i.e., computing T_n(e)).
         # Also by computing using the recurrence on eigenvalues
         # we use information about divisors.
-        F = arith.factor(n)
+        F = factor(n)
         prod = None
         for p, r in F:
             (p, r) = (int(p), int(r))
@@ -1443,7 +1444,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         d = int(d) % self.level()
         if d not in self._diamond_matrices:
             if self.character() is not None:
-                D = matrix_space.MatrixSpace(self.base_ring(), self.rank())(self.character()(d))
+                D = MatrixSpace(self.base_ring(), self.rank())(self.character()(d))
             else:
                 D = self._compute_diamond_matrix(d)
             D.set_immutable()

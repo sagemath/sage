@@ -74,7 +74,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: cartesian_product([ZZ, ZZ], blub=None)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() got an unexpected keyword argument 'blub'
+            TypeError: ...__init__() got an unexpected keyword argument 'blub'
         """
         self._sets = tuple(sets)
         Parent.__init__(self, category=category)
@@ -294,7 +294,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             if len(S_factors) == len(R_factors):
                 if all(r.has_coerce_map_from(s) for r, s in zip(R_factors, S_factors)):
                     return True
-        return super(CartesianProduct, self)._coerce_map_from_(S)
+        return super()._coerce_map_from_(S)
 
     an_element = Sets.CartesianProducts.ParentMethods.an_element
 

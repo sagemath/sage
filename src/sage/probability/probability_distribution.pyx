@@ -29,28 +29,25 @@ REFERENCES:
     GNU gsl library, Random number distributions
     http://www.gnu.org/software/gsl/manual/html_node/Random-Number-Distributions.html
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004, 2005, 2006 Joshua Kantor <kantor.jm@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-import sys
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from cysignals.memory cimport sig_malloc, sig_free
 
-import sage.plot.plot
 from sage.libs.gsl.all cimport *
 import sage.misc.prandom as random
+import sage.rings.real_double
 from sage.modules.free_module_element import vector
 
-#TODO: Add more distributions available in gsl
-#available but not currently wrapped are exponential, laplace, cauchy, landau, gamma,
-#gamma, beta logistic.
+# TODO: Add more distributions available in gsl
+# available but not currently wrapped are exponential, laplace, cauchy, landau, gamma,
+# gamma, beta logistic.
 
 cdef enum:
     uniform
@@ -164,16 +161,14 @@ cdef class ProbabilityDistribution:
 
         EXAMPLES:
 
-        This saves the histogram plot to
-        ``my_general_distribution_plot.png`` in the temporary
-        directory ``SAGE_TMP``::
+        This saves the histogram plot to a temporary file::
 
             sage: from sage.probability.probability_distribution import GeneralDiscreteDistribution
-            sage: import os
+            sage: import tempfile
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: file = os.path.join(SAGE_TMP, "my_general_distribution_plot")
-            sage: X.generate_histogram_plot(file)
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     X.generate_histogram_plot(f.name)
         """
         import pylab
         l = [float(self.get_random_element()) for _ in range(num_samples)]
@@ -309,11 +304,10 @@ cdef class SphericalDistribution(ProbabilityDistribution):
             sage: T.get_random_element()  # rel tol 4e-16
             (0.07961564104639995, -0.05237671627581255, 0.9954486572862178)
         """
-
         cdef int i
         v = [0]*self.dimension
         gsl_ran_dir_nd(self.r, self.dimension, self.vec)
-        for i from 0 <= i<self.dimension:
+        for i in range(self.dimension):
             v[i] = self.vec[i]
         return vector(sage.rings.real_double.RDF, v) #This could be made more efficient by directly constructing the vector, TODO.
 
@@ -700,15 +694,15 @@ cdef class RealDistribution(ProbabilityDistribution):
         sig_free(self.parameters)
 
         if name == 'uniform':
-          self.distribution_type = uniform
-          for x in parameters:
-              try:
-                  float(x)
-              except Exception:
-                  raise TypeError("Uniform distribution requires parameters coercible to float")
-          self.parameters = <double*>sig_malloc(sizeof(double)*2)
-          self.parameters[0] = parameters[0]
-          self.parameters[1] = parameters[1]
+            self.distribution_type = uniform
+            for x in parameters:
+                try:
+                    float(x)
+                except Exception:
+                    raise TypeError("Uniform distribution requires parameters coercible to float")
+            self.parameters = <double*>sig_malloc(sizeof(double)*2)
+            self.parameters[0] = parameters[0]
+            self.parameters[1] = parameters[1]
         elif name == 'gaussian':
             try:
                 float(parameters)
@@ -954,7 +948,7 @@ cdef class RealDistribution(ProbabilityDistribution):
     def plot(self, *args, **kwds):
         """
         Plot the distribution function for the probability
-        distribution. Parameters to ``sage.plot.plot.plot.plot`` can be
+        distribution. Parameters to :func:`sage.plot.plot.plot` can be
         passed through ``*args`` and ``**kwds``.
 
         EXAMPLES::
@@ -962,8 +956,9 @@ cdef class RealDistribution(ProbabilityDistribution):
             sage: T = RealDistribution('uniform', [0, 2])
             sage: P = T.plot()
         """
+        from sage.plot.plot import plot
+        return plot(self.distribution_function, *args, **kwds)
 
-        return sage.plot.plot.plot(self.distribution_function, *args, **kwds)
 
 cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
     """
@@ -988,7 +983,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
     EXAMPLES:
 
     Constructs a ``GeneralDiscreteDistribution`` with the probability
-    distribution `$P$` where `$P(0) = 0.3$`, `$P(1) = 0.4$`, `$P(2) = 0.3$`::
+    distribution `P` where `P(0) = 0.3`, `P(1) = 0.4`, `P(2) = 0.3`::
 
         sage: P = [0.3, 0.4, 0.3]
         sage: X = GeneralDiscreteDistribution(P)
@@ -1005,7 +1000,6 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         ....:     counts[X.get_random_element()] += 1
         sage: [1.0*x/nr_samples for x in counts]  # abs tol 3e-2
         [0.3, 0.4, 0.3]
-
 
     The distribution probabilities will automatically be normalised::
 
@@ -1176,6 +1170,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             sage: [T.get_random_element() for _ in range(10)]
             [2, 2, 2, 2, 2, 1, 2, 2, 1, 2]
         """
-        if self.r != NULL: gsl_rng_free(self.r)
+        if self.r != NULL:
+            gsl_rng_free(self.r)
         self.r = gsl_rng_alloc(self.T)
         self.set_seed(self.seed)

@@ -1,4 +1,5 @@
 from sage.libs.singular.decl cimport ring, poly, number, intvec
+from sage.libs.singular.function cimport Resolution
 
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element
@@ -31,6 +32,10 @@ cdef object si2sa_intvec(intvec *v)
 
 # dispatches to all the above.
 cdef object si2sa(number *n, ring *_ring, object base)
+
+cdef list singular_monomial_exponents(poly *p, ring *r)
+cpdef list si2sa_resolution(Resolution res)
+cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees)
 
 # ======================================
 # Conversion from Sage to Singular types

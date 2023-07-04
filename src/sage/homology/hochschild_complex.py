@@ -269,6 +269,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         Fd = self.module(d-1)
         Fd1 = self.module(d)
         mone = -one
+
         def on_basis(k):
             p = self._M.monomial(k[0]) * self._A.monomial(k[1])
             ret = Fd._from_dict({(m,) + k[2:]: c for m,c in p}, remove_zeros=False)
@@ -668,7 +669,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         def _add_(self, other):
             """
             Module addition
-            
+
             EXAMPLES::
 
                 sage: F.<x,y> = FreeAlgebra(ZZ)

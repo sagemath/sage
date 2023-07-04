@@ -5,11 +5,11 @@ See :pari:`polgalois` for the PARI documentation of these objects.
 """
 
 from sage.libs.pari import pari
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.groups.perm_gps.permgroup_named import TransitiveGroup
 
 
-class PariGroup(object):
+class PariGroup():
     def __init__(self, x, degree):
         """
         EXAMPLES::

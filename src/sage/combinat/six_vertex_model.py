@@ -8,10 +8,12 @@ from sage.structure.list_clone import ClonableArray
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.combinatorial_map import combinatorial_map
 
+
 class SixVertexConfiguration(ClonableArray):
     """
     A configuration in the six vertex model.
     """
+
     def check(self):
         """
         Check if ``self`` is a valid 6 vertex configuration.
@@ -118,13 +120,14 @@ class SixVertexConfiguration(ClonableArray):
         """
         from sage.matrix.constructor import matrix
         # verts = ['LR', 'LU', 'LD', 'UD', 'UR', 'RD']
+
         def matrix_sign(x):
             if x == 0:
                 return -1
             if x == 3:
                 return 1
             return 0
-        return matrix([[matrix_sign(_) for _ in row] for row in self])
+        return matrix([[matrix_sign(r) for r in row] for row in self])
 
     def plot(self, color='sign'):
         """
@@ -288,6 +291,7 @@ class SixVertexConfiguration(ClonableArray):
             raise ValueError("there must be 6 energy constants")
         return sum(epsilon[entry] for row in self for entry in row)
 
+
 class SixVertexModel(UniqueRepresentation, Parent):
     """
     The six vertex model.
@@ -450,7 +454,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
             boundary_conditions = ((False,)*m, (True,)*n)*2
         else:
             boundary_conditions = tuple(tuple(x) for x in boundary_conditions)
-        return super(SixVertexModel, cls).__classcall__(cls, n, m, boundary_conditions)
+        return super().__classcall__(cls, n, m, boundary_conditions)
 
     def __init__(self, n, m, boundary_conditions):
         """
@@ -656,6 +660,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         from sage.functions.log import exp
         return sum(exp(-beta * nu.energy(epsilon)) for nu in self)
 
+
 class SquareIceModel(SixVertexModel):
     r"""
     The square ice model.
@@ -668,6 +673,7 @@ class SquareIceModel(SixVertexModel):
     Configurations of the 6 vertex model with domain wall boundary conditions
     are in bijection with alternating sign matrices.
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.
@@ -775,4 +781,3 @@ class SquareIceModel(SixVertexModel):
             #ASM = AlternatingSignMatrices(self.parent()._nrows)
             #return ASM(self.to_signed_matrix())
             return AlternatingSignMatrix(self.to_signed_matrix())
-

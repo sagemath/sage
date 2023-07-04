@@ -73,10 +73,10 @@ index b5dd325..d45b553 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -14,6 +14,8 @@ libgiac_la_SOURCES = input_lexer.ll sym2poly.cc gausspol.cc threaded.cc \
-   help.cc  lpsolve.cc optimization.cc signalprocessing.cc \
-   graphe.cc graphtheory.cc nautywrapper.c markup.cc kdisplay.cc kadd.cc # Ugh..
+   caseval.c cutils.c graphic.c libbf.c libregexp.c libunicode.c \
+   qjsgiac.c quickjs.c quickjs-libc.c js.c
  
--libgiac_la_LIBADD = $(NTL_LIBS) $(COCOA_LIBS) $(PARI_LIBS) $(GSL_LIBS)
+-libgiac_la_LIBADD = $(NTL_LIBS) $(COCOA_LIBS) $(PARI_LIBS) $(GSL_LIBS) 
 +libgiac_la_LIBADD = $(NTL_LIBS) $(COCOA_LIBS) $(PARI_LIBS) $(GSL_LIBS) $(LAPACK_LIBS) $(BLAS_LIBS)
 +
 +AM_LDFLAGS = -no-undefined

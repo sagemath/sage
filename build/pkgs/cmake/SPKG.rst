@@ -27,11 +27,3 @@ Upstream Contact
 -  https://cmake.org/
 
 -  cmake-developers@cmake.org
-
-Dependencies
-------------
-
--  curl
--  zlib
--  bzip2
--  xz

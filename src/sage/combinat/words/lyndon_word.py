@@ -12,17 +12,15 @@ Lyndon words
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-
-from sage.combinat.composition import Composition, Compositions
-from sage.rings.all import Integer
-from sage.arith.all import divisors, gcd, moebius, multinomial
-
-from sage.combinat.necklace import _sfc
-from sage.combinat.words.words import FiniteWords
-from sage.combinat.words.finite_word import FiniteWord_class
+from sage.arith.misc import divisors, gcd, moebius, multinomial
 from sage.combinat.combinat_cython import lyndon_word_iterator
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.necklace import _sfc
+from sage.combinat.words.finite_word import FiniteWord_class
+from sage.combinat.words.words import FiniteWords
+from sage.rings.integer import Integer
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 def LyndonWords(e=None, k=None):
@@ -406,7 +404,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             sage: L([2,3,4])
             Traceback (most recent call last):
             ...
-            ValueError: 4 not in alphabet!
+            ValueError: 4 not in alphabet
             sage: L([2,1,3])
             Traceback (most recent call last):
             ...
@@ -612,6 +610,7 @@ def standard_bracketing(lw):
     for i in range(1, len(lw)):
         if lw[i:] in LyndonWords():
             return [standard_bracketing(lw[:i]), standard_bracketing(lw[i:])]
+
 
 def standard_unbracketing(sblw):
     """

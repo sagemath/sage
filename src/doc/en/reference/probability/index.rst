@@ -2,7 +2,7 @@ Probability
 ===========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/probability/probability_distribution
    sage/probability/random_variable

@@ -113,7 +113,7 @@ class GoppaCode(AbstractLinearCode):
         self._generating_pol = generating_pol
         self._defining_set = defining_set
 
-        super(GoppaCode, self).__init__(self._field, self._length, "GoppaEncoder", "Syndrome")
+        super().__init__(self._field, self._length, "GoppaEncoder", "Syndrome")
 
         if not generating_pol.is_monic():
             raise ValueError("generating polynomial must be monic")
@@ -353,7 +353,7 @@ class GoppaCodeEncoder(Encoder):
             sage: E = codes.encoders.GoppaCodeEncoder(C)
             sage: TestSuite(E).run()
         """
-        super(GoppaCodeEncoder, self).__init__(code)
+        super().__init__(code)
 
     def _repr_(self):
         """

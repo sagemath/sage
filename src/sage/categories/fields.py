@@ -2,7 +2,7 @@
 r"""
 Fields
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
@@ -10,8 +10,8 @@ Fields
 #                2012-2014 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.lazy_import import LazyImport
@@ -21,6 +21,7 @@ from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.division_rings import DivisionRings
 
 from sage.structure.element import coerce_binop
+
 
 class Fields(CategoryWithAxiom):
     """
@@ -76,7 +77,7 @@ class Fields(CategoryWithAxiom):
 
         This implementation will not be needed anymore once every
         field in Sage will be properly declared in the category
-        :class:`Fields`().
+        :class:`Fields() <Fields>`.
 
         Caveat: this should eventually be fixed::
 
@@ -474,7 +475,7 @@ class Fields(CategoryWithAxiom):
             if f.degree() == 0:
                 return Factorization([], unit=f[0])
             if self.characteristic() != 0:
-                raise NotImplementedError("square-free decomposition not implemented for this polynomial.")
+                raise NotImplementedError("square-free decomposition not implemented for this polynomial")
 
             factors = []
             cur = f
@@ -524,10 +525,10 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: K.<a> = Qq(125)
-                sage: V, fr, to = K.vector_space()
-                sage: v = V([1,2,3])
-                sage: fr(v, 7)
+                sage: K.<a> = Qq(125)                                   # optional - sage.rings.padics
+                sage: V, fr, to = K.vector_space()                      # optional - sage.rings.padics
+                sage: v = V([1, 2, 3])                                  # optional - sage.rings.padics
+                sage: fr(v, 7)                                          # optional - sage.rings.padics
                 (3*a^2 + 2*a + 1) + O(5^7)
             """
             return self.free_module(*args, **kwds)

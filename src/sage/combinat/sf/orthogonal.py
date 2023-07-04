@@ -157,6 +157,7 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
         sage: o.one().counit()
         1
     """
+
     def __init__(self, Sym):
         """
         Initialize ``self``.
@@ -242,4 +243,3 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
                                             for nu in Partitions(j) )
                                  for j in range(n//2+1) # // 2 for horizontal dominoes
                                  for mu in Partitions(n-2*j) })
-

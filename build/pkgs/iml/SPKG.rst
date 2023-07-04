@@ -26,13 +26,6 @@ Upstream Contact
 -  Zhuliang Chen z4chen@uwaterloo.ca
 -  Arne Storjohann astorjoh@uwaterloo.ca
 
-Dependencies
-------------
-
--  GMP
--  ATLAS
-
-
 Special Update/Build Instructions
 ---------------------------------
 

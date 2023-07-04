@@ -5,6 +5,7 @@ Description
 -----------
 
 World Timezone Definitions for Python
+See https://pypi.org/project/pytz/
 
 
 Special Update/Build Instructions

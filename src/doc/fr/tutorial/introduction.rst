@@ -96,16 +96,16 @@ Nous nous limiterons ici à quelques remarques.
    d'environnement.
 
    La documentation de SageTeX se trouve dans le répertoire
-   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, où
+   ``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, où
    "``$SAGE_ROOT``" est le répertoire où vous avez installé Sage, par
-   exemple ``/opt/sage-4.3.4``.
+   exemple ``/opt/sage-9.6``.
 
 Les différentes manières d'utiliser Sage
 ========================================
 
 Il y a plusieurs façons d'utiliser Sage.
 
--  **Interface graphique (« notebook ») :** démarrer `sage -n jupyter`; lire 
+-  **Interface graphique (« notebook ») :** démarrer ``sage -n jupyter``; lire 
    `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_ ;
 
 -  **Ligne de commande :** voir :ref:`chapter-interactive_shell` ;

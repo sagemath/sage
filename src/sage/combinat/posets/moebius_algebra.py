@@ -26,7 +26,7 @@ from sage.categories.realizations import Realizations, Category_realization_of_p
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 class BasisAbstract(CombinatorialFreeModule, BindableClass):
@@ -102,7 +102,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
 
         TESTS::
 
-            sage: L = posets.BooleanLattice(4)
+            sage: L = posets.BooleanLattice(3)
             sage: M = L.moebius_algebra(QQ)
             sage: TestSuite(M).run()
         """
@@ -632,7 +632,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
 
             TESTS::
 
-                sage: L = posets.BooleanLattice(4)
+                sage: L = posets.BooleanLattice(3)
                 sage: M = L.quantum_moebius_algebra()
                 sage: TestSuite(M.KL()).run() # long time
             """

@@ -39,12 +39,13 @@ isomorphic.
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.homology.chain_complex_morphism import ChainComplexMorphism
+
 
 # In a perfect world, this would inherit from something like
 # "TwoMorphism" rather than "Morphism"...
@@ -268,7 +269,7 @@ class ChainHomotopy(Morphism):
             if matrices[i] * self.domain().differential(i-deg) * matrices[i] != matrices[i]:
                 return False
         return True
-       
+
     def in_degree(self, n):
         """
         The matrix representing this chain homotopy in degree ``n``.
@@ -581,4 +582,3 @@ class ChainContraction(ChainHomotopy):
         deg = self.domain().degree_of_differential()
         matrices = {i-deg: matrix_dict[i].transpose() for i in matrix_dict}
         return ChainContraction(matrices, self.iota().dual(), self.pi().dual())
-

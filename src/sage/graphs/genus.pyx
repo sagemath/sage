@@ -27,21 +27,21 @@ described throughout the file.
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #         Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.string cimport memcpy
 from memory_allocator cimport MemoryAllocator
 from cysignals.signals cimport sig_on, sig_off
 
-cimport sage.combinat.permutation_cython
+# cimport sage.combinat.permutation_cython
 
 from sage.combinat.permutation_cython cimport next_swap, reset_swap
 
@@ -55,7 +55,8 @@ cdef inline int edge_map(int i):
     slippery.  This is the fastest way I could find to establish the
     correspondence `i <-> i + 1` if `i` is even.
     """
-    return i - 2 * ( i & 1) + 1
+    return i - 2 * (i & 1) + 1
+
 
 cdef class simple_connected_genus_backtracker:
     r"""
@@ -101,7 +102,6 @@ cdef class simple_connected_genus_backtracker:
         sage: bt = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
         sage: bt.genus()
         2
-
     """
     cdef MemoryAllocator mem
     cdef int **vertex_darts
@@ -125,7 +125,6 @@ cdef class simple_connected_genus_backtracker:
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.genus()
             0
-
         """
         self.num_darts = G.num_arcs
         self.num_verts = G.num_verts
@@ -135,14 +134,14 @@ cdef class simple_connected_genus_backtracker:
 
         # Allocate arrays
         self.mem = MemoryAllocator()
-        self.degree       = <int *> self.mem.malloc(self.num_verts * sizeof(int))
-        self.face_map     = <int *> self.mem.malloc(self.num_darts * sizeof(int))
-        self.visited      = <int *> self.mem.malloc(self.num_darts * sizeof(int))
-        self.face_freeze  = <int *> self.mem.malloc(self.num_darts * sizeof(int))
+        self.degree = <int *> self.mem.malloc(self.num_verts * sizeof(int))
+        self.face_map = <int *> self.mem.malloc(self.num_darts * sizeof(int))
+        self.visited = <int *> self.mem.malloc(self.num_darts * sizeof(int))
+        self.face_freeze = <int *> self.mem.malloc(self.num_darts * sizeof(int))
         self.vertex_darts = <int **>self.mem.malloc(self.num_verts * sizeof(int *))
-        self.swappers     = <int **>self.mem.malloc(self.num_verts * sizeof(int *))
-        cdef int *w       = <int *> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
-        cdef int *s       = <int *> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
+        self.swappers = <int **>self.mem.malloc(self.num_verts * sizeof(int *))
+        cdef int *w = <int *> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
+        cdef int *s = <int *> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
 
         cdef int i, j, du, dv, u, v
 
@@ -173,7 +172,7 @@ cdef class simple_connected_genus_backtracker:
                     self.vertex_darts[v][dv] = i + 1
                     self.degree[u] += 1
                     dv += 1
-                    i  += 2
+                    i += 2
 
             self.degree[v] = dv
 
@@ -202,7 +201,6 @@ cdef class simple_connected_genus_backtracker:
 #        for v in range(self.num_darts):
 #            print(self.face_map[v], end="")
 #        print(']')
-
 
     cdef inline void freeze_face(self):
         """
@@ -300,7 +298,7 @@ cdef class simple_connected_genus_backtracker:
         return 1
 
     cdef void flip(self, int v, int i):
-        """
+        r"""
         This is where the real work happens. Once cycles have been counted for
         the initial face_map, we make small local changes, and look at their
         effect on the number of cycles.
@@ -384,14 +382,12 @@ cdef class simple_connected_genus_backtracker:
 
             self.num_cycles += (2 * k + 1 - j) % 4
 
-
         face_map[e0] = v2
         face_map[e1] = f2
         face_map[e2] = v1
 
         w[i] = v2
         w[i + 1] = v1
-
 
     cdef int count_cycles(self):
         """
@@ -431,7 +427,6 @@ cdef class simple_connected_genus_backtracker:
         OUTPUT:
 
             the minimal or maximal genus for self's graph.
-
 
         EXAMPLES::
 
@@ -481,10 +476,9 @@ cdef class simple_connected_genus_backtracker:
         return next_swap(d, self.swappers[v], self.swappers[v] + d)
 
     cdef int genus_backtrack(self,
-                                 int cutoff,
-                                 bint record_embedding,
-                                 (int (*)(simple_connected_genus_backtracker,int,bint,int))check_embedding
-                                ):
+                             int cutoff,
+                             bint record_embedding,
+                             (int (*)(simple_connected_genus_backtracker, int, bint, int))check_embedding):
         """
         Here's the main backtracking routine.
 
@@ -621,7 +615,7 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
             cutoff = 1
         else:
             style = 2
-            cutoff = 1 + (G.num_edges() - G.num_verts()) / 2 # rounding here is ok
+            cutoff = 1 + (G.num_edges() - G.num_verts()) / 2  # rounding here is ok
 
         g = GG.genus(style=style, cutoff=cutoff, record_embedding=set_embedding)
         if set_embedding:
@@ -631,4 +625,3 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
                 oE[backmap[v]] = [backmap[x] for x in E[v]]
             oG.set_embedding(oE)
         return g
-

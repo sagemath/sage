@@ -75,7 +75,9 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
                 sage: V = lie_conformal_algebras.Affine(QQ, 'A1', names=('e', 'h', 'f'))
                 sage: V.some_elements()
-                [e, h, f, K, Th + 4*T^(2)e, 4*T^(2)h, Te + 4*T^(2)e, Te + 4*T^(2)h]
+                [e, h, f, K, ...]
+                sage: all(v.parent() is V for v in V.some_elements())
+                True
             """
             S = list(self.gens())
             from sage.misc.misc import some_tuples

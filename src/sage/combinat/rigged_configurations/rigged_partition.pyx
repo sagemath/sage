@@ -161,7 +161,7 @@ cdef class RiggedPartition(SageObject):
             \begin{array}[t]{r|c|c|l}
              \cline{2-3} 0 &\phantom{|}&\phantom{|}& 0 \\
              \cline{2-3} -1 &\phantom{|}& \multicolumn{2 }{l}{ -1 } \\
-             \cline{2-2} 
+             \cline{2-2}
             \end{array}
             }
 
@@ -290,7 +290,7 @@ cdef class RiggedPartition(SageObject):
             self._hash = hash(tuple(self._list))
         return self._hash
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS::
 
@@ -621,7 +621,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
             {
             \begin{array}[t]{r|c|c|l}
              \cline{2-3} -4 &\phantom{a}&\phantom{a}& -4 \\
-             \cline{2-3} 
+             \cline{2-3}
             \end{array}
             }
             sage: RiggedConfigurations.options.half_width_boxes_type_B=False
@@ -629,7 +629,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
             {
             \begin{array}[t]{r|c|c|l}
              \cline{2-3} -4 &\phantom{X|}&\phantom{X|}& -4 \\
-             \cline{2-3} 
+             \cline{2-3}
             \end{array}
             }
             sage: RiggedConfigurations.options._reset()
@@ -637,7 +637,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
         num_rows = len(self._list)
         if num_rows == 0:
             return "{\\emptyset}"
-        
+
         from sage.combinat.rigged_configurations.rigged_configurations import RiggedConfigurations
         if RiggedConfigurations.options.half_width_boxes_type_B:
             box_str = "\\phantom{a}&"
@@ -680,4 +680,3 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
             ret_string += "\\cline{2-%s}\n\\end{array}\n}"%(1 + num_cols)
 
         return ret_string
-

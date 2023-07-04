@@ -13,7 +13,8 @@ to reformulate an optimization (or existence) problem through linear
 constraints.
 
 This is a translation of a chapter from the book
-`Calcul mathematique avec Sage <http://sagebook.gforge.inria.fr>`_.
+`Calcul mathematique avec Sage <https://www.sagemath.org/sagebook/french.html>`_.
+This book now exists in `English, too <https://www.sagemath.org/sagebook/english.html>`_.
 
 Definition
 ----------
@@ -331,7 +332,7 @@ Let us write the Sage code of this MILP::
 
 ::
 
-    sage: p.set_objective(p.sum(matching[e] for e in g.edges(labels=False)))
+    sage: p.set_objective(p.sum(matching[e] for e in g.edges(sort=False, labels=False)))
 
 .. link
 
@@ -417,7 +418,7 @@ graph, in which all the edges have a capacity of 1::
 
 ::
 
-    sage: for e in g.edges(labels=False):
+    sage: for e in g.edges(sort=False, labels=False):
     ....:     p.add_constraint(f[e] <= 1)
 
 .. link

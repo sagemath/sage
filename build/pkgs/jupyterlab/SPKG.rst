@@ -17,10 +17,3 @@ Upstream Contact
 
 Home page: https://jupyter.org/
 
-Dependencies
-------------
-
-- Python
-- Setuptools
-- jupyter_core
-- jupyter_client

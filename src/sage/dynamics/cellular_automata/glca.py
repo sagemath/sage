@@ -196,14 +196,14 @@ class GraftalLaceCellularAutomata(SageObject):
              o o o o o o o
         """
         if number is not None:
-            for k in range(number):
+            for _ in range(number):
                 self.evolve()
             return
 
         prev_state = self._states[-1]
         next_state = [0] * (len(prev_state) + 2)
 
-        for i,val in enumerate(prev_state):
+        for i, val in enumerate(prev_state):
             next_state[i] += self._rule[val] & 0x1
             next_state[i+1] += self._rule[val] & 0x2
             next_state[i+2] += self._rule[val] & 0x4
@@ -475,4 +475,3 @@ class GraftalLaceCellularAutomata(SageObject):
             x -= 1
         ret += "\\end{tikzpicture}"
         return ret
-

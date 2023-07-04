@@ -65,16 +65,20 @@ AUTHORS:
 # ****************************************************************************
 import weakref
 
-from sage.structure.parent import Parent
-from sage.structure.element import Element
-from sage.structure.richcmp import richcmp
-from sage.modular.dirichlet import DirichletGroup, trivial_character
-from sage.rings.all import ZZ, QQ, IntegerModRing, Qp, Infinity
-from sage.arith.all import divisors
-from sage.rings.padics.padic_generic_element import pAdicGenericElement
-from sage.misc.cachefunc import cached_method
-from sage.rings.padics.precision_error import PrecisionError
+from sage.arith.misc import divisors
 from sage.categories.sets_cat import Sets
+from sage.misc.cachefunc import cached_method
+from sage.modular.dirichlet import DirichletGroup, trivial_character
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Qp
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.padics.precision_error import PrecisionError
+from sage.rings.rational_field import QQ
+from sage.structure.element import Element
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
 
 
 _wscache = {}
@@ -447,7 +451,7 @@ class WeightCharacter(Element):
             sage: pAdicWeightSpace(11)(0).one_over_Lvalue()
             0
             sage: type(_)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if self.is_trivial():
             return ZZ(0)

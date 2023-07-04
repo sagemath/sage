@@ -244,7 +244,8 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
 
     # 1. Allocate memory:
     nz = v.num_nonzero + w.num_nonzero
-    if nz > v.degree: nz = v.degree
+    if nz > v.degree:
+        nz = v.degree
     init_c_vector_modint(z, v.p, v.degree, nz)
     # 2. Merge entries
     i = 0  # index into entries of v

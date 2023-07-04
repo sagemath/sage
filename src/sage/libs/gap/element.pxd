@@ -89,7 +89,7 @@ cdef class GapElement_MethodProxy(GapElement_Function):
 cdef class GapElement_Record(GapElement):
     cpdef UInt record_name_to_index(self, name)
 
-cdef class GapElement_RecordIterator(object):
+cdef class GapElement_RecordIterator():
     cdef GapElement_Record rec
     cdef UInt i
 

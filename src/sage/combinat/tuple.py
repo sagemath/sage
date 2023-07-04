@@ -17,7 +17,7 @@ Tuples
 # ****************************************************************************
 
 from sage.libs.gap.libgap import libgap
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -63,7 +63,7 @@ class Tuples(Parent, UniqueRepresentation):
             sage: T = Tuples(['l','i','t'],2); T
             Tuples of ('l', 'i', 't') of length 2
         """
-        return super(Tuples, cls).__classcall__(cls, tuple(S), k)
+        return super().__classcall__(cls, tuple(S), k)
 
     def __init__(self, S, k):
         """
@@ -166,7 +166,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
             sage: T = UnorderedTuples(['l','i','t'],2); T
             Unordered tuples of ('l', 'i', 't') of length 2
         """
-        return super(UnorderedTuples, cls).__classcall__(cls, tuple(S), k)
+        return super().__classcall__(cls, tuple(S), k)
 
     def __init__(self, S, k):
         """

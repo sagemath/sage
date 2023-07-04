@@ -74,7 +74,7 @@ class HeckeModuleHomspace(HomsetWithBase):
             category = X.category()
         HomsetWithBase.__init__(self, X, Y, category=category)
 
-    def __call__(self, A, name=''):
+    def __call__(self, A, name='', **kwds):
         r"""
         Create an element of the homspace ``self`` from `A`.
 
@@ -153,10 +153,14 @@ class HeckeModuleHomspace(HomsetWithBase):
                 raise TypeError("unable to coerce A to self")
         except AttributeError:
             pass
+        side = kwds.get("side", "left")
         if A in self.base_ring():
             dim_dom = self.domain().rank()
             dim_codom = self.codomain().rank()
-            MS = MatrixSpace(self.base_ring(), dim_dom, dim_codom)
+            if side == "left":
+                MS = MatrixSpace(self.base_ring(), dim_dom, dim_codom)
+            else:
+                MS = MatrixSpace(self.base_ring(), dim_codom, dim_dom)
             if self.domain() == self.codomain():
                 A = A * MS.identity_matrix()
             elif A == 0:
@@ -165,7 +169,9 @@ class HeckeModuleHomspace(HomsetWithBase):
                 raise ValueError('scalars do not coerce to this homspace')
         elif isinstance(A, (list, tuple)):
             A = matrix([self.codomain().coordinate_vector(f) for f in A])
-        return HeckeModuleMorphism_matrix(self, A, name)
+        if side == "right":
+            A = A.transpose()
+        return HeckeModuleMorphism_matrix(self, A, name, side)
 
     def _an_element_(self):
         """

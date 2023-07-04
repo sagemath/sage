@@ -8,9 +8,9 @@ from libcpp.map cimport map
 from ..eclib cimport vec, svec, mat, smat
 from .mat cimport MatrixFactory
 
-from sage.matrix.all import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 
 cdef MatrixFactory MF = MatrixFactory()
@@ -23,7 +23,7 @@ cdef class ModularSymbols:
 
         sage: M = CremonaModularSymbols(225)
         sage: type(M)
-        <type 'sage.libs.eclib.homspace.ModularSymbols'>
+        <class 'sage.libs.eclib.homspace.ModularSymbols'>
     """
     def __init__(self, long level, int sign=0, bint cuspidal=False, int verbose=0):
         """
@@ -102,13 +102,13 @@ cdef class ModularSymbols:
             156
         """
         if self.is_cuspidal():
-           return self.H.h1cuspdim()
+            return self.H.h1cuspdim()
         else:
-           return self.H.h1dim()
+            return self.H.h1dim()
 
     def number_of_cusps(self):
         r"""
-        Return the number of cusps for $\Gamma_0(N)$, where $N$ is the
+        Return the number of cusps for `\Gamma_0(N)`, where `N` is the
         level.
 
         EXAMPLES::
@@ -242,7 +242,7 @@ cdef class ModularSymbols:
 
             sage: M = CremonaModularSymbols(37)
             sage: t = M.sparse_hecke_matrix(2); type(t)
-            <type 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
+            <class 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
             sage: print(t)
             [ 3  0  0  0  0]
             [-1 -1  1  1  0]
@@ -283,6 +283,4 @@ cdef class ModularSymbols:
                 inc(iter)
         MS = MatrixSpace(base_ring, n, sparse=True)
         # The next step is the bottleneck.
-        ans = MS(entries=d)
-        return ans
-
+        return MS(d)

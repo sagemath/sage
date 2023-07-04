@@ -1,4 +1,3 @@
-# cython: language_level=2
 """
 Ranges and the ``[1,2,..,n]`` notation
 
@@ -16,7 +15,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 
@@ -223,7 +222,7 @@ def srange(*args, **kwds):
         sage: v = srange(5); v
         [0, 1, 2, 3, 4]
         sage: type(v[2])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: srange(1, 10)
         [1, 2, 3, 4, 5, 6, 7, 8, 9]
         sage: srange(10, 1, -1)
@@ -396,10 +395,9 @@ def ellipsis_iter(*args, step=None):
         if len(args) > step_magic+1:
             i = step_magic
             more = xsrange(args[i-2], args[i+1], step, coerce=False, include_endpoint=True)
-            a = None
             for a in more:
+                last_end = a
                 yield a
-            last_end = a
             skip = True
             next_ = None
             step_magic += 1
@@ -428,8 +426,8 @@ def ellipsis_iter(*args, step=None):
                 if last_end != first:
                     yield first
                 for a in more:
+                    last_end = a
                     yield a
-                last_end = a
             except StopIteration:
                 last_end = None
             skip = True
@@ -543,7 +541,7 @@ def ellipsis_range(*args, step=None):
             skip = False
         elif args[i] is Ellipsis:
             if len(args) == i+1:
-                raise IndexError("Ellipsis range must have an endpoint, use (n..) for infinite sequence.")
+                raise IndexError("ellipsis range must have an endpoint, use (n..) for infinite sequence")
             start, end = args[i-1], args[i+1]
             if i < 2 or args[i-2] is not Ellipsis:
                 L.pop()

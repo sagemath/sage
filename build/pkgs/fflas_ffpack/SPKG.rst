@@ -15,24 +15,7 @@ License
 LGPL V2.1 or later
 
 
-SPKG Repository
----------------
-
-   https://bitbucket.org/malb/fflas-ffpack-spkg
-
-
 Upstream Contact
 ----------------
 
 -  <ffpack-devel@googlegroups.com>
-
-Dependencies
-------------
-
--  Givaro
--  ATLAS (non-OSX)/The Accelerate FrameWork (on OSX)
-
-Patches
--------
-
--  bash.patch: fix shebang line to "#!/usr/bin/env bash"

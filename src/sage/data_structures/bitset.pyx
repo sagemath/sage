@@ -297,7 +297,7 @@ cdef class FrozenBitset:
         if capacity is None:
             bitset_init(self._bitset, 1)
         else:
-            bitset_init(self._bitset, capacity)
+            bitset_init(self._bitset, <mp_bitcnt_t> capacity)
 
     def __dealloc__(self):
         """
@@ -456,6 +456,19 @@ cdef class FrozenBitset:
             {0, 1, 3, 4}
         """
         return iter(bitset_list(self._bitset))
+
+    def __reversed__(self):
+        """
+        Return an iterator over ``self``, starting with the largest element.
+
+        EXAMPLES::
+
+            sage: list(reversed(FrozenBitset('11011')))
+            [4, 3, 1, 0]
+            sage: list(reversed(FrozenBitset('00001' * 20)))
+            [99, 94, 89, 84, 79, 74, 69, 64, 59, 54, 49, 44, 39, 34, 29, 24, 19, 14, 9, 4]
+        """
+        return reversed(bitset_list(self._bitset))
 
     cpdef FrozenBitset _larger_capacity_(self, long capacity):
         """
@@ -1796,11 +1809,11 @@ cdef class Bitset(FrozenBitset):
             sage: a.remove(2)
             Traceback (most recent call last):
             ...
-            KeyError: 2L
+            KeyError: 2
             sage: a.remove(4)
             Traceback (most recent call last):
             ...
-            KeyError: 4L
+            KeyError: 4
             sage: a
             100
             sage: a = Bitset('000001' * 15); sorted(list(a))
@@ -2286,7 +2299,7 @@ def test_bitset_remove(py_a, long n):
         sage: test_bitset_remove('01', 0)
         Traceback (most recent call last):
         ...
-        KeyError: 0L
+        KeyError: 0
         sage: test_bitset_remove('01', 1)
         a 01
         a.size 2
@@ -2359,3 +2372,25 @@ def test_bitset_unpickle(data):
     L = bitset_list(bs)
     bitset_free(bs)
     return L
+
+
+def test_bitset_copy_flex(py_a):
+    """
+    TESTS:
+
+    Check that :trac:`33012` is fixed::
+
+        sage: from sage.data_structures.bitset import test_bitset_copy_flex
+        sage: test_bitset_copy_flex('0101'*100)
+    """
+    cdef bitset_t a, b
+
+    bitset_from_str(a, py_a)
+    bitset_init(b, a.size*2)
+
+    bitset_copy_flex(b, a)
+    if not bitset_list(b) == bitset_list(a):
+        raise ValueError
+
+    bitset_free(a)
+    bitset_free(b)

@@ -109,7 +109,7 @@ from libc.stdio cimport snprintf
 
 from sage.modules.vector_modn_dense cimport Vector_modn_dense
 
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 from sage.structure.element cimport (Element, Vector, Matrix,
         ModuleElement, RingElement)
 from sage.matrix.matrix_dense cimport Matrix_dense
@@ -186,15 +186,17 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     cdef size_t* Q = <size_t*>check_allocarray(ncols, sizeof(size_t))
 
     cdef Py_ssize_t r
-    cpdef size_t nbthreads
+    cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
     cdef bool transform = False
-    if nrows*ncols > 1000: sig_on()
+    if nrows * ncols > 1000:
+        sig_on()
     if nbthreads > 1 :
         r = pReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q, transform, nbthreads)
     else :
         r = ReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q)
-    if nrows*ncols > 1000: sig_off()
+    if nrows * ncols > 1000:
+        sig_off()
 
     for i in range(nrows):
         for j in range(r):
@@ -254,15 +256,17 @@ cdef inline int linbox_rank(celement modulus, celement* entries, Py_ssize_t nrow
 
     cdef celement *cpy = linbox_copy(modulus, entries, nrows, ncols)
 
-    cpdef Py_ssize_t r
-    cpdef size_t nbthreads
+    cdef Py_ssize_t r
+    cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
-    if nrows*ncols > 1000: sig_on()
+    if nrows * ncols > 1000:
+        sig_on()
     if nbthreads > 1:
         r = pRank(F[0], nrows, ncols, <ModField.Element*>cpy, ncols, nbthreads)
     else:
         r = Rank(F[0], nrows, ncols, <ModField.Element*>cpy, ncols)
-    if nrows*ncols > 1000: sig_off()
+    if nrows * ncols > 1000:
+        sig_off()
     sig_free(cpy)
     del F
     return r
@@ -274,16 +278,18 @@ cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t 
     cdef ModField *F = new ModField(<long>modulus)
     cdef celement *cpy = linbox_copy(modulus, entries, n, n)
 
-    cdef celement d
-    cpdef size_t nbthreads
+    cdef celement d = 0
+    cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
 
-    if n*n > 1000: sig_on()
+    if n*n > 1000:
+        sig_on()
     if nbthreads > 1 :
         pDet(F[0], d, n, <ModField.Element*>cpy, n, nbthreads)
     else :
         Det(F[0], d, n, <ModField.Element*>cpy, n)
-    if n*n > 1000: sig_off()
+    if n*n > 1000:
+        sig_off()
     sig_free(cpy)
     del F
     return d
@@ -293,14 +299,15 @@ cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* a
     C = A*B
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef ModField.Element one, zero
+    cdef ModField.Element one = 0, zero = 0
     F[0].init(one, <int>1)
     F[0].init(zero, <int>0)
 
-    cpdef size_t nbthreads
+    cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
 
-    if m*n*k > 100000: sig_on()
+    if m*n*k > 100000:
+        sig_on()
     if nbthreads > 1 :
         pfgemm(F[0], FflasNoTrans, FflasNoTrans, m, n, k, one,
                <ModField.Element*>A, k, <ModField.Element*>B, n, zero,
@@ -310,7 +317,8 @@ cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* a
                <ModField.Element*>A, k, <ModField.Element*>B, n, zero,
                <ModField.Element*>ans, n)
 
-    if m*n*k > 100000: sig_off()
+    if m*n*k > 100000:
+        sig_off()
 
     del F
 
@@ -319,16 +327,18 @@ cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, cel
     C = A*v
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef ModField.Element one, zero
+    cdef ModField.Element one = 0, zero = 0
     F.init(one, <int>1)
     F.init(zero, <int>0)
 
-    if m*n > 100000: sig_on()
+    if m*n > 100000:
+        sig_on()
 
     fgemv(F[0], trans,  m, n, one, <ModField.Element*>A, n, <ModField.Element*>b, 1,
                zero, <ModField.Element*>C, 1)
 
-    if m*n > 100000: sig_off()
+    if m*n > 100000:
+        sig_off()
 
     del F
 
@@ -340,9 +350,11 @@ cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries
     cdef ModField *F = new ModField(<long>modulus)
     cdef vector[ModField.Element] *minP = new vector[ModField.Element]()
 
-    if nrows*nrows > 1000: sig_on()
+    if nrows*nrows > 1000:
+        sig_on()
     MinPoly(F[0], minP[0], nrows, <ModField.Element*>entries, nrows)
-    if nrows*nrows > 1000: sig_off()
+    if nrows*nrows > 1000:
+        sig_off()
 
     l = []
     for i in range(minP.size()):
@@ -362,9 +374,11 @@ cdef inline linbox_charpoly(celement modulus, Py_ssize_t nrows, celement* entrie
 
     cdef celement *cpy = linbox_copy(modulus, entries, nrows, nrows)
 
-    if nrows*nrows > 1000: sig_on()
+    if nrows * nrows > 1000:
+        sig_on()
     CharPoly(R[0], P, nrows, <ModField.Element*>cpy, nrows)
-    if nrows*nrows > 1000: sig_off()
+    if nrows * nrows > 1000:
+        sig_off()
 
     sig_free(cpy)
 
@@ -475,13 +489,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
             sage: A = random_matrix(GF(3),1000,1000)
             sage: type(A)
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: A = random_matrix(Integers(10),1000,1000)
             sage: type(A)
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: A = random_matrix(Integers(2^16),1000,1000)
             sage: type(A)
-            <type 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
 
         TESTS::
 
@@ -1155,7 +1169,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if not isinstance(v, Vector_modn_dense):
             return (self.new_matrix(1,self._nrows, entries=v.list()) * self)[0]
 
-        M = self._row_ambient_module()
+        M = self.row_ambient_module()
         cdef Vector_modn_dense c = M.zero_vector()
 
         if self._ncols == 0 or self._nrows == 0:
@@ -1209,7 +1223,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             from sage.modules.free_module_element import vector
             return vector(r.list())
 
-        M = self._column_ambient_module()
+        M = self.column_ambient_module()
         cdef Vector_modn_dense c = M.zero_vector()
 
         if self._ncols == 0 or self._nrows == 0:
@@ -1350,7 +1364,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: M = MatrixSpace(Integers(37), 2)
             sage: A = M(range(0, 2^2))
             sage: type(A)
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: A.charpoly('x').variables()
             (x,)
             sage: A.charpoly('y').variables()
@@ -1704,7 +1718,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             ....:        A.echelonize(algorithm='all')
         """
         x = self.fetch('in_echelon_form')
-        if not x is None:
+        if x is not None:
             return  # already known to be in echelon form
 
         if not self.base_ring().is_field():
@@ -1826,7 +1840,11 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
     def right_kernel_matrix(self, algorithm='linbox', basis='echelon'):
         r"""
         Returns a matrix whose rows form a basis for the right kernel
-        of ``self``, where ``self`` is a matrix over a (small) finite field.
+        of ``self``.
+
+        If the base ring is the ring of integers modulo a composite,
+        the keyword arguments are ignored and the computation is
+        delegated to :meth:`Matrix_dense.right_kernel_matrix`.
 
         INPUT:
 
@@ -1880,7 +1898,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [0 0 0 0]
         """
         if self.fetch('in_echelon_form') is None:
-            self = self.echelon_form(algorithm=algorithm)
+            try:
+                self = self.echelon_form(algorithm=algorithm)
+            except NotImplementedError:  # composite modulus
+                return Matrix_dense.right_kernel_matrix(self)
 
         cdef Py_ssize_t r = self.rank()
         cdef Py_ssize_t nrows = self._nrows
@@ -1941,8 +1962,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         """
         self.check_mutability()
         x = self.fetch('in_hessenberg_form')
-        if not x is None and x: return  # already known to be in Hessenberg form
-
+        if x is not None and x:
+            return  # already known to be in Hessenberg form
         if self._nrows != self._ncols:
             raise ArithmeticError("Matrix must be square to compute Hessenberg form.")
 
@@ -2134,7 +2155,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef Matrix_modn_dense_template A
         if self.p > 2 and is_prime(self.p):
             x = self.fetch('rank')
-            if not x is None:
+            if x is not None:
                 return x
             r = Integer(linbox_rank(self.p, self._entries, self._nrows, self._ncols))
             self.cache('rank', r)
@@ -2237,7 +2258,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         if self.p > 2 and is_prime(self.p):
             x = self.fetch('det')
-            if not x is None:
+            if x is not None:
                 return x
             d = linbox_det(self.p, self._entries, self._nrows)
             d2 = self._coerce_element(d)
@@ -3039,7 +3060,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             ans.append(M)
         return ans
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Test whether this matrix is zero.
 
@@ -3077,7 +3098,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for j in range(self._ncols):
             to[j] = <mod_int>_from[j]
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 

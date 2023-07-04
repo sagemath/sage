@@ -13,7 +13,7 @@ Utility functions for GAP
 #*****************************************************************************
 
 from libc.signal cimport signal, SIGCHLD, SIG_DFL
-from posix.dlfcn cimport dlopen, dlclose, RTLD_NOW, RTLD_GLOBAL
+from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 from cpython.exc cimport PyErr_Fetch, PyErr_Restore
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
@@ -36,7 +36,7 @@ from sage.interfaces.gap_workspace import prepare_workspace_dir
 ############################################################################
 
 
-cdef class ObjWrapper(object):
+cdef class ObjWrapper():
     """
     Wrapper for GAP master pointers
 
@@ -164,33 +164,6 @@ cdef void gasman_callback() with gil:
 ### Initialization of GAP ##################################################
 ############################################################################
 
-def gap_root():
-    """
-    Find the location of the GAP root install which is stored in the gap
-    startup script.
-
-    EXAMPLES::
-
-        sage: from sage.libs.gap.util import gap_root
-        sage: gap_root()   # random output
-        '/home/vbraun/opt/sage-5.3.rc0/local/gap/latest'
-    """
-    if os.path.exists(sage.env.GAP_ROOT_DIR):
-        return sage.env.GAP_ROOT_DIR
-
-    # Attempt to figure out the appropriate GAP_ROOT by reading the
-    # local/bin/gap shell script; this is an ugly hack that exists for
-    # historical reasons; the best approach to setting where Sage looks for
-    # the appropriate GAP_ROOT is to set the GAP_ROOT_DIR variable
-    SAGE_LOCAL = sage.env.SAGE_LOCAL
-    with open(os.path.join(SAGE_LOCAL, 'bin', 'gap')) as f:
-        gap_sh = f.read().splitlines()
-    gapdir = next(x for x in gap_sh if x.strip().startswith('GAP_ROOT'))
-    gapdir = gapdir.split('"')[1]
-    gapdir = gapdir.replace('$SAGE_LOCAL', SAGE_LOCAL)
-    return gapdir
-
-
 # To ensure that we call initialize_libgap only once.
 cdef bint _gap_is_initialized = False
 
@@ -214,7 +187,10 @@ MakeImmutable(libgap_errout);
 cdef initialize():
     """
     Initialize the GAP library, if it hasn't already been
-    initialized.  It is safe to call this multiple times.
+    initialized.  It is safe to call this multiple times. One can set
+    :envvar:`SAGE_GAP_MEMORY` to a particular value, as desribed in
+    `GAP Manual <https://www.gap-system.org/Manuals/doc/ref/chap3.html>`_
+    Specifically, the value is for `-s` and `-o` options.
 
     TESTS::
 
@@ -229,42 +205,40 @@ cdef initialize():
     # this isn't portable
 
     cdef void* handle
-    libgapname = str_to_bytes(sage.env.GAP_SO)
-    handle = dlopen(libgapname, RTLD_NOW | RTLD_GLOBAL)
+    # reload the current module to force reload of libgap (see #33446)
+    lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
+    handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
     if handle is NULL:
-        raise RuntimeError(
-                "Could not dlopen() libgap even though it should already "
-                "be loaded!")
+        err = dlerror()
+        raise RuntimeError(f"Could not reload gap library with RTLD_GLOBAL ({err})")
     dlclose(handle)
 
     # Define argv variable, which we will pass in to
-    # initialize GAP. Note that we must pass define the memory pool
-    # size!
-    cdef char* argv[18]
+    # initialize GAP.
+    cdef char* argv[16]
     argv[0] = "sage"
     argv[1] = "-l"
-    s = str_to_bytes(gap_root(), FS_ENCODING, "surrogateescape")
+    s = str_to_bytes(sage.env.GAP_LIB_DIR + ";" + sage.env.GAP_SHARE_DIR, FS_ENCODING, "surrogateescape")
     argv[2] = s
 
-    from sage.interfaces.gap import _get_gap_memory_pool_size_MB
-    memory_pool = str_to_bytes(_get_gap_memory_pool_size_MB())
-    argv[3] = "-o"
-    argv[4] = memory_pool
-    argv[5] = "-s"
-    argv[6] = memory_pool
+    argv[3] = "-m"
+    argv[4] = "64m"
 
-    argv[7] = "-m"
-    argv[8] = "64m"
-
-    argv[9] = "-q"    # no prompt!
-    argv[10] = "-E"   # don't use readline as this will interfere with Python
-    argv[11] = "--nointeract"  # Implies -T
-    argv[12] = "-x"    # set the "screen" width so that GAP is less likely to
-    argv[13] = "4096"  # insert newlines when printing objects
-                       # 4096 unfortunately is the hard-coded max, but should
-                       # be long enough for most cases
-
-    cdef int argc = 14   # argv[argc] must be NULL
+    argv[5] = "-q"    # no prompt!
+    argv[6] = "-E"   # don't use readline as this will interfere with Python
+    argv[7] = "--nointeract"  # Implies -T
+    argv[8] = "-x"    # set the "screen" width so that GAP is less likely to
+    argv[9] = "4096"  # insert newlines when printing objects
+                      # 4096 unfortunately is the hard-coded max, but should
+                      # be long enough for most cases
+    cdef int argc = 10   # argv[argc] must be NULL
+    gap_mem = sage.env.SAGE_GAP_MEMORY
+    if gap_mem is not None:
+        argc += 2
+        argv[10] = "-s"
+        s1 = str_to_bytes(gap_mem, FS_ENCODING, "surrogateescape")
+        argv[11] = s1
+        argv[4] = s1
 
     from .saved_workspace import workspace
     workspace, workspace_is_up_to_date = workspace()
@@ -299,10 +273,6 @@ cdef initialize():
     # Set the ERROR_OUTPUT global in GAP to an output stream in which to
     # receive error output
     GAP_EvalString(_reset_error_output_cmd)
-
-    # Prepare global GAP variable to hold temporary GAP objects
-    global reference_holder
-    reference_holder = GVarName("$SAGE_libgap_reference_holder")
 
     # Finished!
     _gap_is_initialized = True
@@ -361,15 +331,9 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         GAPError: Error, Variable: 'Complex' must have a value
         Syntax error: ; expected in stream:1
         Complex Field with 53 bits of precision;;
-         ^^^^^^^^^^^^
+                ^^^^^
         Error, Variable: 'with' must have a value
-        Syntax error: ; expected in stream:1
-        Complex Field with 53 bits of precision;;
-         ^^^^^^^^^^^^^^^^^^^^
         Error, Variable: 'bits' must have a value
-        Syntax error: ; expected in stream:1
-        Complex Field with 53 bits of precision;;
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         Error, Variable: 'precision' must have a value
 
     Test that on a subsequent attempt we get the same message (no garbage was
@@ -428,29 +392,6 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     finally:
         GAP_Leave()
         sig_off()
-
-
-###########################################################################
-### Helper to protect temporary objects from deletion ######################
-############################################################################
-
-# Hold a reference (inside the GAP kernel) to obj so that it doesn't
-# get deleted this works by assigning it to a global variable. This is
-# very simple, but you can't use it to keep two objects alive. Be
-# careful.
-cdef UInt reference_holder
-
-cdef void hold_reference(Obj obj):
-    """
-    Hold a reference (inside the GAP kernel) to obj
-
-    This ensures that the GAP garbage collector does not delete
-    ``obj``. This works by assigning it to a global variable. This is
-    very simple, but you can't use it to keep two objects alive. Be
-    careful.
-    """
-    global reference_holder
-    AssGVar(reference_holder, obj)
 
 
 ############################################################################

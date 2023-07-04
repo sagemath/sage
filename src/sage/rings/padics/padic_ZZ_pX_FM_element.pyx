@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-`p`-Adic ``ZZ_pX`` FM Element
+`p`-adic ``ZZ_pX`` FM Element
 
 This file implements elements of Eisenstein and unramified extensions
 of `\ZZ_p` with fixed modulus precision.
@@ -147,9 +147,9 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari_gen
-from sage.interfaces.gp import GpElement
+from sage.interfaces.abc import GpElement
 from sage.rings.finite_rings.integer_mod import is_IntegerMod
-from sage.rings.all import IntegerModRing
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_FM_Eis
 
 
@@ -260,7 +260,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             tmp_Int = Integer.__new__(Integer)
             ZZ_to_mpz(tmp_Int.value, &(<ntl_ZZ>x).x)
             x = tmp_Int
-        elif isinstance(x, (int, long)):
+        elif isinstance(x, int):
             x = Integer(x)
         if isinstance(x, Integer):
             self._set_from_mpz((<Integer>x).value)
@@ -718,7 +718,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: type(W(0))
-            <type 'sage.rings.padics.padic_ZZ_pX_FM_element.pAdicZZpXFMElement'>
+            <class 'sage.rings.padics.padic_ZZ_pX_FM_element.pAdicZZpXFMElement'>
             sage: W(0)^0
             1
             sage: W(0)^0 == W(1)
@@ -1032,7 +1032,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             [1590 1375 1695 1032 2358]
             [2415  590 2370 2970 1032]
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         R = IntegerModRing(self.prime_pow.pow_Integer(self.prime_pow.prec_cap))
         n = self.prime_pow.deg
         L = []
@@ -1658,7 +1658,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12
              + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
         """
-        cdef long valuation, index
+        cdef long valuation = 0, index = 0
         ZZ_pX_min_val_coeff(valuation, index, self.value, self.prime_pow.pow_ZZ_tmp(1)[0])
         if index == -1: # self == 0
             return self.prime_pow.ram_prec_cap
@@ -1721,6 +1721,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         return self.ext_p_list_precs(pos, self.prime_pow.ram_prec_cap)
 
+
 def make_ZZpXFMElement(parent, f):
     """
     Create a new ``pAdicZZpXFMElement`` out of an ``ntl_ZZ_pX`` ``f``, with
@@ -1737,4 +1738,3 @@ def make_ZZpXFMElement(parent, f):
         True
     """
     return pAdicZZpXFMElement(parent, f)
-

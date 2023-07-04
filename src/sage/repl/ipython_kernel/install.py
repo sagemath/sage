@@ -16,6 +16,7 @@ in the Jupyter notebook's kernel drop-down. This is done by
 
 import os
 import errno
+import warnings
 
 from sage.env import (
     SAGE_DOC, SAGE_VENV, SAGE_EXTCODE,
@@ -24,7 +25,7 @@ from sage.env import (
 )
 
 
-class SageKernelSpec(object):
+class SageKernelSpec():
 
     def __init__(self, prefix=None):
         """
@@ -218,7 +219,7 @@ class SageKernelSpec(object):
                 os.path.join(self.kernel_dir, filename)
             )
         self.symlink(
-            os.path.join(SAGE_DOC, 'html', 'en'),
+            SAGE_DOC,
             os.path.join(self.kernel_dir, 'doc')
         )
 
@@ -241,6 +242,35 @@ class SageKernelSpec(object):
         instance.use_local_threejs()
         instance._install_spec()
         instance._symlink_resources()
+
+    @classmethod
+    def check(cls):
+        """
+        Check that the SageMath kernel can be discovered by its name (sagemath).
+
+        This method issues a warning if it cannot -- either because it is not installed,
+        or it is shadowed by a different kernel of this name, or Jupyter is
+        misconfigured in a different way.
+
+        EXAMPLES::
+
+            sage: from sage.repl.ipython_kernel.install import SageKernelSpec
+            sage: SageKernelSpec.check()  # random
+        """
+        from jupyter_client.kernelspec import get_kernel_spec, NoSuchKernel
+        ident = cls.identifier()
+        try:
+            spec = get_kernel_spec(ident)
+        except NoSuchKernel:
+            warnings.warn(f'no kernel named {ident} is accessible; '
+                           'check your Jupyter configuration '
+                           '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+        else:
+            from pathlib import Path
+            if Path(spec.argv[0]).resolve() != Path(os.path.join(SAGE_VENV, 'bin', 'sage')).resolve():
+                warnings.warn(f'the kernel named {ident} does not seem to correspond to this '
+                               'installation of SageMath; check your Jupyter configuration '
+                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
 
 
 def have_prerequisites(debug=True):

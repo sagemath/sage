@@ -21,6 +21,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 from sage.graphs.graph import Graph
 from math import sin, cos, pi
 
+
 def BullGraph():
     r"""
     Return a bull graph with 5 nodes.
@@ -66,7 +67,8 @@ def BullGraph():
     the identity matrix of the same dimensions as `A`::
 
         sage: chrompoly = g.chromatic_polynomial()
-        sage: bool(expand(x * (x - 2) * (x - 1)^3) == chrompoly)
+        sage: x = chrompoly.parent()('x')
+        sage: x * (x - 2) * (x - 1)^3 == chrompoly
         True
         sage: charpoly = g.characteristic_polynomial()
         sage: M = g.adjacency_matrix(); M
@@ -77,14 +79,15 @@ def BullGraph():
         [0 0 1 0 0]
         sage: Id = identity_matrix(ZZ, M.nrows())
         sage: D = x*Id - M
-        sage: bool(D.determinant() == charpoly)
+        sage: D.determinant() == charpoly
         True
-        sage: bool(expand(x * (x^2 - x - 3) * (x^2 + x - 1)) == charpoly)
+        sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly
         True
     """
     edge_list = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 4)]
     pos_dict = {0: (0, 0), 1: (-1, 1), 2: (1, 1), 3: (-2, 2), 4: (2, 2)}
     return Graph(edge_list, pos=pos_dict, name="Bull graph")
+
 
 def ButterflyGraph():
     r"""
@@ -130,8 +133,8 @@ def ButterflyGraph():
         3
     """
     edge_dict = {
-        0: [3,4],
-        1: [2,4],
+        0: [3, 4],
+        1: [2, 4],
         2: [4],
         3: [4]}
     pos_dict = {
@@ -221,6 +224,7 @@ def ClawGraph():
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (0, 0), 3: (1, 0)}
     return Graph(edge_list, pos=pos_dict, name="Claw graph")
 
+
 def CycleGraph(n):
     r"""
     Return a cycle graph with `n` nodes.
@@ -244,12 +248,12 @@ def CycleGraph(n):
 
     Compare plotting using the predefined layout and networkx::
 
-        sage: import networkx
-        sage: n = networkx.cycle_graph(23)
-        sage: spring23 = Graph(n)
-        sage: posdict23 = graphs.CycleGraph(23)
-        sage: spring23.show()  # long time
-        sage: posdict23.show()  # long time
+        sage: import networkx                                                           # optional - networkx
+        sage: n = networkx.cycle_graph(23)                                              # optional - networkx
+        sage: spring23 = Graph(n)                                                       # optional - networkx
+        sage: posdict23 = graphs.CycleGraph(23)                                         # optional - networkx
+        sage: spring23.show()  # long time                                              # optional - networkx
+        sage: posdict23.show()  # long time                                             # optional - networkx
 
     We next view many cycle graphs as a Sage graphics array. First we use the
     ``CycleGraph`` constructor, which fills in the position dictionary::
@@ -271,17 +275,17 @@ def CycleGraph(n):
 
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:     spr = networkx.cycle_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx
+        sage: G.show()  # long time                                                     # optional - networkx
 
     TESTS:
 
@@ -302,6 +306,7 @@ def CycleGraph(n):
         G._circle_embedding(list(range(n)), angle=pi/2)
         G.add_cycle(list(range(n)))
     return G
+
 
 def CompleteGraph(n):
     r"""
@@ -344,27 +349,27 @@ def CompleteGraph(n):
 
     We compare to plotting with the spring-layout algorithm::
 
-        sage: import networkx
+        sage: import networkx                                                           # optional - networkx
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:     spr = networkx.complete_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx
+        sage: G.show()  # long time                                                     # optional - networkx
 
     Compare the constructors (results will vary)::
 
-        sage: import networkx
-        sage: t = cputime()
-        sage: n = networkx.complete_graph(389); spring389 = Graph(n)
-        sage: cputime(t)  # random
+        sage: import networkx                                                           # optional - networkx
+        sage: t = cputime()                                                             # optional - networkx
+        sage: n = networkx.complete_graph(389); spring389 = Graph(n)                    # optional - networkx
+        sage: cputime(t)  # random                                                      # optional - networkx
         0.59203700000000126
         sage: t = cputime()
         sage: posdict389 = graphs.CompleteGraph(389)
@@ -373,11 +378,11 @@ def CompleteGraph(n):
 
     We compare plotting::
 
-        sage: import networkx
-        sage: n = networkx.complete_graph(23)
+        sage: import networkx                                                           # optional - networkx
+        sage: n = networkx.complete_graph(23)                                           # optional - networkx
         sage: spring23 = Graph(n)
         sage: posdict23 = graphs.CompleteGraph(23)
-        sage: spring23.show()  # long time
+        sage: spring23.show()  # long time                                              # optional - networkx
         sage: posdict23.show()  # long time
     """
     G = Graph(n, name="Complete graph")
@@ -385,8 +390,9 @@ def CompleteGraph(n):
         G.set_pos({0: (0, 0)})
     else:
         G._circle_embedding(list(range(n)), angle=pi/2)
-    G.add_edges(((i,j) for i in range(n) for j in range(i+1,n)))
+    G.add_edges(((i, j) for i in range(n) for j in range(i + 1, n)))
     return G
+
 
 def CompleteBipartiteGraph(p, q, set_position=True):
     r"""
@@ -432,19 +438,19 @@ def CompleteBipartiteGraph(p, q, set_position=True):
     Two ways of constructing the complete bipartite graph, using different
     layout algorithms::
 
-        sage: import networkx
-        sage: n = networkx.complete_bipartite_graph(389, 157); spring_big = Graph(n)   # long time
+        sage: import networkx                                                                       # optional - networkx
+        sage: n = networkx.complete_bipartite_graph(389, 157); spring_big = Graph(n)   # long time  # optional - networkx
         sage: posdict_big = graphs.CompleteBipartiteGraph(389, 157)                    # long time
 
     Compare the plotting::
 
-        sage: n = networkx.complete_bipartite_graph(11, 17)
-        sage: spring_med = Graph(n)
+        sage: n = networkx.complete_bipartite_graph(11, 17)                                         # optional - networkx
+        sage: spring_med = Graph(n)                                                                 # optional - networkx
         sage: posdict_med = graphs.CompleteBipartiteGraph(11, 17)
 
     Notice here how the spring-layout tends to center the nodes of `n1`::
 
-        sage: spring_med.show()  # long time
+        sage: spring_med.show()  # long time                                                        # optional - networkx
         sage: posdict_med.show()  # long time
 
     View many complete bipartite graphs with a Sage Graphics Array, with this
@@ -467,17 +473,17 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                                    # optional - networkx
         ....:     spr = networkx.complete_bipartite_graph(i+1,4)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                                    # optional - networkx
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                                 # optional - networkx
+        sage: G.show()  # long time                                                                 # optional - networkx
 
     :trac:`12155`::
 
@@ -514,13 +520,14 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
     return G
 
-def CompleteMultipartiteGraph(l):
+
+def CompleteMultipartiteGraph(L):
     r"""
     Return a complete multipartite graph.
 
     INPUT:
 
-    - ``l`` -- a list of integers; the respective sizes of the components
+    - ``L`` -- a list of integers; the respective sizes of the components
 
     PLOTTING: Produce a layout of the vertices so that vertices in the same
     vertex set are adjacent and clearly separated from vertices in other vertex
@@ -546,16 +553,16 @@ def CompleteMultipartiteGraph(l):
         sage: g.chromatic_number()
         3
     """
-    r = len(l)  # getting the number of partitions
-    name = "Multipartite Graph with set sizes {}".format(l)
+    r = len(L)  # getting the number of partitions
+    name = "Multipartite Graph with set sizes {}".format(L)
 
     if not r:
         g = Graph()
     elif r == 1:
-        g = Graph(l[0])
-        g._line_embedding(range(l[0]), first=(0, 0), last=(l[0], 0))
+        g = Graph(L[0])
+        g._line_embedding(range(L[0]), first=(0, 0), last=(L[0], 0))
     elif r == 2:
-        g = CompleteBipartiteGraph(l[0], l[1])
+        g = CompleteBipartiteGraph(L[0], L[1])
         g.name(name)
     else:
         # This position code gives bad results on bipartite or isolated graphs
@@ -566,16 +573,16 @@ def CompleteMultipartiteGraph(l):
         counter = 0
         positions = {}
         for i in range(r):
-            vertex_set_size = l[i] + 1
+            vertex_set_size = L[i] + 1
             for j in range(1, vertex_set_size):
                 x = points[i][0] + slopes[i][0] * j / vertex_set_size
                 y = points[i][1] + slopes[i][1] * j / vertex_set_size
                 positions[counter] = (x, y)
                 counter += 1
 
-        g = Graph(sum(l))
+        g = Graph(sum(L))
         s = 0
-        for i in l:
+        for i in L:
             g.add_clique(range(s, s + i))
             s += i
 
@@ -584,6 +591,7 @@ def CompleteMultipartiteGraph(l):
 
     g.name(name)
     return g
+
 
 def DiamondGraph():
     """
@@ -603,9 +611,10 @@ def DiamondGraph():
         sage: g = graphs.DiamondGraph()
         sage: g.show()  # long time
     """
-    pos_dict = {0:(0,1),1:(-1,0),2:(1,0),3:(0,-1)}
+    pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1)}
     edges = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
     return Graph(edges, pos=pos_dict, name="Diamond Graph")
+
 
 def GemGraph():
     """
@@ -628,6 +637,7 @@ def GemGraph():
     edges = [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (2, 3), (3, 4)]
     return Graph(edges, pos=pos_dict, name="Gem Graph")
 
+
 def ForkGraph():
     """
     Return a fork graph with 5 nodes.
@@ -649,6 +659,7 @@ def ForkGraph():
     edges = [(0, 2), (2, 3), (3, 1), (2, 4)]
     return Graph(edges, pos=pos_dict, name="Fork Graph")
 
+
 def DartGraph():
     """
     Return a dart graph with 5 nodes.
@@ -667,6 +678,7 @@ def DartGraph():
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1), 4: (0, 0)}
     edges = [(0, 1), (0, 2), (1, 4), (2, 4), (0, 4), (3, 4)]
     return Graph(edges, pos=pos_dict, name="Dart Graph")
+
 
 def EmptyGraph():
     """
@@ -706,6 +718,7 @@ def EmptyGraph():
     """
     return Graph(sparse=True)
 
+
 def ToroidalGrid2dGraph(p, q):
     r"""
     Return a toroidal 2-dimensional grid graph with `p \times q` nodes (`p` rows
@@ -729,25 +742,26 @@ def ToroidalGrid2dGraph(p, q):
         sage: tgrid.is_regular()
         True
     """
-    g = Grid2dGraph(p, q, set_positions=False)
+    g = Grid2dGraph(p, q, set_positions=True)
 
     g.add_edges([((i, 0), (i, q - 1)) for i in range(p)])
     g.add_edges([((0, i), (p - 1, i)) for i in range(q)])
 
     g.name("Toroidal 2D Grid Graph with parameters {},{}".format(p, q))
 
-    d = g.get_pos()
+    pos = g._pos
     p += 0.
     q += 0.
     uf = (p / 2) * (p / 2)
     vf = (q / 2) * (q / 2)
-    for u, v in d:
-        x, y = d[u, v]
-        x +=  0.25 * (1.0 + u * (u - p + 1) / uf)
-        y +=  0.25 * (1 + v * (v - q + 1) / vf)
-        d[u, v] = (x, y)
+    for u, v in g:
+        x, y = pos[u, v]
+        x += 0.25 * (1.0 + u * (u - p + 1) / uf)
+        y += 0.25 * (1.0 + v * (v - q + 1) / vf)
+        pos[u, v] = (x, y)
 
     return g
+
 
 def Toroidal6RegularGrid2dGraph(p, q):
     r"""
@@ -803,6 +817,7 @@ def Toroidal6RegularGrid2dGraph(p, q):
 
     g.name("Toroidal Hexagonal Grid graph on {}x{} elements".format(p, q))
     return g
+
 
 def Grid2dGraph(p, q, set_positions=True):
     r"""
@@ -869,6 +884,7 @@ def Grid2dGraph(p, q, set_positions=True):
     G.add_edges(((i, j), (i, j + 1)) for i in range(p) for j in range(q - 1))
     return G
 
+
 def GridGraph(dim_list):
     r"""
     Return an `n`-dimensional grid graph.
@@ -910,36 +926,36 @@ def GridGraph(dim_list):
     One dimensional grids (i.e., path) have simple vertex labels::
 
         sage: g = graphs.GridGraph([5])
-        sage: g.vertices()
+        sage: g.vertices(sort=True)
         [0, 1, 2, 3, 4]
 
     The graph is correct::
 
         sage: dim = [randint(1,4) for i in range(4)]
         sage: g = graphs.GridGraph(dim)
-        sage: import networkx
-        sage: h = Graph( networkx.grid_graph(list(dim)) )
-        sage: g.is_isomorphic(h)
+        sage: import networkx                                                                       # optional - networkx
+        sage: h = Graph(networkx.grid_graph(list(dim)))                                             # optional - networkx
+        sage: g.is_isomorphic(h)                                                                    # optional - networkx
         True
 
     Trivial cases::
 
-        sage: g = graphs.GridGraph([]); g; g.vertices()
+        sage: g = graphs.GridGraph([]); g; g.vertices(sort=False)
         Grid Graph for []: Graph on 0 vertices
         []
-        sage: g = graphs.GridGraph([1]); g; g.vertices()
+        sage: g = graphs.GridGraph([1]); g; g.vertices(sort=False)
         Grid Graph for [1]: Graph on 1 vertex
         [0]
-        sage: g = graphs.GridGraph([2]); g; g.vertices()
+        sage: g = graphs.GridGraph([2]); g; g.vertices(sort=True)
         Grid Graph for [2]: Graph on 2 vertices
         [0, 1]
-        sage: g = graphs.GridGraph([1,1]); g; g.vertices()
+        sage: g = graphs.GridGraph([1,1]); g; g.vertices(sort=False)
         Grid Graph for [1, 1]: Graph on 1 vertex
         [(0, 0)]
-        sage: g = graphs.GridGraph([1, 1, 1]); g; g.vertices()
+        sage: g = graphs.GridGraph([1, 1, 1]); g; g.vertices(sort=False)
         Grid Graph for [1, 1, 1]: Graph on 1 vertex
         [(0, 0, 0)]
-        sage: g = graphs.GridGraph([1,1,2]); g; g.vertices()
+        sage: g = graphs.GridGraph([1,1,2]); g; g.vertices(sort=True)
         Grid Graph for [1, 1, 2]: Graph on 2 vertices
         [(0, 0, 0), (0, 0, 1)]
 
@@ -977,6 +993,7 @@ def GridGraph(dim_list):
     g.name("Grid Graph for {}".format(dim))
     return g
 
+
 def HouseGraph():
     """
     Return a house graph with 5 nodes.
@@ -1002,6 +1019,7 @@ def HouseGraph():
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
     return Graph(edges, pos=pos_dict, name="House Graph")
+
 
 def HouseXGraph():
     """
@@ -1029,6 +1047,7 @@ def HouseXGraph():
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
     return Graph(edges, pos=pos_dict, name="House Graph")
+
 
 def LadderGraph(n):
     r"""
@@ -1075,6 +1094,7 @@ def LadderGraph(n):
     G.add_path(list(range(n, 2 * n)))
     G.add_edges((i, i + n) for i in range(n))
     return G
+
 
 def PathGraph(n, pos=None):
     r"""
@@ -1182,6 +1202,7 @@ def PathGraph(n, pos=None):
     G.add_edges((i, i + 1) for i in range(n - 1))
     return G
 
+
 def StarGraph(n):
     r"""
     Return a star graph with `n + 1` nodes.
@@ -1202,14 +1223,14 @@ def StarGraph(n):
 
     EXAMPLES::
 
-        sage: import networkx
+        sage: import networkx                                                                       # optional - networkx
 
     Compare the plots::
 
-        sage: n = networkx.star_graph(23)
-        sage: spring23 = Graph(n)
+        sage: n = networkx.star_graph(23)                                                           # optional - networkx
+        sage: spring23 = Graph(n)                                                                   # optional - networkx
         sage: posdict23 = graphs.StarGraph(23)
-        sage: spring23.show()  # long time
+        sage: spring23.show()  # long time                                                          # optional - networkx
         sage: posdict23.show()  # long time
 
     View many star graphs as a Sage Graphics Array

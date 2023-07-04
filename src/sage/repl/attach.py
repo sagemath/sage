@@ -53,7 +53,7 @@ character-by-character::
     ...
         exec(code, globals)
       File ".../foobar.sage....py", line ..., in <module>
-        raise ValueError("third")   # this should appear in the source snippet
+        raise ValueError("third")   # this should appear in the source snippet...
     ValueError: third
     sage: detach(src)
 """
@@ -170,15 +170,17 @@ def load_attach_path(path=None, replace=False):
         sage: with open(fullpath, 'w') as f:
         ....:     _ = f.write("print(37 * 3)")
 
-    We put ``SAGE_TMP`` on the attach path for testing (otherwise this will
-    load ``test.py`` from the current working directory if that happens
-    to exist)::
+    We put a new, empty directory on the attach path for testing
+    (otherwise this will load ``test.py`` from the current working
+    directory if that happens to exist)::
 
-        sage: load_attach_path(SAGE_TMP, replace=True)
-        sage: attach('test.py')
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     load_attach_path(d, replace=True)
+        ....:     attach('test.py')
         Traceback (most recent call last):
         ...
-        IOError: did not find file 'test.py' to load or attach
+        OSError: did not find file 'test.py' to load or attach
         sage: load_attach_path(t_dir)
         sage: attach('test.py')
         111
@@ -187,11 +189,12 @@ def load_attach_path(path=None, replace=False):
         sage: sage.repl.attach.reset(); reset_load_attach_path()
         sage: load_attach_path() == ['.']
         True
-        sage: load_attach_path(SAGE_TMP, replace=True)
-        sage: load('test.py')
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     load_attach_path(d, replace=True)
+        ....:     load('test.py')
         Traceback (most recent call last):
         ...
-        IOError: did not find file 'test.py' to load or attach
+        OSError: did not find file 'test.py' to load or attach
 
     The function returns a reference to the path list::
 
@@ -249,8 +252,7 @@ def reset_load_attach_path():
         sage: reset_load_attach_path(); load_attach_path()
         ['.']
         sage: os.environ['SAGE_LOAD_ATTACH_PATH'] = '/veni/vidi:vici:'
-        sage: from imp import reload        # py2
-        sage: from importlib import reload  # py3
+        sage: from importlib import reload
         sage: reload(sage.repl.attach)    # Simulate startup
         <module 'sage.repl.attach' from '...'>
         sage: load_attach_path()

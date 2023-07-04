@@ -20,8 +20,9 @@ AUTHORS:
 
 import time
 from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree, get_orbits
-from sage.rings.all import ZZ, infinity
-from sage.graphs.all import DiGraph
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import infinity
+from sage.graphs.digraph import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _edge_list_to_matrix
 
 
@@ -50,7 +51,7 @@ def _principal_part(mat):
     """
     n, m = mat.ncols(), mat.nrows() - mat.ncols()
     if m < 0:
-        raise ValueError('The input matrix has more columns than rows.')
+        raise ValueError('the input matrix has more columns than rows')
     elif m == 0:
         return mat
     else:
@@ -75,21 +76,21 @@ def _digraph_mutate(dg, k, frozen=None):
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_mutate
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['A',4]).digraph()
-        sage: dg.edges()
+        sage: dg.edges(sort=True)
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
-        sage: _digraph_mutate(dg,2).edges()
+        sage: _digraph_mutate(dg,2).edges(sort=True)
         [(0, 1, (1, -1)), (1, 2, (1, -1)), (3, 2, (1, -1))]
 
     TESTS::
 
        sage: dg = DiGraph([('a','b',(1,-1)),('c','a',(1,-1))])
-       sage: _digraph_mutate(dg,'a').edges()
+       sage: _digraph_mutate(dg,'a').edges(sort=True)
        [('a', 'c', (1, -1)), ('b', 'a', (1, -1)), ('c', 'b', (1, -1))]
-       sage: _digraph_mutate(dg,'a',frozen=['b','c']).edges()
+       sage: _digraph_mutate(dg,'a',frozen=['b','c']).edges(sort=True)
        [('a', 'c', (1, -1)), ('b', 'a', (1, -1))]
 
        sage: dg = DiGraph([('a','b',(2,-2)),('c','a',(2,-2)),('b','c',(2,-2))])
-       sage: _digraph_mutate(dg,'a').edges()
+       sage: _digraph_mutate(dg,'a').edges(sort=True)
        [('a', 'c', (2, -2)), ('b', 'a', (2, -2)), ('c', 'b', (2, -2))]
     """
     # assert sorted(list(dg)) == list(range(n + m))
@@ -206,31 +207,31 @@ def _dg_canonical_form(dg, frozen=None):
     EXAMPLES::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _dg_canonical_form
-        sage: dg = ClusterQuiver(['B',4]).digraph(); dg.edges()
+        sage: dg = ClusterQuiver(['B',4]).digraph(); dg.edges(sort=True)
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -2))]
-        sage: _dg_canonical_form(dg); dg.edges()
+        sage: _dg_canonical_form(dg); dg.edges(sort=True)
         ({0: 0, 1: 3, 2: 1, 3: 2}, [[0], [3], [1], [2]])
         [(0, 3, (1, -1)), (1, 2, (1, -2)), (1, 3, (1, -1))]
 
     TESTS::
 
         sage: dg2 = ClusterQuiver(DiGraph({0:[1,2]})).digraph()
-        sage: _dg_canonical_form(dg2); dg2.edges()
+        sage: _dg_canonical_form(dg2); dg2.edges(sort=True)
         ({0: 0, 1: 1, 2: 2}, [[0], [1, 2]])
         [(0, 1, (1, -1)), (0, 2, (1, -1))]
 
         sage: dg2 = ClusterQuiver(DiGraph({0:[1,2]})).digraph()
-        sage: _dg_canonical_form(dg2, frozen=[0]); dg2.edges()
+        sage: _dg_canonical_form(dg2, frozen=[0]); dg2.edges(sort=True)
         ({0: 2, 1: 0, 2: 1}, [[2], [0, 1]])
         [(2, 0, (1, -1)), (2, 1, (1, -1))]
 
         sage: dg3 = ClusterQuiver(DiGraph({0:[1,2],1:[3]})).digraph()
-        sage: _dg_canonical_form(dg3, frozen=[0,3]); dg3.edges()
+        sage: _dg_canonical_form(dg3, frozen=[0,3]); dg3.edges(sort=True)
         ({0: 2, 1: 1, 2: 0, 3: 3}, [[2], [1], [0], [3]])
         [(1, 3, (1, -1)), (2, 0, (1, -1)), (2, 1, (1, -1))]
 
         sage: dg3 = ClusterQuiver(DiGraph({2:[1,3],1:[0],3:[4]})).digraph()
-        sage: _dg_canonical_form(dg3, frozen=[4,0]); dg3.edges()
+        sage: _dg_canonical_form(dg3, frozen=[4,0]); dg3.edges(sort=True)
         ({0: 4, 1: 1, 2: 0, 3: 2, 4: 3}, [[4, 3], [1, 2], [0]])
         [(0, 1, (1, -1)), (0, 2, (1, -1)), (1, 4, (1, -1)), (2, 3, (1, -1))]
     """
@@ -294,9 +295,9 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['A',[1,2],1]).digraph()
         sage: itt = _mutation_class_iter(dg, 3,0)
-        sage: next(itt)[0].edges()
+        sage: next(itt)[0].edges(sort=True)
         [(0, 1, (1, -1)), (0, 2, (1, -1)), (1, 2, (1, -1))]
-        sage: next(itt)[0].edges()
+        sage: next(itt)[0].edges(sort=True)
         [(0, 2, (1, -1)), (1, 0, (2, -2)), (2, 1, (1, -1))]
     """
     # assuming that the frozen vertices are at the end (from n to n + m - 1)
@@ -376,6 +377,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
             nr += ' ' * (10-len(nr))
             print("Depth: %s found: %s Time: %.2f s" % (dc, nr, timer2 - timer))
 
+
 def _digraph_to_dig6( dg, hashable=False ):
     """
     Return the dig6 and edge data of the digraph dg.
@@ -420,7 +422,7 @@ def _dig6_to_digraph( dig6 ):
         sage: data = _digraph_to_dig6(dg)
         sage: _dig6_to_digraph(data)
         Digraph on 4 vertices
-        sage: _dig6_to_digraph(data).edges()
+        sage: _dig6_to_digraph(data).edges(sort=True)
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
     """
     dig6, edges = dig6
@@ -457,7 +459,7 @@ def _dig6_to_matrix( dig6 ):
         [ 0  0 -1  0]
     """
     dg = _dig6_to_digraph(dig6)
-    return _edge_list_to_matrix(dg.edges(), list(range(dg.order())), [])
+    return _edge_list_to_matrix(dg.edges(sort=True), list(range(dg.order())), [])
 
 
 def _dg_is_sink_source( dg, v ):
@@ -501,9 +503,9 @@ def _graph_without_edge_labels(dg, vertices):
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _graph_without_edge_labels
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-        sage: dg = ClusterQuiver(['B',4]).digraph(); dg.edges()
+        sage: dg = ClusterQuiver(['B',4]).digraph(); dg.edges(sort=True)
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -2))]
-        sage: _graph_without_edge_labels(dg, range(4)); dg.edges()
+        sage: _graph_without_edge_labels(dg, range(4)); dg.edges(sort=True)
         ([[4]], ((1, -2),))
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 4, (1, -1)), (4, 3, (1, -1))]
     """
@@ -545,7 +547,7 @@ def _has_two_cycles( dg ):
         sage: _has_two_cycles( ClusterQuiver(['A',3]).digraph() )
         False
     """
-    edge_set = dg.edges(labels=False)
+    edge_set = dg.edges(sort=True, labels=False)
     for (v,w) in edge_set:
         if (w,v) in edge_set:
             return True
@@ -579,7 +581,7 @@ def _is_valid_digraph_edge_set( edges, frozen=0 ):
 
         # checks if the digraph contains loops
         if dg.has_loops():
-            print("The given digraph or edge list contains loops.")
+            print("The given digraph or edge list contains loops")
             return False
 
         # checks if the digraph contains oriented 2-cycles
@@ -604,7 +606,7 @@ def _is_valid_digraph_edge_set( edges, frozen=0 ):
             print("The number of frozen variables is larger than the number of vertices.")
             return False
 
-        if any(e[0] >= n for e in dg.edges(labels=False)):
+        if any(e[0] >= n for e in dg.edges(sort=True, labels=False)):
             print("The given digraph or edge list contains edges within the frozen vertices.")
             return False
 

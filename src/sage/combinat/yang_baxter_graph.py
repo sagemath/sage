@@ -435,7 +435,7 @@ class YangBaxterGraph_generic(SageObject):
             sage: Y.edges()
             [((0, 2, 1, 0), (2, 0, 1, 0), Swap-if-increasing at position 0), ((2, 0, 1, 0), (2, 1, 0, 0), Swap-if-increasing at position 1)]
         """
-        return self._digraph.edges()
+        return self._digraph.edges(sort=True)
 
     def vertex_relabelling_dict(self, v, relabel_operator):
         r"""
@@ -546,7 +546,7 @@ class YangBaxterGraph_generic(SageObject):
             from copy import copy
             Y = copy(self)
         digraph = Y._digraph
-        for u, v, i in digraph.edges():
+        for u, v, i in digraph.edges(sort=True):
             digraph.set_edge_label(u, v, edge_dict[u, v])
         if not inplace:
             return Y
@@ -586,7 +586,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
         root = sum([tuple(range(b)) for b in beta], tuple())[::-1]
         operators = [SwapIncreasingOperator(i)
                      for i in range(sum(partition) - 1)]
-        super(YangBaxterGraph_partition, self).__init__(root, operators)
+        super().__init__(root, operators)
 
     def __repr__(self):
         r"""
@@ -632,8 +632,8 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
             sage: Y.edges()
             [((0, 1, 0), (1, 0, 0), Swap positions 0 and 1)]
         """
-        digraph = super(YangBaxterGraph_partition, self)._digraph
-        for (u, v, op) in digraph.edges():
+        digraph = super()._digraph
+        for (u, v, op) in digraph.edges(sort=True):
             digraph.set_edge_label(u, v, SwapOperator(op.position()))
         return digraph
 
@@ -649,7 +649,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
             sage: Y._vertex_ordering
             [(1, 0, 2, 1, 0), (1, 2, 0, 1, 0), (1, 2, 1, 0, 0), (2, 1, 0, 1, 0), (2, 1, 1, 0, 0)]
         """
-        return sorted(self._digraph.vertices())
+        return self._digraph.vertices(sort=True)
 
     def __iter__(self):
         r"""
@@ -720,7 +720,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
              (2, 0, 1, 0): (3, 4, 2, 1),
              (2, 1, 0, 0): (3, 2, 4, 1)}
         """
-        return super(YangBaxterGraph_partition, self).vertex_relabelling_dict(v, self._swap_operator)
+        return super().vertex_relabelling_dict(v, self._swap_operator)
 
     def relabel_vertices(self, v, inplace=True):
         r"""
@@ -741,10 +741,10 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
             Yang-Baxter graph of [3, 1], with top vertex (0, 2, 1, 0)
             sage: d = Y.relabel_vertices((1,2,3,4), inplace=False); d
             Digraph on 3 vertices
-            sage: Y.vertices()
+            sage: Y.vertices(sort=True)
             [(0, 2, 1, 0), (2, 0, 1, 0), (2, 1, 0, 0)]
             sage: e = Y.relabel_vertices((1,2,3,4)); e
-            sage: Y.vertices()
+            sage: Y.vertices(sort=True)
             [(1, 2, 3, 4), (2, 1, 3, 4), (2, 3, 1, 4)]
         """
         relabelling = self.vertex_relabelling_dict(v)
@@ -752,7 +752,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
             Y = self
             Y._root = relabelling[Y._root]
             Y._digraph.relabel(relabelling, inplace=inplace)
-            Y._vertex_ordering = sorted(Y._digraph.vertices())
+            Y._vertex_ordering = Y._digraph.vertices(sort=True)
             return
         else:
             from copy import copy

@@ -137,8 +137,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
             return AbelianLieAlgebra(R, names, index_set, **kwds)
 
-        return super(LieAlgebraWithStructureCoefficients, cls).__classcall__(
-            cls, R, s_coeff, names, index_set, **kwds)
+        return super().__classcall__(cls, R, s_coeff, names, index_set, **kwds)
 
     @staticmethod
     def _standardize_s_coeff(s_coeff, index_set):
@@ -345,7 +344,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             c = self.base_ring()(c)
         return self.element_class(self, c * self._M.basis()[self._index_to_pos[k]])
 
-    def from_vector(self, v):
+    def from_vector(self, v, order=None, coerce=True):
         """
         Return an element of ``self`` from the vector ``v``.
 
@@ -355,7 +354,9 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             sage: L.from_vector([1, 2, -2])
             x + 2*y - 2*z
         """
-        return self.element_class(self, self._M(v))
+        if coerce:
+            v = self._M(v)
+        return self.element_class(self, v)
 
     def some_elements(self):
         """
@@ -428,4 +429,3 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             except Exception: # Sorting the output is a plus, but if we can't, no big deal
                 pass
             return v
-

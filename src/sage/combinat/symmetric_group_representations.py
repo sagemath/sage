@@ -29,7 +29,7 @@ Representations of the Symmetric Group
 # ****************************************************************************
 
 from sage.symbolic.ring import SR
-from sage.functions.all import sqrt
+from sage.misc.functional import sqrt
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.permutation import Permutation, Permutations, from_cycles
 from sage.combinat.tableau import StandardTableaux, Tableau
@@ -172,6 +172,7 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
     Rep = SymmetricGroupRepresentations(sum(partition), implementation=implementation,
                                         ring=ring, cache_matrices=cache_matrices)
     return Rep(partition)
+
 
 def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
         cache_matrices=True):
@@ -378,13 +379,14 @@ class SymmetricGroupRepresentation_generic_class(Element):
             [[1], [-1], [-1], [1], [1], [-1]]
         """
         for permutation in Permutations(self._n):
-             yield self.representation_matrix(permutation)
+            yield self.representation_matrix(permutation)
 
     def verify_representation(self):
         r"""
-        Verify the representation: tests that the images of the simple
-        transpositions are involutions and tests that the braid relations
-        hold.
+        Verify the representation.
+
+        This tests that the images of the simple transpositions are
+        involutions and tests that the braid relations hold.
 
         EXAMPLES::
 
@@ -458,6 +460,7 @@ class SymmetricGroupRepresentations_class(UniqueRepresentation,Parent):
     Generic methods for the CombinatorialClass of irreducible
     representations of the symmetric group.
     """
+
     def __init__(self, n, ring=None, cache_matrices=True):
         r"""
         Irreducible representations of the symmetric group.
@@ -629,12 +632,12 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
         Y = self._yang_baxter_graph
         index_lookup = {b: a for a, b in enumerate(list(Y))}
         digraph = copy(Y._digraph)
-        digraph.delete_edges((u, v) for (u, v, (j, beta)) in digraph.edges()
+        digraph.delete_edges((u, v) for (u, v, (j, beta)) in digraph.edges(sort=True)
                              if j != i)
         M = matrix(self._ring, digraph.num_verts())
         for g in digraph.connected_components_subgraphs():
             if g.num_verts() == 1:
-                [v] = g.vertices()
+                [v] = g.vertices(sort=True)
                 w = self._word_dict[v]
                 trivial = None
                 for j, a in enumerate(w):
@@ -647,7 +650,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
                 j = index_lookup[v]
                 M[j, j] = 1 if trivial is True else -1
             else:
-                [(u, v, (j, beta))] = g.edges()
+                [(u, v, (j, beta))] = g.edges(sort=True)
                 iu = index_lookup[u]
                 iv = index_lookup[v]
                 M[iu, iu], M[iu, iv], M[iv, iu], M[iv, iv] = \
@@ -951,7 +954,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         """
         ret = self._representation_matrix_uncached(permutation)
         ret.set_immutable()
-        return ret 
+        return ret
 
     def _representation_matrix_uncached(self, permutation):
         r"""
@@ -1010,4 +1013,3 @@ def partition_to_vector_of_contents(partition, reverse=False):
     if reverse:
         return tuple(v)[::-1]
     return tuple(v)
-

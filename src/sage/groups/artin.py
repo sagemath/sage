@@ -98,7 +98,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         """
         return sum(s.sign() for s in self.Tietze())
 
-    def coxeter_group_element(self):
+    def coxeter_group_element(self, W=None):
         """
         Return the corresponding Coxeter group element under the natural
         projection.
@@ -118,7 +118,8 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             sage: b.coxeter_group_element().reduced_word()
             [1, 2, 3, 2]
         """
-        W = self.parent().coxeter_group()
+        if W is None:
+            W = self.parent().coxeter_group()
         s = W.simple_reflections()
         I = W.index_set()
         return W.prod(s[I[abs(i)-1]] for i in self.Tietze())
@@ -392,7 +393,7 @@ class ArtinGroup(FinitelyPresentedGroup):
             True
 
             sage: G = graphs.PathGraph(3)
-            sage: CM = CoxeterMatrix([[1,-1,2],[-1,1,-1],[2,-1,1]], index_set=G.vertices())
+            sage: CM = CoxeterMatrix([[1,-1,2],[-1,1,-1],[2,-1,1]], index_set=G.vertices(sort=True))
             sage: A = groups.misc.Artin(CM)
             sage: Ap = groups.misc.RightAngledArtin(G, 's')
             sage: A is Ap
@@ -715,4 +716,3 @@ class FiniteTypeArtinGroup(ArtinGroup):
         return self._standard_lift(self._coxeter_group.long_element())
 
     Element = FiniteTypeArtinGroupElement
-

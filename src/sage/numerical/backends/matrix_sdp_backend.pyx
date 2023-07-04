@@ -20,7 +20,7 @@ other classes implementing solvers.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from .generic_sdp_backend cimport GenericSDPBackend
 
 cdef class MatrixSDPBackend(GenericSDPBackend):
@@ -51,7 +51,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             self.set_sense(-1)
 
         if base_ring is None:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             base_ring = QQ
         self._base_ring = base_ring
 
@@ -164,8 +164,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         """
         for i in range(n):
             self.add_variable()
-        return len(self.objective_function) - 1;
-
+        return len(self.objective_function) - 1
 
     cpdef set_sense(self, int sense):
         """
@@ -217,7 +216,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             2.0
         """
         if coeff is not None:
-            self.objective_function[variable] = float(coeff);
+            self.objective_function[variable] = float(coeff)
         else:
             return self.objective_function[variable]
 
@@ -243,10 +242,8 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             [1, 1, 2, 1, 3]
         """
         for i in range(len(coeff)):
-            self.objective_function[i] = coeff[i];
-        obj_constant_term = d;
-
-
+            self.objective_function[i] = coeff[i]
+        obj_constant_term = d
 
     cpdef add_linear_constraint(self, coefficients, name=None):
         """

@@ -31,7 +31,8 @@ from sage.coding.guruswami_sudan.interpolation import gs_interpolation_linalg, g
 from sage.coding.guruswami_sudan.utils import (johnson_radius,
                                                gilt,
                                                solve_degree2_to_integer_range)
-from sage.functions.other import floor, sqrt
+from sage.functions.other import floor
+from sage.misc.functional import sqrt
 
 def n_k_params(C, n_k):
     r"""
@@ -355,6 +356,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             (92, (2, 6))
         """
         n,k = n_k_params(C, n_k)
+
         def get_tau(s,l):
             "Return the decoding radius given this s and l"
             if s<=0 or l<=0:
@@ -532,8 +534,6 @@ class GRSGuruswamiSudanDecoder(Decoder):
         n,k = n_k_params(C, n_k)
         return l > 0 and s > 0 and n * s * (s+1) < (l+1) * (2*s*(n-tau) - (k-1) * l)
 
-
-
     ####################### decoder itself ###############################
     def __init__(self, code, tau = None, parameters = None, interpolation_alg = None, root_finder = None):
         r"""
@@ -597,7 +597,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             (self._tau,_) = GRSGuruswamiSudanDecoder.guruswami_sudan_decoding_radius(C = code, s=self._s, l=self._ell)
         else:
             raise ValueError("Specify either tau or parameters")
-        if hasattr(interpolation_alg, '__call__'):
+        if callable(interpolation_alg):
             self._interpolation_alg = interpolation_alg
         elif interpolation_alg is None or interpolation_alg == "LeeOSullivan":
             self._interpolation_alg = gs_interpolation_lee_osullivan
@@ -605,7 +605,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             self._interpolation_alg = gs_interpolation_linalg
         else:
             raise ValueError("Please provide a method or one of the allowed strings for interpolation_alg")
-        if hasattr(root_finder, '__call__'):
+        if callable(root_finder):
             self._root_finder = root_finder
         elif root_finder == "RothRuckenstein":
             self._root_finder = roth_ruckenstein_root_finder
@@ -613,7 +613,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             self._root_finder = alekhnovich_root_finder
         else:
             raise ValueError("Please provide a method or one of the allowed strings for root_finder")
-        super(GRSGuruswamiSudanDecoder, self).__init__(code, code.ambient_space(), "EvaluationPolynomial")
+        super().__init__(code, code.ambient_space(), "EvaluationPolynomial")
 
     def _repr_(self):
         r"""
@@ -709,7 +709,6 @@ class GRSGuruswamiSudanDecoder(Decoder):
             (1, 2)
         """
         return (self._s, self._ell)
-
 
     def multiplicity(self):
         r"""

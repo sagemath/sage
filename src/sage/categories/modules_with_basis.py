@@ -219,7 +219,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: list(QS3.basis())
                 [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
             """
-            from sage.combinat.family import Family
+            from sage.sets.family import Family
             return Family(self._indices, self.monomial)
 
         def module_morphism(self, on_basis=None, matrix=None, function=None,
@@ -423,6 +423,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             and `Y` have the same index set `I`::
 
                 sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename("X")
+                sage: from sage.arith.misc import factorial
                 sage: phi = X.module_morphism(diagonal=factorial, codomain=X)
                 sage: x = X.basis()
                 sage: phi(x[1]), phi(x[2]), phi(x[3])
@@ -526,7 +527,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: phi = X.module_morphism(matrix=factorial, codomain=X)
                 Traceback (most recent call last):
                 ...
-                ValueError: matrix (=factorial) should be a matrix
+                ValueError: matrix (=...factorial...) should be a matrix
 
             ::
 
@@ -675,7 +676,17 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: z = C.basis()
                 sage: C.echelon_form([z[0] - z[1], 2*z[1] - 2*z[2], z[0] - z[2]])
                 [z[0] - z[2], z[1] - z[2]]
+
+            TESTS:
+
+            We convert the input elements to ``self``::
+
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: s.echelon_form([1, s[1] + 5])
+                [s[], s[1]]
             """
+            # Make sure elements consists of elements of ``self``
+            elements = [self(y) for y in elements]
             order = self._compute_support_order(elements, order)
 
             from sage.matrix.constructor import matrix
@@ -701,19 +712,16 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``gens`` -- a list or family of elements of ``self``
-
             - ``check`` -- (default: ``True``) whether to verify that the
                elements of ``gens`` are in ``self``
-
             - ``already_echelonized`` -- (default: ``False``) whether
                the elements of ``gens`` are already in (not necessarily
                reduced) echelon form
-
             - ``unitriangular`` -- (default: ``False``) whether
               the lift morphism is unitriangular
-
             - ``support_order`` -- (optional) either something that can
               be converted into a tuple or a key function
+            - ``category`` -- (optional) the category of the submodule
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
@@ -731,7 +739,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             The basis of the submodule uses the same index set as the
             generators, and the lifting map sends `y_i` to `gens[i]`.
-
 
             .. SEEALSO::
 
@@ -858,6 +865,14 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: TestSuite(Y).run()
                 sage: TestSuite(center).run()
             """
+            # Make sure gens consists of elements of ``self``
+            from sage.sets.family import Family, AbstractFamily
+            if isinstance(gens, AbstractFamily):
+                gens = gens.map(self)
+            elif isinstance(gens, dict):
+                gens = Family(gens.keys(), gens.__getitem__)
+            else:
+                gens = [self(y) for y in gens]
             support_order = self._compute_support_order(gens, support_order)
             if not already_echelonized:
                 gens = self.echelon_form(gens, unitriangular, order=support_order)
@@ -908,7 +923,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: C = CombinatorialFreeModule(R, range(3), prefix='x')
                 sage: x = C.basis()
                 sage: gens = [x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]]
-                sage: Y = X.quotient_module(gens)
+                sage: Y = C.quotient_module(gens)
 
             .. SEEALSO::
 
@@ -1013,9 +1028,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             TESTS::
 
-                sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-                sage: F._sum_of_monomials(['a', 'b'])
-                B['a'] + B['b']
+                sage: R.<x,y> = QQ[]
+                sage: W = DifferentialWeylAlgebra(R)
+                sage: W._sum_of_monomials([((1,0), (1,0)), ((0,0), (0,1))])
+                dy + x*dx
             """
             # This is the generic implementation. When implementing a
             # concrete instance of a module with basis, you probably want
@@ -1048,7 +1064,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 A map to Free module generated by {'a', 'b', 'c'} over Rational Field
             """
             # domain = iterables of basis indices of self.
-            return PoorManMap(self._sum_of_monomials, codomain = self)
+            return PoorManMap(self._sum_of_monomials, codomain=self)
 
         def monomial_or_zero_if_none(self, i):
             """
@@ -1155,7 +1171,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if x == self.zero():
                 if not codomain:
-                    from sage.combinat.family import Family
+                    from sage.sets.family import Family
                     B = Family(self.basis())
                     try:
                         z = B.first()
@@ -1490,9 +1506,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: len(z)
                 4
             """
-            zero = self.parent().base_ring().zero()
-            return len([key for key, coeff in self.monomial_coefficients(copy=False).items()
-                        if coeff != zero])
+            return len(self.support())
 
         def length(self):
             """
@@ -1518,7 +1532,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         def support(self):
             """
-            Return a list of the objects indexing the basis of
+            Return an iterable of the objects indexing the basis of
             ``self.parent()`` whose corresponding coefficients of
             ``self`` are non-zero.
 
@@ -1539,9 +1553,19 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: sorted(z.support())
                 [[1], [1, 1, 1], [2, 1], [4]]
             """
-            zero = self.parent().base_ring().zero()
-            return [key for key, coeff in self.monomial_coefficients(copy=False).items()
-                    if coeff != zero]
+            try:
+                return self._support_view
+            except AttributeError:
+                from sage.structure.support_view import SupportView
+                zero = self.parent().base_ring().zero()
+                mc = self.monomial_coefficients(copy=False)
+                support_view = SupportView(mc, zero=zero)
+                try:
+                    # Try to cache it for next time, but this may fail for Cython classes
+                    self._support_view = support_view
+                except AttributeError:
+                    pass
+                return support_view
 
         def monomials(self):
             """
@@ -2102,9 +2126,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             FIXME: is this a policy that we want to enforce on all parents?
             """
-            assert(all(isinstance(element, Element) for element in elements))
+            assert all(isinstance(element, Element) for element in elements)
             parents = [parent(element) for element in elements]
-            return tensor(parents)._tensor_of_elements(elements) # good name???
+            return tensor(parents)._tensor_of_elements(elements)  # good name ?
 
     class Homsets(HomsetsCategory):
         class ParentMethods:
@@ -2150,7 +2174,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: phi(x[1] + x[2] + x[3])
                     B[1] + 4*B[2] + 9*B[3]
 
-                TESTS::
+                TESTS:
 
                 As for usual homsets, the argument can be a Python function::
 
@@ -2170,7 +2194,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: H.zero().category_for()
                     Category of finite dimensional vector spaces with basis over Rational Field
                 """
-                return self.domain().module_morphism(codomain = self.codomain(),
+                return self.domain().module_morphism(codomain=self.codomain(),
                                                      **options)
 
     class MorphismMethods:
@@ -2291,7 +2315,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             with basis.
             """
 
-            def apply_multilinear_morphism(self, f, codomain = None):
+            def apply_multilinear_morphism(self, f, codomain=None):
                 r"""
                 Return the result of applying the morphism induced by ``f``
                 to ``self``.

@@ -53,7 +53,7 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
 * The type :class:`bool` (*booleans*) has two values: ``True`` and ``False``. The
   boolean operators are denoted by their names ``or``, ``and``, ``not``.
 
-* The Python types :class:`int` and :class:`long` are used to
+* The Python type :class:`int` is used to
   represent integers of limited size. To handle arbitrary large
   integers with exact arithmetic, Sage uses its own type named
   :class:`Integer`.
@@ -293,7 +293,7 @@ Creating Lists III: list comprehensions
 
 **Example** We already know how to create the list `[1, 2, \dots, 16]`::
 
-    sage: range(1,17)   # py2
+    sage: list(range(1,17))
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 Using a *list comprehension*, we can now create the list
@@ -1032,22 +1032,22 @@ included:
 
 ::
 
-    sage: range(4)  # py2
+    sage: list(range(4))
     [0, 1, 2, 3]
 
 ::
 
-    sage: range(1, 5)  # py2
+    sage: list(range(1, 5))
     [1, 2, 3, 4]
 
 ::
 
-    sage: range(1, 11, 2)  # py2
+    sage: list(range(1, 11, 2))
     [1, 3, 5, 7, 9]
 
 ::
 
-    sage: range(10, 0, -1)  # py2
+    sage: list(range(10, 0, -1))
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 ::
@@ -1183,7 +1183,7 @@ a list comprehension.
 
         sage: # edit here
 
-#.  The first `n` odd integers::
+#.  The first `n` odd positive integers::
 
         sage: # edit here
 
@@ -1192,7 +1192,7 @@ a list comprehension.
 
         sage: # edit here
 
-#.  The first `n` integers between `1` and `n` that are neither
+#.  The first `n` positive integers that are neither
     divisible by `2` nor by `3` nor by `5`::
 
        sage: # edit here

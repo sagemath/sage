@@ -1,5 +1,5 @@
-beautifulsoup4: A screen-scraping library
-=========================================
+beautifulsoup4: Screen-scraping library
+=======================================
 
 Description
 -----------
@@ -16,4 +16,3 @@ Upstream Contact
 
 https://pypi.org/project/beautifulsoup4/
 
-https://www.crummy.com/software/BeautifulSoup/

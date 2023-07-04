@@ -59,7 +59,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
        sage: Dg(3)
        6
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(g, 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -74,7 +74,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
        sage: g(x)
        x^2
        sage: type(g(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: g(x).derivative()
        2*x
        sage: plot(g(x), 0, 2)
@@ -92,7 +92,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
        sage: plot(sin, 0, 2)
        Graphics object consisting of 1 graphics primitive
        sage: type(sin(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(sin(x), 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -142,7 +142,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
 ::
 
        sage: type(x<2)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 
 シンボリック式が評価される際， ``h`` の定義の場合と同じように，その式が明らかに真でないかぎり戻り値は偽になる．
@@ -181,9 +181,9 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
 ::
 
        sage: type(f)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 
 ``g`` は関数ではなく定数になっているので，変数を持たないから何も値を受けつけない．
@@ -202,7 +202,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 
 - または ``f`` の定義は元のまま ``g`` をシンボリック表式として定義する．
@@ -216,7 +216,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 
 - または ``f`` と ``g`` の定義は元のまま，代入すべき変数を特定する．

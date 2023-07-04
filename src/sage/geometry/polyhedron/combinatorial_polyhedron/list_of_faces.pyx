@@ -41,9 +41,9 @@ Obtain the Vrepresentation of a polyhedron as facet-incidences::
 
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
-    sage: P = polytopes.associahedron(['A',3])
-    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())
-    sage: face_list.compute_dimension()
+    sage: P = polytopes.associahedron(['A',3])                                   # optional - sage.combinat
+    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())  # optional - sage.combinat
+    sage: face_list.compute_dimension()                                          # optional - sage.combinat
     3
 
 Obtain the facets of a polyhedron as :class:`ListOfFaces` from a facet list::
@@ -81,7 +81,7 @@ AUTHOR:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ AUTHOR:
 # ****************************************************************************
 
 from sage.structure.element import is_Matrix
-from sage.matrix.matrix_integer_dense  cimport Matrix_integer_dense
+from sage.matrix.matrix_dense  cimport Matrix_dense
 
 from .face_list_data_structure cimport *
 
@@ -127,7 +127,7 @@ cdef class ListOfFaces:
         sage: facets.matrix().dimensions()
         (5, 13)
     """
-    def __init__(self, size_t n_faces, size_t n_atoms, size_t n_coatoms):
+    def __cinit__(self, size_t n_faces, size_t n_atoms, size_t n_coatoms):
         r"""
         Initialize :class:`ListOfFaces`.
 
@@ -137,8 +137,33 @@ cdef class ListOfFaces:
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces).run()
         """
-        self._mem = MemoryAllocator()
-        face_list_init(self.data, n_faces, n_atoms, n_coatoms, self._mem)
+        # Note that all values are set to zero at the time ``__cinit__`` is called:
+        # https://cython.readthedocs.io/en/latest/src/userguide/special_methods.html#initialisation-methods
+        # In particular, ``__dealloc__`` will not do harm in this case.
+
+        face_list_init(self.data, n_faces, n_atoms, n_coatoms)
+
+    def __dealloc__(self):
+        r"""
+        TESTS:
+
+        Check that failed ``cinit`` does not give segmentation fault or similar::
+
+            sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces import ListOfFaces
+            sage: ListOfFaces(-1, -1, -1)  # indirect doctest
+            Traceback (most recent call last):
+            ...
+            OverflowError: can't convert negative value to size_t
+
+            sage: from memory_allocator.test import TestMemoryAllocator
+            sage: t = TestMemoryAllocator()
+            sage: m = t.size_t_max()
+            sage: ListOfFaces(10, m, 10)
+            Traceback (most recent call last):
+            ...
+            MemoryError: failed to allocate ...
+        """
+        face_list_free(self.data)
 
     def _test_alignment(self):
         r"""
@@ -477,9 +502,9 @@ cdef class ListOfFaces:
             sage: facets.matrix().transpose() == Vrep.matrix()
             True
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        cdef Matrix_integer_dense M = matrix(
+        cdef Matrix_dense M = matrix(
                 ZZ, self.n_faces(), self.n_atoms(), 0)
 
         cdef size_t i
@@ -487,7 +512,7 @@ cdef class ListOfFaces:
         for i in range(self.n_faces()):
             j = face_next_atom(self.data.faces[i], 0)
             while j != -1:
-                M.set_unsafe_si(i, j, 1)
+                M.set_unsafe_int(i, j, 1)
                 j = face_next_atom(self.data.faces[i], j+1)
 
         M.set_immutable()

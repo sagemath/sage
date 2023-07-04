@@ -410,7 +410,7 @@ Each **worker** is a process (:class:`RESetMapReduceWorker` inherits from
 - ``worker._request`` -- a :class:`~multiprocessing.queues.SimpleQueue` storing
   steal request submitted to ``worker``.
 - ``worker._read_task``, ``worker._write_task`` -- a
-  :class:`~multiprocessing.queues.Pipe` used to transfert node during steal.
+  :class:`~multiprocessing.queues.Pipe` used to transfer node during steal.
 - ``worker._thief`` -- a :class:`~threading.Thread` which is in charge of
   stealing from ``worker._todo``.
 
@@ -541,22 +541,21 @@ Classes and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from collections import deque
-from threading import Thread
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
-from sage.misc.lazy_attribute import lazy_attribute
 import copy
 import sys
 import random
 import queue
 import ctypes
-
-
 import logging
+import multiprocessing as mp
+from collections import deque
+from threading import Thread
+
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
+from sage.misc.lazy_attribute import lazy_attribute
+
 logger = logging.getLogger(__name__)
-logger.__doc__ = (
-"""
+logger.__doc__ = ("""
 A logger for :mod:`sage.parallel.map_reduce`
 
 .. SEEALSO::
@@ -578,7 +577,6 @@ logger.addHandler(ch)
 
 # Set up a multiprocessing context to use for this modules (using the
 # 'fork' method which is basically same as on Python 2)
-import multiprocessing as mp
 mp = mp.get_context('fork')
 
 
@@ -626,7 +624,7 @@ class AbortError(Exception):
     pass
 
 
-class ActiveTaskCounterDarwin(object):
+class ActiveTaskCounterDarwin():
     r"""
     Handling the number of active tasks.
 
@@ -739,7 +737,7 @@ class ActiveTaskCounterDarwin(object):
             self._active_tasks.value = 0
 
 
-class ActiveTaskCounterPosix(object):
+class ActiveTaskCounterPosix():
     r"""
     Handling the number of active tasks.
 
@@ -882,7 +880,7 @@ ActiveTaskCounter = (ActiveTaskCounterDarwin if sys.platform == 'darwin'
 # ActiveTaskCounter = ActiveTaskCounterDarwin  # to debug Darwin implementation
 
 
-class RESetMapReduce(object):
+class RESetMapReduce():
     r"""
     Map-Reduce on recursively enumerated sets.
 
@@ -1121,7 +1119,9 @@ class RESetMapReduce(object):
         self._results = mp.Queue()
         self._active_tasks = ActiveTaskCounter(self._nprocess)
         self._done = mp.Lock()
-        self._aborted = mp.Value(ctypes.c_bool, False)
+        # We use lock=False here, as a compromise, to avoid deadlocking when a
+        # subprocess holding a lock is terminated. (:trac:`33236`)
+        self._aborted = mp.Value(ctypes.c_bool, False, lock=False)
         sys.stdout.flush()
         sys.stderr.flush()
         self._workers = [RESetMapReduceWorker(self, i, reduce_locally)
@@ -1137,17 +1137,22 @@ class RESetMapReduce(object):
 
             sage: from sage.parallel.map_reduce import RESetMapReduce
             sage: def children(x):
+            ....:     print(f"Starting: {x}", flush=True)
             ....:     sleep(float(0.5))
+            ....:     print(f"Finished: {x}", flush=True)
             ....:     return []
-            sage: S = RESetMapReduce(roots=[1], children=children)
+            sage: S = RESetMapReduce(roots=[1, 2], children=children)
             sage: S.setup_workers(2)
-            sage: S.start_workers()
-            sage: all(w.is_alive() for w in S._workers)
-            True
-
-            sage: sleep(1)
-            sage: all(not w.is_alive() for w in S._workers)
-            True
+            sage: S.start_workers(); sleep(float(0.4))
+            Starting: ...
+            Starting: ...
+            sage: [w.is_alive() for w in S._workers]
+            [True, True]
+            sage: sleep(float(1.5))
+            Finished: ...
+            Finished: ...
+            sage: [not w.is_alive() for w in S._workers]
+            [True, True]
 
         Cleanup::
 
@@ -1191,9 +1196,9 @@ class RESetMapReduce(object):
         active_proc = self._nprocess
         while active_proc > 0:
             try:
-                logger.debug('Waiting on results; active_proc: %s, '
-                             'timeout: %s, aborted: %s' %
-                             (active_proc, timeout, self._aborted.value))
+                logger.debug('Waiting on results; active_proc: {}, '
+                             'timeout: {}, aborted: {}'.format(
+                                 active_proc, timeout, self._aborted.value))
                 newres = self._results.get(timeout=timeout)
             except queue.Empty:
                 logger.debug('Timed out waiting for results; aborting')
@@ -1244,13 +1249,13 @@ class RESetMapReduce(object):
         if not self._aborted.value:
             logger.debug("Joining worker processes...")
             for worker in self._workers:
-                logger.debug("Joining %s" % worker.name)
+                logger.debug(f"Joining {worker.name}")
                 worker.join()
             logger.debug("Joining done")
         else:
             logger.debug("Killing worker processes...")
             for worker in self._workers:
-                logger.debug("Terminating %s" % worker.name)
+                logger.debug(f"Terminating {worker.name}")
                 worker.terminate()
             logger.debug("Killing done")
 
@@ -1522,9 +1527,9 @@ class RESetMapReduce(object):
         # local function (see e.g:
         # https://stackoverflow.com/questions/2609518/python-nested-function-scopes).
 
-        def pstat(name, start, end, ist):
+        def pstat(name, start, end, istat):
             res[0] += ("\n" + name + " ".join(
-                "%4i" % (self._stats[i][ist]) for i in range(start, end)))
+                "%4i" % (self._stats[i][istat]) for i in range(start, end)))
         for start in range(0, self._nprocess, blocksize):
             end = min(start + blocksize, self._nprocess)
             res[0] = ("#proc:     " +
@@ -1608,17 +1613,17 @@ class RESetMapReduceWorker(mp.Process):
             for ireq in iter(self._request.get, AbortError):
                 reqs += 1
                 target = self._mapred._workers[ireq]
-                logger.debug("Got a Steal request from %s" % target.name)
+                logger.debug(f"Got a Steal request from {target.name}")
                 self._mapred._signal_task_start()
                 try:
                     work = self._todo.popleft()
                 except IndexError:
                     target._write_task.send(None)
-                    logger.debug("Failed Steal %s" % target.name)
+                    logger.debug(f"Failed Steal {target.name}")
                     self._mapred._signal_task_done()
                 else:
                     target._write_task.send(work)
-                    logger.debug("Succesful Steal %s" % target.name)
+                    logger.debug(f"Successful Steal {target.name}")
                     thefts += 1
         except AbortError:
             logger.debug("Thief aborted")
@@ -1651,11 +1656,11 @@ class RESetMapReduceWorker(mp.Process):
             sage: w0, w1 = EX._workers
             sage: w0._todo.append(42)
             sage: thief0 = Thread(target = w0._thief, name="Thief")
-            sage: thief0.start()  # known bug (Trac #27537)
+            sage: thief0.start()  # known bug (Issue #27537)
 
-            sage: w1.steal()  # known bug (Trac #27537)
+            sage: w1.steal()  # known bug (Issue #27537)
             42
-            sage: w0._todo  # known bug (Trac #27537)
+            sage: w0._todo  # known bug (Issue #27537)
             deque([])
         """
         self._mapred._signal_task_done()
@@ -1663,10 +1668,10 @@ class RESetMapReduceWorker(mp.Process):
         while node is None:
             victim = self._mapred.random_worker()
             if victim is not self:
-                logger.debug("Trying to steal from %s" % victim.name)
+                logger.debug(f"Trying to steal from {victim.name}")
                 victim._request.put(self._iproc)
                 self._stats[0] += 1
-                logger.debug("waiting for steal answer from %s" % victim.name)
+                logger.debug(f"waiting for steal answer from {victim.name}")
                 node = self._read_task.recv()
                 # logger.debug("Request answer: %s" % (node,))
                 if node is AbortError:
@@ -1691,7 +1696,7 @@ class RESetMapReduceWorker(mp.Process):
             sage: w._todo.append(EX.roots()[0])
 
             sage: w.run()
-            sage: sleep(1)
+            sage: sleep(int(1))
             sage: w._todo.append(None)
 
             sage: EX.get_results()
@@ -1708,7 +1713,7 @@ class RESetMapReduceWorker(mp.Process):
             PROFILER.runcall(self.run_myself)
 
             output = profile + str(self._iproc)
-            logger.warn("Profiling in %s ..." % output)
+            logger.warn(f"Profiling in {output} ...")
             PROFILER.dump_stats(output)
         else:
             self.run_myself()
@@ -1727,7 +1732,7 @@ class RESetMapReduceWorker(mp.Process):
             sage: w._todo.append(EX.roots()[0])
             sage: w.run_myself()
 
-            sage: sleep(1)
+            sage: sleep(int(1))
             sage: w._todo.append(None)
 
             sage: EX.get_results()

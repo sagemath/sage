@@ -19,10 +19,11 @@ Power sum symmetric functions
 #*****************************************************************************
 from . import sfa, multiplicative, classical
 from sage.combinat.partition import Partition
-from sage.arith.all import divisors
-from sage.rings.all import infinity
+from sage.arith.misc import divisors
+from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
+
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
@@ -476,8 +477,8 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
             """
-            dct = {Partition([n * i for i in lam]): coeff
-                   for (lam, coeff) in self.monomial_coefficients().items()}
+            dct = {lam.stretch(n): coeff
+                   for lam, coeff in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
 
         adams_operation = frobenius
@@ -804,11 +805,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 from sage.rings.integer_ring import ZZ
                 ZZq = PolynomialRing(ZZ, "q")
                 q_lim = ZZq.gen()
+
                 def f(partition):
-                    denom = prod((1-q**part) for part in partition)
+                    denom = prod((1 - q**part) for part in partition)
                     try:
                         ~denom
-                        rational = prod((1-q**(n*part)) for part in partition)/denom
+                        rational = prod((1 - q**(n*part)) for part in partition) / denom
                         return q.parent()(rational)
                     except (ZeroDivisionError, NotImplementedError, TypeError):
                         # If denom is not invertible, we need to do the
@@ -933,6 +935,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 return (1-q)**n * t**n / m
 
             return self.parent()._apply_module_morphism(self, f, t.parent())
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

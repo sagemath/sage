@@ -40,7 +40,7 @@ from copy import copy
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.qqbar import AA, QQbar
-from sage.arith.all import sort_complex_numbers_for_display
+from sage.arith.misc import sort_complex_numbers_for_display
 from sage.rings.polynomial.refine_root import refine_root
 
 
@@ -147,7 +147,6 @@ def intervals_disjoint(intvs):
     return True
 
 
-
 def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
     """
     Compute the complex roots of a given polynomial with exact
@@ -228,7 +227,7 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
         ....:     if tiny(x.imag()): return x.real()
         ....:     if tiny(x.real()): return CIF(0, x.imag())
         sage: rts = complex_roots(p); type(rts[0][0]), sorted(map(smash, rts))
-        (<type 'sage.rings.complex_interval.ComplexIntervalFieldElement'>, [-1.618033988749895?, -0.618033988749895?*I, 1.618033988749895?*I, 0.618033988749895?])
+        (<class 'sage.rings.complex_interval.ComplexIntervalFieldElement'>, [-1.618033988749895?, -0.618033988749895?*I, 1.618033988749895?*I, 0.618033988749895?])
         sage: rts = complex_roots(p, retval='algebraic'); type(rts[0][0]), sorted(map(smash, rts))
         (<class 'sage.rings.qqbar.AlgebraicNumber'>, [-1.618033988749895?, -0.618033988749895?*I, 1.618033988749895?*I, 0.618033988749895?])
         sage: rts = complex_roots(p, retval='algebraic_real'); type(rts[0][0]), rts

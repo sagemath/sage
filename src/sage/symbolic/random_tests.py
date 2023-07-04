@@ -14,14 +14,13 @@ Randomized tests of GiNaC / PyNaC
 
 from sage.misc.prandom import randint, random
 import operator
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
-from sage.libs.pynac.pynac import symbol_table
+from sage.symbolic.expression import symbol_table, mixed_order
 from sage.symbolic.constants import (pi, e, golden_ratio, log2, euler_gamma,
                                      catalan, khinchin, twinprime, mertens)
 from sage.functions.hypergeometric import hypergeometric
 from sage.functions.other import (cases, element_of)
-from sage.symbolic.comparison import mixed_order
 
 ###################################################################
 ### Generate random expressions for doctests ######################
@@ -296,8 +295,8 @@ def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,
         sage: my_internal = [(0.6, full_binary, 2), (0.2, full_unary, 1),
         ....: (0.2, [(1.0,f,f.number_of_arguments()) for f in some_functions])]
         sage: set_random_seed(1)
-        sage: random_expr(50, nvars=3, internal=my_internal,
-        ....:   coeff_generator=CDF.random_element)  # not tested  # known bug
+        sage: random_expr(50, nvars=3, internal=my_internal,  # not tested  # known bug
+        ....:             coeff_generator=CDF.random_element)
         (v1^(0.9713408427702117 + 0.195868299334218*I)/cot(-pi + v1^2 + v3) + tan(arctan(v2 + arctan2(-0.35859061674557324 + 0.9407509502498164*I, v3) - 0.8419115504372718 + 0.30375717982404615*I) + arctan2((0.2275357305882964 - 0.8258002386106038*I)/factorial(v2), -v3 - 0.7604559947718565 - 0.5543672548552057*I) + ceil(1/arctan2(v1, v1))))/v2
         sage: random_expr(5, verbose=True)  # not tested  # known bug
         About to apply <built-in function inv> to [31]

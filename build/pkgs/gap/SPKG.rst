@@ -26,13 +26,6 @@ https://www.gap-system.org
 
 Mailing list at https://mail.gap-system.org/mailman/listinfo/gap
 
-Dependencies
-------------
-
--  Readline
--  GMP
-
-
 Special Update/Build Instructions
 ---------------------------------
 

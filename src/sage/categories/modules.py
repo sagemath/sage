@@ -12,6 +12,7 @@ Modules
 # *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.morphism import SetMorphism
@@ -19,7 +20,7 @@ from sage.categories.homsets import HomsetsCategory
 from sage.categories.homset import Hom
 from .category import Category
 from .category_types import Category_module
-from sage.categories.tensor import TensorProductsCategory, tensor
+from sage.categories.tensor import TensorProductsCategory, TensorProductFunctor, tensor
 from .dual import DualObjectsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.sets_cat import Sets
@@ -112,7 +113,7 @@ class Modules(Category_module):
     """
 
     @staticmethod
-    def __classcall_private__(cls, base_ring, dispatch = True):
+    def __classcall_private__(cls, base_ring, dispatch=True):
         r"""
         Implement the dispatching of ``Modules(field)`` to
         ``VectorSpaces(field)``.
@@ -152,7 +153,7 @@ class Modules(Category_module):
                                         and base_ring.is_subcategory(_Fields)):
                 from .vector_spaces import VectorSpaces
                 return VectorSpaces(base_ring, check=False)
-        result = super(Modules, cls).__classcall__(cls, base_ring)
+        result = super().__classcall__(cls, base_ring)
         result._reduction[2]['dispatch'] = False
         return result
 
@@ -171,7 +172,7 @@ class Modules(Category_module):
             [Category of modules over Rational Field]
         """
         R = self.base_ring()
-        return [Bimodules(R,R)]
+        return [Bimodules(R, R)]
 
     def additional_structure(self):
         r"""
@@ -352,6 +353,26 @@ class Modules(Category_module):
             return self._with_axiom("FiniteDimensional")
 
         @cached_method
+        def FinitelyPresented(self):
+            r"""
+            Return the full subcategory of the finitely presented objects of ``self``.
+
+            EXAMPLES::
+
+                sage: Modules(ZZ).FinitelyPresented()
+                Category of finitely presented modules over Integer Ring
+                sage: A = SteenrodAlgebra(2)
+                sage: from sage.modules.fp_graded.module import FPModule
+                sage: FPModule(A, [0, 1], [[Sq(2), Sq(1)]]).category()
+                Category of finitely presented graded modules over mod 2 Steenrod algebra, milnor basis
+
+            TESTS::
+
+                sage: TestSuite(Modules(ZZ).FinitelyPresented()).run()
+            """
+            return self._with_axiom("FinitelyPresented")
+
+        @cached_method
         def Filtered(self, base_ring=None):
             r"""
             Return the subcategory of the filtered objects of ``self``.
@@ -514,6 +535,55 @@ class Modules(Category_module):
             else:
                 return []
 
+        class TensorProducts(TensorProductsCategory):
+
+            def extra_super_categories(self):
+                """
+                Implement the fact that a (finite) tensor product of
+                finite dimensional modules is a finite dimensional module.
+
+                EXAMPLES::
+
+                    sage: Modules(ZZ).FiniteDimensional().TensorProducts().extra_super_categories()
+                    [Category of finite dimensional modules over Integer Ring]
+                    sage: Modules(QQ).FiniteDimensional().TensorProducts().FiniteDimensional()
+                    Category of tensor products of finite dimensional vector spaces over Rational Field
+
+                """
+                return [self.base_category()]
+
+    class FinitelyPresented(CategoryWithAxiom_over_base_ring):
+
+        def extra_super_categories(self):
+            """
+            Implement the fact that a finitely presented module over a finite
+            ring is finite.
+
+            EXAMPLES::
+
+                sage: Modules(IntegerModRing(4)).FiniteDimensional().extra_super_categories()
+                [Category of finite sets]
+                sage: Modules(ZZ).FiniteDimensional().extra_super_categories()
+                []
+                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())
+                True
+                sage: Modules(ZZ).FiniteDimensional().is_subcategory(Sets().Finite())
+                False
+
+                sage: Modules(Rings().Finite()).FiniteDimensional().is_subcategory(Sets().Finite())
+                True
+                sage: Modules(Rings()).FiniteDimensional().is_subcategory(Sets().Finite())
+                False
+            """
+            base_ring = self.base_ring()
+            FiniteSets = Sets().Finite()
+            if (isinstance(base_ring, Category) and
+                    base_ring.is_subcategory(FiniteSets)) or \
+                base_ring in FiniteSets:
+                return [FiniteSets]
+            else:
+                return []
+
     Filtered = LazyImport('sage.categories.filtered_modules', 'FilteredModules')
     Graded = LazyImport('sage.categories.graded_modules', 'GradedModules')
     Super = LazyImport('sage.categories.super_modules', 'SuperModules')
@@ -605,6 +675,37 @@ class Modules(Category_module):
             if category is None:
                 category = Modules(self.base_ring())
             return SetMorphism(Hom(self, codomain, category), function)
+
+        def quotient(self, submodule, check=True, **kwds):
+            r"""
+            Construct the quotient module ``self`` / ``submodule``.
+
+            INPUT:
+
+            - ``submodule`` -- a submodule with basis of ``self``, or
+              something that can be turned into one via
+              ``self.submodule(submodule)``
+
+            - ``check``, other keyword arguments: passed on to
+              :meth:`quotient_module`.
+
+            This method just delegates to :meth:`quotient_module`.
+            Classes implementing modules should override that method.
+
+            Parents in categories with additional structure may override
+            :meth:`quotient`. For example, in algebras, :meth:`quotient` will
+            be the same as :meth:`quotient_ring`.
+
+            EXAMPLES::
+
+                sage: C = CombinatorialFreeModule(QQ, ['a','b','c'])
+                sage: TA = TensorAlgebra(C)
+                sage: TA.quotient
+                <bound method Rings.ParentMethods.quotient of
+                 Tensor Algebra of Free module generated by {'a', 'b', 'c'} over Rational Field>
+
+            """
+            return self.quotient_module(submodule, check=check, **kwds)
 
     class ElementMethods:
         pass
@@ -805,7 +906,7 @@ class Modules(Category_module):
                     ((5, 10), (15, 20))
                 """
                 return self.parent()._cartesian_product_of_elements(
-                    x*y for y in self.cartesian_factors())
+                    x * y for y in self.cartesian_factors())
 
     class TensorProducts(TensorProductsCategory):
         """
@@ -823,3 +924,55 @@ class Modules(Category_module):
             """
             return [self.base_category()]
 
+        class ParentMethods:
+            """
+            Implement operations on tensor products of modules.
+            """
+            def construction(self):
+                """
+                Return the construction of ``self``.
+
+                EXAMPLES::
+
+                    sage: A = algebras.Free(QQ,2)
+                    sage: T = A.tensor(A)
+                    sage: T.construction()
+                    (The tensor functorial construction,
+                     (Free Algebra on 2 generators (None0, None1) over Rational Field,
+                      Free Algebra on 2 generators (None0, None1) over Rational Field))
+                """
+                try:
+                    factors = self.tensor_factors()
+                except (TypeError, NotImplementedError):
+                    from sage.misc.superseded import deprecation
+                    deprecation(34393, "implementations of Modules().TensorProducts() now must define the method tensor_factors")
+                    return None
+                return (TensorProductFunctor(),
+                        factors)
+
+            @abstract_method(optional=True)
+            def tensor_factors(self):
+                """
+                Return the tensor factors of this tensor product.
+
+                EXAMPLES::
+
+                    sage: F = CombinatorialFreeModule(ZZ, [1,2])
+                    sage: F.rename("F")
+                    sage: G = CombinatorialFreeModule(ZZ, [3,4])
+                    sage: G.rename("G")
+                    sage: T = tensor([F, G]); T
+                    F # G
+                    sage: T.tensor_factors()
+                    (F, G)
+
+                TESTS::
+
+                    sage: M = CombinatorialFreeModule(ZZ, ((1, 1), (1, 2), (2, 1), (2, 2)),
+                    ....:                             category=ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts())
+                    sage: M.construction()
+                    doctest:warning...
+                    DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors
+                    See https://github.com/sagemath/sage/issues/34393 for details.
+                    (VectorFunctor, Integer Ring)
+                """

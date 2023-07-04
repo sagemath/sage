@@ -87,6 +87,7 @@ import os
 import re
 
 from urllib.request import urlretrieve
+import ssl
 
 from sage.misc.verbose import verbose
 from sage.env import SAGE_SHARE
@@ -177,18 +178,18 @@ class SloaneEncyclopediaClass:
 
         return answer
 
-    def install(self, oeis_url="http://oeis.org/stripped.gz",
-                names_url="http://oeis.org/names.gz", overwrite=False):
+    def install(self, oeis_url="https://oeis.org/stripped.gz",
+                names_url="https://oeis.org/names.gz", overwrite=False):
         """
         Download and install the online encyclopedia, raising an IOError if
         either step fails.
 
         INPUT:
 
-        - ``oeis_url`` - string (default: "http://oeis.org...")
+        - ``oeis_url`` - string (default: "https://oeis.org...")
           The URL of the stripped.gz encyclopedia file.
 
-        - ``names_url`` - string (default: "http://oeis.org...")
+        - ``names_url`` - string (default: "https://oeis.org...")
           The URL of the names.gz encyclopedia file.  If you do not want to
           download this file, set names_url=None.
 
@@ -201,6 +202,7 @@ class SloaneEncyclopediaClass:
             raise IOError("Sloane encyclopedia is already installed")
 
         tm = verbose("Downloading stripped version of Sloane encyclopedia")
+        ssl._create_default_https_context = ssl.create_default_context
         try:
             fname, _ = urlretrieve(oeis_url)
         except IOError as msg:
@@ -355,7 +357,6 @@ def copy_gz_file(gz_source, bz_destination):
     - ``bz_destination`` -- string.  The name of the newly compressed file.
     """
     import gzip
-    from sage.misc.misc import sage_makedirs
 
     # Read the gzipped input
     try:
@@ -367,7 +368,7 @@ def copy_gz_file(gz_source, bz_destination):
 
     # Write the bzipped output
     try:
-        sage_makedirs(os.path.dirname(bz_destination))
+        os.makedirs(os.path.dirname(bz_destination), exist_ok=True)
         bz2_output = bz2.BZ2File(bz_destination, 'w')
         bz2_output.write(db_text)
         bz2_output.close()

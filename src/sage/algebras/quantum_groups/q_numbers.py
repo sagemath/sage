@@ -202,4 +202,3 @@ def q_binomial(n, k, q=None):
         return numerat // denomin
     except TypeError:
         return numerat / denomin
-

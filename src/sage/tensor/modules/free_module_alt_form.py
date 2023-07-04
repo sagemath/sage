@@ -428,7 +428,7 @@ class FreeModuleAltForm(FreeModuleTensor):
                     if is_atomic(coef_latex):
                         terms_latex.append(coef_latex + basis_term_latex)
                     else:
-                        terms_latex.append(r'\left(' + coef_latex + \
+                        terms_latex.append(r'\left(' + coef_latex +
                                            r'\right)' + basis_term_latex)
         if not terms_txt:
             expansion_txt = '0'
@@ -554,11 +554,11 @@ class FreeModuleAltForm(FreeModuleTensor):
 
         Check that the bug reported in :trac:`22520` is fixed::
 
-            sage: M = FiniteRankFreeModule(SR, 2, name='M')
-            sage: e = M.basis('e')
-            sage: a = M.alternating_form(2)
-            sage: a[0,1] = SR.var('t', domain='real')
-            sage: a.display()
+            sage: M = FiniteRankFreeModule(SR, 2, name='M')  # optional - sage.symbolic
+            sage: e = M.basis('e')                           # optional - sage.symbolic
+            sage: a = M.alternating_form(2)                  # optional - sage.symbolic
+            sage: a[0,1] = SR.var('t', domain='real')        # optional - sage.symbolic
+            sage: a.display()                                # optional - sage.symbolic
             t e^0∧e^1
 
         """
@@ -856,13 +856,10 @@ class FreeModuleAltForm(FreeModuleTensor):
             if not is_atomic(olname):
                 olname = r'\left(' + olname + r'\right)'
             res_latex_name = r'\iota_{' + slname + '} ' + olname
-        if p_res == 0:
-            if res_name:
-                try:  # there is no guarantee that base ring elements have
-                      # set_name
-                    res.set_name(res_name, latex_name=res_latex_name)
-                except (AttributeError, TypeError):
-                    pass
-        else:
-            res.set_name(res_name, latex_name=res_latex_name)
+        if res_name:
+            try:  # there is no guarantee that the result has set_name
+                  # and is mutable
+                res.set_name(res_name, latex_name=res_latex_name)
+            except (AttributeError, TypeError, ValueError):
+                pass
         return res

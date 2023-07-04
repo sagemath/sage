@@ -111,8 +111,8 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
             sage: P1 is P2
             True
         """
-        return super(PoincareBirkhoffWittBasis, cls).__classcall__(cls,
-                            g, basis_key, prefix, **kwds)
+        return super().__classcall__(cls,
+                                     g, basis_key, prefix, **kwds)
 
     def __init__(self, g, basis_key, prefix, **kwds):
         """
@@ -325,8 +325,12 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         if R == self._g:
             # Make this into the lift map
             I = self._indices
-            def basis_function(x): return self.monomial(I.gen(x))
-            def inv_supp(m): return None if m.length() != 1 else m.leading_support()
+
+            def basis_function(x):
+                return self.monomial(I.gen(x))
+
+            def inv_supp(m):
+                return None if m.length() != 1 else m.leading_support()
             # TODO: this diagonal, but with a smaller indexing set...
             return self._g.module_morphism(basis_function, codomain=self,
                                            triangular='upper', unitriangular=True,
@@ -339,20 +343,24 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         if isinstance(R, PoincareBirkhoffWittBasis):
             if self._g == R._g:
                 I = self._indices
+
                 def basis_function(x):
-                    return self.prod(self.monomial(I.gen(g)**e) for g,e in x._sorted_items())
+                    return self.prod(self.monomial(I.gen(g)**e)
+                                     for g, e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
             coerce_map = self._g.coerce_map_from(R._g)
             if coerce_map:
                 I = self._indices
                 lift = self.coerce_map_from(self._g)
+
                 def basis_function(x):
-                    return self.prod(lift(coerce_map(g))**e for g,e in x._sorted_items())
+                    return self.prod(lift(coerce_map(g))**e
+                                     for g, e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
 
-        return super(PoincareBirkhoffWittBasis, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def lie_algebra(self):
         """
@@ -534,4 +542,3 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                         ret += term
                     return ret
             return None
-

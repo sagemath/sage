@@ -1,5 +1,6 @@
 import sys
 
+
 def compiler_directives(profile: bool):
     """
     Return a list of Cython directives used for compilation.
@@ -15,12 +16,13 @@ def compiler_directives(profile: bool):
         embedsignature=True,
         fast_getattr=True,
         # Use Python 3 (including source code semantics) for module compilation
-        language_level="3str",
+        language_level="3",
         # Enable support for late includes (make declarations in Cython code available to C include files)
         preliminary_late_includes_cy28=True,
         # Add hooks for Python profilers into the compiled C code
         profile=profile,
     )
+
 
 def compile_time_env_variables():
     """

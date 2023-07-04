@@ -25,12 +25,15 @@ Methods
 -------
 """
 
-##############################################################################
-#       Copyright (C) 2012 Birk Eisermann <eisermbi@fastmail.fm>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-##############################################################################
+# ****************************************************************************
+#       Copyright (c) 2012 Birk Eisermann <eisermbi@fastmail.fm>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from memory_allocator cimport MemoryAllocator
 from sage.data_structures.bitset_base cimport *
@@ -45,12 +48,12 @@ cdef inline int has_edge(bitset_t bs, int u, int v, int n):
 
 
 cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
-                                          list id_label, int* path, int* InPath,
-                                          int* neighbor_index, set VisitedP3,
-                                          bint certificate,
-                                          int a, int b, int c, int n):
+                                      list id_label, int* path, int* InPath,
+                                      int* neighbor_index, set VisitedP3,
+                                      bint certificate,
+                                      int a, int b, int c, int n):
     """
-    This method is part of method `is_long_hole_free`.
+    This method is part of method ``is_long_hole_free``.
 
     EXAMPLES::
 
@@ -87,7 +90,7 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
                         # We extract the hole and relabel it on-the-fly with the
                         # vertices' real name
                         C = [id_label[path[i]] for i in range(InPath[d], path_top + 1)]
-                        C_index = {label: i for i,label in enumerate(C)}
+                        C_index = {label: i for i, label in enumerate(C)}
 
                         # At this step C[0]C[1]..... is a cycle such that any 4
                         # consecutive vertices induce a P4. C may not be an
@@ -100,12 +103,13 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
                         # C[i]...C[j] is necessarily an induced cycle.
 
                         gg = g.subgraph(C, immutable=False)
-                        gg.delete_edges(zip(C[:-1],C[1:]))
+                        gg.delete_edges(zip(C[:-1], C[1:]))
 
-                        dist = lambda X: abs(C_index[X[0]]-C_index[X[1]])
+                        def dist(X):
+                            return abs(C_index[X[0]] - C_index[X[1]])
 
-                        label_u,label_v = min(gg.edge_iterator(labels=False), key=dist)
-                        u,v = C_index[label_u], C_index[label_v]
+                        label_u, label_v = min(gg.edge_iterator(labels=False), key=dist)
+                        u, v = C_index[label_u], C_index[label_v]
 
                         # Return the answer
                         return False, g.subgraph(C[min(u, v): max(u, v) + 1])
@@ -221,7 +225,7 @@ def is_long_hole_free(g, certificate=False):
             bitset_add(dense_graph, u * n + v)
             bitset_add(dense_graph, v * n + u)
 
-    # Allocate some data strutures
+    # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* path = <int*> mem.allocarray(n, sizeof(int))
     cdef int path_top
@@ -229,11 +233,9 @@ def is_long_hole_free(g, certificate=False):
     for u in range(n):
         InPath[u] = -1
 
-    cdef int* neighbor_index = <int*>  mem.allocarray(n, sizeof(int))
+    cdef int* neighbor_index = <int*> mem.allocarray(n, sizeof(int))
 
-    cdef set VisitedP3 = set() # stores triples (u,v,w) which represent visited paths of length 3
-
-
+    cdef set VisitedP3 = set()  # stores triples (u,v,w) which represent visited paths of length 3
 
     # main algorithm
     # For all triples u,v,w of vertices such that uvw is a P_3
@@ -251,8 +253,8 @@ def is_long_hole_free(g, certificate=False):
                 if u != w and not has_edge(dense_graph, u, w, n) and (u, v, w) not in VisitedP3:
 
                     res, hole = is_long_hole_free_process(g, sd, dense_graph, id_label,
-                                                              path, InPath, neighbor_index, VisitedP3,
-                                                              certificate, u, v, w, n)
+                                                          path, InPath, neighbor_index, VisitedP3,
+                                                          certificate, u, v, w, n)
 
                     if not res:
                         # We release memory before returning the result
@@ -278,12 +280,12 @@ def is_long_hole_free(g, certificate=False):
 
 
 cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_graph,
-                                              list id_label, int* path, int* InPath,
-                                              int* neighbor_index, set VisitedP3,
-                                              bint certificate,
-                                              int a, int b, int c, int n):
+                                          list id_label, int* path, int* InPath,
+                                          int* neighbor_index, set VisitedP3,
+                                          bint certificate,
+                                          int a, int b, int c, int n):
     """
-    This method is part of method `is_long_antihole_free`.
+    This method is part of method ``is_long_antihole_free``.
 
     EXAMPLES::
 
@@ -318,7 +320,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
                         # Calculation of induced cycle in complement
                         # Relabel it on-the-fly with the vertices' real name
                         C = [id_label[path[i]] for i in range(InPath[d], path_top + 1)]
-                        C_index = {label: i for i,label in enumerate(C)}
+                        C_index = {label: i for i, label in enumerate(C)}
 
                         # At this step C[0]C[1]..... is an anticycle such that
                         # any 4 consecutive vertices induce the complement of a
@@ -332,12 +334,13 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
                         # C[i]...C[j] is necessarily an induced anticycle.
 
                         gg = g.subgraph(C, immutable=False).complement()
-                        gg.delete_edges(zip(C[:-1],C[1:]))
+                        gg.delete_edges(zip(C[:-1], C[1:]))
 
-                        dist = lambda X: abs(C_index[X[0]]-C_index[X[1]])
+                        def dist(X):
+                            return abs(C_index[X[0]] - C_index[X[1]])
 
-                        label_u,label_v = min(gg.edge_iterator(labels=False), key=dist)
-                        u,v = C_index[label_u], C_index[label_v]
+                        label_u, label_v = min(gg.edge_iterator(labels=False), key=dist)
+                        u, v = C_index[label_u], C_index[label_v]
 
                         # Return the answer
                         return False, g.subgraph(C[min(u, v): max(u, v) + 1])
@@ -359,6 +362,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
             InPath[c] = -1
 
     return True, []
+
 
 def is_long_antihole_free(g, certificate=False):
     r"""
@@ -452,7 +456,7 @@ def is_long_antihole_free(g, certificate=False):
             bitset_add(dense_graph, u * n + v)
             bitset_add(dense_graph, v * n + u)
 
-    # Allocate some data strutures
+    # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* path = <int*> mem.allocarray(n, sizeof(int))
     cdef int path_top
@@ -460,10 +464,9 @@ def is_long_antihole_free(g, certificate=False):
     for u in range(n):
         InPath[u] = -1
 
-    cdef int* neighbor_index = <int*>  mem.allocarray(n, sizeof(int))
+    cdef int* neighbor_index = <int*> mem.allocarray(n, sizeof(int))
 
-    cdef set VisitedP3 = set() # stores triples (u,v,w) which represent visited paths of length 3
-
+    cdef set VisitedP3 = set()  # stores triples (u,v,w) which represent visited paths of length 3
 
     # main algorithm
     # For all triples u,v,w of vertices such that uvw is a complement of P_3
@@ -481,9 +484,9 @@ def is_long_antihole_free(g, certificate=False):
                 if v < w and not has_edge(dense_graph, u, w, n) and (v, u, w) not in VisitedP3:
 
                     res, antihole = is_long_antihole_free_process(g, sd, dense_graph, id_label,
-                                                                      path, InPath, neighbor_index,
-                                                                      VisitedP3, certificate,
-                                                                      v, u, w, n)
+                                                                  path, InPath, neighbor_index,
+                                                                  VisitedP3, certificate,
+                                                                  v, u, w, n)
 
                     if not res:
                         # We release memory before returning the result
@@ -506,6 +509,7 @@ def is_long_antihole_free(g, certificate=False):
         return True, []
     else:
         return True
+
 
 def is_weakly_chordal(g, certificate=False):
     r"""
@@ -553,11 +557,10 @@ def is_weakly_chordal(g, certificate=False):
         return (True, []) if certificate else True
 
     if certificate:
-        r,forbid_subgr = g.is_long_hole_free(certificate=True)
+        r, forbid_subgr = g.is_long_hole_free(certificate=True)
         if not r:
             return False, forbid_subgr
 
         return g.is_long_antihole_free(certificate=True)
     else:
         return g.is_long_hole_free() and g.is_long_antihole_free()
-

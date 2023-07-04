@@ -1,18 +1,19 @@
 r"""
 Super Algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.super_modules import SuperModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory, tensor_signed
 from sage.categories.tensor import tensor
 from sage.misc.lazy_import import LazyImport
 from sage.misc.cachefunc import cached_method
+
 
 class SuperAlgebras(SuperModulesCategory):
     r"""
@@ -143,4 +144,3 @@ class SuperAlgebras(SuperModulesCategory):
             Meaning: a signed tensor product of coalgebras is a coalgebra
             """
             return [self.base_category()]
-

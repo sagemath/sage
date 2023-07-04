@@ -450,7 +450,7 @@ def _linear_extension_prepare(D):
         # find all the minimal elements of dag_copy
         minimal_elements = dag_copy.sources()
         if not minimal_elements:
-            raise ValueError("The digraph must be acyclic to have linear extensions.")
+            raise ValueError("the digraph must be acyclic to have linear extensions")
         elif len(minimal_elements) == 1:
             le.append(minimal_elements[0])
             dag_copy.delete_vertex(minimal_elements[0])
@@ -481,12 +481,14 @@ cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py
     if i == -1:
         _is_plus[0] = not _is_plus[0]
     else:
-        a = _a[i]; b = _b[i]
+        a = _a[i]
+        b = _b[i]
         a_index = _le.index(a)
         b_index = _le.index(b)
         _le[a_index] = b
         _le[b_index] = a
-        _b[i] = a; _a[i] = b
+        _b[i] = a
+        _a[i] = b
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -572,7 +574,8 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
     while _linear_extension_right_b(_D, _le, _a, _b, i):
         mrb += 1
         # move_right
-        index = _le.index(_b[i]); index1 = index + 1
+        index = _le.index(_b[i])
+        index1 = index + 1
         _le[index] = _le[index1]
         _le[index1] = _b[i]
         if _is_plus[0]:
@@ -585,7 +588,8 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
             typical = True
             mra += 1
             # move_right
-            index = _le.index(_a[i]); index1 = index+1
+            index = _le.index(_a[i])
+            index1 = index+1
             _le[index] = _le[index1]
             _le[index1] = _a[i]
             if _is_plus[0]:
@@ -607,7 +611,8 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
                 mla = mra + 1
             for _ in range(mla):
                 # move_left
-                index = _le.index(_a[i]); index1 = index-1
+                index = _le.index(_a[i])
+                index1 = index-1
                 _le[index] = _le[index1]
                 _le[index1] = _a[i]
                 if _is_plus[0]:
@@ -618,7 +623,8 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
 
     if typical and (mrb % 2 == 1):
         # move_left
-        index = _le.index(_a[i]); index1 = index-1
+        index = _le.index(_a[i])
+        index1 = index-1
         _le[index] = _le[index1]
         _le[index1] = _a[i]
         if _is_plus[0]:
@@ -631,7 +637,8 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
         yield e
     for _ in range(mrb):
         # move_left
-        index = _le.index(_b[i]); index1 = index-1
+        index = _le.index(_b[i])
+        index1 = index-1
         _le[index] = _le[index1]
         _le[index1] = _b[i]
         if _is_plus[0]:
@@ -639,6 +646,7 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
 
         for e in _linear_extension_gen(_D, _le, _a, _b, _is_plus, i-1):
             yield e
+
 
 def linear_extension_iterator(D):
     """

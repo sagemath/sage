@@ -30,12 +30,6 @@ Upstream Contact
 -  The Maxima mailing list - see
    http://maxima.sourceforge.net/maximalist.html
 
-Dependencies
-------------
-
--  ECL (Embedded Common Lisp)
-
-
 Special Update/Build Instructions
 ---------------------------------
 

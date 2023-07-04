@@ -432,6 +432,7 @@ class QuantumGroupRepresentations(Category_module):
             ac = ct.root_system().weight_lattice().simple_coroots()
             q = self.q()
             from sage.algebras.quantum_groups.q_numbers import q_factorial
+
             def apply_e(d, elt):
                 for i in d:
                     elt = elt.e(i)
@@ -526,4 +527,3 @@ class QuantumGroupRepresentations(Category_module):
                 q
             """
             return self._q
-

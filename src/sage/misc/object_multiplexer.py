@@ -21,7 +21,7 @@ AUTHORS:
 # ****************************************************************************
 
 
-class MultiplexFunction(object):
+class MultiplexFunction():
     """
     A simple wrapper object for functions that are called on a list of
     objects.
@@ -54,11 +54,10 @@ class MultiplexFunction(object):
             l.append(getattr(child, self.name)(*args, **kwds))
         if all(e is None for e in l):
             return None
-        else:
-            return tuple(l)
+        return tuple(l)
 
 
-class Multiplex(object):
+class Multiplex():
     """
     Object for a list of children such that function calls on this
     new object implies that the same function is called on all
@@ -83,11 +82,11 @@ class Multiplex(object):
             sage: m = Multiplex(1,1/2)
             sage: m.str
             <sage.misc.object_multiplexer.MultiplexFunction object at 0x...>
-            sage: m.trait_names
+            sage: m.__bork__
             Traceback (most recent call last):
             ...
-            AttributeError: 'Multiplex' has no attribute 'trait_names'
+            AttributeError: 'Multiplex' has no attribute '__bork__'
         """
-        if name.startswith("__") or name == "trait_names":
+        if name.startswith("__"):
             raise AttributeError("'Multiplex' has no attribute '%s'" % name)
         return MultiplexFunction(self, name)

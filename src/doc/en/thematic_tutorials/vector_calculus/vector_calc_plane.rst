@@ -32,7 +32,7 @@ the Cartesian coordinates (there is no need to declare them via :func:`var`,
 i.e. to type ``x, y = var('x y')``)::
 
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Instead of using the variables ``x`` and ``y``, one may also access to the
 coordinates by their indices in the chart of Cartesian coordinates::
@@ -500,7 +500,7 @@ manifold endowed with a positive definite metric tensor::
 
 Actually ``RR`` is used here as a proxy for the real field (this should
 be replaced in the future, see the discussion at
-`#24456 <https://trac.sagemath.org/ticket/24456>`__) and the 53 bits of
+:trac:`24456`) and the 53 bits of
 precision play of course no role for the symbolic computations.
 
 The user atlas of `\mathbb{E}^2` has two charts::

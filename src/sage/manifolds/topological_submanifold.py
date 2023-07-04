@@ -50,7 +50,8 @@ from sage.manifolds.manifold import TopologicalManifold
 from sage.manifolds.continuous_map import ContinuousMap
 from sage.symbolic.expression import Expression
 from sage.symbolic.assumptions import assumptions, assume
-from sage.plot.plot3d.parametric_surface import ParametricSurface
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.plot3d.parametric_surface", "ParametricSurface")
 
 #############################################################################
 # Global options
@@ -195,6 +196,9 @@ class TopologicalSubmanifold(TopologicalManifold):
                                      latex_name=latex_name,
                                      start_index=start_index,
                                      category=category)
+        if not (ambient is None
+                or isinstance(ambient, TopologicalManifold)):
+            raise TypeError("ambient must be a manifold")
         self._init_immersion(ambient=ambient)
 
     def _init_immersion(self, ambient=None):
@@ -223,7 +227,10 @@ class TopologicalSubmanifold(TopologicalManifold):
             self._ambient = self
         else:
             self._ambient = ambient
-            self._codim = ambient._dim-self._dim
+            self._codim = ambient._dim - self._dim
+            if self._codim < 0:
+                raise ValueError("the submanifold must be of smaller "
+                                 + "dimension than its ambient manifold")
         self._immersed = False
         self._embedded = False
         self._adapted_charts = None
@@ -287,8 +294,7 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         OUTPUT:
 
-        - the open subset, as an instance of
-          :class:`~sage.manifolds.manifold.topological_submanifold.TopologicalSubmanifold`
+        - the open subset, as an instance of :class:`TopologicalSubmanifold`
 
         EXAMPLES::
 
@@ -337,15 +343,15 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         INPUT:
 
-        - ``resu`` -- an instance of ``:class:`TopologicalManifold` or
+        - ``resu`` -- an instance of :class:`TopologicalManifold` or
           a subclass.
 
-        - ``coord_def`` -- (default: {}) definition of the subset in
+        - ``coord_def`` -- (default: ``{}``) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
           charts on the manifold and values the symbolic expressions formed
           by the coordinates to define the subset
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: M = Manifold(3, 'M', structure="topological")
             sage: N = Manifold(2, 'N', ambient=M, structure="topological")
@@ -506,8 +512,9 @@ class TopologicalSubmanifold(TopologicalManifold):
                              "before calling declare_embedding()")
         self._embedded = True
 
-    def set_embedding(self, phi, inverse=None, var=None,
-                      t_inverse=None):
+    def set_embedding(
+        self, phi: ContinuousMap, inverse=None, var=None, t_inverse=None
+    ):
         r"""
         Register the embedding of an embedded submanifold.
 
@@ -805,7 +812,7 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         return ParametricSurface((fx, fy, fz), (u, v), **kwargs)
 
-    def ambient(self):
+    def ambient(self) -> TopologicalManifold:
         r"""
         Return the manifold in which ``self`` is immersed or embedded.
 
@@ -818,7 +825,7 @@ class TopologicalSubmanifold(TopologicalManifold):
         """
         return self._ambient
 
-    def immersion(self):
+    def immersion(self) -> ContinuousMap:
         r"""
         Return the immersion of ``self`` into the ambient manifold.
 
@@ -842,9 +849,10 @@ class TopologicalSubmanifold(TopologicalManifold):
         """
         if not self._immersed:
             raise ValueError("the submanifold is not immersed")
+        assert self._immersion
         return self._immersion
 
-    def embedding(self):
+    def embedding(self) -> ContinuousMap:
         r"""
         Return the embedding of ``self`` into the ambient manifold.
 
@@ -868,6 +876,7 @@ class TopologicalSubmanifold(TopologicalManifold):
         """
         if not self._embedded:
             raise ValueError("the submanifold is not embedded")
+        assert self._immersion
         return self._immersion
 
     def as_subset(self):

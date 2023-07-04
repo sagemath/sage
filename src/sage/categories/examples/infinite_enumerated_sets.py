@@ -1,17 +1,18 @@
 """
 Examples of infinite enumerated sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer import Integer
+
 
 class NonNegativeIntegers(UniqueRepresentation, Parent):
     r"""
@@ -31,12 +32,12 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         ...
         NotImplementedError: cannot list an infinite set
         sage: NN.element_class
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: it = iter(NN)
         sage: [next(it), next(it), next(it), next(it), next(it)]
         [0, 1, 2, 3, 4]
         sage: x = next(it); type(x)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: x.parent()
         Integer Ring
         sage: x+3
@@ -88,7 +89,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             Category of infinite enumerated sets
             sage: TestSuite(NN).run()
         """
-        Parent.__init__(self, category = InfiniteEnumeratedSets())
+        Parent.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -176,7 +177,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             sage: x = NN(42); x
             42
             sage: type(x)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: x.parent()
             Integer Ring
         """

@@ -174,7 +174,7 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
 
         if not cartan_type.is_untwisted_affine():
             raise NotImplementedError("only currently implemented for untwisted affine types")
-        return super(AffineLieAlgebra, cls).__classcall__(cls, g, kac_moody)
+        return super().__classcall__(cls, g, kac_moody)
 
     def __init__(self, g, kac_moody):
         """
@@ -273,7 +273,7 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
         if P == self._g:
             zero = self.base_ring().zero()
             return self.element_class(self, {0: x}, zero, zero)
-        return super(AffineLieAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _coerce_map_from_(self, R):
         """
@@ -292,7 +292,7 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
         """
         if R is self.derived_subalgebra() or R is self._g:
             return True
-        return super(AffineLieAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def derived_subalgebra(self):
         """
@@ -494,4 +494,3 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
         return self.element_class(self, {m[1]: G[m[0]]}, zero, zero)
 
     Element = UntwistedAffineLieAlgebraElement
-

@@ -78,11 +78,11 @@ random numbers are generated.)  ::
 
     sage: set_random_seed(12345)
     sage: initial_seed()
-    12345L
+    12345
     sage: print(rtest())
     (720, -0.612180244315804, 0, (1,3), [ 1, 0, 1, 1, 0 ], 1911581957, 65175, 0.8043027951758298)
     sage: initial_seed()
-    12345L
+    12345
 
 If :func:`set_random_seed` is called with no arguments, then a new
 seed is automatically selected.  On operating systems that support it,
@@ -107,7 +107,7 @@ random number sequence. ::
 
     sage: s = initial_seed()
     sage: s         # random
-    336237747258024892084418842839280045662L
+    336237747258024892084418842839280045662
     sage: set_random_seed(s)
     sage: r2 = rtest()
     sage: r == r2
@@ -141,13 +141,13 @@ line, and these wrappers are properly affected by :meth:`set_random_seed`. ::
 
     sage: set_random_seed(0)
     sage: random(), getrandbits(20), uniform(5.0, 10.0), normalvariate(0, 1)
-    (0.111439293741037, 539332L, 8.26785106378383, 1.3893337539828183)
+    (0.111439293741037, 539332, 8.26785106378383, 1.3893337539828183)
     sage: set_random_seed(1)
     sage: random(), getrandbits(20), uniform(5.0, 10.0), normalvariate(0, 1)
-    (0.8294022851874259, 624859L, 5.77894484361117, -0.4201366826308758)
+    (0.8294022851874259, 624859, 5.77894484361117, -0.4201366826308758)
     sage: set_random_seed(0)
     sage: random(), getrandbits(20), uniform(5.0, 10.0), normalvariate(0, 1)
-    (0.111439293741037, 539332L, 8.26785106378383, 1.3893337539828183)
+    (0.111439293741037, 539332, 8.26785106378383, 1.3893337539828183)
 
 That pretty much covers what you need to know for command-line use of
 this module.  Now let's move to what authors of Sage library code
@@ -486,7 +486,7 @@ cdef class randstate:
             sage: seed(1,2)   # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes at most 1 positional argument (2 given)
+            TypeError: ...__init__() takes at most 1 positional argument (2 given)
 
         AUTHOR:
 
@@ -509,11 +509,11 @@ cdef class randstate:
             sage: r = randstate(54321); r
             <sage.misc.randstate.randstate object at 0x...>
             sage: r.seed()
-            54321L
+            54321
             sage: r = randstate(); r
             <sage.misc.randstate.randstate object at 0x...>
             sage: r.seed()     # random
-            305866218880103397618377824640007711767L
+            305866218880103397618377824640007711767
 
         Note that creating a :class:`randstate` with a seed of 0
         is vastly faster than any other seed (over a thousand times
@@ -556,11 +556,11 @@ cdef class randstate:
             sage: from sage.misc.randstate import randstate
             sage: r = randstate(314159)
             sage: r.seed()
-            314159L
+            314159
             sage: r.python_random().random()
             0.111439293741037
             sage: r.seed()
-            314159L
+            314159
         """
         return self._seed
 
@@ -634,7 +634,7 @@ cdef class randstate:
 
             sage: set_random_seed(1618)
             sage: current_randstate().long_seed()
-            256056279774514099508607350947089272595L
+            256056279774514099508607350947089272595
         """
         from sage.rings.integer_ring import ZZ
         return long(ZZ.random_element(long(1)<<128))
@@ -945,7 +945,7 @@ cpdef set_random_seed(seed=None):
 
         sage: set_random_seed(5)
         sage: initial_seed()
-        5L
+        5
     """
     global _current_randstate
     _current_randstate = randstate(seed)
@@ -977,7 +977,7 @@ def initial_seed():
 
         sage: set_random_seed(42)
         sage: initial_seed()
-        42L
+        42
 
     If you set a random seed (by failing to specify the seed), this is how
     you retrieve the seed actually chosen by Sage.  This can also be
@@ -986,7 +986,7 @@ def initial_seed():
 
         sage: set_random_seed()
         sage: initial_seed()          # random
-        121030915255244661507561642968348336774L
+        121030915255244661507561642968348336774
     """
     return _current_randstate._seed
 

@@ -49,6 +49,14 @@ dnl Make sure the path to our own m4 macros is always properly set
 dnl and doesn't depend on how autoconf is called.
 AC_CONFIG_MACRO_DIR([m4])
 
+dnl The AC_LIB_RPATH macro comes from a Gnulib-provided file in m4/.
+dnl It defines, among other things, the $acl_shlibext variable that
+dnl contains the shared library extension for this system. We already use the
+dnl AM_ICONV macro from the same source (which ultimately calls AC_LIB_RPATH), and we
+dnl avoid involving libtool by using it to get the shared library extension.
+AC_LIB_RPATH
+AC_SUBST(SHLIBEXT, "${acl_shlibext}")
+
 #---------------------------------------------------------
 #
 # This is essentially the configure part of the old "install" file.
@@ -70,16 +78,26 @@ SAGE_LOCAL="$prefix"
 # This is nonstandard.
 if test "$SAGE_LOCAL" = NONE; then
     SAGE_LOCAL=local
+    if test -x "$SAGE_LOCAL"/bin/python3; then
+        # Incremental build with an existing installation of python3 spkg
+        # in SAGE_LOCAL or venv in SAGE_LOCAL.  Keep old behavior.
+        SAGE_VENV_AUTO=no
+    else
+        SAGE_VENV_AUTO=yes
+    fi
+else
+    SAGE_VENV_AUTO=no
 fi
 SAGE_SRC="$SAGE_ROOT/src"
-SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 
 AC_ARG_WITH([sage-venv],
-            [AS_HELP_STRING([--with-sage-venv=SAGE_VENV],
+            [AS_HELP_STRING([--with-sage-venv={auto (default),yes,no,SAGE_VENV}],
                             [put Python packages into an installation hierarchy separate from prefix])],
             [SAGE_VENV="$withval"],
-            [SAGE_VENV='${SAGE_LOCAL}'])dnl Quoted so that it is resolved at build time by shell/Makefile
+            [SAGE_VENV="auto"])
 AC_SUBST([SAGE_VENV])
+
+AC_SUBST([SAGE_DOCS], ['${SAGE_LOCAL}'])dnl Quoted so that it is resolved at build time by shell/Makefile
 
 #---------------------------------------------------------
 
@@ -109,9 +127,16 @@ AC_ARG_ENABLE([debug],
 AC_ARG_VAR(SAGE_DEBUG, controls debugging support: "no" debugging; debugging "symbols" (default); build debug version ("yes"))
 
 AC_ARG_ENABLE([editable],
-              [AS_HELP_STRING([--enable-editable],
-                              [use an editable install of the Sage library])],
+              [AS_HELP_STRING([--disable-editable],
+                              [do not use an editable install of the Sage library: changes to Python files will require "sage -b" to rebuild the Sage library])],
+              [AC_SUBST([SAGE_EDITABLE], [$enableval])],
               [AC_SUBST([SAGE_EDITABLE], [yes])])
+
+AC_ARG_ENABLE([wheels],
+              [AS_HELP_STRING([--enable-wheels],
+                              [build wheels for the Sage library and update them on "sage -b"; if disabled, use "make wheels" to build wheels])],
+              [AC_SUBST([SAGE_WHEELS], [$enableval])],
+              [])
 
 # Check whether we are on a supported platform
 AC_CANONICAL_BUILD()
@@ -416,8 +441,9 @@ AC_ARG_ENABLE([experimental-packages],
   [AS_HELP_STRING([--enable-experimental-packages],
     [allow installing experimental packages (default: no = ask for user confirmation for each package)])])
 AC_ARG_ENABLE([download-from-upstream-url],
-  [AS_HELP_STRING([--enable-download-from-upstream-url],
-    [allow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])])
+  [AS_HELP_STRING([--disable-download-from-upstream-url],
+    [disallow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])], [],
+    [AS_VAR_SET([enable_download_from_upstream_url], [yes])])
 
 SAGE_SPKG_OPTIONS=""
 AS_IF([test "x$enable_experimental_packages" = "xyes"], [
@@ -427,6 +453,14 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
   AS_VAR_APPEND([SAGE_SPKG_OPTIONS], [" -o"])
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
+
+AC_ARG_ENABLE([sagelib],
+  AS_HELP_STRING([--disable-sage_conf],
+                 [disable build of the sage_conf package]), [
+    for pkg in sage_conf; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
 
 AC_ARG_ENABLE([cvxopt],
   AS_HELP_STRING([--disable-cvxopt],
@@ -439,7 +473,13 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert sagenb_export nbformat terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol; do
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
+    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -452,13 +492,37 @@ AC_ARG_ENABLE([r],
     done
   ])
 
+AC_ARG_ENABLE([doc],
+  AS_HELP_STRING([--disable-doc],
+                 [disable build of the Sage documentation and packages depending on it]), [
+    dnl Disable packages needed for docbuilding
+    for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport jupyter_sphinx furo sphinx_copybutton; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+    AS_VAR_IF([enableval], [no], [dnl Disable the docbuild by disabling the install tree for documentation
+        AS_VAR_SET([SAGE_DOCS], [])dnl
+    ])
+  ])
+
+AC_ARG_ENABLE([sagelib],
+  AS_HELP_STRING([--disable-sagelib],
+                 [disable build of the Sage library and packages depending on it]), [
+    for pkg in sagelib sage_docbuild sage_setup; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+dnl Packages that require a special override to use the SPKG
+dnl when the system package is not usable.
+AS_VAR_SET([sage_use_system_gcc], [force])
+
 SAGE_SPKG_COLLECT()
 
 dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
-AC_CONFIG_FILES([pkgs/sage-conf/sage_conf.py pkgs/sage-conf/setup.cfg])
+AC_CONFIG_FILES([pkgs/sage-conf/_sage_conf/_conf.py])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,
@@ -467,7 +531,7 @@ AC_CONFIG_COMMANDS(mkdirs,
             "$SAGE_LOCAL/bin" "$SAGE_LOCAL/etc" \
             "$SAGE_LOCAL/include" "$SAGE_LOCAL/lib" \
             "$SAGE_LOCAL/lib/pkgconfig" \
-            "$SAGE_SHARE" "$SAGE_INST"; do
+            "$SAGE_SHARE" "$SAGE_LOCAL/var/lib/sage/installed"; do
                 AC_MSG_NOTICE([creating directory $d])
                 mkdir -p "$d" || AC_MSG_ERROR(could not create $d)
         done
@@ -486,8 +550,30 @@ AC_CONFIG_COMMANDS(mkdirs,
         SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
         SAGE_LOCAL="$SAGE_LOCAL"
         SAGE_SHARE="$SAGE_LOCAL/share"
-        SAGE_INST="$SAGE_SPKG_INST"
     ])
+
+AC_CONFIG_COMMANDS(links, [
+    dnl Create links for the convenience of users
+    SYMLINK="${ac_top_build_prefix}prefix"
+    AS_IF([test -L "$SYMLINK" -o ! -e "$SYMLINK"], [
+        AC_MSG_NOTICE([creating convenience symlink $SYMLINK -> $SAGE_LOCAL])
+        rm -f "$SYMLINK"
+        ln -sf "$SAGE_LOCAL" "$SYMLINK"
+    ], [
+        AC_MSG_NOTICE([cannot create convenience symlink $SYMLINK -> $SAGE_LOCAL because the file exists and is not a symlink; this is harmless])
+    ])
+    SYMLINK="${ac_top_build_prefix}venv"
+    AS_IF([test -L "$SYMLINK" -o ! -e "$SYMLINK"], [
+        AC_MSG_NOTICE([creating convenience symlink $SYMLINK -> $SAGE_VENV])
+        rm -f "$SYMLINK"
+        ln -sf "$SAGE_VENV" "$SYMLINK"
+    ], [
+        AC_MSG_NOTICE([cannot create convenience symlink $SYMLINK -> $SAGE_VENV because the file exists and is not a symlink; this is harmless])
+    ])
+], [
+    SAGE_LOCAL="$SAGE_LOCAL"
+    eval SAGE_VENV="$SAGE_VENV"dnl eval so as to evaluate the embedded ${SAGE_LOCAL}
+])
 
 AC_OUTPUT()
 

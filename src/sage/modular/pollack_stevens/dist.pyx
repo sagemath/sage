@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# distutils: libraries = gmp zn_poly
+# distutils: libraries = gmp
 # distutils: extra_compile_args = -D_XPG6
 """
 `p`-adic distributions spaces
@@ -33,13 +33,12 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.arith.all import binomial, bernoulli
+from sage.arith.misc import binomial, bernoulli
 from sage.modules.free_module_element import vector, zero_vector
 from sage.matrix.matrix cimport Matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.prandom import random
-from sage.functions.other import floor
 from sage.structure.element cimport RingElement, Element
 import operator
 from sage.rings.padics.padic_generic import pAdicGeneric
@@ -815,7 +814,7 @@ cdef class Dist_vector(Dist):
             sage: D = sage.modular.pollack_stevens.distributions.Symk(2)
             sage: x = D([2,3,4])
             sage: x.__reduce__()
-            (<type 'sage.modular.pollack_stevens.dist.Dist_vector'>, ((2, 3, 4), Sym^2 Q^2, 0, False))
+            (<class 'sage.modular.pollack_stevens.dist.Dist_vector'>, ((2, 3, 4), Sym^2 Q^2, 0, False))
         """
         return (self.__class__, (self._moments, self.parent(), self.ordp, False))
 
@@ -1321,7 +1320,7 @@ cdef class WeightKAction(Action):
             (5, 17, 64, 253)
         """
         g = g.matrix()
-        if not g in self._maxprecs:
+        if g not in self._maxprecs:
             A = self._compute_acting_matrix(g, M)
             self._actmat[g] = {M: A}
             self._maxprecs[g] = M

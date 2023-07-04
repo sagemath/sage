@@ -9,15 +9,15 @@ AUTHORS:
 - Christian Kuper (2012-10): Additions for sensitivity analysis
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.float cimport DBL_MAX
 from libc.limits cimport INT_MAX
@@ -80,9 +80,9 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``binary`` - ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
 
@@ -116,7 +116,7 @@ cdef class GLPKBackend(GenericBackend):
             1.0
         """
         cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -197,7 +197,7 @@ cdef class GLPKBackend(GenericBackend):
             42.0
         """
         cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -611,9 +611,9 @@ cdef class GLPKBackend(GenericBackend):
         # We're going to iterate through this more than once.
         coefficients = list(coefficients)
 
-        for (index,_) in coefficients:
+        for (index, _) in coefficients:
             if index < 0 or index > (self.ncols() - 1):
-                 raise ValueError("invalid variable index %d" % index)
+                raise ValueError("invalid variable index %d" % index)
 
         glp_add_rows(self.lp, 1)
         cdef int n = glp_get_num_rows(self.lp)
@@ -1135,8 +1135,8 @@ cdef class GLPKBackend(GenericBackend):
 
         if solution_status == GLP_OPT:
             pass
-        elif (solution_status == GLP_FEAS) and (solve_status == GLP_ETMLIM or solve_status == GLP_EITLIM \
-                                            or solve_status == GLP_EMIPGAP or solve_status == GLP_EOBJLL or solve_status == GLP_EOBJUL):
+        elif (solution_status == GLP_FEAS) and (solve_status == GLP_ETMLIM or solve_status == GLP_EITLIM
+                                                or solve_status == GLP_EMIPGAP or solve_status == GLP_EOBJLL or solve_status == GLP_EOBJUL):
             # no exception when time limit or iteration limit or  mip gap tolerances or objective limits reached.
             pass
         elif solution_status == GLP_UNDEF:
@@ -1172,9 +1172,9 @@ cdef class GLPKBackend(GenericBackend):
         """
         if (self.simplex_or_intopt != glp_simplex_only
             and self.simplex_or_intopt != glp_exact_simplex_only):
-          return glp_mip_obj_val(self.lp)
+            return glp_mip_obj_val(self.lp)
         else:
-          return glp_get_obj_val(self.lp)
+            return glp_get_obj_val(self.lp)
 
     cpdef best_known_objective_bound(self):
         r"""
@@ -1293,9 +1293,9 @@ cdef class GLPKBackend(GenericBackend):
 
         if (self.simplex_or_intopt != glp_simplex_only
             and self.simplex_or_intopt != glp_exact_simplex_only):
-          return glp_mip_col_val(self.lp, variable+1)
+            return glp_mip_col_val(self.lp, variable + 1)
         else:
-          return glp_get_col_prim(self.lp, variable+1)
+            return glp_get_col_prim(self.lp, variable + 1)
 
     cpdef get_row_prim(self, int i):
         r"""
@@ -1646,11 +1646,7 @@ cdef class GLPKBackend(GenericBackend):
 
             sage: p.add_variable()
             0
-            sage: p.variable_upper_bound(0, 'hey!')  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: a float is required
-            sage: p.variable_upper_bound(0, 'hey!')  # py3
+            sage: p.variable_upper_bound(0, 'hey!')
             Traceback (most recent call last):
             ...
             TypeError: must be real number, not str
@@ -1750,11 +1746,7 @@ cdef class GLPKBackend(GenericBackend):
 
             sage: p.add_variable()
             0
-            sage: p.variable_lower_bound(0, 'hey!')  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: a float is required
-            sage: p.variable_lower_bound(0, 'hey!')  # py3
+            sage: p.variable_lower_bound(0, 'hey!')
             Traceback (most recent call last):
             ...
             TypeError: must be real number, not str
@@ -1815,10 +1807,12 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
-            sage: fnam = os.path.join(SAGE_TMP, "lp_problem.lp")
-            sage: p.write_lp(fnam)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".lp") as f:
+            ....:     _ = p.write_lp(f.name)
+            ....:     len(f.readlines())
             ...
-            sage: len([(x,y) for x,y in enumerate(open(fnam,"r"))])
+            9 lines were written
             9
         """
         filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
@@ -1840,10 +1834,12 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
-            sage: fnam = os.path.join(SAGE_TMP, "lp_problem.mps")
-            sage: p.write_mps(fnam, 2)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix="mps") as f:
+            ....:     _ = p.write_mps(f.name, 2)
+            ....:     len(f.readlines())
             ...
-            sage: len([(x,y) for x,y in enumerate(open(fnam,"r"))])
+            17 records were written
             17
         """
         filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
@@ -2136,12 +2132,13 @@ cdef class GLPKBackend(GenericBackend):
         If you actually try to solve ``lp``, you will get a lot of detailed information.
         """
 
-        if type(name) == str:
-          if name == "out_frq" or name == "out_dly" or name == "tm_lim" or name == "msg_lev":
-            raise ValueError("To set parameter " + name + " you must specify the solver. Append either _simplex or _intopt.")
-          name = solver_parameter_names_dict[name]
+        if isinstance(name, str):
+            if name == "out_frq" or name == "out_dly" or name == "tm_lim" or name == "msg_lev":
+                raise ValueError("To set parameter " + name + " you must specify the solver. Append either _simplex or _intopt.")
+            name = solver_parameter_names_dict[name]
 
-        if type(value) == str: value = solver_parameter_values[value]
+        if isinstance(value, str):
+            value = solver_parameter_values[value]
 
         if name == timelimit_intopt:
             if value is None: return self.iocp.tm_lim
@@ -2158,8 +2155,9 @@ cdef class GLPKBackend(GenericBackend):
             else: self.smcp.tm_lim = value
 
         elif name == simplex_or_intopt:
-            if value is None: return self.simplex_or_intopt
-            if not value in (simplex_only,intopt_only,simplex_then_intopt,exact_simplex_only):
+            if value is None:
+                return self.simplex_or_intopt
+            if value not in (simplex_only, intopt_only, simplex_then_intopt, exact_simplex_only):
                 raise MIPSolverException("GLPK: invalid value for simplex_or_intopt; see documentation")
             self.simplex_or_intopt = value
 
@@ -2186,37 +2184,37 @@ cdef class GLPKBackend(GenericBackend):
         elif name == fp_heur:
             if value is None: return self.iocp.fp_heur
             else:
-              if value: value = GLP_ON
-              else: value = GLP_OFF
-              self.iocp.fp_heur = value
+                if value: value = GLP_ON
+                else: value = GLP_OFF
+                self.iocp.fp_heur = value
 
         elif name == gmi_cuts:
             if value is None: return self.iocp.gmi_cuts
             else:
-              if value: value = GLP_ON
-              else: value = GLP_OFF
-              self.iocp.gmi_cuts = value
+                if value: value = GLP_ON
+                else: value = GLP_OFF
+                self.iocp.gmi_cuts = value
 
         elif name == mir_cuts:
             if value is None: return self.iocp.mir_cuts
             else:
-              if value: value = GLP_ON
-              else: value = GLP_OFF
-              self.iocp.mir_cuts = value
+                if value: value = GLP_ON
+                else: value = GLP_OFF
+                self.iocp.mir_cuts = value
 
         elif name == cov_cuts:
             if value is None: return self.iocp.cov_cuts
             else:
-              if value: value = GLP_ON
-              else: value = GLP_OFF
-              self.iocp.cov_cuts = value
+                if value: value = GLP_ON
+                else: value = GLP_OFF
+                self.iocp.cov_cuts = value
 
         elif name == clq_cuts:
             if value is None: return self.iocp.clq_cuts
             else:
-              if value: value = GLP_ON
-              else: value = GLP_OFF
-              self.iocp.clq_cuts = value
+                if value: value = GLP_ON
+                else: value = GLP_OFF
+                self.iocp.clq_cuts = value
 
         elif name == tol_int:
             if value is None: return self.iocp.tol_int
@@ -2252,9 +2250,9 @@ cdef class GLPKBackend(GenericBackend):
         elif name == binarize:
             if value is None: return self.iocp.binarize
             else:
-              if value: value = GLP_ON
-              else: value = GLP_OFF
-              self.iocp.binarize = value
+                if value: value = GLP_ON
+                else: value = GLP_OFF
+                self.iocp.binarize = value
 
         elif name == msg_lev_simplex:
             if value is None: return self.smcp.msg_lev
@@ -2311,13 +2309,11 @@ cdef class GLPKBackend(GenericBackend):
         elif name == presolve_simplex:
             if value is None: return self.smcp.presolve
             else:
-              if value: value = GLP_ON
-              else: value = GLP_OFF
-              self.smcp.presolve = value
-
+                if value: value = GLP_ON
+                else: value = GLP_OFF
+                self.smcp.presolve = value
         else:
             raise ValueError("This parameter is not available.")
-
 
     cpdef bint is_variable_basic(self, int index):
         """
@@ -2479,11 +2475,12 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.solve()
             0
-            sage: p.print_ranges() # this writes out "ranges.tmp"
+            sage: from tempfile import NamedTemporaryFile
+            sage: with NamedTemporaryFile(mode="r+t", suffix=".tmp") as f:
+            ....:     p.print_ranges(f.name)
+            ....:     for ll in f.readlines():
+            ....:         if ll: print(ll)
             ...
-            sage: fnam = os.path.join(SAGE_TMP, "ranges.tmp")
-            sage: for ll in open(fnam, "r"):
-            ....:     if ll != '': print(ll)
             GLPK ... - SENSITIVITY ANALYSIS REPORT                                                                         Page   1
             Problem:
             Objective:  7.5 (MAXimum)
@@ -2504,25 +2501,24 @@ cdef class GLPKBackend(GenericBackend):
                                                         .               +Inf        1.50000          +Inf          +Inf
             End of report
         """
-
-        from sage.misc.all import SAGE_TMP
-
         if filename is None:
-            fname = SAGE_TMP + "/ranges.tmp"
+            import tempfile
+            with tempfile.NamedTemporaryFile() as f:
+                res = glp_print_ranges(self.lp, 0, 0, 0,
+                                       str_to_bytes(f.name,
+                                                    FS_ENCODING,
+                                                    'surrogateescape'))
+                if res == 0:
+                    # Success; now write it to stdout.
+                    with open(f.name) as fh:
+                        for line in fh:
+                            print(line, end=" ")
+                    print("\n")
         else:
-            fname = filename
-
-        res = glp_print_ranges(self.lp, 0, 0, 0,
-                               str_to_bytes(fname, FS_ENCODING,
-                                            'surrogateescape'))
-
-        if filename is None:
-            if res == 0:
-                with open(fname) as f:
-                    for line in f:
-                        print(line, end=" ")
-                print("\n")
-
+            res = glp_print_ranges(self.lp, 0, 0, 0,
+                                   str_to_bytes(filename,
+                                                FS_ENCODING,
+                                                'surrogateescape'))
         return res
 
     cpdef double get_row_dual(self, int variable):
@@ -3059,13 +3055,14 @@ cdef void glp_callback(glp_tree* tree, void* info):
 # parameter names
 
 cdef enum solver_parameter_names:
-  timelimit_seconds, timelimit_simplex, timelimit_intopt, simplex_or_intopt, msg_lev_simplex,
-  msg_lev_intopt, br_tech, bt_tech, pp_tech, fp_heur, gmi_cuts,
-  mir_cuts, cov_cuts, clq_cuts, tol_int, tol_obj, mip_gap,
-  tm_lim_intopt, out_frq_intopt, out_dly_intopt, presolve_intopt,
-  binarize, meth, pricing, r_test, tol_bnd, tol_dj, tol_piv, obj_ll,
-  obj_ul, it_lim, tm_lim_simplex, out_frq_simplex, out_dly_simplex,
-  presolve_simplex
+    timelimit_seconds, timelimit_simplex, timelimit_intopt, simplex_or_intopt,
+    msg_lev_simplex,
+    msg_lev_intopt, br_tech, bt_tech, pp_tech, fp_heur, gmi_cuts,
+    mir_cuts, cov_cuts, clq_cuts, tol_int, tol_obj, mip_gap,
+    tm_lim_intopt, out_frq_intopt, out_dly_intopt, presolve_intopt,
+    binarize, meth, pricing, r_test, tol_bnd, tol_dj, tol_piv, obj_ll,
+    obj_ul, it_lim, tm_lim_simplex, out_frq_simplex, out_dly_simplex,
+    presolve_simplex
 
 glp_tm_lim_simplex = timelimit_simplex
 glp_tm_lim_intopt = timelimit_intopt
@@ -3132,7 +3129,7 @@ solver_parameter_names_dict = {
   'obj_ll': obj_ll, 'obj_lower_limit': obj_ll,
   'obj_ul': obj_ul, 'obj_upper_limit': obj_ul,
   'it_lim': it_lim, 'iteration_limit': it_lim,
-  'out_frq_simplex': out_frq_simplex, 'output_frequency_intopt': out_frq_simplex,
+  'out_frq_simplex': out_frq_simplex, 'output_frequency_simplex': out_frq_simplex,
   'out_dly_simplex': out_dly_simplex, 'output_delay_simplex': out_dly_simplex,
   'presolve_simplex': presolve_simplex
 }
@@ -3200,7 +3197,7 @@ glp_nu = GLP_NU
 glp_nf = GLP_NF
 
 cdef enum more_parameter_values:
-  simplex_only, simplex_then_intopt, intopt_only, exact_simplex_only
+    simplex_only, simplex_then_intopt, intopt_only, exact_simplex_only
 
 glp_simplex_only = simplex_only
 glp_simplex_then_intopt = simplex_then_intopt

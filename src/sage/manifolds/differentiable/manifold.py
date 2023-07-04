@@ -70,7 +70,7 @@ Sage's symbolic variables::
     sage: y
     y
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 The South pole is the point of coordinates `(x,y)=(0,0)` in the above
 chart::
@@ -439,16 +439,30 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.manifolds import Manifolds
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional, Union
+
 from sage.categories.homset import Hom
-from sage.rings.all import CC
-from sage.rings.real_mpfr import RR
+from sage.categories.manifolds import Manifolds
+from sage.manifolds.differentiable.mixed_form_algebra import MixedFormAlgebra
+from sage.manifolds.manifold import TopologicalManifold
+from sage.rings.cc import CC
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer import Integer
-from sage.manifolds.manifold import TopologicalManifold
-from sage.manifolds.differentiable.mixed_form_algebra import MixedFormAlgebra
+from sage.rings.real_mpfr import RR
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_map import DiffMap
+    from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+    from sage.manifolds.differentiable.vectorfield_module import (
+        VectorFieldFreeModule,
+        VectorFieldModule,
+    )
+    from sage.manifolds.differentiable.vectorframe import VectorFrame
 
 ###############################################################################
+
 
 class DifferentiableManifold(TopologicalManifold):
     r"""
@@ -838,10 +852,10 @@ class DifferentiableManifold(TopologicalManifold):
 
         INPUT:
 
-        - ``resu`` -- an instance of ``:class:`TopologicalManifold` or
+        - ``resu`` -- an instance of :class:`TopologicalManifold` or
           a subclass.
 
-        - ``coord_def`` -- (default: {}) definition of the subset in
+        - ``coord_def`` -- (default: ``{}``) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
           charts on the manifold and values the symbolic expressions formed
           by the coordinates to define the subset
@@ -1218,7 +1232,9 @@ class DifferentiableManifold(TopologicalManifold):
                                                            l, dest_map=dest_map)
         return self._tensor_bundles[dest_map][(k, l)]
 
-    def vector_field_module(self, dest_map=None, force_free=False):
+    def vector_field_module(
+        self, dest_map: Optional[DiffMap] = None, force_free: bool = False
+    ) -> Union[VectorFieldModule, VectorFieldFreeModule]:
         r"""
         Return the set of vector fields defined on ``self``, possibly
         with values in another differentiable manifold, as a module over the
@@ -1422,9 +1438,9 @@ class DifferentiableManifold(TopologicalManifold):
             Free module T^(2,1)(U) of type-(2,1) tensors fields on the Open
              subset U of the 3-dimensional differentiable manifold M
             sage: TU.category()
-            Category of finite dimensional modules over Algebra of
-             differentiable scalar fields on the Open subset U of the
-             3-dimensional differentiable manifold M
+            Category of tensor products of finite dimensional modules
+             over Algebra of differentiable scalar fields
+              on the Open subset U of the 3-dimensional differentiable manifold M
             sage: TU.base_ring()
             Algebra of differentiable scalar fields on the Open subset U of
              the 3-dimensional differentiable manifold M
@@ -2437,6 +2453,54 @@ class DifferentiableManifold(TopologicalManifold):
             resu[:] = comp
         return resu
 
+    def symplectic_form(
+        self, name: Optional[str] = None, latex_name: Optional[str] = None
+    ):
+        r"""
+        Construct a symplectic form on the current manifold.
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticForm`
+
+        EXAMPLES:
+
+        Standard symplectic form on `\RR^2`::
+
+            sage: M.<q, p> = EuclideanSpace(2)
+            sage: omega = M.symplectic_form('omega', r'\omega')
+            sage: omega.set_comp()[1,2] = -1
+            sage: omega.display()
+            omega = -dq∧dp
+
+        """
+        return self.vector_field_module().symplectic_form(name, latex_name)
+
+    def poisson_tensor(
+        self, name: Optional[str] = None, latex_name: Optional[str] = None
+    ):
+        r"""
+        Construct a Poisson tensor on the current manifold.
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.poisson_tensor.PoissonTensorField`
+
+        EXAMPLES:
+
+        Standard Poisson tensor on `\RR^2`::
+
+            sage: M.<q, p> = EuclideanSpace(2)
+            sage: poisson = M.poisson_tensor('varpi')
+            sage: poisson.set_comp()[1,2] = -1
+            sage: poisson.display()
+            varpi = -e_q∧e_p
+
+        """
+        return self.vector_field_module().poisson_tensor(name, latex_name)
+
     def automorphism_field(self, *comp, **kwargs):
         r"""
         Define a field of automorphisms (invertible endomorphisms in each
@@ -2913,7 +2977,6 @@ class DifferentiableManifold(TopologicalManifold):
                              " has not been defined on the {}".format(self))
         return self._frame_changes[(frame1, frame2)]
 
-
     def set_change_of_frame(self, frame1, frame2, change_of_frame,
                          compute_inverse=True):
         r"""
@@ -2974,7 +3037,7 @@ class DifferentiableManifold(TopologicalManifold):
                 for sdom in self.open_supersets():
                     sdom._frame_changes[(frame2, frame1)] = change_of_frame.inverse()
 
-    def vector_frame(self, *args, **kwargs):
+    def vector_frame(self, *args, **kwargs) -> VectorFrame:
         r"""
         Define a vector frame on ``self``.
 
@@ -3339,7 +3402,7 @@ class DifferentiableManifold(TopologicalManifold):
         """
         return bool(self._covering_frames)
 
-    def tangent_space(self, point):
+    def tangent_space(self, point, base_ring=None):
         r"""
         Tangent space to ``self`` at a given point.
 
@@ -3347,6 +3410,8 @@ class DifferentiableManifold(TopologicalManifold):
 
         - ``point`` -- :class:`~sage.manifolds.point.ManifoldPoint`;
           point `p` on the manifold
+
+        - ``base_ring`` -- (default: the symbolic ring) the base ring
 
         OUTPUT:
 
@@ -3381,7 +3446,7 @@ class DifferentiableManifold(TopologicalManifold):
             raise TypeError("{} is not a manifold point".format(point))
         if point not in self:
             raise ValueError("{} is not a point on the {}".format(point, self))
-        return TangentSpace(point)
+        return TangentSpace(point, base_ring=base_ring)
 
     def curve(self, coord_expression, param, chart=None,
               name=None, latex_name=None):
@@ -3891,7 +3956,9 @@ class DifferentiableManifold(TopologicalManifold):
                                                                AffineConnection
         return AffineConnection(self, name, latex_name)
 
-    def metric(self, name, signature=None, latex_name=None, dest_map=None):
+    def metric(self, name: str, signature: Optional[int] = None,
+               latex_name: Optional[str] = None,
+               dest_map: Optional[DiffMap] = None) -> PseudoRiemannianMetric:
         r"""
         Define a pseudo-Riemannian metric on the manifold.
 

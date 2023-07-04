@@ -12,6 +12,7 @@ Root system data for type C
 
 from . import ambient_space
 
+
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     EXAMPLES::
@@ -32,7 +33,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         sage: TestSuite(e).run()
     """
-
 
     def dimension(self):
         """
@@ -111,7 +111,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
         res.extend( [ self.root(i,i,1,1) for i in range(self.n) ] )
         return res
 
-
     def fundamental_weight(self, i):
         """
         EXAMPLES::
@@ -121,7 +120,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         return self.sum(self.monomial(j) for j in range(i))
 
+
 from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic, CartanType_simply_laced
+
+
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
     def __init__(self, n):
         """
@@ -170,7 +172,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: latex(CartanType(['C',4]))
             C_{4}
         """
-        return "C_{%s}"%self.n
+        return "C_{%s}" % self.n
 
     AmbientSpace = AmbientSpace
 
@@ -227,7 +229,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
              O
              1
              C1
-             sage: sorted(b.edges())
+             sage: b.edges(sort=True)
              []
         """
         return self.dual().dynkin_diagram().dual()
@@ -304,6 +306,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         n = self.n
         return CartanTypeFolded(self, ['A', 2*n-1],
             [[i, 2*n-i] for i in range(1, n)] + [[n]])
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

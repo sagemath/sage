@@ -97,9 +97,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: S2 is S3
             True
         """
-        return super(FiniteEnumeratedSet, cls).__classcall__(
-                cls,
-                tuple(iterable))
+        return super().__classcall__(cls, tuple(iterable))
 
     def __init__(self, elements):
         """
@@ -109,9 +107,9 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: TestSuite(FiniteEnumeratedSet([])).run()
         """
         self._elements = elements
-        Parent.__init__(self, facade = True, category = FiniteEnumeratedSets())
+        Parent.__init__(self, facade=True, category=FiniteEnumeratedSets())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Conversion to boolean.
 
@@ -123,8 +121,6 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             False
         """
         return bool(self._elements)
-
-    __nonzero__ = __bool__
 
     def _repr_(self):
         """
@@ -368,7 +364,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: S(1)
             1
             sage: type(S(1))
-            <type 'int'>
+            <class 'int'>
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)

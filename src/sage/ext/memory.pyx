@@ -6,13 +6,7 @@ TESTS:
 Check that a ``MemoryError`` is raised if we try to allocate a
 ridiculously large integer, see :trac:`15363`::
 
-    sage: 2^(2^63-2)                                           # optional - mpir
-    Traceback (most recent call last):
-    ...
-    OverflowError: exponent must be at most 2147483647         # 32-bit
-    MemoryError: failed to allocate 1152921504606847008 bytes  # 64-bit
-
-    sage: 2^(2^63-3)                                           # optional - gmp
+    sage: 2^(2^63-3)
     Traceback (most recent call last):
     ...
     OverflowError: exponent must be at most 2147483647         # 32-bit

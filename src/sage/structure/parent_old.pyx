@@ -26,7 +26,7 @@ This came up in some subtle bug once::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from sage.misc.superseded import deprecation
 cimport sage.structure.sage_object as sage_object
 import operator
 from .coerce cimport py_scalar_parent
@@ -176,12 +176,16 @@ cdef class Parent(parent.Parent):
 
     def _coerce_(self, x):            # Call this from Python (do not override!)
         if self._element_constructor is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33497, "_coerce_ is deprecated, use coerce instead")
             return self.coerce(x)
         check_old_coerce(self)
         return self._coerce_c(x)
 
     cpdef _coerce_c(self, x):          # DO NOT OVERRIDE THIS (call it)
         if self._element_constructor is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33497, "_coerce_c is deprecated, use coerce instead")
             return self.coerce(x)
         check_old_coerce(self)
         try:
@@ -222,6 +226,7 @@ cdef class Parent(parent.Parent):
              x -- Python object
              v -- parent object or list (iterator) of parent objects
         """
+        deprecation(33464, "usage of _coerce_try is deprecated")
         check_old_coerce(self)
         if not isinstance(v, list):
             v = [v]

@@ -10,15 +10,15 @@ AUTHOR:
   see :trac:`10295`.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from pexpect import *
 from ptyprocess import PtyProcess
@@ -26,7 +26,7 @@ from ptyprocess import PtyProcess
 from cpython.ref cimport Py_INCREF
 from libc.signal cimport *
 from posix.signal cimport killpg
-from posix.unistd cimport getpid, getpgid, close, fork
+from posix.unistd cimport getpid, getpgid, fork
 
 from time import sleep
 
@@ -146,7 +146,7 @@ class SageSpawn(spawn):
             sage: E = SageSpawn("sh", ["-c", "echo hello world"])
             sage: _ = E.expect_peek("w")
             sage: E.read().decode('ascii')
-            u'hello world\r\n'
+            'hello world\r\n'
         """
         ret = self.expect(*args, **kwds)
         self._before = self.buffer_type()
@@ -165,7 +165,7 @@ class SageSpawn(spawn):
             sage: E = SageSpawn("sh", ["-c", "echo hello world"])
             sage: _ = E.expect_upto("w")
             sage: E.read().decode('ascii')
-            u'world\r\n'
+            'world\r\n'
         """
         ret = self.expect(*args, **kwds)
         self._before = self.buffer_type()
@@ -249,7 +249,7 @@ class SagePtyProcess(PtyProcess):
             # We need to avoid a race condition where the spawned
             # process has not started up completely yet: we need to
             # wait until the spawned process has changed its process
-            # group. See Trac #18741.
+            # group. See Issue #18741.
             pg = getpgid(self.pid)
             while pg == thispg:
                 counter += 1
@@ -266,12 +266,17 @@ class SagePtyProcess(PtyProcess):
 
             # If any of these killpg() calls fail, it's most likely
             # because the process is actually killed.
-            if killpg(pg, SIGCONT): return
+            if killpg(pg, SIGCONT):
+                return
             sleep(interval)
-            if killpg(pg, SIGINT): return
+            if killpg(pg, SIGINT):
+                return
             sleep(interval)
-            if killpg(pg, SIGHUP): return
+            if killpg(pg, SIGHUP):
+                return
             sleep(interval)
-            if killpg(pg, SIGTERM): return
+            if killpg(pg, SIGTERM):
+                return
             sleep(interval)
-            if killpg(pg, SIGKILL): return
+            if killpg(pg, SIGKILL):
+                return

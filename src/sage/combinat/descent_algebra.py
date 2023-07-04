@@ -19,9 +19,10 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.algebras import Algebras
 from sage.categories.realizations import Realizations, Category_realization_of_parent
-from sage.categories.all import FiniteDimensionalAlgebrasWithBasis
-from sage.rings.all import ZZ, QQ
-from sage.functions.other import factorial
+from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.arith.misc import factorial
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
 from sage.combinat.composition import Compositions
@@ -125,6 +126,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         sage: all(I(B(b)) == b for b in I.basis())
         True
     """
+
     def __init__(self, R, n):
         r"""
         EXAMPLES::
@@ -192,6 +194,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             sage: list(D.basis())
             [D{}]
         """
+
         def __init__(self, alg, prefix="D"):
             r"""
             Initialize ``self``.
@@ -274,7 +277,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 ....:      for U in DescentAlgebra(QQ, 3).D().basis() )
                 True
             """
-            return tuple([])
+            return tuple()
 
         @cached_method
         def to_B_basis(self, S):
@@ -409,6 +412,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             [B[1, 1, 1, 1], B[1, 1, 2], B[1, 2, 1], B[1, 3],
              B[2, 1, 1], B[2, 2], B[3, 1], B[4]]
         """
+
         def __init__(self, alg, prefix="B"):
             r"""
             Initialize ``self``.
@@ -641,6 +645,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             sage: list(I.basis())
             [I[1, 1, 1, 1], I[1, 1, 2], I[1, 2, 1], I[1, 3], I[2, 1, 1], I[2, 2], I[3, 1], I[4]]
         """
+
         def __init__(self, alg, prefix="I"):
             r"""
             Initialize ``self``.
@@ -720,9 +725,9 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 sage: DescentAlgebra(QQ, 4).I().one_basis()
                 Traceback (most recent call last):
                 ...
-                TypeError: 1 is not a basis element in the I basis.
+                TypeError: 1 is not a basis element in the I basis
             """
-            raise TypeError("1 is not a basis element in the I basis.")
+            raise TypeError("1 is not a basis element in the I basis")
 
         @cached_method
         def to_B_basis(self, p):
@@ -812,6 +817,7 @@ class DescentAlgebraBases(Category_realization_of_parent):
     r"""
     The category of bases of a descent algebra.
     """
+
     def __init__(self, base):
         r"""
         Initialize the bases of a descent algebra.

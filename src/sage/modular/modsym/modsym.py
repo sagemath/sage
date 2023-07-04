@@ -112,7 +112,7 @@ def canonical_parameters(group, weight, sign, base_ring):
         sage: p1 == p2
         True
         sage: type(p1[1])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     sign = rings.Integer(sign)
     if not (sign in [-1,0,1]):
@@ -167,25 +167,24 @@ def ModularSymbols_clear_cache():
     Make sure :trac:`10548` is fixed::
 
         sage: import gc
-        sage: m=ModularSymbols(Gamma1(29))
-        sage: m=[]
+        sage: m = ModularSymbols(Gamma1(29))
+        sage: m = []
         sage: ModularSymbols_clear_cache()
         sage: gc.collect() # random
         3422
-        sage: a=[x for x in gc.get_objects() if isinstance(x,sage.modular.modsym.ambient.ModularSymbolsAmbient_wtk_g1)]
+        sage: a = [x for x in gc.get_objects() if isinstance(x,sage.modular.modsym.ambient.ModularSymbolsAmbient_wtk_g1)]
         sage: a
         []
-
     """
     global _cache
     _cache = {}
 
 
-def ModularSymbols(group  = 1,
-                   weight = 2,
-                   sign   = 0,
-                   base_ring = None,
-                   use_cache = True,
+def ModularSymbols(group=1,
+                   weight=2,
+                   sign=0,
+                   base_ring=None,
+                   use_cache=True,
                    custom_init=None):
     r"""
     Create an ambient space of modular symbols.
@@ -381,4 +380,3 @@ def ModularSymbols(group  = 1,
     if use_cache:
         _cache[key] = weakref.ref(M)
     return M
-

@@ -35,7 +35,8 @@ from sage.rings.number_field.unit_group import UnitGroup
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import column_matrix
 from sage.rings.rational_field import QQ
-from sage.rings.all import RR, Infinity
+from sage.rings.infinity import Infinity
+from sage.rings.real_mpfr import RR
 from sage.geometry.polyhedron.constructor import Polyhedron
 
 
@@ -186,7 +187,7 @@ def bdd_height_iq(K, height_bound):
     class_number = len(class_group_reps)
 
     # Find principal ideals of bounded norm
-    possible_norm_set = set([])
+    possible_norm_set = set()
     for n in range(class_number):
         for m in range(1, int(height_bound + 1)):
             possible_norm_set.add(m*class_group_rep_norms[n])
@@ -247,7 +248,7 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         sage: from sage.rings.number_field.bdd_height import bdd_norm_pr_ideal_gens
         sage: K.<g> = QuadraticField(123)
         sage: bdd_norm_pr_ideal_gens(K, range(5))
-        {0: [0], 1: [1], 2: [-g - 11], 3: [], 4: [2]}
+        {0: [0], 1: [1], 2: [g + 11], 3: [], 4: [2]}
 
     ::
 
@@ -429,7 +430,6 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     if B < 1:
         return
     embeddings = K.places(prec=precision)
-    O_K = K.ring_of_integers()
     r1, r2 = K.signature()
     r = r1 + r2 - 1
     RF = RealField(precision)
@@ -454,14 +454,14 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     def delta_approximation(x, delta):
         r"""
-        Compute a rational number in range (x-delta, x+delta)
+        Compute a rational number in range `(x-delta, x+delta)`
         """
         return rational_in(x - delta, x + delta)
 
     def vector_delta_approximation(v, delta):
         r"""
-        Compute a rational vector w=(w1, ..., wn)
-        such that |vi-wi|<delta for all i in [1, n]
+        Compute a rational vector `w=(w_1, ..., w_n)`
+        such that `|v_i-w_i|<delta` for all `i` in `[1, n]`
         """
         return [delta_approximation(vi, delta) for vi in v]
 
@@ -485,7 +485,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
         Return a lambda approximation h_K(alpha/beta)
         """
         delta = Lambda / (r + 2)
-        norm_log = delta_approximation(RR(O_K.ideal(alpha, beta).norm()).log(), delta)
+        norm_log = delta_approximation(RR(K.ideal(alpha, beta).norm()).log(), delta)
         log_ga = vector_delta_approximation(log_map(alpha), delta)
         log_gb = vector_delta_approximation(log_map(beta), delta)
         arch_sum = sum([max(log_ga[k], log_gb[k]) for k in range(r + 1)])
@@ -524,7 +524,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     # Step 2
     # Find generators for principal ideals of bounded norm
-    possible_norm_set = set([])
+    possible_norm_set = set()
     for n in range(class_number):
         for m in range(1, (B + 1).ceil()):
             possible_norm_set.add(m * class_group_rep_norms[n])

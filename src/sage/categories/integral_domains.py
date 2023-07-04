@@ -58,7 +58,7 @@ class IntegralDomains(CategoryWithAxiom):
 
         This implementation will not be needed anymore once every
         field in Sage will be properly declared in the category
-        :class:`IntegralDomains`().
+        :class:`IntegralDomains() <IntegralDomains>`.
         """
         try:
             return self._contains_helper(x) or x.is_integral_domain()
@@ -96,17 +96,23 @@ class IntegralDomains(CategoryWithAxiom):
         return Category_contains_method_by_parent_class(cls())
 
     class ParentMethods:
-        def is_integral_domain(self):
-            """
-            Return True, since this in an object of the category of integral domains.
+        def is_integral_domain(self, proof=True):
+            r"""
+            Return ``True``, since this in an object of the category
+            of integral domains.
 
             EXAMPLES::
 
                 sage: QQ.is_integral_domain()
                 True
-                sage: Parent(QQ,category=IntegralDomains()).is_integral_domain()
+                sage: Parent(QQ, category=IntegralDomains()).is_integral_domain()
                 True
 
+                sage: L.<z> = LazyLaurentSeriesRing(QQ)
+                sage: L.is_integral_domain()
+                True
+                sage: L.is_integral_domain(proof=True)
+                True
             """
             return True
 

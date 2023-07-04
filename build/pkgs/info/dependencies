@@ -1,0 +1,9 @@
+ncurses | xz
+
+xz is needed for unpacking the tarball when sage-bootstrap-python is ancient
+Both perl and (g)awk are checked by the ./configure script, but perl is part
+of the _prereq package, and (g)awk is seemingly assumed throughout the build
+system despite not being listed explicitly anywhere.
+
+----------
+All lines of this file are ignored except the first.

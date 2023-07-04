@@ -168,7 +168,18 @@ class AsymptoticExpansionGenerators(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: precision must be at least 3
+
+        Check that :trac:`20066` is resolved::
+
+            sage: set_series_precision(5)
+            sage: asymptotic_expansions.Stirling('n')
+            sqrt(2)*sqrt(pi)*e^(n*log(n))*(e^n)^(-1)*n^(1/2) +
+            ... + O(e^(n*log(n))*(e^n)^(-1)*n^(-5/2))
+            sage: set_series_precision(20)  # restore series precision default
         """
+        if precision is None:
+            precision = series_precision()
+
         if precision < 3:
             raise ValueError("precision must be at least 3")
         log_Stirling = AsymptoticExpansionGenerators.log_Stirling(
@@ -185,7 +196,6 @@ class AsymptoticExpansionGenerators(SageObject):
             result *= (2*SCR('pi')).sqrt()
 
         return result
-
 
     @staticmethod
     def log_Stirling(var, precision=None, skip_constant_summand=False):
@@ -310,7 +320,6 @@ class AsymptoticExpansionGenerators(SageObject):
 
         return result
 
-
     @staticmethod
     def _log_StirlingNegativePowers_(var, precision):
         r"""
@@ -352,14 +361,13 @@ class AsymptoticExpansionGenerators(SageObject):
             return A.zero()
         n = A.gen()
 
-        from sage.arith.all import bernoulli
+        from sage.arith.misc import bernoulli
         from sage.arith.srange import srange
 
         result = sum((bernoulli(k) / k / (k-1) / n**(k-1)
                       for k in srange(2, 2*precision + 2, 2)),
                      A.zero())
         return result + (1 / n**(2*precision + 1)).O()
-
 
     @staticmethod
     def HarmonicNumber(var, precision=None, skip_constant_summand=False):
@@ -451,7 +459,7 @@ class AsymptoticExpansionGenerators(SageObject):
             result += 1 / (2 * n)
 
         from sage.arith.srange import srange
-        from sage.arith.all import bernoulli
+        from sage.arith.misc import bernoulli
         for k in srange(2, 2*precision - 4, 2):
             result += -bernoulli(k) / k / n**k
 
@@ -465,7 +473,6 @@ class AsymptoticExpansionGenerators(SageObject):
             result += (1 / n**(2*precision - 4)).O()
 
         return result
-
 
     @staticmethod
     def Binomial_kn_over_n(var, k, precision=None, skip_constant_factor=False):
@@ -550,6 +557,13 @@ class AsymptoticExpansionGenerators(SageObject):
             ....:     SR(S.subs(n=k*n) / (S.subs(n=(k-1)*n) * S)).canonicalize_radical()
             ....:     for k in [2, 3, 4])
             True
+
+        Check that :trac:`20066` is resolved::
+
+            sage: set_series_precision(3)
+            sage: asymptotic_expansions.Binomial_kn_over_n('n', k=2)
+            1/sqrt(pi)*4^n*n^(-1/2) - 1/8/sqrt(pi)*4^n*n^(-3/2) + ... + O(4^n*n^(-7/2))
+            sage: set_series_precision(20)  # restore series precision default
         """
         from sage.symbolic.ring import SR
         SCR = SR.subring(no_variables=True)
@@ -559,6 +573,9 @@ class AsymptoticExpansionGenerators(SageObject):
             from .misc import combine_exceptions
             raise combine_exceptions(
                 TypeError('Cannot use k={}.'.format(k)), e)
+
+        if precision is None:
+            precision = series_precision()
 
         S = AsymptoticExpansionGenerators._log_StirlingNegativePowers_(
                 var, precision=max(precision - 2,0))
@@ -581,7 +598,6 @@ class AsymptoticExpansionGenerators(SageObject):
             result *= (k/((k-1)*2*SCR('pi'))).sqrt()
 
         return result
-
 
     @staticmethod
     def SingularityAnalysis(var, zeta=1, alpha=0, beta=0, delta=0,
@@ -891,7 +907,7 @@ class AsymptoticExpansionGenerators(SageObject):
         from .asymptotic_ring import AsymptoticRing
         from .growth_group import ExponentialGrowthGroup, \
                 MonomialGrowthGroup, GenericNonGrowthGroup
-        from sage.arith.all import falling_factorial
+        from sage.arith.misc import falling_factorial
         from sage.categories.cartesian_product import cartesian_product
         from sage.functions.other import binomial
         from sage.functions.gamma import gamma
@@ -939,7 +955,6 @@ class AsymptoticExpansionGenerators(SageObject):
 
         if precision is None:
             precision = series_precision()
-
 
         if not normalized and not (beta in ZZ and delta in ZZ):
             raise ValueError("beta and delta must be integers")
@@ -1019,7 +1034,6 @@ class AsymptoticExpansionGenerators(SageObject):
 
         return result
 
-
     @staticmethod
     @experimental(20050)
     def ImplicitExpansion(var, phi, tau=None, precision=None):
@@ -1074,7 +1088,7 @@ class AsymptoticExpansionGenerators(SageObject):
             doctest:warning
             ...
             FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20050 for details.
+            See https://github.com/sagemath/sage/issues/20050 for details.
             1 - sqrt(2)*Z^(-1/2) + 2/3*Z^(-1) - 11/36*sqrt(2)*Z^(-3/2) +
             43/135*Z^(-2) - 769/4320*sqrt(2)*Z^(-5/2) + 1768/8505*Z^(-3) + O(Z^(-7/2))
 
@@ -1187,7 +1201,6 @@ class AsymptoticExpansionGenerators(SageObject):
 
         return A(tau) + ansatz(prec=precision-1).map_coefficients(lambda term: term.subs(solution_dict).simplify_rational())
 
-
     @staticmethod
     @experimental(20050)
     def ImplicitExpansionPeriodicPart(var, phi, period, tau=None, precision=None):
@@ -1256,7 +1269,7 @@ class AsymptoticExpansionGenerators(SageObject):
             doctest:warning
             ...
             FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20050 for details.
+            See https://github.com/sagemath/sage/issues/20050 for details.
             2 - 2*Z^(-1/2) + 2*Z^(-1) - 2*Z^(-3/2) + 2*Z^(-2) - 2*Z^(-5/2) + O(Z^(-3))
             sage: def g(z):
             ....:     return (1 - sqrt(1 - 4*z))/(2*z)
@@ -1276,7 +1289,6 @@ class AsymptoticExpansionGenerators(SageObject):
         rho = tau/phi(tau)
         Z = aperiodic_expansion.parent().gen()
         return 1/rho * (aperiodic_expansion/(1 - 1/Z))**(1/period)
-
 
     @staticmethod
     def InverseFunctionAnalysis(var, phi, tau=None, period=1, precision=None):

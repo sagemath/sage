@@ -19,14 +19,14 @@ become symbolic inequalities::
     [0 0 0] <= [0   x_0 + x_1 0  ]
     [0 0 0]    [x_0 0         x_1]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -72,11 +72,11 @@ def is_LinearTensorConstraint(x):
 
 @cached_function
 def LinearTensorConstraintsParent(linear_functions_parent):
-   """
-   Return the parent for linear functions over ``base_ring``.
+    """
+    Return the parent for linear functions over ``base_ring``.
 
-   The output is cached, so only a single parent is ever constructed
-   for a given base ring.
+    The output is cached, so only a single parent is ever constructed
+    for a given base ring.
 
     INPUT:
 
@@ -97,22 +97,22 @@ def LinearTensorConstraintsParent(linear_functions_parent):
         sage: LF = LinearFunctionsParent(QQ)
         sage: LT = LinearTensorParent(QQ^2, LF)
         sage: LinearTensorConstraintsParent(LT)
-        Linear constraints in the tensor product of Vector space of dimension 2 
+        Linear constraints in the tensor product of Vector space of dimension 2
         over Rational Field and Linear functions over Rational Field
-   """
-   return LinearTensorConstraintsParent_class(linear_functions_parent)
+    """
+    return LinearTensorConstraintsParent_class(linear_functions_parent)
 
 
-#*****************************************************************************
+# ****************************************************************************
 #
 # Elements of linear tensor constraints
 #
-#*****************************************************************************
+# ****************************************************************************
 
 class LinearTensorConstraint(Element):
     """
     Formal constraint involving two module-valued linear functions.
-    
+
     .. NOTE::
 
         In the code, we use "linear tensor" as abbreviation for the
@@ -160,7 +160,7 @@ class LinearTensorConstraint(Element):
             sage: b[2] * vector([1,2]) + 2*b[3] <= 0
             (1.0, 2.0)*x_0 + (2.0, 2.0)*x_1 <= (0.0, 0.0)
         """
-        super(LinearTensorConstraint, self).__init__(parent)
+        super().__init__(parent)
         self._lhs = lhs
         self._rhs = rhs
         self._equality = equality
@@ -215,7 +215,7 @@ class LinearTensorConstraint(Element):
 
             sage: mip.<x> = MixedIntegerLinearProgram()
             sage: (x[0] * vector([1,2]) == 0).lhs()
-            (1.0, 2.0)*x_0            
+            (1.0, 2.0)*x_0
         """
         return self._lhs
 
@@ -250,7 +250,7 @@ class LinearTensorConstraint(Element):
             sage: mip.<x> = MixedIntegerLinearProgram()
             sage: ascii_art(x[0] * vector([1,2]) >= 0)
             (0.0, 0.0) <= (1.0, 2.0)*x_0
-            sage: ascii_art(x[0] * matrix([[1,2],[3,4]]) >= 0)            
+            sage: ascii_art(x[0] * matrix([[1,2],[3,4]]) >= 0)
             [0 0] <= [x_0   2*x_0]
             [0 0]    [3*x_0 4*x_0]
         """
@@ -313,12 +313,12 @@ class LinearTensorConstraintsParent_class(Parent):
 
         sage: p = MixedIntegerLinearProgram()
         sage: LT = p.linear_functions_parent().tensor(RDF^2);  LT
-        Tensor product of Vector space of dimension 2 over Real Double 
+        Tensor product of Vector space of dimension 2 over Real Double
         Field and Linear functions over Real Double Field
         sage: from sage.numerical.linear_tensor_constraints import LinearTensorConstraintsParent
         sage: LTC = LinearTensorConstraintsParent(LT);  LTC
-        Linear constraints in the tensor product of Vector space of 
-        dimension 2 over Real Double Field and Linear functions over 
+        Linear constraints in the tensor product of Vector space of
+        dimension 2 over Real Double Field and Linear functions over
         Real Double Field
         sage: type(LTC)
         <class 'sage.numerical.linear_tensor_constraints.LinearTensorConstraintsParent_class'>
@@ -330,10 +330,10 @@ class LinearTensorConstraintsParent_class(Parent):
         The Python constructor
 
         INPUT:
-        
+
         - ``linear_tensor_parent`` -- instance of
           :class:`LinearTensorParent_class`.
-        
+
         TESTS::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
@@ -342,7 +342,7 @@ class LinearTensorConstraintsParent_class(Parent):
             sage: LT = LinearTensorParent(RDF^2, LF)
             sage: from sage.numerical.linear_tensor_constraints import LinearTensorConstraintsParent
             sage: LinearTensorConstraintsParent(LT)
-            Linear constraints in the tensor product of Vector space of 
+            Linear constraints in the tensor product of Vector space of
             dimension 2 over Real Double Field and Linear functions over
             Real Double Field
         """
@@ -399,7 +399,7 @@ class LinearTensorConstraintsParent_class(Parent):
             sage: ieq = (x[0] * vector([1,2]) >= 0)
             sage: ieq.parent()    # indirect doctests
             Linear constraints in the tensor product of Vector space of
-            dimension 2 over Real Double Field and Linear functions over 
+            dimension 2 over Real Double Field and Linear functions over
             Real Double Field
         """
         return 'Linear constraints in the tensor product of {0} and {1}'.format(
@@ -446,7 +446,7 @@ class LinearTensorConstraintsParent_class(Parent):
 
     def _an_element_(self):
         """
-        Returns an element
+        Return an element.
 
         EXAMPLES::
 
@@ -457,4 +457,3 @@ class LinearTensorConstraintsParent_class(Parent):
         """
         LT = self.linear_tensors()
         return LT.an_element() >= 0
-

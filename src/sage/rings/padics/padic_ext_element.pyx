@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-p-Adic Extension Element
+`p`-adic Extension Element
 
 A common superclass for all elements of extension rings and field of `\ZZ_p` and
 `\QQ_p`.
@@ -509,4 +509,3 @@ cdef class pAdicExtElement(pAdicGenericElement):
             return R.residue_field()(self.expansion(0))
         else:
             raise NotImplementedError("residue() not implemented in extensions for absprec larger than one")
-

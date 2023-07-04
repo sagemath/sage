@@ -97,8 +97,9 @@ class Polygon(GraphicPrimitive_xydata):
 
     def __getitem__(self, i):
         """
-        Return `i`th vertex of Polygon primitive, starting count
-        from 0th vertex.
+        Return `i`-th vertex of Polygon primitive
+
+        It is starting count from 0th vertex.
 
         EXAMPLES::
 
@@ -111,9 +112,11 @@ class Polygon(GraphicPrimitive_xydata):
 
     def __setitem__(self, i, point):
         """
-        Changes `i`th vertex of Polygon primitive, starting count
-        from 0th vertex.  Note that this only changes a vertex,
-        but does not create new vertices.
+        Change `i`-th vertex of Polygon primitive
+
+        It is starting count from 0th vertex.
+
+        Note that this only changes a vertex, but does not create new vertices.
 
         EXAMPLES::
 
@@ -381,6 +384,21 @@ def polygon2d(points, **options):
 
         v = [(randrange(-5,5), randrange(-5,5)) for _ in range(10)]
         P = polygon2d(v, legend_label='some form')
+        sphinx_plot(P)
+
+    An aperiodic monotile, [Smi2023]_::
+
+        sage: s = sqrt(3)
+        sage: polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0],
+        ....:            [9/2, -1/2*s], [3, -s], [3/2, -1/2*s], [1, -s], [-1, -s],
+        ....:            [-3/2, -1/2*s]], axes=False)
+        Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        s = sqrt(3)
+        P = polygon2d([[0, 0], [0, s], [1, s], [3/2, 3/2*s], [3, s], [3, 0], [4, 0], [9/2, -1/2*s], [3, -s], \
+                       [3/2, -1/2*s], [1, -s], [-1, -s], [-3/2, -1/2*s]], axes=False)
         sphinx_plot(P)
 
     A purple hexagon::

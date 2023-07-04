@@ -257,7 +257,7 @@ Sage example in ./polynomes.tex, line 1492::
 Sage example in ./polynomes.tex, line 1531::
 
   sage: C = ComplexField(15)
-  sage: Frac(C['x'])(r).partial_fraction_decomposition()
+  sage: Frac(C['x'])(r).partial_fraction_decomposition() #abs tol 2e-4
   (x^4 - x^2 + 6.000, [0.5312/(x - 1.000), 0.06250/(x^2 - 2.000*x + 1.000),
   4.385*I/(x - 1.732*I), (-4.385*I)/(x + 1.732*I),
   (-0.5312)/(x + 1.000), 0.06250/(x^2 + 2.000*x + 1.000)])
@@ -267,7 +267,7 @@ Sage example in ./polynomes.tex, line 1600::
   sage: A = Integers(101); R.<x> = A[]
   sage: f6 = sum( (i+1)^2 * x^i for i in (0..5) ); f6
   36*x^5 + 25*x^4 + 16*x^3 + 9*x^2 + 4*x + 1
-  sage: num, den = f6.rational_reconstruct(x^6, 1, 3); num/den
+  sage: num, den = f6.rational_reconstruction(x^6, 1, 3); num/den
   (100*x + 100)/(x^3 + 98*x^2 + 3*x + 100)
 
 Sage example in ./polynomes.tex, line 1611::
@@ -283,7 +283,7 @@ Sage example in ./polynomes.tex, line 1672::
 
 Sage example in ./polynomes.tex, line 1677::
 
-  sage: num, den = ZpZx(s).rational_reconstruct(ZpZx(x)^10,4,5)
+  sage: num, den = ZpZx(s).rational_reconstruction(ZpZx(x)^10,4,5)
   sage: num/den
   (1073741779*x^3 + 105*x)/(x^4 + 1073741744*x^2 + 105)
 
@@ -304,7 +304,7 @@ Sage example in ./polynomes.tex, line 1713::
 
   sage: def mypade(pol, n, k):
   ....:     x = ZpZx.gen();
-  ....:     n,d = ZpZx(pol).rational_reconstruct(x^n, k-1, n-k)
+  ....:     n,d = ZpZx(pol).rational_reconstruction(x^n, k-1, n-k)
   ....:     return Qx(list(map(lift_sym, n)))/Qx(list(map(lift_sym, d)))
 
 Sage example in ./polynomes.tex, line 1813::
@@ -363,28 +363,27 @@ Sage example in ./polynomes.tex, line 1957::
 Sage example in ./polynomes.tex, line 2028::
 
   sage: L.<x> = LazyPowerSeriesRing(QQ)
-  sage: lazy_exp = x.exponential(); lazy_exp
-  O(1)
+  sage: lazy_exp = x.exp(); lazy_exp
+  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
 
 Sage example in ./polynomes.tex, line 2039::
 
   sage: lazy_exp[5]
   1/120
   sage: lazy_exp
-  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + O(x^6)
+  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
 
 Sage example in ./polynomes.tex, line 2062::
 
   sage: f = L(1)  # the constant lazy series 1
   sage: for i in range(5):
-  ....:     f = (x*f).exponential()
-  ....:     f.compute_coefficients(5) # forces the computation
+  ....:     f = (x*f).exp()
   ....:     print(f)                  # of the first coefficients
-  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + O(x^6)
-  1 + x + 3/2*x^2 + 5/3*x^3 + 41/24*x^4 + 49/30*x^5 + O(x^6)
-  1 + x + 3/2*x^2 + 8/3*x^3 + 101/24*x^4 + 63/10*x^5 + O(x^6)
-  1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 49/5*x^5 + O(x^6)
-  1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 54/5*x^5 + O(x^6)
+  1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
+  1 + x + 3/2*x^2 + 5/3*x^3 + 41/24*x^4 + 49/30*x^5 + 1057/720*x^6 + O(x^7)
+  1 + x + 3/2*x^2 + 8/3*x^3 + 101/24*x^4 + 63/10*x^5 + 6607/720*x^6 + O(x^7)
+  1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 49/5*x^5 + 12847/720*x^6 + O(x^7)
+  1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 54/5*x^5 + 16087/720*x^6 + O(x^7)
 
 Sage example in ./polynomes.tex, line 2091::
 
@@ -393,10 +392,9 @@ Sage example in ./polynomes.tex, line 2091::
 
 Sage example in ./polynomes.tex, line 2105::
 
-  sage: from sage.combinat.species.series import LazyPowerSeries
-  sage: f = LazyPowerSeries(L, name='f')
-  sage: f.define((x*f).exponential())
-  sage: f.coefficients(8)
+  sage: f = L.undefined(valuation=0)
+  sage: f.define((x*f).exp())
+  sage: f[:8]
   [1, 1, 3/2, 8/3, 125/24, 54/5, 16807/720, 16384/315]
 
 Sage example in ./polynomes.tex, line 2158::
@@ -406,4 +404,3 @@ Sage example in ./polynomes.tex, line 2158::
   (x^562949953421312 + 1, 562949953421312*x^562949953421311)
 
 """
-

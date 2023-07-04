@@ -19,10 +19,11 @@ from sage.combinat.partition import _Partitions, Partitions_n
 from sage.combinat.tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
 from sage.algebras.group_algebra import GroupAlgebra_class
 from sage.categories.weyl_groups import WeylGroups
-from sage.rings.all import QQ, PolynomialRing
-from sage.arith.all import factorial
-from sage.matrix.all import matrix
-from sage.modules.all import vector
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.arith.misc import factorial
+from sage.matrix.constructor import matrix
+from sage.modules.free_module_element import vector
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.persist import register_unpickle_override
 
@@ -100,7 +101,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
         sage: SGA.group()
         Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space)
         sage: SGA.an_element()
-        s1*s2*s3 + 3*s3*s2 + 2*s3 + 1
+        s1*s2*s3 + 3*s2*s3*s1*s2 + 2*s3*s1 + 1
 
     The preferred way to construct the symmetric group algebra is to
     go through the usual ``algebra`` method::
@@ -367,7 +368,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 phi = S.to_symmetric_group_algebra
                 return phi.codomain().canonical_embedding(self) * phi
 
-        return super(SymmetricGroupAlgebra_n, self)._coerce_map_from_(S)
+        return super()._coerce_map_from_(S)
 
     def _element_constructor_(self, x):
         """
@@ -391,7 +392,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return self.monomial_from_smaller_permutation(
                 from_permutation_group_element(x))
 
-        return super(SymmetricGroupAlgebra_n, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _sibling(self, n):
         r"""
@@ -417,7 +418,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         try:
             W = self.basis().keys().__class__(n)
-        except Exception:
+        except (AttributeError, TypeError, ValueError):
             raise NotImplementedError("Constructing the sibling algebra of a different order "
                                       "only implemented for PermutationGroup and SymmetricGroup")
         return SymmetricGroupAlgebra(self.base_ring(), W)
@@ -756,7 +757,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         la = _Partitions(la)
         kwds['bracket'] = kwds.get('bracket', False)
-        return super(SymmetricGroupAlgebra_n, self).cell_module(la, **kwds)
+        return super().cell_module(la, **kwds)
 
     def retract_plain(self, f, m):
         r"""
@@ -1164,9 +1165,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 big_coeff = character_table[lam_index][0] / denom
                 character_row = character_table[lam_index]
                 iaxpy(1,
-                     {g: big_coeff * character_row[ind]
-                      for ind in cycles for g in cycles[ind]},
-                     cpi)
+                      {g: big_coeff * character_row[ind]
+                       for ind in cycles for g in cycles[ind]},
+                      cpi)
 
         if not all(R(cpi[g].denominator()) for g in cpi):
             return None
@@ -1542,6 +1543,46 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         P = Permutations(n)
         return self.sum_of_monomials([self._indices(P(list(q) + complement(q)))
                                       for q in itertools.combinations(range(1, n + 1), int(k))])
+
+    def specht_module(self, D):
+        r"""
+        Return the Specht module of ``self`` indexed by the diagram ``D``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module(Partition([3,1,1]))
+            sage: SM
+            Specht module of [(0, 0), (0, 1), (0, 2), (1, 0), (2, 0)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[3, 1, 1]
+
+            sage: SM = SGA.specht_module([(1,1),(1,3),(2,2),(3,1),(3,2)])
+            sage: SM
+            Specht module of [(1, 1), (1, 3), (2, 2), (3, 1), (3, 2)] over Rational Field
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1] + s[3, 1, 1] + s[3, 2]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        return SpechtModule(self, D)
+
+    def specht_module_dimension(self, D):
+        r"""
+        Return the dimension of the Specht module of ``self`` indexed by ``D``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SGA.specht_module_dimension(Partition([3,1,1]))
+            6
+            sage: SGA.specht_module_dimension([(1,1),(1,3),(2,2),(3,1),(3,2)])
+            16
+        """
+        from sage.combinat.specht_module import specht_module_spanning_set, _to_diagram
+        D = _to_diagram(D)
+        span_set = specht_module_spanning_set(D, self)
+        return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
 
     def jucys_murphy(self, k):
         r"""
@@ -2806,7 +2847,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             sage: HeckeAlgebraSymmetricGroupT(QQ,3).algebra_generators()
             [T[2, 1, 3], T[1, 3, 2]]
         """
-        return [self.t(_) for _ in range(1, self.n)]
+        return [self.t(i) for i in range(1, self.n)]
 
     def jucys_murphy(self, k):
         r"""

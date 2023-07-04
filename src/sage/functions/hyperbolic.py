@@ -1,5 +1,5 @@
-"""
-Hyperbolic Functions
+r"""
+Hyperbolic functions
 
 The full set of hyperbolic and inverse hyperbolic functions is
 available:
@@ -20,10 +20,28 @@ available:
 REFERENCES:
 
 - :wikipedia:`Hyperbolic function`
-
 - :wikipedia:`Inverse hyperbolic functions`
-
 - R. Roy, F. W. J. Olver, Elementary Functions, https://dlmf.nist.gov/4
+
+EXAMPLES:
+
+Inverse hyperbolic functions have logarithmic expressions,
+so expressions of the form ``exp(c*f(x))`` simplify::
+
+    sage: exp(2*atanh(x))
+    -(x + 1)/(x - 1)
+    sage: exp(2*acoth(x))
+    (x + 1)/(x - 1)
+
+    sage: exp(2*asinh(x))
+    (x + sqrt(x^2 + 1))^2
+    sage: exp(2*acosh(x))
+    (x + sqrt(x^2 - 1))^2
+
+    sage: exp(2*asech(x))
+    (sqrt(-x^2 + 1)/x + 1/x)^2
+    sage: exp(2*acsch(x))
+    (sqrt(1/x^2 + 1) + 1/x)^2
 """
 
 from sage.symbolic.function import GinacFunction
@@ -62,6 +80,7 @@ class Function_sinh(GinacFunction):
         """
         GinacFunction.__init__(self, "sinh", latex_name=r"\sinh")
 
+
 sinh = Function_sinh()
 
 
@@ -97,6 +116,7 @@ class Function_cosh(GinacFunction):
             sqrt(x^2 + 1)
         """
         GinacFunction.__init__(self, "cosh", latex_name=r"\cosh")
+
 
 cosh = Function_cosh()
 
@@ -162,6 +182,7 @@ class Function_tanh(GinacFunction):
         """
         GinacFunction.__init__(self, "tanh", latex_name=r"\tanh")
 
+
 tanh = Function_tanh()
 
 
@@ -217,6 +238,7 @@ class Function_coth(GinacFunction):
         """
         return 1.0 / tanh(x)
 
+
 coth = Function_coth()
 
 
@@ -270,6 +292,7 @@ class Function_sech(GinacFunction):
         """
         return 1.0 / cosh(x)
 
+
 sech = Function_sech()
 
 
@@ -320,6 +343,7 @@ class Function_csch(GinacFunction):
             array([0.27572056, 0.09982157, 0.03664357])
         """
         return 1.0 / sinh(x)
+
 
 csch = Function_csch()
 
@@ -385,7 +409,8 @@ class Function_arcsinh(GinacFunction):
         GinacFunction.__init__(self, "arcsinh",
                 latex_name=r"\operatorname{arsinh}",
                 conversions=dict(maxima='asinh', sympy='asinh', fricas='asinh',
-                                giac='asinh'))
+                                 giac='asinh', mathematica='ArcSinh'))
+
 
 arcsinh = asinh = Function_arcsinh()
 
@@ -470,7 +495,8 @@ class Function_arccosh(GinacFunction):
         GinacFunction.__init__(self, "arccosh",
                 latex_name=r"\operatorname{arcosh}",
                 conversions=dict(maxima='acosh', sympy='acosh', fricas='acosh',
-                                giac='acosh'))
+                                 giac='acosh', mathematica='ArcCosh'))
+
 
 arccosh = acosh = Function_arccosh()
 
@@ -499,8 +525,8 @@ class Function_arctanh(GinacFunction):
             sage: atanh(-1/2,hold=True).unhold()
             -1/2*log(3)
 
-        ``conjugate(arctanh(x))==arctanh(conjugate(x))`` unless on the branch
-        cuts which run along the real axis outside the interval [-1, +1].::
+        ``conjugate(arctanh(x)) == arctanh(conjugate(x))`` unless on the branch
+        cuts which run along the real axis outside the interval [-1, +1]. ::
 
             sage: conjugate(atanh(x))
             conjugate(arctanh(x))
@@ -529,7 +555,8 @@ class Function_arctanh(GinacFunction):
         GinacFunction.__init__(self, "arctanh",
                 latex_name=r"\operatorname{artanh}",
                 conversions=dict(maxima='atanh', sympy='atanh', fricas='atanh',
-                                giac='atanh'))
+                                 giac='atanh', mathematica='ArcTanh'))
+
 
 arctanh = atanh = Function_arctanh()
 
@@ -569,14 +596,16 @@ class Function_arccoth(GinacFunction):
             sage: acoth(x)._sympy_()
             acoth(x)
 
-        Check if :trac:`23636` is fixed::
+        Check that :trac:`23636` is fixed::
 
             sage: acoth(float(1.1))
             1.5222612188617113
         """
         GinacFunction.__init__(self, "arccoth",
                 latex_name=r"\operatorname{arcoth}",
-                conversions=dict(maxima='acoth', sympy='acoth', fricas='acoth'))
+                conversions=dict(maxima='acoth', sympy='acoth',
+                                 mathematica='ArcCoth',
+                                 giac='acoth', fricas='acoth'))
 
     def _eval_numpy_(self, x):
         """
@@ -588,6 +617,7 @@ class Function_arccoth(GinacFunction):
             array([0.54930614, 0.34657359, 0.25541281])
         """
         return arctanh(1.0 / x)
+
 
 arccoth = acoth = Function_arccoth()
 
@@ -619,7 +649,9 @@ class Function_arcsech(GinacFunction):
         """
         GinacFunction.__init__(self, "arcsech",
                 latex_name=r"\operatorname{arsech}",
-                conversions=dict(maxima='asech', sympy='asech', fricas='asech'))
+                conversions=dict(maxima='asech', sympy='asech',
+                                 mathematica='ArcSech',
+                                 fricas='asech'))
 
     def _eval_numpy_(self, x):
         """
@@ -632,6 +664,7 @@ class Function_arcsech(GinacFunction):
             array([       inf,  1.3169579,  0.       ])
         """
         return arccosh(1.0 / x)
+
 
 arcsech = asech = Function_arcsech()
 
@@ -661,7 +694,7 @@ class Function_arccsch(GinacFunction):
 
         TESTS:
 
-        Check if :trac:`20818` is fixed::
+        Check that :trac:`20818` is fixed::
 
             sage: acsch(float(0.1))
             2.99822295029797
@@ -670,7 +703,9 @@ class Function_arccsch(GinacFunction):
         """
         GinacFunction.__init__(self, "arccsch",
                 latex_name=r"\operatorname{arcsch}",
-                conversions=dict(maxima='acsch', sympy='acsch', fricas='acsch'))
+                conversions=dict(maxima='acsch',
+                                 mathematica='ArcCsch',
+                                 sympy='acsch', fricas='acsch'))
 
     def _eval_numpy_(self, x):
         """
@@ -683,5 +718,6 @@ class Function_arccsch(GinacFunction):
             array([        inf,  1.44363548,  0.88137359])
         """
         return arcsinh(1.0 / x)
+
 
 arccsch = acsch = Function_arccsch()
