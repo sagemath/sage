@@ -983,6 +983,29 @@ class SageDocTestParser(doctest.DocTestParser):
             'Zp(5,4,print_mode="digits")(5)\n'
             sage: dte.want
             '...00010\n'
+
+        Style warnings::
+
+            sage: example4 = 'sage: 1 # optional guava mango\nsage: 2 # optional guava\nsage: 3 # optional guava\nsage: 4 # optional guava\n sage: 5 # optional guava\n'
+            sage: parsed4 = DTP.parse(example4)
+            sage: parsed4[1].warnings, parsed4[1].sage_source, parsed4[1].source
+            (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
+            '1 # optional guava mango\n',
+            'None  # virtual doctest')
+
+            sage: example5 = 'sage: 1 # optional guava\nsage: 2 # optional guava mango\nsage: 3 # optional guava\nsage: 4 # optional guava\n sage: 5 # optional guava\n'
+            sage: parsed5 = DTP.parse(example5)
+            sage: parsed5[1].warnings, parsed5[1].sage_source, parsed5[1].source
+            (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
+            '1 # optional guava\n',
+            'Integer(1) # optional guava\n')
+
+            sage: example6 = 'sage: # optional mango\nsage: 1 # optional guava\nsage: 2 # optional guava mango\nsage: 3 # optional guava\nsage: 4 # optional guava\n sage: 5 # optional guava\n'
+            sage: parsed6 = DTP.parse(example6)
+            sage: parsed6[1].warnings, parsed6[1].sage_source, parsed6[1].source
+            (["Consider updating this block-scoped tag to 'sage: # optional - guava mango' to avoid repeating the tag 5 times"],
+            '# optional mango\n',
+            'None  # virtual doctest')
         """
         # Regular expressions
         find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
@@ -1018,14 +1041,73 @@ class SageDocTestParser(doctest.DocTestParser):
         res = doctest.DocTestParser.parse(self, string, *args)
         filtered = []
         persistent_optional_tags = self.file_optional_tags
+        persistent_optional_tag_setter = None
+        persistent_optional_tag_setter_index = None
+        first_example_in_block = None
+        first_example_in_block_index = None
+        tag_count_within_block = defaultdict(lambda: 0)
+
+        def update_tag_counts(optional_tags):
+            for tag in optional_tags:
+                if tag not in persistent_optional_tags:
+                    tag_count_within_block[tag] += 1
+            tag_count_within_block[''] += 1
+
+        def check_and_clear_tag_counts():
+            if (num_examples := tag_count_within_block['']) >= 4:
+                if overused_tags := set(tag for tag, count in tag_count_within_block.items()
+                                        if tag and count >= num_examples):
+                    overused_tags.update(persistent_optional_tags)
+                    overused_tags.difference_update(self.file_optional_tags)
+                    suggested = unparse_optional_tags(overused_tags, prefix='sage: # ')
+
+                    if persistent_optional_tag_setter:
+                        warning_example = persistent_optional_tag_setter
+                        index = persistent_optional_tag_setter_index
+                        warning = (f"Consider updating this block-scoped tag to '{suggested}' "
+                                   f"to avoid repeating the tag {num_examples} times")
+                    else:
+                        warning_example = first_example_in_block
+                        index = first_example_in_block_index
+                        warning = (f"Consider using a block-scoped tag by "
+                                   f"inserting the line '{suggested}' just before this line "
+                                   f"to avoid repeating the tag {num_examples} times")
+
+                    if not (index < len(filtered) and filtered[index] == warning_example):
+                        # The example to which we want to attach our warning is
+                        # not in ``filtered``. It is either the persistent tag line,
+                        # or the first example of the block and not run because of unmet tags,
+                        # or just a comment. Either way, we transform this example
+                        # to a virtual example and attach the warning to it.
+                        warning_example.sage_source = warning_example.source
+                        if warning_example.sage_source.startswith("sage: "):
+                            warning_example.sage_source = warning_example.source[6:]
+                        warning_example.source = 'None  # virtual doctest'
+                        warning_example.want = ''
+                        filtered.insert(index, warning_example)
+
+                    if not hasattr(warning_example, 'warnings'):
+                        warning_example.warnings = []
+                    warning_example.warnings.append(warning)
+            tag_count_within_block.clear()
+
         for item in res:
             if isinstance(item, doctest.Example):
                 optional_tags, source_sans_tags, is_persistent = parse_optional_tags(item.source, return_string_sans_tags=True)
                 optional_tags = set(optional_tags)
                 if is_persistent:
+                    check_and_clear_tag_counts()
                     persistent_optional_tags = optional_tags
                     persistent_optional_tags.update(self.file_optional_tags)
+                    persistent_optional_tag_setter = first_example_in_block = item
+                    persistent_optional_tag_setter_index = len(filtered)
+                    first_example_in_block_index = None
                     continue
+
+                if not first_example_in_block:
+                    first_example_in_block = item
+                    first_example_in_block_index = len(filtered)
+                update_tag_counts(optional_tags)
                 optional_tags.update(persistent_optional_tags)
                 item.optional_tags = frozenset(optional_tags)
                 item.probed_tags = set()
@@ -1077,8 +1159,14 @@ class SageDocTestParser(doctest.DocTestParser):
                     item.source = preparse(item.sage_source)
             else:
                 if item == '\n':
+                    check_and_clear_tag_counts()
                     persistent_optional_tags = self.file_optional_tags
+                    persistent_optional_tag_setter = first_example_in_block = None
+                    persistent_optional_tag_setter_index = first_example_in_block_index = None
             filtered.append(item)
+
+        check_and_clear_tag_counts()
+
         return filtered
 
 
