@@ -934,12 +934,13 @@ def WittDesign(n):
 
     EXAMPLES::
 
-        sage: BD = designs.WittDesign(9)                # optional - gap_package_design
-        sage: BD.is_t_design(return_parameters=True)    # optional - gap_package_design
+        sage: # optional - gap_packages (design package)
+        sage: BD = designs.WittDesign(9)
+        sage: BD.is_t_design(return_parameters=True)
         (True, (2, 9, 3, 1))
-        sage: BD                                        # optional - gap_package_design
+        sage: BD
         Incidence structure with 9 points and 12 blocks
-        sage: print(BD)                                 # optional - gap_package_design
+        sage: print(BD)
         Incidence structure with 9 points and 12 blocks
     """
     libgap.load_package("design")
