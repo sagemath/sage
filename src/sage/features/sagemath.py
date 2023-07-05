@@ -568,7 +568,8 @@ class sage__rings__finite_rings(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.rings.finite_rings',
-                             [PythonModule('sage.rings.finite_rings.element_pari_ffelt')],
+                             [PythonModule('sage.rings.finite_rings.element_pari_ffelt'),
+                              PythonModule('sage.rings.algebraic_closure_finite_field')],
                              type='standard')
 
 
