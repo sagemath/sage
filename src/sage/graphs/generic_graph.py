@@ -12572,7 +12572,7 @@ class GenericGraph(GenericGraph_pyx):
         return EdgesView(self, vertices=vertices, labels=labels, sort=sort, key=key,
                          ignore_direction=ignore_direction, sort_vertices=sort_vertices)
 
-    def edge_boundary(self, vertices1, vertices2=None, labels=True, sort=False):
+    def edge_boundary(self, vertices1, vertices2=None, labels=True, sort=False, key=None):
         r"""
         Return a list of edges ``(u,v,l)`` with ``u`` in ``vertices1``
         and ``v`` in ``vertices2``.
@@ -12589,6 +12589,10 @@ class GenericGraph(GenericGraph_pyx):
           a tuple `(u,v)` of vertices
 
         - ``sort`` -- boolean (default: ``False``); whether to sort the result
+
+        - ``key`` -- a function (default: ``None``); a function that takes an
+          edge as its one argument and returns a value that can be used for
+          comparisons in the sorting algorithm (we must have ``sort=True``)
 
         EXAMPLES::
 
@@ -12614,6 +12618,23 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.edge_boundary([0], labels=False, sort=True)
             [(0, 1), (0, 2)]
 
+        Using the ``key`` argument to order multiple edges of incomparable
+        types::
+
+            sage: G = Graph([(1, 'A', 4), (1, 2, 3)])
+            sage: G.edge_boundary([1], sort=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for <: 'Integer Ring' and '<class 'str'>'
+            sage: G.edge_boundary([1], sort=True, key=str)
+            [('A', 1, 4), (1, 2, 3)]
+            sage: G.edge_boundary([1], sort=True, key=lambda e:e[2])
+            [(1, 2, 3), ('A', 1, 4)]
+            sage: G.edge_boundary([1], labels=False, sort=True, key=lambda e:e[2])
+            Traceback (most recent call last):
+            ...
+            IndexError: tuple index out of range
+
         TESTS::
 
             sage: G = graphs.DiamondGraph()
@@ -12623,7 +12644,14 @@ class GenericGraph(GenericGraph_pyx):
             []
             sage: G.edge_boundary([2], [0])
             [(0, 2, None)]
+            sage: G.edge_boundary([2], [0], sort=False, key=str)
+            Traceback (most recent call last):
+            ...
+            ValueError: sort keyword is False, yet a key function is given
         """
+        if (not sort) and key:
+            raise ValueError('sort keyword is False, yet a key function is given')
+
         vertices1 = set(v for v in vertices1 if v in self)
         if self._directed:
             if vertices2 is not None:
@@ -12643,7 +12671,7 @@ class GenericGraph(GenericGraph_pyx):
                 output = [e for e in self.edges(vertices=vertices1, labels=labels, sort=False)
                           if e[1] not in vertices1 or e[0] not in vertices1]
         if sort:
-            output.sort()
+            return sorted(output, key=key)
         return output
 
     def edge_iterator(self, vertices=None, labels=True, ignore_direction=False, sort_vertices=True):
