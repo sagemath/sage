@@ -211,23 +211,19 @@ class MomentAngleComplex(SageObject): # should this inherit SimplicialComplex?
 
     def components(self):
         """
-        Print the components (disks and spheres) of ``self``.
+        Return the dictionary of components of ``self``, indexed by facets
+        of the simplicial complex.
 
-        Here the components are represented by ``D^2`` (disk) and
-        ``S^1`` (sphere).
+        The values are lists, representing spheres and disks described in the 
+        construction of the moment-angle complex.
 
         EXAMPLES::
 
         <Lots and lots of examples>
         """
 
-        for component in self._components:
-            print(component, end=": ")
-            for x in self._components.get(component):
-                prnt = "D^2" if x == Simplex(2) else "S^1"
-                print(prnt, end=" ")
-            print()
-
+        return self._components
+        
     def homology(self, dim=None, base_ring=ZZ, subcomplex=None,
                  generators=False, cohomology=False, algorithm='pari',
                  verbose=False, reduced=True, **kwds):
