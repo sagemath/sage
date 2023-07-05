@@ -1485,7 +1485,7 @@ class Function_Hankel1(BuiltinFunction):
                                                   sympy='hankel1',
                                                   fricas='hankelH1'))
 
-    def _evalf_(self, nu, z, parent, algorithm=None):
+    def _evalf_(self, nu, z, parent=None, algorithm=None):
         r"""
         TESTS::
 
@@ -1572,7 +1572,7 @@ class Function_Hankel2(BuiltinFunction):
                                                   sympy='hankel2',
                                                   fricas='hankelH2'))
 
-    def _evalf_(self, nu, z, parent, algorithm=None):
+    def _evalf_(self, nu, z, parent=None, algorithm=None):
         r"""
         TESTS::
 
@@ -1668,7 +1668,7 @@ class SphericalBesselJ(BuiltinFunction):
         BuiltinFunction.__init__(self, 'spherical_bessel_J', nargs=2,
                                  conversions=conversions)
 
-    def _evalf_(self, n, z, parent, algorithm=None):
+    def _evalf_(self, n, z, parent=None, algorithm=None):
         r"""
         TESTS::
 
@@ -1766,7 +1766,7 @@ class SphericalBesselY(BuiltinFunction):
         BuiltinFunction.__init__(self, 'spherical_bessel_Y', nargs=2,
                                  conversions=conversions)
 
-    def _evalf_(self, n, z, parent, algorithm=None):
+    def _evalf_(self, n, z, parent=None, algorithm=None):
         r"""
         TESTS::
 
@@ -1863,7 +1863,7 @@ class SphericalHankel1(BuiltinFunction):
         BuiltinFunction.__init__(self, 'spherical_hankel1', nargs=2,
                                  conversions=conversions)
 
-    def _evalf_(self, n, z, parent, algorithm=None):
+    def _evalf_(self, n, z, parent=None, algorithm=None):
         r"""
         TESTS::
 
@@ -1963,7 +1963,7 @@ class SphericalHankel2(BuiltinFunction):
             conversions=dict(mathematica='SphericalHankelH2',
                              maxima='spherical_hankel2'))
 
-    def _evalf_(self, n, z, parent, algorithm=None):
+    def _evalf_(self, n, z, parent=None, algorithm=None):
         r"""
         TESTS::
 
