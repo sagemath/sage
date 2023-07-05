@@ -433,11 +433,13 @@ class kRegularSequence(RecognizableSeries):
             sage: H = S.regenerated()
             sage: H
             2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
-            sage: H.mu[0], H.mu[1], H.left, H.right
-            (
-            [ 0  1]  [3 0]
-            [-2  3], [6 0], (1, 0), (1, 1)
-            )
+            sage: H.linear_representation()
+            ((1, 0),
+             Finite family {0: [ 0  1]
+                               [-2  3],
+                            1: [3 0]
+                               [6 0]},
+             (1, 1))
             sage: H.is_degenerated()
             False
 
@@ -446,11 +448,15 @@ class kRegularSequence(RecognizableSeries):
             sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]),
             ....:          allow_degenerated_sequence=True)
             sage: H = S.regenerated(minimize=False)
-            sage: H.mu[0], H.mu[1], H.left, H.right
-            (
-            [1 0]  [0 0]
-            [0 2], [3 3], (1, 1), (1, 0)
-            )
+            sage: H.linear_representation()
+            ((1, 1),
+             Finite family {0: [1|0]
+                               [-+-]
+                               [0|2],
+                            1: [0|0]
+                               [-+-]
+                               [3|3]},
+             (1, 0))
             sage: H.is_degenerated()
             False
         """
@@ -490,6 +496,7 @@ class kRegularSequence(RecognizableSeries):
             sage: C.regenerated() is C  # indirect doctest
             True
         """
+        from sage.matrix.constructor import Matrix
         from sage.matrix.special import zero_matrix, identity_matrix
         from sage.modules.free_module_element import vector
 
@@ -500,8 +507,8 @@ class kRegularSequence(RecognizableSeries):
 
         itA = iter(P.alphabet())
         z = next(itA)
-        mu = {z: I.augment(Z).stack(Z.augment(self.mu[z]))}
-        mu.update((r, Z.augment(Z).stack(self.mu[r].augment(self.mu[r])))
+        mu = {z: Matrix.block([[I, Z], [Z, self.mu[z]]])}
+        mu.update((r, Matrix.block([[Z, Z], [self.mu[r], self.mu[r]]]))
                   for r in itA)
 
         return P.element_class(
