@@ -149,10 +149,10 @@ cdef class MatrixBackend(GenericBackend):
         self.col_lower_bound.augment(lower_bound)
         self.col_upper_bound.augment(upper_bound)
         self.objective_function.augment(obj)
-        self.col_name_var.augment(name)
-        self.is_binary.augment(binary)
-        self.is_continuous.augment(continuous)
-        self.is_integer.augment(integer)
+        self.col_name_var.append(name)
+        self.is_binary.append(binary)
+        self.is_continuous.append(continuous)
+        self.is_integer.append(integer)
         return len(self.objective_function) - 1
 
     cpdef set_variable_type(self, int variable, int vtype):
