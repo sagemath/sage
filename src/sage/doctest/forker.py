@@ -132,10 +132,11 @@ def init_sage(controller=None):
     Check that SymPy equation pretty printer is limited in doctest
     mode to default width (80 chars)::
 
-        sage: from sympy import sympify                                                 # needs sympy
-        sage: from sympy.printing.pretty.pretty import PrettyPrinter                    # needs sympy
-        sage: s = sympify('+x^'.join(str(i) for i in range(30)))                        # needs sympy
-        sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))             # needs sympy
+        sage: # needs sympy
+        sage: from sympy import sympify
+        sage: from sympy.printing.pretty.pretty import PrettyPrinter
+        sage: s = sympify('+x^'.join(str(i) for i in range(30)))
+        sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))
          29    28    27    26    25    24    23    22    21    20    19    18    17
         x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   +
         <BLANKLINE>
