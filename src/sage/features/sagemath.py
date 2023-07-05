@@ -41,7 +41,6 @@ Hence, we conditionalize this doctest on the presence of the feature
 
 from . import PythonModule, StaticFile
 from .join_feature import JoinFeature
-from .singular import sage__libs__singular
 
 
 class sagemath_doc_html(StaticFile):
@@ -112,12 +111,13 @@ class sage__combinat(JoinFeature):
     Doctests that use combinatorial modules/algebras, or root systems should use the tag
     ``# needs sage.combinat sage.modules``::
 
-        sage: A = SchurAlgebra(QQ, 2, 3)                                                # needs sage.combinat sage.modules
-        sage: a = A.an_element(); a                                                     # needs sage.combinat sage.modules
+        sage: # needs sage.combinat sage.modules
+        sage: A = SchurAlgebra(QQ, 2, 3)
+        sage: a = A.an_element(); a
         2*S((1, 1, 1), (1, 1, 1)) + 2*S((1, 1, 1), (1, 1, 2))
          + 3*S((1, 1, 1), (1, 2, 2))
-        sage: L = RootSystem(['A',3,1]).root_lattice()                                  # needs sage.combinat sage.modules
-        sage: PIR = L.positive_imaginary_roots(); PIR                                   # needs sage.combinat sage.modules
+        sage: L = RootSystem(['A',3,1]).root_lattice()
+        sage: PIR = L.positive_imaginary_roots(); PIR
         Positive imaginary roots of type ['A', 3, 1]
 
     Doctests that use lattices, semilattices, or Dynkin diagrams should use the tag
@@ -342,7 +342,7 @@ class sage__libs__flint(JoinFeature):
     In addition to the modularization purposes that this tag serves, it also provides attribution
     to the upstream project.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.sagemath import sage__libs__flint
         sage: sage__libs__flint().is_present()                                          # needs sage.libs.flint
@@ -362,6 +362,37 @@ class sage__libs__flint(JoinFeature):
                              spkg='sagemath_flint', type='standard')
 
 
+class sage__libs__gap(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.gap`
+    (the library interface to :ref:`GAP <spkg_gap>`) and :mod:`sage.interfaces.gap` (the pexpect
+    interface to GAP). By design, we do not distinguish between these two, in order
+    to facilitate the conversion of code from the pexpect interface to the library
+    interface.
+
+    .. SEEALSO::
+
+        :class:`Features for GAP packages <~sage.features.gap.GapPackage>`
+
+    TESTS::
+
+        sage: from sage.features.gap import sage__libs__gap
+        sage: sage__libs__gap().is_present()                                            # needs sage.libs.gap
+        FeatureTestResult('sage.libs.gap', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.gap import sage__libs__gap
+            sage: isinstance(sage__libs__gap(), sage__libs__gap)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.gap',
+                             [PythonModule('sage.libs.gap.libgap'),
+                              PythonModule('sage.interfaces.gap')])
+
+
 class sage__libs__ntl(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.ntl`
@@ -370,7 +401,7 @@ class sage__libs__ntl(JoinFeature):
     In addition to the modularization purposes that this tag serves, it also provides attribution
     to the upstream project.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.sagemath import sage__libs__ntl
         sage: sage__libs__ntl().is_present()                                            # needs sage.libs.ntl
@@ -426,11 +457,42 @@ class sage__libs__pari(JoinFeature):
                              spkg='sagemath_pari', type='standard')
 
 
+class sage__libs__singular(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.singular`
+    (the library interface to Singular) and :mod:`sage.interfaces.singular` (the pexpect
+    interface to Singular). By design, we do not distinguish between these two, in order
+    to facilitate the conversion of code from the pexpect interface to the library
+    interface.
+
+    .. SEEALSO::
+
+        :class:`Feature singular <~sage.features.singular.Singular>`
+
+    TESTS::
+
+        sage: from sage.features.singular import sage__libs__singular
+        sage: sage__libs__singular().is_present()                                       # needs sage.libs.singular
+        FeatureTestResult('sage.libs.singular', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.singular import sage__libs__singular
+            sage: isinstance(sage__libs__singular(), sage__libs__singular)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.singular',
+                             [PythonModule('sage.libs.singular.singular'),
+                              PythonModule('sage.interfaces.singular')])
+
+
 class sage__modular(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.modular`.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.sagemath import sage__modular
         sage: sage__modular().is_present()                                              # needs sage.modular
@@ -508,7 +570,7 @@ class sage__numerical__mip(PythonModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.numerical.mip`.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.sagemath import sage__numerical__mip
         sage: sage__numerical__mip().is_present()                                       # needs sage.numerical.mip
@@ -732,7 +794,7 @@ class sage__rings__polynomial__pbori(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.rings.polynomial.pbori`.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.sagemath import sage__rings__polynomial__pbori
         sage: sage__rings__polynomial__pbori().is_present()                             # needs sage.rings.polynomial.pbori
@@ -811,7 +873,7 @@ class sage__sat(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.sat`.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.sagemath import sage__sat
         sage: sage__sat().is_present()                                                  # needs sage.sat
@@ -834,7 +896,7 @@ class sage__schemes(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.schemes`.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.sagemath import sage__schemes
         sage: sage__schemes().is_present()                                              # needs sage.schemes
@@ -940,8 +1002,10 @@ def all_features():
             sage__graphs(),
             sage__groups(),
             sage__libs__flint(),
+            sage__libs__gap(),
             sage__libs__ntl(),
             sage__libs__pari(),
+            sage__libs__singular(),
             sage__modular(),
             sage__modules(),
             sage__plot(),
