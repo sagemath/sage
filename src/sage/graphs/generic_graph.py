@@ -3515,7 +3515,7 @@ class GenericGraph(GenericGraph_pyx):
 
         self._backend.multiple_edges(new)
 
-    def multiple_edges(self, to_undirected=False, labels=True, sort=False):
+    def multiple_edges(self, to_undirected=False, labels=True, sort=False, key=None):
         """
         Return any multiple edges in the (di)graph.
 
@@ -3525,7 +3525,11 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``labels`` -- boolean (default: ``True``); whether to include labels
 
-        - ``sort`` - boolean (default: ``False``); whether to sort the result
+        - ``sort`` -- boolean (default: ``False``); whether to sort the result
+
+        - ``key`` -- a function (default: ``None``); a function that takes an
+          edge as its one argument and returns a value that can be used for
+          comparisons in the sorting algorithm (we must have ``sort=True``)
 
         EXAMPLES::
 
@@ -3574,7 +3578,36 @@ class GenericGraph(GenericGraph_pyx):
             []
             sage: G.multiple_edges(to_undirected=True, sort=True)
             [(1, 2, 'h'), (2, 1, 'g')]
+
+        Using the ``key`` argument to order multiple edges of incomparable
+        types::
+
+            sage: G = Graph([('A', 'B', 3), (1, 2, 1), ('A', 'B', 4), (1, 2, 2)], multiedges=True)
+            sage: G.multiple_edges(sort=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for <: 'Integer Ring' and '<class 'str'>'
+            sage: G.multiple_edges(labels=False, sort=True, key=str)
+            [('A', 'B'), ('A', 'B'), (1, 2), (1, 2)]
+            sage: G.multiple_edges(sort=True, key=str)
+            [('A', 'B', 3), ('A', 'B', 4), (1, 2, 1), (1, 2, 2)]
+            sage: G.multiple_edges(labels=True, sort=True, key=lambda e:e[2])
+            [(1, 2, 1), (1, 2, 2), ('A', 'B', 3), ('A', 'B', 4)]
+            sage: G.multiple_edges(labels=False, sort=True, key=lambda e:e[2])
+            Traceback (most recent call last):
+            ...
+            IndexError: tuple index out of range
+
+        TESTS::
+
+            sage: Graph().multiple_edges(sort=False, key=str)
+            Traceback (most recent call last):
+            ...
+            ValueError: sort keyword is False, yet a key function is given
         """
+        if (not sort) and key:
+            raise ValueError('sort keyword is False, yet a key function is given')
+
         multi_edges = []
         seen = set()
 
@@ -3647,7 +3680,7 @@ class GenericGraph(GenericGraph_pyx):
                                 multi_edges.extend((u, v) for _ in L)
 
         if sort:
-            multi_edges.sort()
+            return sorted(multi_edges, key=key)
         return multi_edges
 
     def name(self, new=None):
