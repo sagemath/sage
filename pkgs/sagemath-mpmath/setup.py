@@ -42,7 +42,7 @@ else:
 
     from sage_setup.command.sage_build_cython import sage_build_cython
     from sage_setup.command.sage_build_ext import sage_build_ext
-    sage_build_cython.built_distributions = ['sagemath-bliss']
+    sage_build_cython.built_distributions = ['sagemath-mpmath']
 
     cmdclass = dict(build_cython=sage_build_cython,
                     build_ext=sage_build_ext)
