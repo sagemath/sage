@@ -278,29 +278,6 @@ class sage__graphs(JoinFeature):
                              spkg='sagemath_graphs', type="standard")
 
 
-class sage__modular(JoinFeature):
-    r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.modular`.
-
-    EXAMPLES::
-
-        sage: from sage.features.sagemath import sage__modular
-        sage: sage__modular().is_present()                                              # optional - sage.modular
-        FeatureTestResult('sage.modular', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__modular
-            sage: isinstance(sage__modular(), sage__modular)
-            True
-        """
-        JoinFeature.__init__(self, 'sage.modular',
-                             [PythonModule('sage.modular.modform.eisenstein_submodule')],
-                             spkg='sagemath_schemes', type='standard')
-
-
 class sage__groups(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``sage.groups``.
@@ -763,7 +740,9 @@ class sage__rings__number_field(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.rings.number_field',
-                             [PythonModule('sage.rings.number_field.number_field_element')],
+                             [PythonModule('sage.rings.number_field.number_field_element'),
+                              PythonModule('sage.rings.universal_cyclotomic_field'),
+                              PythonModule('sage.rings.qqbar')],
                              type='standard')
 
 
@@ -841,7 +820,7 @@ class sage__rings__real_double(PythonModule):
             sage: isinstance(sage__rings__real_double(), sage__rings__real_double)
             True
         """
-        PythonModule.__init__(self, 'sage.rings.real_double')
+        PythonModule.__init__(self, 'sage.rings.real_double', type='standard')
 
 
 class sage__rings__real_mpfr(JoinFeature):
@@ -912,7 +891,7 @@ class sage__schemes(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.schemes',
                              [PythonModule('sage.schemes.elliptic_curves.ell_generic')],
-                             spkg="sagemath_schemes")
+                             spkg="sagemath_schemes", type='standard')
 
 
 class sage__symbolic(JoinFeature):
@@ -1008,7 +987,9 @@ def all_features():
             sage__libs__singular(),
             sage__modular(),
             sage__modules(),
+            sage__numerical__mip(),
             sage__plot(),
+            sage__rings__complex_double(),
             sage__rings__finite_rings(),
             sage__rings__function_field(),
             sage__rings__number_field(),
@@ -1016,5 +997,6 @@ def all_features():
             sage__rings__polynomial__pbori(),
             sage__rings__real_double(),
             sage__rings__real_mpfr(),
+            sage__sat(),
             sage__schemes(),
             sage__symbolic()]
