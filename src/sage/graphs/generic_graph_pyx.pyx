@@ -726,7 +726,7 @@ cdef class SubgraphSearch:
             6
 
         Check that the method is working even when vertices or edges are of
-        incomparable types::
+        incomparable types (see :trac:`35904`)::
 
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: G = Graph()
