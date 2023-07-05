@@ -663,15 +663,15 @@ cdef class SubgraphSearch:
             sage: SubgraphSearch(Graph(5), Graph(1))                                    # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: Searched graph should have at least 2 vertices.
+            ValueError: searched graph should have at least 2 vertices
             sage: SubgraphSearch(Graph(5), Graph(2))                                    # optional - sage.modules
             <sage.graphs.generic_graph_pyx.SubgraphSearch ...>
         """
         if H.order() <= 1:
-            raise ValueError("Searched graph should have at least 2 vertices.")
+            raise ValueError("searched graph should have at least 2 vertices")
 
-        if sum([G.is_directed(), H.is_directed()]) == 1:
-            raise ValueError("One graph cannot be directed while the other is not.")
+        if G.is_directed() != H.is_directed():
+            raise ValueError("one graph cannot be directed while the other is not")
 
         G._scream_if_not_simple(allow_loops=True)
         H._scream_if_not_simple(allow_loops=True)
@@ -724,6 +724,18 @@ cdef class SubgraphSearch:
             sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
             sage: S.cardinality()                                                       # optional - sage.modules
             6
+
+        Check that the method is working even when vertices or edges are of
+        incomparable types::
+
+            sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
+            sage: G = Graph()
+            sage: G.add_cycle(['A', 1, 2, 3, ('a', 1)])
+            sage: H = Graph()
+            sage: H.add_path("xyz")
+            sage: S = SubgraphSearch(G, H)                                              # optional - sage.modules
+            sage: S.cardinality()                                                       # optional - sage.modules
+            10
         """
         if self.nh > self.ng:
             return 0
@@ -812,7 +824,8 @@ cdef class SubgraphSearch:
         self.nh = H.order()
 
         # Storing the list of vertices
-        self.g_vertices = G.vertices(sort=True)
+        self.g_vertices = list(G)
+        cdef list h_vertices = list(H)
 
         # Are the graphs directed (in __init__(), we check
         # whether both are of the same type)
@@ -846,15 +859,22 @@ cdef class SubgraphSearch:
         self.h = DenseGraph(self.nh)
 
         # copying the adjacency relations in both G and H
-        for i, row in enumerate(G.adjacency_matrix()):
-            for j, k in enumerate(row):
-                if k:
-                    self.g.add_arc(i, j)
+        cdef dict vertex_to_int = {v: i for i, v in enumerate(self.g_vertices)}
+        cdef bint undirected = not G.is_directed()
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
+            self.g.add_arc(i, j)
+            if undirected:
+                self.g.add_arc(j, i)
 
-        for i, row in enumerate(H.adjacency_matrix()):
-            for j, k in enumerate(row):
-                if k:
-                    self.h.add_arc(i, j)
+        vertex_to_int = {v: i for i, v in enumerate(h_vertices)}
+        for u, v in H.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
+            self.h.add_arc(i, j)
+            if undirected:
+                self.h.add_arc(j, i)
 
         # vertices is equal to range(nh), as an int *variable
         for i in range(self.nh):
