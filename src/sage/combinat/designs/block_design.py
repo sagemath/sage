@@ -901,10 +901,10 @@ def CremonaRichmondConfiguration():
 
     EXAMPLES::
 
-        sage: H = designs.CremonaRichmondConfiguration(); H                             # optional - networkx
+        sage: H = designs.CremonaRichmondConfiguration(); H                             # needs networkx
         Incidence structure with 15 points and 15 blocks
-        sage: g = graphs.TutteCoxeterGraph()                                            # optional - networkx
-        sage: H.incidence_graph().is_isomorphic(g)                                      # optional - networkx
+        sage: g = graphs.TutteCoxeterGraph()                                            # needs networkx
+        sage: H.incidence_graph().is_isomorphic(g)                                      # needs networkx
         True
     """
     from sage.graphs.generators.smallgraphs import TutteCoxeterGraph
@@ -934,12 +934,13 @@ def WittDesign(n):
 
     EXAMPLES::
 
-        sage: BD = designs.WittDesign(9)             # optional - gap_packages (design package)
-        sage: BD.is_t_design(return_parameters=True) # optional - gap_packages (design package)
+        sage: # optional - gap_packages (design package)
+        sage: BD = designs.WittDesign(9)
+        sage: BD.is_t_design(return_parameters=True)
         (True, (2, 9, 3, 1))
-        sage: BD                             # optional - gap_packages (design package)
+        sage: BD
         Incidence structure with 9 points and 12 blocks
-        sage: print(BD)                      # optional - gap_packages (design package)
+        sage: print(BD)
         Incidence structure with 9 points and 12 blocks
     """
     libgap.load_package("design")
@@ -957,16 +958,16 @@ def HadamardDesign(n):
 
     EXAMPLES::
 
-        sage: designs.HadamardDesign(7)                                                 # optional - sage.modules
+        sage: designs.HadamardDesign(7)                                                 # needs sage.modules
         Incidence structure with 7 points and 7 blocks
-        sage: print(designs.HadamardDesign(7))                                          # optional - sage.modules
+        sage: print(designs.HadamardDesign(7))                                          # needs sage.modules
         Incidence structure with 7 points and 7 blocks
 
     For example, the Hadamard 2-design with `n = 11` is a design whose parameters are `2-(11, 5, 2)`.
     We verify that `NJ = 5J` for this design. ::
 
-        sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()                  # optional - sage.modules
-        sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J                                    # optional - sage.modules
+        sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()                  # needs sage.modules
+        sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J                                    # needs sage.modules
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
@@ -1010,7 +1011,7 @@ def Hadamard3Design(n):
 
     EXAMPLES::
 
-        sage: designs.Hadamard3Design(12)                                               # optional - sage.modules
+        sage: designs.Hadamard3Design(12)                                               # needs sage.modules
         Incidence structure with 12 points and 22 blocks
 
     We verify that any two blocks of the Hadamard `3`-design `3-(8, 4, 1)`
@@ -1020,9 +1021,9 @@ def Hadamard3Design(n):
 
     ::
 
-        sage: D = designs.Hadamard3Design(8)                                            # optional - sage.modules
-        sage: N = D.incidence_matrix()                                                  # optional - sage.modules
-        sage: N.transpose()*N                                                           # optional - sage.modules
+        sage: D = designs.Hadamard3Design(8)                                            # needs sage.modules
+        sage: N = D.incidence_matrix()                                                  # needs sage.modules
+        sage: N.transpose()*N                                                           # needs sage.modules
         [4 2 2 2 2 2 2 2 2 2 2 2 2 0]
         [2 4 2 2 2 2 2 2 2 2 2 2 0 2]
         [2 2 4 2 2 2 2 2 2 2 2 0 2 2]
