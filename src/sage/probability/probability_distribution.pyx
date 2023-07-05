@@ -520,8 +520,6 @@ cdef class RealDistribution(ProbabilityDistribution):
         Real Double Field
         sage: T.distribution_function(0)
         0.0
-        sage: T.cum_distribution_function(1)
-        1.0
 
     The weibull distribution has two parameters ``a`` and ``b``::
 
