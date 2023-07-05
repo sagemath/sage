@@ -397,15 +397,17 @@ class kRegularSequence(RecognizableSeries):
                 "for correcting this.")
 
     @cached_method
-    def regenerated(self, minimize=True):
+    def regenerated(self, **kwds):
         r"""
         Return a `k`-regular sequence that satisfies
         `\mu[0] \mathit{right} = \mathit{right}`.
 
         INPUT:
 
-        - ``minimize`` -- (default: ``True``) a boolean. If set, then
-          :meth:`minimized` is called after the operation.
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
 
         OUTPUT:
 
@@ -451,19 +453,43 @@ class kRegularSequence(RecognizableSeries):
             )
             sage: H.is_degenerated()
             False
+        """
+        if not self.is_degenerated():
+            return self
+        return self._regenerated_(**kwds)
 
-        ::
+    @minimize_result
+    def _regenerated_(self):
+        r"""
+        Return a `k`-regular sequence that satisfies
+        `\mu[0] \mathit{right} = \mathit{right}`.
 
+        Compared to :meth:`regenerated`, this method skips some initial checks
+        whether the sequence is degenerated or not.
+
+        See also :meth:`regenerated`.
+
+        INPUT:
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
             ....:          vector([1, 0]), vector([0, 1]))
             sage: C.is_degenerated()
             False
-            sage: C.regenerated() is C
+            sage: C.regenerated() is C  # indirect doctest
             True
         """
-        if not self.is_degenerated():
-            return self
-
         from sage.matrix.special import zero_matrix, identity_matrix
         from sage.modules.free_module_element import vector
 
@@ -478,15 +504,10 @@ class kRegularSequence(RecognizableSeries):
         mu.update((r, Z.augment(Z).stack(self.mu[r].augment(self.mu[r])))
                   for r in itA)
 
-        result = P.element_class(
+        return P.element_class(
             P, mu,
             vector(2*tuple(self.left)),
             vector(tuple(self.right) + dim*(0,)))
-
-        if minimize:
-            return result.minimized()
-        else:
-            return result
 
     def transposed(self, allow_degenerated_sequence=False):
         r"""
