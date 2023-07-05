@@ -706,9 +706,9 @@ cdef class RealDistribution(ProbabilityDistribution):
             result = gsl_ran_beta(self.r, self.parameters[0], self.parameters[1])
         elif self.distribution_type == exponential:
             result = gsl_ran_exponential(self.r, self.parameters[0])
-       elif self.distribution_type == gamma:
+        elif self.distribution_type == gamma:
             result = gsl_ran_gamma(self.r, self.parameters[0], self.parameters[1])
-          else:
+        else:
             raise TypeError("Not a supported probability distribution")
 
         return sage.rings.real_double.RDF(result)
@@ -854,7 +854,7 @@ cdef class RealDistribution(ProbabilityDistribution):
             self.parameters[0] = float(parameters[0])
             self.parameters[1] = float(parameters[1])
             self.distribution_type = gamma
-          else:
+      else:
             raise TypeError("Not a supported probability distribution")
 
         self.name = name
@@ -963,7 +963,7 @@ cdef class RealDistribution(ProbabilityDistribution):
             return sage.rings.real_double.RDF(gsl_cdf_exponential_P(x, self.parameters[0]]))
         elif self.distribution_type == gamma:
             return sage.rings.real_double.RDF(gsl_cdf_gamma_P(x, self.parameters[0], self.parameters[1]))
-          else:
+        else:
             raise TypeError("Not a supported probability distribution")
 
     def cum_distribution_function_inv(self, x):
