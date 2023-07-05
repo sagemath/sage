@@ -1991,22 +1991,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
                                  rename_vertices=True)
         return self.suspension(1, is_mutable).suspension(int(n-1), is_mutable)
 
-    def disjoint_union(self, right, rename_vertices=True, is_mutable=True):
+    def disjoint_union(self, right, is_mutable=True):
         """
         The disjoint union of this simplicial complex with another one.
 
         :param right: the other simplicial complex (the right-hand factor)
-
-        :param rename_vertices: If this is True, the vertices in the
-           disjoint union will be renamed by the formula: vertex "v"
-           in the left-hand factor --> vertex "Lv" in the disjoint
-           union, vertex "w" in the right-hand factor --> vertex "Rw"
-           in the disjoint union.  If this is false, this tries to
-           construct the disjoint union without renaming the vertices;
-           this will cause problems if the two factors have any
-           vertices with names in common.
-
-        :type rename_vertices: boolean; optional, default True
 
         EXAMPLES::
 
