@@ -84,8 +84,12 @@ def RIFtol(*args):
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
 
 special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
-optional_regex = re.compile(fr'({special_optional_regex})|[^ a-z]\s*(optional|needs)\s*[:-]*((?:\s|\w|[.])*)', re.IGNORECASE)
+tag_with_explanation_regex = fr'((?:\w|[.])+)\s*(?:\((.*?)\))?'
+optional_regex = re.compile(fr'(?P<cmd>{special_optional_regex})\s*(?:\((?P<cmd_explanation>.*?)\))?|'
+                            fr'[^ a-z]\s*(optional|needs)(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)',
+                            re.IGNORECASE)
 special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
+tag_with_explanation_regex = re.compile(tag_with_explanation_regex, re.IGNORECASE)
 
 nodoctest_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
 optionaltag_regex = re.compile(r'^(\w|[.])+$')
@@ -153,6 +157,11 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
         sage: parse_optional_tags("'ěščřžýáíéďĎ'")
         {}
 
+    Tags with parenthesized explanations::
+
+        sage: parse_optional_tags("    sage: 1 + 1  # long time (1 year, 2 months??), optional - bliss (because)")
+        {'bliss': 'because', 'long time': '1 year, 2 months??'}
+
     With ``return_string_sans_tags=True``::
 
         sage: parse_optional_tags("sage: print(1)  # very important 1  # optional - foo",
@@ -198,15 +207,15 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
     tags = {}
     for m in optional_regex.finditer(comment):
-        cmd = m.group(1)
+        cmd = m.group('cmd')
         if cmd and cmd.lower() == 'known bug':
             tags['bug'] = None  # so that such tests will be run by sage -t ... -only-optional=bug
         elif cmd:
-            tags[cmd.lower()] = None
+            tags[cmd.lower()] = m.group('cmd_explanation') or None
         else:
-            words = m.group(3).split()
-            if words:
-                tags.update({s.lower(): None for s in words})
+            # optional/needs
+            tags.update({m.group(1).lower(): m.group(2) or None
+                         for m in tag_with_explanation_regex.finditer(m.group('tags'))})
 
     if return_string_sans_tags:
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) annotation
