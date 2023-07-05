@@ -1787,7 +1787,7 @@ class KnotInfoBase(Enum):
             sage: Lk == L.link().khovanov_polynomial()
             True
 
-        TESTS:
+        TESTS::
 
             sage: KnotInfo.K0_1.inject()
             Defining K0_1
