@@ -843,7 +843,7 @@ cdef class RealDistribution(ProbabilityDistribution):
             self.parameters = <double*>sig_malloc(sizeof(double))
             self.parameters[0] = float(parameters)
             self.distribution_type = exponential
-      elif name == 'gamma':
+        elif name == 'gamma':
             if len(parameters) != 2:
                 raise TypeError("gamma distribution requires two real parameters")
             try:
@@ -854,7 +854,7 @@ cdef class RealDistribution(ProbabilityDistribution):
             self.parameters[0] = float(parameters[0])
             self.parameters[1] = float(parameters[1])
             self.distribution_type = gamma
-      else:
+        else:
             raise TypeError("Not a supported probability distribution")
 
         self.name = name
