@@ -1569,8 +1569,9 @@ This mode is suitable for mostly unattended runs on many files.
 .. warning::
 
    While the doctest fixer guarantees to preserve any comments that
-   appear before ``# optional/needs``, any comments that may be mixed with
-   the doctest tags will be lost.
+   appear before ``# optional/needs`` and all parenthesized comments
+   of the form ``# optional - FEATURE (EXPLANATION)``, any free-form comments
+   that may be mixed with the doctest tags will be lost.
 
 If you don't want to update any doctests, you can use the
 option ``--no-test``. In this mode, the doctest fixer does not run
