@@ -1117,13 +1117,17 @@ class kRegularSequence(RecognizableSeries):
             sage: G = Seq2.guess(lambda n: L[n])
             sage: G
             2-regular sequence 1, 4, 10, 19, 31, 49, 67, 94, 118, 154, ...
-            sage: G.mu[0], G.mu[1], G.left, G.right
-            (
-            [  0   1   0   0]  [  0   0   1   0]
-            [  0   0   0   1]  [ -5   3   3   0]
-            [ -5   5   1   0]  [ -5   0   6   0]
-            [ 10 -17   0   8], [-30  21  10   0], (1, 0, 0, 0), (1, 1, 4, 1)
-            )
+            sage: G.linear_representation()
+            ((1, 0, 0, 0),
+             Finite family {0: [  0   1   0   0]
+                               [  0   0   0   1]
+                               [ -5   5   1   0]
+                               [ 10 -17   0   8],
+                            1: [  0   0   1   0]
+                               [ -5   3   3   0]
+                               [ -5   0   6   0]
+                               [-30  21  10   0]},
+             (1, 1, 4, 1))
             sage: G.minimized().dimension() == G.dimension()
             True
 
@@ -1546,11 +1550,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: G = Seq2.guess(lambda n: S[n])
             sage: G
             2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
-            sage: G.mu[0], G.mu[1], G.left, G.right
-            (
-            [ 0  1]  [3 0]
-            [-2  3], [6 0], (1, 0), (1, 1)
-            )
+            sage: G.linear_representation()
+            ((1, 0),
+             Finite family {0: [ 0  1]
+                               [-2  3],
+                            1: [3 0]
+                               [6 0]},
+             (1, 1))
 
             sage: G == S.regenerated()
             True
