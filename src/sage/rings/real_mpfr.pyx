@@ -144,7 +144,7 @@ import sage.misc.weak_dict
 
 import operator
 
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
+from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
 
 from .integer cimport Integer
 from .rational cimport Rational
@@ -5244,7 +5244,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             if parent.__prec > SIG_PREC_THRESHOLD:
                 sig_off()
             return x
-        from sage.libs.mpmath.utils import call
+        from sage.libs.mpmath.sage_utils import call
         from sage.libs.mpmath.all import loggamma
         return call(loggamma, mpfr_to_mpfval(self.value), parent=parent)
 

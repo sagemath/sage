@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-mpmath
-import sage.libs.mpmath
 
 # Patch mpmath to use Cythonized functions
 from . import utils as _utils
@@ -10,8 +9,8 @@ from sage.libs.mpmath._vendor.mpmath.libmp import *
 # Main namespace
 from sage.libs.mpmath._vendor.mpmath import *
 
-# Utilities
-from .utils import call, mpmath_to_sage, sage_to_mpmath
+# Utilities used by the Sage library
+from .sage_utils import call, mpmath_to_sage, sage_to_mpmath
 
 # Use mpmath internal functions for constants, to avoid unnecessary overhead
 _constants_funcs = {

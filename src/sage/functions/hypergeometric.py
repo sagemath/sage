@@ -194,10 +194,10 @@ lazy_import('sage.misc.latex', 'latex')
 lazy_import('sage.symbolic.constants', 'pi')
 lazy_import('sage.symbolic.ring', 'SR')
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
-lazy_import('mpmath', 'hyp1f1', as_='_mpmath_hyp1f1')
-lazy_import('mpmath', 'hyper', as_='_mpmath_hyper')
-lazy_import('mpmath', 'hyperu', as_='_mpmath_hyperu')
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
+lazy_import('sage.libs.mpmath.all', 'hyp1f1', as_='_mpmath_hyp1f1')
+lazy_import('sage.libs.mpmath.all', 'hyper', as_='_mpmath_hyper')
+lazy_import('sage.libs.mpmath.all', 'hyperu', as_='_mpmath_hyperu')
 
 
 def rational_param_as_tuple(x):
@@ -376,7 +376,7 @@ class Hypergeometric(BuiltinFunction):
             raise TypeError("The first two parameters must be of type list")
         aa = [rational_param_as_tuple(c) for c in a]
         bb = [rational_param_as_tuple(c) for c in b]
-        return _mpmath_utils_call(_mpmath_hyper, aa, bb, z, parent=parent)
+        return _mpmath_call(_mpmath_hyper, aa, bb, z, parent=parent)
 
     def _tderivative_(self, a, b, z, *args, **kwargs):
         """
@@ -1002,7 +1002,7 @@ class Hypergeometric_M(BuiltinFunction):
             sage: hypergeometric_M(1, 1, 1).n()                                         # needs sage.symbolic
             2.71828182845905
         """
-        return _mpmath_utils_call(_mpmath_hyp1f1, a, b, z, parent=parent)
+        return _mpmath_call(_mpmath_hyp1f1, a, b, z, parent=parent)
 
     def _derivative_(self, a, b, z, diff_param):
         """
@@ -1106,7 +1106,7 @@ class Hypergeometric_U(BuiltinFunction):
             sage: hypergeometric_U(1, 1, 1).n()                                         # needs sage.symbolic
             0.596347362323194
         """
-        return _mpmath_utils_call(_mpmath_hyperu, a, b, z, parent=parent)
+        return _mpmath_call(_mpmath_hyperu, a, b, z, parent=parent)
 
     def _derivative_(self, a, b, z, diff_param):
         """

@@ -399,7 +399,7 @@ cdef class Context:
 
             sage: from sage.libs.mpmath.all import mp
             sage: type(mp)
-            <class 'mpmath.ctx_mp.MPContext'>
+            <class 'sage.libs.mpmath._vendor.mpmath.ctx_mp.MPContext'>
         """
         global global_opts, global_context
         global_opts = opts_double_precision

@@ -817,7 +817,7 @@ cdef class Function(SageObject):
 
         """
         from sage.libs.mpmath.all import mp, mpf, mpc
-        from sage.libs.mpmath.utils import mpmath_to_sage, sage_to_mpmath
+        from sage.libs.mpmath.sage_utils import mpmath_to_sage, sage_to_mpmath
         args = [mpmath_to_sage(x, mp.prec)
                 if isinstance(x, (mpf, mpc)) else x
                 for x in args]

@@ -228,8 +228,8 @@ lazy_import('sage.misc.latex', 'latex')
 lazy_import('sage.symbolic.constants', 'pi')
 lazy_import('sage.symbolic.ring', 'SR')
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
-lazy_import('mpmath',
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
+lazy_import('sage.libs.mpmath.all',
             ['besseli', 'besselj', 'besselk',
              'bessely', 'hankel1', 'hankel2',
              'struveh', 'struvel'],
@@ -413,7 +413,7 @@ class Function_Bessel_J(BuiltinFunction):
             pass
 
         n, x = get_coercion_model().canonical_coercion(n, x)
-        return _mpmath_utils_call(_mpmath_besselj, n, x, parent=parent)
+        return _mpmath_call(_mpmath_besselj, n, x, parent=parent)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -627,7 +627,7 @@ class Function_Bessel_Y(BuiltinFunction):
             pass
 
         n, x = get_coercion_model().canonical_coercion(n, x)
-        return _mpmath_utils_call(_mpmath_bessely, n, x, parent=parent)
+        return _mpmath_call(_mpmath_bessely, n, x, parent=parent)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -815,7 +815,7 @@ class Function_Bessel_I(BuiltinFunction):
             sage: bessel_I(1,3).n(digits=20)                                            # optional - sage.symbolic
             3.9533702174026093965
         """
-        return _mpmath_utils_call(_mpmath_besseli, n, x, parent=parent)
+        return _mpmath_call(_mpmath_besseli, n, x, parent=parent)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -1010,7 +1010,7 @@ class Function_Bessel_K(BuiltinFunction):
             sage: bessel_K(0, RealField(128)(1))
             0.42102443824070833333562737921260903614
         """
-        return _mpmath_utils_call(_mpmath_besselk, n, x, parent=parent)
+        return _mpmath_call(_mpmath_besselk, n, x, parent=parent)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -1303,7 +1303,7 @@ class Function_Struve_H(BuiltinFunction):
             sage: struve_H(1/2, pi).n(200)                                              # optional - sage.symbolic
             0.9003163161571060695551991910...
         """
-        return _mpmath_utils_call(_mpmath_struveh, a, z, parent=parent)
+        return _mpmath_call(_mpmath_struveh, a, z, parent=parent)
 
     def _derivative_(self, a, z, diff_param=None):
         """
@@ -1416,7 +1416,7 @@ class Function_Struve_L(BuiltinFunction):
             sage: struve_L(1/2, pi).n(200)                                              # optional - sage.symbolic
             4.768054176962864289162484345...
         """
-        return _mpmath_utils_call(_mpmath_struvel, a, z, parent=parent)
+        return _mpmath_call(_mpmath_struvel, a, z, parent=parent)
 
     def _derivative_(self, a, z, diff_param=None):
         """
@@ -1494,7 +1494,7 @@ class Function_Hankel1(BuiltinFunction):
             sage: hankel1(I, I).n()                                                     # optional - sage.symbolic
             -0.886357449263715*I
         """
-        return _mpmath_utils_call(_mpmath_hankel1, nu, z, parent=parent)
+        return _mpmath_call(_mpmath_hankel1, nu, z, parent=parent)
 
     def _latex_(self):
         r"""
@@ -1581,7 +1581,7 @@ class Function_Hankel2(BuiltinFunction):
             sage: hankel2(I, I).n()                                                     # optional - sage.symbolic
             0.790274862674015 + 0.444006335520019*I
         """
-        return _mpmath_utils_call(_mpmath_hankel2, nu, z, parent=parent)
+        return _mpmath_call(_mpmath_hankel2, nu, z, parent=parent)
 
     def _latex_(self):
         r"""
@@ -1677,7 +1677,7 @@ class SphericalBesselJ(BuiltinFunction):
             sage: spherical_bessel_J(I, I).n()                                          # optional - sage.symbolic
             0.215520585196889 - 0.282308805801851*I
         """
-        return _mpmath_utils_call(spherical_bessel_f, 'besselj', n, z,
+        return _mpmath_call(spherical_bessel_f, 'besselj', n, z,
                                  parent=parent)
 
     def _latex_(self):
@@ -1775,7 +1775,7 @@ class SphericalBesselY(BuiltinFunction):
             sage: spherical_bessel_Y(I, I).n()                                          # optional - sage.symbolic
             -0.174225389805399 + 1.36247234140312*I
         """
-        return _mpmath_utils_call(spherical_bessel_f, 'bessely', n, z,
+        return _mpmath_call(spherical_bessel_f, 'bessely', n, z,
                                  parent=parent)
 
     def _latex_(self):
@@ -1872,7 +1872,7 @@ class SphericalHankel1(BuiltinFunction):
             sage: spherical_hankel1(I, I).n()                                           # optional - sage.symbolic
             -1.14695175620623 - 0.456534195607250*I
         """
-        return _mpmath_utils_call(spherical_bessel_f, 'hankel1', n, z,
+        return _mpmath_call(spherical_bessel_f, 'hankel1', n, z,
                                  parent=parent)
 
     def _latex_(self):
@@ -1972,7 +1972,7 @@ class SphericalHankel2(BuiltinFunction):
             sage: spherical_hankel2(I, I).n()                                           # optional - sage.symbolic
             1.57799292660001 - 0.108083415996452*I
         """
-        return _mpmath_utils_call(spherical_bessel_f, 'hankel2', n, z,
+        return _mpmath_call(spherical_bessel_f, 'hankel2', n, z,
                                   parent=parent)
 
     def _latex_(self):
