@@ -54,14 +54,17 @@ def ZZ_points_of_bounded_height(dim, bound):
 
         sage: from sage.schemes.projective.proj_bdd_height import ZZ_points_of_bounded_height
         sage: sorted(list(ZZ_points_of_bounded_height(1, 1)))
-        [(-1 : -1), (-1 : 0), (-1 : 1), (0 : -1), (0 : 1), (1 : -1), (1 : 0), (1 : 1)]
+        [(-1 : -1), (-1 : 0), (-1 : 1), (0 : -1)]
         sage: len(list(ZZ_points_of_bounded_height(1, 5)))
-        80
+        40
         sage: sorted(list(ZZ_points_of_bounded_height(1, 2)))
         [(-2 : -1), (-2 : 1), (-1 : -2), (-1 : -1),
-         (-1 : 0), (-1 : 1), (-1 : 2), (0 : -1),
-         (0 : 1), (1 : -2), (1 : -1), (1 : 0),
-         (1 : 1), (1 : 2), (2 : -1), (2 : 1)]
+         (-1 : 0), (-1 : 1), (-1 : 2), (0 : -1)]
+        sage: sorted(list(ZZ_points_of_bounded_height(2, 1)))
+        [(-1 : -1 : -1), (-1 : -1 : 0), (-1 : -1 : 1), (-1 : 0 : -1),
+         (-1 : 0 : 0), (-1 : 0 : 1), (-1 : 1 : -1), (-1 : 1 : 0),
+         (-1 : 1 : 1), (0 : -1 : -1), (0 : -1 : 0), (0 : -1 : 1),
+         (0 : 0 : -1)]
 
     There are no points of negative height::
 
@@ -73,11 +76,16 @@ def ZZ_points_of_bounded_height(dim, bound):
         return iter(set([]))
 
     PN = ProjectiveSpace(ZZ, dim)
+    points_of_bounded_height = set([])
 
-    for i in range(-bound, bound + 1):
-        for j in range(-bound, bound + 1):
-            if gcd(i, j) == 1:
-                yield PN((i, j))
+    all_tuples = itertools.product(range(-bound, bound+1), repeat=dim+1)
+
+    for t in all_tuples:
+        if gcd(t) == 1:
+            point = PN(t)
+            if point not in points_of_bounded_height:
+                points_of_bounded_height.add(point)
+                yield point
 
 
 def QQ_points_of_bounded_height(dim, bound, normalize=False):
@@ -267,6 +275,16 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53, normalize=False):
         sage: P.<z,w> = ProjectiveSpace(O, 1)
         sage: len(list(P.points_of_bounded_height(bound=2)))
         44
+
+    ::
+
+        sage: R.<x> = QQ[]
+        sage: K.<a> = NumberField(3*x^2 + 1)
+        sage: O = K.maximal_order()
+        sage: P.<z,w> = ProjectiveSpace(O, 1)
+        sage: sorted(list(P.points_of_bounded_height(bound=1, normalize=True)))
+        [(-1 : 1), (-3/2*a - 1/2 : 1), (3/2*a - 1/2 : 1), (0 : 1),
+         (-3/2*a + 1/2 : 0), (-3/2*a + 1/2 : 1), (3/2*a + 1/2 : 1), (1 : 1)]
     """
     if bound < 1:
         return iter([])
@@ -431,10 +449,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53, normalize=False):
 
                         if point not in points_in_class_a:
                             if normalize:
-                                if O is ZZ:
-                                    denom = lcm([point[i].denominator() for i in range(len(point))])
-                                else:
-                                    denom = K.ideal(list(point)).absolute_norm().denominator()
+                                denom = K.ideal(list(point)).absolute_norm().denominator()
                                 point.scale_by(denom)
 
                             points_in_class_a.add(point)
