@@ -156,6 +156,7 @@ try:
         get_sfunction_from_hash, get_sfunction_from_serial as get_sfunction_from_serial
     )
 except ImportError:
+    call_registered_function = None
     register_or_update_function = None
 
 
@@ -524,6 +525,19 @@ cdef class Function(SageObject):
         # if the given input is a symbolic expression, we don't convert it back
         # to a numeric type at the end
         symbolic_input = any(isinstance(arg, Expression) for arg in args)
+
+        if call_registered_function is None:
+            try:
+                evalf = self._evalf_
+            except AttributeError:
+                if len(args) == 1:
+                    method = getattr(args[0], self._name, None)
+                    if callable(method):
+                        return method()
+            else:
+                result = evalf(*args)
+                if result is not None:
+                    return result
 
         from .ring import SR
 
