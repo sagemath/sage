@@ -1543,7 +1543,7 @@ class Graph(GenericGraph):
             sage: G.is_tree(certificate=True, output='edge')
             (False, [(0, 0, None)])
 
-        Case of edges with incomparable types::
+        Case of edges with incomparable types (see :trac:`35903`)::
 
             sage: G = Graph(multiedges=True)
             sage: G.add_cycle(['A', 1, 2, 3])

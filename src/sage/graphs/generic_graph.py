@@ -3580,7 +3580,7 @@ class GenericGraph(GenericGraph_pyx):
             [(1, 2, 'h'), (2, 1, 'g')]
 
         Using the ``key`` argument to order multiple edges of incomparable
-        types::
+        types (see :trac:`35903`)::
 
             sage: G = Graph([('A', 'B', 3), (1, 2, 1), ('A', 'B', 4), (1, 2, 2)], multiedges=True)
             sage: G.multiple_edges(sort=True)
@@ -12619,7 +12619,7 @@ class GenericGraph(GenericGraph_pyx):
             [(0, 1), (0, 2)]
 
         Using the ``key`` argument to order multiple edges of incomparable
-        types::
+        types (see :trac:`35903`)::
 
             sage: G = Graph([(1, 'A', 4), (1, 2, 3)])
             sage: G.edge_boundary([1], sort=True)
