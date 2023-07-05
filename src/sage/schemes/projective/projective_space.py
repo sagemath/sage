@@ -89,6 +89,7 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.fraction_field import FractionField
+from sage.rings.number_field.order import Order
 
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
@@ -1112,9 +1113,28 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<w,z> = ProjectiveSpace(ZZ, 1)
             sage: sorted(list(P.points_of_bounded_height(bound=2)))
             [(-2 : -1), (-2 : 1), (-1 : -2), (-1 : -1),
-             (-1 : 0), (-1 : 1), (-1 : 2), (0 : -1),
-             (0 : 1), (1 : -2), (1 : -1), (1 : 0),
-             (1 : 1), (1 : 2), (2 : -1), (2 : 1)]
+             (-1 : 0), (-1 : 1), (-1 : 2), (0 : -1)]
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: P.<z,w> = ProjectiveSpace(R, 1)
+            sage: P.points_of_bounded_height(bound=2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: self must be a projective space over
+            a number field or a ring of integers
+
+        ::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: PK.<t> = K[]
+            sage: L.<a> = K.extension(t^4  - i)
+            sage: P.<z,w> = ProjectiveSpace(L, 1)
+            sage: sorted(list(P.points_of_bounded_height(bound=1)))
+            [(0 : 1), (1 : 0), (a : 1), (a^2 : 1), (a^3 : 1), (i : 1),
+             (i*a : 1), (i*a^2 : 1), (i*a^3 : 1), (-1 : 1), (-a : 1), (-a^2 : 1),
+             (-a^3 : 1), (-i : 1), (-i*a : 1), (-i*a^2 : 1), (-i*a^3 : 1), (1 : 1)]
         """
         from sage.schemes.projective.proj_bdd_height import (
             ZZ_points_of_bounded_height,
@@ -1134,8 +1154,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         elif R in NumberFields():
             # True for the rational field as well, so check is_RationalField first
             field_type = True
-        else:
+        elif (R is ZZ) or isinstance(R, Order):
             is_ring_of_ints = True
+        else:
+            raise NotImplementedError("self must be a projective space over a number field or a ring of integers")
 
         bound = kwds.pop('bound')
         prec = kwds.pop('precision', 53)
