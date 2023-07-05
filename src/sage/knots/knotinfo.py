@@ -1696,16 +1696,16 @@ class KnotInfoBase(Enum):
         - ``var2`` -- (default: ``'t'``) the second variable
         - ``base_ring`` -- (default: ``ZZ``) the ring of the polynomial's
           coefficients
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
-        - ``reduced`` -- boolean (default: ``False``) if set to ``True``
-          the reduced version of the homology is used.
-        - ``odd`` -- boolean (default: ``False``) if set to ``True``
-          the odd version of the homology is used.
+        - ``reduced`` -- boolean (default: ``False``); if set to ``True``
+          the reduced version of the homology is used
+        - ``odd`` -- boolean (default: ``False``); if set to ``True``
+          the odd version of the homology is used
         - ``KhoHo`` -- boolean (default: ``False`` for knots and ``True``
-          for multi-component links) if set to ``True`` the data calculated
+          for multi-component links); if set to ``True`` the data calculated
           using `KhoHo <https://github.com/AShumakovitch/KhoHo>`__ is used
-          (see the note below).
+          (see the note below)
 
         OUTPUT:
 
