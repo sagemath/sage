@@ -995,26 +995,67 @@ class SageDocTestParser(doctest.DocTestParser):
 
         Style warnings::
 
-            sage: example4 = 'sage: 1 # optional guava mango\nsage: 2 # optional guava\nsage: 3 # optional guava\nsage: 4 # optional guava\n sage: 5 # optional guava\n'
-            sage: parsed4 = DTP.parse(example4)
-            sage: parsed4[1].warnings, parsed4[1].sage_source, parsed4[1].source
-            (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
-            '1 # optional guava mango\n',
-            'None  # virtual doctest')
+            sage: def parse(test_string):
+            ....:     return [x if isinstance(x, str)
+            ....:               else (getattr(x, 'warnings', None), x.sage_source, x.source)
+            ....:             for x in DTP.parse(test_string)]
 
-            sage: example5 = 'sage: 1 # optional guava\nsage: 2 # optional guava mango\nsage: 3 # optional guava\nsage: 4 # optional guava\n sage: 5 # optional guava\n'
-            sage: parsed5 = DTP.parse(example5)
-            sage: parsed5[1].warnings, parsed5[1].sage_source, parsed5[1].source
-            (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
-            '1 # optional guava\n',
-            'Integer(1) # optional guava\n')
+            sage: # optional - guava
+            sage: parse('sage: 1 # optional guava mango\nsage: 2 # optional guava\nsage: 3 # optional guava\nsage: 4 # optional guava\nsage: 5 # optional guava\n\nsage: 11 # optional guava')
+            ['',
+             (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
+              '1 # optional guava mango\n',
+              'None  # virtual doctest'),
+             '',
+             (None, '2 # optional guava\n', 'Integer(2) # optional guava\n'),
+             '',
+             (None, '3 # optional guava\n', 'Integer(3) # optional guava\n'),
+             '',
+             (None, '4 # optional guava\n', 'Integer(4) # optional guava\n'),
+             '',
+             (None, '5 # optional guava\n', 'Integer(5) # optional guava\n'),
+             '\n',
+             (None, '11 # optional guava\n', 'Integer(11) # optional guava\n'),
+             '']
 
-            sage: example6 = 'sage: # optional mango\nsage: 1 # optional guava\nsage: 2 # optional guava mango\nsage: 3 # optional guava\nsage: 4 # optional guava\n sage: 5 # optional guava\n'
-            sage: parsed6 = DTP.parse(example6)
-            sage: parsed6[1].warnings, parsed6[1].sage_source, parsed6[1].source
-            (["Consider updating this block-scoped tag to 'sage: # optional - guava mango' to avoid repeating the tag 5 times"],
-            '# optional mango\n',
-            'None  # virtual doctest')
+            sage: # optional - guava
+            sage: parse('sage: 1 # optional guava\nsage: 2 # optional guava mango\nsage: 3 # optional guava\nsage: 4 # optional guava\nsage: 5 # optional guava\n')
+            ['',
+             (["Consider using a block-scoped tag by inserting the line 'sage: # optional - guava' just before this line to avoid repeating the tag 5 times"],
+              '1 # optional guava\n',
+              'Integer(1) # optional guava\n'),
+             '',
+             '',
+             (None, '3 # optional guava\n', 'Integer(3) # optional guava\n'),
+             '',
+             (None, '4 # optional guava\n', 'Integer(4) # optional guava\n'),
+             '',
+             (None, '5 # optional guava\n', 'Integer(5) # optional guava\n'),
+             '']
+
+            sage: parse('sage: # optional mango\nsage: 1 # optional guava\nsage: 2 # optional guava mango\nsage: 3 # optional guava\nsage: 4 # optional guava\n sage: 5 # optional guava\n')  # optional - guava mango
+            ['',
+             (["Consider updating this block-scoped tag to 'sage: # optional - guava mango' to avoid repeating the tag 5 times"],
+              '# optional mango\n',
+              'None  # virtual doctest'),
+             '',
+             '',
+             '',
+             '',
+             '',
+             '']
+
+            sage: parse('::\n\n    sage: 1 # optional guava\n    sage: 2 # optional guava mango\n    sage: 3 # optional guava\n\n::\n\n    sage: 4 # optional guava\n     sage: 5 # optional guava\n')
+            ['::\n\n',
+            (None, '1 # optional guava\n', 'Integer(1) # optional guava\n'),
+            '',
+            '',
+            (None, '3 # optional guava\n', 'Integer(3) # optional guava\n'),
+            '\n::\n\n',
+            (None, '4 # optional guava\n', 'Integer(4) # optional guava\n'),
+            '',
+            (None, '5 # optional guava\n', 'Integer(5) # optional guava\n'),
+            '']
         """
         # Regular expressions
         find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
@@ -1167,7 +1208,7 @@ class SageDocTestParser(doctest.DocTestParser):
                         continue
                     item.source = preparse(item.sage_source)
             else:
-                if item == '\n':
+                if '\n' in item:
                     check_and_clear_tag_counts()
                     persistent_optional_tags = self.file_optional_tags
                     persistent_optional_tag_setter = first_example_in_block = None
