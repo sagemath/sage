@@ -84,7 +84,6 @@ class DrinfeldModuleMorphismAction(Action):
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
             sage: t = phi.ore_variable()
             sage: f = phi.hom(t + 1)
-
             sage: T*f  # indirect doctest
             Drinfeld Module morphism:
               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
