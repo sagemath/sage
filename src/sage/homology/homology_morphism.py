@@ -166,8 +166,8 @@ class InducedHomologyMorphism(Morphism):
             sage: h = g.induced_homology_morphism(QQ)
         """
         if (isinstance(map.domain(), SimplicialComplex)
-            and (map.domain().is_mutable() or map.codomain().is_mutable())):
-                raise ValueError('the domain and codomain complexes must be immutable')
+                and (map.domain().is_mutable() or map.codomain().is_mutable())):
+            raise ValueError('the domain and codomain complexes must be immutable')
         if base_ring is None:
             base_ring = QQ
         if not base_ring.is_field():
@@ -244,9 +244,9 @@ class InducedHomologyMorphism(Morphism):
             H_domain, H_codomain = H_codomain, H_domain
         if deg is None:
             betti_domain = [H_domain.free_module_rank(n)
-                            for n in range(domain.dimension()+1)]
+                            for n in range(domain.dimension() + 1)]
             betti_codomain = [H_codomain.free_module_rank(n)
-                              for n in range(codomain.dimension()+1)]
+                              for n in range(codomain.dimension() + 1)]
             # Compute cumulative sums of Betti numbers to get subdivisions:
             row_subdivs = list(itertools.accumulate(betti_codomain[:-1]))
             col_subdivs = list(itertools.accumulate(betti_domain[:-1]))
@@ -288,7 +288,7 @@ class InducedHomologyMorphism(Morphism):
 
         return codomain.from_vector(self.to_matrix() * elt.to_vector())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` if and only if this map agrees with ``other``.
 
@@ -321,12 +321,12 @@ class InducedHomologyMorphism(Morphism):
         if (self._map.domain() != other._map.domain()
             or self._map.codomain() != other._map.codomain()
             or self.base_ring() != other.base_ring()
-            or self._cohomology != other._cohomology):
+                or self._cohomology != other._cohomology):
             return False
         dim = min(self._map.domain().dimension(), self._map.codomain().dimension())
-        return all(self.to_matrix(d) == other.to_matrix(d) for d in range(dim+1))
+        return all(self.to_matrix(d) == other.to_matrix(d) for d in range(dim + 1))
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         """
         Return ``True`` if this is the identity map on (co)homology.
 
