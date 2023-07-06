@@ -455,6 +455,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         else:
             raise TypeError('input must be an Ore polynomial')
 
+        # Trivial cases
         if deg <= 0:
             return K(ore_pol[0]).in_base()
         if deg % r != 0:
