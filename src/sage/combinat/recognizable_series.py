@@ -317,6 +317,12 @@ def minimize_result(operation):
       if ``False``, then not. If this argument is ``None``, then
       the default specified by the parent's ``minimize_results`` is used.
 
+    .. NOTE::
+
+        If the result of ``operation`` is ``self``, then minimization is
+        not applied unless ``minimize=True`` is explicitly set,
+        in particular, independent of the parent's ``minimize_results``.
+
     TESTS::
 
         sage: from sage.combinat.recognizable_series import minimize_result
@@ -351,14 +357,39 @@ def minimize_result(operation):
         some result minimized
         sage: S('some').operation(minimize=False)
         some result
+
+    ::
+
+        sage: class T(S):
+        ....:     @minimize_result
+        ....:     def nooperation(self):
+        ....:         return self
+        sage: t = T('some')
+        sage: p.minimize_results = True
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
+        sage: p.minimize_results = False
+        sage: t.nooperation() is t
+        True
+        sage: t.nooperation(minimize=True) is t
+        False
+        sage: t.nooperation(minimize=False) is t
+        True
     """
     @wraps(operation)
     def minimized(self, *args, **kwds):
         minimize = kwds.pop('minimize', None)
-        if minimize is None:
-            minimize = self.parent().minimize_results
 
         result = operation(self, *args, **kwds)
+        if minimize is not True and result is self:
+            return result
+
+        if minimize is None:
+            minimize = self.parent().minimize_results
 
         if minimize:
             result = result.minimized()
