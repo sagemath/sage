@@ -34,6 +34,7 @@ class DrinfeldModuleMorphismAction(Action):
     r"""
     Action of the function ring on the homset of a Drinfeld module.
     """
+
     def __init__(self, A, H, is_left, op):
         r"""
         Initialize this action.
