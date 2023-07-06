@@ -27,6 +27,11 @@ from sage.combinat.integer_vector import IntegerVectors
 
 from sage.rings.integer_ring import ZZ
 
+from sage.categories.action import Action
+from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.constructor import matrix as MatrixConstructor
+from operator import matmul
+
 from .polydict import PolyDict
 from . import (multi_polynomial_ideal,
                polynomial_ring,
@@ -112,6 +117,36 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             False
         """
         return self.base_ring().is_integral_domain(proof)
+    
+    cpdef _get_action_(self, G, op, bint self_on_left):
+        """
+        EXAMPLES::
+            sage: G=groups.matrix.Sp(4,GF(2))
+            sage: R.<w,x,y,z>=GF(2)[]
+            sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
+            sage: g=G.1
+            sage: g
+            [0 0 1 0]
+            [1 0 0 0]
+            [0 0 0 1]
+            [0 1 0 0]
+            sage: g@p
+            w*x*y*z + w*z^2
+            sage: p2=x+y^2
+            sage: g2=G.0
+            sage: g2
+            [1 0 1 1]
+            [1 0 0 1]
+            [0 1 0 1]
+            [1 1 1 1]
+            sage: g2@p2
+            x^2 + z^2 + w + z
+        """
+
+        from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
+        if isinstance(G, MatrixGroup_generic) and self.base_ring().has_coerce_map_from(G.base_ring()) and op==matmul and not self_on_left:            
+            return MatrixPolynomialAction(G, self)
+        return super(MPolynomialRing_base, self)._get_action_(G, op, self_on_left)
 
     def is_noetherian(self):
         """
@@ -1797,3 +1832,17 @@ def unpickle_MPolynomialRing_generic(base_ring, n, names, order):
     from .polynomial_ring_constructor import PolynomialRing
 
     return PolynomialRing(base_ring, n, names=names, order=order)
+
+class MatrixPolynomialAction(Action):
+    def __init__(self, MS, PR):
+        self._poly_vars = PR.gens()
+        self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
+        super().__init__(MS, PR, op=matmul)
+    
+    def _act_(self, mat, polynomial):
+        assert mat.base_ring()==polynomial.base_ring()
+        polynomial_vars=polynomial.parent().gens()
+        vars_to_sub_module_context=mat*MatrixConstructor(polynomial_vars).transpose()
+        vars_to_sub_ring_context=map(PolynomialRing(mat.base_ring(), polynomial_vars), vars_to_sub_module_context)            
+        substitution_dict={v:s for v,s in zip(polynomial_vars, vars_to_sub_ring_context)}
+        return polynomial.subs(substitution_dict)

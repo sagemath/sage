@@ -23,9 +23,6 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.element import is_Matrix
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport richcmp
-from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.matrix.constructor import matrix as MatrixConstructor
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 cdef class MatrixGroupElement_gap(ElementLibGAP):
@@ -119,43 +116,6 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             '[1 1]\n[0 1]'
         """
         return str(self.matrix())
-
-    def __call__(self, other): 
-        r"""        
-
-        EXAMPLES::
-
-            sage: G=groups.matrix.Sp(4,GF(2))
-            sage: R.<w,x,y,z>=GF(2)[]
-            sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
-            sage: g=G.1
-            sage: g
-            [0 0 1 0]
-            [1 0 0 0]
-            [0 0 0 1]
-            [0 1 0 0]
-            sage: g(p)
-            w*x*y*z + w*z^2
-            sage: p2=x+y^2
-            sage: g2=G.0
-            sage: g2
-            [1 0 1 1]
-            [1 0 0 1]
-            [0 1 0 1]
-            [1 1 1 1]
-            sage: g2(p2)
-            x^2 + z^2 + w + z
-
-
-        """
-        if isinstance(other, MPolynomial):
-            assert self.base_ring()==other.base_ring()
-            polynomial=other
-            polynomial_vars=polynomial.parent().gens()
-            vars_to_sub_module_context=self*MatrixConstructor(polynomial_vars).transpose()
-            vars_to_sub_ring_context=map(PolynomialRing(self.base_ring(), polynomial_vars), vars_to_sub_module_context)            
-            substitution_dict={v:s for v,s in zip(polynomial_vars, vars_to_sub_ring_context)}
-            return polynomial.subs(substitution_dict)
 
     def _latex_(self):
         r"""
