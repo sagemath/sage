@@ -1775,6 +1775,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ValueError: the input does not define an isogeny
 
         """
+        # When `x` is in the function ring (or something that coerces to it):
         if self.function_ring().has_coerce_map_from(x.parent()):
             return self.Hom(self)(x)
         if codomain is None:
