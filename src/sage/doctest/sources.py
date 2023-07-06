@@ -843,6 +843,9 @@ class FileDocTestSource(DocTestSource):
             ....:     path = os.path.relpath(path)
             ....:     dirs.sort(); files.sort()
             ....:     for F in files:
+            ....:         if F == 'nodoctest.py':
+            ....:             dirs.clear()
+            ....:             break
             ....:         _, ext = os.path.splitext(F)
             ....:         if ext in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst'):
             ....:             filename = os.path.join(path, F)
