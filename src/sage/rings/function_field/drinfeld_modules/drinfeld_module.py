@@ -1288,6 +1288,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_isomorphic(psi)
             False
         """
+        # Trivial cases
         if self.category() is not other.category():
             raise ValueError("Drinfeld modules are not in the same category")
         if self is other:
