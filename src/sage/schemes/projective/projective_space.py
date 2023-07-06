@@ -1110,6 +1110,15 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(x^3 - 7)
+            sage: O = K.maximal_order()
+            sage: P.<z,w> = ProjectiveSpace(O, 1)
+            sage: len(sorted(list(P.points_of_bounded_height(bound=2))))
+            28
+
+        ::
+
             sage: P.<w,z> = ProjectiveSpace(ZZ, 1)
             sage: sorted(list(P.points_of_bounded_height(bound=2)))
             [(-2 : -1), (-2 : 1), (-1 : -2), (-1 : -1),
@@ -1154,7 +1163,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         elif R in NumberFields():
             # True for the rational field as well, so check is_RationalField first
             field_type = True
-        elif (R is ZZ) or isinstance(R, Order):
+        elif ((R is ZZ) or isinstance(R, Order)) and R.is_integrally_closed(): # Ensure maximal order
             is_ring_of_ints = True
         else:
             raise NotImplementedError("self must be a projective space over a number field or a ring of integers")
