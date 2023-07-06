@@ -1327,7 +1327,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             except ValueError:
                 return False
             except (AttributeError, NotImplementedError):
-                raise NotImplementedError("cannot solve the equation u^%s == %s" % (e, ue))
+                raise NotImplementedError(f"cannot solve the equation u^{e} == {ue}")
             return True
 
     def is_supersingular(self):
