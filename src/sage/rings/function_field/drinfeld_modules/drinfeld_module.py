@@ -1708,7 +1708,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         module as domain.
 
         We recall that a homomorphism `f : \phi \to \psi` between
-        two Drinfeld modules is defined by a Ore polynomial `u`,
+        two Drinfeld modules is defined by an Ore polynomial `u`,
         which is subject to the relation `phi_T u = u \psi_T`.
 
         INPUT:
