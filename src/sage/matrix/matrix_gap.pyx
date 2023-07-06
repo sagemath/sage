@@ -12,7 +12,6 @@ Wrappers on GAP matrices
 # ****************************************************************************
 
 from sage.libs.gap.libgap import libgap
-from . import matrix_space
 from sage.structure.element cimport Matrix
 from .args cimport MatrixArgs_init
 

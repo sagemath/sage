@@ -437,12 +437,18 @@ cpdef bint is_SymbolicEquation(x):
     """
     Return True if *x* is a symbolic equation.
 
+    This function is deprecated.
+
     EXAMPLES:
 
     The following two examples are symbolic equations::
 
         sage: from sage.symbolic.expression import is_SymbolicEquation
         sage: is_SymbolicEquation(sin(x) == x)
+        doctest:warning...
+        DeprecationWarning: is_SymbolicEquation is deprecated; use
+        'isinstance(x, sage.structure.element.Expression) and x.is_relational()' instead
+        See https://github.com/sagemath/sage/issues/35505 for details.
         True
         sage: is_SymbolicEquation(sin(x) < x)
         True
@@ -462,6 +468,10 @@ cpdef bint is_SymbolicEquation(x):
         True
 
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35505,
+                "is_SymbolicEquation is deprecated; use "
+                "'isinstance(x, sage.structure.element.Expression) and x.is_relational()' instead")
     return isinstance(x, Expression) and is_a_relational((<Expression>x)._gobj)
 
 
@@ -474,8 +484,12 @@ cpdef bint _is_SymbolicVariable(x):
 
         sage: from sage.symbolic.ring import is_SymbolicVariable
         sage: is_SymbolicVariable(x)
+        doctest:warning...
+        DeprecationWarning: is_SymbolicVariable is deprecated; use
+        'isinstance(x, sage.structure.element.Expression) and x.is_symbol()' instead
+        See https://github.com/sagemath/sage/issues/35505 for details.
         True
-        sage: is_SymbolicVariable(x+2)
+        sage: is_SymbolicVariable(x + 2)
         False
 
     TESTS::
@@ -483,6 +497,10 @@ cpdef bint _is_SymbolicVariable(x):
         sage: ZZ['x']
         Univariate Polynomial Ring in x over Integer Ring
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35505,
+                "is_SymbolicVariable is deprecated; use "
+                "'isinstance(x, sage.structure.element.Expression) and x.is_symbol()' instead")
     return isinstance(x, Expression) and is_a_symbol((<Expression>x)._gobj)
 
 
@@ -1053,9 +1071,9 @@ cdef class Expression(Expression_abc):
 
         Check if :trac:`7876` is fixed::
 
-            sage: (1/2-1/2*I )*sqrt(2)
+            sage: (1/2-1/2*I)*sqrt(2)
             -(1/2*I - 1/2)*sqrt(2)
-            sage: latex((1/2-1/2*I )*sqrt(2))
+            sage: latex((1/2-1/2*I)*sqrt(2))
             -\left(\frac{1}{2} i - \frac{1}{2}\right) \, \sqrt{2}
 
         Check if :trac:`9632` is fixed::
@@ -2844,7 +2862,7 @@ cdef class Expression(Expression_abc):
 
     def _is_registered_constant_(self):
         """
-        Return True if this symbolic expression is internally represented as
+        Return ``True`` if this symbolic expression is internally represented as
         a constant.
 
         This function is intended to provide an interface to query the internal
@@ -3004,7 +3022,7 @@ cdef class Expression(Expression_abc):
             sig_off()
 
     cpdef bint is_relational(self):
-        """
+        r"""
         Return ``True`` if ``self`` is a relational expression.
 
         EXAMPLES::
@@ -3019,8 +3037,8 @@ cdef class Expression(Expression_abc):
         return is_a_relational(self._gobj)
 
     def is_exact(self):
-        """
-        Return True if this expression only contains exact numerical coefficients.
+        r"""
+        Return ``True`` if this expression only contains exact numerical coefficients.
 
         EXAMPLES::
 
@@ -3064,14 +3082,11 @@ cdef class Expression(Expression_abc):
                     if op.is_numeric():
                         yield op
                     else:
-                        for opp in numelems_gen(op):
-                            yield opp
+                        yield from numelems_gen(op)
         # stop at the first inexact number in the subexpression tree of self,
         # and if there is no such element, then self is exact
-        for nelem in numelems_gen(self):
-            if not nelem.pyobject().base_ring().is_exact():
-                return False
-        return True
+        return all(nelem.pyobject().base_ring().is_exact()
+                   for nelem in numelems_gen(self))
 
     cpdef bint is_infinity(self):
         """
@@ -7780,6 +7795,8 @@ cdef class Expression(Expression_abc):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.fraction_field import FractionField
+        from sage.symbolic.ring import SR
+
         nu = SR(self.numerator()).polynomial(base_ring)
         de = SR(self.denominator()).polynomial(base_ring)
         vars = sorted(set(nu.variables() + de.variables()), key=repr)
@@ -8305,7 +8322,7 @@ cdef class Expression(Expression_abc):
             else:
                 return new_Expression_from_pyobject(self._parent, y)
         zero = self._parent.zero()
-        return zero.add(*(pol[i]*self**i for i in xrange(pol.degree() + 1)))
+        return zero.add(*(pol[i]*self**i for i in range(pol.degree() + 1)))
 
     def collect_common_factors(self):
         """
@@ -10600,22 +10617,26 @@ cdef class Expression(Expression_abc):
         else:
             return self
 
-    def simplify(self, algorithm='maxima'):
+    def simplify(self, algorithm='maxima', **kwds):
         """
         Return a simplified version of this symbolic expression.
 
-        .. NOTE::
-
-           When using ``algorithm='maxima'``, this just sends the expression to Maxima
-           and converts it back to Sage. When ``algorithm='sympy'``,
-           sympy's simplify method is used.
-
         INPUT:
 
-        - ``self`` -- an expression with held operations
-        - ``algorithm`` - (default: ``'maxima'``)  one of
-            - ``'maxima'`` - use Maxima (the default)
-            - ``'sympy'`` - use SymPy
+        - ``algorithm`` -- one of :
+
+            - ``maxima`` : (default) sends the expression to
+              ``maxima`` and converts it back to Sage
+
+            - ``sympy`` : converts the expression to ``sympy``,
+              simplifies it (passing any optional keyword(s)), and
+              converts the result to Sage
+
+            - ``giac`` : converts the expression to ``giac``,
+              simplifies it, and converts the result to Sage
+
+            - ``fricas`` : converts the expression to ``fricas``,
+              simplifies it, and converts the result to Sage
 
         .. SEEALSO::
 
@@ -10632,11 +10653,21 @@ cdef class Expression(Expression_abc):
             sage: f.simplify()
             x^(-a + 1)*sin(2)
 
-        ::
+        Some simplifications are quite algorithm-specific::
 
-            sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
-            sage: expr.simplify(algorithm='sympy')
-            1/5*sqrt(5) - 1/5
+            sage: x, t = var("x, t")
+            sage: ex = cos(t).exponentialize()
+            sage: ex = ex.subs((sin(t).exponentialize()==x).solve(t)[0])
+            sage: ex
+            1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
+            sage: ex.simplify()
+            1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
+            sage: ex.simplify(algorithm="sympy")
+            I*(x^2 + sqrt(x^2 - 1)*x - 1)/(x + sqrt(x^2 - 1))
+            sage: ex.simplify(algorithm="giac")
+            I*sqrt(x^2 - 1)
+            sage: ex.simplify(algorithm="fricas")  # optional - fricas
+            (I*x^2 + I*sqrt(x^2 - 1)*x - I)/(x + sqrt(x^2 - 1))
 
         TESTS:
 
@@ -10652,16 +10683,16 @@ cdef class Expression(Expression_abc):
             sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
             sage: expr.simplify(algorithm='sympy')
             1/5*sqrt(5) - 1/5
-
-
         """
-        if algorithm == 'maxima':
+        if algorithm == "maxima":
             return self._parent(self._maxima_())
-        elif algorithm == 'sympy':
-            return self._sympy_().simplify()._sage_()
-        else:
-            raise NotImplementedError(
-                    "unknown algorithm: '{}'".format(algorithm))
+        if algorithm == "sympy":
+            return self._sympy_().simplify(**kwds)._sage_()
+        if algorithm == "giac":
+            return self._giac_().simplify()._sage_()
+        if algorithm == "fricas":
+            return self._fricas_().simplify()._sage_()
+        raise ValueError(f"algorithm {algorithm} unknown to simplify")
 
     def simplify_full(self):
         """
@@ -12453,7 +12484,7 @@ cdef class Expression(Expression_abc):
             ex = self
         sympy_ex = ex._sympy_()
         solutions = diophantine(sympy_ex)
-        if isinstance(solutions, (set)):
+        if isinstance(solutions, set):
             solutions = list(solutions)
 
         if len(solutions) == 0:
@@ -12464,7 +12495,7 @@ cdef class Expression(Expression_abc):
             solutions = [tuple(SR(s) for s in sol) for sol in solutions]
         if x is None:
             wanted_vars = ex.variables()
-            var_idx = list(xrange(len(ex.variables())))
+            var_idx = list(range(len(ex.variables())))
         else:
             if isinstance(x, (list, tuple)):
                 wanted_vars = x
@@ -13235,6 +13266,7 @@ cdef class Expression(Expression_abc):
             integral, _normalize_integral_input
         R = self._parent
         if isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing):
+            from sage.symbolic.ring import SR
             f = SR(self)
             f, v, a, b = _normalize_integral_input(f, *args)
             # Definite integral with respect to a positional variable.
@@ -13779,6 +13811,8 @@ cpdef new_Expression(parent, x):
         exp = x
     elif isinstance(x, Factorization):
         from sage.misc.misc_c import prod
+        from sage.symbolic.ring import SR
+
         return prod([SR(p)**e for p,e in x], SR(x.unit()))
     elif x in Sets():
         from sage.rings.integer_ring import ZZ
@@ -13854,6 +13888,7 @@ cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=Tr
 
         # tuples can be packed into exprseq
         if isinstance(x, (tuple, list)):
+            from sage.symbolic.ring import SR
             for e in x:
                 obj = SR._force_pyobject(e, force=(not recursive))
                 ex_v.push_back((<Expression>obj)._gobj)

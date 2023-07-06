@@ -23,8 +23,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sys
-
 from cpython.sequence cimport *
 from cpython.list cimport *
 from cpython.tuple cimport *

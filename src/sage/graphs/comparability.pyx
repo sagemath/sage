@@ -642,7 +642,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
         sage: p1 = Permutation([nn+1 for nn in perm[0]])
         sage: p2 = Permutation([nn+1 for nn in perm[1]])
         sage: p = p2 * p1.inverse()
-        sage: p.show(representation = "braid")
+        sage: p.show(representation="braid")                                            # optional - sage.plot
 
     TESTS:
 
@@ -745,15 +745,15 @@ def is_transitive(g, certificate=False):
         (0, 2)
         sage: digraphs.RandomDirectedGNP(30,.2).is_transitive()
         False
-        sage: D = digraphs.DeBruijn(5, 2)
-        sage: D.is_transitive()
+        sage: D = digraphs.DeBruijn(5, 2)                                               # optional - sage.combinat
+        sage: D.is_transitive()                                                         # optional - sage.combinat
         False
-        sage: cert = D.is_transitive(certificate=True)
-        sage: D.has_edge(*cert)
+        sage: cert = D.is_transitive(certificate=True)                                  # optional - sage.combinat
+        sage: D.has_edge(*cert)                                                         # optional - sage.combinat
         False
-        sage: bool(D.shortest_path(*cert))
+        sage: bool(D.shortest_path(*cert))                                              # optional - sage.combinat
         True
-        sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()
+        sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()    # optional - networkx
         True
     """
     cdef int n = g.order()

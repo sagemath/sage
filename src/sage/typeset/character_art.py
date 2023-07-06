@@ -133,8 +133,7 @@ class CharacterArt(SageObject):
              * *
             *****
         """
-        for elem in self._matrix:
-            yield elem
+        yield from self._matrix
 
     def _repr_(self):
         r"""

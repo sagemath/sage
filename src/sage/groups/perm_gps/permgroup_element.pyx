@@ -109,9 +109,6 @@ Check that :trac:`13569` is fixed::
 # ****************************************************************************
 
 import copy
-import random
-
-import sage.groups.old as group
 
 from libc.stdlib cimport qsort
 
@@ -128,7 +125,6 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-import sage.structure.coerce as coerce
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.structure.coerce cimport coercion_model
 from sage.interfaces.abc import GpElement
@@ -137,12 +133,12 @@ import sage.interfaces.abc
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.gap_includes cimport (UInt, UInt2, UInt4, T_PERM2, T_PERM4,
-        NEW_PERM2, NEW_PERM4, TNUM_OBJ, DEG_PERM2, DEG_PERM4, CONST_ADDR_PERM2,
-        CONST_ADDR_PERM4, ADDR_PERM2, ADDR_PERM4)
+        NEW_PERM2, TNUM_OBJ, DEG_PERM2, DEG_PERM4, CONST_ADDR_PERM2,
+        CONST_ADDR_PERM4, ADDR_PERM2)
 from sage.libs.gap.util cimport initialize
 from sage.libs.gap.element cimport (GapElement, GapElement_List,
         GapElement_String, GapElement_Permutation, make_GapElement_Permutation)
-from sage.libs.gap.gap_includes cimport Obj, INT_INTOBJ, ELM_LIST
+from sage.libs.gap.gap_includes cimport Obj, GAP_ValueInt, ELM_LIST
 
 import operator
 
@@ -1365,7 +1361,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         assert vn <= self.n
 
         for i in range(vn):
-            j = INT_INTOBJ(ELM_LIST(obj, i+1))
+            j = GAP_ValueInt(ELM_LIST(obj, i+1))
             new.perm[i] = j - 1
         for i in range(vn, self.n):
             new.perm[i] = i

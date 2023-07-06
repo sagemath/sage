@@ -32,9 +32,8 @@ AUTHORS:
 # ****************************************************************************
 
 from textwrap import dedent
-from sage.misc.superseded import deprecation_cython as deprecation
 
-from libc.math cimport isfinite, INFINITY
+from libc.math cimport INFINITY
 from libc.string cimport memset, memcpy
 from cysignals.memory cimport check_calloc, check_allocarray, check_reallocarray, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
@@ -53,15 +52,10 @@ from cpython.bytes cimport *
 
 include "point_c.pxi"
 
-
-from math import sin, cos, sqrt
-from random import randint
-
 from sage.cpython.string cimport bytes_to_str
 
 from sage.rings.real_double import RDF
 
-from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 
 from sage.plot.colors import Color, float_to_integer
@@ -1637,9 +1631,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: T = S.dual()
             sage: len(T.vertex_list())
             6
-
         """
-        cdef point_c P
         cdef face_c *face
         cdef Py_ssize_t i, j, ix, ff
         cdef IndexFaceSet dual = IndexFaceSet([], **kwds)
