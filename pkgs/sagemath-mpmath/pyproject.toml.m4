@@ -19,12 +19,13 @@ destination = "sage/libs/mpmath/_vendor/"
 requirements = "vendor.txt"
 namespace = "sage.libs.mpmath._vendor"
 
-protected-files = ["vendor.txt", "__init__.py", "nodoctest.py"]
+protected-files = ["all.py", "vendor.txt", "nodoctest.py"]
 patches-dir = "vendoring_patches"
 
 [tool.vendoring.transformations]
 substitute = [
   {match='sage[.]all', replace='sage.libs.mpmath.hooks'},
-  {match="'MPMATH_NOSAGE' not in os.environ and", replace='True or'},
+  {match="(?ms)if 'MPMATH_NOGMPY'.*?except:\\s*pass", replace=''},
+  {match="(?ms)if [(]*'MPMATH_NOSAGE'.*?:(.*?)except:", replace='if True:\1except ():'},
   {match='from mpmath', replace='from sage.libs.mpmath._vendor.mpmath'},
 ]

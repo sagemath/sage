@@ -15,7 +15,7 @@ rm -rf build *.egg_info
 
 export PIP_NO_INDEX=true
 export PIP_FIND_LINKS="file://$SAGE_DISTFILES"
-vendoring sync
+vendoring sync || sdh_die "Vendoring failed"
 
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
