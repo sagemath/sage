@@ -460,6 +460,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             return K(ore_pol[0]).in_base()
         if deg % r != 0:
             raise ValueError('input must be in the image of the Drinfeld module')
+        # Write the system and solve it
         k = deg // r
         A = self._function_ring
         T = A.gen()
