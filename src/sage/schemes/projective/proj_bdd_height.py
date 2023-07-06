@@ -275,6 +275,8 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53, normalize=False):
         sage: P.<z,w> = ProjectiveSpace(O, 1)
         sage: len(list(P.points_of_bounded_height(bound=2)))
         44
+        sage: len(list(P.points_of_bounded_height(bound=2, normalize=True)))
+        44
 
     ::
 
@@ -285,6 +287,16 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53, normalize=False):
         sage: sorted(list(P.points_of_bounded_height(bound=1, normalize=True)))
         [(-1 : 1), (-3/2*a - 1/2 : 1), (3/2*a - 1/2 : 1), (0 : 1),
          (-3/2*a + 1/2 : 0), (-3/2*a + 1/2 : 1), (3/2*a + 1/2 : 1), (1 : 1)]
+
+    ::
+
+        sage: R.<x> = QQ[]
+        sage: K.<z> = NumberField(x^2 - 2)
+        sage: R2.<y> = K[]
+        sage: L.<w> = K.extension(y^2 - 3)
+        sage: P.<a,b> = ProjectiveSpace(L, 1)
+        sage: len(list(P.points_of_bounded_height(bound=2)))
+        256
     """
     if bound < 1:
         return iter([])
