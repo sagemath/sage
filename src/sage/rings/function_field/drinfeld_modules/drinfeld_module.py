@@ -1713,7 +1713,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``x`` -- an element of the ring of functions, or a
+        - ``x`` -- an element of the ring of functions, or an
           Ore polynomial
 
         - ``codomain`` -- a Drinfeld module or ``None`` (default:
