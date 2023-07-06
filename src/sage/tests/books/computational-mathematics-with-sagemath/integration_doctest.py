@@ -200,7 +200,7 @@ Sage example in ./integration.tex, line 1008::
 
 Sage example in ./integration.tex, line 1016::
 
-  sage: f = lambda y: RDF(mpmath.quad(lambda x: mpmath.exp(y*mpmath.mpmath.sin(x)), \
+  sage: f = lambda y: RDF(mpmath.quad(lambda x: mpmath.exp(y*mpmath.sin(x)), \
                                       [0, sqrt(y)]))
   sage: numerical_integral(f, 0, 1) # abs tol 2e-16
   (0.8606791942204567, 6.301207561187562e-07)
